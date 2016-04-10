@@ -25,6 +25,21 @@ use Cake\TestSuite\TestCase;
  */
 class TimeTest extends TestCase
 {
+
+    /**
+     * Backup the defaultLocale property
+     *
+     * @var string
+     */
+    protected $defaultLocaleBackup;
+
+    /**
+     * Backup the defaultOutputTimezone property
+     *
+     * @var string
+     */
+    protected $defaultOutputTimezoneBackup = 'UTC';
+
     /**
      * setUp method
      *
@@ -33,11 +48,18 @@ class TimeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+
+        date_default_timezone_set('UTC');
+        Time::setDefaultOutputTimezone('UTC');
+        FrozenTime::setDefaultOutputTimezone('UTC');
+
         $this->now = Time::getTestNow();
         $this->frozenNow = FrozenTime::getTestNow();
-        $this->locale = Time::$defaultLocale;
-        Time::$defaultLocale = 'en_US';
-        FrozenTime::$defaultLocale = 'en_US';
+
+        Time::setDefaultLocale('en_US');
+        FrozenTime::setDefaultLocale('en_US');
+
+        $this->defaultLocaleBackup = Time::getDefaultLocale();
     }
 
     /**
@@ -48,14 +70,20 @@ class TimeTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Time::setTestNow($this->now);
-        Time::$defaultLocale = $this->locale;
-        Time::resetToStringFormat();
 
-        FrozenTime::setTestNow($this->frozenNow);
-        FrozenTime::$defaultLocale = $this->locale;
-        FrozenTime::resetToStringFormat();
         date_default_timezone_set('UTC');
+        Time::setDefaultOutputTimezone('UTC');
+        FrozenTime::setDefaultOutputTimezone('UTC');
+
+        Time::setTestNow($this->now);
+        FrozenTime::setTestNow($this->frozenNow);
+
+        Time::setDefaultLocale($this->defaultLocaleBackup);
+        FrozenTime::setDefaultLocale($this->defaultLocaleBackup);
+
+        Time::resetToStringFormat();
+        FrozenTime::resetToStringFormat();
+
         I18n::locale(I18n::DEFAULT_LOCALE);
     }
 
@@ -192,6 +220,7 @@ class TimeTest extends TestCase
             ],
         ];
     }
+
     /**
      * test the timezone option for timeAgoInWords
      *
@@ -200,12 +229,40 @@ class TimeTest extends TestCase
      */
     public function testTimeAgoInWordsTimezone($class)
     {
-        $time = new FrozenTime('1990-07-31 20:33:00 UTC');
+        $time = new $class('1990-07-31 20:33:00 UTC');
         $result = $time->timeAgoInWords(
             [
                 'timezone' => 'America/Vancouver',
                 'end' => '+1month',
-                'format' => 'dd-MM-YYYY HH:mm:ss'
+                'format' => 'dd-MM-YYYY HH:mm:ss',
+            ]
+        );
+        $this->assertEquals('on 31-07-1990 13:33:00', $result);
+
+        $time = new $class('1990-07-31 20:33:00 UTC');
+        $result = $time->timeAgoInWords(
+            [
+                'end' => '+1month',
+                'format' => 'dd-MM-YYYY HH:mm:ss',
+            ]
+        );
+        $this->assertEquals('on 31-07-1990 20:33:00', $result);
+
+        $class::setDefaultOutputTimezone('Europe/Berlin');
+
+        $time = new $class('1990-07-31 20:33:00 UTC');
+        $result = $time->timeAgoInWords(
+            [
+                'format' => 'dd-MM-YYYY HH:mm:ss',
+            ]
+        );
+        $this->assertEquals('on 31-07-1990 22:33:00', $result);
+
+        $time = new $class('1990-07-31 20:33:00 UTC');
+        $result = $time->timeAgoInWords(
+            [
+                'format' => 'dd-MM-YYYY HH:mm:ss',
+                'timezone' => 'America/Vancouver',
             ]
         );
         $this->assertEquals('on 31-07-1990 13:33:00', $result);
@@ -220,6 +277,10 @@ class TimeTest extends TestCase
     public function testTimeAgoInWordsEnd($input, $expected, $end)
     {
         $time = new Time($input);
+        $result = $time->timeAgoInWords(['end' => $end]);
+        $this->assertEquals($expected, $result);
+
+        $time = new FrozenTime($input);
         $result = $time->timeAgoInWords(['end' => $end]);
         $this->assertEquals($expected, $result);
     }
@@ -419,6 +480,12 @@ class TimeTest extends TestCase
 
         $this->assertTimeFormat('20 avr. 2014 20:00', $time->nice(null, 'fr-FR'));
         $this->assertTimeFormat('20 avr. 2014 16:00', $time->nice('America/New_York', 'fr-FR'));
+
+        $class::setDefaultOutputTimezone('America/Vancouver');
+        $time = new $class('2014-04-20 20:00', 'UTC');
+        $this->assertTimeFormat('Apr 20 2014 1:00 PM', $time->nice());
+        $this->assertTimeFormat('Apr 20 2014 10:00 PM', $time->nice('Europe/Berlin'));
+        $this->assertEquals('UTC', $time->getTimezone()->getName());
     }
 
     /**
@@ -447,7 +514,7 @@ class TimeTest extends TestCase
         $expected = '00:59:28';
         $this->assertTimeFormat($expected, $result);
 
-        $class::$defaultLocale = 'fr-FR';
+        $class::setDefaultLocale('fr-FR');
         $result = $time->i18nFormat(\IntlDateFormatter::FULL);
         $expected = 'jeudi 14 janvier 2010 13:59:28 UTC';
         $this->assertTimeFormat($expected, $result);
@@ -479,6 +546,31 @@ class TimeTest extends TestCase
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, 'Asia/Tokyo', 'ja-JP@calendar=japanese');
         $expected = '平成22年1月14日木曜日 22時59分28秒 日本標準時';
         $this->assertTimeFormat($expected, $result);
+
+
+        $class::setDefaultLocale('en-CA');
+        $class::setDefaultOutputTimezone('America/Vancouver');
+
+        $result = $time->i18nFormat();
+        $expected = '1/14/10 5:59 AM';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(null, 'America/Toronto');
+        $expected = '1/14/10 8:59 AM';
+        $this->assertTimeFormat($expected, $result);
+
+
+        $class::setDefaultLocale('de-DE');
+        $class::setDefaultOutputTimezone('Europe/Berlin');
+
+        $result = $time->i18nFormat();
+        $expected = '14.01.10 14:59';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(null, 'Europe/London');
+        $expected = '14.01.10 13:59';
+        $this->assertTimeFormat($expected, $result);
+
     }
 
     /**
@@ -562,7 +654,7 @@ class TimeTest extends TestCase
     public function testToString($class)
     {
         $time = new $class('2014-04-20 22:10');
-        $class::$defaultLocale = 'fr-FR';
+        $class::setDefaultLocale('fr-FR');
         $class::setToStringFormat(\IntlDateFormatter::FULL);
         $this->assertTimeFormat('dimanche 20 avril 2014 22:10:00 UTC', (string)$time);
     }
@@ -750,7 +842,7 @@ class TimeTest extends TestCase
         $this->assertNotNull($time);
         $this->assertEquals('2013-10-13 00:54', $time->format('Y-m-d H:i'));
 
-        $class::$defaultLocale = 'fr-FR';
+        $class::setDefaultLocale('fr-FR');
         $time = $class::parseDateTime('13 10, 2013 12:54');
         $this->assertNotNull($time);
         $this->assertEquals('2013-10-13 12:54', $time->format('Y-m-d H:i'));
@@ -775,7 +867,7 @@ class TimeTest extends TestCase
         $this->assertNotNull($time);
         $this->assertEquals('2013-10-13 00:00', $time->format('Y-m-d H:i'));
 
-        $class::$defaultLocale = 'fr-FR';
+        $class::setDefaultLocale('fr-FR');
         $time = $class::parseDate('13 10, 2013 12:54');
         $this->assertNotNull($time);
         $this->assertEquals('2013-10-13 00:00', $time->format('Y-m-d H:i'));
@@ -800,7 +892,7 @@ class TimeTest extends TestCase
         $this->assertNotNull($time);
         $this->assertEquals('00:54:00', $time->format('H:i:s'));
 
-        $class::$defaultLocale = 'fr-FR';
+        $class::setDefaultLocale('fr-FR');
         $time = $class::parseTime('23:54');
         $this->assertNotNull($time);
         $this->assertEquals('23:54:00', $time->format('H:i:s'));
@@ -832,10 +924,64 @@ class TimeTest extends TestCase
     public function testParseDateDifferentTimezone($class)
     {
         date_default_timezone_set('Europe/Paris');
-        $class::$defaultLocale = 'fr-FR';
+        $class::setDefaultLocale('fr-FR');
         $result = $class::parseDate('12/03/2015');
         $this->assertEquals('2015-03-12', $result->format('Y-m-d'));
         $this->assertEquals(new \DateTimeZone('Europe/Paris'), $result->tz);
+    }
+
+    /**
+     * Tests the default locale setter.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testSetDefaultLocale($class) {
+        $result = $class::parseDate('12/03/2015');
+        $this->assertEquals('Dec 3, 2015, 12:00 AM', $result->nice());
+
+        $class::setDefaultLocale('fr-FR');
+
+        $result = $class::parseDate('12/03/2015');
+        $this->assertEquals('12 mars 2015 00:00', $result->nice());
+
+        $expected = 'Y-m-d';
+        $result = $class::parseDate('12/03/2015');
+        $this->assertEquals('2015-03-12', $result->format($expected));
+    }
+
+    /**
+     * Tests the default locale getter.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testGetDefaultLocale($class) {
+        $this->testSetDefaultLocale($class);
+    }
+
+    /**
+     * Tests the default output timezone setter.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testSetDefaultOutputTimezone($class) {
+        $expected = 'Europe/Berlin';
+        $class::setDefaultOutputTimezone('Europe/Berlin');
+        $result = $class::getDefaultOutputTimezone($expected);
+        $this->assertEquals(new \DateTimeZone('Europe/Berlin'), $result);
+        $this->assertInstanceOf('\DatetimeZone', $result);
+    }
+
+    /**
+     * Tests the default output timezone getter.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testGetDefaultOutputTimezone($class) {
+        $this->testSetDefaultOutputTimezone($class);
     }
 
     /**

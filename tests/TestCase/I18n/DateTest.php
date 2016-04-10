@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\I18n;
 
 use Cake\I18n\Date;
 use Cake\I18n\FrozenDate;
+use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use DateTimeZone;
 
@@ -25,11 +26,26 @@ use DateTimeZone;
 class DateTest extends TestCase
 {
     /**
-     * Backup the locale property
+     * Backup the defaultLocale property
      *
      * @var string
      */
-    protected $locale;
+    protected $defaultLocale;
+
+    /**
+     * Backup the defaultOutputTimezone property
+     *
+     * @var string
+     */
+    protected $defaultOutputTimezone = 'UTC';
+
+
+    /**
+     * Backup the serverTime
+     *
+     * @var string
+     */
+    protected $serverTime;
 
     /**
      * setup
@@ -39,7 +55,9 @@ class DateTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->locale = Date::$defaultLocale;
+        $this->serverTime = date_default_timezone_get();
+        $this->defaultLocale = Date::getDefaultLocale();
+        $this->defaultOutputTimezone = I18n::defaultOutputTimezone();
     }
 
     /**
@@ -50,9 +68,10 @@ class DateTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Date::$defaultLocale = $this->locale;
-        FrozenDate::$defaultLocale = $this->locale;
-        date_default_timezone_set('UTC');
+        date_default_timezone_set($this->serverTime);
+        Date::setDefaultLocale($this->defaultLocale);
+        FrozenDate::setDefaultLocale($this->defaultLocale);
+        I18n::defaultOutputTimezone($this->defaultOutputTimezone);
     }
 
     /**
@@ -105,7 +124,7 @@ class DateTest extends TestCase
         $expected = '00:00:00';
         $this->assertEquals($expected, $result);
 
-        $class::$defaultLocale = 'fr-FR';
+        $class::setDefaultLocale('fr-FR');
         $result = $time->i18nFormat(\IntlDateFormatter::FULL);
         $result = str_replace(' à', '', $result);
         $expected = 'jeudi 14 janvier 2010 00:00:00 UTC';
@@ -165,7 +184,7 @@ class DateTest extends TestCase
         $date = $class::parseDate('11/6/15');
         $this->assertEquals('2015-11-06 00:00:00', $date->format('Y-m-d H:i:s'));
 
-        $class::$defaultLocale = 'fr-FR';
+        $class::setDefaultLocale('fr-FR');
         $date = $class::parseDate('13 10, 2015');
         $this->assertEquals('2015-10-13 00:00:00', $date->format('Y-m-d H:i:s'));
     }
@@ -181,7 +200,7 @@ class DateTest extends TestCase
         $date = $class::parseDate('11/6/15 12:33:12');
         $this->assertEquals('2015-11-06 00:00:00', $date->format('Y-m-d H:i:s'));
 
-        $class::$defaultLocale = 'fr-FR';
+        $class::setDefaultLocale('fr-FR');
         $date = $class::parseDate('13 10, 2015 12:54:12');
         $this->assertEquals('2015-10-13 00:00:00', $date->format('Y-m-d H:i:s'));
     }

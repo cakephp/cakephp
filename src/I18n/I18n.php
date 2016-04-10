@@ -268,10 +268,11 @@ class I18n
      * Sets the name of the default output timezone to use for future
      * date and time operations.
      *
-     * If called with no arguments, it will return the currently configured value.
+     * If called with no arguments, it will return the currently configured value if it is
+     * the same for Time, Date, FrozenTime and FrozenDate. If not it will return false.
      *
      * @param string|null $timezone The name of the output timezone to use.
-     * @return \DateTimezone|null The datetime zone.
+     * @return \DateTimezone|null|false The default output datetime zone.
      */
     public static function defaultOutputTimezone($timezone = null)
     {
@@ -283,6 +284,16 @@ class I18n
             Date::setDefaultOutputTimezone($timezone);
             FrozenTime::setDefaultOutputTimezone($timezone);
             FrozenDate::setDefaultOutputTimezone($timezone);
+        } else if ($timezone === null) {
+            $t = Time::getDefaultOutputTimezone();
+            $d = Date::getDefaultOutputTimezone();
+            $ft = FrozenTime::getDefaultOutputTimezone();
+            $fd = FrozenDate::getDefaultOutputTimezone();
+            if ($t == $d && $d == $ft && $ft == $fd) {
+                return $t;
+            } else {
+                return false;
+            }
         }
         return $timezone;
     }

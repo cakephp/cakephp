@@ -194,7 +194,9 @@ trait DateFormatTrait
     {
         $time = $this;
 
-        $timezone = $timezone ?: static::getDefaultOutputTimezone();
+        if ($time->getTimezone()->getName() === date_default_timezone_get()) {
+            $timezone = $timezone ?: static::getDefaultOutputTimezone();
+        }
         if ($timezone) {
             // Handle the immutable and mutable object cases.
             $time = clone $this;
