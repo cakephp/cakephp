@@ -15,9 +15,9 @@
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\ResponseTransformer;
+use Cake\Network\Response as CakeResponse;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Response as PsrResponse;
-use Cake\Network\Response as CakeResponse;
 
 /**
  * Test case for the response transformer.
