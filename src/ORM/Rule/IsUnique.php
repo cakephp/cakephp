@@ -53,7 +53,11 @@ class IsUnique
             return true;
         }
 
-        $checkNull = isset($options['checkNull']) ? true : false;
+        $permitMultipleNulls = true;
+        if(isset($options['permitMultipleNulls'])) {
+            $permitMultipleNulls = $options['permitMultipleNulls'] === true ? true : false;
+        }
+        
         $alias = $options['repository']->alias();
         $conditions = $this->_alias($alias, $entity->extract($this->_fields));
         if ($entity->isNew() === false) {
@@ -64,7 +68,7 @@ class IsUnique
             }
         }
 
-        if ($checkNull) {
+        if ($permitMultipleNulls) {
             foreach ($conditions as $key => $value) {
                 if ($value === null) {
                     $conditions[$key . ' IS'] = $value;

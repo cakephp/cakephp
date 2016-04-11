@@ -370,12 +370,12 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests isUnique with checkNull
+     * Tests isUnique with permitMultipleNulls
      *
      * @group save
      * @return void
      */
-    public function testIsUniqueCheckNull()
+    public function testIsUniquePermitMultipleNulls()
     {
         $entity = new Entity([
             'log_id' => null
@@ -383,7 +383,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = TableRegistry::get('Logs');
         $rules = $table->rulesChecker();
-        $rules->add($rules->isUnique(['log_id']), ['checkNull' => true]);
+        $rules->add($rules->isUnique(['log_id']), ['permitMultipleNulls' => true]);
 
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['_isUnique' => 'This value is already in use'], $entity->errors('log_id'));
@@ -397,12 +397,12 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests isUnique with multiple fields and checkNull
+     * Tests isUnique with multiple fields and permitMultipleNulls
      *
      * @group save
      * @return void
      */
-    public function testIsUniqueMultipleFieldsCheckNull()
+    public function testIsUniqueMultipleFieldsPermitMultipleNulls()
     {
         $entity = new Entity([
             'log_id' => 3,
@@ -411,7 +411,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = TableRegistry::get('Logs');
         $rules = $table->rulesChecker();
-        $rules->add($rules->isUnique(['log_id', 'type'], 'Nope'), ['checkNull' => true]);
+        $rules->add($rules->isUnique(['log_id', 'type'], 'Nope'), ['permitMultipleNulls' => true]);
 
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['log_id' => ['_isUnique' => 'Nope']], $entity->errors());
