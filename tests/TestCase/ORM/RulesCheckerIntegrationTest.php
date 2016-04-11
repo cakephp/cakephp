@@ -29,7 +29,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.tags', 'core.logs'];
+    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.special_tags'];
 
     /**
      * Tear down
@@ -378,21 +378,23 @@ class RulesCheckerIntegrationTest extends TestCase
     public function testIsUniquePermitMultipleNulls()
     {
         $entity = new Entity([
-            'log_id' => null
+            'article_id' => 11,
+            'tag_id' => 11,
+            'author_id' => null
         ]);
 
-        $table = TableRegistry::get('Logs');
+        $table = TableRegistry::get('SpecialTags');
         $rules = $table->rulesChecker();
-        $rules->add($rules->isUnique(['log_id']), ['permitMultipleNulls' => true]);
+        $rules->add($rules->isUnique(['author_id']), ['permitMultipleNulls' => false]);
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['_isUnique' => 'This value is already in use'], $entity->errors('log_id'));
+        $this->assertEquals(['_isUnique' => 'This value is already in use'], $entity->errors('author_id'));
 
-        $entity->log_id = 4;
+        $entity->author_id = 11;
         $this->assertSame($entity, $table->save($entity));
 
         $entity = $table->get(1);
-        $entity->dirty('log_id', true);
+        $entity->dirty('author_id', true);
         $this->assertSame($entity, $table->save($entity));
     }
 
@@ -405,19 +407,22 @@ class RulesCheckerIntegrationTest extends TestCase
     public function testIsUniqueMultipleFieldsPermitMultipleNulls()
     {
         $entity = new Entity([
-            'log_id' => 3,
-            'type' => null
+            'article_id' => 10,
+            'tag_id' => 12,
+            'author_id' => null
         ]);
 
-        $table = TableRegistry::get('Logs');
+        $table = TableRegistry::get('SpecialTags');
         $rules = $table->rulesChecker();
-        $rules->add($rules->isUnique(['log_id', 'type'], 'Nope'), ['permitMultipleNulls' => true]);
+        $rules->add($rules->isUnique(['author_id', 'article_id'], 'Nope'), ['permitMultipleNulls' => false]);
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['log_id' => ['_isUnique' => 'Nope']], $entity->errors());
+        $this->assertEquals(['author_id' => ['_isUnique' => 'Nope']], $entity->errors());
 
         $entity->clean();
-        $entity->type = 'Access';
+        $entity->article_id = 10;
+        $entity->tag_id = 12;
+        $entity->author_id = 12;
         $this->assertSame($entity, $table->save($entity));
     }
 

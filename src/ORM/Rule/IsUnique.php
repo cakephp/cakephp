@@ -54,7 +54,7 @@ class IsUnique
         }
 
         $permitMultipleNulls = true;
-        if(isset($options['permitMultipleNulls'])) {
+        if (isset($options['permitMultipleNulls'])) {
             $permitMultipleNulls = $options['permitMultipleNulls'] === true ? true : false;
         }
         
@@ -68,7 +68,7 @@ class IsUnique
             }
         }
 
-        if ($permitMultipleNulls) {
+        if (!$permitMultipleNulls) {
             foreach ($conditions as $key => $value) {
                 if ($value === null) {
                     $conditions[$key . ' IS'] = $value;
