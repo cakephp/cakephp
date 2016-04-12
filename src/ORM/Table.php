@@ -1619,6 +1619,32 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Saves multiple records for a table.
+     *
+     * @param array $entities Entities to save.
+     * @param array $options Options used when calling Table::save() for each entity.
+     * @return bool|array False on failure, entities list on succcess.
+     */
+    public function saveMany($entities, $options = [])
+    {
+        $return = $this->connection()->transactional(
+            function () use ($entities, $options) {
+                foreach ($entities as $entity) {
+                    if ($this->save($entity, $options) === false) {
+                        return false;
+                    }
+                }
+            }
+        );
+
+        if ($return === false) {
+            return false;
+        }
+
+        return $entities;
+    }
+
+    /**
      * {@inheritDoc}
      *
      * For HasMany and HasOne associations records will be removed based on
