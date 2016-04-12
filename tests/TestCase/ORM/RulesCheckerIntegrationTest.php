@@ -370,12 +370,12 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests isUnique with permitMultipleNulls
+     * Tests isUnique with allowMultipleNulls
      *
      * @group save
      * @return void
      */
-    public function testIsUniquePermitMultipleNulls()
+    public function testIsUniqueAllowMultipleNulls()
     {
         $entity = new Entity([
             'article_id' => 11,
@@ -385,7 +385,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = TableRegistry::get('SpecialTags');
         $rules = $table->rulesChecker();
-        $rules->add($rules->isUnique(['author_id']), ['permitMultipleNulls' => false]);
+        $rules->add($rules->isUnique(['author_id']), ['allowMultipleNulls' => false]);
 
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['_isUnique' => 'This value is already in use'], $entity->errors('author_id'));
@@ -399,12 +399,12 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests isUnique with multiple fields and permitMultipleNulls
+     * Tests isUnique with multiple fields and allowMultipleNulls
      *
      * @group save
      * @return void
      */
-    public function testIsUniqueMultipleFieldsPermitMultipleNulls()
+    public function testIsUniqueMultipleFieldsAllowMultipleNulls()
     {
         $entity = new Entity([
             'article_id' => 10,
@@ -414,7 +414,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = TableRegistry::get('SpecialTags');
         $rules = $table->rulesChecker();
-        $rules->add($rules->isUnique(['author_id', 'article_id'], 'Nope'), ['permitMultipleNulls' => false]);
+        $rules->add($rules->isUnique(['author_id', 'article_id'], 'Nope'), ['allowMultipleNulls' => false]);
 
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['author_id' => ['_isUnique' => 'Nope']], $entity->errors());

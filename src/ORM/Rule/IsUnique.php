@@ -53,9 +53,9 @@ class IsUnique
             return true;
         }
 
-        $permitMultipleNulls = true;
-        if (isset($options['permitMultipleNulls'])) {
-            $permitMultipleNulls = $options['permitMultipleNulls'] === true ? true : false;
+        $allowMultipleNulls = true;
+        if (isset($options['allowMultipleNulls'])) {
+            $allowMultipleNulls = $options['allowMultipleNulls'] === true ? true : false;
         }
         
         $alias = $options['repository']->alias();
@@ -68,7 +68,7 @@ class IsUnique
             }
         }
 
-        if (!$permitMultipleNulls) {
+        if (!$allowMultipleNulls) {
             foreach ($conditions as $key => $value) {
                 if ($value === null) {
                     $conditions[$key . ' IS'] = $value;
