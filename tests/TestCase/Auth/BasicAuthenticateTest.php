@@ -18,10 +18,8 @@ use Cake\Auth\BasicAuthenticate;
 use Cake\I18n\Time;
 use Cake\Network\Exception\UnauthorizedException;
 use Cake\Network\Request;
-use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Security;
 
 /**
  * Test case for BasicAuthentication
@@ -35,7 +33,7 @@ class BasicAuthenticateTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.users', 'core.auth_users'];
+    public $fixtures = ['core.auth_users', 'core.users'];
 
     /**
      * setup

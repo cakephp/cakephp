@@ -51,7 +51,7 @@ class IcuFormatter implements FormatterInterface
             return $this->_formatMessage($locale, $message, $vars);
         }
 
-        if (isset($vars['_context']) && isset($message['_context'])) {
+        if (isset($vars['_context'], $message['_context'])) {
             $message = $message['_context'][$vars['_context']];
             unset($vars['_context']);
         }
@@ -65,7 +65,7 @@ class IcuFormatter implements FormatterInterface
             $count = isset($vars['_count']) ? $vars['_count'] : 0;
             unset($vars['_count'], $vars['_singular']);
             $form = PluralRules::calculate($locale, $count);
-            $message = $message[$form];
+            $message = isset($message[$form]) ? $message[$form] : end($message);
         }
 
         return $this->_formatMessage($locale, $message, $vars);

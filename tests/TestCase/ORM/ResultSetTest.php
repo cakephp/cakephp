@@ -18,7 +18,6 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
-use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -30,7 +29,7 @@ use Cake\TestSuite\TestCase;
 class ResultSetTest extends TestCase
 {
 
-    public $fixtures = ['core.authors', 'core.articles', 'core.comments'];
+    public $fixtures = ['core.articles', 'core.authors', 'core.comments'];
 
     /**
      * setup
@@ -260,7 +259,6 @@ class ResultSetTest extends TestCase
         $query = $this->table->find('all');
         $results = $query->all();
         $expected = [
-            'query' => $query,
             'items' => $results->toArray()
         ];
         $this->assertSame($expected, $results->__debugInfo());
@@ -367,5 +365,23 @@ class ResultSetTest extends TestCase
         })->first();
         $this->assertEquals('TestPlugin.Comments', $result->source());
         $this->assertEquals('TestPlugin.Authors', $result->_matchingData['Authors']->source());
+    }
+
+    /**
+     * Ensure that isEmpty() on a ResultSet doesn't result in loss
+     * of records. This behavior is provided by CollectionTrait.
+     *
+     * @return void
+     */
+    public function testIsEmptyDoesNotConsumeData()
+    {
+        $table = TableRegistry::get('Comments');
+        $query = $table->find()
+            ->formatResults(function ($results) {
+                return $results;
+            });
+        $res = $query->all();
+        $res->isEmpty();
+        $this->assertCount(6, $res->toArray());
     }
 }

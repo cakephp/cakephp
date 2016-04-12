@@ -35,10 +35,7 @@ class XcacheEngineTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        if (PHP_SAPI === 'cli') {
-            $this->markTestSkipped('Xcache is not available for the CLI.');
-        }
-        if (!function_exists('xcache_set')) {
+        if (!extension_loaded('xcache')) {
             $this->markTestSkipped('Xcache is not installed or configured properly');
         }
         Cache::enable();
@@ -85,6 +82,7 @@ class XcacheEngineTest extends TestCase
             'prefix' => 'cake_',
             'duration' => 3600,
             'probability' => 100,
+            'groups' => [],
         ];
         $this->assertTrue(isset($config['PHP_AUTH_USER']));
         $this->assertTrue(isset($config['PHP_AUTH_PW']));
@@ -104,6 +102,7 @@ class XcacheEngineTest extends TestCase
         $expecting = '';
         $this->assertEquals($expecting, $result);
 
+        // String
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('test', $data, 'xcache');
         $this->assertTrue($result);
@@ -111,6 +110,23 @@ class XcacheEngineTest extends TestCase
         $result = Cache::read('test', 'xcache');
         $expecting = $data;
         $this->assertEquals($expecting, $result);
+
+        // Integer
+        $data = 100;
+        $result = Cache::write('test', 100, 'xcache');
+        $this->assertTrue($result);
+
+        $result = Cache::read('test', 'xcache');
+        $this->assertSame(100, $result);
+
+        // Object
+        $data = (object)['value' => 'an object'];
+        $result = Cache::write('test', $data, 'xcache');
+        $this->assertTrue($result);
+
+        $result = Cache::read('test', 'xcache');
+        $this->assertInstanceOf('stdClass', $result);
+        $this->assertEquals('an object', $result->value);
 
         Cache::delete('test', 'xcache');
     }
@@ -167,6 +183,9 @@ class XcacheEngineTest extends TestCase
      */
     public function testClearCache()
     {
+        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
+            $this->markTestSkipped('Xcache administration functions are not available for the CLI.');
+        }
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('clear_test_1', $data, 'xcache');
         $this->assertTrue($result);
@@ -174,7 +193,7 @@ class XcacheEngineTest extends TestCase
         $result = Cache::write('clear_test_2', $data, 'xcache');
         $this->assertTrue($result);
 
-        $result = Cache::clear();
+        $result = Cache::clear(false, 'xcache');
         $this->assertTrue($result);
     }
 
@@ -188,7 +207,7 @@ class XcacheEngineTest extends TestCase
         $result = Cache::write('test_decrement', 5, 'xcache');
         $this->assertTrue($result);
 
-        $result = Cache::decrement('test_decrement', 'xcache');
+        $result = Cache::decrement('test_decrement', 1, 'xcache');
         $this->assertEquals(4, $result);
 
         $result = Cache::read('test_decrement', 'xcache');
@@ -211,7 +230,7 @@ class XcacheEngineTest extends TestCase
         $result = Cache::write('test_increment', 5, 'xcache');
         $this->assertTrue($result);
 
-        $result = Cache::increment('test_increment', 'xcache');
+        $result = Cache::increment('test_increment', 1, 'xcache');
         $this->assertEquals(6, $result);
 
         $result = Cache::read('test_increment', 'xcache');

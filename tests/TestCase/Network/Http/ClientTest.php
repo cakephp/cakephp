@@ -52,7 +52,7 @@ class ClientTest extends TestCase
             'host' => 'example.org',
             'auth' => ['username' => 'mark', 'password' => 'secret']
         ];
-        foreach ($config as $key => $val) {
+        foreach ($expected as $key => $val) {
             $this->assertEquals($val, $result[$key]);
         }
     }

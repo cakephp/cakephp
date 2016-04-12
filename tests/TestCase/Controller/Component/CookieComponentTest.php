@@ -16,8 +16,6 @@ namespace Cake\Test\TestCase\Controller\Component;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\CookieComponent;
-use Cake\Controller\Controller;
-use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -294,7 +292,7 @@ class CookieComponentTest extends TestCase
         $this->Cookie->configKey('Testing', 'expires', '+90 years');
         $this->Cookie->write('Testing', 'value');
         $future = new Time('now');
-        $future->modify('+90 years');
+        $future = $future->modify('+90 years');
 
         $expected = [
             'name' => 'Testing',

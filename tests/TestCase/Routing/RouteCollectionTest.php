@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Routing;
 
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
-use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
 
@@ -106,6 +105,30 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
+     * Test that parse decodes URL data before matching.
+     * This is important for multibyte URLs that pass through URL rewriting.
+     *
+     * @return void
+     */
+    public function testParseEncodedBytesInFixedSegment()
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->connect('/ден/:day-:month', ['controller' => 'Events', 'action' => 'index']);
+        $url = '/%D0%B4%D0%B5%D0%BD/15-%D0%BE%D0%BA%D1%82%D0%BE%D0%BC%D0%B2%D1%80%D0%B8?test=foo';
+        $result = $this->collection->parse($url);
+        $expected = [
+            'pass' => [],
+            'plugin' => null,
+            'controller' => 'Events',
+            'action' => 'index',
+            'day' => 15,
+            'month' => 'октомври',
+            '?' => ['test' => 'foo'],
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Test that parsing checks all the related path scopes.
      *
      * @return void
@@ -115,7 +138,7 @@ class RouteCollectionTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/', []);
 
         $routes->resources('Articles');
-        $routes->connect('/:controller', ['action' => 'index'], [], ['routeClass' => 'InflectedRoute']);
+        $routes->connect('/:controller', ['action' => 'index'], ['routeClass' => 'InflectedRoute']);
         $routes->connect('/:controller/:action', [], ['routeClass' => 'InflectedRoute']);
 
         $result = $this->collection->parse('/articles/add');

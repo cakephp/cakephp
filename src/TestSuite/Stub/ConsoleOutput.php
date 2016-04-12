@@ -31,6 +31,7 @@ use Cake\Console\ConsoleOutput as ConsoleOutputBase;
  */
 class ConsoleOutput extends ConsoleOutputBase
 {
+
     /**
      * Buffered messages.
      *

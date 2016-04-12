@@ -454,6 +454,21 @@ SQL;
                 ['type' => 'text', 'null' => false],
                 '"body" TEXT NOT NULL'
             ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_TINY, 'null' => false],
+                '"body" VARCHAR(' . Table::LENGTH_TINY . ') NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM, 'null' => false],
+                '"body" TEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
+                '"body" TEXT NOT NULL'
+            ],
             // Integers
             [
                 'post_id',
@@ -542,6 +557,41 @@ SQL;
                 '"created" TIMESTAMP DEFAULT NULL'
             ],
         ];
+    }
+
+    /**
+     * Test the addConstraintSql method.
+     *
+     * @return void
+     */
+    public function testAddConstraintSql()
+    {
+        $driver = $this->_getMockedDriver();
+        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+        $connection->expects($this->any())->method('driver')
+            ->will($this->returnValue($driver));
+
+        $table = new Table('posts');
+
+        $result = $table->addConstraintSql($connection);
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * Test the dropConstraintSql method.
+     *
+     * @return void
+     */
+    public function testDropConstraintSql()
+    {
+        $driver = $this->_getMockedDriver();
+        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+        $connection->expects($this->any())->method('driver')
+            ->will($this->returnValue($driver));
+
+        $table = new Table('posts');
+        $result = $table->dropConstraintSql($connection);
+        $this->assertEmpty($result);
     }
 
     /**
@@ -939,14 +989,9 @@ SQL;
     protected function _getMockedDriver()
     {
         $driver = new \Cake\Database\Driver\Sqlite();
-        $mock = $this->getMock('FakePdo', ['quote', 'quoteIdentifier', 'prepare']);
+        $mock = $this->getMock('FakePdo', ['quote', 'prepare']);
         $mock->expects($this->any())
             ->method('quote')
-            ->will($this->returnCallback(function ($value) {
-                return '"' . $value . '"';
-            }));
-        $mock->expects($this->any())
-            ->method('quoteIdentifier')
             ->will($this->returnCallback(function ($value) {
                 return '"' . $value . '"';
             }));

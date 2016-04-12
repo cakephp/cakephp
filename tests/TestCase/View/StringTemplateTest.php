@@ -208,10 +208,10 @@ class StringTemplateTest extends TestCase
      */
     public function testFormatAttributes()
     {
-        $attrs = ['name' => 'bruce', 'data-hero' => '<batman>'];
+        $attrs = ['name' => 'bruce', 'data-hero' => '<batman>', 'spellcheck' => 'true'];
         $result = $this->template->formatAttributes($attrs);
         $this->assertEquals(
-            ' name="bruce" data-hero="&lt;batman&gt;"',
+            ' name="bruce" data-hero="&lt;batman&gt;" spellcheck="true"',
             $result
         );
 

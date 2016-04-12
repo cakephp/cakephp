@@ -15,10 +15,9 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
+use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Network\Exception\NotFoundException;
-use Cake\ORM\Query;
-use Cake\ORM\Table;
 
 /**
  * This component is used to handle automatic model data pagination. The primary way to use this
@@ -142,14 +141,14 @@ class PaginatorComponent extends Component
      * $results = $paginator->paginate($query);
      * ```
      *
-     * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Query $object The table or query to paginate.
+     * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface $object The table or query to paginate.
      * @param array $settings The settings/configuration used for pagination.
-     * @return array Query results
+     * @return \Cake\Datasource\ResultSetInterface Query results
      * @throws \Cake\Network\Exception\NotFoundException
      */
     public function paginate($object, array $settings = [])
     {
-        if ($object instanceof Query) {
+        if ($object instanceof QueryInterface) {
             $query = $object;
             $object = $query->repository();
         }

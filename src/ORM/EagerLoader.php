@@ -136,7 +136,8 @@ class EagerLoader
 
         $associations = (array)$associations;
         $associations = $this->_reformatContain($associations, $this->_containments);
-        $this->_normalized = $this->_loadExternal = null;
+        $this->_normalized = null;
+        $this->_loadExternal = [];
         $this->_aliasList = [];
         return $this->_containments = $associations;
     }
@@ -152,14 +153,15 @@ class EagerLoader
     public function clearContain()
     {
         $this->_containments = [];
-        $this->_normalized = $this->_loadExternal = null;
+        $this->_normalized = null;
+        $this->_loadExternal = [];
         $this->_aliasList = [];
     }
 
     /**
      * Set whether or not contained associations will load fields automatically.
      *
-     * @param bool $value The value to set.
+     * @param bool|null $value The value to set.
      * @return bool The current value.
      */
     public function autoFields($value = null)
@@ -309,6 +311,15 @@ class EagerLoader
             }
 
             $pointer += [$table => []];
+
+            if (isset($options['queryBuilder']) && isset($pointer[$table]['queryBuilder'])) {
+                $first = $pointer[$table]['queryBuilder'];
+                $second = $options['queryBuilder'];
+                $options['queryBuilder'] = function ($query) use ($first, $second) {
+                    return $second($first($query));
+                };
+            }
+
             $pointer[$table] = $options + $pointer[$table];
         }
 
@@ -334,14 +345,22 @@ class EagerLoader
             return;
         }
 
-        foreach ($this->attachableAssociations($repository) as $loadable) {
-            $config = $loadable->config() + [
-                'aliasPath' => $loadable->aliasPath(),
-                'propertyPath' => $loadable->propertyPath(),
-                'includeFields' => $includeFields,
-            ];
-            $loadable->instance()->attachTo($query, $config);
-        }
+        $attachable = $this->attachableAssociations($repository);
+        $processed = [];
+        do {
+            foreach ($attachable as $alias => $loadable) {
+                $config = $loadable->config() + [
+                    'aliasPath' => $loadable->aliasPath(),
+                    'propertyPath' => $loadable->propertyPath(),
+                    'includeFields' => $includeFields,
+                ];
+                $loadable->instance()->attachTo($query, $config);
+                $processed[$alias] = true;
+            }
+
+            $newAttachable = $this->attachableAssociations($repository);
+            $attachable = array_diff_key($newAttachable, $processed);
+        } while (!empty($attachable));
     }
 
     /**
@@ -358,6 +377,7 @@ class EagerLoader
         $contain = $this->normalized($repository);
         $matching = $this->_matching ? $this->_matching->normalized($repository) : [];
         $this->_fixStrategies();
+        $this->_loadExternal = [];
         return $this->_resolveJoins($contain, $matching);
     }
 
@@ -383,7 +403,7 @@ class EagerLoader
      * Auxiliary function responsible for fully normalizing deep associations defined
      * using `contain()`
      *
-     * @param Table $parent owning side of the association
+     * @param \Cake\ORM\Table $parent owning side of the association
      * @param string $alias name of the association to be loaded
      * @param array $options list of extra options to use for this association
      * @param array $paths An array with two values, the first one is a list of dot
@@ -531,7 +551,7 @@ class EagerLoader
      * @param \Cake\ORM\Query $query The query for which to eager load external
      * associations
      * @param \Cake\Database\StatementInterface $statement The statement created after executing the $query
-     * @return CallbackStatement statement modified statement with extra loaders
+     * @return \Cake\Database\Statement\CallbackStatement statement modified statement with extra loaders
      */
     public function loadExternal($query, $statement)
     {
@@ -645,7 +665,7 @@ class EagerLoader
      *
      * @param array $external the list of external associations to be loaded
      * @param \Cake\ORM\Query $query The query from which the results where generated
-     * @param BufferedStatement $statement The statement to work on
+     * @param \Cake\Database\Statement\BufferedStatement $statement The statement to work on
      * @return array
      */
     protected function _collectKeys($external, $query, $statement)

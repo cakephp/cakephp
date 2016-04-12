@@ -18,7 +18,6 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\ORM\Association;
 use Cake\ORM\Behavior;
-use Cake\ORM\Entity;
 
 /**
  * CounterCache behavior
@@ -128,18 +127,18 @@ class CounterCacheBehavior extends Behavior
      *
      * @param \Cake\Event\Event $event Event instance.
      * @param \Cake\Datasource\EntityInterface $entity Entity
-     * @param Association $assoc The association object
+     * @param \Cake\ORM\Association $assoc The association object
      * @param array $settings The settings for for counter cache for this association
      * @return void
      */
     protected function _processAssociation(Event $event, EntityInterface $entity, Association $assoc, array $settings)
     {
         $foreignKeys = (array)$assoc->foreignKey();
-        $primaryKeys = (array)$assoc->target()->primaryKey();
+        $primaryKeys = (array)$assoc->bindingKey();
         $countConditions = $entity->extract($foreignKeys);
         $updateConditions = array_combine($primaryKeys, $countConditions);
-
         $countOriginalConditions = $entity->extractOriginalChanged($foreignKeys);
+
         if ($countOriginalConditions !== []) {
             $updateOriginalConditions = array_combine($primaryKeys, $countOriginalConditions);
         }

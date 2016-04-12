@@ -117,7 +117,7 @@ class Cache
      * Returns the Cache Registry instance used for creating and using cache adapters.
      * Also allows for injecting of a new registry instance.
      *
-     * @param \Cake\Core\ObjectRegistry $registry Injectable registry object.
+     * @param \Cake\Core\ObjectRegistry|null $registry Injectable registry object.
      * @return \Cake\Core\ObjectRegistry
      */
     public static function registry(ObjectRegistry $registry = null)
@@ -125,7 +125,7 @@ class Cache
         if ($registry) {
             static::$_registry = $registry;
         }
-        
+
         if (empty(static::$_registry)) {
             static::$_registry = new CacheRegistry();
         }
@@ -571,7 +571,7 @@ class Cache
      *
      * ```
      * Cache::add('cached_data', $data);
-     * ````
+     * ```
      *
      * Writing to a specific cache config:
      *

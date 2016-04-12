@@ -316,7 +316,9 @@ abstract class ObjectRegistry
     public function __debugInfo()
     {
         $properties = get_object_vars($this);
-        $properties['_loaded'] = array_keys($properties['_loaded']);
+        if (isset($properties['_loaded'])) {
+            $properties['_loaded'] = array_keys($properties['_loaded']);
+        }
         return $properties;
     }
 }

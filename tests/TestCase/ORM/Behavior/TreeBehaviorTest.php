@@ -14,9 +14,6 @@
  */
 namespace Cake\Test\TestCase\ORM\Behavior;
 
-use Cake\Collection\Collection;
-use Cake\Event\Event;
-use Cake\ORM\Behavior\TranslateBehavior;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -33,8 +30,8 @@ class TreeBehaviorTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.number_trees',
-        'core.menu_link_trees'
+        'core.menu_link_trees',
+        'core.number_trees'
     ];
 
     public function setUp()
@@ -848,6 +845,43 @@ class TreeBehaviorTest extends TestCase
             '__17:18 -  9:cd',
             '__19:20 - 10:radios',
             '23:24 - 11:alien hardware'
+        ];
+        $this->assertMpttValues($expected, $this->table);
+    }
+
+    /**
+     * Tests adding a root element to the tree when all other root elements have children
+     *
+     * @return void
+     */
+    public function testAddRoot()
+    {
+        $table = $this->table;
+
+        //First add a child to the empty root element
+        $alien = $table->find()->where(['name' => 'alien hardware'])->first();
+        $entity = new Entity(['name' => 'plasma rifle', 'parent_id' => $alien->id], ['markNew' => true]);
+        $table->save($entity);
+
+        $entity = new Entity(['name' => 'carpentry', 'parent_id' => null], ['markNew' => true]);
+        $this->assertSame($entity, $table->save($entity));
+        $this->assertEquals(25, $entity->lft);
+        $this->assertEquals(26, $entity->rght);
+
+        $expected = [
+            ' 1:20 -  1:electronics',
+            '_ 2: 9 -  2:televisions',
+            '__ 3: 4 -  3:tube',
+            '__ 5: 6 -  4:lcd',
+            '__ 7: 8 -  5:plasma',
+            '_10:19 -  6:portable',
+            '__11:14 -  7:mp3',
+            '___12:13 -  8:flash',
+            '__15:16 -  9:cd',
+            '__17:18 - 10:radios',
+            '21:24 - 11:alien hardware',
+            '_22:23 - 12:plasma rifle',
+            '25:26 - 13:carpentry',
         ];
         $this->assertMpttValues($expected, $this->table);
     }

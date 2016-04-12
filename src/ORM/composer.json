@@ -24,6 +24,5 @@
     },
     "suggest": {
         "cakephp/i18n": "~3.0"
-    },
-    "minimum-stability": "dev"
+    }
 }

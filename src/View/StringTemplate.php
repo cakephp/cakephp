@@ -75,7 +75,6 @@ class StringTemplate
         'seamless' => true,
         'selected' => true,
         'sortable' => true,
-        'spellcheck' => true,
         'truespeed' => true,
         'typemustmatch' => true,
         'visible' => true,

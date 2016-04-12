@@ -109,6 +109,38 @@ class AssociationTest extends TestCase
     }
 
     /**
+     * Tests that className() returns the correct association className
+     *
+     * @return void
+     */
+    public function testClassName()
+    {
+        $this->assertEquals('\Cake\Test\TestCase\ORM\TestTable', $this->association->className());
+    }
+
+    /**
+     * Tests that className() returns the correct (unnormalized) className
+     *
+     * @return void
+     */
+    public function testClassNameUnnormalized()
+    {
+        $config = [
+            'className' => 'Test',
+        ];
+        $this->association = $this->getMock(
+            '\Cake\ORM\Association',
+            [
+                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
+                'saveAssociated', 'eagerLoader', 'type'
+            ],
+            ['Foo', $config]
+        );
+
+        $this->assertEquals('Test', $this->association->className());
+    }
+
+    /**
      * Tests that cascadeCallbacks() returns the correct configured value
      *
      * @return void
@@ -295,6 +327,49 @@ class AssociationTest extends TestCase
         $this->assertEquals('foo', $this->association->property());
         $this->association->property('thing');
         $this->assertEquals('thing', $this->association->property());
+    }
+
+    /**
+     * Test that warning is shown if property name clashes with table field.
+     *
+     * @return void
+     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedExceptionMessageRegExp /^Association property name "foo" clashes with field of same name of table "test"/
+     */
+    public function testPropertyNameClash()
+    {
+        $this->source->schema(['foo' => ['type' => 'string']]);
+        $this->assertEquals('foo', $this->association->property());
+    }
+
+    /**
+     * Test that warning is not shown if "propertyName" option is explicitly specified.
+     *
+     * @return void
+     */
+    public function testPropertyNameExplicitySet()
+    {
+        $this->source->schema(['foo' => ['type' => 'string']]);
+
+        $config = [
+            'className' => '\Cake\Test\TestCase\ORM\TestTable',
+            'foreignKey' => 'a_key',
+            'conditions' => ['field' => 'value'],
+            'dependent' => true,
+            'sourceTable' => $this->source,
+            'joinType' => 'INNER',
+            'propertyName' => 'foo'
+        ];
+        $association = $this->getMock(
+            '\Cake\ORM\Association',
+            [
+                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
+                'saveAssociated', 'eagerLoader', 'type'
+            ],
+            ['Foo', $config]
+        );
+
+        $this->assertEquals('foo', $association->property());
     }
 
     /**

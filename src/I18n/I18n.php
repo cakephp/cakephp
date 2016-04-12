@@ -120,7 +120,7 @@ class I18n
      * @param string|null $locale The locale for the translator.
      * @param callable|null $loader A callback function or callable class responsible for
      * constructing a translations package instance.
-     * @return \Aura\Intl\Translator|void The configured translator.
+     * @return \Aura\Intl\Translator|null The configured translator.
      */
     public static function translator($name = 'default', $locale = null, callable $loader = null)
     {
@@ -131,7 +131,7 @@ class I18n
 
             $packages = static::translators()->getPackages();
             $packages->set($name, $locale, $loader);
-            return;
+            return null;
         }
 
         $translators = static::translators();
@@ -206,7 +206,7 @@ class I18n
      * locale as stored in the `intl.default_locale` PHP setting.
      *
      * @param string|null $locale The name of the locale to set as default.
-     * @return string|void The name of the default locale.
+     * @return string|null The name of the default locale.
      */
     public static function locale($locale = null)
     {
@@ -217,7 +217,7 @@ class I18n
             if (isset(static::$_collection)) {
                 static::translators()->setLocale($locale);
             }
-            return;
+            return null;
         }
 
         $current = Locale::getDefault();

@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\Type;
-use Cake\Database\Type\IntegerType;
 use Cake\TestSuite\TestCase;
 use \PDO;
 
@@ -55,6 +54,9 @@ class IntegerTypeTest extends TestCase
         $result = $this->type->toPHP('2 bears', $this->driver);
         $this->assertSame(2, $result);
 
+        $result = $this->type->toPHP('-2', $this->driver);
+        $this->assertSame(-2, $result);
+
         $result = $this->type->toPHP(['3', '4'], $this->driver);
         $this->assertSame(1, $result);
     }
@@ -66,6 +68,8 @@ class IntegerTypeTest extends TestCase
      */
     public function testToDatabase()
     {
+        $this->assertNull($this->type->toDatabase(null, $this->driver));
+
         $result = $this->type->toDatabase('some data', $this->driver);
         $this->assertSame(0, $result);
 
@@ -74,9 +78,17 @@ class IntegerTypeTest extends TestCase
 
         $result = $this->type->toDatabase('2', $this->driver);
         $this->assertSame(2, $result);
+    }
 
-        $result = $this->type->toDatabase(['3', '4'], $this->driver);
-        $this->assertSame(1, $result);
+    /**
+     * Tests that passing an invalid value will throw an exception
+     *
+     * @expectedException InvalidArgumentException
+     * @return void
+     */
+    public function testToDatabseInvalid()
+    {
+        $this->type->toDatabase(['3', '4'], $this->driver);
     }
 
     /**
@@ -87,7 +99,7 @@ class IntegerTypeTest extends TestCase
     public function testMarshal()
     {
         $result = $this->type->marshal('some data', $this->driver);
-        $this->assertSame('some data', $result);
+        $this->assertNull($result);
 
         $result = $this->type->marshal('', $this->driver);
         $this->assertNull($result);
@@ -101,11 +113,17 @@ class IntegerTypeTest extends TestCase
         $result = $this->type->marshal(105, $this->driver);
         $this->assertSame(105, $result);
 
+        $result = $this->type->marshal('-105', $this->driver);
+        $this->assertSame(-105, $result);
+
+        $result = $this->type->marshal(-105, $this->driver);
+        $this->assertSame(-105, $result);
+
         $result = $this->type->marshal('1.25', $this->driver);
-        $this->assertSame('1.25', $result);
+        $this->assertSame(1, $result);
 
         $result = $this->type->marshal('2 monkeys', $this->driver);
-        $this->assertSame('2 monkeys', $result);
+        $this->assertNull($result);
 
         $result = $this->type->marshal(['3', '4'], $this->driver);
         $this->assertSame(1, $result);

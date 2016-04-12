@@ -20,6 +20,5 @@
         "psr-4": {
             "Cake\\Database\\": "."
         }
-    },
-    "minimum-stability": "beta"
+    }
 }

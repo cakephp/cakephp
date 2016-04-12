@@ -16,6 +16,7 @@ namespace Cake\Routing\Filter;
 
 use Cake\Event\Event;
 use Cake\Routing\DispatcherFilter;
+use Cake\Routing\Exception\RedirectException;
 use Cake\Routing\Router;
 
 /**
@@ -42,16 +43,23 @@ class RoutingFilter extends DispatcherFilter
      * If Routes have not been loaded they will be loaded, and config/routes.php will be run.
      *
      * @param \Cake\Event\Event $event containing the request, response and additional params
-     * @return void
+     * @return \Cake\Network\Response|null A response will be returned when a redirect route is encountered.
      */
     public function beforeDispatch(Event $event)
     {
         $request = $event->data['request'];
         Router::setRequestInfo($request);
 
-        if (empty($request->params['controller'])) {
-            $params = Router::parse($request->url);
-            $request->addParams($params);
+        try {
+            if (empty($request->params['controller'])) {
+                $params = Router::parse($request->url);
+                $request->addParams($params);
+            }
+        } catch (RedirectException $e) {
+            $response = $event->data['response'];
+            $response->statusCode($e->getCode());
+            $response->header('Location', $e->getMessage());
+            return $response;
         }
     }
 }

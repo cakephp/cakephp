@@ -124,6 +124,8 @@ class Helper implements EventListenerInterface
         if (!empty($this->helpers)) {
             $this->_helperMap = $View->helpers()->normalizeArray($this->helpers);
         }
+
+        $this->initialize($config);
     }
 
     /**
@@ -142,7 +144,7 @@ class Helper implements EventListenerInterface
      * Lazy loads helpers.
      *
      * @param string $name Name of the property being accessed.
-     * @return \Cake\View\Helper|void Helper instance if helper with provided name exists
+     * @return \Cake\View\Helper|null Helper instance if helper with provided name exists
      */
     public function __get($name)
     {
@@ -164,9 +166,11 @@ class Helper implements EventListenerInterface
      */
     protected function _confirm($message, $okCode, $cancelCode = '', $options = [])
     {
-        $message = json_encode($message);
+        $message = str_replace('\n', "\n", json_encode($message));
         $confirm = "if (confirm({$message})) { {$okCode} } {$cancelCode}";
-        if (isset($options['escape']) && $options['escape'] === false) {
+        // We cannot change the key here in 3.x, but the behavior is inverted in this case
+        $escape = isset($options['escape']) && $options['escape'] === false;
+        if ($escape) {
             $confirm = h($confirm);
         }
         return $confirm;
@@ -176,7 +180,7 @@ class Helper implements EventListenerInterface
      * Adds the given class to the element options
      *
      * @param array $options Array options/attributes to add a class to
-     * @param string $class The class name being added.
+     * @param string|null $class The class name being added.
      * @param string $key the key to use for class.
      * @return array Array of options with $key set.
      */
@@ -218,6 +222,18 @@ class Helper implements EventListenerInterface
             }
         }
         return $events;
+    }
+
+    /**
+     * Constructor hook method.
+     *
+     * Implement this method to avoid having to overwrite the constructor and call parent.
+     *
+     * @param array $config The configuration settings provided to this helper.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
     }
 
     /**

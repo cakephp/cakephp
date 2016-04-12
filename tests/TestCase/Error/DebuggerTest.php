@@ -19,7 +19,6 @@ use Cake\Core\Configure;
 use Cake\Error\Debugger;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
-use Cake\View\View;
 
 /**
  * DebuggerTestCaseDebugger class

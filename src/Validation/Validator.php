@@ -17,6 +17,7 @@ namespace Cake\Validation;
 use ArrayAccess;
 use ArrayIterator;
 use Countable;
+use InvalidArgumentException;
 use IteratorAggregate;
 
 /**
@@ -347,7 +348,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             foreach ($this->providers() as $provider) {
                 $validator->provider($provider, $this->provider($provider));
             }
-            $errors = $validator->errors($value);
+            $errors = $validator->errors($value, $context['newRecord']);
             return empty($errors) ? true : $errors;
         }]);
         return $this;
@@ -385,7 +386,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 if (!is_array($row)) {
                     return false;
                 }
-                $check = $validator->errors($row);
+                $check = $validator->errors($row, $context['newRecord']);
                 if (!empty($check)) {
                     $errors[$i] = $check;
                 }
@@ -511,7 +512,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * method called will take precedence.
      *
      * @param string $field the name of the field
-     * @param string $message The validation message to show if the field is not
+     * @param string|null $message The message to show if the field is not
      * @param bool|string|callable $when  Indicates when the field is not allowed
      * to be empty. Valid values are true (always), 'create', 'update'. If a
      * callable is passed then the field will allowed be empty only when
@@ -533,6 +534,789 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $this->_allowEmptyMessages[$field] = $message;
         }
         return $this;
+    }
+
+    /**
+     * Add a notBlank rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::notBlank()
+     * @return $this
+     */
+    public function notBlank($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'notBlank', $extra + [
+            'rule' => 'notBlank',
+        ]);
+    }
+
+    /**
+     * Add an alphanumeric rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::alphaNumeric()
+     * @return $this
+     */
+    public function alphaNumeric($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'alphaNumeric', $extra + [
+            'rule' => 'alphaNumeric',
+        ]);
+    }
+
+    /**
+     * Add an rule that ensures a string length is within a range.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param array $range The inclusive minimum and maximum length you want permitted.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::alphaNumeric()
+     * @return $this
+     */
+    public function lengthBetween($field, array $range, $message = null, $when = null)
+    {
+        if (count($range) !== 2) {
+            throw new InvalidArgumentException('The $range argument requires 2 numbers');
+        }
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'lengthBetween', $extra + [
+            'rule' => ['lengthBetween', array_shift($range), array_shift($range)],
+        ]);
+    }
+
+    /**
+     * Add a credit card rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string $type The type of cards you want to allow. Defaults to 'all'.
+     *   You can also supply an array of accepted card types. e.g `['mastercard', 'visa', 'amex']`
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::cc()
+     * @return $this
+     */
+    public function creditCard($field, $type = 'all', $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'creditCard', $extra + [
+            'rule' => ['cc', $type, true],
+        ]);
+    }
+
+    /**
+     * Add a greater than comparison rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param int|float $value The value user data must be greater than.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::comparison()
+     * @return $this
+     */
+    public function greaterThan($field, $value, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'greaterThan', $extra + [
+            'rule' => ['comparison', '>', $value]
+        ]);
+    }
+
+    /**
+     * Add a greater than or equal to comparison rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param int|float $value The value user data must be greater than or equal to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::comparison()
+     * @return $this
+     */
+    public function greaterThanOrEqual($field, $value, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'greaterThanOrEqual', $extra + [
+            'rule' => ['comparison', '>=', $value]
+        ]);
+    }
+
+    /**
+     * Add a less than comparison rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param int|float $value The value user data must be less than.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::comparison()
+     * @return $this
+     */
+    public function lessThan($field, $value, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'lessThan', $extra + [
+            'rule' => ['comparison', '<', $value]
+        ]);
+    }
+
+    /**
+     * Add a less than or equal comparison rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param int|float $value The value user data must be less than or equal to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::comparison()
+     * @return $this
+     */
+    public function lessThanOrEqual($field, $value, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'lessThanOrEqual', $extra + [
+            'rule' => ['comparison', '<=', $value]
+        ]);
+    }
+
+    /**
+     * Add a equal to comparison rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param int|float $value The value user data must be equal to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::comparison()
+     * @return $this
+     */
+    public function equals($field, $value, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'equals', $extra + [
+            'rule' => ['comparison', '=', $value]
+        ]);
+    }
+
+    /**
+     * Add a not equal to comparison rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param int|float $value The value user data must be not be equal to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::comparison()
+     * @return $this
+     */
+    public function notEquals($field, $value, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'notEquals', $extra + [
+            'rule' => ['comparison', '!=', $value]
+        ]);
+    }
+
+    /**
+     * Add a rule to compare two fields to each other.
+     *
+     * If both fields have the exact same value the rule will pass.
+     *
+     * @param mixed $field The field you want to apply the rule to.
+     * @param mixed $secondField The field you want to compare against.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::compareWith()
+     * @return $this
+     */
+    public function sameAs($field, $secondField, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'sameAs', $extra + [
+            'rule' => ['compareWith', $secondField]
+        ]);
+    }
+
+    /**
+     * Add a rule to check if a field contains non alpha numeric characters.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param int $limit The minimum number of non-alphanumeric fields required.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::containsNonAlphaNumeric()
+     * @return $this
+     */
+    public function containsNonAlphaNumeric($field, $limit = 1, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'containsNonAlphaNumeric', $extra + [
+            'rule' => ['containsNonAlphaNumeric', $limit]
+        ]);
+    }
+
+    /**
+     * Add a date format validation rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param array $formats A list of accepted date formats.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::date()
+     * @return $this
+     */
+    public function date($field, $formats = ['ymd'], $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'date', $extra + [
+            'rule' => ['date', $formats]
+        ]);
+    }
+
+    /**
+     * Add a date time format validation rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param array $formats A list of accepted date formats.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::datetime()
+     * @return $this
+     */
+    public function dateTime($field, $formats = ['ymd'], $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'dateTime', $extra + [
+            'rule' => ['datetime', $formats]
+        ]);
+    }
+
+    /**
+     * Add a time format validation rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::time()
+     * @return $this
+     */
+    public function time($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'time', $extra + [
+            'rule' => 'time'
+        ]);
+    }
+
+    /**
+     * Add a localized time, date or datetime format validation rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string $type Parser type, one out of 'date', 'time', and 'datetime'
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::localizedTime()
+     * @return $this
+     */
+    public function localizedTime($field, $type = 'datetime', $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'localizedTime', $extra + [
+            'rule' => ['localizedTime', $type]
+        ]);
+    }
+
+    /**
+     * Add a boolean validation rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::boolean()
+     * @return $this
+     */
+    public function boolean($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'boolean', $extra + [
+            'rule' => 'boolean'
+        ]);
+    }
+
+    /**
+     * Add a decimal validation rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param int|null $places The number of decimal places to require.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::decimal()
+     * @return $this
+     */
+    public function decimal($field, $places = null, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'decimal', $extra + [
+            'rule' => ['decimal', $places]
+        ]);
+    }
+
+    /**
+     * Add an email validation rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param bool $checkMX Whether or not to check the MX records.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::email()
+     * @return $this
+     */
+    public function email($field, $checkMX = false, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'email', $extra + [
+            'rule' => ['email', $checkMX]
+        ]);
+    }
+
+    /**
+     * Add an IP validation rule to a field.
+     *
+     * This rule will accept both IPv4 and IPv6 addresses.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::ip()
+     * @return $this
+     */
+    public function ip($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'ip', $extra + [
+            'rule' => 'ip'
+        ]);
+    }
+
+    /**
+     * Add an IPv4 validation rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::ip()
+     * @return $this
+     */
+    public function ipv4($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'ipv4', $extra + [
+            'rule' => ['ip', 'ipv4']
+        ]);
+    }
+
+    /**
+     * Add an IPv6 validation rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::ip()
+     * @return $this
+     */
+    public function ipv6($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'ipv6', $extra + [
+            'rule' => ['ip', 'ipv6']
+        ]);
+    }
+
+    /**
+     * Add a string length validation rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param int $min The minimum length required.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::minLength()
+     * @return $this
+     */
+    public function minLength($field, $min, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'minLength', $extra + [
+            'rule' => ['minLength', $min]
+        ]);
+    }
+
+    /**
+     * Add a string length validation rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param int $max The maximum length allowed.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::maxLength()
+     * @return $this
+     */
+    public function maxLength($field, $max, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'maxLength', $extra + [
+            'rule' => ['maxLength', $max]
+        ]);
+    }
+
+    /**
+     * Add a numeric value validation rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::numeric()
+     * @return $this
+     */
+    public function numeric($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'numeric', $extra + [
+            'rule' => 'numeric'
+        ]);
+    }
+
+    /**
+     * Add a natural number validation rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::naturalNumber()
+     * @return $this
+     */
+    public function naturalNumber($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'naturalNumber', $extra + [
+            'rule' => ['naturalNumber', false]
+        ]);
+    }
+
+    /**
+     * Add a validation rule to ensure a field is a non negative integer.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::naturalNumber()
+     * @return $this
+     */
+    public function nonNegativeInteger($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'nonNegativeInteger', $extra + [
+            'rule' => ['naturalNumber', true]
+        ]);
+    }
+
+    /**
+     * Add a validation rule to ensure a field is within a numeric range
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param array $range The inclusive upper and lower bounds of the valid range.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::range()
+     * @return $this
+     */
+    public function range($field, array $range, $message = null, $when = null)
+    {
+        if (count($range) !== 2) {
+            throw new InvalidArgumentException('The $range argument requires 2 numbers');
+        }
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'range', $extra + [
+            'rule' => ['range', array_shift($range), array_shift($range)]
+        ]);
+    }
+
+    /**
+     * Add a validation rule to ensure a field is a URL.
+     *
+     * This validator does not require a protocol.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::url()
+     * @return $this
+     */
+    public function url($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'url', $extra + [
+            'rule' => ['url', false]
+        ]);
+    }
+
+    /**
+     * Add a validation rule to ensure a field is a URL.
+     *
+     * This validator requires the URL to have a protocol.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::url()
+     * @return $this
+     */
+    public function urlWithProtocol($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'urlWithProtocol', $extra + [
+            'rule' => ['url', true]
+        ]);
+    }
+
+    /**
+     * Add a validation rule to ensure the field value is within a whitelist.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param array $list The list of valid options.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::inList()
+     * @return $this
+     */
+    public function inList($field, array $list, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'inList', $extra + [
+            'rule' => ['inList', $list]
+        ]);
+    }
+
+    /**
+     * Add a validation rule to ensure the field is a UUID
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::uuid()
+     * @return $this
+     */
+    public function uuid($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'uuid', $extra + [
+            'rule' => 'uuid'
+        ]);
+    }
+
+    /**
+     * Add a validation rule to ensure the field is an uploaded file
+     *
+     * For options see Cake\Validation\Validation::uploadedFile()
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param array $options An array of options.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::uploadedFile()
+     * @return $this
+     */
+    public function uploadedFile($field, array $options, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'uploadedFile', $extra + [
+            'rule' => ['uploadedFile', $options]
+        ]);
+    }
+
+    /**
+     * Add a validation rule to ensure the field is a lat/long tuple.
+     *
+     * e.g. `<lat>, <lng>`
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::uuid()
+     * @return $this
+     */
+    public function latLong($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'latLong', $extra + [
+            'rule' => 'geoCoordinate'
+        ]);
+    }
+
+    /**
+     * Add a validation rule to ensure the field is a latitude.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::latitude()
+     * @return $this
+     */
+    public function latitude($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'latitude', $extra + [
+            'rule' => 'latitude'
+        ]);
+    }
+
+    /**
+     * Add a validation rule to ensure the field is a longitude.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::longitude()
+     * @return $this
+     */
+    public function longitude($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'longitude', $extra + [
+            'rule' => 'longitude'
+        ]);
+    }
+
+    /**
+     * Add a validation rule to ensure a field contains only ascii bytes
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::ascii()
+     * @return $this
+     */
+    public function ascii($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'ascii', $extra + [
+            'rule' => 'ascii'
+        ]);
+    }
+
+    /**
+     * Add a validation rule to ensure a field contains only BMP utf8 bytes
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::utf8()
+     * @return $this
+     */
+    public function utf8($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'utf8', $extra + [
+            'rule' => ['utf8', ['extended' => false]]
+        ]);
+    }
+
+    /**
+     * Add a validation rule to ensure a field contains only utf8 bytes.
+     *
+     * This rule will accept 3 and 4 byte UTF8 sequences, which are necessary for emoji.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::utf8()
+     * @return $this
+     */
+    public function utf8Extended($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'utf8Extended', $extra + [
+            'rule' => ['utf8', ['extended' => true]]
+        ]);
+    }
+
+    /**
+     * Add a validation rule to ensure a field is an integer value.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::isInteger()
+     * @return $this
+     */
+    public function integer($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'integer', $extra + [
+            'rule' => 'isInteger'
+        ]);
+    }
+
+    /**
+     * Add a validation rule for a multiple select. Comparison is case sensitive by default.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param array $options The options for the validator. Includes the options defined in
+     *   \Cake\Validation\Validation::multiple() and the `caseInsensitive` parameter.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::multiple()
+     * @return $this
+     */
+    public function multipleOptions($field, array $options = [], $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        $caseInsensitive = isset($options['caseInsenstive']) ? $options['caseInsensitive'] : false;
+        unset($options['caseInsensitive']);
+        return $this->add($field, 'multipleOptions', $extra + [
+            'rule' => ['multiple', $options, $caseInsensitive]
+        ]);
     }
 
     /**
@@ -571,7 +1355,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Returns false if any validation for the passed rule set should be stopped
      * due to the field missing in the data array
      *
-     * @param ValidationSet $field The set of rules for a field.
+     * @param \Cake\Validation\ValidationSet $field The set of rules for a field.
      * @param array $context A key value list of data containing the validation context.
      * @return bool
      */
@@ -597,7 +1381,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Returns whether the field can be left blank according to `allowEmpty`
      *
-     * @param ValidationSet $field the set of rules for a field
+     * @param \Cake\Validation\ValidationSet $field the set of rules for a field
      * @param array $context a key value list of data containing the validation context.
      * @return bool
      */
@@ -647,7 +1431,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * from executing them
      *
      * @param string $field The name of the field that is being processed
-     * @param ValidationSet $rules the list of rules for a field
+     * @param \Cake\Validation\ValidationSet $rules the list of rules for a field
      * @param array $data the full data passed to the validator
      * @param bool $newRecord whether is it a new record or an existing one
      * @return array

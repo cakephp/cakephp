@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
-use Cake\Validation\Validator;
 use TestApp\Model\Entity\Extending;
 use TestApp\Model\Entity\NonExtending;
 
@@ -313,6 +312,23 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Test getting camelcased virtual fields.
+     *
+     * @return void
+     */
+    public function testGetCamelCasedProperties()
+    {
+        $entity = $this->getMock('\Cake\ORM\Entity', ['_getListIdName']);
+        $entity->expects($this->any())->method('_getListIdName')
+            ->will($this->returnCallback(function ($name) {
+                return 'A name';
+            }));
+        $entity->virtualProperties(['ListIdName']);
+        $this->assertSame('A name', $entity->list_id_name, 'underscored virtual field should be accessible');
+        $this->assertSame('A name', $entity->listIdName, 'Camelbacked virtual field should be accessible');
+    }
+
+    /**
      * Test magic property setting with no custom setter
      *
      * @return void
@@ -345,6 +361,26 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Tests magic set with custom setter function using a Title cased property
+     *
+     * @return void
+     */
+    public function testMagicSetWithSetterTitleCase()
+    {
+        $entity = $this->getMock('\Cake\ORM\Entity', ['_setName']);
+        $entity->expects($this->once())
+            ->method('_setName')
+            ->with('Jones')
+            ->will($this->returnCallback(function ($name) {
+                $this->assertEquals('Jones', $name);
+
+                return 'Dr. ' . $name;
+            }));
+        $entity->Name = 'Jones';
+        $this->assertEquals('Dr. Jones', $entity->Name);
+    }
+
+    /**
      * Tests the magic getter with a custom getter function
      *
      * @return void
@@ -360,6 +396,26 @@ class EntityTest extends TestCase
             }));
         $entity->set('name', 'Jones');
         $this->assertEquals('Dr. Jones', $entity->name);
+    }
+
+    /**
+     * Tests magic get with custom getter function using a Title cased property
+     *
+     * @return void
+     */
+    public function testMagicGetWithGetterTitleCase()
+    {
+        $entity = $this->getMock('\Cake\ORM\Entity', ['_getName']);
+        $entity->expects($this->once())
+            ->method('_getName')
+            ->with('Jones')
+            ->will($this->returnCallback(function ($name) {
+                $this->assertEquals('Jones', $name);
+
+                return 'Dr. ' . $name;
+            }));
+        $entity->set('Name', 'Jones');
+        $this->assertEquals('Dr. Jones', $entity->Name);
     }
 
     /**
@@ -762,7 +818,7 @@ class EntityTest extends TestCase
     public function testConstructorWithMarkNew()
     {
         $entity = $this->getMockBuilder('\Cake\ORM\Entity')
-            ->setMethods(['isNew'])
+            ->setMethods(['isNew', 'clean'])
             ->disableOriginalConstructor()
             ->getMock();
         $entity->expects($this->never())->method('clean');
@@ -1205,6 +1261,7 @@ class EntityTest extends TestCase
         $entity->virtualProperties(['baz']);
         $entity->dirty('foo', true);
         $entity->errors('foo', ['An error']);
+        $entity->invalid('foo', 'a value');
         $entity->source('foos');
         $result = $entity->__debugInfo();
         $expected = [
@@ -1216,6 +1273,7 @@ class EntityTest extends TestCase
             '[original]' => [],
             '[virtual]' => ['baz'],
             '[errors]' => ['foo' => ['An error']],
+            '[invalid]' => ['foo' => 'a value'],
             '[repository]' => 'foos'
         ];
         $this->assertSame($expected, $result);

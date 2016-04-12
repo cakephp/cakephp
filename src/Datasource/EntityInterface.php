@@ -92,8 +92,10 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     public function visibleProperties();
 
     /**
-     * Returns an array with all the properties that have been set
-     * to this entity
+     * Returns an array with all the visible properties set in this entity.
+     *
+     * *Note* hidden properties are not visible, and will not be output
+     * by toArray().
      *
      * @return array
      */
@@ -117,7 +119,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * When called with no arguments it will return whether or not there are any
      * dirty property in the entity
      *
-     * @param string $property the field to set or check status for
+     * @param string|null $property the field to set or check status for
      * @param null|bool $isDirty true means the property was changed, false means
      * it was not changed and null will make the function return current state
      * for that property
@@ -139,12 +141,12 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * This method can return null in the case there is no prior information on
      * the status of this entity.
      *
-     * If called with a boolean it will set the known status of this instance,
-     * true means that the instance is not yet persisted in the database, false
+     * If called with a boolean, this method will set the status of this instance.
+     * Using `true` means that the instance has not been persisted in the database, `false`
      * that it already is.
      *
-     * @param bool $new true if it is known this instance was persisted
-     * @return bool if it is known whether the entity was already persisted
+     * @param bool|null $new Indicate whether or not this instance has been persisted.
+     * @return bool If it is known whether the entity was already persisted
      * null otherwise
      */
     public function isNew($new = null);
@@ -158,7 +160,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * When used as a setter, this method will return this entity instance for method
      * chaining.
      *
-     * @param string|array $field The field to get errors for.
+     * @param string|array|null $field The field to get errors for.
      * @param string|array|null $errors The errors to be set for $field
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
      * @return array|\Cake\Datasource\EntityInterface

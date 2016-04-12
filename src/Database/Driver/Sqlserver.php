@@ -60,6 +60,7 @@ class Sqlserver extends Driver
         $config = $this->_config;
         $config['flags'] += [
             PDO::ATTR_PERSISTENT => $config['persistent'],
+            PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
 
@@ -110,5 +111,13 @@ class Sqlserver extends Driver
         }
         $statement = $this->_connection->prepare($isObject ? $query->sql() : $query, $options);
         return new SqlserverStatement($statement, $this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function supportsDynamicConstraints()
+    {
+        return true;
     }
 }

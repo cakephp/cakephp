@@ -16,6 +16,7 @@ namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
 use Cake\Database\Type;
+use InvalidArgumentException;
 use PDO;
 
 /**
@@ -30,7 +31,7 @@ class IntegerType extends Type
      * Convert integer data into the database format.
      *
      * @param mixed $value The value to convert.
-     * @param Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return int
      */
     public function toDatabase($value, Driver $driver)
@@ -38,9 +39,11 @@ class IntegerType extends Type
         if ($value === null || $value === '') {
             return null;
         }
-        if (is_array($value)) {
-            return 1;
+
+        if (!is_scalar($value)) {
+            throw new InvalidArgumentException('Cannot convert value to integer');
         }
+
         return (int)$value;
     }
 
@@ -48,16 +51,13 @@ class IntegerType extends Type
      * Convert integer values to PHP integers
      *
      * @param mixed $value The value to convert.
-     * @param Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return int
      */
     public function toPHP($value, Driver $driver)
     {
         if ($value === null) {
             return null;
-        }
-        if (is_array($value)) {
-            return 1;
         }
         return (int)$value;
     }
@@ -66,7 +66,7 @@ class IntegerType extends Type
      * Get the correct PDO binding type for integer data.
      *
      * @param mixed $value The value being bound.
-     * @param Driver $driver The driver.
+     * @param \Cake\Database\Driver $driver The driver.
      * @return int
      */
     public function toStatement($value, Driver $driver)
@@ -78,22 +78,19 @@ class IntegerType extends Type
      * Marshalls request data into PHP floats.
      *
      * @param mixed $value The value to convert.
-     * @return mixed Converted value.
+     * @return int|null Converted value.
      */
     public function marshal($value)
     {
         if ($value === null || $value === '') {
             return null;
         }
-        if (is_int($value)) {
-            return $value;
-        }
-        if (ctype_digit($value)) {
+        if (is_numeric($value) || ctype_digit($value)) {
             return (int)$value;
         }
         if (is_array($value)) {
             return 1;
         }
-        return $value;
+        return null;
     }
 }

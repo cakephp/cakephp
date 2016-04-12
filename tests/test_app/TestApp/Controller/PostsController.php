@@ -14,6 +14,7 @@
  */
 namespace TestApp\Controller;
 
+use Cake\Event\Event;
 use TestApp\Controller\AppController;
 
 /**
@@ -22,7 +23,6 @@ use TestApp\Controller\AppController;
  */
 class PostsController extends AppController
 {
-
     /**
      * Components array
      *
@@ -31,7 +31,20 @@ class PostsController extends AppController
     public $components = [
         'Flash',
         'RequestHandler',
+        'Security',
     ];
+
+    /**
+     * beforeFilter
+     *
+     * @return void
+     */
+    public function beforeFilter(Event $event)
+    {
+        if ($this->request->param('action') !== 'securePost') {
+            $this->eventManager()->off($this->Security);
+        }
+    }
 
     /**
      * Index method.
@@ -56,5 +69,22 @@ class PostsController extends AppController
     public function get()
     {
         // Do nothing.
+    }
+
+    /**
+     * Post endpoint for integration testing with security component.
+     *
+     * @return void
+     */
+    public function securePost()
+    {
+        $this->response->body('Request was accepted');
+        return $this->response;
+    }
+
+    public function file()
+    {
+        $this->response->file(__FILE__);
+        return $this->response;
     }
 }

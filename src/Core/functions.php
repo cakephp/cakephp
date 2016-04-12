@@ -19,7 +19,6 @@ if (!defined('DS')) {
      * Define DS as short form of DIRECTORY_SEPARATOR.
      */
     define('DS', DIRECTORY_SEPARATOR);
-
 }
 
 if (!function_exists('h')) {
@@ -30,7 +29,7 @@ if (!function_exists('h')) {
      *    Arrays will be mapped and have all their elements escaped. Objects will be string cast if they
      *    implement a `__toString` method. Otherwise the class name will be used.
      * @param bool $double Encode existing html entities.
-     * @param string $charset Character set to use when escaping. Defaults to config value in `mb_internal_encoding()`
+     * @param string|null $charset Character set to use when escaping. Defaults to config value in `mb_internal_encoding()`
      * or 'UTF-8'.
      * @return string Wrapped text.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#h
@@ -82,7 +81,7 @@ if (!function_exists('pluginSplit')) {
      *
      * @param string $name The name you want to plugin split.
      * @param bool $dotAppend Set to true if you want the plugin to have a '.' appended to it.
-     * @param string $plugin Optional default plugin to use if no plugin is found. Defaults to null.
+     * @param string|null $plugin Optional default plugin to use if no plugin is found. Defaults to null.
      * @return array Array with 2 indexes. 0 => plugin name, 1 => class name.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pluginSplit
      */
@@ -138,7 +137,7 @@ if (!function_exists('pr')) {
             return;
         }
 
-        $template = PHP_SAPI !== 'cli' ? '<pre class="pr">%s</pre>' : "\n%s\n\n";
+        $template = (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') ? '<pre class="pr">%s</pre>' : "\n%s\n\n";
         printf($template, trim(print_r($var, true)));
     }
 
@@ -162,7 +161,7 @@ if (!function_exists('pj')) {
             return;
         }
 
-        $template = PHP_SAPI !== 'cli' ? '<pre class="pj">%s</pre>' : "\n%s\n\n";
+        $template = (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') ? '<pre class="pj">%s</pre>' : "\n%s\n\n";
         printf($template, trim(json_encode($var, JSON_PRETTY_PRINT)));
     }
 
@@ -176,7 +175,7 @@ if (!function_exists('env')) {
      * environment information.
      *
      * @param string $key Environment variable name.
-     * @param string $default Specify a default value in case the environment variable is not defined.
+     * @param string|null $default Specify a default value in case the environment variable is not defined.
      * @return string|null Environment variable setting.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#env
      */

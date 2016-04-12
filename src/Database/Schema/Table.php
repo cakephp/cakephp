@@ -47,6 +47,13 @@ class Table
     protected $_columns = [];
 
     /**
+     * A map with columns to types
+     *
+     * @var array
+     */
+    protected $_typeMap = [];
+
+    /**
      * Indexes in the table.
      *
      * @var array
@@ -73,6 +80,38 @@ class Table
      * @var bool
      */
     protected $_temporary = false;
+
+    /**
+     * Column length when using a `tiny` column type
+     *
+     * @var int
+     */
+    const LENGTH_TINY = 255;
+
+    /**
+     * Column length when using a `medium` column type
+     *
+     * @var int
+     */
+    const LENGTH_MEDIUM = 16777215;
+
+    /**
+     * Column length when using a `long` column type
+     *
+     * @var int
+     */
+    const LENGTH_LONG = 4294967295;
+
+    /**
+     * Valid column length that can be used with text type columns
+     *
+     * @var array
+     */
+    public static $columnLengths = [
+        'tiny' => self::LENGTH_TINY,
+        'medium' => self::LENGTH_MEDIUM,
+        'long' => self::LENGTH_LONG
+    ];
 
     /**
      * The valid keys that can be used in a column
@@ -297,6 +336,7 @@ class Table
         }
         $attrs = array_intersect_key($attrs, $valid);
         $this->_columns[$name] = $attrs + $valid;
+        $this->_typeMap[$name] = $this->_columns[$name]['type'];
         return $this;
     }
 
@@ -331,7 +371,7 @@ class Table
      * if none is passed.
      *
      * @param string $name The column to get the type of.
-     * @param string $type The type to set the column to.
+     * @param string|null $type The type to set the column to.
      * @return string|null Either the column type or null.
      */
     public function columnType($name, $type = null)
@@ -341,6 +381,7 @@ class Table
         }
         if ($type !== null) {
             $this->_columns[$name]['type'] = $type;
+            $this->_typeMap[$name] = $type;
         }
         return $this->_columns[$name]['type'];
     }
@@ -369,6 +410,17 @@ class Table
             $type = Type::build($type)->getBaseType();
         }
         return $this->_columns[$column]['baseType'] = $type;
+    }
+
+    /**
+     * Returns an array where the keys are the column names in the schema
+     * and the values the database type they have.
+     *
+     * @return array
+     */
+    public function typeMap()
+    {
+        return $this->_typeMap;
     }
 
     /**
@@ -546,15 +598,15 @@ class Table
             $attrs = $this->_checkForeignKey($attrs);
 
             if (isset($this->_constraints[$name])) {
-                $this->_constraints[$name]['columns'] = array_merge(
+                $this->_constraints[$name]['columns'] = array_unique(array_merge(
                     $this->_constraints[$name]['columns'],
                     $attrs['columns']
-                );
+                ));
 
-                $this->_constraints[$name]['references'][1] = array_merge(
+                $this->_constraints[$name]['references'][1] = array_unique(array_merge(
                     (array)$this->_constraints[$name]['references'][1],
                     [$attrs['references'][1]]
-                );
+                ));
                 return $this;
             }
         } else {
@@ -563,6 +615,19 @@ class Table
 
         $this->_constraints[$name] = $attrs;
         return $this;
+    }
+
+    /**
+     * Remove a constraint.
+     *
+     * @param string $name Name of the constraint to remove
+     * @return void
+     */
+    public function dropConstraint($name)
+    {
+        if (isset($this->_constraints[$name])) {
+            unset($this->_constraints[$name]);
+        }
     }
 
     /**
@@ -709,5 +774,29 @@ class Table
     {
         $dialect = $connection->driver()->schemaDialect();
         return $dialect->truncateTableSql($this);
+    }
+
+    /**
+     * Generate the SQL statements to add the constraints to the table
+     *
+     * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for.
+     * @return array SQL to drop a table.
+     */
+    public function addConstraintSql(ConnectionInterface $connection)
+    {
+        $dialect = $connection->driver()->schemaDialect();
+        return $dialect->addConstraintSql($this);
+    }
+
+    /**
+     * Generate the SQL statements to drop the constraints to the table
+     *
+     * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for.
+     * @return array SQL to drop a table.
+     */
+    public function dropConstraintSql(ConnectionInterface $connection)
+    {
+        $dialect = $connection->driver()->schemaDialect();
+        return $dialect->dropConstraintSql($this);
     }
 }

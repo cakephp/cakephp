@@ -28,6 +28,13 @@ class ArticlesCell extends \Cake\View\Cell
     protected $_validCellOptions = ['limit', 'page'];
 
     /**
+     * Counter used to test the cache cell feature
+     *
+     * @return void
+     */
+    public $counter = 0;
+
+    /**
      * Default cell action.
      *
      * @return void
@@ -49,6 +56,41 @@ class ArticlesCell extends \Cake\View\Cell
             ['title' => 'Topis semper blandit eu non', 'body' => 'alvinar diam convallis non. Nullam pu'],
             ['title' => 'Suspendisse gravida neque', 'body' => 'pellentesque sed scelerisque libero'],
         ]);
+    }
+
+    /**
+     * Renders a view using a different template than the action name
+     * The template is set using the ``Cell::$template`` property
+     *
+     * @return void
+     */
+    public function customTemplate()
+    {
+        $this->template = 'alternate_teaser_list';
+    }
+
+    /**
+     * Renders a view using a different template than the action name
+     * The template is set using the ViewBuilder bound to the Cell
+     *
+     * @return void
+     */
+    public function customTemplateViewBuilder()
+    {
+        $this->template = 'derp';
+        $this->counter++;
+        $this->viewBuilder()->template('alternate_teaser_list');
+    }
+
+    /**
+     * Renders a template in a custom templatePath
+     * The template is set using the ViewBuilder bound to the Cell
+     *
+     * @return void
+     */
+    public function customTemplatePath()
+    {
+        $this->viewBuilder()->templatePath('Cell/Articles/Subdir');
     }
 
     /**

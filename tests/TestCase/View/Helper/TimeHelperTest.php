@@ -14,9 +14,8 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
+use Cake\I18n\I18n;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\TimeHelper;
@@ -42,6 +41,19 @@ class TimeHelperTest extends TestCase
         $this->View = new View();
         $this->Time = new TimeHelper($this->View);
         Time::$defaultLocale = 'en_US';
+        $this->locale = I18n::locale();
+    }
+
+    /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        Time::$defaultLocale = 'en_US';
+        I18n::locale($this->locale);
     }
 
     /**
@@ -431,6 +443,44 @@ class TimeHelperTest extends TestCase
         $result = $this->Time->format('invalid date', null, 'Date invalid');
         $expected = 'Date invalid';
         $this->assertEquals($expected, $result);
+
+        I18n::locale('fr_FR');
+        Time::$defaultLocale = 'fr_FR';
+        $time = new \Cake\I18n\FrozenTime('Thu Jan 14 13:59:28 2010');
+        $result = $this->Time->format($time, \IntlDateFormatter::FULL);
+        $expected = 'jeudi 14 janvier 2010 13:59:28 UTC';
+        $this->assertTimeFormat($expected, $result);
+    }
+
+    /**
+     * Test format() with a string.
+     *
+     * @return void
+     */
+    public function testFormatString()
+    {
+        $time = '2010-01-14 13:59:28';
+        $result = $this->Time->format($time);
+        $this->assertTimeFormat('1/14/10 1:59 PM', $result);
+
+        $result = $this->Time->format($time, 'HH:mm', null, 'America/New_York');
+        $this->assertTimeFormat('08:59', $result);
+    }
+
+    /**
+     * Test format() with a Time instance.
+     *
+     * @return void
+     */
+    public function testFormatTimeInstance()
+    {
+        $time = new Time('2010-01-14 13:59:28', 'America/New_York');
+        $result = $this->Time->format($time, 'HH:mm', null, 'America/New_York');
+        $this->assertTimeFormat('13:59', $result);
+
+        $time = new Time('2010-01-14 13:59:28', 'UTC');
+        $result = $this->Time->format($time, 'HH:mm', null, 'America/New_York');
+        $this->assertTimeFormat('08:59', $result);
     }
 
     /**
@@ -444,8 +494,8 @@ class TimeHelperTest extends TestCase
     public function assertTimeFormat($expected, $result)
     {
         return $this->assertEquals(
-            str_replace([',', '(', ')', ' at'], '', $expected),
-            str_replace([',', '(', ')', ' at'], '', $result)
+            str_replace([',', '(', ')', ' at', ' à'], '', $expected),
+            str_replace([',', '(', ')', ' at', ' à'], '', $result)
         );
     }
 

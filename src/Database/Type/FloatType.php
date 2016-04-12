@@ -46,7 +46,7 @@ class FloatType extends Type
      * Convert integer data into the database format.
      *
      * @param string|resource $value The value to convert.
-     * @param Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|resource
      */
     public function toDatabase($value, Driver $driver)
@@ -64,7 +64,7 @@ class FloatType extends Type
      * Convert float values to PHP integers
      *
      * @param null|string|resource $value The value to convert.
-     * @param Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return resource
      * @throws \Cake\Core\Exception\Exception
      */
@@ -83,7 +83,7 @@ class FloatType extends Type
      * Get the correct PDO binding type for integer data.
      *
      * @param mixed $value The value being bound.
-     * @param Driver $driver The driver.
+     * @param \Cake\Database\Driver $driver The driver.
      * @return int
      */
     public function toStatement($value, Driver $driver)
@@ -104,7 +104,8 @@ class FloatType extends Type
         }
         if (is_numeric($value)) {
             return (float)$value;
-        } elseif (is_string($value) && $this->_useLocaleParser) {
+        }
+        if (is_string($value) && $this->_useLocaleParser) {
             return $this->_parseValue($value);
         }
         if (is_array($value)) {

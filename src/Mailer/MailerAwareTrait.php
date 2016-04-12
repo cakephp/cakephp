@@ -16,7 +16,6 @@ namespace Cake\Mailer;
 
 use Cake\Core\App;
 use Cake\Mailer\Exception\MissingMailerException;
-use InvalidArgumentException;
 
 /**
  * Provides functionality for loading mailer classes

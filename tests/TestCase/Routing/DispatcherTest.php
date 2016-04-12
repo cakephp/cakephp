@@ -14,17 +14,14 @@
 namespace Cake\Test\TestCase\Routing;
 
 use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Network\Session;
 use Cake\Routing\Dispatcher;
 use Cake\Routing\Filter\ControllerFactoryFilter;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Inflector;
 
 /**
  * A testing stub that doesn't send headers.
@@ -303,6 +300,30 @@ class DispatcherTest extends TestCase
     }
 
     /**
+     * Test that lowercase controller names result in missing controller errors.
+     *
+     * In case-insensitive file systems, lowercase controller names will kind of work.
+     * This causes annoying deployment issues for lots of folks.
+     *
+     * @expectedException \Cake\Routing\Exception\MissingControllerException
+     * @expectedExceptionMessage Controller class somepages could not be found.
+     * @return void
+     */
+    public function testMissingControllerLowercase()
+    {
+        $request = new Request([
+            'url' => 'pages/home',
+            'params' => [
+                'controller' => 'somepages',
+                'action' => 'display',
+                'pass' => ['home'],
+            ]
+        ]);
+        $response = $this->getMock('Cake\Network\Response');
+        $this->dispatcher->dispatch($request, $response, ['return' => 1]);
+    }
+
+    /**
      * testDispatch method
      *
      * @return void
@@ -477,7 +498,7 @@ class DispatcherTest extends TestCase
         $request = new Request([
             'url' => '/',
             'params' => [
-                'controller' => 'pages',
+                'controller' => 'Pages',
                 'action' => 'display',
                 'home',
                 'pass' => []

@@ -18,13 +18,15 @@
         "source": "https://github.com/cakephp/cakephp"
     },
     "require": {
-        "php": ">=5.4.16",
+        "php": ">=5.5.9",
         "ext-intl": "*",
         "ext-mbstring": "*",
-        "nesbot/Carbon": "1.13.*",
-        "ircmaxell/password-compat": "1.0.*",
+        "cakephp/chronos": "*",
         "aura/intl": "1.1.*",
         "psr/log": "1.0"
+    },
+    "suggest": {
+      "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation."
     },
     "require-dev": {
         "phpunit/phpunit": "*",

@@ -292,6 +292,25 @@ class SocketTest extends TestCase
     }
 
     /**
+     * Test that protocol in the host doesn't cause cert errors.
+     *
+     * @return void
+     */
+    public function testConnectProtocolInHost()
+    {
+        $this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
+        $configSslTls = ['host' => 'ssl://smtp.gmail.com', 'port' => 465, 'timeout' => 5];
+        $socket = new Socket($configSslTls);
+        try {
+            $socket->connect();
+            $this->assertEquals('smtp.gmail.com', $socket->config('host'));
+            $this->assertEquals('ssl', $socket->config('protocol'));
+        } catch (SocketException $e) {
+            $this->markTestSkipped('Cannot test network, skipping.');
+        }
+    }
+
+    /**
      * _connectSocketToSslTls
      *
      * @return void
@@ -411,6 +430,38 @@ class SocketTest extends TestCase
             $this->markTestSkipped('No network, skipping test.');
         }
         $result = $this->Socket->context();
-        $this->assertEquals($config['context'], $result);
+        $this->assertTrue($result['ssl']['capture_peer']);
+    }
+
+    /**
+     * test configuring the context from the flat keys.
+     *
+     * @return void
+     */
+    public function testConfigContext()
+    {
+        $this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
+        $config = [
+            'host' => 'smtp.gmail.com',
+            'port' => 465,
+            'timeout' => 5,
+            'ssl_verify_peer' => true,
+            'ssl_allow_self_signed' => false,
+            'ssl_verify_depth' => 5,
+            'ssl_verify_host' => true,
+        ];
+        $socket = new Socket($config);
+
+        $socket->connect();
+        $result = $socket->context();
+
+        $this->assertTrue($result['ssl']['verify_peer']);
+        $this->assertFalse($result['ssl']['allow_self_signed']);
+        $this->assertEquals(5, $result['ssl']['verify_depth']);
+        $this->assertEquals('smtp.gmail.com', $result['ssl']['CN_match']);
+        $this->assertArrayNotHasKey('ssl_verify_peer', $socket->config());
+        $this->assertArrayNotHasKey('ssl_allow_self_signed', $socket->config());
+        $this->assertArrayNotHasKey('ssl_verify_host', $socket->config());
+        $this->assertArrayNotHasKey('ssl_verify_depth', $socket->config());
     }
 }

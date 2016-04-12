@@ -21,7 +21,7 @@ use Cake\Network\Request;
 /**
  * Abstract base authorization adapter for AuthComponent.
  *
- * @see AuthComponent::$authenticate
+ * @see \Cake\Controller\Component\AuthComponent::$authenticate
  */
 abstract class BaseAuthorize
 {
@@ -31,7 +31,7 @@ abstract class BaseAuthorize
     /**
      * ComponentRegistry instance for getting more components.
      *
-     * @var ComponentRegistry
+     * @var \Cake\Controller\ComponentRegistry
      */
     protected $_registry;
 
@@ -45,7 +45,7 @@ abstract class BaseAuthorize
     /**
      * Constructor
      *
-     * @param ComponentRegistry $registry The controller for this request.
+     * @param \Cake\Controller\ComponentRegistry $registry The controller for this request.
      * @param array $config An array of config. This class does not use any config.
      */
     public function __construct(ComponentRegistry $registry, array $config = [])

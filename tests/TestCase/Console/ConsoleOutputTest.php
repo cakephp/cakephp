@@ -115,8 +115,8 @@ class ConsoleOutputTest extends TestCase
         $this->assertNull($this->output->styles('made_up_goop'));
 
         $result = $this->output->styles();
-        $this->assertNotEmpty($result, 'error', 'Error is missing');
-        $this->assertNotEmpty($result, 'warning', 'Warning is missing');
+        $this->assertNotEmpty($result, 'Error is missing');
+        $this->assertNotEmpty($result, 'Warning is missing');
     }
 
     /**

@@ -17,13 +17,10 @@ namespace Cake\Test\TestCase\Console;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
-use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Hash;
 use TestApp\Shell\TestingDispatchShell;
 
 /**
@@ -128,13 +125,13 @@ class ShellTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.posts',
-        'core.comments',
         'core.articles',
-        'core.users',
-        'core.tags',
         'core.articles_tags',
-        'core.attachments'
+        'core.attachments',
+        'core.comments',
+        'core.posts',
+        'core.tags',
+        'core.users'
     ];
 
     /**
@@ -313,6 +310,48 @@ class ShellTest extends TestCase
             ->with('Just a test', 1);
 
         $this->Shell->err('Just a test');
+    }
+
+    /**
+     * testInfo method
+     *
+     * @return void
+     */
+    public function testInfo()
+    {
+        $this->io->expects($this->once())
+            ->method('out')
+            ->with('<info>Just a test</info>', 1);
+
+        $this->Shell->info('Just a test');
+    }
+
+    /**
+     * testWarn method
+     *
+     * @return void
+     */
+    public function testWarn()
+    {
+        $this->io->expects($this->once())
+            ->method('err')
+            ->with('<warning>Just a test</warning>', 1);
+
+        $this->Shell->warn('Just a test');
+    }
+
+    /**
+     * testSuccess method
+     *
+     * @return void
+     */
+    public function testSuccess()
+    {
+        $this->io->expects($this->once())
+            ->method('out')
+            ->with('<success>Just a test</success>', 1);
+
+        $this->Shell->success('Just a test');
     }
 
     /**
@@ -652,6 +691,7 @@ class ShellTest extends TestCase
             ->will($this->returnValue(true));
         $result = $shell->runCommand(['cakes', '--verbose']);
         $this->assertTrue($result);
+        $this->assertEquals('main', $shell->command);
     }
 
     /**
@@ -670,6 +710,7 @@ class ShellTest extends TestCase
             ->will($this->returnValue(true));
         $result = $shell->runCommand(['hit_me', 'cakes', '--verbose'], true);
         $this->assertTrue($result);
+        $this->assertEquals('hit_me', $shell->command);
     }
 
     /**
@@ -921,7 +962,11 @@ TEXT;
      */
     public function testRunCommandBaseclassMethod()
     {
-        $shell = $this->getMock('Cake\Console\Shell', ['startup', 'getOptionParser', 'out'], [], '', false);
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['startup', 'getOptionParser', 'out', 'hr'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $shell->io($this->getMock('Cake\Console\ConsoleIo'));
         $parser = $this->getMock('Cake\Console\ConsoleOptionParser', [], [], '', false);
 
@@ -941,7 +986,10 @@ TEXT;
      */
     public function testRunCommandMissingMethod()
     {
-        $shell = $this->getMock('Cake\Console\Shell', ['startup', 'getOptionParser', 'out'], [], '', false);
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['startup', 'getOptionParser', 'out', 'hr'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $shell->io($this->getMock('Cake\Console\ConsoleIo'));
         $parser = $this->getMock('Cake\Console\ConsoleOptionParser', [], [], '', false);
 

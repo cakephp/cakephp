@@ -233,7 +233,7 @@ class PaginatorHelperTest extends TestCase
 
         $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
         $this->Paginator->request->params['paging']['Article']['direction'] = 'desc';
-        $result = $this->Paginator->sort('title', 'Title', ['direction' => 'asc']);
+        $result = $this->Paginator->sort('title', 'Title', ['direction' => 'ASC']);
         $expected = [
             'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=asc', 'class' => 'desc'],
             'Title',
@@ -799,7 +799,7 @@ class PaginatorHelperTest extends TestCase
         ];
 
         $this->Paginator->request->params['pass'] = [2];
-        $this->Paginator->request->query = ['page' => 1, 'foo' => 'bar', 'x' => 'y', 'num' => 0, 'empty' => ''];
+        $this->Paginator->request->query = ['page' => 1, 'foo' => 'bar', 'x' => 'y', 'num' => 0];
         $this->View->request = $this->Paginator->request;
         $this->Paginator = new PaginatorHelper($this->View);
 
@@ -814,19 +814,19 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->numbers();
         $expected = [
             ['li' => ['class' => 'active']], '<a href=""', '1', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/articles/index/2?page=2&amp;foo=bar&amp;x=y&amp;num=0']], '2', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/articles/index/2?page=3&amp;foo=bar&amp;x=y&amp;num=0']], '3', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/articles/index/2?page=4&amp;foo=bar&amp;x=y&amp;num=0']], '4', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/articles/index/2?page=5&amp;foo=bar&amp;x=y&amp;num=0']], '5', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/articles/index/2?page=6&amp;foo=bar&amp;x=y&amp;num=0']], '6', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/articles/index/2?page=7&amp;foo=bar&amp;x=y&amp;num=0']], '7', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=2']], '2', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=3']], '3', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=4']], '4', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=5']], '5', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=6']], '6', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=7']], '7', '/a', '/li',
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Paginator->next('Next');
         $expected = [
             'li' => ['class' => 'next'],
-            'a' => ['href' => '/articles/index/2?page=2&amp;foo=bar&amp;x=y&amp;num=0', 'rel' => 'next'],
+            'a' => ['href' => '/articles/index/2?foo=bar&amp;x=y&amp;num=0&amp;page=2', 'rel' => 'next'],
             'Next',
             '/a',
             '/li'
@@ -1144,6 +1144,42 @@ class PaginatorHelperTest extends TestCase
             ['li' => []], ['a' => ['href' => '/index?page=12']], '12', '/a', '/li',
             ['li' => ['class' => 'ellipsis']], '...', '/li',
             ['li' => ['class' => 'last']], ['a' => ['href' => '/index?page=15']], 'last', '/a', '/li',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Paginator->numbers(['first' => '2', 'last' => '8']);
+        $expected = [
+            ['li' => ['class' => 'first']], ['a' => ['href' => '/index']], '2', '/a', '/li',
+            ['li' => ['class' => 'ellipsis']], '...', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4']], '4', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=5']], '5', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=6']], '6', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=7']], '7', '/a', '/li',
+            ['li' => ['class' => 'active']], '<a href=""', '8', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=9']], '9', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=10']], '10', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=11']], '11', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=12']], '12', '/a', '/li',
+            ['li' => ['class' => 'ellipsis']], '...', '/li',
+            ['li' => ['class' => 'last']], ['a' => ['href' => '/index?page=15']], '8', '/a', '/li',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Paginator->numbers(['first' => '8', 'last' => '8']);
+        $expected = [
+            ['li' => ['class' => 'first']], ['a' => ['href' => '/index']], '8', '/a', '/li',
+            ['li' => ['class' => 'ellipsis']], '...', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4']], '4', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=5']], '5', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=6']], '6', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=7']], '7', '/a', '/li',
+            ['li' => ['class' => 'active']], '<a href=""', '8', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=9']], '9', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=10']], '10', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=11']], '11', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=12']], '12', '/a', '/li',
+            ['li' => ['class' => 'ellipsis']], '...', '/li',
+            ['li' => ['class' => 'last']], ['a' => ['href' => '/index?page=15']], '8', '/a', '/li',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1750,6 +1786,16 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
+        $result = $this->Paginator->first('5');
+        $expected = [
+            'li' => ['class' => 'first'],
+            'a' => ['href' => '/index'],
+            '5',
+            '/a',
+            '/li'
+        ];
+        $this->assertHtml($expected, $result);
+
         $result = $this->Paginator->last(2);
         $expected = [
             '<li',
@@ -1758,6 +1804,16 @@ class PaginatorHelperTest extends TestCase
             '<li',
             ['a' => ['href' => '/index?page=7']], '7', '/a',
             '/li',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Paginator->last('9');
+        $expected = [
+            'li' => ['class' => 'last'],
+            'a' => ['href' => '/index?page=7'],
+            '9',
+            '/a',
+            '/li'
         ];
         $this->assertHtml($expected, $result);
     }

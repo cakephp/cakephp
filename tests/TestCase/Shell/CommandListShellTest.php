@@ -15,10 +15,7 @@
 namespace Cake\Test\TestCase\Shell;
 
 use Cake\Console\ConsoleIo;
-use Cake\Core\App;
 use Cake\Core\Plugin;
-use Cake\Shell\CommandListShell;
-use Cake\Shell\Task\CommandTask;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 
@@ -81,7 +78,7 @@ class CommandListShellTest extends TestCase
         $expected = "/\[.*TestPlugin.*\] example/";
         $this->assertRegExp($expected, $output);
 
-        $expected = "/\[.*TestPluginTwo.*\] example, welcome/";
+        $expected = "/\[.*TestPluginTwo.*\] example, unique, welcome/";
         $this->assertRegExp($expected, $output);
 
         $expected = "/\[.*CORE.*\] i18n, orm_cache, plugin, routes, server/";

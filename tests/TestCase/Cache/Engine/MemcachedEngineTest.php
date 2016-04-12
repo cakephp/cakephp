@@ -481,7 +481,7 @@ class MemcachedEngineTest extends TestCase
     {
         $Memcached = new TestMemcachedEngine();
         $result = $Memcached->parseServerString('unix:///path/to/memcachedd.sock');
-        $this->assertEquals(['unix:///path/to/memcachedd.sock', 0], $result);
+        $this->assertEquals(['/path/to/memcachedd.sock', 0], $result);
     }
 
     /**

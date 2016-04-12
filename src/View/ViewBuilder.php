@@ -30,6 +30,7 @@ use Serializable;
  */
 class ViewBuilder implements JsonSerializable, Serializable
 {
+
     /**
      * The subdirectory to the template.
      *
@@ -217,7 +218,7 @@ class ViewBuilder implements JsonSerializable, Serializable
 
     /**
      * Get/set the name of the view file to render. The name specified is the
-     * filename in /app/Template/<SubFolder> without the .ctp extension.
+     * filename in /src/Template/<SubFolder> without the .ctp extension.
      *
      * @param string|null $name View file name to set. If null returns current name.
      * @return string|$this
@@ -234,7 +235,7 @@ class ViewBuilder implements JsonSerializable, Serializable
 
     /**
      * Get/set the name of the layout file to render the view inside of.
-     * The name specified is the filename of the layout in /app/Template/Layout
+     * The name specified is the filename of the layout in /src/Template/Layout
      * without the .ctp extension.
      *
      * @param string|null $name Layout file name to set. If null returns current name.
@@ -313,9 +314,9 @@ class ViewBuilder implements JsonSerializable, Serializable
      * If that class does not exist, then Cake\View\View will be used.
      *
      * @param array $vars The view variables/context to use.
-     * @param \Cake\Network\Request $request The request to use.
-     * @param \Cake\Network\Response $response The response to use.
-     * @param \Cake\Event\EventManager $events The event manager to use.
+     * @param \Cake\Network\Request|null $request The request to use.
+     * @param \Cake\Network\Response|null $response The response to use.
+     * @param \Cake\Event\EventManager|null $events The event manager to use.
      * @return \Cake\View\View
      * @throws \Cake\View\Exception\MissingViewException
      */

@@ -13,12 +13,10 @@
  */
 namespace Cake\Test\TestCase\Routing;
 
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Network\Request;
 use Cake\Routing\DispatcherFactory;
-use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
@@ -33,7 +31,7 @@ class RequestActionTraitTest extends TestCase
      *
      * @var string
      */
-    public $fixtures = ['core.posts', 'core.test_plugin_comments', 'core.comments'];
+    public $fixtures = ['core.comments', 'core.posts', 'core.test_plugin_comments'];
 
     /**
      * Setup
@@ -356,6 +354,24 @@ class RequestActionTraitTest extends TestCase
         );
         $result = json_decode($result, true);
         $this->assertEquals('value', $result['query']['get']);
+    }
+
+    /**
+     * Test that requestAction handles cookies correctly.
+     *
+     * @return void
+     */
+    public function testRequestActionCookies()
+    {
+        $cookies = [
+            'foo' => 'bar'
+        ];
+        $result = $this->object->requestAction(
+            '/request_action/cookie_pass',
+            ['cookies' => $cookies]
+        );
+        $result = json_decode($result, true);
+        $this->assertEquals($cookies, $result);
     }
 
     /**

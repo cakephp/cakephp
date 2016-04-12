@@ -18,7 +18,6 @@ use Cake\Database\Query;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
-use Cake\ORM\Behavior\CounterCacheBehavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -48,9 +47,10 @@ class CounterCacheBehaviorTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.counter_cache_users',
-        'core.counter_cache_posts',
         'core.counter_cache_categories',
+        'core.counter_cache_posts',
+        'core.counter_cache_users',
+        'core.counter_cache_user_category_posts'
     ];
 
     /**
@@ -76,6 +76,12 @@ class CounterCacheBehaviorTest extends TestCase
         $this->post = new PostTable([
             'alias' => 'Post',
             'table' => 'counter_cache_posts',
+            'connection' => $this->connection
+        ]);
+
+        $this->userCategoryPosts = new Table([
+            'alias' => 'UserCategoryPosts',
+            'table' => 'counter_cache_user_category_posts',
             'connection' => $this->connection
         ]);
     }
@@ -364,6 +370,35 @@ class CounterCacheBehaviorTest extends TestCase
 
         $this->assertEquals(2, $before->get('post_count'));
         $this->assertEquals(3, $after->get('post_count'));
+    }
+
+    /**
+     * Tests to see that the binding key configuration is respected.
+     *
+     * @return void
+     */
+    public function testBindingKey()
+    {
+        $this->post->hasMany('UserCategoryPosts', [
+            'bindingKey' => ['category_id', 'user_id'],
+            'foreignKey' => ['category_id', 'user_id']
+        ]);
+        $this->post->association('UserCategoryPosts')->target($this->userCategoryPosts);
+        $this->post->addBehavior('CounterCache', [
+            'UserCategoryPosts' => ['post_count']
+        ]);
+
+        $before = $this->userCategoryPosts->find()
+            ->where(['user_id' => 1, 'category_id' => 2])
+            ->first();
+        $entity = $this->_getEntity()->set('category_id', 2);
+        $this->post->save($entity);
+        $after = $this->userCategoryPosts->find()
+            ->where(['user_id' => 1, 'category_id' => 2])
+            ->first();
+
+        $this->assertEquals(1, $before->get('post_count'));
+        $this->assertEquals(2, $after->get('post_count'));
     }
 
     /**

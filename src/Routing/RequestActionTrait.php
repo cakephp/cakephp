@@ -139,6 +139,9 @@ trait RequestActionTrait
         if (isset($extra['query'])) {
             $params['query'] = $extra['query'];
         }
+        if (isset($extra['cookies'])) {
+            $params['cookies'] = $extra['cookies'];
+        }
         if (isset($extra['environment'])) {
             $params['environment'] = $extra['environment'] + $_SERVER + $_ENV;
         }

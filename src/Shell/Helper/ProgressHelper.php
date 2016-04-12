@@ -22,6 +22,7 @@ use RuntimeException;
  */
 class ProgressHelper extends Helper
 {
+
     /**
      * The current progress.
      *
@@ -68,6 +69,8 @@ class ProgressHelper extends Helper
         $this->init($args);
 
         $callback = $args['callback'];
+
+        $this->_io->out('', 0);
         while ($this->_progress < $this->_total) {
             $callback($this);
             $this->draw();
@@ -119,7 +122,7 @@ class ProgressHelper extends Helper
             $bar = str_repeat('=', $barLen - 1) . '>';
         }
 
-        $pad = $this->_width - $numberLen - $barLen;
+        $pad = ceil($this->_width - $numberLen - $barLen);
         if ($pad > 0) {
             $bar .= str_repeat(' ', $pad);
         }

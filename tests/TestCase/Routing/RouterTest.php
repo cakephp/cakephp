@@ -14,15 +14,12 @@
  */
 namespace Cake\Test\TestCase\Routing;
 
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Network\Request;
-use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
-use TestPlugin\Routing\Route\TestRoute;
 
 /**
  * RouterTest class
@@ -1089,6 +1086,16 @@ class RouterTest extends TestCase
             '_ext' => 'json'
         ]);
         $expected = '/articles.json';
+        $this->assertEquals($expected, $result);
+
+        $result = Router::url([
+            'plugin' => null,
+            'controller' => 'articles',
+            'action' => 'index',
+            'id' => 'testing',
+            '_ext' => 'json'
+        ]);
+        $expected = '/articles.json?id=testing';
         $this->assertEquals($expected, $result);
     }
 
@@ -2959,6 +2966,25 @@ class RouterTest extends TestCase
 
         $result = Router::url(['controller' => 'FooBar', 'action' => 'index']);
         $this->assertEquals('/foo-bar', $result);
+    }
+
+    /**
+     * Test generation of routes with collisions between the query string
+     * and other url params
+     *
+     * @return void
+     */
+    public function testUrlWithCollidingQueryString()
+    {
+        Router::connect('/:controller/:action/:id');
+
+        $query = ['controller' => 'Foo', 'action' => 'bar', 'id' => 100];
+        $result = Router::url(['controller' => 'posts', 'action' => 'view', 'id' => 1, '?' => $query]);
+        $this->assertEquals('/posts/view/1?controller=Foo&action=bar&id=100', $result);
+
+        $query = ['_host' => 'foo.bar', '_ssl' => 0, '_scheme' => 'ftp://', '_base' => 'baz', '_port' => '15'];
+        $result = Router::url(['controller' => 'posts', 'action' => 'view', 'id' => 1, '?' => $query]);
+        $this->assertEquals('/posts/view/1?_host=foo.bar&_ssl=0&_scheme=ftp%3A%2F%2F&_base=baz&_port=15', $result);
     }
 
     /**

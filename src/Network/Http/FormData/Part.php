@@ -93,7 +93,7 @@ class Part
      * header from being added.
      *
      * @param null|string $disposition Use null to get/string to set.
-     * @return mixed
+     * @return string|null
      */
     public function disposition($disposition = null)
     {
@@ -107,7 +107,7 @@ class Part
      * Get/set the contentId for a part.
      *
      * @param null|string $id The content id.
-     * @return mixed
+     * @return string|null
      */
     public function contentId($id = null)
     {
@@ -124,7 +124,7 @@ class Part
      * generated output.
      *
      * @param null|string $filename Use null to get/string to set.
-     * @return mixed
+     * @return string|null
      */
     public function filename($filename = null)
     {
@@ -138,7 +138,7 @@ class Part
      * Get/set the content type.
      *
      * @param null|string $type Use null to get/string to set.
-     * @return mixed
+     * @return string|null
      */
     public function type($type)
     {
@@ -154,7 +154,7 @@ class Part
      * Useful when content bodies are in encodings like base64.
      *
      * @param null|string $type The type of encoding the value has.
-     * @return mixed
+     * @return string|null
      */
     public function transferEncoding($type)
     {

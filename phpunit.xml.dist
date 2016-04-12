@@ -34,15 +34,9 @@
 
     <!-- Prevent coverage reports from looking in tests, vendors, config folders -->
     <filter>
-        <blacklist>
-            <directory suffix=".php">./vendor/</directory>
-            <directory suffix=".ctp">./vendor/</directory>
-
-            <directory suffix=".php">./tests/</directory>
-            <directory suffix=".ctp">./tests/</directory>
-
-            <directory suffix=".php">./config/</directory>
-        </blacklist>
+        <whitelist>
+            <directory suffix=".php">./src/</directory>
+        </whitelist>
     </filter>
 
     <php>
@@ -50,13 +44,13 @@
         <env name="db_dsn" value="sqlite:///:memory:"/>
         -->
         <!-- Postgres
-        <env name="db_dsn" value="postgres://localhost/cake_test"/>
+        <env name="db_dsn" value="postgres://localhost/cake_test?timezone=UTC"/>
         -->
         <!-- Mysql
-        <env name="db_dsn" value="mysql://localhost/cake_test"/>
+        <env name="db_dsn" value="mysql://localhost/cake_test?timezone=UTC"/>
         -->
         <!-- SQL Server
-        <env name="db_dsn" value="sqlserver://localhost/cake_test"/>
+        <env name="db_dsn" value="sqlserver://localhost/cake_test?timezone=UTC"/>
         -->
     </php>
 </phpunit>

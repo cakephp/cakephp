@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\Database\Type;
 use Cake\Database\Type\DateTimeType;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
@@ -40,21 +39,8 @@ class DateTimeTypeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->type = Type::build('datetime');
+        $this->type = new DateTimeType();
         $this->driver = $this->getMock('Cake\Database\Driver');
-        $this->_originalMap = Type::map();
-    }
-
-    /**
-     * Restores Type class state
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-
-        Type::map($this->_originalMap);
     }
 
     /**
@@ -62,11 +48,19 @@ class DateTimeTypeTest extends TestCase
      *
      * @return void
      */
-    public function testToPHP()
+    public function testToPHPEmpty()
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
         $this->assertNull($this->type->toPHP('0000-00-00 00:00:00', $this->driver));
+    }
 
+    /**
+     * Test toPHP
+     *
+     * @return void
+     */
+    public function testToPHPString()
+    {
         $result = $this->type->toPHP('2001-01-04 12:13:14', $this->driver);
         $this->assertInstanceOf('Cake\I18n\Time', $result);
         $this->assertEquals('2001', $result->format('Y'));
@@ -221,6 +215,23 @@ class DateTimeTypeTest extends TestCase
     }
 
     /**
+     * Test that useLocaleParser() can disable locale parsing.
+     *
+     * @return void
+     */
+    public function testLocaleParserDisable()
+    {
+        $expected = new Time('13-10-2013 23:28:00');
+        $this->type->useLocaleParser();
+        $result = $this->type->marshal('10/13/2013 11:28pm');
+        $this->assertEquals($expected, $result);
+
+        $this->type->useLocaleParser(false);
+        $result = $this->type->marshal('10/13/2013 11:28pm');
+        $this->assertNotEquals($expected, $result);
+    }
+
+    /**
      * Tests marshalling dates using the locale aware parser
      *
      * @return void
@@ -246,5 +257,21 @@ class DateTimeTypeTest extends TestCase
         $expected = new Time('13-10-2013 13:54:00');
         $result = $this->type->marshal('13 Oct, 2013 01:54pm');
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test that toImmutable changes all the methods to create frozen time instances.
+     *
+     * @return void
+     */
+    public function testToImmutableAndToMutable()
+    {
+        $this->type->useImmutable();
+        $this->assertInstanceOf('DateTimeImmutable', $this->type->marshal('2015-11-01 11:23:00'));
+        $this->assertInstanceOf('DateTimeImmutable', $this->type->toPHP('2015-11-01 11:23:00', $this->driver));
+
+        $this->type->useMutable();
+        $this->assertInstanceOf('DateTime', $this->type->marshal('2015-11-01 11:23:00'));
+        $this->assertInstanceOf('DateTime', $this->type->toPHP('2015-11-01 11:23:00', $this->driver));
     }
 }

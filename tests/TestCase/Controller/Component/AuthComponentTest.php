@@ -14,18 +14,13 @@
  */
 namespace Cake\Test\TestCase\Controller\Component;
 
-use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AuthComponent;
-use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Event\Event;
-use Cake\Network\Exception\ForbiddenException;
-use Cake\Network\Exception\UnauthorizedException;
+use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Network\Session;
-use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -52,7 +47,7 @@ class AuthComponentTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.users', 'core.auth_users'];
+    public $fixtures = ['core.auth_users', 'core.users'];
 
     /**
      * setUp method
@@ -1083,6 +1078,11 @@ class AuthComponentTest extends TestCase
         $result = $this->Auth->user();
         $this->assertEquals('mariano', $result['username']);
 
+        $this->assertInstanceOf(
+            'Cake\Auth\BasicAuthenticate',
+            $this->Auth->authenticationProvider()
+        );
+
         $result = $this->Auth->user('username');
         $this->assertEquals('mariano', $result);
         $this->assertFalse(isset($_SESSION));
@@ -1150,12 +1150,46 @@ class AuthComponentTest extends TestCase
         $this->assertEquals($expected, $authObject->callStack);
         $expected = ['id' => 1, 'username' => 'admad'];
         $this->assertEquals($expected, $user);
+        $this->assertInstanceOf(
+            'TestApp\Auth\TestAuthenticate',
+            $authObject->authenticationProvider
+        );
 
         // Callback for Auth.afterIdentify returns a value
         $authObject->modifiedUser = true;
         $user = $this->Auth->identify();
         $expected = ['id' => 1, 'username' => 'admad', 'extra' => 'foo'];
         $this->assertEquals($expected, $user);
+    }
+
+    /**
+     * testAfterIdentifyForStatelessAuthentication
+     *
+     * @return void
+     * @triggers Controller.startup $this->Controller
+     */
+    public function testAfterIdentifyForStatelessAuthentication()
+    {
+        $event = new Event('Controller.startup', $this->Controller);
+        $url = '/auth_test/add';
+        $this->Auth->request->addParams(Router::parse($url));
+        $this->Auth->request->env('PHP_AUTH_USER', 'mariano');
+        $this->Auth->request->env('PHP_AUTH_PW', 'cake');
+
+        $this->Auth->config('authenticate', [
+            'Basic' => ['userModel' => 'AuthUsers']
+        ]);
+        $this->Auth->config('storage', 'Memory');
+
+        EventManager::instance()->on('Auth.afterIdentify', function ($event) {
+            $user = $event->data[0];
+            $user['from_callback'] = true;
+            return $user;
+        });
+
+        $this->Auth->startup($event);
+        $this->assertEquals('mariano', $this->Auth->user('username'));
+        $this->assertTrue($this->Auth->user('from_callback'));
     }
 
     /**
@@ -1319,8 +1353,6 @@ class AuthComponentTest extends TestCase
     /**
      * test that the returned URL doesn't contain the base URL.
      *
-     * @see https://cakephp.lighthouseapp.com/projects/42648/tickets/3922-authcomponentredirecturl-prepends-appbaseurl
-     *
      * @return void This test method doesn't return anything.
      */
     public function testRedirectUrlWithBaseSet()
@@ -1418,6 +1450,7 @@ class AuthComponentTest extends TestCase
      */
     public function testStatelessFollowedByStatefulAuth()
     {
+        $this->Auth->response = $this->getMock('Cake\Network\Response', ['stop', 'statusCode', 'send']);
         $event = new Event('Controller.startup', $this->Controller);
         $this->Auth->authenticate = ['Basic', 'Form'];
         $this->Controller->request['action'] = 'add';

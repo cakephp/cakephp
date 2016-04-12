@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Core\Configure\Engine;
 
-use Cake\Core\App;
 use Cake\Core\Configure\Engine\JsonConfig;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
@@ -157,7 +156,20 @@ class JsonConfigTest extends TestCase
         $engine = new JsonConfig(TMP);
         $result = $engine->dump('test', $this->testData);
         $this->assertTrue($result > 0);
-        $expected = '{"One":{"two":"value","three":{"four":"value four"},"is_null":null,"bool_false":false,"bool_true":true},"Asset":{"timestamp":"force"}}';
+        $expected = '{
+    "One": {
+        "two": "value",
+        "three": {
+            "four": "value four"
+        },
+        "is_null": null,
+        "bool_false": false,
+        "bool_true": true
+    },
+    "Asset": {
+        "timestamp": "force"
+    }
+}';
         $file = TMP . 'test.json';
         $contents = file_get_contents($file);
 

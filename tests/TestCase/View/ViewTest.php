@@ -282,7 +282,7 @@ class ViewTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.users', 'core.posts'];
+    public $fixtures = ['core.posts', 'core.users'];
 
     /**
      * setUp method
@@ -347,11 +347,6 @@ class ViewTest extends TestCase
         $request->params['pass'] = ['home'];
 
         $ThemeView = new TestView(null, null, null, $viewOptions);
-        $expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'src' . DS . 'Template' . DS . 'Pages' . DS . 'index.ctp';
-        $result = $ThemeView->getViewFileName('Company/TestPluginThree./Pages/index');
-        $this->assertPathEquals($expected, $result);
-
-        $ThemeView = new TestView(null, null, null, $viewOptions);
         $ThemeView->theme = 'TestTheme';
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages' . DS . 'home.ctp';
         $result = $ThemeView->getViewFileName('home');
@@ -405,6 +400,34 @@ class ViewTest extends TestCase
         $expected = Plugin::path('TestPlugin') . 'src' . DS . 'Template' . DS . 'Layout' . DS . 'default.ctp';
         $result = $View->getLayoutFileName();
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test that plugin files with absolute file paths are scoped
+     * to the plugin and do now allow any file path.
+     *
+     * @expectedException Cake\View\Exception\MissingTemplateException
+     * @return void
+     */
+    public function testPluginGetTemplateAbsoluteFail()
+    {
+        $request = $this->getMock('Cake\Network\Request');
+        $response = $this->getMock('Cake\Network\Response');
+
+        $viewOptions = [
+            'plugin' => null,
+            'name' => 'Pages',
+            'viewPath' => 'Pages'
+        ];
+        $request->action = 'display';
+        $request->params['pass'] = ['home'];
+
+        $view = new TestView(null, null, null, $viewOptions);
+        $expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'src' . DS . 'Template' . DS . 'Pages' . DS . 'index.ctp';
+        $result = $view->getViewFileName('Company/TestPluginThree./Pages/index');
+        $this->assertPathEquals($expected, $result);
+
+        $view->getViewFileName('Company/TestPluginThree./etc/passwd');
     }
 
     /**
@@ -490,6 +513,41 @@ class ViewTest extends TestCase
             TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
             $pluginPath . 'src' . DS . 'Template' . DS,
             TEST_APP . 'TestApp' . DS . 'Template' . DS,
+            CAKE . 'Template' . DS,
+        ];
+        $this->assertPathEquals($expected, $paths);
+    }
+
+    /**
+     * Test that multiple paths can be used in App.paths.templates.
+     *
+     * @return void
+     */
+    public function testMultipleAppPaths()
+    {
+        $viewOptions = ['plugin' => 'TestPlugin',
+            'name' => 'TestPlugin',
+            'viewPath' => 'Tests',
+            'view' => 'index',
+            'theme' => 'TestTheme'
+        ];
+
+        $paths = Configure::read('App.paths.templates');
+        $paths[] = Plugin::classPath('TestPlugin') . 'Template' . DS;
+        Configure::write('App.paths.templates', $paths);
+
+        $View = new TestView(null, null, null, $viewOptions);
+        $paths = $View->paths('TestPlugin');
+        $pluginPath = Plugin::path('TestPlugin');
+        $themePath = Plugin::path('TestTheme');
+        $expected = [
+            $themePath . 'src' . DS . 'Template' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
+            $themePath . 'src' . DS . 'Template' . DS,
+            TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
+            $pluginPath . 'src' . DS . 'Template' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
+            $pluginPath . 'src' . DS . 'Template' . DS,
+            TEST_APP . 'TestApp' . DS . 'Template' . DS,
+            TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src' . DS . 'Template' . DS,
             CAKE . 'Template' . DS,
         ];
         $this->assertPathEquals($expected, $paths);
@@ -1244,7 +1302,7 @@ class ViewTest extends TestCase
         $View->templatePath($this->PostsController->name);
         $result = $View->render('index');
 
-        $this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\"\/>\s*<title>/", $result);
+        $this->assertRegExp("/<meta charset=\"utf-8\"\/>\s*<title>/", $result);
         $this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
         $this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 
@@ -1263,7 +1321,7 @@ class ViewTest extends TestCase
         $View->templatePath($this->PostsController->name);
         $result = $View->render('index');
 
-        $this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\"\/>\s*<title>/", $result);
+        $this->assertRegExp("/<meta charset=\"utf-8\"\/>\s*<title>/", $result);
         $this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
     }
 
@@ -1466,6 +1524,22 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test resetting a block's content with reset.
+     *
+     * @return void
+     */
+    public function testBlockResetFunc()
+    {
+        $this->View->assign('test', 'Block content');
+        $result = $this->View->fetch('test', 'This should not be returned');
+        $this->assertSame('Block content', $result);
+
+        $this->View->reset('test');
+        $result = $this->View->fetch('test', 'This should not be returned');
+        $this->assertSame('', $result);
+    }
+
+    /**
      * Test checking a block's existance.
      *
      * @return void
@@ -1481,7 +1555,6 @@ class ViewTest extends TestCase
      * Test setting a block's content to null
      *
      * @return void
-     * @link https://cakephp.lighthouseapp.com/projects/42648/tickets/3938-this-redirectthis-auth-redirecturl-broken
      */
     public function testBlockSetNull()
     {
@@ -1848,6 +1921,7 @@ TEXT;
      */
     public function testMemoryLeakInPaths()
     {
+        $this->skipIf(env('CODECOVERAGE') == 1, 'Running coverage this causes this tests to fail sometimes.');
         $this->ThemeController->plugin = null;
         $this->ThemeController->name = 'Posts';
 
@@ -1862,7 +1936,7 @@ TEXT;
             $View->element('test_element');
         }
         $end = memory_get_usage();
-        $this->assertLessThanOrEqual($start + 5000, $end);
+        $this->assertLessThanOrEqual($start + 15000, $end);
     }
 
     /**

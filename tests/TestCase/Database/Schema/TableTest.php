@@ -39,7 +39,13 @@ class FooType extends Type
 class TableTest extends TestCase
 {
 
-    public $fixtures = ['core.articles_tags', 'core.products', 'core.orders', 'core.tags'];
+    public $fixtures = [
+        'core.articles',
+        'core.tags',
+        'core.articles_tags',
+        'core.orders',
+        'core.products'
+    ];
 
     protected $_map;
 
@@ -506,26 +512,25 @@ class TableTest extends TestCase
     public function testConstraintForeignKeyTwoColumns()
     {
         $table = TableRegistry::get('Orders');
-        $compositeConstraint = $table->schema()->constraint('product_id_fk');
+        $compositeConstraint = $table->schema()->constraint('product_category_fk');
         $expected = [
             'type' => 'foreign',
             'columns' => [
-                'product_id',
-                'product_category'
+                'product_category',
+                'product_id'
             ],
             'references' => [
                 'products',
-                ['id', 'category']
+                ['category', 'id']
             ],
             'update' => 'cascade',
             'delete' => 'cascade',
             'length' => []
         ];
-
         $this->assertEquals($expected, $compositeConstraint);
 
-        $expectedSubstring = 'CONSTRAINT <product_id_fk> FOREIGN KEY \(<product_id>, <product_category>\)' .
-            ' REFERENCES <products> \(<id>, <category>\)';
+        $expectedSubstring = 'CONSTRAINT <product_category_fk> FOREIGN KEY \(<product_category>, <product_id>\)' .
+            ' REFERENCES <products> \(<category>, <id>\)';
 
         $this->assertQuotedQuery($expectedSubstring, $table->schema()->createSql(ConnectionManager::get('test'))[0]);
     }

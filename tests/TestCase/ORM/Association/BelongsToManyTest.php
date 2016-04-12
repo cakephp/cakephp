@@ -14,15 +14,10 @@
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
-use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Database\Expression\TupleComparison;
-use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
-use Cake\ORM\Query;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -32,6 +27,12 @@ use Cake\TestSuite\TestCase;
  */
 class BelongsToManyTest extends TestCase
 {
+    /**
+     * Fixtures
+     *
+     * @var array
+     */
+    public $fixtures = ['core.articles', 'core.special_tags', 'core.articles_tags', 'core.tags'];
 
     /**
      * Set up
@@ -64,29 +65,6 @@ class BelongsToManyTest extends TestCase
             '_constraints' => [
                 'primary' => ['type' => 'primary', 'columns' => ['id']]
             ]
-        ]);
-        TableRegistry::set('Articles', $this->article);
-        TableRegistry::get('ArticlesTags', [
-            'table' => 'articles_tags',
-            'schema' => [
-                'article_id' => ['type' => 'integer'],
-                'tag_id' => ['type' => 'integer'],
-                '_constraints' => [
-                    'primary' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']]
-                ]
-            ]
-        ]);
-        $this->tagsTypeMap = new TypeMap([
-            'Tags.id' => 'integer',
-            'id' => 'integer',
-            'Tags.name' => 'string',
-            'name' => 'string',
-        ]);
-        $this->articlesTagsTypeMap = new TypeMap([
-            'ArticlesTags.article_id' => 'integer',
-            'article_id' => 'integer',
-            'ArticlesTags.tag_id' => 'integer',
-            'tag_id' => 'integer',
         ]);
     }
 
@@ -190,6 +168,32 @@ class BelongsToManyTest extends TestCase
 
         $assoc->junction('ArticlesTags');
         $this->assertSame($junction, $assoc->junction());
+    }
+
+    /**
+     * Tests the junction method custom keys
+     *
+     * @return void
+     */
+    public function testJunctionCustomKeys()
+    {
+        $this->article->belongsToMany('Tags', [
+            'joinTable' => 'articles_tags',
+            'foreignKey' => 'article',
+            'targetForeignKey' => 'tag'
+        ]);
+        $this->tag->belongsToMany('Articles', [
+            'joinTable' => 'articles_tags',
+            'foreignKey' => 'tag',
+            'targetForeignKey' => 'article'
+        ]);
+        $junction = $this->article->association('Tags')->junction();
+        $this->assertEquals('article', $junction->association('Articles')->foreignKey());
+        $this->assertEquals('article', $this->article->association('ArticlesTags')->foreignKey());
+
+        $junction = $this->tag->association('Articles')->junction();
+        $this->assertEquals('tag', $junction->association('Tags')->foreignKey());
+        $this->assertEquals('tag', $this->tag->association('ArticlesTags')->foreignKey());
     }
 
     /**
@@ -313,7 +317,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testCascadeDeleteWithCallbacks()
     {
-        $articleTag = $this->getMock('Cake\ORM\Table', ['find', 'delete'], []);
+        $articleTag = TableRegistry::get('ArticlesTags');
         $config = [
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
@@ -321,47 +325,17 @@ class BelongsToManyTest extends TestCase
         ];
         $association = new BelongsToMany('Tag', $config);
         $association->junction($articleTag);
-        $this->article
-            ->association($articleTag->alias())
-            ->conditions(['click_count' => 3]);
+        $this->article->association($articleTag->alias());
 
-        $articleTagOne = new Entity(['article_id' => 1, 'tag_id' => 2]);
-        $articleTagTwo = new Entity(['article_id' => 1, 'tag_id' => 4]);
-        $iterator = new \ArrayIterator([
-            $articleTagOne,
-            $articleTagTwo
-        ]);
+        $counter = $this->getMock('StdClass', ['__invoke']);
+        $counter->expects($this->exactly(2))->method('__invoke');
+        $articleTag->eventManager()->on('Model.beforeDelete', $counter);
 
-        $query = $this->getMock('\Cake\ORM\Query', [], [], '', false);
-        $query->expects($this->at(0))
-            ->method('where')
-            ->with(['click_count' => 3])
-            ->will($this->returnSelf());
-        $query->expects($this->at(1))
-            ->method('where')
-            ->with(['article_id' => 1])
-            ->will($this->returnSelf());
-
-        $query->expects($this->any())
-            ->method('getIterator')
-            ->will($this->returnValue($iterator));
-
-        $articleTag->expects($this->once())
-            ->method('find')
-            ->will($this->returnValue($query));
-
-        $articleTag->expects($this->at(1))
-            ->method('delete')
-            ->with($articleTagOne, []);
-        $articleTag->expects($this->at(2))
-            ->method('delete')
-            ->with($articleTagTwo, []);
-
-        $articleTag->expects($this->never())
-            ->method('deleteAll');
-
+        $this->assertEquals(2, $articleTag->find()->where(['article_id' => 1])->count());
         $entity = new Entity(['id' => 1, 'name' => 'PHP']);
         $association->cascadeDelete($entity);
+
+        $this->assertEquals(0, $articleTag->find()->where(['article_id' => 1])->count());
     }
 
     /**
@@ -501,87 +475,26 @@ class BelongsToManyTest extends TestCase
      */
     public function testUnlinkSuccess()
     {
-        $connection = ConnectionManager::get('test');
-        $joint = $this->getMock(
-            '\Cake\ORM\Table',
-            ['delete', 'find'],
-            [['alias' => 'ArticlesTags', 'connection' => $connection]]
-        );
-        $config = [
-            'sourceTable' => $this->article,
-            'targetTable' => $this->tag,
+        $joint = TableRegistry::get('SpecialTags');
+        $articles = TableRegistry::get('Articles');
+        $tags = TableRegistry::get('Tags');
+
+        $assoc = $articles->belongsToMany('Tags', [
+            'sourceTable' => $articles,
+            'targetTable' => $tags,
             'through' => $joint,
-            'joinTable' => 'tags_articles'
-        ];
-        $assoc = $this->article->belongsToMany('Test', $config);
-        $assoc->junction();
-        $this->article->association('ArticlesTags')
-            ->conditions(['foo' => 1]);
+            'joinTable' => 'special_tags',
+        ]);
+        $entity = $articles->get(2, ['contain' => 'Tags']);
+        $initial = $entity->tags;
+        $this->assertCount(1, $initial);
 
-        $query1 = $this->getMock('\Cake\ORM\Query', [], [$connection, $joint]);
-        $query2 = $this->getMock('\Cake\ORM\Query', [], [$connection, $joint]);
+        $assoc->unlink($entity, $entity->tags);
+        $this->assertEmpty($entity->get('tags'), 'Property should be empty');
 
-        $joint->expects($this->at(0))->method('find')
-            ->with('all')
-            ->will($this->returnValue($query1));
-
-        $joint->expects($this->at(1))->method('find')
-            ->with('all')
-            ->will($this->returnValue($query2));
-
-        $query1->expects($this->at(0))
-            ->method('where')
-            ->with(['foo' => 1])
-            ->will($this->returnSelf());
-        $query1->expects($this->at(1))
-            ->method('where')
-            ->with(['article_id' => 1])
-            ->will($this->returnSelf());
-        $query1->expects($this->at(2))
-            ->method('andWhere')
-            ->with(['tag_id' => 2])
-            ->will($this->returnSelf());
-        $query1->expects($this->once())
-            ->method('union')
-            ->with($query2)
-            ->will($this->returnSelf());
-
-        $query2->expects($this->at(0))
-            ->method('where')
-            ->with(['foo' => 1])
-            ->will($this->returnSelf());
-        $query2->expects($this->at(1))
-            ->method('where')
-            ->with(['article_id' => 1])
-            ->will($this->returnSelf());
-        $query2->expects($this->at(2))
-            ->method('andWhere')
-            ->with(['tag_id' => 3])
-            ->will($this->returnSelf());
-
-        $jointEntities = [
-            new Entity(['article_id' => 1, 'tag_id' => 2]),
-            new Entity(['article_id' => 1, 'tag_id' => 3])
-        ];
-
-        $query1->expects($this->once())
-            ->method('toArray')
-            ->will($this->returnValue($jointEntities));
-
-        $opts = ['markNew' => false];
-        $tags = [new Entity(['id' => 2], $opts), new Entity(['id' => 3], $opts)];
-        $entity = new Entity(['id' => 1, 'test' => $tags], $opts);
-
-        $joint->expects($this->at(2))
-            ->method('delete')
-            ->with($jointEntities[0]);
-
-        $joint->expects($this->at(3))
-            ->method('delete')
-            ->with($jointEntities[1]);
-
-        $assoc->unlink($entity, $tags);
-        $this->assertEmpty($entity->get('test'));
+        $new = $articles->get(2, ['contain' => 'Tags']);
+        $this->assertCount(0, $new->tags, 'DB should be clean');
+        $this->assertSame(3, $tags->find()->count(), 'Tags should still exist');
     }
 
     /**
@@ -592,46 +505,27 @@ class BelongsToManyTest extends TestCase
      */
     public function testUnlinkWithoutPropertyClean()
     {
-        $connection = ConnectionManager::get('test');
-        $joint = $this->getMock(
-            '\Cake\ORM\Table',
-            ['delete', 'find'],
-            [['alias' => 'ArticlesTags', 'connection' => $connection]]
-        );
-        $config = [
-            'sourceTable' => $this->article,
-            'targetTable' => $this->tag,
+        $joint = TableRegistry::get('SpecialTags');
+        $articles = TableRegistry::get('Articles');
+        $tags = TableRegistry::get('Tags');
+
+        $assoc = $articles->belongsToMany('Tags', [
+            'sourceTable' => $articles,
+            'targetTable' => $tags,
             'through' => $joint,
-            'joinTable' => 'tags_articles'
-        ];
-        $assoc = new BelongsToMany('Test', $config);
-        $assoc
-            ->junction()
-            ->association('tags')
-            ->conditions(['foo' => 1]);
+            'joinTable' => 'special_tags',
+            'conditions' => ['SpecialTags.highlighted' => true]
+        ]);
+        $entity = $articles->get(2, ['contain' => 'Tags']);
+        $initial = $entity->tags;
+        $this->assertCount(1, $initial);
 
-        $joint->expects($this->never())->method('find');
-        $opts = ['markNew' => false];
-        $jointEntities = [
-            new Entity(['article_id' => 1, 'tag_id' => 2]),
-            new Entity(['article_id' => 1, 'tag_id' => 3])
-        ];
-        $tags = [
-            new Entity(['id' => 2, '_joinData' => $jointEntities[0]], $opts),
-            new Entity(['id' => 3, '_joinData' => $jointEntities[1]], $opts)
-        ];
-        $entity = new Entity(['id' => 1, 'test' => $tags], $opts);
+        $assoc->unlink($entity, $initial, ['cleanProperty' => false]);
+        $this->assertNotEmpty($entity->get('tags'), 'Property should not be empty');
+        $this->assertEquals($initial, $entity->get('tags'), 'Property should be untouched');
 
-        $joint->expects($this->at(0))
-            ->method('delete')
-            ->with($jointEntities[0]);
-
-        $joint->expects($this->at(1))
-            ->method('delete')
-            ->with($jointEntities[1]);
-
-        $assoc->unlink($entity, $tags, false);
-        $this->assertEquals($tags, $entity->get('test'));
+        $new = $articles->get(2, ['contain' => 'Tags']);
+        $this->assertCount(0, $new->tags, 'DB should be clean');
     }
 
     /**
@@ -662,74 +556,26 @@ class BelongsToManyTest extends TestCase
      */
     public function testReplaceLinksUpdateToEmptySet()
     {
-        $connection = ConnectionManager::get('test');
-        $joint = $this->getMock(
-            '\Cake\ORM\Table',
-            ['delete', 'find'],
-            [['alias' => 'ArticlesTags', 'connection' => $connection]]
-        );
-        $config = [
-            'sourceTable' => $this->article,
-            'targetTable' => $this->tag,
+        $joint = TableRegistry::get('ArticlesTags');
+        $articles = TableRegistry::get('Articles');
+        $tags = TableRegistry::get('Tags');
+
+        $assoc = $articles->belongsToMany('Tags', [
+            'sourceTable' => $articles,
+            'targetTable' => $tags,
             'through' => $joint,
-            'joinTable' => 'tags_articles'
-        ];
-        $assoc = $this->getMock(
-            '\Cake\ORM\Association\BelongsToMany',
-            ['_collectJointEntities', '_saveTarget'],
-            ['tags', $config]
-        );
-        $assoc->junction();
+            'joinTable' => 'articles_tags',
+        ]);
 
-        $this->article
-            ->association('ArticlesTags')
-            ->conditions(['foo' => 1]);
+        $entity = $articles->get(1, ['contain' => 'Tags']);
+        $this->assertCount(2, $entity->tags);
 
-        $query1 = $this->getMock(
-            '\Cake\ORM\Query',
-            ['where', 'andWhere', 'addDefaultTypes'],
-            [$connection, $joint]
-        );
+        $assoc->replaceLinks($entity, []);
+        $this->assertSame([], $entity->tags, 'Property should be empty');
+        $this->assertFalse($entity->dirty('tags'), 'Property should be cleaned');
 
-        $joint->expects($this->at(0))->method('find')
-            ->with('all')
-            ->will($this->returnValue($query1));
-
-        $query1->expects($this->at(0))
-            ->method('where')
-            ->with(['foo' => 1])
-            ->will($this->returnSelf());
-        $query1->expects($this->at(1))
-            ->method('where')
-            ->with(['article_id' => 1])
-            ->will($this->returnSelf());
-
-        $existing = [
-            new Entity(['article_id' => 1, 'tag_id' => 2]),
-            new Entity(['article_id' => 1, 'tag_id' => 4]),
-        ];
-        $query1->setResult(new \ArrayIterator($existing));
-
-        $tags = [];
-        $entity = new Entity(['id' => 1, 'test' => $tags]);
-
-        $assoc->expects($this->once())->method('_collectJointEntities')
-            ->with($entity, $tags)
-            ->will($this->returnValue([]));
-
-        $joint->expects($this->at(1))
-            ->method('delete')
-            ->with($existing[0]);
-        $joint->expects($this->at(2))
-            ->method('delete')
-            ->with($existing[1]);
-
-        $assoc->expects($this->never())
-            ->method('_saveTarget');
-
-        $assoc->replaceLinks($entity, $tags);
-        $this->assertSame([], $entity->tags);
-        $this->assertFalse($entity->dirty('tags'));
+        $new = $articles->get(1, ['contain' => 'Tags']);
+        $this->assertSame([], $entity->tags, 'Should not be data in db');
     }
 
     /**
@@ -741,91 +587,68 @@ class BelongsToManyTest extends TestCase
      */
     public function testReplaceLinkSuccess()
     {
-        $connection = ConnectionManager::get('test');
-        $joint = $this->getMock(
-            '\Cake\ORM\Table',
-            ['delete', 'find'],
-            [['alias' => 'ArticlesTags', 'connection' => $connection]]
-        );
-        $config = [
-            'sourceTable' => $this->article,
-            'targetTable' => $this->tag,
+        $joint = TableRegistry::get('ArticlesTags');
+        $articles = TableRegistry::get('Articles');
+        $tags = TableRegistry::get('Tags');
+
+        $assoc = $articles->belongsToMany('Tags', [
+            'sourceTable' => $articles,
+            'targetTable' => $tags,
             'through' => $joint,
-            'joinTable' => 'tags_articles'
+            'joinTable' => 'articles_tags',
+        ]);
+        $entity = $articles->get(1, ['contain' => 'Tags']);
+
+        // 1=existing, 2=removed, 3=new link, & new tag
+        $tagData = [
+            new Entity(['id' => 1], ['markNew' => false]),
+            new Entity(['id' => 3]),
+            new Entity(['name' => 'net new']),
         ];
-        $assoc = $this->getMock(
-            '\Cake\ORM\Association\BelongsToMany',
-            ['_collectJointEntities', '_saveTarget'],
-            ['tags', $config]
-        );
-        $assoc->junction();
 
-        $this->article
-            ->association('ArticlesTags')
-            ->conditions(['foo' => 1]);
+        $assoc->replaceLinks($entity, $tagData, ['associated' => false]);
+        $this->assertSame($tagData, $entity->tags, 'Tags should match replaced objects');
+        $this->assertFalse($entity->dirty('tags'), 'Should be clean');
 
-        $query1 = $this->getMock(
-            '\Cake\ORM\Query',
-            ['where', 'andWhere', 'addDefaultTypes'],
-            [$connection, $joint]
-        );
+        $fresh = $articles->get(1, ['contain' => 'Tags']);
+        $this->assertCount(3, $fresh->tags, 'Records should be in db');
 
-        $joint->expects($this->at(0))->method('find')
-            ->with('all')
-            ->will($this->returnValue($query1));
+        $this->assertNotEmpty($tags->get(2), 'Unlinked tag should still exist');
+    }
 
-        $query1->expects($this->at(0))
-            ->method('where')
-            ->with(['foo' => 1])
-            ->will($this->returnSelf());
-        $query1->expects($this->at(1))
-            ->method('where')
-            ->with(['article_id' => 1])
-            ->will($this->returnSelf());
+    /**
+     * Tests that replaceLinks() will contain() the target table when
+     * there are conditions present on the association.
+     *
+     * In this case the replacement will fail because the association conditions
+     * hide the fixture data.
+     *
+     * @return void
+     */
+    public function testReplaceLinkWithConditions()
+    {
+        $joint = TableRegistry::get('SpecialTags');
+        $articles = TableRegistry::get('Articles');
+        $tags = TableRegistry::get('Tags');
 
-        $existing = [
-            new Entity(['article_id' => 1, 'tag_id' => 2]),
-            new Entity(['article_id' => 1, 'tag_id' => 4]),
-            new Entity(['article_id' => 1, 'tag_id' => 5]),
-            new Entity(['article_id' => 1, 'tag_id' => 6])
-        ];
-        $query1->setResult(new \ArrayIterator($existing));
+        $assoc = $articles->belongsToMany('Tags', [
+            'sourceTable' => $articles,
+            'targetTable' => $tags,
+            'through' => $joint,
+            'joinTable' => 'special_tags',
+            'conditions' => ['SpecialTags.highlighted' => true]
+        ]);
+        $entity = $articles->get(1, ['contain' => 'Tags']);
 
-        $opts = ['markNew' => false];
-        $tags = [
-            new Entity(['id' => 2], $opts),
-            new Entity(['id' => 3], $opts),
-            new Entity(['id' => 6])
-        ];
-        $entity = new Entity(['id' => 1, 'test' => $tags], $opts);
+        $assoc->replaceLinks($entity, [], ['associated' => false]);
+        $this->assertSame([], $entity->tags, 'Tags should match replaced objects');
+        $this->assertFalse($entity->dirty('tags'), 'Should be clean');
 
-        $jointEntities = [
-            new Entity(['article_id' => 1, 'tag_id' => 2])
-        ];
-        $assoc->expects($this->once())->method('_collectJointEntities')
-            ->with($entity, $tags)
-            ->will($this->returnValue($jointEntities));
+        $fresh = $articles->get(1, ['contain' => 'Tags']);
+        $this->assertCount(0, $fresh->tags, 'Association should be empty');
 
-        $joint->expects($this->at(1))
-            ->method('delete')
-            ->with($existing[1]);
-        $joint->expects($this->at(2))
-            ->method('delete')
-            ->with($existing[2]);
-
-        $options = ['foo' => 'bar'];
-        $assoc->expects($this->once())
-            ->method('_saveTarget')
-            ->with($entity, [1 => $tags[1], 2 => $tags[2]], $options + ['associated' => false])
-            ->will($this->returnCallback(function ($entity, $inserts) use ($tags) {
-                $this->assertSame([1 => $tags[1], 2 => $tags[2]], $inserts);
-                $entity->tags = $inserts;
-                return true;
-            }));
-
-        $assoc->replaceLinks($entity, $tags, $options + ['associated' => false]);
-        $this->assertSame($tags, $entity->tags);
-        $this->assertFalse($entity->dirty('tags'));
+        $jointCount = $joint->find()->where(['article_id' => 1])->count();
+        $this->assertSame(1, $jointCount, 'Non matching joint record should remain.');
     }
 
     /**
@@ -844,6 +667,28 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Test that saveAssociated() fails on non-empty, non-iterable value
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Could not save tags, it cannot be traversed
+     * @return void
+     */
+    public function testSaveAssociatedNotEmptyNotIterable()
+    {
+        $articles = TableRegistry::get('Articles');
+        $assoc = $articles->belongsToMany('Tags', [
+            'saveStrategy' => BelongsToMany::SAVE_APPEND,
+            'joinTable' => 'articles_tags',
+        ]);
+        $entity = new Entity([
+            'id' => 1,
+            'tags' => 'oh noes',
+        ], ['markNew' => true]);
+
+        $assoc->saveAssociated($entity);
+    }
+
+    /**
      * Test that saving an empty set on create works.
      *
      * @dataProvider emptyProvider
@@ -851,10 +696,12 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveAssociatedEmptySetSuccess($value)
     {
+        $table = $this->getMock('Cake\ORM\Table', ['table'], [[]]);
+        $table->schema([]);
         $assoc = $this->getMock(
             '\Cake\ORM\Association\BelongsToMany',
             ['_saveTarget', 'replaceLinks'],
-            ['tags']
+            ['tags', ['sourceTable' => $table]]
         );
         $entity = new Entity([
             'id' => 1,
@@ -877,10 +724,12 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveAssociatedEmptySetUpdateSuccess($value)
     {
+        $table = $this->getMock('Cake\ORM\Table', ['table'], [[]]);
+        $table->schema([]);
         $assoc = $this->getMock(
             '\Cake\ORM\Association\BelongsToMany',
             ['_saveTarget', 'replaceLinks'],
-            ['tags']
+            ['tags', ['sourceTable' => $table]]
         );
         $entity = new Entity([
             'id' => 1,
@@ -906,10 +755,12 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveAssociatedWithReplace()
     {
+        $table = $this->getMock('Cake\ORM\Table', ['table'], [[]]);
+        $table->schema([]);
         $assoc = $this->getMock(
             '\Cake\ORM\Association\BelongsToMany',
             ['replaceLinks'],
-            ['tags']
+            ['tags', ['sourceTable' => $table]]
         );
         $entity = new Entity([
             'id' => 1,
@@ -933,10 +784,12 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveAssociatedWithReplaceReturnFalse()
     {
+        $table = $this->getMock('Cake\ORM\Table', ['table'], [[]]);
+        $table->schema([]);
         $assoc = $this->getMock(
             '\Cake\ORM\Association\BelongsToMany',
             ['replaceLinks'],
-            ['tags']
+            ['tags', ['sourceTable' => $table]]
         );
         $entity = new Entity([
             'id' => 1,
@@ -1062,5 +915,200 @@ class BelongsToManyTest extends TestCase
         ];
         $association = new BelongsToMany('Contacts.Tags', $config);
         $this->assertEquals('tags', $association->property());
+    }
+
+    /**
+     * Test that the generated associations are correct.
+     *
+     * @return void
+     */
+    public function testGeneratedAssociations()
+    {
+        $articles = TableRegistry::get('Articles');
+        $tags = TableRegistry::get('Tags');
+        $conditions = ['SpecialTags.highlighted' => true];
+        $assoc = $articles->belongsToMany('Tags', [
+            'sourceTable' => $articles,
+            'targetTable' => $tags,
+            'foreignKey' => 'foreign_key',
+            'targetForeignKey' => 'target_foreign_key',
+            'through' => 'SpecialTags',
+            'conditions' => $conditions,
+        ]);
+        // Generate associations
+        $assoc->junction();
+
+        $tagAssoc = $articles->association('Tags');
+        $this->assertNotEmpty($tagAssoc, 'btm should exist');
+        $this->assertEquals($conditions, $tagAssoc->conditions());
+        $this->assertEquals('target_foreign_key', $tagAssoc->targetForeignKey());
+        $this->assertEquals('foreign_key', $tagAssoc->foreignKey());
+
+        $jointAssoc = $articles->association('SpecialTags');
+        $this->assertNotEmpty($jointAssoc, 'has many to junction should exist');
+        $this->assertInstanceOf('Cake\ORM\Association\HasMany', $jointAssoc);
+        $this->assertEquals('foreign_key', $jointAssoc->foreignKey());
+
+        $articleAssoc = $tags->association('Articles');
+        $this->assertNotEmpty($articleAssoc, 'reverse btm should exist');
+        $this->assertInstanceOf('Cake\ORM\Association\BelongsToMany', $articleAssoc);
+        $this->assertEquals($conditions, $articleAssoc->conditions());
+        $this->assertEquals('foreign_key', $articleAssoc->targetForeignKey(), 'keys should swap');
+        $this->assertEquals('target_foreign_key', $articleAssoc->foreignKey(), 'keys should swap');
+
+        $jointAssoc = $tags->association('SpecialTags');
+        $this->assertNotEmpty($jointAssoc, 'has many to junction should exist');
+        $this->assertInstanceOf('Cake\ORM\Association\HasMany', $jointAssoc);
+        $this->assertEquals('target_foreign_key', $jointAssoc->foreignKey());
+    }
+
+    /**
+     * Tests that fetching belongsToMany association will not force
+     * all fields being returned, but intead will honor the select() clause
+     *
+     * @see https://github.com/cakephp/cakephp/issues/7916
+     * @return void
+     */
+    public function testEagerLoadingBelongsToManyLimitedFields()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags');
+        $result = $table
+            ->find()
+            ->contain(['Tags' => function ($q) {
+                return $q->select(['id']);
+            }])
+            ->first();
+
+        $this->assertNotEmpty($result->tags[0]->id);
+        $this->assertEmpty($result->tags[0]->name);
+    }
+
+    /**
+     * Tests that fetching belongsToMany association will retain autoFields(true) if it was used.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/8052
+     * @return void
+     */
+    public function testEagerLoadingBelongsToManyLimitedFieldsWithAutoFields()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags');
+        $result = $table
+            ->find()
+            ->contain(['Tags' => function ($q) {
+                return $q->select(['two' => $q->newExpr('1 + 1')])->autoFields(true);
+            }])
+            ->first();
+
+        $this->assertNotEmpty($result->tags[0]->two, 'Should have computed field');
+        $this->assertNotEmpty($result->tags[0]->name, 'Should have standard field');
+    }
+
+    /**
+     * Test that association proxy find() applies joins when conditions are involved.
+     *
+     * @return void
+     */
+    public function testAssociationProxyFindWithConditions()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'conditions' => ['SpecialTags.highlighted' => true],
+            'through' => 'SpecialTags'
+        ]);
+        $query = $table->Tags->find();
+        $result = $query->toArray();
+        $this->assertCount(1, $result);
+    }
+
+    /**
+     * Test that association proxy find() applies complex conditions
+     *
+     * @return void
+     */
+    public function testAssociationProxyFindWithComplexConditions()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'conditions' => [
+                'OR' => [
+                    'SpecialTags.highlighted' => true,
+                ]
+            ],
+            'through' => 'SpecialTags'
+        ]);
+        $query = $table->Tags->find();
+        $result = $query->toArray();
+        $this->assertCount(1, $result);
+    }
+
+    /**
+     * Test that matching() works on belongsToMany associations.
+     *
+     * @return void
+     */
+    public function testBelongsToManyAssociationWithArrayConditions()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'conditions' => ['SpecialTags.highlighted' => true],
+            'through' => 'SpecialTags'
+        ]);
+        $query = $table->find()->matching('Tags', function ($q) {
+            return $q->where(['Tags.name' => 'tag1']);
+        });
+        $results = $query->toArray();
+        $this->assertCount(1, $results);
+        $this->assertNotEmpty($results[0]->_matchingData);
+    }
+
+    /**
+     * Test that matching() works on belongsToMany associations.
+     *
+     * @return void
+     */
+    public function testBelongsToManyAssociationWithExpressionConditions()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'conditions' => [new QueryExpression("name LIKE 'tag%'")],
+            'through' => 'SpecialTags'
+        ]);
+        $query = $table->find()->matching('Tags', function ($q) {
+            return $q->where(['Tags.name' => 'tag1']);
+        });
+        $results = $query->toArray();
+        $this->assertCount(1, $results);
+        $this->assertNotEmpty($results[0]->_matchingData);
+    }
+
+    /**
+     * Test that association proxy find() with matching resolves joins correctly
+     *
+     * @return void
+     */
+    public function testAssociationProxyFindWithConditionsMatching()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'conditions' => ['SpecialTags.highlighted' => true],
+            'through' => 'SpecialTags'
+        ]);
+        $query = $table->Tags->find()->matching('Articles', function ($query) {
+            return $query->where(['Articles.id' => 1]);
+        });
+        // The inner join on special_tags excludes the results.
+        $this->assertEquals(0, $query->count());
     }
 }

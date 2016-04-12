@@ -110,8 +110,9 @@ class RouteCollection
      */
     public function parse($url)
     {
+        $decoded = urldecode($url);
         foreach (array_keys($this->_paths) as $path) {
-            if (strpos($url, $path) !== 0) {
+            if (strpos($decoded, $path) !== 0) {
                 continue;
             }
 

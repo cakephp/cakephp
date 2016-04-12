@@ -612,6 +612,19 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests that issuing a count will throw an exception
+     *
+     * @expectedException \LogicException
+     * @return void
+     */
+    public function testCollectionCount()
+    {
+        $data = [1, 2, 3, 4];
+        $collection = new Collection($data);
+        $collection->count();
+    }
+
+    /**
      * Tests take method
      *
      * @return void
@@ -1287,6 +1300,21 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests the isEmpty() method does not consume data
+     * from buffered iterators.
+     *
+     * @return void
+     */
+    public function testIsEmptyDoesNotConsume()
+    {
+        $array = new \ArrayIterator([1, 2, 3]);
+        $inner = new \Cake\Collection\Iterator\BufferedIterator($array);
+        $collection = new Collection($inner);
+        $this->assertFalse($collection->isEmpty());
+        $this->assertCount(3, $collection->toArray());
+    }
+
+    /**
      * Tests the zip() method
      *
      * @return void
@@ -1396,7 +1424,7 @@ class CollectionTest extends TestCase
         ];
 
         $extracted = (new Collection($items))->extract('comments.{*}.id');
-        $this->assertEquals([1, 2, 3, 4, 7, null], $extracted->toList());
+        $this->assertEquals([1, 2, 3, 4, 7, null], $extracted->toArray());
 
         $items = [
             [
@@ -1431,6 +1459,7 @@ class CollectionTest extends TestCase
         ];
         $extracted = (new Collection($items))->extract('comments.{*}.voters.{*}.id');
         $expected = [1, 2, 3, 4, 5, null, 6];
+        $this->assertEquals($expected, $extracted->toArray());
         $this->assertEquals($expected, $extracted->toList());
     }
 
@@ -1497,5 +1526,44 @@ class CollectionTest extends TestCase
         $selialized = serialize($collection);
         $unserialized = unserialize($selialized);
         $this->assertEquals($collection->toList(), $unserialized->toList());
+    }
+
+    /**
+     * Tests the chunk method with exact chunks
+     *
+     * @return void
+     */
+    public function testChunk()
+    {
+        $collection = new Collection(range(1, 10));
+        $chunked = $collection->chunk(2)->toList();
+        $expected = [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]];
+        $this->assertEquals($expected, $chunked);
+    }
+
+    /**
+     * Tests the chunk method with overflowing chunk size
+     *
+     * @return void
+     */
+    public function testChunkOverflow()
+    {
+        $collection = new Collection(range(1, 11));
+        $chunked = $collection->chunk(2)->toList();
+        $expected = [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11]];
+        $this->assertEquals($expected, $chunked);
+    }
+
+    /**
+     * Tests the chunk method with non-scalar items
+     *
+     * @return void
+     */
+    public function testChunkNested()
+    {
+        $collection = new Collection([1, 2, 3, [4, 5], 6, [7, [8, 9], 10], 11]);
+        $chunked = $collection->chunk(2)->toList();
+        $expected = [[1, 2], [3, [4, 5]], [6, [7, [8, 9], 10]], [11]];
+        $this->assertEquals($expected, $chunked);
     }
 }

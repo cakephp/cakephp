@@ -21,7 +21,7 @@ use SimpleXmlElement;
  * An object to represent a single argument used in the command line.
  * ConsoleOptionParser creates these when you use addArgument()
  *
- * @see ConsoleOptionParser::addArgument()
+ * @see \Cake\Console\ConsoleOptionParser::addArgument()
  */
 class ConsoleInputArgument
 {

@@ -54,7 +54,7 @@ class Dispatcher
      *
      * @param \Cake\Network\Request $request Request object to dispatch.
      * @param \Cake\Network\Response $response Response object to put the results of the dispatch into.
-     * @return string|void if `$request['return']` is set then it returns response body, null otherwise
+     * @return string|null if `$request['return']` is set then it returns response body, null otherwise
      * @throws \Cake\Routing\Exception\MissingControllerException When the controller is missing.
      */
     public function dispatch(Request $request, Response $response)
@@ -67,7 +67,7 @@ class Dispatcher
                 return $beforeEvent->result->body();
             }
             $beforeEvent->result->send();
-            return;
+            return null;
         }
 
         $controller = false;
@@ -99,7 +99,7 @@ class Dispatcher
      * is true. If a response object is returned by controller action that is returned
      * else controller's $response property is returned.
      *
-     * @param Controller $controller Controller to invoke
+     * @param \Cake\Controller\Controller $controller Controller to invoke
      * @return \Cake\Network\Response The resulting response object
      * @throws \LogicException If data returned by controller action is not an
      *   instance of Response

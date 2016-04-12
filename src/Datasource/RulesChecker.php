@@ -127,7 +127,7 @@ class RulesChecker
      *
      * @param callable $rule A callable function or object that will return whether
      * the entity is valid or not.
-     * @param string $name The alias for a rule.
+     * @param string|null $name The alias for a rule.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
@@ -151,7 +151,7 @@ class RulesChecker
      *
      * @param callable $rule A callable function or object that will return whether
      * the entity is valid or not.
-     * @param string $name The alias for a rule.
+     * @param string|null $name The alias for a rule.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
@@ -175,7 +175,7 @@ class RulesChecker
      *
      * @param callable $rule A callable function or object that will return whether
      * the entity is valid or not.
-     * @param string $name The alias for a rule.
+     * @param string|null $name The alias for a rule.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
@@ -199,7 +199,7 @@ class RulesChecker
      *
      * @param callable $rule A callable function or object that will return whether
      * the entity is valid or not.
-     * @param string $name The alias for a rule.
+     * @param string|null $name The alias for a rule.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
@@ -248,12 +248,7 @@ class RulesChecker
      */
     public function checkCreate(EntityInterface $entity, array $options = [])
     {
-        $success = true;
-        $options = $options + $this->_options;
-        foreach (array_merge($this->_rules, $this->_createRules) as $rule) {
-            $success = $rule($entity, $options) && $success;
-        }
-        return $success;
+        return $this->_checkRules($entity, $options, array_merge($this->_rules, $this->_createRules));
     }
 
     /**
@@ -266,12 +261,7 @@ class RulesChecker
      */
     public function checkUpdate(EntityInterface $entity, array $options = [])
     {
-        $success = true;
-        $options = $options + $this->_options;
-        foreach (array_merge($this->_rules, $this->_updateRules) as $rule) {
-            $success = $rule($entity, $options) && $success;
-        }
-        return $success;
+        return $this->_checkRules($entity, $options, array_merge($this->_rules, $this->_updateRules));
     }
 
     /**
@@ -284,9 +274,23 @@ class RulesChecker
      */
     public function checkDelete(EntityInterface $entity, array $options = [])
     {
+        return $this->_checkRules($entity, $options, $this->_deleteRules);
+    }
+
+    /**
+     * Used by top level functions checkDelete, checkCreate and checkUpdate, this function
+     * iterates an array containing the rules to be checked and checks them all.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
+     * @param array $options Extra options to pass to checker functions.
+     * @param array $rules The list of rules that must be checked.
+     * @return bool
+     */
+    protected function _checkRules(EntityInterface $entity, array $options = [], array $rules = [])
+    {
         $success = true;
         $options = $options + $this->_options;
-        foreach ($this->_deleteRules as $rule) {
+        foreach ($rules as $rule) {
             $success = $rule($entity, $options) && $success;
         }
         return $success;
@@ -298,7 +302,7 @@ class RulesChecker
      *
      * @param callable $rule The rule to decorate
      * @param string $name The alias for a rule.
-     * @param array $options The options containing the error message and field
+     * @param array $options The options containing the error message and field.
      * @return callable
      */
     protected function _addError($rule, $name, $options)
@@ -327,6 +331,12 @@ class RulesChecker
                 $message = [$message];
             }
             $entity->errors($options['errorField'], $message);
+
+            if ($entity instanceof InvalidPropertyInterface && isset($entity->{$options['errorField']})) {
+                $invalidValue = $entity->{$options['errorField']};
+                $entity->invalid($options['errorField'], $invalidValue);
+            }
+
             return $pass === true;
         };
     }

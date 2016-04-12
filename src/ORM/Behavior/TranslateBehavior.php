@@ -234,10 +234,10 @@ class TranslateBehavior extends Behavior
             $name = $alias . '_' . $field . '_translation';
 
             $contain[$name]['queryBuilder'] = $conditions(
-            $field,
-            $locale,
-            $query,
-            $select
+                $field,
+                $locale,
+                $query,
+                $select
             );
 
             if ($changeFilter) {
@@ -276,6 +276,11 @@ class TranslateBehavior extends Behavior
 
         $values = $entity->extract($this->_config['fields'], true);
         $fields = array_keys($values);
+
+        if (empty($fields)) {
+            return;
+        }
+
         $primaryKey = (array)$this->_table->primaryKey();
         $key = $entity->get(current($primaryKey));
         $model = $this->_config['referenceName'];
@@ -452,6 +457,9 @@ class TranslateBehavior extends Behavior
                 return $row;
             }
             $translations = (array)$row->get('_i18n');
+            if (empty($translations) && $row->get('_translations')) {
+                return $row;
+            }
             $grouped = new Collection($translations);
 
             $result = [];

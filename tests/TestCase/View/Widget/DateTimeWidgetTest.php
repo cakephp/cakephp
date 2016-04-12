@@ -137,6 +137,7 @@ class DateTimeWidgetTest extends TestCase
         return [
             'DateTime' => [$date],
             'string' => [$date->format('Y-m-d H:i:s')],
+            'int string' => [$date->format('U')],
             'int' => [$date->getTimestamp()],
             'array' => [[
                 'year' => '2014', 'month' => '01', 'day' => '20',
@@ -778,6 +779,27 @@ class DateTimeWidgetTest extends TestCase
 
         $this->assertContains('<select name="date[meridian]">', $result);
         $this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+    }
+
+    /**
+     * Test rendering 12 hour widgets with empty options and no value.
+     *
+     * @return void
+     */
+    public function testRenderHourWidget12Empty()
+    {
+        $result = $this->DateTime->render([
+            'val' => ['hour' => '', 'minute' => '', 'meridian' => ''],
+            'year' => false,
+            'month' => false,
+            'day' => false,
+            'hour' => ['format' => 12, 'empty' => '--'],
+            'minute' => ['empty' => '--'],
+            'second' => false,
+            'meridian' => ['empty' => '--'],
+        ], $this->context);
+        $this->assertContains('<option value="" selected="selected">--</option>', $result);
+        $this->assertNotRegExp('/value="\d+" selected="selected"/', $result);
     }
 
     /**

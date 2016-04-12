@@ -231,6 +231,22 @@ abstract class BaseSchema
     abstract public function columnSql(Table $table, $name);
 
     /**
+     * Generate the SQL queries needed to add foreign key constraints to the table
+     *
+     * @param \Cake\Database\Schema\Table $table The table instance the foreign key constraints are.
+     * @return array SQL fragment.
+     */
+    abstract public function addConstraintSql(Table $table);
+
+    /**
+     * Generate the SQL queries needed to drop foreign key constraints from the table
+     *
+     * @param \Cake\Database\Schema\Table $table The table instance the foreign key constraints are.
+     * @return array SQL fragment.
+     */
+    abstract public function dropConstraintSql(Table $table);
+
+    /**
      * Generate the SQL fragments for defining table constraints.
      *
      * @param \Cake\Database\Schema\Table $table The table instance the column is in.

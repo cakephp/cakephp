@@ -18,8 +18,9 @@ use Cake\Collection\Collection;
 use RecursiveIterator;
 
 /**
- * An iterator that can be used as argument for other iterators that require
- * a RecursiveIterator, but that will always report as having no nested items.
+ * An iterator that can be used as an argument for other iterators that require
+ * a RecursiveIterator but do not want children. This iterator will
+ * always behave as having no nested items.
  */
 class NoChildrenIterator extends Collection implements RecursiveIterator
 {

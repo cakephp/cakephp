@@ -61,6 +61,7 @@ class ProgressHelperTest extends TestCase
         }]);
         $expected = [
             '',
+            '',
             '==============>                                                              20%',
             '',
             '=============================>                                               40%',
@@ -90,6 +91,7 @@ class ProgressHelperTest extends TestCase
             }
         ]);
         $expected = [
+            '',
             '',
             '==>              20%',
             '',
@@ -187,6 +189,55 @@ class ProgressHelperTest extends TestCase
         $this->helper->increment(4);
         $this->helper->draw();
         $this->helper->increment(4);
+        $this->helper->draw();
+
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
+     * Test increment and draw with value that makes the pad
+     * be a float
+     *
+     * @return void
+     */
+    public function testIncrementFloatPad()
+    {
+        $this->helper->init([
+            'total' => 50
+        ]);
+        $expected = [
+            '',
+            '=========>                                                                   14%',
+            '',
+            '====================>                                                        28%',
+            '',
+            '==============================>                                              42%',
+            '',
+            '=========================================>                                   56%',
+            '',
+            '===================================================>                         70%',
+            '',
+            '========================================================>                    76%',
+            '',
+            '==============================================================>              84%',
+            '',
+            '==========================================================================> 100%',
+        ];
+        $this->helper->increment(7);
+        $this->helper->draw();
+        $this->helper->increment(7);
+        $this->helper->draw();
+        $this->helper->increment(7);
+        $this->helper->draw();
+        $this->helper->increment(7);
+        $this->helper->draw();
+        $this->helper->increment(7);
+        $this->helper->draw();
+        $this->helper->increment(3);
+        $this->helper->draw();
+        $this->helper->increment(4);
+        $this->helper->draw();
+        $this->helper->increment(8);
         $this->helper->draw();
 
         $this->assertEquals($expected, $this->stub->messages());

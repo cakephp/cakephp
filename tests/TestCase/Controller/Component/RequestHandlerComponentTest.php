@@ -16,12 +16,9 @@ namespace Cake\Test\TestCase\Controller\Component;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\RequestHandlerComponent;
-use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -903,6 +900,78 @@ class RequestHandlerComponentTest extends TestCase
     }
 
     /**
+     * Test that AJAX requests involving redirects handle querystrings
+     *
+     * @return void
+     * @triggers Controller.beforeRedirect $this->Controller
+     */
+    public function testAjaxRedirectAsRequestActionWithQueryString()
+    {
+        Configure::write('App.namespace', 'TestApp');
+        Router::connect('/:controller/:action');
+        $event = new Event('Controller.beforeRedirect', $this->Controller);
+
+        $this->Controller->RequestHandler = new RequestHandlerComponent($this->Controller->components());
+        $this->Controller->request = $this->getMock('Cake\Network\Request', ['is']);
+        $this->Controller->response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'stop']);
+        $this->Controller->RequestHandler->request = $this->Controller->request;
+        $this->Controller->RequestHandler->response = $this->Controller->response;
+        $this->Controller->request->expects($this->any())
+            ->method('is')
+            ->with('ajax')
+            ->will($this->returnValue(true));
+
+        $response = $this->Controller->RequestHandler->beforeRedirect(
+            $event,
+            '/request_action/params_pass?a=b&x=y?ish',
+            $this->Controller->response
+        );
+        $data = json_decode($response, true);
+        $this->assertEquals('/request_action/params_pass', $data['here']);
+
+        $response = $this->Controller->RequestHandler->beforeRedirect(
+            $event,
+            '/request_action/query_pass?a=b&x=y?ish',
+            $this->Controller->response
+        );
+        $data = json_decode($response, true);
+        $this->assertEquals('y?ish', $data['x']);
+    }
+
+    /**
+     * Test that AJAX requests involving redirects handle cookie data
+     *
+     * @return void
+     * @triggers Controller.beforeRedirect $this->Controller
+     */
+    public function testAjaxRedirectAsRequestActionWithCookieData()
+    {
+        Configure::write('App.namespace', 'TestApp');
+        Router::connect('/:controller/:action');
+        $event = new Event('Controller.beforeRedirect', $this->Controller);
+
+        $this->Controller->RequestHandler = new RequestHandlerComponent($this->Controller->components());
+        $this->Controller->request = $this->getMock('Cake\Network\Request', ['is']);
+        $this->Controller->response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'stop']);
+        $this->Controller->RequestHandler->request = $this->Controller->request;
+        $this->Controller->RequestHandler->response = $this->Controller->response;
+        $this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
+
+        $cookies = [
+            'foo' => 'bar'
+        ];
+        $this->Controller->request->cookies = $cookies;
+
+        $response = $this->Controller->RequestHandler->beforeRedirect(
+            $event,
+            '/request_action/cookie_pass',
+            $this->Controller->response
+        );
+        $data = json_decode($response, true);
+        $this->assertEquals($cookies, $data);
+    }
+
+    /**
      * Tests that AJAX requests involving redirects don't let the status code bleed through.
      *
      * @return void
@@ -965,7 +1034,6 @@ class RequestHandlerComponentTest extends TestCase
      * array URLs into their correct string ones, and adds base => false so
      * the correct URLs are generated.
      *
-     * @link https://cakephp.lighthouseapp.com/projects/42648-cakephp-1x/tickets/276
      * @return void
      * @triggers Controller.beforeRender $this->Controller
      */
@@ -1073,7 +1141,7 @@ class RequestHandlerComponentTest extends TestCase
         $RequestHandler = new RequestHandlerComponent($this->Controller->components());
         $RequestHandler->response = $this->getMock('Cake\Network\Response', ['notModified', 'stop']);
         $RequestHandler->response->expects($this->never())->method('notModified');
-        $this->assertNull($RequestHandler->beforeRender($event, '', $RequestHandler->response));
+        $this->assertNull($RequestHandler->beforeRender($event));
     }
 
     /**

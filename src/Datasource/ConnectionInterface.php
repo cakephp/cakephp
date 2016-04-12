@@ -37,7 +37,7 @@ interface ConnectionInterface
     /**
      * Executes a callable function inside a transaction, if any exception occurs
      * while executing the passed callable, the transaction will be rolled back
-     * If the result of the callable function is ``false``, the transaction will
+     * If the result of the callable function is `false`, the transaction will
      * also be rolled back. Otherwise the transaction is committed after executing
      * the callback.
      *
@@ -65,7 +65,7 @@ interface ConnectionInterface
     /**
      * Enables or disables query logging for this connection.
      *
-     * @param bool $enable whether to turn logging on or disable it.
+     * @param bool|null $enable whether to turn logging on or disable it.
      *   Use null to read current value.
      * @return bool
      */
@@ -75,7 +75,7 @@ interface ConnectionInterface
      * Sets the logger object instance. When called with no arguments
      * it returns the currently setup logger instance.
      *
-     * @param object $instance logger object instance
+     * @param object|null $instance logger object instance
      * @return object logger instance
      */
     public function logger($instance = null);

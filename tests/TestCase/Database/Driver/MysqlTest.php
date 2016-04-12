@@ -15,8 +15,6 @@
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Core\Configure;
-use Cake\Database\Connection;
-use Cake\Database\Driver\Mysql;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use \PDO;
@@ -127,5 +125,39 @@ class MysqlTest extends TestCase
         $driver->expects($this->any())->method('connection')
             ->will($this->returnValue($connection));
         $driver->connect($config);
+    }
+
+    /**
+     * Test isConnected
+     *
+     * @return void
+     */
+    public function testIsConnected()
+    {
+        $connection = ConnectionManager::get('test');
+        $connection->disconnect();
+        $this->assertFalse($connection->isConnected(), 'Not connected now.');
+
+        $connection->connect();
+        $this->assertTrue($connection->isConnected(), 'Should be connected.');
+    }
+
+    public function testRollbackTransactionAutoConnect()
+    {
+        $connection = ConnectionManager::get('test');
+        $connection->disconnect();
+
+        $driver = $connection->driver();
+        $this->assertFalse($driver->rollbackTransaction());
+        $this->assertTrue($driver->isConnected());
+    }
+
+    public function testCommitTransactionAutoConnect()
+    {
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->driver();
+
+        $this->assertFalse($driver->commitTransaction());
+        $this->assertTrue($driver->isConnected());
     }
 }

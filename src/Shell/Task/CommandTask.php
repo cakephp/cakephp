@@ -14,11 +14,11 @@
  */
 namespace Cake\Shell\Task;
 
-use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use ReflectionClass;
 use ReflectionMethod;
@@ -109,15 +109,21 @@ class CommandTask extends Shell
     public function commands()
     {
         $shellList = $this->getShellList();
+        $flatten = Hash::flatten($shellList);
+        $duplicates = array_intersect($flatten, array_unique(array_diff_key($flatten, array_unique($flatten))));
+        $duplicates = Hash::expand($duplicates);
 
         $options = [];
         foreach ($shellList as $type => $commands) {
-            $prefix = '';
-            if (!in_array(strtolower($type), ['app', 'core'])) {
-                $prefix = $type . '.';
-            }
-
             foreach ($commands as $shell) {
+                $prefix = '';
+                if (!in_array(strtolower($type), ['app', 'core']) &&
+                    isset($duplicates[$type]) &&
+                    in_array($shell, $duplicates[$type])
+                ) {
+                    $prefix = $type . '.';
+                }
+
                 $options[] = $prefix . $shell;
             }
         }
@@ -143,7 +149,7 @@ class CommandTask extends Shell
         $return = array_keys($taskMap);
         $return = array_map('Cake\Utility\Inflector::underscore', $return);
 
-        $shellMethodNames = ['main', 'help', 'getOptionParser'];
+        $shellMethodNames = ['main', 'help', 'getOptionParser', 'initialize', 'runCommand'];
 
         $baseClasses = ['Object', 'Shell', 'AppShell'];
 
@@ -166,8 +172,8 @@ class CommandTask extends Shell
     /**
      * Get Shell instance for the given command
      *
-     * @param mixed $commandName The command you want.
-     * @return mixed
+     * @param string $commandName The command you want.
+     * @return \Cake\Console\Shell|bool Shell instance if the command can be found, false otherwise.
      */
     public function getShell($commandName)
     {
@@ -178,8 +184,22 @@ class CommandTask extends Shell
             $pluginDot = '';
         }
 
-        if (!in_array($commandName, $this->commands())) {
+        if (!in_array($commandName, $this->commands()) && (empty($pluginDot) && !in_array($name, $this->commands()))) {
             return false;
+        }
+
+        if (empty($pluginDot)) {
+            $shellList = $this->getShellList();
+
+            if (!in_array($commandName, $shellList['app']) && !in_array($commandName, $shellList['CORE'])) {
+                unset($shellList['CORE'], $shellList['app']);
+                foreach ($shellList as $plugin => $commands) {
+                    if (in_array($commandName, $commands)) {
+                        $pluginDot = $plugin . '.';
+                        break;
+                    }
+                }
+            }
         }
 
         $name = Inflector::camelize($name);
@@ -197,18 +217,30 @@ class CommandTask extends Shell
     }
 
     /**
-     * Get Shell instance for the given command
+     * Get options list for the given command or subcommand
      *
-     * @param mixed $commandName The command to get options for.
-     * @return array
+     * @param string $commandName The command to get options for.
+     * @param string $subCommandName The subcommand to get options for. Can be empty to get options for the command.
+     * If this parameter is used, the subcommand must be a valid subcommand of the command passed
+     * @return array Options list for the given command or subcommand
      */
-    public function options($commandName)
+    public function options($commandName, $subCommandName = '')
     {
         $Shell = $this->getShell($commandName);
+
         if (!$Shell) {
-            $parser = new ConsoleOptionParser();
-        } else {
-            $parser = $Shell->getOptionParser();
+            return [];
+        }
+
+        $parser = $Shell->getOptionParser();
+
+        if (!empty($subCommandName)) {
+            $subCommandName = Inflector::camelize($subCommandName);
+            if ($Shell->hasTask($subCommandName)) {
+                $parser = $Shell->{$subCommandName}->getOptionParser();
+            } else {
+                return [];
+            }
         }
 
         $options = [];

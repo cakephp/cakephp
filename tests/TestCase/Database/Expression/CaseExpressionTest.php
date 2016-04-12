@@ -54,6 +54,26 @@ class CaseExpressionTest extends TestCase
     }
 
     /**
+     * Test sql generation with 0 case.
+     *
+     * @return void
+     */
+    public function testSqlOutputZero()
+    {
+        $expression = new QueryExpression();
+        $expression->add(['id' => 'test']);
+        $caseExpression = new CaseExpression([$expression], [0], ['integer']);
+        $expected = 'CASE WHEN id = :c0 THEN :c1 END';
+        $binder = new ValueBinder();
+        $this->assertSame($expected, $caseExpression->sql($binder));
+        $expected = [
+            ':c0' => ['value' => 'test', 'type' => null, 'placeholder' => 'c0'],
+            ':c1' => ['value' => 0, 'type' => 'integer', 'placeholder' => 'c1'],
+        ];
+        $this->assertEquals($expected, $binder->bindings());
+    }
+
+    /**
      * Tests that the expression is correctly traversed
      *
      * @return void
@@ -72,5 +92,25 @@ class CaseExpressionTest extends TestCase
         $caseExpression = new CaseExpression([$expr, $expr2]);
         $caseExpression->traverse($visitor);
         $this->assertSame(4, $count);
+    }
+
+    /**
+     * Test cloning
+     *
+     * @return void
+     */
+    public function testClone()
+    {
+        $expr = new QueryExpression();
+        $expr->eq('test', 'true');
+        $expr2 = new QueryExpression();
+        $expr2->eq('test2', 'false');
+
+        $caseExpression = new CaseExpression([$expr, $expr2], 'foobar');
+        $dupe = clone $caseExpression;
+        $dupe->elseValue('nope');
+
+        $this->assertNotEquals($caseExpression, $dupe);
+        $this->assertNotSame($caseExpression, $dupe);
     }
 }

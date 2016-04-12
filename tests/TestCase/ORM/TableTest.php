@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\ORM;
 
 use ArrayObject;
+use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Database\Exception;
@@ -24,6 +25,9 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\I18n\Time;
+use Cake\ORM\AssociationCollection;
+use Cake\ORM\Association\BelongsToMany;
+use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
@@ -48,18 +52,18 @@ class TableTest extends TestCase
 {
 
     public $fixtures = [
-        'core.comments',
-        'core.users',
-        'core.categories',
         'core.articles',
-        'core.authors',
         'core.tags',
         'core.articles_tags',
-        'core.site_articles',
-        'core.members',
+        'core.authors',
+        'core.categories',
+        'core.comments',
         'core.groups',
         'core.groups_members',
+        'core.members',
         'core.polymorphic_tagged',
+        'core.site_articles',
+        'core.users'
     ];
 
     /**
@@ -79,25 +83,35 @@ class TableTest extends TestCase
         $this->usersTypeMap = new TypeMap([
             'Users.id' => 'integer',
             'id' => 'integer',
+            'Users__id' => 'integer',
             'Users.username' => 'string',
+            'Users__username' => 'string',
             'username' => 'string',
             'Users.password' => 'string',
+            'Users__password' => 'string',
             'password' => 'string',
             'Users.created' => 'timestamp',
+            'Users__created' => 'timestamp',
             'created' => 'timestamp',
             'Users.updated' => 'timestamp',
+            'Users__updated' => 'timestamp',
             'updated' => 'timestamp',
         ]);
         $this->articlesTypeMap = new TypeMap([
             'Articles.id' => 'integer',
+            'Articles__id' => 'integer',
             'id' => 'integer',
             'Articles.title' => 'string',
+            'Articles__title' => 'string',
             'title' => 'string',
             'Articles.author_id' => 'integer',
+            'Articles__author_id' => 'integer',
             'author_id' => 'integer',
             'Articles.body' => 'text',
+            'Articles__body' => 'text',
             'body' => 'text',
             'Articles.published' => 'string',
+            'Articles__published' => 'string',
             'published' => 'string',
         ]);
     }
@@ -792,7 +806,12 @@ class TableTest extends TestCase
             'hasOne' => ['profiles'],
             'hasMany' => ['authors'],
             'belongsToMany' => [
-                'tags' => ['joinTable' => 'things_tags']
+                'tags' => [
+                    'joinTable' => 'things_tags',
+                    'conditions' => [
+                        'Tags.starred' => true
+                    ]
+                ]
             ]
         ];
 
@@ -820,6 +839,7 @@ class TableTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Association\BelongsToMany', $belongsToMany);
         $this->assertEquals('tags', $belongsToMany->name());
         $this->assertSame('things_tags', $belongsToMany->junction()->table());
+        $this->assertSame(['Tags.starred' => true], $belongsToMany->conditions());
     }
 
     /**
@@ -1735,6 +1755,292 @@ class TableTest extends TestCase
 
         $table->expects($this->once())->method('exists');
         $this->assertSame($entity, $table->save($entity));
+    }
+
+
+    /**
+     * Test that save works with replace saveStrategy and are not deleted once they are not null
+     *
+     * @return void
+     */
+    public function testSaveReplaceSaveStrategy()
+    {
+        $authors = new Table(
+            [
+                'table' => 'authors',
+                'alias' => 'Authors',
+                'connection' => $this->connection,
+                'entityClass' => 'Cake\ORM\Entity',
+            ]
+        );
+
+        $authors->hasMany('Articles', ['saveStrategy' => 'replace']);
+
+        $entity = $authors->newEntity([
+            'name' => 'mylux',
+            'articles' => [
+                ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
+                ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
+                ['title' => 'One more random post', 'body' => 'The cake is forever']
+            ]
+        ], ['associated' => ['Articles']]);
+
+        $entity = $authors->save($entity, ['associated' => ['Articles']]);
+        $sizeArticles = count($entity->articles);
+        $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+
+        $articleId = $entity->articles[0]->id;
+        unset($entity->articles[0]);
+        $entity->dirty('articles', true);
+
+        $authors->save($entity, ['associated' => ['Articles']]);
+
+        $this->assertEquals($sizeArticles - 1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertTrue($authors->Articles->exists(['id' => $articleId]));
+    }
+
+
+    /**
+     * Test that save works with replace saveStrategy, replacing the already persisted entities even if no new entities are passed
+     *
+     * @return void
+     */
+    public function testSaveReplaceSaveStrategyNotAdding()
+    {
+        $authors = new Table(
+            [
+                'table' => 'authors',
+                'alias' => 'Authors',
+                'connection' => $this->connection,
+                'entityClass' => 'Cake\ORM\Entity',
+            ]
+        );
+
+        $authors->hasMany('Articles', ['saveStrategy' => 'replace']);
+
+        $entity = $authors->newEntity([
+            'name' => 'mylux',
+            'articles' => [
+                ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
+                ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
+                ['title' => 'One more random post', 'body' => 'The cake is forever']
+            ]
+        ], ['associated' => ['Articles']]);
+
+        $entity = $authors->save($entity, ['associated' => ['Articles']]);
+        $sizeArticles = count($entity->articles);
+        $this->assertCount($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']]));
+
+        $entity->set('articles', []);
+
+        $entity = $authors->save($entity, ['associated' => ['Articles']]);
+
+        $this->assertCount(0, $authors->Articles->find('all')->where(['author_id' => $entity['id']]));
+    }
+
+    /**
+     * Test that save works with append saveStrategy not deleting or setting null anything
+     *
+     * @return void
+     */
+    public function testSaveAppendSaveStrategy()
+    {
+        $authors = new Table(
+            [
+                'table' => 'authors',
+                'alias' => 'Authors',
+                'connection' => $this->connection,
+                'entityClass' => 'Cake\ORM\Entity',
+            ]
+        );
+
+        $authors->hasMany('Articles', ['saveStrategy' => 'append']);
+
+        $entity = $authors->newEntity([
+            'name' => 'mylux',
+            'articles' => [
+                ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
+                ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
+                ['title' => 'One more random post', 'body' => 'The cake is forever']
+            ]
+        ], ['associated' => ['Articles']]);
+
+        $entity = $authors->save($entity, ['associated' => ['Articles']]);
+        $sizeArticles = count($entity->articles);
+
+        $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+
+        $articleId = $entity->articles[0]->id;
+        unset($entity->articles[0]);
+        $entity->dirty('articles', true);
+
+        $authors->save($entity, ['associated' => ['Articles']]);
+
+        $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertTrue($authors->Articles->exists(['id' => $articleId]));
+    }
+
+    /**
+     * Test that save has append as the default save strategy
+     *
+     * @return void
+     */
+    public function testSaveDefaultSaveStrategy()
+    {
+        $authors = new Table(
+            [
+                'table' => 'authors',
+                'alias' => 'Authors',
+                'connection' => $this->connection,
+                'entityClass' => 'Cake\ORM\Entity',
+            ]
+        );
+        $authors->hasMany('Articles', ['saveStrategy' => 'append']);
+        $this->assertEquals('append', $authors->association('articles')->saveStrategy());
+    }
+
+    /**
+     * Test that the associated entities are unlinked and deleted when they are dependent
+     *
+     * @return void
+     */
+    public function testSaveReplaceSaveStrategyDependent()
+    {
+        $authors = new Table(
+            [
+                'table' => 'authors',
+                'alias' => 'Authors',
+                'connection' => $this->connection,
+                'entityClass' => 'Cake\ORM\Entity',
+            ]
+        );
+
+        $authors->hasMany('Articles', ['saveStrategy' => 'replace', 'dependent' => true]);
+
+        $entity = $authors->newEntity([
+            'name' => 'mylux',
+            'articles' => [
+                ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
+                ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
+                ['title' => 'One more random post', 'body' => 'The cake is forever']
+            ]
+        ], ['associated' => ['Articles']]);
+
+        $entity = $authors->save($entity, ['associated' => ['Articles']]);
+        $sizeArticles = count($entity->articles);
+        $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+
+        $articleId = $entity->articles[0]->id;
+        unset($entity->articles[0]);
+        $entity->dirty('articles', true);
+
+        $authors->save($entity, ['associated' => ['Articles']]);
+
+        $this->assertEquals($sizeArticles - 1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertFalse($authors->Articles->exists(['id' => $articleId]));
+    }
+
+    /**
+     * Test that the associated entities are unlinked and deleted when they have a not nullable foreign key
+     *
+     * @return void
+     */
+    public function testSaveReplaceSaveStrategyNotNullable()
+    {
+        $articles = new Table(
+            [
+                'table' => 'articles',
+                'alias' => 'Articles',
+                'connection' => $this->connection,
+                'entityClass' => 'Cake\ORM\Entity',
+            ]
+        );
+
+        $articles->hasMany('Comments', ['saveStrategy' => 'replace']);
+
+        $article = $articles->newEntity([
+            'title' => 'Bakeries are sky rocketing',
+            'body' => 'All because of cake',
+            'comments' => [
+                [
+                    'user_id' => 1,
+                    'comment' => 'That is true!'
+                ],
+                [
+                    'user_id' => 2,
+                    'comment' => 'Of course'
+                ]
+            ]
+        ], ['associated' => ['Comments']]);
+
+        $article = $articles->save($article, ['associated' => ['Comments']]);
+        $commentId = $article->comments[0]->id;
+        $sizeComments = count($article->comments);
+
+        $this->assertEquals($sizeComments, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
+        $this->assertTrue($articles->Comments->exists(['id' => $commentId]));
+
+        unset($article->comments[0]);
+        $article->dirty('comments', true);
+        $article = $articles->save($article, ['associated' => ['Comments']]);
+
+        $this->assertEquals($sizeComments - 1, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
+        $this->assertFalse($articles->Comments->exists(['id' => $commentId]));
+    }
+
+    /**
+     * Test that the associated entities are unlinked and deleted when they have a not nullable foreign key
+     *
+     * @return void
+     */
+    public function testSaveReplaceSaveStrategyAdding()
+    {
+        $articles = new Table(
+            [
+                'table' => 'articles',
+                'alias' => 'Articles',
+                'connection' => $this->connection,
+                'entityClass' => 'Cake\ORM\Entity',
+            ]
+        );
+
+        $articles->hasMany('Comments', ['saveStrategy' => 'replace']);
+
+        $article = $articles->newEntity([
+            'title' => 'Bakeries are sky rocketing',
+            'body' => 'All because of cake',
+            'comments' => [
+                [
+                    'user_id' => 1,
+                    'comment' => 'That is true!'
+                ],
+                [
+                    'user_id' => 2,
+                    'comment' => 'Of course'
+                ]
+            ]
+        ], ['associated' => ['Comments']]);
+
+        $article = $articles->save($article, ['associated' => ['Comments']]);
+        $commentId = $article->comments[0]->id;
+        $sizeComments = count($article->comments);
+        $articleId = $article->id;
+
+        $this->assertEquals($sizeComments, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
+        $this->assertTrue($articles->Comments->exists(['id' => $commentId]));
+
+        unset($article->comments[0]);
+        $article->comments[] = $articles->Comments->newEntity([
+            'user_id' => 1,
+            'comment' => 'new comment'
+        ]);
+
+        $article->dirty('comments', true);
+        $article = $articles->save($article, ['associated' => ['Comments']]);
+
+        $this->assertEquals($sizeComments, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
+        $this->assertFalse($articles->Comments->exists(['id' => $commentId]));
+        $this->assertTrue($articles->Comments->exists(['comment' => 'new comment', 'article_id' => $articleId]));
     }
 
     /**
@@ -3062,18 +3368,7 @@ class TableTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Query', $result);
         $this->assertNull($result->clause('limit'));
         $expected = new QueryExpression();
-        $expected->typeMap()->defaults([
-            'Users.id' => 'integer',
-            'id' => 'integer',
-            'Users.username' => 'string',
-            'username' => 'string',
-            'Users.password' => 'string',
-            'password' => 'string',
-            'Users.created' => 'timestamp',
-            'created' => 'timestamp',
-            'Users.updated' => 'timestamp',
-            'updated' => 'timestamp',
-        ]);
+        $expected->typeMap()->defaults($this->usersTypeMap->toArray());
         $expected->add(
             ['or' => ['Users.author_id' => 1, 'Users.published' => 'Y']]
         );
@@ -3574,7 +3869,8 @@ class TableTest extends TestCase
         ], $options);
 
         $newTag = new \TestApp\Model\Entity\Tag([
-            'name' => 'Foo'
+            'name' => 'Foo',
+            'description' => 'Foo desc'
         ], $source);
         $tags[] = new \TestApp\Model\Entity\Tag([
             'id' => 3
@@ -3593,6 +3889,503 @@ class TableTest extends TestCase
         $this->assertEquals($article->tags[2]->id, $tags[0]->id);
         $this->assertEquals($article->tags[3], $tags[1]);
     }
+
+    /**
+     * Integration test for linking entities with HasMany
+     *
+     * @return void
+     */
+    public function testLinkHasMany()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = TableRegistry::get('Articles');
+
+        $authors->hasMany('Articles', [
+            'foreignKey' => 'author_id'
+        ]);
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ]
+            ]
+        );
+
+        $sizeArticles = count($newArticles);
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+
+
+        $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
+        $this->assertCount($sizeArticles, $author->articles);
+        $this->assertFalse($author->dirty('articles'));
+    }
+
+    /**
+     * Integration test for linking entities with HasMany combined with ReplaceSaveStrategy. It must append, not unlinking anything
+     *
+     * @return void
+     */
+    public function testLinkHasManyReplaceSaveStrategy()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = TableRegistry::get('Articles');
+
+        $authors->hasMany('Articles', [
+            'foreignKey' => 'author_id',
+            'saveStrategy' => 'replace'
+        ]);
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ]
+            ]
+        );
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+
+        $sizeArticles = count($newArticles);
+
+        $newArticles = $articles->newEntities(
+            [
+                [
+                    'title' => 'Nothing but the cake',
+                    'body' => 'It is all that we need'
+                ]
+            ]
+        );
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+
+        $sizeArticles++;
+
+        $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
+        $this->assertCount($sizeArticles, $author->articles);
+        $this->assertFalse($author->dirty('articles'));
+    }
+
+    /**
+     * Integration test for linking entities with HasMany. The input contains already linked entities and they should not appeat duplicated
+     *
+     * @return void
+     */
+    public function testLinkHasManyExisting()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = TableRegistry::get('Articles');
+
+        $authors->hasMany('Articles', [
+            'foreignKey' => 'author_id',
+            'saveStrategy' => 'replace'
+        ]);
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ]
+            ]
+        );
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+
+        $sizeArticles = count($newArticles);
+
+        $newArticles = array_merge(
+            $author->articles,
+            $articles->newEntities(
+                [
+                    [
+                        'title' => 'Nothing but the cake',
+                        'body' => 'It is all that we need'
+                    ]
+                ]
+            )
+        );
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+
+        $sizeArticles++;
+
+        $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
+        $this->assertCount($sizeArticles, $author->articles);
+        $this->assertFalse($author->dirty('articles'));
+    }
+
+    /**
+     * Integration test for unlinking entities with HasMany. The association property must be cleaned
+     *
+     * @return void
+     */
+    public function testUnlinkHasManyCleanProperty()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = TableRegistry::get('Articles');
+
+        $authors->hasMany('Articles', [
+            'foreignKey' => 'author_id',
+            'saveStrategy' => 'replace'
+        ]);
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ],
+                [
+                    'title' => 'Creamy cake recipe',
+                    'body' => 'chocolate and cream'
+                ],
+            ]
+        );
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+
+        $sizeArticles = count($newArticles);
+
+        $articlesToUnlink = [ $author->articles[0], $author->articles[1] ];
+
+        $authors->Articles->unlink($author, $articlesToUnlink);
+
+        $this->assertCount($sizeArticles - count($articlesToUnlink), $authors->Articles->findAllByAuthorId($author->id));
+        $this->assertCount($sizeArticles - count($articlesToUnlink), $author->articles);
+        $this->assertFalse($author->dirty('articles'));
+    }
+
+    /**
+     * Integration test for unlinking entities with HasMany. The association property must stay unchanged
+     *
+     * @return void
+     */
+    public function testUnlinkHasManyNotCleanProperty()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = TableRegistry::get('Articles');
+
+        $authors->hasMany('Articles', [
+            'foreignKey' => 'author_id',
+            'saveStrategy' => 'replace'
+        ]);
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ],
+                [
+                    'title' => 'Creamy cake recipe',
+                    'body' => 'chocolate and cream'
+                ],
+            ]
+        );
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+
+        $sizeArticles = count($newArticles);
+
+        $articlesToUnlink = [ $author->articles[0], $author->articles[1] ];
+
+        $authors->Articles->unlink($author, $articlesToUnlink, ['cleanProperty' => false]);
+
+        $this->assertCount($sizeArticles - count($articlesToUnlink), $authors->Articles->findAllByAuthorId($author->id));
+        $this->assertCount($sizeArticles, $author->articles);
+        $this->assertFalse($author->dirty('articles'));
+    }
+
+    /**
+     * Integration test for unlinking entities with HasMany.
+     * Checking that no error happens when the hasMany property is originally
+     * null
+     *
+     * @return void
+     */
+    public function testUnlinkHasManyEmpty()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = TableRegistry::get('Articles');
+        $authors->hasMany('Articles');
+        $author = $authors->get(1);
+        $article = $authors->Articles->get(1);
+
+        $authors->Articles->unlink($author, [$article]);
+    }
+
+
+    /**
+     * Integration test for replacing entities which depend on their source entity with HasMany and failing transaction. False should be returned when
+     * unlinking fails while replacing even when cascadeCallbacks is enabled
+     *
+     * @return void
+     */
+    public function testReplaceHasManyOnErrorDependentCascadeCallbacks()
+    {
+        $articles = $this->getMock(
+            'Cake\ORM\Table',
+            ['delete'],
+            [[
+                'connection' => $this->connection,
+                'alias' => 'Articles',
+                'table' => 'articles',
+            ]]
+        );
+
+        $articles->method('delete')->willReturn(false);
+
+        $associations = new AssociationCollection();
+
+        $hasManyArticles = $this->getMock(
+            'Cake\ORM\Association\HasMany',
+            ['target'],
+            [
+                'articles',
+                [
+                    'target' => $articles,
+                    'foreignKey' => 'author_id',
+                    'dependent' => true,
+                    'cascadeCallbacks' => true
+                ]
+            ]
+        );
+        $hasManyArticles->method('target')->willReturn($articles);
+
+        $associations->add('articles', $hasManyArticles);
+
+        $authors = new Table([
+            'connection' => $this->connection,
+            'alias' => 'Authors',
+            'table' => 'authors',
+            'associations' => $associations
+        ]);
+        $authors->Articles->source($authors);
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ]
+            ]
+        );
+
+        $sizeArticles = count($newArticles);
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+        $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
+        $this->assertEquals(count($author->articles), $sizeArticles);
+
+        $newArticles = array_merge(
+            $author->articles,
+            $articles->newEntities(
+                [
+                    [
+                        'title' => 'Cheese cake recipe',
+                        'body' => 'The secrets of mixing salt and sugar'
+                    ],
+                    [
+                        'title' => 'Not another piece of cake',
+                        'body' => 'This is the best'
+                    ]
+                ]
+            )
+        );
+        unset($newArticles[0]);
+
+        $this->assertFalse($authors->Articles->replace($author, $newArticles));
+        $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
+    }
+
+
+    /**
+     * Integration test for replacing entities with HasMany and an empty target list. The transaction must be successfull
+     *
+     * @return void
+     */
+    public function testReplaceHasManyEmptyList()
+    {
+        $authors = new Table([
+            'connection' => $this->connection,
+            'alias' => 'Authors',
+            'table' => 'authors',
+        ]);
+        $authors->hasMany('Articles');
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $authors->Articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ]
+            ]
+        );
+
+        $sizeArticles = count($newArticles);
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+        $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
+        $this->assertEquals(count($author->articles), $sizeArticles);
+
+        $newArticles = [];
+
+        $this->assertTrue($authors->Articles->replace($author, $newArticles));
+        $this->assertCount(0, $authors->Articles->findAllByAuthorId($author->id));
+    }
+
+    /**
+     * Integration test for replacing entities with HasMany and no already persisted entities. The transaction must be successfull.
+     * Replace operation should prevent considering 0 changed records an error when they are not found in the table
+     *
+     * @return void
+     */
+    public function testReplaceHasManyNoPersistedEntities()
+    {
+        $authors = new Table([
+            'connection' => $this->connection,
+            'alias' => 'Authors',
+            'table' => 'authors',
+        ]);
+        $authors->hasMany('Articles');
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $authors->Articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ]
+            ]
+        );
+
+        $authors->Articles->deleteAll(['1=1']);
+
+        $sizeArticles = count($newArticles);
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+        $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
+        $this->assertEquals(count($author->articles), $sizeArticles);
+        $this->assertTrue($authors->Articles->replace($author, $newArticles));
+        $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
+    }
+
+    /**
+     * Integration test for replacing entities with HasMany.
+     *
+     * @return void
+     */
+    public function testReplaceHasMany()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = TableRegistry::get('Articles');
+
+        $authors->hasMany('Articles', [
+            'foreignKey' => 'author_id'
+        ]);
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ]
+            ]
+        );
+
+        $sizeArticles = count($newArticles);
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+
+        $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
+        $this->assertEquals(count($author->articles), $sizeArticles);
+
+        $newArticles = array_merge(
+            $author->articles,
+            $articles->newEntities(
+                [
+                    [
+                        'title' => 'Cheese cake recipe',
+                        'body' => 'The secrets of mixing salt and sugar'
+                    ],
+                    [
+                        'title' => 'Not another piece of cake',
+                        'body' => 'This is the best'
+                    ]
+                ]
+            )
+        );
+        unset($newArticles[0]);
+
+        $this->assertTrue($authors->Articles->replace($author, $newArticles));
+        $this->assertEquals(count($newArticles), count($author->articles));
+        $this->assertEquals((new Collection($newArticles))->extract('title'), (new Collection($author->articles))->extract('title'));
+    }
+
 
     /**
      * Integration test to show how to unlink a single record from a belongsToMany
@@ -3744,6 +4537,415 @@ class TableTest extends TestCase
         $this->assertCount(2, $article->tags);
         $this->assertEquals(2, $article->tags[0]->id);
         $this->assertEquals(3, $article->tags[1]->id);
+    }
+
+    /**
+     * Tests that options are being passed through to the internal table method calls.
+     *
+     * @return void
+     */
+    public function testOptionsBeingPassedToImplicitBelongsToManyDeletesUsingSaveReplace()
+    {
+        $articles = TableRegistry::get('Articles');
+
+        $tags = $articles->belongsToMany('Tags');
+        $tags->saveStrategy(BelongsToMany::SAVE_REPLACE);
+        $tags->dependent(true);
+        $tags->cascadeCallbacks(true);
+
+        $actualOptions = null;
+        $tags->junction()->eventManager()->on(
+            'Model.beforeDelete',
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
+                $actualOptions = $options->getArrayCopy();
+            }
+        );
+
+        $article = $articles->get(1);
+        $article->tags = [];
+        $article->dirty('tags', true);
+
+        $result = $articles->save($article, ['foo' => 'bar']);
+        $this->assertNotEmpty($result);
+
+        $expected = [
+            '_primary' => false,
+            'foo' => 'bar',
+            'atomic' => true,
+            'checkRules' => true,
+            'checkExisting' => true
+        ];
+        $this->assertEquals($expected, $actualOptions);
+    }
+
+    /**
+     * Tests that options are being passed through to the internal table method calls.
+     *
+     * @return void
+     */
+    public function testOptionsBeingPassedToInternalSaveCallsUsingBelongsToManyLink()
+    {
+        $articles = TableRegistry::get('Articles');
+        $tags = $articles->belongsToMany('Tags');
+
+        $actualOptions = null;
+        $tags->junction()->eventManager()->on(
+            'Model.beforeSave',
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
+                $actualOptions = $options->getArrayCopy();
+            }
+        );
+
+        $article = $articles->get(1);
+
+        $result = $tags->link($article, [$tags->target()->get(2)], ['foo' => 'bar']);
+        $this->assertTrue($result);
+
+        $expected = [
+            '_primary' => true,
+            'foo' => 'bar',
+            'atomic' => true,
+            'checkRules' => true,
+            'checkExisting' => true,
+            'associated' => [
+                'articles' => [],
+                'tags' => []
+            ]
+        ];
+        $this->assertEquals($expected, $actualOptions);
+    }
+
+    /**
+     * Tests that options are being passed through to the internal table method calls.
+     *
+     * @return void
+     */
+    public function testOptionsBeingPassedToInternalSaveCallsUsingBelongsToManyUnlink()
+    {
+        $articles = TableRegistry::get('Articles');
+        $tags = $articles->belongsToMany('Tags');
+
+        $actualOptions = null;
+        $tags->junction()->eventManager()->on(
+            'Model.beforeDelete',
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
+                $actualOptions = $options->getArrayCopy();
+            }
+        );
+
+        $article = $articles->get(1);
+
+        $tags->unlink($article, [$tags->target()->get(2)], ['foo' => 'bar']);
+
+        $expected = [
+            '_primary' => true,
+            'foo' => 'bar',
+            'atomic' => true,
+            'checkRules' => true,
+            'cleanProperty' => true
+        ];
+        $this->assertEquals($expected, $actualOptions);
+    }
+
+    /**
+     * Tests that options are being passed through to the internal table method calls.
+     *
+     * @return void
+     */
+    public function testOptionsBeingPassedToInternalSaveAndDeleteCallsUsingBelongsToManyReplaceLinks()
+    {
+        $articles = TableRegistry::get('Articles');
+        $tags = $articles->belongsToMany('Tags');
+
+        $actualSaveOptions = null;
+        $actualDeleteOptions = null;
+        $tags->junction()->eventManager()->on(
+            'Model.beforeSave',
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$actualSaveOptions) {
+                $actualSaveOptions = $options->getArrayCopy();
+            }
+        );
+        $tags->junction()->eventManager()->on(
+            'Model.beforeDelete',
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$actualDeleteOptions) {
+                $actualDeleteOptions = $options->getArrayCopy();
+            }
+        );
+
+        $article = $articles->get(1);
+
+        $result = $tags->replaceLinks(
+            $article,
+            [
+                $tags->target()->newEntity(['name' => 'new']),
+                $tags->target()->get(2)
+            ],
+            ['foo' => 'bar']
+        );
+        $this->assertTrue($result);
+
+        $expected = [
+            '_primary' => true,
+            'foo' => 'bar',
+            'atomic' => true,
+            'checkRules' => true,
+            'checkExisting' => true,
+            'associated' => []
+        ];
+        $this->assertEquals($expected, $actualSaveOptions);
+
+        $expected = [
+            '_primary' => true,
+            'foo' => 'bar',
+            'atomic' => true,
+            'checkRules' => true
+        ];
+        $this->assertEquals($expected, $actualDeleteOptions);
+    }
+
+    /**
+     * Tests that options are being passed through to the internal table method calls.
+     *
+     * @return void
+     */
+    public function testOptionsBeingPassedToImplicitHasManyDeletesUsingSaveReplace()
+    {
+        $authors = TableRegistry::get('Authors');
+
+        $articles = $authors->hasMany('Articles');
+        $articles->saveStrategy(HasMany::SAVE_REPLACE);
+        $articles->dependent(true);
+        $articles->cascadeCallbacks(true);
+
+        $actualOptions = null;
+        $articles->target()->eventManager()->on(
+            'Model.beforeDelete',
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
+                $actualOptions = $options->getArrayCopy();
+            }
+        );
+
+        $author = $authors->get(1);
+        $author->articles = [];
+        $author->dirty('articles', true);
+
+        $result = $authors->save($author, ['foo' => 'bar']);
+        $this->assertNotEmpty($result);
+
+        $expected = [
+            '_primary' => false,
+            'foo' => 'bar',
+            'atomic' => true,
+            'checkRules' => true,
+            'checkExisting' => true,
+            '_sourceTable' => $authors
+        ];
+        $this->assertEquals($expected, $actualOptions);
+    }
+
+    /**
+     * Tests that options are being passed through to the internal table method calls.
+     *
+     * @return void
+     */
+    public function testOptionsBeingPassedToInternalSaveCallsUsingHasManyLink()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = $authors->hasMany('Articles');
+
+        $actualOptions = null;
+        $articles->target()->eventManager()->on(
+            'Model.beforeSave',
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
+                $actualOptions = $options->getArrayCopy();
+            }
+        );
+
+        $author = $authors->get(1);
+        $author->articles = [];
+        $author->dirty('articles', true);
+
+        $result = $articles->link($author, [$articles->target()->get(2)], ['foo' => 'bar']);
+        $this->assertTrue($result);
+
+        $expected = [
+            '_primary' => true,
+            'foo' => 'bar',
+            'atomic' => true,
+            'checkRules' => true,
+            'checkExisting' => true,
+            '_sourceTable' => $authors,
+            'associated' => [
+                'authors' => [],
+                'tags' => [],
+                'articlestags' => []
+            ]
+        ];
+        $this->assertEquals($expected, $actualOptions);
+    }
+
+    /**
+     * Tests that options are being passed through to the internal table method calls.
+     *
+     * @return void
+     */
+    public function testOptionsBeingPassedToInternalSaveCallsUsingHasManyUnlink()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = $authors->hasMany('Articles');
+        $articles->dependent(true);
+        $articles->cascadeCallbacks(true);
+
+        $actualOptions = null;
+        $articles->target()->eventManager()->on(
+            'Model.beforeDelete',
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
+                $actualOptions = $options->getArrayCopy();
+            }
+        );
+
+        $author = $authors->get(1);
+        $author->articles = [];
+        $author->dirty('articles', true);
+
+        $articles->unlink($author, [$articles->target()->get(1)], ['foo' => 'bar']);
+
+        $expected = [
+            '_primary' => true,
+            'foo' => 'bar',
+            'atomic' => true,
+            'checkRules' => true,
+            'cleanProperty' => true
+        ];
+        $this->assertEquals($expected, $actualOptions);
+    }
+
+    /**
+     * Tests that options are being passed through to the internal table method calls.
+     *
+     * @return void
+     */
+    public function testOptionsBeingPassedToInternalSaveAndDeleteCallsUsingHasManyReplace()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = $authors->hasMany('Articles');
+        $articles->dependent(true);
+        $articles->cascadeCallbacks(true);
+
+        $actualSaveOptions = null;
+        $actualDeleteOptions = null;
+        $articles->target()->eventManager()->on(
+            'Model.beforeSave',
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$actualSaveOptions) {
+                $actualSaveOptions = $options->getArrayCopy();
+            }
+        );
+        $articles->target()->eventManager()->on(
+            'Model.beforeDelete',
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$actualDeleteOptions) {
+                $actualDeleteOptions = $options->getArrayCopy();
+            }
+        );
+
+        $author = $authors->get(1);
+
+        $result = $articles->replace(
+            $author,
+            [
+                $articles->target()->newEntity(['title' => 'new', 'body' => 'new']),
+                $articles->target()->get(1)
+            ],
+            ['foo' => 'bar']
+        );
+        $this->assertTrue($result);
+
+        $expected = [
+            '_primary' => true,
+            'foo' => 'bar',
+            'atomic' => true,
+            'checkRules' => true,
+            'checkExisting' => true,
+            '_sourceTable' => $authors,
+            'associated' => [
+                'authors' => [],
+                'tags' => [],
+                'articlestags' => []
+            ]
+        ];
+        $this->assertEquals($expected, $actualSaveOptions);
+
+        $expected = [
+            '_primary' => true,
+            'foo' => 'bar',
+            'atomic' => true,
+            'checkRules' => true,
+            '_sourceTable' => $authors
+        ];
+        $this->assertEquals($expected, $actualDeleteOptions);
+    }
+
+    /**
+     * Tests backwards compatibility of the the `$options` argument, formerly `$cleanProperty`.
+     *
+     * @return void
+     */
+    public function testBackwardsCompatibilityForBelongsToManyUnlinkCleanPropertyOption()
+    {
+        $articles = TableRegistry::get('Articles');
+        $tags = $articles->belongsToMany('Tags');
+
+        $actualOptions = null;
+        $tags->junction()->eventManager()->on(
+            'Model.beforeDelete',
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
+                $actualOptions = $options->getArrayCopy();
+            }
+        );
+
+        $article = $articles->get(1);
+
+        $tags->unlink($article, [$tags->target()->get(1)], false);
+        $this->assertArrayHasKey('cleanProperty', $actualOptions);
+        $this->assertFalse($actualOptions['cleanProperty']);
+
+        $actualOptions = null;
+        $tags->unlink($article, [$tags->target()->get(2)]);
+        $this->assertArrayHasKey('cleanProperty', $actualOptions);
+        $this->assertTrue($actualOptions['cleanProperty']);
+    }
+
+    /**
+     * Tests backwards compatibility of the the `$options` argument, formerly `$cleanProperty`.
+     *
+     * @return void
+     */
+    public function testBackwardsCompatibilityForHasManyUnlinkCleanPropertyOption()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = $authors->hasMany('Articles');
+        $articles->dependent(true);
+        $articles->cascadeCallbacks(true);
+
+        $actualOptions = null;
+        $articles->target()->eventManager()->on(
+            'Model.beforeDelete',
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
+                $actualOptions = $options->getArrayCopy();
+            }
+        );
+
+        $author = $authors->get(1);
+        $author->articles = [];
+        $author->dirty('articles', true);
+
+        $articles->unlink($author, [$articles->target()->get(1)], false);
+        $this->assertArrayHasKey('cleanProperty', $actualOptions);
+        $this->assertFalse($actualOptions['cleanProperty']);
+
+        $actualOptions = null;
+        $articles->unlink($author, [$articles->target()->get(3)]);
+        $this->assertArrayHasKey('cleanProperty', $actualOptions);
+        $this->assertTrue($actualOptions['cleanProperty']);
     }
 
     /**

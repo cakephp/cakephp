@@ -58,7 +58,7 @@ class RequestHandlerComponent extends Component
      * Contains the file extension parsed out by the Router
      *
      * @var string
-     * @see Router::extensions()
+     * @see \Cake\Routing\Router::extensions()
      */
     public $ext = null;
 
@@ -91,7 +91,7 @@ class RequestHandlerComponent extends Component
     /**
      * Constructor. Parses the accepted content types accepted by the client using HTTP_ACCEPT
      *
-     * @param ComponentRegistry $registry ComponentRegistry object.
+     * @param \Cake\Controller\ComponentRegistry $registry ComponentRegistry object.
      * @param array $config Array of config.
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
@@ -133,7 +133,7 @@ class RequestHandlerComponent extends Component
      *
      * @param array $config The config data.
      * @return void
-     * @see Router::extensions()
+     * @see \Cake\Routing\Router::extensions()
      */
     public function initialize(array $config)
     {
@@ -188,7 +188,7 @@ class RequestHandlerComponent extends Component
      * If the XML data is POSTed, the data is parsed into an XML object, which is assigned
      * to the $data property of the controller, which can then be saved to a model object.
      *
-     * @param Event $event The startup event that was fired.
+     * @param \Cake\Event\Event $event The startup event that was fired.
      * @return void
      */
     public function startup(Event $event)
@@ -242,22 +242,27 @@ class RequestHandlerComponent extends Component
     /**
      * Handles (fakes) redirects for AJAX requests using requestAction()
      *
-     * @param Event $event The Controller.beforeRedirect event.
+     * @param \Cake\Event\Event $event The Controller.beforeRedirect event.
      * @param string|array $url A string or array containing the redirect location
      * @param \Cake\Network\Response $response The response object.
-     * @return void|\Cake\Network\Response The response object if the redirect is caught.
+     * @return \Cake\Network\Response|null The response object if the redirect is caught.
      */
     public function beforeRedirect(Event $event, $url, Response $response)
     {
         $request = $this->request;
         if (!$request->is('ajax')) {
-            return;
+            return null;
         }
         if (empty($url)) {
-            return;
+            return null;
         }
         if (is_array($url)) {
             $url = Router::url($url + ['_base' => false]);
+        }
+        $query = [];
+        if (strpos($url, '?') !== false) {
+            list($url, $querystr) = explode('?', $url, 2);
+            parse_str($querystr, $query);
         }
         $controller = $event->subject();
         $response->body($controller->requestAction($url, [
@@ -265,7 +270,9 @@ class RequestHandlerComponent extends Component
             'bare' => false,
             'environment' => [
                 'REQUEST_METHOD' => 'GET'
-            ]
+            ],
+            'query' => $query,
+            'cookies' => $request->cookies
         ]));
         $response->statusCode(200);
         return $response;
@@ -278,10 +285,10 @@ class RequestHandlerComponent extends Component
      * "304 Not Modified" header.
      *
      * - If Router::extensions() is enabled, the layout and template type are
-     *   switched based on the parsed extension or Accept-Type header. For example,
+     *   switched based on the parsed extension or `Accept` header. For example,
      *   if `controller/action.xml` is requested, the view path becomes
      *   `app/View/Controller/xml/action.ctp`. Also if `controller/action` is
-     *   requested with `Accept-Type: application/xml` in the headers the view
+     *   requested with `Accept: application/xml` in the headers the view
      *   path will become `app/View/Controller/xml/action.ctp`. Layout and template
      *   types will only switch to mime-types recognized by Cake\Network\Response.
      *   If you need to declare additional mime-types, you can do so using
@@ -291,7 +298,7 @@ class RequestHandlerComponent extends Component
      * - If the extension is of a type that RequestHandler understands, it will
      *   set that Content-type in the response header.
      *
-     * @param Event $event The Controller.beforeRender event.
+     * @param \Cake\Event\Event $event The Controller.beforeRender event.
      * @return bool false if the render process should be aborted
      */
     public function beforeRender(Event $event)
@@ -385,7 +392,7 @@ class RequestHandlerComponent extends Component
      *
      * Returns true if the client accepts xml.
      *
-     * @param string|array $type Can be null (or no parameter), a string type name, or an
+     * @param string|array|null $type Can be null (or no parameter), a string type name, or an
      *   array of types
      * @return mixed If null or no parameter is passed, returns an array of content
      *   types the client accepts. If a string is passed, returns true
@@ -419,7 +426,7 @@ class RequestHandlerComponent extends Component
     /**
      * Determines the content type of the data the client has sent (i.e. in a POST request)
      *
-     * @param string|array $type Can be null (or no parameter), a string type name, or an array of types
+     * @param string|array|null $type Can be null (or no parameter), a string type name, or an array of types
      * @return mixed If a single type is supplied a boolean will be returned. If no type is provided
      *   The mapped value of CONTENT_TYPE will be returned. If an array is supplied the first type
      *   in the request content type will be returned.
@@ -464,7 +471,7 @@ class RequestHandlerComponent extends Component
      * if provided, and secondarily by the list of content-types provided in
      * HTTP_ACCEPT.
      *
-     * @param string|array $type An optional array of 'friendly' content-type names, i.e.
+     * @param string|array|null $type An optional array of 'friendly' content-type names, i.e.
      *   'html', 'xml', 'js', etc.
      * @return mixed If $type is null or not provided, the first content-type in the
      *    list, based on preference, is returned. If a single type is provided
@@ -524,11 +531,11 @@ class RequestHandlerComponent extends Component
      * $this->RequestHandler->renderAs($this, 'xml', ['attachment' => 'myfile.xml'];
      * ```
      *
-     * @param Controller $controller A reference to a controller object
+     * @param \Cake\Controller\Controller $controller A reference to a controller object
      * @param string $type Type of response to send (e.g: 'ajax')
      * @param array $options Array of options to use
      * @return void
-     * @see RequestHandlerComponent::respondAs()
+     * @see \Cake\Controller\Component\RequestHandlerComponent::respondAs()
      */
     public function renderAs(Controller $controller, $type, array $options = [])
     {
@@ -557,11 +564,11 @@ class RequestHandlerComponent extends Component
             $builder->className($viewClass);
         } else {
             if (empty($this->_renderType)) {
-                $builder->templatePath($builder->templatePath() . DS . $type);
+                $builder->templatePath($builder->templatePath() . DIRECTORY_SEPARATOR . $type);
             } else {
                 $builder->templatePath(preg_replace(
                     "/([\/\\\\]{$this->_renderType})$/",
-                    DS . $type,
+                    DIRECTORY_SEPARATOR . $type,
                     $builder->templatePath()
                 ));
             }

@@ -100,6 +100,19 @@ class UnaryExpression implements ExpressionInterface
     {
         if ($this->_value instanceof ExpressionInterface) {
             $callable($this->_value);
+            $this->_value->traverse($callable);
+        }
+    }
+
+    /**
+     * Perform a deep clone of the inner expression.
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        if ($this->_value instanceof ExpressionInterface) {
+            $this->_value = clone $this->_value;
         }
     }
 }

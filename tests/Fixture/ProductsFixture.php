@@ -37,7 +37,7 @@ class ProductsFixture extends TestFixture
         'category' => ['type' => 'integer', 'null' => false],
         'name' => ['type' => 'string', 'null' => false],
         'price' => ['type' => 'integer'],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id', 'category']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['category', 'id']]]
     ];
 
     /**

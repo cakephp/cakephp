@@ -14,6 +14,7 @@
  */
 namespace Cake\Database\Expression;
 
+use Cake\Database\Exception as DatabaseException;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 
@@ -153,6 +154,22 @@ class Comparison implements ExpressionInterface, FieldInterface
     }
 
     /**
+     * Create a deep clone.
+     *
+     * Clones the field and value if they are expression objects.
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        foreach (['_value', '_field'] as $prop) {
+            if ($prop instanceof ExpressionInterface) {
+                $this->{$prop} = clone $this->{$prop};
+            }
+        }
+    }
+
+    /**
      * Returns a template and a placeholder for the value after registering it
      * with the placeholder $generator
      *
@@ -173,9 +190,12 @@ class Comparison implements ExpressionInterface, FieldInterface
             $value = $this->_flattenValue($this->_value, $generator, $type);
 
             // To avoid SQL errors when comparing a field to a list of empty values,
-            // generate a condition that will always evaluate to false
+            // better just throw an exception here
             if ($value === '') {
-                return ['1 != 1', ''];
+                $field = $this->_field instanceof ExpressionInterface ? $this->_field->sql($generator) : $this->_field;
+                throw new DatabaseException(
+                    "Impossible to generate condition with empty list of values for field ($field)"
+                );
             }
         } else {
             $template .= '%s %s';
@@ -206,7 +226,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      *
      * @param array|\Traversable $value the value to flatten
      * @param \Cake\Database\ValueBinder $generator The value binder to use
-     * @param string|array $type the type to cast values to
+     * @param string|array|null $type the type to cast values to
      * @return string
      */
     protected function _flattenValue($value, $generator, $type = null)

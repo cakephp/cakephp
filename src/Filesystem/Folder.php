@@ -163,7 +163,7 @@ class Folder
      *   to false to get unsorted results.
      * @param array|bool $exceptions Either an array or boolean true will not grab dot files
      * @param bool $fullPath True returns the full path
-     * @return mixed Contents of current directory as an array, an empty array on failure
+     * @return array Contents of current directory as an array, an empty array on failure
      */
     public function read($sort = true, $exceptions = false, $fullPath = false)
     {
@@ -286,7 +286,6 @@ class Folder
         if (empty($path)) {
             return false;
         }
-
         return $path[0] === '/' ||
             preg_match('/^[A-Z]:\\\\/i', $path) ||
             substr($path, 0, 2) === '\\\\' ||
@@ -452,7 +451,7 @@ class Folder
      * @param array|bool $exceptions Either an array of files/folder to exclude
      *   or boolean true to not grab dot files/folders
      * @param string|null $type either 'file' or 'dir'. Null returns both files and directories
-     * @return mixed array of nested directories and files in each directory
+     * @return array Array of nested directories and files in each directory
      */
     public function tree($path = null, $exceptions = false, $type = null)
     {
@@ -518,7 +517,7 @@ class Folder
      * @param string $pathname The directory structure to create. Either an absolute or relative
      *   path. If the path is relative and exists in the process' cwd it will not be created.
      *   Otherwise relative paths will be prefixed with the current pwd().
-     * @param int $mode octal value 0755
+     * @param int|bool $mode octal value 0755
      * @return bool Returns TRUE on success, FALSE on failure
      */
     public function create($pathname, $mode = false)
@@ -827,13 +826,13 @@ class Folder
      */
     public function realpath($path)
     {
-        $path = str_replace('/', DIRECTORY_SEPARATOR, trim($path));
         if (strpos($path, '..') === false) {
             if (!Folder::isAbsolute($path)) {
                 $path = Folder::addPathElement($this->path, $path);
             }
             return $path;
         }
+        $path = str_replace('/', DIRECTORY_SEPARATOR, trim($path));
         $parts = explode(DIRECTORY_SEPARATOR, $path);
         $newparts = [];
         $newpath = '';

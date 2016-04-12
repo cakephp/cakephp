@@ -35,9 +35,9 @@ class AjaxView extends View
     /**
      * Constructor
      *
-     * @param \Cake\Network\Request $request The request object.
-     * @param \Cake\Network\Response $response The response object.
-     * @param \Cake\Event\EventManager $eventManager Event manager object.
+     * @param \Cake\Network\Request|null $request The request object.
+     * @param \Cake\Network\Response|null $response The response object.
+     * @param \Cake\Event\EventManager|null $eventManager Event manager object.
      * @param array $viewOptions View options.
      */
     public function __construct(

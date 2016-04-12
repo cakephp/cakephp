@@ -15,6 +15,7 @@
 namespace Cake\View\Form;
 
 use Cake\Network\Request;
+use Cake\Utility\Hash;
 
 /**
  * Provides a context provider for Cake\Form\Form instances.
@@ -134,10 +135,6 @@ class FormContext implements ContextInterface
      */
     public function error($field)
     {
-        $errors = $this->_form->errors();
-        if (isset($errors[$field])) {
-            return array_values($errors[$field]);
-        }
-        return [];
+        return array_values((array)Hash::get($this->_form->errors(), $field, []));
     }
 }

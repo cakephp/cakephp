@@ -16,9 +16,12 @@ namespace Cake\Test\TestCase\Validation;
 
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
+use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
 use Locale;
+
+require_once __DIR__ . '/stubs.php';
 
 /**
  * Test Case for Validation Class
@@ -122,17 +125,18 @@ class ValidationTest extends TestCase
      */
     public function testAlphaNumericPassedAsArray()
     {
-        $this->assertTrue(Validation::alphaNumeric(['check' => 'frferrf']));
-        $this->assertTrue(Validation::alphaNumeric(['check' => '12234']));
-        $this->assertTrue(Validation::alphaNumeric(['check' => '1w2e2r3t4y']));
-        $this->assertTrue(Validation::alphaNumeric(['check' => '0']));
-        $this->assertFalse(Validation::alphaNumeric(['check' => '12 234']));
-        $this->assertFalse(Validation::alphaNumeric(['check' => 'dfd 234']));
-        $this->assertFalse(Validation::alphaNumeric(['check' => "\n"]));
-        $this->assertFalse(Validation::alphaNumeric(['check' => "\t"]));
-        $this->assertFalse(Validation::alphaNumeric(['check' => "\r"]));
-        $this->assertFalse(Validation::alphaNumeric(['check' => ' ']));
-        $this->assertFalse(Validation::alphaNumeric(['check' => '']));
+        $this->assertTrue(Validation::alphaNumeric('frferrf'));
+        $this->assertTrue(Validation::alphaNumeric('12234'));
+        $this->assertTrue(Validation::alphaNumeric('1w2e2r3t4y'));
+        $this->assertTrue(Validation::alphaNumeric('0'));
+        $this->assertFalse(Validation::alphaNumeric('12 234'));
+        $this->assertFalse(Validation::alphaNumeric('dfd 234'));
+        $this->assertFalse(Validation::alphaNumeric("\n"));
+        $this->assertFalse(Validation::alphaNumeric("\t"));
+        $this->assertFalse(Validation::alphaNumeric("\r"));
+        $this->assertFalse(Validation::alphaNumeric(' '));
+        $this->assertFalse(Validation::alphaNumeric(''));
+        $this->assertFalse(Validation::alphaNumeric(['foo']));
     }
 
     /**
@@ -603,51 +607,51 @@ class ValidationTest extends TestCase
     public function testLuhn()
     {
         //American Express
-        $this->assertTrue(Validation::luhn('370482756063980', true));
+        $this->assertTrue(Validation::luhn('370482756063980'));
         //BankCard
-        $this->assertTrue(Validation::luhn('5610745867413420', true));
+        $this->assertTrue(Validation::luhn('5610745867413420'));
         //Diners Club 14
-        $this->assertTrue(Validation::luhn('30155483651028', true));
+        $this->assertTrue(Validation::luhn('30155483651028'));
         //2004 MasterCard/Diners Club Alliance International 14
-        $this->assertTrue(Validation::luhn('36747701998969', true));
+        $this->assertTrue(Validation::luhn('36747701998969'));
         //2004 MasterCard/Diners Club Alliance US & Canada 16
-        $this->assertTrue(Validation::luhn('5597511346169950', true));
+        $this->assertTrue(Validation::luhn('5597511346169950'));
         //Discover
-        $this->assertTrue(Validation::luhn('6011802876467237', true));
+        $this->assertTrue(Validation::luhn('6011802876467237'));
         //enRoute
-        $this->assertTrue(Validation::luhn('201496944158937', true));
+        $this->assertTrue(Validation::luhn('201496944158937'));
         //JCB 15 digit
-        $this->assertTrue(Validation::luhn('210034762247893', true));
+        $this->assertTrue(Validation::luhn('210034762247893'));
         //JCB 16 digit
-        $this->assertTrue(Validation::luhn('3096806857839939', true));
+        $this->assertTrue(Validation::luhn('3096806857839939'));
         //Maestro (debit card)
-        $this->assertTrue(Validation::luhn('5020147409985219', true));
+        $this->assertTrue(Validation::luhn('5020147409985219'));
         //Mastercard
-        $this->assertTrue(Validation::luhn('5580424361774366', true));
+        $this->assertTrue(Validation::luhn('5580424361774366'));
         //Solo 16
-        $this->assertTrue(Validation::luhn('6767432107064987', true));
+        $this->assertTrue(Validation::luhn('6767432107064987'));
         //Solo 18
-        $this->assertTrue(Validation::luhn('676714834398858593', true));
+        $this->assertTrue(Validation::luhn('676714834398858593'));
         //Solo 19
-        $this->assertTrue(Validation::luhn('6767838565218340113', true));
+        $this->assertTrue(Validation::luhn('6767838565218340113'));
         //Switch 16
-        $this->assertTrue(Validation::luhn('5641829171515733', true));
+        $this->assertTrue(Validation::luhn('5641829171515733'));
         //Switch 18
-        $this->assertTrue(Validation::luhn('493622764224625174', true));
+        $this->assertTrue(Validation::luhn('493622764224625174'));
         //Switch 19
-        $this->assertTrue(Validation::luhn('6759603460617628716', true));
+        $this->assertTrue(Validation::luhn('6759603460617628716'));
         //VISA 13 digit
-        $this->assertTrue(Validation::luhn('4024007174754', true));
+        $this->assertTrue(Validation::luhn('4024007174754'));
         //VISA 16 digit
-        $this->assertTrue(Validation::luhn('4916375389940009', true));
+        $this->assertTrue(Validation::luhn('4916375389940009'));
         //Visa Electron
-        $this->assertTrue(Validation::luhn('4175003346287100', true));
+        $this->assertTrue(Validation::luhn('4175003346287100'));
         //Voyager
-        $this->assertTrue(Validation::luhn('869940697287073', true));
+        $this->assertTrue(Validation::luhn('869940697287073'));
 
-        $this->assertFalse(Validation::luhn('0000000000000000', true));
+        $this->assertFalse(Validation::luhn('0000000000000000'));
 
-        $this->assertFalse(Validation::luhn('869940697287173', true));
+        $this->assertFalse(Validation::luhn('869940697287173'));
     }
 
     /**
@@ -657,9 +661,8 @@ class ValidationTest extends TestCase
      */
     public function testCustomRegexForCc()
     {
-        $this->assertTrue(Validation::cc('12332105933743585', null, null, '/123321\\d{11}/'));
-        $this->assertFalse(Validation::cc('1233210593374358', null, null, '/123321\\d{11}/'));
-        $this->assertFalse(Validation::cc('12312305933743585', null, null, '/123321\\d{11}/'));
+        $this->assertTrue(Validation::cc('370482756063980', null, false, '/123321\\d{11}/'));
+        $this->assertFalse(Validation::cc('1233210593374358', null, false, '/123321\\d{11}/'));
     }
 
     /**
@@ -865,43 +868,6 @@ class ValidationTest extends TestCase
     }
 
     /**
-     * testComparisonAsArray method
-     *
-     * @return void
-     */
-    public function testComparisonAsArray()
-    {
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'is greater', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '>', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 6, 'operator' => 'is less', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 6, 'operator' => '<', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'greater or equal', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '>=', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'greater or equal', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '>=', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 6, 'operator' => 'less or equal', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 6, 'operator' => '<=', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'equal to', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '==', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'not equal', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '!=', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => 'is greater', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => '>', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => 'is less', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => '<', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => 'greater or equal', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => '>=', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => 'greater or equal', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => '>=', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => 'less or equal', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => '<=', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => 'equal to', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => '==', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => 'not equal', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => '!=', 'check2' => 7]));
-    }
-
-    /**
      * testCustom method
      *
      * @return void
@@ -921,9 +887,9 @@ class ValidationTest extends TestCase
      */
     public function testCustomAsArray()
     {
-        $this->assertTrue(Validation::custom(['check' => '12345', 'regex' => '/(?<!\\S)\\d++(?!\\S)/']));
-        $this->assertFalse(Validation::custom(['check' => 'Text', 'regex' => '/(?<!\\S)\\d++(?!\\S)/']));
-        $this->assertFalse(Validation::custom(['check' => '123.45', 'regex' => '/(?<!\\S)\\d++(?!\\S)/']));
+        $this->assertTrue(Validation::custom('12345', '/(?<!\\S)\\d++(?!\\S)/'));
+        $this->assertFalse(Validation::custom('Text', '/(?<!\\S)\\d++(?!\\S)/'));
+        $this->assertFalse(Validation::custom('123.45', '/(?<!\\S)\\d++(?!\\S)/'));
     }
 
     /**
@@ -937,6 +903,13 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::date($dateTime));
         $this->assertTrue(Validation::time($dateTime));
         $this->assertTrue(Validation::dateTime($dateTime));
+        $this->assertTrue(Validation::localizedTime($dateTime));
+
+        $dateTime = new \DateTimeImmutable();
+        $this->assertTrue(Validation::date($dateTime));
+        $this->assertTrue(Validation::time($dateTime));
+        $this->assertTrue(Validation::dateTime($dateTime));
+        $this->assertTrue(Validation::localizedTime($dateTime));
     }
 
     /**
@@ -1576,7 +1549,48 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::dateTime('12/04/2017 1:38 pm', ['dmy']));
         $this->assertTrue(Validation::dateTime('12/04/2017 1:38pm', ['dmy']));
         $this->assertTrue(Validation::dateTime('12/04/2017 1:38AM', ['dmy']));
+        $this->assertTrue(Validation::dateTime('12/04/2017, 1:38AM', ['dmy']));
+        $this->assertTrue(Validation::dateTime('28/10/2015, 3:21 PM', ['dmy']));
         $this->assertFalse(Validation::dateTime('12/04/2017 58:38AM', ['dmy']));
+    }
+
+    /**
+     * Test localizedTime
+     *
+     * @return void
+     */
+    public function testLocalizedTime()
+    {
+        $locale = I18N::locale();
+
+        $this->assertFalse(Validation::localizedTime('', 'date'));
+        $this->assertFalse(Validation::localizedTime('invalid', 'date'));
+
+        // English (US)
+        I18N::locale('en_US');
+        $this->assertTrue(Validation::localizedTime('12/31/2006', 'date'));
+        $this->assertTrue(Validation::localizedTime('6.40pm', 'time'));
+        $this->assertTrue(Validation::localizedTime('12/31/2006 6.40pm', 'datetime'));
+        $this->assertTrue(Validation::localizedTime('December 31, 2006', 'date'));
+
+        $this->assertFalse(Validation::localizedTime('31. Dezember 2006', 'date')); // non-US format
+        $this->assertFalse(Validation::localizedTime('18:40', 'time')); // non-US format
+
+        // German
+        I18N::locale('de_DE');
+        $this->assertTrue(Validation::localizedTime('31.12.2006', 'date'));
+        $this->assertTrue(Validation::localizedTime('31. Dezember 2006', 'date'));
+        $this->assertTrue(Validation::localizedTime('18:40', 'time'));
+
+        $this->assertFalse(Validation::localizedTime('December 31, 2006', 'date')); // non-German format
+
+        // Russian
+        I18N::locale('ru_RU');
+        $this->assertTrue(Validation::localizedTime('31 декабря 2006', 'date'));
+
+        $this->assertFalse(Validation::localizedTime('December 31, 2006', 'date')); // non-Russian format
+
+        I18N::locale($locale);
     }
 
 
@@ -2139,12 +2153,19 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::extension('extension.jpg', ['GIF']));
         $this->assertTrue(Validation::extension(['extension.JPG', 'extension.gif', 'extension.png']));
         $this->assertTrue(Validation::extension(['file' => ['name' => 'file.jpg']]));
-        $this->assertTrue(Validation::extension(['file1' => ['name' => 'file.jpg'],
-                                                'file2' => ['name' => 'file.jpg'],
-                                                'file3' => ['name' => 'file.jpg']]));
-        $this->assertFalse(Validation::extension(['file1' => ['name' => 'file.jpg'],
-                                                'file2' => ['name' => 'file.jpg'],
-                                                'file3' => ['name' => 'file.jpg']], ['gif']));
+        $this->assertTrue(Validation::extension([
+            'file1' => ['name' => 'file.jpg'],
+            'file2' => ['name' => 'file.jpg'],
+            'file3' => ['name' => 'file.jpg']
+        ]));
+        $this->assertFalse(Validation::extension(
+            [
+                'file1' => ['name' => 'file.jpg'],
+                'file2' => ['name' => 'file.jpg'],
+                'file3' => ['name' => 'file.jpg']
+            ],
+            ['gif']
+        ));
 
         $this->assertFalse(Validation::extension(['noextension', 'extension.JPG', 'extension.gif', 'extension.png']));
         $this->assertFalse(Validation::extension(['extension.pdf', 'extension.JPG', 'extension.gif', 'extension.png']));

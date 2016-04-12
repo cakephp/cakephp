@@ -15,6 +15,7 @@
 namespace Cake\Console;
 
 use Cake\Console\Exception\MissingShellException;
+use Cake\Console\Exception\StopException;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
@@ -176,7 +177,11 @@ class ShellDispatcher
      */
     public function dispatch($extra = [])
     {
-        $result = $this->_dispatch($extra);
+        try {
+            $result = $this->_dispatch($extra);
+        } catch (StopException $e) {
+            return $e->getCode();
+        }
         if ($result === null || $result === true) {
             return 0;
         }

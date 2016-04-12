@@ -163,7 +163,7 @@ class ConsoleOutput
     {
         $this->_output = fopen($stream, 'w');
 
-        if ((DS === '\\' && !(bool)env('ANSICON') && env('ConEmuANSI') !== 'ON') ||
+        if ((DIRECTORY_SEPARATOR === '\\' && !(bool)env('ANSICON') && env('ConEmuANSI') !== 'ON') ||
             (function_exists('posix_isatty') && !posix_isatty($this->_output))
         ) {
             $this->_outputAs = self::PLAIN;
@@ -301,7 +301,7 @@ class ConsoleOutput
      * Get/Set the output type to use. The output type how formatting tags are treated.
      *
      * @param int|null $type The output type to use. Should be one of the class constants.
-     * @return int|void  Either null or the value if getting.
+     * @return int|null  Either null or the value if getting.
      */
     public function outputAs($type = null)
     {

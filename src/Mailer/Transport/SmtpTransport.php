@@ -74,7 +74,7 @@ class SmtpTransport extends AbstractTransport
         try {
             $this->disconnect();
         } catch (Exception $e) {
-// avoid fatal error on script termination
+            // avoid fatal error on script termination
         }
     }
 
@@ -246,7 +246,7 @@ class SmtpTransport extends AbstractTransport
      */
     protected function _auth()
     {
-        if (isset($this->_config['username']) && isset($this->_config['password'])) {
+        if (isset($this->_config['username'], $this->_config['password'])) {
             $replyCode = (string)$this->_smtpSend('AUTH LOGIN', '334|500|502|504');
             if ($replyCode === '334') {
                 try {
@@ -411,8 +411,8 @@ class SmtpTransport extends AbstractTransport
     /**
      * Protected method for sending data to SMTP connection
      *
-     * @param string $data data to be sent to SMTP server
-     * @param string|bool $checkCode code to check for in server response, false to skip
+     * @param string|null $data Data to be sent to SMTP server
+     * @param string|bool $checkCode Code to check for in server response, false to skip
      * @return string|null The matched code, or null if nothing matched
      * @throws \Cake\Network\Exception\SocketException
      */

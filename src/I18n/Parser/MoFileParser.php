@@ -44,7 +44,7 @@ class MoFileParser
     /**
      * The size of the header of a MO file in bytes.
      *
-     * @var int Number of bytes.
+     * @var int
      */
     const MO_HEADER_SIZE = 28;
 

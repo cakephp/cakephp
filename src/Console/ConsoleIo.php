@@ -181,7 +181,7 @@ class ConsoleIo
      *
      * @param array|string $message The message to output.
      * @param int $newlines Number of newlines to append.
-     * @param int $size The number of bytes to overwrite. Defaults to the
+     * @param int|null $size The number of bytes to overwrite. Defaults to the
      *    length of the last message output.
      * @return void
      */
@@ -269,7 +269,7 @@ class ConsoleIo
     /**
      * Add a new output style or get defined styles.
      *
-     * @param string $style The style to get or create.
+     * @param string|null $style The style to get or create.
      * @param array|bool|null $definition The array definition of the style to change or create a style
      *   or false to remove a style.
      * @return mixed If you are getting styles, the style or null will be returned. If you are creating/modifying

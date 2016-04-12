@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\View\Form;
 use Cake\Form\Form;
 use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
+use Cake\Validation\Validator;
 use Cake\View\Form\FormContext;
 
 /**
@@ -172,22 +173,44 @@ class FormContextTest extends TestCase
      */
     public function testError()
     {
+        $nestedValidator = new Validator();
+        $nestedValidator
+            ->add('password', 'length', ['rule' => ['minLength', 8]])
+            ->add('confirm', 'length', ['rule' => ['minLength', 8]]);
         $form = new Form();
         $form->validator()
             ->add('email', 'format', ['rule' => 'email'])
-            ->add('name', 'length', ['rule' => ['minLength', 10]]);
+            ->add('name', 'length', ['rule' => ['minLength', 10]])
+            ->addNested('pass', $nestedValidator);
         $form->validate([
             'email' => 'derp',
-            'name' => 'derp'
+            'name' => 'derp',
+            'pass' => [
+                'password' => 'short',
+                'confirm' => 'long enough',
+            ],
         ]);
 
         $context = new FormContext($this->request, ['entity' => $form]);
         $this->assertEquals([], $context->error('empty'));
         $this->assertEquals(['The provided value is invalid'], $context->error('email'));
         $this->assertEquals(['The provided value is invalid'], $context->error('name'));
-
+        $this->assertEquals(['The provided value is invalid'], $context->error('pass.password'));
         $this->assertEquals([], $context->error('Alias.name'));
         $this->assertEquals([], $context->error('nope.nope'));
+
+        $mock = $this->getMock('Cake\Validation\Validator', ['errors']);
+        $mock->expects($this->once())
+            ->method('errors')
+            ->willReturn(['key' => 'should be an array, not a string']);
+        $form->validator($mock);
+        $form->validate([]);
+        $context = new FormContext($this->request, ['entity' => $form]);
+        $this->assertEquals(
+            ['should be an array, not a string'],
+            $context->error('key'),
+            'This test should not produce a PHP warning from array_values().'
+        );
     }
 
     /**
@@ -197,13 +220,22 @@ class FormContextTest extends TestCase
      */
     public function testHasError()
     {
+        $nestedValidator = new Validator();
+        $nestedValidator
+            ->add('password', 'length', ['rule' => ['minLength', 8]])
+            ->add('confirm', 'length', ['rule' => ['minLength', 8]]);
         $form = new Form();
         $form->validator()
             ->add('email', 'format', ['rule' => 'email'])
-            ->add('name', 'length', ['rule' => ['minLength', 10]]);
+            ->add('name', 'length', ['rule' => ['minLength', 10]])
+            ->addNested('pass', $nestedValidator);
         $form->validate([
             'email' => 'derp',
-            'name' => 'derp'
+            'name' => 'derp',
+            'pass' => [
+                'password' => 'short',
+                'confirm' => 'long enough',
+            ],
         ]);
 
         $context = new FormContext($this->request, ['entity' => $form]);
@@ -211,5 +243,6 @@ class FormContextTest extends TestCase
         $this->assertTrue($context->hasError('name'));
         $this->assertFalse($context->hasError('nope'));
         $this->assertFalse($context->hasError('nope.nope'));
+        $this->assertTrue($context->hasError('pass.password'));
     }
 }

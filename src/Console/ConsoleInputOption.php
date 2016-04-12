@@ -21,7 +21,7 @@ use SimpleXmlElement;
  * An object to represent a single option used in the command line.
  * ConsoleOptionParser creates these when you use addOption()
  *
- * @see ConsoleOptionParser::addOption()
+ * @see \Cake\Console\ConsoleOptionParser::addOption()
  */
 class ConsoleInputOption
 {

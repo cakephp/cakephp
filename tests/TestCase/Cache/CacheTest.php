@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\Cache;
 use Cake\Cache\Cache;
 use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
@@ -93,6 +92,38 @@ class CacheTest extends TestCase
 
         $result = Cache::engine('tests');
         $this->assertInstanceOf('Cake\Cache\Engine\NullEngine', $result);
+    }
+
+    /**
+     * Test configuring an invalid class fails
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Cache engines must use Cake\Cache\CacheEngine
+     * @return void
+     */
+    public function testConfigInvalidClassType()
+    {
+        Cache::config('tests', [
+            'className' => '\StdClass'
+        ]);
+        Cache::engine('tests');
+    }
+
+    /**
+     * Test engine init failing causes an error
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage not properly configured
+     * @return void
+     */
+    public function testConfigFailedInit()
+    {
+        $mock = $this->getMockForAbstractClass('Cake\Cache\CacheEngine', [], '', true, true, true, ['init']);
+        $mock->method('init')->will($this->returnValue(false));
+        Cache::config('tests', [
+            'engine' => $mock
+        ]);
+        Cache::engine('tests');
     }
 
     /**

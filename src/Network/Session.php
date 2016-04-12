@@ -39,7 +39,7 @@ class Session
     /**
      * The Session handler instance used as an engine for persisting the session data.
      *
-     * @var SessionHandlerInterface
+     * @var \SessionHandlerInterface
      */
     protected $_engine;
 
@@ -89,7 +89,7 @@ class Session
      *
      * @param array $sessionConfig Session config.
      * @return \Cake\Network\Session
-     * @see Session::__construct()
+     * @see \Cake\Network\Session::__construct()
      */
     public static function create($sessionConfig = [])
     {
@@ -100,7 +100,7 @@ class Session
             }
         }
 
-        if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS')) {
+        if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS') && ini_get("session.cookie_secure") != 1) {
             $sessionConfig['ini']['session.cookie_secure'] = 1;
         }
 
@@ -112,7 +112,7 @@ class Session
             $sessionConfig['ini']['session.save_handler'] = 'user';
         }
 
-        if (!isset($sessionConfig['ini']['session.cookie_httponly'])) {
+        if (!isset($sessionConfig['ini']['session.cookie_httponly']) && ini_get("session.cookie_httponly") != 1) {
             $sessionConfig['ini']['session.cookie_httponly'] = 1;
         }
 
@@ -219,7 +219,7 @@ class Session
         }
 
         $this->_lifetime = ini_get('session.gc_maxlifetime');
-        $this->_isCLI = PHP_SAPI === 'cli';
+        $this->_isCLI = (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg');
         session_register_shutdown();
     }
 
@@ -372,7 +372,7 @@ class Session
      * Returns given session variable, or all of them, if no parameters given.
      *
      * @param string|null $name The name of the session variable (or a path as sent to Hash.extract)
-     * @return mixed The value of the session variable, null if session not available,
+     * @return string|null The value of the session variable, null if session not available,
      *   session not started, or provided name not found in the session.
      */
     public function read($name = null)

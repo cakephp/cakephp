@@ -382,7 +382,7 @@ trait CollectionTrait
 
             if (!($options['groupPath'])) {
                 $mapReduce->emit($rowVal($value, $key), $rowKey($value, $key));
-                return;
+                return null;
             }
 
             $key = $options['groupPath']($value, $key);
@@ -433,7 +433,7 @@ trait CollectionTrait
                     $parents[$id] = $isObject ? $parents[$id] : new ArrayIterator($parents[$id], 1);
                     $mapReduce->emit($parents[$id]);
                 }
-                return;
+                return null;
             }
 
             $children = [];
@@ -469,6 +469,11 @@ trait CollectionTrait
         if ($iterator instanceof ArrayIterator) {
             $items = $iterator->getArrayCopy();
             return $preserveKeys ? $items : array_values($items);
+        }
+        // RecursiveIteratorIterator can return duplicate key values causing
+        // data loss when converted into an array
+        if ($preserveKeys && get_class($iterator) === 'RecursiveIteratorIterator') {
+            $preserveKeys = false;
         }
         return iterator_to_array($this, $preserveKeys);
     }
@@ -600,9 +605,32 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      */
+    public function chunk($chunkSize)
+    {
+        return $this->map(function ($v, $k, $iterator) use ($chunkSize) {
+            $values = [$v];
+            for ($i = 1; $i < $chunkSize; $i++) {
+                $iterator->next();
+                if (!$iterator->valid()) {
+                    break;
+                }
+                $values[] = $iterator->current();
+            }
+
+            return $values;
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
     public function isEmpty()
     {
-        return iterator_count($this->take(1)) === 0;
+        foreach ($this->unwrap() as $el) {
+            return false;
+        }
+        return true;
     }
 
     /**
