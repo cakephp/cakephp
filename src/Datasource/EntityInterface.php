@@ -20,6 +20,8 @@ use JsonSerializable;
 /**
  * Describes the methods that any class representing a data storage should
  * comply with.
+ *
+ * @property mixed $id Alias for commonly used primary key.
  */
 interface EntityInterface extends ArrayAccess, JsonSerializable
 {
