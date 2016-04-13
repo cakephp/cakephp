@@ -1616,7 +1616,16 @@ class FormHelper extends Helper
      */
     public function postButton($title, $url, array $options = [])
     {
-        $out = $this->create(false, ['url' => $url]);
+        $formOptions = ['url' => $url];
+        if (isset($options['method'])) {
+            $formOptions['type'] = $options['method'];
+            unset($options['method']);
+        }
+        if (isset($options['form']) && is_array($options['form'])) {
+            $formOptions = $options['form'] + $formOptions;
+            unset($options['form']);
+        }
+        $out = $this->create(false, $formOptions);
         if (isset($options['data']) && is_array($options['data'])) {
             foreach (Hash::flatten($options['data']) as $key => $value) {
                 $out .= $this->hidden($key, ['value' => $value]);
