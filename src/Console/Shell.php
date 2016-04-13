@@ -447,7 +447,7 @@ class Shell
         if ($this->hasTask($command) && isset($subcommands[$command])) {
             $this->startup();
             array_shift($argv);
-            return $this->{$method}->runCommand($argv, false);
+            return $this->{$method}->runCommand($argv, false, ['requested' => true]);
         }
 
         if ($this->hasMethod('main')) {
