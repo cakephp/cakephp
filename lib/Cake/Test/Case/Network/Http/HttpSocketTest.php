@@ -1779,7 +1779,7 @@ class HttpSocketTest extends CakeTestCase {
 	}
 
 /**
- * This tests asserts HttpSocket::reset() resets a HttpSocket instance to it's initial state (before Object::__construct
+ * This tests asserts HttpSocket::reset() resets a HttpSocket instance to it's initial state (before CakeObject::__construct
  * got executed)
  *
  * @return void
@@ -1803,7 +1803,7 @@ class HttpSocketTest extends CakeTestCase {
 
 /**
  * This tests asserts HttpSocket::reset(false) resets certain HttpSocket properties to their initial state (before
- * Object::__construct got executed).
+ * CakeObject::__construct got executed).
  *
  * @return void
  */

@@ -37,7 +37,7 @@ App::uses('ComponentCollection', 'Controller');
  * @link          http://book.cakephp.org/2.0/en/controllers/components.html
  * @see Controller::$components
  */
-class Component extends Object {
+class Component extends CakeObject {
 
 /**
  * Component collection class used to lazy load components.

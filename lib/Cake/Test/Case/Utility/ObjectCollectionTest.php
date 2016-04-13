@@ -38,7 +38,7 @@ class GenericObject {
 }
 
 /**
- * First Extension of Generic Object
+ * First Extension of Generic CakeObject
  */
 class FirstGenericObject extends GenericObject {
 
@@ -53,7 +53,7 @@ class FirstGenericObject extends GenericObject {
 }
 
 /**
- * Second Extension of Generic Object
+ * Second Extension of Generic CakeObject
  */
 class SecondGenericObject extends GenericObject {
 
@@ -66,7 +66,7 @@ class SecondGenericObject extends GenericObject {
 }
 
 /**
- * Third Extension of Generic Object
+ * Third Extension of Generic CakeObject
  */
 class ThirdGenericObject extends GenericObject {
 
@@ -86,7 +86,7 @@ class GenericObjectCollection extends ObjectCollection {
 /**
  * Loads a generic object
  *
- * @param string $object Object name
+ * @param string $object CakeObject name
  * @param array $settings Settings array
  * @return array List of loaded objects
  */
@@ -109,7 +109,7 @@ class GenericObjectCollection extends ObjectCollection {
  * settings
  *
  * @param string $name Name of the object
- * @param Object $object The object to use
+ * @param CakeObject $object The object to use
  * @param array $settings Settings to apply for the object
  * @return array Loaded objects
  */
@@ -542,7 +542,7 @@ class ObjectCollectionTest extends CakeTestCase {
 		$this->Objects->setObject('TriggerMockFirst', $this->FirstGenericObject);
 		$this->Objects->setObject('TriggerMockSecond', $this->SecondGenericObject);
 
-		$subjectClass = new Object();
+		$subjectClass = new CakeObject();
 		$this->Objects->TriggerMockFirst->expects($this->once())
 			->method('callback')
 			->with($subjectClass, 'first argument')
@@ -568,7 +568,7 @@ class ObjectCollectionTest extends CakeTestCase {
 		$this->Objects->setObject('TriggerMockFirst', $this->FirstGenericObject);
 		$this->Objects->setObject('TriggerMockSecond', $this->SecondGenericObject);
 
-		$subjectClass = new Object();
+		$subjectClass = new CakeObject();
 		$this->Objects->TriggerMockFirst->expects($this->once())
 			->method('callback')
 			->with('first argument')

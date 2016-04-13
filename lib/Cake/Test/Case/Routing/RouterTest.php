@@ -2454,7 +2454,7 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	public function testCustomRouteException() {
-		Router::connect('/:controller', array(), array('routeClass' => 'Object'));
+		Router::connect('/:controller', array(), array('routeClass' => 'CakeObject'));
 	}
 
 /**
@@ -2801,7 +2801,7 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	public function testSettingInvalidDefaultRouteException() {
-		Router::defaultRouteClass('Object');
+		Router::defaultRouteClass('CakeObject');
 	}
 
 /**

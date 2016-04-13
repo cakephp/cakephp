@@ -28,7 +28,7 @@ App::uses('File', 'Utility');
  *
  * @package       Cake.Console
  */
-class Shell extends Object {
+class Shell extends CakeObject {
 
 /**
  * Default error code
@@ -369,7 +369,7 @@ class Shell extends Object {
 	}
 
 /**
- * Dispatch a command to another Shell. Similar to Object::requestAction()
+ * Dispatch a command to another Shell. Similar to CakeObject::requestAction()
  * but intended for running shells from other shells.
  *
  * ### Usage:

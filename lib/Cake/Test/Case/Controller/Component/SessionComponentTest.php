@@ -135,7 +135,7 @@ class SessionComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testSessionIdConsistentAcrossRequestAction() {
-		$Object = new Object();
+		$Object = new CakeObject();
 		$Session = new SessionComponent($this->ComponentCollection);
 		$expected = $Session->id();
 
