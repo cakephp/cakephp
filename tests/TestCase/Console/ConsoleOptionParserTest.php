@@ -591,12 +591,12 @@ class ConsoleOptionParserTest extends TestCase
         $result = $parser->help('method');
         $expected = <<<TEXT
 <info>Usage:</info>
-cake mycommand method [-h] [--connection]
+cake mycommand method [--connection] [-h]
 
 <info>Options:</info>
 
---help, -h        Display this help.
 --connection      Db connection.
+--help, -h        Display this help.
 
 TEXT;
         $this->assertTextEquals($expected, $result, 'Help is not correct.');
