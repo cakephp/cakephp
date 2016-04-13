@@ -53,6 +53,11 @@ class IsUnique
             return true;
         }
 
+        $allowMultipleNulls = true;
+        if (isset($options['allowMultipleNulls'])) {
+            $allowMultipleNulls = $options['allowMultipleNulls'] === true ? true : false;
+        }
+        
         $alias = $options['repository']->alias();
         $conditions = $this->_alias($alias, $entity->extract($this->_fields));
         if ($entity->isNew() === false) {
@@ -60,6 +65,15 @@ class IsUnique
             $keys = $this->_alias($alias, $entity->extract($keys));
             if (array_filter($keys, 'strlen')) {
                 $conditions['NOT'] = $keys;
+            }
+        }
+
+        if (!$allowMultipleNulls) {
+            foreach ($conditions as $key => $value) {
+                if ($value === null) {
+                    $conditions[$key . ' IS'] = $value;
+                    unset($conditions[$key]);
+                }
             }
         }
 
