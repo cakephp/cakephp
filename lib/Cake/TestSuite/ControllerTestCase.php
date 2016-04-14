@@ -345,7 +345,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 		$controllerObj = $this->getMock($name . 'Controller', $mocks['methods'], array(), '', false);
 		$controllerObj->name = $name;
 		$request = $this->getMock('CakeRequest');
-		$response = $this->getMock('CakeResponse', array('_sendHeader'));
+		$response = $this->getMock($controllerObj->responseClass(), array('_sendHeader'));
 		$controllerObj->__construct($request, $response);
 		$controllerObj->Components->setController($controllerObj);
 
