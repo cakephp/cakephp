@@ -276,7 +276,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 			$params['requested'] = 1;
 		}
 		$Dispatch->testController = $this->controller;
-		$Dispatch->response = $this->getMock('CakeResponse', array('send', '_clearBuffer'));
+		$Dispatch->response = $this->getMock($this->controller->responseClass(), array('send', '_clearBuffer'));
 		$this->result = $Dispatch->dispatch($request, $Dispatch->response, $params);
 
 		// Clear out any stored requests.
