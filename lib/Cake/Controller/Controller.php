@@ -1255,7 +1255,7 @@ class Controller extends Object implements CakeEventListener {
  * @return string
  */
 	public function getResponseClass() {
-		return $this->_responseCLass;
+		return $this->_responseClass;
 	}
 
 }
