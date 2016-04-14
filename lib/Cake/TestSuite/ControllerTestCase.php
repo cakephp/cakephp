@@ -276,7 +276,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 			$params['requested'] = 1;
 		}
 		$Dispatch->testController = $this->controller;
-		$Dispatch->response = $this->getMock($this->controller->responseClass(), array('send', '_clearBuffer'));
+		$Dispatch->response = $this->getMock($this->controller->getResponseClass(), array('send', '_clearBuffer'));
 		$this->result = $Dispatch->dispatch($request, $Dispatch->response, $params);
 
 		// Clear out any stored requests.
@@ -345,7 +345,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 		$controllerObj = $this->getMock($name . 'Controller', $mocks['methods'], array(), '', false);
 		$controllerObj->name = $name;
 		$request = $this->getMock('CakeRequest');
-		$response = $this->getMock($controllerObj->responseClass(), array('_sendHeader'));
+		$response = $this->getMock($controllerObj->getResponseClass(), array('_sendHeader'));
 		$controllerObj->__construct($request, $response);
 		$controllerObj->Components->setController($controllerObj);
 
