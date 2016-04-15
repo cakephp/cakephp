@@ -760,6 +760,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param callable|string $callable Callable to be invoked as before action (before filter)
      * @param array $options Array of options
+     * @return void
      */
     public function addBeforeAction($callable, $options = [])
     {
@@ -813,6 +814,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param callable|string $callable Callable to be invoked as after action (after filter)
      * @param array $options Array of options
+     * @return void
      */
     public function addAfterAction($callable, $options = [])
     {
@@ -826,8 +828,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param string $event Event name
      * @param callable|string $callable Callable to be used as an event handler
      * @param array $options Array of options
+     * @return void
      */
-    private function on($event, $callable, $options = [])
+    public function on($event, $callable, $options = [])
     {
         if (isset($options['if'])) {
             $options['if'] = $this->toCallables($options['if']);
@@ -840,13 +843,13 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         if (isset($options['only'])) {
             $options['if'][] = function () use ($options) {
-                return in_array($this->request->param('action'), (array) $options['only']);
+                return in_array($this->request->param('action'), (array)$options['only']);
             };
         }
 
         if (isset($options['except'])) {
             $options['if'][] = function () use ($options) {
-                return !in_array($this->request->param('action'), (array) $options['except']);
+                return !in_array($this->request->param('action'), (array)$options['except']);
             };
         }
 
@@ -878,12 +881,12 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param mixed $callables Simplified representation of callables
      * @return callable[] Array of valid PHP callables
      */
-    private function toCallables($callables)
+    protected function toCallables($callables)
     {
         if (is_callable($callables)) {
             $result = [$callables];
         } else {
-            $result = (array) $callables;
+            $result = (array)$callables;
         }
 
         foreach ($result as &$callable) {
