@@ -714,8 +714,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     }
 
     /**
-     * Adds a function that will be called before the controller action. The function can
-     * perform logic that needs to happen before more controller actions.
+     * Adds a function that will be called before the controller action is run.
      *
      * You can configure the function to only execute before some of the controller actions:
      * ```
@@ -834,6 +833,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $options['if'] = $this->toCallables($options['if']);
         }
 
+
         if (isset($options['unless'])) {
             $options['unless'] = $this->toCallables($options['unless']);
         }
@@ -862,7 +862,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * Mainly does two things:
      * 1. converts strings to callables (in case they are not callables already) assuming
-     * they are referencig a method in current controller:
+     * they are referencing a method in current controller:
      * ```
      * ['isValid', 'isActive'] => [[$this, 'isValid'], [$this, 'isActive']]
      * ['time'] => ['time'] // time is already valid callable
@@ -892,7 +892,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             }
         }
 
-        return $callables;
+        return $result;
     }
 
     /**
