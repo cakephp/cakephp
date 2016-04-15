@@ -104,6 +104,25 @@ class AssociationCollectionTest extends TestCase
     }
 
     /**
+     * Test getting associations by foreign key.
+     *
+     * @return void
+     */
+    public function testGetByForeignKey()
+    {
+        $table = $this->getMock('Cake\ORM\Table', ['table'], [[]]);
+        $table->schema([]);
+        $belongsTo = new BelongsTo('Users', [
+            'sourceTable' => $table
+        ]);
+        $this->assertEquals('user_id', $belongsTo->foreignKey());
+        $this->associations->add('Users', $belongsTo);
+        $this->assertNull($this->associations->get('user_id'));
+
+        $this->assertSame($belongsTo, $this->associations->getByForeignKey('user_id'));
+    }
+
+    /**
      * Test associations with plugin names.
      *
      * @return void
