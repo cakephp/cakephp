@@ -85,6 +85,22 @@ class AssociationCollection implements IteratorAggregate
     }
 
     /**
+     * Fetch an association by foreign key.
+     *
+     * @param string $fk The foreign key to find an association by.
+     * @return \Cake\ORM\Association|null Either the association or null.
+     */
+    public function getByForeignKey($fk)
+    {
+        foreach ($this->_items as $assoc) {
+            if ($assoc->foreignKey() === $fk) {
+                return $assoc;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Check for an attached association by name.
      *
      * @param string $alias The association alias to get.
