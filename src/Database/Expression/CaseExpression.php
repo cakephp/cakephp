@@ -150,7 +150,7 @@ class CaseExpression implements ExpressionInterface
      * Sets the default value
      *
      * @param \Cake\Database\ExpressionInterface|string|array|null $value Value to set
-     * @param string $type Type of value
+     * @param string|null $type Type of value
      *
      * @return void
      */

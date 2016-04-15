@@ -223,7 +223,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * and storing containments. If called with no arguments, it will return the
      * currently configured instance.
      *
-     * @param \Cake\ORM\EagerLoader $instance The eager loader to use. Pass null
+     * @param \Cake\ORM\EagerLoader|null $instance The eager loader to use. Pass null
      *   to get the current eagerloader.
      * @return \Cake\ORM\EagerLoader|$this
      */
@@ -328,7 +328,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * If called with an empty first argument and $override is set to true, the
      * previous list will be emptied.
      *
-     * @param array|string $associations list of table aliases to be queried
+     * @param array|string|null $associations list of table aliases to be queried
      * @param bool $override whether override previous list with the one passed
      * defaults to merging previous list with the new one.
      * @return array|$this
@@ -424,7 +424,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * add more complex clauses you can do it directly in the main query.
      *
      * @param string $assoc The association to filter by
-     * @param callable $builder a function that will receive a pre-made query object
+     * @param callable|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      */
@@ -494,7 +494,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * add more complex clauses you can do it directly in the main query.
      *
      * @param string $assoc The association to join with
-     * @param callable $builder a function that will receive a pre-made query object
+     * @param callable|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      */
@@ -538,7 +538,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * will select no fields from the association.
      *
      * @param string $assoc The association to join with
-     * @param callable $builder a function that will receive a pre-made query object
+     * @param callable|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      * @see \Cake\ORM\Query::matching()
@@ -599,7 +599,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * add more complex clauses you can do it directly in the main query.
      *
      * @param string $assoc The association to filter by
-     * @param callable $builder a function that will receive a pre-made query object
+     * @param callable|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      */
@@ -977,7 +977,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     protected function _addDefaultSelectTypes()
     {
         $typeMap = $this->typeMap()->defaults();
-        $selectTypeMap = $this->selectTypeMap();
         $select = $this->clause('select');
         $types = [];
 

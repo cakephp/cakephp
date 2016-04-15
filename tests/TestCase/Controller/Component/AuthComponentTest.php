@@ -14,19 +14,13 @@
  */
 namespace Cake\Test\TestCase\Controller\Component;
 
-use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AuthComponent;
-use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
-use Cake\Network\Exception\ForbiddenException;
-use Cake\Network\Exception\UnauthorizedException;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Network\Session;
-use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -1456,6 +1450,7 @@ class AuthComponentTest extends TestCase
      */
     public function testStatelessFollowedByStatefulAuth()
     {
+        $this->Auth->response = $this->getMock('Cake\Network\Response', ['stop', 'statusCode', 'send']);
         $event = new Event('Controller.startup', $this->Controller);
         $this->Auth->authenticate = ['Basic', 'Form'];
         $this->Controller->request['action'] = 'add';

@@ -487,6 +487,21 @@ SQL;
                 ['type' => 'text', 'null' => false],
                 '[body] NVARCHAR(MAX) NOT NULL'
             ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_TINY, 'null' => false],
+                sprintf('[body] NVARCHAR(%s) NOT NULL', Table::LENGTH_TINY)
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM, 'null' => false],
+                '[body] NVARCHAR(MAX) NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
+                '[body] NVARCHAR(MAX) NOT NULL'
+            ],
             // Integers
             [
                 'post_id',
@@ -528,7 +543,22 @@ SQL;
             // Binary
             [
                 'img',
-                ['type' => 'binary'],
+                ['type' => 'binary', 'length' => null],
+                '[img] VARBINARY(MAX)'
+            ],
+            [
+                'img',
+                ['type' => 'binary', 'length' => Table::LENGTH_TINY],
+                sprintf('[img] VARBINARY(%s)', Table::LENGTH_TINY)
+            ],
+            [
+                'img',
+                ['type' => 'binary', 'length' => Table::LENGTH_MEDIUM],
+                '[img] VARBINARY(MAX)'
+            ],
+            [
+                'img',
+                ['type' => 'binary', 'length' => Table::LENGTH_LONG],
                 '[img] VARBINARY(MAX)'
             ],
             // Boolean
@@ -841,7 +871,7 @@ SQL;
         $result = $table->truncateSql($connection);
         $this->assertCount(2, $result);
         $this->assertEquals('DELETE FROM [schema_articles]', $result[0]);
-        $this->assertEquals('DBCC CHECKIDENT([schema_articles], RESEED, 0)', $result[1]);
+        $this->assertEquals("DBCC CHECKIDENT('schema_articles', RESEED, 0)", $result[1]);
     }
 
     /**
@@ -852,14 +882,9 @@ SQL;
     protected function _getMockedDriver()
     {
         $driver = new \Cake\Database\Driver\Sqlserver();
-        $mock = $this->getMock('FakePdo', ['quote', 'quoteIdentifier']);
+        $mock = $this->getMock('FakePdo', ['quote']);
         $mock->expects($this->any())
             ->method('quote')
-            ->will($this->returnCallback(function ($value) {
-                return '[' . $value . ']';
-            }));
-        $mock->expects($this->any())
-            ->method('quoteIdentifier')
             ->will($this->returnCallback(function ($value) {
                 return '[' . $value . ']';
             }));

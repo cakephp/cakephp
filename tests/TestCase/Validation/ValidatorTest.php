@@ -1242,6 +1242,18 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the localizedTime proxy method
+     *
+     * @return void
+     */
+    public function testLocalizedTime()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'localizedTime', 'date', ['date']);
+        $this->assertNotEmpty($validator->errors(['username' => 'not a date']));
+    }
+
+    /**
      * Tests the boolean proxy method
      *
      * @return void
@@ -1515,6 +1527,24 @@ class ValidatorTest extends TestCase
         $this->assertNotEmpty($validator->errors(['username' => 'not integer']));
     }
 
+    /**
+     * Tests the multiple proxy method
+     *
+     * @return void
+     */
+    public function testMultiple()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod(
+            $validator,
+            'multipleOptions',
+            ['min' => 1, 'caseInsensitive' => true],
+            [['min' => 1], false],
+            'multiple'
+        );
+        $this->assertNotEmpty($validator->errors(['username' => '']));
+    }
+
     protected function assertProxyMethod($validator, $method, $extra = null, $pass = [], $name = null)
     {
         $name = $name ?: $method;
@@ -1525,6 +1555,7 @@ class ValidatorTest extends TestCase
         }
 
         $rule = $validator->field('username')->rule($method);
+        $this->assertNotEmpty($rule, "Rule was not found for $method");
         $this->assertNull($rule->get('message'), 'Message is present when it should not be');
         $this->assertNull($rule->get('on'), 'On clause is present when it should not be');
         $this->assertEquals($name, $rule->get('rule'), 'Rule name does not match');

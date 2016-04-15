@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Core\Configure;
 use Cake\Database\Schema\Collection as SchemaCollection;
+use Cake\Database\Schema\MysqlSchema;
 use Cake\Database\Schema\PostgresSchema;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
@@ -615,7 +616,7 @@ SQL;
             [
                 'role',
                 ['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
-                '"role" VARCHAR(10) NOT NULL DEFAULT "admin"'
+                '"role" VARCHAR(10) NOT NULL DEFAULT \'admin\''
             ],
             [
                 'title',
@@ -626,6 +627,21 @@ SQL;
             [
                 'body',
                 ['type' => 'text', 'null' => false],
+                '"body" TEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_TINY, 'null' => false],
+                sprintf('"body" VARCHAR(%s) NOT NULL', Table::LENGTH_TINY)
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM, 'null' => false],
+                '"body" TEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
                 '"body" TEXT NOT NULL'
             ],
             // Integers
@@ -987,7 +1003,7 @@ SQL;
             $result[1]
         );
         $this->assertEquals(
-            'COMMENT ON COLUMN "schema_articles"."title" IS "This is the title"',
+            'COMMENT ON COLUMN "schema_articles"."title" IS \'This is the title\'',
             $result[2]
         );
     }
@@ -1125,16 +1141,11 @@ SQL;
     protected function _getMockedDriver()
     {
         $driver = new \Cake\Database\Driver\Postgres();
-        $mock = $this->getMock('FakePdo', ['quote', 'quoteIdentifier']);
+        $mock = $this->getMock('FakePdo', ['quote']);
         $mock->expects($this->any())
             ->method('quote')
             ->will($this->returnCallback(function ($value) {
-                return '"' . $value . '"';
-            }));
-        $mock->expects($this->any())
-            ->method('quoteIdentifier')
-            ->will($this->returnCallback(function ($value) {
-                return '"' . $value . '"';
+                return "'$value'";
             }));
         $driver->connection($mock);
         return $driver;

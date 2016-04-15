@@ -302,10 +302,8 @@ class SqlserverSchema extends BaseSchema
             'integer' => ' INTEGER',
             'biginteger' => ' BIGINT',
             'boolean' => ' BIT',
-            'binary' => ' VARBINARY(MAX)',
             'float' => ' FLOAT',
             'decimal' => ' DECIMAL',
-            'text' => ' NVARCHAR(MAX)',
             'date' => ' DATE',
             'time' => ' TIME',
             'datetime' => ' DATETIME',
@@ -324,7 +322,21 @@ class SqlserverSchema extends BaseSchema
             }
         }
 
-        if ($data['type'] === 'string') {
+        if ($data['type'] === 'text' && $data['length'] !== Table::LENGTH_TINY) {
+            $out .= ' NVARCHAR(MAX)';
+        }
+
+        if ($data['type'] === 'binary') {
+            $out .= ' VARBINARY';
+
+            if ($data['length'] !== Table::LENGTH_TINY) {
+                $out .= '(MAX)';
+            } else {
+                $out .= sprintf('(%s)', Table::LENGTH_TINY);
+            }
+        }
+
+        if ($data['type'] === 'string' || ($data['type'] === 'text' && $data['length'] === Table::LENGTH_TINY)) {
             $type = ' NVARCHAR';
 
             if (!empty($data['fixed'])) {
@@ -496,8 +508,8 @@ class SqlserverSchema extends BaseSchema
             $column = $table->column($pk[0]);
             if (in_array($column['type'], ['integer', 'biginteger'])) {
                 $queries[] = sprintf(
-                    'DBCC CHECKIDENT(%s, RESEED, 0)',
-                    $name
+                    "DBCC CHECKIDENT('%s', RESEED, 0)",
+                    $table->name()
                 );
             }
         }

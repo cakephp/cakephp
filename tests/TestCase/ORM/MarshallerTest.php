@@ -895,6 +895,41 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test belongsToMany association with the ForceNewTarget to force saving
+     * new records on the target tables with BTM relationships when the primaryKey(s)
+     * of the target table is specified.
+     *
+     * @return void
+     */
+    public function testBelongsToManyWithForceNew()
+    {
+        $data = [
+            'title' => 'Fourth Article',
+            'body' => 'Fourth Article Body',
+            'author_id' => 1,
+            'tags' => [
+                [
+                    'id' => 3
+                ],
+                [
+                    'id' => 4,
+                    'name' => 'tag4'
+                ]
+            ]
+        ];
+
+        $marshaller = new Marshaller($this->articles);
+        $article = $marshaller->one($data, [
+            'associated' => ['Tags'],
+            'forceNew' => true
+        ]);
+
+        $this->assertFalse($article->tags[0]->isNew(), 'The tag should not be new');
+        $this->assertTrue($article->tags[1]->isNew(), 'The tag should be new');
+        $this->assertSame('tag4', $article->tags[1]->name, 'Property should match request data.');
+    }
+
+    /**
      * Test HasMany association with _ids attribute
      *
      * @return void
@@ -2148,6 +2183,30 @@ class MarshallerTest extends TestCase
         $this->assertCount(2, $result, 'Should have two records');
         $this->assertSame($entities[0], $result[0], 'Should retain object');
         $this->assertSame($entities[1], $result[1], 'Should retain object');
+    }
+
+    /**
+     * Test mergeMany() with forced contain to ensure aliases are used in queries.
+     *
+     * @return void
+     */
+    public function testMergeManyExistingQueryAliases()
+    {
+        $entities = [
+            new OpenEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2], ['markClean' => true]),
+        ];
+
+        $data = [
+            ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 1],
+            ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
+        ];
+        $this->comments->eventManager()->on('Model.beforeFind', function ($event, $query) {
+            return $query->contain(['Articles']);
+        });
+        $marshall = new Marshaller($this->comments);
+        $result = $marshall->mergeMany($entities, $data);
+
+        $this->assertSame($entities[0], $result[0]);
     }
 
     /**

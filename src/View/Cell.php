@@ -133,9 +133,9 @@ abstract class Cell
     /**
      * Constructor.
      *
-     * @param \Cake\Network\Request $request The request to use in the cell.
-     * @param \Cake\Network\Response $response The response to use in the cell.
-     * @param \Cake\Event\EventManager $eventManager The eventManager to bind events to.
+     * @param \Cake\Network\Request|null $request The request to use in the cell.
+     * @param \Cake\Network\Response|null $response The response to use in the cell.
+     * @param \Cake\Event\EventManager|null $eventManager The eventManager to bind events to.
      * @param array $cellOptions Cell options to apply.
      */
     public function __construct(
@@ -201,10 +201,12 @@ abstract class Cell
             $builder->layout(false)
                 ->template($template);
 
-            $className = substr(strrchr(get_class($this), "\\"), 1);
-            $name = substr($className, 0, -4);
+            $className = get_class($this);
+            $namePrefix = '\View\Cell\\';
+            $name = substr($className, strpos($className, $namePrefix) + strlen($namePrefix));
+            $name = substr($name, 0, -4);
             if (!$builder->templatePath()) {
-                $builder->templatePath('Cell' . DIRECTORY_SEPARATOR . $name);
+                $builder->templatePath('Cell' . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name));
             }
 
             $this->View = $this->createView();

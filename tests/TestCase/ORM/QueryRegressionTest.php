@@ -16,8 +16,6 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Plugin;
 use Cake\I18n\Time;
-use Cake\ORM\Query;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -580,6 +578,48 @@ class QueryRegressionTest extends TestCase
             }])
             ->count();
         $this->assertEquals(2, $count);
+    }
+
+    /**
+     * Tests that getting the count of a query with bind is correct
+     *
+     * @see https://github.com/cakephp/cakephp/issues/8466
+     * @return void
+     */
+    public function testCountWithBind()
+    {
+        $table = TableRegistry::get('Articles');
+        $query = $table
+            ->find()
+            ->select(['title', 'id'])
+            ->where("title LIKE :val")
+            ->group(['id', 'title'])
+            ->bind(':val', '%Second%');
+        $count = $query->count();
+        $this->assertEquals(1, $count);
+    }
+
+    /**
+     * Tests that bind in subqueries works.
+     *
+     * @return void
+     */
+    public function testSubqueryBind()
+    {
+        $table = TableRegistry::get('Articles');
+        $sub = $table->find()
+            ->select(['id'])
+            ->where("title LIKE :val")
+            ->bind(':val', 'Second %');
+
+        $query = $table
+            ->find()
+            ->select(['title'])
+            ->where(["id NOT IN" => $sub]);
+        $result = $query->toArray();
+        $this->assertCount(2, $result);
+        $this->assertEquals('First Article', $result[0]->title);
+        $this->assertEquals('Third Article', $result[1]->title);
     }
 
     /**
@@ -1164,8 +1204,9 @@ class QueryRegressionTest extends TestCase
      *
      * @return void
      */
-    public function testFormatResultsMemory()
+    public function testFormatResultsMemoryLeak()
     {
+        $this->skipIf(env('CODECOVERAGE') == 1, 'Running coverage this causes this tests to fail sometimes.');
         $table = TableRegistry::get('Articles');
         $table->belongsTo('Authors');
         $table->belongsToMany('Tags');

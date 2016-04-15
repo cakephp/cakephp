@@ -87,7 +87,7 @@ trait ValidatorAwareTrait
      * should you wish to have a validation set that applies in cases where no other
      * set is specified.
      *
-     * @param string $name the name of the validation set to return
+     * @param string|null $name the name of the validation set to return
      * @param \Cake\Validation\Validator|null $validator The validator instance to store,
      *   use null to get a validator.
      * @return \Cake\Validation\Validator

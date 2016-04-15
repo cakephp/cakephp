@@ -150,7 +150,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Sets the connection instance to be used for executing and transforming this query
      * When called with a null argument, it will return the current connection instance.
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection instance
+     * @param \Cake\Datasource\ConnectionInterface|null $connection instance
      * @return $this|\Cake\Datasource\ConnectionInterface
      */
     public function connection($connection = null)
@@ -211,7 +211,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * values when the query is executed, hence it is most suitable to use with
      * prepared statements.
      *
-     * @param \Cake\Database\ValueBinder $generator A placeholder object that will hold
+     * @param \Cake\Database\ValueBinder|null $generator A placeholder object that will hold
      * associated values for expressions
      * @return string
      */
@@ -1095,7 +1095,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * does. Please refer to its documentation for an insight on how to using each
      * parameter.
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|callable $conditions The having conditions.
+     * @param string|array|\Cake\Database\ExpressionInterface|callable|null $conditions The having conditions.
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @see \Cake\Database\Query::where()
@@ -1154,7 +1154,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Pages should start at 1.
      *
      * @param int $num The page number you want.
-     * @param int $limit The number of rows you want in the page. If null
+     * @param int|null $limit The number of rows you want in the page. If null
      *  the current limit clause will be used.
      * @return $this
      */
@@ -1459,7 +1459,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Can be combined with from(), where() and other methods to
      * create delete queries with specific conditions.
      *
-     * @param string $table The table to use when deleting.
+     * @param string|null $table The table to use when deleting.
      * @return $this
      */
     public function delete($table = null)
@@ -1484,7 +1484,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *  ->epilog('RETURNING id');
      * ```
      *
-     * @param string|\Cake\Database\Expression\QueryExpression $expression The expression to be appended
+     * @param string|\Cake\Database\Expression\QueryExpression|null $expression The expression to be appended
      * @return $this
      */
     public function epilog($expression = null)
@@ -1709,7 +1709,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * associate values to those placeholders so that they can be passed correctly
      * statement object.
      *
-     * @param \Cake\Database\ValueBinder $binder new instance to be set. If no value is passed the
+     * @param \Cake\Database\ValueBinder|null $binder new instance to be set. If no value is passed the
      *   default one will be returned
      * @return $this|\Cake\Database\ValueBinder
      */

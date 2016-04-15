@@ -806,7 +806,12 @@ class TableTest extends TestCase
             'hasOne' => ['profiles'],
             'hasMany' => ['authors'],
             'belongsToMany' => [
-                'tags' => ['joinTable' => 'things_tags']
+                'tags' => [
+                    'joinTable' => 'things_tags',
+                    'conditions' => [
+                        'Tags.starred' => true
+                    ]
+                ]
             ]
         ];
 
@@ -834,6 +839,7 @@ class TableTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Association\BelongsToMany', $belongsToMany);
         $this->assertEquals('tags', $belongsToMany->name());
         $this->assertSame('things_tags', $belongsToMany->junction()->table());
+        $this->assertSame(['Tags.starred' => true], $belongsToMany->conditions());
     }
 
     /**
@@ -3863,7 +3869,8 @@ class TableTest extends TestCase
         ], $options);
 
         $newTag = new \TestApp\Model\Entity\Tag([
-            'name' => 'Foo'
+            'name' => 'Foo',
+            'description' => 'Foo desc'
         ], $source);
         $tags[] = new \TestApp\Model\Entity\Tag([
             'id' => 3
@@ -4124,6 +4131,24 @@ class TableTest extends TestCase
         $this->assertCount($sizeArticles - count($articlesToUnlink), $authors->Articles->findAllByAuthorId($author->id));
         $this->assertCount($sizeArticles, $author->articles);
         $this->assertFalse($author->dirty('articles'));
+    }
+
+    /**
+     * Integration test for unlinking entities with HasMany.
+     * Checking that no error happens when the hasMany property is originally
+     * null
+     *
+     * @return void
+     */
+    public function testUnlinkHasManyEmpty()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = TableRegistry::get('Articles');
+        $authors->hasMany('Articles');
+        $author = $authors->get(1);
+        $article = $authors->Articles->get(1);
+
+        $authors->Articles->unlink($author, [$article]);
     }
 
 

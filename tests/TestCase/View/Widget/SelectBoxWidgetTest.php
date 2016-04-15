@@ -88,6 +88,28 @@ class SelectBoxWidgetTest extends TestCase
     }
 
     /**
+     * Test render boolean options
+     *
+     * @return void
+     */
+    public function testRenderBoolean()
+    {
+        $select = new SelectBoxWidget($this->templates);
+        $data = [
+            'id' => 'enabled',
+            'name' => 'enabled',
+            'options' => [0 => 'No', 1 => 'Yes'],
+            'val' => false
+        ];
+        $result = $select->render($data, $this->context);
+        $this->assertContains('<option value="0" selected="selected">No</option>', $result);
+
+        $data['value'] = [false, 2];
+        $result = $select->render($data, $this->context);
+        $this->assertContains('<option value="0" selected="selected">No</option>', $result);
+    }
+
+    /**
      * test simple iterator rendering
      *
      * @return void
@@ -734,10 +756,6 @@ class SelectBoxWidgetTest extends TestCase
             ['option' => ['value' => 'b']], 'Budgie', '/option',
             '/select'
         ];
-        $this->assertHtml($expected, $result);
-
-        $data['val'] = false;
-        $result = $select->render($data, $this->context);
         $this->assertHtml($expected, $result);
     }
 

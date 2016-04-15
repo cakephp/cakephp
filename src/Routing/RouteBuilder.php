@@ -270,6 +270,14 @@ class RouteBuilder
      * By default the path segment will match the key name. You can use the 'path' key inside the resource
      * definition to customize the path name.
      *
+     * You can use the `inflect` option to change how path segments are generated:
+     *
+     * ```
+     * $routes->resources('PaymentTypes', ['inflect' => 'dasherize']);
+     * ```
+     *
+     * Will generate routes like `/payment-types` instead of `/payment_types`
+     *
      * ### Options:
      *
      * - 'id' - The regular expression fragment to use when matching IDs. By default, matches
@@ -400,6 +408,8 @@ class RouteBuilder
      *   included when generating new URLs. You can override persistent parameters
      *   by redefining them in a URL or remove them by setting the parameter to `false`.
      *   Ex. `'persist' => ['lang']`
+     * - `multibytePattern` Set to true to enable multibyte pattern support in route
+     *   parameter patterns.
      * - `_name` is used to define a specific name for routes. This can be used to optimize
      *   reverse routing lookups. If undefined a name will be generated for each
      *   connected route.

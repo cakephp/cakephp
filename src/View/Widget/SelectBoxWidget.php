@@ -287,6 +287,7 @@ class SelectBoxWidget extends BasicWidget
         }
         $isArray = is_array($selected);
         if (!$isArray) {
+            $selected = $selected === false ? '0' : $selected;
             return (string)$key === (string)$selected;
         }
         $strict = !is_numeric($key);

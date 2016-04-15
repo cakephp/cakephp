@@ -673,8 +673,8 @@ class BelongsToMany extends Association
     /**
      * Associates the source entity to each of the target entities provided by
      * creating links in the junction table. Both the source entity and each of
-     * the target entities are assumed to be already persisted, if the are marked
-     * as new or their status is unknown, an exception will be thrown.
+     * the target entities are assumed to be already persisted, if they are marked
+     * as new or their status is unknown then an exception will be thrown.
      *
      * When using this method, all entities in `$targetEntities` will be appended to
      * the source entity's property corresponding to this association object.
@@ -853,7 +853,13 @@ class BelongsToMany extends Association
         }
         $alias = $this->_junctionAssociationName() . '.';
         foreach ($conditions as $field => $value) {
-            if (is_string($field) && strpos($field, $alias) === 0) {
+            $isString = is_string($field);
+            if ($isString && strpos($field, $alias) === 0) {
+                $matching[$field] = $value;
+            }
+            // Assume that operators contain junction conditions.
+            // Trying to munge complex conditions could result in incorrect queries.
+            if ($isString && in_array(strtoupper($field), ['OR', 'NOT', 'AND', 'XOR'])) {
                 $matching[$field] = $value;
             }
         }
@@ -868,7 +874,7 @@ class BelongsToMany extends Association
      * If your association includes conditions, the junction table will be
      * included in the query's contained associations.
      *
-     * @param string|array $type the type of query to perform, if an array is passed,
+     * @param string|array|null $type the type of query to perform, if an array is passed,
      *   it will be interpreted as the `$options` parameter
      * @param array $options The options to for the find
      * @see \Cake\ORM\Table::find()
@@ -982,7 +988,7 @@ class BelongsToMany extends Association
 
         return $this->junction()->connection()->transactional(
             function () use ($sourceEntity, $targetEntities, $primaryValue, $options) {
-                $foreignKey = (array)$this->foreignKey();
+                $foreignKey = array_map([$this->_junctionTable, 'aliasField'], (array)$this->foreignKey());
                 $hasMany = $this->source()->association($this->_junctionTable->alias());
                 $existing = $hasMany->find('all')
                     ->where(array_combine($foreignKey, $primaryValue));

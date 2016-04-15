@@ -148,7 +148,7 @@ class HtmlHelper extends Helper
      * Adds a link to the breadcrumbs array.
      *
      * @param string $name Text for link
-     * @param string|null $link URL for link (if empty it won't be a link)
+     * @param string|array|null $link URL for link (if empty it won't be a link)
      * @param string|array $options Link attributes e.g. ['id' => 'selected']
      * @return $this
      * @see \Cake\View\Helper\HtmlHelper::link() for details on $options that can be used.
@@ -437,7 +437,7 @@ class HtmlHelper extends Helper
         if (strpos($path, '//') !== false) {
             $url = $path;
         } else {
-            $url = $this->Url->assetUrl($path, $options + ['pathPrefix' => Configure::read('App.cssBaseUrl'), 'ext' => '.css']);
+            $url = $this->Url->css($path, $options);
             $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
         }
 
@@ -528,7 +528,7 @@ class HtmlHelper extends Helper
         }
 
         if (strpos($url, '//') === false) {
-            $url = $this->Url->assetUrl($url, $options + ['pathPrefix' => Configure::read('App.jsBaseUrl'), 'ext' => '.js']);
+            $url = $this->Url->script($url, $options);
             $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
         }
         if ($options['once'] && isset($this->_includedAssets[__METHOD__][$url])) {
@@ -808,7 +808,7 @@ class HtmlHelper extends Helper
      */
     public function image($path, array $options = [])
     {
-        $path = $this->Url->assetUrl($path, $options + ['pathPrefix' => Configure::read('App.imageBaseUrl')]);
+        $path = $this->Url->image($path, $options);
         $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
 
         if (!isset($options['alt'])) {
@@ -945,7 +945,7 @@ class HtmlHelper extends Helper
      * - `escape` Whether or not the contents should be html_entity escaped.
      *
      * @param string $name Tag name.
-     * @param string $text String content that will appear inside the div element.
+     * @param string|null $text String content that will appear inside the div element.
      *   If null, only a start tag will be printed
      * @param array $options Additional HTML attributes of the DIV tag, see above.
      * @return string The formatted tag element
@@ -978,8 +978,8 @@ class HtmlHelper extends Helper
      *
      * - `escape` Whether or not the contents should be html_entity escaped.
      *
-     * @param string $class CSS class name of the div element.
-     * @param string $text String content that will appear inside the div element.
+     * @param string|null $class CSS class name of the div element.
+     * @param string|null $text String content that will appear inside the div element.
      *   If null, only a start tag will be printed
      * @param array $options Additional HTML attributes of the DIV tag
      * @return string The formatted DIV element

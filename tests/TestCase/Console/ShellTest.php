@@ -17,13 +17,10 @@ namespace Cake\Test\TestCase\Console;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
-use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Hash;
 use TestApp\Shell\TestingDispatchShell;
 
 /**
@@ -965,7 +962,11 @@ TEXT;
      */
     public function testRunCommandBaseclassMethod()
     {
-        $shell = $this->getMock('Cake\Console\Shell', ['startup', 'getOptionParser', 'out'], [], '', false);
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['startup', 'getOptionParser', 'out', 'hr'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $shell->io($this->getMock('Cake\Console\ConsoleIo'));
         $parser = $this->getMock('Cake\Console\ConsoleOptionParser', [], [], '', false);
 
@@ -985,7 +986,10 @@ TEXT;
      */
     public function testRunCommandMissingMethod()
     {
-        $shell = $this->getMock('Cake\Console\Shell', ['startup', 'getOptionParser', 'out'], [], '', false);
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['startup', 'getOptionParser', 'out', 'hr'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $shell->io($this->getMock('Cake\Console\ConsoleIo'));
         $parser = $this->getMock('Cake\Console\ConsoleOptionParser', [], [], '', false);
 

@@ -362,7 +362,7 @@ class View implements EventDispatcherInterface
     /**
      * Get/set path for templates files.
      *
-     * @param string $path Path for template files. If null returns current path.
+     * @param string|null $path Path for template files. If null returns current path.
      * @return string|null
      */
     public function templatePath($path = null)
@@ -377,7 +377,7 @@ class View implements EventDispatcherInterface
     /**
      * Get/set path for layout files.
      *
-     * @param string $path Path for layout files. If null returns current path.
+     * @param string|null $path Path for layout files. If null returns current path.
      * @return string|null
      */
     public function layoutPath($path = null)
@@ -394,7 +394,7 @@ class View implements EventDispatcherInterface
      * On by default. Setting to off means that layouts will not be
      * automatically applied to rendered templates.
      *
-     * @param bool $autoLayout Boolean to turn on/off. If null returns current value.
+     * @param bool|null $autoLayout Boolean to turn on/off. If null returns current value.
      * @return bool|null
      */
     public function autoLayout($autoLayout = null)
@@ -409,7 +409,7 @@ class View implements EventDispatcherInterface
     /**
      * The view theme to use.
      *
-     * @param string $theme Theme name. If null returns current theme.
+     * @param string|null $theme Theme name. If null returns current theme.
      * @return string|null
      */
     public function theme($theme = null)
@@ -425,7 +425,7 @@ class View implements EventDispatcherInterface
      * Get/set the name of the template file to render. The name specified is the
      * filename in /src/Template/<SubFolder> without the .ctp extension.
      *
-     * @param string $name Template file name to set. If null returns current name.
+     * @param string|null $name Template file name to set. If null returns current name.
      * @return string|null
      */
     public function template($name = null)
@@ -442,7 +442,7 @@ class View implements EventDispatcherInterface
      * The name specified is the filename of the layout in /src/Template/Layout
      * without the .ctp extension.
      *
-     * @param string $name Layout file name to set. If null returns current name.
+     * @param string|null $name Layout file name to set. If null returns current name.
      * @return string|null
      */
     public function layout($name = null)

@@ -58,7 +58,7 @@ class XcacheEngine extends CacheEngine
      */
     public function init(array $config = [])
     {
-        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') || !extension_loaded('xcache')) {
+        if (!extension_loaded('xcache')) {
             return false;
         }
 
@@ -76,6 +76,10 @@ class XcacheEngine extends CacheEngine
     public function write($key, $value)
     {
         $key = $this->_key($key);
+
+        if (!is_numeric($value)) {
+            $value = serialize($value);
+        }
 
         $duration = $this->_config['duration'];
         $expires = time() + $duration;
@@ -100,7 +104,12 @@ class XcacheEngine extends CacheEngine
             if ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime) {
                 return false;
             }
-            return xcache_get($key);
+
+            $value = xcache_get($key);
+            if (is_string($value) && !is_numeric($value)) {
+                $value = unserialize($value);
+            }
+            return $value;
         }
         return false;
     }

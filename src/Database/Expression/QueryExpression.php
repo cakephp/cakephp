@@ -143,7 +143,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
-     * @param string $type the type name for $value as configured using the Type map.
+     * @param string|null $type the type name for $value as configured using the Type map.
      * If it is suffixed with "[]" and the value is an array then multiple placeholders
      * will be created, one per each value in the array.
      * @return $this
@@ -161,7 +161,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
-     * @param string $type the type name for $value as configured using the Type map.
+     * @param string|null $type the type name for $value as configured using the Type map.
      * If it is suffixed with "[]" and the value is an array then multiple placeholders
      * will be created, one per each value in the array.
      * @return $this
@@ -179,7 +179,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
-     * @param string $type the type name for $value as configured using the Type map.
+     * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
     public function gt($field, $value, $type = null)
@@ -195,7 +195,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
-     * @param string $type the type name for $value as configured using the Type map.
+     * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
     public function lt($field, $value, $type = null)
@@ -211,7 +211,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
-     * @param string $type the type name for $value as configured using the Type map.
+     * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
     public function gte($field, $value, $type = null)
@@ -227,7 +227,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
-     * @param string $type the type name for $value as configured using the Type map.
+     * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
     public function lte($field, $value, $type = null)
@@ -273,7 +273,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
-     * @param string $type the type name for $value as configured using the Type map.
+     * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
     public function like($field, $value, $type = null)
@@ -289,7 +289,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
-     * @param string $type the type name for $value as configured using the Type map.
+     * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
     public function notLike($field, $value, $type = null)
@@ -306,7 +306,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param string $field Database field to be compared against value
      * @param string|array $values the value to be bound to $field for comparison
-     * @param string $type the type name for $value as configured using the Type map.
+     * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
     public function in($field, $values, $type = null)
@@ -342,7 +342,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param string $field Database field to be compared against value
      * @param array $values the value to be bound to $field for comparison
-     * @param string $type the type name for $value as configured using the Type map.
+     * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
     public function notIn($field, $values, $type = null)
@@ -363,7 +363,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param mixed $field The field name to compare for values in between the range.
      * @param mixed $from The initial value of the range.
      * @param mixed $to The ending value in the comparison range.
-     * @param string $type the type name for $value as configured using the Type map.
+     * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
     public function between($field, $from, $to, $type = null)

@@ -317,7 +317,7 @@ trait EntityTrait
 
     /**
      * Returns whether this entity contains a property named $property
-     * regardless of if it is empty.
+     * that contains a non-null value.
      *
      * ### Example:
      *
@@ -327,6 +327,14 @@ trait EntityTrait
      * $entity->has('name'); // false
      * $entity->has('last_name'); // false
      * ```
+     *
+     * You can check multiple properties by passing an array:
+     *
+     * ```
+     * $entity->has(['name', 'last_name']);
+     * ```
+     *
+     * All properties must not be null to get a truthy result.
      *
      * When checking multiple properties. All properties must not be null
      * in order for true to be returned.
@@ -497,7 +505,7 @@ trait EntityTrait
     }
 
     /**
-     * Implements unset($result[$offset);
+     * Implements unset($result[$offset]);
      *
      * @param mixed $offset The offset to remove.
      * @return void
@@ -518,6 +526,7 @@ trait EntityTrait
     protected static function _accessor($property, $type)
     {
         $class = static::class;
+
         if (isset(static::$_accessors[$class][$type][$property])) {
             return static::$_accessors[$class][$type][$property];
         }
@@ -537,8 +546,10 @@ trait EntityTrait
             }
             $field = lcfirst(substr($method, 4));
             $snakeField = Inflector::underscore($field);
+            $titleField = ucfirst($field);
             static::$_accessors[$class][$prefix][$snakeField] = $method;
             static::$_accessors[$class][$prefix][$field] = $method;
+            static::$_accessors[$class][$prefix][$titleField] = $method;
         }
 
         if (!isset(static::$_accessors[$class][$type][$property])) {
@@ -616,7 +627,7 @@ trait EntityTrait
      * When called with no arguments it will return whether or not there are any
      * dirty property in the entity
      *
-     * @param string $property the field to set or check status for
+     * @param string|null $property the field to set or check status for
      * @param null|bool $isDirty true means the property was changed, false means
      * it was not changed and null will make the function return current state
      * for that property
@@ -799,7 +810,7 @@ trait EntityTrait
      * Read the error(s) from one or many objects.
      *
      * @param array|\Cake\Datasource\EntityTrait $object The object to read errors from.
-     * @param string $path The field name for errors.
+     * @param string|null $path The field name for errors.
      * @return array
      */
     protected function _readError($object, $path = null)
@@ -885,7 +896,7 @@ trait EntityTrait
      * ```
      *
      * @param string|array $property single or list of properties to change its accessibility
-     * @param bool $set true marks the property as accessible, false will
+     * @param bool|null $set true marks the property as accessible, false will
      * mark it as protected.
      * @return $this|bool
      */
@@ -920,7 +931,7 @@ trait EntityTrait
      * If called with no arguments, it returns the alias of the repository
      * this entity came from if it is known.
      *
-     * @param string $alias the alias of the repository
+     * @param string|null $alias the alias of the repository
      * @return string|$this
      */
     public function source($alias = null)

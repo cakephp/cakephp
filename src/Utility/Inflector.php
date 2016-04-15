@@ -731,6 +731,7 @@ class Inflector
      * Returns a string with all spaces converted to dashes (by default), accented
      * characters converted to non-accented characters, and non word characters removed.
      *
+     * @deprecated 3.2.7 Use Text::slug() instead.
      * @param string $string the string you want to slug
      * @param string $replacement will replace keys in map
      * @return string

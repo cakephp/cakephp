@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\I18n;
 
 use Cake\I18n\FrozenTime;
+use Cake\I18n\I18n;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 
@@ -55,6 +56,7 @@ class TimeTest extends TestCase
         FrozenTime::$defaultLocale = $this->locale;
         FrozenTime::resetToStringFormat();
         date_default_timezone_set('UTC');
+        I18n::locale(I18n::DEFAULT_LOCALE);
     }
 
     /**
@@ -310,6 +312,10 @@ class TimeTest extends TestCase
         ]);
         $expected = 'in about a day';
         $this->assertEquals($expected, $result);
+
+        $time = new $class('+20 days');
+        $result = $time->timeAgoInWords(['accuracy' => 'month']);
+        $this->assertEquals('in about a month', $result);
     }
 
     /**
@@ -390,6 +396,10 @@ class TimeTest extends TestCase
         $time = new $class('-23 hours');
         $result = $time->timeAgoInWords(['accuracy' => 'day']);
         $this->assertEquals('about a day ago', $result);
+
+        $time = new $class('-20 days');
+        $result = $time->timeAgoInWords(['accuracy' => 'month']);
+        $this->assertEquals('about a month ago', $result);
     }
 
     /**
@@ -797,6 +807,20 @@ class TimeTest extends TestCase
 
         $time = $class::parseTime('31c2:54');
         $this->assertNull($time);
+    }
+
+    /**
+     * Tests that timeAgoInWords when using a russian locale does not break things
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testRussianTimeAgoInWords($class)
+    {
+        I18n::locale('ru_RU');
+        $time = new $class('5 days ago');
+        $result = $time->timeAgoInWords();
+        $this->assertEquals('5 days ago', $result);
     }
 
     /**

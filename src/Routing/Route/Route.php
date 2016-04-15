@@ -146,7 +146,7 @@ class Route
      */
     public function compile()
     {
-        if (!empty($this->compiledRoute)) {
+        if ($this->_compiledRoute) {
             return $this->_compiledRoute;
         }
         $this->_writeRoute();
@@ -199,9 +199,13 @@ class Route
             $parsed = preg_replace('#/\\\\\*$#', '(?:/(?P<_args_>.*))?', $parsed);
             $this->_greedy = true;
         }
+        $mode = '';
+        if (!empty($this->options['multibytePattern'])) {
+            $mode = 'u';
+        }
         krsort($routeParams);
         $parsed = str_replace(array_keys($routeParams), array_values($routeParams), $parsed);
-        $this->_compiledRoute = '#^' . $parsed . '[/]*$#';
+        $this->_compiledRoute = '#^' . $parsed . '[/]*$#' . $mode;
         $this->keys = $names;
 
         // Remove defaults that are also keys. They can cause match failures
@@ -261,8 +265,6 @@ class Route
      */
     public function parse($url)
     {
-        $request = Router::getRequest(true) ?: Request::createFromGlobals();
-
         if (empty($this->_compiledRoute)) {
             $this->compile();
         }
@@ -273,6 +275,7 @@ class Route
         }
 
         if (isset($this->defaults['_method'])) {
+            $request = Router::getRequest(true) ?: Request::createFromGlobals();
             $method = $request->env('REQUEST_METHOD');
             if (!in_array($method, (array)$this->defaults['_method'], true)) {
                 return false;

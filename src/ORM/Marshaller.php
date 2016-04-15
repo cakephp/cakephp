@@ -87,10 +87,15 @@ class Marshaller
      *
      * ### Options:
      *
-     * * associated: Associations listed here will be marshalled as well.
-     * * fieldList: A whitelist of fields to be assigned to the entity. If not present,
-     *   the accessible fields list in the entity will be used.
-     * * accessibleFields: A list of fields to allow or deny in entity accessible fields.
+     * - validate: Set to false to disable validation. Can also be a string of the validator ruleset to be applied.
+     *   Defaults to true/default.
+     * - associated: Associations listed here will be marshalled as well. Defaults to null.
+     * - fieldList: A whitelist of fields to be assigned to the entity. If not present,
+     *   the accessible fields list in the entity will be used. Defaults to null.
+     * - accessibleFields: A list of fields to allow or deny in entity accessible fields. Defaults to null
+     * - forceNew: When enabled, belongsToMany associations will have 'new' entities created
+     *   when primary key values are set, and a record does not already exist. Normally primary key
+     *   on missing entities would be ignored. Defaults to false.
      *
      * The above options can be used in each nested `associated` array. In addition to the above
      * options you can also use the `onlyIds` option for HasMany and BelongsToMany associations.
@@ -125,6 +130,11 @@ class Marshaller
             }
         }
 
+        $marshallOptions = [];
+        if (isset($options['forceNew'])) {
+            $marshallOptions['forceNew'] = $options['forceNew'];
+        }
+
         $errors = $this->_validate($data, $options, true);
         $properties = [];
         foreach ($data as $key => $value) {
@@ -137,7 +147,7 @@ class Marshaller
             $columnType = $schema->columnType($key);
             if (isset($propertyMap[$key])) {
                 $assoc = $propertyMap[$key]['association'];
-                $value = $this->_marshalAssociation($assoc, $value, $propertyMap[$key]);
+                $value = $this->_marshalAssociation($assoc, $value, $propertyMap[$key] + $marshallOptions);
             } elseif ($value === '' && in_array($key, $primaryKey, true)) {
                 // Skip marshalling '' for pk fields.
                 continue;
@@ -257,10 +267,15 @@ class Marshaller
      *
      * ### Options:
      *
-     * * associated: Associations listed here will be marshalled as well.
-     * * fieldList: A whitelist of fields to be assigned to the entity. If not present,
-     *   the accessible fields list in the entity will be used.
-     * * accessibleFields: A list of fields to allow or deny in entity accessible fields.
+     * - validate: Set to false to disable validation. Can also be a string of the validator ruleset to be applied.
+     *   Defaults to true/default.
+     * - associated: Associations listed here will be marshalled as well. Defaults to null.
+     * - fieldList: A whitelist of fields to be assigned to the entity. If not present,
+     *   the accessible fields list in the entity will be used. Defaults to null.
+     * - accessibleFields: A list of fields to allow or deny in entity accessible fields. Defaults to null
+     * - forceNew: When enabled, belongsToMany associations will have 'new' entities created
+     *   when primary key values are set, and a record does not already exist. Normally primary key
+     *   on missing entities would be ignored. Defaults to false.
      *
      * @param array $data The data to hydrate.
      * @param array $options List of options
@@ -293,6 +308,7 @@ class Marshaller
     protected function _belongsToMany(Association $assoc, array $data, $options = [])
     {
         $associated = isset($options['associated']) ? $options['associated'] : [];
+        $forceNew = isset($options['forceNew']) ? $options['forceNew'] : false;
 
         $data = array_values($data);
 
@@ -300,6 +316,7 @@ class Marshaller
         $primaryKey = array_flip($target->schema()->primaryKey());
         $records = $conditions = [];
         $primaryCount = count($primaryKey);
+        $conditions = [];
 
         foreach ($data as $i => $row) {
             if (!is_array($row)) {
@@ -308,9 +325,16 @@ class Marshaller
             if (array_intersect_key($primaryKey, $row) === $primaryKey) {
                 $keys = array_intersect_key($row, $primaryKey);
                 if (count($keys) === $primaryCount) {
+                    $rowConditions = [];
                     foreach ($keys as $key => $value) {
-                        $conditions[][$target->aliasfield($key)] = $value;
+                        $rowConditions[][$target->aliasfield($key)] = $value;
                     }
+
+                    if ($forceNew && !$target->exists($rowConditions)) {
+                        $records[$i] = $this->one($row, $options);
+                    }
+
+                    $conditions = array_merge($conditions, $rowConditions);
                 }
             } else {
                 $records[$i] = $this->one($row, $options);
@@ -380,9 +404,7 @@ class Marshaller
         $target = $assoc->target();
         $primaryKey = (array)$target->primaryKey();
         $multi = count($primaryKey) > 1;
-        $primaryKey = array_map(function ($key) use ($target) {
-            return $target->alias() . '.' . $key;
-        }, $primaryKey);
+        $primaryKey = array_map([$target, 'aliasField'], $primaryKey);
 
         if ($multi) {
             if (count(current($ids)) !== count($primaryKey)) {
@@ -422,12 +444,12 @@ class Marshaller
      *
      * ### Options:
      *
-     * * associated: Associations listed here will be marshalled as well.
-     * * validate: Whether or not to validate data before hydrating the entities. Can
+     * - associated: Associations listed here will be marshalled as well.
+     * - validate: Whether or not to validate data before hydrating the entities. Can
      *   also be set to a string to use a specific validator. Defaults to true/default.
-     * * fieldList: A whitelist of fields to be assigned to the entity. If not present
+     * - fieldList: A whitelist of fields to be assigned to the entity. If not present
      *   the accessible fields list in the entity will be used.
-     * * accessibleFields: A list of fields to allow or deny in entity accessible fields.
+     * - accessibleFields: A list of fields to allow or deny in entity accessible fields.
      *
      * The above options can be used in each nested `associated` array. In addition to the above
      * options you can also use the `onlyIds` option for HasMany and BelongsToMany associations.
@@ -537,6 +559,8 @@ class Marshaller
      *
      * ### Options:
      *
+     * - validate: Whether or not to validate data before hydrating the entities. Can
+     *   also be set to a string to use a specific validator. Defaults to true/default.
      * - associated: Associations listed here will be marshalled as well.
      * - fieldList: A whitelist of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used.
@@ -591,7 +615,8 @@ class Marshaller
                 return count(array_filter($keys, 'strlen')) === count($primary);
             })
             ->reduce(function ($query, $keys) use ($primary) {
-                return $query->orWhere($query->newExpr()->and_(array_combine($primary, $keys)));
+                $fields = array_map([$this->_table, 'aliasField'], $primary);
+                return $query->orWhere($query->newExpr()->and_(array_combine($fields, $keys)));
             }, $this->_table->find());
 
         if (!empty($indexed) && count($maybeExistentQuery->clause('where'))) {

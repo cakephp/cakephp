@@ -16,9 +16,12 @@ namespace Cake\Test\TestCase\Validation;
 
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
+use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
 use Locale;
+
+require_once __DIR__ . '/stubs.php';
 
 /**
  * Test Case for Validation Class
@@ -900,6 +903,13 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::date($dateTime));
         $this->assertTrue(Validation::time($dateTime));
         $this->assertTrue(Validation::dateTime($dateTime));
+        $this->assertTrue(Validation::localizedTime($dateTime));
+
+        $dateTime = new \DateTimeImmutable();
+        $this->assertTrue(Validation::date($dateTime));
+        $this->assertTrue(Validation::time($dateTime));
+        $this->assertTrue(Validation::dateTime($dateTime));
+        $this->assertTrue(Validation::localizedTime($dateTime));
     }
 
     /**
@@ -1542,6 +1552,45 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::dateTime('12/04/2017, 1:38AM', ['dmy']));
         $this->assertTrue(Validation::dateTime('28/10/2015, 3:21 PM', ['dmy']));
         $this->assertFalse(Validation::dateTime('12/04/2017 58:38AM', ['dmy']));
+    }
+
+    /**
+     * Test localizedTime
+     *
+     * @return void
+     */
+    public function testLocalizedTime()
+    {
+        $locale = I18N::locale();
+
+        $this->assertFalse(Validation::localizedTime('', 'date'));
+        $this->assertFalse(Validation::localizedTime('invalid', 'date'));
+
+        // English (US)
+        I18N::locale('en_US');
+        $this->assertTrue(Validation::localizedTime('12/31/2006', 'date'));
+        $this->assertTrue(Validation::localizedTime('6.40pm', 'time'));
+        $this->assertTrue(Validation::localizedTime('12/31/2006 6.40pm', 'datetime'));
+        $this->assertTrue(Validation::localizedTime('December 31, 2006', 'date'));
+
+        $this->assertFalse(Validation::localizedTime('31. Dezember 2006', 'date')); // non-US format
+        $this->assertFalse(Validation::localizedTime('18:40', 'time')); // non-US format
+
+        // German
+        I18N::locale('de_DE');
+        $this->assertTrue(Validation::localizedTime('31.12.2006', 'date'));
+        $this->assertTrue(Validation::localizedTime('31. Dezember 2006', 'date'));
+        $this->assertTrue(Validation::localizedTime('18:40', 'time'));
+
+        $this->assertFalse(Validation::localizedTime('December 31, 2006', 'date')); // non-German format
+
+        // Russian
+        I18N::locale('ru_RU');
+        $this->assertTrue(Validation::localizedTime('31 декабря 2006', 'date'));
+
+        $this->assertFalse(Validation::localizedTime('December 31, 2006', 'date')); // non-Russian format
+
+        I18N::locale($locale);
     }
 
 

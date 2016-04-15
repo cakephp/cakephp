@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Database\Log;
 
 use Cake\Database\Log\LoggingStatement;
 use Cake\TestSuite\TestCase;
-use PDOStatement;
 
 /**
  * Tests LoggingStatement class

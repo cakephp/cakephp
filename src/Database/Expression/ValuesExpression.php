@@ -94,7 +94,7 @@ class ValuesExpression implements ExpressionInterface
      * Sets the columns to be inserted. If no params are passed, then it returns
      * the currently stored columns
      *
-     * @param array $cols arrays with columns to be inserted
+     * @param array|null $cols arrays with columns to be inserted
      * @return array|$this
      */
     public function columns($cols = null)
@@ -110,7 +110,7 @@ class ValuesExpression implements ExpressionInterface
      * Sets the values to be inserted. If no params are passed, then it returns
      * the currently stored values
      *
-     * @param array $values arrays with values to be inserted
+     * @param array|null $values arrays with values to be inserted
      * @return array|$this
      */
     public function values($values = null)
@@ -127,7 +127,7 @@ class ValuesExpression implements ExpressionInterface
      * to insert records in the table. If no params are passed, then it returns
      * the currently stored query
      *
-     * @param \Cake\Database\Query $query The query to set/get
+     * @param \Cake\Database\Query|null $query The query to set/get
      * @return \Cake\Database\Query
      */
     public function query(Query $query = null)

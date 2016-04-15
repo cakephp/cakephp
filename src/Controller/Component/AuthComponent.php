@@ -567,7 +567,7 @@ class AuthComponent extends Component
      * $this->Auth->allow();
      * ```
      *
-     * @param string|array $actions Controller action name or array of actions
+     * @param string|array|null $actions Controller action name or array of actions
      * @return void
      * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#making-actions-public
      */
@@ -596,7 +596,7 @@ class AuthComponent extends Component
      * ```
      * to remove all items from the allowed list
      *
-     * @param string|array $actions Controller action name or array of actions
+     * @param string|array|null $actions Controller action name or array of actions
      * @return void
      * @see \Cake\Controller\Component\AuthComponent::allow()
      * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#making-actions-require-authorization
@@ -656,8 +656,8 @@ class AuthComponent extends Component
     /**
      * Get the current user from storage.
      *
-     * @param string $key Field to retrieve. Leave null to get entire User record.
-     * @return array|null Either User record or null if no user is logged in.
+     * @param string|null $key Field to retrieve. Leave null to get entire User record.
+     * @return mixed|null Either User record or null if no user is logged in, or retrieved field if key is specified.
      * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#accessing-the-logged-in-user
      */
     public function user($key = null)
@@ -724,7 +724,7 @@ class AuthComponent extends Component
      *    `loginRedirect`, the `loginRedirect` value is returned.
      *  - If there is no session and no `loginRedirect`, / is returned.
      *
-     * @param string|array $url Optional URL to write as the login redirect URL.
+     * @param string|array|null $url Optional URL to write as the login redirect URL.
      * @return string Redirect URL
      */
     public function redirectUrl($url = null)
