@@ -28,6 +28,17 @@ class CakesController extends Controller
     }
 
     /**
+     * No autoRender
+     *
+     * @return void
+     */
+    public function noRender()
+    {
+        $this->autoRender = false;
+        $this->response->body('autoRender false body');
+    }
+
+    /**
      * invalid method
      *
      * @return \Cake\Network\Response
@@ -35,5 +46,29 @@ class CakesController extends Controller
     public function invalid()
     {
         return 'Some string';
+    }
+
+    /**
+     * startup process.
+     */
+    public function startupProcess()
+    {
+        parent::startupProcess();
+        if ($this->request->param('stop') === 'startup') {
+            $this->response->body('startup stop');
+            return $this->response;
+        }
+    }
+
+    /**
+     * shutdown process.
+     */
+    public function shutdownProcess()
+    {
+        parent::shutdownProcess();
+        if ($this->request->param('stop') === 'shutdown') {
+            $this->response->body('shutdown stop');
+            return $this->response;
+        }
     }
 }
