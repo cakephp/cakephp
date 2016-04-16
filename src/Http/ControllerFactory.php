@@ -55,16 +55,19 @@ class ControllerFactory
             }
         }
         $firstChar = substr($controller, 0, 1);
+
+        // Disallow plugin short forms, / and \\ from
+        // controller names as they allow direct references to
+        // be created.
         if (strpos($controller, '\\') !== false ||
+            strpos($controller, '/') !== false ||
             strpos($controller, '.') !== false ||
             $firstChar === strtolower($firstChar)
         ) {
             return $this->missingController($request);
         }
-        $className = false;
-        if ($pluginPath . $controller) {
-            $className = App::classname($pluginPath . $controller, $namespace, 'Controller');
-        }
+
+        $className = App::classname($pluginPath . $controller, $namespace, 'Controller');
         if (!$className) {
             return $this->missingController($request);
         }

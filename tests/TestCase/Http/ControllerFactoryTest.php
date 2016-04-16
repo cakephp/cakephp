@@ -232,6 +232,23 @@ class ControllerFactoryTest extends TestCase
 
     /**
      * @expectedException \Cake\Routing\Exception\MissingControllerException
+     * @expectedExceptionMessage Controller class Admin/Posts could not be found.
+     * @return void
+     */
+    public function testSlashedControllerFailure()
+    {
+        $request = new Request([
+            'url' => 'admin/posts/index',
+            'params' => [
+                'controller' => 'Admin/Posts',
+                'action' => 'index',
+            ]
+        ]);
+        $this->factory->create($request, $this->response);
+    }
+
+    /**
+     * @expectedException \Cake\Routing\Exception\MissingControllerException
      * @expectedExceptionMessage Controller class TestApp\Controller\CakesController could not be found.
      * @return void
      */
