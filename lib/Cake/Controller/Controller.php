@@ -1249,5 +1249,13 @@ class Controller extends Object implements CakeEventListener {
 
 		return new $viewClass($this);
 	}
+	
+/**
+ * Returns the class name to use for creating the response object.
+ * @return string
+ */
+	public function getResponseClass() {
+		return $this->_responseClass;
+	}
 
 }
