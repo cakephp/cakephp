@@ -19,7 +19,6 @@ use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\Routing\Exception\MissingControllerException;
 use LogicException;
 
 /**
@@ -55,7 +54,7 @@ class Dispatcher
      * @param \Cake\Network\Request $request Request object to dispatch.
      * @param \Cake\Network\Response $response Response object to put the results of the dispatch into.
      * @return string|null if `$request['return']` is set then it returns response body, null otherwise
-     * @throws \Cake\Routing\Exception\MissingControllerException When the controller is missing.
+     * @throws \LogicException When the controller did not get created in the Dispatcher.beforeDispatch event.
      */
     public function dispatch(Request $request, Response $response)
     {
@@ -70,19 +69,13 @@ class Dispatcher
             return null;
         }
 
-        $controller = false;
-        if (isset($beforeEvent->data['controller'])) {
-            $controller = $beforeEvent->data['controller'];
+        if (!isset($beforeEvent->data['controller'])) {
+            throw new LogicException(
+                'The Dispatcher.beforeDispatch event did not create a controller. ' .
+                'Ensure you have added the ControllerFactoryFilter.'
+            );
         }
-
-        if (!($controller instanceof Controller)) {
-            throw new MissingControllerException([
-                'class' => $request->params['controller'],
-                'plugin' => empty($request->params['plugin']) ? null : $request->params['plugin'],
-                'prefix' => empty($request->params['prefix']) ? null : $request->params['prefix'],
-                '_ext' => empty($request->params['_ext']) ? null : $request->params['_ext']
-            ]);
-        }
+        $controller = $beforeEvent->data['controller'];
 
         $response = $this->_invoke($controller);
         if (isset($request->params['return'])) {

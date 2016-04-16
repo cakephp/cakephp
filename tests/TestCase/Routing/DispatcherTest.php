@@ -69,12 +69,6 @@ class MyPluginAppController extends Controller
 {
 }
 
-interface DispatcherTestInterfaceController
-{
-
-    public function index();
-}
-
 /**
  * MyPluginController class
  *
@@ -262,15 +256,15 @@ class DispatcherTest extends TestCase
      * testMissingControllerInterface method
      *
      * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class DispatcherTestInterface could not be found.
+     * @expectedExceptionMessage Controller class Interface could not be found.
      * @return void
      */
     public function testMissingControllerInterface()
     {
         $request = new Request([
-            'url' => 'dispatcher_test_interface/index',
+            'url' => 'interface/index',
             'params' => [
-                'controller' => 'DispatcherTestInterface',
+                'controller' => 'Interface',
                 'action' => 'index',
             ]
         ]);
@@ -530,7 +524,15 @@ class DispatcherTest extends TestCase
         $filter->expects($this->never())
             ->method('afterDispatch');
 
-        $request = new Request();
+        $request = new Request([
+            'url' => '/',
+            'params' => [
+                'controller' => 'Pages',
+                'action' => 'display',
+                'home',
+                'pass' => []
+            ]
+        ]);
         $res = new Response();
         $this->dispatcher->addFilter($filter);
         $this->dispatcher->dispatch($request, $res);
