@@ -161,7 +161,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['options', 'orm_cache']);
         $output = $this->out->output;
 
-        $expected = "--help -h --verbose -v --quiet -q --connection -c\n";
+        $expected = "--connection -c --help -h --quiet -q --verbose -v\n";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -175,7 +175,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['options', 'sample', 'sample']);
         $output = $this->out->output;
 
-        $expected = "--help -h --verbose -v --quiet -q --sample -s\n";
+        $expected = "--help -h --quiet -q --sample -s --verbose -v\n";
         $this->assertTextEquals($expected, $output);
     }
 
