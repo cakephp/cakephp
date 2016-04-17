@@ -48,7 +48,9 @@ class RoutingFilter extends DispatcherFilter
     public function beforeDispatch(Event $event)
     {
         $request = $event->data['request'];
-        Router::setRequestInfo($request);
+        if (Router::getRequest(true) !== $request) {
+            Router::setRequestInfo($request);
+        }
 
         try {
             if (empty($request->params['controller'])) {

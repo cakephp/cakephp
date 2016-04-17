@@ -78,14 +78,24 @@ class ActionDispatcher
      */
     public function dispatch(Request $request, Response $response)
     {
-        Router::pushRequest($request);
+        if (Router::getRequest(true) !== $request) {
+            Router::pushRequest($request);
+        }
         $beforeEvent = $this->dispatchEvent('Dispatcher.beforeDispatch', compact('request', 'response'));
 
         $request = $beforeEvent->data['request'];
         if ($beforeEvent->result instanceof Response) {
             return $beforeEvent->result;
         }
-        $controller = $this->factory->create($request, $response);
+
+        // Use the controller built by an beforeDispatch
+        // event handler if there is one.
+        if (isset($beforeEvent->data['controller'])) {
+            $controller = $beforeEvent->data['controller'];
+        } else {
+            $controller = $this->factory->create($request, $response);
+        }
+
         $response = $this->_invoke($controller);
         if (isset($request->params['return'])) {
             return $response;
@@ -104,6 +114,8 @@ class ActionDispatcher
      */
     protected function _invoke(Controller $controller)
     {
+        $this->dispatchEvent('Dispatcher.invokeController', ['controller' => $controller]);
+
         $result = $controller->startupProcess();
         if ($result instanceof Response) {
             return $result;

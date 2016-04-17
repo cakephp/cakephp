@@ -17,6 +17,7 @@ namespace Cake\Routing;
 use Cake\Controller\Controller;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
+use Cake\Http\ActionDispatcher;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use LogicException;
@@ -58,69 +59,15 @@ class Dispatcher
      */
     public function dispatch(Request $request, Response $response)
     {
-        $beforeEvent = $this->dispatchEvent('Dispatcher.beforeDispatch', compact('request', 'response'));
-
-        $request = $beforeEvent->data['request'];
-        if ($beforeEvent->result instanceof Response) {
-            if (isset($request->params['return'])) {
-                return $beforeEvent->result->body();
-            }
-            $beforeEvent->result->send();
-            return null;
+        $actionDispatcher = new ActionDispatcher(null, $this->eventManager());
+        foreach ($this->_filters as $filter) {
+            $actionDispatcher->addFilter($filter);
         }
-
-        if (!isset($beforeEvent->data['controller'])) {
-            throw new LogicException(
-                'The Dispatcher.beforeDispatch event did not create a controller. ' .
-                'Ensure you have added the ControllerFactoryFilter.'
-            );
-        }
-        $controller = $beforeEvent->data['controller'];
-
-        $response = $this->_invoke($controller);
+        $response = $actionDispatcher->dispatch($request, $response);
         if (isset($request->params['return'])) {
             return $response->body();
         }
-
-        $afterEvent = $this->dispatchEvent('Dispatcher.afterDispatch', compact('request', 'response'));
-        $afterEvent->data['response']->send();
-    }
-
-    /**
-     * Initializes the components and models a controller will be using.
-     * Triggers the controller action and invokes the rendering if Controller::$autoRender
-     * is true. If a response object is returned by controller action that is returned
-     * else controller's $response property is returned.
-     *
-     * @param \Cake\Controller\Controller $controller Controller to invoke
-     * @return \Cake\Network\Response The resulting response object
-     * @throws \LogicException If data returned by controller action is not an
-     *   instance of Response
-     */
-    protected function _invoke(Controller $controller)
-    {
-        $result = $controller->startupProcess();
-        if ($result instanceof Response) {
-            return $result;
-        }
-
-        $response = $controller->invokeAction();
-        if ($response !== null && !($response instanceof Response)) {
-            throw new LogicException('Controller action can only return an instance of Response');
-        }
-
-        if (!$response && $controller->autoRender) {
-            $response = $controller->render();
-        } elseif (!$response) {
-            $response = $controller->response;
-        }
-
-        $result = $controller->shutdownProcess();
-        if ($result instanceof Response) {
-            return $result;
-        }
-
-        return $response;
+        return $response->send();
     }
 
     /**
@@ -136,7 +83,6 @@ class Dispatcher
     public function addFilter(EventListenerInterface $filter)
     {
         $this->_filters[] = $filter;
-        $this->eventManager()->on($filter);
     }
 
     /**

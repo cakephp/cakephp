@@ -24,177 +24,6 @@ use Cake\Routing\Filter\ControllerFactoryFilter;
 use Cake\TestSuite\TestCase;
 
 /**
- * A testing stub that doesn't send headers.
- */
-class DispatcherMockResponse extends Response
-{
-
-    protected function _sendHeader($name, $value = null)
-    {
-        return $name . ' ' . $value;
-    }
-}
-
-/**
- * TestDispatcher class
- */
-class TestDispatcher extends Dispatcher
-{
-
-    /**
-     * Controller instance, made publicly available for testing
-     *
-     * @var Controller
-     */
-    public $controller;
-
-    /**
-     * invoke method
-     *
-     * @param \Cake\Controller\Controller $controller
-     * @return \Cake\Network\Response $response
-     */
-    protected function _invoke(Controller $controller)
-    {
-        $this->controller = $controller;
-        return parent::_invoke($controller);
-    }
-}
-
-/**
- * MyPluginAppController class
- *
- */
-class MyPluginAppController extends Controller
-{
-}
-
-/**
- * MyPluginController class
- *
- */
-class MyPluginController extends MyPluginAppController
-{
-
-    /**
-     * name property
-     *
-     * @var string
-     */
-    public $name = 'MyPlugin';
-
-    /**
-     * index method
-     *
-     * @return void
-     */
-    public function index()
-    {
-        return true;
-    }
-
-    /**
-     * add method
-     *
-     * @return void
-     */
-    public function add()
-    {
-        return true;
-    }
-
-    /**
-     * admin_add method
-     *
-     * @param mixed $id
-     * @return void
-     */
-    public function admin_add($id = null)
-    {
-        return $id;
-    }
-}
-
-/**
- * OtherPagesController class
- *
- */
-class OtherPagesController extends MyPluginAppController
-{
-
-    /**
-     * name property
-     *
-     * @var string
-     */
-    public $name = 'OtherPages';
-
-    /**
-     * display method
-     *
-     * @param string $page
-     * @return void
-     */
-    public function display($page = null)
-    {
-        return $page;
-    }
-
-    /**
-     * index method
-     *
-     * @return void
-     */
-    public function index()
-    {
-        return true;
-    }
-}
-
-/**
- * ArticlesTestAppController class
- *
- */
-class ArticlesTestAppController extends Controller
-{
-}
-
-/**
- * ArticlesTestController class
- *
- */
-class ArticlesTestController extends ArticlesTestAppController
-{
-
-    /**
-     * name property
-     *
-     * @var string
-     */
-    public $name = 'ArticlesTest';
-
-    /**
-     * admin_index method
-     *
-     * @return void
-     */
-    public function admin_index()
-    {
-        return true;
-    }
-
-    /**
-     * fake index method.
-     *
-     * @return void
-     */
-    public function index()
-    {
-        return true;
-    }
-}
-
-/**
  * DispatcherTest class
  *
  */
@@ -217,7 +46,7 @@ class DispatcherTest extends TestCase
         Configure::write('App.webroot', 'webroot');
         Configure::write('App.namespace', 'TestApp');
 
-        $this->dispatcher = new TestDispatcher();
+        $this->dispatcher = new Dispatcher();
         $this->dispatcher->addFilter(new ControllerFactoryFilter());
     }
 
@@ -330,14 +159,14 @@ class DispatcherTest extends TestCase
                 'controller' => 'Pages',
                 'action' => 'display',
                 'pass' => ['extract'],
-                'return' => 1
             ]
         ]);
         $response = $this->getMock('Cake\Network\Response');
+        $response->expects($this->once())
+            ->method('send');
 
-        $this->dispatcher->dispatch($url, $response);
-        $expected = 'Pages';
-        $this->assertEquals($expected, $this->dispatcher->controller->name);
+        $result = $this->dispatcher->dispatch($url, $response);
+        $this->assertNull($result);
     }
 
     /**
@@ -362,65 +191,6 @@ class DispatcherTest extends TestCase
         $result = ob_get_clean();
 
         $this->assertEquals('new response', $result);
-    }
-
-    /**
-     * testPrefixDispatch method
-     *
-     * @return void
-     */
-    public function testPrefixDispatch()
-    {
-        $request = new Request([
-            'url' => 'admin/posts/index',
-            'params' => [
-                'prefix' => 'Admin',
-                'controller' => 'Posts',
-                'action' => 'index',
-                'pass' => [],
-                'return' => 1
-            ]
-        ]);
-        $response = $this->getMock('Cake\Network\Response');
-
-        $this->dispatcher->dispatch($request, $response);
-
-        $this->assertInstanceOf(
-            'TestApp\Controller\Admin\PostsController',
-            $this->dispatcher->controller
-        );
-        $expected = '/admin/posts/index';
-        $this->assertSame($expected, $request->here);
-    }
-
-    /**
-     * test prefix dispatching in a plugin.
-     *
-     * @return void
-     */
-    public function testPrefixDispatchPlugin()
-    {
-        Plugin::load('TestPlugin');
-
-        $request = new Request([
-            'url' => 'admin/test_plugin/comments/index',
-            'params' => [
-                'plugin' => 'TestPlugin',
-                'prefix' => 'Admin',
-                'controller' => 'Comments',
-                'action' => 'index',
-                'pass' => [],
-                'return' => 1
-            ]
-        ]);
-        $response = $this->getMock('Cake\Network\Response');
-
-        $this->dispatcher->dispatch($request, $response);
-
-        $this->assertInstanceOf(
-            'TestPlugin\Controller\Admin\CommentsController',
-            $this->dispatcher->controller
-        );
     }
 
     /**
