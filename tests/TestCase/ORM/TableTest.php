@@ -2778,6 +2778,24 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test saveMany() with entities array
+     *
+     * @return void
+     */
+    public function testSaveManyArray()
+    {
+        $entities = [
+            new Entity(['name' => 'admad']),
+            new Entity(['name' => 'dakota'])
+        ];
+
+        $table = TableRegistry::get('authors');
+        $result = $table->saveMany($entities);
+        $this->assertSame($entities, $result);
+        $this->assertTrue(isset($result[0]->id));
+    }
+
+    /**
      * Test simple delete.
      *
      * @return void
