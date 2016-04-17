@@ -1627,9 +1627,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function saveMany($entities, $options = [])
     {
+        $isNew = [];
+
         $return = $this->connection()->transactional(
-            function () use ($entities, $options) {
-                foreach ($entities as $entity) {
+            function () use ($entities, $options, &$isNew) {
+                foreach ($entities as $key => $entity) {
+                    $isNew[$key] = $entity->isNew();
                     if ($this->save($entity, $options) === false) {
                         return false;
                     }
@@ -1638,6 +1641,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         );
 
         if ($return === false) {
+            foreach ($entities as $key => $entity) {
+                if (isset($isNew[$key]) && $isNew[$key]) {
+                    $entity->unsetProperty($this->primaryKey());
+                    $entity->isNew(true);
+                }
+            }
             return false;
         }
 

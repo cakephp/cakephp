@@ -2819,6 +2819,27 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test saveMany() with failed save
+     *
+     * @return void
+     */
+    public function testSaveManyFailed()
+    {
+        $table = TableRegistry::get('authors');
+        $entities = [
+            new Entity(['name' => 'mark']),
+            new Entity(['name' => 'jose'])
+        ];
+        $entities[1]->errors(['name' => ['message']]);
+        $result = $table->saveMany($entities);
+
+        $this->assertFalse($result);
+        foreach ($entities as $entity) {
+            $this->assertTrue($entity->isNew());
+        }
+    }
+
+    /**
      * Test simple delete.
      *
      * @return void
