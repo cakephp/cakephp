@@ -2796,6 +2796,25 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test saveMany() with ResultSet instance
+     *
+     * @return void
+     */
+    public function testSaveManyResultSet()
+    {
+        $table = TableRegistry::get('authors');
+
+        $entities = $table->find()->all();
+        $entities->first()->name = 'admad';
+
+        $result = $table->saveMany($entities);
+        $this->assertSame($entities, $result);
+
+        $first = $table->find()->first();
+        $this->assertSame('admad', $first->name);
+    }
+
+    /**
      * Test simple delete.
      *
      * @return void
