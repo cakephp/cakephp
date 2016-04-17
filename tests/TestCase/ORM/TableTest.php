@@ -2791,8 +2791,12 @@ class TableTest extends TestCase
 
         $table = TableRegistry::get('authors');
         $result = $table->saveMany($entities);
+
         $this->assertSame($entities, $result);
         $this->assertTrue(isset($result[0]->id));
+        foreach ($entities as $entity) {
+            $this->assertFalse($entity->isNew());
+        }
     }
 
     /**
