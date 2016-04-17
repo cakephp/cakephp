@@ -55,6 +55,21 @@ class ActionDispatcherTest extends TestCase
     }
 
     /**
+     * Ensure the constructor args end up on the right protected properties.
+     *
+     * @return void
+     */
+    public function testConstructorArgs()
+    {
+        $factory = $this->getMock('Cake\Http\ControllerFactory');
+        $events = $this->getMock('Cake\Event\EventManager');
+        $dispatcher = new ActionDispatcher($factory, $events);
+
+        $this->assertAttributeSame($events, '_eventManager', $dispatcher);
+        $this->assertAttributeSame($factory, 'factory', $dispatcher);
+    }
+
+    /**
      * Ensure that filters connected to the DispatcherFactory are
      * also applied
      */

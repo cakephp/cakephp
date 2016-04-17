@@ -54,9 +54,14 @@ class ActionDispatcher
      * Constructor
      *
      * @param \Cake\Http\ControllerFactory $factory A controller factory instance.
+     * @param \Cake\Event\EventManager $eventManager An event manager if you want to inject one.
      */
-    public function __construct($factory = null)
+    public function __construct($factory = null, $eventManager = null)
     {
+        if ($eventManager) {
+            $this->eventManager($eventManager);
+        }
+
         // Compatibility with DispatcherFilters.
         foreach (DispatcherFactory::filters() as $filter) {
             $this->addFilter($filter);
