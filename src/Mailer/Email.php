@@ -1133,7 +1133,7 @@ class Email implements JsonSerializable, Serializable
                 if (is_int($name)) {
                     throw new InvalidArgumentException('No filename specified.');
                 }
-                $fileInfo['data'] = chunk_split(base64_encode($fileInfo['data']), 76, "\r\n");
+                $fileInfo['data'] = base64_decode($fileInfo['data'], true) ? $fileInfo['data'] : chunk_split(base64_encode($fileInfo['data']), 76, "\r\n");
             } else {
                 $fileName = $fileInfo['file'];
                 $fileInfo['file'] = realpath($fileInfo['file']);
