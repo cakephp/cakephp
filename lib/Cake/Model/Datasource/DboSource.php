@@ -3541,6 +3541,15 @@ class DboSource extends DataSource {
 	}
 
 /**
+ * Empties the query caches.
+ *
+ * @return void
+ */
+	public function flushQueryCache() {
+		$this->_queryCache = array();
+	}
+
+/**
  * Writes a new key for the in memory sql query cache
  *
  * @param string $sql SQL query
