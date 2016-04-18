@@ -2808,13 +2808,17 @@ class TableTest extends TestCase
     {
         $table = TableRegistry::get('authors');
 
-        $entities = $table->find()->all();
+        $entities = $table->find()
+            ->order(['id' => 'ASC'])
+            ->all();
         $entities->first()->name = 'admad';
 
         $result = $table->saveMany($entities);
         $this->assertSame($entities, $result);
 
-        $first = $table->find()->first();
+        $first = $table->find()
+            ->order(['id' => 'ASC'])
+            ->first();
         $this->assertSame('admad', $first->name);
     }
 
