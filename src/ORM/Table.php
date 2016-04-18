@@ -1619,10 +1619,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Saves multiple records for a table.
+     * Persists multiple entities of a table.
+     *
+     * The records will be saved in a transaction which will be rolled back if
+     * any one of the records fails to save due to failed validation or datbase
+     * error.
      *
      * @param array|\Cake\ORM\ResultSet $entities Entities to save.
-     * @param array $options Options used when calling Table::save() for each entity.
+     * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
      * @return bool|array|\Cake\ORM\ResultSet False on failure, entities list on succcess.
      */
     public function saveMany($entities, $options = [])
