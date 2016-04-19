@@ -1622,7 +1622,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Persists multiple entities of a table.
      *
      * The records will be saved in a transaction which will be rolled back if
-     * any one of the records fails to save due to failed validation or datbase
+     * any one of the records fails to save due to failed validation or database
      * error.
      *
      * @param array|\Cake\ORM\ResultSet $entities Entities to save.
