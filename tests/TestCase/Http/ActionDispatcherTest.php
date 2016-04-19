@@ -19,7 +19,6 @@ use Cake\Http\ActionDispatcher;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Network\Session;
-use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Filter\ControllerFactoryFilter;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -44,17 +43,6 @@ class ActionDispatcherTest extends TestCase
     }
 
     /**
-     * Teardown
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        DispatcherFactory::clear();
-    }
-
-    /**
      * Ensure the constructor args end up on the right protected properties.
      *
      * @return void
@@ -67,22 +55,6 @@ class ActionDispatcherTest extends TestCase
 
         $this->assertAttributeSame($events, '_eventManager', $dispatcher);
         $this->assertAttributeSame($factory, 'factory', $dispatcher);
-    }
-
-    /**
-     * Ensure that filters connected to the DispatcherFactory are
-     * also applied
-     */
-    public function testDispatcherFactoryCompat()
-    {
-        $filter = $this->getMock(
-            'Cake\Routing\DispatcherFilter',
-            ['beforeDispatch', 'afterDispatch']
-        );
-        DispatcherFactory::add($filter);
-        $dispatcher = new ActionDispatcher();
-        $this->assertCount(1, $dispatcher->getFilters());
-        $this->assertSame($filter, $dispatcher->getFilters()[0]);
     }
 
     /**
