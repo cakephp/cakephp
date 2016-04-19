@@ -177,7 +177,7 @@ abstract class ControllerTestCase extends CakeTestCase {
  * @var bool
  */
 	protected $_dirtyController = false;
-	
+
 /**
  * The class name to use for mocking the response object.
  *
