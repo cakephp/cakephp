@@ -122,6 +122,9 @@ class TimeHelperTest extends TestCase
     {
         $this->assertEquals(4, $this->Time->toQuarter('2007-12-25'));
         $this->assertEquals(['2007-10-01', '2007-12-31'], $this->Time->toQuarter('2007-12-25', true));
+        $this->assertEquals(1, $this->Time->toQuarter('2016-03-31'));
+        $this->Time->config('defaultOutputTimezone', 'America/Vancouver');
+        $this->assertEquals(1, $this->Time->toQuarter('2016-04-01 01:00:00'));
     }
 
     /**

@@ -53,7 +53,6 @@ class TimeHelper extends Helper
      */
     public function fromString($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString))->timezone($timezone);
     }
 
@@ -166,7 +165,6 @@ class TimeHelper extends Helper
      */
     public function isTomorrow($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->isTomorrow();
     }
 
@@ -195,7 +193,6 @@ class TimeHelper extends Helper
      */
     public function toUnix($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->toUnixString();
     }
 
@@ -239,11 +236,10 @@ class TimeHelper extends Helper
      *
      * @param int|string|\DateTime $dateTime UNIX timestamp, strtotime() valid string or DateTime object
      * @param array $options Default format if timestamp is used in $dateString
-     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
      * @return string Relative time string.
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
-    public function timeAgoInWords($dateTime, array $options = [], $timezone = null)
+    public function timeAgoInWords($dateTime, array $options = [])
     {
         $element = null;
 
@@ -261,8 +257,7 @@ class TimeHelper extends Helper
             }
             unset($options['element']);
         }
-        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
-        $relativeDate = (new Time($dateTime, $timezone))->timeAgoInWords($options);
+        $relativeDate = (new Time($dateTime))->timeAgoInWords($options);
 
         if ($element) {
             $relativeDate = sprintf(

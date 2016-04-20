@@ -556,22 +556,8 @@ class TimeTest extends TestCase
         $expected = '1263477568';
         $this->assertTimeFormat($expected, $result);
 
-        $class::setDefaultLocale('de-DE');
-        $class::setDefaultOutputTimezone('Europe/Berlin');
-
-        $result = $time->toUnixString();
-        $expected = '1263477568';
-        $this->assertTimeFormat($expected, $result);
-
         $time = new $class('Thu Jan 1 00:00:00 1970');
         
-        $result = $time->toUnixString();
-        $expected = '0';
-        $this->assertTimeFormat($expected, $result);
-
-        $class::setDefaultLocale('fr-FR');
-        $class::setDefaultOutputTimezone('Europe/Berlin');
-
         $result = $time->toUnixString();
         $expected = '0';
         $this->assertTimeFormat($expected, $result);
