@@ -608,49 +608,70 @@ class Text
                         }
                     }
 
-                    $truncate .= mb_substr($tag[3], 0, $left + $entitiesLength);
+                    if (!$options['exact']) {
+                        $words = explode(' ', $tag[3]);
+                        // Keep at least one word.
+                        if (count($words) === 1) {
+                            $truncate .= mb_substr($tag[3], 0, $left + $entitiesLength);
+                        } else {
+                            $wordLength = 0;
+                            $addWords = [];
+                            // Append words until the length is crossed.
+                            foreach ($words as $word) {
+                                // Add words until we have enough letters.
+                                if ($wordLength < $left + $entitiesLength) {
+                                    $addWords[] = $word;
+                                }
+                                // Include inter-word space.
+                                $wordLength += mb_strlen($word) + 1;
+                            }
+                            $truncate .= implode(' ', $addWords);
+
+                            // If the string is longer than requested, find the last space and cut there.
+                            $lastSpace = mb_strrpos($truncate, ' ');
+                            if (mb_strlen($truncate) > $totalLength && $lastSpace !== false) {
+                                $remainder = mb_substr($truncate, $lastSpace);
+                                $truncate = mb_substr($truncate, 0, $lastSpace);
+
+                                // Re-add close tags that were cut off.
+                                preg_match_all('/<\/([a-z]+)>/', $remainder, $droppedTags, PREG_SET_ORDER);
+                                if ($droppedTags) {
+                                    foreach ($droppedTags as $closingTag) {
+                                        if (!in_array($closingTag[1], $openTags)) {
+                                            array_unshift($openTags, $closingTag[1]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        $truncate .= mb_substr($tag[3], 0, $left + $entitiesLength);
+                    }
                     break;
                 }
-
                 $truncate .= $tag[3];
+
                 $totalLength += $contentLength;
                 if ($totalLength >= $length) {
                     break;
                 }
             }
-        } else {
-            if (mb_strlen($text) <= $length) {
-                return $text;
+
+            $truncate .= $options['ellipsis'];
+
+            foreach ($openTags as $tag) {
+                $truncate .= '</' . $tag . '>';
             }
-            $truncate = mb_substr($text, 0, $length - mb_strlen($options['ellipsis']));
+            return $truncate;
         }
+
+        if (mb_strlen($text) <= $length) {
+            return $text;
+        }
+        $truncate = mb_substr($text, 0, $length - mb_strlen($options['ellipsis']));
+
         if (!$options['exact']) {
             $spacepos = mb_strrpos($truncate, ' ');
-            if ($options['html']) {
-                $truncateCheck = mb_substr($truncate, 0, $spacepos);
-                $lastOpenTag = mb_strrpos($truncateCheck, '<');
-                $lastCloseTag = mb_strrpos($truncateCheck, '>');
-                if ($lastOpenTag > $lastCloseTag) {
-                    preg_match_all('/<[\w]+[^>]*>/s', $truncate, $lastTagMatches);
-                    $lastTag = array_pop($lastTagMatches[0]);
-                    $spacepos = mb_strrpos($truncate, $lastTag) + mb_strlen($lastTag);
-                }
-                $bits = mb_substr($truncate, $spacepos);
-                preg_match_all('/<\/([a-z]+)>/', $bits, $droppedTags, PREG_SET_ORDER);
-                if (!empty($droppedTags)) {
-                    if (!empty($openTags)) {
-                        foreach ($droppedTags as $closingTag) {
-                            if (!in_array($closingTag[1], $openTags)) {
-                                array_unshift($openTags, $closingTag[1]);
-                            }
-                        }
-                    } else {
-                        foreach ($droppedTags as $closingTag) {
-                            $openTags[] = $closingTag[1];
-                        }
-                    }
-                }
-            }
             $truncate = mb_substr($truncate, 0, $spacepos);
 
             // If truncate still empty, then we don't need to count ellipsis in the cut.
@@ -660,13 +681,6 @@ class Text
         }
 
         $truncate .= $options['ellipsis'];
-
-        if ($options['html']) {
-            foreach ($openTags as $tag) {
-                $truncate .= '</' . $tag . '>';
-            }
-        }
-
         return $truncate;
     }
 
