@@ -588,19 +588,19 @@ TEXT;
     {
         $text = '<a href="http://example.org">hello</a> world';
         $expected = '<a href="http://example.org">hell..</a>';
-        $result = Text::truncate($text, 6, array(
+        $result = Text::truncate($text, 6, [
             'ellipsis' => '..',
             'exact' => true,
             'html' => true
-        ));
+        ]);
         $this->assertEquals($expected, $result);
 
         $expected = '<a href="http://example.org">hell..</a>';
-        $result = Text::truncate($text, 6, array(
+        $result = Text::truncate($text, 6, [
             'ellipsis' => '..',
             'exact' => false,
             'html' => true
-        ));
+        ]);
         $this->assertEquals($expected, $result);
     }
 
