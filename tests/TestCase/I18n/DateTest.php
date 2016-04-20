@@ -22,30 +22,10 @@ use DateTimeZone;
 
 /**
  * DateTest class
+ *
  */
 class DateTest extends TestCase
 {
-    /**
-     * Backup the defaultLocale property
-     *
-     * @var string
-     */
-    protected $defaultLocale;
-
-    /**
-     * Backup the defaultOutputTimezone property
-     *
-     * @var string
-     */
-    protected $defaultOutputTimezone = 'UTC';
-
-
-    /**
-     * Backup the serverTime
-     *
-     * @var string
-     */
-    protected $serverTime;
 
     /**
      * setup
@@ -55,9 +35,11 @@ class DateTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->serverTime = date_default_timezone_get();
-        $this->defaultLocale = Date::getDefaultLocale();
-        $this->defaultOutputTimezone = I18n::defaultOutputTimezone();
+        date_default_timezone_set('UTC');
+        Date::setDefaultLocale('en_US');
+        FrozenDate::setDefaultLocale('en_US');
+        Date::setDefaultOutputTimezone('UTC');
+        FrozenDate::setDefaultOutputTimezone('UTC');
     }
 
     /**
@@ -68,10 +50,11 @@ class DateTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        date_default_timezone_set($this->serverTime);
-        Date::setDefaultLocale($this->defaultLocale);
-        FrozenDate::setDefaultLocale($this->defaultLocale);
-        I18n::defaultOutputTimezone($this->defaultOutputTimezone);
+        date_default_timezone_set('UTC');
+        Date::setDefaultLocale('en_US');
+        FrozenDate::setDefaultLocale('en_US');
+        Date::setDefaultOutputTimezone('UTC');
+        FrozenDate::setDefaultOutputTimezone('UTC');
     }
 
     /**
@@ -159,6 +142,12 @@ class DateTest extends TestCase
         $this->assertEquals('Nov 6, 2015', $date->nice());
         $this->assertEquals('Nov 6, 2015', $date->nice(new DateTimeZone('America/New_York')));
         $this->assertEquals('6 nov. 2015', $date->nice(null, 'fr-FR'));
+        
+        $class::setDefaultOutputTimezone('America/Vancouver');
+        $date = new $class('2015-11-06 01:00:00', 'UTC');
+        $this->assertEquals('Nov 5, 2015', $date->nice()); // Why is this failing!?
+        $this->assertEquals('Nov 6, 2015', $date->nice('Europe/Berlin'));
+        $this->assertEquals('UTC', $date->getTimezone()->getName());
     }
 
     /**
@@ -206,6 +195,64 @@ class DateTest extends TestCase
     }
 
     /**
+     * Tests the default locale setter.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testSetDefaultLocale($class)
+    {
+        $result = $class::parseDate('12/03/2015');
+        $this->assertEquals('Dec 3, 2015', $result->nice());
+
+        $class::setDefaultLocale('fr-FR');
+
+        $result = $class::parseDate('12/03/2015');
+        $this->assertEquals('12 mars 2015', $result->nice());
+
+        $expected = 'Y-m-d';
+        $result = $class::parseDate('12/03/2015');
+        $this->assertEquals('2015-03-12', $result->format($expected));
+    }
+
+    /**
+     * Tests the default locale getter.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testGetDefaultLocale($class)
+    {
+        $this->testSetDefaultLocale($class);
+    }
+
+    /**
+     * Tests the default output timezone setter.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testSetDefaultOutputTimezone($class)
+    {
+        $expected = 'Europe/Berlin';
+        $class::setDefaultOutputTimezone('Europe/Berlin');
+        $result = $class::getDefaultOutputTimezone($expected);
+        $this->assertEquals(new \DateTimeZone('Europe/Berlin'), $result);
+        $this->assertInstanceOf('\DatetimeZone', $result);
+    }
+
+    /**
+     * Tests the default output timezone getter.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testGetDefaultOutputTimezone($class)
+    {
+        $this->testSetDefaultOutputTimezone($class);
+    }
+
+    /**
      * provider for timeAgoInWords() tests
      *
      * @return array
@@ -241,6 +288,19 @@ class DateTest extends TestCase
         $date = new Date($input);
         $result = $date->timeAgoInWords();
         $this->assertEquals($expected, $result);
+        
+        Date::setDefaultOutputTimezone('Europe/Berlin');
+        
+        $date = new Date($input);
+        $result = $date->timeAgoInWords();
+        $this->assertEquals($expected, $result);
+
+        $result = $date->timeAgoInWords(
+            [
+                'timezone' => 'America/Vancouver',
+            ]
+        );
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -251,8 +311,21 @@ class DateTest extends TestCase
      */
     public function testTimeAgoInWordsFrozenDate($input, $expected)
     {
-        $date = new FrozenDate($input);
-        $result = $date->timeAgoInWords();
+        $FrozenDate = new FrozenDate($input);
+        $result = $FrozenDate->timeAgoInWords();
+        $this->assertEquals($expected, $result);
+        
+        FrozenDate::setDefaultOutputTimezone('Europe/Berlin');
+        
+        $FrozenDate = new FrozenDate($input);
+        $result = $FrozenDate->timeAgoInWords();
+        $this->assertEquals($expected, $result);
+
+        $result = $FrozenDate->timeAgoInWords(
+            [
+                'timezone' => 'America/Vancouver',
+            ]
+        );
         $this->assertEquals($expected, $result);
     }
 
@@ -264,6 +337,17 @@ class DateTest extends TestCase
      */
     public function testTimeAgoInWordsTimezone($class)
     {
+        $date = new $class('1990-07-31 20:33:00 UTC');
+        $result = $date->timeAgoInWords(
+            [
+                'timezone' => 'America/Vancouver',
+                'end' => '+1month',
+                'format' => 'dd-MM-YYYY'
+            ]
+        );
+        $this->assertEquals('on 31-07-1990', $result);
+
+        $class::setDefaultOutputTimezone('Europe/Berlin');
         $date = new $class('1990-07-31 20:33:00 UTC');
         $result = $date->timeAgoInWords(
             [

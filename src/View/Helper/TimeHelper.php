@@ -81,7 +81,6 @@ class TimeHelper extends Helper
      */
     public function isToday($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->isToday();
     }
 
@@ -94,7 +93,6 @@ class TimeHelper extends Helper
      */
     public function isFuture($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->isFuture();
     }
 
@@ -107,7 +105,6 @@ class TimeHelper extends Helper
      */
     public function isPast($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->isPast();
     }
 
@@ -120,7 +117,6 @@ class TimeHelper extends Helper
      */
     public function isThisWeek($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->isThisWeek();
     }
 
@@ -133,7 +129,6 @@ class TimeHelper extends Helper
      */
     public function isThisMonth($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->isThisMonth();
     }
 
@@ -146,7 +141,6 @@ class TimeHelper extends Helper
      */
     public function isThisYear($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->isThisYear();
     }
 
@@ -160,7 +154,6 @@ class TimeHelper extends Helper
      */
     public function wasYesterday($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->isYesterday();
     }
 
@@ -295,7 +288,6 @@ class TimeHelper extends Helper
      */
     public function wasWithinLast($timeInterval, $dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->wasWithinLast($timeInterval);
     }
 
@@ -311,7 +303,6 @@ class TimeHelper extends Helper
      */
     public function isWithinNext($timeInterval, $dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->isWithinNext($timeInterval);
     }
 
