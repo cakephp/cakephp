@@ -104,7 +104,16 @@ class Security
             return random_bytes($length);
         }
         if (function_exists('openssl_random_pseudo_bytes')) {
-            return openssl_random_pseudo_bytes($length);
+            $bytes = openssl_random_pseudo_bytes($length, $strongSource);
+            if (!$strongSource) {
+                trigger_error(
+                    'openssl was unable to use a strong source of entropy. ' .
+                    'Consider updating your system libraries, or ensuring ' .
+                    'you have more available entropy.',
+                    E_USER_WARNING
+                );
+            }
+            return $bytes;
         }
         trigger_error(
             'You do not have a safe source of random data available. ' .
