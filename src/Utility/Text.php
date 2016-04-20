@@ -570,13 +570,12 @@ class Text
             $default['ellipsis'] = "\xe2\x80\xa6";
         }
         $options += $default;
-        extract($options);
 
-        if ($html) {
+        if ($options['html']) {
             if (mb_strlen(preg_replace('/<.*?>/', '', $text)) <= $length) {
                 return $text;
             }
-            $totalLength = mb_strlen(strip_tags($ellipsis));
+            $totalLength = mb_strlen(strip_tags($options['ellipsis']));
             $openTags = [];
             $truncate = '';
 
@@ -623,11 +622,11 @@ class Text
             if (mb_strlen($text) <= $length) {
                 return $text;
             }
-            $truncate = mb_substr($text, 0, $length - mb_strlen($ellipsis));
+            $truncate = mb_substr($text, 0, $length - mb_strlen($options['ellipsis']));
         }
-        if (!$exact) {
+        if (!$options['exact']) {
             $spacepos = mb_strrpos($truncate, ' ');
-            if ($html) {
+            if ($options['html']) {
                 $truncateCheck = mb_substr($truncate, 0, $spacepos);
                 $lastOpenTag = mb_strrpos($truncateCheck, '<');
                 $lastCloseTag = mb_strrpos($truncateCheck, '>');
@@ -660,9 +659,9 @@ class Text
             }
         }
 
-        $truncate .= $ellipsis;
+        $truncate .= $options['ellipsis'];
 
-        if ($html) {
+        if ($options['html']) {
             foreach ($openTags as $tag) {
                 $truncate .= '</' . $tag . '>';
             }
