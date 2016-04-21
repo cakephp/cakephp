@@ -1213,7 +1213,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * called allowing you to define additional default values. The new
      * entity will be saved and returned.
      *
-     * @param array $search The criteria to find existing records by.
+     * @param array|\Cake\ORM\Query|string $search The criteria to find existing records by.
      * @param callable|null $callback A callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
      *   is persisted.
@@ -1221,7 +1221,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function findOrCreate($search, callable $callback = null)
     {
-        $query = $this->find()->where($search);
+        $query = $this->_getFindOrCreateQuery($search);
         $row = $query->first();
         if ($row) {
             return $row;
@@ -1232,6 +1232,25 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $callback($entity);
         }
         return $this->save($entity) ?: $entity;
+    }
+
+    /**
+     * Gets the query object for findOrCreate().
+     *
+     * @param array|\Cake\ORM\Query|string $search The criteria to find existing records by.
+     * @return \Cake\ORM\Query
+     */
+    protected function _getFindOrCreateQuery($search) {
+        if ($search instanceof Query) {
+            return $search;
+        } elseif (is_string($search)) {
+            if (method_exists($this, $search)) {
+                return $this->{$search}();
+            } else {
+                throw new InvalidArgumentException('Method `' . $search . '` does not exist!');
+            }
+        }
+        return $this->find()->where($search);
     }
 
     /**
