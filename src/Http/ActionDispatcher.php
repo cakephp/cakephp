@@ -118,7 +118,7 @@ class ActionDispatcher
 
         $response = $controller->invokeAction();
         if ($response !== null && !($response instanceof Response)) {
-            throw new LogicException('Controller actions can only Cake\Network\Response instances');
+            throw new LogicException('Controller actions can only return Cake\Network\Response or null.');
         }
 
         if (!$response && $controller->autoRender) {
