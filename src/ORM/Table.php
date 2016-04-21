@@ -1240,15 +1240,16 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array|\Cake\ORM\Query|string $search The criteria to find existing records by.
      * @return \Cake\ORM\Query
      */
-    protected function _getFindOrCreateQuery($search) {
+    protected function _getFindOrCreateQuery($search)
+    {
         if ($search instanceof Query) {
             return $search;
-        } elseif (is_string($search)) {
+        }
+        if (is_string($search)) {
             if (method_exists($this, $search)) {
                 return $this->{$search}();
-            } else {
-                throw new InvalidArgumentException('Method `' . $search . '` does not exist!');
             }
+            throw new InvalidArgumentException('Method `' . $search . '` does not exist!');
         }
         return $this->find()->where($search);
     }
