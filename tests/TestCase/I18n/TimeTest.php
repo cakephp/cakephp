@@ -711,7 +711,7 @@ class TimeTest extends TestCase
     public function testJsonEnconde($class)
     {
         $time = new $class('2014-04-20 10:10:10');
-        $this->assertEquals('"2014-04-20T10:10:10+0000"', json_encode($time));
+        $this->assertEquals('"2014-04-20T10:10:10+00:00"', json_encode($time));
 
         $class::setJsonEncodeFormat('yyyy-MM-dd HH:mm:ss');
         $this->assertEquals('"2014-04-20 10:10:10"', json_encode($time));
