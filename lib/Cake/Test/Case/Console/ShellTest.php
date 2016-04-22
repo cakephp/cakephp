@@ -1001,27 +1001,33 @@ TEXT;
 		$this->Shell->helper("tomato");
 	}
 
-	/**
-	 * @return void
-	 */
-	public function testShellLoggersDoNotGetOverridden()
-	{
-		$shell = $this->getMock("Shell", array(
-			"_loggerIsConfigured",
-			"configureStdOutLogger",
-			"configureStdErrLogger",
-		), [], "", false);
-		
+/**
+ * Test that shell loggers do not get overridden in constructor if already configured
+ * 
+ * @return void
+ */
+	public function testShellLoggersDoNotGetOverridden() {
+		$shell = $this->getMock(
+			"Shell", array(
+				"_loggerIsConfigured",
+				"configureStdOutLogger",
+				"configureStdErrLogger",
+			),
+			array(),
+			"",
+			false
+		);
+
 		$shell->expects($this->exactly(2))
 			->method("_loggerIsConfigured")
 			->will($this->returnValue(true));
-		
+
 		$shell->expects($this->never())
 			->method("_configureStdOutLogger");
 
 		$shell->expects($this->never())
-			->method("_configureStdErrLogger");	
-		
+			->method("_configureStdErrLogger");
+
 		$shell->__construct();
 	}
 }
