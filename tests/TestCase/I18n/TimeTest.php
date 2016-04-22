@@ -26,6 +26,28 @@ use Cake\TestSuite\TestCase;
 class TimeTest extends TestCase
 {
     /**
+     * icuVersion
+     *
+     * @var int
+     */
+    protected static $icuVersion;
+
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
+    public static function setUpBeforeClass()
+    {
+        ob_start();
+        phpinfo();
+        $phpinfo = ob_get_clean();
+        preg_match('/ICU version => ([\d\.]+)/', $phpinfo, $matches);
+
+        static::$icuVersion = (int)$matches[1];
+    }
+
+    /**
      * setUp method
      *
      * @return void
@@ -710,6 +732,10 @@ class TimeTest extends TestCase
      */
     public function testJsonEnconde($class)
     {
+        if (static::$icuVersion < 50) {
+            $this->markTestSkipped('ICU 5x is needed');
+        }
+
         $time = new $class('2014-04-20 10:10:10');
         $this->assertEquals('"2014-04-20T10:10:10+00:00"', json_encode($time));
 
