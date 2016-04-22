@@ -964,15 +964,48 @@ class Shell extends Object {
 			CakeLog::drop('stderr');
 			return;
 		}
+		if (!$this->_loggerIsConfigured("stdout")) {
+			$this->_configureStdOutLogger();
+		}
+		if (!$this->_loggerIsConfigured("stderr")) {
+			$this->_configureStdErrLogger();
+		}
+	}
+
+/**
+ * Configure the stdout logger
+ * 
+ * @return void
+ */
+	protected function _configureStdOutLogger() {
 		CakeLog::config('stdout', array(
 			'engine' => 'Console',
 			'types' => array('notice', 'info'),
 			'stream' => $this->stdout,
 		));
+	}
+
+/**
+ * Configure the stderr logger
+ * 
+ * @return void
+ */
+	protected function _configureStdErrLogger() {
 		CakeLog::config('stderr', array(
 			'engine' => 'Console',
 			'types' => array('emergency', 'alert', 'critical', 'error', 'warning', 'debug'),
 			'stream' => $this->stderr,
 		));
+	}
+
+/**
+ * Checks if the given logger is configured
+ * 
+ * @param string $logger The name of the logger to check 
+ * @return bool
+ */
+	protected function _loggerIsConfigured($logger) {
+		$configured = CakeLog::configured();
+		return in_array($logger, $configured);
 	}
 }
