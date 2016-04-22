@@ -1010,9 +1010,9 @@ TEXT;
 			"_loggerIsConfigured",
 			"configureStdOutLogger",
 			"configureStdErrLogger",
-		));
+		), [], "", false);
 		
-		$shell->expects($this->any())
+		$shell->expects($this->exactly(2))
 			->method("_loggerIsConfigured")
 			->will($this->returnValue(true));
 		
@@ -1021,5 +1021,7 @@ TEXT;
 
 		$shell->expects($this->never())
 			->method("_configureStdErrLogger");	
+		
+		$shell->__construct();
 	}
 }
