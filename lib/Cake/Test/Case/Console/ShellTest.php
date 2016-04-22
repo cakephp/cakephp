@@ -920,6 +920,8 @@ TEXT;
  * @return void
  */
 	public function testFileAndConsoleLogging() {
+		CakeLog::disable('stdout');
+		CakeLog::disable('stderr');
 		// file logging
 		$this->Shell->log_something();
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
@@ -944,6 +946,9 @@ TEXT;
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
 		$contents = file_get_contents(LOGS . 'error.log');
 		$this->assertContains($this->Shell->testMessage, $contents);
+
+		CakeLog::enable('stdout');
+		CakeLog::enable('stderr');
 	}
 
 /**
@@ -994,5 +999,35 @@ TEXT;
  */
 	public function testGetInvalidHelper() {
 		$this->Shell->helper("tomato");
+	}
+
+/**
+ * Test that shell loggers do not get overridden in constructor if already configured
+ * 
+ * @return void
+ */
+	public function testShellLoggersDoNotGetOverridden() {
+		$shell = $this->getMock(
+			"Shell", array(
+				"_loggerIsConfigured",
+				"configureStdOutLogger",
+				"configureStdErrLogger",
+			),
+			array(),
+			"",
+			false
+		);
+
+		$shell->expects($this->exactly(2))
+			->method("_loggerIsConfigured")
+			->will($this->returnValue(true));
+
+		$shell->expects($this->never())
+			->method("_configureStdOutLogger");
+
+		$shell->expects($this->never())
+			->method("_configureStdErrLogger");
+
+		$shell->__construct();
 	}
 }
