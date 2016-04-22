@@ -181,7 +181,9 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     {
         $this->post('/posts/index');
         $this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
+        $this->assertNotEmpty($this->_viewName, 'View name not set');
         $this->assertContains('Template' . DS . 'Posts' . DS . 'index.ctp', $this->_viewName);
+        $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
         $this->assertContains('Template' . DS . 'Layout' . DS . 'default.ctp', $this->_layoutName);
 
         $this->assertTemplate('index');

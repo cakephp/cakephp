@@ -125,7 +125,6 @@ abstract class IntegrationTestCase extends TestCase
 
     /**
      *
-     *
      * @var null|string
      */
     protected $_cookieEncriptionKey = null;
@@ -357,7 +356,7 @@ abstract class IntegrationTestCase extends TestCase
         $response = new Response();
         $dispatcher = DispatcherFactory::create();
         $dispatcher->eventManager()->on(
-            'Dispatcher.beforeDispatch',
+            'Dispatcher.invokeController',
             ['priority' => 999],
             [$this, 'controllerSpy']
         );
@@ -379,15 +378,13 @@ abstract class IntegrationTestCase extends TestCase
      * Adds additional event spies to the controller/view event manager.
      *
      * @param \Cake\Event\Event $event A dispatcher event.
+     * @param \Cake\Controller\Controller $controller Controller instance.
      * @return void
      */
-    public function controllerSpy($event)
+    public function controllerSpy($event, $controller)
     {
-        if (empty($event->data['controller'])) {
-            return;
-        }
-        $this->_controller = $event->data['controller'];
-        $events = $this->_controller->eventManager();
+        $this->_controller = $controller;
+        $events = $controller->eventManager();
         $events->on('View.beforeRender', function ($event, $viewFile) {
             if (!$this->_viewName) {
                 $this->_viewName = $viewFile;
