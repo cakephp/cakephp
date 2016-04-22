@@ -1685,7 +1685,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * If type is expressed as "atype[]" (note braces) then it will cause the
      * placeholder to be re-written dynamically so if the value is an array, it
-     * will create as many placeholders as values are in it. For example: 
+     * will create as many placeholders as values are in it. For example:
      *
      * ```
      * $query->bind(':id', [1, 2, 3], 'int[]');
