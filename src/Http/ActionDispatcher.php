@@ -105,7 +105,7 @@ class ActionDispatcher
      *
      * @param \Cake\Controller\Controller $controller The controller to invoke.
      * @return \Cake\Network\Response The response
-     * @throw \LogicException If the controller action returns a non-response value.
+     * @throws \LogicException If the controller action returns a non-response value.
      */
     protected function _invoke(Controller $controller)
     {
