@@ -178,9 +178,13 @@ class FixtureTask extends BakeTask {
  */
 	public function importOptions($modelName) {
 		$options = array();
+		$plugin = '';
+		if (isset($this->params['plugin'])) {
+			$plugin = $this->params['plugin'] . '.';
+		}
 
 		if (!empty($this->params['schema'])) {
-			$options['schema'] = $modelName;
+			$options['schema'] = $plugin . $modelName;
 		} elseif ($this->interactive) {
 			$doSchema = $this->in(__d('cake_console', 'Would you like to import schema for this fixture?'), array('y', 'n'), 'n');
 			if ($doSchema === 'y') {

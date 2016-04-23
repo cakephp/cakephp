@@ -137,6 +137,19 @@ class FixtureTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test importOptions with overwriting CLI options
+ *
+ * @return void
+ */
+	public function testImportOptionsWithCommandLineOptionsPlugin() {
+		$this->Task->params = array('schema' => true, 'records' => true, 'plugin' => 'TestPlugin');
+
+		$result = $this->Task->importOptions('Article');
+		$expected = array('schema' => 'TestPlugin.Article', 'fromTable' => true);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test importOptions with schema.
  *
  * @return void
