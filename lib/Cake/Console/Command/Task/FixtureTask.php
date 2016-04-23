@@ -238,6 +238,16 @@ class FixtureTask extends BakeTask {
 				$import = sprintf("array(%s)", implode(', ', $importBits));
 			}
 		}
+    
+		if (!empty($this->params['schema'])) {
+			$modelImport = true;
+			$prefixImportModel = '';
+			if (!empty($this->params['plugin'])) {
+				$prefixImportModel = $this->params['plugin'] . '.';
+			}
+ 			$importBits[] = "'model' => '{$prefixImportModel}{$model}'";
+			$import = sprintf("array(%s)", implode(', ', $importBits));
+		}
 
 		$this->_Schema = new CakeSchema();
 		$data = $this->_Schema->read(array('models' => false, 'connection' => $this->connection));
