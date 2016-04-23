@@ -32,28 +32,6 @@ class DateTest extends TestCase
     protected $locale;
 
     /**
-     * icuVersion
-     *
-     * @var int
-     */
-    protected static $icuVersion;
-
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        ob_start();
-        phpinfo();
-        $phpinfo = ob_get_clean();
-        preg_match('/ICU version => ([\d\.]+)/', $phpinfo, $matches);
-
-        static::$icuVersion = (int)$matches[1];
-    }
-
-    /**
      * setup
      *
      * @return void
@@ -172,7 +150,7 @@ class DateTest extends TestCase
      */
     public function testJsonSerialize($class)
     {
-        if (static::$icuVersion < 50) {
+        if (version_compare(INTL_ICU_VERSION, '50.0', '<')) {
             $this->markTestSkipped('ICU 5x is needed');
         }
 
