@@ -98,6 +98,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testImportOptionsSchemaRecords() {
+		$this->Task->interactive = true;
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('y'));
 
@@ -112,6 +113,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testImportOptionsNothing() {
+		$this->Task->interactive = true;
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('n'));
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('n'));
 		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue('n'));
@@ -130,7 +132,20 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->params = array('schema' => true, 'records' => true);
 
 		$result = $this->Task->importOptions('Article');
-		$expected = array('schema' => 'Article', 'records' => true);
+		$expected = array('schema' => 'Article', 'fromTable' => true);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test importOptions with overwriting CLI options
+ *
+ * @return void
+ */
+	public function testImportOptionsWithCommandLineOptionsPlugin() {
+		$this->Task->params = array('schema' => true, 'records' => true, 'plugin' => 'TestPlugin');
+
+		$result = $this->Task->importOptions('Article');
+		$expected = array('schema' => 'TestPlugin.Article', 'fromTable' => true);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -140,6 +155,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testImportOptionsWithSchema() {
+		$this->Task->interactive = true;
 		$this->Task->params = array('schema' => true);
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('n'));
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('n'));
@@ -155,11 +171,12 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testImportOptionsWithRecords() {
+		$this->Task->interactive = true;
 		$this->Task->params = array('records' => true);
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('n'));
 
 		$result = $this->Task->importOptions('Article');
-		$expected = array('records' => true);
+		$expected = array('fromTable' => true);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -169,6 +186,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testImportOptionsTable() {
+		$this->Task->interactive = true;
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('n'));
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('n'));
 		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue('y'));
@@ -242,6 +260,62 @@ class FixtureTaskTest extends CakeTestCase {
 			'records' => false
 		));
 		$this->assertContains("'body' => 'Body \"value\"'", $result, 'Data has bad escaping');
+	}
+
+/**
+ * test that execute includes import options
+ *
+ * @return void
+ */
+	public function testExecuteWithImportSchema() {
+		$this->Task->connection = 'test';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('article');
+		$this->Task->params = array(
+			'schema' => true,
+			'records' => false,
+		);
+		$filename = '/my/path/ArticleFixture.php';
+
+		$this->Task->expects($this->never())
+			->method('in');
+
+		$this->Task->expects($this->at(0))
+			->method('createFile')
+			->with($filename, $this->logicalAnd(
+				$this->stringContains('class ArticleFixture'),
+				$this->stringContains("\$import = array('model' => 'Article'")
+			));
+
+		$this->Task->execute();
+	}
+
+/**
+ * test that execute includes import options
+ *
+ * @return void
+ */
+	public function testExecuteWithImportRecords() {
+		$this->Task->connection = 'test';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('article');
+		$this->Task->params = array(
+			'schema' => true,
+			'records' => true,
+		);
+		$filename = '/my/path/ArticleFixture.php';
+
+		$this->Task->expects($this->never())
+			->method('in');
+
+		$this->Task->expects($this->at(0))
+			->method('createFile')
+			->with($filename, $this->logicalAnd(
+				$this->stringContains('class ArticleFixture'),
+				$this->stringContains("\$import = array('model' => 'Article', 'connection' => 'test')")
+			));
+
+		$this->Task->execute();
 	}
 
 /**
