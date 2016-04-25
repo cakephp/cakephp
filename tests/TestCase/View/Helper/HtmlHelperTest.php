@@ -1280,6 +1280,11 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
+        $this->Html->addCrumb('Fifth', [
+            'plugin' => false,
+            'controller' => 'controller',
+            'action' => 'action',
+        ]);
         $result = $this->Html->getCrumbs('-', 'Start');
         $expected = [
             ['a' => ['href' => '/']],
@@ -1298,7 +1303,11 @@ class HtmlHelperTest extends TestCase
             'Third',
             '/a',
             '-',
-            'Fourth'
+            'Fourth',
+            '-',
+            ['a' => ['href' => '/controller/action']],
+            'Fifth',
+            '/a',
         ];
         $this->assertHtml($expected, $result);
     }

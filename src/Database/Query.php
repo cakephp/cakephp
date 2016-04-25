@@ -1685,8 +1685,14 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * If type is expressed as "atype[]" (note braces) then it will cause the
      * placeholder to be re-written dynamically so if the value is an array, it
-     * will create as many placeholders as values are in it. For example "string[]"
-     * will create several placeholders of type string.
+     * will create as many placeholders as values are in it. For example:
+     *
+     * ```
+     * $query->bind(':id', [1, 2, 3], 'int[]');
+     * ```
+     *
+     * Will create 3 int placeholders. When using named placeholders, this method
+     * requires that the placeholders include `:` e.g. `:value`.
      *
      * @param string|int $param placeholder to be replaced with quoted version
      *   of $value

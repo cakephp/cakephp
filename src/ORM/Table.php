@@ -1619,6 +1619,45 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Persists multiple entities of a table.
+     *
+     * The records will be saved in a transaction which will be rolled back if
+     * any one of the records fails to save due to failed validation or database
+     * error.
+     *
+     * @param array|\Cake\ORM\ResultSet $entities Entities to save.
+     * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
+     * @return bool|array|\Cake\ORM\ResultSet False on failure, entities list on succcess.
+     */
+    public function saveMany($entities, $options = [])
+    {
+        $isNew = [];
+
+        $return = $this->connection()->transactional(
+            function () use ($entities, $options, &$isNew) {
+                foreach ($entities as $key => $entity) {
+                    $isNew[$key] = $entity->isNew();
+                    if ($this->save($entity, $options) === false) {
+                        return false;
+                    }
+                }
+            }
+        );
+
+        if ($return === false) {
+            foreach ($entities as $key => $entity) {
+                if (isset($isNew[$key]) && $isNew[$key]) {
+                    $entity->unsetProperty($this->primaryKey());
+                    $entity->isNew(true);
+                }
+            }
+            return false;
+        }
+
+        return $entities;
+    }
+
+    /**
      * {@inheritDoc}
      *
      * For HasMany and HasOne associations records will be removed based on

@@ -361,8 +361,10 @@ class ConsoleOptionParser
             $option = new ConsoleInputOption($options);
         }
         $this->_options[$name] = $option;
+        asort($this->_options);
         if ($option->short() !== null) {
             $this->_shortOptions[$option->short()] = $name;
+            asort($this->_shortOptions);
         }
         return $this;
     }
@@ -495,6 +497,7 @@ class ConsoleOptionParser
             $command = new ConsoleInputSubcommand($options);
         }
         $this->_subcommands[$name] = $command;
+        asort($this->_subcommands);
         return $this;
     }
 

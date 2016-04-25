@@ -148,7 +148,7 @@ class HtmlHelper extends Helper
      * Adds a link to the breadcrumbs array.
      *
      * @param string $name Text for link
-     * @param string|null $link URL for link (if empty it won't be a link)
+     * @param string|array|null $link URL for link (if empty it won't be a link)
      * @param string|array $options Link attributes e.g. ['id' => 'selected']
      * @return $this
      * @see \Cake\View\Helper\HtmlHelper::link() for details on $options that can be used.
