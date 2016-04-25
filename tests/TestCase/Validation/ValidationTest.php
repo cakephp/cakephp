@@ -31,6 +31,16 @@ class ValidationTest extends TestCase
 {
 
     /**
+     * @var string
+     */
+    protected $locale;
+
+    /**
+     * @var string
+     */
+    protected $_appEncoding;
+
+    /**
      * setUp method
      *
      * @return void
@@ -60,7 +70,7 @@ class ValidationTest extends TestCase
      *
      * @return void
      */
-    public function testNotEmpty()
+    public function testNotBlank()
     {
         $this->assertTrue(Validation::notBlank('abcdefg'));
         $this->assertTrue(Validation::notBlank('fasdf '));
@@ -69,6 +79,8 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::notBlank('José'));
         $this->assertTrue(Validation::notBlank('é'));
         $this->assertTrue(Validation::notBlank('π'));
+        $this->assertTrue(Validation::notBlank('0'));
+        $this->assertTrue(Validation::notBlank(0));
         $this->assertFalse(Validation::notBlank("\t "));
         $this->assertFalse(Validation::notBlank(""));
     }
@@ -78,7 +90,7 @@ class ValidationTest extends TestCase
      *
      * @return void
      */
-    public function testNotEmptyISO88591AppEncoding()
+    public function testNotBlankIso88591AppEncoding()
     {
         Configure::write('App.encoding', 'ISO-8859-1');
         $this->assertTrue(Validation::notBlank('abcdefg'));
@@ -1862,7 +1874,7 @@ class ValidationTest extends TestCase
      */
     public function testEmailDeep()
     {
-        $this->skipIf(gethostbynamel('example.abcd'), 'Your DNS service responds for non-existant domains, skipping deep email checks.');
+        $this->skipIf((bool)gethostbynamel('example.abcd'), 'Your DNS service responds for non-existant domains, skipping deep email checks.');
 
         $this->assertTrue(Validation::email('abc.efg@cakephp.org', true));
         $this->assertFalse(Validation::email('abc.efg@caphpkeinvalid.com', true));
