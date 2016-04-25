@@ -51,14 +51,13 @@ abstract class BaseApplication
     /**
      * Load all the application configuration and bootstrap logic.
      *
+     * Override this method to add additional bootstrap logic for your application.
+     *
      * @return void
      */
     public function bootstrap()
     {
-        // Load traditional bootstrap file..
         require_once $this->configDir . '/bootstrap.php';
-
-        // Load other config files your application needs.
     }
 
     /**
@@ -89,7 +88,7 @@ abstract class BaseApplication
     /**
      * Get the ActionDispatcher.
      *
-     * @return \Spekkoek\ActionDispatcher
+     * @return \Cake\Http\ActionDispatcher
      */
     protected function getDispatcher()
     {
