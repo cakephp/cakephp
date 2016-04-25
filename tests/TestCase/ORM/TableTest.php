@@ -5868,11 +5868,14 @@ class TableTest extends TestCase
     public function testValidateAtLeastOne()
     {
         $table = TableRegistry::get('Authors');
-        $this->assertFalse($table->validateAtLeastOne(''));
-        $this->assertFalse($table->validateAtLeastOne([]));
-        $this->assertFalse($table->validateAtLeastOne(['_ids' => '']));
-        $this->assertFalse($table->validateAtLeastOne(['_ids' => []]));
+        $this->assertFalse($table->validateAtLeast(''));
+        $this->assertFalse($table->validateAtLeast([]));
+        $this->assertFalse($table->validateAtLeast(['_ids' => '']));
+        $this->assertFalse($table->validateAtLeast(['_ids' => []]));
 
-        $this->assertTrue($table->validateAtLeastOne(['_ids' => [1, 2, 3]]));
+        $this->assertFalse($table->validateAtLeast(['_ids' => [1, 2, 3]], 4, '='));
+        $this->assertTrue($table->validateAtLeast(['_ids' => [1, 2, 3]], 4, '<='));
+
+        $this->assertTrue($table->validateAtLeast(['_ids' => [1, 2, 3]]));
     }
 }

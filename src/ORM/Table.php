@@ -35,6 +35,7 @@ use Cake\ORM\Association\HasOne;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
+use Cake\Validation\Validation;
 use Cake\Validation\ValidatorAwareTrait;
 use InvalidArgumentException;
 use RuntimeException;
@@ -2311,7 +2312,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param mixed $value
      * @return boolean
      */
-    public function validateAtLeastOne($value)
+    public function validateAtLeast($value, $expectedCount = 0, $operator = '>')
     {
         if (!is_array($value)) {
             return false;
@@ -2320,8 +2321,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             if (!is_array($value['_ids'])) {
                 return false;
             }
-            return (count($value['_ids']) > 0);
+            $count = count($value['_ids']);
+        } else {
+            $count = count($value);
         }
-        return (count($value) > 0);
+        return Validation::comparison($count, $operator, $expectedCount);
     }
 }
