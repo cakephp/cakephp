@@ -5391,17 +5391,6 @@ class TableTest extends TestCase
     }
 
     /**
-     * Test that exceptions from the findOrCreate are thrown.
-     *
-     * @expectedException \InvalidArgumentException
-     */
-    public function testFindOrCreateException()
-    {
-        $articles = TableRegistry::get('Articles');
-        $articles->findOrCreate('doesNotExist');
-    }
-
-    /**
      * Test that creating a table fires the initialize event.
      *
      * @return void

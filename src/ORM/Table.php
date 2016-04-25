@@ -1245,12 +1245,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($search instanceof Query) {
             return $search;
         }
-        if (is_string($search)) {
-            if (method_exists($this, $search)) {
-                return $this->{$search}();
-            }
-            throw new InvalidArgumentException('Method `' . $search . '` does not exist!');
-        }
         return $this->find()->where($search);
     }
 
