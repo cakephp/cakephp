@@ -5859,4 +5859,20 @@ class TableTest extends TestCase
             'SQLServer does not support the requirements of this test.'
         );
     }
+
+    /**
+     * Test that an association has at least one entry present.
+     *
+     * @return void
+     */
+    public function testValidateAtLeastOne()
+    {
+        $table = TableRegistry::get('Authors');
+        $this->assertFalse($table->validateAtLeastOne(''));
+        $this->assertFalse($table->validateAtLeastOne([]));
+        $this->assertFalse($table->validateAtLeastOne(['_ids' => '']));
+        $this->assertFalse($table->validateAtLeastOne(['_ids' => []]));
+
+        $this->assertTrue($table->validateAtLeastOne(['_ids' => [1, 2, 3]]));
+    }
 }

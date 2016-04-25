@@ -2304,4 +2304,24 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'connectionName' => $conn ? $conn->configName() : null
         ];
     }
+
+    /**
+     * Validates that a belongsToMany or hasMany assoc has at least one entry.
+     *
+     * @param mixed $value
+     * @return boolean
+     */
+    public function validateAtLeastOne($value)
+    {
+        if (!is_array($value)) {
+            return false;
+        }
+        if (isset($value['_ids'])) {
+            if (!is_array($value['_ids'])) {
+                return false;
+            }
+            return (count($value['_ids']) > 0);
+        }
+        return (count($value) > 0);
+    }
 }
