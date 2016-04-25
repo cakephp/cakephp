@@ -83,7 +83,7 @@ class Validation
      */
     public static function notBlank($check)
     {
-        if (empty($check) && $check !== '0') {
+        if (empty($check) && $check !== '0' && $check !== 0) {
             return false;
         }
         return static::_check($check, '/[^\s]+/m');
