@@ -89,94 +89,108 @@ class InflectorTest extends TestCase
     /**
      * testInflectingSingulars method
      *
+     * @dataProvider singularizeProvider
      * @return void
      */
-    public function testInflectingSingulars()
+    public function testInflectingSingulars($singular, $plural)
     {
-        $this->assertEquals('categoria', Inflector::singularize('categorias'));
-        $this->assertEquals('menu', Inflector::singularize('menus'));
-        $this->assertEquals('news', Inflector::singularize('news'));
-        $this->assertEquals('food_menu', Inflector::singularize('food_menus'));
-        $this->assertEquals('Menu', Inflector::singularize('Menus'));
-        $this->assertEquals('FoodMenu', Inflector::singularize('FoodMenus'));
-        $this->assertEquals('house', Inflector::singularize('houses'));
-        $this->assertEquals('powerhouse', Inflector::singularize('powerhouses'));
-        $this->assertEquals('quiz', Inflector::singularize('quizzes'));
-        $this->assertEquals('Bus', Inflector::singularize('Buses'));
-        $this->assertEquals('bus', Inflector::singularize('buses'));
-        $this->assertEquals('matrix_row', Inflector::singularize('matrix_rows'));
-        $this->assertEquals('matrix', Inflector::singularize('matrices'));
-        $this->assertEquals('vertex', Inflector::singularize('vertices'));
-        $this->assertEquals('index', Inflector::singularize('indices'));
-        $this->assertEquals('Alias', Inflector::singularize('Aliases'));
-        $this->assertEquals('Alias', Inflector::singularize('Alias'));
-        $this->assertEquals('Media', Inflector::singularize('Media'));
-        $this->assertEquals('NodeMedia', Inflector::singularize('NodeMedia'));
-        $this->assertEquals('alumnus', Inflector::singularize('alumni'));
-        $this->assertEquals('bacillus', Inflector::singularize('bacilli'));
-        $this->assertEquals('cactus', Inflector::singularize('cacti'));
-        $this->assertEquals('focus', Inflector::singularize('foci'));
-        $this->assertEquals('fungus', Inflector::singularize('fungi'));
-        $this->assertEquals('nucleus', Inflector::singularize('nuclei'));
-        $this->assertEquals('octopus', Inflector::singularize('octopuses'));
-        $this->assertEquals('radius', Inflector::singularize('radii'));
-        $this->assertEquals('stimulus', Inflector::singularize('stimuli'));
-        $this->assertEquals('syllabus', Inflector::singularize('syllabi'));
-        $this->assertEquals('terminus', Inflector::singularize('termini'));
-        $this->assertEquals('virus', Inflector::singularize('viruses'));
-        $this->assertEquals('person', Inflector::singularize('people'));
-        $this->assertEquals('glove', Inflector::singularize('gloves'));
-        $this->assertEquals('dove', Inflector::singularize('doves'));
-        $this->assertEquals('life', Inflector::singularize('lives'));
-        $this->assertEquals('knife', Inflector::singularize('knives'));
-        $this->assertEquals('wolf', Inflector::singularize('wolves'));
-        $this->assertEquals('slave', Inflector::singularize('slaves'));
-        $this->assertEquals('shelf', Inflector::singularize('shelves'));
-        $this->assertEquals('taxi', Inflector::singularize('taxis'));
-        $this->assertEquals('tax', Inflector::singularize('taxes'));
-        $this->assertEquals('Tax', Inflector::singularize('Taxes'));
-        $this->assertEquals('AwesomeTax', Inflector::singularize('AwesomeTaxes'));
-        $this->assertEquals('fax', Inflector::singularize('faxes'));
-        $this->assertEquals('wax', Inflector::singularize('waxes'));
-        $this->assertEquals('niche', Inflector::singularize('niches'));
-        $this->assertEquals('cave', Inflector::singularize('caves'));
-        $this->assertEquals('grave', Inflector::singularize('graves'));
-        $this->assertEquals('wave', Inflector::singularize('waves'));
-        $this->assertEquals('bureau', Inflector::singularize('bureaus'));
-        $this->assertEquals('genetic_analysis', Inflector::singularize('genetic_analyses'));
-        $this->assertEquals('doctor_diagnosis', Inflector::singularize('doctor_diagnoses'));
-        $this->assertEquals('paranthesis', Inflector::singularize('parantheses'));
-        $this->assertEquals('Cause', Inflector::singularize('Causes'));
-        $this->assertEquals('colossus', Inflector::singularize('colossuses'));
-        $this->assertEquals('diagnosis', Inflector::singularize('diagnoses'));
-        $this->assertEquals('basis', Inflector::singularize('bases'));
-        $this->assertEquals('analysis', Inflector::singularize('analyses'));
-        $this->assertEquals('curve', Inflector::singularize('curves'));
-        $this->assertEquals('cafe', Inflector::singularize('cafes'));
-        $this->assertEquals('roof', Inflector::singularize('roofs'));
-        $this->assertEquals('foe', Inflector::singularize('foes'));
-        $this->assertEquals('database', Inflector::singularize('databases'));
-        $this->assertEquals('cookie', Inflector::singularize('cookies'));
-        $this->assertEquals('thief', Inflector::singularize('thieves'));
-        $this->assertEquals('potato', Inflector::singularize('potatoes'));
-        $this->assertEquals('hero', Inflector::singularize('heroes'));
-        $this->assertEquals('buffalo', Inflector::singularize('buffaloes'));
-        $this->assertEquals('baby', Inflector::singularize('babies'));
-        $this->assertEquals('tooth', Inflector::singularize('teeth'));
-        $this->assertEquals('goose', Inflector::singularize('geese'));
-        $this->assertEquals('foot', Inflector::singularize('feet'));
-        $this->assertEquals('objective', Inflector::singularize('objectives'));
-        $this->assertEquals('archive', Inflector::singularize('archives'));
-        $this->assertEquals('brief', Inflector::singularize('briefs'));
-        $this->assertEquals('quota', Inflector::singularize('quotas'));
-        $this->assertEquals('curve', Inflector::singularize('curves'));
-        $this->assertEquals('body_curve', Inflector::singularize('body_curves'));
-        $this->assertEquals('metadata', Inflector::singularize('metadata'));
-        $this->assertEquals('files_metadata', Inflector::singularize('files_metadata'));
-        $this->assertEquals('address', Inflector::singularize('addresses'));
-        $this->assertEquals('sieve', Inflector::singularize('sieves'));
-        $this->assertEquals('blue_octopus', Inflector::singularize('blue_octopuses'));
-        $this->assertEquals('', Inflector::singularize(''));
+        $this->assertEquals($singular, Inflector::singularize($plural));
+    }
+
+    /**
+     * Data provider for testing singularize()
+     *
+     * @return array
+     */
+    public function singularizeProvider()
+    {
+        return [
+            ['categoria', 'categorias'],
+            ['menu', 'menus'],
+            ['news', 'news'],
+            ['food_menu', 'food_menus'],
+            ['Menu', 'Menus'],
+            ['FoodMenu', 'FoodMenus'],
+            ['house', 'houses'],
+            ['powerhouse', 'powerhouses'],
+            ['quiz', 'quizzes'],
+            ['Bus', 'Buses'],
+            ['bus', 'buses'],
+            ['matrix_row', 'matrix_rows'],
+            ['matrix', 'matrices'],
+            ['vertex', 'vertices'],
+            ['index', 'indices'],
+            ['Alias', 'Aliases'],
+            ['Alias', 'Alias'],
+            ['Media', 'Media'],
+            ['NodeMedia', 'NodeMedia'],
+            ['alumnus', 'alumni'],
+            ['bacillus', 'bacilli'],
+            ['cactus', 'cacti'],
+            ['focus', 'foci'],
+            ['fungus', 'fungi'],
+            ['nucleus', 'nuclei'],
+            ['octopus', 'octopuses'],
+            ['radius', 'radii'],
+            ['stimulus', 'stimuli'],
+            ['syllabus', 'syllabi'],
+            ['terminus', 'termini'],
+            ['virus', 'viruses'],
+            ['person', 'people'],
+            ['glove', 'gloves'],
+            ['dove', 'doves'],
+            ['life', 'lives'],
+            ['knife', 'knives'],
+            ['wolf', 'wolves'],
+            ['slave', 'slaves'],
+            ['shelf', 'shelves'],
+            ['taxi', 'taxis'],
+            ['tax', 'taxes'],
+            ['Tax', 'Taxes'],
+            ['AwesomeTax', 'AwesomeTaxes'],
+            ['fax', 'faxes'],
+            ['wax', 'waxes'],
+            ['niche', 'niches'],
+            ['cave', 'caves'],
+            ['grave', 'graves'],
+            ['wave', 'waves'],
+            ['bureau', 'bureaus'],
+            ['genetic_analysis', 'genetic_analyses'],
+            ['doctor_diagnosis', 'doctor_diagnoses'],
+            ['paranthesis', 'parantheses'],
+            ['Cause', 'Causes'],
+            ['colossus', 'colossuses'],
+            ['diagnosis', 'diagnoses'],
+            ['basis', 'bases'],
+            ['analysis', 'analyses'],
+            ['curve', 'curves'],
+            ['cafe', 'cafes'],
+            ['roof', 'roofs'],
+            ['foe', 'foes'],
+            ['database', 'databases'],
+            ['cookie', 'cookies'],
+            ['thief', 'thieves'],
+            ['potato', 'potatoes'],
+            ['hero', 'heroes'],
+            ['buffalo', 'buffaloes'],
+            ['baby', 'babies'],
+            ['tooth', 'teeth'],
+            ['goose', 'geese'],
+            ['foot', 'feet'],
+            ['objective', 'objectives'],
+            ['archive', 'archives'],
+            ['brief', 'briefs'],
+            ['quota', 'quotas'],
+            ['curve', 'curves'],
+            ['body_curve', 'body_curves'],
+            ['metadata', 'metadata'],
+            ['files_metadata', 'files_metadata'],
+            ['address', 'addresses'],
+            ['sieve', 'sieves'],
+            ['blue_octopus', 'blue_octopuses'],
+            ['chef', 'chefs'],
+            ['', ''],
+        ];
     }
 
     /**
@@ -204,81 +218,94 @@ class InflectorTest extends TestCase
     /**
      * testInflectingPlurals method
      *
+     * @dataProvider pluralizeProvider
      * @return void
      */
-    public function testInflectingPlurals()
+    public function testInflectingPlurals($plural, $singular)
     {
-        $this->assertEquals('axmen', Inflector::pluralize('axman'));
-        $this->assertEquals('men', Inflector::pluralize('man'));
-        $this->assertEquals('women', Inflector::pluralize('woman'));
-        $this->assertEquals('humans', Inflector::pluralize('human'));
-        $this->assertEquals('axmen', Inflector::pluralize('axman'));
-        $this->assertEquals('men', Inflector::pluralize('man'));
-        $this->assertEquals('women', Inflector::pluralize('woman'));
-        $this->assertEquals('humans', Inflector::pluralize('human'));
-        $this->assertEquals('categorias', Inflector::pluralize('categoria'));
-        $this->assertEquals('houses', Inflector::pluralize('house'));
-        $this->assertEquals('powerhouses', Inflector::pluralize('powerhouse'));
-        $this->assertEquals('Buses', Inflector::pluralize('Bus'));
-        $this->assertEquals('buses', Inflector::pluralize('bus'));
-        $this->assertEquals('menus', Inflector::pluralize('menu'));
-        $this->assertEquals('news', Inflector::pluralize('news'));
-        $this->assertEquals('food_menus', Inflector::pluralize('food_menu'));
-        $this->assertEquals('Menus', Inflector::pluralize('Menu'));
-        $this->assertEquals('FoodMenus', Inflector::pluralize('FoodMenu'));
-        $this->assertEquals('quizzes', Inflector::pluralize('quiz'));
-        $this->assertEquals('matrix_rows', Inflector::pluralize('matrix_row'));
-        $this->assertEquals('matrices', Inflector::pluralize('matrix'));
-        $this->assertEquals('vertices', Inflector::pluralize('vertex'));
-        $this->assertEquals('indices', Inflector::pluralize('index'));
-        $this->assertEquals('Aliases', Inflector::pluralize('Alias'));
-        $this->assertEquals('Aliases', Inflector::pluralize('Aliases'));
-        $this->assertEquals('Media', Inflector::pluralize('Media'));
-        $this->assertEquals('NodeMedia', Inflector::pluralize('NodeMedia'));
-        $this->assertEquals('alumni', Inflector::pluralize('alumnus'));
-        $this->assertEquals('bacilli', Inflector::pluralize('bacillus'));
-        $this->assertEquals('cacti', Inflector::pluralize('cactus'));
-        $this->assertEquals('foci', Inflector::pluralize('focus'));
-        $this->assertEquals('fungi', Inflector::pluralize('fungus'));
-        $this->assertEquals('nuclei', Inflector::pluralize('nucleus'));
-        $this->assertEquals('octopuses', Inflector::pluralize('octopus'));
-        $this->assertEquals('radii', Inflector::pluralize('radius'));
-        $this->assertEquals('stimuli', Inflector::pluralize('stimulus'));
-        $this->assertEquals('syllabi', Inflector::pluralize('syllabus'));
-        $this->assertEquals('termini', Inflector::pluralize('terminus'));
-        $this->assertEquals('viruses', Inflector::pluralize('virus'));
-        $this->assertEquals('people', Inflector::pluralize('person'));
-        $this->assertEquals('people', Inflector::pluralize('people'));
-        $this->assertEquals('gloves', Inflector::pluralize('glove'));
-        $this->assertEquals('crises', Inflector::pluralize('crisis'));
-        $this->assertEquals('taxes', Inflector::pluralize('tax'));
-        $this->assertEquals('waves', Inflector::pluralize('wave'));
-        $this->assertEquals('bureaus', Inflector::pluralize('bureau'));
-        $this->assertEquals('cafes', Inflector::pluralize('cafe'));
-        $this->assertEquals('roofs', Inflector::pluralize('roof'));
-        $this->assertEquals('foes', Inflector::pluralize('foe'));
-        $this->assertEquals('cookies', Inflector::pluralize('cookie'));
-        $this->assertEquals('wolves', Inflector::pluralize('wolf'));
-        $this->assertEquals('thieves', Inflector::pluralize('thief'));
-        $this->assertEquals('potatoes', Inflector::pluralize('potato'));
-        $this->assertEquals('heroes', Inflector::pluralize('hero'));
-        $this->assertEquals('buffaloes', Inflector::pluralize('buffalo'));
-        $this->assertEquals('teeth', Inflector::pluralize('tooth'));
-        $this->assertEquals('geese', Inflector::pluralize('goose'));
-        $this->assertEquals('feet', Inflector::pluralize('foot'));
-        $this->assertEquals('objectives', Inflector::pluralize('objective'));
-        $this->assertEquals('briefs', Inflector::pluralize('brief'));
-        $this->assertEquals('quotas', Inflector::pluralize('quota'));
-        $this->assertEquals('curves', Inflector::pluralize('curve'));
-        $this->assertEquals('body_curves', Inflector::pluralize('body_curve'));
-        $this->assertEquals('metadata', Inflector::pluralize('metadata'));
-        $this->assertEquals('files_metadata', Inflector::pluralize('files_metadata'));
-        $this->assertEquals('stadia', Inflector::pluralize('stadia'));
-        $this->assertEquals('Addresses', Inflector::pluralize('Address'));
-        $this->assertEquals('sieves', Inflector::pluralize('sieve'));
-        $this->assertEquals('blue_octopuses', Inflector::pluralize('blue_octopus'));
-        $this->assertEquals('chefs', Inflector::pluralize('chef'));
-        $this->assertEquals('', Inflector::pluralize(''));
+        $this->assertEquals($plural, Inflector::pluralize($singular));
+    }
+
+    /**
+     * Data provider for testing pluralize()
+     *
+     * @return array
+     */
+    public function pluralizeProvider()
+    {
+        return [
+            ['axmen', 'axman'],
+            ['men', 'man'],
+            ['women', 'woman'],
+            ['humans', 'human'],
+            ['axmen', 'axman'],
+            ['men', 'man'],
+            ['women', 'woman'],
+            ['humans', 'human'],
+            ['categorias', 'categoria'],
+            ['houses', 'house'],
+            ['powerhouses', 'powerhouse'],
+            ['Buses', 'Bus'],
+            ['buses', 'bus'],
+            ['menus', 'menu'],
+            ['news', 'news'],
+            ['food_menus', 'food_menu'],
+            ['Menus', 'Menu'],
+            ['FoodMenus', 'FoodMenu'],
+            ['quizzes', 'quiz'],
+            ['matrix_rows', 'matrix_row'],
+            ['matrices', 'matrix'],
+            ['vertices', 'vertex'],
+            ['indices', 'index'],
+            ['Aliases', 'Alias'],
+            ['Aliases', 'Aliases'],
+            ['Media', 'Media'],
+            ['NodeMedia', 'NodeMedia'],
+            ['alumni', 'alumnus'],
+            ['bacilli', 'bacillus'],
+            ['cacti', 'cactus'],
+            ['foci', 'focus'],
+            ['fungi', 'fungus'],
+            ['nuclei', 'nucleus'],
+            ['octopuses', 'octopus'],
+            ['radii', 'radius'],
+            ['stimuli', 'stimulus'],
+            ['syllabi', 'syllabus'],
+            ['termini', 'terminus'],
+            ['viruses', 'virus'],
+            ['people', 'person'],
+            ['people', 'people'],
+            ['gloves', 'glove'],
+            ['crises', 'crisis'],
+            ['taxes', 'tax'],
+            ['waves', 'wave'],
+            ['bureaus', 'bureau'],
+            ['cafes', 'cafe'],
+            ['roofs', 'roof'],
+            ['foes', 'foe'],
+            ['cookies', 'cookie'],
+            ['wolves', 'wolf'],
+            ['thieves', 'thief'],
+            ['potatoes', 'potato'],
+            ['heroes', 'hero'],
+            ['buffaloes', 'buffalo'],
+            ['teeth', 'tooth'],
+            ['geese', 'goose'],
+            ['feet', 'foot'],
+            ['objectives', 'objective'],
+            ['briefs', 'brief'],
+            ['quotas', 'quota'],
+            ['curves', 'curve'],
+            ['body_curves', 'body_curve'],
+            ['metadata', 'metadata'],
+            ['files_metadata', 'files_metadata'],
+            ['stadia', 'stadia'],
+            ['Addresses', 'Address'],
+            ['sieves', 'sieve'],
+            ['blue_octopuses', 'blue_octopus'],
+            ['chefs', 'chef'],
+            ['', ''],
+        ];
     }
 
     /**
