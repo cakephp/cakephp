@@ -481,7 +481,8 @@ class Validation
         if (empty($methods[$type])) {
             throw new \InvalidArgumentException('Unsupported parser type given.');
         }
-        return (Time::{$methods[$type]}($check, $format) !== null);
+        $method = $methods[$type];
+        return (Time::$method($check, $format) !== null);
     }
 
     /**
