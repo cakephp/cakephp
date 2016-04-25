@@ -33,7 +33,7 @@ class ValidationTest extends TestCase
     /**
      * @var string
      */
-    protected $locale;
+    public $locale;
 
     /**
      * @var string
