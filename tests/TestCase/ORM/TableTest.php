@@ -5865,17 +5865,17 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    public function testValidateAtLeastOne()
+    public function testValidateCount()
     {
         $table = TableRegistry::get('Authors');
-        $this->assertFalse($table->validateAtLeast(''));
-        $this->assertFalse($table->validateAtLeast([]));
-        $this->assertFalse($table->validateAtLeast(['_ids' => '']));
-        $this->assertFalse($table->validateAtLeast(['_ids' => []]));
+        $this->assertFalse($table->validateCount(''));
+        $this->assertFalse($table->validateCount([]));
+        $this->assertFalse($table->validateCount(['_ids' => '']));
+        $this->assertFalse($table->validateCount(['_ids' => []]));
 
-        $this->assertFalse($table->validateAtLeast(['_ids' => [1, 2, 3]], 4, '='));
-        $this->assertTrue($table->validateAtLeast(['_ids' => [1, 2, 3]], 4, '<='));
+        $this->assertFalse($table->validateCount(['_ids' => [1, 2, 3]], 4, '='));
+        $this->assertTrue($table->validateCount(['_ids' => [1, 2, 3]], 4, '<='));
 
-        $this->assertTrue($table->validateAtLeast(['_ids' => [1, 2, 3]]));
+        $this->assertTrue($table->validateCount(['_ids' => [1, 2, 3]]));
     }
 }

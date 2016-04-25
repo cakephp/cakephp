@@ -2309,10 +2309,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Validates that a belongsToMany or hasMany assoc has at least one entry.
      *
+     * This can be used to validate any other array as well.
+     *
      * @param mixed $value
      * @return boolean
      */
-    public function validateAtLeast($value, $expectedCount = 0, $operator = '>')
+    public function validateCount($value, $expectedCount = 0, $operator = '>')
     {
         if (!is_array($value)) {
             return false;
