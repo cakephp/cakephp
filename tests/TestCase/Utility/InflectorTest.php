@@ -277,6 +277,7 @@ class InflectorTest extends TestCase
         $this->assertEquals('Addresses', Inflector::pluralize('Address'));
         $this->assertEquals('sieves', Inflector::pluralize('sieve'));
         $this->assertEquals('blue_octopuses', Inflector::pluralize('blue_octopus'));
+        $this->assertEquals('chefs', Inflector::pluralize('chef'));
         $this->assertEquals('', Inflector::pluralize(''));
     }
 
