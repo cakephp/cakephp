@@ -40,10 +40,7 @@ class Oauth
     public function authentication(Request $request, array $credentials)
     {
         $hasKeys = isset(
-            $credentials['consumerSecret'],
-            $credentials['consumerKey'],
-            $credentials['token'],
-            $credentials['tokenSecret']
+            $credentials['consumerKey']
         );
         if (!$hasKeys) {
             return;
@@ -54,10 +51,30 @@ class Oauth
         $credentials['method'] = strtoupper($credentials['method']);
         switch ($credentials['method']) {
             case 'HMAC-SHA1':
+                $hasKeys = isset(
+                    $credentials['consumerSecret'],
+                    $credentials['token'],
+                    $credentials['tokenSecret']
+                );
+                if (!$hasKeys) {
+                    return;
+                }
                 $value = $this->_hmacSha1($request, $credentials);
                 break;
 
+            case 'RSA-SHA1':
+                $value = $this->_rsaSha1($request, $credentials);
+                break;
+
             case 'PLAINTEXT':
+                $hasKeys = isset(
+                    $credentials['consumerSecret'],
+                    $credentials['token'],
+                    $credentials['tokenSecret']
+                );
+                if (!$hasKeys) {
+                    return;
+                }
                 $value = $this->_plaintext($request, $credentials);
                 break;
 
@@ -131,6 +148,64 @@ class Oauth
         $values['oauth_signature'] = base64_encode(
             hash_hmac('sha1', $baseString, $key, true)
         );
+        return $this->_buildAuth($values);
+    }
+
+    /**
+     * Use RSA-SHA1 signing.
+     *
+     * This method is suitable for plain HTTP or HTTPS.
+     *
+     * @param \Cake\Network\Http\Request $request The request object.
+     * @param array $credentials Authentication credentials.
+     * @return string
+     */
+    protected function _rsaSha1($request, $credentials)
+    {
+        if (!function_exists('openssl_pkey_get_private')) {
+            throw new \RuntimeException('RSA-SHA1 signature method requires the OpenSSL extension.');
+        }
+
+        $nonce = isset($credentials['nonce']) ? $credentials['nonce'] : uniqid();
+        $timestamp = isset($credentials['timestamp']) ? $credentials['timestamp'] : time();
+        $values = [
+            'oauth_version' => '1.0',
+            'oauth_nonce' => $nonce,
+            'oauth_timestamp' => $timestamp,
+            'oauth_signature_method' => 'RSA-SHA1',
+            'oauth_consumer_key' => $credentials['consumerKey'],
+        ];
+        if (isset($credentials['consumerSecret'])) {
+            $values['oauth_consumer_secret'] = $credentials['consumerSecret'];
+        }
+        if (isset($credentials['token'])) {
+            $values['oauth_token'] = $credentials['token'];
+        }
+        if (isset($credentials['tokenSecret'])) {
+            $values['oauth_token_secret'] = $credentials['tokenSecret'];
+        }
+        $baseString = $this->baseString($request, $values);
+
+        if (isset($credentials['realm'])) {
+            $values['oauth_realm'] = $credentials['realm'];
+        }
+
+        $credentials += [
+            'private_key_passphrase' => null,
+        ];
+        if (is_resource($credentials['private_key_passphrase'])) {
+            $resource = $credentials['private_key_passphrase'];
+            $passphrase = stream_get_line($resource, 0, PHP_EOL);
+            rewind($resource);
+            $credentials['private_key_passphrase'] = $passphrase;
+        }
+        $privateKey = openssl_pkey_get_private(file_get_contents($credentials['private_key_file']), $credentials['private_key_passphrase']);
+        $signature = '';
+        openssl_sign($baseString, $signature, $privateKey);
+        openssl_free_key($privateKey);
+
+        $values['oauth_signature'] = base64_encode($signature);
+
         return $this->_buildAuth($values);
     }
 
