@@ -1213,7 +1213,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * called allowing you to define additional default values. The new
      * entity will be saved and returned.
      *
-     * @param array|\Cake\ORM\Query $search The criteria to find existing records by.
+     * @param array|\Cake\ORM\Query $search The criteria to find existing
+     *   records by. Note that when you pass a query object you'll have to use
+     *   the 2nd arg of the method to modify the entity data before saving.
      * @param callable|null $callback A callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
      *   is persisted.
