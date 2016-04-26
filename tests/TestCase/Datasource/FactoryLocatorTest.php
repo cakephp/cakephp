@@ -8,67 +8,69 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Datasource;
 
 use Cake\Datasource\FactoryLocator;
-use Cake\Datasource\ModelAwareTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * Testing stub.
+ * FactoryLocatorTest test case
  */
-class Stub
+class FactoryLocatorTest extends TestCase
 {
-
-    use ModelAwareTrait;
-
-    public function setProps($name)
-    {
-        $this->_setModelClass($name);
-    }
-}
-
-/**
- * ModelAwareTrait test case
- */
-class ModelAwareTraitTest extends TestCase
-{
-
     /**
-     * Test set modelClass
+     * Test get factory
      *
      * @return void
      */
-    public function testSetModelClass()
+    public function testGet()
     {
-        $stub = new Stub();
-        $this->assertNull($stub->modelClass);
-
-        $stub->setProps('StubArticles');
-        $this->assertEquals('StubArticles', $stub->modelClass);
+        $this->assertInternalType('callable', FactoryLocator::get('Table'));
     }
 
     /**
-     * test loadModel()
+     * Test get non existing factory
+     *
+     * @return void
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Unknown repository type "Test". Make sure you register a type before trying to use it.
+     */
+    public function testGetNonExisting()
+    {
+        FactoryLocator::get('Test');
+    }
+
+    /**
+     * test add()
      *
      * @return void
      */
-    public function testLoadModel()
+    public function testAdd()
     {
-        $stub = new Stub();
-        $stub->setProps('Articles');
-        $stub->modelType('Table');
+        FactoryLocator::add('Test', function ($name) {
+            $mock = new \StdClass();
+            $mock->name = $name;
+            return $mock;
+        });
 
-        $result = $stub->loadModel();
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
-        $this->assertInstanceOf('Cake\ORM\Table', $stub->Articles);
+        $this->assertInternalType('callable', FactoryLocator::get('Test'));
+    }
 
-        $result = $stub->loadModel('Comments');
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
-        $this->assertInstanceOf('Cake\ORM\Table', $stub->Comments);
+    /**
+     * test drop()
+     *
+     * @return void
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Unknown repository type "Test". Make sure you register a type before trying to use it.
+     */
+    public function testDrop()
+    {
+        FactoryLocator::drop('Test');
+
+        FactoryLocator::get('Test');
     }
 
     /**
