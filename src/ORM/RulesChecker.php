@@ -16,6 +16,7 @@ namespace Cake\ORM;
 
 use Cake\Datasource\RulesChecker as BaseRulesChecker;
 use Cake\ORM\Rule\ExistsIn;
+use Cake\ORM\Rule\ValidCount;
 use Cake\ORM\Rule\IsUnique;
 
 /**
@@ -88,5 +89,28 @@ class RulesChecker extends BaseRulesChecker
 
         $errorField = is_string($field) ? $field : current($field);
         return $this->_addError(new ExistsIn($field, $table), '_existsIn', compact('errorField', 'message'));
+    }
+
+    /**
+     * Validates the count of associated records.
+     *
+     * @param The entity property that contains the associations.
+     * @param int The expected count.
+     * @param string The operator for the count comparison.
+     * @param string|null $message The error message to show in case the rule does not pass.
+     * @return callable
+     */
+    public function validCount($field, $count = 0, $operator = '>', $message = null)
+    {
+        if (!$message) {
+            if ($this->_useI18n) {
+                $message = __d('cake', 'The count does not match {0}{1}', [$operator, $count]);
+            } else {
+                $message = 'This value does not exist';
+            }
+        }
+
+        $errorField = $field;
+        return $this->_addError(new ValidCount($field, $count, $operator), '_validCount', compact('count', 'operator', 'errorField', 'message'));
     }
 }
