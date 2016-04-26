@@ -40,6 +40,7 @@ class Type
         'decimal' => 'Cake\Database\Type\FloatType',
         'float' => 'Cake\Database\Type\FloatType',
         'integer' => 'Cake\Database\Type\IntegerType',
+        'json' => 'Cake\Database\Type\JsonType',
         'string' => 'Cake\Database\Type\StringType',
         'text' => 'Cake\Database\Type\StringType',
         'time' => 'Cake\Database\Type\TimeType',

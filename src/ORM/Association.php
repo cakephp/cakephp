@@ -15,6 +15,7 @@
 namespace Cake\ORM;
 
 use Cake\Core\ConventionsTrait;
+use Cake\Database\Expression\CrossSchemaTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetDecorator;
@@ -543,13 +544,22 @@ abstract class Association
     {
         $target = $this->target();
         $joinType = empty($options['joinType']) ? $this->joinType() : $options['joinType'];
+
+        $table = $target->table();
+        if ($this->source()->connection()->supportsCrossWith($target->connection())) {
+            $table = new CrossSchemaTableExpression(
+                $target->connection()->driver()->schema(),
+                $table
+            );
+        }
+
         $options += [
             'includeFields' => true,
             'foreignKey' => $this->foreignKey(),
             'conditions' => [],
             'fields' => [],
             'type' => $joinType,
-            'table' => $target->table(),
+            'table' => $table,
             'finder' => $this->finder()
         ];
 
@@ -666,6 +676,25 @@ abstract class Association
         return $this->target()
             ->find($type, $options + $opts)
             ->where($this->conditions());
+    }
+
+    /**
+     * Proxies the operation to the target table's exists method after
+     * appending the default conditions for this association
+     *
+     * @param array|callable|ExpressionInterface $conditions The conditions to use
+     * for checking if any record matches.
+     * @see \Cake\ORM\Table::exists()
+     * @return bool
+     */
+    public function exists($conditions)
+    {
+        if (!empty($this->_conditions)) {
+            $conditions = $this
+                ->find('all', ['conditions' => $conditions])
+                ->clause('where');
+        }
+        return $this->target()->exists($conditions);
     }
 
     /**

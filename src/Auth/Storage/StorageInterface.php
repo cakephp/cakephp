@@ -30,10 +30,10 @@ interface StorageInterface
     /**
      * Write user record.
      *
-     * @param array $user User record.
+     * @param array|\ArrayAccess $user User record.
      * @return void
      */
-    public function write(array $user);
+    public function write($user);
 
     /**
      * Delete user record.

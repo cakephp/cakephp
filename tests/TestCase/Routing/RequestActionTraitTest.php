@@ -73,29 +73,36 @@ class RequestActionTraitTest extends TestCase
 
         $result = $this->object->requestAction('');
         $this->assertFalse($result);
+        $this->assertNull(Router::getRequest(), 'requests were not popped off the stack, this will break url generation');
 
         $result = $this->object->requestAction('/request_action/test_request_action');
         $expected = 'This is a test';
         $this->assertEquals($expected, $result);
+        $this->assertNull(Router::getRequest(), 'requests were not popped off the stack, this will break url generation');
 
         $result = $this->object->requestAction(Configure::read('App.fullBaseUrl') . '/request_action/test_request_action');
         $expected = 'This is a test';
         $this->assertEquals($expected, $result);
+        $this->assertNull(Router::getRequest(), 'requests were not popped off the stack, this will break url generation');
 
         $result = $this->object->requestAction('/request_action/another_ra_test/2/5');
         $expected = 7;
         $this->assertEquals($expected, $result);
+        $this->assertNull(Router::getRequest(), 'requests were not popped off the stack, this will break url generation');
 
         $result = $this->object->requestAction('/tests_apps/index', ['return']);
         $expected = 'This is the TestsAppsController index view ';
         $this->assertEquals($expected, $result);
+        $this->assertNull(Router::getRequest(), 'requests were not popped off the stack, this will break url generation');
 
         $result = $this->object->requestAction('/tests_apps/some_method');
         $expected = 5;
         $this->assertEquals($expected, $result);
+        $this->assertNull(Router::getRequest(), 'requests were not popped off the stack, this will break url generation');
 
         $result = $this->object->requestAction('/request_action/paginate_request_action');
         $this->assertNull($result);
+        $this->assertNull(Router::getRequest(), 'requests were not popped off the stack, this will break url generation');
 
         $result = $this->object->requestAction('/request_action/normal_request_action');
         $expected = 'Hello World';

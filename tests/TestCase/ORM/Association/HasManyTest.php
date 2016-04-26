@@ -267,7 +267,7 @@ class HasManyTest extends TestCase
             'conditions' => ['Articles.id !=' => 3],
             'sort' => ['title' => 'DESC'],
             'fields' => ['title', 'author_id'],
-            'contain' => ['Comments' => ['fields' => ['comment']]],
+            'contain' => ['Comments' => ['fields' => ['comment', 'article_id']]],
             'keys' => $keys,
             'query' => $query
         ]);

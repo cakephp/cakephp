@@ -105,10 +105,11 @@ class RouteCollection
      * Takes the URL string and iterates the routes until one is able to parse the route.
      *
      * @param string $url URL to parse.
+     * @param string $method The HTTP method to use.
      * @return array An array of request parameters parsed from the URL.
      * @throws \Cake\Routing\Exception\MissingRouteException When a URL has no matching route.
      */
-    public function parse($url)
+    public function parse($url, $method = '')
     {
         $decoded = urldecode($url);
         foreach (array_keys($this->_paths) as $path) {
@@ -122,7 +123,7 @@ class RouteCollection
                 parse_str($queryParameters, $queryParameters);
             }
             foreach ($this->_paths[$path] as $route) {
-                $r = $route->parse($url);
+                $r = $route->parse($url, $method);
                 if ($r === false) {
                     continue;
                 }
