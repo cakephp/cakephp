@@ -83,7 +83,7 @@ class Validation
      */
     public static function notBlank($check)
     {
-        if (empty($check) && $check !== '0') {
+        if (empty($check) && $check !== '0' && $check !== 0) {
             return false;
         }
         return static::_check($check, '/[^\s]+/m');
@@ -481,7 +481,8 @@ class Validation
         if (empty($methods[$type])) {
             throw new \InvalidArgumentException('Unsupported parser type given.');
         }
-        return (Time::{$methods[$type]}($check, $format) !== null);
+        $method = $methods[$type];
+        return (Time::$method($check, $format) !== null);
     }
 
     /**
