@@ -97,15 +97,15 @@ trait CookieCryptTrait
      * @param string|bool $mode Encryption mode
      * @return string decrypted string
      */
-    protected function _decrypt($values, $mode)
+    protected function _decrypt($values, $mode, $key = null)
     {
         if (is_string($values)) {
-            return $this->_decode($values, $mode);
+            return $this->_decode($values, $mode, $key);
         }
 
         $decrypted = [];
         foreach ($values as $name => $value) {
-            $decrypted[$name] = $this->_decode($value, $mode);
+            $decrypted[$name] = $this->_decode($value, $mode, $key);
         }
         return $decrypted;
     }
@@ -117,7 +117,7 @@ trait CookieCryptTrait
      * @param string|false $encrypt The encryption cipher to use.
      * @return string Decoded value.
      */
-    protected function _decode($value, $encrypt)
+    protected function _decode($value, $encrypt, $key)
     {
         if (!$encrypt) {
             return $this->_explode($value);
@@ -125,11 +125,14 @@ trait CookieCryptTrait
         $this->_checkCipher($encrypt);
         $prefix = 'Q2FrZQ==.';
         $value = base64_decode(substr($value, strlen($prefix)));
+        if (!isset($key)) {
+            $key = $this->_getCookieEncryptionKey();
+        }
         if ($encrypt === 'rijndael') {
-            $value = Security::rijndael($value, $this->_getCookieEncryptionKey(), 'decrypt');
+            $value = Security::rijndael($value, $key, 'decrypt');
         }
         if ($encrypt === 'aes') {
-            $value = Security::decrypt($value, $this->_getCookieEncryptionKey());
+            $value = Security::decrypt($value, $key);
         }
         return $this->_explode($value);
     }
