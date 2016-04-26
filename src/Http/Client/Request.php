@@ -11,7 +11,7 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Network\Http;
+namespace Cake\Http\Client;
 
 use Cake\Core\Exception\Exception;
 
@@ -20,6 +20,7 @@ use Cake\Core\Exception\Exception;
  *
  * Used by Cake\Network\Http\Client to contain request information
  * for making requests.
+ *
  */
 class Request extends Message
 {

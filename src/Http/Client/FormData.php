@@ -11,9 +11,9 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Network\Http;
+namespace Cake\Http\Client;
 
-use Cake\Network\Http\FormData\Part;
+use Cake\Http\Client\FormDataPart;
 use Countable;
 use finfo;
 
@@ -23,7 +23,6 @@ use finfo;
  *
  * Used by Http\Client to upload POST/PUT data
  * and files.
- *
  */
 class FormData implements Countable
 {
@@ -75,11 +74,11 @@ class FormData implements Countable
      *
      * @param string $name The name of the part.
      * @param string $value The value to add.
-     * @return \Cake\Network\Http\FormData\Part
+     * @return \Cake\Network\Http\FormDataPart
      */
     public function newPart($name, $value)
     {
-        return new Part($name, $value);
+        return new FormDataPart($name, $value);
     }
 
     /**
@@ -109,7 +108,7 @@ class FormData implements Countable
                 E_USER_DEPRECATED
             );
             $this->_parts[] = $this->addFile($name, $value);
-        } elseif ($name instanceof Part && $value === null) {
+        } elseif ($name instanceof FormDataPart && $value === null) {
             $this->_hasComplexPart = true;
             $this->_parts[] = $name;
         } else {
@@ -140,7 +139,7 @@ class FormData implements Countable
      *
      * @param string $name The name to use.
      * @param mixed $value Either a string filename, or a filehandle.
-     * @return \Cake\Network\Http\FormData\Part
+     * @return \Cake\Network\Http\FormDataPart
      */
     public function addFile($name, $value)
     {

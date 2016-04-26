@@ -11,10 +11,10 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Network\Http\Auth;
+namespace Cake\Http\Client\Auth;
 
-use Cake\Network\Http\Client;
-use Cake\Network\Http\Request;
+use Cake\Http\Client;
+use Cake\Http\Client\Request;
 
 /**
  * Digest authentication adapter for Cake\Network\Http\Client

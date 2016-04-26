@@ -11,11 +11,13 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Network\Http;
+namespace Cake\Http;
 
 use Cake\Core\App;
 use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Http\Client\CookieCollection;
+use Cake\Http\Client\Request;
 use Cake\Utility\Hash;
 
 /**
@@ -98,7 +100,7 @@ class Client
      * @var array
      */
     protected $_defaultConfig = [
-        'adapter' => 'Cake\Network\Http\Adapter\Stream',
+        'adapter' => 'Cake\Http\Client\Adapter\Stream',
         'host' => null,
         'port' => null,
         'scheme' => 'http',
@@ -116,7 +118,7 @@ class Client
      * Cookies are indexed by the cookie's domain or
      * request host name.
      *
-     * @var \Cake\Network\Http\CookieCollection
+     * @var \Cake\Http\Client\CookieCollection
      */
     protected $_cookies;
 
@@ -124,7 +126,7 @@ class Client
      * Adapter for sending requests. Defaults to
      * Cake\Network\Http\Adapter\Stream
      *
-     * @var \Cake\Network\Http\Adapter\Stream
+     * @var \Cake\Http\Client\Adapter\Stream
      */
     protected $_adapter;
 
@@ -175,7 +177,7 @@ class Client
      *
      * Returns an array of cookie data arrays.
      *
-     * @return \Cake\Network\Http\CookieCollection
+     * @return \Cake\Http\Client\CookieCollection
      */
     public function cookies()
     {
@@ -193,7 +195,7 @@ class Client
      * @param string $url The url or path you want to request.
      * @param array $data The query data you want to send.
      * @param array $options Additional options for the request.
-     * @return \Cake\Network\Http\Response
+     * @return \Cake\Http\Client\Response
      */
     public function get($url, $data = [], array $options = [])
     {
@@ -218,7 +220,7 @@ class Client
      * @param string $url The url or path you want to request.
      * @param mixed $data The post data you want to send.
      * @param array $options Additional options for the request.
-     * @return \Cake\Network\Http\Response
+     * @return \Cake\Http\Client\Response
      */
     public function post($url, $data = [], array $options = [])
     {
@@ -233,7 +235,7 @@ class Client
      * @param string $url The url or path you want to request.
      * @param mixed $data The request data you want to send.
      * @param array $options Additional options for the request.
-     * @return \Cake\Network\Http\Response
+     * @return \Cake\Http\Client\Response
      */
     public function put($url, $data = [], array $options = [])
     {
@@ -248,7 +250,7 @@ class Client
      * @param string $url The url or path you want to request.
      * @param mixed $data The request data you want to send.
      * @param array $options Additional options for the request.
-     * @return \Cake\Network\Http\Response
+     * @return \Cake\Http\Client\Response
      */
     public function patch($url, $data = [], array $options = [])
     {
@@ -263,7 +265,7 @@ class Client
      * @param string $url The url or path you want to request.
      * @param mixed $data The request data you want to send.
      * @param array $options Additional options for the request.
-     * @return \Cake\Network\Http\Response
+     * @return \Cake\Http\Client\Response
      */
     public function options($url, $data = [], array $options = [])
     {
@@ -278,7 +280,7 @@ class Client
      * @param string $url The url or path you want to request.
      * @param mixed $data The request data you want to send.
      * @param array $options Additional options for the request.
-     * @return \Cake\Network\Http\Response
+     * @return \Cake\Http\Client\Response
      */
     public function trace($url, $data = [], array $options = [])
     {
@@ -293,7 +295,7 @@ class Client
      * @param string $url The url or path you want to request.
      * @param mixed $data The request data you want to send.
      * @param array $options Additional options for the request.
-     * @return \Cake\Network\Http\Response
+     * @return \Cake\Http\Client\Response
      */
     public function delete($url, $data = [], array $options = [])
     {
@@ -308,7 +310,7 @@ class Client
      * @param string $url The url or path you want to request.
      * @param array $data The query string data you want to send.
      * @param array $options Additional options for the request.
-     * @return \Cake\Network\Http\Response
+     * @return \Cake\Http\Client\Response
      */
     public function head($url, array $data = [], array $options = [])
     {
@@ -324,7 +326,7 @@ class Client
      * @param string $url URL to request.
      * @param mixed $data The request body.
      * @param array $options The options to use. Contains auth, proxy etc.
-     * @return \Cake\Network\Http\Response
+     * @return \Cake\Http\Client\Response
      */
     protected function _doRequest($method, $url, $data, $options)
     {
@@ -354,9 +356,9 @@ class Client
      * Used internally by other methods, but can also be used to send
      * handcrafted Request objects.
      *
-     * @param \Cake\Network\Http\Request $request The request to send.
+     * @param \Cake\Http\Client\Request $request The request to send.
      * @param array $options Additional options to use.
-     * @return \Cake\Network\Http\Response
+     * @return \Cake\Http\Client\Response
      */
     public function send(Request $request, $options = [])
     {
@@ -414,7 +416,7 @@ class Client
      * @param string $url The url including query string.
      * @param mixed $data The request body.
      * @param array $options The options to use. Contains auth, proxy etc.
-     * @return \Cake\Network\Http\Request
+     * @return \Cake\Http\Client\Request
      */
     protected function _createRequest($method, $url, $data, $options)
     {
@@ -480,7 +482,7 @@ class Client
      * Uses the authentication type to choose the correct strategy
      * and use its methods to add headers.
      *
-     * @param \Cake\Network\Http\Request $request The request to modify.
+     * @param \Cake\Http\Client\Request $request The request to modify.
      * @param array $options Array of options containing the 'auth' key.
      * @return void
      */
@@ -497,7 +499,7 @@ class Client
      * Uses the authentication type to choose the correct strategy
      * and use its methods to add headers.
      *
-     * @param \Cake\Network\Http\Request $request The request to modify.
+     * @param \Cake\Http\Client\Request $request The request to modify.
      * @param array $options Array of options containing the 'proxy' key.
      * @return void
      */
@@ -525,7 +527,7 @@ class Client
             $auth['type'] = 'basic';
         }
         $name = ucfirst($auth['type']);
-        $class = App::className($name, 'Network/Http/Auth');
+        $class = App::className($name, 'Http/Client/Auth');
         if (!$class) {
             throw new Exception(
                 sprintf('Invalid authentication type %s', $name)

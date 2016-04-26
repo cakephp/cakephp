@@ -11,7 +11,7 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Network\Http\FormData;
+namespace Cake\Http\Client;
 
 /**
  * Contains the data and behavior for a single
@@ -19,8 +19,10 @@ namespace Cake\Network\Http\FormData;
  *
  * Added to Cake\Network\Http\FormData when sending
  * data to a remote server.
+ *
+ * @internal
  */
-class Part
+class FormDataPart
 {
 
     /**

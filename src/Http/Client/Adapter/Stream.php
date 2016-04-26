@@ -11,12 +11,12 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Network\Http\Adapter;
+namespace Cake\Http\Client\Adapter;
 
 use Cake\Core\Exception\Exception;
-use Cake\Network\Http\FormData;
-use Cake\Network\Http\Request;
-use Cake\Network\Http\Response;
+use Cake\Http\Client\FormData;
+use Cake\Http\Client\Request;
+use Cake\Http\Client\Response;
 
 /**
  * Implements sending Cake\Network\Http\Request
@@ -65,7 +65,7 @@ class Stream
     /**
      * Send a request and get a response back.
      *
-     * @param \Cake\Network\Http\Request $request The request object to send.
+     * @param \Cake\Http\Client\Request $request The request object to send.
      * @param array $options Array of options for the stream.
      * @return array Array of populated Response objects
      */
