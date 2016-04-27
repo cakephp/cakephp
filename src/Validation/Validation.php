@@ -229,6 +229,7 @@ class Validation
      */
     public static function count($check1, $operator, $expectedCount)
     {
+        $count = null;
         if (is_array($check1) || $check1 instanceof \Countable) {
             $count = count($check1);
         } elseif (is_string($check1)) {
@@ -237,7 +238,7 @@ class Validation
             $count = $check1;
         }
 
-        if (!isset($count)) {
+        if ($count === null) {
             return false;
         }
 
