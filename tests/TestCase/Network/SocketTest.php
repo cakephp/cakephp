@@ -441,6 +441,7 @@ class SocketTest extends TestCase
     public function testConfigContext()
     {
         $this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
+        $this->skipIf(!empty(getenv('http_proxy')) || !empty(getenv('https_proxy')), 'Proxy detected and cannot test SSL.');
         $config = [
             'host' => 'smtp.gmail.com',
             'port' => 465,
