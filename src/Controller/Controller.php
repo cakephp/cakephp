@@ -645,7 +645,18 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $referer = $this->request->referer($local);
         if ($referer === '/' && $default && $default !== $referer) {
-            return Router::url($default, !$local);
+            $url = Router::url($default, !$local);
+            if ($local
+                && $this->request->base
+                && strpos($url, $this->request->base) === 0
+            ) {
+                $url = substr($url, strlen($this->request->base));
+                if ($url[0] !== '/') {
+                    $url = '/' . $url;
+                }
+                return $url;
+            }
+            return $url;
         }
         return $referer;
     }
