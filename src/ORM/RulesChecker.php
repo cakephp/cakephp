@@ -106,7 +106,7 @@ class RulesChecker extends BaseRulesChecker
             if ($this->_useI18n) {
                 $message = __d('cake', 'The count does not match {0}{1}', [$operator, $count]);
             } else {
-                $message = 'This value does not exist';
+                $message = sprintf('The count does not match %s%d', $operator, $count);
             }
         }
 
