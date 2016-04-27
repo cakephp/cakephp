@@ -2785,10 +2785,18 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::count($int, '>', 8));
         $this->assertFalse(Validation::count($int, '<', 1));
 
-        $int = 0;
-        $this->assertTrue(Validation::count($int, '==', 0));
+        $this->assertTrue(Validation::count(0, '==', 0));
+        $this->assertFalse(Validation::count(1, '==', 0));
 
         $this->assertFalse(Validation::count(null, '==', 0));
         $this->assertFalse(Validation::count(new \stdClass(), '==', 0));
+
+        $callable = function() {
+            return '';
+        };
+
+        $this->assertFalse(Validation::count($callable, '==', 0));
+        $this->assertFalse(Validation::count(false, '==', 0));
+        $this->assertFalse(Validation::count(true, '==', 0));
     }
 }
