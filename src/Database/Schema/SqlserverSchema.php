@@ -141,7 +141,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function convertColumnDescription(Table $table, $row)
+    public function convertColumnDescription(TableSchema $table, $row)
     {
         $field = $this->_convertColumn(
             $row['type'],
@@ -192,18 +192,18 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function convertIndexDescription(Table $table, $row)
+    public function convertIndexDescription(TableSchema $table, $row)
     {
-        $type = Table::INDEX_INDEX;
+        $type = TableSchema::INDEX_INDEX;
         $name = $row['index_name'];
         if ($row['is_primary_key']) {
-            $name = $type = Table::CONSTRAINT_PRIMARY;
+            $name = $type = TableSchema::CONSTRAINT_PRIMARY;
         }
-        if ($row['is_unique_constraint'] && $type === Table::INDEX_INDEX) {
-            $type = Table::CONSTRAINT_UNIQUE;
+        if ($row['is_unique_constraint'] && $type === TableSchema::INDEX_INDEX) {
+            $type = TableSchema::CONSTRAINT_UNIQUE;
         }
 
-        if ($type === Table::INDEX_INDEX) {
+        if ($type === TableSchema::INDEX_INDEX) {
             $existing = $table->index($name);
         } else {
             $existing = $table->constraint($name);
@@ -214,7 +214,7 @@ class SqlserverSchema extends BaseSchema
             $columns = array_merge($existing['columns'], $columns);
         }
 
-        if ($type === Table::CONSTRAINT_PRIMARY || $type === Table::CONSTRAINT_UNIQUE) {
+        if ($type === TableSchema::CONSTRAINT_PRIMARY || $type === TableSchema::CONSTRAINT_UNIQUE) {
             $table->addConstraint($name, [
                 'type' => $type,
                 'columns' => $columns
@@ -251,10 +251,10 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function convertForeignKeyDescription(Table $table, $row)
+    public function convertForeignKeyDescription(TableSchema $table, $row)
     {
         $data = [
-            'type' => Table::CONSTRAINT_FOREIGN,
+            'type' => TableSchema::CONSTRAINT_FOREIGN,
             'columns' => [$row['column']],
             'references' => [$row['reference_table'], $row['reference_column']],
             'update' => $this->_convertOnClause($row['update_type']),
@@ -270,7 +270,7 @@ class SqlserverSchema extends BaseSchema
     protected function _foreignOnClause($on)
     {
         $parent = parent::_foreignOnClause($on);
-        return $parent === 'RESTRICT' ? parent::_foreignOnClause(Table::ACTION_SET_NULL) : $parent;
+        return $parent === 'RESTRICT' ? parent::_foreignOnClause(TableSchema::ACTION_SET_NULL) : $parent;
     }
 
     /**
@@ -280,21 +280,21 @@ class SqlserverSchema extends BaseSchema
     {
         switch ($clause) {
             case 'NO_ACTION':
-                return Table::ACTION_NO_ACTION;
+                return TableSchema::ACTION_NO_ACTION;
             case 'CASCADE':
-                return Table::ACTION_CASCADE;
+                return TableSchema::ACTION_CASCADE;
             case 'SET_NULL':
-                return Table::ACTION_SET_NULL;
+                return TableSchema::ACTION_SET_NULL;
             case 'SET_DEFAULT':
-                return Table::ACTION_SET_DEFAULT;
+                return TableSchema::ACTION_SET_DEFAULT;
         }
-        return Table::ACTION_SET_NULL;
+        return TableSchema::ACTION_SET_NULL;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function columnSql(Table $table, $name)
+    public function columnSql(TableSchema $table, $name)
     {
         $data = $table->column($name);
         $out = $this->_driver->quoteIdentifier($name);
@@ -322,21 +322,21 @@ class SqlserverSchema extends BaseSchema
             }
         }
 
-        if ($data['type'] === 'text' && $data['length'] !== Table::LENGTH_TINY) {
+        if ($data['type'] === 'text' && $data['length'] !== TableSchema::LENGTH_TINY) {
             $out .= ' NVARCHAR(MAX)';
         }
 
         if ($data['type'] === 'binary') {
             $out .= ' VARBINARY';
 
-            if ($data['length'] !== Table::LENGTH_TINY) {
+            if ($data['length'] !== TableSchema::LENGTH_TINY) {
                 $out .= '(MAX)';
             } else {
-                $out .= sprintf('(%s)', Table::LENGTH_TINY);
+                $out .= sprintf('(%s)', TableSchema::LENGTH_TINY);
             }
         }
 
-        if ($data['type'] === 'string' || ($data['type'] === 'text' && $data['length'] === Table::LENGTH_TINY)) {
+        if ($data['type'] === 'string' || ($data['type'] === 'text' && $data['length'] === TableSchema::LENGTH_TINY)) {
             $type = ' NVARCHAR';
 
             if (!empty($data['fixed'])) {
@@ -380,14 +380,14 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function addConstraintSql(Table $table)
+    public function addConstraintSql(TableSchema $table)
     {
         $sqlPattern = 'ALTER TABLE %s ADD %s;';
         $sql = [];
 
         foreach ($table->constraints() as $name) {
             $constraint = $table->constraint($name);
-            if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
+            if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($table->name());
                 $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($table, $name));
             }
@@ -399,14 +399,14 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function dropConstraintSql(Table $table)
+    public function dropConstraintSql(TableSchema $table)
     {
         $sqlPattern = 'ALTER TABLE %s DROP CONSTRAINT %s;';
         $sql = [];
 
         foreach ($table->constraints() as $name) {
             $constraint = $table->constraint($name);
-            if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
+            if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($table->name());
                 $constraintName = $this->_driver->quoteIdentifier($name);
                 $sql[] = sprintf($sqlPattern, $tableName, $constraintName);
@@ -419,7 +419,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function indexSql(Table $table, $name)
+    public function indexSql(TableSchema $table, $name)
     {
         $data = $table->index($name);
         $columns = array_map(
@@ -437,14 +437,14 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function constraintSql(Table $table, $name)
+    public function constraintSql(TableSchema $table, $name)
     {
         $data = $table->constraint($name);
         $out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
-        if ($data['type'] === Table::CONSTRAINT_PRIMARY) {
+        if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $out = 'PRIMARY KEY';
         }
-        if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
+        if ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
             $out .= ' UNIQUE';
         }
         return $this->_keySql($out, $data);
@@ -463,7 +463,7 @@ class SqlserverSchema extends BaseSchema
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
         );
-        if ($data['type'] === Table::CONSTRAINT_FOREIGN) {
+        if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
             return $prefix . sprintf(
                 ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
                 implode(', ', $columns),
@@ -479,7 +479,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function createTableSql(Table $table, $columns, $constraints, $indexes)
+    public function createTableSql(TableSchema $table, $columns, $constraints, $indexes)
     {
         $content = array_merge($columns, $constraints);
         $content = implode(",\n", array_filter($content));
@@ -495,7 +495,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function truncateTableSql(Table $table)
+    public function truncateTableSql(TableSchema $table)
     {
         $name = $this->_driver->quoteIdentifier($table->name());
         $queries = [

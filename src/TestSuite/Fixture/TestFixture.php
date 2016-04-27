@@ -14,7 +14,7 @@
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Exception\Exception as CakeException;
-use Cake\Database\Schema\Table;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
@@ -76,7 +76,7 @@ class TestFixture implements FixtureInterface
     /**
      * The Cake\Database\Schema\Table for this fixture.
      *
-     * @var \Cake\Database\Schema\Table
+     * @var \Cake\Database\Schema\TableSchema
      */
     protected $_schema;
 
@@ -175,7 +175,7 @@ class TestFixture implements FixtureInterface
     protected function _schemaFromFields()
     {
         $connection = ConnectionManager::get($this->connection());
-        $this->_schema = new Table($this->table);
+        $this->_schema = new TableSchema($this->table);
         foreach ($this->fields as $field => $data) {
             if ($field === '_constraints' || $field === '_indexes' || $field === '_options') {
                 continue;
@@ -184,7 +184,7 @@ class TestFixture implements FixtureInterface
         }
         if (!empty($this->fields['_constraints'])) {
             foreach ($this->fields['_constraints'] as $name => $data) {
-                if (!$connection->supportsDynamicConstraints() || $data['type'] !== Table::CONSTRAINT_FOREIGN) {
+                if (!$connection->supportsDynamicConstraints() || $data['type'] !== TableSchema::CONSTRAINT_FOREIGN) {
                     $this->_schema->addConstraint($name, $data);
                 } else {
                     $this->_constraints[$name] = $data;
@@ -261,10 +261,10 @@ class TestFixture implements FixtureInterface
     /**
      * Get/Set the Cake\Database\Schema\Table instance used by this fixture.
      *
-     * @param \Cake\Database\Schema\Table|null $schema The table to set.
-     * @return \Cake\Database\Schema\Table|null
+     * @param \Cake\Database\Schema\TableSchema|null $schema The table to set.
+     * @return \Cake\Database\Schema\TableSchema|null
      */
-    public function schema(Table $schema = null)
+    public function schema(TableSchema $schema = null)
     {
         if ($schema) {
             $this->_schema = $schema;

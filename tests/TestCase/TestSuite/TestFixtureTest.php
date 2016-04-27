@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\TestSuite;
 
-use Cake\Database\Schema\Table;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\Fixture\TestFixture;
@@ -196,7 +196,7 @@ class TestFixtureTest extends TestCase
         $this->assertEquals('articles', $Fixture->table);
 
         $schema = $Fixture->schema();
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $schema);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $schema);
 
         $fields = $Fixture->fields;
         unset($fields['_constraints'], $fields['_indexes']);
@@ -283,7 +283,7 @@ class TestFixtureTest extends TestCase
         $db = ConnectionManager::get('test');
         $collection = $db->schemaCollection();
         if (!in_array('letters', $collection->listTables())) {
-            $table = new Table('letters', [
+            $table = new TableSchema('letters', [
                 'id' => ['type' => 'integer'],
                 'letter' => ['type' => 'string', 'length' => 1]
             ]);
@@ -317,7 +317,7 @@ class TestFixtureTest extends TestCase
     {
         $fixture = new ArticlesFixture();
         $db = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
+        $table = $this->getMock('Cake\Database\Schema\TableSchema', [], ['articles']);
         $table->expects($this->once())
             ->method('createSql')
             ->with($db)
@@ -343,7 +343,7 @@ class TestFixtureTest extends TestCase
     {
         $fixture = new ArticlesFixture();
         $db = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
+        $table = $this->getMock('Cake\Database\Schema\TableSchema', [], ['articles']);
         $table->expects($this->once())
             ->method('createSql')
             ->with($db)
@@ -515,7 +515,7 @@ class TestFixtureTest extends TestCase
             ->with('sql')
             ->will($this->returnValue($statement));
 
-        $table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
+        $table = $this->getMock('Cake\Database\Schema\TableSchema', [], ['articles']);
         $table->expects($this->once())
             ->method('dropSql')
             ->with($db)
@@ -541,7 +541,7 @@ class TestFixtureTest extends TestCase
             ->with('sql')
             ->will($this->returnValue($statement));
 
-        $table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
+        $table = $this->getMock('Cake\Database\Schema\TableSchema', [], ['articles']);
         $table->expects($this->once())
             ->method('truncateSql')
             ->with($db)

@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\Database\Schema;
 use Cake\Core\Configure;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqliteSchema;
-use Cake\Database\Schema\Table;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
@@ -152,7 +152,7 @@ class SqliteSchemaTest extends TestCase
         $driver = $this->getMock('Cake\Database\Driver\Sqlite');
         $dialect = new SqliteSchema($driver);
 
-        $table = $this->getMock('Cake\Database\Schema\Table', [], ['table']);
+        $table = $this->getMock('Cake\Database\Schema\TableSchema', [], ['table']);
         $table->expects($this->at(1))->method('addColumn')->with('field', $expected);
 
         $dialect->convertColumnDescription($table, $field);
@@ -184,7 +184,7 @@ class SqliteSchemaTest extends TestCase
             'dflt_value' => 1,
         ];
 
-        $table = new \Cake\Database\Schema\Table('table');
+        $table = new \Cake\Database\Schema\TableSchema('table');
         $dialect->convertColumnDescription($table, $field1);
         $dialect->convertColumnDescription($table, $field2);
         $this->assertEquals(['field1', 'field2'], $table->primaryKey());
@@ -329,7 +329,7 @@ SQL;
                 'comment' => null,
             ],
         ];
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
         $this->assertEquals(['id'], $result->primaryKey());
         foreach ($expected as $field => $definition) {
             $this->assertEquals($definition, $result->column($field));
@@ -368,7 +368,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
         $expected = [
             'primary' => [
                 'type' => 'primary',
@@ -456,17 +456,17 @@ SQL;
             ],
             [
                 'body',
-                ['type' => 'text', 'length' => Table::LENGTH_TINY, 'null' => false],
-                '"body" VARCHAR(' . Table::LENGTH_TINY . ') NOT NULL'
+                ['type' => 'text', 'length' => TableSchema::LENGTH_TINY, 'null' => false],
+                '"body" VARCHAR(' . TableSchema::LENGTH_TINY . ') NOT NULL'
             ],
             [
                 'body',
-                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM, 'null' => false],
+                ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM, 'null' => false],
                 '"body" TEXT NOT NULL'
             ],
             [
                 'body',
-                ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
+                ['type' => 'text', 'length' => TableSchema::LENGTH_LONG, 'null' => false],
                 '"body" TEXT NOT NULL'
             ],
             // Integers
@@ -571,7 +571,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = new Table('posts');
+        $table = new TableSchema('posts');
 
         $result = $table->addConstraintSql($connection);
         $this->assertEmpty($result);
@@ -589,7 +589,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = new Table('posts');
+        $table = new TableSchema('posts');
         $result = $table->dropConstraintSql($connection);
         $this->assertEmpty($result);
     }
@@ -605,7 +605,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new SqliteSchema($driver);
 
-        $table = (new Table('articles'))->addColumn($name, $data);
+        $table = (new TableSchema('articles'))->addColumn($name, $data);
         $this->assertEquals($expected, $schema->columnSql($table, $name));
     }
 
@@ -619,7 +619,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new SqliteSchema($driver);
 
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('id', [
                 'type' => 'integer',
                 'null' => false,
@@ -647,7 +647,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new SqliteSchema($driver);
 
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('id', [
                 'type' => 'biginteger',
                 'null' => false
@@ -724,7 +724,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new SqliteSchema($driver);
 
-        $table = (new Table('articles'))->addColumn('title', [
+        $table = (new TableSchema('articles'))->addColumn('title', [
             'type' => 'string',
             'length' => 255
         ])->addColumn('author_id', [
@@ -760,7 +760,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new SqliteSchema($driver);
 
-        $table = (new Table('articles'))->addColumn('title', [
+        $table = (new TableSchema('articles'))->addColumn('title', [
             'type' => 'string',
             'length' => 255
         ])->addColumn('author_id', [
@@ -782,7 +782,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('articles'))->addColumn('id', [
+        $table = (new TableSchema('articles'))->addColumn('id', [
                 'type' => 'integer',
                 'null' => false
             ])
@@ -829,7 +829,7 @@ SQL;
         $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
-        $table = (new Table('schema_articles'))->addColumn('id', [
+        $table = (new TableSchema('schema_articles'))->addColumn('id', [
             'type' => 'integer',
             'null' => false
         ]);
@@ -850,7 +850,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('articles_tags'))
+        $table = (new TableSchema('articles_tags'))
             ->addColumn('article_id', [
                 'type' => 'integer',
                 'null' => false
@@ -877,7 +877,7 @@ SQL;
 
         // Sqlite only supports AUTO_INCREMENT on single column primary
         // keys. Ensure that schema data follows the limitations of Sqlite.
-        $table = (new Table('composite_key'))
+        $table = (new TableSchema('composite_key'))
             ->addColumn('id', [
                 'type' => 'integer',
                 'null' => false,
@@ -916,7 +916,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $result = $table->dropSql($connection);
         $this->assertCount(1, $result);
         $this->assertEquals('DROP TABLE "articles"', $result[0]);
@@ -946,7 +946,7 @@ SQL;
         $statement->expects($this->at(2))->method('fetch')
             ->will($this->returnValue(false));
 
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $result = $table->truncateSql($connection);
         $this->assertCount(2, $result);
         $this->assertEquals('DELETE FROM sqlite_sequence WHERE name="articles"', $result[0]);
@@ -975,7 +975,7 @@ SQL;
         $statement->expects($this->once())->method('fetch')
             ->will($this->returnValue(false));
 
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $result = $table->truncateSql($connection);
         $this->assertCount(1, $result);
         $this->assertEquals('DELETE FROM "articles"', $result[0]);
