@@ -26,7 +26,7 @@ class ValidCount
 {
 
     /**
-     * The list of fields to check
+     * The field to check
      *
      * @var array
      */
@@ -35,7 +35,7 @@ class ValidCount
     /**
      * Constructor.
      *
-     * @param string|array $fields The field to check the count on.
+     * @param string $field The field to check the count on.
      */
     public function __construct($field)
     {
