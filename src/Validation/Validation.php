@@ -216,6 +216,35 @@ class Validation
     }
 
     /**
+     * Used to check the count of a given value of type string, int, or array.
+     *
+     * If a string value is passed the string length is used as count.
+     *
+     * @param array|int|string $check1 The value to check the count on.
+     * @param string $operator Can be either a word or operand
+     *    is greater >, is less <, greater or equal >=
+     *    less or equal <=, is less <, equal to ==, not equal !=
+     * @param int $check2 The expected count value.
+     * @return bool Success
+     */
+    public static function count($check1, $operator, $expectedCount)
+    {
+        if (is_array($check1) || $check1 instanceof \Countable) {
+            $count = count($check1);
+        } elseif (is_string($check1)) {
+            $count = mb_strlen($check1);
+        } elseif (is_int($check1)) {
+            $count = $check1;
+        }
+
+        if (!$count) {
+            return false;
+        }
+
+        return self::comparison($count, $operator, $expectedCount);
+    }
+
+    /**
      * Used to compare 2 numeric values.
      *
      * @param string $check1 if string is passed for, a string must also be passed for $check2

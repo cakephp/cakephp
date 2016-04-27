@@ -2762,4 +2762,27 @@ class ValidationTest extends TestCase
         // Grinning face
         $this->assertTrue(Validation::utf8('some' . "\xf0\x9f\x98\x80" . 'value', ['extended' => true]));
     }
+
+    /**
+     * Test count
+     *
+     * @return void
+     */
+    public function testCount()
+    {
+        $array = ['cake', 'php'];
+        $this->assertTrue(Validation::count($array, '==', 2));
+        $this->assertFalse(Validation::count($array, '>', 3));
+        $this->assertFalse(Validation::count($array, '<', 1));
+
+        $string = 'cakephp';
+        $this->assertTrue(Validation::count($string, '==', 7));
+        $this->assertFalse(Validation::count($string, '>', 8));
+        $this->assertFalse(Validation::count($string, '<', 1));
+
+        $int = 7;
+        $this->assertTrue(Validation::count($int, '==', 7));
+        $this->assertFalse(Validation::count($int, '>', 8));
+        $this->assertFalse(Validation::count($int, '<', 1));
+    }
 }
