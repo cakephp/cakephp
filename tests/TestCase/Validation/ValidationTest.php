@@ -2784,5 +2784,8 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::count($int, '==', 7));
         $this->assertFalse(Validation::count($int, '>', 8));
         $this->assertFalse(Validation::count($int, '<', 1));
+
+        $int = 0;
+        $this->assertTrue(Validation::count($int, '==', 0));
     }
 }

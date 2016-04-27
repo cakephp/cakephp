@@ -237,7 +237,7 @@ class Validation
             $count = $check1;
         }
 
-        if (!$count) {
+        if (!isset($count)) {
             return false;
         }
 
