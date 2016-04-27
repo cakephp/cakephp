@@ -5860,22 +5860,4 @@ class TableTest extends TestCase
         );
     }
 
-    /**
-     * Test that an association has at least one entry present.
-     *
-     * @return void
-     */
-    public function testValidateCount()
-    {
-        $table = TableRegistry::get('Authors');
-        $this->assertFalse($table->validateCount(''));
-        $this->assertFalse($table->validateCount([]));
-        $this->assertFalse($table->validateCount(['_ids' => '']));
-        $this->assertFalse($table->validateCount(['_ids' => []]));
-
-        $this->assertFalse($table->validateCount(['_ids' => [1, 2, 3]], 4, '='));
-        $this->assertTrue($table->validateCount(['_ids' => [1, 2, 3]], 4, '<='));
-
-        $this->assertTrue($table->validateCount(['_ids' => [1, 2, 3]]));
-    }
 }
