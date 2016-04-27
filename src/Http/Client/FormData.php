@@ -13,7 +13,6 @@
  */
 namespace Cake\Http\Client;
 
-use Cake\Http\Client\FormDataPart;
 use Countable;
 use finfo;
 
