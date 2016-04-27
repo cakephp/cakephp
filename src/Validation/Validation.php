@@ -224,7 +224,7 @@ class Validation
      * @param string $operator Can be either a word or operand
      *    is greater >, is less <, greater or equal >=
      *    less or equal <=, is less <, equal to ==, not equal !=
-     * @param int $check2 The expected count value.
+     * @param int $expectedCount The expected count value.
      * @return bool Success
      */
     public static function count($check1, $operator, $expectedCount)
