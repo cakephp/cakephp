@@ -5859,5 +5859,4 @@ class TableTest extends TestCase
             'SQLServer does not support the requirements of this test.'
         );
     }
-
 }
