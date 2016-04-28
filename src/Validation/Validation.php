@@ -227,22 +227,12 @@ class Validation
      * @param int $expectedCount The expected count value.
      * @return bool Success
      */
-    public static function count($check1, $operator, $expectedCount)
+    public static function numElements($check1, $operator, $expectedCount)
     {
-        $count = null;
-        if (is_array($check1) || $check1 instanceof \Countable) {
-            $count = count($check1);
-        } elseif (is_string($check1)) {
-            $count = mb_strlen($check1);
-        } elseif (is_int($check1)) {
-            $count = $check1;
-        }
-
-        if ($count === null) {
+        if (!is_array($check1) || $check1 instanceof \Countable) {
             return false;
         }
-
-        return self::comparison($count, $operator, $expectedCount);
+        return self::comparison(count($check1), $operator, $expectedCount);
     }
 
     /**

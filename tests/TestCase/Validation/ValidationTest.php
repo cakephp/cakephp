@@ -2764,39 +2764,25 @@ class ValidationTest extends TestCase
     }
 
     /**
-     * Test count
+     * Test numElements
      *
      * @return void
      */
-    public function testCount()
+    public function testNumElements()
     {
         $array = ['cake', 'php'];
-        $this->assertTrue(Validation::count($array, '==', 2));
-        $this->assertFalse(Validation::count($array, '>', 3));
-        $this->assertFalse(Validation::count($array, '<', 1));
-
-        $string = 'cakephp';
-        $this->assertTrue(Validation::count($string, '==', 7));
-        $this->assertFalse(Validation::count($string, '>', 8));
-        $this->assertFalse(Validation::count($string, '<', 1));
-
-        $int = 7;
-        $this->assertTrue(Validation::count($int, '==', 7));
-        $this->assertFalse(Validation::count($int, '>', 8));
-        $this->assertFalse(Validation::count($int, '<', 1));
-
-        $this->assertTrue(Validation::count(0, '==', 0));
-        $this->assertFalse(Validation::count(1, '==', 0));
-
-        $this->assertFalse(Validation::count(null, '==', 0));
-        $this->assertFalse(Validation::count(new \stdClass(), '==', 0));
+        $this->assertTrue(Validation::numElements($array, '==', 2));
+        $this->assertFalse(Validation::numElements($array, '>', 3));
+        $this->assertFalse(Validation::numElements($array, '<', 1));
 
         $callable = function() {
             return '';
         };
 
-        $this->assertFalse(Validation::count($callable, '==', 0));
-        $this->assertFalse(Validation::count(false, '==', 0));
-        $this->assertFalse(Validation::count(true, '==', 0));
+        $this->assertFalse(Validation::numElements(null, '==', 0));
+        $this->assertFalse(Validation::numElements(new \stdClass(), '==', 0));
+        $this->assertFalse(Validation::numElements($callable, '==', 0));
+        $this->assertFalse(Validation::numElements(false, '==', 0));
+        $this->assertFalse(Validation::numElements(true, '==', 0));
     }
 }
