@@ -114,7 +114,6 @@ class ErrorHandlerMiddlewareTest extends TestCase
     /**
      * Test handling an error and having rendering fail.
      *
-     * @expectedException PHPUnit_Framework_Error
      * @return void
      */
     public function testHandleExceptionRenderingFails()
@@ -135,6 +134,8 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $next = function ($req, $res) {
             throw new \Cake\Network\Exception\ServiceUnavailableException('whoops');
         };
-        $middleware($request, $response, $next);
+        $response = $middleware($request, $response, $next);
+        $this->assertEquals(500, $response->getStatusCode());
+        $this->assertEquals('An Internal Server Error Occurred', '' . $response->getBody());
     }
 }

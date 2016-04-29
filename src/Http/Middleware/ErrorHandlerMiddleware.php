@@ -15,8 +15,8 @@
 namespace Cake\Http\Middleware;
 
 use Cake\Core\App;
+use Cake\Log\Log;
 use Cake\Http\ResponseTransformer;
-use Exception;
 
 /**
  * Error handling middleware.
@@ -68,14 +68,19 @@ class ErrorHandlerMiddleware
         try {
             $response = $renderer->render();
             return ResponseTransformer::toPsr($response);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $message = sprintf(
                 "[%s] %s\n%s", // Keeping same message format
                 get_class($e),
                 $e->getMessage(),
                 $e->getTraceAsString()
             );
-            trigger_error($message, E_USER_ERROR);
+            Log::error($message);
+
+            $body = $response->getBody();
+            $body->write('An Internal Server Error Occurred');
+            $response = $response->withStatus(500)
+                ->withBody($body);
         }
         return $response;
     }
@@ -85,6 +90,7 @@ class ErrorHandlerMiddleware
      *
      * @param \Exception $exception The exception being rendered.
      * @return \Cake\Error\BaseErrorHandler The exception renderer.
+     * @throws \Exception When the renderer class cannot be found.
      */
     protected function getRenderer($exception)
     {
