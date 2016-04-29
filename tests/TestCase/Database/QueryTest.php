@@ -30,6 +30,8 @@ class QueryTest extends TestCase
 
     public $fixtures = ['core.articles', 'core.authors', 'core.comments'];
 
+    public $autoFixtures = false;
+
     const ARTICLE_COUNT = 3;
     const AUTHOR_COUNT = 4;
     const COMMENT_COUNT = 6;
@@ -107,6 +109,7 @@ class QueryTest extends TestCase
      */
     public function testSelectFieldsFromTable()
     {
+        $this->loadFixtures('Authors', 'Articles');
         $query = new Query($this->connection);
         $result = $query->select(['body', 'author_id'])->from('articles')->execute();
         $this->assertEquals(['body' => 'First Article Body', 'author_id' => 1], $result->fetch('assoc'));
@@ -132,6 +135,7 @@ class QueryTest extends TestCase
      */
     public function testSelectAliasedFieldsFromTable()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query->select(['text' => 'comment', 'article_id'])->from('comments')->execute();
         $this->assertEquals(['text' => 'First Comment for First Article', 'article_id' => 1], $result->fetch('assoc'));
@@ -165,6 +169,7 @@ class QueryTest extends TestCase
      */
     public function testSelectAliasedTables()
     {
+        $this->loadFixtures('Authors', 'Articles');
         $query = new Query($this->connection);
         $result = $query->select(['text' => 'a.body', 'a.author_id'])
             ->from(['a' => 'articles'])->execute();
@@ -192,6 +197,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWithJoins()
     {
+        $this->loadFixtures('Authors', 'Articles');
         $query = new Query($this->connection);
         $result = $query
             ->select(['title', 'name'])
@@ -222,6 +228,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWithJoinsConditions()
     {
+        $this->loadFixtures('Authors', 'Articles', 'Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['title', 'name'])
@@ -261,6 +268,7 @@ class QueryTest extends TestCase
      */
     public function testSelectAliasedJoins()
     {
+        $this->loadFixtures('Authors', 'Articles', 'Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['title', 'name'])
@@ -300,6 +308,7 @@ class QueryTest extends TestCase
      */
     public function testSelectLeftJoin()
     {
+        $this->loadFixtures('Articles', 'Comments');
         $query = new Query($this->connection);
         $time = new \DateTime('2007-03-18 10:45:23');
         $types = ['created' => 'datetime'];
@@ -329,6 +338,7 @@ class QueryTest extends TestCase
      */
     public function testSelectInnerJoin()
     {
+        $this->loadFixtures('Articles', 'Comments');
         $query = new Query($this->connection);
         $time = new \DateTime('2007-03-18 10:45:23');
         $types = ['created' => 'datetime'];
@@ -347,6 +357,7 @@ class QueryTest extends TestCase
      */
     public function testSelectRightJoin()
     {
+        $this->loadFixtures('Articles', 'Comments');
         $this->skipIf(
             $this->connection->driver() instanceof \Cake\Database\Driver\Sqlite,
             'SQLite does not support RIGHT joins'
@@ -373,6 +384,7 @@ class QueryTest extends TestCase
      */
     public function testSelectJoinWithCallback()
     {
+        $this->loadFixtures('Articles', 'Comments');
         $query = new Query($this->connection);
         $types = ['created' => 'datetime'];
         $result = $query
@@ -410,6 +422,7 @@ class QueryTest extends TestCase
      */
     public function testSelectSimpleWhere()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $result = $query
             ->select(['title'])
@@ -436,6 +449,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereOperatorMoreThan()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['comment'])
@@ -454,6 +468,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereOperatorLessThan()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $result = $query
             ->select(['title'])
@@ -472,6 +487,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereOperatorLessThanEqual()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $result = $query
             ->select(['title'])
@@ -489,6 +505,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereOperatorMoreThanEqual()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $result = $query
             ->select(['title'])
@@ -506,6 +523,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereOperatorNotEqual()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $result = $query
             ->select(['title'])
@@ -524,6 +542,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereOperatorLike()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $result = $query
             ->select(['title'])
@@ -542,6 +561,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereOperatorLikeExpansion()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $result = $query
             ->select(['title'])
@@ -559,6 +579,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereOperatorNotLike()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $result = $query
             ->select(['title'])
@@ -576,6 +597,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereUnary()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -599,6 +621,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereTypes()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -672,6 +695,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereArrayType()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -693,6 +717,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereArrayTypeEmpty()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -709,6 +734,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereArrayTypeEmptyWithExpression()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -726,6 +752,7 @@ class QueryTest extends TestCase
      */
     public function testSelectOrWhere()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -745,6 +772,7 @@ class QueryTest extends TestCase
      */
     public function testSelectAndWhere()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -773,6 +801,7 @@ class QueryTest extends TestCase
      */
     public function testSelectExpressionNesting()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -807,6 +836,7 @@ class QueryTest extends TestCase
      */
     public function testSelectOrWhereNoPreviousCondition()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -826,6 +856,7 @@ class QueryTest extends TestCase
      */
     public function testSelectAndWhereNoPreviousCondition()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -845,6 +876,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereUsingClosure()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -889,6 +921,7 @@ class QueryTest extends TestCase
      */
     public function testTupleWithClosureExpression()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('comments')
@@ -917,6 +950,7 @@ class QueryTest extends TestCase
      */
     public function testSelectAndWhereUsingClosure()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -949,6 +983,7 @@ class QueryTest extends TestCase
      */
     public function testSelectOrWhereUsingClosure()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -985,6 +1020,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereUsingExpressionInField()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -1006,6 +1042,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereOperatorMethods()
     {
+        $this->loadFixtures('Articles', 'Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['title'])
@@ -1167,6 +1204,7 @@ class QueryTest extends TestCase
      */
     public function testInValueCast()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -1232,6 +1270,7 @@ class QueryTest extends TestCase
      */
     public function testInValueCast2()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -1301,6 +1340,7 @@ class QueryTest extends TestCase
      */
     public function testWhereWithBetween()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -1327,6 +1367,7 @@ class QueryTest extends TestCase
      */
     public function testWhereWithBetweenComplex()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -1355,6 +1396,7 @@ class QueryTest extends TestCase
      */
     public function testWhereWithBetweenWithExpressionField()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -1382,6 +1424,7 @@ class QueryTest extends TestCase
      */
     public function testWhereWithBetweenWithExpressionParts()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -1409,6 +1452,7 @@ class QueryTest extends TestCase
      */
     public function testSelectExpressionComposition()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -1489,6 +1533,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereNot()
     {
+        $this->loadFixtures('Articles', 'Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -1538,6 +1583,7 @@ class QueryTest extends TestCase
      */
     public function testSelectOrderBy()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -1602,6 +1648,7 @@ class QueryTest extends TestCase
      */
     public function testSelectOrderByString()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
@@ -1620,6 +1667,7 @@ class QueryTest extends TestCase
      */
     public function testSelectOrderAsc()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
@@ -1660,6 +1708,7 @@ class QueryTest extends TestCase
      */
     public function testSelectOrderDesc()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
@@ -1700,6 +1749,7 @@ class QueryTest extends TestCase
      */
     public function testSelectGroup()
     {
+        $this->loadFixtures('Authors', 'Articles');
         $query = new Query($this->connection);
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
@@ -1730,6 +1780,7 @@ class QueryTest extends TestCase
      */
     public function testSelectDistinct()
     {
+        $this->loadFixtures('Authors', 'Articles');
         $query = new Query($this->connection);
         $result = $query
             ->select(['author_id'])
@@ -1752,6 +1803,7 @@ class QueryTest extends TestCase
      */
     public function testSelectDistinctON()
     {
+        $this->loadFixtures('Authors', 'Articles');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id', 'author_id'])
@@ -1845,6 +1897,7 @@ class QueryTest extends TestCase
      */
     public function testSelectHaving()
     {
+        $this->loadFixtures('Authors', 'Articles');
         $query = new Query($this->connection);
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
@@ -1877,6 +1930,7 @@ class QueryTest extends TestCase
      */
     public function testSelectOrHaving()
     {
+        $this->loadFixtures('Authors', 'Articles');
         $query = new Query($this->connection);
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
@@ -1924,6 +1978,7 @@ class QueryTest extends TestCase
      */
     public function testSelectAndHaving()
     {
+        $this->loadFixtures('Authors', 'Articles');
         $query = new Query($this->connection);
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
@@ -1968,6 +2023,7 @@ class QueryTest extends TestCase
      */
     public function testSelectLimit()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $result = $query->select('id')->from('articles')->limit(1)->execute();
         $this->assertCount(1, $result);
@@ -1984,6 +2040,7 @@ class QueryTest extends TestCase
      */
     public function testSelectOffset()
     {
+        $this->loadFixtures('Articles', 'Comments');
         $query = new Query($this->connection);
         $result = $query->select('id')->from('comments')
             ->limit(1)
@@ -2042,6 +2099,7 @@ class QueryTest extends TestCase
      */
     public function testSelectPage()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query->select('id')->from('comments')
             ->limit(1)
@@ -2083,6 +2141,7 @@ class QueryTest extends TestCase
      */
     public function testSubqueryInSelect()
     {
+        $this->loadFixtures('Authors', 'Articles', 'Comments');
         $query = new Query($this->connection);
         $subquery = (new Query($this->connection))
             ->select('name')
@@ -2127,6 +2186,7 @@ class QueryTest extends TestCase
      */
     public function testSuqueryInFrom()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $subquery = (new Query($this->connection))
             ->select(['id', 'comment'])
@@ -2155,6 +2215,7 @@ class QueryTest extends TestCase
      */
     public function testSubqueryInWhere()
     {
+        $this->loadFixtures('Authors', 'Comments');
         $query = new Query($this->connection);
         $subquery = (new Query($this->connection))
             ->select(['id'])
@@ -2199,6 +2260,7 @@ class QueryTest extends TestCase
      */
     public function testSubqueryInJoin()
     {
+        $this->loadFixtures('Authors', 'Articles');
         $subquery = (new Query($this->connection))->select('*')->from('authors');
 
         $query = new Query($this->connection);
@@ -2228,6 +2290,7 @@ class QueryTest extends TestCase
      */
     public function testUnion()
     {
+        $this->loadFixtures('Authors', 'Articles', 'Comments');
         $union = (new Query($this->connection))->select(['id', 'title'])->from(['a' => 'articles']);
         $query = new Query($this->connection);
         $result = $query->select(['id', 'comment'])
@@ -2268,6 +2331,7 @@ class QueryTest extends TestCase
      */
     public function testUnionOrderBy()
     {
+        $this->loadFixtures('Articles', 'Comments');
         $this->skipIf(
             ($this->connection->driver() instanceof \Cake\Database\Driver\Sqlite ||
             $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver),
@@ -2297,6 +2361,7 @@ class QueryTest extends TestCase
      */
     public function testUnionAll()
     {
+        $this->loadFixtures('Authors', 'Articles', 'Comments');
         $union = (new Query($this->connection))->select(['id', 'title'])->from(['a' => 'articles']);
         $query = new Query($this->connection);
         $result = $query->select(['id', 'comment'])
@@ -2328,6 +2393,7 @@ class QueryTest extends TestCase
      */
     public function testDecorateResults()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id', 'title'])
@@ -2380,6 +2446,7 @@ class QueryTest extends TestCase
      */
     public function testDeleteWithFrom()
     {
+        $this->loadFixtures('Authors');
         $query = new Query($this->connection);
 
         $query->delete()
@@ -2402,6 +2469,7 @@ class QueryTest extends TestCase
      */
     public function testDeleteWithAliasedFrom()
     {
+        $this->loadFixtures('Authors');
         $query = new Query($this->connection);
 
         $query->delete()
@@ -2424,6 +2492,7 @@ class QueryTest extends TestCase
      */
     public function testDeleteNoFrom()
     {
+        $this->loadFixtures('Authors');
         $query = new Query($this->connection);
 
         $query->delete('authors')
@@ -2445,6 +2514,7 @@ class QueryTest extends TestCase
      */
     public function testSelectAndDeleteOnSameQuery()
     {
+        $this->loadFixtures('Authors');
         $query = new Query($this->connection);
         $result = $query->select()
             ->delete('authors')
@@ -2462,6 +2532,7 @@ class QueryTest extends TestCase
      */
     public function testUpdateSimple()
     {
+        $this->loadFixtures('Authors');
         $query = new Query($this->connection);
         $query->update('authors')
             ->set('name', 'mark')
@@ -2481,6 +2552,7 @@ class QueryTest extends TestCase
      */
     public function testUpdateMultipleFields()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->update('articles')
             ->set('title', 'mark', 'string')
@@ -2507,6 +2579,7 @@ class QueryTest extends TestCase
      */
     public function testUpdateMultipleFieldsArray()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->update('articles')
             ->set([
@@ -2535,6 +2608,7 @@ class QueryTest extends TestCase
      */
     public function testUpdateWithExpression()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
 
         $expr = $query->newExpr()->equalFields('article_id', 'user_id');
@@ -2562,6 +2636,7 @@ class QueryTest extends TestCase
      */
     public function testUpdateArrayFields()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $date = new \DateTime;
         $query->update('comments')
@@ -2592,6 +2667,7 @@ class QueryTest extends TestCase
      */
     public function testUpdateSetCallable()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $date = new \DateTime;
         $query->update('comments')
@@ -2650,6 +2726,7 @@ class QueryTest extends TestCase
      */
     public function testInsertSimple()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->insert(['title', 'body'])
             ->into('articles')
@@ -2693,6 +2770,7 @@ class QueryTest extends TestCase
      */
     public function testInsertSparseRow()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->insert(['title', 'body'])
             ->into('articles')
@@ -2734,6 +2812,7 @@ class QueryTest extends TestCase
      */
     public function testInsertMultipleRowsSparse()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->insert(['title', 'body'])
             ->into('articles')
@@ -2778,6 +2857,7 @@ class QueryTest extends TestCase
      */
     public function testInsertFromSelect()
     {
+        $this->loadFixtures('Authors', 'Articles');
         $select = (new Query($this->connection))->select(['name', "'some text'", 99])
             ->from('authors')
             ->where(['id' => 1]);
@@ -2831,6 +2911,7 @@ class QueryTest extends TestCase
      */
     public function testInsertFailureMixingTypesArrayFirst()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->insert(['name'])
             ->into('articles')
@@ -2845,6 +2926,7 @@ class QueryTest extends TestCase
      */
     public function testInsertFailureMixingTypesQueryFirst()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->insert(['name'])
             ->into('articles')
@@ -2859,6 +2941,7 @@ class QueryTest extends TestCase
      */
     public function testInsertExpressionValues()
     {
+        $this->loadFixtures('Articles', 'Authors');
         $query = new Query($this->connection);
         $query->insert(['title', 'author_id'])
             ->into('articles')
@@ -2925,6 +3008,7 @@ class QueryTest extends TestCase
      */
     public function testSQLFunctions()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query->select(
             function ($q) {
@@ -3027,6 +3111,7 @@ class QueryTest extends TestCase
      */
     public function testDefaultTypes()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $this->assertEquals([], $query->defaultTypes());
         $types = ['id' => 'integer', 'created' => 'datetime'];
@@ -3055,6 +3140,7 @@ class QueryTest extends TestCase
      */
     public function testBind()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $results = $query->select(['id', 'comment'])
             ->from('comments')
@@ -3082,6 +3168,7 @@ class QueryTest extends TestCase
      */
     public function testAppendSelect()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $sql = $query
             ->select(['id', 'title'])
@@ -3372,6 +3459,7 @@ class QueryTest extends TestCase
      */
     public function testIsNullWithExpressions()
     {
+        $this->loadFixtures('Authors');
         $query = new Query($this->connection);
         $subquery = (new Query($this->connection))
             ->select(['id'])
@@ -3427,6 +3515,7 @@ class QueryTest extends TestCase
      */
     public function testDirectIsNull()
     {
+        $this->loadFixtures('Authors');
         $sql = (new Query($this->connection))
             ->select(['name'])
             ->from(['authors'])
@@ -3451,6 +3540,7 @@ class QueryTest extends TestCase
      */
     public function testDirectIsNotNull()
     {
+        $this->loadFixtures('Authors');
         $sql = (new Query($this->connection))
             ->select(['name'])
             ->from(['authors'])
@@ -3474,6 +3564,7 @@ class QueryTest extends TestCase
      */
     public function testSqlCaseStatement()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $publishedCase = $query
             ->newExpr()
@@ -3561,6 +3652,7 @@ class QueryTest extends TestCase
      */
     public function testUnbufferedQuery()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $result = $query->select(['body', 'author_id'])
             ->from('articles')
@@ -3596,6 +3688,7 @@ class QueryTest extends TestCase
      */
     public function testDeepClone()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->select(['id', 'title' => $query->func()->concat(['title' => 'literal', 'test'])])
             ->from('articles')
@@ -3648,6 +3741,7 @@ class QueryTest extends TestCase
      */
     public function testSelectTypeConversion()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $query
             ->select(['id', 'comment', 'the_date' => 'created'])
@@ -3666,6 +3760,7 @@ class QueryTest extends TestCase
      */
     public function testRemoveJoin()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->select(['id', 'title'])
             ->from('articles')
@@ -3687,6 +3782,7 @@ class QueryTest extends TestCase
      */
     public function testBetweenExpressionAndTypeMap()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $query->select('id')
             ->from('comments')
@@ -3748,6 +3844,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWithObjFetchType()
     {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
