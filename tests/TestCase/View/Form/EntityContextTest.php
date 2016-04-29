@@ -655,6 +655,26 @@ class EntityContextTest extends TestCase
     }
 
     /**
+     * Test getting default value from table schema.
+     *
+     * @return void
+     */
+    public function testValSchemaDefault()
+    {
+        $table = TableRegistry::get('Articles');
+        $column = $table->schema()->column('title');
+        $table->schema()->addColumn('title', ['default' => 'default title'] + $column);
+        $row = $table->newEntity();
+
+        $context = new EntityContext($this->request, [
+            'entity' => $row,
+            'table' => 'Articles',
+        ]);
+        $result = $context->val('title');
+        $this->assertEquals('default title', $result);
+    }
+
+    /**
      * Test validator for boolean fields.
      *
      * @return void
