@@ -39,6 +39,7 @@ class Inflector
         '/(x|ch|ss|sh)$/i' => '\1es',
         '/([^aeiouy]|qu)y$/i' => '\1ies',
         '/(hive)$/i' => '\1s',
+        '/(chef)$/i' => '\1s',
         '/(?:([^f])fe|([lre])f)$/i' => '\1\2ves',
         '/sis$/i' => 'ses',
         '/([ti])um$/i' => '\1a',

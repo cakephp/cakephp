@@ -320,6 +320,43 @@ class FormAuthenticateTest extends TestCase
     }
 
     /**
+     * Test using custom finder
+     *
+     * @return void
+     */
+    public function testFinderOptions()
+    {
+        $request = new Request('posts/index');
+        $request->data = [
+            'username' => 'mariano',
+            'password' => 'password'
+        ];
+
+        $this->auth->config([
+            'userModel' => 'AuthUsers',
+            'finder' => 'username'
+        ]);
+
+        $result = $this->auth->authenticate($request, $this->response);
+        $expected = [
+            'id' => 1,
+            'username' => 'mariano',
+        ];
+        $this->assertEquals($expected, $result);
+
+        $this->auth->config([
+            'finder' => ['username' => ['username' => 'nate']]
+        ]);
+
+        $result = $this->auth->authenticate($request, $this->response);
+        $expected = [
+            'id' => 5,
+            'username' => 'nate',
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * test password hasher settings
      *
      * @return void
