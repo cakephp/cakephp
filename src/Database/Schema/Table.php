@@ -15,7 +15,7 @@
 namespace Cake\Database\Schema;
 
 /**
- * @deprecated Provided for backward compatibility. Use TableSchema instead.
+ * @deprecated 3.2.8 Use \Cake\Database\Schema\TableSchema instead.
  */
 class Table extends TableSchema
 {
