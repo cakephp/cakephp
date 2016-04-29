@@ -1735,10 +1735,10 @@ class CakeResponseTest extends CakeTestCase {
  */
 	public function testFileRangeInvalid($range) {
 		$_SERVER['HTTP_RANGE'] = $range;
-		$response = $this->getMock('CakeResponse', [
+		$response = $this->getMock('CakeResponse', array(
 			'_sendHeader',
 			'_isActive',
-		]);
+		));
 
 		$response->file(
 			CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS . 'css' . DS . 'test_asset.css',
@@ -1762,10 +1762,10 @@ class CakeResponseTest extends CakeTestCase {
  */
 	public function testFileRangeReversed() {
 		$_SERVER['HTTP_RANGE'] = 'bytes=30-5';
-		$response = $this->getMock('CakeResponse', [
+		$response = $this->getMock('CakeResponse', array(
 			'_sendHeader',
 			'_isActive',
-		]);
+		));
 
 		$response->file(
 			CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS . 'css' . DS . 'test_asset.css',
