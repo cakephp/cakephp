@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\ORM\Rule;
@@ -17,7 +17,6 @@ namespace Cake\ORM\Rule;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\Validation\Validation;
-use RuntimeException;
 
 /**
  * Validates the count of associated records.
@@ -56,15 +55,6 @@ class ValidCount
             return false;
         }
 
-        if (isset($value['_ids'])) {
-            if (!is_array($value['_ids'])) {
-                return false;
-            }
-            $count = count($value['_ids']);
-        } else {
-            $count = count($value);
-        }
-
-        return Validation::comparison($count, $options['operator'], $options['count']);
+        return Validation::comparison(count($value), $options['operator'], $options['count']);
     }
 }
