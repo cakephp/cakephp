@@ -235,7 +235,10 @@ class EntityContext implements ContextInterface
             if ($val !== null) {
                 return $val;
             }
-            if (!$options['schemaDefault']) {
+            if ($options['default'] !== null
+                || !$options['schemaDefault']
+                || !$entity->isNew()
+            ) {
                 return $options['default'];
             }
             return $this->_schemaDefault($part, $entity);
