@@ -86,6 +86,14 @@ class Folder
     public $mode = 0755;
 
     /**
+     *
+     */
+    protected $_fsorts = [
+        self::SORT_NAME => 'getPathname',
+        self::SORT_TIME => 'getCTime'
+    ];
+
+    /**
      * Holds messages from last method.
      *
      * @var array
@@ -193,6 +201,12 @@ class Folder
             return [$dirs, $files];
         }
 
+        if (!is_bool($sort) && array_key_exists($sort, $this->_fsorts)) {
+            $methodName = $this->_fsorts[$sort];
+        } else {
+            $methodName = $this->_fsorts[self::SORT_NAME];
+        }
+
         foreach ($iterator as $item) {
             if ($item->isDot()) {
                 continue;
@@ -206,20 +220,15 @@ class Folder
             }
 
             if ($item->isDir()) {
-                $dirs[$item->getCTime()][] = $name;
+                $dirs[$item->{$methodName}()][] = $name;
             } else {
-                $files[$item->getCTime()][] = $name;
+                $files[$item->{$methodName}()][] = $name;
             }
         }
 
         if ($sort || $this->sort) {
-            if ($sort === self::SORT_TIME || $this->sort === self::SORT_TIME) {
-                ksort($dirs);
-                ksort($files);
-            } elseif ($sort === self::SORT_NAME || $this->sort === self::SORT_NAME) {
-                sort($dirs);
-                sort($files);
-            }
+            ksort($dirs);
+            ksort($files);
         }
 
         if (!empty($dirs)) {

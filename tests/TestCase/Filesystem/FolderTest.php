@@ -1298,4 +1298,27 @@ class FolderTest extends TestCase
 
         $this->assertSame(['a.txt', 'c.txt', 'b.txt'], $results);
     }
+
+    /**
+     * Verify that the order using name is correct.
+     */
+    public function testSortByName()
+    {
+        $Folder = new Folder(TMP . 'tests', true);
+
+        $fileA = new File($Folder->pwd() . DS . 'a.txt');
+        $fileA->create();
+
+        $fileC = new File($Folder->pwd() . DS . 'c.txt');
+        $fileC->create();
+
+        sleep(1);
+
+        $fileB = new File($Folder->pwd() . DS . 'b.txt');
+        $fileB->create();
+
+        $results = $Folder->find('.*', Folder::SORT_NAME);
+
+        $this->assertSame(['a.txt', 'b.txt', 'c.txt'], $results);
+    }
 }
