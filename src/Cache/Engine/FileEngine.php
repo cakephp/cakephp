@@ -151,7 +151,7 @@ class FileEngine extends CacheEngine
 
         $duration = $this->_config['duration'];
         $expires = time() + $duration;
-        $contents = $expires . $lineBreak . $data . $lineBreak;
+        $contents = implode([$expires, $lineBreak, $data, $lineBreak]);
 
         if ($this->_config['lock']) {
             $this->_File->flock(LOCK_EX);
