@@ -216,6 +216,24 @@ class Validation
     }
 
     /**
+     * Used to check the count of a given value of type array or Countable.
+     *
+     * @param array|\Countable $check The value to check the count on.
+     * @param string $operator Can be either a word or operand
+     *    is greater >, is less <, greater or equal >=
+     *    less or equal <=, is less <, equal to ==, not equal !=
+     * @param int $expectedCount The expected count value.
+     * @return bool Success
+     */
+    public static function numElements($check, $operator, $expectedCount)
+    {
+        if (!is_array($check) && !$check instanceof \Countable) {
+            return false;
+        }
+        return self::comparison(count($check), $operator, $expectedCount);
+    }
+
+    /**
      * Used to compare 2 numeric values.
      *
      * @param string $check1 if string is passed for, a string must also be passed for $check2

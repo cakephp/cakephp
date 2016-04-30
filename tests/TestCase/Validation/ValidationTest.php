@@ -2768,4 +2768,27 @@ class ValidationTest extends TestCase
         // Grinning face
         $this->assertTrue(Validation::utf8('some' . "\xf0\x9f\x98\x80" . 'value', ['extended' => true]));
     }
+
+    /**
+     * Test numElements
+     *
+     * @return void
+     */
+    public function testNumElements()
+    {
+        $array = ['cake', 'php'];
+        $this->assertTrue(Validation::numElements($array, '==', 2));
+        $this->assertFalse(Validation::numElements($array, '>', 3));
+        $this->assertFalse(Validation::numElements($array, '<', 1));
+
+        $callable = function () {
+            return '';
+        };
+
+        $this->assertFalse(Validation::numElements(null, '==', 0));
+        $this->assertFalse(Validation::numElements(new \stdClass(), '==', 0));
+        $this->assertFalse(Validation::numElements($callable, '==', 0));
+        $this->assertFalse(Validation::numElements(false, '==', 0));
+        $this->assertFalse(Validation::numElements(true, '==', 0));
+    }
 }

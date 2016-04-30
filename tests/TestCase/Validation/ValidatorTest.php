@@ -1545,6 +1545,46 @@ class ValidatorTest extends TestCase
         $this->assertNotEmpty($validator->errors(['username' => '']));
     }
 
+    /**
+     * Tests the hasAtLeast method
+     *
+     * @return void
+     */
+    public function testHasAtLeast()
+    {
+        $validator = new Validator();
+        $validator->hasAtLeast('things', 3);
+        $this->assertEmpty($validator->errors(['things' => [1, 2, 3]]));
+        $this->assertEmpty($validator->errors(['things' => [1, 2, 3, 4]]));
+        $this->assertNotEmpty($validator->errors(['things' => [1, 2]]));
+        $this->assertNotEmpty($validator->errors(['things' => []]));
+        $this->assertNotEmpty($validator->errors(['things' => 'string']));
+
+        $this->assertEmpty($validator->errors(['things' => ['_ids' => [1, 2, 3]]]));
+        $this->assertEmpty($validator->errors(['things' => ['_ids' => [1, 2, 3, 4]]]));
+        $this->assertNotEmpty($validator->errors(['things' => ['_ids' => [1, 2]]]));
+        $this->assertNotEmpty($validator->errors(['things' => ['_ids' => []]]));
+        $this->assertNotEmpty($validator->errors(['things' => ['_ids' => 'string']]));
+    }
+
+    /**
+     * Tests the hasAtMost method
+     *
+     * @return void
+     */
+    public function testHasAtMost()
+    {
+        $validator = new Validator();
+        $validator->hasAtMost('things', 3);
+        $this->assertEmpty($validator->errors(['things' => [1, 2, 3]]));
+        $this->assertEmpty($validator->errors(['things' => [1]]));
+        $this->assertNotEmpty($validator->errors(['things' => [1, 2, 3, 4]]));
+
+        $this->assertEmpty($validator->errors(['things' => ['_ids' => [1, 2, 3]]]));
+        $this->assertEmpty($validator->errors(['things' => ['_ids' => [1, 2]]]));
+        $this->assertNotEmpty($validator->errors(['things' => ['_ids' => [1, 2, 3, 4]]]));
+    }
+
     protected function assertProxyMethod($validator, $method, $extra = null, $pass = [], $name = null)
     {
         $name = $name ?: $method;
