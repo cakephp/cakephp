@@ -15,8 +15,8 @@
 namespace Cake\Http\Middleware;
 
 use Cake\Core\App;
-use Cake\Log\Log;
 use Cake\Http\ResponseTransformer;
+use Cake\Log\Log;
 
 /**
  * Error handling middleware.
