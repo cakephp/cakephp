@@ -433,6 +433,7 @@ class QueryTest extends TestCase
      */
     public function testSelectJoinWithCallback2()
     {
+        $this->loadFixtures('Authors', 'Comments');
         $query = new Query($this->connection);
         $types = ['created' => 'datetime'];
         $result = $query
@@ -1643,6 +1644,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereNot2()
     {
+        $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
