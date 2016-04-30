@@ -1350,6 +1350,56 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Add a validation rule to ensure that a field is an array containing at least
+     * the specified amount of elements
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param int $count The number of elements the array should at least have
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::numElements()
+     * @return $this
+     */
+    public function hasAtLeast($field, $count, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'hasAtLeast', $extra + [
+            'rule' => function ($value) use ($count) {
+                if (is_array($value) && isset($value['_ids'])) {
+                    $value = $value['_ids'];
+                }
+                return Validation::numElements($value, '>=', $count);
+            }
+        ]);
+    }
+
+    /**
+     * Add a validation rule to ensure that a field is an array containing at most
+     * the specified amount of elements
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param int $count The number maximim amount of elements the field should have
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::numElements()
+     * @return $this
+     */
+    public function hasAtMost($field, $count, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'hasAtMost', $extra + [
+            'rule' => function ($value) use ($count) {
+                if (is_array($value) && isset($value['_ids'])) {
+                    $value = $value['_ids'];
+                }
+                return Validation::numElements($value, '<=', $count);
+            }
+        ]);
+    }
+
+    /**
      * Returns whether or not a field can be left empty for a new or already existing
      * record.
      *
