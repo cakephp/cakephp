@@ -330,8 +330,6 @@ class BelongsToMany extends Association
      */
     public function attachTo(Query $query, array $options = [])
     {
-        parent::attachTo($query, $options);
-
         $junction = $this->junction();
         $belongsTo = $junction->association($this->source()->alias());
         $cond = $belongsTo->_joinCondition(['foreignKey' => $belongsTo->foreignKey()]);
@@ -344,14 +342,20 @@ class BelongsToMany extends Association
         // Attach the junction table as well we need it to populate _joinData.
         $assoc = $this->_targetTable->association($junction->alias());
         $query->removeJoin($assoc->name());
-        $options = array_intersect_key($options, ['joinType' => 1, 'fields' => 1]);
-        $options += [
+        $newOptions = array_intersect_key($options, ['joinType' => 1, 'fields' => 1]);
+        $newOptions += [
             'conditions' => $cond,
             'includeFields' => $includeFields,
-            'foreignKey' => $this->targetForeignKey(),
+            'foreignKey' => false,
         ];
-        $assoc->attachTo($query, $options);
+        $assoc->attachTo($query, $newOptions);
         $query->eagerLoader()->addToJoinsMap($junction->alias(), $assoc, true);
+
+        parent::attachTo($query, $options);
+
+        $foreignKey = $this->targetForeignKey();
+        $thisJoin = $query->clause('join')[$this->name()];
+        $thisJoin['conditions']->add($assoc->_joinCondition(['foreignKey' => $foreignKey]));
     }
 
     /**
