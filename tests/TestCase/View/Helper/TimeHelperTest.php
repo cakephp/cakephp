@@ -40,7 +40,7 @@ class TimeHelperTest extends TestCase
         parent::setUp();
         $this->View = new View();
         $this->Time = new TimeHelper($this->View);
-        Time::$defaultLocale = 'en_US';
+        Time::setDefaultLocale('en_US');
         $this->locale = I18n::locale();
     }
 
@@ -52,7 +52,7 @@ class TimeHelperTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Time::$defaultLocale = 'en_US';
+        Time::setDefaultLocale('en_US');
         I18n::locale($this->locale);
     }
 
@@ -122,6 +122,9 @@ class TimeHelperTest extends TestCase
     {
         $this->assertEquals(4, $this->Time->toQuarter('2007-12-25'));
         $this->assertEquals(['2007-10-01', '2007-12-31'], $this->Time->toQuarter('2007-12-25', true));
+        $this->assertEquals(1, $this->Time->toQuarter('2016-03-31'));
+        $this->Time->config('defaultOutputTimezone', 'America/Vancouver');
+        $this->assertEquals(1, $this->Time->toQuarter('2016-04-01 01:00:00'));
     }
 
     /**
@@ -134,8 +137,12 @@ class TimeHelperTest extends TestCase
         $time = '2014-04-20 20:00';
         $this->assertTimeFormat('Apr 20, 2014, 8:00 PM', $this->Time->nice($time));
 
+        $time = '2015-11-06 01:00:00';
         $result = $this->Time->nice($time, 'America/New_York');
-        $this->assertTimeFormat('Apr 20, 2014, 4:00 PM', $result);
+        $this->assertTimeFormat('Nov 5, 2015, 8:00 PM', $result);
+        $this->Time->config('defaultOutputTimezone', 'Australia/Sydney');
+        $result = $this->Time->nice($time);
+        $this->assertTimeFormat('Nov 6, 2015, 12:00 PM', $result);
     }
 
     /**
@@ -445,7 +452,7 @@ class TimeHelperTest extends TestCase
         $this->assertEquals($expected, $result);
 
         I18n::locale('fr_FR');
-        Time::$defaultLocale = 'fr_FR';
+        Time::setDefaultLocale('fr_FR');
         $time = new \Cake\I18n\FrozenTime('Thu Jan 14 13:59:28 2010');
         $result = $this->Time->format($time, \IntlDateFormatter::FULL);
         $expected = 'jeudi 14 janvier 2010 13:59:28 UTC';
@@ -512,5 +519,22 @@ class TimeHelperTest extends TestCase
         $fallback = 'Date invalid or not set';
         $result = $this->Time->format(null, \IntlDateFormatter::FULL, $fallback);
         $this->assertEquals($fallback, $result);
+    }
+
+    /**
+     * Test config options
+     */
+    public function testConfigOptions()
+    {
+        $Time = new TimeHelper($this->View);
+        $this->assertEquals($Time->config('defaultLocale'), null);
+        $this->assertEquals($Time->config('defaultFormat'), null);
+        $this->assertEquals($Time->config('defaultOutputTimezone'), null);
+        $Time->config('defaultLocale', 'fr_FR');
+        $this->assertEquals($Time->config('defaultLocale'), 'fr_FR');
+        $Time = new TimeHelper($this->View, ['defaultOutputTimezone' => 'America/Vancouver']);
+        $this->assertEquals($Time->config('defaultOutputTimezone'), 'America/Vancouver');
+        $Time->config('defaultOutputTimezone', 'Europe/Berlin');
+        $this->assertEquals($Time->config('defaultOutputTimezone'), 'Europe/Berlin');
     }
 }

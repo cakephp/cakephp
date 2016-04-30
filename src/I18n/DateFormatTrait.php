@@ -30,8 +30,18 @@ trait DateFormatTrait
      * The default locale to be used for displaying formatted date strings.
      *
      * @var string
+     * @deprecated Public direct access deprecated.
+     *  use self::setDefaultLocale($locale) and self::getDefaultLocale() instead.
      */
-    public static $defaultLocale;
+    public static $defaultLocale = null;
+
+    /**
+     * The \DateTimeZone default output timezone.
+     * See http://php.net/manual/en/timezones.php.
+     *
+     * @var \DateTimeZone|null
+     */
+    protected static $_defaultOutputTimezone = null;
 
     /**
      * In-memory cache of date formatters
@@ -52,7 +62,7 @@ trait DateFormatTrait
      * will be used to format the time part.
      *
      * @var string|array|int
-     * @see \Cake\I18n\Time::i18nFormat()
+     * @see self::i18nFormat()
      */
     protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
 
@@ -64,9 +74,57 @@ trait DateFormatTrait
     protected static $_isDateInstance;
 
     /**
+     * Gets the default output timezone.
+     *
+     * @return \DateTimeZone|null DateTimeZone object in which the date will be displayed or null.
+     */
+    public static function getDefaultOutputTimezone()
+    {
+        return static::$_defaultOutputTimezone;
+    }
+
+    /**
+     * Sets the default output timezone.
+     *
+     * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
+     * in which the date will be displayed.
+     * @return void
+     */
+    public static function setDefaultOutputTimezone($timezone)
+    {
+        if ($timezone === null) {
+            $timezone = new \DateTimeZone(date_default_timezone_get());
+        } elseif (is_string($timezone)) {
+            $timezone = new \DateTimeZone($timezone);
+        }
+        static::$_defaultOutputTimezone = $timezone;
+    }
+
+    /**
+     * Gets the default locale.
+     *
+     * @return string|null The default locale string to be used or null.
+     */
+    public static function getDefaultLocale()
+    {
+        return static::$defaultLocale;
+    }
+
+    /**
+     * Sets the default locale.
+     *
+     * @param string|null $locale The default locale string to be used or null.
+     * @return void
+     */
+    public static function setDefaultLocale($locale = null)
+    {
+        static::$defaultLocale = $locale;
+    }
+
+    /**
      * Returns a nicely formatted date string for this object.
      *
-     * The format to be used is stored in the static property `Time::niceFormat`.
+     * The format to be used is stored in the static property `self::niceFormat`.
      *
      * @param string|\DateTimeZone|null $timezone Timezone string or DateTimeZone object
      * in which the date will be displayed. The timezone stored for this object will not
@@ -76,6 +134,7 @@ trait DateFormatTrait
      */
     public function nice($timezone = null, $locale = null)
     {
+        $timezone = $timezone ?: static::getDefaultOutputTimezone();
         return $this->i18nFormat(static::$niceFormat, $timezone, $locale);
     }
 
@@ -97,11 +156,6 @@ trait DateFormatTrait
      * $time->i18nFormat([\IntlDateFormatter::FULL, \IntlDateFormatter::SHORT]); // Use full date but short time format
      * $time->i18nFormat('yyyy-MM-dd HH:mm:ss'); // outputs '2014-04-20 22:10'
      * ```
-     *
-     * If you wish to control the default format to be used for this method, you can alter
-     * the value of the static `Time::$defaultLocale` variable and set it to one of the
-     * possible formats accepted by this function.
-     *
      * You can read about the available IntlDateFormatter constants at
      * http://www.php.net/manual/en/class.intldateformatter.php
      *
@@ -118,11 +172,16 @@ trait DateFormatTrait
      * $time = new Time('2014-04-20 22:10');
      * $time->i18nFormat(null, null, 'de-DE');
      * $time->i18nFormat(\IntlDateFormatter::FULL, 'Europe/Berlin', 'de-DE');
+     * $time->i18nFormat(null, new \DateTimeZone('Australia/Sydney'));
      * ```
      *
-     * You can control the default locale to be used by setting the static variable
-     * `Time::$defaultLocale` to a  valid locale string. If empty, the default will be
-     * taken from the `intl.default_locale` ini config.
+     * You can control the default locale to be used by calling `static::setDefaultLocale()`
+     * If null, the default will be taken from the `intl.default_locale`
+     * ini config, see config/bootstrap.php.
+     *
+     * You can control the default timezone to be used for output formatting, by setting
+     * calling `static::setDefaultOutputTimezone()`.
+     * If empty, the default will be taken from `date_default_timezone_set()`, see config/bootstrap.php.
      *
      * @param string|int|null $format Format string.
      * @param string|\DateTimeZone|null $timezone Timezone string or DateTimeZone object
@@ -135,6 +194,9 @@ trait DateFormatTrait
     {
         $time = $this;
 
+        if ($time->getTimezone()->getName() === date_default_timezone_get()) {
+            $timezone = $timezone ?: static::getDefaultOutputTimezone();
+        }
         if ($timezone) {
             // Handle the immutable and mutable object cases.
             $time = clone $this;
@@ -142,7 +204,7 @@ trait DateFormatTrait
         }
 
         $format = $format !== null ? $format : static::$_toStringFormat;
-        $locale = $locale ?: static::$defaultLocale;
+        $locale = $locale ?: static::getDefaultLocale();
         return $this->_formatObject($time, $format, $locale);
     }
 
@@ -257,9 +319,10 @@ trait DateFormatTrait
      *
      * @param string $time The time string to parse.
      * @param string|array|null $format Any format accepted by IntlDateFormatter.
+     * @param string|\DateTimeZone|null $timezone Timezone string or DateTimeZone object
      * @return static|null
      */
-    public static function parseDateTime($time, $format = null)
+    public static function parseDateTime($time, $format = null, $timezone = null)
     {
         $dateFormat = $format ?: static::$_toStringFormat;
         $timeFormat = $pattern = null;
@@ -278,19 +341,25 @@ trait DateFormatTrait
                 is_subclass_of(static::class, MutableDate::class);
         }
 
-        $defaultTimezone = static::$_isDateInstance ? 'UTC' : date_default_timezone_get();
+        if ($timezone === null) {
+            $timezone = new \DateTimeZone('UTC');
+        } elseif (is_string($timezone)) {
+            $timezone = new \DateTimeZone($timezone);
+        }
+
+        $timezone = static::$_isDateInstance ? $timezone->getName() : date_default_timezone_get();
         $formatter = datefmt_create(
-            static::$defaultLocale,
+            static::getDefaultLocale(),
             $dateFormat,
             $timeFormat,
-            $defaultTimezone,
+            $timezone,
             null,
             $pattern
         );
         $time = $formatter->parse($time);
         if ($time !== false) {
             $result = new static('@' . $time);
-            return static::$_isDateInstance ? $result : $result->setTimezone($defaultTimezone);
+            return static::$_isDateInstance ? $result : $result->setTimezone($timezone);
         }
         return null;
     }

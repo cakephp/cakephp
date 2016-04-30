@@ -17,6 +17,7 @@ namespace Cake\View\Helper;
 use Cake\I18n\Time;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
+use Cake\View\View;
 use Exception;
 
 /**
@@ -31,6 +32,17 @@ class TimeHelper extends Helper
 {
 
     use StringTemplateTrait;
+
+    /**
+     * Default config for this class
+     *
+     * @var array
+     */
+    protected $_defaultConfig = [
+        'defaultLocale' => null,
+        'defaultFormat' => null,
+        'defaultOutputTimezone' => null,
+    ];
 
     /**
      * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
@@ -49,11 +61,13 @@ class TimeHelper extends Helper
      *
      * @param int|string|\DateTime|null $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
-     * @param string|null $locale Locale string.
+     * @param string|null $locale Locale string
      * @return string Formatted date string
      */
     public function nice($dateString = null, $timezone = null, $locale = null)
     {
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
+        $locale = $locale ?: $this->config('defaultLocale');
         return (new Time($dateString))->nice($timezone, $locale);
     }
 
@@ -159,12 +173,14 @@ class TimeHelper extends Helper
      *
      * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param bool $range if true returns a range in Y-m-d format
+     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
      * @return int|array 1, 2, 3, or 4 quarter of year or array if $range true
      * @see \Cake\I18n\Time::toQuarter()
      */
-    public function toQuarter($dateString, $range = false)
+    public function toQuarter($dateString, $range = false, $timezone = null)
     {
-        return (new Time($dateString))->toQuarter($range);
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
+        return (new Time($dateString, $timezone))->toQuarter($range);
     }
 
     /**
@@ -312,6 +328,8 @@ class TimeHelper extends Helper
      */
     public function format($date, $format = null, $invalid = false, $timezone = null)
     {
+        $format = $format !== null ? $format : $this->config('defaultFormat');
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return $this->i18nFormat($date, $format, $invalid, $timezone);
     }
 
@@ -320,7 +338,7 @@ class TimeHelper extends Helper
      * UNIX timestamp or a valid strtotime() date string.
      *
      * @param int|string|\DateTime $date UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|null $format Intl compatible format string.
+     * @param string|null $format Intl compatible format string
      * @param bool|string $invalid Default value to display on invalid dates
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
      * @return string Formatted and translated date string
@@ -329,6 +347,9 @@ class TimeHelper extends Helper
      */
     public function i18nFormat($date, $format = null, $invalid = false, $timezone = null)
     {
+        $format = $format !== null ? $format : $this->config('defaultFormat');
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
+
         if (!isset($date)) {
             return $invalid;
         }

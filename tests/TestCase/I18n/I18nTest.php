@@ -35,6 +35,13 @@ class I18nTest extends TestCase
     public $locale;
 
     /**
+     * Backup the defaultOutputTimezone property
+     *
+     * @var string
+     */
+    protected $defaultOutputTimezoneBackup = 'UTC';
+
+    /**
      * Set Up
      *
      * @return void

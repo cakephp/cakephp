@@ -18,8 +18,13 @@ use Aura\Intl\FormatterLocator;
 use Aura\Intl\PackageLocator;
 use Aura\Intl\TranslatorFactory;
 use Cake\Cache\Cache;
+use Cake\I18n\Date;
 use Cake\I18n\Formatter\IcuFormatter;
 use Cake\I18n\Formatter\SprintfFormatter;
+use Cake\I18n\FrozenDate;
+use Cake\I18n\FrozenTime;
+use Cake\I18n\Time;
+use DateTimeZone;
 use Locale;
 
 /**
@@ -257,6 +262,40 @@ class I18n
     public static function defaultFormatter($name = null)
     {
         return static::translators()->defaultFormatter($name);
+    }
+
+    /**
+     * Sets the name of the default output timezone to use for future
+     * date and time operations.
+     *
+     * If called with no arguments, it will return the currently configured value if it is
+     * the same for Time, Date, FrozenTime and FrozenDate. If not it will return false.
+     *
+     * @param string|null $timezone The name of the output timezone to use.
+     * @return \DateTimezone|null|false The default output datetime zone.
+     */
+    public static function defaultOutputTimezone($timezone = null)
+    {
+        if (is_string($timezone)) {
+            $timezone = new \DateTimeZone($timezone);
+        }
+        if ($timezone !== null) {
+            Time::setDefaultOutputTimezone($timezone);
+            Date::setDefaultOutputTimezone($timezone);
+            FrozenTime::setDefaultOutputTimezone($timezone);
+            FrozenDate::setDefaultOutputTimezone($timezone);
+        } else if ($timezone === null) {
+            $t = Time::getDefaultOutputTimezone();
+            $d = Date::getDefaultOutputTimezone();
+            $ft = FrozenTime::getDefaultOutputTimezone();
+            $fd = FrozenDate::getDefaultOutputTimezone();
+            if ($t == $d && $d == $ft && $ft == $fd) {
+                return $t;
+            } else {
+                return false;
+            }
+        }
+        return $timezone;
     }
 
     /**
