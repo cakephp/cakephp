@@ -1267,7 +1267,7 @@ class FolderTest extends TestCase
         $file1 = new File($Folder->pwd() . DS . 'file_1.tmp');
         $file1->create();
 
-        $results = $Folder->find('.*', 'time');
+        $results = $Folder->find('.*', Folder::SORT_TIME);
 
         $this->assertSame(['file_2.tmp', 'file_1.tmp'], $results);
     }
