@@ -208,7 +208,7 @@ class TimeTest extends TestCase
      */
     public function testTimeAgoInWordsTimezone($class)
     {
-        $time = new FrozenTime('1990-07-31 20:33:00 UTC');
+        $time = new $class('1990-07-31 20:33:00 UTC');
         $result = $time->timeAgoInWords(
             [
                 'timezone' => 'America/Vancouver',

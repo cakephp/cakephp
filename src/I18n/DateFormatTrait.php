@@ -171,9 +171,9 @@ trait DateFormatTrait
         $time = $this;
 
         // This is required for testI18nFormatWithOffsetTimezone to pass
-        if ($time->getTimezone()->getName() === date_default_timezone_get()) {
+        // if ($time->getTimezone()->getName() === date_default_timezone_get()) {
             $timezone = $timezone ?: static::getDefaultOutputTimezone();
-        }
+        // }
 
         if ($timezone) {
             // Handle the immutable and mutable object cases.
