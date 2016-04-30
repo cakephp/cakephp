@@ -35,6 +35,14 @@ trait DateFormatTrait
     public static $defaultLocale;
 
     /**
+     * The \DateTimeZone default output timezone.
+     * See http://php.net/manual/en/timezones.php.
+     *
+     * @var \DateTimeZone|null
+     */
+    protected static $_defaultOutputTimezone;
+
+    /**
      * In-memory cache of date formatters
      *
      * @var array
@@ -63,6 +71,33 @@ trait DateFormatTrait
      * @var boolean
      */
     protected static $_isDateInstance;
+
+    /** Gets the default output timezone.
+     *
+     * @return \DateTimeZone|null DateTimeZone object in which the date will be displayed or null.
+     */
+    public static function getDefaultOutputTimezone()
+    {
+        return static::$_defaultOutputTimezone;
+    }
+
+    /**
+     * Sets the default output timezone.
+     *
+     * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
+     * in which the date will be displayed.
+     * @return void
+     */
+    public static function setDefaultOutputTimezone($timezone)
+    {
+        if (is_string($timezone)) {
+            static::$_defaultOutputTimezone = new \DateTimeZone($timezone);
+        } elseif ($timezone instanceof \DateTimeZone) {
+            static::$_defaultOutputTimezone = $timezone;
+        } else {
+            throw new \InvalidArgumentException('Expected valid DateTimeZone string or \DateTimeZone object.');
+        }
+    }
 
     /**
      * Gets the default locale.
@@ -156,6 +191,11 @@ trait DateFormatTrait
     public function i18nFormat($format = null, $timezone = null, $locale = null)
     {
         $time = $this;
+
+        // This is required for testI18nFormatWithOffsetTimezone to pass
+        if ($time->getTimezone()->getName() === date_default_timezone_get()) {
+            $timezone = $timezone ?: static::getDefaultOutputTimezone();
+        }
 
         if ($timezone) {
             // Handle the immutable and mutable object cases.
