@@ -17,19 +17,6 @@ use Cake\Routing\Router;
 
 define('TIME_START', microtime(true));
 
-// @deprecated Backward compatibility with 2.x series
-if (PHP_VERSION_ID < 70000) {
-    class_alias('Cake\Utility\Text', 'Cake\Utility\String');
-}
-
-// @deprecated Backward compatibility with 2.x, 3.0.x
-class_alias('Cake\Mailer\AbstractTransport', 'Cake\Network\Email\AbstractTransport');
-class_alias('Cake\Mailer\Transport\DebugTransport', 'Cake\Network\Email\DebugTransport');
-class_alias('Cake\Mailer\Email', 'Cake\Network\Email\Email');
-class_alias('Cake\Mailer\Transport\MailTransport', 'Cake\Network\Email\MailTransport');
-class_alias('Cake\Mailer\Transport\SmtpTransport', 'Cake\Network\Email\SmtpTransport');
-
-
 require CAKE . 'basics.php';
 
 // Sets the initial router state so future reloads work.
