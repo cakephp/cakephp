@@ -29,18 +29,6 @@ class_alias('Cake\Mailer\Email', 'Cake\Network\Email\Email');
 class_alias('Cake\Mailer\Transport\MailTransport', 'Cake\Network\Email\MailTransport');
 class_alias('Cake\Mailer\Transport\SmtpTransport', 'Cake\Network\Email\SmtpTransport');
 
-// @deprecated Backwards compatibility with earler 3.x versions.
-class_alias('Cake\Http\Client', 'Cake\Network\Http\Client');
-class_alias('Cake\Http\Client\CookieCollection', 'Cake\Network\Http\CookieCollection');
-class_alias('Cake\Http\Client\FormData', 'Cake\Network\Http\FormData');
-class_alias('Cake\Http\Client\Message', 'Cake\Network\Http\Message');
-class_alias('Cake\Http\Client\Request', 'Cake\Network\Http\Request');
-class_alias('Cake\Http\Client\Response', 'Cake\Network\Http\Response');
-class_alias('Cake\Http\Client\Adapter\Stream', 'Cake\Network\Http\Adapter\Stream');
-class_alias('Cake\Http\Client\Auth\Basic', 'Cake\Network\Http\Auth\Basic');
-class_alias('Cake\Http\Client\Auth\Digest', 'Cake\Network\Http\Auth\Digest');
-class_alias('Cake\Http\Client\Auth\Oauth', 'Cake\Network\Http\Auth\Oauth');
-class_alias('Cake\Http\Client\FormDataPart', 'Cake\Network\Http\FormData\Part');
 
 require CAKE . 'basics.php';
 
