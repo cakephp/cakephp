@@ -213,10 +213,10 @@ class Folder
         }
 
         if ($sort || $this->sort) {
-            if ($sort === self::SORT_TIME or $this->sort === self::SORT_TIME) {
+            if ($sort === self::SORT_TIME || $this->sort === self::SORT_TIME) {
                 ksort($dirs);
                 ksort($files);
-            } else if ($sort === self::SORT_NAME or $this->sort === self::SORT_NAME) {
+            } elseif ($sort === self::SORT_NAME || $this->sort === self::SORT_NAME) {
                 sort($dirs);
                 sort($files);
             }
