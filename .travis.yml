@@ -6,7 +6,7 @@ php:
 #  - 5.6
 #  - 7.0
 
-sudo: false
+sudo: required
 
 addons:
   apt:
