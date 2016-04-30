@@ -1247,4 +1247,28 @@ class FolderTest extends TestCase
         $this->assertFalse(is_dir($folderTwo . '/folderA'));
         $this->assertFalse(file_exists($folderTwo . '/folderA/fileA.php'));
     }
+
+    /**
+     * testSortByTime method
+     *
+     * Verify that the order using modified time is correct.
+     *
+     * @return void
+     */
+    public function testSortByTime()
+    {
+        $Folder = new Folder(TMP . 'tests', true);
+
+        $file2 = new File($Folder->pwd() . DS . 'file_2.tmp');
+        $file2->create();
+
+        sleep(1);
+
+        $file1 = new File($Folder->pwd() . DS . 'file_1.tmp');
+        $file1->create();
+
+        $results = $Folder->find('.*', 'time');
+
+        $this->assertSame(['file_2.tmp', 'file_1.tmp'], $results);
+    }
 }

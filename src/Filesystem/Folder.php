@@ -165,7 +165,7 @@ class Folder
      * @param bool $fullPath True returns the full path
      * @return array Contents of current directory as an array, an empty array on failure
      */
-    public function read($sort = true, $exceptions = false, $fullPath = false)
+    public function read($sort = 'name', $exceptions = false, $fullPath = false)
     {
         $dirs = $files = [];
 
@@ -194,16 +194,32 @@ class Folder
             if ($fullPath) {
                 $name = $item->getPathname();
             }
+
             if ($item->isDir()) {
-                $dirs[] = $name;
+                $dirs[$item->getCTime()][] = $name;
             } else {
-                $files[] = $name;
+                $files[$item->getCTime()][] = $name;
             }
         }
+
         if ($sort || $this->sort) {
-            sort($dirs);
-            sort($files);
+            if ($sort === 'time') {
+                ksort($dirs);
+                ksort($files);
+            } else {
+                sort($dirs);
+                sort($files);
+            }
         }
+
+        if (!empty($dirs)) {
+            $dirs = call_user_func_array('array_merge', $dirs);
+        }
+
+        if (!empty($files)) {
+            $files = call_user_func_array('array_merge', $files);
+        }
+
         return [$dirs, $files];
     }
 
