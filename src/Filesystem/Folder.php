@@ -53,6 +53,16 @@ class Folder
     const SKIP = 'skip';
 
     /**
+     * Sort mode by name
+     */
+    const SORT_NAME = 'name';
+
+    /**
+     * Sort mode by time
+     */
+    const SORT_TIME = 'time';
+
+    /**
      * Path to Folder.
      *
      * @var string
@@ -165,7 +175,7 @@ class Folder
      * @param bool $fullPath True returns the full path
      * @return array Contents of current directory as an array, an empty array on failure
      */
-    public function read($sort = 'name', $exceptions = false, $fullPath = false)
+    public function read($sort = self::SORT_NAME, $exceptions = false, $fullPath = false)
     {
         $dirs = $files = [];
 
@@ -203,10 +213,10 @@ class Folder
         }
 
         if ($sort || $this->sort) {
-            if ($sort === 'time') {
+            if ($sort === self::SORT_TIME or $this->sort === self::SORT_TIME) {
                 ksort($dirs);
                 ksort($files);
-            } else {
+            } else if ($sort === self::SORT_NAME or $this->sort === self::SORT_NAME) {
                 sort($dirs);
                 sort($files);
             }
