@@ -646,6 +646,21 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Tests that jsonSerialize is called recursivily for contained entities
+     *
+     * @return void
+     */
+    public function testJsonSerializeRecursive()
+    {
+        $phone = $this->getMock(Entity::class, ['jsonSerialize']);
+        $phone->expects($this->once())->method('jsonSerialize')->will($this->returnValue('12345'));
+        $data = ['name' => 'James', 'age' => 20, 'phone' => $phone];
+        $entity = new Entity($data);
+        $expected = ['name' => 'James', 'age' => 20, 'phone' => '12345'];
+        $this->assertEquals(json_encode($expected), json_encode($entity));
+    }
+
+    /**
      * Tests the extract method
      *
      * @return void
