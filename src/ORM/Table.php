@@ -525,7 +525,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($this->_displayField === null) {
             $schema = $this->schema();
             $primary = (array)$this->primaryKey();
-            $this->_displayField = array_shift($primary);
+            $this->_displayField = $primary;
             if ($schema->column('title')) {
                 $this->_displayField = 'title';
             }
