@@ -1,23 +1,31 @@
 language: php
+dist: trusty
 
 php:
   - 5.5
-  - 5.6
-  - 7.0
+#  - 5.6
+#  - 7.0
 
 sudo: false
+
+addons:
+  apt:
+    packages:
+    - mysql-server-5.6
+    - mysql-client-core-5.6
+    - mysql-client-5.6
 
 env:
   matrix:
     - DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
-    - DB=pgsql db_dsn='postgres://postgres@127.0.0.1/cakephp_test'
-    - DB=sqlite db_dsn='sqlite:///:memory:'
+#    - DB=pgsql db_dsn='postgres://postgres@127.0.0.1/cakephp_test'
+#    - DB=sqlite db_dsn='sqlite:///:memory:'
   global:
     - DEFAULT=1
 
-services:
-  - memcached
-  - redis-server
+#services:
+#  - memcached
+#  - redis-server
 
 cache:
   directories:
@@ -27,32 +35,32 @@ cache:
 matrix:
   fast_finish: true
 
-  include:
-    - php: 7.0
-      env: CODECOVERAGE=1 DEFAULT=0
-
-    - php: 7.0
-      env: PHPCS=1 DEFAULT=0
-
-    - php: hhvm
-      env: HHVM=1 DB=sqlite db_dsn='sqlite:///:memory:'
-
-    - php: hhvm
-      env: HHVM=1 DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
-
-  allow_failures:
-    - env: CODECOVERAGE=1 DEFAULT=0
-
-    - php: hhvm
+#  include:
+#    - php: 7.0
+#      env: CODECOVERAGE=1 DEFAULT=0
+#
+#    - php: 7.0
+#      env: PHPCS=1 DEFAULT=0
+#
+#    - php: hhvm
+#      env: HHVM=1 DB=sqlite db_dsn='sqlite:///:memory:'
+#
+#    - php: hhvm
+#      env: HHVM=1 DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
+#
+#  allow_failures:
+#    - env: CODECOVERAGE=1 DEFAULT=0
+#
+#    - php: hhvm
 
 before_install:
   - sh -c "if [ '$HHVM' != '1' ]; then phpenv config-rm xdebug.ini; fi"
   - composer self-update
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
 
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test2;'; fi"
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test3;'; fi"
+  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi"
+  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test2;'; fi"
+  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test3;'; fi"
 
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi"
@@ -77,11 +85,11 @@ before_script:
 script:
   - sh -c "if [ '$DEFAULT' = '1' ]; then vendor/bin/phpunit; fi"
 
-  - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi"
-
-  - sh -c "if [ '$CODECOVERAGE' = '1' ]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml || true; fi"
-  - sh -c "if [ '$CODECOVERAGE' = '1' ]; then wget -O codecov.sh https://codecov.io/bash; fi"
-  - sh -c "if [ '$CODECOVERAGE' = '1' ]; then bash codecov.sh; fi"
+#  - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi"
+#
+#  - sh -c "if [ '$CODECOVERAGE' = '1' ]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml || true; fi"
+#  - sh -c "if [ '$CODECOVERAGE' = '1' ]; then wget -O codecov.sh https://codecov.io/bash; fi"
+#  - sh -c "if [ '$CODECOVERAGE' = '1' ]; then bash codecov.sh; fi"
 
 notifications:
   email: false
