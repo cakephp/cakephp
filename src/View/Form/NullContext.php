@@ -70,7 +70,7 @@ class NullContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function val($field)
+    public function val($field, $options = [])
     {
         return $this->_request->data($field);
     }
