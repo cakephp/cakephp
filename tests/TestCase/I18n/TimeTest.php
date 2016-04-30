@@ -38,6 +38,10 @@ class TimeTest extends TestCase
         $this->locale = Time::$defaultLocale;
         Time::$defaultLocale = 'en_US';
         FrozenTime::$defaultLocale = 'en_US';
+
+        date_default_timezone_set('UTC');
+        Time::setDefaultOutputTimezone('UTC');
+        FrozenTime::setDefaultOutputTimezone('UTC');
     }
 
     /**
@@ -55,8 +59,12 @@ class TimeTest extends TestCase
         FrozenTime::setTestNow($this->frozenNow);
         FrozenTime::$defaultLocale = $this->locale;
         FrozenTime::resetToStringFormat();
-        date_default_timezone_set('UTC');
+
         I18n::locale(I18n::DEFAULT_LOCALE);
+
+        date_default_timezone_set('UTC');
+        Time::setDefaultOutputTimezone('UTC');
+        FrozenTime::setDefaultOutputTimezone('UTC');
     }
 
     /**
@@ -478,6 +486,40 @@ class TimeTest extends TestCase
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, 'Asia/Tokyo', 'ja-JP@calendar=japanese');
         $expected = '平成22年1月14日木曜日 22時59分28秒 日本標準時';
+        $this->assertTimeFormat($expected, $result);
+    }
+
+    /**
+     * test formatting dates taking in account default output timezones.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testI18nFormatWithDefaultOutputTimezone($class)
+    {
+        $time = new $class('Thu Jan 14 13:59:28 2010');
+
+        $class::$defaultLocale = 'en-CA';
+        $class::setDefaultOutputTimezone('America/Vancouver');
+
+        $result = $time->i18nFormat();
+        $expected = '1/14/10 5:59 AM';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(null, 'America/Toronto');
+        $expected = '1/14/10 8:59 AM';
+        $this->assertTimeFormat($expected, $result);
+
+
+        $class::$defaultLocale = 'de-DE';
+        $class::setDefaultOutputTimezone('Europe/Berlin');
+
+        $result = $time->i18nFormat();
+        $expected = '14.01.10 14:59';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(null, 'Europe/London');
+        $expected = '14.01.10 13:59';
         $this->assertTimeFormat($expected, $result);
     }
 
