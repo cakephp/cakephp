@@ -859,12 +859,12 @@ class TimeTest extends TestCase
     public function testDefaultLocaleEffectsFormatting($class)
     {
         $result = $class::parseDate('12/03/2015');
-        $this->assertEquals('Dec 3, 2015, 12:00 AM', $result->nice());
+        $this->assertRegExp('/Dec 3, 2015[ ,]+12:00 AM/', $result->nice());
 
         $class::setDefaultLocale('fr-FR');
 
         $result = $class::parseDate('12/03/2015');
-        $this->assertEquals('12 mars 2015 à 00:00', $result->nice());
+        $this->assertRegexp('/12 mars 2015 (?:à )?00:00/', $result->nice());
 
         $expected = 'Y-m-d';
         $result = $class::parseDate('12/03/2015');
