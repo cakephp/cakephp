@@ -726,7 +726,14 @@ class ControllerTest extends TestCase
             ->getMock();
 
         $Controller = new Controller($request, $response);
-        $Controller->request->query['url'] = [];
+        $Controller->request->query = [
+            'url' => [],
+            'prefix' => [
+                'page' => 2,
+                'limit' => 2,
+            ]
+        ];
+
         $this->assertEquals([], $Controller->paginate);
 
         $this->assertNotContains('Paginator', $Controller->helpers);
@@ -734,14 +741,26 @@ class ControllerTest extends TestCase
 
         $results = $Controller->paginate('Posts');
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
+        $this->assertCount(3, $results);
 
         $results = $Controller->paginate(TableRegistry::get('Posts'));
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
+        $this->assertCount(3, $results);
 
         $this->assertSame($Controller->request->params['paging']['Posts']['page'], 1);
         $this->assertSame($Controller->request->params['paging']['Posts']['pageCount'], 1);
         $this->assertSame($Controller->request->params['paging']['Posts']['prevPage'], false);
         $this->assertSame($Controller->request->params['paging']['Posts']['nextPage'], false);
+
+        $results = $Controller->paginate(TableRegistry::get('Posts'), ['prefix' => 'prefix']);
+        $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
+        $this->assertCount(1, $results);
+
+        $this->assertSame($Controller->request->params['paging']['Posts']['page'], 2);
+        $this->assertSame($Controller->request->params['paging']['Posts']['pageCount'], 2);
+        $this->assertSame($Controller->request->params['paging']['Posts']['prevPage'], true);
+        $this->assertSame($Controller->request->params['paging']['Posts']['nextPage'], false);
+
     }
 
     /**
