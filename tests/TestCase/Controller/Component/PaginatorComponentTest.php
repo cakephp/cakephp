@@ -292,6 +292,76 @@ class PaginatorComponentTest extends TestCase
     }
 
     /**
+     * test mergeOptions with custom prefix
+     *
+     * @return void
+     */
+    public function testMergeOptionsCustomPrefix()
+    {
+        $this->request->query = [
+            'page' => 10,
+            'limit' => 10,
+            'prefix' => [
+                'page' => 2,
+                'limit' => 5,
+            ]
+        ];
+
+        $settings = [
+            'page' => 1,
+            'limit' => 20,
+            'maxLimit' => 100,
+            'finder' => 'myCustomFind',
+        ];
+        $result = $this->Paginator->mergeOptions('Post', $settings);
+        $expected = [
+            'page' => 10,
+            'limit' => 10,
+            'maxLimit' => 100,
+            'finder' => 'myCustomFind',
+            'whitelist' => ['limit', 'sort', 'page', 'direction'],
+        ];
+        $this->assertEquals($expected, $result);
+
+        $settings = [
+            'page' => 1,
+            'limit' => 20,
+            'maxLimit' => 100,
+            'finder' => 'myCustomFind',
+            'prefix' => 'non-existent',
+        ];
+        $result = $this->Paginator->mergeOptions('Post', $settings);
+        $expected = [
+            'page' => 1,
+            'limit' => 20,
+            'maxLimit' => 100,
+            'finder' => 'myCustomFind',
+            'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'prefix' => 'non-existent',
+        ];
+        $this->assertEquals($expected, $result);
+
+
+        $settings = [
+            'page' => 1,
+            'limit' => 20,
+            'maxLimit' => 100,
+            'finder' => 'myCustomFind',
+            'prefix' => 'prefix',
+        ];
+        $result = $this->Paginator->mergeOptions('Post', $settings);
+        $expected = [
+            'page' => 2,
+            'limit' => 5,
+            'maxLimit' => 100,
+            'finder' => 'myCustomFind',
+            'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'prefix' => 'prefix',
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * test mergeOptions with customFind key
      *
      * @return void
