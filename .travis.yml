@@ -5,11 +5,18 @@ php:
   - 5.6
   - 7.0
 
-sudo: false
+dist: trusty
+sudo: required
+addons:
+  apt:
+    packages:
+    - mysql-server-5.6
+    - mysql-client-core-5.6
+    - mysql-client-5.6
 
 env:
   matrix:
-    - DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
+    - DB=mysql db_dsn='mysql://root@0.0.0.0/cakephp_test'
     - DB=pgsql db_dsn='postgres://postgres@127.0.0.1/cakephp_test'
     - DB=sqlite db_dsn='sqlite:///:memory:'
   global:
@@ -50,9 +57,9 @@ before_install:
   - composer self-update
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
 
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test2;'; fi"
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test3;'; fi"
+  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi"
+  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test2;'; fi"
+  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test3;'; fi"
 
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi"
