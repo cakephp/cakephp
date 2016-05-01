@@ -2253,6 +2253,12 @@ class PaginatorHelperTest extends TestCase
     {
         $this->Paginator->request = new Request();
         $this->assertNull($this->Paginator->defaultModel());
+
+        $this->Paginator->defaultModel('Article');
+        $this->assertEquals('Article', $this->Paginator->defaultModel());
+
+        $this->Paginator->options(['model' => 'Client']);
+        $this->assertEquals('Client', $this->Paginator->defaultModel());
     }
 
     /**
