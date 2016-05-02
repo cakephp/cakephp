@@ -1310,6 +1310,7 @@ class FormHelper extends AppHelper {
 			$fieldDef['length'] < 1000000 &&
 			$fieldDef['type'] !== 'decimal' &&
 			$fieldDef['type'] !== 'time' &&
+			$fieldDef['type'] !== 'datetime' &&
 			$options['type'] !== 'select'
 		);
 		if ($autoLength &&
