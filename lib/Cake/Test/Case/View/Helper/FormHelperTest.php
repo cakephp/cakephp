@@ -8706,8 +8706,7 @@ class FormHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testCreateUrlImpliedController()
-	{
+	public function testCreateUrlImpliedController() {
 		$restore = error_reporting(E_ALL ^ E_USER_DEPRECATED);
 		$this->Form->request['controller'] = 'posts';
 		$result = $this->Form->create('Comment', array(
