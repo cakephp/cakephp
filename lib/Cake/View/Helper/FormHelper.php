@@ -382,6 +382,7 @@ class FormHelper extends AppHelper {
 		if (isset($options['action'])) {
 			trigger_error('Using key `action` is deprecated, use `url` directly instead.', E_USER_DEPRECATED);
 		}
+
 		if (is_array($options['url']) && isset($options['url']['action'])) {
 			$options['action'] = $options['url']['action'];
 		}
@@ -393,7 +394,7 @@ class FormHelper extends AppHelper {
 
 		if ($options['action'] === null && $options['url'] === null) {
 			$options['action'] = $this->request->here(false);
-		} elseif (is_array($options['url'])) {
+		} elseif (empty($options['url']) || is_array($options['url'])) {
 			if (empty($options['url']['controller'])) {
 				if (!empty($model)) {
 					$options['url']['controller'] = Inflector::underscore(Inflector::pluralize($model));

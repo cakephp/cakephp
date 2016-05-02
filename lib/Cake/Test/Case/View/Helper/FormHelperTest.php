@@ -8700,6 +8700,37 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test that the action key still uses the model as the implicit controller
+ * when the url option is undefined. While the action parameter is deprecated
+ * we need it to continue working for the duration of 2.x
+ *
+ * @return void
+ */
+	public function testCreateUrlImpliedController()
+	{
+		$restore = error_reporting(E_ALL ^ E_USER_DEPRECATED);
+		$this->Form->request['controller'] = 'posts';
+		$result = $this->Form->create('Comment', array(
+			'action' => 'addComment',
+			'id' => 'addCommentForm',
+			'type' => 'POST'
+		));
+		$expected = array(
+			'form' => array(
+				'action' => '/comments/addComment',
+				'id' => 'addCommentForm',
+				'method' => 'post',
+				'accept-charset' => strtolower(Configure::read('App.encoding'))
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+		error_reporting($restore);
+	}
+
+/**
  * Test the onsubmit option for create()
  *
  * @return void
