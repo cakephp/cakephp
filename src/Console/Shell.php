@@ -808,6 +808,7 @@ class Shell
         $File = new File($path, true);
         if ($File->exists() && $File->writable()) {
             $File->write($contents);
+            $File->close();
             $this->_io->out(sprintf('<success>Wrote</success> `%s`', $path));
             return true;
         }
