@@ -86,7 +86,7 @@ class Folder
     public $mode = 0755;
 
     /**
-     *
+     * Functions array to be called depending on the sort type chosen.
      */
     protected $_fsorts = [
         self::SORT_NAME => 'getPathname',
@@ -177,7 +177,7 @@ class Folder
      * Returns an array of the contents of the current directory.
      * The returned array holds two arrays: One of directories and one of files.
      *
-     * @param bool $sort Whether you want the results sorted, set this and the sort property
+     * @param string|bool $sort Whether you want the results sorted, set this and the sort property
      *   to false to get unsorted results.
      * @param array|bool $exceptions Either an array or boolean true will not grab dot files
      * @param bool $fullPath True returns the full path
@@ -201,7 +201,7 @@ class Folder
             return [$dirs, $files];
         }
 
-        if (!is_bool($sort) && array_key_exists($sort, $this->_fsorts)) {
+        if (!is_bool($sort) && isset($this->_fsorts[$sort])) {
             $methodName = $this->_fsorts[$sort];
         } else {
             $methodName = $this->_fsorts[self::SORT_NAME];
@@ -231,11 +231,11 @@ class Folder
             ksort($files);
         }
 
-        if (!empty($dirs)) {
+        if ($dirs) {
             $dirs = call_user_func_array('array_merge', $dirs);
         }
 
-        if (!empty($files)) {
+        if ($files) {
             $files = call_user_func_array('array_merge', $files);
         }
 
