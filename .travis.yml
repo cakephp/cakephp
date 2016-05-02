@@ -6,13 +6,6 @@ php:
   - 7.0
 
 dist: trusty
-sudo: required
-addons:
-  apt:
-    packages:
-    - mysql-server-5.6
-    - mysql-client-core-5.6
-    - mysql-client-5.6
 
 env:
   matrix:
@@ -50,9 +43,9 @@ matrix:
 before_install:
   - if [ $HHVM != 1 ]; then phpenv config-rm xdebug.ini; fi
 
-  - composer self-update
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
 
+  - if [ $DB = 'mysql' ]; then sudo apt-get -y install mysql-server; fi
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test2;'; fi
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test3;'; fi
