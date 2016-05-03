@@ -122,7 +122,7 @@ class Security
             E_USER_WARNING
         );
         $bytes = '';
-        while ($bytes < $length) {
+        while (strlen($bytes) < $length) {
             $bytes .= static::hash(Text::uuid() . uniqid(mt_rand(), true), 'sha512', true);
         }
         return substr($bytes, 0, $length);
