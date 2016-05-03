@@ -1214,9 +1214,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * called allowing you to define additional default values. The new
      * entity will be saved and returned.
      *
-     * If the $search properties do not match the properties of the entity, then you
-     * should disable defaults and define all default values using the callback.
-     *
      * If your find conditions require custom order, associations or conditions, then the $search
      * parameter can be a callable that takes the Query as the argument. Allowing you to
      * customize the find results.
@@ -1229,6 +1226,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   transaction (default: true)
      * - defaults: Whether to use the search criteria as default values for the new entity (default: true)
      *
+     * @param array|\Cake\ORM\Query $search The criteria to find existing
+     *   records by. Note that when you pass a query object you'll have to use
+     *   the 2nd arg of the method to modify the entity data before saving.     
      * @param array|callable $search The criteria to find an existing record by, or a callable that will
      *   customize the find query.
      * @param callable|null $callback A callback that will be invoked for newly
@@ -1286,6 +1286,20 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
         unset($options['defaults']);
         return $this->save($entity, $options) ?: $entity;
+    }
+
+    /**
+     * Gets the query object for findOrCreate().
+     *
+     * @param array|\Cake\ORM\Query|string $search The criteria to find existing records by.
+     * @return \Cake\ORM\Query
+     */
+    protected function _getFindOrCreateQuery($search)
+    {
+        if ($search instanceof Query) {
+            return $search;
+        }
+        return $this->find()->where($search);
     }
 
     /**
