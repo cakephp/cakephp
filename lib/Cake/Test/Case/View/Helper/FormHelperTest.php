@@ -4871,6 +4871,50 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testSelect boolean method
+ *
+ * @return void
+ */
+	public function testSelectBoolean() {
+		$result = $this->Form->select(
+			'Model.field',
+			array(0 => 'No', 1 => 'Yes'),
+			array('value' => false, 'empty' => false)
+		);
+		$expected = array(
+			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			array('option' => array('value' => '0', 'selected' => 'selected')),
+			'No',
+			'/option',
+			array('option' => array('value' => '1')),
+			'Yes',
+			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->select(
+			'Model.field',
+			array(0 => 'No', 1 => 'Yes', 2 => 'Yes again'),
+			array('value' => array(false, 2), 'empty' => false)
+		);
+		$expected = array(
+			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			array('option' => array('value' => '0', 'selected' => 'selected')),
+			'No',
+			'/option',
+			array('option' => array('value' => '1')),
+			'Yes',
+			'/option',
+			array('option' => array('value' => '2', 'selected' => 'selected')),
+			'Yes again',
+			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test that select() with optiongroups listens to the escape param.
  *
  * @return void
@@ -8121,6 +8165,34 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test that postLink doesn't modify the fields in the containing form.
+ *
+ * postLink() calls inside open forms should not modify the field list
+ * for the form.
+ *
+ * @return void
+ */
+	public function testPostLinkSecurityHashInline() {
+		$hash = Security::hash(
+			'/posts/delete/1' .
+			serialize(array()) .
+			'' .
+			Configure::read('Security.salt')
+		);
+		$hash .= '%3A';
+		$this->Form->request->params['_Token']['key'] = 'test';
+
+		$this->Form->create('Post', array('url' => array('action' => 'add')));
+		$this->Form->input('title');
+		$this->Form->postLink('Delete', '/posts/delete/1', array('inline' => false));
+		$result = $this->View->fetch('postLink');
+
+		$this->assertEquals(array('Post.title'), $this->Form->fields);
+		$this->assertContains($hash, $result, 'Should contain the correct hash.');
+		$this->assertAttributeEquals('/posts/add', '_lastAction', $this->Form, 'lastAction was should be restored.');
+	}
+
+/**
  * Test using postLink with N dimensional data.
  *
  * @return void
@@ -8672,6 +8744,36 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test that the action key still uses the model as the implicit controller
+ * when the url option is undefined. While the action parameter is deprecated
+ * we need it to continue working for the duration of 2.x
+ *
+ * @return void
+ */
+	public function testCreateUrlImpliedController() {
+		$restore = error_reporting(E_ALL ^ E_USER_DEPRECATED);
+		$this->Form->request['controller'] = 'posts';
+		$result = $this->Form->create('Comment', array(
+			'action' => 'addComment',
+			'id' => 'addCommentForm',
+			'type' => 'POST'
+		));
+		$expected = array(
+			'form' => array(
+				'action' => '/comments/addComment',
+				'id' => 'addCommentForm',
+				'method' => 'post',
+				'accept-charset' => strtolower(Configure::read('App.encoding'))
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+		error_reporting($restore);
 	}
 
 /**

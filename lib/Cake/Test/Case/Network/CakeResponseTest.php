@@ -1706,47 +1706,80 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
+ * Provider for invalid range header values.
+ *
+ * @return array
+ */
+	public function invalidFileRangeProvider() {
+		return array(
+			// malformed range
+			array(
+				'bytes=0,38'
+			),
+
+			// malformed punctuation
+			array(
+				'bytes: 0 - 32'
+			),
+			array(
+				'garbage: poo - poo'
+			),
+		);
+	}
+
+/**
  * Test invalid file ranges.
  *
+ * @dataProvider invalidFileRangeProvider
  * @return void
  */
-	public function testFileRangeInvalid() {
-		$_SERVER['HTTP_RANGE'] = 'bytes=30-2';
+	public function testFileRangeInvalid($range) {
+		$_SERVER['HTTP_RANGE'] = $range;
 		$response = $this->getMock('CakeResponse', array(
-			'header',
-			'type',
 			'_sendHeader',
-			'_setContentType',
 			'_isActive',
-			'_clearBuffer',
-			'_flushBuffer'
 		));
-
-		$response->expects($this->at(1))
-			->method('header')
-			->with('Content-Disposition', 'attachment; filename="test_asset.css"');
-
-		$response->expects($this->at(2))
-			->method('header')
-			->with('Content-Transfer-Encoding', 'binary');
-
-		$response->expects($this->at(3))
-			->method('header')
-			->with('Accept-Ranges', 'bytes');
-
-		$response->expects($this->at(4))
-			->method('header')
-			->with(array(
-				'Content-Range' => 'bytes 0-37/38',
-			));
 
 		$response->file(
 			CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS . 'css' . DS . 'test_asset.css',
 			array('download' => true)
 		);
 
+		$expected = array(
+			'Content-Disposition' => 'attachment; filename="test_asset.css"',
+			'Content-Transfer-Encoding' => 'binary',
+			'Accept-Ranges' => 'bytes',
+			'Content-Range' => 'bytes 0-37/38',
+			'Content-Length' => 38,
+		);
+		$this->assertEquals($expected, $response->header());
+	}
+
+/**
+ * Test backwards file range
+ *
+ * @return void
+ */
+	public function testFileRangeReversed() {
+		$_SERVER['HTTP_RANGE'] = 'bytes=30-5';
+		$response = $this->getMock('CakeResponse', array(
+			'_sendHeader',
+			'_isActive',
+		));
+
+		$response->file(
+			CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS . 'css' . DS . 'test_asset.css',
+			array('download' => true)
+		);
+
+		$expected = array(
+			'Content-Disposition' => 'attachment; filename="test_asset.css"',
+			'Content-Transfer-Encoding' => 'binary',
+			'Accept-Ranges' => 'bytes',
+			'Content-Range' => 'bytes 0-37/38',
+		);
+		$this->assertEquals($expected, $response->header());
 		$this->assertEquals(416, $response->statusCode());
-		$response->send();
 	}
 
 /**

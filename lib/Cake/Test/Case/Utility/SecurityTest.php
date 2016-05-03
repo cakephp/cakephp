@@ -152,15 +152,35 @@ class SecurityTest extends CakeTestCase {
 	}
 
 /**
+ * Test that blowfish doesn't return '' when the salt is ''
+ *
+ * @return void
+ */
+	public function testHashBlowfishEmptySalt() {
+		$test = Security::hash('password', 'blowfish');
+		$this->skipIf(strpos($test, '$2a$') === false, 'Blowfish hashes are incorrect.');
+
+		$stored = '';
+		$hash = Security::hash('anything', 'blowfish', $stored);
+		$this->assertNotEquals($stored, $hash);
+
+		$hash = Security::hash('anything', 'blowfish', false);
+		$this->assertNotEquals($stored, $hash);
+
+		$hash = Security::hash('anything', 'blowfish', null);
+		$this->assertNotEquals($stored, $hash);
+	}
+
+/**
  * Test that hash() works with blowfish.
  *
  * @return void
  */
 	public function testHashBlowfish() {
-		Security::setCost(10);
 		$test = Security::hash('password', 'blowfish');
 		$this->skipIf(strpos($test, '$2a$') === false, 'Blowfish hashes are incorrect.');
 
+		Security::setCost(10);
 		$_hashType = Security::$hashType;
 
 		$key = 'someKey';

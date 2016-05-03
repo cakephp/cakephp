@@ -303,7 +303,7 @@ class Security {
  * @return string The hashed string or an empty string on error.
  */
 	protected static function _crypt($password, $salt = false) {
-		if ($salt === false) {
+		if ($salt === false || $salt === null || $salt === '') {
 			$salt = static::_salt(22);
 			$salt = vsprintf('$2a$%02d$%s', array(static::$hashCost, $salt));
 		}

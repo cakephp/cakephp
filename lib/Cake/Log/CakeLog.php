@@ -21,10 +21,10 @@
 App::uses('LogEngineCollection', 'Log');
 
 /**
- * Logs messages to configured Log adapters. One or more adapters
- * can be configured using CakeLogs's methods. If you don't
- * configure any adapters, and write to the logs a default
- * FileLog will be autoconfigured for you.
+ * Logs messages to configured Log adapters.
+ * 
+ * One or more adapters
+ * can be configured using CakeLogs's methods.
  *
  * ### Configuring Log adapters
  *
@@ -84,6 +84,9 @@ class CakeLog {
 /**
  * Default log levels as detailed in RFC 5424
  * http://tools.ietf.org/html/rfc5424
+ * 
+ * Windows has fewer levels, thus notice, info and debug are the same.
+ * https://bugs.php.net/bug.php?id=18090
  *
  * @var array
  */

@@ -382,6 +382,7 @@ class FormHelper extends AppHelper {
 		if (isset($options['action'])) {
 			trigger_error('Using key `action` is deprecated, use `url` directly instead.', E_USER_DEPRECATED);
 		}
+
 		if (is_array($options['url']) && isset($options['url']['action'])) {
 			$options['action'] = $options['url']['action'];
 		}
@@ -393,7 +394,7 @@ class FormHelper extends AppHelper {
 
 		if ($options['action'] === null && $options['url'] === null) {
 			$options['action'] = $this->request->here(false);
-		} elseif (is_array($options['url'])) {
+		} elseif (empty($options['url']) || is_array($options['url'])) {
 			if (empty($options['url']['controller'])) {
 				if (!empty($model)) {
 					$options['url']['controller'] = Inflector::underscore(Inflector::pluralize($model));
@@ -611,11 +612,13 @@ class FormHelper extends AppHelper {
 		$tokenFields = array_merge($secureAttributes, array(
 			'value' => urlencode($fields . ':' . $locked),
 			'id' => 'TokenFields' . mt_rand(),
+			'secure' => static::SECURE_SKIP,
 		));
 		$out = $this->hidden('_Token.fields', $tokenFields);
 		$tokenUnlocked = array_merge($secureAttributes, array(
 			'value' => urlencode($unlocked),
 			'id' => 'TokenUnlocked' . mt_rand(),
+			'secure' => static::SECURE_SKIP,
 		));
 		$out .= $this->hidden('_Token.unlocked', $tokenUnlocked);
 		return $this->Html->useTag('hiddenblock', $out);
@@ -1870,6 +1873,7 @@ class FormHelper extends AppHelper {
 			unset($options['target']);
 		}
 
+		$previousLastAction = $this->_lastAction;
 		$this->_lastAction($url);
 
 		$out = $this->Html->useTag('form', $formUrl, $formOptions);
@@ -1882,7 +1886,7 @@ class FormHelper extends AppHelper {
 		if (isset($options['data']) && is_array($options['data'])) {
 			foreach (Hash::flatten($options['data']) as $key => $value) {
 				$fields[$key] = $value;
-				$out .= $this->hidden($key, array('value' => $value, 'id' => false));
+				$out .= $this->hidden($key, array('value' => $value, 'id' => false, 'secure' => static::SECURE_SKIP));
 			}
 			unset($options['data']);
 		}
@@ -1892,6 +1896,8 @@ class FormHelper extends AppHelper {
 		if ($options['block']) {
 			$this->_View->append($options['block'], $out);
 			$out = '';
+			// Reset security-relevant fields for outer form
+			$this->_lastAction = $previousLastAction;
 		}
 		unset($options['block']);
 
@@ -2782,6 +2788,11 @@ class FormHelper extends AppHelper {
 		);
 		$selectedIsEmpty = ($attributes['value'] === '' || $attributes['value'] === null);
 		$selectedIsArray = is_array($attributes['value']);
+
+		// Cast boolean false into an integer so string comparisons can work.
+		if ($attributes['value'] === false) {
+			$attributes['value'] = 0;
+		}
 
 		$this->_domIdSuffixes = array();
 		foreach ($elements as $name => $title) {

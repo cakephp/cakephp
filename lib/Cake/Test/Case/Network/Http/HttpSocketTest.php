@@ -1843,7 +1843,6 @@ class HttpSocketTest extends CakeTestCase {
 		} catch (SocketException $e) {
 			$message = $e->getMessage();
 			$this->skipIf(strpos($message, 'Invalid HTTP') !== false, 'Invalid HTTP Response received, skipping.');
-			$this->assertContains('Peer certificate CN', $message);
 			$this->assertContains('Failed to enable crypto', $message);
 		}
 	}
