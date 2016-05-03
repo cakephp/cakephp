@@ -7715,17 +7715,13 @@ class FormHelperTest extends CakeTestCase {
 	public function testInputTimeWithMicrosecondsAsText() {
 		$this->Form->request->data = array();
 		$this->Form->create('Contact');
-		$result = $this->Form->input('lap_time',
-				array(
-					'type' => 'text',
-				)
-		);
+		$result = $this->Form->input('lap_time', array(
+			'type' => 'text',
+		));
 		$this->assertNotContains('maxlength=', $result);
-		$result = $this->Form->input('last_seen',
-				array(
-					'type' => 'text',
-				)
-		);
+		$result = $this->Form->input('last_seen', array(
+			'type' => 'text',
+		));
 		$this->assertNotContains('maxlength=', $result);
 	}
 
