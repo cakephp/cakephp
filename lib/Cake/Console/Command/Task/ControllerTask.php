@@ -182,11 +182,11 @@ class ControllerTask extends BakeTask {
 				$components = $this->doComponents();
 
 				$wannaUseSession = $this->in(
-					__d('cake_console', "Would you like to use Session flash messages?"), array('y', 'n'), 'y'
+					__d('cake_console', "Would you like to use the FlashComponent to display flash messages?"), array('y', 'n'), 'y'
 				);
 
 				if (strtolower($wannaUseSession) === 'y') {
-					array_push($components, 'Session');
+					array_push($components, 'Session', 'Flash');
 				}
 				array_unique($components);
 			}
@@ -384,9 +384,9 @@ class ControllerTask extends BakeTask {
  * @return array Components the user wants to use.
  */
 	public function doComponents() {
-		$components = array('Paginator', 'Flash');
+		$components = array('Paginator');
 		return array_merge($components, $this->_doPropertyChoices(
-			__d('cake_console', "Would you like this controller to use other components\nbesides PaginatorComponent and FlashComponent?"),
+			__d('cake_console', "Would you like this controller to use other components\nbesides PaginatorComponent?"),
 			__d('cake_console', "Please provide a comma separated list of the component names you'd like to use.\nExample: 'Acl, Security, RequestHandler'")
 		));
 	}
