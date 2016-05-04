@@ -68,6 +68,8 @@ author_id INTEGER NOT NULL,
 published BIT DEFAULT 0,
 views SMALLINT DEFAULT 0,
 created DATETIME,
+field1 VARCHAR(10) DEFAULT NULL,
+field2 VARCHAR(10) DEFAULT 'NULL',
 CONSTRAINT [content_idx] UNIQUE ([title], [body]),
 CONSTRAINT [author_idx] FOREIGN KEY ([author_id]) REFERENCES [schema_authors] ([id]) ON DELETE CASCADE ON UPDATE CASCADE
 )
@@ -343,6 +345,24 @@ SQL;
                 'default' => null,
                 'length' => null,
                 'precision' => null,
+                'comment' => null,
+            ],
+            'field1' => [
+                'type' => 'string',
+                'null' => true,
+                'default' => null,
+                'length' => 10,
+                'precision' => null,
+                'fixed' => null,
+                'comment' => null,
+            ],
+            'field2' => [
+                'type' => 'string',
+                'null' => true,
+                'default' => 'NULL',
+                'length' => 10,
+                'precision' => null,
+                'fixed' => null,
                 'comment' => null,
             ],
         ];
