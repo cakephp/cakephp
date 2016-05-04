@@ -13,7 +13,6 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-use Cake\Datasource\FactoryLocator;
 use Cake\Routing\Router;
 
 define('TIME_START', microtime(true));
