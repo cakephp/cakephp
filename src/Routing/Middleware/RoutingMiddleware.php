@@ -12,7 +12,7 @@
  * @since         3.3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Http\Middleware;
+namespace Cake\Routing\Middleware;
 
 use Cake\Routing\Exception\RedirectException;
 use Cake\Routing\Router;

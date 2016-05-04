@@ -12,10 +12,10 @@
  * @since         3.3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Http\Middleware;
+namespace Cake\Test\TestCase\Error\Middleware;
 
 use Cake\Core\Configure;
-use Cake\Http\Middleware\ErrorHandlerMiddleware;
+use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\ServerRequestFactory;
 use Cake\Network\Response as CakeResponse;
 use Cake\TestSuite\TestCase;

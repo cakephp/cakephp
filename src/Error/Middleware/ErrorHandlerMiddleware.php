@@ -12,7 +12,7 @@
  * @since         3.3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Http\Middleware;
+namespace Cake\Error\Middleware;
 
 use Cake\Core\App;
 use Cake\Http\ResponseTransformer;
