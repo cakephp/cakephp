@@ -12,9 +12,9 @@
  * @since         3.3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Http\Middleware;
+namespace Cake\Test\TestCase\Routing\Middleware;
 
-use Cake\Http\Middleware\RoutingMiddleware;
+use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Request;
