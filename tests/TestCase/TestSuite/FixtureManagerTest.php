@@ -15,7 +15,7 @@
 namespace Cake\Test\TestSuite;
 
 use Cake\Core\Plugin;
-use Cake\Database\Schema\Table;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\ORM\TableRegistry;
@@ -112,7 +112,7 @@ class FixtureManagerTest extends TestCase
             'stream' => $buffer
         ]);
 
-        $table = new Table('articles', [
+        $table = new TableSchema('articles', [
             'id' => ['type' => 'integer', 'unsigned' => true],
             'title' => ['type' => 'string', 'length' => 255],
         ]);

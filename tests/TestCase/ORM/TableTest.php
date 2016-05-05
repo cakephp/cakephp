@@ -322,7 +322,7 @@ class TableTest extends TestCase
         $schema = ['id' => ['type' => 'integer']];
         $table->schema($schema);
         $this->assertEquals(
-            new \Cake\Database\Schema\Table('another', $schema),
+            new \Cake\Database\Schema\TableSchema('another', $schema),
             $table->schema()
         );
     }

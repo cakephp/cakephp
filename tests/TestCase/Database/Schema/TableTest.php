@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
-use Cake\Database\Schema\Table;
+use Cake\Database\Schema\TableSchema;
 use Cake\Database\Type;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\TableRegistry;
@@ -80,7 +80,7 @@ class TableTest extends TestCase
                 'length' => 255
             ]
         ];
-        $table = new Table('articles', $columns);
+        $table = new TableSchema('articles', $columns);
         $this->assertEquals(['id', 'title'], $table->columns());
     }
 
@@ -91,7 +91,7 @@ class TableTest extends TestCase
      */
     public function testAddColumn()
     {
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $result = $table->addColumn('title', [
             'type' => 'string',
             'length' => 25,
@@ -112,7 +112,7 @@ class TableTest extends TestCase
      */
     public function testIsNullable()
     {
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('title', [
             'type' => 'string',
             'length' => 25,
@@ -134,7 +134,7 @@ class TableTest extends TestCase
      */
     public function testColumnType()
     {
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('title', [
             'type' => 'string',
             'length' => 25,
@@ -151,7 +151,7 @@ class TableTest extends TestCase
      */
     public function testColumnTypeSet()
     {
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('title', [
             'type' => 'string',
             'length' => 25,
@@ -169,7 +169,7 @@ class TableTest extends TestCase
      */
     public function testBaseColumnType()
     {
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('title', [
             'type' => 'json',
             'baseType' => 'text',
@@ -188,7 +188,7 @@ class TableTest extends TestCase
     public function testBaseColumnTypeInherited()
     {
         Type::map('foo', __NAMESPACE__ . '\FooType');
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('thing', [
             'type' => 'foo',
             'null' => false
@@ -204,7 +204,7 @@ class TableTest extends TestCase
      */
     public function testAddColumnFiltersAttributes()
     {
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('title', [
             'type' => 'string'
         ]);
@@ -259,7 +259,7 @@ class TableTest extends TestCase
      */
     public function testDefaultValues()
     {
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('id', [
             'type' => 'integer',
             'default' => 0
@@ -291,7 +291,7 @@ class TableTest extends TestCase
      */
     public function testAddConstraint()
     {
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('id', [
             'type' => 'integer'
         ]);
@@ -314,10 +314,10 @@ class TableTest extends TestCase
             // No properties
             [[]],
             // Empty columns
-            [['columns' => '', 'type' => Table::CONSTRAINT_UNIQUE]],
-            [['columns' => [], 'type' => Table::CONSTRAINT_UNIQUE]],
+            [['columns' => '', 'type' => TableSchema::CONSTRAINT_UNIQUE]],
+            [['columns' => [], 'type' => TableSchema::CONSTRAINT_UNIQUE]],
             // Missing column
-            [['columns' => ['derp'], 'type' => Table::CONSTRAINT_UNIQUE]],
+            [['columns' => ['derp'], 'type' => TableSchema::CONSTRAINT_UNIQUE]],
             // Invalid type
             [['columns' => 'author_id', 'type' => 'derp']],
         ];
@@ -333,7 +333,7 @@ class TableTest extends TestCase
      */
     public function testAddConstraintError($props)
     {
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('author_id', 'integer');
         $table->addConstraint('author_idx', $props);
     }
@@ -345,7 +345,7 @@ class TableTest extends TestCase
      */
     public function testAddIndex()
     {
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('title', [
             'type' => 'string'
         ]);
@@ -370,10 +370,10 @@ class TableTest extends TestCase
             // Invalid type
             [['columns' => 'author_id', 'type' => 'derp']],
             // No columns
-            [['columns' => ''], 'type' => Table::INDEX_INDEX],
-            [['columns' => [], 'type' => Table::INDEX_INDEX]],
+            [['columns' => ''], 'type' => TableSchema::INDEX_INDEX],
+            [['columns' => [], 'type' => TableSchema::INDEX_INDEX]],
             // Missing column
-            [['columns' => ['not_there'], 'type' => Table::INDEX_INDEX]],
+            [['columns' => ['not_there'], 'type' => TableSchema::INDEX_INDEX]],
         ];
     }
 
@@ -387,7 +387,7 @@ class TableTest extends TestCase
      */
     public function testAddIndexError($props)
     {
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('author_id', 'integer');
         $table->addIndex('author_idx', $props);
     }
@@ -399,7 +399,7 @@ class TableTest extends TestCase
      */
     public function testAddIndexTypes()
     {
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('id', 'integer')
             ->addColumn('title', 'string')
             ->addColumn('author_id', 'integer');
@@ -425,7 +425,7 @@ class TableTest extends TestCase
      */
     public function testPrimaryKey()
     {
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('id', 'integer')
             ->addColumn('title', 'string')
             ->addColumn('author_id', 'integer')
@@ -438,7 +438,7 @@ class TableTest extends TestCase
             ]);
         $this->assertEquals(['id'], $table->primaryKey());
 
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('id', 'integer')
             ->addColumn('title', 'string')
             ->addColumn('author_id', 'integer');
@@ -452,12 +452,12 @@ class TableTest extends TestCase
      */
     public function testOptions()
     {
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $options = [
             'engine' => 'InnoDB'
         ];
         $return = $table->options($options);
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $return);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $return);
         $this->assertEquals($options, $table->options());
     }
 
@@ -468,10 +468,10 @@ class TableTest extends TestCase
      */
     public function testAddConstraintForeignKey()
     {
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('author_id', 'integer')
             ->addConstraint('author_id_idx', [
-                'type' => Table::CONSTRAINT_FOREIGN,
+                'type' => TableSchema::CONSTRAINT_FOREIGN,
                 'columns' => ['author_id'],
                 'references' => ['authors', 'id'],
                 'update' => 'cascade',
@@ -544,19 +544,19 @@ class TableTest extends TestCase
     {
         return [
             'references is bad' => [[
-                'type' => Table::CONSTRAINT_FOREIGN,
+                'type' => TableSchema::CONSTRAINT_FOREIGN,
                 'columns' => ['author_id'],
                 'references' => ['authors'],
                 'delete' => 'derp',
             ]],
             'bad update value' => [[
-                'type' => Table::CONSTRAINT_FOREIGN,
+                'type' => TableSchema::CONSTRAINT_FOREIGN,
                 'columns' => ['author_id'],
                 'references' => ['authors', 'id'],
                 'update' => 'derp',
             ]],
             'bad delete value' => [[
-                'type' => Table::CONSTRAINT_FOREIGN,
+                'type' => TableSchema::CONSTRAINT_FOREIGN,
                 'columns' => ['author_id'],
                 'references' => ['authors', 'id'],
                 'delete' => 'derp',
@@ -573,7 +573,7 @@ class TableTest extends TestCase
      */
     public function testAddConstraintForeignKeyBadData($data)
     {
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('author_id', 'integer')
             ->addConstraint('author_id_idx', $data);
     }
@@ -585,7 +585,7 @@ class TableTest extends TestCase
      */
     public function testTemporary()
     {
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $this->assertFalse($table->temporary());
         $this->assertSame($table, $table->temporary(true));
         $this->assertTrue($table->temporary());

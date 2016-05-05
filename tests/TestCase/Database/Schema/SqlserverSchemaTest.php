@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\Database\Schema;
 use Cake\Core\Configure;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqlserverSchema;
-use Cake\Database\Schema\Table;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
@@ -245,7 +245,7 @@ SQL;
         $driver = $this->getMock('Cake\Database\Driver\Sqlserver');
         $dialect = new SqlserverSchema($driver);
 
-        $table = $this->getMock('Cake\Database\Schema\Table', [], ['table']);
+        $table = $this->getMock('Cake\Database\Schema\TableSchema', [], ['table']);
         $table->expects($this->at(0))->method('addColumn')->with('field', $expected);
 
         $dialect->convertColumnDescription($table, $field);
@@ -407,7 +407,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
         $this->assertCount(3, $result->constraints());
         $expected = [
             'primary' => [
@@ -489,17 +489,17 @@ SQL;
             ],
             [
                 'body',
-                ['type' => 'text', 'length' => Table::LENGTH_TINY, 'null' => false],
-                sprintf('[body] NVARCHAR(%s) NOT NULL', Table::LENGTH_TINY)
+                ['type' => 'text', 'length' => TableSchema::LENGTH_TINY, 'null' => false],
+                sprintf('[body] NVARCHAR(%s) NOT NULL', TableSchema::LENGTH_TINY)
             ],
             [
                 'body',
-                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM, 'null' => false],
+                ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM, 'null' => false],
                 '[body] NVARCHAR(MAX) NOT NULL'
             ],
             [
                 'body',
-                ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
+                ['type' => 'text', 'length' => TableSchema::LENGTH_LONG, 'null' => false],
                 '[body] NVARCHAR(MAX) NOT NULL'
             ],
             // Integers
@@ -548,17 +548,17 @@ SQL;
             ],
             [
                 'img',
-                ['type' => 'binary', 'length' => Table::LENGTH_TINY],
-                sprintf('[img] VARBINARY(%s)', Table::LENGTH_TINY)
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_TINY],
+                sprintf('[img] VARBINARY(%s)', TableSchema::LENGTH_TINY)
             ],
             [
                 'img',
-                ['type' => 'binary', 'length' => Table::LENGTH_MEDIUM],
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_MEDIUM],
                 '[img] VARBINARY(MAX)'
             ],
             [
                 'img',
-                ['type' => 'binary', 'length' => Table::LENGTH_LONG],
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG],
                 '[img] VARBINARY(MAX)'
             ],
             // Boolean
@@ -609,7 +609,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new SqlserverSchema($driver);
 
-        $table = (new Table('schema_articles'))->addColumn($name, $data);
+        $table = (new TableSchema('schema_articles'))->addColumn($name, $data);
         $this->assertEquals($expected, $schema->columnSql($table, $name));
     }
 
@@ -674,7 +674,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new SqlserverSchema($driver);
 
-        $table = (new Table('schema_articles'))->addColumn('title', [
+        $table = (new TableSchema('schema_articles'))->addColumn('title', [
             'type' => 'string',
             'length' => 255
         ])->addColumn('author_id', [
@@ -696,7 +696,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('posts'))
+        $table = (new TableSchema('posts'))
             ->addColumn('author_id', [
                 'type' => 'integer',
                 'null' => false
@@ -745,7 +745,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('posts'))
+        $table = (new TableSchema('posts'))
             ->addColumn('author_id', [
                 'type' => 'integer',
                 'null' => false
@@ -794,7 +794,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('schema_articles'))->addColumn('id', [
+        $table = (new TableSchema('schema_articles'))->addColumn('id', [
                 'type' => 'integer',
                 'null' => false
             ])
@@ -844,7 +844,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = new Table('schema_articles');
+        $table = new TableSchema('schema_articles');
         $result = $table->dropSql($connection);
         $this->assertCount(1, $result);
         $this->assertEquals('DROP TABLE [schema_articles]', $result[0]);
@@ -862,7 +862,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = new Table('schema_articles');
+        $table = new TableSchema('schema_articles');
         $table->addColumn('id', 'integer')
             ->addConstraint('primary', [
                 'type' => 'primary',
