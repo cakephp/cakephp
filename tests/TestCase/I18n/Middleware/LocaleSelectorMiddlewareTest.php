@@ -65,6 +65,12 @@ class LocaleSelectorMiddlewareTest extends TestCase
         $middleware = new LocaleSelectorMiddleware([]);
         $middleware($request, $response, $this->next);
         $this->assertSame($this->locale, I18n::locale());
+
+        $request = ServerRequestFactory::fromGlobals(['HTTP_ACCEPT_LANGUAGE' => 'garbage']);
+        $response = new Response();
+        $middleware = new LocaleSelectorMiddleware([]);
+        $middleware($request, $response, $this->next);
+        $this->assertSame($this->locale, I18n::locale());
     }
 
     /**

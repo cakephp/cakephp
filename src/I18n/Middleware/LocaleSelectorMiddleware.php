@@ -46,14 +46,16 @@ class LocaleSelectorMiddleware
     /**
      * @param ServerRequestInterface $request  The request.
      * @param ResponseInterface $response The response.
-     * @param callable $next The next middleware to call
-     * @return \Psr\Http\Message\ResponseInterface A response
+     * @param callable $next The next middleware to call.
+     * @return \Psr\Http\Message\ResponseInterface A response.
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
         $locale = Locale::acceptFromHttp($request->getHeaderLine('Accept-Language'));
-
-        if ($locale && (in_array($locale, $this->locales) || $this->locales === ['*'])) {
+        if (!$locale) {
+            return $next($request, $response);
+        }
+        if (in_array($locale, $this->locales) || $this->locales === ['*']) {
             I18n::locale($locale);
         }
         return $next($request, $response);
