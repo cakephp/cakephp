@@ -30,6 +30,7 @@ trait DateFormatTrait
      * The default locale to be used for displaying formatted date strings.
      *
      * @var string
+     * @deprecated 3.2.9 Use static::setDefaultLocale() and static::getDefaultLocale() instead.
      */
     public static $defaultLocale;
 
@@ -62,6 +63,27 @@ trait DateFormatTrait
      * @var boolean
      */
     protected static $_isDateInstance;
+
+    /**
+     * Gets the default locale.
+     *
+     * @return string|null The default locale string to be used or null.
+     */
+    public static function getDefaultLocale()
+    {
+        return static::$defaultLocale;
+    }
+
+    /**
+     * Sets the default locale.
+     *
+     * @param string|null $locale The default locale string to be used or null.
+     * @return void
+     */
+    public static function setDefaultLocale($locale = null)
+    {
+        static::$defaultLocale = $locale;
+    }
 
     /**
      * Returns a nicely formatted date string for this object.

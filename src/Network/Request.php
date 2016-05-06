@@ -1352,6 +1352,9 @@ class Request implements ArrayAccess
      */
     public function offsetExists($name)
     {
+        if ($name === 'url' || $name === 'data') {
+            return true;
+        }
         return isset($this->params[$name]);
     }
 
