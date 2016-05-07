@@ -54,11 +54,15 @@ class Folder
 
     /**
      * Sort mode by name
+     *
+     * @var string
      */
     const SORT_NAME = 'name';
 
     /**
      * Sort mode by time
+     *
+     * @var string
      */
     const SORT_TIME = 'time';
 
