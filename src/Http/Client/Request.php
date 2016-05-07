@@ -23,7 +23,6 @@ use Zend\Diactoros\RequestTrait;
  *
  * Used by Cake\Network\Http\Client to contain request information
  * for making requests.
- *
  */
 class Request extends Message implements RequestInterface
 {
@@ -36,13 +35,6 @@ class Request extends Message implements RequestInterface
      * @var mixed
      */
     protected $_body;
-
-    /**
-     * The URL to request.
-     *
-     * @var string
-     */
-    protected $_url;
 
     /**
      * Constructor
@@ -92,13 +84,14 @@ class Request extends Message implements RequestInterface
      *
      * @param string|null $url The url for the request. Leave null for get
      * @return $this|string Either $this or the url value.
+     * @deprecated 3.3.0 Use getUri() and withUri() instead.
      */
     public function url($url = null)
     {
         if ($url === null) {
-            return $this->_url;
+            return '' . $this->getUri();
         }
-        $this->_url = $url;
+        $this->uri = $this->createUri($url);
         return $this;
     }
 

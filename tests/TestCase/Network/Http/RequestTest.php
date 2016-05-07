@@ -15,6 +15,7 @@ namespace Cake\Test\TestCase\Network\Http;
 
 use Cake\Network\Http\Request;
 use Cake\TestSuite\TestCase;
+use Zend\Diactoros\Uri;
 
 /**
  * HTTP request test.
@@ -33,6 +34,25 @@ class RequestTest extends TestCase
         $this->assertSame($request, $request->url('http://example.com'));
 
         $this->assertEquals('http://example.com', $request->url());
+    }
+
+    /**
+     * Test that url() modifies the PSR7 stream
+     *
+     * @return void
+     */
+    public function testUrlInteroperability()
+    {
+        $request = new Request();
+        $request->url('http://example.com');
+        $this->assertSame('http://example.com', $request->url());
+        $this->assertSame('http://example.com', $request->getUri()->__toString());
+
+        $uri = 'http://example.com/test';
+        $request = new Request();
+        $request = $request->withUri(new Uri($uri));
+        $this->assertSame($uri, $request->url());
+        $this->assertSame($uri, $request->getUri()->__toString());
     }
 
     /**
@@ -89,6 +109,16 @@ class RequestTest extends TestCase
         $this->assertSame($request, $request->body($data));
 
         $this->assertEquals($data, $request->body());
+    }
+
+    /**
+     * Test that body() modifies the PSR7 stream
+     *
+     * @return void
+     */
+    public function testBodyInteroperability()
+    {
+        $this->markTestIncomplete();
     }
 
     /**
