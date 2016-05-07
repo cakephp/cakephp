@@ -17,6 +17,7 @@ use Cake\Network\Http\Client;
 use Cake\Network\Http\Request;
 use Cake\Network\Http\Response;
 use Cake\TestSuite\TestCase;
+use Zend\Diactoros\Uri;
 
 /**
  * HTTP client test.
@@ -369,7 +370,7 @@ class ClientTest extends TestCase
             ->with($this->logicalAnd(
                 $this->isInstanceOf('Cake\Network\Http\Request'),
                 $this->attributeEqualTo('method', $method),
-                $this->attributeEqualTo('_url', 'http://cakephp.org/projects/add')
+                $this->attributeEqualTo('url', new Uri('http://cakephp.org/projects/add'))
             ))
             ->will($this->returnValue([$response]));
 

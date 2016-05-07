@@ -112,6 +112,28 @@ class RequestTest extends TestCase
     }
 
     /**
+     * test body method with array payload
+     *
+     * @return void
+     */
+    public function testBodyArray()
+    {
+        $request = new Request();
+        $data = [
+            'a' => 'b',
+            'c' => 'd',
+            'e' => ['f', 'g']
+        ];
+        $request->body($data);
+        $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaderLine('content-type'));
+        $this->assertEquals(
+            'a=b&c=d&e%5B0%5D=f&e%5B1%5D=g',
+            $request->body(),
+            'Body should be serialized'
+        );
+    }
+
+    /**
      * Test that body() modifies the PSR7 stream
      *
      * @return void

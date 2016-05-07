@@ -39,14 +39,10 @@ class Request extends Message implements RequestInterface
     {
         $this->method = static::METHOD_GET;
 
-        $this->headerNames = [
-            'connection' => 'Connection',
-            'user-agent' => 'User-Agent',
-        ];
-        $this->headers = [
+        $this->header([
             'Connection' => 'close',
             'User-Agent' => 'CakePHP'
-        ];
+        ]);
     }
 
     /**
@@ -205,20 +201,25 @@ class Request extends Message implements RequestInterface
     }
 
     /**
-     * Get/set the body for the message.
+     * Get/set the body/payload for the message.
      *
-     * *Warning* This method mutates the request in-place for backwards
-     * compatibility reasons, and is not part of the PSR7 interface.
+     * Array data will be serialized with Cake\Http\FormData,
+     * and the content-type will be set.
      *
      * @param string|null $body The body for the request. Leave null for get
      * @return mixed Either $this or the body value.
-     * @deprecated 3.3.0 use getBody() and withBody() instead.
      */
     public function body($body = null)
     {
         if ($body === null) {
             $body = $this->getBody();
             return $body ? $body->__toString() : '';
+        }
+        if (is_array($body)) {
+            $formData = new FormData();
+            $formData->addMany($body);
+            $this->header('Content-Type', $formData->contentType());
+            $body = (string)$formData;
         }
         $stream = new Stream('php://memory', 'rw');
         $stream->write($body);
