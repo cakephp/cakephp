@@ -172,7 +172,7 @@ class ClientTest extends TestCase
             ->method('send')
             ->with($this->logicalAnd(
                 $this->isInstanceOf('Cake\Network\Http\Request'),
-                $this->attributeEqualTo('_method', Request::METHOD_GET),
+                $this->attributeEqualTo('method', Request::METHOD_GET),
                 $this->attributeEqualTo('_url', 'http://cakephp.org/test.html'),
                 $this->attributeEqualTo('_headers', $headers),
                 $this->attributeEqualTo('_cookies', $cookies)
@@ -201,7 +201,7 @@ class ClientTest extends TestCase
             ->method('send')
             ->with($this->logicalAnd(
                 $this->isInstanceOf('Cake\Network\Http\Request'),
-                $this->attributeEqualTo('_method', Request::METHOD_GET),
+                $this->attributeEqualTo('method', Request::METHOD_GET),
                 $this->attributeEqualTo('_url', 'http://cakephp.org/search?q=hi+there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3')
             ))
             ->will($this->returnValue([$response]));
@@ -262,7 +262,7 @@ class ClientTest extends TestCase
             ->method('send')
             ->with($this->logicalAnd(
                 $this->isInstanceOf('Cake\Network\Http\Request'),
-                $this->attributeEqualTo('_method', Request::METHOD_GET),
+                $this->attributeEqualTo('method', Request::METHOD_GET),
                 $this->attributeEqualTo('_url', 'http://cakephp.org/search'),
                 $this->attributeEqualTo('_body', 'some data')
             ))
@@ -319,7 +319,7 @@ class ClientTest extends TestCase
             ->method('send')
             ->with($this->logicalAnd(
                 $this->isInstanceOf('Cake\Network\Http\Request'),
-                $this->attributeEqualTo('_method', Request::METHOD_GET),
+                $this->attributeEqualTo('method', Request::METHOD_GET),
                 $this->attributeEqualTo('_url', 'http://cakephp.org/'),
                 $this->attributeEqualTo('_headers', $headers)
             ))
@@ -368,7 +368,7 @@ class ClientTest extends TestCase
             ->method('send')
             ->with($this->logicalAnd(
                 $this->isInstanceOf('Cake\Network\Http\Request'),
-                $this->attributeEqualTo('_method', $method),
+                $this->attributeEqualTo('method', $method),
                 $this->attributeEqualTo('_url', 'http://cakephp.org/projects/add')
             ))
             ->will($this->returnValue([$response]));
@@ -417,7 +417,7 @@ class ClientTest extends TestCase
         $mock->expects($this->once())
             ->method('send')
             ->with($this->logicalAnd(
-                $this->attributeEqualTo('_method', Request::METHOD_POST),
+                $this->attributeEqualTo('method', Request::METHOD_POST),
                 $this->attributeEqualTo('_body', $data),
                 $this->attributeEqualTo('_headers', $headers)
             ))
@@ -538,7 +538,7 @@ class ClientTest extends TestCase
             ->method('send')
             ->with($this->logicalAnd(
                 $this->isInstanceOf('Cake\Network\Http\Request'),
-                $this->attributeEqualTo('_method', Request::METHOD_HEAD),
+                $this->attributeEqualTo('method', Request::METHOD_HEAD),
                 $this->attributeEqualTo('_url', 'http://cakephp.org/search?q=hi+there')
             ))
             ->will($this->returnValue([$response]));

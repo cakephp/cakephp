@@ -421,7 +421,7 @@ class Client
     protected function _createRequest($method, $url, $data, $options)
     {
         $request = new Request();
-        $request->method($method)
+        $request = $request->withMethod($method)
             ->url($url)
             ->body($data);
 

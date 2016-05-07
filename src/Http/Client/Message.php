@@ -142,13 +142,6 @@ class Message
     protected $_cookies = [];
 
     /**
-     * HTTP Version being used.
-     *
-     * @var string
-     */
-    protected $_version = '1.1';
-
-    /**
      * Normalize header names to Camel-Case form.
      *
      * @param string $name The header name to normalize.
@@ -191,7 +184,7 @@ class Message
      */
     public function version()
     {
-        return $this->_version;
+        return $this->protocol;
     }
 
     /**

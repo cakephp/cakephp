@@ -14,6 +14,7 @@
 namespace Cake\Http\Client;
 
 use Cake\Core\Exception\Exception;
+use Psr\Http\Message\RequestInterface;
 use Zend\Diactoros\MessageTrait;
 use Zend\Diactoros\RequestTrait;
 
@@ -24,17 +25,10 @@ use Zend\Diactoros\RequestTrait;
  * for making requests.
  *
  */
-class Request extends Message
+class Request extends Message implements RequestInterface
 {
     use MessageTrait;
     use RequestTrait;
-
-    /**
-     * The HTTP method to use.
-     *
-     * @var string
-     */
-    protected $_method = self::METHOD_GET;
 
     /**
      * Request body to send.
@@ -51,17 +45,29 @@ class Request extends Message
     protected $_url;
 
     /**
-     * Headers to be sent.
+     * Constructor
      *
-     * @var array
+     * Provides backwards compatible defaults for some properties.
      */
-    protected $_headers = [
-        'Connection' => 'close',
-        'User-Agent' => 'CakePHP'
-    ];
+    public function __construct()
+    {
+        $this->method = static::METHOD_GET;
+
+        $this->headerNames = [
+            'connection' => 'Connection',
+            'user-agent' => 'User-Agent',
+        ];
+        $this->headers = [
+            'Connection' => 'close',
+            'User-Agent' => 'CakePHP'
+        ];
+    }
 
     /**
      * Get/Set the HTTP method.
+     *
+     * *Warning* This method mutates the request in-place for backwards
+     * compatibility issues, and is not part of the PSR7 interface.
      *
      * @param string|null $method The method for the request.
      * @return $this|string Either this or the current method.
@@ -71,13 +77,13 @@ class Request extends Message
     public function method($method = null)
     {
         if ($method === null) {
-            return $this->_method;
+            return $this->method;
         }
         $name = get_called_class() . '::METHOD_' . strtoupper($method);
         if (!defined($name)) {
             throw new Exception('Invalid method type');
         }
-        $this->_method = $method;
+        $this->method = $method;
         return $this;
     }
 
@@ -120,22 +126,31 @@ class Request extends Message
      * $request->header(['Connection' => 'close', 'User-Agent' => 'CakePHP']);
      * ```
      *
+     * *Warning* This method mutates the request in-place for backwards
+     * compatibility issues, and is not part of the PSR7 interface.
+     *
      * @param string|array|null $name The name to get, or array of multiple values to set.
      * @param string|null $value The value to set for the header.
      * @return mixed Either $this when setting or header value when getting.
+     * @deprecated 3.3.0 Use withHeader() and getHeaderLine() instead.
      */
     public function header($name = null, $value = null)
     {
         if ($value === null && is_string($name)) {
-            $name = $this->_normalizeHeader($name);
-            return isset($this->_headers[$name]) ? $this->_headers[$name] : null;
+            $val = $this->getHeaderLine($name);
+            if ($val === '') {
+                return null;
+            }
+            return $val;
         }
+
         if ($value !== null && !is_array($name)) {
             $name = [$name => $value];
         }
         foreach ($name as $key => $val) {
-            $key = $this->_normalizeHeader($key);
-            $this->_headers[$key] = $val;
+            $normalized = strtolower($key);
+            $this->headers[$key] = (array)$val;
+            $this->headerNames[$normalized] = $key;
         }
         return $this;
     }
@@ -182,6 +197,9 @@ class Request extends Message
     /**
      * Get/Set HTTP version.
      *
+     * *Warning* This method mutates the request in-place for backwards
+     * compatibility issues, and is not part of the PSR7 interface.
+     *
      * @param string|null $version The HTTP version.
      * @return $this|string Either $this or the HTTP version.
      * @deprecated 3.3.0 Use getProtocolVersion() and withProtocolVersion() instead.
@@ -189,10 +207,10 @@ class Request extends Message
     public function version($version = null)
     {
         if ($version === null) {
-            return parent::version();
+            return $this->protocol;
         }
 
-        $this->_version = $version;
+        $this->protocol = $version;
         return $this;
     }
 }

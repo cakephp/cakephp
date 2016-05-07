@@ -49,6 +49,23 @@ class RequestTest extends TestCase
     }
 
     /**
+     * test method interop.
+     *
+     * @return void
+     */
+    public function testMethodInteroperability()
+    {
+        $request = new Request();
+        $this->assertSame($request, $request->method(Request::METHOD_GET));
+        $this->assertEquals(Request::METHOD_GET, $request->method());
+        $this->assertEquals(Request::METHOD_GET, $request->getMethod());
+
+        $request = $request->withMethod(Request::METHOD_GET);
+        $this->assertEquals(Request::METHOD_GET, $request->method());
+        $this->assertEquals(Request::METHOD_GET, $request->getMethod());
+    }
+
+    /**
      * test invalid method.
      *
      * @expectedException \Cake\Core\Exception\Exception
@@ -104,6 +121,35 @@ class RequestTest extends TestCase
     }
 
     /**
+     * Test the default headers
+     *
+     * @return void
+     */
+    public function testDefaultHeaders()
+    {
+        $request = new Request();
+        $this->assertEquals('CakePHP', $request->getHeaderLine('User-Agent'));
+        $this->assertEquals('close', $request->getHeaderLine('Connection'));
+    }
+
+    /**
+     * Test that header() and PSR7 methods play nice.
+     *
+     * @return void
+     */
+    public function testHeaderMethodInteroperability()
+    {
+        $request = new Request();
+        $request->header('Content-Type', 'application/json');
+        $this->assertEquals('application/json', $request->header('Content-Type'), 'Old getter should work');
+
+        $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'), 'getHeaderLine works');
+        $this->assertEquals('application/json', $request->getHeaderLine('content-type'), 'getHeaderLine works');
+        $this->assertEquals(['application/json'], $request->getHeader('Content-Type'), 'getHeader works');
+        $this->assertEquals(['application/json'], $request->getHeader('content-type'), 'getHeader works');
+    }
+
+    /**
      * test cookie method.
      *
      * @return void
@@ -132,5 +178,21 @@ class RequestTest extends TestCase
         $this->assertSame($request, $request, 'Should return self');
 
         $this->assertSame('1.0', $request->version());
+    }
+
+    /**
+     * test version interop.
+     *
+     * @return void
+     */
+    public function testVersionInteroperability()
+    {
+        $request = new Request();
+        $this->assertEquals('1.1', $request->version());
+        $this->assertEquals('1.1', $request->getProtocolVersion());
+
+        $request = $request->withProtocolVersion('1.0');
+        $this->assertEquals('1.0', $request->version());
+        $this->assertEquals('1.0', $request->getProtocolVersion());
     }
 }
