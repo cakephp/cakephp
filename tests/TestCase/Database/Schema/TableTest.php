@@ -304,6 +304,39 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test adding an constraint with an overlapping unique index
+     * >
+     * @return void
+     */
+    public function testAddConstraintWithOverlappingUniqueIndex()
+    {
+        $table = new Table('articles');
+        $table->addColumn('project_id', [
+            'type' => 'integer',
+            'default' => null,
+            'limit' => 11,
+            'null' => false,
+        ])->addColumn('id', [
+            'type' => 'integer',
+            'autoIncrement' => true,
+            'limit' => 11
+        ])->addColumn('user_id', [
+            'type' => 'integer',
+            'default' => null,
+            'limit' => 11,
+            'null' => false,
+        ])->addConstraint('users_idx', [
+            'type' => 'unique',
+            'columns' => ['project_id', 'user_id']
+        ])->addConstraint('users_idx', [
+            'type' => 'foreign',
+            'references' => ['users', 'project_id', 'id'],
+            'columns' => ['project_id', 'user_id']
+        ]);
+        $this->assertEquals(['unique_project', 'users_idx'], $table->constraints());
+    }
+
+    /**
      * Dataprovider for invalid addConstraint calls.
      *
      * @return array
