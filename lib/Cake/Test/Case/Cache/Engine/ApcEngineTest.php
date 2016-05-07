@@ -26,6 +26,13 @@ App::uses('Cache', 'Cache');
 class ApcEngineTest extends CakeTestCase {
 
 /**
+ * APC extension to be used
+ *
+ * @var string
+ */
+	protected $_apcExtension = 'apc';
+
+/**
  * setUp method
  *
  * @return void
@@ -37,6 +44,10 @@ class ApcEngineTest extends CakeTestCase {
 
 		if (PHP_SAPI === 'cli') {
 			$this->skipIf(!ini_get('apc.enable_cli'), 'APC is not enabled for the CLI.');
+		}
+
+		if (extension_loaded('apcu')) {
+			$this->_apcExtension = 'apcu';
 		}
 
 		$this->_cacheDisable = Configure::read('Cache.disable');
@@ -198,14 +209,18 @@ class ApcEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testClear() {
-		$this->_apcCall('store', 'not_cake', 'survive');
+		$storeFunc = $this->_apcExtension . '_store';
+		$fetchFunc = $this->_apcExtension . '_fetch';
+		$deleteFunc = $this->_apcExtension . '_delete';
+
+		$storeFunc('not_cake', 'survive');
 		Cache::write('some_value', 'value', 'apc');
 
 		$result = Cache::clear(false, 'apc');
 		$this->assertTrue($result);
 		$this->assertFalse(Cache::read('some_value', 'apc'));
-		$this->assertEquals('survive', $this->_apcCall('fetch', 'not_cake'));
-		$this->_apcCall('delete', 'not_cake');
+		$this->assertEquals('survive', $fetchFunc('not_cake'));
+		$deleteFunc('not_cake');
 	}
 
 /**
@@ -216,6 +231,7 @@ class ApcEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testGroupsReadWrite() {
+		$incFunc = $this->_apcExtension . '_inc';
 		Cache::config('apc_groups', array(
 			'engine' => 'Apc',
 			'duration' => 0,
@@ -225,12 +241,12 @@ class ApcEngineTest extends CakeTestCase {
 		$this->assertTrue(Cache::write('test_groups', 'value', 'apc_groups'));
 		$this->assertEquals('value', Cache::read('test_groups', 'apc_groups'));
 
-		$this->_apcCall('inc', 'test_group_a');
+		$incFunc('test_group_a');
 		$this->assertFalse(Cache::read('test_groups', 'apc_groups'));
 		$this->assertTrue(Cache::write('test_groups', 'value2', 'apc_groups'));
 		$this->assertEquals('value2', Cache::read('test_groups', 'apc_groups'));
 
-		$this->_apcCall('inc', 'test_group_b');
+		$incFunc('test_group_b');
 		$this->assertFalse(Cache::read('test_groups', 'apc_groups'));
 		$this->assertTrue(Cache::write('test_groups', 'value3', 'apc_groups'));
 		$this->assertEquals('value3', Cache::read('test_groups', 'apc_groups'));
@@ -294,17 +310,5 @@ class ApcEngineTest extends CakeTestCase {
 
 		$result = Cache::add('test_add_key', 'test data 2', 'apc');
 		$this->assertFalse($result);
-	}
-
-/**
- * Call APC/APCu function
- *
- * @return mixed
- */
-	protected function _apcCall() {
-		$params = func_get_args();
-		$ext = extension_loaded('apc') ? 'apc' : 'apcu';
-		$func = $ext . '_' . array_shift($params);
-		return call_user_func_array($func, $params);
 	}
 }
