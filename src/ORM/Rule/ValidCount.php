@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM\Rule;
 
+use Countable;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\Validation\Validation;
@@ -44,14 +45,14 @@ class ValidCount
     /**
      * Performs the count check
      *
-     * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
+     * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields.
      * @param array $options Options passed to the check.
-     * @return bool
+     * @return bool True if successful, else false.
      */
     public function __invoke(EntityInterface $entity, array $options)
     {
         $value = $entity->{$this->_field};
-        if (!is_array($value)) {
+        if (!is_array($value) && !$value instanceof Countable) {
             return false;
         }
 
