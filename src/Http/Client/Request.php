@@ -16,6 +16,7 @@ namespace Cake\Http\Client;
 use Cake\Core\Exception\Exception;
 use Psr\Http\Message\RequestInterface;
 use Zend\Diactoros\MessageTrait;
+use Zend\Diactoros\Stream;
 use Zend\Diactoros\RequestTrait;
 
 /**
@@ -28,13 +29,6 @@ class Request extends Message implements RequestInterface
 {
     use MessageTrait;
     use RequestTrait;
-
-    /**
-     * Request body to send.
-     *
-     * @var mixed
-     */
-    protected $_body;
 
     /**
      * Constructor
@@ -207,6 +201,28 @@ class Request extends Message implements RequestInterface
         }
 
         $this->protocol = $version;
+        return $this;
+    }
+
+    /**
+     * Get/set the body for the message.
+     *
+     * *Warning* This method mutates the request in-place for backwards
+     * compatibility reasons, and is not part of the PSR7 interface.
+     *
+     * @param string|null $body The body for the request. Leave null for get
+     * @return mixed Either $this or the body value.
+     * @deprecated 3.3.0 use getBody() and withBody() instead.
+     */
+    public function body($body = null)
+    {
+        if ($body === null) {
+            $body = $this->getBody();
+            return $body ? $body->__toString() : '';
+        }
+        $stream = new Stream('php://memory', 'rw');
+        $stream->write($body);
+        $this->stream = $stream;
         return $this;
     }
 }

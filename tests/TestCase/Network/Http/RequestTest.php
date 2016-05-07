@@ -118,7 +118,14 @@ class RequestTest extends TestCase
      */
     public function testBodyInteroperability()
     {
-        $this->markTestIncomplete();
+        $request = new Request();
+        $this->assertSame('', $request->body());
+
+        $data = '{"json":"data"}';
+        $request = new Request();
+        $request->body($data);
+        $this->assertSame($data, $request->body());
+        $this->assertSame($data, '' . $request->getBody());
     }
 
     /**
