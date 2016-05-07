@@ -840,9 +840,11 @@ class HtmlHelper extends Helper
     /**
      * Create multiple formatted image elements
      *
+     * ### Usage using glob:
      *
-     * ### Usage:
+     * echo $this->Html->images(glob("img/thumb/*.jpg"));
      *
+     * ### Usage using path and options:
      * $images = [
      *     [
      *         'path' => 'test-image-2.jpg',
@@ -856,12 +858,13 @@ class HtmlHelper extends Helper
      *
      * echo $this->Html->images($images);
      *
+     *
      * ### Multiple Images
      *
      * - `path` string Path to the image file, relative to the app/webroot/img/ directory.
      *   `options` Reference HtmlHelper::image - options
      *
-     * @param array $multipleImages Array of image Arrays. See above for special options.
+     * @param array $multipleImages Array of image paths or Array of path and options. See above for special options.
      * @return string of multiple image tags
      */
     public function images(array $multipleImages)
@@ -870,7 +873,7 @@ class HtmlHelper extends Helper
 
         if (!empty($multipleImages)) {
             foreach ($multipleImages as $image) {
-                if (isset($image['path'])) {
+                if (is_array($image) && isset($image['path'])) {
 
                     $path = $image['path'];
                     $options = [];
@@ -880,7 +883,8 @@ class HtmlHelper extends Helper
                     }
 
                     $images .= $this->image($path, $options);
-
+                } else {
+                    $images .= $this->image($image);
                 }
             }
         }
