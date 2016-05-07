@@ -308,7 +308,7 @@ class TableTest extends TestCase
      * >
      * @return void
      */
-    public function testAddConstraintWithOverlappingUniqueIndex()
+    public function testAddConstraintOverwriteUniqueIndex()
     {
         $table = new Table('articles');
         $table->addColumn('project_id', [
@@ -333,7 +333,7 @@ class TableTest extends TestCase
             'references' => ['users', 'project_id', 'id'],
             'columns' => ['project_id', 'user_id']
         ]);
-        $this->assertEquals(['unique_project', 'users_idx'], $table->constraints());
+        $this->assertEquals(['users_idx'], $table->constraints());
     }
 
     /**
