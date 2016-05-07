@@ -53,6 +53,16 @@ class Folder
     const SKIP = 'skip';
 
     /**
+     * Sort mode by name
+     */
+    const SORT_NAME = 'name';
+
+    /**
+     * Sort mode by time
+     */
+    const SORT_TIME = 'time';
+
+    /**
      * Path to Folder.
      *
      * @var string
@@ -74,6 +84,14 @@ class Folder
      * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\Folder::$mode
      */
     public $mode = 0755;
+
+    /**
+     * Functions array to be called depending on the sort type chosen.
+     */
+    protected $_fsorts = [
+        self::SORT_NAME => 'getPathname',
+        self::SORT_TIME => 'getCTime'
+    ];
 
     /**
      * Holds messages from last method.
@@ -159,13 +177,13 @@ class Folder
      * Returns an array of the contents of the current directory.
      * The returned array holds two arrays: One of directories and one of files.
      *
-     * @param bool $sort Whether you want the results sorted, set this and the sort property
+     * @param string|bool $sort Whether you want the results sorted, set this and the sort property
      *   to false to get unsorted results.
      * @param array|bool $exceptions Either an array or boolean true will not grab dot files
      * @param bool $fullPath True returns the full path
      * @return array Contents of current directory as an array, an empty array on failure
      */
-    public function read($sort = true, $exceptions = false, $fullPath = false)
+    public function read($sort = self::SORT_NAME, $exceptions = false, $fullPath = false)
     {
         $dirs = $files = [];
 
@@ -183,6 +201,12 @@ class Folder
             return [$dirs, $files];
         }
 
+        if (!is_bool($sort) && isset($this->_fsorts[$sort])) {
+            $methodName = $this->_fsorts[$sort];
+        } else {
+            $methodName = $this->_fsorts[self::SORT_NAME];
+        }
+
         foreach ($iterator as $item) {
             if ($item->isDot()) {
                 continue;
@@ -194,16 +218,27 @@ class Folder
             if ($fullPath) {
                 $name = $item->getPathname();
             }
+
             if ($item->isDir()) {
-                $dirs[] = $name;
+                $dirs[$item->{$methodName}()][] = $name;
             } else {
-                $files[] = $name;
+                $files[$item->{$methodName}()][] = $name;
             }
         }
+
         if ($sort || $this->sort) {
-            sort($dirs);
-            sort($files);
+            ksort($dirs);
+            ksort($files);
         }
+
+        if ($dirs) {
+            $dirs = call_user_func_array('array_merge', $dirs);
+        }
+
+        if ($files) {
+            $files = call_user_func_array('array_merge', $files);
+        }
+
         return [$dirs, $files];
     }
 
