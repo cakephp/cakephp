@@ -59,7 +59,7 @@ class Request extends Message implements RequestInterface
      * Get/Set the HTTP method.
      *
      * *Warning* This method mutates the request in-place for backwards
-     * compatibility issues, and is not part of the PSR7 interface.
+     * compatibility reasons, and is not part of the PSR7 interface.
      *
      * @param string|null $method The method for the request.
      * @return $this|string Either this or the current method.
@@ -81,6 +81,9 @@ class Request extends Message implements RequestInterface
 
     /**
      * Get/Set the url for the request.
+     *
+     * *Warning* This method mutates the request in-place for backwards
+     * compatibility reasons, and is not part of the PSR7 interface.
      *
      * @param string|null $url The url for the request. Leave null for get
      * @return $this|string Either $this or the url value.
@@ -120,7 +123,7 @@ class Request extends Message implements RequestInterface
      * ```
      *
      * *Warning* This method mutates the request in-place for backwards
-     * compatibility issues, and is not part of the PSR7 interface.
+     * compatibility reasons, and is not part of the PSR7 interface.
      *
      * @param string|array|null $name The name to get, or array of multiple values to set.
      * @param string|null $value The value to set for the header.
@@ -191,7 +194,7 @@ class Request extends Message implements RequestInterface
      * Get/Set HTTP version.
      *
      * *Warning* This method mutates the request in-place for backwards
-     * compatibility issues, and is not part of the PSR7 interface.
+     * compatibility reasons, and is not part of the PSR7 interface.
      *
      * @param string|null $version The HTTP version.
      * @return $this|string Either $this or the HTTP version.
