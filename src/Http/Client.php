@@ -336,6 +336,7 @@ class Client
             $data,
             $options
         );
+
         return $this->send($request, $options);
     }
 
