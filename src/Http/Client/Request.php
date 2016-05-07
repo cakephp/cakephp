@@ -14,6 +14,8 @@
 namespace Cake\Http\Client;
 
 use Cake\Core\Exception\Exception;
+use Zend\Diactoros\MessageTrait;
+use Zend\Diactoros\RequestTrait;
 
 /**
  * Implements methods for HTTP requests.
@@ -24,6 +26,8 @@ use Cake\Core\Exception\Exception;
  */
 class Request extends Message
 {
+    use MessageTrait;
+    use RequestTrait;
 
     /**
      * The HTTP method to use.
@@ -62,6 +66,7 @@ class Request extends Message
      * @param string|null $method The method for the request.
      * @return $this|string Either this or the current method.
      * @throws \Cake\Core\Exception\Exception On invalid methods.
+     * @deprecated 3.3.0 Use getMethod() and withMethod() instead.
      */
     public function method($method = null)
     {
@@ -178,8 +183,8 @@ class Request extends Message
      * Get/Set HTTP version.
      *
      * @param string|null $version The HTTP version.
-     *
      * @return $this|string Either $this or the HTTP version.
+     * @deprecated 3.3.0 Use getProtocolVersion() and withProtocolVersion() instead.
      */
     public function version($version = null)
     {

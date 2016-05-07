@@ -166,6 +166,7 @@ class Message
      * Get all headers
      *
      * @return array
+     * @deprecated 3.3.0 Use getHeaders() instead.
      */
     public function headers()
     {
@@ -186,6 +187,7 @@ class Message
      * Get the HTTP version used.
      *
      * @return string
+     * @deprecated 3.3.0 Use getProtocolVersion()
      */
     public function version()
     {
