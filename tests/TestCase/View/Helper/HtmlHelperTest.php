@@ -337,6 +337,52 @@ class HtmlHelperTest extends TestCase
     }
 
     /**
+     * testImages method
+     *
+     * @return void
+     */
+    public function testImages()
+    {
+        Router::connect('/:controller', ['action' => 'index']);
+        Router::connect('/:controller/:action/*');
+
+        $this->Html->request->webroot = '';
+
+        $result = $this->Html->images([
+            'logo.gif'
+        ]);
+        $expected = ['img' => ['src' => 'img/logo.gif', 'alt' => '']];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->images([
+            'logo.gif',
+            'test.gif'
+        ]);
+        $expected = [
+            ['img' => ['src' => 'img/logo.gif', 'alt' => '']],
+            ['img' => ['src' => 'img/test.gif', 'alt' => '']]
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->images([
+            [
+                'path' => 'logo.gif',
+                'options' => [
+                    'alt' => 'hello',
+                    'width' => '100px'
+                ]
+            ],
+            'test.gif'
+        ]);
+        $expected = [
+            ['img' => ['src' => 'img/logo.gif', 'alt' => 'hello', 'width' => '100px']],
+            ['img' => ['src' => 'img/test.gif', 'alt' => '']]
+        ];
+        $this->assertHtml($expected, $result);
+
+    }
+
+    /**
      * Test image() with query strings.
      *
      * @return void

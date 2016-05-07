@@ -91,10 +91,10 @@ class SessionStorage implements StorageInterface
      *
      * The session id is also renewed to help mitigate issues with session replays.
      *
-     * @param array $user User record.
+     * @param array|\ArrayAccess $user User record.
      * @return void
      */
-    public function write(array $user)
+    public function write($user)
     {
         $this->_user = $user;
 

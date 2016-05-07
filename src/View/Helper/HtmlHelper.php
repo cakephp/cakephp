@@ -838,6 +838,61 @@ class HtmlHelper extends Helper
     }
 
     /**
+     * Create multiple formatted image elements
+     *
+     * ### Usage using glob:
+     *
+     * echo $this->Html->images(glob("img/thumb/*.jpg"));
+     *
+     * ### Usage using path and options:
+     * $images = [
+     *     [
+     *         'path' => 'test-image-2.jpg',
+     *         'options' => [] // optional
+     *     ],
+     *     [
+     *         'path' => 'test-image-3.jpg',
+     *         'options' => [] // optional
+     *     ]
+     * ];
+     *
+     * echo $this->Html->images($images);
+     *
+     *
+     * ### Multiple Images
+     *
+     * - `path` string Path to the image file, relative to the app/webroot/img/ directory.
+     *   `options` Reference HtmlHelper::image - options
+     *
+     * @param array $multipleImages Array of image paths or Array of path and options. See above for Multi Image structure.
+     * @return string of multiple image tags
+     */
+    public function images(array $multipleImages)
+    {
+        $images = '';
+
+        if (!empty($multipleImages)) {
+            foreach ($multipleImages as $image) {
+                if (is_array($image) && isset($image['path'])) {
+
+                    $path = $image['path'];
+                    $options = [];
+
+                    if (isset($image['options'])) {
+                        $options = $image['options'];
+                    }
+
+                    $images .= $this->image($path, $options);
+                } else {
+                    $images .= $this->image($image);
+                }
+            }
+        }
+
+        return $images;
+    }
+
+    /**
      * Returns a row of formatted and named TABLE headers.
      *
      * @param array $names Array of tablenames. Each tablename also can be a key that points to an array with a set

@@ -422,9 +422,16 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Sets whether a field is required to be present in data array.
+     * Sets whether a field is required to be present in data array. You can also pass array.
+     * Using an array will let you provide the following keys:
      *
-     * @param string $field the name of the field
+     * - `mode` individual mode for field
+     * - `message` individual error message for field
+     *
+     * You can also set mode and message for all passed fields, the individual setting
+     * takes precedence over group settings.
+     *
+     * @param string|array $field the name of the field
      * @param bool|string|callable $mode Valid values are true, false, 'create', 'update'.
      * If a callable is passed then the field will be required only when the callback
      * returns true.
@@ -433,10 +440,33 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function requirePresence($field, $mode = true, $message = null)
     {
-        $this->field($field)->isPresenceRequired($mode);
-        if ($message) {
-            $this->_presenceMessages[$field] = $message;
+        if (!is_array($field)) {
+            $field = [
+                $field => [
+                    'mode' => $mode,
+                    'message' => $message
+                ]
+            ];
         }
+
+        foreach ($field as $fieldName => $setting) {
+            if (is_string($setting)) {
+                $fieldName = $setting;
+                $setting = [];
+            }
+            if (!is_array($setting)) {
+                throw new InvalidArgumentException(sprintf('Invalid field "%s" setting, must be an array.', $fieldName));
+            }
+            $setting += [
+                'mode' => $mode,
+                'message' => $message
+            ];
+            $this->field($fieldName)->isPresenceRequired($setting['mode']);
+            if ($setting['message']) {
+                $this->_presenceMessages[$fieldName] = $setting['message'];
+            }
+        }
+
         return $this;
     }
 

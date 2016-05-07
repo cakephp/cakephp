@@ -626,7 +626,7 @@ class ControllerTest extends TestCase
 
         $controller = new Controller($request);
         $result = $controller->referer('/some/path', true);
-        $this->assertEquals('/base/some/path', $result);
+        $this->assertEquals('/some/path', $result);
     }
 
     /**

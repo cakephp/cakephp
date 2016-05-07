@@ -87,7 +87,7 @@ class QueryRegressionTest extends TestCase
     /**
      * Tests that eagerloading belongsToMany with find list fails with a helpful message.
      *
-     * @expectedException \RuntimeException
+     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testEagerLoadingBelongsToManyList()
