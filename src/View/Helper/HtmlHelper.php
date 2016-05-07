@@ -864,7 +864,7 @@ class HtmlHelper extends Helper
      * - `path` string Path to the image file, relative to the app/webroot/img/ directory.
      *   `options` Reference HtmlHelper::image - options
      *
-     * @param array $multipleImages Array of image paths or Array of path and options. See above for special options.
+     * @param array $multipleImages Array of image paths or Array of path and options. See above for Multi Image structure.
      * @return string of multiple image tags
      */
     public function images(array $multipleImages)
