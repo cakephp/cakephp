@@ -173,7 +173,8 @@ class Stream
     {
         $body = $request->getBody();
         if (empty($body)) {
-            return $this->_contextOptions['content'] = '';
+            $this->_contextOptions['content'] = '';
+            return;
         }
         $body->rewind();
         $this->_contextOptions['content'] = $body->getContents();
