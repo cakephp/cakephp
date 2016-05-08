@@ -29,7 +29,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.tags'];
+    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.tags', 'core.categories'];
 
     /**
      * Tear down
@@ -431,6 +431,29 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $this->assertEquals($entity, $table->save($entity));
         $this->assertEquals([], $entity->errors('author_id'));
+    }
+
+    /**
+     * Test ExistsIn on not dirty field in new Entity
+     *
+     * @return
+     */
+    public function testExistsInNotNullValue()
+    {
+        $entity = new Entity([
+            'name' => 'A Category',
+        ]);
+
+        $table = TableRegistry::get('Categories');
+        $table->belongsTo('Categories', [
+            'foreignKey' => 'parent_id',
+            'bindingKey' => 'id',
+        ]);
+        $rules = $table->rulesChecker();
+        $rules->add($rules->existsIn('parent_id', 'Categories'));
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->errors('parent_id'));
     }
 
     /**
