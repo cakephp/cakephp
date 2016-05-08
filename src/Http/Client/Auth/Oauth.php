@@ -206,7 +206,9 @@ class Oauth
 
         $post = [];
         $body = $request->body();
-
+        if (is_string($body) && $request->getHeaderLine('content-type') === 'application/x-www-form-urlencoded') {
+            parse_str($body, $post);
+        }
         if (is_array($body)) {
             $post = $body;
         }
