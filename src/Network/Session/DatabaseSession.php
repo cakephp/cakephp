@@ -108,7 +108,13 @@ class DatabaseSession implements SessionHandlerInterface
             return $result['data'];
         }
 
-        return stream_get_contents($result['data']);
+        $session = stream_get_contents($result['data']);
+
+        if ($session === false) {
+            return '';
+        }
+        
+        return $session;
     }
 
     /**
