@@ -142,11 +142,20 @@ class ApcEngine extends CacheEngine
         if ($check) {
             return true;
         }
-        $iterator = new APCUIterator(
-            '/^' . preg_quote($this->_config['prefix'], '/') . '/',
-            APC_ITER_NONE
-        );
-        apcu_delete($iterator);
+        if (class_exists('APCIterator', false)) {
+            $iterator = new APCUIterator(
+                '/^' . preg_quote($this->_config['prefix'], '/') . '/',
+                APC_ITER_NONE
+            );
+            apcu_delete($iterator);
+            return true;
+        }
+        $cache = apcu_cache_info();
+        foreach ($cache['cache_list'] as $key) {
+            if (strpos($key['info'], $this->_config['prefix']) === 0) {
+                apcu_delete($key['info']);
+            }
+        }
         return true;
     }
 
