@@ -29,7 +29,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.tags'];
+    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.tags', 'core.categories'];
 
     /**
      * Tear down
@@ -415,7 +415,7 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * ExistsIn uses the schema to verify that nullable fields are ok.
      *
-     * @return
+     * @return void
      */
     public function testExistsInNullValue()
     {
@@ -434,9 +434,32 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Test ExistsIn on not dirty field in new Entity
+     *
+     * @return void
+     */
+    public function testExistsInNotNullValue()
+    {
+        $entity = new Entity([
+            'name' => 'A Category',
+        ]);
+
+        $table = TableRegistry::get('Categories');
+        $table->belongsTo('Categories', [
+            'foreignKey' => 'parent_id',
+            'bindingKey' => 'id',
+        ]);
+        $rules = $table->rulesChecker();
+        $rules->add($rules->existsIn('parent_id', 'Categories'));
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->errors('parent_id'));
+    }
+
+    /**
      * Tests exists in uses the bindingKey of the association
      *
-     * @return
+     * @return void
      */
     public function testExistsInWithBindingKey()
     {
