@@ -415,7 +415,7 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * ExistsIn uses the schema to verify that nullable fields are ok.
      *
-     * @return
+     * @return void
      */
     public function testExistsInNullValue()
     {
@@ -436,7 +436,7 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Test ExistsIn on not dirty field in new Entity
      *
-     * @return
+     * @return void
      */
     public function testExistsInNotNullValue()
     {
@@ -459,7 +459,7 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests exists in uses the bindingKey of the association
      *
-     * @return
+     * @return void
      */
     public function testExistsInWithBindingKey()
     {
