@@ -206,7 +206,7 @@ class Request extends Message implements RequestInterface
      * Array data will be serialized with Cake\Http\FormData,
      * and the content-type will be set.
      *
-     * @param string|null $body The body for the request. Leave null for get
+     * @param string|array|null $body The body for the request. Leave null for get
      * @return mixed Either $this or the body value.
      */
     public function body($body = null)
