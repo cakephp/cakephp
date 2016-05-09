@@ -218,10 +218,7 @@ class ValidatorTest extends TestCase
             true
         );
         $this->assertFalse($validator->field('title')->isPresenceRequired());
-        $this->assertEquals(
-            'update',
-            $validator->field('content')->isPresenceRequired()
-        );
+        $this->assertEquals('update', $validator->field('content')->isPresenceRequired());
         $this->assertTrue($validator->field('subject')->isPresenceRequired());
     }
 
@@ -584,20 +581,11 @@ class ValidatorTest extends TestCase
             ],
             'create'
         );
-        $this->assertEquals(
-            'create',
-            $validator->field('title')->isEmptyAllowed()
-        );
-        $this->assertEquals(
-            'create',
-            $validator->field('subject')->isEmptyAllowed()
-        );
+        $this->assertEquals('create', $validator->field('title')->isEmptyAllowed());
+        $this->assertEquals('create', $validator->field('subject')->isEmptyAllowed());
         $this->assertFalse($validator->field('posted_at')->isEmptyAllowed());
         $this->assertTrue($validator->field('updated_at')->isEmptyAllowed());
-        $this->assertEquals(
-            'update',
-            $validator->field('show_at')->isEmptyAllowed()
-        );
+        $this->assertEquals('update', $validator->field('show_at')->isEmptyAllowed());
     }
 
     /**
