@@ -440,7 +440,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * You can also set mode and message for all passed fields, the individual
      * setting takes precedence over group settings.
      *
-     * @param string|array $field the name of the field
+     * @param string|array $field the name of the field or list of fields
      * @param bool|string|callable $mode Valid values are true, false, 'create', 'update'.
      * If a callable is passed then the field will be required only when the callback
      * returns true.
@@ -514,7 +514,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Because this and `notEmpty()` modify the same internal state, the last
      * method called will take precedence.
      *
-     * @param string $field the name of the field
+     * @param string|array $field the name of the field or list of fields
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true (always), 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
@@ -610,7 +610,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Because this and `allowEmpty()` modify the same internal state, the last
      * method called will take precedence.
      *
-     * @param string $field the name of the field
+     * @param string|array $field the name of the field or list of fields
      * @param string|null $message The message to show if the field is not
      * @param bool|string|callable $when Indicates when the field is not allowed
      * to be empty. Valid values are true (always), 'create', 'update'. If a
