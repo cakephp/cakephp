@@ -142,7 +142,7 @@ class ApcEngine extends CacheEngine
         if ($check) {
             return true;
         }
-        if (class_exists('APCIterator', false)) {
+        if (class_exists('APCUIterator', false)) {
             $iterator = new APCUIterator(
                 '/^' . preg_quote($this->_config['prefix'], '/') . '/',
                 APC_ITER_NONE
