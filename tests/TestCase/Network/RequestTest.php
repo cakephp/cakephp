@@ -574,6 +574,10 @@ class RequestTest extends TestCase
         $result = $request->referer(true);
         $this->assertSame('/some/path', $result);
 
+        $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/');
+        $result = $request->referer(true);
+        $this->assertSame('/', $result);
+
         $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
         $result = $request->referer(false);
         $this->assertSame(Configure::read('App.fullBaseUrl') . '/some/path', $result);
