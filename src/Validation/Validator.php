@@ -474,11 +474,15 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true (always), 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
+     * @param string|null $message The message to show if the field is not
      * @return $this
      */
-    public function allowEmpty($field, $when = true)
+    public function allowEmpty($field, $when = true, $message = null)
     {
         $this->field($field)->isEmptyAllowed($when);
+        if ($message) {
+            $this->_allowEmptyMessages[$field] = $message;
+        }
         return $this;
     }
 
