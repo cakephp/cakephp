@@ -203,7 +203,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['subcommands', 'app.sample']);
         $output = $this->out->output;
 
-        $expected = "derp sample\n";
+        $expected = "derp load sample\n";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -261,7 +261,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['subcommands', 'sample']);
         $output = $this->out->output;
 
-        $expected = "derp sample\n";
+        $expected = "derp load sample\n";
         $this->assertTextEquals($expected, $output);
     }
 
