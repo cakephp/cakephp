@@ -553,8 +553,7 @@ class HasManyTest extends TestCase
             ->select([
                 'id',
                 'slug' => $query->func()->concat([
-                    'id' => 'identifier',
-                    '-',
+                    '---',
                     'name' => 'identifier'
                 ])
             ])
