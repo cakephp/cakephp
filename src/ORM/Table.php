@@ -35,6 +35,7 @@ use Cake\ORM\Association\HasOne;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
+use Cake\Validation\Validation;
 use Cake\Validation\ValidatorAwareTrait;
 use InvalidArgumentException;
 use RuntimeException;

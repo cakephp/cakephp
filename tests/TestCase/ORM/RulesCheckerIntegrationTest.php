@@ -883,4 +883,57 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $this->assertSame($entity, $table->save($entity));
     }
+
+    /**
+     * Tests that associated items have a count of X.
+     *
+     * @group save
+     * @return void
+     */
+    public function testCountOfAssociatedItems()
+    {
+        $entity = new \Cake\ORM\Entity([
+            'title' => 'A Title',
+            'body' => 'A body'
+        ]);
+        $entity->tags = [
+            new \Cake\ORM\Entity([
+                'name' => 'Something New'
+            ]),
+            new \Cake\ORM\Entity([
+                'name' => '100'
+            ])
+        ];
+
+        TableRegistry::get('ArticlesTags');
+
+        $table = TableRegistry::get('articles');
+        $table->belongsToMany('tags');
+
+        $rules = $table->rulesChecker();
+        $rules->add($rules->validCount('tags', 3));
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals($entity->errors(), [
+            'tags' => [
+                '_validCount' => 'The count does not match >3'
+            ]
+        ]);
+
+        // Testing that undesired types fail
+        $entity->tags = null;
+        $this->assertFalse($table->save($entity));
+
+        $entity->tags = new \stdClass();
+        $this->assertFalse($table->save($entity));
+
+        $entity->tags = 'string';
+        $this->assertFalse($table->save($entity));
+
+        $entity->tags = 123456;
+        $this->assertFalse($table->save($entity));
+
+        $entity->tags = 0.512;
+        $this->assertFalse($table->save($entity));
+    }
 }
