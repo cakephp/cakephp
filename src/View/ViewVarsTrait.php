@@ -70,8 +70,8 @@ trait ViewVarsTrait
     public function createView($viewClass = null)
     {
         $builder = $this->viewBuilder();
-        if ($viewClass === null) {
-            $viewClass = $this->viewClass;
+        if ($viewClass === null && $builder->className() === null) {
+            $builder->className($this->viewClass);
         }
         if ($viewClass) {
             $builder->className($viewClass);
