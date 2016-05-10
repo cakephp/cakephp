@@ -16,6 +16,7 @@ namespace Cake\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\TupleComparison;
+use Cake\Database\ValueBinder;
 use InvalidArgumentException;
 
 /**
@@ -222,7 +223,7 @@ trait SelectableAssociationTrait
         $filterQuery->mapReduce(null, null, true);
         $filterQuery->formatResults(null, true);
         $filterQuery->contain([], true);
-        $filterQuery->valueBinder()->resetCount();
+        $filterQuery->valueBinder(new ValueBinder());
 
         if (!$filterQuery->clause('limit')) {
             $filterQuery->limit(null);

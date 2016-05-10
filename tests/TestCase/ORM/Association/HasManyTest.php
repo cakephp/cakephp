@@ -20,6 +20,7 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\IdentifierQuoter;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
+use Cake\ORM\Association;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
@@ -533,6 +534,35 @@ class HasManyTest extends TestCase
         ];
         $association = new HasMany('Contacts.Addresses', $config);
         $this->assertEquals('addresses', $association->property());
+    }
+
+    /**
+     * Test that the ValueBinder is reset when using strategy = Association::STRATEGY_SUBQUERY
+     *
+     * @return void
+     */
+    public function testValueBinderUpdateOnSubQueryStrategy()
+    {
+        $Authors = TableRegistry::get('Authors');
+        $Authors->hasMany('Articles', [
+            'strategy' => Association::STRATEGY_SUBQUERY
+        ]);
+
+        $query = $Authors->find();
+        $authorsAndArticles = $query
+            ->select([
+                'id',
+                'slug' => $query->func()->concat([
+                    'id' => 'identifier',
+                    '-',
+                    'name' => 'identifier'
+                ])
+            ])
+            ->contain('Articles')
+            ->where(['name' => 'mariano'])
+            ->first();
+
+        $this->assertCount(2, $authorsAndArticles->get('articles'));
     }
 
     /**
