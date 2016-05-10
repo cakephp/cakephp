@@ -222,6 +222,7 @@ trait SelectableAssociationTrait
         $filterQuery->mapReduce(null, null, true);
         $filterQuery->formatResults(null, true);
         $filterQuery->contain([], true);
+        $filterQuery->valueBinder()->resetCount();
 
         if (!$filterQuery->clause('limit')) {
             $filterQuery->limit(null);
