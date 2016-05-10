@@ -14,10 +14,10 @@
  */
 namespace Cake\ORM\Rule;
 
-use Countable;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\Validation\Validation;
+use Countable;
 
 /**
  * Validates the count of associated records.
