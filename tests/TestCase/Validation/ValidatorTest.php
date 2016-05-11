@@ -203,18 +203,15 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->field('title')->isPresenceRequired());
         $this->assertTrue($validator->field('created')->isPresenceRequired());
 
-        $validator->requirePresence(
-            [
-                'title' => [
-                    'mode' => false
-                ],
-                'content' => [
-                    'mode' => 'update'
-                ],
-                'subject'
+        $validator->requirePresence([
+            'title' => [
+                'mode' => false
             ],
-            true
-        );
+            'content' => [
+                'mode' => 'update'
+            ],
+            'subject'
+        ], true);
         $this->assertFalse($validator->field('title')->isPresenceRequired());
         $this->assertEquals('update', $validator->field('content')->isPresenceRequired());
         $this->assertTrue($validator->field('subject')->isPresenceRequired());
@@ -561,22 +558,19 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator;
 
-        $validator->allowEmpty(
-            [
-                'title',
-                'subject',
-                'posted_at' => [
-                    'when' => false
-                ],
-                'updated_at' => [
-                    'when' => true
-                ],
-                'show_at' => [
-                    'when' => 'update'
-                ]
+        $validator->allowEmpty([
+            'title',
+            'subject',
+            'posted_at' => [
+                'when' => false
             ],
-            'create'
-        );
+            'updated_at' => [
+                'when' => true
+            ],
+            'show_at' => [
+                'when' => 'update'
+            ]
+        ], 'create');
         $this->assertEquals('create', $validator->field('title')->isEmptyAllowed());
         $this->assertEquals('create', $validator->field('subject')->isEmptyAllowed());
         $this->assertFalse($validator->field('posted_at')->isEmptyAllowed());
@@ -623,26 +617,22 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->field('title')->isEmptyAllowed());
         $this->assertFalse($validator->field('created')->isEmptyAllowed());
 
-        $validator->notEmpty(
-            [
-                'title' => [
-                    'when' => false
-                ],
-                'content' => [
-                    'when' => 'update'
-                ],
-                'posted_at' => [
-                    'when' => 'create'
-                ],
-                'show_at' => [
-                    'message' => 'Show date cannot be empty',
-                    'when' => false
-                ],
-                'subject'
+        $validator->notEmpty([
+            'title' => [
+                'when' => false
             ],
-            'Not empty',
-            true
-        );
+            'content' => [
+                'when' => 'update'
+            ],
+            'posted_at' => [
+                'when' => 'create'
+            ],
+            'show_at' => [
+                'message' => 'Show date cannot be empty',
+                'when' => false
+            ],
+            'subject'
+        ], 'Not empty', true);
 
         $this->assertFalse($validator->field('title')->isEmptyAllowed());
         $this->assertTrue($validator->isEmptyAllowed('content', true));
@@ -651,16 +641,13 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->isEmptyAllowed('posted_at', false));
         $this->assertTrue($validator->field('subject')->isEmptyAllowed());
 
-        $errors = $validator->errors(
-            [
-                'title' => '',
-                'content' => '',
-                'posted_at' => null,
-                'show_at' => null,
-                'subject' => ''
-            ],
-            false
-        );
+        $errors = $validator->errors([
+            'title' => '',
+            'content' => '',
+            'posted_at' => null,
+            'show_at' => null,
+            'subject' => ''
+        ], false);
 
         $expected = [
             'title' => ['_empty' => 'Not empty'],
@@ -948,7 +935,6 @@ class ValidatorTest extends TestCase
                     'field' => 'title'
                 ];
                 $this->assertEquals($expected, $context);
-
                 return "That ain't cool, yo";
             }));
 
@@ -994,7 +980,6 @@ class ValidatorTest extends TestCase
                     'field' => 'title'
                 ];
                 $this->assertEquals($expected, $context);
-
                 return "That ain't cool, yo";
             }));
         $validator->provider('thing', $thing);
@@ -1016,7 +1001,6 @@ class ValidatorTest extends TestCase
         $validator->add('name', 'myRule', [
             'rule' => function ($data, $provider) {
                 $this->assertEquals('foo', $data);
-
                 return 'You fail';
             }
         ]);

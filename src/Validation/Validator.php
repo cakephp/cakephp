@@ -158,7 +158,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $set = $set ?: new ValidationSet;
             $this->_fields[$name] = $set;
         }
-
         return $this->_fields[$name];
     }
 
@@ -318,6 +317,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         foreach ($rules as $name => $rule) {
             $field->add($name, $rule);
         }
+
         return $this;
     }
 
@@ -349,7 +349,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 $validator->provider($provider, $this->provider($provider));
             }
             $errors = $validator->errors($value, $context['newRecord']);
-
             return empty($errors) ? true : $errors;
         }]);
         return $this;
@@ -392,7 +391,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                     $errors[$i] = $check;
                 }
             }
-
             return empty($errors) ? true : $errors;
         }]);
         return $this;
@@ -1444,7 +1442,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function hasAtLeast($field, $count, $message = null, $when = null)
     {
         $extra = array_filter(['on' => $when, 'message' => $message]);
-
         return $this->add($field, 'hasAtLeast', $extra + [
             'rule' => function ($value) use ($count) {
                 if (is_array($value) && isset($value['_ids'])) {
@@ -1470,7 +1467,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function hasAtMost($field, $count, $message = null, $when = null)
     {
         $extra = array_filter(['on' => $when, 'message' => $message]);
-
         return $this->add($field, 'hasAtMost', $extra + [
             'rule' => function ($value) use ($count) {
                 if (is_array($value) && isset($value['_ids'])) {
@@ -1536,6 +1532,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 ($required === 'update' && $newRecord)
             );
         }
+
         return !$required;
     }
 
@@ -1561,6 +1558,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 ($allowed === 'update' && !$newRecord)
             );
         }
+
         return $allowed;
     }
 
@@ -1578,7 +1576,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $isArray = is_array($data);
         if ($isArray && (isset($data['year']) || isset($data['hour']))) {
             $value = implode('', $data);
-
             return strlen($value) === 0;
         }
         if ($isArray && isset($data['name'], $data['type'], $data['tmp_name'], $data['error'])) {
