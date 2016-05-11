@@ -74,7 +74,6 @@ class ValidatorTest extends TestCase
         $inner = new Validator();
         $inner->add('username', 'not-blank', ['rule' => function () use ($inner, $validator) {
             $this->assertSame($validator->providers(), $inner->providers(), 'Providers should match');
-
             return false;
         }]);
         $validator->addNested('user', $inner);
@@ -111,7 +110,6 @@ class ValidatorTest extends TestCase
         $inner = new Validator();
         $inner->add('comment', 'not-blank', ['rule' => function () use ($inner, $validator) {
             $this->assertSame($validator->providers(), $inner->providers(), 'Providers should match');
-
             return false;
         }]);
         $validator->addNestedMany('comments', $inner);
@@ -226,7 +224,6 @@ class ValidatorTest extends TestCase
      * Tests the requirePresence failure case
      *
      * @expectedException InvalidArgumentException
-     *
      * @return void
      */
     public function testRequirePresenceAsArrayFailure()
@@ -249,7 +246,6 @@ class ValidatorTest extends TestCase
             $this->assertEquals([], $context['providers']);
             $this->assertEquals('title', $context['field']);
             $this->assertTrue($context['newRecord']);
-
             return $require;
         });
         $this->assertTrue($validator->isPresenceRequired('title', true));
@@ -592,7 +588,6 @@ class ValidatorTest extends TestCase
      * Tests the allowEmpty failure case
      *
      * @expectedException InvalidArgumentException
-     *
      * @return void
      */
     public function testAllowEmptyAsArrayFailure()
@@ -679,7 +674,6 @@ class ValidatorTest extends TestCase
      * Tests the notEmpty failure case
      *
      * @expectedException InvalidArgumentException
-     *
      * @return void
      */
     public function testNotEmptyAsArrayFailure()
@@ -750,7 +744,6 @@ class ValidatorTest extends TestCase
             $this->assertEquals([], $context['data']);
             $this->assertEquals([], $context['providers']);
             $this->assertTrue($context['newRecord']);
-
             return $allow;
         });
         $this->assertTrue($validator->isEmptyAllowed('title', true));
@@ -772,7 +765,6 @@ class ValidatorTest extends TestCase
             $this->assertEquals([], $context['data']);
             $this->assertEquals([], $context['providers']);
             $this->assertFalse($context['newRecord']);
-
             return $prevent;
         });
         $this->assertFalse($validator->isEmptyAllowed('title', false));
