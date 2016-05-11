@@ -92,7 +92,7 @@ class ExistsIn
             $source = $source->source();
         }
 
-        if (!$entity->extract($this->_fields, true)) {
+        if (!$entity->extract($this->_fields, true) && !$entity->isNew()) {
             return true;
         }
 

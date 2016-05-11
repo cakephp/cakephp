@@ -712,7 +712,21 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests custom error mesages generated when a field is not allowed to be empty
+     * Tests custom error messages generated when a field is allowed to be empty
+     *
+     * @return void
+     */
+    public function testCustomErrorsWithAllowedEmpty()
+    {
+        $validator = new Validator;
+        $validator->allowEmpty('title', false, 'Custom message');
+        $errors = $validator->errors(['title' => null]);
+        $expected = ['title' => ['_empty' => 'Custom message']];
+        $this->assertEquals($expected, $errors);
+    }
+
+    /**
+     * Tests custom error messages generated when a field is not allowed to be empty
      *
      * @return void
      */
