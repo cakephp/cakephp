@@ -527,7 +527,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $fieldName = current(array_keys($settings));
 
             $this->field($fieldName)->isEmptyAllowed($settings[$fieldName]['when']);
-            if ($message) {
+            if ($settings[$fieldName]['message']) {
                 $this->_allowEmptyMessages[$fieldName] = $settings[$fieldName]['message'];
             }
         }
