@@ -163,7 +163,7 @@ class CommandTask extends Shell
             }
         }
 
-        $return += array_diff($methodNames, $shellMethodNames);
+        $return = array_merge($return, array_diff($methodNames, $shellMethodNames));
         sort($return);
 
         return $return;

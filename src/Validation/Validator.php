@@ -463,6 +463,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Using an array will let you provide the following keys:
      *
      * - `when` individual when condition for field
+     * - 'message' individual message for field
      *
      * You can also set when and message for all passed fields, the individual setting
      * takes precedence over group settings.
@@ -483,10 +484,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *          'email' => [
      *              'when' => true
      *          ],
+     *          'content' => [
+     *              'message' => 'Content cannot be empty'
+     *          ],
      *          'subject'
      *      ],
      *      'update'
-     * ); // Email can be always empty on and subject can be empty on update
+     * ); // Email can be always empty, subject and content can be empty on update
      *
      * ```
      *
@@ -509,19 +513,23 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true (always), 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
+     * @param string|null $message The message to show if the field is not
      * @return $this
      */
-    public function allowEmpty($field, $when = true)
+    public function allowEmpty($field, $when = true, $message = null)
     {
         if (!is_array($field)) {
-            $field = $this->_convertValidatorToArray($field, ['when'], [$when]);
+            $field = $this->_convertValidatorToArray($field, ['when', 'message'], [$when, $message]);
         }
 
         foreach ($field as $fieldName => $setting) {
-            $settings = $this->_convertValidatorToArray($fieldName, ['when'], [$when], $setting);
+            $settings = $this->_convertValidatorToArray($fieldName, ['when', 'message'], [$when, $message], $setting);
             $fieldName = current(array_keys($settings));
 
             $this->field($fieldName)->isEmptyAllowed($settings[$fieldName]['when']);
+            if ($message) {
+                $this->_allowEmptyMessages[$fieldName] = $settings[$fieldName]['message'];
+            }
         }
         return $this;
     }

@@ -547,6 +547,9 @@ class Request implements ArrayAccess
         if (!empty($ref) && !empty($base)) {
             if ($local && strpos($ref, $base) === 0) {
                 $ref = substr($ref, strlen($base));
+                if (!strlen($ref)) {
+                    $ref = '/';
+                }
                 if ($ref[0] !== '/') {
                     $ref = '/' . $ref;
                 }
