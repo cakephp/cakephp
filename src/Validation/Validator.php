@@ -529,12 +529,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Converts validator to fieldName => $setting array
+     * Converts validator to fieldName => $settings array
      *
-     * @param integer|string $fieldName name of field
+     * @param int|string $fieldName name of field
      * @param array $settingKeys keys that will be used to create default settings
      * @param array $settingsValues values that will be used to create default settings
-     * @param string|array $setting settings from data
+     * @param string|array $settings settings from data
      * @return array
      */
     protected function _convertValidatorToArray($fieldName, $settingKeys = [], $settingsValues = [], $settings = [])
