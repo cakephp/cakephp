@@ -442,12 +442,17 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function requirePresence($field, $mode = true, $message = null)
     {
+        $settingsDefault = [
+            'mode' => $mode,
+            'message' => $message
+        ];
+
         if (!is_array($field)) {
-            $field = $this->_convertValidatorToArray($field, ['mode', 'message'], [$mode, $message]);
+            $field = $this->_convertValidatorToArray($field, $settingsDefault);
         }
 
         foreach ($field as $fieldName => $setting) {
-            $settings = $this->_convertValidatorToArray($fieldName, ['mode', 'message'], [$mode, $message], $setting);
+            $settings = $this->_convertValidatorToArray($fieldName, $settingsDefault, $setting);
             $fieldName = current(array_keys($settings));
 
             $this->field($fieldName)->isPresenceRequired($settings[$fieldName]['mode']);
@@ -518,12 +523,17 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function allowEmpty($field, $when = true, $message = null)
     {
+        $settingsDefault = [
+            'when' => $when,
+            'message' => $message
+        ];
+
         if (!is_array($field)) {
-            $field = $this->_convertValidatorToArray($field, ['when', 'message'], [$when, $message]);
+            $field = $this->_convertValidatorToArray($field, $settingsDefault);
         }
 
         foreach ($field as $fieldName => $setting) {
-            $settings = $this->_convertValidatorToArray($fieldName, ['when', 'message'], [$when, $message], $setting);
+            $settings = $this->_convertValidatorToArray($fieldName, $settingsDefault, $setting);
             $fieldName = current(array_keys($settings));
 
             $this->field($fieldName)->isEmptyAllowed($settings[$fieldName]['when']);
@@ -538,12 +548,11 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Converts validator to fieldName => $settings array
      *
      * @param int|string $fieldName name of field
-     * @param array $settingKeys keys that will be used to create default settings
-     * @param array $settingsValues values that will be used to create default settings
+     * @param array $settingDefaults default settings
      * @param string|array $settings settings from data
      * @return array
      */
-    protected function _convertValidatorToArray($fieldName, $settingKeys = [], $settingsValues = [], $settings = [])
+    protected function _convertValidatorToArray($fieldName, $settingDefaults = [], $settings = [])
     {
         if (is_string($settings)) {
             $fieldName = $settings;
@@ -554,7 +563,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 sprintf('Invalid field "%s" setting, must be an array.', $fieldName)
             );
         }
-        $settings += array_combine($settingKeys, $settingsValues);
+        $settings += $settingDefaults;
         return [$fieldName => $settings];
     }
 
@@ -618,21 +627,17 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function notEmpty($field, $message = null, $when = false)
     {
+        $settingsDefault = [
+            'when' => $when,
+            'message' => $message
+        ];
+
         if (!is_array($field)) {
-            $field = $this->_convertValidatorToArray(
-                $field,
-                ['when', 'message'],
-                [$when, $message]
-            );
+            $field = $this->_convertValidatorToArray($field, $settingsDefault);
         }
 
         foreach ($field as $fieldName => $setting) {
-            $settings = $this->_convertValidatorToArray(
-                $fieldName,
-                ['when', 'message'],
-                [$when, $message],
-                $setting
-            );
+            $settings = $this->_convertValidatorToArray($fieldName, $settingsDefault, $setting);
             $fieldName = current(array_keys($settings));
             $whenSetting = $settings[$fieldName]['when'];
 

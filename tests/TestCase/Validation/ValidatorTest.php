@@ -562,7 +562,8 @@ class ValidatorTest extends TestCase
             'title',
             'subject',
             'posted_at' => [
-                'when' => false
+                'when' => false,
+                'message' => 'Post time cannot be empty'
             ],
             'updated_at' => [
                 'when' => true
@@ -570,12 +571,27 @@ class ValidatorTest extends TestCase
             'show_at' => [
                 'when' => 'update'
             ]
-        ], 'create');
+        ], 'create', 'Cannot be empty');
         $this->assertEquals('create', $validator->field('title')->isEmptyAllowed());
         $this->assertEquals('create', $validator->field('subject')->isEmptyAllowed());
         $this->assertFalse($validator->field('posted_at')->isEmptyAllowed());
         $this->assertTrue($validator->field('updated_at')->isEmptyAllowed());
         $this->assertEquals('update', $validator->field('show_at')->isEmptyAllowed());
+
+        $errors = $validator->errors([
+            'title' => '',
+            'subject' => null,
+            'posted_at' => null,
+            'updated_at' => null,
+            'show_at' => ''
+        ], false);
+
+        $expected = [
+            'title' => ['_empty' => 'Cannot be empty'],
+            'subject' => ['_empty' => 'Cannot be empty'],
+            'posted_at' => ['_empty' => 'Post time cannot be empty']
+        ];
+        $this->assertEquals($expected, $errors);
     }
 
     /**
