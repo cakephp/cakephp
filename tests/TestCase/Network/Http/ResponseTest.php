@@ -147,6 +147,16 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test accessor for json
+     *
+     * @return void
+     */
+    public function testBodyJsonPsr7()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
      * Test accessor for xml
      *
      * @return void
@@ -279,6 +289,16 @@ XML;
     }
 
     /**
+     * Test accessing cookies set through the PSR7 interface.
+     *
+     * @return void
+     */
+    public function testCookiesPsr7()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
      * Test statusCode()
      *
      * @return void
@@ -291,6 +311,7 @@ XML;
         ];
         $response = new Response($headers, '');
         $this->assertEquals(404, $response->statusCode());
+        $this->assertEquals(404, $response->getStatusCode());
 
         $this->assertEquals(404, $response->code);
         $this->assertTrue(isset($response->code));
@@ -314,6 +335,7 @@ XML;
             'Content-Type: text/html'
         ];
         $response = new Response($headers, '');
+        $this->assertNull($response->getEncoding());
         $this->assertNull($response->encoding());
 
         $headers = [
@@ -321,6 +343,7 @@ XML;
             'Content-Type: text/html; charset="UTF-8"'
         ];
         $response = new Response($headers, '');
+        $this->assertEquals('UTF-8', $response->getEncoding());
         $this->assertEquals('UTF-8', $response->encoding());
 
         $headers = [
@@ -328,6 +351,7 @@ XML;
             "Content-Type: text/html; charset='ISO-8859-1'"
         ];
         $response = new Response($headers, '');
+        $this->assertEquals('ISO-8859-1', $response->getEncoding());
         $this->assertEquals('ISO-8859-1', $response->encoding());
     }
 

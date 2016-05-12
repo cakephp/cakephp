@@ -332,8 +332,19 @@ class Response extends Message implements ResponseInterface
      * Get the encoding if it was set.
      *
      * @return string|null
+     * @deprecated 3.3.0 Use getEncoding() instead.
      */
     public function encoding()
+    {
+        return $this->getEncoding();
+    }
+
+    /**
+     * Get the encoding if it was set.
+     *
+     * @return string|null
+     */
+    public function getEncoding()
     {
         $content = $this->getHeaderLine('content-type');
         if (!$content) {
