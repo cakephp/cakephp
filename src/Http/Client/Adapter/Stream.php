@@ -145,8 +145,8 @@ class Stream
     protected function _buildHeaders(Request $request, $options)
     {
         $headers = [];
-        foreach ($request->headers() as $name => $value) {
-            $headers[] = "$name: $value";
+        foreach ($request->getHeaders() as $name => $values) {
+            $headers[] = sprintf('%s: %s', $name, implode(", ", $values));
         }
 
         $cookies = [];
@@ -171,23 +171,13 @@ class Stream
      */
     protected function _buildContent(Request $request, $options)
     {
-        $content = $request->body();
-        if (empty($content)) {
+        $body = $request->getBody();
+        if (empty($body)) {
+            $this->_contextOptions['content'] = '';
             return;
         }
-        if (is_string($content)) {
-            $this->_contextOptions['content'] = $content;
-            return;
-        }
-        if (is_array($content)) {
-            $formData = new FormData();
-            $formData->addMany($content);
-            $type = $formData->contentType();
-            $request->header('Content-Type', $type);
-            $this->_contextOptions['content'] = (string)$formData;
-            return;
-        }
-        $this->_contextOptions['content'] = $content;
+        $body->rewind();
+        $this->_contextOptions['content'] = $body->getContents();
     }
 
     /**

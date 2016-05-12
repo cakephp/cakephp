@@ -14,80 +14,77 @@
 namespace Cake\Http\Client;
 
 use Cake\Core\Exception\Exception;
+use Psr\Http\Message\RequestInterface;
+use Zend\Diactoros\MessageTrait;
+use Zend\Diactoros\RequestTrait;
+use Zend\Diactoros\Stream;
 
 /**
  * Implements methods for HTTP requests.
  *
  * Used by Cake\Network\Http\Client to contain request information
  * for making requests.
- *
  */
-class Request extends Message
+class Request extends Message implements RequestInterface
 {
+    use MessageTrait;
+    use RequestTrait;
 
     /**
-     * The HTTP method to use.
+     * Constructor
      *
-     * @var string
+     * Provides backwards compatible defaults for some properties.
      */
-    protected $_method = self::METHOD_GET;
+    public function __construct()
+    {
+        $this->method = static::METHOD_GET;
 
-    /**
-     * Request body to send.
-     *
-     * @var mixed
-     */
-    protected $_body;
-
-    /**
-     * The URL to request.
-     *
-     * @var string
-     */
-    protected $_url;
-
-    /**
-     * Headers to be sent.
-     *
-     * @var array
-     */
-    protected $_headers = [
-        'Connection' => 'close',
-        'User-Agent' => 'CakePHP'
-    ];
+        $this->header([
+            'Connection' => 'close',
+            'User-Agent' => 'CakePHP'
+        ]);
+    }
 
     /**
      * Get/Set the HTTP method.
      *
+     * *Warning* This method mutates the request in-place for backwards
+     * compatibility reasons, and is not part of the PSR7 interface.
+     *
      * @param string|null $method The method for the request.
      * @return $this|string Either this or the current method.
      * @throws \Cake\Core\Exception\Exception On invalid methods.
+     * @deprecated 3.3.0 Use getMethod() and withMethod() instead.
      */
     public function method($method = null)
     {
         if ($method === null) {
-            return $this->_method;
+            return $this->method;
         }
         $name = get_called_class() . '::METHOD_' . strtoupper($method);
         if (!defined($name)) {
             throw new Exception('Invalid method type');
         }
-        $this->_method = $method;
+        $this->method = $method;
         return $this;
     }
 
     /**
      * Get/Set the url for the request.
      *
+     * *Warning* This method mutates the request in-place for backwards
+     * compatibility reasons, and is not part of the PSR7 interface.
+     *
      * @param string|null $url The url for the request. Leave null for get
      * @return $this|string Either $this or the url value.
+     * @deprecated 3.3.0 Use getUri() and withUri() instead.
      */
     public function url($url = null)
     {
         if ($url === null) {
-            return $this->_url;
+            return '' . $this->getUri();
         }
-        $this->_url = $url;
+        $this->uri = $this->createUri($url);
         return $this;
     }
 
@@ -115,22 +112,31 @@ class Request extends Message
      * $request->header(['Connection' => 'close', 'User-Agent' => 'CakePHP']);
      * ```
      *
+     * *Warning* This method mutates the request in-place for backwards
+     * compatibility reasons, and is not part of the PSR7 interface.
+     *
      * @param string|array|null $name The name to get, or array of multiple values to set.
      * @param string|null $value The value to set for the header.
      * @return mixed Either $this when setting or header value when getting.
+     * @deprecated 3.3.0 Use withHeader() and getHeaderLine() instead.
      */
     public function header($name = null, $value = null)
     {
         if ($value === null && is_string($name)) {
-            $name = $this->_normalizeHeader($name);
-            return isset($this->_headers[$name]) ? $this->_headers[$name] : null;
+            $val = $this->getHeaderLine($name);
+            if ($val === '') {
+                return null;
+            }
+            return $val;
         }
+
         if ($value !== null && !is_array($name)) {
             $name = [$name => $value];
         }
         foreach ($name as $key => $val) {
-            $key = $this->_normalizeHeader($key);
-            $this->_headers[$key] = $val;
+            $normalized = strtolower($key);
+            $this->headers[$key] = (array)$val;
+            $this->headerNames[$normalized] = $key;
         }
         return $this;
     }
@@ -177,17 +183,47 @@ class Request extends Message
     /**
      * Get/Set HTTP version.
      *
-     * @param string|null $version The HTTP version.
+     * *Warning* This method mutates the request in-place for backwards
+     * compatibility reasons, and is not part of the PSR7 interface.
      *
+     * @param string|null $version The HTTP version.
      * @return $this|string Either $this or the HTTP version.
+     * @deprecated 3.3.0 Use getProtocolVersion() and withProtocolVersion() instead.
      */
     public function version($version = null)
     {
         if ($version === null) {
-            return parent::version();
+            return $this->protocol;
         }
 
-        $this->_version = $version;
+        $this->protocol = $version;
+        return $this;
+    }
+
+    /**
+     * Get/set the body/payload for the message.
+     *
+     * Array data will be serialized with Cake\Http\FormData,
+     * and the content-type will be set.
+     *
+     * @param string|array|null $body The body for the request. Leave null for get
+     * @return mixed Either $this or the body value.
+     */
+    public function body($body = null)
+    {
+        if ($body === null) {
+            $body = $this->getBody();
+            return $body ? $body->__toString() : '';
+        }
+        if (is_array($body)) {
+            $formData = new FormData();
+            $formData->addMany($body);
+            $this->header('Content-Type', $formData->contentType());
+            $body = (string)$formData;
+        }
+        $stream = new Stream('php://memory', 'rw');
+        $stream->write($body);
+        $this->stream = $stream;
         return $this;
     }
 }

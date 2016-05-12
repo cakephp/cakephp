@@ -89,6 +89,12 @@ use RuntimeException;
  */
 class Response extends Message
 {
+    /**
+     * This is temporary until the response is made PSR7 compliant as well.
+     *
+     * @var string
+     */
+    protected $protocol = '1.1';
 
     /**
      * The status code of the response.
@@ -187,7 +193,7 @@ class Response extends Message
         foreach ($headers as $key => $value) {
             if (substr($value, 0, 5) === 'HTTP/') {
                 preg_match('/HTTP\/([\d.]+) ([0-9]+)/i', $value, $matches);
-                $this->_version = $matches[1];
+                $this->protocol = $matches[1];
                 $this->_code = $matches[2];
                 continue;
             }
