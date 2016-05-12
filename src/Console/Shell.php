@@ -640,11 +640,11 @@ class Shell
      *
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return void
+     * @return int|bool Returns the number of bytes returned from writing to stderr.
      */
     public function err($message = null, $newlines = 1)
     {
-        $this->_io->err($message, $newlines);
+        return $this->_io->err('<error>' . $message . '</error>', $newlines);
     }
 
     /**
