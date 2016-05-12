@@ -1227,4 +1227,85 @@ class FolderTest extends CakeTestCase {
 		$Folder->delete();
 	}
 
+/**
+ * testSortByTime method
+ *
+ * Verify that the order using modified time is correct.
+ *
+ * @return void
+ */
+	public function testSortByTime() {
+		$Folder = new Folder(TMP . 'test_sort_by_time', true);
+
+		$file2 = new File($Folder->pwd() . DS . 'file_2.tmp');
+		$file2->create();
+
+		sleep(1);
+
+		$file1 = new File($Folder->pwd() . DS . 'file_1.tmp');
+		$file1->create();
+
+		$expected = array('file_2.tmp', 'file_1.tmp');
+		$result = $Folder->find('.*', Folder::SORT_TIME);
+		$this->assertSame($expected, $result);
+
+		$Folder->delete();
+	}
+
+/**
+ * testSortByTime2 method
+ *
+ * Verify that the sort order using modified time is correct.
+ *
+ * @return void
+ */
+	public function testSortByTime2() {
+		$Folder = new Folder(TMP . 'test_sort_by_time2', true);
+
+		$fileC = new File($Folder->pwd() . DS . 'c.txt');
+		$fileC->create();
+
+		sleep(1);
+
+		$fileA = new File($Folder->pwd() . DS . 'a.txt');
+		$fileA->create();
+
+		sleep(1);
+
+		$fileB = new File($Folder->pwd() . DS . 'b.txt');
+		$fileB->create();
+
+		$expected = array('c.txt', 'a.txt', 'b.txt');
+		$result = $Folder->find('.*', Folder::SORT_TIME);
+		$this->assertSame($expected, $result);
+
+		$Folder->delete();
+	}
+
+/**
+ * Verify that the sort order using name is correct.
+ *
+ * @return void
+ */
+	public function testSortByName() {
+		$Folder = new Folder(TMP . 'test_sort_by_name', true);
+
+		$fileA = new File($Folder->pwd() . DS . 'a.txt');
+		$fileA->create();
+
+		$fileC = new File($Folder->pwd() . DS . 'c.txt');
+		$fileC->create();
+
+		sleep(1);
+
+		$fileB = new File($Folder->pwd() . DS . 'b.txt');
+		$fileB->create();
+
+		$expected = array('a.txt', 'b.txt', 'c.txt');
+		$result = $Folder->find('.*', Folder::SORT_NAME);
+		$this->assertSame($expected, $result);
+
+		$Folder->delete();
+	}
+
 }
