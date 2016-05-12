@@ -21,6 +21,33 @@ use Cake\TestSuite\TestCase;
  */
 class ResponseTest extends TestCase
 {
+    /**
+     * Test parsing headers and reading with PSR7 methods.
+     *
+     * @return void
+     */
+    public function testHeaderParsingPsr7()
+    {
+        $headers = [
+            'HTTP/1.0 200 OK',
+            'Content-Type : text/html;charset="UTF-8"',
+            'date: Tue, 25 Dec 2012 04:43:47 GMT',
+        ];
+        $response = new Response($headers, 'winner!');
+
+        $this->assertEquals('1.0', $response->getProtocolVersion());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('OK', $response->getReasonPhrase());
+        $this->assertEquals(
+            'text/html;charset="UTF-8"',
+            $response->getHeaderLine('content-type')
+        );
+        $this->assertEquals(
+            'Tue, 25 Dec 2012 04:43:47 GMT',
+            $response->getHeaderLine('Date')
+        );
+        $this->assertEquals('winner!', '' . $response->getBody());
+    }
 
     /**
      * Test parsing headers and capturing content
@@ -36,8 +63,8 @@ class ResponseTest extends TestCase
         ];
         $response = new Response($headers, 'ok');
 
-        $this->assertEquals('1.0', $response->version());
         $this->assertEquals(200, $response->statusCode());
+        $this->assertEquals('1.0', $response->version());
         $this->assertEquals(
             'text/html;charset="UTF-8"',
             $response->header('content-type')
