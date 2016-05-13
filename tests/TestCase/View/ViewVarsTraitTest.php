@@ -189,6 +189,44 @@ class ViewVarsTraitTest extends TestCase
     }
 
     /**
+     * test that viewClass is used to create the view
+     *
+     * @return void
+     */
+    public function testCreateViewViewClass()
+    {
+        $this->subject->viewClass = 'Json';
+        $view = $this->subject->createView();
+        $this->assertInstanceof('Cake\View\JsonView', $view);
+    }
+
+    /**
+     * test that viewBuilder settings override viewClass
+     *
+     * @return void
+     */
+    public function testCreateViewViewBuilder()
+    {
+        $this->subject->viewBuilder()->className('Xml');
+        $this->subject->viewClass = 'Json';
+        $view = $this->subject->createView();
+        $this->assertInstanceof('Cake\View\XmlView', $view);
+    }
+
+    /**
+     * test that parameters beats viewBuilder() and viewClass
+     *
+     * @return void
+     */
+    public function testCreateViewParameter()
+    {
+        $this->subject->viewBuilder()->className('View');
+        $this->subject->viewClass = 'Json';
+        $view = $this->subject->createView('Xml');
+        $this->assertInstanceof('Cake\View\XmlView', $view);
+    }
+
+    /**
      * test createView() throws exception if view class cannot be found
      *
      * @expectedException \Cake\View\Exception\MissingViewException

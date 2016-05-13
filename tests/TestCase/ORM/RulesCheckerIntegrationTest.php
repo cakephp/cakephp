@@ -29,7 +29,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.tags'];
+    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.tags', 'core.categories'];
 
     /**
      * Tear down
@@ -370,6 +370,33 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Tests isUnique with multiple fields and a nulled field.
+     *
+     * @group save
+     * @return void
+     */
+    public function testIsUniqueMultipleFieldsOneIsNull()
+    {
+        $entity = new Entity([
+            'author_id' => null,
+            'title' => 'First Article'
+        ]);
+        $table = TableRegistry::get('Articles');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->isUnique(['title', 'author_id'], 'Nope'));
+
+        $this->assertSame($entity, $table->save($entity));
+
+        // Make a duplicate
+        $entity = new Entity([
+            'author_id' => null,
+            'title' => 'First Article'
+        ]);
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['title' => ['_isUnique' => 'Nope']], $entity->errors());
+    }
+
+    /**
      * Tests the existsIn domain rule
      *
      * @group save
@@ -415,7 +442,7 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * ExistsIn uses the schema to verify that nullable fields are ok.
      *
-     * @return
+     * @return void
      */
     public function testExistsInNullValue()
     {
@@ -434,9 +461,32 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Test ExistsIn on not dirty field in new Entity
+     *
+     * @return void
+     */
+    public function testExistsInNotNullValue()
+    {
+        $entity = new Entity([
+            'name' => 'A Category',
+        ]);
+
+        $table = TableRegistry::get('Categories');
+        $table->belongsTo('Categories', [
+            'foreignKey' => 'parent_id',
+            'bindingKey' => 'id',
+        ]);
+        $rules = $table->rulesChecker();
+        $rules->add($rules->existsIn('parent_id', 'Categories'));
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->errors('parent_id'));
+    }
+
+    /**
      * Tests exists in uses the bindingKey of the association
      *
-     * @return
+     * @return void
      */
     public function testExistsInWithBindingKey()
     {
@@ -859,5 +909,58 @@ class RulesCheckerIntegrationTest extends TestCase
         });
 
         $this->assertSame($entity, $table->save($entity));
+    }
+
+    /**
+     * Tests that associated items have a count of X.
+     *
+     * @group save
+     * @return void
+     */
+    public function testCountOfAssociatedItems()
+    {
+        $entity = new \Cake\ORM\Entity([
+            'title' => 'A Title',
+            'body' => 'A body'
+        ]);
+        $entity->tags = [
+            new \Cake\ORM\Entity([
+                'name' => 'Something New'
+            ]),
+            new \Cake\ORM\Entity([
+                'name' => '100'
+            ])
+        ];
+
+        TableRegistry::get('ArticlesTags');
+
+        $table = TableRegistry::get('articles');
+        $table->belongsToMany('tags');
+
+        $rules = $table->rulesChecker();
+        $rules->add($rules->validCount('tags', 3));
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals($entity->errors(), [
+            'tags' => [
+                '_validCount' => 'The count does not match >3'
+            ]
+        ]);
+
+        // Testing that undesired types fail
+        $entity->tags = null;
+        $this->assertFalse($table->save($entity));
+
+        $entity->tags = new \stdClass();
+        $this->assertFalse($table->save($entity));
+
+        $entity->tags = 'string';
+        $this->assertFalse($table->save($entity));
+
+        $entity->tags = 123456;
+        $this->assertFalse($table->save($entity));
+
+        $entity->tags = 0.512;
+        $this->assertFalse($table->save($entity));
     }
 }

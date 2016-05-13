@@ -120,7 +120,10 @@ class EntityContext implements ContextInterface
         $entity = $this->_context['entity'];
         if (empty($table)) {
             if (is_array($entity) || $entity instanceof Traversable) {
-                $entity = (new Collection($entity))->first();
+                foreach ($entity as $e) {
+                    $entity = $e;
+                    break;
+                }
             }
             $isEntity = $entity instanceof EntityInterface;
 
@@ -187,7 +190,10 @@ class EntityContext implements ContextInterface
     {
         $entity = $this->_context['entity'];
         if (is_array($entity) || $entity instanceof Traversable) {
-            $entity = (new Collection($entity))->first();
+            foreach ($entity as $e) {
+                $entity = $e;
+                break;
+            }
         }
         if ($entity instanceof EntityInterface) {
             return $entity->isNew() !== false;

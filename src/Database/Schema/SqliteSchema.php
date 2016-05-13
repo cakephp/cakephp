@@ -127,7 +127,7 @@ class SqliteSchema extends BaseSchema
         $field = $this->_convertColumn($row['type']);
         $field += [
             'null' => !$row['notnull'],
-            'default' => $row['dflt_value'] === null ? null : trim($row['dflt_value'], "'"),
+            'default' => $this->_defaultValue($row['dflt_value']),
         ];
         $primary = $table->constraint('primary');
 
@@ -151,6 +151,29 @@ class SqliteSchema extends BaseSchema
             $constraint['columns'] = array_merge($constraint['columns'], [$row['name']]);
             $table->addConstraint('primary', $constraint);
         }
+    }
+
+    /**
+     * Manipulate the default value.
+     *
+     * Sqlite includes quotes and bared NULLs in default values.
+     * We need to remove those.
+     *
+     * @param string|null $default The default value.
+     * @return string|null
+     */
+    protected function _defaultValue($default)
+    {
+        if ($default === 'NULL') {
+            return null;
+        }
+
+        // Remove quotes
+        if (preg_match("/^'(.*)'$/", $default, $matches)) {
+            return str_replace("''", "'", $matches[1]);
+        }
+
+        return $default;
     }
 
     /**

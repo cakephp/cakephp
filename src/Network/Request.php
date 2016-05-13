@@ -547,6 +547,9 @@ class Request implements ArrayAccess
         if (!empty($ref) && !empty($base)) {
             if ($local && strpos($ref, $base) === 0) {
                 $ref = substr($ref, strlen($base));
+                if (!strlen($ref)) {
+                    $ref = '/';
+                }
                 if ($ref[0] !== '/') {
                     $ref = '/' . $ref;
                 }
@@ -1347,6 +1350,9 @@ class Request implements ArrayAccess
      */
     public function offsetExists($name)
     {
+        if ($name === 'url' || $name === 'data') {
+            return true;
+        }
         return isset($this->params[$name]);
     }
 
