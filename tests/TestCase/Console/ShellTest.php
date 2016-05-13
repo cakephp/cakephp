@@ -307,7 +307,7 @@ class ShellTest extends TestCase
     {
         $this->io->expects($this->once())
             ->method('err')
-            ->with('Just a test', 1);
+            ->with('<error>Just a test</error>', 1);
 
         $this->Shell->err('Just a test');
     }
@@ -334,7 +334,7 @@ class ShellTest extends TestCase
     public function testWarn()
     {
         $this->io->expects($this->once())
-            ->method('err')
+            ->method('warn')
             ->with('<warning>Just a test</warning>', 1);
 
         $this->Shell->warn('Just a test');
