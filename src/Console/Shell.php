@@ -671,7 +671,7 @@ class Shell
      */
     public function warn($message = null, $newlines = 1)
     {
-        return $this->err('<warning>' . $message . '</warning>', $newlines);
+        return $this->_io->err('<warning>' . $message . '</warning>', $newlines);
     }
 
     /**
