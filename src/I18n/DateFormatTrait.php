@@ -17,6 +17,7 @@ namespace Cake\I18n;
 use Cake\Chronos\Date as ChronosDate;
 use Cake\Chronos\MutableDate;
 use IntlDateFormatter;
+use \NotImplementedException;
 
 /**
  * Trait for date formatting methods shared by both Time & Date.
@@ -35,7 +36,7 @@ trait DateFormatTrait
     public static $defaultLocale;
 
     /**
-     * The \DateTimeZone default output timezone.
+     * The \DateTimeZone default output timezone used by Time and FrozenTime.
      * See http://php.net/manual/en/timezones.php.
      *
      * @var \DateTimeZone|null
@@ -72,17 +73,20 @@ trait DateFormatTrait
      */
     protected static $_isDateInstance;
 
-    /** Gets the default output timezone.
+    /** Gets the default output timezone used by Time and FrozenTime.
      *
      * @return \DateTimeZone|null DateTimeZone object in which the date will be displayed or null.
      */
     public static function getDefaultOutputTimezone()
     {
+        if (static::$_isDateInstance === true) {
+            throw new NotImplementedException('Timezone conversion is not supported by Date/FrozenDate.');
+        }
         return static::$_defaultOutputTimezone;
     }
 
     /**
-     * Sets the default output timezone.
+     * Sets the default output timezone used by Time and FrozenTime.
      *
      * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
      * in which the date will be displayed.
@@ -90,6 +94,9 @@ trait DateFormatTrait
      */
     public static function setDefaultOutputTimezone($timezone)
     {
+        if (static::$_isDateInstance === true) {
+            throw new NotImplementedException('Timezone conversion is not supported by Date/FrozenDate.');
+        }
         if (is_string($timezone)) {
             static::$_defaultOutputTimezone = new \DateTimeZone($timezone);
         } elseif ($timezone instanceof \DateTimeZone) {
@@ -192,10 +199,9 @@ trait DateFormatTrait
     {
         $time = $this;
 
-        // This is required for testI18nFormatWithOffsetTimezone to pass
-        // if ($time->getTimezone()->getName() === date_default_timezone_get()) {
+        if (static::$_isDateInstance === false) {
             $timezone = $timezone ?: static::getDefaultOutputTimezone();
-        // }
+        }
 
         if ($timezone) {
             // Handle the immutable and mutable object cases.
