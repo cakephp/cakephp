@@ -17,7 +17,9 @@ namespace Cake\I18n;
 use Cake\Chronos\Date as ChronosDate;
 use Cake\Chronos\MutableDate;
 use IntlDateFormatter;
-use \NotImplementedException;
+use \DateTimeZone;
+use \InvalidArgumentException;
+use \RuntimeException;
 
 /**
  * Trait for date formatting methods shared by both Time & Date.
@@ -79,8 +81,8 @@ trait DateFormatTrait
      */
     public static function getDefaultOutputTimezone()
     {
-        if (static::$_isDateInstance === true) {
-            throw new NotImplementedException('Timezone conversion is not supported by Date/FrozenDate.');
+        if (is_subclass_of(static::class, ChronosDate::class) || is_subclass_of(static::class, MutableDate::class)) {
+            throw new \RuntimeException('Timezone conversion is not supported by Date/FrozenDate.');
         }
         return static::$_defaultOutputTimezone;
     }
@@ -94,8 +96,8 @@ trait DateFormatTrait
      */
     public static function setDefaultOutputTimezone($timezone)
     {
-        if (static::$_isDateInstance === true) {
-            throw new NotImplementedException('Timezone conversion is not supported by Date/FrozenDate.');
+        if (is_subclass_of(static::class, ChronosDate::class) || is_subclass_of(static::class, MutableDate::class)) {
+            throw new \RuntimeException('Timezone conversion is not supported by Date/FrozenDate.');
         }
         if (is_string($timezone)) {
             static::$_defaultOutputTimezone = new \DateTimeZone($timezone);
@@ -199,13 +201,22 @@ trait DateFormatTrait
     {
         $time = $this;
 
-        if (static::$_isDateInstance === false) {
+        if ($time instanceof Time || $time instanceof FrozenTime) {
+            // Remove before merge:
+            // if ((is_string($time->timezone) && $time->timezone === 'UTC')
+            //     || ($time->timezone instanceof \DateTimeZone && $time->timezone->getName() === '+0:00')
+            // ) {
+            // }
+            // if ($time->getOffset() !== 0) {
+            //     $time = clone $time;
+            //     $time->add(new \DateInterval('PT' . $time->getOffset() / 60 . 'M'));
+            // }
             $timezone = $timezone ?: static::getDefaultOutputTimezone();
         }
 
         if ($timezone) {
             // Handle the immutable and mutable object cases.
-            $time = clone $this;
+            $time = clone $time;
             $time = $time->timezone($timezone);
         }
 

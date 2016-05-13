@@ -200,6 +200,7 @@ class TimeTest extends TestCase
             ],
         ];
     }
+
     /**
      * test the timezone option for timeAgoInWords
      *
@@ -208,6 +209,36 @@ class TimeTest extends TestCase
      */
     public function testTimeAgoInWordsTimezone($class)
     {
+        $time = new $class('1990-07-31 20:33:00 UTC');
+        $result = $time->timeAgoInWords(
+            [
+                'timezone' => 'America/Vancouver',
+                'end' => '+1month',
+                'format' => 'dd-MM-YYYY HH:mm:ss'
+            ]
+        );
+        $this->assertEquals('on 31-07-1990 13:33:00', $result);
+    }
+
+    /**
+     * test the timezone option for timeAgoInWords
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testTimeAgoInWordsTimezoneOutputDefaultTimezone($class)
+    {
+        $class::setDefaultOutputTimezone('Europe/Paris');
+        $time = new $class('1990-07-31 20:33:00 UTC');
+        $result = $time->timeAgoInWords(
+            [
+                'end' => '+1month',
+                'format' => 'dd-MM-YYYY HH:mm:ss'
+            ]
+        );
+        $this->assertEquals('on 31-07-1990 22:33:00', $result);
+
+        $class::setDefaultOutputTimezone('Europe/Berlin');
         $time = new $class('1990-07-31 20:33:00 UTC');
         $result = $time->timeAgoInWords(
             [
@@ -430,6 +461,29 @@ class TimeTest extends TestCase
     }
 
     /**
+     * testNiceWithDefaultOutputTimezone method
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testNiceWithDefaultOutputTimezone($class)
+    {
+        $class::setDefaultOutputTimezone('America/Vancouver');
+        $time = new $class('2014-04-20 20:00', 'UTC');
+
+        $this->assertTimeFormat('Apr 20, 2014, 1:00 PM', $time->nice());
+
+        $result = $time->nice('America/New_York');
+        $this->assertTimeFormat('Apr 20, 2014, 4:00 PM', $result);
+        $this->assertEquals('UTC', $time->getTimezone()->getName());
+
+        $class::setDefaultOutputTimezone('Europe/Paris');
+        $time = new $class('2014-04-20 20:00', 'UTC');
+        $this->assertTimeFormat('20 avr. 2014 22:00', $time->nice(null, 'fr-FR'));
+        $this->assertTimeFormat('20 avr. 2014 16:00', $time->nice('America/New_York', 'fr-FR'));
+    }
+
+    /**
      * test formatting dates taking in account preferred i18n locale file
      *
      * @dataProvider classNameProvider
@@ -549,6 +603,33 @@ class TimeTest extends TestCase
     }
 
     /**
+     * test formatting dates with offset style timezone and defaultOutputTimezone
+     *
+     * @dataProvider classNameProvider
+     * @see https://github.com/facebook/hhvm/issues/3637
+     * @return void
+     */
+    public function testI18nFormatWithOffsetTimezoneWithDefaultOutputTimezone($class)
+    {
+        $class::setDefaultOutputTimezone('America/Vancouver');
+
+        $time = new $class('2014-01-01T00:00:00+00');
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL);
+        $expected = 'Wednesday January 1 2014 12:00:00 AM GMT';
+        $this->assertTimeFormat($expected, $result);
+
+        $time = new $class('2014-01-01T00:00:00+09');
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL);
+        $expected = 'Wednesday January 1 2014 12:00:00 AM GMT+09:00';
+        $this->assertTimeFormat($expected, $result);
+
+        $time = new $class('2014-01-01T00:00:00-01:30');
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL);
+        $expected = 'Wednesday January 1 2014 12:00:00 AM GMT-01:30';
+        $this->assertTimeFormat($expected, $result);
+    }
+
+    /**
      * testListTimezones
      *
      * @dataProvider classNameProvider
@@ -593,6 +674,21 @@ class TimeTest extends TestCase
         $return = $class::listTimezones(\DateTimeZone::PER_COUNTRY, 'US', false);
         $this->assertTrue(isset($return['Pacific/Honolulu']));
         $this->assertFalse(isset($return['Asia/Bangkok']));
+    }
+
+    /**
+     * Tests that __toString uses the i18n formatter and works with OutputTimezones
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testToStringWithdefaultOutputTimezone($class)
+    {
+        $class::setDefaultOutputTimezone('America/Vancouver');
+        $time = new $class('2014-04-20 22:10');
+        $class::setDefaultLocale('fr-FR');
+        $class::setToStringFormat(\IntlDateFormatter::FULL);
+        $this->assertTimeFormat('dimanche 20 avril 2014 15:10:00 UTC', (string)$time);
     }
 
     /**
