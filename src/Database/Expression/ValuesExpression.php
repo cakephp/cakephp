@@ -151,7 +151,13 @@ class ValuesExpression implements ExpressionInterface
         }
 
         $i = 0;
-        $defaults = array_fill_keys($this->_columns, null);
+        $columns = [];
+
+        // Remove identifier quoting so column names match keys.
+        foreach ($this->_columns as $col) {
+            $columns[] = trim($col, '`[]"');
+        }
+        $defaults = array_fill_keys($columns, null);
         $placeholders = [];
 
         foreach ($this->_values as $row) {
@@ -173,7 +179,6 @@ class ValuesExpression implements ExpressionInterface
         if ($this->query()) {
             return ' ' . $this->query()->sql($generator);
         }
-
         return sprintf(' VALUES (%s)', implode('), (', $placeholders));
     }
 
