@@ -38,6 +38,8 @@ class TimeTest extends TestCase
         $this->locale = Time::getDefaultLocale();
         Time::setDefaultLocale('en_US');
         FrozenTime::setDefaultLocale('en_US');
+
+        date_default_timezone_set('UTC');
         Time::setDefaultOutputTimezone('UTC');
         FrozenTime::setDefaultOutputTimezone('UTC');
     }
