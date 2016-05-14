@@ -75,9 +75,11 @@ trait DateFormatTrait
      */
     protected static $_isDateInstance;
 
-    /** Gets the default output timezone used by Time and FrozenTime.
+    /**
+     * Gets the default output timezone used by Time and FrozenTime.
      *
      * @return \DateTimeZone|null DateTimeZone object in which the date will be displayed or null.
+     * @throws \RuntimeException When being executed on Date/FrozenDate.
      */
     public static function getDefaultOutputTimezone()
     {
@@ -93,6 +95,8 @@ trait DateFormatTrait
      * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
      * in which the date will be displayed.
      * @return void
+     * @throws \RuntimeException When being executed on Date/FrozenDate.
+     * @throws \InvalidArgumentException When $timezone is neither a valid DateTimeZone string nor a \DateTimeZone object.
      */
     public static function setDefaultOutputTimezone($timezone)
     {
