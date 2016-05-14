@@ -307,7 +307,7 @@ class ShellTest extends TestCase
     {
         $this->io->expects($this->once())
             ->method('err')
-            ->with('Just a test', 1);
+            ->with('<error>Just a test</error>', 1);
 
         $this->Shell->err('Just a test');
     }
