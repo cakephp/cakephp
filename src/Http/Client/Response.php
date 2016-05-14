@@ -30,14 +30,14 @@ use Zend\Diactoros\Stream;
  * when the response is parsed.
  *
  * ```
- * $val = $response->header('content-type');
+ * $val = $response->getHeaderLine('content-type');
  * ```
  *
  * Will read the Content-Type header. You can get all set
  * headers using:
  *
  * ```
- * $response->header();
+ * $response->getHeaders();
  * ```
  *
  * You can also get at the headers using object access. When getting
@@ -50,13 +50,14 @@ use Zend\Diactoros\Stream;
  *
  * ### Get the response body
  *
- * You can access the response body using:
+ * You can access the response body stream using:
  *
  * ```
- * $content = $response->body();
+ * $content = $response->getBody();
  * ```
  *
- * You can also use object access:
+ * You can also use object access to get the string version
+ * of the response body:
  *
  * ```
  * $content = $response->body;
@@ -81,7 +82,7 @@ use Zend\Diactoros\Stream;
  * You can access the response status code using:
  *
  * ```
- * $content = $response->statusCode();
+ * $content = $response->getStatusCode();
  * ```
  *
  * You can also use object access:
