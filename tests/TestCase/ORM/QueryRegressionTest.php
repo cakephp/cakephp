@@ -129,6 +129,7 @@ class QueryRegressionTest extends TestCase
             ->order(['Articles.id' => 'ASC'])
             ->toArray();
 
+        $this->assertCount(3, $results);
         $this->assertEquals(1, $results[0]->articles_tag->foo->id);
         $this->assertEquals(1, $results[0]->author->favorite_tag->id);
         $this->assertEquals(2, $results[1]->articles_tag->foo->id);
