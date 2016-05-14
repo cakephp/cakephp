@@ -383,11 +383,16 @@ class Response extends Message implements ResponseInterface
     /**
      * Read single/multiple cookie values out.
      *
+     * *Note* This method will only provide access to cookies that
+     * were added as part of the constructor. If cookies are added post
+     * construction they will not be accessible via this method.
+     *
      * @param string|null $name The name of the cookie you want. Leave
      *   null to get all cookies.
      * @param bool $all Get all parts of the cookie. When false only
      *   the value will be returned.
      * @return mixed
+     * @deprecated 3.3.0 Use getCookie(), getCookieData() or getCookies() instead.
      */
     public function cookie($name = null, $all = false)
     {
@@ -401,6 +406,44 @@ class Response extends Message implements ResponseInterface
             return $this->_cookies[$name];
         }
         return $this->_cookies[$name]['value'];
+    }
+
+    /**
+     * Get the all cookie data.
+     *
+     * @return array The cookie data
+     */
+    public function getCookies()
+    {
+        return $this->_cookies;
+    }
+
+    /**
+     * Get the value of a single cookie.
+     *
+     * @param string $name The name of the cookie value.
+     * @return string|null Either the cookie's value or null when the cookie is undefined.
+     */
+    public function getCookie($name)
+    {
+        if (!isset($this->_cookies[$name])) {
+            return null;
+        }
+        return $this->_cookies[$name]['value'];
+    }
+
+    /**
+     * Get the full data for a single cookie.
+     *
+     * @param string $name The name of the cookie value.
+     * @return array|null Either the cookie's data or null when the cookie is undefined.
+     */
+    public function getCookieData($name)
+    {
+        if (!isset($this->_cookies[$name])) {
+            return null;
+        }
+        return $this->_cookies[$name];
     }
 
     /**

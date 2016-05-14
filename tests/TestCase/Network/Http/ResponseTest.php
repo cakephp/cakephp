@@ -147,13 +147,19 @@ class ResponseTest extends TestCase
     }
 
     /**
-     * Test accessor for json
+     * Test accessor for json when set with PSR7 methods.
      *
      * @return void
      */
     public function testBodyJsonPsr7()
     {
-        $this->markTestIncomplete();
+        $data = [
+            'property' => 'value'
+        ];
+        $encoded = json_encode($data);
+        $response = new Response([], '');
+        $response->getBody()->write($encoded);
+        $this->assertEquals($data, $response->json);
     }
 
     /**
@@ -289,13 +295,39 @@ XML;
     }
 
     /**
-     * Test accessing cookies set through the PSR7 interface.
+     * Test accessing cookies through the PSR7-like methods
      *
      * @return void
      */
-    public function testCookiesPsr7()
+    public function testGetCookies()
     {
-        $this->markTestIncomplete();
+        $headers = [
+            'HTTP/1.0 200 Ok',
+            'Set-Cookie: test=value',
+            'Set-Cookie: session=123abc',
+            'Set-Cookie: expiring=soon; Expires=Wed, 09-Jun-2021 10:18:14 GMT; Path=/; HttpOnly; Secure;',
+        ];
+        $response = new Response($headers, '');
+
+        $this->assertNull($response->getCookie('undef'));
+        $this->assertEquals('value', $response->getCookie('test'));
+        $this->assertEquals('soon', $response->getCookie('expiring'));
+
+        $result = $response->getCookieData('expiring');
+        $this->assertEquals('soon', $result['value']);
+        $this->assertTrue($result['httponly']);
+        $this->assertTrue($result['secure']);
+        $this->assertEquals(
+            'Wed, 09-Jun-2021 10:18:14 GMT',
+            $result['expires']
+        );
+        $this->assertEquals('/', $result['path']);
+
+        $result = $response->getCookies();
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('test', $result);
+        $this->assertArrayHasKey('session', $result);
+        $this->assertArrayHasKey('expiring', $result);
     }
 
     /**
