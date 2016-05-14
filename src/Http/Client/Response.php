@@ -397,15 +397,12 @@ class Response extends Message implements ResponseInterface
     public function cookie($name = null, $all = false)
     {
         if ($name === null) {
-            return $this->_cookies;
-        }
-        if (!isset($this->_cookies[$name])) {
-            return null;
+            return $this->getCookies();
         }
         if ($all) {
-            return $this->_cookies[$name];
+            return $this->getCookieData($name);
         }
-        return $this->_cookies[$name]['value'];
+        return $this->getCookie($name);
     }
 
     /**
