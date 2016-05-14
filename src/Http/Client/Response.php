@@ -304,6 +304,8 @@ class Response extends Message implements ResponseInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @return int The status code.
      */
     public function getStatusCode()
     {
@@ -312,6 +314,10 @@ class Response extends Message implements ResponseInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param int $code The status code to set.
+     * @param string $reasonPhrase The status reason phrase.
+     * @return self A copy of the current object with an updated status code.
      */
     public function withStatus($code, $reasonPhrase = '')
     {
@@ -323,6 +329,8 @@ class Response extends Message implements ResponseInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @return string The current reason phrase.
      */
     public function getReasonPhrase()
     {
