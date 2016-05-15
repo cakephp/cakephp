@@ -718,7 +718,7 @@ class HashTest extends TestCase
     {
         $result = Hash::merge(
             ['hkuc' => ['lion']],
-            ['hkuc' =>'lion']
+            ['hkuc' => 'lion']
         );
         $expected = ['hkuc' => 'lion'];
         $this->assertEquals($expected, $result);
