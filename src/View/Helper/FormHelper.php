@@ -1023,8 +1023,7 @@ class FormHelper extends Helper
         if ($options['type'] !== 'hidden' && $options['error'] !== false) {
             if (is_array($options['error'])) {
                 $error = $this->error($fieldName, $options['error'], $options['error']);
-            }
-            else {
+            } else {
                 $error = $this->error($fieldName, $options['error']);
             }
             $errorSuffix = empty($error) ? '' : 'Error';

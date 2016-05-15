@@ -2416,7 +2416,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->input('Article.content',['error' => ['escape' => true]]);
+        $result = $this->Form->input('Article.content', ['error' => ['escape' => true]]);
         $expected = [
             'div' => ['class' => 'input text error'],
             'label' => ['for' => 'article-content'],
@@ -2433,7 +2433,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->input('Article.content',['error' => ['escape' => false]]);
+        $result = $this->Form->input('Article.content', ['error' => ['escape' => false]]);
         $expected = [
             'div' => ['class' => 'input text error'],
             'label' => ['for' => 'article-content'],
