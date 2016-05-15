@@ -2355,7 +2355,10 @@ class FormHelperTest extends TestCase
     public function testErrorMessageDisplay()
     {
         $this->article['errors'] = [
-            'Article' => ['title' => 'error message']
+            'Article' => [
+                'title' => 'error message',
+                'content' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars'
+            ]
         ];
         $this->Form->create($this->article);
 
@@ -2391,6 +2394,58 @@ class FormHelperTest extends TestCase
                 'type' => 'text', 'name' => 'Article[title]',
                 'id' => 'article-title', 'class' => 'form-error'
             ],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+
+
+        $result = $this->Form->input('Article.content');
+        $expected = [
+            'div' => ['class' => 'input text error'],
+            'label' => ['for' => 'article-content'],
+            'Content',
+            '/label',
+            'input' => [
+                'type' => 'text', 'name' => 'Article[content]',
+                'id' => 'article-content', 'class' => 'form-error'
+            ],
+            ['div' => ['class' => 'error-message']],
+            'some &lt;strong&gt;test&lt;/strong&gt; data with &lt;a href=&quot;#&quot;&gt;HTML&lt;/a&gt; chars',
+            '/div',
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->input('Article.content',['error' => ['escape' => true]]);
+        $expected = [
+            'div' => ['class' => 'input text error'],
+            'label' => ['for' => 'article-content'],
+            'Content',
+            '/label',
+            'input' => [
+                'type' => 'text', 'name' => 'Article[content]',
+                'id' => 'article-content', 'class' => 'form-error'
+            ],
+            ['div' => ['class' => 'error-message']],
+            'some &lt;strong&gt;test&lt;/strong&gt; data with &lt;a href=&quot;#&quot;&gt;HTML&lt;/a&gt; chars',
+            '/div',
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->input('Article.content',['error' => ['escape' => false]]);
+        $expected = [
+            'div' => ['class' => 'input text error'],
+            'label' => ['for' => 'article-content'],
+            'Content',
+            '/label',
+            'input' => [
+                'type' => 'text', 'name' => 'Article[content]',
+                'id' => 'article-content', 'class' => 'form-error'
+            ],
+            ['div' => ['class' => 'error-message']],
+            'some <strong>test</strong> data with <a href="#">HTML</a> chars',
+            '/div',
             '/div'
         ];
         $this->assertHtml($expected, $result);
