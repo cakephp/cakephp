@@ -1135,10 +1135,11 @@ class MarshallerTest extends TestCase
     /**
      * Test if exceptin is raised when called with [associated=>NonExistingAssociation]
      * Previously such association has been simply ignored
+     * @expectedException \InvalidArgumentException
+     * @return void
      */
     public function testManyInvalidAssociation()
     {
-        $this->expectException(MissingAssociationException::class);
         $data = [
             [
                 'comment' => 'First post',
@@ -1156,7 +1157,7 @@ class MarshallerTest extends TestCase
             ],
         ];
         $marshall = new Marshaller($this->comments);
-        $result = $marshall->many($data, ['associated' => ['Users','People']]);
+        $marshall->many($data, ['associated' => ['Users','People']]);
     }
 
     /**

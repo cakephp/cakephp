@@ -59,6 +59,7 @@ class Marshaller
      * Build the map of property => association names.
      *
      * @param array $options List of options containing the 'associated' key.
+     * @throws \InvalidArgumentException
      * @return array
      */
     protected function _buildPropertyMap($options)
@@ -78,11 +79,10 @@ class Marshaller
             $assoc = $this->_table->association($key);
             if ($assoc) {
                 $map[$assoc->property()] = ['association' => $assoc] + $nested + ['associated' => []];
-            } else {
-                if (substr($key, 0, 1) !== "_") { // if $key is a special underscored field eg _ids or _joinData
-                    throw new MissingAssociationException([$this->_table->alias(), $key]);
-                }
-
+                continue;
+            }
+            if (substr($key, 0, 1) !== "_") { // if $key is not a special underscored field eg _ids or _joinData
+                throw new \InvalidArgumentException(vsprintf("%s is not associated with %s",[$this->_table->alias(), $key]));
             }
         }
         return $map;
