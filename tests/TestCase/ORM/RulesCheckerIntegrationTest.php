@@ -431,7 +431,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests isUnique with multiple fields and a nulled field.
-     * 
+     *
      * @group save
      * @return void
      */
