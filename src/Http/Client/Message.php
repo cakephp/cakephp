@@ -128,32 +128,11 @@ class Message
     const METHOD_HEAD = 'HEAD';
 
     /**
-     * The array of headers in the response.
-     *
-     * @var array
-     */
-    protected $_headers = [];
-
-    /**
      * The array of cookies in the response.
      *
      * @var array
      */
     protected $_cookies = [];
-
-    /**
-     * Normalize header names to Camel-Case form.
-     *
-     * @param string $name The header name to normalize.
-     * @return string Normalized header name.
-     */
-    protected function _normalizeHeader($name)
-    {
-        $parts = explode('-', trim($name));
-        $parts = array_map('strtolower', $parts);
-        $parts = array_map('ucfirst', $parts);
-        return implode('-', $parts);
-    }
 
     /**
      * Get all headers
@@ -163,7 +142,7 @@ class Message
      */
     public function headers()
     {
-        return $this->_headers;
+        return $this->headers;
     }
 
     /**
@@ -174,17 +153,6 @@ class Message
     public function cookies()
     {
         return $this->_cookies;
-    }
-
-    /**
-     * Get the HTTP version used.
-     *
-     * @return string
-     * @deprecated 3.3.0 Use getProtocolVersion()
-     */
-    public function version()
-    {
-        return $this->protocol;
     }
 
     /**

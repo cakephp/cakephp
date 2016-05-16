@@ -13,7 +13,10 @@
  */
 namespace Cake\Http\Client;
 
+use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
+use Zend\Diactoros\MessageTrait;
+use Zend\Diactoros\Stream;
 
 /**
  * Implements methods for HTTP responses.
@@ -27,14 +30,14 @@ use RuntimeException;
  * when the response is parsed.
  *
  * ```
- * $val = $response->header('content-type');
+ * $val = $response->getHeaderLine('content-type');
  * ```
  *
  * Will read the Content-Type header. You can get all set
  * headers using:
  *
  * ```
- * $response->header();
+ * $response->getHeaders();
  * ```
  *
  * You can also get at the headers using object access. When getting
@@ -47,13 +50,14 @@ use RuntimeException;
  *
  * ### Get the response body
  *
- * You can access the response body using:
+ * You can access the response body stream using:
  *
  * ```
- * $content = $response->body();
+ * $content = $response->getBody();
  * ```
  *
- * You can also use object access:
+ * You can also use object access to get the string version
+ * of the response body:
  *
  * ```
  * $content = $response->body;
@@ -78,7 +82,7 @@ use RuntimeException;
  * You can access the response status code using:
  *
  * ```
- * $content = $response->statusCode();
+ * $content = $response->getStatusCode();
  * ```
  *
  * You can also use object access:
@@ -87,28 +91,23 @@ use RuntimeException;
  * $content = $response->code;
  * ```
  */
-class Response extends Message
+class Response extends Message implements ResponseInterface
 {
-    /**
-     * This is temporary until the response is made PSR7 compliant as well.
-     *
-     * @var string
-     */
-    protected $protocol = '1.1';
+    use MessageTrait;
 
     /**
      * The status code of the response.
      *
      * @var int
      */
-    protected $_code;
+    protected $code;
 
     /**
-     * The response body
+     * The reason phrase for the status code
      *
      * @var string
      */
-    protected $_body;
+    protected $reasonPhrase;
 
     /**
      * Cached decoded XML data.
@@ -131,11 +130,11 @@ class Response extends Message
      */
     protected $_exposedProperties = [
         'cookies' => '_cookies',
-        'headers' => '_headers',
-        'body' => '_body',
-        'code' => '_code',
+        'body' => '_getBody',
+        'code' => 'code',
         'json' => '_getJson',
-        'xml' => '_getXml'
+        'xml' => '_getXml',
+        'headers' => '_getHeaders',
     ];
 
     /**
@@ -147,10 +146,12 @@ class Response extends Message
     public function __construct($headers = [], $body = '')
     {
         $this->_parseHeaders($headers);
-        if ($this->header('Content-Encoding') === 'gzip') {
+        if ($this->getHeaderLine('Content-Encoding') === 'gzip') {
             $body = $this->_decodeGzipBody($body);
         }
-        $this->_body = $body;
+        $stream = new Stream('php://memory', 'wb+');
+        $stream->write($body);
+        $this->stream = $stream;
     }
 
     /**
@@ -182,7 +183,7 @@ class Response extends Message
     /**
      * Parses headers if necessary.
      *
-     * - Decodes the status code.
+     * - Decodes the status code and reasonphrase.
      * - Parses and normalizes header names + values.
      *
      * @param array $headers Headers to parse.
@@ -192,22 +193,26 @@ class Response extends Message
     {
         foreach ($headers as $key => $value) {
             if (substr($value, 0, 5) === 'HTTP/') {
-                preg_match('/HTTP\/([\d.]+) ([0-9]+)/i', $value, $matches);
+                preg_match('/HTTP\/([\d.]+) ([0-9]+)(.*)/i', $value, $matches);
                 $this->protocol = $matches[1];
-                $this->_code = $matches[2];
+                $this->code = $matches[2];
+                $this->reasonPhrase = trim($matches[3]);
                 continue;
             }
             list($name, $value) = explode(':', $value, 2);
             $value = trim($value);
-            $name = $this->_normalizeHeader($name);
-            if ($name === 'Set-Cookie') {
+            $name = trim($name);
+
+            $normalized = strtolower($name);
+            if ($normalized === 'set-cookie') {
                 $this->_parseCookie($value);
             }
-            if (isset($this->_headers[$name])) {
-                $this->_headers[$name] = (array)$this->_headers[$name];
-                $this->_headers[$name][] = $value;
+
+            if (isset($this->headers[$name])) {
+                $this->headers[$name][] = $value;
             } else {
-                $this->_headers[$name] = $value;
+                $this->headers[$name] = (array)$value;
+                $this->headerNames[$normalized] = $name;
             }
         }
     }
@@ -264,7 +269,7 @@ class Response extends Message
             static::STATUS_CREATED,
             static::STATUS_ACCEPTED
         ];
-        return in_array($this->_code, $codes);
+        return in_array($this->code, $codes);
     }
 
     /**
@@ -281,8 +286,8 @@ class Response extends Message
             static::STATUS_TEMPORARY_REDIRECT,
         ];
         return (
-            in_array($this->_code, $codes) &&
-            $this->header('Location')
+            in_array($this->code, $codes) &&
+            $this->getHeaderLine('Location')
         );
     }
 
@@ -290,10 +295,57 @@ class Response extends Message
      * Get the status code from the response
      *
      * @return int
+     * @deprecated 3.3.0 Use getStatusCode() instead.
      */
     public function statusCode()
     {
-        return $this->_code;
+        return $this->code;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return int The status code.
+     */
+    public function getStatusCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param int $code The status code to set.
+     * @param string $reasonPhrase The status reason phrase.
+     * @return self A copy of the current object with an updated status code.
+     */
+    public function withStatus($code, $reasonPhrase = '')
+    {
+        $new = clone $this;
+        $new->code = $code;
+        $new->reasonPhrase = $reasonPhrase;
+        return $new;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return string The current reason phrase.
+     */
+    public function getReasonPhrase()
+    {
+        return $this->reasonPhrase;
+    }
+
+    /**
+     * Get the encoding if it was set.
+     *
+     * @return string|null
+     * @deprecated 3.3.0 Use getEncoding() instead.
+     */
+    public function encoding()
+    {
+        return $this->getEncoding();
     }
 
     /**
@@ -301,9 +353,9 @@ class Response extends Message
      *
      * @return string|null
      */
-    public function encoding()
+    public function getEncoding()
     {
-        $content = $this->header('content-type');
+        $content = $this->getHeaderLine('content-type');
         if (!$content) {
             return null;
         }
@@ -323,40 +375,92 @@ class Response extends Message
      *   will be returned when getting all headers or when getting
      *   a header that had multiple values set. Otherwise a string
      *   will be returned.
+     * @deprecated 3.3.0 Use getHeader() and getHeaderLine() instead.
      */
     public function header($name = null)
     {
         if ($name === null) {
-            return $this->_headers;
+            return $this->_getHeaders();
         }
-        $name = $this->_normalizeHeader($name);
-        if (!isset($this->_headers[$name])) {
-            return null;
+        $header = $this->getHeader($name);
+        if (count($header) === 1) {
+            return $header[0];
         }
-        return $this->_headers[$name];
+        return $header;
     }
 
     /**
      * Read single/multiple cookie values out.
+     *
+     * *Note* This method will only provide access to cookies that
+     * were added as part of the constructor. If cookies are added post
+     * construction they will not be accessible via this method.
      *
      * @param string|null $name The name of the cookie you want. Leave
      *   null to get all cookies.
      * @param bool $all Get all parts of the cookie. When false only
      *   the value will be returned.
      * @return mixed
+     * @deprecated 3.3.0 Use getCookie(), getCookieData() or getCookies() instead.
      */
     public function cookie($name = null, $all = false)
     {
         if ($name === null) {
-            return $this->_cookies;
+            return $this->getCookies();
         }
+        if ($all) {
+            return $this->getCookieData($name);
+        }
+        return $this->getCookie($name);
+    }
+
+    /**
+     * Get the all cookie data.
+     *
+     * @return array The cookie data
+     */
+    public function getCookies()
+    {
+        return $this->_cookies;
+    }
+
+    /**
+     * Get the value of a single cookie.
+     *
+     * @param string $name The name of the cookie value.
+     * @return string|null Either the cookie's value or null when the cookie is undefined.
+     */
+    public function getCookie($name)
+    {
         if (!isset($this->_cookies[$name])) {
             return null;
         }
-        if ($all) {
-            return $this->_cookies[$name];
-        }
         return $this->_cookies[$name]['value'];
+    }
+
+    /**
+     * Get the full data for a single cookie.
+     *
+     * @param string $name The name of the cookie value.
+     * @return array|null Either the cookie's data or null when the cookie is undefined.
+     */
+    public function getCookieData($name)
+    {
+        if (!isset($this->_cookies[$name])) {
+            return null;
+        }
+        return $this->_cookies[$name];
+    }
+
+    /**
+     * Get the HTTP version used.
+     *
+     * @return string
+     * @deprecated 3.3.0 Use getProtocolVersion()
+     */
+    public function version()
+    {
+        return $this->protocol;
     }
 
     /**
@@ -377,10 +481,12 @@ class Response extends Message
      */
     public function body($parser = null)
     {
+        $stream = $this->stream;
+        $stream->rewind();
         if ($parser) {
-            return $parser($this->_body);
+            return $parser($stream->getContents());
         }
-        return $this->_body;
+        return $stream->getContents();
     }
 
     /**
@@ -393,7 +499,7 @@ class Response extends Message
         if (!empty($this->_json)) {
             return $this->_json;
         }
-        return $this->_json = json_decode($this->_body, true);
+        return $this->_json = json_decode($this->_getBody(), true);
     }
 
     /**
@@ -407,13 +513,39 @@ class Response extends Message
             return $this->_xml;
         }
         libxml_use_internal_errors();
-        $data = simplexml_load_string($this->_body);
+        $data = simplexml_load_string($this->_getBody());
         if ($data) {
             $this->_xml = $data;
             return $this->_xml;
         }
         return null;
     }
+
+    /**
+     * Provides magic __get() support.
+     *
+     * @return array
+     */
+    protected function _getHeaders()
+    {
+        $out = [];
+        foreach ($this->headers as $key => $values) {
+            $out[$key] = implode(',', $values);
+        }
+        return $out;
+    }
+
+    /**
+     * Provides magic __get() support.
+     *
+     * @return array
+     */
+    protected function _getBody()
+    {
+        $this->stream->rewind();
+        return $this->stream->getContents();
+    }
+
 
     /**
      * Read values as properties.
