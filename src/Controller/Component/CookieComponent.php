@@ -252,7 +252,7 @@ class CookieComponent extends Component
         $cookie = $this->request->cookies[$first];
         $config = $this->configKey($first);
         $this->_loaded[$first] = true;
-        $this->_values[$first] = $this->_decrypt($cookie, $config['encryption']);
+        $this->_values[$first] = $this->_decrypt($cookie, $config['encryption'], $config['key']);
     }
 
     /**
@@ -310,7 +310,7 @@ class CookieComponent extends Component
 
         $this->_response->cookie([
             'name' => $name,
-            'value' => $this->_encrypt($value, $config['encryption']),
+            'value' => $this->_encrypt($value, $config['encryption'], $config['key']),
             'expire' => $expires->format('U'),
             'path' => $config['path'],
             'domain' => $config['domain'],

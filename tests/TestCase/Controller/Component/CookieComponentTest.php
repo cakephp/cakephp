@@ -363,6 +363,45 @@ class CookieComponentTest extends TestCase
     }
 
     /**
+     * Test writing with a custom encryption key using ConfigKey
+     *
+     * @return void
+     */
+    public function testWriteConfigKeyWithCustomEncryptionKey()
+    {
+        $name = 'sampleCookieTest';
+        $value = 'some data';
+        $encryption = 'aes';
+        $prefix = "Q2FrZQ==.";
+        $key = 'justanotherencryptionkeyjustanotherencryptionkey';
+
+        $this->Cookie->configKey($name, compact('key', 'encryption'));
+        $this->Cookie->write($name, $value);
+
+        $cookie = $this->Controller->response->cookie($name);
+
+        $this->assertEquals($value, Security::decrypt(base64_decode(substr($cookie['value'], strlen($prefix))), $key));
+    }
+
+    /**
+     * Test reading with a custom encryption key using ConfigKey
+     *
+     * @return void
+     */
+    public function testReadConfigKeyWithCustomEncryptionKey()
+    {
+        $name = 'sampleCookieTest';
+        $value = 'some data';
+        $encryption = 'aes';
+        $key = 'justanotherencryptionkeyjustanotherencryptionkey';
+
+        $this->Cookie->configKey($name, compact('key', 'encryption'));
+        $this->Cookie->write($name, $value);
+
+        $this->assertEquals('some data', $this->Cookie->read($name));
+    }
+
+    /**
      * test delete with httpOnly
      *
      * @return void

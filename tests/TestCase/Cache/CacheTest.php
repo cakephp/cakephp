@@ -558,6 +558,37 @@ class CacheTest extends TestCase
     }
 
     /**
+     * test clearAll() method
+     *
+     * @return void
+     */
+    public function testClearAll()
+    {
+        Cache::config('configTest', [
+            'engine' => 'File',
+            'path' => TMP . 'tests'
+        ]);
+        Cache::config('anotherConfigTest', [
+            'engine' => 'File',
+            'path' => TMP . 'tests'
+        ]);
+
+        Cache::write('key_1', 'hello', 'configTest');
+        Cache::write('key_2', 'hello again', 'anotherConfigTest');
+
+        $this->assertSame(Cache::read('key_1', 'configTest'), 'hello');
+        $this->assertSame(Cache::read('key_2', 'anotherConfigTest'), 'hello again');
+
+        $result = Cache::clearAll();
+        $this->assertTrue($result['configTest']);
+        $this->assertTrue($result['anotherConfigTest']);
+        $this->assertFalse(Cache::read('key_1', 'configTest'));
+        $this->assertFalse(Cache::read('key_2', 'anotherConfigTest'));
+        Cache::drop('configTest');
+        Cache::drop('anotherConfigTest');
+    }
+
+    /**
      * Test toggling enabled state of cache.
      *
      * @return void

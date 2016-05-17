@@ -192,6 +192,13 @@ class CollectionTest extends TestCase
             ->will($this->returnValue(false));
         $callable->expects($this->exactly(2))->method('__invoke');
         $this->assertFalse($collection->every($callable));
+
+        $items = [];
+        $collection = new Collection($items);
+        $callable = $this->getMock('stdClass', ['__invoke']);
+        $callable->expects($this->never())
+            ->method('__invoke');
+        $this->assertFalse($collection->every($callable));
     }
 
     /**

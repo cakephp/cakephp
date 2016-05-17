@@ -556,7 +556,7 @@ TEXT;
         $this->assertSame($this->Text->truncate($text1, 15, ['html' => true]), "The quick brow\xe2\x80\xa6");
         $this->assertSame($this->Text->truncate($text1, 15, ['exact' => false, 'html' => true]), "The quick\xe2\x80\xa6");
         $this->assertSame($this->Text->truncate($text2, 10, ['html' => true]), "Heiz&ouml;lr&uuml;c\xe2\x80\xa6");
-        $this->assertSame($this->Text->truncate($text2, 10, ['exact' => false, 'html' => true]), "Heiz&ouml;\xe2\x80\xa6");
+        $this->assertSame($this->Text->truncate($text2, 10, ['exact' => false, 'html' => true]), "Heiz&ouml;lr&uuml;c\xe2\x80\xa6");
         $this->assertSame($this->Text->truncate($text3, 20, ['html' => true]), "<b>&copy; 2005-2007, Cake S\xe2\x80\xa6</b>");
         $this->assertSame($this->Text->truncate($text4, 15, ['html' => true]), "<img src=\"mypic.jpg\"> This image ta\xe2\x80\xa6");
         $this->assertSame($this->Text->truncate($text4, 45, ['html' => true]), "<img src=\"mypic.jpg\"> This image tag is not XHTML conform!<br><hr/><b>But the\xe2\x80\xa6</b>");
@@ -576,43 +576,31 @@ TEXT;
             'exact' => false,
             'html' => true
         ]);
-        $expected = '<p><span style="font-size: medium;"><a>...</a></span></p>';
+        $expected = '<p><span style="font-size: medium;"><a>Iamates...</a></span></p>';
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test truncate() method with both exact and html.
+     * @return void
+     */
+    public function testTruncateExactHtml()
+    {
+        $text = '<a href="http://example.org">hello</a> world';
+        $expected = '<a href="http://example.org">hell..</a>';
+        $result = Text::truncate($text, 6, [
+            'ellipsis' => '..',
+            'exact' => true,
+            'html' => true
+        ]);
         $this->assertEquals($expected, $result);
 
-        $text = '<p><span style="font-size: medium;">El biógrafo de Steve Jobs, Walter
-Isaacson, explica porqué Jobs le pidió que le hiciera su biografía en
-este artículo de El País.</span></p>
-<p><span style="font-size: medium;"><span style="font-size:
-large;">Por qué Steve era distinto.</span></span></p>
-<p><span style="font-size: medium;"><a href="http://www.elpais.com/
-articulo/primer/plano/Steve/era/distinto/elpepueconeg/
-20111009elpneglse_4/Tes">http://www.elpais.com/articulo/primer/plano/
-Steve/era/distinto/elpepueconeg/20111009elpneglse_4/Tes</a></span></p>
-<p><span style="font-size: medium;">Ya se ha publicado la biografía de
-Steve Jobs escrita por Walter Isaacson  "<strong>Steve Jobs by Walter
-Isaacson</strong>", aquí os dejamos la dirección de amazon donde
-podeís adquirirla.</span></p>
-<p><span style="font-size: medium;"><a>http://www.amazon.com/Steve-
-Jobs-Walter-Isaacson/dp/1451648537</a></span></p>';
-        $result = $this->Text->truncate($text, 500, [
-            'ellipsis' => '... ',
+        $expected = '<a href="http://example.org">hell..</a>';
+        $result = Text::truncate($text, 6, [
+            'ellipsis' => '..',
             'exact' => false,
             'html' => true
         ]);
-        $expected = '<p><span style="font-size: medium;">El biógrafo de Steve Jobs, Walter
-Isaacson, explica porqué Jobs le pidió que le hiciera su biografía en
-este artículo de El País.</span></p>
-<p><span style="font-size: medium;"><span style="font-size:
-large;">Por qué Steve era distinto.</span></span></p>
-<p><span style="font-size: medium;"><a href="http://www.elpais.com/
-articulo/primer/plano/Steve/era/distinto/elpepueconeg/
-20111009elpneglse_4/Tes">http://www.elpais.com/articulo/primer/plano/
-Steve/era/distinto/elpepueconeg/20111009elpneglse_4/Tes</a></span></p>
-<p><span style="font-size: medium;">Ya se ha publicado la biografía de
-Steve Jobs escrita por Walter Isaacson  "<strong>Steve Jobs by Walter
-Isaacson</strong>", aquí os dejamos la dirección de amazon donde
-podeís adquirirla.</span></p>
-<p><span style="font-size: medium;"><a>... </a></span></p>';
         $this->assertEquals($expected, $result);
     }
 

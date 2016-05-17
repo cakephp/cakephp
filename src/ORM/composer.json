@@ -4,9 +4,9 @@
     "license": "MIT",
     "authors": [
         {
-        "name": "CakePHP Community",
-        "homepage": "http://cakephp.org"
-    }
+            "name": "CakePHP Community",
+            "homepage": "http://cakephp.org"
+        }
     ],
     "autoload": {
         "psr-4": {
@@ -16,8 +16,8 @@
     "require": {
         "cakephp/collection": "~3.0",
         "cakephp/core": "~3.0",
-        "cakephp/datasource": "~3.0",
-        "cakephp/database": "~3.0",
+        "cakephp/datasource": "^3.1.2",
+        "cakephp/database": "^3.1.4",
         "cakephp/event": "~3.0",
         "cakephp/utility": "~3.0",
         "cakephp/validation": "~3.0"
