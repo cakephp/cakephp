@@ -37,7 +37,7 @@ class ConditionalCallable
      * @param callable $callable Wrapped callable
      * @param array $options Conditions that will be evaluated before invocation of the callable
      */
-    public function __construct($callable, $options)
+    public function __construct(callable $callable, $options)
     {
         $this->callable = $callable;
         $this->options = $options;
@@ -68,11 +68,11 @@ class ConditionalCallable
     {
         if (!isset($this->options['if'])) {
             return true;
-        } else {
-            return $this->getConditions('if')->every(function ($callable) use ($args) {
-                return $this->call($callable, $args);
-            });
         }
+
+        return $this->getConditions('if')->every(function ($callable) use ($args) {
+            return $this->call($callable, $args);
+        });
     }
 
     /**
@@ -85,11 +85,11 @@ class ConditionalCallable
     {
         if (!isset($this->options['unless'])) {
             return false;
-        } else {
-            return $this->getConditions('unless')->every(function ($callable) use ($args) {
-                return $this->call($callable, $args);
-            });
         }
+
+        return $this->getConditions('unless')->every(function ($callable) use ($args) {
+            return $this->call($callable, $args);
+        });
     }
 
     /**

@@ -843,21 +843,17 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         if (isset($options['only'])) {
             $options['if'][] = function () use ($options) {
-                return in_array($this->request->param('action'), (array)$options['only']);
+                return in_array($this->request->param('action'), (array)$options['only'], true);
             };
         }
 
         if (isset($options['except'])) {
             $options['if'][] = function () use ($options) {
-                return !in_array($this->request->param('action'), (array)$options['except']);
+                return !in_array($this->request->param('action'), (array)$options['except'], true);
             };
         }
 
-        if (is_string($callable) && !is_callable($callable)) {
-            $callable = [$this, $callable];
-        }
-
-        $this->eventManager()->on($event, $options, $callable);
+        $this->eventManager()->on($event, $options, $this->toCallables($callable)[0]);
     }
 
     /**
@@ -883,6 +879,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     protected function toCallables($callables)
     {
+        // simple cast to an array would not work in case of [$object, 'method']
         if (is_callable($callables)) {
             $result = [$callables];
         } else {
