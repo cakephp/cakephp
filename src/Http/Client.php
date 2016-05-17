@@ -421,10 +421,7 @@ class Client
      */
     protected function _createRequest($method, $url, $data, $options)
     {
-        $request = new Request();
-        $request = $request->withMethod($method)
-            ->url($url)
-            ->body($data);
+        $request = new Request($url, $method, $data);
 
         if (isset($options['type'])) {
             $request->header($this->_typeHeaders($options['type']));

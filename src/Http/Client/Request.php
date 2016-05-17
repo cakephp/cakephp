@@ -34,11 +34,17 @@ class Request extends Message implements RequestInterface
      * Constructor
      *
      * Provides backwards compatible defaults for some properties.
+     *
+     * @param string $url The request URL
+     * @param string $method The HTTP method to use.
+     * @param array|string $body The request body to use.
      */
-    public function __construct()
+    public function __construct($url = '', $method = self::METHOD_GET, $data = null)
     {
-        $this->method = static::METHOD_GET;
-
+        $this->validateMethod($method);
+        $this->method = $method;
+        $this->uri = $this->createUri($url);
+        $this->body($data);
         $this->header([
             'Connection' => 'close',
             'User-Agent' => 'CakePHP'
