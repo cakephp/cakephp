@@ -136,7 +136,8 @@ class EagerLoader
 
         $associations = (array)$associations;
         $associations = $this->_reformatContain($associations, $this->_containments);
-        $this->_normalized = $this->_loadExternal = null;
+        $this->_normalized = null;
+        $this->_loadExternal = [];
         $this->_aliasList = [];
         return $this->_containments = $associations;
     }
@@ -152,7 +153,8 @@ class EagerLoader
     public function clearContain()
     {
         $this->_containments = [];
-        $this->_normalized = $this->_loadExternal = null;
+        $this->_normalized = null;
+        $this->_loadExternal = [];
         $this->_aliasList = [];
     }
 
@@ -366,6 +368,7 @@ class EagerLoader
         $contain = $this->normalized($repository);
         $matching = $this->_matching ? $this->_matching->normalized($repository) : [];
         $this->_fixStrategies();
+        $this->_loadExternal = [];
         return $this->_resolveJoins($contain, $matching);
     }
 

@@ -118,8 +118,7 @@ class CommandTask extends Shell
         foreach ($shellList as $type => $commands) {
             foreach ($commands as $shell) {
                 $prefix = '';
-                if (
-                    !in_array(strtolower($type), ['app', 'core']) &&
+                if (!in_array(strtolower($type), ['app', 'core']) &&
                     isset($duplicates[$type]) &&
                     in_array($shell, $duplicates[$type])
                 ) {

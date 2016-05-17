@@ -1206,4 +1206,34 @@ class QueryRegressionTest extends TestCase
         $endMemory = memory_get_usage() / 1024 / 1024;
         $this->assertWithinRange($endMemory, $memory, 1.25, 'Memory leak in ResultSet');
     }
+
+    /**
+     * Tests that having bound placeholders in the order clause does not result
+     * in an error when trying to count a query.
+     *
+     * @return void
+     */
+    public function testCountWithComplexOrderBy()
+    {
+        $table = TableRegistry::get('Articles');
+        $query = $table->find();
+        $query->orderDesc($query->newExpr()->addCase(
+            [$query->newExpr()->add(['id' => 3])],
+            [1, 0]
+        ));
+        $query->order(['title' => 'desc']);
+        // Executing the normal query before getting the count
+        $query->all();
+        $this->assertEquals(3, $query->count());
+
+        $table = TableRegistry::get('Articles');
+        $query = $table->find();
+        $query->orderDesc($query->newExpr()->addCase(
+            [$query->newExpr()->add(['id' => 3])],
+            [1, 0]
+        ));
+        $query->orderDesc($query->newExpr()->add(['id' => 3]));
+        // Not executing the query first, just getting the count
+        $this->assertEquals(3, $query->count());
+    }
 }

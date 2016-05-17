@@ -112,4 +112,25 @@ class QueryExpressionTest extends TestCase
             $this->assertNotSame($originalParts[$i], $part);
         });
     }
+
+    /**
+     * Tests the hasNestedExpression() function
+     *
+     * @return void
+     */
+    public function testHasNestedExpression()
+    {
+        $expr = new QueryExpression();
+        $this->assertFalse($expr->hasNestedExpression());
+
+        $expr->add(['a' => 'b']);
+        $this->assertTrue($expr->hasNestedExpression());
+
+        $expr = new QueryExpression();
+        $expr->add('a = b');
+        $this->assertFalse($expr->hasNestedExpression());
+
+        $expr->add(new QueryExpression('1 = 1'));
+        $this->assertTrue($expr->hasNestedExpression());
+    }
 }
