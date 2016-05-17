@@ -150,8 +150,8 @@ class Oauth
     public function baseString($request, $oauthValues)
     {
         $parts = [
-            $request->method(),
-            $this->_normalizedUrl($request->url()),
+            $request->getMethod(),
+            $this->_normalizedUrl($request->getUri()),
             $this->_normalizedParams($request, $oauthValues),
         ];
         $parts = array_map([$this, '_encode'], $parts);
@@ -163,27 +163,23 @@ class Oauth
      *
      * Section 9.1.2. of the Oauth spec
      *
-     * @param string $url URL
+     * @param Psr\Http\Message\UriInterface $url URL
      * @return string Normalized URL
-     * @throws \Cake\Core\Exception\Exception On invalid URLs
      */
-    protected function _normalizedUrl($url)
+    protected function _normalizedUrl($uri)
     {
-        $parts = parse_url($url);
-        if (!$parts) {
-            throw new Exception('Unable to parse URL');
-        }
-        $scheme = strtolower($parts['scheme'] ?: 'http');
+        $scheme = $uri->getScheme();
         $defaultPorts = [
             'http' => 80,
             'https' => 443
         ];
-        if (isset($parts['port']) && $parts['port'] != $defaultPorts[$scheme]) {
-            $parts['host'] .= ':' . $parts['port'];
+        $port = $uri->getPort();
+        if ($port && $port != $defaultPorts[$scheme]) {
+            $parts['host'] .= ':' . $port;
         }
         $out = $scheme . '://';
-        $out .= strtolower($parts['host']);
-        $out .= $parts['path'];
+        $out .= strtolower($uri->getHost());
+        $out .= $uri->getPath();
         return $out;
     }
 

@@ -421,17 +421,15 @@ class Client
      */
     protected function _createRequest($method, $url, $data, $options)
     {
-        $request = new Request($url, $method, $data);
-
+        $headers = isset($options['headers']) ? (array)$options['headers'] : [];
         if (isset($options['type'])) {
-            $request->header($this->_typeHeaders($options['type']));
+            $headers = array_merge($headers, $this->_typeHeaders($options['type']));
         }
-        if (isset($options['headers'])) {
-            $request->header($options['headers']);
+        if (is_string($data) && !isset($headers['Content-Type']) && !isset($headers['content-type'])) {
+            $headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
-        if (is_string($data) && !$request->header('content-type')) {
-            $request->header('Content-Type', 'application/x-www-form-urlencoded');
-        }
+
+        $request = new Request($url, $method, $headers, $data);
         $request->cookie($this->_cookies->get($url));
         if (isset($options['cookies'])) {
             $request->cookie($options['cookies']);

@@ -85,12 +85,12 @@ class Digest
             ['auth' => []]
         );
 
-        if (!$response->header('WWW-Authenticate')) {
+        if (!$response->getHeader('WWW-Authenticate')) {
             return [];
         }
         preg_match_all(
             '@(\w+)=(?:(?:")([^"]+)"|([^\s,$]+))@',
-            $response->header('WWW-Authenticate'),
+            $response->getHeaderLine('WWW-Authenticate'),
             $matches,
             PREG_SET_ORDER
         );
@@ -112,7 +112,7 @@ class Digest
      */
     protected function _generateHeader(Request $request, $credentials)
     {
-        $path = parse_url($request->url(), PHP_URL_PATH);
+        $path = $request->getUri()->getPath();
         $a1 = md5($credentials['username'] . ':' . $credentials['realm'] . ':' . $credentials['password']);
         $a2 = md5($request->method() . ':' . $path);
 
