@@ -48,22 +48,22 @@ class Digest
      *
      * @param \Cake\Network\Http\Request $request The request object.
      * @param array $credentials Authentication credentials.
-     * @return void
+     * @return \Cake\Network\Http\Request The updated request.
      * @see http://www.ietf.org/rfc/rfc2617.txt
      */
     public function authentication(Request $request, array $credentials)
     {
         if (!isset($credentials['username'], $credentials['password'])) {
-            return;
+            return $request;
         }
         if (!isset($credentials['realm'])) {
             $credentials = $this->_getServerInfo($request, $credentials);
         }
         if (!isset($credentials['realm'])) {
-            return;
+            return $request;
         }
         $value = $this->_generateHeader($request, $credentials);
-        $request->header('Authorization', $value);
+        return $request->withHeader('Authorization', $value);
     }
 
     /**

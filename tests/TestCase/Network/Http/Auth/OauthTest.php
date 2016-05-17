@@ -56,9 +56,9 @@ class OauthTest extends TestCase
             'method' => 'plaintext',
         ];
         $request = new Request();
-        $auth->authentication($request, $creds);
+        $request = $auth->authentication($request, $creds);
 
-        $result = $request->header('Authorization');
+        $result = $request->getHeaderLine('Authorization');
         $this->assertContains('OAuth', $result);
         $this->assertContains('oauth_version="1.0"', $result);
         $this->assertContains('oauth_token="a%20token%20value"', $result);
@@ -204,9 +204,9 @@ class OauthTest extends TestCase
             'timestamp' => '1191242096'
         ];
         $auth = new Oauth();
-        $auth->authentication($request, $options);
+        $request = $auth->authentication($request, $options);
 
-        $result = $request->header('Authorization');
+        $result = $request->getHeaderLine('Authorization');
         $expected = 'tR3+Ty81lMeYAr/Fid0kMTYa/WM=';
         $this->assertContains(
             'oauth_signature="' . $expected . '"',

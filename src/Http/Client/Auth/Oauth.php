@@ -34,7 +34,7 @@ class Oauth
      *
      * @param \Cake\Network\Http\Request $request The request object.
      * @param array $credentials Authentication credentials.
-     * @return void
+     * @return \Cake\Network\Http\Request The updated request.
      * @throws \Cake\Core\Exception\Exception On invalid signature types.
      */
     public function authentication(Request $request, array $credentials)
@@ -46,7 +46,7 @@ class Oauth
             $credentials['tokenSecret']
         );
         if (!$hasKeys) {
-            return;
+            return $request;
         }
         if (empty($credentials['method'])) {
             $credentials['method'] = 'hmac-sha1';
@@ -64,7 +64,7 @@ class Oauth
             default:
                 throw new Exception(sprintf('Unknown Oauth signature method %s', $credentials['method']));
         }
-        $request->header('Authorization', $value);
+        return $request->withHeader('Authorization', $value);
     }
 
     /**

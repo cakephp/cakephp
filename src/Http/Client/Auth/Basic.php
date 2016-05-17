@@ -29,15 +29,16 @@ class Basic
      *
      * @param \Cake\Network\Http\Request $request Request instance.
      * @param array $credentials Credentials.
-     * @return void
+     * @return \Cake\Network\Http\Request The updated request.
      * @see http://www.ietf.org/rfc/rfc2617.txt
      */
     public function authentication(Request $request, array $credentials)
     {
         if (isset($credentials['username'], $credentials['password'])) {
             $value = $this->_generateHeader($credentials['username'], $credentials['password']);
-            $request->header('Authorization', $value);
+            $request = $request->withHeader('Authorization', $value);
         }
+        return $request;
     }
 
     /**
@@ -45,15 +46,16 @@ class Basic
      *
      * @param \Cake\Network\Http\Request $request Request instance.
      * @param array $credentials Credentials.
-     * @return void
+     * @return \Cake\Network\Http\Request The updated request.
      * @see http://www.ietf.org/rfc/rfc2617.txt
      */
     public function proxyAuthentication(Request $request, array $credentials)
     {
         if (isset($credentials['username'], $credentials['password'])) {
             $value = $this->_generateHeader($credentials['username'], $credentials['password']);
-            $request->header('Proxy-Authorization', $value);
+            $request = $request->withHeader('Proxy-Authorization', $value);
         }
+        return $request;
     }
 
     /**

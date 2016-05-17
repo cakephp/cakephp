@@ -13,6 +13,7 @@
  */
 namespace Cake\Test\TestCase\Network\Http;
 
+use Cake\Core\Configure;
 use Cake\Network\Http\Client;
 use Cake\Network\Http\Request;
 use Cake\Network\Http\Response;
@@ -340,6 +341,42 @@ class ClientTest extends TestCase
         $result = $http->get('/', [], [
             'auth' => ['username' => 'mark', 'password' => 'secret'],
             'proxy' => ['username' => 'mark', 'password' => 'pass'],
+        ]);
+        $this->assertSame($result, $response);
+    }
+
+    /**
+     * Test authentication adapter that mutates request.
+     *
+     * @return void
+     */
+    public function testAuthenticationWithMutation()
+    {
+        Configure::write('App.namespace', 'TestApp');
+        $response = new Response();
+        $mock = $this->getMock('Cake\Network\Http\Adapter\Stream', ['send']);
+        $headers = [
+            'Authorization' => 'Bearer abc123',
+            'Proxy-Authorization' => 'Bearer abc123',
+        ];
+        $mock->expects($this->once())
+            ->method('send')
+            ->with($this->callback(function ($request) use ($headers) {
+                $this->assertEquals(Request::METHOD_GET, $request->getMethod());
+                $this->assertEquals('http://cakephp.org/', '' . $request->getUri());
+                $this->assertEquals($headers['Authorization'], $request->getHeaderLine('Authorization'));
+                $this->assertEquals($headers['Proxy-Authorization'], $request->getHeaderLine('Proxy-Authorization'));
+                return true;
+            }))
+            ->will($this->returnValue([$response]));
+
+        $http = new Client([
+            'host' => 'cakephp.org',
+            'adapter' => $mock
+        ]);
+        $result = $http->get('/', [], [
+            'auth' => ['type' => 'TestApp\Http\CompatAuth'],
+            'proxy' => ['type' => 'TestApp\Http\CompatAuth'],
         ]);
         $this->assertSame($result, $response);
     }

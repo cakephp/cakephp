@@ -435,10 +435,10 @@ class Client
             $request->cookie($options['cookies']);
         }
         if (isset($options['auth'])) {
-            $this->_addAuthentication($request, $options);
+            $request = $this->_addAuthentication($request, $options);
         }
         if (isset($options['proxy'])) {
-            $this->_addProxy($request, $options);
+            $request = $this->_addProxy($request, $options);
         }
         return $request;
     }
@@ -480,13 +480,14 @@ class Client
      *
      * @param \Cake\Http\Client\Request $request The request to modify.
      * @param array $options Array of options containing the 'auth' key.
-     * @return void
+     * @return \Cake\Http\Client\Request The updated request object.
      */
     protected function _addAuthentication(Request $request, $options)
     {
         $auth = $options['auth'];
         $adapter = $this->_createAuth($auth, $options);
-        $adapter->authentication($request, $options['auth']);
+        $result = $adapter->authentication($request, $options['auth']);
+        return $result ?: $request;
     }
 
     /**
@@ -497,13 +498,14 @@ class Client
      *
      * @param \Cake\Http\Client\Request $request The request to modify.
      * @param array $options Array of options containing the 'proxy' key.
-     * @return void
+     * @return \Cake\Http\Client\Request The updated request object.
      */
     protected function _addProxy(Request $request, $options)
     {
         $auth = $options['proxy'];
         $adapter = $this->_createAuth($auth, $options);
-        $adapter->proxyAuthentication($request, $options['proxy']);
+        $result = $adapter->proxyAuthentication($request, $options['proxy']);
+        return $result ?: $request;
     }
 
     /**
