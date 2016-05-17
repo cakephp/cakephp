@@ -257,13 +257,13 @@ class EventManagerTest extends TestCase
     {
         $manager = new EventManager();
 
-        $manager->on('my.event', ['if' => 'condition'], 'myfunc');
+        $manager->on('my.event', ['if' => 'condition'], 'time');
         $listeners = $manager->listeners('my.event');
 
         $this->assertCount(1, $listeners);
         $this->assertInstanceOf('\Cake\Event\ConditionalCallable', $listeners[0]['callable']);
 
-        $manager->on('my.event', ['unless' => 'condition'], 'otherfunc');
+        $manager->on('my.event', ['unless' => 'condition'], 'date');
         $listeners = $manager->listeners('my.event');
 
         $this->assertCount(2, $listeners);

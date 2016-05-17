@@ -100,7 +100,7 @@ class TestController extends ControllerTestAppController
      * beforeFilter handler
      *
      * @param \Cake\Event\Event $event
-     * @retun void
+     * @return void
      */
     public function beforeFilter(Event $event)
     {
@@ -109,16 +109,6 @@ class TestController extends ControllerTestAppController
     public function beforeAction(Event $event)
     {
         $this->beforeActionCalled = true;
-    }
-
-    public function trueCondition()
-    {
-        return true;
-    }
-
-    public function falseCondition()
-    {
-        return false;
     }
 
     /**
@@ -1027,14 +1017,9 @@ class ControllerTest extends TestCase
         $this->assertArrayHasKey('testVariable', $controller->View->viewVars);
     }
 
-    /**
-     * Test that before action callbacks work correctly.
-     *
-     * @param string $addActionMethod
-     */
-    public function testAddBeforeAction($addActionMethod = 'addBeforeAction')
+    public static function addBeforeActionProvider()
     {
-        $tests = [
+        return [
             [[], true],
             [['only' => 'index'], true],
             [['except' => 'view'], true],
@@ -1042,36 +1027,39 @@ class ControllerTest extends TestCase
             [['except' => 'index'], false],
             [['only' => ['index', 'view']], true],
             [['except' => ['index', 'view']], false],
-            [['if' => 'trueCondition'], true],
-            [['if' => 'falseCondition'], false],
-            [['unless' => 'trueCondition'], false],
-            [['unless' => 'falseCondition'], true],
-            [['if' => ['trueCondition', 'trueCondition']], true],
-            [['if' => ['trueCondition', 'falseCondition']], false],
-            [['unless' => ['trueCondition', 'trueCondition']], false],
-            [['unless' => ['trueCondition', 'falseCondition']], true],
         ];
+    }
 
-        foreach ($tests as $i => list($options, $expected)) {
+    /**
+     * Test that before action callbacks work correctly.
+     *
+     * @param array $options
+     * @param bool $expected
+     * @param string $actionMethod
+     * @dataProvider addBeforeActionProvider
+     */
+    public function testAddBeforeAction($options, $expected, $actionMethod = 'addBeforeAction')
+    {
+        $request = new Request('test/index');
+        $request->addParams(['controller' => 'Test', 'action' => 'index', 'pass' => [1, 1]]);
+        $response = $this->getMock('Cake\Network\Response');
 
-            $request = new Request('test/index');
-            $request->addParams(['controller' => 'Test', 'action' => 'index', 'pass' => [1, 1]]);
-            $response = $this->getMock('Cake\Network\Response');
-
-            $controller = new TestController($request, $response);
-            $controller->$addActionMethod('beforeAction', $options);
-            $controller->startupProcess();
-            $controller->shutdownProcess();
-            $this->assertEquals($expected, $controller->beforeActionCalled, "Sample $i");
-
-        }
+        $controller = new TestController($request, $response);
+        $controller->$actionMethod('beforeAction', $options);
+        $controller->startupProcess();
+        $controller->shutdownProcess();
+        $this->assertEquals($expected, $controller->beforeActionCalled);
     }
 
     /**
      * Test that after action callbacks work properly.
+     *
+     * @param array $options
+     * @param bool $expected
+     * @dataProvider addBeforeActionProvider
      */
-    public function testAddAfterAction()
+    public function testAddAfterAction($options, $expected)
     {
-        $this->testAddBeforeAction('addAfterAction');
+        $this->testAddBeforeAction($options, $expected, 'addAfterAction');
     }
 }
