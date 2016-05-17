@@ -505,9 +505,14 @@ class RequestHandlerComponent extends Component {
  *   in the request content type will be returned.
  */
 	public function requestedWith($type = null) {
-		if (!$this->request->is('post') && !$this->request->is('put') && !$this->request->is('delete')) {
-			return null;
-		}
+                $request = $this->request;
+                if (!$request->is('post') &&
+                    !$request->is('put') &&
+                    !$request->is('patch') &&
+                    !$request->is('delete')
+                ) {
+                    return null;
+                }
 		if (is_array($type)) {
 			foreach ($type as $t) {
 				if ($this->requestedWith($t)) {
