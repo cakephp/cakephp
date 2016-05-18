@@ -1133,8 +1133,9 @@ class MarshallerTest extends TestCase
     }
 
     /**
-     * Test if exceptin is raised when called with [associated=>NonExistingAssociation]
-     * Previously such association has been simply ignored
+     * Test if exception is raised when called with [associated => NonExistingAssociation]
+     * Previously such association were simply ignored
+     *
      * @expectedException \InvalidArgumentException
      * @return void
      */
@@ -1157,7 +1158,7 @@ class MarshallerTest extends TestCase
             ],
         ];
         $marshall = new Marshaller($this->comments);
-        $marshall->many($data, ['associated' => ['Users','People']]);
+        $marshall->many($data, ['associated' => ['Users', 'People']]);
     }
 
     /**

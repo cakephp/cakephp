@@ -20,7 +20,6 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
-use Cake\ORM\Exception\MissingAssociationException;
 use RuntimeException;
 
 /**
@@ -81,8 +80,14 @@ class Marshaller
                 $map[$assoc->property()] = ['association' => $assoc] + $nested + ['associated' => []];
                 continue;
             }
-            if (substr($key, 0, 1) !== "_") { // if $key is not a special underscored field eg _ids or _joinData
-                throw new \InvalidArgumentException(vsprintf("%s is not associated with %s",[$this->_table->alias(), $key]));
+            // If the key is not a special field like _ids or _joinData
+            // it is a missing association that we should error on.
+            if (substr($key, 0, 1) !== "_") {
+                throw new \InvalidArgumentException(sprintf(
+                    "'%s' is not associated with '%s'",
+                    $this->_table->alias(),
+                    $key
+                ));
             }
         }
         return $map;
