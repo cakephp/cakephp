@@ -423,6 +423,40 @@ class SqliteTest extends CakeTestCase {
 	}
 
 /**
+ * Test that describe ignores `default current_timestamp` in timestamp columns.
+ *
+ * @return void
+ */
+	public function testDescribeHandleCurrentTimestamp() {
+		$name = $this->Dbo->fullTableName('timestamp_default_values');
+		$sql = <<<SQL
+CREATE TABLE $name (
+	id INT NOT NULL,
+	phone VARCHAR(10),
+	limit_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (id)
+);
+SQL;
+		$this->Dbo->execute($sql);
+		$model = new Model(array(
+			'table' => 'timestamp_default_values',
+			'ds' => 'test',
+			'alias' => 'TimestampDefaultValue'
+		));
+		$result = $this->Dbo->describe($model);
+		$this->Dbo->execute('DROP TABLE ' . $name);
+
+		$this->assertNull($result['limit_date']['default']);
+
+		$schema = new CakeSchema(array(
+			'connection' => 'test',
+			'testdescribes' => $result
+		));
+		$result = $this->Dbo->createSchema($schema);
+		$this->assertContains('"limit_date" timestamp NOT NULL', $result);
+	}
+
+/**
  * Test virtualFields with functions.
  *
  * @return void

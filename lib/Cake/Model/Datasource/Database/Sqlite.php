@@ -185,6 +185,9 @@ class Sqlite extends DboSource {
 				'default' => $default,
 				'length' => $this->length($column['type'])
 			);
+			if (in_array($fields[$column['name']]['type'], array('timestamp', 'datetime')) && strtoupper($fields[$column['name']]['default']) === 'CURRENT_TIMESTAMP') {
+				$fields[$column['name']]['default'] = null;
+			}
 			if ($column['pk'] == 1) {
 				$fields[$column['name']]['key'] = $this->index['PRI'];
 				$fields[$column['name']]['null'] = false;
