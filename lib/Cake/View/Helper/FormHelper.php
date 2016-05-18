@@ -1510,6 +1510,7 @@ class FormHelper extends AppHelper {
  * - `between` - the string between legend and input set or array of strings to insert
  *    strings between each input block
  * - `legend` - control whether or not the widget set has a fieldset & legend
+ * - `fieldset` - sets the class of the fieldset. Fieldset is only generated if legend attribute is provided
  * - `value` - indicate a value that is should be checked
  * - `label` - boolean to indicate whether or not labels for widgets show be displayed
  * - `hiddenField` - boolean to indicate if you want the results of radio() to include
@@ -1542,6 +1543,12 @@ class FormHelper extends AppHelper {
 			unset($attributes['legend']);
 		} elseif (count($options) > 1) {
 			$legend = __(Inflector::humanize($this->field()));
+		}
+
+		$fieldset = '';
+		if (isset($attributes['fieldset'])) {
+			$fieldset = $attributes['fieldset'];
+			unset($attributes['fieldset']);
 		}
 
 		$label = true;
@@ -1638,7 +1645,12 @@ class FormHelper extends AppHelper {
 			$between = '';
 		}
 		if ($legend) {
-			$out = $this->Html->useTag('fieldset', '', $this->Html->useTag('legend', $legend) . $between . $out);
+			if (is_string($fieldset)) {
+				$fieldsetClass = sprintf(' class="%s"', $fieldset);
+			} else {
+				$fieldsetClass = '';
+			}
+			$out = $this->Html->useTag('fieldset', $fieldsetClass, $this->Html->useTag('legend', $legend) . $between . $out);
 		}
 		return $out;
 	}
