@@ -20,7 +20,8 @@ use RuntimeException;
 /**
  * Event Condition Decorator
  */
-class ConditionDecorator extends BaseDecorator {
+class ConditionDecorator extends BaseDecorator
+{
 
     /**
      * @inheritdoc

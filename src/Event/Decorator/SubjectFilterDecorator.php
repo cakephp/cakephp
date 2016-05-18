@@ -20,7 +20,8 @@ use RuntimeException;
 /**
  * Event Subject Filter Decorator
  */
-class SubjectFilterDecorator extends BaseDecorator {
+class SubjectFilterDecorator extends BaseDecorator
+{
 
     /**
      * @inheritdoc

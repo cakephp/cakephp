@@ -14,7 +14,8 @@
  */
 namespace Cake\Event\Decorator;
 
-class BaseDecorator {
+class BaseDecorator
+{
 
     /**
      * Callable
