@@ -35,16 +35,13 @@ class ConditionDecoratorTest extends TestCase
      */
     public function testCanTriggerIf()
     {
-        $callable = function(Event $event) {
+        $callable = function (Event $event) {
             return 'success';
         };
 
         $decorator = new ConditionDecorator($callable, [
-            'if' => function(Event $event) {
-                if (isset($event->data['canTrigger'])) {
-                    return true;
-                }
-                return false;
+            'if' => function (Event $event) {
+               return $event->data['canTrigger'];
             }
         ]);
 
@@ -65,10 +62,11 @@ class ConditionDecoratorTest extends TestCase
      * testCallableRuntimeException
      *
      * @expectedException \RuntimeException
+     * @expectedExceptionMessage Cake\Event\Decorator\ConditionDecorator the `if` condition is not a callable!
      */
     public function testCallableRuntimeException()
     {
-        $callable = function(Event $event) {
+        $callable = function (Event $event) {
             return 'success';
         };
 

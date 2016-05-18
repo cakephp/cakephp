@@ -25,6 +25,7 @@ class SubjectFilterDecorator extends BaseDecorator
 
     /**
      * @inheritdoc
+     * @return mixed
      */
     public function __invoke()
     {

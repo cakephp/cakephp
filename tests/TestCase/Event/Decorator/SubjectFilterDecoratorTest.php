@@ -18,8 +18,8 @@
  */
 namespace Cake\Test\TestCase\Event;
 
-use Cake\Event\Event;
 use Cake\Event\Decorator\SubjectFilterDecorator;
+use Cake\Event\Event;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -36,7 +36,7 @@ class SubjectFilterDecoratorTest extends TestCase
     public function testCanTrigger()
     {
         $event = new Event('decorator.test', $this);
-        $callable = function(Event $event) {
+        $callable = function (Event $event) {
             return 'success';
         };
 
