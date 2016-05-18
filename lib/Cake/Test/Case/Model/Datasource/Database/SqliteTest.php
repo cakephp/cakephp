@@ -168,7 +168,13 @@ class SqliteTest extends CakeTestCase {
 		$dbName = 'db' . rand() . '$(*%&).db';
 		$this->assertFalse(file_exists(TMP . $dbName));
 
-		$db = new Sqlite(array_merge($this->Dbo->config, array('database' => TMP . $dbName)));
+		try {
+			$db = new Sqlite(array_merge($this->Dbo->config, array('database' => TMP . $dbName)));
+		} catch (MissingConnectionException $e) {
+			// This might be caused by NTFS file systems, where '*' is a forbidden character. Repeat without this character.
+			$dbName = str_replace('*', '', $dbName);
+			$db = new Sqlite(array_merge($this->Dbo->config, array('database' => TMP . $dbName)));
+		}
 		$this->assertTrue(file_exists(TMP . $dbName));
 
 		$db->execute("CREATE TABLE test_list (id VARCHAR(255));");
