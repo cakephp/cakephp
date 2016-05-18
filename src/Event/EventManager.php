@@ -14,7 +14,6 @@
  */
 namespace Cake\Event;
 
-use Cake\Event\Decorator\ConditionDecorator;
 use InvalidArgumentException;
 
 /**
@@ -158,14 +157,14 @@ class EventManager
         $argCount = func_num_args();
         if ($argCount === 2) {
             $this->_listeners[$eventKey][static::$defaultPriority][] = [
-                'callable' => is_callable($options) ? new ConditionDecorator($options) : $options,
+                'callable' => $options
             ];
             return;
         }
         if ($argCount === 3) {
             $priority = isset($options['priority']) ? $options['priority'] : static::$defaultPriority;
             $this->_listeners[$eventKey][$priority][] = [
-                'callable' => is_callable($callable) ? new ConditionDecorator($callable, $options) : $callable
+                'callable' => $callable
             ];
             return;
         }
