@@ -14,8 +14,12 @@
  */
 namespace Cake\Event\Decorator;
 
+use Cake\Event\Event;
 use RuntimeException;
 
+/**
+ * Event Filter Decorator
+ */
 class FilterDecorator extends EventDecorator {
 
     /**
@@ -53,10 +57,13 @@ class FilterDecorator extends EventDecorator {
     protected function _evaluateCondition($condition, Event $event)
     {
         if (!isset($this->_options[$condition])) {
+            if ($condition === 'unless') {
+                return false;
+            }
             return true;
         }
         if (!is_callable($this->_options[$condition])) {
-            throw new RuntimeException('Is not a callable!');
+            throw new RuntimeException(self::class . ' the `' . $condition . '` condition is not a callable!');
         }
         return $this->_options[$condition]($event);
     }
