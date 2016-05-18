@@ -18,8 +18,8 @@
  */
 namespace Cake\Test\TestCase\Event;
 
-use Cake\Event\Event;
 use Cake\Event\Decorator\ConditionDecorator;
+use Cake\Event\Event;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -41,7 +41,7 @@ class ConditionDecoratorTest extends TestCase
 
         $decorator = new ConditionDecorator($callable, [
             'if' => function (Event $event) {
-               return $event->data['canTrigger'];
+                return $event->data['canTrigger'];
             }
         ]);
 

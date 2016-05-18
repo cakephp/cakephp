@@ -34,7 +34,7 @@ class BaseDecorator
     /**
      * Constructor.
      *
-     * @param $callable $callable Callable.
+     * @param callable $callable Callable.
      * @param array $options Decorator options.
      */
     public function __construct(callable $callable, array $options = [])
@@ -57,7 +57,7 @@ class BaseDecorator
     /**
      * Calls a callable with the passed arguments.
      *
-     * @param $callable The callable.
+     * @param callable $callable The callable.
      * @param array $args Arguments for the callable.
      * @return mixed
      */
