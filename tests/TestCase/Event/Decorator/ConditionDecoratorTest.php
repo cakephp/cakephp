@@ -19,13 +19,13 @@
 namespace Cake\Test\TestCase\Event;
 
 use Cake\Event\Event;
-use Cake\Event\Decorator\FilterDecorator;
+use Cake\Event\Decorator\ConditionDecorator;
 use Cake\TestSuite\TestCase;
 
 /**
  * Tests the Cake\Event\Event class functionality
  */
-class EventTest extends TestCase
+class ConditionDecoratorTest extends TestCase
 {
 
     /**
@@ -39,7 +39,7 @@ class EventTest extends TestCase
             return 'success';
         };
 
-        $decorator = new FilterDecorator($callable, [
+        $decorator = new ConditionDecorator($callable, [
             'if' => function(Event $event) {
                 if (isset($event->data['canTrigger'])) {
                     return true;
@@ -66,12 +66,13 @@ class EventTest extends TestCase
      *
      * @expectedException \RuntimeException
      */
-    public function testCallableRuntimeException() {
+    public function testCallableRuntimeException()
+    {
         $callable = function(Event $event) {
             return 'success';
         };
 
-        $decorator = new FilterDecorator($callable, [
+        $decorator = new ConditionDecorator($callable, [
             'if' => 'not a callable'
         ]);
 

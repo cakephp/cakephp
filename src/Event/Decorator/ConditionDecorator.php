@@ -18,14 +18,15 @@ use Cake\Event\Event;
 use RuntimeException;
 
 /**
- * Event Filter Decorator
+ * Event Condition Decorator
  */
-class FilterDecorator extends EventDecorator {
+class ConditionDecorator extends BaseDecorator {
 
     /**
      * @inheritdoc
      */
-    public function __invoke() {
+    public function __invoke()
+    {
         $args = func_get_args();
         if (!$this->canTrigger($args[0])) {
             return false;
