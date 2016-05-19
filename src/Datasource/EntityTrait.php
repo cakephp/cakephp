@@ -338,9 +338,24 @@ trait EntityTrait
         if (!strlen((string)$property)) {
             throw new InvalidArgumentException('Cannot get an empty property');
         }
+
+        if (strpos($property, '.') > 0) {
+            list($property, $nested) = explode('.', $property, 2);
+            if ($this->_properties[$property] instanceof EntityInterface) {
+                return $this->_properties[$property]->getOriginal($nested);
+            }
+
+            throw new \InvalidArgumentException(sprintf(
+                'No original value is available for path: %s.%s',
+                $property,
+                $nested
+            ));
+        }
+
         if (array_key_exists($property, $this->_original)) {
             return $this->_original[$property];
         }
+
         return $this->get($property);
     }
 
