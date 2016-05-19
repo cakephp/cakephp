@@ -34,15 +34,23 @@ class Request extends Message implements RequestInterface
      * Constructor
      *
      * Provides backwards compatible defaults for some properties.
+     *
+     * @param string $url The request URL
+     * @param string $method The HTTP method to use.
+     * @param array $headers The HTTP headers to set.
+     * @param array|string $data The request body to use.
      */
-    public function __construct()
+    public function __construct($url = '', $method = self::METHOD_GET, array $headers = [], $data = null)
     {
-        $this->method = static::METHOD_GET;
-
-        $this->header([
+        $this->validateMethod($method);
+        $this->method = $method;
+        $this->uri = $this->createUri($url);
+        $this->body($data);
+        $headers += [
             'Connection' => 'close',
             'User-Agent' => 'CakePHP'
-        ]);
+        ];
+        $this->addHeaders($headers);
     }
 
     /**
@@ -133,12 +141,23 @@ class Request extends Message implements RequestInterface
         if ($value !== null && !is_array($name)) {
             $name = [$name => $value];
         }
-        foreach ($name as $key => $val) {
+        $this->addHeaders($name);
+        return $this;
+    }
+
+    /**
+     * Add an array of headers to the request.
+     *
+     * @param array $headers The headers to add.
+     * @return void
+     */
+    protected function addHeaders($headers)
+    {
+        foreach ($headers as $key => $val) {
             $normalized = strtolower($key);
             $this->headers[$key] = (array)$val;
             $this->headerNames[$normalized] = $key;
         }
-        return $this;
     }
 
     /**

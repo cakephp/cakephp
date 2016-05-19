@@ -34,7 +34,7 @@ class Oauth
      *
      * @param \Cake\Network\Http\Request $request The request object.
      * @param array $credentials Authentication credentials.
-     * @return void
+     * @return \Cake\Network\Http\Request The updated request.
      * @throws \Cake\Core\Exception\Exception On invalid signature types.
      */
     public function authentication(Request $request, array $credentials)
@@ -46,7 +46,7 @@ class Oauth
             $credentials['tokenSecret']
         );
         if (!$hasKeys) {
-            return;
+            return $request;
         }
         if (empty($credentials['method'])) {
             $credentials['method'] = 'hmac-sha1';
@@ -64,7 +64,7 @@ class Oauth
             default:
                 throw new Exception(sprintf('Unknown Oauth signature method %s', $credentials['method']));
         }
-        $request->header('Authorization', $value);
+        return $request->withHeader('Authorization', $value);
     }
 
     /**
@@ -150,8 +150,8 @@ class Oauth
     public function baseString($request, $oauthValues)
     {
         $parts = [
-            $request->method(),
-            $this->_normalizedUrl($request->url()),
+            $request->getMethod(),
+            $this->_normalizedUrl($request->getUri()),
             $this->_normalizedParams($request, $oauthValues),
         ];
         $parts = array_map([$this, '_encode'], $parts);
@@ -163,27 +163,23 @@ class Oauth
      *
      * Section 9.1.2. of the Oauth spec
      *
-     * @param string $url URL
+     * @param Psr\Http\Message\UriInterface $uri Uri object to build a normalized version of.
      * @return string Normalized URL
-     * @throws \Cake\Core\Exception\Exception On invalid URLs
      */
-    protected function _normalizedUrl($url)
+    protected function _normalizedUrl($uri)
     {
-        $parts = parse_url($url);
-        if (!$parts) {
-            throw new Exception('Unable to parse URL');
-        }
-        $scheme = strtolower($parts['scheme'] ?: 'http');
+        $scheme = $uri->getScheme();
         $defaultPorts = [
             'http' => 80,
             'https' => 443
         ];
-        if (isset($parts['port']) && $parts['port'] != $defaultPorts[$scheme]) {
-            $parts['host'] .= ':' . $parts['port'];
+        $port = $uri->getPort();
+        if ($port && $port != $defaultPorts[$scheme]) {
+            $parts['host'] .= ':' . $port;
         }
         $out = $scheme . '://';
-        $out .= strtolower($parts['host']);
-        $out .= $parts['path'];
+        $out .= strtolower($uri->getHost());
+        $out .= $uri->getPath();
         return $out;
     }
 
