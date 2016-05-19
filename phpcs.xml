@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<ruleset name="CakePHP">
+    <rule ref=".\vendor\cakephp\cakephp-codesniffer\CakePHP\ruleset.xml"/>
+    <file>./src</file>
+</ruleset>
