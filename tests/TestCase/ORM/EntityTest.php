@@ -145,9 +145,12 @@ class EntityTest extends TestCase
             'null' => null,
         ], ['markNew' => true]);
         $entity->set('body', 'updated body');
-        $result = $entity->getOriginalValues(['id', 'title', 'body', 'null']);
+        $result = $entity->getOriginalValues();
         $expected = [
-            'body' => 'no'
+            'id' => 1,
+            'title' => 'original',
+            'body' => 'no',
+            'null' => null,
         ];
         $this->assertEquals($expected, $result);
     }

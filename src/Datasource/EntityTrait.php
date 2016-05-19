@@ -322,7 +322,14 @@ trait EntityTrait
      */
     public function getOriginalValues()
     {
-        return $this->_original;
+        $originals = $this->_original;
+        $originalKeys = array_keys($originals);
+        foreach ($this->_properties as $key => $value) {
+            if (!in_array($key, $originalKeys)) {
+                $originals[$key] = $value;
+            }
+        }
+        return $originals;
     }
 
     /**
