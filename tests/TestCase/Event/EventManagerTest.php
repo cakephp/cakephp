@@ -710,4 +710,26 @@ class EventManagerTest extends TestCase
         $this->assertEquals(['listenerFunction'], $listener->callStack);
         $this->assertEquals(['listenerFunction'], $listener2->callStack);
     }
+
+    /**
+     * Test getting a list of dispatched events from the manager.
+     *
+     * @return void
+     * @triggers my_event $this)
+     * @triggers my_second_event $this)
+     */
+    public function testGetDispatchedEvents()
+    {
+        $event = new Event('my_event', $this);
+        $event2 = new Event('my_second_event', $this);
+
+        $manager = new EventManager();
+        $manager->dispatch($event);
+        $manager->dispatch($event2);
+
+        $result = $manager->getDispatchedEvents();
+        $this->assertCount(2, $result);
+        $this->assertEquals($result[0], $event);
+        $this->assertEquals($result[1], $event2);
+    }
 }

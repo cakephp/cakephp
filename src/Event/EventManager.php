@@ -54,6 +54,13 @@ class EventManager
     protected $_isGlobal = false;
 
     /**
+     * A list of already dispatched events
+     *
+     * @var array
+     */
+    protected $_dispatchedEvents = [];
+
+    /**
      * Returns the globally available instance of a Cake\Event\EventManager
      * this is used for dispatching events attached from outside the scope
      * other managers were created. Usually for creating hook systems or inter-class
@@ -346,6 +353,7 @@ class EventManager
 
         $listeners = $this->listeners($event->name());
         if (empty($listeners)) {
+            $this->_dispatchedEvents[] = $event;
             return $event;
         }
 
@@ -361,6 +369,7 @@ class EventManager
                 $event->result = $result;
             }
         }
+        $this->_dispatchedEvents[] = $event;
         return $event;
     }
 
@@ -461,6 +470,16 @@ class EventManager
     }
 
     /**
+     * Returns a list of dispatched event objects.
+     *
+     * @return array
+     */
+    public function getDispatchedEvents()
+    {
+        return $this->_dispatchedEvents;
+    }
+
+    /**
      * Debug friendly object properties.
      *
      * @return array
@@ -472,6 +491,9 @@ class EventManager
         $properties['_listeners'] = [];
         foreach ($this->_listeners as $key => $listeners) {
             $properties['_listeners'][$key] = count($listeners) . ' listener(s)';
+        }
+        foreach ($this->_dispatchedEvents as $event) {
+            $properties['_dispatchedEvents'][] = $event->name() . ' with subject ' . get_class($event->subject());
         }
         return $properties;
     }
