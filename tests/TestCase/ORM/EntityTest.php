@@ -71,20 +71,21 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Test that getOriginal() retains falsey values.
+     * Test that getOriginal() retains falsey values and recurses into nested entities.
      *
      * @return void
      */
     public function testGetOriginal()
     {
         $entity = new Entity(
-            ['false' => false, 'null' => null, 'zero' => 0, 'empty' => ''],
+            ['false' => false, 'null' => null, 'zero' => 0, 'empty' => '', 'nested' => new Entity(['deep' => 42])],
             ['markNew' => true]
         );
         $this->assertNull($entity->getOriginal('null'));
         $this->assertFalse($entity->getOriginal('false'));
         $this->assertSame(0, $entity->getOriginal('zero'));
         $this->assertSame('', $entity->getOriginal('empty'));
+        $this->assertSame(42, $entity->getOriginal('nested.deep'));
 
         $entity->set(['false' => 'y', 'null' => 'y', 'zero' => 'y', 'empty' => '']);
         $entity->nested->set('deep', 256);
@@ -92,6 +93,7 @@ class EntityTest extends TestCase
         $this->assertFalse($entity->getOriginal('false'));
         $this->assertSame(0, $entity->getOriginal('zero'));
         $this->assertSame('', $entity->getOriginal('empty'));
+        $this->assertSame(42, $entity->getOriginal('nested.deep'));
     }
 
     /**
