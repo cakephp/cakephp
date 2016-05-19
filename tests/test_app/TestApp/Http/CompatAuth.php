@@ -47,5 +47,4 @@ class CompatAuth
     {
         $request->header('Proxy-Authorization', 'Bearer abc123');
     }
-
 }
