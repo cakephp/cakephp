@@ -316,6 +316,16 @@ trait EntityTrait
     }
 
     /**
+     * Gets all original values of the entity.
+     *
+     * @return array
+     */
+    public function getOriginalValues()
+    {
+        return $this->_original;
+    }
+
+    /**
      * Returns whether this entity contains a property named $property
      * that contains a non-null value.
      *
