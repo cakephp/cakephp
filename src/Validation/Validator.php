@@ -432,27 +432,26 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * You can also set mode and message for all passed fields, the individual
      * setting takes precedence over group settings.
      *
-     * @param string|array $field the name of the field or list of fields
+     * @param string|array $field the name of the field or list of fields.
      * @param bool|string|callable $mode Valid values are true, false, 'create', 'update'.
-     * If a callable is passed then the field will be required only when the callback
-     * returns true.
+     *   If a callable is passed then the field will be required only when the callback
+     *   returns true.
      * @param string|null $message The message to show if the field presence validation fails.
-     *
      * @return $this
      */
     public function requirePresence($field, $mode = true, $message = null)
     {
-        $settingsDefault = [
+        $defaults = [
             'mode' => $mode,
             'message' => $message
         ];
 
         if (!is_array($field)) {
-            $field = $this->_convertValidatorToArray($field, $settingsDefault);
+            $field = $this->_convertValidatorToArray($field, $defaults);
         }
 
         foreach ($field as $fieldName => $setting) {
-            $settings = $this->_convertValidatorToArray($fieldName, $settingsDefault, $setting);
+            $settings = $this->_convertValidatorToArray($fieldName, $defaults, $setting);
             $fieldName = current(array_keys($settings));
 
             $this->field($fieldName)->isPresenceRequired($settings[$fieldName]['mode']);
@@ -480,10 +479,19 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * ### Example:
      *
      * ```
-     * $validator->allowEmpty('email'); // Email can be empty
-     * $validator->allowEmpty('email', 'create'); // Email can be empty on create
-     * $validator->allowEmpty('email', 'update'); // Email can be empty on update
-     * $validator->allowEmpty(['email', 'subject'], 'update'); // Email and subject can be empty on update
+     * // Email can be empty
+     * $validator->allowEmpty('email');
+     *
+     * // Email can be empty on create
+     * $validator->allowEmpty('email', 'create');
+     *
+     * // Email can be empty on update
+     * $validator->allowEmpty('email', 'update');
+     *
+     * // Email and subject can be empty on update
+     * $validator->allowEmpty(['email', 'subject'], 'update');
+     *
+     * // Email can be always empty, subject and content can be empty on update.
      * $validator->allowEmpty(
      *      [
      *          'email' => [
@@ -495,8 +503,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *          'subject'
      *      ],
      *      'update'
-     * ); // Email can be always empty, subject and content can be empty on update
-     *
+     * );
      * ```
      *
      * It is possible to conditionally allow emptiness on a field by passing a callback
@@ -514,7 +521,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Because this and `notEmpty()` modify the same internal state, the last
      * method called will take precedence.
      *
-     * @param string|array $field the name of the field or list of fields
+     * @param string|array $field the name of the field or a list of fields
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true (always), 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
@@ -548,11 +555,11 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Converts validator to fieldName => $settings array
      *
      * @param int|string $fieldName name of field
-     * @param array $settingDefaults default settings
+     * @param array $defaults default settings
      * @param string|array $settings settings from data
      * @return array
      */
-    protected function _convertValidatorToArray($fieldName, $settingDefaults = [], $settings = [])
+    protected function _convertValidatorToArray($fieldName, $defaults = [], $settings = [])
     {
         if (is_string($settings)) {
             $fieldName = $settings;
@@ -560,10 +567,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
         if (!is_array($settings)) {
             throw new InvalidArgumentException(
-                sprintf('Invalid field "%s" setting, must be an array.', $fieldName)
+                sprintf('Invalid settings for "%s". Settings must be an array.', $fieldName)
             );
         }
-        $settings += $settingDefaults;
+        $settings += $defaults;
         return [$fieldName => $settings];
     }
 
@@ -574,10 +581,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * - `when` individual when condition for field
      * - `message` individual error message for field
      *
-     * You can also set when and message for all passed fields, the individual setting
+     * You can also set `when` and `message` for all passed fields, the individual setting
      * takes precedence over group settings.
      *
-     * This is the opposite of allowEmpty() which allows a field to be empty.
+     * This is the opposite of `allowEmpty()` which allows a field to be empty.
      * By using $mode equal to 'create' or 'update', you can make fields required
      * when records are first created, or when they are updated.
      *
@@ -585,11 +592,20 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * ```
      * $message = 'This field cannot be empty';
-     * $validator->notEmpty('email'); // Email cannot be empty
-     * $validator->notEmpty('email', $message, 'create'); // Email can be empty on update
-     * $validator->notEmpty('email', $message, 'update'); // Email can be empty on create
+     *
+     * // Email cannot be empty
+     * $validator->notEmpty('email');
+     *
+     * // Email can be empty on update, but not create
+     * $validator->notEmpty('email', $message, 'create');
+     *
+     * // Email can be empty on create, but required on update.
+     * $validator->notEmpty('email', $message, 'update');
+     *
+     * // Email and title can be empty on create, but are required on update.
      * $validator->notEmpty(['email', 'title'], $message, 'update');
-     * // Email and title can be empty on create but can not on update
+     *
+     * // Email can be empty on create, title must always be not empty
      * $validator->notEmpty(
      *      [
      *          'email',
@@ -600,7 +616,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *      ],
      *      $message,
      *      'update'
-     * ); // Email can be empty on create, title must always be not empty
+     * );
      * ```
      *
      * It is possible to conditionally disallow emptiness on a field by passing a callback
@@ -619,25 +635,24 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|array $field the name of the field or list of fields
      * @param string|null $message The message to show if the field is not
      * @param bool|string|callable $when Indicates when the field is not allowed
-     * to be empty. Valid values are true (always), 'create', 'update'. If a
-     * callable is passed then the field will allowed be empty only when
-     * the callback returns false.
-     *
+     *   to be empty. Valid values are true (always), 'create', 'update'. If a
+     *   callable is passed then the field will allowed to be empty only when
+     *   the callback returns false.
      * @return $this
      */
     public function notEmpty($field, $message = null, $when = false)
     {
-        $settingsDefault = [
+        $defaults = [
             'when' => $when,
             'message' => $message
         ];
 
         if (!is_array($field)) {
-            $field = $this->_convertValidatorToArray($field, $settingsDefault);
+            $field = $this->_convertValidatorToArray($field, $defaults);
         }
 
         foreach ($field as $fieldName => $setting) {
-            $settings = $this->_convertValidatorToArray($fieldName, $settingsDefault, $setting);
+            $settings = $this->_convertValidatorToArray($fieldName, $defaults, $setting);
             $fieldName = current(array_keys($settings));
             $whenSetting = $settings[$fieldName]['when'];
 
