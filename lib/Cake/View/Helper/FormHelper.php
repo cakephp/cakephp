@@ -932,10 +932,14 @@ class FormHelper extends AppHelper {
 
 		if (isset($options['legend'])) {
 			$legend = $options['legend'];
+			unset($options['legend']);
 		}
+
 		if (isset($options['fieldset'])) {
 			$fieldset = $options['fieldset'];
+			unset($options['fieldset']);
 		}
+
 
 		if (empty($fields)) {
 			$fields = $modelFields;
@@ -971,11 +975,11 @@ class FormHelper extends AppHelper {
 			$out .= $this->input($name, $options);
 		}
 
-		if (is_string($fieldset)) {
-			$fieldsetClass = sprintf(' class="%s"', $fieldset);
-		} else {
-			$fieldsetClass = '';
-		}
+        if (is_string($fieldset)) {
+            $fieldsetClass = array('class' => $fieldset);
+        } else {
+            $fieldsetClass = '';
+        }
 
 		if ($fieldset) {
 			if ($legend) {
@@ -1545,9 +1549,9 @@ class FormHelper extends AppHelper {
 			$legend = __(Inflector::humanize($this->field()));
 		}
 
-		$fieldset = '';
+		$fieldsetAttrs = '';
 		if (isset($attributes['fieldset'])) {
-			$fieldset = $attributes['fieldset'];
+			$fieldsetAttrs = array('class' => $attributes['fieldset']);
 			unset($attributes['fieldset']);
 		}
 
@@ -1644,13 +1648,10 @@ class FormHelper extends AppHelper {
 		if (is_array($between)) {
 			$between = '';
 		}
+
 		if ($legend) {
-			if (is_string($fieldset)) {
-				$fieldsetClass = sprintf(' class="%s"', $fieldset);
-			} else {
-				$fieldsetClass = '';
-			}
-			$out = $this->Html->useTag('fieldset', $fieldsetClass, $this->Html->useTag('legend', $legend) . $between . $out);
+			$out = $this->Html->useTag('legend', $legend) . $between . $out;
+			$out = $this->Html->useTag('fieldset', $fieldsetAttrs, $out);
 		}
 		return $out;
 	}
