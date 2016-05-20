@@ -61,6 +61,13 @@ class EventManager
     protected $_dispatchedEvents = [];
 
     /**
+     * Enables or disables the stacking of dispatched events
+     *
+     * @var bool
+     */
+    protected $_eventStacking = false;
+
+    /**
      * Returns the globally available instance of a Cake\Event\EventManager
      * this is used for dispatching events attached from outside the scope
      * other managers were created. Usually for creating hook systems or inter-class
@@ -353,7 +360,7 @@ class EventManager
 
         $listeners = $this->listeners($event->name());
         if (empty($listeners)) {
-            $this->_dispatchedEvents[] = $event;
+            $this->stackEvent($event);
             return $event;
         }
 
@@ -369,7 +376,8 @@ class EventManager
                 $event->result = $result;
             }
         }
-        $this->_dispatchedEvents[] = $event;
+
+        $this->stackEvent($event);
         return $event;
     }
 
@@ -477,6 +485,50 @@ class EventManager
     public function getDispatchedEvents()
     {
         return $this->_dispatchedEvents;
+    }
+
+    /**
+     * Enables the stacking of dispatched events.
+     *
+     * @return void
+     */
+    public function enableEventStacking()
+    {
+        $this->_eventStacking = true;
+    }
+
+    /**
+     * Disables the stacking of dispatched events.
+     *
+     * @return void
+     */
+    public function disableEventStacking()
+    {
+        $this->_eventStacking = false;
+        $this->flushEventStack();
+    }
+
+    /**
+     * Empties the stack of dispatched events.
+     *
+     * @return void
+     */
+    public function flushEventStack()
+    {
+        $this->_dispatchedEvents = [];
+    }
+
+    /**
+     * Adds an event to the stack when stacking is enabled.
+     *
+     * @param \Cake\Event\Event An event to stack.
+     * @return void
+     */
+    protected function stackEvent(Event $event)
+    {
+        if ($this->_eventStacking === true) {
+            $this->_dispatchedEvents[] = $event;
+        }
     }
 
     /**
