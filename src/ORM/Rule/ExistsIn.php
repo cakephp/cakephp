@@ -94,7 +94,7 @@ class ExistsIn
             return true;
         }
 
-        if (!$entity->extract($this->_fields, true) && !$entity->isNew()) {
+        if (!$entity->extract($this->_fields, true)) {
             return true;
         }
 
