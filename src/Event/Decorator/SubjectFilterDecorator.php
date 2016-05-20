@@ -20,7 +20,7 @@ use RuntimeException;
 /**
  * Event Subject Filter Decorator
  */
-class SubjectFilterDecorator extends BaseDecorator
+class SubjectFilterDecorator extends AbstractDecorator
 {
 
     /**
@@ -33,7 +33,7 @@ class SubjectFilterDecorator extends BaseDecorator
         if (!$this->canTrigger($args[0])) {
             return false;
         }
-        return call_user_func_array('parent::__invoke', $args);
+        return $this->_call($args);
     }
 
     /**

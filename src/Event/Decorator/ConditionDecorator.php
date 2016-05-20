@@ -20,7 +20,7 @@ use RuntimeException;
 /**
  * Event Condition Decorator
  */
-class ConditionDecorator extends BaseDecorator
+class ConditionDecorator extends AbstractDecorator
 {
 
     /**
@@ -33,7 +33,7 @@ class ConditionDecorator extends BaseDecorator
         if (!$this->canTrigger($args[0])) {
             return false;
         }
-        return call_user_func_array('parent::__invoke', $args);
+        return $this->_call($args);
     }
 
     /**

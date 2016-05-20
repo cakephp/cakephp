@@ -14,7 +14,7 @@
  */
 namespace Cake\Event\Decorator;
 
-class BaseDecorator
+abstract class AbstractDecorator
 {
 
     /**
@@ -51,18 +51,19 @@ class BaseDecorator
      */
     public function __invoke()
     {
-        return $this->call($this->_callable, func_get_args());
+        return $this->_call($this->_callable, func_get_args());
     }
 
     /**
-     * Calls a callable with the passed arguments.
+     * Calls the decorated callable with the passed arguments.
      *
      * @param callable $callable The callable.
      * @param array $args Arguments for the callable.
      * @return mixed
      */
-    public function call(callable $callable, $args)
+    protected function _call($args)
     {
+        $callable = $this->_callable;
         switch (count($args)) {
             case 0:
                 return $callable();
