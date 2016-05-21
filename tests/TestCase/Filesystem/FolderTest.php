@@ -443,9 +443,9 @@ class FolderTest extends TestCase
             $path . DS . 'Session'
         ];
         $result = $folder->subdirectories();
-        $this->assertEquals($expected, $result);
+        $this->assertSame([], array_diff($expected, $result));
         $result = $folder->subdirectories($path);
-        $this->assertEquals($expected, $result);
+        $this->assertSame([], array_diff($expected, $result));
 
         $expected = [
             'Exception',
@@ -453,15 +453,15 @@ class FolderTest extends TestCase
             'Session'
         ];
         $result = $folder->subdirectories(null, false);
-        $this->assertEquals($expected, $result);
+        $this->assertSame([], array_diff($expected, $result));
         $result = $folder->subdirectories($path, false);
-        $this->assertEquals($expected, $result);
+        $this->assertSame([], array_diff($expected, $result));
 
         $expected = [];
         $result = $folder->subdirectories('NonExistantPath');
-        $this->assertEquals($expected, $result);
+        $this->assertSame([], array_diff($expected, $result));
         $result = $folder->subdirectories($path . DS . 'Exception');
-        $this->assertEquals($expected, $result);
+        $this->assertSame([], array_diff($expected, $result));
     }
 
     /**
