@@ -1003,14 +1003,16 @@ class Email implements JsonSerializable, Serializable
         $className = App::className($config['className'], 'Mailer/Transport', 'Transport');
         if (!$className) {
             $className = App::className($config['className'], 'Network/Email', 'Transport');
-            trigger_error(
-                'Transports in "Network/Email" are deprecated, use "Mailer/Transport" instead.',
-                E_USER_DEPRECATED
-            );
+            if ($className) {
+                trigger_error(
+                    'Transports in "Network/Email" are deprecated, use "Mailer/Transport" instead.',
+                    E_USER_DEPRECATED
+                );
+            }
         }
 
         if (!$className) {
-            throw new InvalidArgumentException(sprintf('Transport class "%s" not found.', $name));
+            throw new InvalidArgumentException(sprintf('Transport class "%s" not found.', $config['className']));
         } elseif (!method_exists($className, 'send')) {
             throw new InvalidArgumentException(sprintf('The "%s" does not have a send() method.', $className));
         }
