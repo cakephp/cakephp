@@ -1189,4 +1189,17 @@ class RequestHandlerComponentTest extends TestCase
         $this->assertArrayHasKey('json', $inputs);
         $this->assertCount(1, $inputs);
     }
+
+    /**
+     * test beforeRender() doesn't override response type set in controller action
+     *
+     * @return void
+     */
+    public function testBeforeRender()
+    {
+        $this->Controller->set_response_type();
+        $event = new Event('Controller.beforeRender', $this->Controller);
+        $this->RequestHandler->beforeRender($event);
+        $this->assertEquals('text/plain', $this->Controller->response->type());
+    }
 }
