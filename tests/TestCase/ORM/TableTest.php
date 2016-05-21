@@ -2674,14 +2674,26 @@ class TableTest extends TestCase
     }
 
     /**
-     * Tests that when updating the primary key is not passed to the list of
-     * attributes to change
+     * Tests that when updating the primary key is passed to the list of
+     * attributes to change, the key is updated.
      *
      * @group save
      * @return void
      */
-    public function testSaveUpdatePrimaryKeyNotModified()
+    public function testSaveUpdatePrimaryKeyModified()
     {
+        $originalData = ['id' => 2, 'username' => 'baggins',
+            'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO',
+            'created' => '2012-06-10 01:22:23', 'updated' => '2015-05-21 15:43:00'];
+        $newData = ['id' => 3, 'username' => 'Kamille'];
+        $mergedData = ['id' => 3, 'username' => 'Kamille',
+            'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO',
+            'created' => '2012-06-10 01:22:23', 'updated' => '2015-05-21 15:43:00'];
+
+        $entity = new \Cake\ORM\Entity($originalData, ['markNew' => false]);
+
+        $this->assertSame($originalData, $entity->toArray());
+
         $table = $this->getMock(
             '\Cake\ORM\Table',
             ['query'],
@@ -2690,7 +2702,7 @@ class TableTest extends TestCase
 
         $query = $this->getMock(
             '\Cake\ORM\Query',
-            ['execute', 'addDefaultTypes', 'set'],
+            ['execute', 'addDefaultTypes', 'set', 'update', 'where'],
             [null, $table]
         );
 
@@ -2706,36 +2718,90 @@ class TableTest extends TestCase
             ->method('execute')
             ->will($this->returnValue($statement));
 
-        $query->expects($this->once())->method('set')
-            ->with(['username' => 'baggins'])
+        $query->expects($this->once())
+            ->method('update')
             ->will($this->returnValue($query));
 
-        $entity = new \Cake\ORM\Entity([
-            'id' => 2,
-            'username' => 'baggins'
-        ], ['markNew' => false]);
-        $this->assertSame($entity, $table->save($entity));
+        $query->expects($this->once())
+            ->method('set')
+            ->with($mergedData)
+            ->will($this->returnValue($query));
+
+        $query->expects($this->once())
+            ->method('where')
+            ->with(['id' => 2])
+            ->will($this->returnValue($query));
+
+        $changedEntity = $table->patchEntity($entity, $newData);
+        $resultingEntity = $table->save($changedEntity);
+
+        $this->assertNotSame($originalData, $resultingEntity->toArray());
+        $this->assertSame($mergedData, $resultingEntity->toArray());
     }
 
     /**
-     * Tests that passing only the primary key to save will not execute any queries
-     * but still return success
+     * Tests that passing only the primary key to save will execute a query
      *
      * @group save
      * @return void
      */
-    public function testUpdateNoChange()
+    public function testUpdateKeyChange()
     {
+        $originalData = ['id' => 3, 'username' => 'Kamille',
+            'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO',
+            'created' => '2012-06-10 01:22:23', 'updated' => '2015-05-21 15:43:00'];
+        $newData = ['id' => 2];
+        $mergedData = ['id' => 2, 'username' => 'Kamille',
+            'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO',
+            'created' => '2012-06-10 01:22:23', 'updated' => '2015-05-21 15:43:00'];
+
+        $entity = new \Cake\ORM\Entity($originalData, ['markNew' => false]);
+
+        $this->assertSame($originalData, $entity->toArray());
+
         $table = $this->getMock(
             '\Cake\ORM\Table',
             ['query'],
             [['table' => 'users', 'connection' => $this->connection]]
         );
-        $table->expects($this->never())->method('query');
-        $entity = new \Cake\ORM\Entity([
-            'id' => 2,
-        ], ['markNew' => false]);
-        $this->assertSame($entity, $table->save($entity));
+
+        $query = $this->getMock(
+            '\Cake\ORM\Query',
+            ['execute', 'addDefaultTypes', 'set', 'update', 'where'],
+            [null, $table]
+        );
+
+        $table->expects($this->once())->method('query')
+            ->will($this->returnValue($query));
+
+        $statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
+        $statement->expects($this->once())
+            ->method('errorCode')
+            ->will($this->returnValue('00000'));
+
+        $query->expects($this->once())
+            ->method('execute')
+            ->will($this->returnValue($statement));
+
+        $query->expects($this->once())
+            ->method('update')
+            ->will($this->returnValue($query));
+
+        $query->expects($this->once())
+            ->method('set')
+            ->with($mergedData)
+            ->will($this->returnValue($query));
+
+        $query->expects($this->once())
+            ->method('where')
+            ->with(['id' => 3])
+            ->will($this->returnValue($query));
+
+        $changedEntity = $table->patchEntity($entity, $newData);
+        $resultingEntity = $table->save($changedEntity);
+
+        $this->assertNotSame($originalData, $resultingEntity->toArray());
+        $this->assertSame($mergedData, $resultingEntity->toArray());
     }
 
     /**

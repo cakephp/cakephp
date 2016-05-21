@@ -1593,9 +1593,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     protected function _update($entity, $data)
     {
         $primaryColumns = (array)$this->primaryKey();
-        $primaryKey = $entity->extract($primaryColumns);
+        $primaryKey = $entity->extractOriginal($primaryColumns);
 
-        $data = array_diff_key($data, $primaryKey);
         if (empty($data)) {
             return $entity;
         }
