@@ -1598,6 +1598,29 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test unlockField removing from fields array. multiple field version.
+ *
+ * @return void
+ */
+	public function testUnlockMultipleFieldRemovingFromFields() {
+		$this->Form->request['_Token'] = array(
+			'key' => 'testKey',
+			'unlockedFields' => array()
+		);
+		$this->Form->create('Order');
+		$this->Form->hidden('Order.id', array('value' => 1));
+		$this->Form->checkbox('Ticked.id.');
+		$this->Form->checkbox('Ticked.id.');
+
+		$this->assertEquals(1, $this->Form->fields['Order.id'], 'Hidden input should be secured.');
+		$this->assertTrue(in_array('Ticked.id', $this->Form->fields), 'Field should be secured.');
+
+		$this->Form->unlockField('Order.id');
+		$this->Form->unlockField('Ticked.id');
+		$this->assertEquals(array(), $this->Form->fields);
+	}
+
+/**
  * testTagIsInvalid method
  *
  * @return void
