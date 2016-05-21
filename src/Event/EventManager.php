@@ -521,7 +521,7 @@ class EventManager
     /**
      * Adds an event to the stack when stacking is enabled.
      *
-     * @param \Cake\Event\Event An event to stack.
+     * @param \Cake\Event\Event $event An event to stack.
      * @return void
      */
     protected function stackEvent(Event $event)
