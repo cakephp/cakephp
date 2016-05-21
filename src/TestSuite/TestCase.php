@@ -141,6 +141,17 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Assert array equality, ignoring the order of the content
+     * @param array $expected The expected array.
+     * @param array $actual The actual array.
+     * @param string $message The message to use for failure.
+     */
+    public function assertArrayContentEquals(array $expected, array $actual, $message = '')
+    {
+        $this->assertTrue($expected == $actual, $message);
+    }
+
+    /**
      * Assert text equality, ignoring differences in newlines.
      * Helpful for doing cross platform tests of blocks of text.
      *
