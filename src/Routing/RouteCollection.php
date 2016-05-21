@@ -16,6 +16,7 @@ namespace Cake\Routing;
 
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Route\Route;
+use Cake\Utility\Inflector;
 
 /**
  * Contains a collection of routes.
@@ -128,6 +129,11 @@ class RouteCollection
                 }
                 if ($queryParameters) {
                     $r['?'] = $queryParameters;
+                }
+                if (isset($r['controller']) &&
+                    substr($r['controller'], 0, 1) == strtolower(substr($r['controller'], 0, 1))
+                ) {
+                    $r['controller'] = Inflector::camelize($r['controller']);
                 }
                 return $r;
             }
