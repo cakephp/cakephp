@@ -487,7 +487,7 @@ class Folder
      * Returns an array of subdirectories for the provided or current path.
      *
      * @param string|null $path The directory path to get subdirectories for.
-     * @param bool $fullPath Wheter to return the full path or only the directory name.
+     * @param bool $fullPath Whether to return the full path or only the directory name.
      * @return array Array of subdirectories for the provided or current path.
      */
     public function subdirectories($path = null, $fullPath = true)
