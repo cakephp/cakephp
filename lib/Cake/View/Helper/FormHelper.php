@@ -975,11 +975,11 @@ class FormHelper extends AppHelper {
 			$out .= $this->input($name, $options);
 		}
 
-        if (is_string($fieldset)) {
-            $fieldsetClass = array('class' => $fieldset);
-        } else {
-            $fieldsetClass = '';
-        }
+		if (is_string($fieldset)) {
+			$fieldsetClass = array('class' => $fieldset);
+		} else {
+			$fieldsetClass = '';
+		}
 
 		if ($fieldset) {
 			if ($legend) {
