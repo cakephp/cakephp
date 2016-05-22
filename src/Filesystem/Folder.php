@@ -484,6 +484,35 @@ class Folder
     }
 
     /**
+     * Returns an array of subdirectories for the provided or current path.
+     *
+     * @param string|null $path The directory path to get subdirectories for.
+     * @param bool $fullPath Whether to return the full path or only the directory name.
+     * @return array Array of subdirectories for the provided or current path.
+     */
+    public function subdirectories($path = null, $fullPath = true)
+    {
+        if (!$path) {
+            $path = $this->path;
+        }
+        $subdirectories = [];
+
+        try {
+            $iterator = new DirectoryIterator($path);
+        } catch (Exception $e) {
+            return [];
+        }
+
+        foreach ($iterator as $item) {
+            if (!$item->isDir() || $item->isDot()) {
+                continue;
+            }
+            $subdirectories[] = $fullPath ? $item->getRealPath() : $item->getFilename();
+        }
+        return $subdirectories;
+    }
+
+    /**
      * Returns an array of nested directories and files in each directory
      *
      * @param string|null $path the directory path to build the tree from
