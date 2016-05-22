@@ -105,16 +105,16 @@ class TableHelper extends Helper
         if(empty($rows) || !is_array($rows)) {
             return;
         }
-        
+
         $config = $this->config();
         $widths = $this->_calculateWidths($rows);
-        
+    
         $this->_rowSeparator($widths);
         if ($config['headers'] === true) {
             $this->_render(array_shift($rows), $widths, ['style' => $config['headerStyle']]);
             $this->_rowSeparator($widths);
         }
-        
+    
         if(empty($rows)) {
             return;
         }
