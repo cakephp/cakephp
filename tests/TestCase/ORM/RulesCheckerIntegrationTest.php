@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\Entity;
+use Cake\ORM\RulesChecker;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -502,7 +503,7 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * ExistsIn uses the schema to verify that nullable fields are ok.
      *
-     * @return void
+     * @return
      */
     public function testExistsInNullValue()
     {
@@ -521,16 +522,18 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Test ExistsIn on not dirty field in new Entity
+     * Test ExistsIn on a new entity that doesn't have the field populated.
+     *
+     * This use case is important for saving records and their
+     * associated belongsTo records in one pass.
      *
      * @return void
      */
-    public function testExistsInNotNullValue()
+    public function testExistsInNotNullValueNewEntity()
     {
         $entity = new Entity([
             'name' => 'A Category',
         ]);
-
         $table = TableRegistry::get('Categories');
         $table->belongsTo('Categories', [
             'foreignKey' => 'parent_id',
@@ -538,15 +541,14 @@ class RulesCheckerIntegrationTest extends TestCase
         ]);
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('parent_id', 'Categories'));
-
-        $this->assertFalse($table->save($entity));
-        $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->errors('parent_id'));
+        $this->assertTrue($table->checkRules($entity, RulesChecker::CREATE));
+        $this->assertEmpty($entity->errors('parent_id'));
     }
 
     /**
      * Tests exists in uses the bindingKey of the association
      *
-     * @return void
+     * @return
      */
     public function testExistsInWithBindingKey()
     {

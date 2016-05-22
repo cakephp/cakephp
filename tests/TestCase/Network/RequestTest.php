@@ -195,6 +195,20 @@ class RequestTest extends TestCase
     }
 
     /**
+     * Test that URL in path is handled correctly.
+     */
+    public function testUrlInPath()
+    {
+        $_SERVER['REQUEST_URI'] = '/jump/http://cakephp.org';
+        $request = Request::createFromGlobals();
+        $this->assertEquals('jump/http://cakephp.org', $request->url);
+
+        $_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/jump/http://cakephp.org';
+        $request = Request::createFromGlobals();
+        $this->assertEquals('jump/http://cakephp.org', $request->url);
+    }
+
+    /**
      * Test addParams() method
      *
      * @return void

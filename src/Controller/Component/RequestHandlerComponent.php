@@ -310,8 +310,8 @@ class RequestHandlerComponent extends Component
 
         if (!empty($this->ext) && $isRecognized) {
             $this->renderAs($event->subject(), $this->ext);
-        } elseif (empty($this->ext) || in_array($this->ext, ['html', 'htm'])) {
-            $this->respondAs('html', ['charset' => Configure::read('App.encoding')]);
+        } else {
+            $this->response->charset(Configure::read('App.encoding'));
         }
 
         if ($this->_config['checkHttpCache'] &&

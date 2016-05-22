@@ -1320,11 +1320,11 @@ class Query implements ExpressionInterface, IteratorAggregate
         $this->_dirty();
         $this->_type = 'insert';
         $this->_parts['insert'][1] = $columns;
-
         if (!$this->_parts['values']) {
             $this->_parts['values'] = new ValuesExpression($columns, $this->typeMap()->types($types));
+        } else {
+            $this->_parts['values']->columns($columns);
         }
-
         return $this;
     }
 

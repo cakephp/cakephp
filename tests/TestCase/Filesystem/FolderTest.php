@@ -428,6 +428,43 @@ class FolderTest extends TestCase
     }
 
     /**
+     * testFolderSubdirectories method
+     *
+     * @return void
+     */
+    public function testFolderSubdirectories()
+    {
+        $path = CAKE . 'Network';
+        $folder = new Folder($path);
+
+        $expected = [
+            $path . DS . 'Exception',
+            $path . DS . 'Http',
+            $path . DS . 'Session'
+        ];
+        $result = $folder->subdirectories();
+        $this->assertSame([], array_diff($expected, $result));
+        $result = $folder->subdirectories($path);
+        $this->assertSame([], array_diff($expected, $result));
+
+        $expected = [
+            'Exception',
+            'Http',
+            'Session'
+        ];
+        $result = $folder->subdirectories(null, false);
+        $this->assertSame([], array_diff($expected, $result));
+        $result = $folder->subdirectories($path, false);
+        $this->assertSame([], array_diff($expected, $result));
+
+        $expected = [];
+        $result = $folder->subdirectories('NonExistantPath');
+        $this->assertSame([], array_diff($expected, $result));
+        $result = $folder->subdirectories($path . DS . 'Exception');
+        $this->assertSame([], array_diff($expected, $result));
+    }
+
+    /**
      * testFolderTree method
      *
      * @return void
@@ -1235,7 +1272,7 @@ class FolderTest extends TestCase
         $Folder = new Folder($path);
         $Folder->delete();
     }
-    
+
     public function testMoveWithoutRecursive()
     {
         extract($this->_setupFilesystem());

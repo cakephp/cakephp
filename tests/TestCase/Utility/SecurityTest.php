@@ -294,7 +294,7 @@ class SecurityTest extends TestCase
     }
 
     /**
-     * Test the random method.
+     * Test the randomBytes method.
      *
      * @return void
      */
@@ -305,5 +305,23 @@ class SecurityTest extends TestCase
 
         $value = Security::randomBytes(64);
         $this->assertSame(64, strlen($value));
+
+        $this->assertRegExp('/[^0-9a-f]/', $value, 'should return a binary string');
+    }
+
+    /**
+     * Test the insecureRandomBytes method
+     *
+     * @return void
+     */
+    public function testInsecureRandomBytes()
+    {
+        $value = Security::insecureRandomBytes(16);
+        $this->assertSame(16, strlen($value));
+
+        $value = Security::insecureRandomBytes(64);
+        $this->assertSame(64, strlen($value));
+
+        $this->assertRegExp('/[^0-9a-f]/', $value, 'should return a binary string');
     }
 }

@@ -2803,6 +2803,31 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test insert overwrites values
+     *
+     * @return void
+     */
+    public function testInsertOverwritesValues()
+    {
+        $this->loadFixtures('Articles');
+        $query = new Query($this->connection);
+        $query->insert(['title', 'body'])
+            ->insert(['title'])
+            ->into('articles')
+            ->values([
+                'title' => 'mark',
+            ]);
+
+        $result = $query->sql();
+        $this->assertQuotedQuery(
+            'INSERT INTO <articles> \(<title>\) (OUTPUT INSERTED\.\* )?' .
+            'VALUES \(:c0\)',
+            $result,
+            !$this->autoQuote
+        );
+    }
+
+    /**
      * Test inserting a single row.
      *
      * @return void

@@ -121,13 +121,29 @@ class Security
             'Falling back to an insecure random source.',
             E_USER_WARNING
         );
+        return static::insecureRandomBytes($length);
+    }
+
+    /**
+     * Like randomBytes() above, but not cryptographically secure.
+     *
+     * @param int $length The number of bytes you want.
+     * @return string Random bytes in binary.
+     * @see \Cake\Utility\Security::randomBytes()
+     */
+    public static function insecureRandomBytes($length)
+    {
+        $length *= 2;
+
         $bytes = '';
         $byteLength = 0;
         while ($byteLength < $length) {
             $bytes .= static::hash(Text::uuid() . uniqid(mt_rand(), true), 'sha512', true);
             $byteLength = strlen($bytes);
         }
-        return substr($bytes, 0, $length);
+        $bytes = substr($bytes, 0, $length);
+
+        return pack('H*', $bytes);
     }
 
     /**
