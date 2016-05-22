@@ -54,18 +54,11 @@ class EventManager
     protected $_isGlobal = false;
 
     /**
-     * A list of already dispatched events
+     * The event stack object.
      *
-     * @var array
+     * @var \Cake\Event\EventStack|null
      */
-    protected $_dispatchedEvents = [];
-
-    /**
-     * Enables or disables the stacking of dispatched events
-     *
-     * @var bool
-     */
-    protected $_eventStacking = false;
+    protected $_eventStack;
 
     /**
      * Returns the globally available instance of a Cake\Event\EventManager
@@ -360,7 +353,7 @@ class EventManager
 
         $listeners = $this->listeners($event->name());
         if (empty($listeners)) {
-            $this->stackEvent($event);
+            $this->_stackEvent($event);
             return $event;
         }
 
@@ -377,7 +370,7 @@ class EventManager
             }
         }
 
-        $this->stackEvent($event);
+        $this->_stackEvent($event);
         return $event;
     }
 
@@ -478,23 +471,37 @@ class EventManager
     }
 
     /**
-     * Returns a list of dispatched event objects.
+     * Returns the event stack.
      *
      * @return array
      */
-    public function getDispatchedEvents()
+    public function eventStack()
     {
-        return $this->_dispatchedEvents;
+        return $this->_eventStack;
+    }
+
+    /**
+     * Adds an event to the stack if the stack object is present.
+     *
+     * @param \Cake\Event\Event $event An event to add to the stack.
+     * @return void
+     */
+    public function _stackEvent(Event $event)
+    {
+        if ($this->_eventStack) {
+            $this->_eventStack->add($event);
+        }
     }
 
     /**
      * Enables the stacking of dispatched events.
      *
+     * @param \Cake\Event\EventStack $eventStack The event stack object to use.
      * @return void
      */
-    public function enableEventStacking()
+    public function enableEventStacking(EventStack $eventStack)
     {
-        $this->_eventStacking = true;
+        $this->_eventStack = $eventStack;
     }
 
     /**
@@ -504,31 +511,7 @@ class EventManager
      */
     public function disableEventStacking()
     {
-        $this->_eventStacking = false;
-        $this->flushEventStack();
-    }
-
-    /**
-     * Empties the stack of dispatched events.
-     *
-     * @return void
-     */
-    public function flushEventStack()
-    {
-        $this->_dispatchedEvents = [];
-    }
-
-    /**
-     * Adds an event to the stack when stacking is enabled.
-     *
-     * @param \Cake\Event\Event $event An event to stack.
-     * @return void
-     */
-    protected function stackEvent(Event $event)
-    {
-        if ($this->_eventStacking === true) {
-            $this->_dispatchedEvents[] = $event;
-        }
+        $this->_eventStack = null;
     }
 
     /**
@@ -544,8 +527,10 @@ class EventManager
         foreach ($this->_listeners as $key => $listeners) {
             $properties['_listeners'][$key] = count($listeners) . ' listener(s)';
         }
-        foreach ($this->_dispatchedEvents as $event) {
-            $properties['_dispatchedEvents'][] = $event->name() . ' with subject ' . get_class($event->subject());
+        if ($this->_eventStack) {
+            foreach ($this->_eventStack as $event) {
+                $properties['_dispatchedEvents'][] = $event->name() . ' with subject ' . get_class($event->subject());
+            }
         }
         return $properties;
     }

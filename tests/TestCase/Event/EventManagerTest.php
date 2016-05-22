@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Event;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
+use Cake\Event\EventStack;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -720,30 +721,29 @@ class EventManagerTest extends TestCase
      */
     public function testGetDispatchedEvents()
     {
+        $eventStack = new EventStack();
         $event = new Event('my_event', $this);
         $event2 = new Event('my_second_event', $this);
 
         $manager = new EventManager();
-        $manager->enableEventStacking();
+        $manager->enableEventStacking($eventStack);
         $manager->dispatch($event);
         $manager->dispatch($event2);
 
-        $result = $manager->getDispatchedEvents();
+        $result = $manager->eventStack();
         $this->assertCount(2, $result);
         $this->assertEquals($result[0], $event);
         $this->assertEquals($result[1], $event2);
 
-        $manager->flushEventStack();
-        $result = $manager->getDispatchedEvents();
+        $manager->eventStack()->flush();
+        $result = $manager->eventStack();
         $this->assertCount(0, $result);
-        $this->assertEquals($result, []);
 
         $manager->disableEventStacking();
         $manager->dispatch($event);
         $manager->dispatch($event2);
 
-        $result = $manager->getDispatchedEvents();
-        $this->assertCount(0, $result);
-        $this->assertEquals($result, []);
+        $result = $manager->eventStack();
+        $this->assertNull($result);
     }
 }
