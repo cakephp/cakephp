@@ -665,6 +665,10 @@ class FormHelper extends AppHelper {
 			$field = Hash::filter(explode('.', $field));
 		}
 
+		if (is_array($field)) {
+			$field = array_filter($field, 'strlen');
+		}
+
 		foreach ($this->_unlockedFields as $unlockField) {
 			$unlockParts = explode('.', $unlockField);
 			if (array_values(array_intersect($field, $unlockParts)) === $unlockParts) {
