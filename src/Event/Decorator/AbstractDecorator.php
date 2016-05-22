@@ -51,7 +51,7 @@ abstract class AbstractDecorator
      */
     public function __invoke()
     {
-        return $this->_call($this->_callable, func_get_args());
+        return $this->_call(func_get_args());
     }
 
     /**
