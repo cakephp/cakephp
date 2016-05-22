@@ -108,7 +108,7 @@ class TableHelper extends Helper
 
         $config = $this->config();
         $widths = $this->_calculateWidths($rows);
-    
+
         $this->_rowSeparator($widths);
         if ($config['headers'] === true) {
             $this->_render(array_shift($rows), $widths, ['style' => $config['headerStyle']]);
