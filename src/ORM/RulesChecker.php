@@ -17,6 +17,7 @@ namespace Cake\ORM;
 use Cake\Datasource\RulesChecker as BaseRulesChecker;
 use Cake\ORM\Rule\ExistsIn;
 use Cake\ORM\Rule\IsUnique;
+use Cake\ORM\Rule\LinkConstraint;
 use Cake\ORM\Rule\ValidCount;
 
 /**
@@ -89,6 +90,105 @@ class RulesChecker extends BaseRulesChecker
 
         $errorField = is_string($field) ? $field : current($field);
         return $this->_addError(new ExistsIn($field, $table), '_existsIn', compact('errorField', 'message'));
+    }
+
+    /**
+     * Validates whether links to the given association exist.
+     *
+     * ### Example:
+     *
+     * ```
+     * $rules->update($rules->isLinkedTo('Articles', 'article'));
+     * ```
+     *
+     * On a `Comments` table that has a `belongsTo Articles` association, this check would ensure that comments
+     * can only be edited as long as they are associated to an existing article.
+     *
+     * @param \Cake\ORM\Association|\Cake\ORM\Table|string $association The association to check for links.
+     * @param string|null $field The name of the association property. When supplied, this is the name used to set
+     *  possible errors. When absent, no error message will be set.
+     * @param string|null $message The error message to show in case the rule does not pass.
+     * @return callable
+     */
+    public function isLinkedTo($association, $field = null, $message = null)
+    {
+        return $this->_addLinkConstraintRule(
+            $association,
+            $field,
+            $message,
+            LinkConstraint::LINK_STATUS_LINKED,
+            '_isLinkedTo'
+        );
+    }
+
+    /**
+     * Validates whether links to the given association do not exist.
+     *
+     * ### Example:
+     *
+     * ```
+     * $rules->delete($rules->isNotLinkedTo('Comments', 'comments'));
+     * ```
+     *
+     * On a `Articles` table that has a `hasMany Comments` association, this check would ensure that articles
+     * can only be deleted when no associated comments exist.
+     *
+     * @param \Cake\ORM\Association|\Cake\ORM\Table|string $association The association to check for links.
+     * @param string|null $field The name of the association property. When supplied, this is the name used to set
+     *  possible errors. When absent, no error message will be set.
+     * @param string|null $message The error message to show in case the rule does not pass.
+     * @return callable
+     */
+    public function isNotLinkedTo($association, $field = null, $message = null)
+    {
+        return $this->_addLinkConstraintRule(
+            $association,
+            $field,
+            $message,
+            LinkConstraint::LINK_STATUS_NOT_LINKED,
+            '_isNotLinkedTo'
+        );
+    }
+
+    /**
+     * Adds a link constraint rule.
+     *
+     * @see \Cake\ORM\RulesChecker::isLinkedTo()
+     * @see \Cake\ORM\RulesChecker::isNotLinkedTo()
+     * @see \Cake\ORM\Rule\LinkConstraint::LINK_STATUS_LINKED
+     * @see \Cake\ORM\Rule\LinkConstraint::LINK_STATUS_NOT_LINKED
+     *
+     * @param \Cake\ORM\Association|\Cake\ORM\Table|string $association The association to check for links.
+     * @param string|null $field The name of the association property. When supplied, this is the name used to set
+     *  possible errors. When absent, no error message will be set.
+     * @param string|null $message The error message to show in case the rule does not pass.
+     * @param string $linkStatus The ink status required for the check to pass.
+     * @param string $ruleName The alias/name of the rule.
+     * @return callable
+     */
+    protected function _addLinkConstraintRule($association, $field, $message, $linkStatus, $ruleName)
+    {
+        if ($association instanceof Table) {
+            $association = $association->registryAlias();
+        }
+
+        if (!$message) {
+            if ($this->_useI18n) {
+                $message = __d('cake', 'Cannot modify row: a constraint for the `%s` association fails');
+            } else {
+                $message = 'Cannot modify row: a constraint for the `%s` association fails';
+            }
+        }
+
+        $message = sprintf($message, is_string($association) ? $association : $association->registryAlias());
+
+        $errorField = $field;
+        $rule = new LinkConstraint(
+            $association,
+            $linkStatus,
+            LinkConstraint::ERROR_MODE_RETURN_VALUE
+        );
+        return $this->_addError($rule, $ruleName, compact('errorField', 'message'));
     }
 
     /**

@@ -31,7 +31,7 @@ class RulesCheckerIntegrationTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.articles', 'core.articles_tags', 'core.authors', 'core.tags',
+        'core.articles', 'core.articles_tags', 'core.authors', 'core.comments', 'core.tags',
         'core.special_tags', 'core.categories'
     ];
 
@@ -1046,5 +1046,178 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $entity->tags = 0.512;
         $this->assertFalse($table->save($entity));
+    }
+
+    public function testIsLinkedToViaBelongsToIsLinked()
+    {
+        $Comments = TableRegistry::get('Comments');
+        $Comments->belongsTo('Articles');
+
+        $rulesChecker = $Comments->rulesChecker();
+        $rulesChecker->addUpdate(
+            $rulesChecker->isLinkedTo('Articles', 'articles')
+        );
+
+        $comment = $Comments->get(1);
+        $comment->dirty('comment', true);
+        $this->assertNotFalse($Comments->save($comment));
+    }
+
+    public function testIsLinkedToViaBelongsToIsNotLinked()
+    {
+        $Comments = TableRegistry::get('Comments');
+        $Comments->belongsTo('Articles');
+
+        $Comments->save($Comments->newEntity([
+            'article_id' => 9999,
+            'user_id' => 1,
+            'comment' => 'Orphaned Comment'
+        ]));
+
+        $rulesChecker = $Comments->rulesChecker();
+        $rulesChecker->addUpdate(
+            $rulesChecker->isLinkedTo('Articles', 'articles')
+        );
+
+        $comment = $Comments->get(7);
+        $comment->dirty('comment', true);
+        $this->assertFalse($Comments->save($comment));
+
+        $expected = [
+            'articles' => [
+                '_isLinkedTo' => 'Cannot modify row: a constraint for the `Articles` association fails'
+            ]
+        ];
+        $this->assertEquals($expected, $comment->errors());
+    }
+
+    public function testIsNotLinkedToViaHasManyIsLinked()
+    {
+        $Articles = TableRegistry::get('Articles');
+        $Articles->hasMany('Comments');
+
+        $rulesChecker = $Articles->rulesChecker();
+        $rulesChecker->addDelete(
+            $rulesChecker->isNotLinkedTo('Comments', 'comments')
+        );
+
+        $article = $Articles->get(1);
+        $this->assertFalse($Articles->delete($article));
+
+        $expected = [
+            'comments' => [
+                '_isNotLinkedTo' => 'Cannot modify row: a constraint for the `Comments` association fails'
+            ]
+        ];
+        $this->assertEquals($expected, $article->errors());
+    }
+
+    public function testIsNotLinkedToViaHasManyIsNotLinked()
+    {
+        $Articles = TableRegistry::get('Articles');
+        $Articles->hasMany('Comments');
+
+        $rulesChecker = $Articles->rulesChecker();
+        $rulesChecker->addDelete(
+            $rulesChecker->isNotLinkedTo('Comments', 'comments')
+        );
+
+        $article = $Articles->get(3);
+        $this->assertTrue($Articles->delete($article));
+    }
+
+    public function testIsLinkedToPassAssociationInstance()
+    {
+        $Comments = TableRegistry::get('Comments');
+        $Comments->belongsTo('Articles');
+
+        $rulesChecker = $Comments->rulesChecker();
+        $rulesChecker->addUpdate(
+            $rulesChecker->isLinkedTo($Comments->association('Articles'), 'articles')
+        );
+
+        $comment = $Comments->get(1);
+        $comment->dirty('comment', true);
+        $this->assertNotFalse($Comments->save($comment));
+    }
+
+    public function testIsNotLinkedToPassAssociationInstance()
+    {
+        $Articles = TableRegistry::get('Articles');
+        $Articles->hasMany('Comments');
+
+        $rulesChecker = $Articles->rulesChecker();
+        $rulesChecker->addDelete(
+            $rulesChecker->isNotLinkedTo($Articles->association('Comments'), 'comments')
+        );
+
+        $article = $Articles->get(3);
+        $this->assertTrue($Articles->delete($article));
+    }
+
+    public function testIsLinkedToPassTableInstance()
+    {
+        $Comments = TableRegistry::get('Comments');
+        $Comments->belongsTo('Articles');
+
+        $rulesChecker = $Comments->rulesChecker();
+        $rulesChecker->addUpdate(
+            $rulesChecker->isLinkedTo($Comments->association('Articles')->target(), 'articles')
+        );
+
+        $comment = $Comments->get(1);
+        $comment->dirty('comment', true);
+        $this->assertNotFalse($Comments->save($comment));
+    }
+
+    public function testIsNotLinkedToPassTableInstance()
+    {
+        $Articles = TableRegistry::get('Articles');
+        $Articles->hasMany('Comments');
+
+        $rulesChecker = $Articles->rulesChecker();
+        $rulesChecker->addDelete(
+            $rulesChecker->isNotLinkedTo($Articles->association('Comments')->target(), 'comments')
+        );
+
+        $article = $Articles->get(3);
+        $this->assertTrue($Articles->delete($article));
+    }
+
+    public function testIsLinkedToOmittingFieldArgumentCausesNoErrorToBeSet()
+    {
+        $Comments = TableRegistry::get('Comments');
+        $Comments->belongsTo('Articles');
+
+        $Comments->save($Comments->newEntity([
+            'article_id' => 9999,
+            'user_id' => 1,
+            'comment' => 'Orphaned Comment'
+        ]));
+
+        $rulesChecker = $Comments->rulesChecker();
+        $rulesChecker->addUpdate(
+            $rulesChecker->isLinkedTo('Articles')
+        );
+
+        $comment = $Comments->get(7);
+        $comment->dirty('comment', true);
+        $this->assertFalse($Comments->save($comment));
+        $this->assertEmpty($comment->errors());
+    }
+
+    public function testIsNotLinkedToOmittingFieldArgumentCausesNoErrorToBeSet()
+    {
+        $Articles = TableRegistry::get('Articles');
+        $Articles->hasMany('Comments');
+
+        $rulesChecker = $Articles->rulesChecker();
+        $rulesChecker->addDelete(
+            $rulesChecker->isNotLinkedTo('Comments')
+        );
+
+        $article = $Articles->get(1);
+        $this->assertFalse($Articles->delete($article));
+        $this->assertEmpty($article->errors());
     }
 }
