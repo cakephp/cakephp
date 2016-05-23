@@ -27,14 +27,14 @@ if (!empty($prefix)) {
     $prefix .= DIRECTORY_SEPARATOR;
 }
 
-// Cake\Controller\Exception\MissingActionException support
+// Controller MissingAction support
 if (isset($controller)) {
     $baseClass = $namespace . '\Controller\AppController';
     $extends = 'AppController';
     $type = 'Controller';
     $class = $controller;
 }
-// Cake\Mailer\Exception\MissingActionException support
+// Mailer MissingActionException support
 if (isset($mailer)) {
     $baseClass = 'Cake\Mailer\Mailer';
     $type = $extends = 'Mailer';
