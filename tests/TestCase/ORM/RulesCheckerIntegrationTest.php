@@ -371,7 +371,7 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests isUnique with multiple fields and a nulled field.
+     * Tests isUnique with multiple fields emulates SQL UNIQUE keys
      *
      * @group save
      * @return void
@@ -388,13 +388,12 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $this->assertSame($entity, $table->save($entity));
 
-        // Make a duplicate
+        // Make a matching record
         $entity = new Entity([
             'author_id' => null,
-            'title' => 'First Article'
+            'title' => 'New Article'
         ]);
-        $this->assertFalse($table->save($entity));
-        $this->assertEquals(['title' => ['_isUnique' => 'Nope']], $entity->errors());
+        $this->assertSame($entity, $table->save($entity));
     }
 
     /**
