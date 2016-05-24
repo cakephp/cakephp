@@ -2287,17 +2287,17 @@ class FormHelperTest extends TestCase
      */
     public function testResetUnlockFields()
     {
-        $this->Form->request['_Token'] = array(
-            'key'            => 'testKey',
-            'unlockedFields' => array()
-        );
+        $this->Form->request['_Token'] = [
+            'key' => 'testKey',
+            'unlockedFields' => []
+        ];
 
         $this->Form->create('Contact');
         $this->Form->unlockField('Contact.id');
         $this->Form->end();
 
         $this->Form->create('Contact');
-        $this->Form->hidden('Contact.id', array('value' => 1));
+        $this->Form->hidden('Contact.id', ['value' => 1]);
         $this->assertEquals(1, $this->Form->fields['Contact.id'], 'Hidden input should be secured.');
     }
 
