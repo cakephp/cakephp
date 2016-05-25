@@ -147,8 +147,7 @@ class LinkConstraint
 
         $count = $this->_countLinks($association, $entity);
 
-        if (!is_int($count) ||
-            ($this->_requiredLinkState === static::LINK_STATUS_LINKED && $count < 1) ||
+        if (($this->_requiredLinkState === static::LINK_STATUS_LINKED && $count < 1) ||
             ($this->_requiredLinkState === static::LINK_STATUS_NOT_LINKED && $count !== 0)
         ) {
             if ($this->_errorMode === static::ERROR_MODE_EXCEPTIONS) {
@@ -198,63 +197,52 @@ class LinkConstraint
      *
      * @param \Cake\ORM\Association $association The association for which to count links.
      * @param \Cake\Datasource\EntityInterface $entity The entity involved in the operation.
-     * @return int|null The number of links, or `null` for unsupported association types.
+     * @return int The number of links.
      */
     protected function _countLinks($association, $entity)
     {
-        $count = null;
+        $source = $association->source();
 
-        switch ($association->type()) {
-            case Association::ONE_TO_ONE:
-            case Association::ONE_TO_MANY:
-                $conditions = $this->_buildConditions(
-                    $this->_aliasFields((array)$association->foreignKey(), $association->target()),
-                    $entity->extract((array)$association->bindingKey())
-                );
-
-                $count = $association
-                    ->target()
-                    ->find()
-                    ->where($conditions)
-                    ->count();
-                break;
-
-            case Association::MANY_TO_MANY:
-                $primaryKey = $association->source()->primaryKey();
-                $conditions = $this->_buildConditions(
-                    $this->_aliasFields((array)$primaryKey, $association->source()),
-                    $entity->extract((array)$primaryKey)
-                );
-
-                $sourceAlias = $association->source()->registryAlias();
-                $sourceAssociation = $association->target()->association($sourceAlias);
-
-                $count = $association
-                    ->target()
-                    ->find()
-                    ->matching(
-                        $sourceAssociation->registryAlias(),
-                        function (Query $query) use ($conditions) {
-                            return $query->where($conditions);
-                        }
-                    )
-                    ->count();
-                break;
-
-            case Association::MANY_TO_ONE:
-                $conditions = $this->_buildConditions(
-                    $this->_aliasFields((array)$association->bindingKey(), $association->target()),
-                    $entity->extract((array)$association->foreignKey())
-                );
-
-                $count = $association
-                    ->target()
-                    ->find()
-                    ->where($conditions)
-                    ->count();
-                break;
+        $primaryKey = $source->primaryKey();
+        if (!$entity->has($primaryKey)) {
+            throw new \InvalidArgumentException('All primary key values are required.');
         }
 
-        return $count;
+        $conditions = $this->_buildConditions(
+            $this->_aliasFields((array)$primaryKey, $source),
+            $entity->extract((array)$primaryKey)
+        );
+
+        $sourceAlias = $source->registryAlias();
+        $sourceAssociation = $association->target()->association($sourceAlias);
+
+        if ($sourceAssociation instanceof Association) {
+            return $association
+                ->find()
+                ->matching(
+                    $sourceAssociation->registryAlias(),
+                    function (Query $query) use ($conditions) {
+                        return $query->where($conditions);
+                    }
+                )
+                ->count();
+        }
+
+        $entity = $source
+            ->find()
+            ->contain($association->registryAlias())
+            ->where($conditions)
+            ->hydrate(false)
+            ->bufferResults(false)
+            ->firstOrFail();
+
+        $property = $association->property();
+        if (!isset($entity[$property]) || empty($entity[$property])) {
+            return 0;
+        }
+        if (in_array($association->type(), [Association::MANY_TO_MANY, Association::ONE_TO_MANY], true)) {
+            return count($entity[$property]);
+        }
+        return 1;
     }
 }

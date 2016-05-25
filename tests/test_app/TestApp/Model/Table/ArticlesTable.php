@@ -36,7 +36,7 @@ class ArticlesTable extends Table
      */
     public function findPublished($query)
     {
-        return $query->where(['published' => 'Y']);
+        return $query->where([$this->aliasField('published') => 'Y']);
     }
 
     /**

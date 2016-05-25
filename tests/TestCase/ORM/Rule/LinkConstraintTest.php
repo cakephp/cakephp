@@ -15,7 +15,10 @@
 namespace Cake\Test\TestCase\ORM\Rule;
 
 use Cake\Core\Configure;
+use Cake\Database\Expression\QueryExpression;
+use Cake\Event\Event;
 use Cake\ORM\Association\BelongsTo;
+use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Rule\LinkConstraint;
 use Cake\ORM\TableRegistry;
@@ -154,17 +157,48 @@ class LinkConstraintTest extends TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The number of fields is expected to match the number of values.
+     * @expectedExceptionMessage All primary key values are required.
      */
-    public function testNonMatchingCompositeKeys()
+    public function testMissingPrimaryKeyValues()
     {
         $Articles = TableRegistry::get('Articles');
-        $Articles->hasMany('Comments')->foreignKey(['id', 'article_id']);
+        $Articles->hasMany('Comments');
+
+        $Articles->eventManager()->on('Model.beforeRules', function (Event $event) {
+            $event->subject()->primaryKey(['id', 'non_existent']);
+        });
 
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addDelete(
             new LinkConstraint('Comments', LinkConstraint::LINK_STATUS_NOT_LINKED)
         );
+
+        $article = $Articles->get(1);
+        $Articles->delete($article);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The number of fields is expected to match the number of values.
+     */
+    public function testNonMatchingKeyFields()
+    {
+        $Articles = TableRegistry::get('Articles');
+        $Articles->hasMany('Comments')->foreignKey(['id', 'article_id']);
+
+        /* @var $ruleMock \Cake\ORM\Rule\LinkConstraint|\PHPUnit_Framework_MockObject_MockObject */
+        $ruleMock = $this->getMock(
+            '\Cake\ORM\Rule\LinkConstraint',
+            ['_aliasFields'],
+            ['Comments', LinkConstraint::LINK_STATUS_NOT_LINKED]
+        );
+        $ruleMock
+            ->expects($this->once())
+            ->method('_aliasFields')
+            ->willReturn([]);
+
+        $rulesChecker = $Articles->rulesChecker();
+        $rulesChecker->addDelete($ruleMock);
 
         $article = $Articles->get(1);
         $Articles->delete($article);
@@ -206,6 +240,7 @@ class LinkConstraintTest extends TestCase
     {
         $Comments = TableRegistry::get('Comments');
         $Comments->belongsTo('Articles');
+        $Comments->association('Articles')->hasMany('Comments');
 
         $rulesChecker = $Comments->rulesChecker();
         $rulesChecker->addDelete(
@@ -231,6 +266,7 @@ class LinkConstraintTest extends TestCase
     {
         $Comments = TableRegistry::get('Comments');
         $Comments->belongsTo('Articles');
+        $Comments->association('Articles')->hasMany('Comments');
 
         $rulesChecker = $Comments->rulesChecker();
         $rulesChecker->addUpdate(
@@ -246,6 +282,7 @@ class LinkConstraintTest extends TestCase
     {
         $Comments = TableRegistry::get('Comments');
         $Comments->belongsTo('Articles');
+        $Comments->association('Articles')->hasMany('Comments');
 
         $rulesChecker = $Comments->rulesChecker();
         $rulesChecker->addUpdate(
@@ -265,6 +302,7 @@ class LinkConstraintTest extends TestCase
     {
         $Comments = TableRegistry::get('Comments');
         $Comments->belongsTo('Articles');
+        $Comments->association('Articles')->hasMany('Comments');
 
         $Comments->save($Comments->newEntity([
             'article_id' => 9999,
@@ -322,6 +360,7 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = TableRegistry::get('Articles');
         $Articles->hasMany('Comments');
+        $Articles->association('Comments')->belongsTo('Articles');
 
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addUpdate(
@@ -341,6 +380,7 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = TableRegistry::get('Articles');
         $Articles->hasMany('Comments');
+        $Articles->association('Comments')->belongsTo('Articles');
 
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addUpdate(
@@ -356,6 +396,7 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = TableRegistry::get('Articles');
         $Articles->hasOne('Comments');
+        $Articles->association('Comments')->belongsTo('Articles');
 
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addUpdate(
@@ -375,6 +416,7 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = TableRegistry::get('Articles');
         $Articles->hasOne('Comments');
+        $Articles->association('Comments')->belongsTo('Articles');
 
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addUpdate(
@@ -394,6 +436,7 @@ class LinkConstraintTest extends TestCase
     {
         $Comments = TableRegistry::get('Comments');
         $Comments->belongsTo('Articles');
+        $Comments->association('Articles')->hasMany('Comments');
 
         $rulesChecker = $Comments->rulesChecker();
         $rulesChecker->addDelete(
@@ -408,6 +451,7 @@ class LinkConstraintTest extends TestCase
     {
         $Comments = TableRegistry::get('Comments');
         $Comments->belongsTo('Articles');
+        $Comments->association('Articles')->hasMany('Comments');
 
         $Comments->save($Comments->newEntity([
             'article_id' => 9999,
@@ -466,6 +510,7 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = TableRegistry::get('Articles');
         $Articles->hasMany('Comments');
+        $Articles->association('Comments')->belongsTo('Articles');
 
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addDelete(
@@ -480,6 +525,7 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = TableRegistry::get('Articles');
         $Articles->hasMany('Comments');
+        $Articles->association('Comments')->belongsTo('Articles');
 
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addDelete(
@@ -498,6 +544,7 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = TableRegistry::get('Articles');
         $Articles->hasOne('Comments');
+        $Articles->association('Comments')->belongsTo('Articles');
 
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addDelete(
@@ -512,6 +559,7 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = TableRegistry::get('Articles');
         $Articles->hasOne('Comments');
+        $Articles->association('Comments')->belongsTo('Articles');
 
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addDelete(
@@ -520,5 +568,258 @@ class LinkConstraintTest extends TestCase
 
         $article = $Articles->get(3);
         $this->assertTrue($Articles->delete($article));
+    }
+
+    /**
+     * @expectedException \Cake\ORM\Exception\LinkConstraintViolationException
+     * @expectedExceptionMessage Cannot modify row: a constraint for the `Articles` repositories `Comments` association fails
+     */
+    public function testDisabledForeignKeyAndSubQueryConditionsWithMustNotBeLinkedViaHasOneIsLinked()
+    {
+        $Articles = TableRegistry::get('Articles');
+        $Articles->hasOne('Comments', [
+            'foreignKey' => false,
+            'conditions' => function (QueryExpression $exp, Query $query) {
+                /* @var $connection \Cake\Database\Connection  */
+                $connection = $query->connection();
+                $subQuery = $connection
+                    ->newQuery()
+                    ->select(['RecentComments.id'])
+                    ->from(['RecentComments' => 'comments'])
+                    ->where(['Articles.id = RecentComments.article_id'])
+                    ->order(['RecentComments.created' => 'DESC'])
+                    ->limit(1);
+
+                return $exp->add(['Comments.id' => $subQuery]);
+            }
+        ]);
+        $Articles->association('Comments')->belongsTo('Articles');
+
+        $rulesChecker = $Articles->rulesChecker();
+        $rulesChecker->addDelete(
+            new LinkConstraint('Comments', LinkConstraint::LINK_STATUS_NOT_LINKED)
+        );
+
+        $article = $Articles->get(1);
+        $this->assertTrue($Articles->delete($article));
+    }
+
+    public function testDisabledForeignKeyAndSubQueryConditionsWithMustNotBeLinkedViaHasOneIsNotLinked()
+    {
+        $Articles = TableRegistry::get('Articles');
+        $Articles->hasOne('Comments', [
+            'foreignKey' => false,
+            'conditions' => function (QueryExpression $exp, Query $query) {
+                /* @var $connection \Cake\Database\Connection  */
+                $connection = $query->connection();
+                $subQuery = $connection
+                    ->newQuery()
+                    ->select(['RecentComments.id'])
+                    ->from(['RecentComments' => 'comments'])
+                    ->where(['Articles.id = RecentComments.article_id'])
+                    ->order(['RecentComments.created' => 'DESC'])
+                    ->limit(1);
+
+                return $exp->add(['Comments.id' => $subQuery]);
+            }
+        ]);
+        $Articles->association('Comments')->belongsTo('Articles');
+
+        $rulesChecker = $Articles->rulesChecker();
+        $rulesChecker->addDelete(
+            new LinkConstraint('Comments', LinkConstraint::LINK_STATUS_NOT_LINKED)
+        );
+
+        $article = $Articles->get(3);
+        $this->assertTrue($Articles->delete($article));
+    }
+
+    public function testConditionsWithMustNotBeLinkedViaHasManyIsNotLinked()
+    {
+        $Articles = TableRegistry::get('Articles');
+        $Articles->hasMany('Comments', [
+            'conditions' => [
+                'Comments.published' => 'N'
+            ]
+        ]);
+        $Articles->association('Comments')->belongsTo('Articles');
+
+        $rulesChecker = $Articles->rulesChecker();
+        $rulesChecker->addDelete(
+            new LinkConstraint('Comments', LinkConstraint::LINK_STATUS_NOT_LINKED)
+        );
+
+        $article = $Articles->get(2);
+        $this->assertTrue($Articles->delete($article));
+    }
+
+    /**
+     * @expectedException \Cake\ORM\Exception\LinkConstraintViolationException
+     * @expectedExceptionMessage Cannot modify row: a constraint for the `Articles` repositories `Comments` association fails
+     */
+    public function testConditionsWithMustNotBeLinkedViaHasManyIsLinked()
+    {
+        $Articles = TableRegistry::get('Articles');
+        $Articles->hasMany('Comments', [
+            'conditions' => [
+                'Comments.published' => 'Y'
+            ]
+        ]);
+        $Articles->association('Comments')->belongsTo('Articles');
+
+        $rulesChecker = $Articles->rulesChecker();
+        $rulesChecker->addDelete(
+            new LinkConstraint('Comments', LinkConstraint::LINK_STATUS_NOT_LINKED)
+        );
+
+        $article = $Articles->get(2);
+        $this->assertTrue($Articles->delete($article));
+    }
+
+    /**
+     * @expectedException \Cake\ORM\Exception\LinkConstraintViolationException
+     * @expectedExceptionMessage Cannot modify row: a constraint for the `Articles` repositories `Comments` association fails
+     */
+    public function testConditionsReferencingParentColumnWithMustNotBeLinkedViaHasOneIsLinked()
+    {
+        $Articles = TableRegistry::get('Articles');
+        $Articles->hasOne('Comments', [
+            'conditions' => [
+                'Comments.published = Articles.published'
+            ]
+        ]);
+        $Articles->association('Comments')->belongsTo('Articles');
+
+        $rulesChecker = $Articles->rulesChecker();
+        $rulesChecker->addDelete(
+            new LinkConstraint('Comments', LinkConstraint::LINK_STATUS_NOT_LINKED)
+        );
+
+        $article = $Articles->get(1);
+        $this->assertTrue($Articles->delete($article));
+    }
+
+    public function testConditionsReferencingParentColumnWithMustNotBeLinkedViaHasOneIsNotLinked()
+    {
+        $Articles = TableRegistry::get('Articles');
+        $Articles->hasOne('Comments', [
+            'conditions' => [
+                'Comments.published != Articles.published'
+            ]
+        ]);
+        $Articles->association('Comments')->belongsTo('Articles');
+
+        $article = $Articles->save($Articles->newEntity([
+            'user_id' => 1,
+            'body' => 'Some Text',
+            'published' => 'N',
+            'comment' => [
+                'user_id' => 1,
+                'comment' => 'Some Comment',
+                'published' => 'N',
+            ]
+        ]));
+
+        $rulesChecker = $Articles->rulesChecker();
+        $rulesChecker->addDelete(
+            new LinkConstraint('Comments', LinkConstraint::LINK_STATUS_NOT_LINKED)
+        );
+
+        $article = $Articles->get($article->id);
+        $this->assertTrue($Articles->delete($article));
+    }
+
+    /**
+     * @expectedException \Cake\ORM\Exception\LinkConstraintViolationException
+     * @expectedExceptionMessage Cannot modify row: a constraint for the `Comments` repositories `Articles` association fails
+     */
+    public function testFinderWithMustNotBeLinkedViaBelongsToIsLinked()
+    {
+        $Comments = TableRegistry::get('Comments');
+        $Comments->belongsTo('Articles', [
+            'finder' => 'published'
+        ]);
+        $Comments->association('Articles')->hasMany('Comments');
+
+        $rulesChecker = $Comments->rulesChecker();
+        $rulesChecker->addDelete(
+            new LinkConstraint('Articles', LinkConstraint::LINK_STATUS_NOT_LINKED)
+        );
+
+        $comment = $Comments->get(1);
+        $this->assertTrue($Comments->delete($comment));
+    }
+
+    public function testFinderWithMustNotBeLinkedViaBelongsToIsNotLinked()
+    {
+        $Comments = TableRegistry::get('Comments');
+        $Comments->belongsTo('Articles', [
+            'finder' => 'published'
+        ]);
+        $Comments->association('Articles')->hasMany('Comments');
+
+        $comment = $Comments->save($Comments->newEntity([
+            'user_id' => 1,
+            'comment' => 'Some Comment',
+            'published' => 'Y',
+            'article' => [
+                'user_id' => 1,
+                'body' => 'Some Text',
+                'published' => 'N',
+            ]
+        ]));
+
+        $rulesChecker = $Comments->rulesChecker();
+        $rulesChecker->addDelete(
+            new LinkConstraint('Articles', LinkConstraint::LINK_STATUS_NOT_LINKED)
+        );
+
+        $comment = $Comments->get($comment->id);
+        $this->assertTrue($Comments->delete($comment));
+    }
+
+    /**
+     * @expectedException \Cake\ORM\Exception\LinkConstraintViolationException
+     * @expectedExceptionMessage Cannot modify row: a constraint for the `Comments` repositories `Articles` association fails
+     */
+    public function testOtherSideAssociationMissingWithMustNotBeLinkedViaBelongsToIsLinked()
+    {
+        $Comments = TableRegistry::get('Comments');
+        $Comments->belongsTo('Articles');
+
+        $rulesChecker = $Comments->rulesChecker();
+        $rulesChecker->addDelete(
+            new LinkConstraint('Articles', LinkConstraint::LINK_STATUS_NOT_LINKED)
+        );
+
+        $comment = $Comments->get(1);
+        $Comments->delete($comment);
+    }
+
+    public function testOtherSideAssociationMissingWithMustNotBeLinkedViaBelongsToIsNotLinked()
+    {
+        $Comments = TableRegistry::get('Comments');
+        $Comments->belongsTo('Articles', [
+            'finder' => 'published'
+        ]);
+
+        $comment = $Comments->save($Comments->newEntity([
+            'user_id' => 1,
+            'comment' => 'Some Comment',
+            'published' => 'Y',
+            'article' => [
+                'user_id' => 1,
+                'comment' => 'Some Comment',
+                'published' => 'N',
+            ]
+        ]));
+
+        $rulesChecker = $Comments->rulesChecker();
+        $rulesChecker->addDelete(
+            new LinkConstraint('Articles', LinkConstraint::LINK_STATUS_NOT_LINKED)
+        );
+
+        $comment = $Comments->get($comment->id);
+        $this->assertTrue($Comments->delete($comment));
     }
 }

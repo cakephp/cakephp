@@ -1052,7 +1052,9 @@ class RulesCheckerIntegrationTest extends TestCase
     {
         $Comments = TableRegistry::get('Comments');
         $Comments->belongsTo('Articles');
+        $Comments->association('Articles')->hasMany('Comments');
 
+        /* @var $rulesChecker \Cake\ORM\RulesChecker */
         $rulesChecker = $Comments->rulesChecker();
         $rulesChecker->addUpdate(
             $rulesChecker->isLinkedTo('Articles', 'articles')
@@ -1067,6 +1069,7 @@ class RulesCheckerIntegrationTest extends TestCase
     {
         $Comments = TableRegistry::get('Comments');
         $Comments->belongsTo('Articles');
+        $Comments->association('Articles')->hasMany('Comments');
 
         $Comments->save($Comments->newEntity([
             'article_id' => 9999,
@@ -1074,6 +1077,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'comment' => 'Orphaned Comment'
         ]));
 
+        /* @var $rulesChecker \Cake\ORM\RulesChecker */
         $rulesChecker = $Comments->rulesChecker();
         $rulesChecker->addUpdate(
             $rulesChecker->isLinkedTo('Articles', 'articles')
@@ -1095,7 +1099,9 @@ class RulesCheckerIntegrationTest extends TestCase
     {
         $Articles = TableRegistry::get('Articles');
         $Articles->hasMany('Comments');
+        $Articles->association('Comments')->belongsTo('Articles');
 
+        /* @var $rulesChecker \Cake\ORM\RulesChecker */
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addDelete(
             $rulesChecker->isNotLinkedTo('Comments', 'comments')
@@ -1116,7 +1122,9 @@ class RulesCheckerIntegrationTest extends TestCase
     {
         $Articles = TableRegistry::get('Articles');
         $Articles->hasMany('Comments');
+        $Articles->association('Comments')->belongsTo('Articles');
 
+        /* @var $rulesChecker \Cake\ORM\RulesChecker */
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addDelete(
             $rulesChecker->isNotLinkedTo('Comments', 'comments')
@@ -1130,7 +1138,9 @@ class RulesCheckerIntegrationTest extends TestCase
     {
         $Comments = TableRegistry::get('Comments');
         $Comments->belongsTo('Articles');
+        $Comments->association('Articles')->hasMany('Comments');
 
+        /* @var $rulesChecker \Cake\ORM\RulesChecker */
         $rulesChecker = $Comments->rulesChecker();
         $rulesChecker->addUpdate(
             $rulesChecker->isLinkedTo($Comments->association('Articles'), 'articles')
@@ -1145,7 +1155,9 @@ class RulesCheckerIntegrationTest extends TestCase
     {
         $Articles = TableRegistry::get('Articles');
         $Articles->hasMany('Comments');
+        $Articles->association('Comments')->belongsTo('Articles');
 
+        /* @var $rulesChecker \Cake\ORM\RulesChecker */
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addDelete(
             $rulesChecker->isNotLinkedTo($Articles->association('Comments'), 'comments')
@@ -1159,7 +1171,9 @@ class RulesCheckerIntegrationTest extends TestCase
     {
         $Comments = TableRegistry::get('Comments');
         $Comments->belongsTo('Articles');
+        $Comments->association('Articles')->hasMany('Comments');
 
+        /* @var $rulesChecker \Cake\ORM\RulesChecker */
         $rulesChecker = $Comments->rulesChecker();
         $rulesChecker->addUpdate(
             $rulesChecker->isLinkedTo($Comments->association('Articles')->target(), 'articles')
@@ -1174,7 +1188,9 @@ class RulesCheckerIntegrationTest extends TestCase
     {
         $Articles = TableRegistry::get('Articles');
         $Articles->hasMany('Comments');
+        $Articles->association('Comments')->belongsTo('Articles');
 
+        /* @var $rulesChecker \Cake\ORM\RulesChecker */
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addDelete(
             $rulesChecker->isNotLinkedTo($Articles->association('Comments')->target(), 'comments')
@@ -1188,6 +1204,7 @@ class RulesCheckerIntegrationTest extends TestCase
     {
         $Comments = TableRegistry::get('Comments');
         $Comments->belongsTo('Articles');
+        $Comments->association('Articles')->hasMany('Comments');
 
         $Comments->save($Comments->newEntity([
             'article_id' => 9999,
@@ -1195,6 +1212,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'comment' => 'Orphaned Comment'
         ]));
 
+        /* @var $rulesChecker \Cake\ORM\RulesChecker */
         $rulesChecker = $Comments->rulesChecker();
         $rulesChecker->addUpdate(
             $rulesChecker->isLinkedTo('Articles')
@@ -1210,7 +1228,9 @@ class RulesCheckerIntegrationTest extends TestCase
     {
         $Articles = TableRegistry::get('Articles');
         $Articles->hasMany('Comments');
+        $Articles->association('Comments')->belongsTo('Articles');
 
+        /* @var $rulesChecker \Cake\ORM\RulesChecker */
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addDelete(
             $rulesChecker->isNotLinkedTo('Comments')
