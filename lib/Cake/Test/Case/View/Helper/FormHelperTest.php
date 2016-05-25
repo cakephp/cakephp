@@ -1608,8 +1608,10 @@ class FormHelperTest extends CakeTestCase {
 			'unlockedFields' => array()
 		);
 
-		$this->Form->create('Contact');
 		$this->Form->unlockField('Contact.id');
+		$this->Form->create('Contact');
+		$this->Form->hidden('Contact.id', array('value' => 1));
+		$this->assertEmpty($this->Form->fields, 'Field should be unlocked');
 		$this->Form->end();
 
 		$this->Form->create('Contact');

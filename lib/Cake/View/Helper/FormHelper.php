@@ -467,7 +467,6 @@ class FormHelper extends AppHelper {
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
 		$this->fields = array();
-		$this->_unlockedFields = array();
 		if ($this->requestType !== 'get') {
 			$append .= $this->_csrfField();
 		}
@@ -561,6 +560,7 @@ class FormHelper extends AppHelper {
 		$this->setEntity(null);
 		$out .= $this->Html->useTag('formend');
 
+		$this->_unlockedFields = array();
 		$this->_View->modelScope = false;
 		$this->requestType = null;
 		return $out;
