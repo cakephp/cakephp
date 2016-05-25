@@ -467,6 +467,7 @@ class FormHelper extends AppHelper {
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
 		$this->fields = array();
+		$this->_unlockedFields = array();
 		if ($this->requestType !== 'get') {
 			$append .= $this->_csrfField();
 		}
