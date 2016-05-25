@@ -420,7 +420,6 @@ class FormHelper extends Helper
         $htmlAttributes += $options;
 
         $this->fields = [];
-        $this->_unlockedFields = [];
         if ($this->requestType !== 'get') {
             $append .= $this->_csrfField();
         }
@@ -531,6 +530,7 @@ class FormHelper extends Helper
         ) {
             $out .= $this->secure($this->fields, $secureAttributes);
             $this->fields = [];
+            $this->_unlockedFields = [];
         }
         $out .= $this->formatTemplate('formEnd', []);
 
