@@ -420,6 +420,7 @@ class FormHelper extends Helper
         $htmlAttributes += $options;
 
         $this->fields = [];
+        $this->_unlockedFields = [];
         if ($this->requestType !== 'get') {
             $append .= $this->_csrfField();
         }
