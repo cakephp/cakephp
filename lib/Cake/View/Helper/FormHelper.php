@@ -941,7 +941,6 @@ class FormHelper extends AppHelper {
 			unset($options['fieldset']);
 		}
 
-
 		if (empty($fields)) {
 			$fields = $modelFields;
 		}
