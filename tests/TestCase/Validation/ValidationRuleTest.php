@@ -79,6 +79,21 @@ class ValidationRuleTest extends TestCase
     }
 
     /**
+     * Test using a custom provider without specifying it in providers list
+     *
+     * @return void
+     */
+    public function testCustomProviderNotInProvidersList()
+    {
+        $data = '42';
+        $providers = ['default' => $this];
+
+        $context = ['newRecord' => true];
+        $Rule = new ValidationRule(['rule' => 'is42', 'provider' => 'TestApp\Validation\CustomProvider']);
+        $this->assertTrue($Rule->process($data, $providers, $context));
+    }
+
+    /**
      * Test using a custom validation method with no provider declared.
      *
      * @return void
