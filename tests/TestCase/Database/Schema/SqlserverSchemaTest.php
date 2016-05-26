@@ -70,6 +70,7 @@ views SMALLINT DEFAULT 0,
 created DATETIME,
 field1 VARCHAR(10) DEFAULT NULL,
 field2 VARCHAR(10) DEFAULT 'NULL',
+field3 VARCHAR(10) DEFAULT 'O''hare',
 CONSTRAINT [content_idx] UNIQUE ([title], [body]),
 CONSTRAINT [author_idx] FOREIGN KEY ([author_id]) REFERENCES [schema_authors] ([id]) ON DELETE CASCADE ON UPDATE CASCADE
 )
@@ -360,6 +361,15 @@ SQL;
                 'type' => 'string',
                 'null' => true,
                 'default' => 'NULL',
+                'length' => 10,
+                'precision' => null,
+                'fixed' => null,
+                'comment' => null,
+            ],
+            'field3' => [
+                'type' => 'string',
+                'null' => true,
+                'default' => 'O\'hare',
                 'length' => 10,
                 'precision' => null,
                 'fixed' => null,
