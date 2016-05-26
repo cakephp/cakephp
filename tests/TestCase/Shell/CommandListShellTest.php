@@ -81,7 +81,7 @@ class CommandListShellTest extends TestCase
         $expected = "/\[.*TestPluginTwo.*\] example, unique, welcome/";
         $this->assertRegExp($expected, $output);
 
-        $expected = "/\[.*CORE.*\] i18n, orm_cache, plugin, routes, server/";
+        $expected = "/\[.*CORE.*\] caches, i18n, orm_cache, plugin, routes, server/";
         $this->assertRegExp($expected, $output);
 
         $expected = "/\[.*app.*\] i18m, sample/";
@@ -102,7 +102,7 @@ class CommandListShellTest extends TestCase
         $output = implode("\n", $output);
         rename(APP . 'Shell' . DS . 'I18nShell.php', APP . 'Shell' . DS . 'I18mShell.php');
 
-        $expected = "/\[.*CORE.*\] orm_cache, plugin, routes, server/";
+        $expected = "/\[.*CORE.*\] caches, orm_cache, plugin, routes, server/";
         $this->assertRegExp($expected, $output);
 
         $expected = "/\[.*app.*\] i18n, sample/";
