@@ -210,6 +210,10 @@ class ShellDispatcher
             $this->help();
             return true;
         }
+        if (in_array($shell, ['version', '--version'])) {
+            $this->version();
+            return true;
+        }
 
         $Shell = $this->findShell($shell);
 
@@ -365,6 +369,17 @@ class ShellDispatcher
     public function help()
     {
         $this->args = array_merge(['command_list'], $this->args);
+        $this->dispatch();
+    }
+
+    /**
+     * Prints the current version of CakePHP. Performs an internal dispatch to the CommandList Shell
+     *
+     * @return void
+     */
+    public function version()
+    {
+        $this->args = array_merge(['command_list', '--version'], $this->args);
         $this->dispatch();
     }
 }

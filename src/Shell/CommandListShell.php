@@ -16,6 +16,7 @@ namespace Cake\Shell;
 
 use Cake\Console\ConsoleOutput;
 use Cake\Console\Shell;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 use SimpleXmlElement;
@@ -41,7 +42,7 @@ class CommandListShell extends Shell
      */
     public function startup()
     {
-        if (empty($this->params['xml'])) {
+        if (empty($this->params['xml']) && empty($this->params['version'])) {
             parent::startup();
         }
     }
@@ -53,7 +54,7 @@ class CommandListShell extends Shell
      */
     public function main()
     {
-        if (empty($this->params['xml'])) {
+        if (empty($this->params['xml']) && empty($this->params['version'])) {
             $this->out("<info>Current Paths:</info>", 2);
             $this->out("* app:  " . APP_DIR);
             $this->out("* root: " . rtrim(ROOT, DIRECTORY_SEPARATOR));
@@ -65,6 +66,11 @@ class CommandListShell extends Shell
 
         $shellList = $this->Command->getShellList();
         if (empty($shellList)) {
+            return;
+        }
+
+        if (!empty($this->params['version'])) {
+            $this->out(Configure::version());
             return;
         }
 
@@ -135,6 +141,9 @@ class CommandListShell extends Shell
             'Get the list of available shells for this CakePHP application.'
         )->addOption('xml', [
             'help' => 'Get the listing as XML.',
+            'boolean' => true
+        ])->addOption('version', [
+            'help' => 'Prints the current version of CakePHP.',
             'boolean' => true
         ]);
 
