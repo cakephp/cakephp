@@ -213,4 +213,120 @@ class OauthTest extends TestCase
             urldecode($result)
         );
     }
+
+    /**
+     * Test RSA-SHA1 signing
+     *
+     * Hash result + parameters taken from
+     * http://wiki.oauth.net/w/page/12238556/TestCases
+     *
+     * @return void
+     */
+    public function testRsaSigning() {
+        $request = new Request();
+        $request->url('http://photos.example.net/photos')
+            ->body([
+                       'file' => 'vacaction.jpg',
+                       'size' => 'original'
+                   ]);
+        $private_key_path = TEST_APP . DS . 'config' . DS . 'key.pem';
+
+        $options = [
+            'method' => 'RSA-SHA1',
+            'consumerKey' => 'dpf43f3p2l4k3l03',
+            'nonce' => '13917289812797014437',
+            'timestamp' => '1196666512',
+            'private_key_file' => $private_key_path,
+        ];
+        $auth = new Oauth();
+        $auth->authentication($request, $options);
+
+        $result = $request->header('Authorization');
+        $expected = 'jvTp/wX1TYtByB1m+Pbyo0lnCOLIsyGCH7wke8AUs3BpnwZJtAuEJkvQL2/9n4s5wUmUl4aCI4BwpraNx4RtEXMe5qg5T1LVTGliMRpKasKsW//e+RinhejgCuzoH26dyF8iY2ZZ/5D1ilgeijhV/vBka5twt399mXwaYdCwFYE=';
+        $this->assertContains(
+            'oauth_signature="' . $expected . '"',
+            urldecode($result)
+        );
+    }
+
+    /**
+     * Test RSA-SHA1 signing with passphrase string
+     *
+     * Hash result + parameters taken from
+     * http://wiki.oauth.net/w/page/12238556/TestCases
+     *
+     * @return void
+     */
+    public function testRsaSigningWithPassphraseString() {
+        $request = new Request();
+        $request->url('http://photos.example.net/photos')
+            ->body([
+                       'file' => 'vacaction.jpg',
+                       'size' => 'original'
+                   ]);
+        $private_key_path = TEST_APP . DS . 'config' . DS . 'key_with_passphrase.pem';
+        $passphrase = 'fancy-cakephp-passphrase';
+
+        $options = [
+            'method' => 'RSA-SHA1',
+            'consumerKey' => 'dpf43f3p2l4k3l03',
+            'nonce' => '13917289812797014437',
+            'timestamp' => '1196666512',
+            'private_key_file' => $private_key_path,
+            'private_key_passphrase' => $passphrase,
+        ];
+        $auth = new Oauth();
+        $auth->authentication($request, $options);
+
+        $result = $request->header('Authorization');
+        $expected = 'jvTp/wX1TYtByB1m+Pbyo0lnCOLIsyGCH7wke8AUs3BpnwZJtAuEJkvQL2/9n4s5wUmUl4aCI4BwpraNx4RtEXMe5qg5T1LVTGliMRpKasKsW//e+RinhejgCuzoH26dyF8iY2ZZ/5D1ilgeijhV/vBka5twt399mXwaYdCwFYE=';
+        $this->assertContains(
+            'oauth_signature="' . $expected . '"',
+            urldecode($result)
+        );
+    }
+
+    /**
+     * Test RSA-SHA1 signing with passphrase file
+     *
+     * Hash result + parameters taken from
+     * http://wiki.oauth.net/w/page/12238556/TestCases
+     *
+     * @return void
+     */
+    public function testRsaSigningWithPassphraseFile() {
+        $request = new Request();
+        $request->url('http://photos.example.net/photos')
+            ->body([
+                       'file' => 'vacaction.jpg',
+                       'size' => 'original'
+                   ]);
+        $private_key_path = TEST_APP . DS . 'config' . DS . 'key_with_passphrase.pem';
+
+        if(PHP_EOL == "\n") $passphrase_path = TEST_APP . DS . 'config' . DS . 'key_passphrase_lf';
+        else if(PHP_EOL == "\r\n") $passphrase_path = TEST_APP . DS . 'config' . DS . 'key_passphrase_crlf';
+        else if(PHP_EOL == "\r") $passphrase_path = TEST_APP . DS . 'config' . DS . 'key_passphrase_cr';
+        else { $this->markTestSkipped('The file for the key passphrase could not be loaded as PHP_EOL could not be recognized.'); return; }
+        $passphrase = fopen($passphrase_path, 'r');
+
+        $options = [
+            'method' => 'RSA-SHA1',
+            'consumerKey' => 'dpf43f3p2l4k3l03',
+            'nonce' => '13917289812797014437',
+            'timestamp' => '1196666512',
+            'private_key_file' => $private_key_path,
+            'private_key_passphrase' => $passphrase,
+        ];
+        $auth = new Oauth();
+        $auth->authentication($request, $options);
+
+        $result = $request->header('Authorization');
+        $expected = 'jvTp/wX1TYtByB1m+Pbyo0lnCOLIsyGCH7wke8AUs3BpnwZJtAuEJkvQL2/9n4s5wUmUl4aCI4BwpraNx4RtEXMe5qg5T1LVTGliMRpKasKsW//e+RinhejgCuzoH26dyF8iY2ZZ/5D1ilgeijhV/vBka5twt399mXwaYdCwFYE=';
+        $this->assertContains(
+            'oauth_signature="' . $expected . '"',
+            urldecode($result)
+        );
+        $expected = 0;
+        $this->assertEquals($expected, ftell($passphrase));
+    }
 }
