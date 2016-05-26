@@ -64,13 +64,13 @@ class CommandListShell extends Shell
             $this->out("<info>Available Shells:</info>", 2);
         }
 
-        $shellList = $this->Command->getShellList();
-        if (empty($shellList)) {
+        if (!empty($this->params['version'])) {
+            $this->out(Configure::version());
             return;
         }
 
-        if (!empty($this->params['version'])) {
-            $this->out(Configure::version());
+        $shellList = $this->Command->getShellList();
+        if (empty($shellList)) {
             return;
         }
 
