@@ -42,7 +42,7 @@ class CommandListShell extends Shell
      */
     public function startup()
     {
-        if (empty($this->params['xml']) && empty($this->params['version'])) {
+        if (!$this->param('xml') && !$this->param('version')) {
             parent::startup();
         }
     }
@@ -54,7 +54,7 @@ class CommandListShell extends Shell
      */
     public function main()
     {
-        if (empty($this->params['xml']) && empty($this->params['version'])) {
+        if (!$this->param('xml') && !$this->param('version')) {
             $this->out("<info>Current Paths:</info>", 2);
             $this->out("* app:  " . APP_DIR);
             $this->out("* root: " . rtrim(ROOT, DIRECTORY_SEPARATOR));
@@ -64,17 +64,17 @@ class CommandListShell extends Shell
             $this->out("<info>Available Shells:</info>", 2);
         }
 
-        if (!empty($this->params['version'])) {
+        if ($this->param('version')) {
             $this->out(Configure::version());
             return;
         }
 
         $shellList = $this->Command->getShellList();
-        if (empty($shellList)) {
+        if (!$shellList) {
             return;
         }
 
-        if (empty($this->params['xml'])) {
+        if (!$this->param('xml')) {
             $this->_asText($shellList);
         } else {
             $this->_asXml($shellList);
