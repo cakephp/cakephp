@@ -373,7 +373,7 @@ class ShellDispatcher
     }
 
     /**
-     * Prints the current version of CakePHP. Performs an internal dispatch to the CommandList Shell
+     * Prints the currently installed version of CakePHP. Performs an internal dispatch to the CommandList Shell
      *
      * @return void
      */

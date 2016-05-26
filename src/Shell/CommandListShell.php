@@ -143,7 +143,7 @@ class CommandListShell extends Shell
             'help' => 'Get the listing as XML.',
             'boolean' => true
         ])->addOption('version', [
-            'help' => 'Prints the current version of CakePHP.',
+            'help' => 'Prints the currently installed version of CakePHP.',
             'boolean' => true
         ]);
 
