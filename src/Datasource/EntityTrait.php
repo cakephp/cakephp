@@ -243,11 +243,37 @@ trait EntityTrait
         $options += ['setter' => true, 'guard' => $guard];
 
         foreach ($property as $p => $value) {
+            $nested = false;
+            if (strpos($p, '.') > 0 && !array_key_exists($p, $this->_properties)) {
+                list($p, $nested) = explode('.', $p, 2);
+            }
+
             if ($options['guard'] === true && !$this->accessible($p)) {
                 continue;
             }
 
             $this->dirty($p, true);
+
+            if ($nested) {
+                if (!array_key_exists($p, $this->_properties)
+                    || is_null($this->_properties[$p])
+                ) {
+                    $value = new \Cake\ORM\Entity([$nested => $value]);
+                    //$value = Hash::insert([], $nested, $value); //@TODO: Hash::insert() is the other option to generate arrays down the chain instead of Entities, but this has drawbacks like not preserving the ability to ::getOriginal() down the chain. The most fidelity is preserved by using Entities.
+                } elseif ($this->_properties[$p] instanceof EntityInterface) {
+                    $this->_properties[$p]->set($nested, $value, $options);
+                    continue; // In the recursive case, don't update ::$_original till we get to the bottom of the path. ONLY traverse the chain until that point.
+                } elseif (is_array($this->_properties[$p])
+                    || $this->_properties[$p] instanceof ArrayAccess
+                ) {
+                    $value = Hash::insert($this->_properties[$p], $nested, $value);
+                } else {
+                    throw new InvalidArgumentException(sprintf(
+                        'Cannot set dotted property when a traversal segment contains a scalar value: %s',
+                        $p
+                    ));
+                }
+            }
 
             if (!array_key_exists($p, $this->_original) &&
                 array_key_exists($p, $this->_properties) &&
