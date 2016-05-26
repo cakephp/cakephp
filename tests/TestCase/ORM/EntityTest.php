@@ -46,6 +46,31 @@ class EntityTest extends TestCase
         $this->assertSame(1, $entity->id);
         $this->assertEquals(1, $entity->getOriginal('id'));
         $this->assertEquals('bar', $entity->getOriginal('foo'));
+
+        $entity->set('level1.level2.level3', 'three');
+        $this->assertSame('three', $entity->level1->level2->level3);
+        $this->assertEquals('three', $entity->getOriginal('level1.level2.level3'));
+        $entity->set('level1.level2.level3', '333');
+        $this->assertEquals('three', $entity->getOriginal('level1.level2.level3'));
+
+        $entity->ary = [];
+        $entity->set('ary.season1.power9000', 'Goku');
+        $this->assertSame('Goku', $entity->ary['season1']['power9000']);
+    }
+
+    /**
+     * Tests setting a deep property that contains a segment already assigned as a scalar (string).
+     *
+     * @return void
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetDottedScalarPath()
+    {
+        $entity = new Entity(['scalarKey' => 'this string does not implement ::set()']);
+        $entity->set(
+            'scalarKey.canNotTraverseHere',
+            'Not allowed since scalarKey is not an array or Entity.'
+        );
     }
 
     /**
@@ -68,6 +93,16 @@ class EntityTest extends TestCase
         $this->assertSame(3, $entity->thing);
         $this->assertEquals('bar', $entity->getOriginal('foo'));
         $this->assertEquals(1, $entity->getOriginal('id'));
+
+        $entity->deeply = new Entity(['nested' => new Entity(['id' => 4])]);
+        $entity->set(['foo' => ['bar' => 'baz'], 'deeply.nested.id' => 5, 'thing' => 6]);
+        $this->assertEquals('baz', $entity->foo['bar']);
+        $this->assertSame(5, $entity->deeply->nested->id);
+        $this->assertSame(6, $entity->thing);
+        $this->assertEquals(4, $entity->getOriginal('deeply.nested.id'));
+        $entity->set(['deeply.nested.id' => 7]);
+        $this->assertSame(7, $entity->deeply->nested->id);
+        $this->assertEquals(4, $entity->getOriginal('deeply.nested.id'));
     }
 
     /**
@@ -181,7 +216,7 @@ class EntityTest extends TestCase
      */
     public function testSetOneParamWithSetter()
     {
-        $entity = $this->getMock('\Cake\ORM\Entity', ['_setName']);
+        $entity = $this->getMock('\Cake\ORM\Entity', ['_setName', '_setStar']);
         $entity->expects($this->once())->method('_setName')
             ->with('Jones')
             ->will($this->returnCallback(function ($name) {
@@ -190,6 +225,22 @@ class EntityTest extends TestCase
             }));
         $entity->set('name', 'Jones');
         $this->assertEquals('Dr. Jones', $entity->name);
+
+        $movie = $this->getMock('\Cake\ORM\Entity', ['_setYear', '_setStar']);
+        $movie->expects($this->once())->method('_setYear')
+            ->with(1981)
+            ->willReturn(1981);
+
+        // Confirm that the setter for a final segment of a dotted path is called.
+        $entity->set('film', $movie);
+        $entity->set('film.year', 1981);
+        $this->assertEquals(1981, $entity->film->year);
+
+        // Confirm that the setter for an intermediate segment of a dotted path is NOT called.
+        $movie->set('star', $entity, ['setter' => false]);
+        $entity->expects($this->never())->method('_setStar');
+        $movie->set('star.hat', 'fedora');
+        $this->assertEquals('fedora', $movie->star->hat);
     }
 
     /**
