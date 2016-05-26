@@ -122,13 +122,12 @@ class ExistsIn
      */
     protected function _fieldsAreNull($entity, $source)
     {
-        $nulls = 0;
         $schema = $source->schema();
         foreach ($this->_fields as $field) {
-            if ($schema->column($field) && $schema->isNullable($field) && $entity->get($field) === null) {
-                $nulls++;
+            if ($schema->isNullable($field) === false && $entity->get($field) === null) {
+                return false;
             }
         }
-        return $nulls === count($this->_fields);
+        return true;
     }
 }
