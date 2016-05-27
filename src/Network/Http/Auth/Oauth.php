@@ -40,10 +40,7 @@ class Oauth
      */
     public function authentication(Request $request, array $credentials)
     {
-        $hasKeys = isset(
-            $credentials['consumerKey']
-        );
-        if (!$hasKeys) {
+        if (!isset($credentials['consumerKey'])) {
             return;
         }
         if (empty($credentials['method'])) {
@@ -160,6 +157,8 @@ class Oauth
      * @param \Cake\Network\Http\Request $request The request object.
      * @param array $credentials Authentication credentials.
      * @return string
+     *
+     * @throws \RuntimeException
      */
     protected function _rsaSha1($request, $credentials)
     {
@@ -192,15 +191,15 @@ class Oauth
         }
 
         $credentials += [
-            'private_key_passphrase' => null,
+            'privateKeyPassphrase' => null,
         ];
-        if (is_resource($credentials['private_key_passphrase'])) {
-            $resource = $credentials['private_key_passphrase'];
+        if (is_resource($credentials['privateKeyPassphrase'])) {
+            $resource = $credentials['privateKeyPassphrase'];
             $passphrase = stream_get_line($resource, 0, PHP_EOL);
             rewind($resource);
-            $credentials['private_key_passphrase'] = $passphrase;
+            $credentials['privateKeyPassphrase'] = $passphrase;
         }
-        $privateKey = openssl_pkey_get_private(file_get_contents($credentials['private_key_file']), $credentials['private_key_passphrase']);
+        $privateKey = openssl_pkey_get_private(file_get_contents($credentials['privateKeyFile']), $credentials['privateKeyPassphrase']);
         $signature = '';
         openssl_sign($baseString, $signature, $privateKey);
         openssl_free_key($privateKey);
