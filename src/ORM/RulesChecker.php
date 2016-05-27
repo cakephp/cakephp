@@ -71,6 +71,8 @@ class RulesChecker extends BaseRulesChecker
      * $rules->add($rules->existsIn('site_id', new SitesTable(), 'Invalid Site'));
      * ```
      *
+     * Available $options are error 'message' and 'allowSqlNulls' flag.
+     *
      * @param string|array $field The field or list of fields to check for existence by
      * primary key lookup in the other table.
      * @param object|string $table The table name where the fields existence will be checked.
@@ -79,7 +81,10 @@ class RulesChecker extends BaseRulesChecker
      */
     public function existsIn($field, $table, $options = null)
     {
-        if (is_array($options)) {
+        $message = null;
+        if (is_string($options)) {
+            $message = $options;
+        } elseif (is_array($options)) {
             $options += ['message' => ''];
             $message = $options['message'];
             unset($options['message']);
@@ -93,7 +98,7 @@ class RulesChecker extends BaseRulesChecker
         }
 
         $errorField = is_string($field) ? $field : current($field);
-        return $this->_addError(new ExistsIn($field, $table, $options), '_existsIn', compact('errorField', 'message'));
+        return $this->_addError(new ExistsIn($field, $table, (array) $options), '_existsIn', compact('errorField', 'message'));
     }
 
     /**
