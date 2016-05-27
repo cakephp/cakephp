@@ -14,8 +14,6 @@
  */
 namespace Cake\Event;
 
-use Cake\Event\Event;
-
 /**
  * The Event Stack
  */
@@ -30,7 +28,7 @@ class EventStack implements \ArrayAccess, \Countable
     protected $_events = [];
 
     /**
-     * Empties the stack of dispatched events.
+     * Empties the list of dispatched events.
      *
      * @return void
      */
@@ -40,9 +38,9 @@ class EventStack implements \ArrayAccess, \Countable
     }
 
     /**
-     * Adds an event to the stack when stacking is enabled.
+     * Adds an event to the list when stacking is enabled.
      *
-     * @param \Cake\Event\Event $event An event to stack.
+     * @param \Cake\Event\Event $event An event to the list of dispatched events.
      * @return void
      */
     public function add(Event $event)
@@ -54,14 +52,8 @@ class EventStack implements \ArrayAccess, \Countable
      * Whether a offset exists
      *
      * @link http://php.net/manual/en/arrayaccess.offsetexists.php
-     * @param mixed $offset <p>
-     * An offset to check for.
-     * </p>
+     * @param mixed $offset An offset to check for.
      * @return boolean true on success or false on failure.
-     * </p>
-     * <p>
-     * The return value will be casted to boolean if non-boolean was returned.
-     * @since 5.0.0
      */
     public function offsetExists($offset)
     {
@@ -72,11 +64,8 @@ class EventStack implements \ArrayAccess, \Countable
      * Offset to retrieve
      *
      * @link http://php.net/manual/en/arrayaccess.offsetget.php
-     * @param mixed $offset <p>
-     * The offset to retrieve.
-     * </p>
+     * @param mixed $offset The offset to retrieve.
      * @return mixed Can return all value types.
-     * @since 5.0.0
      */
     public function offsetGet($offset)
     {
@@ -90,14 +79,9 @@ class EventStack implements \ArrayAccess, \Countable
      * Offset to set
      *
      * @link http://php.net/manual/en/arrayaccess.offsetset.php
-     * @param mixed $offset <p>
-     * The offset to assign the value to.
-     * </p>
-     * @param mixed $value <p>
-     * The value to set.
-     * </p>
+     * @param mixed $offset The offset to assign the value to.
+     * @param mixed $value The value to set.
      * @return void
-     * @since 5.0.0
      */
     public function offsetSet($offset, $value)
     {
@@ -108,11 +92,8 @@ class EventStack implements \ArrayAccess, \Countable
      * Offset to unset
      *
      * @link http://php.net/manual/en/arrayaccess.offsetunset.php
-     * @param mixed $offset <p>
-     * The offset to unset.
-     * </p>
+     * @param mixed $offset The offset to unset.
      * @return void
-     * @since 5.0.0
      */
     public function offsetUnset($offset)
     {
@@ -124,10 +105,6 @@ class EventStack implements \ArrayAccess, \Countable
      *
      * @link http://php.net/manual/en/countable.count.php
      * @return int The custom count as an integer.
-     * </p>
-     * <p>
-     * The return value is cast to an integer.
-     * @since 5.1.0
      */
     public function count()
     {
