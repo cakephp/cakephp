@@ -46,4 +46,33 @@ class EvenStackTest extends TestCase
 
         $this->assertCount(0, $eventStack);
     }
+
+    /**
+     * Testing implemented \ArrayAccess and \Count methods
+     *
+     * @return void
+     */
+    public function testArrayAccess()
+    {
+        $eventStack = new EventStack();
+        $event = new Event('my_event', $this);
+        $event2 = new Event('my_second_event', $this);
+
+        $eventStack->add($event);
+        $eventStack->add($event2);
+        $this->assertCount(2, $eventStack);
+
+        $this->assertEquals($eventStack->offsetGet(0), $event);
+        $this->assertEquals($eventStack->offsetGet(1), $event2);
+        $this->assertTrue($eventStack->offsetExists(0));
+        $this->assertTrue($eventStack->offsetExists(1));
+        $this->assertFalse($eventStack->offsetExists(2));
+
+        $eventStack->offsetUnset(1);
+        $this->assertCount(1, $eventStack);
+
+        $eventStack->flush();
+
+        $this->assertCount(0, $eventStack);
+    }
 }
