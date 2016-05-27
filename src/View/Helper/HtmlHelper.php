@@ -843,7 +843,7 @@ class HtmlHelper extends Helper
             'url' => $path,
             'attrs' => $templater->formatAttributes($options),
         ]);
-//debug($image);
+
         if ($url) {
             return $templater->format('link', [
                 'url' => $this->Url->build($url),
