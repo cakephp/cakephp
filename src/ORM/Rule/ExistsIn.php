@@ -40,14 +40,24 @@ class ExistsIn
     protected $_repository;
 
     /**
+     * Setup Options
+     *
+     * @var array
+     */
+    protected $_setupOptions;
+
+    /**
      * Constructor.
      *
      * @param string|array $fields The field or fields to check existence as primary key.
      * @param object|string $repository The repository where the field will be looked for,
      * or the association name for the repository.
      */
-    public function __construct($fields, $repository)
+    public function __construct($fields, $repository, $setupOptions = array())
     {
+        $this->_setupOptions = [
+                'allowPartialSchemaNulls' => true,
+            ] + $setupOptions;
         $this->_fields = (array)$fields;
         $this->_repository = $repository;
     }
@@ -98,7 +108,9 @@ class ExistsIn
             return true;
         }
 
-        if ($this->_fieldsAreNull($entity, $source)) {
+        if ($this->_setupOptions['allowPartialSchemaNulls'] === true
+            && $this->_checkPartialSchemaNulls($entity, $source) === true
+        ) {
             return true;
         }
 
@@ -114,20 +126,21 @@ class ExistsIn
     }
 
     /**
-     * Check whether or not the entity fields are nullable and null.
+     * Check whether or not the entity has nullable fields that are null.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to check.
      * @param \Cake\ORM\Table $source The table to use schema from.
      * @return bool
      */
-    protected function _fieldsAreNull($entity, $source)
+    protected function _checkPartialSchemaNulls($entity, $source)
     {
         $schema = $source->schema();
         foreach ($this->_fields as $field) {
-            if ($schema->isNullable($field) === false && $entity->get($field) === null) {
-                return false;
+            if ($schema->isNullable($field) === true && $entity->get($field) === null) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
+
 }
