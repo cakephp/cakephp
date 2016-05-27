@@ -69,10 +69,5 @@
         "cakephp/orm": "self.version",
         "cakephp/utility": "self.version",
         "cakephp/validation": "self.version"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-3.next": "dev-3.3.0"
-        }
     }
 }
