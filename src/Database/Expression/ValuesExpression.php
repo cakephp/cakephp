@@ -130,7 +130,10 @@ class ValuesExpression implements ExpressionInterface
     {
         $columns = [];
         foreach ($this->_columns as $col) {
-            $columns[] = trim($col, '`[]"');
+            if (is_string($col)) {
+                $col = trim($col, '`[]"');
+            }
+            $columns[] = $col;
         }
         return $columns;
     }
