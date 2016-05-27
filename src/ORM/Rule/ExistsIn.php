@@ -40,11 +40,11 @@ class ExistsIn
     protected $_repository;
 
     /**
-     * Construct Options
+     * Options for the constructor
      *
      * @var array
      */
-    protected $_constructOptions = [];
+    protected $_options = [];
 
     /**
      * Constructor.
@@ -52,11 +52,12 @@ class ExistsIn
      * @param string|array $fields The field or fields to check existence as primary key.
      * @param object|string $repository The repository where the field will be looked for,
      * or the association name for the repository.
+     * @param array $options The options that modify the rules behavior.
      */
-    public function __construct($fields, $repository, array $constructOptions = Array())
+    public function __construct($fields, $repository, array $options = [])
     {
-        $constructOptions += ['allowSqlNulls' => false];
-        $this->_constructOptions = $constructOptions;
+        $options += ['allowSqlNulls' => false];
+        $this->_options = $options;
 
         $this->_fields = (array)$fields;
         $this->_repository = $repository;
@@ -108,11 +109,12 @@ class ExistsIn
             return true;
         }
 
-        if ($this->_constructOptions['allowSqlNulls'] === true
+        if ($this->_options['allowSqlNulls'] === true
             && $this->_checkPartialSchemaNulls($entity, $source) === true
         ) {
             return true;
-        } elseif ($this->_fieldsAreNull($entity, $source)) {
+        }
+        if ($this->_fieldsAreNull($entity, $source)) {
             return true;
         }
 
@@ -147,7 +149,7 @@ class ExistsIn
     }
 
     /**
-     * Check wether there are partial, nullable, nulls.
+     * Check whether there are partial, nullable, nulls.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to check.
      * @param \Cake\ORM\Table $source The table to use schema from.
