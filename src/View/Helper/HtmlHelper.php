@@ -776,6 +776,21 @@ class HtmlHelper extends Helper
     }
 
     /**
+     * Check if a given image path is a CID.
+     *
+     * @param $path array|string $path
+     * @return bool
+     */
+    protected function _isCid($path)
+    {
+        if (is_array($path)) {
+            return false;
+        }
+        $isCid = substr($path, 0 , 4);
+        return is_string($isCid) && (strtolower($isCid) === 'cid:');
+    }
+
+    /**
      * Creates a formatted IMG element.
      *
      * This method will set an empty alt attribute if one is not supplied.
@@ -808,7 +823,9 @@ class HtmlHelper extends Helper
      */
     public function image($path, array $options = [])
     {
-        $path = $this->Url->image($path, $options);
+        if (!$this->_isCid($path)) {
+            $path = $this->Url->image($path, $options);
+        }
         $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
 
         if (!isset($options['alt'])) {
@@ -826,7 +843,7 @@ class HtmlHelper extends Helper
             'url' => $path,
             'attrs' => $templater->formatAttributes($options),
         ]);
-
+//debug($image);
         if ($url) {
             return $templater->format('link', [
                 'url' => $this->Url->build($url),
