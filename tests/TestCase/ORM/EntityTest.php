@@ -1389,4 +1389,22 @@ class EntityTest extends TestCase
         $this->assertTrue($cloned->dirty('a'));
         $this->assertTrue($cloned->dirty('b'));
     }
+
+    /**
+     * Tests the invalid method.
+     *
+     * @return void
+     */
+    public function testInvalid()
+    {
+        $entity = new Entity(['a' => 1]);
+        $this->assertEmpty([], $entity->invalid());
+
+        $entity->invalid('a', 'Must be a float');
+        $this->assertEquals('Must be a float', $entity->invalid('a'));
+
+        $result = $entity->invalid('a', 'Must really be monetary', true);
+        $this->assertEquals('Must really be monetary', $entity->invalid('a'));
+        $this->assertSame($entity, $result);
+    }
 }
