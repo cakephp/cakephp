@@ -119,6 +119,23 @@ class ValuesExpression implements ExpressionInterface
     }
 
     /**
+     * Get the bare column names.
+     *
+     * Because column names could be identifier quoted, we
+     * need to strip the identifiers off of the columns.
+     *
+     * @return array
+     */
+    protected function _columnNames()
+    {
+        $columns = [];
+        foreach ($this->_columns as $col) {
+            $columns[] = trim($col, '`[]"');
+        }
+        return $columns;
+    }
+
+    /**
      * Sets the values to be inserted. If no params are passed, then it returns
      * the currently stored values
      *
@@ -173,10 +190,7 @@ class ValuesExpression implements ExpressionInterface
         $i = 0;
         $columns = [];
 
-        // Remove identifier quoting so column names match keys.
-        foreach ($this->_columns as $col) {
-            $columns[] = trim($col, '`[]"');
-        }
+        $columns = $this->_columnNames();
         $defaults = array_fill_keys($columns, null);
         $placeholders = [];
 
@@ -257,7 +271,8 @@ class ValuesExpression implements ExpressionInterface
         $types = [];
         $typeMap = $this->typeMap();
 
-        foreach ($this->_columns as $c) {
+        $columns = $this->_columnNames();
+        foreach ($columns as $c) {
             if (!is_scalar($c)) {
                 continue;
             }
