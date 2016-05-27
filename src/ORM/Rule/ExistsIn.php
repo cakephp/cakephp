@@ -55,9 +55,9 @@ class ExistsIn
      */
     public function __construct($fields, $repository, $setupOptions = array())
     {
-        $this->_setupOptions = [
-                'allowPartialSchemaNulls' => true,
-            ] + $setupOptions;
+        $this->_setupOptions += ['allowPartialSchemaNulls' => true];
+        $allowPartialSchemaNulls = $this->_setupOptions['allowPartialSchemaNulls'];
+
         $this->_fields = (array)$fields;
         $this->_repository = $repository;
     }
