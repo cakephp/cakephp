@@ -61,6 +61,9 @@ class Oauth
                 break;
 
             case 'RSA-SHA1':
+                if (!isset($credentials['privateKeyFile'])) {
+                    return;
+                }
                 $value = $this->_rsaSha1($request, $credentials);
                 break;
 
