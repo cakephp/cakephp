@@ -72,12 +72,20 @@ class CacheShell extends Shell
     public function clear($prefix = null)
     {
         try {
+            $engine = Cache::engine($prefix);
             Cache::clear(false, $prefix);
+            if ($engine instanceof \Cake\Cache\Engine\ApcEngine) {
+                $this->warn("ApcEngine detected: Cleared $prefix CLI cache successfully " .
+                "but $prefix web cache must be cleared separately.");
+            } elseif ($engine instanceof \Cake\Cache\Engine\WincacheEngine) {
+                $this->warn("WincacheEngine detected: Cleared $prefix CLI cache successfully " .
+                "but $prefix web cache must be cleared separately.");
+            } else {
+                $this->out("<success>Cleared $prefix cache</success>");
+            }
         } catch (\InvalidArgumentException $e) {
             $this->abort($e->getMessage());
         }
-
-        $this->out("<success>Cleared $prefix cache</success>");
     }
 
     /**
@@ -87,14 +95,9 @@ class CacheShell extends Shell
      */
     public function clearAll()
     {
-        if (version_compare(Configure::version(), '3.2.0', '>=')) {
-            Cache::clearAll(false);
-            $this->out("<success>Cleared all caches</success>");
-        } else {
-            $prefixes = Cache::configured();
-            foreach ($prefixes as $prefix) {
-                $this->clear($prefix);
-            }
+        $prefixes = Cache::configured();
+        foreach ($prefixes as $prefix) {
+            $this->clear($prefix);
         }
     }
 
