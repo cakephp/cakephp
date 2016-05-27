@@ -618,6 +618,9 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'DELETE';
 		$this->assertEquals('json', $this->RequestHandler->requestedWith());
 
+		$_SERVER['REQUEST_METHOD'] = 'PATCH';
+		$this->assertEquals('json', $this->RequestHandler->requestedWith());
+
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		unset($_SERVER['CONTENT_TYPE']);
 		$_SERVER['HTTP_CONTENT_TYPE'] = 'application/json';
