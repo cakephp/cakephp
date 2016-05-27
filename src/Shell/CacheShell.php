@@ -48,7 +48,7 @@ class CacheShell extends Shell
                 'description' => [
                     'Clear the cache for a particular prefix.',
                     'For example, `cake cache clear _cake_model_` will clear the model cache',
-                    'Use `cake cache clear list_prefixes` to list available prefixes'
+                    'Use `cake cache list_prefixes` to list available prefixes'
                 ],
                 'arguments' => [
                     'prefix' => [
