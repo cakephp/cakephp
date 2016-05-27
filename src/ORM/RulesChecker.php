@@ -84,6 +84,7 @@ class RulesChecker extends BaseRulesChecker
         $message = null;
         if (is_string($options)) {
             $message = $options;
+            $options = [];
         } elseif (is_array($options)) {
             $options += ['message' => ''];
             $message = $options['message'];
