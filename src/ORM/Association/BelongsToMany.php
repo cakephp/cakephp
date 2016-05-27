@@ -894,7 +894,7 @@ class BelongsToMany extends Association
 
         $belongsTo = $this->junction()->association($this->target()->alias());
         $conditions = $belongsTo->_joinCondition([
-            'foreignKey' => $this->foreignKey()
+            'foreignKey' => $this->targetForeignKey()
         ]);
         $conditions += $this->junctionConditions();
         return $this->_appendJunctionJoin($query, $conditions);

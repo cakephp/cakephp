@@ -1022,6 +1022,7 @@ class BelongsToManyTest extends TestCase
         $query = $table->Tags->find();
         $result = $query->toArray();
         $this->assertCount(1, $result);
+        $this->assertEquals(1, $result[0]->id);
     }
 
     /**
@@ -1045,6 +1046,7 @@ class BelongsToManyTest extends TestCase
         $query = $table->Tags->find();
         $result = $query->toArray();
         $this->assertCount(1, $result);
+        $this->assertEquals(1, $result[0]->id);
     }
 
     /**

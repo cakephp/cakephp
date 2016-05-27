@@ -530,6 +530,7 @@ class FormHelper extends Helper
         ) {
             $out .= $this->secure($this->fields, $secureAttributes);
             $this->fields = [];
+            $this->_unlockedFields = [];
         }
         $out .= $this->formatTemplate('formEnd', []);
 

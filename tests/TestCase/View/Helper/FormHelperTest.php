@@ -2281,6 +2281,29 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * test reset unlockFields, when create new form.
+     *
+     * @return void
+     */
+    public function testResetUnlockFields()
+    {
+        $this->Form->request['_Token'] = [
+            'key' => 'testKey',
+            'unlockedFields' => []
+        ];
+
+        $this->Form->unlockField('Contact.id');
+        $this->Form->create('Contact');
+        $this->Form->hidden('Contact.id', ['value' => 1]);
+        $this->assertEmpty($this->Form->fields, 'Field should be unlocked');
+        $this->Form->end();
+
+        $this->Form->create('Contact');
+        $this->Form->hidden('Contact.id', ['value' => 1]);
+        $this->assertEquals(1, $this->Form->fields['Contact.id'], 'Hidden input should be secured.');
+    }
+
+    /**
      * Test that only the path + query elements of a form's URL show up in their hash.
      *
      * @return void

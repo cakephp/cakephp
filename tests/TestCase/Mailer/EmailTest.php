@@ -2083,7 +2083,7 @@ class EmailTest extends TestCase
         $this->assertNotEmpty($result);
 
         $result = $this->CakeEmail->getBoundary();
-        $this->assertNotEmpty($result);
+        $this->assertRegExp('/^[0-9a-f]{32}$/', $result);
     }
 
     /**

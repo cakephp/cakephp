@@ -27,6 +27,7 @@ use Cake\Datasource\Exception\MissingDatasourceException;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
+use Cake\Mailer\Exception\MissingActionException as MissingMailerActionException;
 use Cake\Network\Exception\InternalErrorException;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Network\Exception\NotFoundException;
@@ -582,6 +583,19 @@ class ExceptionRendererTest extends TestCase
                     '/<em>MyPlugin.MyDatasource<\/em> could not be found./'
                 ],
                 500
+            ],
+            [
+                new MissingMailerActionException([
+                    'mailer' => 'UserMailer',
+                    'action' => 'welcome',
+                    'prefix' => '',
+                    'plugin' => '',
+                ]),
+                [
+                    '/Missing Method in UserMailer/',
+                    '/<em>UserMailer::welcome\(\)<\/em>/'
+                ],
+                404
             ],
             [
                 new Exception('boom'),

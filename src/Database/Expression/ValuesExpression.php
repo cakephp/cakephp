@@ -190,7 +190,7 @@ class ValuesExpression implements ExpressionInterface
             $row += $defaults;
             $rowPlaceholders = [];
 
-            foreach ($this->_columns as $column) {
+            foreach ($columns as $column) {
                 $value = $row[$column];
 
                 if ($value instanceof ExpressionInterface) {

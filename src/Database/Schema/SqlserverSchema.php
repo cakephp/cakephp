@@ -161,9 +161,32 @@ class SqlserverSchema extends BaseSchema
 
         $field += [
             'null' => $row['null'] === '1' ? true : false,
-            'default' => $row['default'],
+            'default' => $this->_defaultValue($row['default']),
         ];
         $table->addColumn($row['name'], $field);
+    }
+
+    /**
+     * Manipulate the default value.
+     *
+     * Sqlite includes quotes and bared NULLs in default values.
+     * We need to remove those.
+     *
+     * @param string|null $default The default value.
+     * @return string|null
+     */
+    protected function _defaultValue($default)
+    {
+        if ($default === 'NULL') {
+            return null;
+        }
+
+        // Remove quotes
+        if (preg_match("/^'(.*)'$/", $default, $matches)) {
+            return str_replace("''", "'", $matches[1]);
+        }
+
+        return $default;
     }
 
     /**

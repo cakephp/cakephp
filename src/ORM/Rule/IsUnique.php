@@ -74,6 +74,9 @@ class IsUnique
     /**
      * Add a model alias to all the keys in a set of conditions.
      *
+     * Null values will be omitted from the generated conditions,
+     * as SQL UNIQUE indexes treat `NULL != NULL`
+     *
      * @param string $alias The alias to add.
      * @param array $conditions The conditions to alias.
      * @return array
@@ -82,7 +85,7 @@ class IsUnique
     {
         $aliased = [];
         foreach ($conditions as $key => $value) {
-            $aliased["$alias.$key IS"] = $value;
+            $aliased["$alias.$key"] = $value;
         }
         return $aliased;
     }
