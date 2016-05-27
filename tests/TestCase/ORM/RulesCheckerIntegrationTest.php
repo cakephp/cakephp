@@ -30,7 +30,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.tags', 'core.categories'];
+    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.tags', 'core.categories', 'core.site_categories'];
 
     /**
      * Tear down
@@ -765,6 +765,64 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->errors('author_id'));
+    }
+
+    /**
+     * Tests new allowSqlNulls flag with parent id set to null
+     *
+     * @return
+     */
+    public function testExistsInAllowSqlNullsWithParentIdNull()
+    {
+        $entity = new Entity([
+            'id' => 10,
+            'parent_id' => null,
+            'site_id' => 1,
+            'name' => 'New Site Category without parent',
+        ]);
+        $table = TableRegistry::get('SiteCategories');
+        $table->belongsTo('ParentSiteCategories', [
+            'className' => 'SiteCategories',
+        ]);
+        $rules = $table->rulesChecker();
+
+        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories', ['allowSqlNulls' => true]));
+        $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
+
+        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories', ['allowSqlNulls' => false]));
+        $this->assertFalse($table->save(clone $entity));
+
+        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories'));
+        $this->assertFalse($table->save(clone $entity));
+    }
+
+    /**
+     * Tests new allowSqlNulls flag with parent id set to 1
+     *
+     * @return
+     */
+    public function testExistsInAllowSqlNullsWithParentId1()
+    {
+        $entity = new Entity([
+            'id' => 10,
+            'parent_id' => 1,
+            'site_id' => 1,
+            'name' => 'New Site Category with parent',
+        ]);
+        $table = TableRegistry::get('SiteCategories');
+        $table->belongsTo('ParentSiteCategories', [
+            'className' => 'SiteCategories',
+        ]);
+        $rules = $table->rulesChecker();
+
+        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories', ['allowSqlNulls' => true]));
+        $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
+
+        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories', ['allowSqlNulls' => false]));
+        $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
+
+        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories'));
+        $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
     }
 
     /**
