@@ -15,6 +15,8 @@
 namespace Cake\Shell;
 
 use Cake\Cache\Cache;
+use Cake\Cache\Engine\ApcEngine;
+use Cake\Cache\Engine\WincacheEngine;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 
@@ -74,10 +76,10 @@ class CacheShell extends Shell
         try {
             $engine = Cache::engine($prefix);
             Cache::clear(false, $prefix);
-            if ($engine instanceof \Cake\Cache\Engine\ApcEngine) {
+            if ($engine instanceof ApcEngine) {
                 $this->warn("ApcEngine detected: Cleared $prefix CLI cache successfully " .
                 "but $prefix web cache must be cleared separately.");
-            } elseif ($engine instanceof \Cake\Cache\Engine\WincacheEngine) {
+            } elseif ($engine instanceof WincacheEngine) {
                 $this->warn("WincacheEngine detected: Cleared $prefix CLI cache successfully " .
                 "but $prefix web cache must be cleared separately.");
             } else {
