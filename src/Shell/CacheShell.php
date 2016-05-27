@@ -19,13 +19,13 @@ use Cake\Console\Shell;
 use Cake\Core\Configure;
 
 /**
- * Caches Shell.
+ * Cache Shell.
  *
  * Provides a CLI interface to clear caches.
  * This tool can be used in development or by deployment scripts when changes
  * are made that require cached data to be removed.
  */
-class CachesShell extends Shell
+class CacheShell extends Shell
 {
 
     /**

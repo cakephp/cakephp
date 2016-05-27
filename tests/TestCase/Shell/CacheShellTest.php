@@ -15,13 +15,13 @@
 namespace Cake\Test\TestCase\Shell;
 
 use Cake\Cache\Cache;
-use Cake\Shell\CachesShell;
+use Cake\Shell\CacheShell;
 use Cake\TestSuite\TestCase;
 
 /**
- * CachesShell tests.
+ * CacheShell tests.
  */
-class CachesShellTest extends TestCase
+class CacheShellTest extends TestCase
 {
 
     /**
@@ -33,7 +33,7 @@ class CachesShellTest extends TestCase
     {
         parent::setUp();
         $this->io = $this->getMock('Cake\Console\ConsoleIo');
-        $this->shell = new CachesShell($this->io);
+        $this->shell = new CacheShell($this->io);
         Cache::config('test', ['engine' => 'File', 'path' => TMP]);
     }
 
