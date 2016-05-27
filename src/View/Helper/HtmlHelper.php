@@ -778,7 +778,7 @@ class HtmlHelper extends Helper
     /**
      * Check if a given image path is a CID.
      *
-     * @param $path array|string $path
+     * @param array|string $path
      * @return bool
      */
     protected function _isCid($path)
