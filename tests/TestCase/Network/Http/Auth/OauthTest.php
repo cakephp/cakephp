@@ -222,21 +222,22 @@ class OauthTest extends TestCase
      *
      * @return void
      */
-    public function testRsaSigning() {
+    public function testRsaSigning()
+    {
         $request = new Request();
         $request->url('http://photos.example.net/photos')
             ->body([
                        'file' => 'vacaction.jpg',
                        'size' => 'original'
                    ]);
-        $private_key_path = TEST_APP . DS . 'config' . DS . 'key.pem';
+        $privateKeyPath = TEST_APP . DS . 'config' . DS . 'key.pem';
 
         $options = [
             'method' => 'RSA-SHA1',
             'consumerKey' => 'dpf43f3p2l4k3l03',
             'nonce' => '13917289812797014437',
             'timestamp' => '1196666512',
-            'private_key_file' => $private_key_path,
+            'privateKeyFile' => $privateKeyPath
         ];
         $auth = new Oauth();
         $auth->authentication($request, $options);
@@ -257,14 +258,15 @@ class OauthTest extends TestCase
      *
      * @return void
      */
-    public function testRsaSigningWithPassphraseString() {
+    public function testRsaSigningWithPassphraseString()
+    {
         $request = new Request();
         $request->url('http://photos.example.net/photos')
             ->body([
                        'file' => 'vacaction.jpg',
                        'size' => 'original'
                    ]);
-        $private_key_path = TEST_APP . DS . 'config' . DS . 'key_with_passphrase.pem';
+        $privateKeyPath = TEST_APP . DS . 'config' . DS . 'key_with_passphrase.pem';
         $passphrase = 'fancy-cakephp-passphrase';
 
         $options = [
@@ -272,8 +274,8 @@ class OauthTest extends TestCase
             'consumerKey' => 'dpf43f3p2l4k3l03',
             'nonce' => '13917289812797014437',
             'timestamp' => '1196666512',
-            'private_key_file' => $private_key_path,
-            'private_key_passphrase' => $passphrase,
+            'privateKeyFile' => $privateKeyPath,
+            'privateKeyPassphrase' => $passphrase,
         ];
         $auth = new Oauth();
         $auth->authentication($request, $options);
@@ -294,28 +296,31 @@ class OauthTest extends TestCase
      *
      * @return void
      */
-    public function testRsaSigningWithPassphraseFile() {
+    public function testRsaSigningWithPassphraseFile()
+    {
         $request = new Request();
         $request->url('http://photos.example.net/photos')
             ->body([
                        'file' => 'vacaction.jpg',
                        'size' => 'original'
                    ]);
-        $private_key_path = TEST_APP . DS . 'config' . DS . 'key_with_passphrase.pem';
+        $privateKeyPath = TEST_APP . DS . 'config' . DS . 'key_with_passphrase.pem';
 
-        if(PHP_EOL == "\n") $passphrase_path = TEST_APP . DS . 'config' . DS . 'key_passphrase_lf';
-        else if(PHP_EOL == "\r\n") $passphrase_path = TEST_APP . DS . 'config' . DS . 'key_passphrase_crlf';
-        else if(PHP_EOL == "\r") $passphrase_path = TEST_APP . DS . 'config' . DS . 'key_passphrase_cr';
-        else { $this->markTestSkipped('The file for the key passphrase could not be loaded as PHP_EOL could not be recognized.'); return; }
-        $passphrase = fopen($passphrase_path, 'r');
+        if (PHP_EOL != "\n") {
+            $this->markTestSkipped('Just the line ending ("\n") is supported. You can run the test again e.g. on a linux system.');
+            return;
+        }
+
+        $passphrasePath = TEST_APP . DS . 'config' . DS . 'key_passphrase_lf';
+        $passphrase = fopen($passphrasePath, 'r');
 
         $options = [
             'method' => 'RSA-SHA1',
             'consumerKey' => 'dpf43f3p2l4k3l03',
             'nonce' => '13917289812797014437',
             'timestamp' => '1196666512',
-            'private_key_file' => $private_key_path,
-            'private_key_passphrase' => $passphrase,
+            'privateKeyFile' => $privateKeyPath,
+            'privateKeyPassphrase' => $passphrase,
         ];
         $auth = new Oauth();
         $auth->authentication($request, $options);
