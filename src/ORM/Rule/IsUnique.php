@@ -52,17 +52,14 @@ class IsUnique
         if (!$entity->extract($this->_fields, true)) {
             return true;
         }
-
-        $allowMultipleNulls = true;
-        if (isset($options['allowMultipleNulls'])) {
-            $allowMultipleNulls = $options['allowMultipleNulls'] === true ? true : false;
-        }
+        $options += ['allowMultipleNulls' => true];
+        $allowMultipleNulls = $options['allowMultipleNulls'];
 
         $alias = $options['repository']->alias();
-        $conditions = $this->_alias($alias, $entity->extract($this->_fields));
+        $conditions = $this->_alias($alias, $entity->extract($this->_fields), $allowMultipleNulls);
         if ($entity->isNew() === false) {
             $keys = (array)$options['repository']->primaryKey();
-            $keys = $this->_alias($alias, $entity->extract($keys));
+            $keys = $this->_alias($alias, $entity->extract($keys), $allowMultipleNulls);
             if (array_filter($keys, 'strlen')) {
                 $conditions['NOT'] = $keys;
             }
@@ -79,13 +76,18 @@ class IsUnique
      *
      * @param string $alias The alias to add.
      * @param array $conditions The conditions to alias.
+     * @param bool $multipleNulls Whether or not to allow multiple nulls.
      * @return array
      */
-    protected function _alias($alias, $conditions)
+    protected function _alias($alias, $conditions, $multipleNulls)
     {
         $aliased = [];
         foreach ($conditions as $key => $value) {
-            $aliased["$alias.$key"] = $value;
+            if ($multipleNulls) {
+                $aliased["$alias.$key"] = $value;
+            } else {
+                $aliased["$alias.$key IS"] = $value;
+            }
         }
         return $aliased;
     }
