@@ -98,7 +98,7 @@ class RulesChecker extends BaseRulesChecker
         }
 
         $errorField = is_string($field) ? $field : current($field);
-        return $this->_addError(new ExistsIn($field, $table, (array) $options), '_existsIn', compact('errorField', 'message'));
+        return $this->_addError(new ExistsIn($field, $table, (array)$options), '_existsIn', compact('errorField', 'message'));
     }
 
     /**
