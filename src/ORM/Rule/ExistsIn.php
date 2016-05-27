@@ -40,11 +40,11 @@ class ExistsIn
     protected $_repository;
 
     /**
-     * Setup Options
+     * Construct Options
      *
      * @var array
      */
-    protected $_setupOptions;
+    protected $_constructOptions = [];
 
     /**
      * Constructor.
@@ -53,10 +53,10 @@ class ExistsIn
      * @param object|string $repository The repository where the field will be looked for,
      * or the association name for the repository.
      */
-    public function __construct($fields, $repository, $setupOptions = array())
+    public function __construct($fields, $repository, array $constructOptions = Array())
     {
-        $this->_setupOptions += ['allowPartialSchemaNulls' => true];
-        $allowPartialSchemaNulls = $this->_setupOptions['allowPartialSchemaNulls'];
+        $constructOptions += ['allowSqlNulls' => false];
+        $this->_constructOptions = $constructOptions;
 
         $this->_fields = (array)$fields;
         $this->_repository = $repository;
@@ -108,9 +108,11 @@ class ExistsIn
             return true;
         }
 
-        if ($this->_setupOptions['allowPartialSchemaNulls'] === true
+        if ($this->_constructOptions['allowSqlNulls'] === true
             && $this->_checkPartialSchemaNulls($entity, $source) === true
         ) {
+            return true;
+        } elseif ($this->_fieldsAreNull($entity, $source)) {
             return true;
         }
 
@@ -123,6 +125,25 @@ class ExistsIn
             $entity->extract($this->_fields)
         );
         return $target->exists($conditions);
+    }
+
+    /**
+     * Check whether or not the entity fields are nullable and null.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The entity to check.
+     * @param \Cake\ORM\Table $source The table to use schema from.
+     * @return bool
+     */
+    protected function _fieldsAreNull($entity, $source)
+    {
+        $nulls = 0;
+        $schema = $source->schema();
+        foreach ($this->_fields as $field) {
+            if ($schema->column($field) && $schema->isNullable($field) && $entity->get($field) === null) {
+                $nulls++;
+            }
+        }
+        return $nulls === count($this->_fields);
     }
 
     /**
