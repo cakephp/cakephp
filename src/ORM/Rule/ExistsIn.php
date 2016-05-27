@@ -147,7 +147,7 @@ class ExistsIn
     }
 
     /**
-     * Check whether or not the entity has nullable fields that are null.
+     * Check wether there are partial, nullable, nulls.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to check.
      * @param \Cake\ORM\Table $source The table to use schema from.
@@ -163,5 +163,4 @@ class ExistsIn
         }
         return false;
     }
-
 }
