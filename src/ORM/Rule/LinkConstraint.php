@@ -166,13 +166,13 @@ class LinkConstraint
      * Alias fields.
      *
      * @param array $fields The fields that should be aliased.
-     * @param Table $table The table object to use for aliasing.
+     * @param \Cake\ORM\Association|\Cake\ORM\Table $source The object to use for aliasing.
      * @return array The aliased fields
      */
-    protected function _aliasFields($fields, $table)
+    protected function _aliasFields($fields, $source)
     {
         foreach ($fields as $key => $value) {
-            $fields[$key] = $table->aliasField($value);
+            $fields[$key] = $source->aliasField($value);
         }
         return $fields;
     }
@@ -208,15 +208,15 @@ class LinkConstraint
             throw new \InvalidArgumentException('All primary key values are required.');
         }
 
-        $conditions = $this->_buildConditions(
-            $this->_aliasFields((array)$primaryKey, $source),
-            $entity->extract((array)$primaryKey)
-        );
-
         $sourceAlias = $source->registryAlias();
         $sourceAssociation = $association->target()->association($sourceAlias);
 
         if ($sourceAssociation instanceof Association) {
+            $conditions = $this->_buildConditions(
+                $this->_aliasFields((array)$primaryKey, $sourceAssociation),
+                $entity->extract((array)$primaryKey)
+            );
+
             return $association
                 ->find()
                 ->matching(
@@ -227,6 +227,11 @@ class LinkConstraint
                 )
                 ->count();
         }
+
+        $conditions = $this->_buildConditions(
+            $this->_aliasFields((array)$primaryKey, $source),
+            $entity->extract((array)$primaryKey)
+        );
 
         $entity = $source
             ->find()
