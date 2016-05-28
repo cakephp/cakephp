@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\ORM\Rule;
 
 use Cake\Core\Configure;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Event\Event;
 use Cake\ORM\Association\BelongsTo;
@@ -586,7 +587,12 @@ class LinkConstraintTest extends TestCase
                     ->newQuery()
                     ->select(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
-                    ->where(['Articles.id = RecentComments.article_id'])
+                    ->where(function (QueryExpression $exp) {
+                        return $exp->eq(
+                            new IdentifierExpression('Articles.id'),
+                            new IdentifierExpression('RecentComments.article_id')
+                        );
+                    })
                     ->order(['RecentComments.created' => 'DESC'])
                     ->limit(1);
 
@@ -616,7 +622,12 @@ class LinkConstraintTest extends TestCase
                     ->newQuery()
                     ->select(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
-                    ->where(['Articles.id = RecentComments.article_id'])
+                    ->where(function (QueryExpression $exp) {
+                        return $exp->eq(
+                            new IdentifierExpression('Articles.id'),
+                            new IdentifierExpression('RecentComments.article_id')
+                        );
+                    })
                     ->order(['RecentComments.created' => 'DESC'])
                     ->limit(1);
 
@@ -684,9 +695,12 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = TableRegistry::get('Articles');
         $Articles->hasOne('Comments', [
-            'conditions' => [
-                'Comments.published = Articles.published'
-            ]
+            'conditions' => function (QueryExpression $exp) {
+                return $exp->eq(
+                    new IdentifierExpression('Comments.published'),
+                    new IdentifierExpression('Articles.published')
+                );
+            }
         ]);
         $Articles->association('Comments')->belongsTo('Articles');
 
@@ -703,9 +717,12 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = TableRegistry::get('Articles');
         $Articles->hasOne('Comments', [
-            'conditions' => [
-                'Comments.published != Articles.published'
-            ]
+            'conditions' => function (QueryExpression $exp) {
+                return $exp->notEq(
+                    new IdentifierExpression('Comments.published'),
+                    new IdentifierExpression('Articles.published')
+                );
+            }
         ]);
         $Articles->association('Comments')->belongsTo('Articles');
 
