@@ -768,7 +768,7 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests new allowSqlNulls flag with parent id set to null
+     * Tests new passingOnPartialNulls flag with parent id set to null
      *
      * @return
      */
@@ -786,10 +786,10 @@ class RulesCheckerIntegrationTest extends TestCase
         ]);
         $rules = $table->rulesChecker();
 
-        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories', ['allowSqlNulls' => true]));
+        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories', ['passingOnPartialNulls' => true]));
         $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
 
-        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories', ['allowSqlNulls' => false]));
+        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories', ['passingOnPartialNulls' => false]));
         $this->assertFalse($table->save(clone $entity));
 
         $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories'));
@@ -797,7 +797,7 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests new allowSqlNulls flag with parent id set to 1
+     * Tests new passingOnPartialNulls flag with parent id set to 1
      *
      * @return
      */
@@ -815,10 +815,10 @@ class RulesCheckerIntegrationTest extends TestCase
         ]);
         $rules = $table->rulesChecker();
 
-        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories', ['allowSqlNulls' => true]));
+        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories', ['passingOnPartialNulls' => true]));
         $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
 
-        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories', ['allowSqlNulls' => false]));
+        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories', ['passingOnPartialNulls' => false]));
         $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
 
         $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories'));

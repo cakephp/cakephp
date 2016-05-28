@@ -56,7 +56,7 @@ class ExistsIn
      */
     public function __construct($fields, $repository, array $options = [])
     {
-        $options += ['allowSqlNulls' => false];
+        $options += ['passingOnPartialNulls' => false];
         $this->_options = $options;
 
         $this->_fields = (array)$fields;
@@ -109,7 +109,7 @@ class ExistsIn
             return true;
         }
 
-        if ($this->_options['allowSqlNulls'] === true
+        if ($this->_options['passingOnPartialNulls'] === true
             && $this->_checkPartialSchemaNulls($entity, $source) === true
         ) {
             return true;
