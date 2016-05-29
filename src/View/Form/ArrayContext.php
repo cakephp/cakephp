@@ -152,7 +152,7 @@ class ArrayContext implements ContextInterface
      * @param array $options Options:
      *   - `default`: Default value to return if no value found in request
      *     data or context record.
-     *   - `schemaDefault`: Boolen indicating whether default value from
+     *   - `schemaDefault`: Boolean indicating whether default value from
      *      context's schema should be used if it's not explicitly provided.
      * @return mixed
      */
