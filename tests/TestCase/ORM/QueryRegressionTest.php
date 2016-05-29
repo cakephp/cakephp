@@ -45,6 +45,8 @@ class QueryRegressionTest extends TestCase
         'core.users'
     ];
 
+    public $autoFixtures = false;
+
     /**
      * Tear down
      *
@@ -64,6 +66,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testSelectTimestampColumn()
     {
+        $this->loadFixtures('Users');
         $table = TableRegistry::get('users');
         $user = $table->find()->where(['id' => 1])->first();
         $this->assertEquals(new Time('2007-03-17 01:16:23'), $user->created);
@@ -78,6 +81,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testEagerLoadingFromEmptyResults()
     {
+        $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
         $table = TableRegistry::get('Articles');
         $table->belongsToMany('ArticlesTags');
         $results = $table->find()->where(['id >' => 100])->contain('ArticlesTags')->toArray();
@@ -92,6 +96,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testEagerLoadingBelongsToManyList()
     {
+        $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
         $table = TableRegistry::get('Articles');
         $table->belongsToMany('Tags', [
             'finder' => 'list'
@@ -109,6 +114,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testDuplicateAttachableAliases()
     {
+        $this->loadFixtures('Articles', 'Tags', 'ArticlesTags', 'Authors');
         TableRegistry::get('Stuff', ['table' => 'tags']);
         TableRegistry::get('Things', ['table' => 'articles_tags']);
 
@@ -146,6 +152,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testNullableTimeColumn()
     {
+        $this->loadFixtures('Users');
         $table = TableRegistry::get('users');
         $entity = $table->newEntity(['username' => 'derp', 'created' => null]);
         $this->assertSame($entity, $table->save($entity));
@@ -160,6 +167,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testCreateJointData()
     {
+        $this->loadFixtures('Articles', 'Tags', 'SpecialTags');
         $articles = TableRegistry::get('Articles');
         $articles->belongsToMany('Highlights', [
             'className' => 'TestApp\Model\Table\TagsTable',
@@ -192,6 +200,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testReciprocalBelongsToMany()
     {
+        $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
         $articles = TableRegistry::get('Articles');
         $tags = TableRegistry::get('Tags');
 
@@ -213,6 +222,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testReciprocalBelongsToManyNoOverwrite()
     {
+        $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
         $articles = TableRegistry::get('Articles');
         $tags = TableRegistry::get('Tags');
 
@@ -250,6 +260,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testBelongsToManyDeepSave($strategy)
     {
+        $this->loadFixtures('Articles', 'Tags', 'SpecialTags', 'Authors');
         $articles = TableRegistry::get('Articles');
         $articles->belongsToMany('Highlights', [
             'className' => 'TestApp\Model\Table\TagsTable',
@@ -310,6 +321,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testSaveWithCallbacks()
     {
+        $this->loadFixtures('Articles', 'Authors');
         $articles = TableRegistry::get('Articles');
         $articles->belongsTo('Authors');
 
@@ -331,6 +343,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testSaveWithExpressionProperty()
     {
+        $this->loadFixtures('Articles');
         $articles = TableRegistry::get('Articles');
         $article = $articles->newEntity();
         $article->title = new \Cake\Database\Expression\QueryExpression("SELECT 'jose'");
@@ -346,6 +359,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testBelongsToManyDeepSave2()
     {
+        $this->loadFixtures('Articles', 'Tags', 'SpecialTags');
         $articles = TableRegistry::get('Articles');
         $articles->belongsToMany('Highlights', [
             'className' => 'TestApp\Model\Table\TagsTable',
@@ -403,6 +417,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testPluginAssociationQueryGeneration()
     {
+        $this->loadFixtures('Articles', 'Comments', 'Authors');
         Plugin::load('TestPlugin');
         $articles = TableRegistry::get('Articles');
         $articles->hasMany('TestPlugin.Comments');
@@ -433,6 +448,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testAssociationChainOrder()
     {
+        $this->loadFixtures('Articles', 'Tags', 'ArticlesTags', 'Authors');
         $articles = TableRegistry::get('Articles');
         $articles->belongsTo('Authors');
         $articles->hasOne('ArticlesTags');
@@ -462,6 +478,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testAssociationSubQueryNoOffset()
     {
+        $this->loadFixtures('Articles', 'Translates');
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $table->locale('eng');
@@ -481,6 +498,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testDeepBelongsToManySubqueryStrategy()
     {
+        $this->loadFixtures('Authors', 'Tags', 'Articles', 'ArticlesTags');
         $table = TableRegistry::get('Authors');
         $table->hasMany('Articles');
         $table->Articles->belongsToMany('Tags', [
@@ -502,6 +520,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testDeepBelongsToManySubqueryStrategy2()
     {
+        $this->loadFixtures('Articles', 'Authors', 'Tags', 'Authors', 'AuthorsTags');
         $table = TableRegistry::get('Authors');
         $table->hasMany('Articles');
         $table->Articles->belongsToMany('Tags', [
@@ -532,6 +551,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testDeepHasManyEitherStrategy()
     {
+        $this->loadFixtures('Tags', 'FeaturedTags', 'TagsTranslations');
         $tags = TableRegistry::get('Tags');
         $featuredTags = TableRegistry::get('FeaturedTags');
         $featuredTags->belongsTo('Tags');
@@ -569,6 +589,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testCountWithContain()
     {
+        $this->loadFixtures('Articles', 'Authors');
         $table = TableRegistry::get('Articles');
         $table->belongsTo('Authors', ['joinType' => 'inner']);
         $count = $table
@@ -588,6 +609,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testCountWithBind()
     {
+        $this->loadFixtures('Articles');
         $table = TableRegistry::get('Articles');
         $query = $table
             ->find()
@@ -606,6 +628,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testSubqueryBind()
     {
+        $this->loadFixtures('Articles');
         $table = TableRegistry::get('Articles');
         $sub = $table->find()
             ->select(['id'])
@@ -630,6 +653,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testContainNoEmptyAssociatedObjects()
     {
+        $this->loadFixtures('Comments', 'Users', 'Articles');
         $comments = TableRegistry::get('Comments');
         $comments->belongsTo('Users');
         $users = TableRegistry::get('Users');
@@ -660,6 +684,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testOrConditionsWithExpression()
     {
+        $this->loadFixtures('Articles');
         $table = TableRegistry::get('Articles');
         $query = $table->find();
         $query->where([
@@ -681,6 +706,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testCountWithUnionQuery()
     {
+        $this->loadFixtures('Articles');
         $table = TableRegistry::get('Articles');
         $query = $table->find()->where(['id' => 1]);
         $query2 = $table->find()->where(['id' => 2]);
@@ -695,6 +721,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testSelectNoFieldsOnPrimaryAlias()
     {
+        $this->loadFixtures('Articles', 'Users');
         $table = TableRegistry::get('Articles');
         $table->belongsTo('Users');
         $query = $table->find()
@@ -711,6 +738,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testFirstOnResultSet()
     {
+        $this->loadFixtures('Articles');
         $results = TableRegistry::get('Articles')->find()->all();
         $this->assertEquals(3, $results->count());
         $this->assertNotNull($results->first());
@@ -725,6 +753,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testFindMatchingAndContain()
     {
+        $this->loadFixtures('Articles', 'Authors');
         $table = TableRegistry::get('Articles');
         $table->belongsTo('Authors');
         $article = $table->find()
@@ -745,6 +774,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testFindMatchingAndContainWithSubquery()
     {
+        $this->loadFixtures('Articles', 'Authors', 'Tags', 'ArticlesTags');
         $table = TableRegistry::get('authors');
         $table->hasMany('articles', ['strategy' => 'subquery']);
         $table->articles->belongsToMany('tags');
@@ -766,6 +796,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testFindMatchingOverwrite()
     {
+        $this->loadFixtures('Articles', 'Comments', 'Tags', 'ArticlesTags');
         $comments = TableRegistry::get('Comments');
         $comments->belongsTo('Articles');
 
@@ -795,6 +826,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testFindMatchingOverwrite2()
     {
+        $this->loadFixtures('Articles', 'Comments', 'Tags', 'ArticlesTags', 'Authors');
         $comments = TableRegistry::get('Comments');
         $comments->belongsTo('Articles');
 
@@ -822,6 +854,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testQueryNotFatalError()
     {
+        $this->loadFixtures('Comments');
         $comments = TableRegistry::get('Comments');
         $comments->find()->contain('Deprs')->all();
     }
@@ -835,6 +868,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testFindMatchingWithContain()
     {
+        $this->loadFixtures('Articles', 'Comments', 'Users');
         $comments = TableRegistry::get('Comments');
         $comments->belongsTo('Articles');
         $comments->belongsTo('Users');
@@ -862,6 +896,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testHasManyEagerLoadingUniqueKey()
     {
+        $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
         $table = TableRegistry::get('ArticlesTags');
         $table->belongsTo('Articles', [
             'strategy' => 'select'
@@ -887,6 +922,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testContainWithNoFields()
     {
+        $this->loadFixtures('Comments', 'Users');
         $table = TableRegistry::get('Comments');
         $table->belongsTo('Users');
         $results = $table->find()
@@ -907,6 +943,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testMatchingWithNoFields()
     {
+        $this->loadFixtures('Comments', 'Users');
         $table = TableRegistry::get('Users');
         $table->hasMany('Comments');
         $results = $table->find()
@@ -926,6 +963,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testMatchingEmptyQuery()
     {
+        $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
         $table = TableRegistry::get('Articles');
         $table->belongsToMany('Tags');
 
@@ -951,6 +989,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testSubqueryInSelectExpression()
     {
+        $this->loadFixtures('Comments');
         $table = TableRegistry::get('Comments');
         $ratio = $table->find()
             ->select(function ($query) use ($table) {
@@ -977,6 +1016,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testFindLastOnEmptyTable()
     {
+        $this->loadFixtures('Comments');
         $table = TableRegistry::get('Comments');
         $table->deleteAll(['1 = 1']);
         $this->assertEquals(0, $table->find()->count());
@@ -991,6 +1031,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testContainInNestedClosure()
     {
+        $this->loadFixtures('Comments', 'Articles', 'Authors', 'Tags', 'AuthorsTags');
         $table = TableRegistry::get('Comments');
         $table->belongsTo('Articles');
         $table->Articles->belongsTo('Authors');
@@ -1012,6 +1053,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testTypemapInFunctions()
     {
+        $this->loadFixtures('Comments');
         $table = TableRegistry::get('Comments');
         $table->updateAll(['published' => null], ['1 = 1']);
         $query = $table->find();
@@ -1038,6 +1080,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testTypemapInFunctions2()
     {
+        $this->loadFixtures('Comments');
         $table = TableRegistry::get('Comments');
         $query = $table->find();
         $query->select([
@@ -1054,6 +1097,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testBooleanConditionsInContain()
     {
+        $this->loadFixtures('Articles', 'Tags', 'SpecialTags');
         $table = TableRegistry::get('Articles');
         $table->belongsToMany('Tags', [
             'foreignKey' => 'article_id',
@@ -1079,6 +1123,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testComplexTypesInJoinedWhere()
     {
+        $this->loadFixtures('Comments', 'Users');
         $table = TableRegistry::get('Users');
         $table->hasOne('Comments', [
             'foreignKey' => 'user_id',
@@ -1101,6 +1146,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testComplexNestedTypesInJoinedWhere()
     {
+        $this->loadFixtures('Comments', 'Users', 'Articles');
         $table = TableRegistry::get('Users');
         $table->hasOne('Comments', [
             'foreignKey' => 'user_id',
@@ -1131,6 +1177,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testDotNotationNotOverride()
     {
+        $this->loadFixtures('Comments', 'Articles', 'Tags', 'Authors', 'SpecialTags');
         $table = TableRegistry::get('Comments');
         $articles = $table->belongsTo('Articles');
         $specialTags = $articles->hasMany('SpecialTags');
@@ -1158,6 +1205,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testComplexOrderWithUnion()
     {
+        $this->loadFixtures('Comments');
         $table = TableRegistry::get('Comments');
         $query = $table->find();
         $inner = $table->find()
@@ -1185,6 +1233,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testEagerLoadOrderAndSubquery()
     {
+        $this->loadFixtures('Articles', 'Comments');
         $table = TableRegistry::get('Articles');
         $table->hasMany('Comments', [
             'strategy' => 'subquery'
@@ -1206,6 +1255,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testFormatResultsMemoryLeak()
     {
+        $this->loadFixtures('Articles', 'Authors', 'Tags', 'ArticlesTags');
         $this->skipIf(env('CODECOVERAGE') == 1, 'Running coverage this causes this tests to fail sometimes.');
         $table = TableRegistry::get('Articles');
         $table->belongsTo('Authors');
@@ -1233,6 +1283,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testCountWithComplexOrderBy()
     {
+        $this->loadFixtures('Articles');
         $table = TableRegistry::get('Articles');
         $query = $table->find();
         $query->orderDesc($query->newExpr()->addCase(
@@ -1264,6 +1315,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testFunctionInWhereClause()
     {
+        $this->loadFixtures('Comments');
         $table = TableRegistry::get('Comments');
         $table->updateAll(['updated' => Time::tomorrow()], ['id' => 6]);
         $query = $table->find();
