@@ -705,7 +705,8 @@ class Router
             $params['bare'],
             $params['requested'],
             $params['return'],
-            $params['_Token']
+            $params['_Token'],
+            $params['_matchedRoute']
         );
         $params = array_merge($params, $pass);
         if (!empty($url)) {

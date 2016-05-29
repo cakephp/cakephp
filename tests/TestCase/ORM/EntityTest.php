@@ -132,6 +132,30 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Test that all original values are returned properly
+     *
+     * @return void
+     */
+    public function testExtractOriginalValues()
+    {
+        $entity = new Entity([
+            'id' => 1,
+            'title' => 'original',
+            'body' => 'no',
+            'null' => null,
+        ], ['markNew' => true]);
+        $entity->set('body', 'updated body');
+        $result = $entity->getOriginalValues();
+        $expected = [
+            'id' => 1,
+            'title' => 'original',
+            'body' => 'no',
+            'null' => null,
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Tests setting a single property using a setter function
      *
      * @return void

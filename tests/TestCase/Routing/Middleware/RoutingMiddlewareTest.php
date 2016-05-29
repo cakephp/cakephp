@@ -91,7 +91,8 @@ class RoutingMiddlewareTest extends TestCase
                 'controller' => 'Articles',
                 'action' => 'index',
                 'plugin' => null,
-                'pass' => []
+                'pass' => [],
+                '_matchedRoute' => '/articles'
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
         };

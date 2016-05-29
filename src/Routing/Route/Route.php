@@ -329,6 +329,8 @@ class Route
                 }
             }
         }
+
+        $route['_matchedRoute'] = $this->template;
         return $route;
     }
 
