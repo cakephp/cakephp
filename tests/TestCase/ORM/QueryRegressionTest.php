@@ -572,7 +572,7 @@ class QueryRegressionTest extends TestCase
         $findViaSubquery = $featuredTags
             ->find()
             ->where(['FeaturedTags.tag_id' => 2])
-            ->contain(['Tags.TagsTranslations' => ['sort' => 'TagsTranslations.id']]);
+            ->contain('Tags.TagsTranslations');
 
         $expected = [2 => 'tag 2 translated into en_us'];
 

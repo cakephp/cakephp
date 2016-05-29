@@ -41,8 +41,8 @@ class TagsTranslationsFixture extends TestFixture
      * @var array
      */
     public $records = [
-        ['locale' => 'en_us', 'name' => 'tag 1 translated into en_us'],
-        ['locale' => 'en_us', 'name' => 'tag 2 translated into en_us'],
-        ['locale' => 'en_us', 'name' => 'tag 3 translated into en_us']
+        ['id' => 1, 'locale' => 'en_us', 'name' => 'tag 1 translated into en_us'],
+        ['id' => 2, 'locale' => 'en_us', 'name' => 'tag 2 translated into en_us'],
+        ['id' => 3, 'locale' => 'en_us', 'name' => 'tag 3 translated into en_us']
     ];
 }
