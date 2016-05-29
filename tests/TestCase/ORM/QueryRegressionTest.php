@@ -563,7 +563,8 @@ class QueryRegressionTest extends TestCase
         $findViaSelect = $featuredTags
             ->find()
             ->where(['FeaturedTags.tag_id' => 2])
-            ->contain('Tags.TagsTranslations');
+            ->contain('Tags.TagsTranslations')
+            ->all();
 
         $tags->hasMany('TagsTranslations', [
             'foreignKey' => 'id',
@@ -572,7 +573,8 @@ class QueryRegressionTest extends TestCase
         $findViaSubquery = $featuredTags
             ->find()
             ->where(['FeaturedTags.tag_id' => 2])
-            ->contain('Tags.TagsTranslations');
+            ->contain('Tags.TagsTranslations')
+            ->all();
 
         $expected = [2 => 'tag 2 translated into en_us'];
 
