@@ -72,6 +72,8 @@ class RulesChecker extends BaseRulesChecker
      * ```
      *
      * Available $options are error 'message' and 'partialNullsPass' flag.
+     * 'message' sets a custom error message.
+     * Set 'partialNullsPass' to true to accept composite foreign keys where one or more nullable columns are null.'
      *
      * @param string|array $field The field or list of fields to check for existence by
      * primary key lookup in the other table.

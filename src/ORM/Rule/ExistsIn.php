@@ -50,7 +50,7 @@ class ExistsIn
      * Constructor.
      *
      * Available option for $options is 'partialNullsPass' flag. 
-     * Set to true to allow passing of composite foreign keys where one or multiple keys are null.
+     * Set to true to accept composite foreign keys where one or more nullable columns are null.'
      *
      * @param string|array $fields The field or fields to check existence as primary key.
      * @param object|string $repository The repository where the field will be looked for,
