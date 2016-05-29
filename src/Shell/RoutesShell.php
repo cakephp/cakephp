@@ -60,6 +60,9 @@ class RoutesShell extends Shell
                     break;
                 }
             }
+
+            unset($route['_matchedRoute']);
+
             $output = [
                 ['Route name', 'URI template', 'Defaults'],
                 [$name, $url, json_encode($route)]
