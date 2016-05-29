@@ -30,7 +30,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.tags', 'core.categories', 'core.site_categories'];
+    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.tags', 'core.categories', 'core.site_articles', 'core.site_authors'];
 
     /**
      * Tear down
@@ -768,7 +768,7 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests new passingOnPartialNulls flag with parent id set to null
+     * Tests new passingOnPartialNulls flag with author id set to null
      *
      * @return
      */
@@ -776,28 +776,26 @@ class RulesCheckerIntegrationTest extends TestCase
     {
         $entity = new Entity([
             'id' => 10,
-            'parent_id' => null,
+            'author_id' => null,
             'site_id' => 1,
-            'name' => 'New Site Category without parent',
+            'name' => 'New Site Article without Author',
         ]);
-        $table = TableRegistry::get('SiteCategories');
-        $table->belongsTo('ParentSiteCategories', [
-            'className' => 'SiteCategories',
-        ]);
+        $table = TableRegistry::get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
-        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories', ['passingOnPartialNulls' => true]));
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['passingOnPartialNulls' => true]));
         $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
 
-        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories', ['passingOnPartialNulls' => false]));
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['passingOnPartialNulls' => false]));
         $this->assertFalse($table->save(clone $entity));
 
-        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories'));
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors'));
         $this->assertFalse($table->save(clone $entity));
     }
 
     /**
-     * Tests new passingOnPartialNulls flag with parent id set to 1
+     * Tests new passingOnPartialNulls flag with author id set to 1
      *
      * @return
      */
@@ -805,23 +803,21 @@ class RulesCheckerIntegrationTest extends TestCase
     {
         $entity = new Entity([
             'id' => 10,
-            'parent_id' => 1,
+            'author_id' => 1,
             'site_id' => 1,
-            'name' => 'New Site Category with parent',
+            'name' => 'New Site Article with Author',
         ]);
-        $table = TableRegistry::get('SiteCategories');
-        $table->belongsTo('ParentSiteCategories', [
-            'className' => 'SiteCategories',
-        ]);
+        $table = TableRegistry::get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
-        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories', ['passingOnPartialNulls' => true]));
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['passingOnPartialNulls' => true]));
         $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
 
-        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories', ['passingOnPartialNulls' => false]));
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['passingOnPartialNulls' => false]));
         $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
 
-        $rules->add($rules->existsIn(['parent_id', 'site_id'], 'ParentSiteCategories'));
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors'));
         $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
     }
 
