@@ -562,7 +562,7 @@ class QueryRegressionTest extends TestCase
         ]);
         $findViaSelect = $featuredTags
             ->find()
-            ->where(['FeaturedTags.tag_id' => 3])
+            ->where(['FeaturedTags.tag_id' => 1])
             ->contain('Tags.TagsTranslations')
             ->all();
 
@@ -572,11 +572,11 @@ class QueryRegressionTest extends TestCase
         ]);
         $findViaSubquery = $featuredTags
             ->find()
-            ->where(['FeaturedTags.tag_id' => 3])
+            ->where(['FeaturedTags.tag_id' => 1])
             ->contain('Tags.TagsTranslations')
             ->all();
 
-        $expected = [3 => 'tag 3 translated into en_us'];
+        $expected = [1 => 'tag 1 translated into en_us'];
 
         $this->assertEquals($expected, $findViaSelect->combine('tag_id', 'tag.tags_translations.0.name')->toArray());
         $this->assertEquals($expected, $findViaSubquery->combine('tag_id', 'tag.tags_translations.0.name')->toArray());
