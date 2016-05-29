@@ -551,11 +551,13 @@ class QueryRegressionTest extends TestCase
      */
     public function testDeepHasManyEitherStrategy()
     {
+        $this->loadFixtures('Tags', 'FeaturedTags', 'TagsTranslations');
+        $tags = TableRegistry::get('Tags');
+
         $this->skipIf(
-            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
+            $tags->connection()->driver() instanceof \Cake\Database\Driver\Sqlserver,
             'SQL server is temporarily weird in this test, will investigate later'
         );
-        $this->loadFixtures('Tags', 'FeaturedTags', 'TagsTranslations');
         $tags = TableRegistry::get('Tags');
         $featuredTags = TableRegistry::get('FeaturedTags');
         $featuredTags->belongsTo('Tags');
