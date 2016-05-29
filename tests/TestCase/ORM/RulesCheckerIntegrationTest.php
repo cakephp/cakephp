@@ -768,7 +768,7 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests new partialNullsPass flag with author id set to null
+     * Tests new allowPartialNulls flag with author id set to null
      *
      * @return
      */
@@ -784,10 +784,10 @@ class RulesCheckerIntegrationTest extends TestCase
         $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
-        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['partialNullsPass' => true]));
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowPartialNulls' => true]));
         $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
 
-        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['partialNullsPass' => false]));
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowPartialNulls' => false]));
         $this->assertFalse($table->save(clone $entity));
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors'));
@@ -795,7 +795,7 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests new partialNullsPass flag with author id set to 1
+     * Tests new allowPartialNulls flag with author id set to 1
      *
      * @return
      */
@@ -811,10 +811,10 @@ class RulesCheckerIntegrationTest extends TestCase
         $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
-        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['partialNullsPass' => true]));
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowPartialNulls' => true]));
         $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
 
-        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['partialNullsPass' => false]));
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowPartialNulls' => false]));
         $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors'));

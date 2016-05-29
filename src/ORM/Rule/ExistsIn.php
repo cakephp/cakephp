@@ -49,7 +49,7 @@ class ExistsIn
     /**
      * Constructor.
      *
-     * Available option for $options is 'partialNullsPass' flag. 
+     * Available option for $options is 'allowPartialNulls' flag. 
      * Set to true to accept composite foreign keys where one or more nullable columns are null.'
      *
      * @param string|array $fields The field or fields to check existence as primary key.
@@ -59,7 +59,7 @@ class ExistsIn
      */
     public function __construct($fields, $repository, array $options = [])
     {
-        $options += ['partialNullsPass' => false];
+        $options += ['allowPartialNulls' => false];
         $this->_options = $options;
 
         $this->_fields = (array)$fields;
@@ -112,7 +112,7 @@ class ExistsIn
             return true;
         }
 
-        if ($this->_options['partialNullsPass'] === true
+        if ($this->_options['allowPartialNulls'] === true
             && $this->_checkPartialSchemaNulls($entity, $source) === true
         ) {
             return true;
