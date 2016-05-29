@@ -29,7 +29,7 @@ class TagsTranslationsFixture extends TestFixture
      * @var array
      */
     public $fields = [
-        'id' => ['type' => 'integer', 'null' => false, 'autoIncrement' => false],
+        'id' => ['type' => 'integer', 'null' => false, 'autoIncrement' => true],
         'locale' => ['type' => 'string', 'null' => false],
         'name' => ['type' => 'string', 'null' => false],
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
@@ -41,8 +41,8 @@ class TagsTranslationsFixture extends TestFixture
      * @var array
      */
     public $records = [
-        ['id' => 1, 'locale' => 'en_us', 'name' => 'tag 1 translated into en_us'],
-        ['id' => 2, 'locale' => 'en_us', 'name' => 'tag 2 translated into en_us'],
-        ['id' => 3, 'locale' => 'en_us', 'name' => 'tag 3 translated into en_us']
+        ['locale' => 'en_us', 'name' => 'tag 1 translated into en_us'],
+        ['locale' => 'en_us', 'name' => 'tag 2 translated into en_us'],
+        ['locale' => 'en_us', 'name' => 'tag 3 translated into en_us']
     ];
 }
