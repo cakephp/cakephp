@@ -160,7 +160,7 @@ class ExistsIn
     {
         $schema = $source->schema();
         foreach ($this->_fields as $field) {
-            if ($schema->isNullable($field) === true && $entity->get($field) === null) {
+            if ($schema->isNullable($field) && $entity->get($field) === null) {
                 return true;
             }
         }
