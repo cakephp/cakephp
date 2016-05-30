@@ -216,7 +216,8 @@ class Marshaller
 
         $tableName = $this->_table->alias();
         if (isset($data[$tableName])) {
-            $data = $data[$tableName];
+            $data += $data[$tableName];
+            unset($data[$tableName]);
         }
 
         $data = new ArrayObject($data);

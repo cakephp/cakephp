@@ -360,6 +360,7 @@ class MarshallerTest extends TestCase
     public function testOneWithAdditionalName()
     {
         $data = [
+            'title' => 'Original Title',
             'Articles' => [
                 'title' => 'My title',
                 'body' => 'My content',
@@ -376,7 +377,8 @@ class MarshallerTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Entity', $result);
         $this->assertTrue($result->dirty(), 'Should be a dirty entity.');
         $this->assertTrue($result->isNew(), 'Should be new');
-        $this->assertEquals($data['Articles']['title'], $result->title);
+        $this->assertFalse($result->has('Articles'), 'No prefixed field.');
+        $this->assertEquals($data['title'], $result->title, 'Data from prefix should be merged.');
         $this->assertEquals($data['Articles']['user']['username'], $result->user->username);
     }
 

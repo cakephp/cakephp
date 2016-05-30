@@ -68,6 +68,7 @@ class RouteCollectionTest extends TestCase
             'pass' => [],
             'plugin' => null,
             'key' => 'value',
+            '_matchedRoute' => '/b',
         ];
         $this->assertEquals($expected, $result);
 
@@ -80,6 +81,7 @@ class RouteCollectionTest extends TestCase
             'plugin' => null,
             'key' => 'value',
             '?' => ['one' => 'two'],
+            '_matchedRoute' => '/b/:id',
         ];
         $this->assertEquals($expected, $result);
 
@@ -89,7 +91,8 @@ class RouteCollectionTest extends TestCase
             'pass' => [],
             'plugin' => null,
             'controller' => 'Media',
-            'action' => 'search'
+            'action' => 'search',
+            '_matchedRoute' => '/b/media/search/*',
         ];
         $this->assertEquals($expected, $result);
 
@@ -99,7 +102,8 @@ class RouteCollectionTest extends TestCase
             'pass' => ['thing'],
             'plugin' => null,
             'controller' => 'Media',
-            'action' => 'search'
+            'action' => 'search',
+            '_matchedRoute' => '/b/media/search/*',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -121,9 +125,10 @@ class RouteCollectionTest extends TestCase
             'plugin' => null,
             'controller' => 'Events',
             'action' => 'index',
-            'day' => 15,
+            'day' => '15',
             'month' => 'октомври',
             '?' => ['test' => 'foo'],
+            '_matchedRoute' => '/ден/:day-:month',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -146,7 +151,9 @@ class RouteCollectionTest extends TestCase
             'controller' => 'Articles',
             'action' => 'add',
             'plugin' => null,
-            'pass' => []
+            'pass' => [],
+            '_matchedRoute' => '/:controller/:action',
+
         ];
         $this->assertEquals($expected, $result);
     }
