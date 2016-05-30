@@ -298,6 +298,8 @@ class OauthTest extends TestCase
      */
     public function testRsaSigningWithPassphraseFile()
     {
+        $this->skipIf(PHP_EOL != "\n", 'Just the line ending "\n" is supported. You can run the test again e.g. on a linux system.');
+
         $request = new Request();
         $request->url('http://photos.example.net/photos')
             ->body([
@@ -305,12 +307,6 @@ class OauthTest extends TestCase
                        'size' => 'original'
                    ]);
         $privateKeyPath = TEST_APP . DS . 'config' . DS . 'key_with_passphrase.pem';
-
-        if (PHP_EOL != "\n") {
-            $this->markTestSkipped('Just the line ending ("\n") is supported. You can run the test again e.g. on a linux system.');
-            return;
-        }
-
         $passphrasePath = TEST_APP . DS . 'config' . DS . 'key_passphrase_lf';
         $passphrase = fopen($passphrasePath, 'r');
 
