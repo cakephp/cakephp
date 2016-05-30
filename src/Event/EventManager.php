@@ -61,6 +61,13 @@ class EventManager
     protected $_eventStack;
 
     /**
+     * Enables automatic adding of events to the event stack object if it is present.
+     *
+     * @param bool
+     */
+    protected $_stackEvents = false;
+
+    /**
      * Returns the globally available instance of a Cake\Event\EventManager
      * this is used for dispatching events attached from outside the scope
      * other managers were created. Usually for creating hook systems or inter-class
@@ -353,7 +360,9 @@ class EventManager
 
         $listeners = $this->listeners($event->name());
         if (empty($listeners)) {
-            $this->_stackEvent($event);
+            if ($this->_stackEvents) {
+                $this->stackEvent($event);
+            }
             return $event;
         }
 
@@ -370,7 +379,9 @@ class EventManager
             }
         }
 
-        $this->_stackEvent($event);
+        if ($this->_stackEvents) {
+            $this->stackEvent($event);
+        }
         return $event;
     }
 
@@ -486,11 +497,22 @@ class EventManager
      * @param \Cake\Event\Event $event An event to add to the stack.
      * @return void
      */
-    public function _stackEvent(Event $event)
+    public function stackEvent(Event $event)
     {
         if ($this->_eventStack) {
             $this->_eventStack->add($event);
         }
+    }
+
+    /**
+     * Enables / disables event stacking at runtime.
+     *
+     * @param bool $enabled True or false to enable / disable it.
+     * @return void
+     */
+    public function stackEvents($enabled)
+    {
+        $this->_stackEvents = (bool)$enabled;
     }
 
     /**
@@ -499,9 +521,10 @@ class EventManager
      * @param \Cake\Event\EventStack $eventStack The event stack object to use.
      * @return void
      */
-    public function enableEventStacking(EventStack $eventStack)
+    public function attachEventStack(EventStack $eventStack)
     {
         $this->_eventStack = $eventStack;
+        $this->_stackEvents = true;
     }
 
     /**
@@ -509,9 +532,10 @@ class EventManager
      *
      * @return void
      */
-    public function disableEventStacking()
+    public function detachEventStack()
     {
         $this->_eventStack = null;
+        $this->_stackEvents = false;
     }
 
     /**

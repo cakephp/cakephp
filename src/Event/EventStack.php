@@ -53,7 +53,7 @@ class EventStack implements \ArrayAccess, \Countable
      *
      * @link http://php.net/manual/en/arrayaccess.offsetexists.php
      * @param mixed $offset An offset to check for.
-     * @return boolean true on success or false on failure.
+     * @return boole True on success or false on failure.
      */
     public function offsetExists($offset)
     {
@@ -109,5 +109,21 @@ class EventStack implements \ArrayAccess, \Countable
     public function count()
     {
         return count($this->_events);
+    }
+
+    /**
+     * Checks if an event is in the stack.
+     *
+     * @param string $name Event name.
+     * @return bool
+     */
+    public function hasEvent($name)
+    {
+        foreach ($this->_events as $event) {
+            if ($event->name() === $name) {
+                return true;
+            }
+        }
+        return false;
     }
 }

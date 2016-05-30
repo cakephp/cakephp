@@ -62,6 +62,9 @@ class EvenStackTest extends TestCase
         $eventStack->add($event2);
         $this->assertCount(2, $eventStack);
 
+        $this->assertTrue($eventStack->hasEvent('my_event'));
+        $this->assertFalse($eventStack->hasEvent('does-not-exist'));
+
         $this->assertEquals($eventStack->offsetGet(0), $event);
         $this->assertEquals($eventStack->offsetGet(1), $event2);
         $this->assertTrue($eventStack->offsetExists(0));

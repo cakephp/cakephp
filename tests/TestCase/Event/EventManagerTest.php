@@ -726,7 +726,7 @@ class EventManagerTest extends TestCase
         $event2 = new Event('my_second_event', $this);
 
         $manager = new EventManager();
-        $manager->enableEventStacking($eventStack);
+        $manager->attachEventStack($eventStack);
         $manager->dispatch($event);
         $manager->dispatch($event2);
 
@@ -739,7 +739,7 @@ class EventManagerTest extends TestCase
         $result = $manager->eventStack();
         $this->assertCount(0, $result);
 
-        $manager->disableEventStacking();
+        $manager->detachEventStack();
         $manager->dispatch($event);
         $manager->dispatch($event2);
 
