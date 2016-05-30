@@ -32,7 +32,7 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public $fixtures = [
         'core.articles', 'core.articles_tags', 'core.authors', 'core.tags',
-        'core.special_tags', 'core.categories'
+        'core.special_tags', 'core.categories', 'core.site_articles', 'core.site_authors'    
     ];
 
     /**
@@ -825,6 +825,60 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->errors('author_id'));
+    }
+
+    /**
+     * Tests new allowPartialNulls flag with author id set to null
+     *
+     * @return
+     */
+    public function testExistsInAllowSqlNullsWithParentIdNull()
+    {
+        $entity = new Entity([
+            'id' => 10,
+            'author_id' => null,
+            'site_id' => 1,
+            'name' => 'New Site Article without Author',
+        ]);
+        $table = TableRegistry::get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
+        $rules = $table->rulesChecker();
+
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowPartialNulls' => true]));
+        $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
+
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowPartialNulls' => false]));
+        $this->assertFalse($table->save(clone $entity));
+
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors'));
+        $this->assertFalse($table->save(clone $entity));
+    }
+
+    /**
+     * Tests new allowPartialNulls flag with author id set to 1
+     *
+     * @return
+     */
+    public function testExistsInAllowSqlNullsWithParentId1()
+    {
+        $entity = new Entity([
+            'id' => 10,
+            'author_id' => 1,
+            'site_id' => 1,
+            'name' => 'New Site Article with Author',
+        ]);
+        $table = TableRegistry::get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
+        $rules = $table->rulesChecker();
+
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowPartialNulls' => true]));
+        $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
+
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowPartialNulls' => false]));
+        $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
+
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors'));
+        $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
     }
 
     /**

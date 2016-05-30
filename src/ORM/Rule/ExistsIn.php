@@ -40,14 +40,28 @@ class ExistsIn
     protected $_repository;
 
     /**
+     * Options for the constructor
+     *
+     * @var array
+     */
+    protected $_options = [];
+
+    /**
      * Constructor.
+     *
+     * Available option for $options is 'allowPartialNulls' flag.
+     * Set to true to accept composite foreign keys where one or more nullable columns are null.'
      *
      * @param string|array $fields The field or fields to check existence as primary key.
      * @param object|string $repository The repository where the field will be looked for,
      * or the association name for the repository.
+     * @param array $options The options that modify the rules behavior.
      */
-    public function __construct($fields, $repository)
+    public function __construct($fields, $repository, array $options = [])
     {
+        $options += ['allowPartialNulls' => false];
+        $this->_options = $options;
+
         $this->_fields = (array)$fields;
         $this->_repository = $repository;
     }
@@ -96,6 +110,11 @@ class ExistsIn
             return true;
         }
 
+        if ($this->_options['allowPartialNulls'] === true
+            && $this->_checkPartialSchemaNulls($entity, $source) === true
+        ) {
+            return true;
+        }
         if ($this->_fieldsAreNull($entity, $source)) {
             return true;
         }
@@ -128,5 +147,23 @@ class ExistsIn
             }
         }
         return $nulls === count($this->_fields);
+    }
+
+    /**
+     * Check whether there are nullable nulls in at least one part of the foreign key.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The entity to check.
+     * @param \Cake\ORM\Table $source The table to use schema from.
+     * @return bool
+     */
+    protected function _checkPartialSchemaNulls($entity, $source)
+    {
+        $schema = $source->schema();
+        foreach ($this->_fields as $field) {
+            if ($schema->isNullable($field) === true && $entity->get($field) === null) {
+                return true;
+            }
+        }
+        return false;
     }
 }
