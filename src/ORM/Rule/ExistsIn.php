@@ -110,9 +110,7 @@ class ExistsIn
             return true;
         }
 
-        if ($this->_options['allowPartialNulls'] === true
-            && $this->_checkPartialSchemaNulls($entity, $source) === true
-        ) {
+        if ($this->_options['allowPartialNulls'] && $this->_checkPartialSchemaNulls($entity, $source)) {
             return true;
         }
         if ($this->_fieldsAreNull($entity, $source)) {
