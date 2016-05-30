@@ -15,6 +15,7 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\ValueBinder;
 
 /**
@@ -25,6 +26,7 @@ use Cake\Database\ValueBinder;
 class BetweenExpression implements ExpressionInterface, FieldInterface
 {
 
+    use ExpressionTypeCasterTrait;
     use FieldTrait;
 
     /**
@@ -58,6 +60,11 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
      */
     public function __construct($field, $from, $to, $type = null)
     {
+        if ($type !== null) {
+            $from = $this->_castToExpression($from, $type);
+            $to = $this->_castToExpression($to, $type);
+        }
+
         $this->_field = $field;
         $this->_from = $from;
         $this->_to = $to;

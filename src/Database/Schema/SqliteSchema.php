@@ -277,6 +277,7 @@ class SqliteSchema extends BaseSchema
             'time' => ' TIME',
             'datetime' => ' DATETIME',
             'timestamp' => ' TIMESTAMP',
+            'json' => ' TEXT'
         ];
 
         $out = $this->_driver->quoteIdentifier($name);

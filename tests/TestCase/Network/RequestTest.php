@@ -58,6 +58,23 @@ class RequestTest extends TestCase
     }
 
     /**
+     * Test custom detector with extra arguments.
+     *
+     * @return void
+     */
+    public function testCustomArgsDetector()
+    {
+        $request = new Request();
+        $request->addDetector('controller', function ($request, $name) {
+            return $request->param('controller') === $name;
+        });
+
+        $request->params = ['controller' => 'cake'];
+        $this->assertTrue($request->is('controller', 'cake'));
+        $this->assertTrue($request->isController('cake'));
+    }
+
+    /**
      * Test the header detector.
      *
      * @return void

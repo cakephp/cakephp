@@ -270,6 +270,18 @@ trait SqlserverDialectTrait
                     ->tieWith(' ')
                     ->add(['weekday, ' => 'literal'], [], true);
                 break;
+            case 'SUBSTR':
+                $expression->name('SUBSTRING');
+                if (count($expression) < 4) {
+                    $params = [];
+                    $expression
+                        ->iterateParts(function ($p) use (&$params) {
+                            return $params[] = $p;
+                        })
+                        ->add([new FunctionExpression('LEN', [$params[0]]), ['string']]);
+                }
+
+                break;
         }
     }
 

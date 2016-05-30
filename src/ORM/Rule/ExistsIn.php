@@ -91,21 +91,19 @@ class ExistsIn
         }
 
         $source = $target = $this->_repository;
+        $isAssociation = $target instanceof Association;
+        $bindingKey = $isAssociation ? (array)$target->bindingKey() : (array)$target->primaryKey();
+        $realTarget = $isAssociation ? $target->target() : $target;
+
+        if (!empty($options['_sourceTable']) && $realTarget === $options['_sourceTable']) {
+            return true;
+        }
+
         if (!empty($options['repository'])) {
             $source = $options['repository'];
         }
         if ($source instanceof Association) {
             $source = $source->source();
-        }
-        if ($target instanceof Association) {
-            $bindingKey = (array)$target->bindingKey();
-            $target = $target->target();
-        } else {
-            $bindingKey = (array)$target->primaryKey();
-        }
-
-        if (!empty($options['_sourceTable']) && $target === $options['_sourceTable']) {
-            return true;
         }
 
         if (!$entity->extract($this->_fields, true)) {

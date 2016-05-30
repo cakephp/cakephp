@@ -484,7 +484,7 @@ trait EntityTrait
      */
     public function jsonSerialize()
     {
-        return $this->toArray();
+        return $this->extract($this->visibleProperties());
     }
 
     /**

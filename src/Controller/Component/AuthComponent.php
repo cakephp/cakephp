@@ -470,7 +470,7 @@ class AuthComponent extends Component
      * Each adapter will be checked in sequence, if any of them return true, then the user will
      * be authorized for the request.
      *
-     * @param array|null $user The user to check the authorization of.
+     * @param array|\ArrayAccess|null $user The user to check the authorization of.
      *   If empty the user fetched from storage will be used.
      * @param \Cake\Network\Request|null $request The request to authenticate for.
      *   If empty, the current request will be used.
@@ -622,11 +622,11 @@ class AuthComponent extends Component
      * The storage class is configured using `storage` config key or passing
      * instance to AuthComponent::storage().
      *
-     * @param array $user Array of user data.
+     * @param array|\ArrayAccess $user User data.
      * @return void
      * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#identifying-users-and-logging-them-in
      */
-    public function setUser(array $user)
+    public function setUser($user)
     {
         $this->storage()->write($user);
     }
@@ -767,7 +767,7 @@ class AuthComponent extends Component
         }
         foreach ($this->_authenticateObjects as $auth) {
             $result = $auth->authenticate($this->request, $this->response);
-            if (!empty($result) && is_array($result)) {
+            if (!empty($result)) {
                 $this->_authenticationProvider = $auth;
                 $event = $this->dispatchEvent('Auth.afterIdentify', [$result, $auth]);
                 if ($event->result !== null) {

@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
+use Cake\ORM\Exception\MissingAssociationException;
 use Cake\ORM\Marshaller;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -1131,6 +1132,35 @@ class MarshallerTest extends TestCase
             $data[1]['user']['username'],
             $result[1]->user->username
         );
+    }
+
+    /**
+     * Test if exception is raised when called with [associated => NonExistingAssociation]
+     * Previously such association were simply ignored
+     *
+     * @expectedException \InvalidArgumentException
+     * @return void
+     */
+    public function testManyInvalidAssociation()
+    {
+        $data = [
+            [
+                'comment' => 'First post',
+                'user_id' => 2,
+                'user' => [
+                    'username' => 'mark',
+                ],
+            ],
+            [
+                'comment' => 'Second post',
+                'user_id' => 2,
+                'user' => [
+                    'username' => 'jose',
+                ],
+            ],
+        ];
+        $marshall = new Marshaller($this->comments);
+        $marshall->many($data, ['associated' => ['Users', 'People']]);
     }
 
     /**

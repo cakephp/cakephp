@@ -30,7 +30,10 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.tags', 'core.categories', 'core.site_articles', 'core.site_authors'];
+    public $fixtures = [
+        'core.articles', 'core.articles_tags', 'core.authors', 'core.tags',
+        'core.special_tags', 'core.categories', 'core.site_articles', 'core.site_authors'    
+    ];
 
     /**
      * Tear down
@@ -367,6 +370,63 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $entity->clean();
         $entity->author_id = 2;
+        $this->assertSame($entity, $table->save($entity));
+    }
+
+    /**
+     * Tests isUnique with allowMultipleNulls
+     *
+     * @group save
+     * @return void
+     */
+    public function testIsUniqueAllowMultipleNulls()
+    {
+        $entity = new Entity([
+            'article_id' => 11,
+            'tag_id' => 11,
+            'author_id' => null
+        ]);
+
+        $table = TableRegistry::get('SpecialTags');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->isUnique(['author_id']), ['allowMultipleNulls' => false]);
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['_isUnique' => 'This value is already in use'], $entity->errors('author_id'));
+
+        $entity->author_id = 11;
+        $this->assertSame($entity, $table->save($entity));
+
+        $entity = $table->get(1);
+        $entity->dirty('author_id', true);
+        $this->assertSame($entity, $table->save($entity));
+    }
+
+    /**
+     * Tests isUnique with multiple fields and allowMultipleNulls
+     *
+     * @group save
+     * @return void
+     */
+    public function testIsUniqueMultipleFieldsAllowMultipleNulls()
+    {
+        $entity = new Entity([
+            'article_id' => 10,
+            'tag_id' => 12,
+            'author_id' => null
+        ]);
+
+        $table = TableRegistry::get('SpecialTags');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->isUnique(['author_id', 'article_id'], 'Nope'), ['allowMultipleNulls' => false]);
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['author_id' => ['_isUnique' => 'Nope']], $entity->errors());
+
+        $entity->clean();
+        $entity->article_id = 10;
+        $entity->tag_id = 12;
+        $entity->author_id = 12;
         $this->assertSame($entity, $table->save($entity));
     }
 
@@ -967,9 +1027,32 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests that associated items have a count of X.
+     * Tests the existsIn domain rule respects the conditions set for the associations
      *
      * @group save
+     * @return void
+     */
+    public function testExistsInDomainRuleWithAssociationConditions()
+    {
+        $entity = new Entity([
+            'title' => 'An Article',
+            'author_id' => 1
+        ]);
+
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors', [
+            'conditions' => ['Authors.name !=' => 'mariano']
+        ]);
+        $rules = $table->rulesChecker();
+        $rules->add($rules->existsIn('author_id', 'Authors'));
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->errors('author_id'));
+    }
+
+    /**
+     * Tests that associated items have a count of X.
+     *
      * @return void
      */
     public function testCountOfAssociatedItems()

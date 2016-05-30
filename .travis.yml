@@ -18,6 +18,10 @@ env:
 services:
   - memcached
   - redis-server
+  - postgresql
+
+addons:
+  postgresql: "9.4"
 
 cache:
   directories:
