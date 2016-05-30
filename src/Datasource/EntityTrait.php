@@ -255,16 +255,15 @@ trait EntityTrait
             $this->dirty($p, true);
 
             if ($nested) {
-                if (!array_key_exists($p, $this->_properties)
-                    || is_null($this->_properties[$p])
+                if (!array_key_exists($p, $this->_properties) ||
+                    is_null($this->_properties[$p])
                 ) {
-                    $value = new \Cake\ORM\Entity([$nested => $value]);
-                    //$value = Hash::insert([], $nested, $value); //@TODO: Hash::insert() is the other option to generate arrays down the chain instead of Entities, but this has drawbacks like not preserving the ability to ::getOriginal() down the chain. The most fidelity is preserved by using Entities.
+                    $value = Hash::insert([], $nested, $value);
                 } elseif ($this->_properties[$p] instanceof EntityInterface) {
                     $this->_properties[$p]->set($nested, $value, $options);
-                    continue; // In the recursive case, don't update ::$_original till we get to the bottom of the path. ONLY traverse the chain until that point.
-                } elseif (is_array($this->_properties[$p])
-                    || $this->_properties[$p] instanceof ArrayAccess
+                    continue;
+                } elseif (is_array($this->_properties[$p]) ||
+                    $this->_properties[$p] instanceof ArrayAccess
                 ) {
                     $value = Hash::insert($this->_properties[$p], $nested, $value);
                 } else {
@@ -325,28 +324,22 @@ trait EntityTrait
             list($property, $nested) = explode('.', $property, 2);
         }
 
-        if ($nested) {
-            if ($this->_properties[$property] instanceof EntityInterface) {
-                $result = $this->_properties[$property]->get($nested);
-                return $result;
-            } elseif (is_array($this->_properties[$property])
-                || ($this->_properties[$property] instanceof \ArrayAccess)
-            ) {
-                $value = Hash::get($this->_properties[$property], $nested);
-                return $value; //@TODO: Or remove this line and let getters engage below?
-            }
-        }
-
         $value = null;
-        $method = $this->_accessor($property, 'get');
-
         if (isset($this->_properties[$property])) {
-            $value =& $this->_properties[$property];
+            $value = $this->_properties[$property];
         }
 
+        $method = $this->_accessor($property, 'get');
         if ($method) {
-            $result = $this->{$method}($value);
-            return $result;
+            $value = $this->{$method}($value);
+        }
+
+        if ($nested) {
+            if ($value instanceof EntityInterface) {
+                $value = $value->get($nested);
+            } elseif (is_array($value) || ($value instanceof \ArrayAccess)) {
+                $value = Hash::get($value, $nested);
+            }
         }
 
         return $value;
@@ -919,9 +912,12 @@ trait EntityTrait
     /**
      * Sets a field as invalid and not patchable into the entity.
      *
-     * This is useful for batch operations when one needs to get the original value for an error message after patching.
-     * This value could not be patched into the entity and is simply copied into the _invalid property for debugging purposes
-     * or to be able to log it away.
+     * This is useful for batch operations when one needs to get the original
+     * value for an error message after patching.
+     *
+     * This value could not be patched into the entity and is simply copied
+     * into the _invalid property for debugging purposes or to be able to log
+     * it away.
      *
      * @param string|array|null $field The field to get invalid value for, or the value to set.
      * @param mixed|null $value The invalid value to be set for $field.
