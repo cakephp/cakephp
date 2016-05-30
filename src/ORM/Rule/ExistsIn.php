@@ -49,7 +49,7 @@ class ExistsIn
     /**
      * Constructor.
      *
-     * Available option for $options is 'allowPartialNulls' flag. 
+     * Available option for $options is 'allowPartialNulls' flag.
      * Set to true to accept composite foreign keys where one or more nullable columns are null.'
      *
      * @param string|array $fields The field or fields to check existence as primary key.
