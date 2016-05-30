@@ -30,13 +30,21 @@ class IsUnique
     protected $_fields;
 
     /**
+     * The options to use.
+     *
+     * @var array
+     */
+    protected $_options;
+
+    /**
      * Constructor.
      *
      * @param array $fields The list of fields to check uniqueness for
      */
-    public function __construct(array $fields)
+    public function __construct(array $fields, array $options = [])
     {
         $this->_fields = $fields;
+        $this->_options = $options + ['allowMultipleNulls' => true];
     }
 
     /**
@@ -52,8 +60,7 @@ class IsUnique
         if (!$entity->extract($this->_fields, true)) {
             return true;
         }
-        $options += ['allowMultipleNulls' => true];
-        $allowMultipleNulls = $options['allowMultipleNulls'];
+        $allowMultipleNulls = $this->_options['allowMultipleNulls'];
 
         $alias = $options['repository']->alias();
         $conditions = $this->_alias($alias, $entity->extract($this->_fields), $allowMultipleNulls);
