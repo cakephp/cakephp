@@ -1598,7 +1598,7 @@ class FormHelper extends Helper
     }
 
     /**
-     * Create a `<button>` tag with a surrounding `<form>` that submits via POST in default.
+     * Create a `<button>` tag with a surrounding `<form>` that submits via POST as default.
      *
      * This method creates a `<form>` element. So do not use this method in an already opened form.
      * Instead use FormHelper::submit() or FormHelper::button() to create buttons inside opened forms.
