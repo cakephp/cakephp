@@ -1598,7 +1598,7 @@ class FormHelper extends Helper
     }
 
     /**
-     * Create a `<button>` tag with a surrounding `<form>` that submits via POST.
+     * Create a `<button>` tag with a surrounding `<form>` that submits via POST in default.
      *
      * This method creates a `<form>` element. So do not use this method in an already opened form.
      * Instead use FormHelper::submit() or FormHelper::button() to create buttons inside opened forms.
@@ -1606,6 +1606,9 @@ class FormHelper extends Helper
      * ### Options:
      *
      * - `data` - Array with key/value to pass in input hidden
+     * - `method` - Request method to use. Set to 'delete' or others to simulate
+     *   HTTP/1.1 DELETE (or others) request. Defaults to 'post'.
+     * - `form` - Array with any option that FormHelper::create() can take
      * - Other options is the same of button method.
      *
      * @param string $title The button's caption. Not automatically HTML encoded
