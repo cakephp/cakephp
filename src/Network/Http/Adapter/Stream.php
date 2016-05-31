@@ -265,6 +265,7 @@ class Stream
         $url = $request->url();
         $this->_open($url);
         $content = '';
+        $timedOut = false;
 
         while (!feof($this->_stream)) {
             if ($deadline !== false) {
@@ -275,11 +276,16 @@ class Stream
 
             $meta = stream_get_meta_data($this->_stream);
             if ($meta['timed_out'] || ($deadline !== false && time() > $deadline)) {
-                throw new Exception('Connection timed out ' . $url);
+                $timedOut = true;
+                break;
             }
         }
         $meta = stream_get_meta_data($this->_stream);
         fclose($this->_stream);
+
+        if ($timedOut) {
+            throw new Exception('Connection timed out ' . $url);
+        }
 
         $headers = $meta['wrapper_data'];
         if (isset($headers['headers']) && is_array($headers['headers'])) {
