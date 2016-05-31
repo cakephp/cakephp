@@ -15,13 +15,13 @@
 namespace Cake\Test\TestCase\Event;
 
 use Cake\Event\Event;
-use Cake\Event\EventStack;
+use Cake\Event\EventList;
 use Cake\TestSuite\TestCase;
 
 /**
- * Tests the Cake\Event\EvenStack class functionality
+ * Tests the Cake\Event\EvenList class functionality
  */
-class EvenStackTest extends TestCase
+class EvenListTest extends TestCase
 {
 
     /**
@@ -31,20 +31,20 @@ class EvenStackTest extends TestCase
      */
     public function testAddEventAndFlush()
     {
-        $eventStack = new EventStack();
+        $eventList = new EventList();
         $event = new Event('my_event', $this);
         $event2 = new Event('my_second_event', $this);
 
-        $eventStack->add($event);
-        $eventStack->add($event2);
-        $this->assertCount(2, $eventStack);
+        $eventList->add($event);
+        $eventList->add($event2);
+        $this->assertCount(2, $eventList);
 
-        $this->assertEquals($eventStack[0], $event);
-        $this->assertEquals($eventStack[1], $event2);
+        $this->assertEquals($eventList[0], $event);
+        $this->assertEquals($eventList[1], $event2);
 
-        $eventStack->flush();
+        $eventList->flush();
 
-        $this->assertCount(0, $eventStack);
+        $this->assertCount(0, $eventList);
     }
 
     /**
@@ -54,28 +54,28 @@ class EvenStackTest extends TestCase
      */
     public function testArrayAccess()
     {
-        $eventStack = new EventStack();
+        $eventList = new EventList();
         $event = new Event('my_event', $this);
         $event2 = new Event('my_second_event', $this);
 
-        $eventStack->add($event);
-        $eventStack->add($event2);
-        $this->assertCount(2, $eventStack);
+        $eventList->add($event);
+        $eventList->add($event2);
+        $this->assertCount(2, $eventList);
 
-        $this->assertTrue($eventStack->hasEvent('my_event'));
-        $this->assertFalse($eventStack->hasEvent('does-not-exist'));
+        $this->assertTrue($eventList->hasEvent('my_event'));
+        $this->assertFalse($eventList->hasEvent('does-not-exist'));
 
-        $this->assertEquals($eventStack->offsetGet(0), $event);
-        $this->assertEquals($eventStack->offsetGet(1), $event2);
-        $this->assertTrue($eventStack->offsetExists(0));
-        $this->assertTrue($eventStack->offsetExists(1));
-        $this->assertFalse($eventStack->offsetExists(2));
+        $this->assertEquals($eventList->offsetGet(0), $event);
+        $this->assertEquals($eventList->offsetGet(1), $event2);
+        $this->assertTrue($eventList->offsetExists(0));
+        $this->assertTrue($eventList->offsetExists(1));
+        $this->assertFalse($eventList->offsetExists(2));
 
-        $eventStack->offsetUnset(1);
-        $this->assertCount(1, $eventStack);
+        $eventList->offsetUnset(1);
+        $this->assertCount(1, $eventList);
 
-        $eventStack->flush();
+        $eventList->flush();
 
-        $this->assertCount(0, $eventStack);
+        $this->assertCount(0, $eventList);
     }
 }

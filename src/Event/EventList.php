@@ -15,9 +15,9 @@
 namespace Cake\Event;
 
 /**
- * The Event Stack
+ * The Event List
  */
-class EventStack implements \ArrayAccess, \Countable
+class EventList implements \ArrayAccess, \Countable
 {
 
     /**
@@ -38,7 +38,7 @@ class EventStack implements \ArrayAccess, \Countable
     }
 
     /**
-     * Adds an event to the list when stacking is enabled.
+     * Adds an event to the list when event listing is enabled.
      *
      * @param \Cake\Event\Event $event An event to the list of dispatched events.
      * @return void
@@ -112,7 +112,7 @@ class EventStack implements \ArrayAccess, \Countable
     }
 
     /**
-     * Checks if an event is in the stack.
+     * Checks if an event is in the list.
      *
      * @param string $name Event name.
      * @return bool
