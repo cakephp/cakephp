@@ -486,7 +486,7 @@ class EventManager
      *
      * @return array
      */
-    public function eventList()
+    public function getEventList()
     {
         return $this->_eventList;
     }
@@ -521,7 +521,7 @@ class EventManager
      * @param \Cake\Event\EventList $eventList The event stack object to use.
      * @return void
      */
-    public function attachEventList(EventList $eventList)
+    public function setEventList(EventList $eventList)
     {
         $this->_eventList = $eventList;
         $this->_listEvents = true;
@@ -532,7 +532,7 @@ class EventManager
      *
      * @return void
      */
-    public function detachEventList()
+    public function unsetEventList()
     {
         $this->_eventList = null;
         $this->_listEvents = false;

@@ -726,25 +726,25 @@ class EventManagerTest extends TestCase
         $event2 = new Event('my_second_event', $this);
 
         $manager = new EventManager();
-        $manager->attachEventList($eventList);
+        $manager->setEventList($eventList);
         $manager->dispatch($event);
         $manager->dispatch($event2);
 
-        $result = $manager->eventList();
+        $result = $manager->getEventList();
         $this->assertInstanceOf('\Cake\Event\EventList', $result);
         $this->assertCount(2, $result);
         $this->assertEquals($result[0], $event);
         $this->assertEquals($result[1], $event2);
 
-        $manager->eventList()->flush();
-        $result = $manager->eventList();
+        $manager->getEventList()->flush();
+        $result = $manager->getEventList();
         $this->assertCount(0, $result);
 
-        $manager->detachEventList();
+        $manager->unsetEventList();
         $manager->dispatch($event);
         $manager->dispatch($event2);
 
-        $result = $manager->eventList();
+        $result = $manager->getEventList();
         $this->assertNull($result);
     }
 }
