@@ -257,18 +257,30 @@ class Stream
      */
     protected function _send(Request $request)
     {
+        $deadline = false;
+        if (isset($this->_contextOptions['timeout']) && $this->_contextOptions['timeout'] > 0) {
+            $deadline = time() + $this->_contextOptions['timeout'];
+        }
+
         $url = $request->url();
         $this->_open($url);
         $content = '';
+
         while (!feof($this->_stream)) {
+            if ($deadline !== false) {
+                stream_set_timeout($this->_stream, max($deadline - time(), 1));
+            }
+
             $content .= fread($this->_stream, 8192);
+
+            $meta = stream_get_meta_data($this->_stream);
+            if ($meta['timed_out'] || ($deadline !== false && time() > $deadline)) {
+                throw new Exception('Connection timed out ' . $url);
+            }
         }
         $meta = stream_get_meta_data($this->_stream);
         fclose($this->_stream);
 
-        if ($meta['timed_out']) {
-            throw new Exception('Connection timed out ' . $url);
-        }
         $headers = $meta['wrapper_data'];
         if (isset($headers['headers']) && is_array($headers['headers'])) {
             $headers = $headers['headers'];
