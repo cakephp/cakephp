@@ -41,7 +41,7 @@ class CakeStreamWrapper implements \ArrayAccess
         }
 
         $this->_stream = fopen('php://memory', 'rb+');
-        fwrite($this->_stream, str_repeat('x', 10000));
+        fwrite($this->_stream, str_repeat('x', 20000));
         rewind($this->_stream);
 
         return true;
@@ -148,7 +148,7 @@ class StreamTest extends TestCase
         $responses = $stream->send($request, []);
         $this->assertInstanceOf('Cake\Network\Http\Response', $responses[0]);
 
-        $this->assertEquals(10000, strlen($responses[0]->body()));
+        $this->assertEquals(20000, strlen($responses[0]->body()));
     }
 
     /**
