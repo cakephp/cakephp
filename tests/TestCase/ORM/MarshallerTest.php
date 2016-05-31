@@ -2923,4 +2923,58 @@ class MarshallerTest extends TestCase
         $this->assertFalse($entity->dirty('user'));
         $this->assertTrue($entity->user->isNew());
     }
+
+    public function testEnsurePrimaryKeyBeingReadFromTableForHandlingEmptyStringPrimaryKey()
+    {
+        $data = [
+            'id' => ''
+        ];
+
+        $articles = TableRegistry::get('Articles');
+        $articles->schema()->dropConstraint('primary');
+        $articles->primaryKey('id');
+
+        $marshall = new Marshaller($articles);
+        $result = $marshall->one($data);
+
+        $this->assertFalse($result->dirty('id'));
+        $this->assertNull($result->id);
+    }
+
+    public function testEnsurePrimaryKeyBeingReadFromTableWhenLoadingBelongsToManyRecordsByPrimaryKey()
+    {
+        $data = [
+            'tags' => [
+                [
+                    'id' => 1
+                ],
+                [
+                    'id' => 2
+                ]
+            ]
+        ];
+
+        $tags = TableRegistry::get('Tags');
+        $tags->schema()->dropConstraint('primary');
+        $tags->primaryKey('id');
+
+        $marshall = new Marshaller($this->articles);
+        $result = $marshall->one($data, ['associated' => ['Tags']]);
+
+        $expected = [
+            'tags' => [
+                [
+                    'id' => 1,
+                    'name' => 'tag1',
+                    'description' => 'A big description'
+                ],
+                [
+                    'id' => 2,
+                    'name' => 'tag2',
+                    'description' => 'Another big description'
+                ]
+            ]
+        ];
+        $this->assertEquals($expected, $result->toArray());
+    }
 }

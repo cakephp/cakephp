@@ -119,7 +119,7 @@ class Marshaller
         $propertyMap = $this->_buildPropertyMap($options);
 
         $schema = $this->_table->schema();
-        $primaryKey = $schema->primaryKey();
+        $primaryKey = (array)$this->_table->primaryKey();
         $entityClass = $this->_table->entityClass();
         $entity = new $entityClass();
         $entity->source($this->_table->registryAlias());
@@ -314,7 +314,7 @@ class Marshaller
         $data = array_values($data);
 
         $target = $assoc->target();
-        $primaryKey = array_flip($target->schema()->primaryKey());
+        $primaryKey = array_flip((array)$target->primaryKey());
         $records = $conditions = [];
         $primaryCount = count($primaryKey);
         $conditions = [];
