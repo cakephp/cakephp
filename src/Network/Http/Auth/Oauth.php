@@ -61,7 +61,7 @@ class Oauth
                 break;
 
             case 'RSA-SHA1':
-                if (!isset($credentials['privateKeyFile'])) {
+                if (!isset($credentials['privateKey'])) {
                     return;
                 }
                 $value = $this->_rsaSha1($request, $credentials);
@@ -193,6 +193,13 @@ class Oauth
             $values['oauth_realm'] = $credentials['realm'];
         }
 
+        if (is_resource($credentials['privateKey'])) {
+            $resource = $credentials['privateKey'];
+            $privateKey = stream_get_contents($resource);
+            rewind($resource);
+            $credentials['privateKey'] = $privateKey;
+        }
+
         $credentials += [
             'privateKeyPassphrase' => null,
         ];
@@ -202,7 +209,7 @@ class Oauth
             rewind($resource);
             $credentials['privateKeyPassphrase'] = $passphrase;
         }
-        $privateKey = openssl_pkey_get_private(file_get_contents($credentials['privateKeyFile']), $credentials['privateKeyPassphrase']);
+        $privateKey = openssl_pkey_get_private($credentials['privateKey'], $credentials['privateKeyPassphrase']);
         $signature = '';
         openssl_sign($baseString, $signature, $privateKey);
         openssl_free_key($privateKey);
