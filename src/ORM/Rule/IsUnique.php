@@ -39,7 +39,14 @@ class IsUnique
     /**
      * Constructor.
      *
+     * ### Options
+     *
+     * - `allowMultipleNulls` Set to false to disallow multiple null values in
+     *   multi-column unique rules. By default this is `true` to emulate how SQL UNIQUE
+     *   keys work.
+     *
      * @param array $fields The list of fields to check uniqueness for
+     * @param array $options The additional options for this rule.
      */
     public function __construct(array $fields, array $options = [])
     {
@@ -51,8 +58,8 @@ class IsUnique
      * Performs the uniqueness check
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
+     *   where the `repository` key is required.
      * @param array $options Options passed to the check,
-     * where the `repository` key is required.
      * @return bool
      */
     public function __invoke(EntityInterface $entity, array $options)
