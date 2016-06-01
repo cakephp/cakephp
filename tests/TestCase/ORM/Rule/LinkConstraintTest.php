@@ -39,10 +39,21 @@ class LinkConstraintTest extends TestCase
         'core.users'
     ];
 
+    public $autoFixtures = false;
+
     public function setUp()
     {
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
+
+        $this->loadFixtures(
+            'Authors',
+            'Users',
+            'Articles',
+            'Comments',
+            'Tags',
+            'ArticlesTags'
+        );
     }
 
     public function tearDown()
