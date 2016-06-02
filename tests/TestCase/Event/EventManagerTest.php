@@ -697,7 +697,7 @@ class EventManagerTest extends TestCase
      * listeners at the same priority.
      *
      * @return void
-     * @triggers fake.event $this)
+     * @triggers fake.event $this
      */
     public function testDispatchWithGlobalAndLocalEvents()
     {
@@ -716,8 +716,8 @@ class EventManagerTest extends TestCase
      * Test getting a list of dispatched events from the manager.
      *
      * @return void
-     * @triggers my_event $this)
-     * @triggers my_second_event $this)
+     * @triggers my_event $this
+     * @triggers my_second_event $this
      */
     public function testGetDispatchedEvents()
     {
