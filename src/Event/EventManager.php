@@ -484,7 +484,7 @@ class EventManager
     /**
      * Returns the event list.
      *
-     * @return array
+     * @return \Cake\Event\EventList
      */
     public function getEventList()
     {
