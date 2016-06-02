@@ -54,18 +54,18 @@ class EventManager
     protected $_isGlobal = false;
 
     /**
-     * The event stack object.
+     * The event list object.
      *
      * @var \Cake\Event\EventList|null
      */
     protected $_eventList;
 
     /**
-     * Enables automatic adding of events to the event stack object if it is present.
+     * Enables automatic adding of events to the event list object if it is present.
      *
      * @param bool
      */
-    protected $_listEvents = false;
+    protected $_trackEvents = false;
 
     /**
      * Returns the globally available instance of a Cake\Event\EventManager
@@ -360,8 +360,8 @@ class EventManager
 
         $listeners = $this->listeners($event->name());
         if (empty($listeners)) {
-            if ($this->_listEvents) {
-                $this->listEvent($event);
+            if ($this->_trackEvents) {
+                $this->addEventToList($event);
             }
             return $event;
         }
@@ -379,8 +379,8 @@ class EventManager
             }
         }
 
-        if ($this->_listEvents) {
-            $this->listEvent($event);
+        if ($this->_trackEvents) {
+            $this->addEventToList($event);
         }
         return $event;
     }
@@ -492,12 +492,12 @@ class EventManager
     }
 
     /**
-     * Adds an event to the stack if the stack object is present.
+     * Adds an event to the list if the event list object is present.
      *
-     * @param \Cake\Event\Event $event An event to add to the stack.
+     * @param \Cake\Event\Event $event An event to add to the list.
      * @return void
      */
-    public function listEvent(Event $event)
+    public function addEventToList(Event $event)
     {
         if ($this->_eventList) {
             $this->_eventList->add($event);
@@ -505,37 +505,37 @@ class EventManager
     }
 
     /**
-     * Enables / disables event stacking at runtime.
+     * Enables / disables event tracking at runtime.
      *
      * @param bool $enabled True or false to enable / disable it.
      * @return void
      */
-    public function listEvents($enabled)
+    public function trackEvents($enabled)
     {
-        $this->_listEvents = (bool)$enabled;
+        $this->_trackEvents = (bool)$enabled;
     }
 
     /**
-     * Enables the stacking of dispatched events.
+     * Enables the listing of dispatched events.
      *
-     * @param \Cake\Event\EventList $eventList The event stack object to use.
+     * @param \Cake\Event\EventList $eventList The event list object to use.
      * @return void
      */
     public function setEventList(EventList $eventList)
     {
         $this->_eventList = $eventList;
-        $this->_listEvents = true;
+        $this->_trackEvents = true;
     }
 
     /**
-     * Disables the stacking of dispatched events.
+     * Disables the listing of dispatched events.
      *
      * @return void
      */
     public function unsetEventList()
     {
         $this->_eventList = null;
-        $this->_listEvents = false;
+        $this->_trackEvents = false;
     }
 
     /**
