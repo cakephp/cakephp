@@ -206,6 +206,8 @@ class MiddlewareStackTest extends TestCase
     /**
      * Test insertBefore an invalid classname
      *
+     * @expectedException LogicException
+     * @expectedExceptionMessage No middleware matching 'InvalidClassName' could be found.
      * @return void
      */
     public function testInsertBeforeInvalid()
@@ -217,11 +219,6 @@ class MiddlewareStackTest extends TestCase
         };
         $stack = new MiddlewareStack();
         $stack->push($one)->push($two)->insertBefore('InvalidClassName', $three);
-
-        $this->assertCount(3, $stack);
-        $this->assertSame($one, $stack->get(0));
-        $this->assertSame($two, $stack->get(1));
-        $this->assertSame($three, $stack->get(2));
     }
 
     /**

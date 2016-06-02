@@ -15,6 +15,7 @@
 namespace Cake\Http;
 
 use Countable;
+use LogicException;
 
 /**
  * Provides methods for creating and manipulating a 'stack' of
@@ -108,7 +109,7 @@ class MiddlewareStack implements Countable
         if ($found) {
             return $this->insertAt($i, $callable);
         }
-        return $this->push($callable);
+        throw new LogicException(sprintf("No middleware matching '%s' could be found.", $class));
     }
 
     /**
