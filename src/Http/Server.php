@@ -77,8 +77,8 @@ class Server
         if (!($middleware instanceof MiddlewareStack)) {
             throw new RuntimeException('The application `middleware` method did not return a middleware stack.');
         }
-        $middleware->push($this->app);
         $this->dispatchEvent('Server.buildMiddleware', ['middleware' => $middleware]);
+        $middleware->push($this->app);
         $response = $this->runner->run($middleware, $request, $response);
 
         if (!($response instanceof ResponseInterface)) {

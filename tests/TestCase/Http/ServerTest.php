@@ -179,12 +179,19 @@ class ServerTest extends TestCase
     {
         $app = new MiddlewareApplication($this->config);
         $server = new Server($app);
-        $called = false;
-        $server->eventManager()->on('Server.buildMiddleware', function ($event, $middleware) use (&$called) {
-            $called = true;
+        $this->called = false;
+
+        $server->eventManager()->on('Server.buildMiddleware', function ($event, $middleware) {
             $this->assertInstanceOf('Cake\Http\MiddlewareStack', $middleware);
+            $middleware->push(function ($req, $res, $next) {
+                $this->called = true;
+                return $next($req, $res);
+            });
+            $this->middleware = $middleware;
         });
         $server->run();
-        $this->assertTrue($called, 'Event not triggered.');
+        $this->assertTrue($this->called, 'Middleware added in the event was not triggered.');
+        $this->assertInstanceOf('Closure', $this->middleware->get(3), '2nd last middleware is a closure');
+        $this->assertSame($app, $this->middleware->get(4), 'Last middleware is an app instance');
     }
 }

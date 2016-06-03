@@ -82,7 +82,7 @@ abstract class BaseApplication
         $cakeResponse = $this->getDispatcher()->dispatch($cakeRequest, $cakeResponse);
 
         // Convert the response back into a PSR7 object.
-        return $next($request, ResponseTransformer::toPsr($cakeResponse));
+        return ResponseTransformer::toPsr($cakeResponse);
     }
 
     /**
