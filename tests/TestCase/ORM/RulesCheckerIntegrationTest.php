@@ -832,7 +832,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @return
      */
-    public function testExistsInAllowSqlNullsWithParentIdNullA()
+    public function testExistsInAllowPartialNullsWithAuthorIdNullA()
     {
         $entity = new Entity([
             'id' => 10,
@@ -855,7 +855,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @return
      */
-    public function testExistsInAllowSqlNullsWithParentIdNullB()
+    public function testExistsInAllowPartialNullsWithAuthorIdNullB()
     {
         $entity = new Entity([
             'id' => 10,
@@ -878,7 +878,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @return
      */
-    public function testExistsInAllowSqlNullsWithParentIdNullC()
+    public function testExistsInAllowPartialNullsWithAuthorIdNullC()
     {
         $entity = new Entity([
             'id' => 10,
@@ -899,7 +899,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @return
      */
-    public function testExistsInAllowSqlNullsWithParentIdNullD()
+    public function testExistsInAllowPartialNullsWithAuthorIdNullD()
     {
         $entity = new Entity([
             'id' => 10,
@@ -924,7 +924,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @return
      */
-    public function testExistsInAllowSqlNullsWithParentIdNullE()
+    public function testExistsInAllowPartialNullsWithAuthorIdNullE()
     {
         $entity = new Entity([
             'id' => 10,
@@ -948,7 +948,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @return
      */
-    public function testExistsInAllowSqlNullsWithParentId1A()
+    public function testExistsInAllowPartialNullsWithAuthorId1A()
     {
         $entity = new Entity([
             'id' => 10,
@@ -969,7 +969,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @return
      */
-    public function testExistsInAllowSqlNullsWithParentIdB()
+    public function testExistsInAllowPartialNullsWithAuthorIdB()
     {
         $entity = new Entity([
             'id' => 10,
@@ -990,7 +990,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @return
      */
-    public function testExistsInAllowSqlNullsWithParentId1C()
+    public function testExistsInAllowPartialNullsWithAuthorId1C()
     {
         $entity = new Entity([
             'id' => 10,
@@ -1011,7 +1011,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @return
      */
-    public function testExistsInAllowSqlNullsWithParentId1E()
+    public function testExistsInAllowPartialNullsWithAuthorId1E()
     {
         $entity = new Entity([
             'id' => 10,
@@ -1034,7 +1034,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @return
      */
-    public function testExistsInAllowSqlNullsWithParentId1G()
+    public function testExistsInAllowPartialNullsWithAuthorId1G()
     {
         $entity = new Entity([
             'id' => 10,
