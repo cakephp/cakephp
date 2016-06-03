@@ -206,16 +206,16 @@ trait DateFormatTrait
         $time = $this;
 
         if ($time instanceof Time || $time instanceof FrozenTime) {
-            // Remove before merge:
-            // if ((is_string($time->timezone) && $time->timezone === 'UTC')
-            //     || ($time->timezone instanceof \DateTimeZone && $time->timezone->getName() === '+0:00')
-            // ) {
-            // }
-            // if ($time->getOffset() !== 0) {
-            //     $time = clone $time;
-            //     $time->add(new \DateInterval('PT' . $time->getOffset() / 60 . 'M'));
-            // }
             $timezone = $timezone ?: static::getDefaultOutputTimezone();
+        }
+        // Detect and prevent null timezone transitions, as datefmt_create will
+        // doubly apply the TZ offset.
+        $currentTimezone = $time->getTimezone();
+        if ($timezone && (
+            (is_string($timezone) && $currentTimezone->getName() === $timezone) ||
+            ($timezone instanceof DateTimeZone && $currentTimezone->getName() === $timezone->getName())
+        )) {
+            $timezone = null;
         }
 
         if ($timezone) {

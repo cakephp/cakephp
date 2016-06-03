@@ -586,16 +586,19 @@ class TimeTest extends TestCase
      */
     public function testI18nFormatWithOffsetTimezone($class)
     {
+        // Default output format is in UTC
         $time = new $class('2014-01-01T00:00:00+00');
         $result = $time->i18nFormat(\IntlDateFormatter::FULL);
         $expected = 'Wednesday January 1 2014 12:00:00 AM GMT';
         $this->assertTimeFormat($expected, $result);
 
+        $class::setDefaultOutputTimezone('GMT+09:00');
         $time = new $class('2014-01-01T00:00:00+09');
         $result = $time->i18nFormat(\IntlDateFormatter::FULL);
         $expected = 'Wednesday January 1 2014 12:00:00 AM GMT+09:00';
         $this->assertTimeFormat($expected, $result);
 
+        $class::setDefaultOutputTimezone('GMT-01:30');
         $time = new $class('2014-01-01T00:00:00-01:30');
         $result = $time->i18nFormat(\IntlDateFormatter::FULL);
         $expected = 'Wednesday January 1 2014 12:00:00 AM GMT-01:30';
@@ -611,22 +614,23 @@ class TimeTest extends TestCase
      */
     public function testI18nFormatWithOffsetTimezoneWithDefaultOutputTimezone($class)
     {
+        // America/Vancouver is GMT-8 in the winter
         $class::setDefaultOutputTimezone('America/Vancouver');
 
         $time = new $class('2014-01-01T00:00:00+00');
         $result = $time->i18nFormat(\IntlDateFormatter::FULL);
-        $expected = 'Wednesday January 1 2014 12:00:00 AM GMT';
-        $this->assertTimeFormat($expected, $result);
+        $expected = 'Tuesday December 31 2013 4:00:00 PM Pacific Standard Time';
+        $this->assertTimeFormat($expected, $result, 'GMT to GMT-8 should be 8 hours');
 
-        $time = new $class('2014-01-01T00:00:00+09');
+        $time = new $class('2014-01-01T00:00:00+09:00');
         $result = $time->i18nFormat(\IntlDateFormatter::FULL);
-        $expected = 'Wednesday January 1 2014 12:00:00 AM GMT+09:00';
-        $this->assertTimeFormat($expected, $result);
+        $expected = 'Tuesday December 31 2013 7:00:00 AM Pacific Standard Time';
+        $this->assertTimeFormat($expected, $result, 'GMT+9 to GMT-8 should be 17hrs');
 
         $time = new $class('2014-01-01T00:00:00-01:30');
         $result = $time->i18nFormat(\IntlDateFormatter::FULL);
-        $expected = 'Wednesday January 1 2014 12:00:00 AM GMT-01:30';
-        $this->assertTimeFormat($expected, $result);
+        $expected = 'Tuesday December 31 2013 5:30:00 PM Pacific Standard Time';
+        $this->assertTimeFormat($expected, $result, 'GMT-1:30 to GMT-8 is 6.5hrs');
     }
 
     /**
@@ -682,13 +686,13 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testToStringWithdefaultOutputTimezone($class)
+    public function testToStringWithDefaultOutputTimezone($class)
     {
         $class::setDefaultOutputTimezone('America/Vancouver');
-        $time = new $class('2014-04-20 22:10');
+        $time = new $class('2014-04-20 22:10 UTC');
         $class::setDefaultLocale('fr-FR');
         $class::setToStringFormat(\IntlDateFormatter::FULL);
-        $this->assertTimeFormat('dimanche 20 avril 2014 15:10:00 UTC', (string)$time);
+        $this->assertTimeFormat('dimanche 20 avril 2014 15:10:00 heure d’été du Pacifique', (string)$time);
     }
 
     /**
