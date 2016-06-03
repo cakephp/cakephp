@@ -39,9 +39,9 @@ trait DateFormatTrait
 
     /**
      * The \DateTimeZone default output timezone used by Time and FrozenTime.
-     * See http://php.net/manual/en/timezones.php.
      *
      * @var \DateTimeZone|null
+     * @see http://php.net/manual/en/timezones.php
      */
     protected static $_defaultOutputTimezone;
 

@@ -581,8 +581,8 @@ class TimeTest extends TestCase
      * test formatting dates with offset style timezone
      *
      * @dataProvider classNameProvider
-     * @see https://github.com/facebook/hhvm/issues/3637
      * @return void
+     * @see https://github.com/facebook/hhvm/issues/3637
      */
     public function testI18nFormatWithOffsetTimezone($class)
     {
@@ -609,8 +609,8 @@ class TimeTest extends TestCase
      * test formatting dates with offset style timezone and defaultOutputTimezone
      *
      * @dataProvider classNameProvider
-     * @see https://github.com/facebook/hhvm/issues/3637
      * @return void
+     * @see https://github.com/facebook/hhvm/issues/3637
      */
     public function testI18nFormatWithOffsetTimezoneWithDefaultOutputTimezone($class)
     {
