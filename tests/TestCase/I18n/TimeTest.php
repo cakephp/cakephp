@@ -553,7 +553,7 @@ class TimeTest extends TestCase
     {
         $time = new $class('Thu Jan 14 13:59:28 2010');
 
-        $class::$defaultLocale = 'en-CA';
+        $class::setDefaultLocale('en-US');
         $class::setDefaultOutputTimezone('America/Vancouver');
 
         $result = $time->i18nFormat();
@@ -565,7 +565,7 @@ class TimeTest extends TestCase
         $this->assertTimeFormat($expected, $result);
 
 
-        $class::$defaultLocale = 'de-DE';
+        $class::setDefaultLocale('de-DE');
         $class::setDefaultOutputTimezone('Europe/Berlin');
 
         $result = $time->i18nFormat();
