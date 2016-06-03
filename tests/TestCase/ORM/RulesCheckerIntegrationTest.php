@@ -832,7 +832,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @return
      */
-    public function testExistsInAllowSqlNullsWithParentIdNull()
+    public function testExistsInAllowSqlNullsWithParentIdNullA()
     {
         $entity = new Entity([
             'id' => 10,
@@ -844,14 +844,103 @@ class RulesCheckerIntegrationTest extends TestCase
         $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
-        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowPartialNulls' => true]));
-        $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
+            'allowPartialNulls' => true
+        ]));
+        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
+    }
 
-        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowPartialNulls' => false]));
-        $this->assertFalse($table->save(clone $entity));
+    /**
+     * Tests new allowPartialNulls flag with author id set to null
+     *
+     * @return
+     */
+    public function testExistsInAllowSqlNullsWithParentIdNullB()
+    {
+        $entity = new Entity([
+            'id' => 10,
+            'author_id' => null,
+            'site_id' => 1,
+            'name' => 'New Site Article without Author',
+        ]);
+        $table = TableRegistry::get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
+        $rules = $table->rulesChecker();
+
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
+            'allowPartialNulls' => false
+        ]));
+        $this->assertFalse($table->save($entity));
+    }
+
+    /**
+     * Tests new allowPartialNulls flag with author id set to null
+     *
+     * @return
+     */
+    public function testExistsInAllowSqlNullsWithParentIdNullC()
+    {
+        $entity = new Entity([
+            'id' => 10,
+            'author_id' => null,
+            'site_id' => 1,
+            'name' => 'New Site Article without Author',
+        ]);
+        $table = TableRegistry::get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
+        $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors'));
-        $this->assertFalse($table->save(clone $entity));
+        $this->assertFalse($table->save($entity));
+    }
+
+    /**
+     * Tests new allowPartialNulls flag with author id set to null
+     *
+     * @return
+     */
+    public function testExistsInAllowSqlNullsWithParentIdNullD()
+    {
+        $entity = new Entity([
+            'id' => 10,
+            'author_id' => null,
+            'site_id' => 1,
+            'name' => 'New Site Article without Author',
+        ]);
+        $table = TableRegistry::get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
+        $rules = $table->rulesChecker();
+
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
+            'allowPartialNulls' => false,
+            'message' => 'Niente'
+        ]));
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['author_id' => ['_existsIn' => 'Niente']], $entity->errors());
+    }
+
+    /**
+     * Tests new allowPartialNulls flag with author id set to null
+     *
+     * @return
+     */
+    public function testExistsInAllowSqlNullsWithParentIdNullE()
+    {
+        $entity = new Entity([
+            'id' => 10,
+            'author_id' => null,
+            'site_id' => 1,
+            'name' => 'New Site Article without Author',
+        ]);
+        $table = TableRegistry::get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
+        $rules = $table->rulesChecker();
+
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
+            'allowPartialNulls' => true,
+            'message' => 'Niente'
+        ]));
+        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
     }
 
     /**
@@ -859,7 +948,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @return
      */
-    public function testExistsInAllowSqlNullsWithParentId1()
+    public function testExistsInAllowSqlNullsWithParentId1A()
     {
         $entity = new Entity([
             'id' => 10,
@@ -872,13 +961,95 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowPartialNulls' => true]));
-        $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
+        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
+    }
+
+    /**
+     * Tests new allowPartialNulls flag with author id set to 1
+     *
+     * @return
+     */
+    public function testExistsInAllowSqlNullsWithParentIdB()
+    {
+        $entity = new Entity([
+            'id' => 10,
+            'author_id' => 1,
+            'site_id' => 1,
+            'name' => 'New Site Article with Author',
+        ]);
+        $table = TableRegistry::get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
+        $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowPartialNulls' => false]));
-        $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
+        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
+    }
+
+    /**
+     * Tests new allowPartialNulls flag with author id set to 1
+     *
+     * @return
+     */
+    public function testExistsInAllowSqlNullsWithParentId1C()
+    {
+        $entity = new Entity([
+            'id' => 10,
+            'author_id' => 1,
+            'site_id' => 1,
+            'name' => 'New Site Article with Author',
+        ]);
+        $table = TableRegistry::get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
+        $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors'));
-        $this->assertInstanceOf('Cake\ORM\Entity', $table->save(clone $entity));
+        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
+    }
+
+    /**
+     * Tests new allowPartialNulls flag with author id set to 1
+     *
+     * @return
+     */
+    public function testExistsInAllowSqlNullsWithParentId1E()
+    {
+        $entity = new Entity([
+            'id' => 10,
+            'author_id' => 1,
+            'site_id' => 1,
+            'name' => 'New Site Article with Author',
+        ]);
+        $table = TableRegistry::get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
+        $rules = $table->rulesChecker();
+
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
+            'allowPartialNulls' => true,
+            'message' => 'will not occur']));
+        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
+    }
+
+    /**
+     * Tests new allowPartialNulls flag with author id set to 1
+     *
+     * @return
+     */
+    public function testExistsInAllowSqlNullsWithParentId1G()
+    {
+        $entity = new Entity([
+            'id' => 10,
+            'author_id' => 1,
+            'site_id' => 1,
+            'name' => 'New Site Article with Author',
+        ]);
+        $table = TableRegistry::get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
+        $rules = $table->rulesChecker();
+
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
+            'allowPartialNulls' => false,
+            'message' => 'will not occur']));
+        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
     }
 
     /**

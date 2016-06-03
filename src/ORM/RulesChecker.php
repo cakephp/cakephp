@@ -78,18 +78,18 @@ class RulesChecker extends BaseRulesChecker
      * @param string|array $field The field or list of fields to check for existence by
      * primary key lookup in the other table.
      * @param object|string $table The table name where the fields existence will be checked.
-     * @param array|string|null $options List of options or error message string to show in case the rule does not pass.
+     * @param @param string|array|null $message The error message to show in case the rule does not pass. Can
+     *   also be an array of options. When an array, the 'message' key can be used to provide a message.
      * @return callable
      */
-    public function existsIn($field, $table, $options = null)
+    public function existsIn($field, $table, $message = null)
     {
-        if (is_string($options)) {
-            $options = ['message' => $options];
+        $options = [];
+        if (is_array($message)) {
+            $options = $message + ['message' => null];
+            $message = $options['message'];
+            unset($options['message']);
         }
-
-        $options = (array)$options + ['message' => null];
-        $message = $options['message'];
-        unset($options['message']);
 
         if (!$message) {
             if ($this->_useI18n) {
