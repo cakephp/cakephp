@@ -6877,6 +6877,38 @@ class FormHelperTest extends TestCase
         $this->assertTrue(strpos($result, '<input type="hidden" name="extra" value="value"') !== false);
     }
 
+    public function testPostButtonMethodType()
+    {
+        $result = $this->Form->postButton('Hi', '/controller/action', ['method' => 'patch']);
+        $expected = [
+            'form' => ['method' => 'post', 'action' => '/controller/action', 'accept-charset' => 'utf-8'],
+            'div' => ['style' => 'display:none;'],
+            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'PATCH'],
+            '/div',
+            'button' => ['type' => 'submit'],
+            'Hi',
+            '/button',
+            '/form'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    public function testPostButtonFormOptions()
+    {
+        $result = $this->Form->postButton('Hi', '/controller/action', ['form' => ['class' => 'inline']]);
+        $expected = [
+            'form' => ['method' => 'post', 'action' => '/controller/action', 'accept-charset' => 'utf-8', 'class' => 'inline'],
+            'div' => ['style' => 'display:none;'],
+            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
+            '/div',
+            'button' => ['type' => 'submit'],
+            'Hi',
+            '/button',
+            '/form'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
     /**
      * Test using postButton with N dimensional data.
      *

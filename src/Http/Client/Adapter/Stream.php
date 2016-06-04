@@ -65,7 +65,7 @@ class Stream
     /**
      * Send a request and get a response back.
      *
-     * @param \Cake\Http\Client\Request $request The request object to send.
+     * @param \Cake\Network\Http\Request $request The request object to send.
      * @param array $options Array of options for the stream.
      * @return array Array of populated Response objects
      */
@@ -247,18 +247,36 @@ class Stream
      */
     protected function _send(Request $request)
     {
+        $deadline = false;
+        if (isset($this->_contextOptions['timeout']) && $this->_contextOptions['timeout'] > 0) {
+            $deadline = time() + $this->_contextOptions['timeout'];
+        }
+
         $url = $request->url();
         $this->_open($url);
         $content = '';
+        $timedOut = false;
+
         while (!feof($this->_stream)) {
+            if ($deadline !== false) {
+                stream_set_timeout($this->_stream, max($deadline - time(), 1));
+            }
+
             $content .= fread($this->_stream, 8192);
+
+            $meta = stream_get_meta_data($this->_stream);
+            if ($meta['timed_out'] || ($deadline !== false && time() > $deadline)) {
+                $timedOut = true;
+                break;
+            }
         }
         $meta = stream_get_meta_data($this->_stream);
         fclose($this->_stream);
 
-        if ($meta['timed_out']) {
+        if ($timedOut) {
             throw new Exception('Connection timed out ' . $url);
         }
+
         $headers = $meta['wrapper_data'];
         if (isset($headers['headers']) && is_array($headers['headers'])) {
             $headers = $headers['headers'];

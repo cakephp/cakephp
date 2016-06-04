@@ -1132,9 +1132,6 @@ class FormHelper extends Helper
                 $opts = $options['options'];
                 unset($options['options']);
                 return $this->multicheckbox($fieldName, $opts, $options);
-            case 'url':
-                $options = $this->_initInputField($fieldName, $options);
-                return $this->widget($options['type'], $options);
             default:
                 return $this->{$options['type']}($fieldName, $options);
         }
@@ -1601,7 +1598,7 @@ class FormHelper extends Helper
     }
 
     /**
-     * Create a `<button>` tag with a surrounding `<form>` that submits via POST.
+     * Create a `<button>` tag with a surrounding `<form>` that submits via POST as default.
      *
      * This method creates a `<form>` element. So do not use this method in an already opened form.
      * Instead use FormHelper::submit() or FormHelper::button() to create buttons inside opened forms.
@@ -1609,6 +1606,9 @@ class FormHelper extends Helper
      * ### Options:
      *
      * - `data` - Array with key/value to pass in input hidden
+     * - `method` - Request method to use. Set to 'delete' or others to simulate
+     *   HTTP/1.1 DELETE (or others) request. Defaults to 'post'.
+     * - `form` - Array with any option that FormHelper::create() can take
      * - Other options is the same of button method.
      *
      * @param string $title The button's caption. Not automatically HTML encoded
@@ -1619,7 +1619,16 @@ class FormHelper extends Helper
      */
     public function postButton($title, $url, array $options = [])
     {
-        $out = $this->create(false, ['url' => $url]);
+        $formOptions = ['url' => $url];
+        if (isset($options['method'])) {
+            $formOptions['type'] = $options['method'];
+            unset($options['method']);
+        }
+        if (isset($options['form']) && is_array($options['form'])) {
+            $formOptions = $options['form'] + $formOptions;
+            unset($options['form']);
+        }
+        $out = $this->create(false, $formOptions);
         if (isset($options['data']) && is_array($options['data'])) {
             foreach (Hash::flatten($options['data']) as $key => $value) {
                 $out .= $this->hidden($key, ['value' => $value]);
