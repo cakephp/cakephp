@@ -15,10 +15,11 @@
 namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\FormAuthenticate;
-use Cake\Core\Configure;
+use Cake\Controller\ComponentRegistry;
 use Cake\Core\Plugin;
 use Cake\I18n\Time;
 use Cake\Network\Request;
+use Cake\Network\Response;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -46,7 +47,7 @@ class FormAuthenticateTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->Collection = $this->getMock('Cake\Controller\ComponentRegistry');
+        $this->Collection = $this->getMockBuilder(ComponentRegistry::class)->getMock();
         $this->auth = new FormAuthenticate($this->Collection, [
             'userModel' => 'Users'
         ]);
@@ -61,7 +62,7 @@ class FormAuthenticateTest extends TestCase
         ]);
         $AuthUsers->updateAll(['password' => $password], []);
 
-        $this->response = $this->getMock('Cake\Network\Response');
+        $this->response = $this->getMockBuilder(Response::class)->getMock();
     }
 
     /**
@@ -144,16 +145,13 @@ class FormAuthenticateTest extends TestCase
             'password' => ''
         ];
 
-        $this->auth = $this->getMock(
-            'Cake\Auth\FormAuthenticate',
-            ['_checkFields'],
-            [
+        $this->auth = $this->getMockBuilder(FormAuthenticate::class)
+            ->setMethods(['_checkFields'])
+            ->setConstructorArgs([
                 $this->Collection,
-                [
-                    'userModel' => 'Users'
-                ]
-            ]
-        );
+                ['userModel' => 'Users']
+            ])
+            ->getMock();
 
         // Simulate that check for ensuring password is not empty is missing.
         $this->auth->expects($this->once())
