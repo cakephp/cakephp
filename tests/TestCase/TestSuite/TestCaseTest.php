@@ -186,7 +186,7 @@ class TestCaseTest extends TestCase
     {
         $test = new FixturizedTestCase('testFixtureLoadOnDemand');
         $test->autoFixtures = false;
-        $manager = $this->getMock('Cake\TestSuite\Fixture\FixtureManager');
+        $manager = $this->getMockBuilder('Cake\TestSuite\Fixture\FixtureManager')->getMock();
         $manager->fixturize($test);
         $test->fixtureManager = $manager;
         $manager->expects($this->once())->method('loadSingle');

@@ -33,7 +33,7 @@ class StringTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = Type::build('string');
-        $this->driver = $this->getMock('Cake\Database\Driver');
+        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
     }
 
     /**

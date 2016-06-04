@@ -249,7 +249,7 @@ class FormHelperTest extends TestCase
         $data = [
             'val' => 1
         ];
-        $mock = $this->getMock('Cake\View\Widget\WidgetInterface');
+        $mock = $this->getMockBuilder('Cake\View\Widget\WidgetInterface')->getMock();
         $this->assertNull($this->Form->addWidget('test', $mock));
         $mock->expects($this->once())
             ->method('render')
@@ -271,7 +271,7 @@ class FormHelperTest extends TestCase
             'val' => 1,
             'name' => 'test'
         ];
-        $mock = $this->getMock('Cake\View\Widget\WidgetInterface');
+        $mock = $this->getMockBuilder('Cake\View\Widget\WidgetInterface')->getMock();
         $this->assertNull($this->Form->addWidget('test', $mock));
 
         $mock->expects($this->at(0))
@@ -328,7 +328,7 @@ class FormHelperTest extends TestCase
     public function testAddContextProvider()
     {
         $context = 'My data';
-        $stub = $this->getMock('Cake\View\Form\ContextInterface');
+        $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
         $this->Form->addContextProvider('test', function ($request, $data) use ($context, $stub) {
             $this->assertInstanceOf('Cake\Network\Request', $request);
             $this->assertEquals($context, $data['entity']);
@@ -347,7 +347,7 @@ class FormHelperTest extends TestCase
     public function testAddContextProviderReplace()
     {
         $entity = new Article();
-        $stub = $this->getMock('Cake\View\Form\ContextInterface');
+        $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
         $this->Form->addContextProvider('orm', function ($request, $data) use ($stub) {
             return $stub;
         });
@@ -364,7 +364,7 @@ class FormHelperTest extends TestCase
     public function testAddContextProviderAdd()
     {
         $entity = new Article();
-        $stub = $this->getMock('Cake\View\Form\ContextInterface');
+        $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
         $this->Form->addContextProvider('newshiny', function ($request, $data) use ($stub) {
             if ($data['entity'] instanceof Entity) {
                 return $stub;
@@ -7967,7 +7967,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->context();
         $this->assertInstanceOf('Cake\View\Form\ContextInterface', $result);
 
-        $mock = $this->getMock('Cake\View\Form\ContextInterface');
+        $mock = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
         $this->assertSame($mock, $this->Form->context($mock));
         $this->assertSame($mock, $this->Form->context());
     }

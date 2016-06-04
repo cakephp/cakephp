@@ -35,7 +35,7 @@ class FloatTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = Type::build('float');
-        $this->driver = $this->getMock('Cake\Database\Driver');
+        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $this->locale = I18n::locale();
         $this->numberClass = FloatType::$numberClass;
 

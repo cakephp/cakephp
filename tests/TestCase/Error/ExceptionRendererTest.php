@@ -671,7 +671,7 @@ class ExceptionRendererTest extends TestCase
             ->with('missingHelper')
             ->will($this->throwException($exception));
 
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $response->expects($this->once())
             ->method('body')
             ->with($this->stringContains('Helper class Fail'));
@@ -698,7 +698,7 @@ class ExceptionRendererTest extends TestCase
             ->method('beforeRender')
             ->will($this->throwException($exception));
 
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $response->expects($this->once())
             ->method('body')
             ->with($this->stringContains('Not there, sorry'));
@@ -729,7 +729,7 @@ class ExceptionRendererTest extends TestCase
             ->with('error400')
             ->will($this->throwException($exception));
 
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $response->expects($this->once())
             ->method('body')
             ->with($this->stringContains('Not Found'));
@@ -756,7 +756,7 @@ class ExceptionRendererTest extends TestCase
 
         $ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', ['render']);
         $ExceptionRenderer->controller->plugin = 'TestPlugin';
-        $ExceptionRenderer->controller->request = $this->getMock('Cake\Network\Request');
+        $ExceptionRenderer->controller->request = $this->getMockBuilder('Cake\Network\Request')->getMock();
 
         $exception = new MissingPluginException(['plugin' => 'TestPlugin']);
         $ExceptionRenderer->controller->expects($this->once())
@@ -764,7 +764,7 @@ class ExceptionRendererTest extends TestCase
             ->with('error400')
             ->will($this->throwException($exception));
 
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $response->expects($this->once())
             ->method('body')
             ->with($this->logicalAnd(
@@ -789,7 +789,7 @@ class ExceptionRendererTest extends TestCase
 
         $ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', ['render']);
         $ExceptionRenderer->controller->plugin = 'TestPlugin';
-        $ExceptionRenderer->controller->request = $this->getMock('Cake\Network\Request');
+        $ExceptionRenderer->controller->request = $this->getMockBuilder('Cake\Network\Request')->getMock();
 
         $exception = new MissingPluginException(['plugin' => 'TestPluginTwo']);
         $ExceptionRenderer->controller->expects($this->once())
@@ -797,7 +797,7 @@ class ExceptionRendererTest extends TestCase
             ->with('error400')
             ->will($this->throwException($exception));
 
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $response->expects($this->once())
             ->method('body')
             ->with($this->logicalAnd(

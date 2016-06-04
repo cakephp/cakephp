@@ -598,7 +598,7 @@ class RequestHandlerComponentTest extends TestCase
     {
         $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
         $event = new Event('Controller.startup', $this->Controller);
-        $this->Controller->response = $this->getMock('Cake\Network\Response');
+        $this->Controller->response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $this->Controller->response->expects($this->never())
             ->method('body');

@@ -35,7 +35,7 @@ class TextareaWidgetTest extends TestCase
         $templates = [
             'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
         ];
-        $this->context = $this->getMock('Cake\View\Form\ContextInterface');
+        $this->context = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
         $this->templates = new StringTemplate($templates);
     }
 

@@ -583,7 +583,7 @@ class EventManagerTest extends TestCase
      */
     public function testStopPropagation()
     {
-        $generalManager = $this->getMock('Cake\Event\EventManager');
+        $generalManager = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $manager = new EventManager();
         $listener = new EventTestListener();
 
@@ -612,7 +612,7 @@ class EventManagerTest extends TestCase
      */
     public function testDispatchPrioritizedWithGlobal()
     {
-        $generalManager = $this->getMock('Cake\Event\EventManager');
+        $generalManager = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $manager = new EventManager();
         $listener = new CustomTestEventListenerInterface();
         $event = new Event('fake.event');
@@ -645,7 +645,7 @@ class EventManagerTest extends TestCase
      */
     public function testDispatchGlobalBeforeLocal()
     {
-        $generalManager = $this->getMock('Cake\Event\EventManager');
+        $generalManager = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $manager = new EventManager();
         $listener = new CustomTestEventListenerInterface();
         $event = new Event('fake.event');

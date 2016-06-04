@@ -226,7 +226,7 @@ SQL;
             'comment' => 'Comment section',
         ];
 
-        $driver = $this->getMock('Cake\Database\Driver\Postgres');
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')->getMock();
         $dialect = new PostgresSchema($driver);
 
         $table = $this->getMock('Cake\Database\Schema\Table', [], ['table']);

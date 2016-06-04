@@ -794,7 +794,7 @@ class EmailTest extends TestCase
         $result = $this->CakeEmail->transport();
         $this->assertInstanceOf('Cake\Mailer\Transport\DebugTransport', $result);
 
-        $instance = $this->getMock('Cake\Mailer\Transport\DebugTransport');
+        $instance = $this->getMockBuilder('Cake\Mailer\Transport\DebugTransport')->getMock();
         $this->CakeEmail->transport($instance);
         $this->assertSame($instance, $this->CakeEmail->transport());
     }
@@ -2630,7 +2630,7 @@ HTML;
      */
     public function testMockTransport()
     {
-        $mock = $this->getMock('\Cake\Mailer\AbstractTransport');
+        $mock = $this->getMockBuilder('\Cake\Mailer\AbstractTransport')->getMock();
         $config = ['from' => 'tester@example.org', 'transport' => 'default'];
 
         Email::config('default', $config);

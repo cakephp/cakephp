@@ -254,7 +254,7 @@ class DispatcherTest extends TestCase
                 'action' => 'home',
             ]
         ]);
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $this->dispatcher->dispatch($request, $response, ['return' => 1]);
     }
 
@@ -275,7 +275,7 @@ class DispatcherTest extends TestCase
             ]
         ]);
         $url = new Request('dispatcher_test_interface/index');
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $this->dispatcher->dispatch($request, $response, ['return' => 1]);
     }
 
@@ -295,7 +295,7 @@ class DispatcherTest extends TestCase
                 'action' => 'index',
             ]
         ]);
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $this->dispatcher->dispatch($request, $response, ['return' => 1]);
     }
 
@@ -319,7 +319,7 @@ class DispatcherTest extends TestCase
                 'pass' => ['home'],
             ]
         ]);
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $this->dispatcher->dispatch($request, $response, ['return' => 1]);
     }
 
@@ -339,7 +339,7 @@ class DispatcherTest extends TestCase
                 'return' => 1
             ]
         ]);
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $this->dispatcher->dispatch($url, $response);
         $expected = 'Pages';
@@ -387,7 +387,7 @@ class DispatcherTest extends TestCase
                 'return' => 1
             ]
         ]);
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $this->dispatcher->dispatch($request, $response);
 
@@ -419,7 +419,7 @@ class DispatcherTest extends TestCase
                 'return' => 1
             ]
         ]);
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $this->dispatcher->dispatch($request, $response);
 
@@ -450,7 +450,7 @@ class DispatcherTest extends TestCase
                 'return' => 1
             ]
         ]);
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $this->dispatcher->dispatch($request, $response);
     }
 
@@ -473,7 +473,7 @@ class DispatcherTest extends TestCase
                 'return' => 1
             ]
         ]);
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $this->dispatcher->dispatch($request, $response);
     }
 

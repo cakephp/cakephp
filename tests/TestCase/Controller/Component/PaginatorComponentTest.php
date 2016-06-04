@@ -466,7 +466,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortInvalidDirection()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -527,7 +527,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistFailure()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -550,7 +550,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistTrusted()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -580,7 +580,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistEmpty()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -608,7 +608,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistNotInSchema()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -637,7 +637,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistMultiple()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -668,7 +668,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortMultiple()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -696,7 +696,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWithString()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -718,7 +718,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortNoSort()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -740,7 +740,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortInvalidAlias()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));

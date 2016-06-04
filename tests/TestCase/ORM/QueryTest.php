@@ -841,7 +841,7 @@ class QueryTest extends TestCase
     {
         $query = new Query($this->connection, $this->table);
 
-        $stmt = $this->getMock('Cake\Database\StatementInterface');
+        $stmt = $this->getMockBuilder('Cake\Database\StatementInterface')->getMock();
         $results = new ResultSet($query, $stmt);
         $query->setResult($results);
         $this->assertSame($results, $query->all());
@@ -1845,7 +1845,7 @@ class QueryTest extends TestCase
         $query->expects($this->never())
             ->method('execute');
 
-        $cacher = $this->getMock('Cake\Cache\CacheEngine');
+        $cacher = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $cacher->expects($this->once())
             ->method('read')
             ->with('my_key')
@@ -1870,7 +1870,7 @@ class QueryTest extends TestCase
 
         $query->select(['id', 'title']);
 
-        $cacher = $this->getMock('Cake\Cache\CacheEngine');
+        $cacher = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $cacher->expects($this->once())
             ->method('write')
             ->with(

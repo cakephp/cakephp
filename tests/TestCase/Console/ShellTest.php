@@ -682,7 +682,7 @@ class ShellTest extends TestCase
      */
     public function testRunCommandMain()
     {
-        $io = $this->getMock('Cake\Console\ConsoleIo');
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
         $shell = $this->getMock('Cake\Console\Shell', ['main', 'startup'], [$io]);
 
         $shell->expects($this->once())->method('startup');
@@ -701,7 +701,7 @@ class ShellTest extends TestCase
      */
     public function testRunCommandWithMethod()
     {
-        $io = $this->getMock('Cake\Console\ConsoleIo');
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
         $shell = $this->getMock('Cake\Console\Shell', ['hitMe', 'startup'], [$io]);
 
         $shell->expects($this->once())->method('startup');
@@ -724,7 +724,7 @@ class ShellTest extends TestCase
     public function testRunCommandWithExtra()
     {
         $Parser = $this->getMock('Cake\Console\ConsoleOptionParser', ['help'], ['knife']);
-        $io = $this->getMock('Cake\Console\ConsoleIo');
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
         $Shell = $this->getMock('Cake\Console\Shell', ['getOptionParser', 'slice', '_welcome', 'param'], [$io]);
         $Parser->addSubCommand('slice');
         $Shell->expects($this->once())
@@ -865,7 +865,7 @@ TEXT;
      */
     public function testRunCommandAutoMethodOff()
     {
-        $io = $this->getMock('Cake\Console\ConsoleIo');
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
         $shell = $this->getMock('Cake\Console\Shell', ['hit_me', 'startup'], [$io]);
 
         $shell->expects($this->never())->method('startup');
@@ -886,7 +886,7 @@ TEXT;
     public function testRunCommandWithMethodNotInSubcommands()
     {
         $parser = $this->getMock('Cake\Console\ConsoleOptionParser', ['help'], ['knife']);
-        $io = $this->getMock('Cake\Console\ConsoleIo');
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
         $shell = $this->getMock('Cake\Console\Shell', ['getOptionParser', 'roll', 'startup'], [$io]);
 
         $parser->addSubCommand('slice');
@@ -913,7 +913,7 @@ TEXT;
     public function testRunCommandWithMethodInSubcommands()
     {
         $parser = $this->getMock('Cake\Console\ConsoleOptionParser', ['help'], ['knife']);
-        $io = $this->getMock('Cake\Console\ConsoleIo');
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
         $shell = $this->getMock('Cake\Console\Shell', ['getOptionParser', 'slice', 'startup'], [$io]);
 
         $parser->addSubCommand('slice');
@@ -940,7 +940,7 @@ TEXT;
         $parser = $this->getMock('Cake\Console\ConsoleOptionParser', ['help'], ['knife']);
         $parser->addSubCommand('slice');
 
-        $io = $this->getMock('Cake\Console\ConsoleIo');
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
         $shell = $this->getMock('Cake\Console\Shell', ['getOptionParser', 'startup'], [$io]);
         $shell->expects($this->any())
             ->method('getOptionParser')
@@ -1058,7 +1058,7 @@ TEXT;
     {
         $parser = new ConsoleOptionParser('knife');
         $parser->addSubcommand('slice');
-        $io = $this->getMock('Cake\Console\ConsoleIo');
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
 
         $shell = $this->getMock('Cake\Console\Shell', ['hasTask', 'startup', 'getOptionParser'], [], '', false);
         $shell->io($io);
