@@ -85,8 +85,10 @@ use RuntimeException;
  */
 class Controller implements EventListenerInterface, EventDispatcherInterface
 {
-
-    use EventDispatcherTrait;
+    use EventDispatcherTrait {
+        on as private _on;
+    }
+    
     use LocatorAwareTrait;
     use LogTrait;
     use MergeVariablesTrait;
@@ -711,6 +713,140 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         return $method->isPublic();
+    }
+
+    /**
+     * Adds a function that will be called before the controller action is run.
+     *
+     * You can configure the function to only execute before some of the controller actions:
+     * ```
+     * $this->addBeforeAction(function () { ... }, ['only' => 'index']);
+     * $this->addBeforeAction(function () { ... }, ['only' => ['index', 'view']]);
+     * ```
+     *
+     * Or you can exclude some controller actions from executing the function:
+     * ```
+     * $this->addBeforeAction(function () { ... }, ['except' => 'index']);
+     * ```
+     *
+     * Options may also contain conditions and the function only executes if they all pass:
+     * ```
+     * $this->addBeforeAction(function () { ... }, [
+     *     'if' => function () {
+     *         return !is_null($this->currentUser);
+     *     }
+     * ]);
+     *
+     * $this->addBeforeAction(function () { ... }, [
+     *     'unless' => function () {
+     *         return is_null($this->currentUser);
+     *     }
+     * ]);
+     *
+     * $this->addBeforeAction(function () { ... }, [
+     *     'if' => [
+     *          function () { ... },
+     *          function () { ... },
+     *     ]
+     * ]);
+     * ```
+     *
+     * Accepts simplified representation of callables:
+     * ```
+     * // assuming that 'init' and 'condition' are methods on current controller
+     * // you can write
+     * $this->addBeforeAction('init', ['if' => 'condition'])
+     * // instead of
+     * $this->addBeforeAction([$this, 'init'], ['if' => [$this, 'condition']])
+     * ```
+     *
+     * @param callable|string $callable Callable to be invoked as before action (before filter)
+     * @param array $options Array of options
+     * @return void
+     */
+    public function addBeforeAction($callable, $options = [])
+    {
+        $this->on('Controller.startup', $callable, $options);
+    }
+
+    /**
+     * Adds a function that will be called after the controller action is run and rendered.
+     *
+     * You can configure the function to only execute after some of the controller actions:
+     * ```
+     * $this->addAfterAction(function () { ... }, ['only' => 'index']);
+     * $this->addAfterAction(function () { ... }, ['only' => ['index', 'view']]);
+     * ```
+     *
+     * Or you can exclude some controller actions from executing the function:
+     * ```
+     * $this->addAfterAction(function () { ... }, ['except' => 'index']);
+     * ```
+     *
+     * Options may also contain conditions and the function only executes if they all pass:
+     * ```
+     * $this->addAfterAction(function () { ... }, [
+     *     'if' => function () {
+     *         return !is_null($this->currentUser);
+     *     }
+     * ]);
+     *
+     * $this->addAfterAction(function () { ... }, [
+     *     'unless' => function () {
+     *         return is_null($this->currentUser);
+     *     }
+     * ]);
+     *
+     * $this->addAfterAction(function () { ... }, [
+     *     'if' => [
+     *          function () { ... },
+     *          function () { ... },
+     *     ]
+     * ]);
+     * ```
+     *
+     * Accepts simplified representation of callables:
+     * ```
+     * // assuming that 'init' and 'condition' are methods on current controller
+     * // you can write
+     * $this->addAfterAction('init', ['if' => 'condition'])
+     * // instead of
+     * $this->addAfterAction([$this, 'init'], ['if' => [$this, 'condition']])
+     * ```
+     *
+     * @param callable|string $callable Callable to be invoked as after action (after filter)
+     * @param array $options Array of options
+     * @return void
+     */
+    public function addAfterAction($callable, $options = [])
+    {
+        $this->on('Controller.shutdown', $callable, $options);
+    }
+
+    /**
+     * Shortcut for binding events on controller's event manager.
+     * See usage of addBeforeAction or addAfterAction methods.
+     *
+     * @param string $event Event name
+     * @param callable|string $callable Callable to be used as an event handler
+     * @param array $options Array of options
+     * @return void
+     */
+    public function on($event, $callable, $options = [])
+    {
+        if (isset($options['only'])) {
+            $options['if'][] = function () use ($options) {
+                return in_array($this->request->param('action'), (array)$options['only'], true);
+            };
+        }
+
+        if (isset($options['except'])) {
+            $options['if'][] = function () use ($options) {
+                return !in_array($this->request->param('action'), (array)$options['except'], true);
+            };
+        }
+
+        $this->_on($event, $callable, $options);
     }
 
     /**

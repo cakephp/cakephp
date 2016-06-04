@@ -700,7 +700,7 @@ class AuthComponentTest extends TestCase
      */
     public function testDefaultToLoginRedirect()
     {
-        $url = '/party/on';
+        $url = '/party/rocks';
         $this->Auth->request = $request = new Request($url);
         $request->env('HTTP_REFERER', false);
         $request->addParams(Router::parse($url));
@@ -720,7 +720,7 @@ class AuthComponentTest extends TestCase
         $response = new Response();
         $Controller = $this->getMock(
             'Cake\Controller\Controller',
-            ['on', 'redirect'],
+            ['rocks', 'redirect'],
             [$request, $response]
         );
         $event = new Event('Controller.startup', $Controller);
@@ -741,7 +741,7 @@ class AuthComponentTest extends TestCase
      */
     public function testRedirectToUnauthorizedRedirect()
     {
-        $url = '/party/on';
+        $url = '/party/rocks';
         $this->Auth->Flash = $this->getMock(
             'Cake\Controller\Component\FlashComponent',
             ['set'],
@@ -761,7 +761,7 @@ class AuthComponentTest extends TestCase
         $response = new Response();
         $Controller = $this->getMock(
             'Cake\Controller\Controller',
-            ['on', 'redirect'],
+            ['rocks', 'redirect'],
             [$request, $response]
         );
 
@@ -784,7 +784,7 @@ class AuthComponentTest extends TestCase
      */
     public function testRedirectToUnauthorizedRedirectLoginAction()
     {
-        $url = '/party/on';
+        $url = '/party/rocks';
         $this->Auth->Flash = $this->getMock(
             'Cake\Controller\Component\FlashComponent',
             ['set'],
@@ -804,7 +804,7 @@ class AuthComponentTest extends TestCase
         $response = new Response();
         $Controller = $this->getMock(
             'Cake\Controller\Controller',
-            ['on', 'redirect'],
+            ['rocks', 'redirect'],
             [$request, $response]
         );
 
@@ -825,7 +825,7 @@ class AuthComponentTest extends TestCase
      */
     public function testRedirectToUnauthorizedRedirectSuppressedAuthError()
     {
-        $url = '/party/on';
+        $url = '/party/rocks';
         $this->Auth->session = $this->getMock(
             'Cake\Network\Session',
             ['flash']
@@ -841,7 +841,7 @@ class AuthComponentTest extends TestCase
         $Response = new Response();
         $Controller = $this->getMock(
             'Cake\Controller\Controller',
-            ['on', 'redirect'],
+            ['rocks', 'redirect'],
             [$Request, $Response]
         );
 
@@ -865,7 +865,7 @@ class AuthComponentTest extends TestCase
      */
     public function testForbiddenException()
     {
-        $url = '/party/on';
+        $url = '/party/rocks';
         $this->Auth->request = $request = new Request($url);
         $this->Auth->request->addParams(Router::parse($url));
         $this->Auth->config([
@@ -877,7 +877,7 @@ class AuthComponentTest extends TestCase
         $response = new Response();
         $Controller = $this->getMock(
             'Cake\Controller\Controller',
-            ['on', 'redirect'],
+            ['rocks', 'redirect'],
             [$request, $response]
         );
 

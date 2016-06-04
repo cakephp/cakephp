@@ -79,4 +79,71 @@ trait EventDispatcherTrait
 
         return $event;
     }
+
+    /**
+     * Shortcut for binding events on event manager. Accepts simplified representation of callables:
+     * ```
+     * // assuming that 'handler' and 'condition' are methods on current object
+     * // you can write
+     * $this->on('event', 'handler', ['if' => 'condition'])
+     * // instead of
+     * $this->on('event', [$this, 'handler'], ['if' => [$this, 'condition']])
+     * ```
+     *
+     * @param string $event Event name
+     * @param callable|string $callable Callable to be used as an event handler
+     * @param array $options Array of options
+     * @return void
+     */
+    public function on($event, $callable, $options = [])
+    {
+        if (isset($options['if'])) {
+            $options['if'] = $this->toCallables($options['if']);
+        }
+
+        if (isset($options['unless'])) {
+            $options['unless'] = $this->toCallables($options['unless']);
+        }
+
+        $this->eventManager()->on($event, $options, $this->toCallables($callable)[0]);
+    }
+
+    /**
+     * Converts simplified representation of callables to an array of valid PHP callables.
+     *
+     * Mainly does two things:
+     * 1. converts strings to callables (in case they are not callables already) assuming
+     * they are referencing a method in current object:
+     * ```
+     * ['isValid', 'isActive'] => [[$this, 'isValid'], [$this, 'isActive']]
+     * ['time'] => ['time'] // time is already valid callable
+     * ```
+     *
+     * 2. converts single callable to an array:
+     * ```
+     * 'time' => ['time']
+     * function () { ... } => [function () { ... }]
+     * [$object, 'method'] => [[$object, 'method']]
+     * ```
+     *
+     * @param mixed $callables Simplified representation of callables
+     * @return callable[] Array of valid PHP callables
+     */
+    protected function toCallables($callables)
+    {
+        // simple cast to an array would not work in case of [$object, 'method']
+        if (is_callable($callables)) {
+            $result = [$callables];
+        } else {
+            $result = (array)$callables;
+        }
+
+        foreach ($result as &$callable) {
+            if (is_string($callable) && !is_callable($callable)) {
+                $callable = [$this, $callable];
+            }
+        }
+
+        return $result;
+    }
 }

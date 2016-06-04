@@ -14,8 +14,34 @@
 
 namespace Cake\Test\TestCase\Event;
 
+use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
+
+class TestEventDispatcherObject
+{
+    use EventDispatcherTrait;
+
+    /**
+     * @var bool
+     */
+    public $handlerCalled = false;
+
+    public function trueCondition()
+    {
+        return true;
+    }
+
+    public function falseCondition()
+    {
+        return false;
+    }
+    
+    public function handler()
+    {
+        $this->handlerCalled = true;
+    }
+}
 
 /**
  * EventDispatcherTrait test case
@@ -23,6 +49,10 @@ use Cake\TestSuite\TestCase;
  */
 class EventDispatcherTraitTest extends TestCase
 {
+    /**
+     * @var TestEventDispatcherObject
+     */
+    private $subject;
 
     /**
      * setup
@@ -33,7 +63,7 @@ class EventDispatcherTraitTest extends TestCase
     {
         parent::setUp();
 
-        $this->subject = $this->getObjectForTrait('Cake\Event\EventDispatcherTrait');
+        $this->subject = new TestEventDispatcherObject();
     }
 
     /**
@@ -74,5 +104,35 @@ class EventDispatcherTraitTest extends TestCase
         $this->assertSame($this->subject, $event->subject);
         $this->assertEquals('some.event', $event->name);
         $this->assertEquals(['foo' => 'bar'], $event->data);
+    }
+
+    public static function onProvider()
+    {
+        return [
+            [[], true],
+            [['if' => 'trueCondition'], true],
+            [['if' => 'falseCondition'], false],
+            [['unless' => 'trueCondition'], false],
+            [['unless' => 'falseCondition'], true],
+            [['if' => ['trueCondition', 'trueCondition']], true],
+            [['if' => ['trueCondition', 'falseCondition']], false],
+            [['unless' => ['trueCondition', 'trueCondition']], false],
+            [['unless' => ['trueCondition', 'falseCondition']], true],
+        ];
+    }
+
+    /**
+     * Test that simplified callables work correctly.
+     *
+     * @param array $options
+     * @param bool $expected
+     * @dataProvider onProvider
+     */
+    public function testOn($options, $expected)
+    {
+        $this->subject->on('some.event', 'handler', $options);
+        $this->subject->dispatchEvent('some.event');
+
+        $this->assertEquals($expected, $this->subject->handlerCalled);
     }
 }

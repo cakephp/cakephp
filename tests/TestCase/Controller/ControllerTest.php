@@ -92,13 +92,23 @@ class TestController extends ControllerTestAppController
     public $modelClass = 'Comments';
 
     /**
+     * @var bool
+     */
+    public $beforeActionCalled = false;
+
+    /**
      * beforeFilter handler
      *
      * @param \Cake\Event\Event $event
-     * @retun void
+     * @return void
      */
     public function beforeFilter(Event $event)
     {
+    }
+
+    public function beforeAction(Event $event)
+    {
+        $this->beforeActionCalled = true;
     }
 
     /**
@@ -1005,5 +1015,51 @@ class ControllerTest extends TestCase
         $controller->render('index');
 
         $this->assertArrayHasKey('testVariable', $controller->View->viewVars);
+    }
+
+    public static function addBeforeActionProvider()
+    {
+        return [
+            [[], true],
+            [['only' => 'index'], true],
+            [['except' => 'view'], true],
+            [['only' => 'view'], false],
+            [['except' => 'index'], false],
+            [['only' => ['index', 'view']], true],
+            [['except' => ['index', 'view']], false],
+        ];
+    }
+
+    /**
+     * Test that before action callbacks work correctly.
+     *
+     * @param array $options
+     * @param bool $expected
+     * @param string $actionMethod
+     * @dataProvider addBeforeActionProvider
+     */
+    public function testAddBeforeAction($options, $expected, $actionMethod = 'addBeforeAction')
+    {
+        $request = new Request('test/index');
+        $request->addParams(['controller' => 'Test', 'action' => 'index', 'pass' => [1, 1]]);
+        $response = $this->getMock('Cake\Network\Response');
+
+        $controller = new TestController($request, $response);
+        $controller->$actionMethod('beforeAction', $options);
+        $controller->startupProcess();
+        $controller->shutdownProcess();
+        $this->assertEquals($expected, $controller->beforeActionCalled);
+    }
+
+    /**
+     * Test that after action callbacks work properly.
+     *
+     * @param array $options
+     * @param bool $expected
+     * @dataProvider addBeforeActionProvider
+     */
+    public function testAddAfterAction($options, $expected)
+    {
+        $this->testAddBeforeAction($options, $expected, 'addAfterAction');
     }
 }

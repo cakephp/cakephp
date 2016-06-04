@@ -147,6 +147,14 @@ class EventManager
      * $eventManager->on('Model.beforeSave', ['priority' => 90], $callable);
      * ```
      *
+     * Binding with conditions:
+     *
+     * ```
+     * $eventManager->on('Controller.startup', ['if' => function () use ($entity) {
+     *     return $entity->shouldRedirect();
+     * }], $redirect);
+     * ```
+     *
      * @param string|\Cake\Event\EventListenerInterface|null $eventKey The event unique identifier name
      * with which the callback will be associated. If $eventKey is an instance of
      * Cake\Event\EventListenerInterface its events will be bound using the `implementedEvents` methods.
@@ -154,7 +162,8 @@ class EventManager
      * @param array|callable $options Either an array of options or the callable you wish to
      * bind to $eventKey. If an array of options, the `priority` key can be used to define the order.
      * Priorities are treated as queues. Lower values are called before higher ones, and multiple attachments
-     * added to the same priority queue will be treated in the order of insertion.
+     * added to the same priority queue will be treated in the order of insertion. `if` and `unless` keys
+     * can be used to add a conditional listener which only gets executed if conditions pass.
      *
      * @param callable|null $callable The callable function you want invoked.
      *
@@ -177,6 +186,9 @@ class EventManager
         }
         if ($argCount === 3) {
             $priority = isset($options['priority']) ? $options['priority'] : static::$defaultPriority;
+            if (isset($options['if']) || isset($options['unless'])) {
+                $callable = new ConditionalCallable($callable, $options);
+            }
             $this->_listeners[$eventKey][$priority][] = [
                 'callable' => $callable
             ];
