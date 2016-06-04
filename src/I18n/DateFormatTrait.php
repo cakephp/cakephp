@@ -16,10 +16,10 @@ namespace Cake\I18n;
 
 use Cake\Chronos\Date as ChronosDate;
 use Cake\Chronos\MutableDate;
+use DateTimeZone;
 use IntlDateFormatter;
-use \DateTimeZone;
-use \InvalidArgumentException;
-use \RuntimeException;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Trait for date formatting methods shared by both Time & Date.
@@ -71,7 +71,7 @@ trait DateFormatTrait
     /**
      * Caches whether or not this class is a subclass of a Date or MutableDate
      *
-     * @var boolean
+     * @var bool
      */
     protected static $_isDateInstance;
 
@@ -84,7 +84,7 @@ trait DateFormatTrait
     public static function getDefaultOutputTimezone()
     {
         if (is_subclass_of(static::class, ChronosDate::class) || is_subclass_of(static::class, MutableDate::class)) {
-            throw new \RuntimeException('Timezone conversion is not supported by Date/FrozenDate.');
+            throw new RuntimeException('Timezone conversion is not supported by Date/FrozenDate.');
         }
         return static::$_defaultOutputTimezone;
     }
@@ -101,14 +101,14 @@ trait DateFormatTrait
     public static function setDefaultOutputTimezone($timezone)
     {
         if (is_subclass_of(static::class, ChronosDate::class) || is_subclass_of(static::class, MutableDate::class)) {
-            throw new \RuntimeException('Timezone conversion is not supported by Date/FrozenDate.');
+            throw new RuntimeException('Timezone conversion is not supported by Date/FrozenDate.');
         }
         if (is_string($timezone)) {
-            static::$_defaultOutputTimezone = new \DateTimeZone($timezone);
-        } elseif ($timezone instanceof \DateTimeZone) {
+            static::$_defaultOutputTimezone = new DateTimeZone($timezone);
+        } elseif ($timezone instanceof DateTimeZone) {
             static::$_defaultOutputTimezone = $timezone;
         } else {
-            throw new \InvalidArgumentException('Expected valid DateTimeZone string or \DateTimeZone object.');
+            throw new InvalidArgumentException('Expected valid DateTimeZone string or \DateTimeZone object.');
         }
     }
 
