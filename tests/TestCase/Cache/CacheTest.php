@@ -244,7 +244,9 @@ class CacheTest extends TestCase
      */
     public function testConfigInvalidObject()
     {
-        $this->getMock('\StdClass', [], [], 'RubbishEngine');
+        $this->getMockBuilder(\StdClass::class)
+            ->setMockClassName('RubbishEngine')
+            ->getMock();
         Cache::config('test', [
             'engine' => '\RubbishEngine'
         ]);
