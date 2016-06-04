@@ -73,7 +73,9 @@ class PaginatorComponentTest extends TestCase
         $registry = new ComponentRegistry($controller);
         $this->Paginator = new PaginatorComponent($registry, []);
 
-        $this->Post = $this->getMock('Cake\ORM\Table', [], [], '', false);
+        $this->Post = $this->getMockBuilder('Cake\ORM\Table')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
@@ -1019,14 +1021,13 @@ class PaginatorComponentTest extends TestCase
      * Helper method for making mocks.
      *
      * @param array $methods
-     * @return Table
+     * @return \Cake\ORM\Table
      */
     protected function _getMockPosts($methods = [])
     {
-        return $this->getMock(
-            'TestApp\Model\Table\PaginatorPostsTable',
-            $methods,
-            [[
+        return $this->getMockBuilder('TestApp\Model\Table\PaginatorPostsTable')
+            ->setMethods($methods)
+            ->setConstructorArgs([[
                 'connection' => ConnectionManager::get('test'),
                 'alias' => 'PaginatorPosts',
                 'schema' => [
@@ -1037,14 +1038,14 @@ class PaginatorComponentTest extends TestCase
                     'published' => ['type' => 'string', 'length' => 1, 'default' => 'N'],
                     '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
                 ]
-            ]]
-        );
+            ]])
+            ->getMock();
     }
 
     /**
      * Helper method for mocking queries.
      *
-     * @return Query
+     * @return \Cake\ORM\Query
      */
     protected function _getMockFindQuery($table = null)
     {
@@ -1053,7 +1054,9 @@ class PaginatorComponentTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $results = $this->getMock('Cake\ORM\ResultSet', [], [], '', false);
+        $results = $this->getMockBuilder('Cake\ORM\ResultSet')
+            ->disableOriginalConstructor()
+            ->getMock();
         $query->expects($this->any())
             ->method('count')
             ->will($this->returnValue(2));
