@@ -57,7 +57,6 @@ abstract class AbstractDecorator
     /**
      * Calls the decorated callable with the passed arguments.
      *
-     * @param callable $callable The callable.
      * @param array $args Arguments for the callable.
      * @return mixed
      */
