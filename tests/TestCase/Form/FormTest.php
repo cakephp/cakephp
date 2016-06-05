@@ -122,7 +122,9 @@ class FormTest extends TestCase
      */
     public function testExecuteInvalid()
     {
-        $form = $this->getMock('Cake\Form\Form', ['_execute']);
+        $form = $this->getMockBuilder('Cake\Form\Form')
+            ->setMethods(['_execute'])
+            ->getMock();
         $form->validator()
             ->add('email', 'format', ['rule' => 'email']);
         $data = [
@@ -141,7 +143,9 @@ class FormTest extends TestCase
      */
     public function testExecuteValid()
     {
-        $form = $this->getMock('Cake\Form\Form', ['_execute']);
+        $form = $this->getMockBuilder('Cake\Form\Form')
+            ->setMethods(['_execute'])
+            ->getMock();
         $form->validator()
             ->add('email', 'format', ['rule' => 'email']);
         $data = [
