@@ -192,7 +192,7 @@ class MysqlSchemaTest extends TestCase
             'comment' => 'Comment section',
         ];
 
-        $driver = $this->getMock('Cake\Database\Driver\Mysql');
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')->getMock();
         $dialect = new MysqlSchema($driver);
 
         $table = $this->getMock('Cake\Database\Schema\Table', [], ['table']);
@@ -1078,7 +1078,7 @@ SQL;
      */
     public function testConstructConnectsDriver()
     {
-        $driver = $this->getMock('Cake\Database\Driver');
+        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $driver->expects($this->once())
             ->method('connect');
         $schema = new MysqlSchema($driver);

@@ -49,7 +49,7 @@ class ConnectionTest extends TestCase
      */
     public function getMockFormDriver()
     {
-        $driver = $this->getMock('Cake\Database\Driver');
+        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $driver->expects($this->once())
             ->method('enabled')
             ->will($this->returnValue(true));
@@ -816,7 +816,7 @@ class ConnectionTest extends TestCase
      */
     public function testLogFunction()
     {
-        $logger = $this->getMock('\Cake\Database\Log\QueryLogger');
+        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
         $this->connection->logger($logger);
         $logger->expects($this->once())->method('log')
             ->with($this->logicalAnd(
@@ -843,7 +843,7 @@ class ConnectionTest extends TestCase
         $driver = $this->getMockFormDriver();
         $connection->driver($driver);
 
-        $logger = $this->getMock('\Cake\Database\Log\QueryLogger');
+        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
         $connection->logger($logger);
         $logger->expects($this->at(0))->method('log')
             ->with($this->logicalAnd(
@@ -875,7 +875,7 @@ class ConnectionTest extends TestCase
             [['driver' => $driver]]
         );
 
-        $logger = $this->getMock('\Cake\Database\Log\QueryLogger');
+        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
         $connection->logger($logger);
 
         $logger->expects($this->at(1))->method('log')

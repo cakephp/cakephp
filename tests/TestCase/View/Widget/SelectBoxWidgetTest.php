@@ -39,7 +39,7 @@ class SelectBoxWidgetTest extends TestCase
             'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
             'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
         ];
-        $this->context = $this->getMock('Cake\View\Form\ContextInterface');
+        $this->context = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
         $this->templates = new StringTemplate($templates);
     }
 

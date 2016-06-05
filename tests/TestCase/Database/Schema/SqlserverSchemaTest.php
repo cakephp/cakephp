@@ -245,7 +245,7 @@ SQL;
             'default' => 'Default value',
         ];
 
-        $driver = $this->getMock('Cake\Database\Driver\Sqlserver');
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')->getMock();
         $dialect = new SqlserverSchema($driver);
 
         $table = $this->getMock('Cake\Database\Schema\Table', [], ['table']);

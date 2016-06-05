@@ -149,7 +149,7 @@ class SqliteSchemaTest extends TestCase
             'default' => 'Default value',
         ];
 
-        $driver = $this->getMock('Cake\Database\Driver\Sqlite');
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')->getMock();
         $dialect = new SqliteSchema($driver);
 
         $table = $this->getMock('Cake\Database\Schema\Table', [], ['table']);
@@ -166,7 +166,7 @@ class SqliteSchemaTest extends TestCase
      */
     public function testConvertCompositePrimaryKey()
     {
-        $driver = $this->getMock('Cake\Database\Driver\Sqlite');
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')->getMock();
         $dialect = new SqliteSchema($driver);
 
         $field1 = [

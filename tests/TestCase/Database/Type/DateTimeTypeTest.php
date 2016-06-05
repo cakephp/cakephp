@@ -40,7 +40,7 @@ class DateTimeTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new DateTimeType();
-        $this->driver = $this->getMock('Cake\Database\Driver');
+        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
     }
 
     /**

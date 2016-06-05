@@ -60,7 +60,7 @@ class TableRegistryTest extends TestCase
      */
     protected function _setMockLocator()
     {
-        $locator = $this->getMock('Cake\ORM\Locator\LocatorInterface');
+        $locator = $this->getMockBuilder('Cake\ORM\Locator\LocatorInterface')->getMock();
         TableRegistry::locator($locator);
 
         return $locator;
@@ -124,7 +124,7 @@ class TableRegistryTest extends TestCase
      */
     public function testSet()
     {
-        $table = $this->getMock('Cake\ORM\Table');
+        $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
 
         $locator = $this->_setMockLocator();
         $locator->expects($this->once())->method('set')->with('Test', $table);

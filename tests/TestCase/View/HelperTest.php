@@ -137,7 +137,7 @@ class HelperTest extends TestCase
     {
         Plugin::loadAll();
 
-        $events = $this->getMock('\Cake\Event\EventManager');
+        $events = $this->getMockBuilder('\Cake\Event\EventManager')->getMock();
         $this->View->eventManager($events);
 
         $events->expects($this->never())
