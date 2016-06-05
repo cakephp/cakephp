@@ -368,8 +368,10 @@ class EventManagerTest extends TestCase
     public function testDispatch()
     {
         $manager = new EventManager();
-        $listener = $this->getMock(__NAMESPACE__ . '\EventTestListener');
-        $anotherListener = $this->getMock(__NAMESPACE__ . '\EventTestListener');
+        $listener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
+            ->getMock();
+        $anotherListener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
+            ->getMock();
         $manager->attach([$listener, 'listenerFunction'], 'fake.event');
         $manager->attach([$anotherListener, 'listenerFunction'], 'fake.event');
         $event = new Event('fake.event');
@@ -409,8 +411,10 @@ class EventManagerTest extends TestCase
             'These tests fail in PHPUnit 3.6'
         );
         $manager = new EventManager;
-        $listener = $this->getMock(__NAMESPACE__ . '\EventTestListener');
-        $anotherListener = $this->getMock(__NAMESPACE__ . '\EventTestListener');
+        $listener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
+            ->getMock();
+        $anotherListener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
+            ->getMock();
         $manager->attach([$listener, 'listenerFunction'], 'fake.event');
         $manager->attach([$anotherListener, 'listenerFunction'], 'fake.event');
         $event = new Event('fake.event');
@@ -439,8 +443,10 @@ class EventManagerTest extends TestCase
         );
 
         $manager = new EventManager();
-        $listener = $this->getMock(__NAMESPACE__ . '\EventTestListener');
-        $anotherListener = $this->getMock(__NAMESPACE__ . '\EventTestListener');
+        $listener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
+            ->getMock();
+        $anotherListener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
+            ->getMock();
         $manager->attach([$listener, 'listenerFunction'], 'fake.event');
         $manager->attach([$anotherListener, 'listenerFunction'], 'fake.event');
         $event = new Event('fake.event');
@@ -483,7 +489,9 @@ class EventManagerTest extends TestCase
     public function testAttachSubscriber()
     {
         $manager = new EventManager();
-        $listener = $this->getMock(__NAMESPACE__ . '\CustomTestEventListenerInterface', ['secondListenerFunction']);
+        $listener = $this->getMockBuilder(__NAMESPACE__ . '\CustomTestEventListenerInterface')
+            ->setMethods(['secondListenerFunction'])
+            ->getMock();
         $manager->attach($listener);
 
         $event = new Event('fake.event');
@@ -508,7 +516,9 @@ class EventManagerTest extends TestCase
     public function testAttachSubscriberMultiple()
     {
         $manager = new EventManager();
-        $listener = $this->getMock(__NAMESPACE__ . '\CustomTestEventListenerInterface', ['listenerFunction', 'thirdListenerFunction']);
+        $listener = $this->getMockBuilder(__NAMESPACE__ . '\CustomTestEventListenerInterface')
+            ->setMethods(['listenerFunction', 'thirdListenerFunction'])
+            ->getMock();
         $manager->attach($listener);
         $event = new Event('multiple.handlers');
         $listener->expects($this->once())
@@ -528,7 +538,9 @@ class EventManagerTest extends TestCase
     public function testDetachSubscriber()
     {
         $manager = new EventManager();
-        $listener = $this->getMock(__NAMESPACE__ . '\CustomTestEventListenerInterface', ['secondListenerFunction']);
+        $listener = $this->getMockBuilder(__NAMESPACE__ . '\CustomTestEventListenerInterface')
+            ->setMethods(['secondListenerFunction'])
+            ->getMock();
         $manager->attach($listener);
         $expected = [
             ['callable' => [$listener, 'secondListenerFunction']]
@@ -565,7 +577,9 @@ class EventManagerTest extends TestCase
      */
     public function testDispatchWithGlobal()
     {
-        $generalManager = $this->getMock('Cake\Event\EventManager', ['prioritisedListeners']);
+        $generalManager = $this->getMockBuilder('Cake\Event\EventManager')
+            ->setMethods(['prioritisedListeners'])
+            ->getMock();
         $manager = new EventManager();
         $event = new Event('fake.event');
         EventManager::instance($generalManager);
