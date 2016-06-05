@@ -1025,10 +1025,12 @@ class TimeTest extends TestCase
     {
         $expected = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA', 'à '], '', $expected);
         $expected = str_replace(['  '], ' ', $expected);
+        $expected = str_replace("d’été", 'avancée', $expected);
 
         $result = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA', 'à '], '', $result);
         $result = str_replace(['گرینویچ'], 'GMT', $result);
         $result = str_replace(['  '], ' ', $result);
+        $expected = str_replace("d’été", 'avancée', $result);
 
         return $this->assertSame($expected, $result, $message);
     }
