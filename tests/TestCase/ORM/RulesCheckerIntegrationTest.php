@@ -389,10 +389,13 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = TableRegistry::get('SpecialTags');
         $rules = $table->rulesChecker();
-        $rules->add($rules->isUnique(['author_id']), ['allowMultipleNulls' => false]);
+        $rules->add($rules->isUnique(['author_id'], [
+            'allowMultipleNulls' => false,
+            'message' => 'All fields are required'
+        ]));
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['_isUnique' => 'This value is already in use'], $entity->errors('author_id'));
+        $this->assertEquals(['_isUnique' => 'All fields are required'], $entity->errors('author_id'));
 
         $entity->author_id = 11;
         $this->assertSame($entity, $table->save($entity));
@@ -418,7 +421,10 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = TableRegistry::get('SpecialTags');
         $rules = $table->rulesChecker();
-        $rules->add($rules->isUnique(['author_id', 'article_id'], 'Nope'), ['allowMultipleNulls' => false]);
+        $rules->add($rules->isUnique(['author_id', 'article_id'], [
+            'allowMultipleNulls' => false,
+            'message' => 'Nope'
+        ]));
 
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['author_id' => ['_isUnique' => 'Nope']], $entity->errors());
