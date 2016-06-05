@@ -179,7 +179,9 @@ class DispatcherFilterTest extends TestCase
         $beforeEvent = new Event('Dispatcher.beforeDispatch', $this, compact('response', 'request'));
         $afterEvent = new Event('Dispatcher.afterDispatch', $this, compact('response', 'request'));
 
-        $filter = $this->getMock('Cake\Routing\DispatcherFilter', ['beforeDispatch', 'afterDispatch']);
+        $filter = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
+            ->setMethods(['beforeDispatch', 'afterDispatch'])
+            ->getMock();
         $filter->expects($this->at(0))
             ->method('beforeDispatch')
             ->with($beforeEvent);
@@ -204,11 +206,10 @@ class DispatcherFilterTest extends TestCase
 
         $event = new Event('Dispatcher.beforeDispatch', $this, compact('response', 'request'));
 
-        $filter = $this->getMock(
-            'Cake\Routing\DispatcherFilter',
-            ['beforeDispatch'],
-            [['for' => '/admin']]
-        );
+        $filter = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
+            ->setMethods(['beforeDispatch'])
+            ->setConstructorArgs([['for' => '/admin']])
+            ->getMock();
         $filter->expects($this->never())
             ->method('beforeDispatch');
 
@@ -231,11 +232,10 @@ class DispatcherFilterTest extends TestCase
             return false;
         };
 
-        $filter = $this->getMock(
-            'Cake\Routing\DispatcherFilter',
-            ['beforeDispatch'],
-            [['when' => $matcher]]
-        );
+        $filter = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
+            ->setMethods(['beforeDispatch'])
+            ->setConstructorArgs([['when' => $matcher]])
+            ->getMock();
         $filter->expects($this->never())
             ->method('beforeDispatch');
 

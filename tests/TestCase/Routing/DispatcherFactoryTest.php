@@ -41,7 +41,9 @@ class DispatcherFactoryTest extends TestCase
      */
     public function testAddFilter()
     {
-        $mw = $this->getMock('Cake\Routing\DispatcherFilter', ['beforeDispatch']);
+        $mw = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
+            ->setMethods(['beforeDispatch'])
+            ->getMock();
         $result = DispatcherFactory::add($mw);
         $this->assertSame($mw, $result);
     }
@@ -89,7 +91,9 @@ class DispatcherFactoryTest extends TestCase
      */
     public function testCreate()
     {
-        $mw = $this->getMock('Cake\Routing\DispatcherFilter', ['beforeDispatch']);
+        $mw = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
+            ->setMethods(['beforeDispatch'])
+            ->getMock();
         DispatcherFactory::add($mw);
         $result = DispatcherFactory::create();
         $this->assertInstanceOf('Cake\Routing\Dispatcher', $result);
