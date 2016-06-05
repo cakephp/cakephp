@@ -387,7 +387,9 @@ TEXT;
      */
     public function testLog()
     {
-        $mock = $this->getMock('Cake\Log\Engine\BaseLog', ['log']);
+        $mock = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
+            ->setMethods(['log'])
+            ->getMock();
         Log::config('test', ['engine' => $mock]);
 
         $mock->expects($this->at(0))
@@ -419,7 +421,9 @@ TEXT;
      */
     public function testLogDepth()
     {
-        $mock = $this->getMock('Cake\Log\Engine\BaseLog', ['log']);
+        $mock = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
+            ->setMethods(['log'])
+            ->getMock();
         Log::config('test', ['engine' => $mock]);
 
         $mock->expects($this->at(0))
