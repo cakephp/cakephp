@@ -33,7 +33,9 @@ class MailTransportTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->MailTransport = $this->getMock('Cake\Mailer\Transport\MailTransport', ['_mail']);
+        $this->MailTransport = $this->getMockBuilder('Cake\Mailer\Transport\MailTransport')
+            ->setMethods(['_mail'])
+            ->getMock();
         $this->MailTransport->config(['additionalParameters' => '-f']);
     }
 
@@ -44,7 +46,9 @@ class MailTransportTest extends TestCase
      */
     public function testSendData()
     {
-        $email = $this->getMock('Cake\Mailer\Email', ['message'], []);
+        $email = $this->getMockBuilder('Cake\Mailer\Email')
+            ->setMethods(['message'])
+            ->getMock();
         $email->from('noreply@cakephp.org', 'CakePHP Test');
         $email->returnPath('pleasereply@cakephp.org', 'CakePHP Return');
         $email->to('cake@cakephp.org', 'CakePHP');
