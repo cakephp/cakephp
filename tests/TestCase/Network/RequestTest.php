@@ -2314,7 +2314,9 @@ class RequestTest extends TestCase
      */
     public function testInput()
     {
-        $request = $this->getMock('Cake\Network\Request', ['_readInput']);
+        $request = $this->getMockBuilder('Cake\Network\Request')
+            ->setMethods(['_readInput'])
+            ->getMock();
         $request->expects($this->once())->method('_readInput')
             ->will($this->returnValue('I came from stdin'));
 
@@ -2329,7 +2331,9 @@ class RequestTest extends TestCase
      */
     public function testInputDecode()
     {
-        $request = $this->getMock('Cake\Network\Request', ['_readInput']);
+        $request = $this->getMockBuilder('Cake\Network\Request')
+            ->setMethods(['_readInput'])
+            ->getMock();
         $request->expects($this->once())->method('_readInput')
             ->will($this->returnValue('{"name":"value"}'));
 
@@ -2351,7 +2355,9 @@ class RequestTest extends TestCase
 </post>
 XML;
 
-        $request = $this->getMock('Cake\Network\Request', ['_readInput']);
+        $request = $this->getMockBuilder('Cake\Network\Request')
+            ->setMethods(['_readInput'])
+            ->getMock();
         $request->expects($this->once())->method('_readInput')
             ->will($this->returnValue($xml));
 
