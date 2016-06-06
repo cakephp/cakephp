@@ -386,7 +386,7 @@ class PaginatorComponent extends Component
         if (empty($options['limit']) || $options['limit'] < 1) {
             $options['limit'] = 1;
         }
-        $options['limit'] = min($options['limit'], $options['maxLimit']);
+        $options['limit'] = max(min($options['limit'], $options['maxLimit']), 1);
         return $options;
     }
 }
