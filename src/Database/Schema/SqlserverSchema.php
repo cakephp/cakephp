@@ -57,7 +57,7 @@ class SqlserverSchema extends BaseSchema
             INNER JOIN sys.[types] TY ON TY.[user_type_id] = AC.[user_type_id]
             WHERE T.[name] = ? AND S.[name] = ?
             ORDER BY column_id";
-        
+
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
         return [$sql, [$tableName, $schema]];
     }
