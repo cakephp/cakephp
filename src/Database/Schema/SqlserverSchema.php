@@ -27,11 +27,15 @@ class SqlserverSchema extends BaseSchema
      */
     public function listTablesSql($config)
     {
-    $sql = "SELECT TABLE_NAME
-            FROM INFORMATION_SCHEMA.TABLES
-            WHERE TABLE_SCHEMA = ?
-            AND (TABLE_TYPE = 'BASE TABLE' OR TABLE_TYPE = 'VIEW') 
-            ORDER BY TABLE_NAME, TABLE_TYPE";
+        $sql = "SELECT TABLE_NAME
+                FROM INFORMATION_SCHEMA.TABLES
+                WHERE TABLE_SCHEMA = 'dbo'
+                    AND TABLE_TYPE = 'BASE TABLE'
+                UNION
+                SELECT TABLE_NAME
+                FROM INFORMATION_SCHEMA.VIEWS
+                WHERE TABLE_SCHEMA = 'dbo'
+                ORDER BY TABLE_NAME";
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
         return [$sql, [$schema]];
     }
@@ -41,7 +45,7 @@ class SqlserverSchema extends BaseSchema
      */
     public function describeColumnSql($tableName, $config)
     {
-             $sql = "SELECT DISTINCT
+        $sql = "SELECT DISTINCT
             AC.column_id AS [column_id],
             AC.name AS [name],
             TY.name AS [type],
@@ -55,9 +59,23 @@ class SqlserverSchema extends BaseSchema
             INNER JOIN sys.[schemas] S ON S.[schema_id] = T.[schema_id]
             INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id]
             INNER JOIN sys.[types] TY ON TY.[user_type_id] = AC.[user_type_id]
-            WHERE T.[name] = ? AND S.[name] = ?
-            ORDER BY AC.column_id";
-
+            WHERE T.[name] = ? AND S.[name] = 'dbo'
+            UNION
+            SELECT DISTINCT
+            AC.column_id AS [column_id],
+            AC.name AS [name],
+            TY.name AS [type],
+            AC.max_length AS [char_length],
+            AC.precision AS [precision],
+            AC.scale AS [scale],
+            AC.is_identity AS [autoincrement],
+            AC.is_nullable AS [null],
+            OBJECT_DEFINITION(AC.default_object_id) AS [default]
+            FROM sys.[objects] T
+            INNER JOIN sys.[schemas] S ON S.[schema_id] = T.[schema_id]
+            INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id]
+            INNER JOIN sys.[types] TY ON TY.[user_type_id] = AC.[user_type_id]
+            WHERE T.[name] = ? AND S.[name] = 'dbo'";
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
         return [$sql, [$tableName, $schema]];
