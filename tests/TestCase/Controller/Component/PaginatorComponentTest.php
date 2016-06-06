@@ -753,27 +753,58 @@ class PaginatorComponentTest extends TestCase
         $this->assertEquals([], $result['order']);
     }
 
+    public function checkLimitProvider()
+    {
+        return [
+            'out of bounds' => [
+                ['limit' => 1000000, 'maxLimit' => 100],
+                100,
+            ],
+            'limit is nan' => [
+                ['limit' => 'sheep!', 'maxLimit' => 100],
+                1,
+            ],
+            'negative limit' => [
+                ['limit' => '-1', 'maxLimit' => 100],
+                1,
+            ],
+            'unset limit' => [
+                ['limit' => null, 'maxLimit' => 100],
+                1,
+            ],
+            'limit = 0' => [
+                ['limit' => 0, 'maxLimit' => 100],
+                1,
+            ],
+            'limit = 0' => [
+                ['limit' => 0, 'maxLimit' => 0],
+                1,
+            ],
+            'limit = null' => [
+                ['limit' => null, 'maxLimit' => 0],
+                1,
+            ],
+            'bad input, results in 1' => [
+                ['limit' => null, 'maxLimit' => null],
+                1,
+            ],
+            'bad input, results in 1' => [
+                ['limit' => false, 'maxLimit' => false],
+                1,
+            ],
+        ];
+    }
+
     /**
      * test that maxLimit is respected
      *
+     * @dataProvider checkLimitProvider
      * @return void
      */
-    public function testCheckLimit()
+    public function testCheckLimit($input, $expected)
     {
-        $result = $this->Paginator->checkLimit(['limit' => 1000000, 'maxLimit' => 100]);
-        $this->assertEquals(100, $result['limit']);
-
-        $result = $this->Paginator->checkLimit(['limit' => 'sheep!', 'maxLimit' => 100]);
-        $this->assertEquals(1, $result['limit']);
-
-        $result = $this->Paginator->checkLimit(['limit' => '-1', 'maxLimit' => 100]);
-        $this->assertEquals(1, $result['limit']);
-
-        $result = $this->Paginator->checkLimit(['limit' => null, 'maxLimit' => 100]);
-        $this->assertEquals(1, $result['limit']);
-
-        $result = $this->Paginator->checkLimit(['limit' => 0, 'maxLimit' => 100]);
-        $this->assertEquals(1, $result['limit']);
+        $result = $this->Paginator->checkLimit($input);
+        $this->assertSame($expected, $result['limit']);
     }
 
     /**
