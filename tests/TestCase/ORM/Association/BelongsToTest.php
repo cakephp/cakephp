@@ -19,8 +19,6 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
-use Cake\ORM\Query;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -70,6 +68,8 @@ class BelongsToTest extends TestCase
             'id' => 'integer',
             'Companies.company_name' => 'string',
             'company_name' => 'string',
+            'Companies__id' => 'integer',
+            'Companies__company_name' => 'string'
         ]);
     }
 
@@ -168,6 +168,12 @@ class BelongsToTest extends TestCase
             ]
         ];
         $this->assertEquals($expected, $query->clause('join'));
+
+        $this->assertEquals(
+            'integer',
+            $query->typeMap()->type('Companies__id'),
+            'Associations should map types.'
+        );
     }
 
     /**
@@ -281,7 +287,7 @@ class BelongsToTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities()
     {
-        $mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+        $mock = $this->getMock('Cake\ORM\Table', ['saveAssociated'], [], '', false);
         $config = [
             'sourceTable' => $this->client,
             'targetTable' => $mock,

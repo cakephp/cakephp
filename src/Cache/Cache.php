@@ -117,7 +117,7 @@ class Cache
      * Returns the Cache Registry instance used for creating and using cache adapters.
      * Also allows for injecting of a new registry instance.
      *
-     * @param \Cake\Core\ObjectRegistry $registry Injectable registry object.
+     * @param \Cake\Core\ObjectRegistry|null $registry Injectable registry object.
      * @return \Cake\Core\ObjectRegistry
      */
     public static function registry(ObjectRegistry $registry = null)
@@ -125,7 +125,7 @@ class Cache
         if ($registry) {
             static::$_registry = $registry;
         }
-        
+
         if (empty(static::$_registry)) {
             static::$_registry = new CacheRegistry();
         }
@@ -445,6 +445,23 @@ class Cache
         $engine = static::engine($config);
         return $engine->clear($check);
     }
+    
+    /**
+     * Delete all keys from the cache from all configurations.
+     *
+     * @param bool $check if true will check expiration, otherwise delete all
+     * @return array Status code. For each configuration, it reports the status of the operation
+     */
+    public static function clearAll($check = false)
+    {
+        $status = [];
+        
+        foreach (self::configured() as $config) {
+            $status[$config] = self::clear($check, $config);
+        }
+        
+        return $status;
+    }
 
     /**
      * Delete all keys from the cache belonging to the same group.
@@ -571,7 +588,7 @@ class Cache
      *
      * ```
      * Cache::add('cached_data', $data);
-     * ````
+     * ```
      *
      * Writing to a specific cache config:
      *

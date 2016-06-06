@@ -146,7 +146,7 @@ class Route
      */
     public function compile()
     {
-        if (!empty($this->compiledRoute)) {
+        if ($this->_compiledRoute) {
             return $this->_compiledRoute;
         }
         $this->_writeRoute();
@@ -199,9 +199,13 @@ class Route
             $parsed = preg_replace('#/\\\\\*$#', '(?:/(?P<_args_>.*))?', $parsed);
             $this->_greedy = true;
         }
+        $mode = '';
+        if (!empty($this->options['multibytePattern'])) {
+            $mode = 'u';
+        }
         krsort($routeParams);
         $parsed = str_replace(array_keys($routeParams), array_values($routeParams), $parsed);
-        $this->_compiledRoute = '#^' . $parsed . '[/]*$#';
+        $this->_compiledRoute = '#^' . $parsed . '[/]*$#' . $mode;
         $this->keys = $names;
 
         // Remove defaults that are also keys. They can cause match failures
@@ -257,12 +261,10 @@ class Route
      * false will be returned. String URLs are parsed if they match a routes regular expression.
      *
      * @param string $url The URL to attempt to parse.
-     * @return array|false Boolean false on failure, otherwise an array of parameters.
+     * @return array|false An array of request parameters, or false on failure.
      */
     public function parse($url)
     {
-        $request = Router::getRequest(true) ?: Request::createFromGlobals();
-
         if (empty($this->_compiledRoute)) {
             $this->compile();
         }
@@ -273,6 +275,7 @@ class Route
         }
 
         if (isset($this->defaults['_method'])) {
+            $request = Router::getRequest(true) ?: Request::createFromGlobals();
             $method = $request->env('REQUEST_METHOD');
             if (!in_array($method, (array)$this->defaults['_method'], true)) {
                 return false;
@@ -406,7 +409,7 @@ class Route
      * @param array $context An array of the current request context.
      *   Contains information such as the current host, scheme, port, base
      *   directory and other url params.
-     * @return mixed Either a string url for the parameters if they match or false.
+     * @return string|false Either a string URL for the parameters if they match or false.
      */
     public function match(array $url, array $context = [])
     {
@@ -441,7 +444,9 @@ class Route
         if (!isset($hostOptions['_base']) && isset($context['_base'])) {
             $hostOptions['_base'] = $context['_base'];
         }
-        unset($url['_host'], $url['_scheme'], $url['_port'], $url['_base']);
+
+        $query = !empty($url['?']) ? (array)$url['?'] : [];
+        unset($url['_host'], $url['_scheme'], $url['_port'], $url['_base'], $url['?']);
 
         // Move extension into the hostOptions so its not part of
         // reverse matches.
@@ -484,8 +489,6 @@ class Route
         }
 
         $pass = [];
-        $query = [];
-
         foreach ($url as $key => $value) {
             // keys that exist in the defaults and have different values is a match failure.
             $defaultExists = array_key_exists($key, $defaults);
@@ -499,7 +502,8 @@ class Route
             $numeric = is_numeric($key);
             if ($numeric && isset($defaults[$key]) && $defaults[$key] == $value) {
                 continue;
-            } elseif ($numeric) {
+            }
+            if ($numeric) {
                 $pass[] = $value;
                 unset($url[$key]);
                 continue;
@@ -615,7 +619,7 @@ class Route
             $out .= '.' . $params['_ext'];
         }
         if (!empty($query)) {
-            $out .= '?' . http_build_query($query);
+            $out .= rtrim('?' . http_build_query($query), '?');
         }
         return $out;
     }

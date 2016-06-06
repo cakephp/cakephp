@@ -20,7 +20,6 @@ use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\EagerLoader;
 use Cake\ORM\Query;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -87,6 +86,9 @@ class EagerLoaderTest extends TestCase
             'name' => 'string',
             'clients.phone' => 'string',
             'phone' => 'string',
+            'clients__id' => 'integer',
+            'clients__name' => 'string',
+            'clients__phone' => 'string',
         ]);
         $this->ordersTypeMap = new TypeMap([
             'orders.id' => 'integer',
@@ -95,26 +97,34 @@ class EagerLoaderTest extends TestCase
             'total' => 'string',
             'orders.placed' => 'datetime',
             'placed' => 'datetime',
+            'orders__id' => 'integer',
+            'orders__total' => 'string',
+            'orders__placed' => 'datetime',
         ]);
         $this->orderTypesTypeMap = new TypeMap([
             'orderTypes.id' => 'integer',
             'id' => 'integer',
+            'orderTypes__id' => 'integer',
         ]);
         $this->stuffTypeMap = new TypeMap([
             'stuff.id' => 'integer',
             'id' => 'integer',
+            'stuff__id' => 'integer',
         ]);
         $this->stuffTypesTypeMap = new TypeMap([
             'stuffTypes.id' => 'integer',
             'id' => 'integer',
+            'stuffTypes__id' => 'integer',
         ]);
         $this->companiesTypeMap = new TypeMap([
             'companies.id' => 'integer',
             'id' => 'integer',
+            'companies__id' => 'integer',
         ]);
         $this->categoriesTypeMap = new TypeMap([
             'categories.id' => 'integer',
             'id' => 'integer',
+            'categories__id' => 'integer',
         ]);
     }
 
@@ -159,7 +169,7 @@ class EagerLoaderTest extends TestCase
                 'type' => 'LEFT',
                 'conditions' => new QueryExpression([
                     ['clients.id' => new IdentifierExpression('foo.client_id')],
-                ], $this->clientsTypeMap)
+                ], new TypeMap($this->clientsTypeMap->defaults()))
             ]])
             ->will($this->returnValue($query));
 
@@ -295,6 +305,31 @@ class EagerLoaderTest extends TestCase
             'clients' => ['queryBuilder' => $builder]
         ]);
         $this->assertEquals($expected, $loader->contain());
+    }
+
+    /**
+     * Tests that query builders are stacked
+     *
+     * @return void
+     */
+    public function testContainMergeBuilders()
+    {
+        $loader = new EagerLoader;
+        $loader->contain([
+            'clients' => function ($query) {
+                return $query->select(['a']);
+            }
+        ]);
+        $loader->contain([
+            'clients' => function ($query) {
+                return $query->select(['b']);
+            }
+        ]);
+        $builder = $loader->contain()['clients']['queryBuilder'];
+        $table = TableRegistry::get('foo');
+        $query = new Query($this->connection, $table);
+        $query = $builder($query);
+        $this->assertEquals(['a', 'b'], $query->clause('select'));
     }
 
     /**

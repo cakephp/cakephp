@@ -175,7 +175,7 @@ class Router
      * Gets the named route patterns for use in config/routes.php
      *
      * @return array Named route elements
-     * @see Router::$_namedExpressions
+     * @see \Cake\Routing\Router::$_namedExpressions
      */
     public static function getNamedExpressions()
     {
@@ -403,8 +403,8 @@ class Router
      * Pops a request off of the request stack.  Used when doing requestAction
      *
      * @return \Cake\Network\Request The request removed from the stack.
-     * @see Router::pushRequest()
-     * @see Object::requestAction()
+     * @see \Cake\Routing\Router::pushRequest()
+     * @see \Cake\Routing\RequestActionTrait::requestAction()
      */
     public static function popRequest()
     {
@@ -421,7 +421,7 @@ class Router
      * Get the current request object, or the first one.
      *
      * @param bool $current True to get the current request, or false to get the first one.
-     * @return \Cake\Network\Request|null.
+     * @return \Cake\Network\Request|null
      */
     public static function getRequest($current = false)
     {
@@ -491,8 +491,8 @@ class Router
      *
      * @param array $url The URL array being modified.
      * @return array The modified URL.
-     * @see Router::url()
-     * @see Router::addUrlFilter()
+     * @see \Cake\Routing\Router::url()
+     * @see \Cake\Routing\Router::addUrlFilter()
      */
     protected static function _applyUrlFilters($url)
     {
@@ -532,7 +532,7 @@ class Router
      * - `_name` - Name of route. If you have setup named routes you can use this key
      *   to specify it.
      *
-     * @param string|array $url An array specifying any of the following:
+     * @param string|array|null $url An array specifying any of the following:
      *   'controller', 'action', 'plugin' additionally, you can provide routed
      *   elements or query string parameters. If string it can be name any valid url
      *   string.
@@ -571,16 +571,11 @@ class Router
                 $output = static::fullBaseUrl() . $output;
             }
             return $output;
-        } elseif (is_array($url)) {
+        }
+        if (is_array($url)) {
             if (isset($url['_full']) && $url['_full'] === true) {
                 $full = true;
                 unset($url['_full']);
-            }
-            // Compatibility for older versions.
-            if (isset($url['?'])) {
-                $q = $url['?'];
-                unset($url['?']);
-                $url = array_merge($url, $q);
             }
             if (isset($url['#'])) {
                 $frag = '#' . $url['#'];
@@ -649,12 +644,12 @@ class Router
      *
      * ### Note:
      *
-     * If you change the configuration value ``App.fullBaseUrl`` during runtime
+     * If you change the configuration value `App.fullBaseUrl` during runtime
      * and expect the router to produce links using the new setting, you are
      * required to call this method passing such value again.
      *
      * @param string|null $base the prefix for URLs generated containing the domain.
-     * For example: ``http://example.com``
+     * For example: `http://example.com`
      * @return string
      */
     public static function fullBaseUrl($base = null)
@@ -765,7 +760,7 @@ class Router
      * A string or an array of valid extensions can be passed to this method.
      * If called without any parameters it will return current list of set extensions.
      *
-     * @param array|string $extensions List of extensions to be added.
+     * @param array|string|null $extensions List of extensions to be added.
      * @param bool $merge Whether to merge with or override existing extensions.
      *   Defaults to `true`.
      * @return array Array of extensions Router is configured to parse.
@@ -901,7 +896,7 @@ class Router
      * @param string $name The prefix name to use.
      * @param array|callable $params An array of routing defaults to add to each connected route.
      *   If you have no parameters, this argument can be a callable.
-     * @param callable $callback The callback to invoke that builds the prefixed routes.
+     * @param callable|null $callback The callback to invoke that builds the prefixed routes.
      * @return void
      */
     public static function prefix($name, $params = [], $callback = null)

@@ -53,7 +53,7 @@ class FlashComponent extends Component
     /**
      * Constructor
      *
-     * @param ComponentRegistry $registry A ComponentRegistry for this component
+     * @param \Cake\Controller\ComponentRegistry $registry A ComponentRegistry for this component
      * @param array $config Array of config.
      */
     public function __construct(ComponentRegistry $registry, array $config = [])

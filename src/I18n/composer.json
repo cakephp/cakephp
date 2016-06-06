@@ -17,11 +17,10 @@
     "require": {
         "cakephp/core": "~3.0",
         "ext-intl": "*",
-        "nesbot/Carbon": "1.13.*",
+        "cakephp/chronos": "*",
         "aura/intl": "1.1.*"
     },
     "suggest": {
         "cakephp/cache": "Require this if you want automatic caching of translators"
-    },
-    "minimum-stability": "dev"
+    }
 }

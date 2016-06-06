@@ -78,7 +78,7 @@ class BufferedStatement extends StatementDecorator
      * {@inheritDoc}
      *
      * @param string $type The type to fetch.
-     * @return mixed
+     * @return array|false
      */
     public function fetch($type = 'num')
     {
@@ -106,7 +106,7 @@ class BufferedStatement extends StatementDecorator
      * {@inheritDoc}
      *
      * @param string $type The type to fetch.
-     * @return mixed
+     * @return array
      */
     public function fetchAll($type = 'num')
     {

@@ -16,8 +16,6 @@ namespace Cake\Test\TestCase\Controller\Component;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\CookieComponent;
-use Cake\Controller\Controller;
-use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -294,7 +292,7 @@ class CookieComponentTest extends TestCase
         $this->Cookie->configKey('Testing', 'expires', '+90 years');
         $this->Cookie->write('Testing', 'value');
         $future = new Time('now');
-        $future->modify('+90 years');
+        $future = $future->modify('+90 years');
 
         $expected = [
             'name' => 'Testing',
@@ -362,6 +360,45 @@ class CookieComponentTest extends TestCase
 
         $result = $this->Controller->response->cookie('Closed');
         $this->assertContains('Q2FrZQ==.', $result['value']);
+    }
+
+    /**
+     * Test writing with a custom encryption key using ConfigKey
+     *
+     * @return void
+     */
+    public function testWriteConfigKeyWithCustomEncryptionKey()
+    {
+        $name = 'sampleCookieTest';
+        $value = 'some data';
+        $encryption = 'aes';
+        $prefix = "Q2FrZQ==.";
+        $key = 'justanotherencryptionkeyjustanotherencryptionkey';
+
+        $this->Cookie->configKey($name, compact('key', 'encryption'));
+        $this->Cookie->write($name, $value);
+
+        $cookie = $this->Controller->response->cookie($name);
+
+        $this->assertEquals($value, Security::decrypt(base64_decode(substr($cookie['value'], strlen($prefix))), $key));
+    }
+
+    /**
+     * Test reading with a custom encryption key using ConfigKey
+     *
+     * @return void
+     */
+    public function testReadConfigKeyWithCustomEncryptionKey()
+    {
+        $name = 'sampleCookieTest';
+        $value = 'some data';
+        $encryption = 'aes';
+        $key = 'justanotherencryptionkeyjustanotherencryptionkey';
+
+        $this->Cookie->configKey($name, compact('key', 'encryption'));
+        $this->Cookie->write($name, $value);
+
+        $this->assertEquals('some data', $this->Cookie->read($name));
     }
 
     /**

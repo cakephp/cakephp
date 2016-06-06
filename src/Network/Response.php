@@ -71,6 +71,7 @@ class Response
         415 => 'Unsupported Media Type',
         416 => 'Requested range not satisfiable',
         417 => 'Expectation Failed',
+        422 => 'Unprocessable Entity',
         429 => 'Too Many Requests',
         500 => 'Internal Server Error',
         501 => 'Not Implemented',
@@ -340,14 +341,14 @@ class Response
     /**
      * Buffer string or callable for response message
      *
-     * @var string
+     * @var string|callable
      */
     protected $_body = null;
 
     /**
      * File object for file to be read out as response
      *
-     * @var File
+     * @var \Cake\Filesystem\File
      */
     protected $_file = null;
 
@@ -797,7 +798,7 @@ class Response
      * e.g `mapType('application/pdf'); // returns 'pdf'`
      *
      * @param string|array $ctype Either a string content type to map, or an array of types.
-     * @return mixed Aliases for the types provided.
+     * @return string|array|null Aliases for the types provided.
      */
     public function mapType($ctype)
     {
@@ -1347,55 +1348,33 @@ class Response
      * cors($request, ['http://www.cakephp.org', '*.google.com', 'https://myproject.github.io']);
      * ```
      *
+     * *Note* The `$allowedDomains`, `$allowedMethods`, `$allowedHeaders` parameters are deprecated.
+     * Instead the builder object should be used.
+     *
      * @param \Cake\Network\Request $request Request object
      * @param string|array $allowedDomains List of allowed domains, see method description for more details
      * @param string|array $allowedMethods List of HTTP verbs allowed
      * @param string|array $allowedHeaders List of HTTP headers allowed
-     * @return void
+     * @return \Cake\Network\CorsBuilder A builder object the provides a fluent interface for defining
+     *   additional CORS headers.
      */
-    public function cors(Request $request, $allowedDomains, $allowedMethods = [], $allowedHeaders = [])
+    public function cors(Request $request, $allowedDomains = [], $allowedMethods = [], $allowedHeaders = [])
     {
         $origin = $request->header('Origin');
+        $ssl = $request->is('ssl');
+        $builder = new CorsBuilder($this, $origin, $ssl);
         if (!$origin) {
-            return;
+            return $builder;
+        }
+        if (empty($allowedDomains) && empty($allowedMethods) && empty($allowedHeaders)) {
+            return $builder;
         }
 
-        $allowedDomains = $this->_normalizeCorsDomains((array)$allowedDomains, $request->is('ssl'));
-        foreach ($allowedDomains as $domain) {
-            if (!preg_match($domain['preg'], $origin)) {
-                continue;
-            }
-            $this->header('Access-Control-Allow-Origin', $domain['original'] === '*' ? '*' : $origin);
-            $allowedMethods && $this->header('Access-Control-Allow-Methods', implode(', ', (array)$allowedMethods));
-            $allowedHeaders && $this->header('Access-Control-Allow-Headers', implode(', ', (array)$allowedHeaders));
-            break;
-        }
-    }
-
-    /**
-     * Normalize the origin to regular expressions and put in an array format
-     *
-     * @param array $domains Domain names to normalize.
-     * @param bool $requestIsSSL Whether it's a SSL request.
-     * @return array
-     */
-    protected function _normalizeCorsDomains($domains, $requestIsSSL = false)
-    {
-        $result = [];
-        foreach ($domains as $domain) {
-            if ($domain === '*') {
-                $result[] = ['preg' => '@.@', 'original' => '*'];
-                continue;
-            }
-
-            $original = $preg = $domain;
-            if (strpos($domain, '://') === false) {
-                $domain = ($requestIsSSL ? 'https://' : 'http://') . $domain;
-            }
-            $preg = '@^' . str_replace('\*', '.*', preg_quote($domain, '@')) . '$@';
-            $result[] = compact('original', 'preg');
-        }
-        return $result;
+        $builder->allowOrigin($allowedDomains)
+            ->allowMethods((array)$allowedMethods)
+            ->allowHeaders((array)$allowedHeaders)
+            ->build();
+        return $builder;
     }
 
     /**
@@ -1474,8 +1453,17 @@ class Response
             $this->header('Content-Length', $fileSize);
         }
 
-        $this->_clearBuffer();
         $this->_file = $file;
+    }
+
+    /**
+     * Get the current file if one exists.
+     *
+     * @return \Cake\Filesystem\File|null The file to use in the response or null
+     */
+    public function getFile()
+    {
+        return $this->_file;
     }
 
     /**
@@ -1484,17 +1472,22 @@ class Response
      * If an invalid range is requested a 416 Status code will be used
      * in the response.
      *
-     * @param File $file The file to set a range on.
+     * @param \Cake\Filesystem\File $file The file to set a range on.
      * @param string $httpRange The range to use.
      * @return void
      */
     protected function _fileRange($file, $httpRange)
     {
-        list(, $range) = explode('=', $httpRange);
-        list($start, $end) = explode('-', $range);
-
         $fileSize = $file->size();
         $lastByte = $fileSize - 1;
+        $start = 0;
+        $end = $lastByte;
+
+        preg_match('/^bytes\s*=\s*(\d+)?\s*-\s*(\d+)?$/', $httpRange, $matches);
+        if ($matches) {
+            $start = $matches[1];
+            $end = isset($matches[2]) ? $matches[2] : '';
+        }
 
         if ($start === '') {
             $start = $fileSize - $end;
@@ -1524,13 +1517,15 @@ class Response
     /**
      * Reads out a file, and echos the content to the client.
      *
-     * @param File $file File object
+     * @param \Cake\Filesystem\File $file File object
      * @param array $range The range to read out of the file.
      * @return bool True is whole file is echoed successfully or false if client connection is lost in between
      */
     protected function _sendFile($file, $range)
     {
         $compress = $this->outputCompressed();
+        ob_implicit_flush(true);
+
         $file->open('rb');
 
         $end = $start = false;
@@ -1557,9 +1552,6 @@ class Response
                 $bufferSize = $end - $offset + 1;
             }
             echo fread($file->handle, $bufferSize);
-            if (!$compress) {
-                $this->_flushBuffer();
-            }
         }
         $file->close();
         return true;
@@ -1579,6 +1571,7 @@ class Response
      * Clears the contents of the topmost output buffer and discards them
      *
      * @return bool
+     * @deprecated 3.2.4 This function is not needed anymore
      */
     protected function _clearBuffer()
     {
@@ -1591,6 +1584,7 @@ class Response
      * Flushes the contents of the output buffer
      *
      * @return void
+     * @deprecated 3.2.4 This function is not needed anymore
      */
     protected function _flushBuffer()
     {

@@ -24,10 +24,10 @@ class PluginShortRoute extends InflectedRoute
 
     /**
      * Parses a string URL into an array. If a plugin key is found, it will be copied to the
-     * controller parameter
+     * controller parameter.
      *
      * @param string $url The URL to parse
-     * @return mixed false on failure, or an array of request parameters
+     * @return array|false An array of request parameters, or boolean false on failure.
      */
     public function parse($url)
     {
@@ -40,14 +40,14 @@ class PluginShortRoute extends InflectedRoute
     }
 
     /**
-     * Reverse route plugin shortcut URLs. If the plugin and controller
+     * Reverses route plugin shortcut URLs. If the plugin and controller
      * are not the same the match is an auto fail.
      *
      * @param array $url Array of parameters to convert to a string.
      * @param array $context An array of the current request context.
      *   Contains information such as the current host, scheme, port, and base
      *   directory.
-     * @return mixed either false or a string URL.
+     * @return string|false Either a string URL for the parameters if they match or false.
      */
     public function match(array $url, array $context = [])
     {

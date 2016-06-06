@@ -12,8 +12,6 @@
  */
 namespace Cake\Test\TestCase\Mailer;
 
-use Cake\Mailer\Email;
-use Cake\Mailer\Mailer;
 use Cake\TestSuite\TestCase;
 use TestApp\Mailer\TestMailer;
 

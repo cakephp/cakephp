@@ -39,6 +39,7 @@ class Inflector
         '/(x|ch|ss|sh)$/i' => '\1es',
         '/([^aeiouy]|qu)y$/i' => '\1ies',
         '/(hive)$/i' => '\1s',
+        '/(chef)$/i' => '\1s',
         '/(?:([^f])fe|([lre])f)$/i' => '\1\2ves',
         '/sis$/i' => 'ses',
         '/([ti])um$/i' => '\1a',
@@ -587,7 +588,7 @@ class Inflector
 
         if ($result === false) {
             $result = str_replace(' ', '', static::humanize($string, $delimiter));
-            static::_cache(__FUNCTION__, $string, $result);
+            static::_cache($cacheKey, $string, $result);
         }
 
         return $result;
@@ -720,7 +721,7 @@ class Inflector
         if ($result === false) {
             $camelized = static::camelize(static::underscore($string));
             $replace = strtolower(substr($camelized, 0, 1));
-            $result = preg_replace('/\\w/', $replace, $camelized, 1);
+            $result = $replace . substr($camelized, 1);
             static::_cache(__FUNCTION__, $string, $result);
         }
 
@@ -731,6 +732,7 @@ class Inflector
      * Returns a string with all spaces converted to dashes (by default), accented
      * characters converted to non-accented characters, and non word characters removed.
      *
+     * @deprecated 3.2.7 Use Text::slug() instead.
      * @param string $string the string you want to slug
      * @param string $replacement will replace keys in map
      * @return string

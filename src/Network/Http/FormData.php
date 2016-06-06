@@ -14,6 +14,7 @@
 namespace Cake\Network\Http;
 
 use Cake\Network\Http\FormData\Part;
+use Cake\Utility\Security;
 use Countable;
 use finfo;
 
@@ -66,7 +67,7 @@ class FormData implements Countable
         if ($this->_boundary) {
             return $this->_boundary;
         }
-        $this->_boundary = md5(uniqid(time()));
+        $this->_boundary = md5(Security::randomBytes(16));
         return $this->_boundary;
     }
 

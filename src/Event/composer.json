@@ -12,6 +12,5 @@
         "psr-4": {
             "Cake\\Event\\": "."
         }
-    },
-    "minimum-stability": "beta"
+    }
 }

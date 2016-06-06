@@ -3,10 +3,14 @@ shallow_clone: false
 platform: 'x86'
 clone_folder: c:\projects\cakephp
 
+cache:
+  - '%LOCALAPPDATA%\Composer'
+  - '%APPDATA%\Composer'
+
 branches:
   only:
     - master
-    - 3.2
+    - 3.next
 environment:
   global:
     PHP: "C:/PHP"
@@ -23,7 +27,7 @@ init:
 
 install:
   - cd c:\
-  - appveyor DownloadFile http://windows.php.net/downloads/releases/archives/php-5.5.8-nts-Win32-VC11-x86.zip -FileName php.zip
+  - appveyor DownloadFile http://windows.php.net/downloads/releases/archives/php-5.5.10-nts-Win32-VC11-x86.zip -FileName php.zip
   - 7z x php.zip -oc:\php
   - appveyor DownloadFile https://dl.dropboxusercontent.com/s/euip490d9183jkr/SQLSRV32.cab -FileName sqlsrv.cab
   - 7z x sqlsrv.cab -oc:\php\ext php*_55_nts.dll

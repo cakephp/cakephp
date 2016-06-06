@@ -14,11 +14,11 @@
  */
 namespace Cake\ORM\Behavior;
 
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
-use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use InvalidArgumentException;
 use RuntimeException;
@@ -74,6 +74,15 @@ class TreeBehavior extends Behavior
         'level' => null,
         'recoverOrder' => null
     ];
+
+    /**
+     * {@inheritDoc}
+     */
+    public function initialize(array $config)
+    {
+        $this->_config['leftField'] = new IdentifierExpression($this->_config['left']);
+        $this->_config['rightField'] = new IdentifierExpression($this->_config['right']);
+    }
 
     /**
      * Before save listener.
@@ -211,10 +220,11 @@ class TreeBehavior extends Behavior
         $diff = $right - $left + 1;
 
         if ($diff > 2) {
-            $this->_table->deleteAll([
-                "{$config['left']} >=" => $left + 1,
-                "{$config['left']} <=" => $right - 1
-            ]);
+            $this->_table->deleteAll(function ($exp) use ($config, $left, $right) {
+                return $exp
+                    ->gte($config['leftField'], $left + 1)
+                    ->lte($config['leftField'], $right - 1);
+            });
         }
 
         $this->_sync($diff, '-', "> {$right}");
@@ -326,11 +336,19 @@ class TreeBehavior extends Behavior
     protected function _unmarkInternalTree()
     {
         $config = $this->config();
-        $query = $this->_table->query();
-        $this->_table->updateAll([
-            $query->newExpr()->add("{$config['left']} = {$config['left']} * -1"),
-            $query->newExpr()->add("{$config['right']} = {$config['right']} * -1"),
-        ], [$config['left'] . ' <' => 0]);
+        $this->_table->updateAll(
+            function ($exp) use ($config) {
+                $leftInverse = clone $exp;
+                $leftInverse->type('*')->add('-1');
+                $rightInverse = clone $leftInverse;
+                return $exp
+                    ->eq($config['leftField'], $leftInverse->add($config['leftField']))
+                    ->eq($config['rightField'], $rightInverse->add($config['rightField']));
+            },
+            function ($exp) use ($config) {
+                return $exp->lt($config['leftField'], 0);
+            }
+        );
     }
 
     /**
@@ -597,8 +615,11 @@ class TreeBehavior extends Behavior
         if ($number !== true) {
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
-                ->where(["$parent IS" => $nodeParent, "$right <" => $nodeLeft])
-                ->order([$left => 'DESC'])
+                ->where(["$parent IS" => $nodeParent])
+                ->where(function ($exp) use ($config, $nodeLeft) {
+                    return $exp->lt($config['rightField'], $nodeLeft);
+                })
+                ->orderDesc($config['leftField'])
                 ->offset($number - 1)
                 ->limit(1)
                 ->first();
@@ -606,8 +627,11 @@ class TreeBehavior extends Behavior
         if (!$targetNode) {
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
-                ->where(["$parent IS" => $nodeParent, "$right <" => $nodeLeft])
-                ->order([$left => 'ASC'])
+                ->where(["$parent IS" => $nodeParent])
+                ->where(function ($exp) use ($config, $nodeLeft) {
+                    return $exp->lt($config['rightField'], $nodeLeft);
+                })
+                ->orderAsc($config['leftField'])
                 ->limit(1)
                 ->first();
 
@@ -672,15 +696,17 @@ class TreeBehavior extends Behavior
     {
         $config = $this->config();
         list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
-
         list($nodeParent, $nodeLeft, $nodeRight) = array_values($node->extract([$parent, $left, $right]));
 
         $targetNode = null;
         if ($number !== true) {
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
-                ->where(["$parent IS" => $nodeParent, "$left >" => $nodeRight])
-                ->order([$left => 'ASC'])
+                ->where(["$parent IS" => $nodeParent])
+                ->where(function ($exp) use ($config, $nodeRight) {
+                    return $exp->gt($config['leftField'], $nodeRight);
+                })
+                ->orderAsc($config['leftField'])
                 ->offset($number - 1)
                 ->limit(1)
                 ->first();
@@ -688,8 +714,11 @@ class TreeBehavior extends Behavior
         if (!$targetNode) {
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
-                ->where(["$parent IS" => $nodeParent, "$left >" => $nodeRight])
-                ->order([$left => 'DESC'])
+                ->where(["$parent IS" => $nodeParent])
+                ->where(function ($exp) use ($config, $nodeRight) {
+                    return $exp->gt($config['leftField'], $nodeRight);
+                })
+                ->orderDesc($config['leftField'])
                 ->limit(1)
                 ->first();
 
@@ -814,12 +843,11 @@ class TreeBehavior extends Behavior
      */
     protected function _getMax()
     {
-        $config = $this->config();
-        $field = $config['right'];
-
+        $field = $this->_config['right'];
+        $rightField = $this->_config['rightField'];
         $edge = $this->_scope($this->_table->find())
             ->select([$field])
-            ->order([$field => 'DESC'])
+            ->orderDesc($rightField)
             ->first();
 
         if (empty($edge->{$field})) {
@@ -843,17 +871,28 @@ class TreeBehavior extends Behavior
      */
     protected function _sync($shift, $dir, $conditions, $mark = false)
     {
-        $config = $this->config();
+        $config = $this->_config;
 
-        foreach ([$config['left'], $config['right']] as $field) {
+        foreach ([$config['leftField'], $config['rightField']] as $field) {
             $query = $this->_scope($this->_table->query());
+            $exp = $query->newExpr();
 
-            $mark = $mark ? '*-1' : '';
-            $template = sprintf('%s = (%s %s %s)%s', $field, $field, $dir, $shift, $mark);
-            $query->update()->set($query->newExpr()->add($template));
-            $query->where("{$field} {$conditions}");
+            $movement = clone $exp;
+            $movement ->add($field)->add("$shift")->tieWith($dir);
 
-            $query->execute();
+            $inverse = clone $exp;
+            $movement = $mark ?
+                $inverse->add($movement)->tieWith('*')->add('-1'):
+                $movement;
+
+            $where = clone $exp;
+            $where->add($field)->add($conditions)->tieWith('');
+
+            $query->update()
+                ->set($exp->eq($field, $movement))
+                ->where($where);
+
+            $query->execute()->closeCursor();
         }
     }
 
@@ -870,7 +909,8 @@ class TreeBehavior extends Behavior
 
         if (is_array($config['scope'])) {
             return $query->where($config['scope']);
-        } elseif (is_callable($config['scope'])) {
+        }
+        if (is_callable($config['scope'])) {
             return $config['scope']($query);
         }
 

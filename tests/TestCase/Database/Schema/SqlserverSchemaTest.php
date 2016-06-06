@@ -68,6 +68,9 @@ author_id INTEGER NOT NULL,
 published BIT DEFAULT 0,
 views SMALLINT DEFAULT 0,
 created DATETIME,
+field1 VARCHAR(10) DEFAULT NULL,
+field2 VARCHAR(10) DEFAULT 'NULL',
+field3 VARCHAR(10) DEFAULT 'O''hare',
 CONSTRAINT [content_idx] UNIQUE ([title], [body]),
 CONSTRAINT [author_idx] FOREIGN KEY ([author_id]) REFERENCES [schema_authors] ([id]) ON DELETE CASCADE ON UPDATE CASCADE
 )
@@ -345,6 +348,33 @@ SQL;
                 'precision' => null,
                 'comment' => null,
             ],
+            'field1' => [
+                'type' => 'string',
+                'null' => true,
+                'default' => null,
+                'length' => 10,
+                'precision' => null,
+                'fixed' => null,
+                'comment' => null,
+            ],
+            'field2' => [
+                'type' => 'string',
+                'null' => true,
+                'default' => 'NULL',
+                'length' => 10,
+                'precision' => null,
+                'fixed' => null,
+                'comment' => null,
+            ],
+            'field3' => [
+                'type' => 'string',
+                'null' => true,
+                'default' => 'O\'hare',
+                'length' => 10,
+                'precision' => null,
+                'fixed' => null,
+                'comment' => null,
+            ],
         ];
         $this->assertEquals(['id'], $result->primaryKey());
         foreach ($expected as $field => $definition) {
@@ -487,6 +517,21 @@ SQL;
                 ['type' => 'text', 'null' => false],
                 '[body] NVARCHAR(MAX) NOT NULL'
             ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_TINY, 'null' => false],
+                sprintf('[body] NVARCHAR(%s) NOT NULL', Table::LENGTH_TINY)
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM, 'null' => false],
+                '[body] NVARCHAR(MAX) NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
+                '[body] NVARCHAR(MAX) NOT NULL'
+            ],
             // Integers
             [
                 'post_id',
@@ -528,7 +573,22 @@ SQL;
             // Binary
             [
                 'img',
-                ['type' => 'binary'],
+                ['type' => 'binary', 'length' => null],
+                '[img] VARBINARY(MAX)'
+            ],
+            [
+                'img',
+                ['type' => 'binary', 'length' => Table::LENGTH_TINY],
+                sprintf('[img] VARBINARY(%s)', Table::LENGTH_TINY)
+            ],
+            [
+                'img',
+                ['type' => 'binary', 'length' => Table::LENGTH_MEDIUM],
+                '[img] VARBINARY(MAX)'
+            ],
+            [
+                'img',
+                ['type' => 'binary', 'length' => Table::LENGTH_LONG],
                 '[img] VARBINARY(MAX)'
             ],
             // Boolean
@@ -841,7 +901,7 @@ SQL;
         $result = $table->truncateSql($connection);
         $this->assertCount(2, $result);
         $this->assertEquals('DELETE FROM [schema_articles]', $result[0]);
-        $this->assertEquals('DBCC CHECKIDENT([schema_articles], RESEED, 0)', $result[1]);
+        $this->assertEquals("DBCC CHECKIDENT('schema_articles', RESEED, 0)", $result[1]);
     }
 
     /**
@@ -852,14 +912,9 @@ SQL;
     protected function _getMockedDriver()
     {
         $driver = new \Cake\Database\Driver\Sqlserver();
-        $mock = $this->getMock('FakePdo', ['quote', 'quoteIdentifier']);
+        $mock = $this->getMock('FakePdo', ['quote']);
         $mock->expects($this->any())
             ->method('quote')
-            ->will($this->returnCallback(function ($value) {
-                return '[' . $value . ']';
-            }));
-        $mock->expects($this->any())
-            ->method('quoteIdentifier')
             ->will($this->returnCallback(function ($value) {
                 return '[' . $value . ']';
             }));

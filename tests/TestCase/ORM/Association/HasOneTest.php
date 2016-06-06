@@ -19,8 +19,6 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\Entity;
-use Cake\ORM\Query;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -64,6 +62,9 @@ class HasOneTest extends TestCase
             'first_name' => 'string',
             'Profiles.user_id' => 'integer',
             'user_id' => 'integer',
+            'Profiles__first_name' => 'string',
+            'Profiles__user_id' => 'integer',
+            'Profiles__id' => 'integer',
         ]);
     }
 
@@ -122,6 +123,12 @@ class HasOneTest extends TestCase
             'Profiles__user_id' => 'Profiles.user_id'
         ]);
         $association->attachTo($query);
+
+        $this->assertEquals(
+            'string',
+            $query->typeMap()->type('Profiles__first_name'),
+            'Associations should map types.'
+        );
     }
 
     /**
@@ -214,7 +221,7 @@ class HasOneTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities()
     {
-        $mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+        $mock = $this->getMock('Cake\ORM\Table', ['saveAssociated'], [], '', false);
         $config = [
             'sourceTable' => $this->user,
             'targetTable' => $mock,

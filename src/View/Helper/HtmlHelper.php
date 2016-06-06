@@ -74,7 +74,7 @@ class HtmlHelper extends Helper
             'parastart' => '<p{{attrs}}>',
             'css' => '<link rel="{{rel}}" href="{{url}}"{{attrs}}/>',
             'style' => '<style{{attrs}}>{{content}}</style>',
-            'charset' => '<meta http-equiv="Content-Type" content="text/html; charset={{charset}}"/>',
+            'charset' => '<meta charset="{{charset}}"/>',
             'ul' => '<ul{{attrs}}>{{content}}</ul>',
             'ol' => '<ol{{attrs}}>{{content}}</ol>',
             'li' => '<li{{attrs}}>{{content}}</li>',
@@ -148,10 +148,10 @@ class HtmlHelper extends Helper
      * Adds a link to the breadcrumbs array.
      *
      * @param string $name Text for link
-     * @param string|null $link URL for link (if empty it won't be a link)
+     * @param string|array|null $link URL for link (if empty it won't be a link)
      * @param string|array $options Link attributes e.g. ['id' => 'selected']
      * @return $this
-     * @see HtmlHelper::link() for details on $options that can be used.
+     * @see \Cake\View\Helper\HtmlHelper::link() for details on $options that can be used.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
      */
     public function addCrumb($name, $link = null, array $options = [])
@@ -437,7 +437,7 @@ class HtmlHelper extends Helper
         if (strpos($path, '//') !== false) {
             $url = $path;
         } else {
-            $url = $this->Url->assetUrl($path, $options + ['pathPrefix' => Configure::read('App.cssBaseUrl'), 'ext' => '.css']);
+            $url = $this->Url->css($path, $options);
             $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
         }
 
@@ -507,7 +507,7 @@ class HtmlHelper extends Helper
      *
      * @param string|array $url String or array of javascript files to include
      * @param array $options Array of options, and html attributes see above.
-     * @return mixed String of `<script />` tags or null if block is specified in options
+     * @return string|null String of `<script />` tags or null if block is specified in options
      *   or if $once is true and the file has been included before.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#linking-to-javascript-files
      */
@@ -528,7 +528,7 @@ class HtmlHelper extends Helper
         }
 
         if (strpos($url, '//') === false) {
-            $url = $this->Url->assetUrl($url, $options + ['pathPrefix' => Configure::read('App.jsBaseUrl'), 'ext' => '.js']);
+            $url = $this->Url->script($url, $options);
             $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
         }
         if ($options['once'] && isset($this->_includedAssets[__METHOD__][$url])) {
@@ -562,7 +562,7 @@ class HtmlHelper extends Helper
      * @param string $script The script to wrap
      * @param array $options The options to use. Options not listed above will be
      *    treated as HTML attributes.
-     * @return mixed string or null depending on the value of `$options['block']`
+     * @return string|null String or null depending on the value of `$options['block']`
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-inline-javascript-blocks
      */
     public function scriptBlock($script, array $options = [])
@@ -614,7 +614,7 @@ class HtmlHelper extends Helper
      * Generates a script tag inline or appends to specified view block depending on
      * the settings used when the scriptBlock was started
      *
-     * @return mixed depending on the settings of scriptStart() either a script tag or null
+     * @return string|null Depending on the settings of scriptStart() either a script tag or null
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-javascript-blocks
      */
     public function scriptEnd()
@@ -808,7 +808,7 @@ class HtmlHelper extends Helper
      */
     public function image($path, array $options = [])
     {
-        $path = $this->Url->assetUrl($path, $options + ['pathPrefix' => Configure::read('App.imageBaseUrl')]);
+        $path = $this->Url->image($path, $options);
         $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
 
         if (!isset($options['alt'])) {
@@ -945,7 +945,7 @@ class HtmlHelper extends Helper
      * - `escape` Whether or not the contents should be html_entity escaped.
      *
      * @param string $name Tag name.
-     * @param string $text String content that will appear inside the div element.
+     * @param string|null $text String content that will appear inside the div element.
      *   If null, only a start tag will be printed
      * @param array $options Additional HTML attributes of the DIV tag, see above.
      * @return string The formatted tag element
@@ -978,8 +978,8 @@ class HtmlHelper extends Helper
      *
      * - `escape` Whether or not the contents should be html_entity escaped.
      *
-     * @param string $class CSS class name of the div element.
-     * @param string $text String content that will appear inside the div element.
+     * @param string|null $class CSS class name of the div element.
+     * @param string|null $text String content that will appear inside the div element.
      *   If null, only a start tag will be printed
      * @param array $options Additional HTML attributes of the DIV tag
      * @return string The formatted DIV element
@@ -1182,7 +1182,7 @@ class HtmlHelper extends Helper
      * @param array $options Additional HTML attributes of the list (ol/ul) tag.
      * @param array $itemOptions Options and additional HTML attributes of the list item (LI) tag.
      * @return string The nested list element
-     * @see HtmlHelper::nestedList()
+     * @see \Cake\View\Helper\HtmlHelper::nestedList()
      */
     protected function _nestedListItem($items, $options, $itemOptions)
     {

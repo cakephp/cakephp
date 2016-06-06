@@ -14,17 +14,15 @@
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
-use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\IdentifierQuoter;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
+use Cake\ORM\Association;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
-use Cake\ORM\Query;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -80,6 +78,9 @@ class HasManyTest extends TestCase
             'title' => 'string',
             'Articles.author_id' => 'integer',
             'author_id' => 'integer',
+            'Articles__id' => 'integer',
+            'Articles__title' => 'string',
+            'Articles__author_id' => 'integer',
         ]);
         $this->autoQuote = $connection->driver()->autoQuoting();
     }
@@ -485,7 +486,7 @@ class HasManyTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities()
     {
-        $mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+        $mock = $this->getMock('Cake\ORM\Table', ['saveAssociated'], [], '', false);
         $config = [
             'sourceTable' => $this->author,
             'targetTable' => $mock,
@@ -533,6 +534,34 @@ class HasManyTest extends TestCase
         ];
         $association = new HasMany('Contacts.Addresses', $config);
         $this->assertEquals('addresses', $association->property());
+    }
+
+    /**
+     * Test that the ValueBinder is reset when using strategy = Association::STRATEGY_SUBQUERY
+     *
+     * @return void
+     */
+    public function testValueBinderUpdateOnSubQueryStrategy()
+    {
+        $Authors = TableRegistry::get('Authors');
+        $Authors->hasMany('Articles', [
+            'strategy' => Association::STRATEGY_SUBQUERY
+        ]);
+
+        $query = $Authors->find();
+        $authorsAndArticles = $query
+            ->select([
+                'id',
+                'slug' => $query->func()->concat([
+                    '---',
+                    'name' => 'identifier'
+                ])
+            ])
+            ->contain('Articles')
+            ->where(['name' => 'mariano'])
+            ->first();
+
+        $this->assertCount(2, $authorsAndArticles->get('articles'));
     }
 
     /**

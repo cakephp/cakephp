@@ -190,7 +190,7 @@ class AuthComponent extends Component
      * Controller actions for which user validation is not required.
      *
      * @var array
-     * @see AuthComponent::allow()
+     * @see \Cake\Controller\Component\AuthComponent::allow()
      */
     public $allowedActions = [];
 
@@ -502,13 +502,13 @@ class AuthComponent extends Component
     /**
      * Loads the authorization objects configured.
      *
-     * @return mixed Either null when authorize is empty, or the loaded authorization objects.
+     * @return array|null The loaded authorization objects, or null when authorize is empty.
      * @throws \Cake\Core\Exception\Exception
      */
     public function constructAuthorize()
     {
         if (empty($this->_config['authorize'])) {
-            return;
+            return null;
         }
         $this->_authorizeObjects = [];
         $authorize = Hash::normalize((array)$this->_config['authorize']);
@@ -567,7 +567,7 @@ class AuthComponent extends Component
      * $this->Auth->allow();
      * ```
      *
-     * @param string|array $actions Controller action name or array of actions
+     * @param string|array|null $actions Controller action name or array of actions
      * @return void
      * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#making-actions-public
      */
@@ -596,9 +596,9 @@ class AuthComponent extends Component
      * ```
      * to remove all items from the allowed list
      *
-     * @param string|array $actions Controller action name or array of actions
+     * @param string|array|null $actions Controller action name or array of actions
      * @return void
-     * @see AuthComponent::allow()
+     * @see \Cake\Controller\Component\AuthComponent::allow()
      * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#making-actions-require-authorization
      */
     public function deny($actions = null)
@@ -656,8 +656,8 @@ class AuthComponent extends Component
     /**
      * Get the current user from storage.
      *
-     * @param string $key Field to retrieve. Leave null to get entire User record.
-     * @return array|null Either User record or null if no user is logged in.
+     * @param string|null $key Field to retrieve. Leave null to get entire User record.
+     * @return mixed|null Either User record or null if no user is logged in, or retrieved field if key is specified.
      * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#accessing-the-logged-in-user
      */
     public function user($key = null)
@@ -724,7 +724,7 @@ class AuthComponent extends Component
      *    `loginRedirect`, the `loginRedirect` value is returned.
      *  - If there is no session and no `loginRedirect`, / is returned.
      *
-     * @param string|array $url Optional URL to write as the login redirect URL.
+     * @param string|array|null $url Optional URL to write as the login redirect URL.
      * @return string Redirect URL
      */
     public function redirectUrl($url = null)
@@ -782,7 +782,7 @@ class AuthComponent extends Component
     /**
      * Loads the configured authentication objects.
      *
-     * @return mixed either null on empty authenticate value, or an array of loaded objects.
+     * @return array|null The loaded authorization objects, or null on empty authenticate value.
      * @throws \Cake\Core\Exception\Exception
      */
     public function constructAuthenticate()
@@ -822,7 +822,7 @@ class AuthComponent extends Component
      * Get/set user record storage object.
      *
      * @param \Cake\Auth\Storage\StorageInterface|null $storage Sets provided
-     *   object as storage or if null returns configuread storage object.
+     *   object as storage or if null returns configured storage object.
      * @return \Cake\Auth\Storage\StorageInterface|null
      */
     public function storage(StorageInterface $storage = null)

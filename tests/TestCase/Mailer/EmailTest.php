@@ -103,6 +103,9 @@ class EmailTest extends TestCase
         $this->transports = [
             'debug' => [
                 'className' => 'Debug'
+            ],
+            'badClassName' => [
+                'className' => 'TestFalse'
             ]
         ];
         Email::configTransport($this->transports);
@@ -119,6 +122,7 @@ class EmailTest extends TestCase
         Log::drop('email');
         Email::drop('test');
         Email::dropTransport('debug');
+        Email::dropTransport('badClassName');
         Email::dropTransport('test_smtp');
     }
 
@@ -354,6 +358,20 @@ class EmailTest extends TestCase
             '.extend.@example.com' => '.extend.@example.com',
             '.docomo@example.com' => '.docomo@example.com',
         ], $this->CakeEmail->to());
+    }
+
+    /**
+     * Tests not found transport class name exception
+     *
+     * @return void
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Transport class "TestFalse" not found.
+     */
+    public function testClassNameException()
+    {
+        $email = new Email();
+        $email->transport('badClassName');
     }
 
     /**
@@ -2053,7 +2071,7 @@ class EmailTest extends TestCase
         $this->assertNotEmpty($result);
 
         $result = $this->CakeEmail->getBoundary();
-        $this->assertNotEmpty($result);
+        $this->assertRegExp('/^[0-9a-f]{32}$/', $result);
     }
 
     /**

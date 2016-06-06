@@ -56,7 +56,7 @@ trait PDODriverTrait
      * result to the value passed
      *
      * @param null|\PDO $connection The PDO connection instance.
-     * @return mixed connection object used internally
+     * @return \PDO connection object used internally
      */
     public function connection($connection = null)
     {
@@ -139,12 +139,13 @@ trait PDODriverTrait
     }
 
     /**
-     * Rollsback a transaction
+     * Rollback a transaction
      *
      * @return bool true on success, false otherwise
      */
     public function rollbackTransaction()
     {
+        $this->connect();
         if (!$this->_connection->inTransaction()) {
             return false;
         }

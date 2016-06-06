@@ -14,7 +14,7 @@
  */
 namespace Cake\Cache\Engine;
 
-use APCIterator;
+use APCUIterator;
 use Cake\Cache\CacheEngine;
 
 /**
@@ -42,7 +42,7 @@ class ApcEngine extends CacheEngine
      */
     public function init(array $config = [])
     {
-        if (!extension_loaded('apc')) {
+        if (!extension_loaded('apcu')) {
             return false;
         }
 
@@ -66,8 +66,8 @@ class ApcEngine extends CacheEngine
         if ($duration) {
             $expires = time() + $duration;
         }
-        apc_store($key . '_expires', $expires, $duration);
-        return apc_store($key, $value, $duration);
+        apcu_store($key . '_expires', $expires, $duration);
+        return apcu_store($key, $value, $duration);
     }
 
     /**
@@ -82,11 +82,11 @@ class ApcEngine extends CacheEngine
         $key = $this->_key($key);
 
         $time = time();
-        $cachetime = (int)apc_fetch($key . '_expires');
+        $cachetime = (int)apcu_fetch($key . '_expires');
         if ($cachetime !== 0 && ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime)) {
             return false;
         }
-        return apc_fetch($key);
+        return apcu_fetch($key);
     }
 
     /**
@@ -100,7 +100,7 @@ class ApcEngine extends CacheEngine
     {
         $key = $this->_key($key);
 
-        return apc_inc($key, $offset);
+        return apcu_inc($key, $offset);
     }
 
     /**
@@ -114,7 +114,7 @@ class ApcEngine extends CacheEngine
     {
         $key = $this->_key($key);
 
-        return apc_dec($key, $offset);
+        return apcu_dec($key, $offset);
     }
 
     /**
@@ -127,7 +127,7 @@ class ApcEngine extends CacheEngine
     {
         $key = $this->_key($key);
 
-        return apc_delete($key);
+        return apcu_delete($key);
     }
 
     /**
@@ -142,19 +142,18 @@ class ApcEngine extends CacheEngine
         if ($check) {
             return true;
         }
-        if (class_exists('APCIterator', false)) {
-            $iterator = new APCIterator(
-                'user',
+        if (class_exists('APCUIterator', false)) {
+            $iterator = new APCUIterator(
                 '/^' . preg_quote($this->_config['prefix'], '/') . '/',
                 APC_ITER_NONE
             );
-            apc_delete($iterator);
+            apcu_delete($iterator);
             return true;
         }
-        $cache = apc_cache_info('user');
+        $cache = apcu_cache_info();
         foreach ($cache['cache_list'] as $key) {
             if (strpos($key['info'], $this->_config['prefix']) === 0) {
-                apc_delete($key['info']);
+                apcu_delete($key['info']);
             }
         }
         return true;
@@ -178,8 +177,8 @@ class ApcEngine extends CacheEngine
         if ($duration) {
             $expires = time() + $duration;
         }
-        apc_add($key . '_expires', $expires, $duration);
-        return apc_add($key, $value, $duration);
+        apcu_add($key . '_expires', $expires, $duration);
+        return apcu_add($key, $value, $duration);
     }
 
     /**
@@ -197,11 +196,11 @@ class ApcEngine extends CacheEngine
             }
         }
 
-        $groups = apc_fetch($this->_compiledGroupNames);
+        $groups = apcu_fetch($this->_compiledGroupNames);
         if (count($groups) !== count($this->_config['groups'])) {
             foreach ($this->_compiledGroupNames as $group) {
                 if (!isset($groups[$group])) {
-                    apc_store($group, 1);
+                    apcu_store($group, 1);
                     $groups[$group] = 1;
                 }
             }
@@ -225,7 +224,7 @@ class ApcEngine extends CacheEngine
      */
     public function clearGroup($group)
     {
-        apc_inc($this->_config['prefix'] . $group, 1, $success);
+        apcu_inc($this->_config['prefix'] . $group, 1, $success);
         return $success;
     }
 }

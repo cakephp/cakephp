@@ -19,7 +19,6 @@ namespace Cake\Test\TestCase\Console;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\HelpFormatter;
 use Cake\TestSuite\TestCase;
-use \DOMDocument as DomDocument;
 
 /**
  * Class HelpFormatterTest
@@ -48,7 +47,7 @@ This is fifteen This is
 fifteen This is fifteen
 
 <info>Usage:</info>
-cake test [subcommand] [-h] [--four] [<four>]
+cake test [subcommand] [--four] [-h] [<four>]
 
 <info>Subcommands:</info>
 
@@ -59,9 +58,9 @@ To see help on a subcommand use <info>`cake test [subcommand] --help`</info>
 
 <info>Options:</info>
 
---help, -h  Display this help.
 --four      this is help text
             this is help text
+--help, -h  Display this help.
 
 <info>Arguments:</info>
 
@@ -200,14 +199,14 @@ txt;
         $result = $formatter->text();
         $expected = <<<txt
 <info>Usage:</info>
-cake mycommand [-h] [--test] [-c default]
+cake mycommand [-c default] [-h] [--test]
 
 <info>Options:</info>
 
---help, -h        Display this help.
---test            A test option.
 --connection, -c  The connection to use. <comment>(default:
                   default)</comment>
+--help, -h        Display this help.
+--test            A test option.
 
 txt;
         $this->assertTextEquals($expected, $result, 'Help does not match');

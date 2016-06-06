@@ -234,10 +234,10 @@ class TranslateBehavior extends Behavior
             $name = $alias . '_' . $field . '_translation';
 
             $contain[$name]['queryBuilder'] = $conditions(
-            $field,
-            $locale,
-            $query,
-            $select
+                $field,
+                $locale,
+                $query,
+                $select
             );
 
             if ($changeFilter) {
@@ -457,6 +457,9 @@ class TranslateBehavior extends Behavior
                 return $row;
             }
             $translations = (array)$row->get('_i18n');
+            if (empty($translations) && $row->get('_translations')) {
+                return $row;
+            }
             $grouped = new Collection($translations);
 
             $result = [];

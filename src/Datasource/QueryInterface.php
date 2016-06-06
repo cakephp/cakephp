@@ -32,7 +32,7 @@ interface QueryInterface
      * If no $alias is passed, the default table for this query will be used.
      *
      * @param string $field The field to alias
-     * @param string $alias the alias used to prefix the field
+     * @param string|null $alias the alias used to prefix the field
      * @return array
      */
     public function aliasField($field, $alias = null);
@@ -199,7 +199,7 @@ interface QueryInterface
      *
      * Produces:
      *
-     * ``ORDER BY title DESC, author_id ASC``
+     * `ORDER BY title DESC, author_id ASC`
      *
      * ```
      * $query->order(['title' => 'DESC NULLS FIRST'])->order('author_id');
@@ -207,7 +207,7 @@ interface QueryInterface
      *
      * Will generate:
      *
-     * ``ORDER BY title DESC NULLS FIRST, author_id``
+     * `ORDER BY title DESC NULLS FIRST, author_id`
      *
      * ```
      * $expression = $query->newExpr()->add(['id % 2 = 0']);
@@ -216,7 +216,7 @@ interface QueryInterface
      *
      * Will become:
      *
-     * ``ORDER BY (id %2 = 0), title ASC``
+     * `ORDER BY (id %2 = 0), title ASC`
      *
      * If you need to set complex expressions as order conditions, you
      * should use `orderAsc()` or `orderDesc()`.
@@ -237,7 +237,7 @@ interface QueryInterface
      * Pages should start at 1.
      *
      * @param int $num The page number you want.
-     * @param int $limit The number of rows you want in the page. If null
+     * @param int|null $limit The number of rows you want in the page. If null
      *  the current limit clause will be used.
      * @return $this
      */
@@ -286,7 +286,7 @@ interface QueryInterface
      *
      * The previous example produces:
      *
-     * ``WHERE posted >= 2012-01-27 AND title LIKE 'Hello W%' AND author_id = 1``
+     * `WHERE posted >= 2012-01-27 AND title LIKE 'Hello W%' AND author_id = 1`
      *
      * Second parameter is used to specify what type is expected for each passed
      * key. Valid types can be used from the mapped with Database\Type class.
@@ -303,13 +303,13 @@ interface QueryInterface
      *
      * The previous example produces:
      *
-     * ``WHERE author_id = 1 AND (published = 1 OR posted < '2012-02-01') AND NOT (title = 'Hello')``
+     * `WHERE author_id = 1 AND (published = 1 OR posted < '2012-02-01') AND NOT (title = 'Hello')`
      *
      * You can nest conditions using conjunctions as much as you like. Sometimes, you
      * may want to define 2 different options for the same key, in that case, you can
      * wrap each condition inside a new array:
      *
-     * ``$query->where(['OR' => [['published' => false], ['published' => true]])``
+     * `$query->where(['OR' => [['published' => false], ['published' => true]])`
      *
      * Keep in mind that every time you call where() with the third param set to false
      * (default), it will join the passed conditions to the previous stored list using
@@ -319,13 +319,13 @@ interface QueryInterface
      * ### Using expressions objects:
      *
      * ```
-     *  $exp = $query->newExpr()->add(['id !=' => 100, 'author_id' != 1])->type('OR');
+     *  $exp = $query->newExpr()->add(['id !=' => 100, 'author_id' != 1])->tieWith('OR');
      *  $query->where(['published' => true], ['published' => 'boolean'])->where($exp);
      * ```
      *
      * The previous example produces:
      *
-     * ``WHERE (id != 100 OR author_id != 1) AND published = 1``
+     * `WHERE (id != 100 OR author_id != 1) AND published = 1`
      *
      * Other Query objects that be used as conditions for any field.
      *
@@ -348,7 +348,7 @@ interface QueryInterface
      *
      * * The previous example produces:
      *
-     * ``WHERE title != 'Hello World' AND (id = 1 OR (id > 2 AND id < 10))``
+     * `WHERE title != 'Hello World' AND (id = 1 OR (id > 2 AND id < 10))`
      *
      * ### Conditions as strings:
      *
@@ -358,7 +358,7 @@ interface QueryInterface
      *
      * The previous example produces:
      *
-     * ``WHERE articles.author_id = authors.id AND modified IS NULL``
+     * `WHERE articles.author_id = authors.id AND modified IS NULL`
      *
      * Please note that when using the array notation or the expression objects, all
      * values will be correctly quoted and transformed to the correspondent database
@@ -366,7 +366,7 @@ interface QueryInterface
      * If you use string conditions make sure that your values are correctly quoted.
      * The safest thing you can do is to never use string conditions.
      *
-     * @param string|array|callback|null $conditions The conditions to filter on.
+     * @param string|array|callable|null $conditions The conditions to filter on.
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @return $this

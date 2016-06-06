@@ -39,7 +39,13 @@ class FooType extends Type
 class TableTest extends TestCase
 {
 
-    public $fixtures = ['core.articles_tags', 'core.orders', 'core.products', 'core.tags'];
+    public $fixtures = [
+        'core.articles',
+        'core.tags',
+        'core.articles_tags',
+        'core.orders',
+        'core.products'
+    ];
 
     protected $_map;
 
@@ -298,6 +304,39 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test adding an constraint with an overlapping unique index
+     * >
+     * @return void
+     */
+    public function testAddConstraintOverwriteUniqueIndex()
+    {
+        $table = new Table('articles');
+        $table->addColumn('project_id', [
+            'type' => 'integer',
+            'default' => null,
+            'limit' => 11,
+            'null' => false,
+        ])->addColumn('id', [
+            'type' => 'integer',
+            'autoIncrement' => true,
+            'limit' => 11
+        ])->addColumn('user_id', [
+            'type' => 'integer',
+            'default' => null,
+            'limit' => 11,
+            'null' => false,
+        ])->addConstraint('users_idx', [
+            'type' => 'unique',
+            'columns' => ['project_id', 'user_id']
+        ])->addConstraint('users_idx', [
+            'type' => 'foreign',
+            'references' => ['users', 'project_id', 'id'],
+            'columns' => ['project_id', 'user_id']
+        ]);
+        $this->assertEquals(['users_idx'], $table->constraints());
+    }
+
+    /**
      * Dataprovider for invalid addConstraint calls.
      *
      * @return array
@@ -521,7 +560,6 @@ class TableTest extends TestCase
             'delete' => 'cascade',
             'length' => []
         ];
-
         $this->assertEquals($expected, $compositeConstraint);
 
         $expectedSubstring = 'CONSTRAINT <product_category_fk> FOREIGN KEY \(<product_category>, <product_id>\)' .

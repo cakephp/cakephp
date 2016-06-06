@@ -15,8 +15,6 @@
 namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\FormAuthenticate;
-use Cake\Cache\Cache;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\I18n\Time;
@@ -307,6 +305,55 @@ class FormAuthenticateTest extends TestCase
             'username' => 'mariano',
         ];
         $this->assertEquals($expected, $result, 'Result should not contain "created" and "modified" fields');
+
+        $this->auth->config([
+            'finder' => ['auth' => ['return_created' => true]]
+        ]);
+
+        $result = $this->auth->authenticate($request, $this->response);
+        $expected = [
+            'id' => 1,
+            'username' => 'mariano',
+            'created' => new Time('2007-03-17 01:16:23'),
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test using custom finder
+     *
+     * @return void
+     */
+    public function testFinderOptions()
+    {
+        $request = new Request('posts/index');
+        $request->data = [
+            'username' => 'mariano',
+            'password' => 'password'
+        ];
+
+        $this->auth->config([
+            'userModel' => 'AuthUsers',
+            'finder' => 'username'
+        ]);
+
+        $result = $this->auth->authenticate($request, $this->response);
+        $expected = [
+            'id' => 1,
+            'username' => 'mariano',
+        ];
+        $this->assertEquals($expected, $result);
+
+        $this->auth->config([
+            'finder' => ['username' => ['username' => 'nate']]
+        ]);
+
+        $result = $this->auth->authenticate($request, $this->response);
+        $expected = [
+            'id' => 5,
+            'username' => 'nate',
+        ];
+        $this->assertEquals($expected, $result);
     }
 
     /**

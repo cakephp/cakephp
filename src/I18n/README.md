@@ -1,3 +1,6 @@
+[![Total Downloads](https://img.shields.io/packagist/dt/cakephp/i18n.svg?style=flat-square)](https://packagist.org/packages/cakephp/i18n)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.txt)
+
 # CakePHP Internationalization Library
 
 The I18n library provides a `I18n` service locator that can be used for setting

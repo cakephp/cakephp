@@ -196,9 +196,21 @@ class FormContextTest extends TestCase
         $this->assertEquals(['The provided value is invalid'], $context->error('email'));
         $this->assertEquals(['The provided value is invalid'], $context->error('name'));
         $this->assertEquals(['The provided value is invalid'], $context->error('pass.password'));
-
         $this->assertEquals([], $context->error('Alias.name'));
         $this->assertEquals([], $context->error('nope.nope'));
+
+        $mock = $this->getMock('Cake\Validation\Validator', ['errors']);
+        $mock->expects($this->once())
+            ->method('errors')
+            ->willReturn(['key' => 'should be an array, not a string']);
+        $form->validator($mock);
+        $form->validate([]);
+        $context = new FormContext($this->request, ['entity' => $form]);
+        $this->assertEquals(
+            ['should be an array, not a string'],
+            $context->error('key'),
+            'This test should not produce a PHP warning from array_values().'
+        );
     }
 
     /**

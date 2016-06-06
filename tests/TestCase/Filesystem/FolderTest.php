@@ -428,6 +428,43 @@ class FolderTest extends TestCase
     }
 
     /**
+     * testFolderSubdirectories method
+     *
+     * @return void
+     */
+    public function testFolderSubdirectories()
+    {
+        $path = CAKE . 'Network';
+        $folder = new Folder($path);
+
+        $expected = [
+            $path . DS . 'Exception',
+            $path . DS . 'Http',
+            $path . DS . 'Session'
+        ];
+        $result = $folder->subdirectories();
+        $this->assertSame([], array_diff($expected, $result));
+        $result = $folder->subdirectories($path);
+        $this->assertSame([], array_diff($expected, $result));
+
+        $expected = [
+            'Exception',
+            'Http',
+            'Session'
+        ];
+        $result = $folder->subdirectories(null, false);
+        $this->assertSame([], array_diff($expected, $result));
+        $result = $folder->subdirectories($path, false);
+        $this->assertSame([], array_diff($expected, $result));
+
+        $expected = [];
+        $result = $folder->subdirectories('NonExistantPath');
+        $this->assertSame([], array_diff($expected, $result));
+        $result = $folder->subdirectories($path . DS . 'Exception');
+        $this->assertSame([], array_diff($expected, $result));
+    }
+
+    /**
      * testFolderTree method
      *
      * @return void
@@ -1235,7 +1272,7 @@ class FolderTest extends TestCase
         $Folder = new Folder($path);
         $Folder->delete();
     }
-    
+
     public function testMoveWithoutRecursive()
     {
         extract($this->_setupFilesystem());
@@ -1246,5 +1283,79 @@ class FolderTest extends TestCase
         $this->assertTrue(file_exists($folderTwo . '/file1.php'));
         $this->assertFalse(is_dir($folderTwo . '/folderA'));
         $this->assertFalse(file_exists($folderTwo . '/folderA/fileA.php'));
+    }
+
+    /**
+     * testSortByTime method
+     *
+     * Verify that the order using modified time is correct.
+     *
+     * @return void
+     */
+    public function testSortByTime()
+    {
+        $Folder = new Folder(TMP . 'tests', true);
+
+        $file2 = new File($Folder->pwd() . DS . 'file_2.tmp');
+        $file2->create();
+
+        sleep(1);
+
+        $file1 = new File($Folder->pwd() . DS . 'file_1.tmp');
+        $file1->create();
+
+        $results = $Folder->find('.*', Folder::SORT_TIME);
+
+        $this->assertSame(['file_2.tmp', 'file_1.tmp'], $results);
+    }
+
+    /**
+     * testSortByTime2 method
+     *
+     * Verify that the order using modified time is correct.
+     *
+     * @return void
+     */
+    public function testSortByTime2()
+    {
+        $Folder = new Folder(TMP . 'tests', true);
+
+        $fileA = new File($Folder->pwd() . DS . 'a.txt');
+        $fileA->create();
+
+        $fileC = new File($Folder->pwd() . DS . 'c.txt');
+        $fileC->create();
+
+        sleep(1);
+
+        $fileB = new File($Folder->pwd() . DS . 'b.txt');
+        $fileB->create();
+
+        $results = $Folder->find('.*', Folder::SORT_TIME);
+
+        $this->assertSame(['a.txt', 'c.txt', 'b.txt'], $results);
+    }
+
+    /**
+     * Verify that the order using name is correct.
+     */
+    public function testSortByName()
+    {
+        $Folder = new Folder(TMP . 'tests', true);
+
+        $fileA = new File($Folder->pwd() . DS . 'a.txt');
+        $fileA->create();
+
+        $fileC = new File($Folder->pwd() . DS . 'c.txt');
+        $fileC->create();
+
+        sleep(1);
+
+        $fileB = new File($Folder->pwd() . DS . 'b.txt');
+        $fileB->create();
+
+        $results = $Folder->find('.*', Folder::SORT_NAME);
+
+        $this->assertSame(['a.txt', 'b.txt', 'c.txt'], $results);
     }
 }

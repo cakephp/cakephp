@@ -129,7 +129,7 @@ class Log
     /**
      * LogEngineRegistry class
      *
-     * @var LogEngineRegistry
+     * @var \Cake\Log\LogEngineRegistry
      */
     protected static $_registry;
 
@@ -273,7 +273,7 @@ class Log
      *
      * @param string|array $key The name of the logger config, or an array of multiple configs.
      * @param array|null $config An array of name => config data for adapter.
-     * @return mixed null when adding configuration and an array of configuration data when reading.
+     * @return array|null Null when adding configuration and an array of configuration data when reading.
      * @throws \BadMethodCallException When trying to modify an existing config.
      */
     public static function config($key, $config = null)
@@ -289,7 +289,7 @@ class Log
      * Get a logging engine.
      *
      * @param string $name Key name of a configured adapter to get.
-     * @return mixed Instance of BaseLog or false if not found
+     * @return \Cake\Log\Engine\BaseLog|false Instance of BaseLog or false if not found
      */
     public static function engine($name)
     {

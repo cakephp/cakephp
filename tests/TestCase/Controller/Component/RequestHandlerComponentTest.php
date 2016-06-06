@@ -16,12 +16,9 @@ namespace Cake\Test\TestCase\Controller\Component;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\RequestHandlerComponent;
-use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -1037,7 +1034,6 @@ class RequestHandlerComponentTest extends TestCase
      * array URLs into their correct string ones, and adds base => false so
      * the correct URLs are generated.
      *
-     * @link https://cakephp.lighthouseapp.com/projects/42648-cakephp-1x/tickets/276
      * @return void
      * @triggers Controller.beforeRender $this->Controller
      */
@@ -1145,7 +1141,7 @@ class RequestHandlerComponentTest extends TestCase
         $RequestHandler = new RequestHandlerComponent($this->Controller->components());
         $RequestHandler->response = $this->getMock('Cake\Network\Response', ['notModified', 'stop']);
         $RequestHandler->response->expects($this->never())->method('notModified');
-        $this->assertNull($RequestHandler->beforeRender($event, '', $RequestHandler->response));
+        $this->assertNull($RequestHandler->beforeRender($event));
     }
 
     /**
@@ -1192,5 +1188,18 @@ class RequestHandlerComponentTest extends TestCase
         $inputs = $requestHandler->config('inputTypeMap');
         $this->assertArrayHasKey('json', $inputs);
         $this->assertCount(1, $inputs);
+    }
+
+    /**
+     * test beforeRender() doesn't override response type set in controller action
+     *
+     * @return void
+     */
+    public function testBeforeRender()
+    {
+        $this->Controller->set_response_type();
+        $event = new Event('Controller.beforeRender', $this->Controller);
+        $this->RequestHandler->beforeRender($event);
+        $this->assertEquals('text/plain', $this->Controller->response->type());
     }
 }

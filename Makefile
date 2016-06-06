@@ -23,6 +23,13 @@ endif
 
 DASH_VERSION=$(shell echo $(VERSION) | sed -e s/\\./-/g)
 
+# Used when building packages for older 3.x packages.
+# The build scripts clone cakephp/app, and this var selects the
+# correct tag in that repo.
+# For 3.1.x use 3.1.2
+# For 3.0.x use 3.0.5
+APP_VERSION:=master
+
 ALL: help
 .PHONY: help install test need-version bump-version tag-version
 
@@ -41,7 +48,7 @@ help:
 	@echo "  Publish the dist/cakephp-VERSION.zip to github."
 	@echo ""
 	@echo "components"
-	@echo "  Split each of the public namespaces into separate repos and push the to github."
+	@echo "  Split each of the public namespaces into separate repos and push the to Github."
 	@echo ""
 	@echo "test"
 	@echo "  Run the tests for CakePHP."
@@ -104,9 +111,12 @@ build:
 
 build/app: build
 	git clone git@github.com:$(OWNER)/app.git build/app/
+	cd build/app && git checkout $(APP_VERSION)
 
 build/cakephp: build
+	git checkout $(VERSION)
 	git checkout-index -a -f --prefix=build/cakephp/
+	git checkout -
 
 dist/cakephp-$(DASH_VERSION).zip: build/app build/cakephp composer.phar
 	mkdir -p dist
@@ -128,7 +138,7 @@ package: dist/cakephp-$(DASH_VERSION).zip
 
 
 
-# Tasks to publish zipballs to github.
+# Tasks to publish zipballs to Github.
 .PHONY: publish release
 
 publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(DASH_VERSION).zip
@@ -153,7 +163,7 @@ publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(DASH_VERSION).zip
 	rm release.json
 	rm id.txt
 
-# Tasks for publishing separate reporsitories out of each cake namespace
+# Tasks for publishing separate repositories out of each CakePHP namespace
 
 components: $(foreach component, $(COMPONENTS), component-$(component))
 components-tag: $(foreach component, $(COMPONENTS), tag-component-$(component))
@@ -164,7 +174,7 @@ component-%:
 	- (git branch -D $* 2> /dev/null)
 	git checkout -b $*
 	git filter-branch --prune-empty --subdirectory-filter src/$(shell php -r "echo ucfirst('$*');") -f $*
-	git push $* $*:$(CURRENT_BRANCH)
+	git push -f $* $*:$(CURRENT_BRANCH)
 	git checkout $(CURRENT_BRANCH) > /dev/null
 
 tag-component-%: component-% guard-VERSION guard-GITHUB_USER
@@ -179,4 +189,4 @@ tag-component-%: component-% guard-VERSION guard-GITHUB_USER
 	git remote rm $*
 
 # Top level alias for doing a release.
-release: guard-VERSION guard-GITHUB_USER tag-release package publish components-tag
+release: guard-VERSION guard-GITHUB_USER tag-release components-tag package publish

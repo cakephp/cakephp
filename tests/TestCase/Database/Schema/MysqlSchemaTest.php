@@ -99,8 +99,24 @@ class MysqlSchemaTest extends TestCase
                 ['type' => 'uuid', 'length' => null]
             ],
             [
-                'TINYTEXT',
+                'TEXT',
                 ['type' => 'text', 'length' => null]
+            ],
+            [
+                'TINYTEXT',
+                ['type' => 'text', 'length' => Table::LENGTH_TINY]
+            ],
+            [
+                'MEDIUMTEXT',
+                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM]
+            ],
+            [
+                'LONGTEXT',
+                ['type' => 'text', 'length' => Table::LENGTH_LONG]
+            ],
+            [
+                'TINYBLOB',
+                ['type' => 'binary', 'length' => Table::LENGTH_TINY]
             ],
             [
                 'BLOB',
@@ -108,7 +124,11 @@ class MysqlSchemaTest extends TestCase
             ],
             [
                 'MEDIUMBLOB',
-                ['type' => 'binary', 'length' => null]
+                ['type' => 'binary', 'length' => Table::LENGTH_MEDIUM]
+            ],
+            [
+                'LONGBLOB',
+                ['type' => 'binary', 'length' => Table::LENGTH_LONG]
             ],
             [
                 'FLOAT',
@@ -150,7 +170,7 @@ class MysqlSchemaTest extends TestCase
     }
 
     /**
-     * Test parsing MySQL column types form field description.
+     * Test parsing MySQL column types from field description.
      *
      * @dataProvider convertColumnProvider
      * @return void
@@ -448,7 +468,7 @@ SQL;
             [
                 'role',
                 ['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
-                '`role` VARCHAR(10) NOT NULL DEFAULT "admin"'
+                '`role` VARCHAR(10) NOT NULL DEFAULT \'admin\''
             ],
             [
                 'title',
@@ -465,6 +485,42 @@ SQL;
                 'body',
                 ['type' => 'text', 'null' => false],
                 '`body` TEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_TINY, 'null' => false],
+                '`body` TINYTEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM, 'null' => false],
+                '`body` MEDIUMTEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
+                '`body` LONGTEXT NOT NULL'
+            ],
+            // Blob / binary
+            [
+                'body',
+                ['type' => 'binary', 'null' => false],
+                '`body` BLOB NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'binary', 'length' => Table::LENGTH_TINY, 'null' => false],
+                '`body` TINYBLOB NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'binary', 'length' => Table::LENGTH_MEDIUM, 'null' => false],
+                '`body` MEDIUMBLOB NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'binary', 'length' => Table::LENGTH_LONG, 'null' => false],
+                '`body` LONGBLOB NOT NULL'
             ],
             // Integers
             [
@@ -544,7 +600,7 @@ SQL;
             [
                 'created',
                 ['type' => 'datetime', 'comment' => 'Created timestamp'],
-                '`created` DATETIME COMMENT "Created timestamp"'
+                '`created` DATETIME COMMENT \'Created timestamp\''
             ],
             // Date & Time
             [
@@ -884,7 +940,7 @@ SQL;
         $expected = <<<SQL
 CREATE TABLE `posts` (
 `id` INTEGER NOT NULL AUTO_INCREMENT,
-`title` VARCHAR(255) NOT NULL COMMENT "The title",
+`title` VARCHAR(255) NOT NULL COMMENT 'The title',
 `body` TEXT,
 `created` DATETIME,
 PRIMARY KEY (`id`)
@@ -1036,16 +1092,11 @@ SQL;
     protected function _getMockedDriver()
     {
         $driver = new \Cake\Database\Driver\Mysql();
-        $mock = $this->getMock('FakePdo', ['quote', 'quoteIdentifier']);
+        $mock = $this->getMock('FakePdo', ['quote']);
         $mock->expects($this->any())
             ->method('quote')
             ->will($this->returnCallback(function ($value) {
-                return '"' . $value . '"';
-            }));
-        $mock->expects($this->any())
-            ->method('quoteIdentifier')
-            ->will($this->returnCallback(function ($value) {
-                return '`' . $value . '`';
+                return "'$value'";
             }));
         $driver->connection($mock);
         return $driver;

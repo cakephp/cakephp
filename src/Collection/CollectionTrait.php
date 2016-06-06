@@ -86,12 +86,14 @@ trait CollectionTrait
      */
     public function every(callable $c)
     {
+        $return = false;
         foreach ($this->unwrap() as $key => $value) {
+            $return = true;
             if (!$c($value, $key)) {
                 return false;
             }
         }
-        return true;
+        return $return;
     }
 
     /**
@@ -599,6 +601,26 @@ trait CollectionTrait
             $items = [$items];
         }
         return new ZipIterator(array_merge([$this], $items), $callable);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    public function chunk($chunkSize)
+    {
+        return $this->map(function ($v, $k, $iterator) use ($chunkSize) {
+            $values = [$v];
+            for ($i = 1; $i < $chunkSize; $i++) {
+                $iterator->next();
+                if (!$iterator->valid()) {
+                    break;
+                }
+                $values[] = $iterator->current();
+            }
+
+            return $values;
+        });
     }
 
     /**

@@ -14,8 +14,6 @@
  */
 namespace Cake\Test\TestCase\Shell;
 
-use Cake\Cache\Cache;
-use Cake\Datasource\ConnectionManager;
 use Cake\Shell\I18nShell;
 use Cake\TestSuite\TestCase;
 
@@ -48,13 +46,16 @@ class I18nShellTest extends TestCase
     {
         parent::tearDown();
 
-        $deDir = $this->localeDir . 'de' . DS;
+        $deDir = $this->localeDir . 'de_DE' . DS;
 
-        unlink($this->localeDir . 'default.pot');
-        unlink($this->localeDir . 'cake.pot');
-
-        unlink($deDir . 'default.po');
-        unlink($deDir . 'cake.po');
+        if (file_exists($this->localeDir . 'default.pot')) {
+            unlink($this->localeDir . 'default.pot');
+            unlink($this->localeDir . 'cake.pot');
+        }
+        if (file_exists($deDir . 'default.po')) {
+            unlink($deDir . 'default.po');
+            unlink($deDir . 'cake.po');
+        }
     }
 
     /**
@@ -64,7 +65,7 @@ class I18nShellTest extends TestCase
      */
     public function testInit()
     {
-        $deDir = $this->localeDir . 'de' . DS;
+        $deDir = $this->localeDir . 'de_DE' . DS;
         if (!is_dir($deDir)) {
             mkdir($deDir, 0770, true);
         }
@@ -79,7 +80,7 @@ class I18nShellTest extends TestCase
 
         $this->shell->io()->expects($this->at(0))
             ->method('ask')
-            ->will($this->returnValue('de'));
+            ->will($this->returnValue('de_DE'));
         $this->shell->io()->expects($this->at(1))
             ->method('ask')
             ->will($this->returnValue($this->localeDir));
@@ -89,5 +90,18 @@ class I18nShellTest extends TestCase
 
         $this->assertFileExists($deDir . 'default.po');
         $this->assertFileExists($deDir . 'cake.po');
+    }
+
+    /**
+     * Test that the option parser is shaped right.
+     *
+     * @return void
+     */
+    public function testGetOptionParser()
+    {
+        $this->shell->loadTasks();
+        $parser = $this->shell->getOptionParser();
+        $this->assertArrayHasKey('init', $parser->subcommands());
+        $this->assertArrayHasKey('extract', $parser->subcommands());
     }
 }

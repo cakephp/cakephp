@@ -18,9 +18,7 @@ use Cake\Core\Configure;
 use Cake\Network\Exception;
 use Cake\Network\Request;
 use Cake\Network\Session;
-use Cake\Routing\Dispatcher;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Xml;
 
 /**
  * Class TestRequest
@@ -177,6 +175,20 @@ class RequestTest extends TestCase
         $_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/other/path?url=http://cakephp.org';
         $request = Request::createFromGlobals();
         $this->assertEquals('other/path', $request->url);
+    }
+
+    /**
+     * Test that URL in path is handled correctly.
+     */
+    public function testUrlInPath()
+    {
+        $_SERVER['REQUEST_URI'] = '/jump/http://cakephp.org';
+        $request = Request::createFromGlobals();
+        $this->assertEquals('jump/http://cakephp.org', $request->url);
+
+        $_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/jump/http://cakephp.org';
+        $request = Request::createFromGlobals();
+        $this->assertEquals('jump/http://cakephp.org', $request->url);
     }
 
     /**
@@ -530,7 +542,7 @@ class RequestTest extends TestCase
      *
      * @return void
      */
-    public function testclientIp()
+    public function testClientIp()
     {
         $request = new Request(['environment' => [
             'HTTP_X_FORWARDED_FOR' => '192.168.1.5, 10.0.1.1, proxy.com',
@@ -541,17 +553,17 @@ class RequestTest extends TestCase
         $request->trustProxy = true;
         $this->assertEquals('192.168.1.5', $request->clientIp());
 
-        $request->trustProxy = false;
-        $this->assertEquals('192.168.1.2', $request->clientIp());
-
         $request->env('HTTP_X_FORWARDED_FOR', '');
         $this->assertEquals('192.168.1.2', $request->clientIp());
 
-        $request->env('HTTP_CLIENT_IP', '');
+        $request->trustProxy = false;
         $this->assertEquals('192.168.1.3', $request->clientIp());
 
-        $request->env('HTTP_CLIENTADDRESS', '10.0.1.2, 10.0.1.1');
-        $this->assertEquals('10.0.1.2', $request->clientIp());
+        $request->env('HTTP_X_FORWARDED_FOR', '');
+        $this->assertEquals('192.168.1.3', $request->clientIp());
+
+        $request->env('HTTP_CLIENT_IP', '');
+        $this->assertEquals('192.168.1.3', $request->clientIp());
     }
 
     /**
@@ -575,6 +587,14 @@ class RequestTest extends TestCase
         $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
         $result = $request->referer(true);
         $this->assertSame('/some/path', $result);
+
+        $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/0');
+        $result = $request->referer(true);
+        $this->assertSame('/0', $result);
+
+        $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/');
+        $result = $request->referer(true);
+        $this->assertSame('/', $result);
 
         $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
         $result = $request->referer(false);
@@ -1269,7 +1289,6 @@ class RequestTest extends TestCase
      * - index.php/apples/
      * - index.php/bananas/eat/tasty_banana
      *
-     * @link https://cakephp.lighthouseapp.com/projects/42648-cakephp/tickets/3318
      * @return void
      */
     public function testBaseUrlWithModRewriteAndIndexPhp()
@@ -2460,6 +2479,32 @@ XML;
         $_SERVER['CONTENT_TYPE'] = 'application/xml';
         $request = Request::createFromGlobals();
         $this->assertEquals('application/xml', $request->contentType(), 'prefer non http header.');
+    }
+
+    /**
+     * Tests that overriding the method to GET will clean all request
+     * data, to better simulate a GET request.
+     *
+     * @return void
+     */
+    public function testMethodOverrideEmptyData()
+    {
+        $post = ['_method' => 'GET', 'foo' => 'bar'];
+        $request = new Request([
+            'post' => $post,
+            'environment' => ['REQUEST_METHOD' => 'POST']
+        ]);
+        $this->assertEmpty($request->data);
+
+        $post = ['_method' => 'GET', 'foo' => 'bar'];
+        $request = new Request([
+            'post' => ['foo' => 'bar'],
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_X_HTTP_METHOD_OVERRIDE' => 'GET'
+            ]
+        ]);
+        $this->assertEmpty($request->data);
     }
 
     /**

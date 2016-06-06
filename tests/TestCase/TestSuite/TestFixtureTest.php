@@ -14,6 +14,8 @@
  */
 namespace Cake\Test\TestCase\TestSuite;
 
+use Cake\Database\Schema\Table;
+use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;
@@ -123,6 +125,26 @@ class ImportsFixture extends TestFixture
 }
 
 /**
+ * This class allows testing the fixture data insertion when the properties
+ * $fields and $import are not set
+ *
+ */
+class LettersFixture extends TestFixture
+{
+
+    /**
+     * records property
+     *
+     * @var array
+     */
+    public $records = [
+        ['letter' => 'a'],
+        ['letter' => 'b'],
+        ['letter' => 'c']
+    ];
+}
+
+/**
  * Test case for TestFixture
  *
  */
@@ -210,6 +232,80 @@ class TestFixtureTest extends TestCase
             'published',
         ];
         $this->assertEquals($expected, $fixture->schema()->columns());
+    }
+
+    /**
+     * test import fixture initialization
+     *
+     * @return void
+     */
+    public function testInitImportModel()
+    {
+        $fixture = new ImportsFixture();
+        $fixture->fields = $fixture->records = null;
+        $fixture->import = [
+            'model' => 'Posts',
+            'connection' => 'test',
+        ];
+        $fixture->init();
+
+        $expected = [
+            'id',
+            'author_id',
+            'title',
+            'body',
+            'published',
+        ];
+        $this->assertEquals($expected, $fixture->schema()->columns());
+    }
+
+    /**
+     * test schema reflection without $import or $fields and without the table existing
+     * it will throw an exception
+     *
+     * @expectedException \Cake\Core\Exception\Exception
+     * @expectedExceptionMessage Cannot describe schema for table `letters` for fixture `Cake\Test\TestCase\TestSuite\LettersFixture` : the table does not exist.
+     * @return void
+     */
+    public function testInitNoImportNoFieldsException()
+    {
+        $fixture = new LettersFixture();
+        $fixture->init();
+    }
+
+    /**
+     * test schema reflection without $import or $fields will reflect the schema
+     *
+     * @return void
+     */
+    public function testInitNoImportNoFields()
+    {
+        $db = ConnectionManager::get('test');
+        $collection = $db->schemaCollection();
+        if (!in_array('letters', $collection->listTables())) {
+            $table = new Table('letters', [
+                'id' => ['type' => 'integer'],
+                'letter' => ['type' => 'string', 'length' => 1]
+            ]);
+            $table->addConstraint('primary', ['type' => 'primary', 'columns' => ['id']]);
+            $sql = $table->createSql($db);
+
+            foreach ($sql as $stmt) {
+                $db->execute($stmt);
+            }
+        }
+
+        $fixture = new LettersFixture();
+        $fixture->init();
+        $this->assertEquals(['id', 'letter'], $fixture->schema()->columns());
+
+        $db = $this->getMock('Cake\Database\Connection', ['prepare', 'execute'], [], '', false);
+        $db->expects($this->never())
+            ->method('prepare');
+        $db->expects($this->never())
+            ->method('execute');
+        $this->assertTrue($fixture->create($db));
+        $this->assertTrue($fixture->drop($db));
     }
 
     /**

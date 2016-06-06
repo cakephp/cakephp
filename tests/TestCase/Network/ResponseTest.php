@@ -448,7 +448,7 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $result = $response->httpCodes();
-        $this->assertEquals(41, count($result));
+        $this->assertEquals(42, count($result));
 
         $result = $response->httpCodes(100);
         $expected = [100 => 'Continue'];
@@ -461,7 +461,7 @@ class ResponseTest extends TestCase
 
         $result = $response->httpCodes($codes);
         $this->assertTrue($result);
-        $this->assertEquals(43, count($response->httpCodes()));
+        $this->assertEquals(44, count($response->httpCodes()));
 
         $result = $response->httpCodes(381);
         $expected = [381 => 'Unicorn Moved'];
@@ -470,7 +470,7 @@ class ResponseTest extends TestCase
         $codes = [404 => 'Sorry Bro'];
         $result = $response->httpCodes($codes);
         $this->assertTrue($result);
-        $this->assertEquals(43, count($response->httpCodes()));
+        $this->assertEquals(44, count($response->httpCodes()));
 
         $result = $response->httpCodes(404);
         $expected = [404 => 'Sorry Bro'];
@@ -1082,25 +1082,24 @@ class ResponseTest extends TestCase
     public function testCors($request, $origin, $domains, $methods, $headers, $expectedOrigin, $expectedMethods = false, $expectedHeaders = false)
     {
         $request->env('HTTP_ORIGIN', $origin);
+        $response = new Response();
 
-        $response = $this->getMock('Cake\Network\Response', ['header']);
+        $result = $response->cors($request, $domains, $methods, $headers);
+        $this->assertInstanceOf('Cake\Network\CorsBuilder', $result);
 
-        $method = $response->expects(!$expectedOrigin ? $this->never() : $this->at(0))->method('header');
-        $expectedOrigin && $method->with('Access-Control-Allow-Origin', $expectedOrigin ? $expectedOrigin : $this->anything());
-
-        $i = 1;
+        $headers = $response->header();
+        if ($expectedOrigin) {
+            $this->assertArrayHasKey('Access-Control-Allow-Origin', $headers);
+            $this->assertEquals($expectedOrigin, $headers['Access-Control-Allow-Origin']);
+        }
         if ($expectedMethods) {
-            $response->expects($this->at($i++))
-                ->method('header')
-                ->with('Access-Control-Allow-Methods', $expectedMethods ? $expectedMethods : $this->anything());
+            $this->assertArrayHasKey('Access-Control-Allow-Methods', $headers);
+            $this->assertEquals($expectedMethods, $headers['Access-Control-Allow-Methods']);
         }
         if ($expectedHeaders) {
-            $response->expects($this->at($i++))
-                ->method('header')
-                ->with('Access-Control-Allow-Headers', $expectedHeaders ? $expectedHeaders : $this->anything());
+            $this->assertArrayHasKey('Access-Control-Allow-Headers', $headers);
+            $this->assertEquals($expectedHeaders, $headers['Access-Control-Allow-Headers']);
         }
-
-        $response->cors($request, $domains, $methods, $headers);
         unset($_SERVER['HTTP_ORIGIN']);
     }
 
@@ -1123,19 +1122,19 @@ class ResponseTest extends TestCase
         };
 
         return [
-            [$fooRequest, null, '*', '', '', false, false],
-            [$fooRequest, 'http://www.foo.com', '*', '', '', '*', false],
-            [$fooRequest, 'http://www.foo.com', 'www.foo.com', '', '', 'http://www.foo.com', false],
-            [$fooRequest, 'http://www.foo.com', '*.foo.com', '', '', 'http://www.foo.com', false],
-            [$fooRequest, 'http://www.foo.com', 'http://*.foo.com', '', '', 'http://www.foo.com', false],
-            [$fooRequest, 'http://www.foo.com', 'https://www.foo.com', '', '', false, false],
-            [$fooRequest, 'http://www.foo.com', 'https://*.foo.com', '', '', false, false],
-            [$fooRequest, 'http://www.foo.com', ['*.bar.com', '*.foo.com'], '', '', 'http://www.foo.com', false],
+            // [$fooRequest, null, '*', '', '', false, false],
+            // [$fooRequest, 'http://www.foo.com', '*', '', '', '*', false],
+            // [$fooRequest, 'http://www.foo.com', 'www.foo.com', '', '', 'http://www.foo.com', false],
+            // [$fooRequest, 'http://www.foo.com', '*.foo.com', '', '', 'http://www.foo.com', false],
+            // [$fooRequest, 'http://www.foo.com', 'http://*.foo.com', '', '', 'http://www.foo.com', false],
+            // [$fooRequest, 'http://www.foo.com', 'https://www.foo.com', '', '', false, false],
+            // [$fooRequest, 'http://www.foo.com', 'https://*.foo.com', '', '', false, false],
+            // [$fooRequest, 'http://www.foo.com', ['*.bar.com', '*.foo.com'], '', '', 'http://www.foo.com', false],
 
-            [$fooRequest, 'http://not-foo.com', '*.foo.com', '', '', false, false],
-            [$fooRequest, 'http://bad.academy', '*.acad.my', '', '', false, false],
-            [$fooRequest, 'http://www.foo.com.at.bad.com', '*.foo.com', '', '', false, false],
-            [$fooRequest, 'https://www.foo.com', '*.foo.com', '', '', false, false],
+            // [$fooRequest, 'http://not-foo.com', '*.foo.com', '', '', false, false],
+            // [$fooRequest, 'http://bad.academy', '*.acad.my', '', '', false, false],
+            // [$fooRequest, 'http://www.foo.com.at.bad.com', '*.foo.com', '', '', false, false],
+            // [$fooRequest, 'https://www.foo.com', '*.foo.com', '', '', false, false],
 
             [$secureRequest(), 'https://www.bar.com', 'www.bar.com', '', '', 'https://www.bar.com', false],
             [$secureRequest(), 'https://www.bar.com', 'http://www.bar.com', '', '', false, false],
@@ -1229,8 +1228,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->exactly(1))
@@ -1241,9 +1238,6 @@ class ResponseTest extends TestCase
         $response->expects($this->at(1))
             ->method('header')
             ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->once())->method('_clearBuffer');
-        $response->expects($this->once())->method('_flushBuffer');
 
         $response->expects($this->exactly(1))
             ->method('_isActive')
@@ -1272,8 +1266,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->exactly(1))
@@ -1292,9 +1284,6 @@ class ResponseTest extends TestCase
         $response->expects($this->at(3))
             ->method('header')
             ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->once())->method('_clearBuffer');
-        $response->expects($this->once())->method('_flushBuffer');
 
         $response->expects($this->exactly(1))
             ->method('_isActive')
@@ -1332,8 +1321,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->exactly(1))
@@ -1352,9 +1339,6 @@ class ResponseTest extends TestCase
         $response->expects($this->at(3))
             ->method('header')
             ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->once())->method('_clearBuffer');
-        $response->expects($this->once())->method('_flushBuffer');
 
         $response->expects($this->exactly(1))
             ->method('_isActive')
@@ -1389,8 +1373,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->at(0))
@@ -1415,8 +1397,6 @@ class ResponseTest extends TestCase
             ->method('header')
             ->with('Accept-Ranges', 'bytes');
 
-        $response->expects($this->once())->method('_clearBuffer');
-        $response->expects($this->once())->method('_flushBuffer');
         $response->expects($this->exactly(1))
             ->method('_isActive')
             ->will($this->returnValue(true));
@@ -1450,8 +1430,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->at(0))
@@ -1476,8 +1454,6 @@ class ResponseTest extends TestCase
             ->method('header')
             ->with('Accept-Ranges', 'bytes');
 
-        $response->expects($this->once())->method('_clearBuffer');
-        $response->expects($this->once())->method('_flushBuffer');
         $response->expects($this->exactly(1))
             ->method('_isActive')
             ->will($this->returnValue(true));
@@ -1512,8 +1488,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->exactly(1))
@@ -1538,6 +1512,22 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * test getFile method
+     *
+     * @return void
+     */
+    public function testGetFile()
+    {
+        $response = new Response();
+        $this->assertNull($response->getFile(), 'No file to get');
+
+        $response->file(TEST_APP . 'vendor/css/test_asset.css');
+        $file = $response->getFile();
+        $this->assertInstanceOf('Cake\Filesystem\File', $file, 'Should get a file');
+        $this->assertPathEquals(TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css', $file->path);
+    }
+
+    /**
      * testConnectionAbortedOnBuffering method
      *
      * @return void
@@ -1551,8 +1541,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->any())
@@ -1563,9 +1551,6 @@ class ResponseTest extends TestCase
         $response->expects($this->at(0))
             ->method('_isActive')
             ->will($this->returnValue(false));
-
-        $response->expects($this->once())->method('_clearBuffer');
-        $response->expects($this->never())->method('_flushBuffer');
 
         $response->file(TEST_APP . 'vendor/css/test_asset.css');
 
@@ -1587,8 +1572,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->any())
@@ -1617,8 +1600,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->any())
@@ -1649,11 +1630,18 @@ class ResponseTest extends TestCase
             [
                 'bytes=0-', 38, 'bytes 0-37/38'
             ],
+
             [
                 'bytes=10-', 28, 'bytes 10-37/38'
             ],
+
             [
                 'bytes=10-20', 11, 'bytes 10-20/38'
+            ],
+
+            // Spaced out
+            [
+                'bytes = 10 - 20', 11, 'bytes 10-20/38'
             ],
         ];
     }
@@ -1672,8 +1660,6 @@ class ResponseTest extends TestCase
             'type',
             '_sendHeader',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->at(1))
@@ -1723,8 +1709,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->exactly(1))
@@ -1751,8 +1735,6 @@ class ResponseTest extends TestCase
                 'Content-Range' => 'bytes 8-25/38',
             ]);
 
-        $response->expects($this->once())->method('_clearBuffer');
-
         $response->expects($this->any())
             ->method('_isActive')
             ->will($this->returnValue(true));
@@ -1771,11 +1753,60 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Provider for invalid range header values.
+     *
+     * @return array
+     */
+    public function invalidFileRangeProvider()
+    {
+        return [
+            // malformed range
+            [
+                'bytes=0,38'
+            ],
+
+            // malformed punctuation
+            [
+                'bytes: 0 - 38'
+            ],
+        ];
+    }
+
+    /**
      * Test invalid file ranges.
+     *
+     * @dataProvider invalidFileRangeProvider
+     * @return void
+     */
+    public function testFileRangeInvalid($range)
+    {
+        $_SERVER['HTTP_RANGE'] = $range;
+        $response = $this->getMock('Cake\Network\Response', [
+            '_sendHeader',
+            '_isActive',
+        ]);
+
+        $response->file(
+            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+            ['download' => true]
+        );
+
+        $expected = [
+            'Content-Disposition' => 'attachment; filename="test_asset.css"',
+            'Content-Transfer-Encoding' => 'binary',
+            'Accept-Ranges' => 'bytes',
+            'Content-Range' => 'bytes 0-37/38',
+            'Content-Length' => 38,
+        ];
+        $this->assertEquals($expected, $response->header());
+    }
+
+    /**
+     * Test reversed file ranges.
      *
      * @return void
      */
-    public function testFileRangeInvalid()
+    public function testFileRangeReversed()
     {
         $_SERVER['HTTP_RANGE'] = 'bytes=30-2';
         $response = $this->getMock('Cake\Network\Response', [
@@ -1784,8 +1815,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->at(1))
@@ -1829,8 +1858,6 @@ class ResponseTest extends TestCase
             'type',
             '_sendHeader',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->at(1))
@@ -1872,8 +1899,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->exactly(1))
@@ -1891,8 +1916,6 @@ class ResponseTest extends TestCase
                 'Content-Length' => 18,
                 'Content-Range' => 'bytes 8-25/38',
             ]);
-
-        $response->expects($this->once())->method('_clearBuffer');
 
         $response->expects($this->any())
             ->method('_isActive')
@@ -1925,8 +1948,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->at(1))

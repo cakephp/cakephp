@@ -15,10 +15,8 @@
 namespace Cake\Test\TestCase\Shell;
 
 use Cake\Console\ConsoleIo;
-use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Shell\CommandListShell;
-use Cake\Shell\Task\CommandTask;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 
@@ -133,5 +131,21 @@ class CommandListShellTest extends TestCase
 
         $find = '<shell name="welcome" call_as="TestPluginTwo.welcome" provider="TestPluginTwo" help="TestPluginTwo.welcome -h"';
         $this->assertContains($find, $output);
+    }
+
+    /**
+     * test that main prints the cakephp's version.
+     *
+     * @return void
+     */
+    public function testMainVersion()
+    {
+        $this->Shell->params['version'] = true;
+        $this->Shell->main();
+        $output = $this->out->messages();
+        $output = implode("\n", $output);
+
+        $expected = Configure::version();
+        $this->assertEquals($expected, $output);
     }
 }

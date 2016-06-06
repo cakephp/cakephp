@@ -35,6 +35,7 @@ use Cake\ORM\Association\HasOne;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
+use Cake\Validation\Validation;
 use Cake\Validation\ValidatorAwareTrait;
 use InvalidArgumentException;
 use RuntimeException;
@@ -105,6 +106,12 @@ use RuntimeException;
  *
  * - `afterSave(Event $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired after an entity is saved.
+ *
+ * - `afterSaveCommit(Event $event, EntityInterface $entity, ArrayObject $options)`
+ *   Fired after the transaction in which the save operation is wrapped has been committed.
+ *   It’s also triggered for non atomic saves where database operations are implicitly committed.
+ *   The event is triggered only for the primary table on which save() is directly called.
+ *   The event is not triggered if a transaction is started before calling save.
  *
  * - `beforeDelete(Event $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired before an entity is deleted. By stopping this event you will abort
@@ -751,9 +758,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * - foreignKey: The name of the field to use as foreign key, if false none
      *   will be used
      * - dependent: Set to true if you want CakePHP to cascade deletes to the
-     *   associated table when an entity is removed on this table. Set to false
-     *   if you don't want CakePHP to remove associated data, for when you are using
-     *   database constraints.
+     *   associated table when an entity is removed on this table. The delete operation
+     *   on the associated table will not cascade further. To get recursive cascades enable
+     *   `cascadeCallbacks` as well. Set to false if you don't want CakePHP to remove
+     *   associated data, or when you are using database constraints.
      * - cascadeCallbacks: Set to true if you want CakePHP to fire callbacks on
      *   cascaded deletes. If false the ORM will use deleteAll() to remove data.
      *   When true records will be loaded and then deleted.
@@ -793,9 +801,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * - foreignKey: The name of the field to use as foreign key, if false none
      *   will be used
      * - dependent: Set to true if you want CakePHP to cascade deletes to the
-     *   associated table when an entity is removed on this table. Set to false
-     *   if you don't want CakePHP to remove associated data, for when you are using
-     *   database constraints.
+     *   associated table when an entity is removed on this table. The delete operation
+     *   on the associated table will not cascade further. To get recursive cascades enable
+     *   `cascadeCallbacks` as well. Set to false if you don't want CakePHP to remove
+     *   associated data, or when you are using database constraints.
      * - cascadeCallbacks: Set to true if you want CakePHP to fire callbacks on
      *   cascaded deletes. If false the ORM will use deleteAll() to remove data.
      *   When true records will be loaded and then deleted.
@@ -844,6 +853,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * - through: If you choose to use an already instantiated link table, set this
      *   key to a configured Table instance containing associations to both the source
      *   and target tables in this association.
+     * - dependent: Set to false, if you do not want junction table records removed
+     *   when an owning record is removed.
      * - cascadeCallbacks: Set to true if you want CakePHP to fire callbacks on
      *   cascaded deletes. If false the ORM will use deleteAll() to remove data.
      *   When true join/junction table records will be loaded and then deleted.
@@ -1020,7 +1031,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (isset($options['idField'])) {
             $options['keyField'] = $options['idField'];
             unset($options['idField']);
-            trigger_error('Option "idField" is deprecated, use "keyField" instead.', E_USER_WARNING);
+            trigger_error('Option "idField" is deprecated, use "keyField" instead.', E_USER_DEPRECATED);
         }
 
         if (!$query->clause('select') &&
@@ -1086,7 +1097,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (isset($options['idField'])) {
             $options['keyField'] = $options['idField'];
             unset($options['idField']);
-            trigger_error('Option "idField" is deprecated, use "keyField" instead.', E_USER_WARNING);
+            trigger_error('Option "idField" is deprecated, use "keyField" instead.', E_USER_DEPRECATED);
         }
 
         $options = $this->_setFieldMatchers($options, ['keyField', 'parentField']);
@@ -1609,6 +1620,45 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Persists multiple entities of a table.
+     *
+     * The records will be saved in a transaction which will be rolled back if
+     * any one of the records fails to save due to failed validation or database
+     * error.
+     *
+     * @param array|\Cake\ORM\ResultSet $entities Entities to save.
+     * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
+     * @return bool|array|\Cake\ORM\ResultSet False on failure, entities list on succcess.
+     */
+    public function saveMany($entities, $options = [])
+    {
+        $isNew = [];
+
+        $return = $this->connection()->transactional(
+            function () use ($entities, $options, &$isNew) {
+                foreach ($entities as $key => $entity) {
+                    $isNew[$key] = $entity->isNew();
+                    if ($this->save($entity, $options) === false) {
+                        return false;
+                    }
+                }
+            }
+        );
+
+        if ($return === false) {
+            foreach ($entities as $key => $entity) {
+                if (isset($isNew[$key]) && $isNew[$key]) {
+                    $entity->unsetProperty($this->primaryKey());
+                    $entity->isNew(true);
+                }
+            }
+            return false;
+        }
+
+        return $entities;
+    }
+
+    /**
      * {@inheritDoc}
      *
      * For HasMany and HasOne associations records will be removed based on
@@ -1814,6 +1864,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             );
         }
 
+        $conditions = [];
         if ($hasOr === false && $hasAnd === false) {
             $conditions = $makeConditions([$fields], $args);
         } elseif ($hasOr !== false) {

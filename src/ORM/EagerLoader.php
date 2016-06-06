@@ -161,7 +161,7 @@ class EagerLoader
     /**
      * Set whether or not contained associations will load fields automatically.
      *
-     * @param bool $value The value to set.
+     * @param bool|null $value The value to set.
      * @return bool The current value.
      */
     public function autoFields($value = null)
@@ -311,6 +311,15 @@ class EagerLoader
             }
 
             $pointer += [$table => []];
+
+            if (isset($options['queryBuilder']) && isset($pointer[$table]['queryBuilder'])) {
+                $first = $pointer[$table]['queryBuilder'];
+                $second = $options['queryBuilder'];
+                $options['queryBuilder'] = function ($query) use ($first, $second) {
+                    return $second($first($query));
+                };
+            }
+
             $pointer[$table] = $options + $pointer[$table];
         }
 
@@ -394,7 +403,7 @@ class EagerLoader
      * Auxiliary function responsible for fully normalizing deep associations defined
      * using `contain()`
      *
-     * @param Table $parent owning side of the association
+     * @param \Cake\ORM\Table $parent owning side of the association
      * @param string $alias name of the association to be loaded
      * @param array $options list of extra options to use for this association
      * @param array $paths An array with two values, the first one is a list of dot
@@ -542,7 +551,7 @@ class EagerLoader
      * @param \Cake\ORM\Query $query The query for which to eager load external
      * associations
      * @param \Cake\Database\StatementInterface $statement The statement created after executing the $query
-     * @return CallbackStatement statement modified statement with extra loaders
+     * @return \Cake\Database\Statement\CallbackStatement statement modified statement with extra loaders
      */
     public function loadExternal($query, $statement)
     {
@@ -656,7 +665,7 @@ class EagerLoader
      *
      * @param array $external the list of external associations to be loaded
      * @param \Cake\ORM\Query $query The query from which the results where generated
-     * @param BufferedStatement $statement The statement to work on
+     * @param \Cake\Database\Statement\BufferedStatement $statement The statement to work on
      * @return array
      */
     protected function _collectKeys($external, $query, $statement)

@@ -14,7 +14,6 @@
  */
 namespace Cake\Shell\Task;
 
-use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Plugin;
@@ -164,7 +163,7 @@ class CommandTask extends Shell
             }
         }
 
-        $return += array_diff($methodNames, $shellMethodNames);
+        $return = array_merge($return, array_diff($methodNames, $shellMethodNames));
         sort($return);
 
         return $return;

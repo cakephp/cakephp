@@ -192,6 +192,13 @@ class CollectionTest extends TestCase
             ->will($this->returnValue(false));
         $callable->expects($this->exactly(2))->method('__invoke');
         $this->assertFalse($collection->every($callable));
+
+        $items = [];
+        $collection = new Collection($items);
+        $callable = $this->getMock('stdClass', ['__invoke']);
+        $callable->expects($this->never())
+            ->method('__invoke');
+        $this->assertFalse($collection->every($callable));
     }
 
     /**
@@ -1526,5 +1533,44 @@ class CollectionTest extends TestCase
         $selialized = serialize($collection);
         $unserialized = unserialize($selialized);
         $this->assertEquals($collection->toList(), $unserialized->toList());
+    }
+
+    /**
+     * Tests the chunk method with exact chunks
+     *
+     * @return void
+     */
+    public function testChunk()
+    {
+        $collection = new Collection(range(1, 10));
+        $chunked = $collection->chunk(2)->toList();
+        $expected = [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]];
+        $this->assertEquals($expected, $chunked);
+    }
+
+    /**
+     * Tests the chunk method with overflowing chunk size
+     *
+     * @return void
+     */
+    public function testChunkOverflow()
+    {
+        $collection = new Collection(range(1, 11));
+        $chunked = $collection->chunk(2)->toList();
+        $expected = [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11]];
+        $this->assertEquals($expected, $chunked);
+    }
+
+    /**
+     * Tests the chunk method with non-scalar items
+     *
+     * @return void
+     */
+    public function testChunkNested()
+    {
+        $collection = new Collection([1, 2, 3, [4, 5], 6, [7, [8, 9], 10], 11]);
+        $chunked = $collection->chunk(2)->toList();
+        $expected = [[1, 2], [3, [4, 5]], [6, [7, [8, 9], 10]], [11]];
+        $this->assertEquals($expected, $chunked);
     }
 }

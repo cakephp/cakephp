@@ -80,7 +80,7 @@ class Type
     /**
      * Constructor
      *
-     * @param string $name The name identifying this type
+     * @param string|null $name The name identifying this type
      */
     public function __construct($name = null)
     {
@@ -92,7 +92,7 @@ class Type
      *
      * @param string $name type identifier
      * @throws \InvalidArgumentException If type identifier is unknown
-     * @return Type
+     * @return \Cake\Database\Type
      */
     public static function build($name)
     {
@@ -102,7 +102,25 @@ class Type
         if (!isset(static::$_types[$name])) {
             throw new InvalidArgumentException(sprintf('Unknown type "%s"', $name));
         }
-        return static::$_builtTypes[$name] = new static::$_types[$name]($name);
+        if (is_string(static::$_types[$name])) {
+            return static::$_builtTypes[$name] = new static::$_types[$name]($name);
+        }
+
+        return static::$_builtTypes[$name] = static::$_types[$name];
+    }
+
+    /**
+     * Returns an arrays with all the mapped type objects, indexed by name
+     *
+     * @return array
+     */
+    public static function buildAll()
+    {
+        $result = [];
+        foreach (self::$_types as $name => $type) {
+            $result[$name] = isset(static::$_builtTypes[$name]) ? static::$_builtTypes[$name] : static::build($name);
+        }
+        return $result;
     }
 
     /**
@@ -122,7 +140,7 @@ class Type
      * If called with no arguments it will return current types map array
      * If $className is omitted it will return mapped class for $type
      *
-     * @param string|array|null $type if string name of type to map, if array list of arrays to be mapped
+     * @param string|array|\Cake\Database\Type|null $type if string name of type to map, if array list of arrays to be mapped
      * @param string|null $className The classname to register.
      * @return array|string|null if $type is null then array with current map, if $className is null string
      * configured class name for give $type, null otherwise
@@ -132,7 +150,7 @@ class Type
         if ($type === null) {
             return self::$_types;
         }
-        if (!is_string($type)) {
+        if (is_array($type)) {
             self::$_types = $type;
             return null;
         }
@@ -180,7 +198,7 @@ class Type
      * Casts given value from a PHP type to one acceptable by database
      *
      * @param mixed $value value to be converted to database equivalent
-     * @param Driver $driver object from which database preferences and configuration will be extracted
+     * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
      * @return mixed
      */
     public function toDatabase($value, Driver $driver)
@@ -192,7 +210,7 @@ class Type
      * Casts given value from a database type to PHP equivalent
      *
      * @param mixed $value value to be converted to PHP equivalent
-     * @param Driver $driver object from which database preferences and configuration will be extracted
+     * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
      * @return mixed
      */
     public function toPHP($value, Driver $driver)
@@ -226,7 +244,7 @@ class Type
      * Casts give value to Statement equivalent
      *
      * @param mixed $value value to be converted to PHP equivalent
-     * @param Driver $driver object from which database preferences and configuration will be extracted
+     * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
      * @return mixed
      */
     public function toStatement($value, Driver $driver)
@@ -245,6 +263,7 @@ class Type
      *
      * @param mixed $value The value to convert to a boolean.
      * @return bool
+     * @deprecated 3.1.8 This method is now unused.
      */
     public static function boolval($value)
     {
@@ -261,6 +280,7 @@ class Type
      *
      * @param mixed $value The value to convert to a string.
      * @return bool
+     * @deprecated 3.1.8 This method is now unused.
      */
     public static function strval($value)
     {

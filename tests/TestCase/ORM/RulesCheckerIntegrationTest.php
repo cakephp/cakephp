@@ -30,7 +30,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.tags'];
+    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.tags', 'core.categories'];
 
     /**
      * Tear down
@@ -116,6 +116,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $this->assertNull($entity->article->get('author_id'));
         $this->assertFalse($entity->article->dirty('author_id'));
         $this->assertNotEmpty($entity->article->errors('title'));
+        $this->assertSame('A Title', $entity->article->invalid('title'));
     }
 
     /**
@@ -370,6 +371,32 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Tests isUnique with multiple fields emulates SQL UNIQUE keys
+     *
+     * @group save
+     * @return void
+     */
+    public function testIsUniqueMultipleFieldsOneIsNull()
+    {
+        $entity = new Entity([
+            'author_id' => null,
+            'title' => 'First Article'
+        ]);
+        $table = TableRegistry::get('Articles');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->isUnique(['title', 'author_id'], 'Nope'));
+
+        $this->assertSame($entity, $table->save($entity));
+
+        // Make a matching record
+        $entity = new Entity([
+            'author_id' => null,
+            'title' => 'New Article'
+        ]);
+        $this->assertSame($entity, $table->save($entity));
+    }
+
+    /**
      * Tests the existsIn domain rule
      *
      * @group save
@@ -434,6 +461,30 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Test ExistsIn on a new entity that doesn't have the field populated.
+     *
+     * This use case is important for saving records and their
+     * associated belongsTo records in one pass.
+     *
+     * @return void
+     */
+    public function testExistsInNotNullValueNewEntity()
+    {
+        $entity = new Entity([
+            'name' => 'A Category',
+        ]);
+        $table = TableRegistry::get('Categories');
+        $table->belongsTo('Categories', [
+            'foreignKey' => 'parent_id',
+            'bindingKey' => 'id',
+        ]);
+        $rules = $table->rulesChecker();
+        $rules->add($rules->existsIn('parent_id', 'Categories'));
+        $this->assertTrue($table->checkRules($entity, RulesChecker::CREATE));
+        $this->assertEmpty($entity->errors('parent_id'));
+    }
+
+    /**
      * Tests exists in uses the bindingKey of the association
      *
      * @return
@@ -458,6 +509,29 @@ class RulesCheckerIntegrationTest extends TestCase
         $entity->clean();
         $entity->title = 'larry';
         $this->assertEquals($entity, $table->save($entity));
+    }
+
+    /**
+     * Tests existsIn with invalid associations
+     *
+     * @group save
+     * @expectedException RuntimeException
+     * @expectedExceptionMessage ExistsIn rule for 'author_id' is invalid. The 'NotValid' association is not defined.
+     * @return void
+     */
+    public function testExistsInInvalidAssociation()
+    {
+        $entity = new Entity([
+            'title' => 'An Article',
+            'author_id' => 500
+        ]);
+
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->existsIn('author_id', 'NotValid'));
+
+        $table->save($entity);
     }
 
     /**
@@ -836,5 +910,58 @@ class RulesCheckerIntegrationTest extends TestCase
         });
 
         $this->assertSame($entity, $table->save($entity));
+    }
+
+    /**
+     * Tests that associated items have a count of X.
+     *
+     * @group save
+     * @return void
+     */
+    public function testCountOfAssociatedItems()
+    {
+        $entity = new \Cake\ORM\Entity([
+            'title' => 'A Title',
+            'body' => 'A body'
+        ]);
+        $entity->tags = [
+            new \Cake\ORM\Entity([
+                'name' => 'Something New'
+            ]),
+            new \Cake\ORM\Entity([
+                'name' => '100'
+            ])
+        ];
+
+        TableRegistry::get('ArticlesTags');
+
+        $table = TableRegistry::get('articles');
+        $table->belongsToMany('tags');
+
+        $rules = $table->rulesChecker();
+        $rules->add($rules->validCount('tags', 3));
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals($entity->errors(), [
+            'tags' => [
+                '_validCount' => 'The count does not match >3'
+            ]
+        ]);
+
+        // Testing that undesired types fail
+        $entity->tags = null;
+        $this->assertFalse($table->save($entity));
+
+        $entity->tags = new \stdClass();
+        $this->assertFalse($table->save($entity));
+
+        $entity->tags = 'string';
+        $this->assertFalse($table->save($entity));
+
+        $entity->tags = 123456;
+        $this->assertFalse($table->save($entity));
+
+        $entity->tags = 0.512;
+        $this->assertFalse($table->save($entity));
     }
 }

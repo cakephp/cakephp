@@ -15,13 +15,9 @@
 namespace Cake\Test\TestCase\View;
 
 use Cake\Cache\Cache;
-use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
-use Cake\View\Cell;
-use Cake\View\CellTrait;
 use TestApp\View\CustomJsonView;
 
 /**
@@ -133,6 +129,47 @@ class CellTest extends TestCase
     }
 
     /**
+     * Tests that cell action setting the template using the property renders the correct template
+     *
+     * @return void
+     */
+    public function testSettingCellTemplateFromAction()
+    {
+        $appCell = $this->View->cell('Articles::customTemplate');
+
+        $this->assertContains('This is the alternate template', "{$appCell}");
+        $this->assertEquals('alternate_teaser_list', $appCell->template);
+        $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->template());
+    }
+
+    /**
+     * Tests that cell action setting the templatePath
+     *
+     * @return void
+     */
+    public function testSettingCellTemplatePathFromAction()
+    {
+        $appCell = $this->View->cell('Articles::customTemplatePath');
+
+        $this->assertContains('Articles subdir custom_template_path template', "{$appCell}");
+        $this->assertEquals('custom_template_path', $appCell->template);
+        $this->assertEquals('Cell/Articles/Subdir', $appCell->viewBuilder()->templatePath());
+    }
+
+    /**
+     * Tests that cell action setting the template using the ViewBuilder renders the correct template
+     *
+     * @return void
+     */
+    public function testSettingCellTemplateFromActionViewBuilder()
+    {
+        $appCell = $this->View->cell('Articles::customTemplateViewBuilder');
+
+        $this->assertContains('This is the alternate template', "{$appCell}");
+        $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->template());
+    }
+
+    /**
      * Tests manual render() invocation.
      *
      * @return void
@@ -206,6 +243,28 @@ class CellTest extends TestCase
     }
 
     /**
+     * Tests that using namespaced cells works.
+     *
+     * @return void
+     */
+    public function testNamespacedCell()
+    {
+        $cell = $this->View->cell('Admin/Menu');
+        $this->assertContains('Admin Menu Cell', $cell->render());
+    }
+
+    /**
+     * Tests that using namespaced cells in plugins works
+     *
+     * @return void
+     */
+    public function testPluginNamespacedCell()
+    {
+        $cell = $this->View->cell('TestPlugin.Admin/Menu');
+        $this->assertContains('Test Plugin Admin Menu Cell', $cell->render());
+    }
+
+    /**
      * Test that plugin cells can render other view templates.
      *
      * @return void
@@ -250,7 +309,8 @@ class CellTest extends TestCase
      */
     public function testCellMissingMethod()
     {
-        $this->View->cell('Articles::nope');
+        $cell = $this->View->cell('Articles::nope');
+        $cell->render();
     }
 
     /**
@@ -315,6 +375,28 @@ class CellTest extends TestCase
     }
 
     /**
+     * Test read cached cell.
+     *
+     * @return void
+     */
+    public function testReadCachedCell()
+    {
+        $mock = $this->getMock('Cake\Cache\CacheEngine');
+        $mock->method('init')
+            ->will($this->returnValue(true));
+        $mock->method('read')
+            ->will($this->returnValue("dummy\n"));
+        $mock->expects($this->never())
+            ->method('write');
+        Cache::config('default', $mock);
+
+        $cell = $this->View->cell('Articles', [], ['cache' => true]);
+        $result = $cell->render();
+        $this->assertEquals("dummy\n", $result);
+        Cache::drop('default');
+    }
+
+    /**
      * Test cached render array config
      *
      * @return void
@@ -337,5 +419,51 @@ class CellTest extends TestCase
         $result = $cell->render();
         $this->assertEquals("dummy\n", $result);
         Cache::drop('cell');
+    }
+
+    /**
+     * Test cached render when using an action changing the template used
+     *
+     * @return void
+     */
+    public function testCachedRenderSimpleCustomTemplate()
+    {
+        $mock = $this->getMock('Cake\Cache\CacheEngine');
+        $mock->method('init')
+            ->will($this->returnValue(true));
+        $mock->method('read')
+            ->will($this->returnValue(false));
+        $mock->expects($this->once())
+            ->method('write')
+            ->with('cell_test_app_view_cell_articles_cell_customTemplate', "<h1>This is the alternate template</h1>\n");
+        Cache::config('default', $mock);
+
+        $cell = $this->View->cell('Articles::customTemplate', [], ['cache' => true]);
+        $result = $cell->render();
+        $this->assertContains('This is the alternate template', $result);
+
+        Cache::drop('default');
+    }
+
+    /**
+     * Test that when the cell cache is enabled, the cell action is only invoke the first
+     * time the cell is rendered
+     *
+     * @return void
+     */
+    public function testCachedRenderSimpleCustomTemplateViewBuilder()
+    {
+        Cache::config('default', [
+            'className' => 'File',
+            'path' => CACHE,
+        ]);
+        $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => ['key' => 'celltest']]);
+        $result = $cell->render();
+        $this->assertEquals(1, $cell->counter);
+        $cell->render();
+        $this->assertEquals(1, $cell->counter);
+        $this->assertContains('This is the alternate template', $result);
+        Cache::delete('celltest');
+        Cache::drop('default');
     }
 }

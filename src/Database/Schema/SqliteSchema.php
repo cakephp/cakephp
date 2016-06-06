@@ -14,9 +14,7 @@
  */
 namespace Cake\Database\Schema;
 
-use Cake\Core\Configure;
 use Cake\Database\Exception;
-use RuntimeException;
 
 /**
  * Schema management/reflection features for Sqlite
@@ -129,7 +127,7 @@ class SqliteSchema extends BaseSchema
         $field = $this->_convertColumn($row['type']);
         $field += [
             'null' => !$row['notnull'],
-            'default' => $row['dflt_value'] === null ? null : trim($row['dflt_value'], "'"),
+            'default' => $this->_defaultValue($row['dflt_value']),
         ];
         $primary = $table->constraint('primary');
 
@@ -153,6 +151,29 @@ class SqliteSchema extends BaseSchema
             $constraint['columns'] = array_merge($constraint['columns'], [$row['name']]);
             $table->addConstraint('primary', $constraint);
         }
+    }
+
+    /**
+     * Manipulate the default value.
+     *
+     * Sqlite includes quotes and bared NULLs in default values.
+     * We need to remove those.
+     *
+     * @param string|null $default The default value.
+     * @return string|null
+     */
+    protected function _defaultValue($default)
+    {
+        if ($default === 'NULL') {
+            return null;
+        }
+
+        // Remove quotes
+        if (preg_match("/^'(.*)'$/", $default, $matches)) {
+            return str_replace("''", "'", $matches[1]);
+        }
+
+        return $default;
     }
 
     /**
@@ -247,22 +268,16 @@ class SqliteSchema extends BaseSchema
         $data = $table->column($name);
         $typeMap = [
             'uuid' => ' CHAR(36)',
-            'string' => ' VARCHAR',
-            'integer' => ' INTEGER',
             'biginteger' => ' BIGINT',
             'boolean' => ' BOOLEAN',
             'binary' => ' BLOB',
             'float' => ' FLOAT',
             'decimal' => ' DECIMAL',
-            'text' => ' TEXT',
             'date' => ' DATE',
             'time' => ' TIME',
             'datetime' => ' DATETIME',
             'timestamp' => ' TIMESTAMP',
         ];
-        if (!isset($typeMap[$data['type']])) {
-            throw new Exception(sprintf('Unknown column type for "%s"', $name));
-        }
 
         $out = $this->_driver->quoteIdentifier($name);
         $hasUnsigned = ['biginteger', 'integer', 'float', 'decimal'];
@@ -274,14 +289,30 @@ class SqliteSchema extends BaseSchema
                 $out .= ' UNSIGNED';
             }
         }
-        $out .= $typeMap[$data['type']];
 
-        $hasLength = ['integer', 'string'];
-        if (in_array($data['type'], $hasLength, true) && isset($data['length'])) {
-            if ($data['type'] !== 'integer' || [$name] !== (array)$table->primaryKey()) {
+        if (isset($typeMap[$data['type']])) {
+            $out .= $typeMap[$data['type']];
+        }
+
+        if ($data['type'] === 'text' && $data['length'] !== Table::LENGTH_TINY) {
+            $out .= ' TEXT';
+        }
+
+        if ($data['type'] === 'string' || ($data['type'] === 'text' && $data['length'] === Table::LENGTH_TINY)) {
+            $out .= ' VARCHAR';
+
+            if (isset($data['length'])) {
                 $out .= '(' . (int)$data['length'] . ')';
             }
         }
+
+        if ($data['type'] === 'integer') {
+            $out .= ' INTEGER';
+            if (isset($data['length']) && [$name] !== (array)$table->primaryKey()) {
+                $out .= '(' . (int)$data['length'] . ')';
+            }
+        }
+
         $hasPrecision = ['float', 'decimal'];
         if (in_array($data['type'], $hasPrecision, true) &&
             (isset($data['length']) || isset($data['precision']))

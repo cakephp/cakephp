@@ -27,7 +27,7 @@ class SiteArticlesFixture extends TestFixture
     public $fields = [
         'id' => ['type' => 'integer'],
         'author_id' => ['type' => 'integer', 'null' => true],
-        'site_id' => ['type' => 'integer', 'null' => true],
+        'site_id' => ['type' => 'integer', 'null' => false],
         'title' => ['type' => 'string', 'null' => true],
         'body' => 'text',
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id', 'site_id']]]

@@ -17,13 +17,11 @@
 namespace Cake\Test\TestCase\View;
 
 use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Xml;
-use Cake\View\XmlView;
 
 /**
  * XmlViewTest
@@ -119,7 +117,7 @@ class XmlViewTest extends TestCase
         $Controller = new Controller($Request, $Response);
         $data = [
             '_serialize' => ['tags', 'nope'],
-            '_xmlOptions' => ['format' => 'attributes'],
+            '_xmlOptions' => ['format' => 'attributes', 'return' => 'domdocument'],
             'tags' => [
                     'tag' => [
                         [
@@ -138,7 +136,7 @@ class XmlViewTest extends TestCase
         $View = $Controller->createView();
         $result = $View->render();
 
-        $expected = Xml::build(['response' => ['tags' => $data['tags']]], $data['_xmlOptions'])->asXML();
+        $expected = Xml::build(['response' => ['tags' => $data['tags']]], $data['_xmlOptions'])->saveXML();
         $this->assertSame($expected, $result);
     }
 

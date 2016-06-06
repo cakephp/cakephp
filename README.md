@@ -2,7 +2,7 @@
 
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
 [![Build Status](https://img.shields.io/travis/cakephp/cakephp/master.svg?style=flat-square)](https://travis-ci.org/cakephp/cakephp)
-[![Coverage Status](https://img.shields.io/coveralls/cakephp/cakephp/master.svg?style=flat-square)](https://coveralls.io/r/cakephp/cakephp?branch=master)
+[![Coverage Status](https://img.shields.io/codecov/c/github/cakephp/cakephp.svg?style=flat-square)](https://codecov.io/github/cakephp/cakephp)
 [![Code Consistency](https://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/grade.svg)](http://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/)
 [![Total Downloads](https://img.shields.io/packagist/dt/cakephp/cakephp.svg?style=flat-square)](https://packagist.org/packages/cakephp/cakephp)
 [![Latest Stable Version](https://img.shields.io/packagist/v/cakephp/cakephp.svg?style=flat-square&label=stable)](https://packagist.org/packages/cakephp/cakephp)
@@ -22,7 +22,7 @@ recommend using the [app skeleton](https://github.com/cakephp/app) as
 a starting point. For existing applications you can run the following:
 
 ``` bash
-$ composer require cakephp/cakephp:"~3.1"
+$ composer require cakephp/cakephp:"~3.2"
 ```
 
 ## Running Tests
@@ -40,7 +40,7 @@ tests for CakePHP by doing the following:
 
 [CakePHP](http://www.cakephp.org) - The rapid development PHP framework.
 
-[CookBook](http://book.cakephp.org) - THE CakePHP user documentation; start learning here!
+[CookBook](http://book.cakephp.org) - The CakePHP user documentation; start learning here!
 
 [API](http://api.cakephp.org) - A reference to CakePHP's classes.
 
@@ -58,9 +58,11 @@ tests for CakePHP by doing the following:
 
 ## Get Support!
 
+[Slack](http://cakesf.herokuapp.com/) - Join us on Slack.
+
 [#cakephp](http://webchat.freenode.net/?channels=#cakephp) on irc.freenode.net - Come chat with us, we have cake.
 
-[Google Group](https://groups.google.com/group/cake-php) - Community mailing list and forum.
+[Forum](http://discourse.cakephp.org/) - Offical CakePHP forum.
 
 [GitHub Issues](https://github.com/cakephp/cakephp/issues) - Got issues? Please tell us!
 
@@ -68,7 +70,7 @@ tests for CakePHP by doing the following:
 
 ## Contributing
 
-[CONTRIBUTING.md](CONTRIBUTING.md) - Quick pointers for contributing to the CakePHP project.
+[CONTRIBUTING.md](.github/CONTRIBUTING.md) - Quick pointers for contributing to the CakePHP project.
 
 [CookBook "Contributing" Section](http://book.cakephp.org/3.0/en/contributing.html) - Details about contributing to the project.
 

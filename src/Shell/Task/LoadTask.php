@@ -23,6 +23,7 @@ use Cake\Filesystem\File;
  */
 class LoadTask extends Shell
 {
+
     /**
      * Path to the bootstrap file.
      *
@@ -33,12 +34,12 @@ class LoadTask extends Shell
     /**
      * Execution method always used for tasks.
      *
-     * @param string $plugin The plugin name.
+     * @param string|null $plugin The plugin name.
      * @return bool
      */
     public function main($plugin = null)
     {
-        $this->bootstrap = ROOT . DS . 'config' . DS . 'bootstrap.php';
+        $this->bootstrap = ROOT . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
         if (empty($plugin)) {
             $this->err('<error>You must provide a plugin name in CamelCase format.</error>');

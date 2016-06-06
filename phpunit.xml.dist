@@ -36,7 +36,6 @@
     <filter>
         <whitelist>
             <directory suffix=".php">./src/</directory>
-            <directory suffix=".ctp">./src/</directory>
         </whitelist>
     </filter>
 
@@ -45,13 +44,13 @@
         <env name="db_dsn" value="sqlite:///:memory:"/>
         -->
         <!-- Postgres
-        <env name="db_dsn" value="postgres://localhost/cake_test"/>
+        <env name="db_dsn" value="postgres://localhost/cake_test?timezone=UTC"/>
         -->
         <!-- Mysql
-        <env name="db_dsn" value="mysql://localhost/cake_test"/>
+        <env name="db_dsn" value="mysql://localhost/cake_test?timezone=UTC"/>
         -->
         <!-- SQL Server
-        <env name="db_dsn" value="sqlserver://localhost/cake_test"/>
+        <env name="db_dsn" value="sqlserver://localhost/cake_test?timezone=UTC"/>
         -->
     </php>
 </phpunit>

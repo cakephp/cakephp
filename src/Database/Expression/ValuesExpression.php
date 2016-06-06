@@ -69,7 +69,7 @@ class ValuesExpression implements ExpressionInterface
     /**
      * Add a row of data to be inserted.
      *
-     * @param array|Query $data Array of data to append into the insert, or
+     * @param array|\Cake\Database\Query $data Array of data to append into the insert, or
      *   a query for doing INSERT INTO .. SELECT style commands
      * @return void
      * @throws \Cake\Database\Exception When mixing array + Query data types.
@@ -94,7 +94,7 @@ class ValuesExpression implements ExpressionInterface
      * Sets the columns to be inserted. If no params are passed, then it returns
      * the currently stored columns
      *
-     * @param array $cols arrays with columns to be inserted
+     * @param array|null $cols arrays with columns to be inserted
      * @return array|$this
      */
     public function columns($cols = null)
@@ -110,7 +110,7 @@ class ValuesExpression implements ExpressionInterface
      * Sets the values to be inserted. If no params are passed, then it returns
      * the currently stored values
      *
-     * @param array $values arrays with values to be inserted
+     * @param array|null $values arrays with values to be inserted
      * @return array|$this
      */
     public function values($values = null)
@@ -127,7 +127,7 @@ class ValuesExpression implements ExpressionInterface
      * to insert records in the table. If no params are passed, then it returns
      * the currently stored query
      *
-     * @param \Cake\Database\Query $query The query to set/get
+     * @param \Cake\Database\Query|null $query The query to set/get
      * @return \Cake\Database\Query
      */
     public function query(Query $query = null)
@@ -151,7 +151,13 @@ class ValuesExpression implements ExpressionInterface
         }
 
         $i = 0;
-        $defaults = array_fill_keys($this->_columns, null);
+        $columns = [];
+
+        // Remove identifier quoting so column names match keys.
+        foreach ($this->_columns as $col) {
+            $columns[] = trim($col, '`[]"');
+        }
+        $defaults = array_fill_keys($columns, null);
         $placeholders = [];
 
         foreach ($this->_values as $row) {
@@ -173,7 +179,6 @@ class ValuesExpression implements ExpressionInterface
         if ($this->query()) {
             return ' ' . $this->query()->sql($generator);
         }
-
         return sprintf(' VALUES (%s)', implode('), (', $placeholders));
     }
 

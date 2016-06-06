@@ -15,10 +15,7 @@
 namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Collection\Collection;
-use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Form\Form;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
@@ -28,7 +25,6 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use Cake\View\Helper\FormHelper;
-use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
 
 /**
@@ -583,6 +579,58 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test ensuring template variables work in template files loaded
+     * during input().
+     *
+     * @return void
+     */
+    public function testInputTemplatesFromFile()
+    {
+        $result = $this->Form->input('title', [
+            'templates' => 'test_templates',
+            'templateVars' => [
+                'forcontainer' => 'container-data'
+            ]
+        ]);
+        $expected = [
+            'div' => ['class'],
+            'label' => ['for'],
+            'Title',
+            '/label',
+            'input' => ['name', 'type' => 'text', 'id'],
+            'container-data',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test using template vars in inputSubmit and submitContainer template.
+     *
+     * @return void
+     */
+    public function testSubmitTemplateVars()
+    {
+        $this->Form->templates([
+            'inputSubmit' => '<input custom="{{forinput}}" type="{{type}}"{{attrs}}/>',
+            'submitContainer' => '<div class="submit">{{content}}{{forcontainer}}</div>'
+        ]);
+        $result = $this->Form->submit('Submit', [
+            'templateVars' => [
+                'forinput' => 'in-input',
+                'forcontainer' => 'in-container'
+            ]
+        ]);
+        $expected = [
+            'div' => ['class'],
+            'input' => ['custom' => 'in-input', 'type' => 'submit', 'value' => 'Submit'],
+            'in-container',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * test the create() method
      *
      * @dataProvider requestTypeProvider
@@ -658,7 +706,7 @@ class FormHelperTest extends TestCase
         $this->article['defaults'] = ['id' => 1];
         $this->Form->request->here = '/articles/edit/1';
         $this->Form->request['action'] = 'delete';
-        $result = $this->Form->create($this->article, ['action' => 'edit']);
+        $result = $this->Form->create($this->article, ['url' => ['action' => 'edit']]);
         $expected = [
             'form' => [
                 'method' => 'post',
@@ -695,7 +743,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $this->Form->request['controller'] = 'Pages';
-        $result = $this->Form->create($this->article, ['action' => 'signup']);
+        $result = $this->Form->create($this->article, ['url' => ['action' => 'signup']]);
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/Pages/signup/1',
@@ -726,9 +774,6 @@ class FormHelperTest extends TestCase
             '/div'
         ];
         $this->assertHtml($expected, $result);
-
-        $result = $this->Form->create(false, ['action' => false]);
-        $this->assertHtml($expected, $result);
     }
 
     /**
@@ -743,7 +788,7 @@ class FormHelperTest extends TestCase
 
         $this->Form->request['controller'] = 'users';
 
-        $result = $this->Form->create(false, ['action' => 'login']);
+        $result = $this->Form->create(false, ['url' => ['action' => 'login']]);
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/login',
@@ -783,7 +828,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->create(
             $this->article,
             [
-                'type' => 'post', 'action' => 'index', 'encoding' => 'iso-8859-1'
+                'type' => 'post', 'url' => ['action' => 'index'], 'encoding' => 'iso-8859-1'
             ]
         );
         $expected = [
@@ -1061,7 +1106,51 @@ class FormHelperTest extends TestCase
         $hash = Security::hash(serialize($fields) . Security::salt());
         $hash .= ':' . 'Model.valid';
         $hash = urlencode($hash);
+        $tokenDebug = urlencode(json_encode([
+            '',
+            $fields,
+            []
+        ]));
+        $expected = [
+            'div' => ['style' => 'display:none;'],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[fields]',
+                'value' => $hash
+            ]],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[unlocked]',
+                'value' => '',
+            ]],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[debug]',
+                'value' => $tokenDebug
+            ]],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+    }
 
+    /**
+     * testFormSecurityFields method
+     *
+     * Test debug token is not generated if debug is false
+     *
+     * @return void
+     */
+    public function testFormSecurityFieldsNoDebugMode()
+    {
+        Configure::write('debug', false);
+        $fields = ['Model.password', 'Model.username', 'Model.valid' => '0'];
+
+        $this->Form->request->params['_Token'] = 'testKey';
+        $result = $this->Form->secure($fields);
+
+        $hash = Security::hash(serialize($fields) . Security::salt());
+        $hash .= ':' . 'Model.valid';
+        $hash = urlencode($hash);
         $expected = [
             'div' => ['style' => 'display:none;'],
             ['input' => [
@@ -1208,6 +1297,11 @@ class FormHelperTest extends TestCase
 
         $hash = '51e3b55a6edd82020b3f29c9ae200e14bbeb7ee5%3AModel.0.hidden%7CModel.0.valid';
         $hash .= '%7CModel.1.hidden%7CModel.1.valid';
+        $tokenDebug = urlencode(json_encode([
+            '',
+            $fields,
+            []
+        ]));
 
         $expected = [
             'div' => ['style' => 'display:none;'],
@@ -1218,6 +1312,10 @@ class FormHelperTest extends TestCase
             ['input' => [
                 'type' => 'hidden', 'name' => '_Token[unlocked]',
                 'value' => ''
+            ]],
+            ['input' => [
+                'type' => 'hidden', 'name' => '_Token[debug]',
+                'value' => $tokenDebug,
             ]],
             '/div'
         ];
@@ -1256,6 +1354,15 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->end();
+        $tokenDebug = urlencode(json_encode([
+            '/articles/add',
+            [
+                'Address.title',
+                'Address.first_name',
+            ],
+            ['save', 'cancel']
+        ]));
+
         $expected = [
             'div' => ['style' => 'display:none;'],
             ['input' => [
@@ -1267,6 +1374,10 @@ class FormHelperTest extends TestCase
                 'type' => 'hidden',
                 'name' => '_Token[unlocked]',
                 'value' => 'cancel%7Csave'
+            ]],
+            ['input' => [
+                'type' => 'hidden', 'name' => '_Token[debug]',
+                'value' => $tokenDebug,
             ]],
             '/div'
         ];
@@ -1378,7 +1489,28 @@ class FormHelperTest extends TestCase
         $result = $this->Form->secure($this->Form->fields);
 
         $hash = '8bd3911b07b507408b1a969b31ee90c47b7d387e%3AAddresses.0.id%7CAddresses.1.id';
-
+        $tokenDebug = urlencode(json_encode([
+            '/articles/add',
+            [
+                'Addresses.0.id' => '123456',
+                'Addresses.0.title',
+                'Addresses.0.first_name',
+                'Addresses.0.last_name',
+                'Addresses.0.address',
+                'Addresses.0.city',
+                'Addresses.0.phone',
+                'Addresses.0.primary',
+                'Addresses.1.id' => '654321',
+                'Addresses.1.title',
+                'Addresses.1.first_name',
+                'Addresses.1.last_name',
+                'Addresses.1.address',
+                'Addresses.1.city',
+                'Addresses.1.phone',
+                'Addresses.1.primary',
+            ],
+            []
+        ]));
         $expected = [
             'div' => ['style' => 'display:none;'],
             ['input' => [
@@ -1388,6 +1520,10 @@ class FormHelperTest extends TestCase
             ['input' => [
                 'type' => 'hidden', 'name' => '_Token[unlocked]',
                 'value' => ''
+            ]],
+            ['input' => [
+                'type' => 'hidden', 'name' => '_Token[debug]',
+                'value' => $tokenDebug,
             ]],
             '/div'
         ];
@@ -1442,6 +1578,25 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->secure($this->Form->fields);
         $hash = '4fb10b46873df4ddd4ef5c3a19944a2f29b38991%3AAddresses.0.id%7CAddresses.1.id';
+        $tokenDebug = urlencode(json_encode([
+                '/articles/add',
+                [
+                    'Addresses.0.id' => '123456',
+                    'Addresses.0.title',
+                    'Addresses.0.last_name',
+                    'Addresses.0.city',
+                    'Addresses.0.phone',
+                    'Addresses.1.id' => '654321',
+                    'Addresses.1.title',
+                    'Addresses.1.last_name',
+                    'Addresses.1.city',
+                    'Addresses.1.phone'
+                ],
+                [
+                    'first_name',
+                    'address'
+                ]
+            ]));
 
         $expected = [
             'div' => ['style' => 'display:none;'],
@@ -1454,6 +1609,10 @@ class FormHelperTest extends TestCase
                 'type' => 'hidden',
                 'name' => '_Token[unlocked]',
                 'value' => 'address%7Cfirst_name',
+            ]],
+            ['input' => [
+                'type' => 'hidden', 'name' => '_Token[debug]',
+                'value' => $tokenDebug,
             ]],
             '/div'
         ];
@@ -1493,6 +1652,149 @@ class FormHelperTest extends TestCase
         $result = $this->Form->secure($expected, ['data-foo' => 'bar']);
 
         $hash = 'a303becbdd99cb42ca14a1cf7e63dfd48696a3c5%3AAddresses.id';
+        $tokenDebug = urlencode(json_encode([
+                '/articles/add',
+                [
+                    'Addresses.id' => '123456',
+                    'Addresses.title',
+                    'Addresses.last_name',
+                    'Addresses.city',
+                    'Addresses.phone'
+                ],
+                [
+                    'first_name',
+                    'address'
+                ]
+            ]));
+
+        $expected = [
+            'div' => ['style' => 'display:none;'],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[fields]',
+                'value' => $hash,
+                'data-foo' => 'bar',
+            ]],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[unlocked]',
+                'value' => 'address%7Cfirst_name',
+                'data-foo' => 'bar',
+            ]],
+            ['input' => [
+                'type' => 'hidden', 'name' => '_Token[debug]',
+                'value' => $tokenDebug,
+                'data-foo' => 'bar'
+            ]],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * testFormSecurityInputUnlockedFieldsDebugSecurityTrue method
+     *
+     * Test single record form with debugSecurity param.
+     *
+     * @return void
+     */
+    public function testFormSecurityInputUnlockedFieldsDebugSecurityTrue()
+    {
+        $this->Form->request['_Token'] = [
+            'unlockedFields' => ['first_name', 'address']
+        ];
+        $this->Form->create();
+        $this->assertEquals($this->Form->request['_Token']['unlockedFields'], $this->Form->unlockField());
+
+        $this->Form->hidden('Addresses.id', ['value' => '123456']);
+        $this->Form->text('Addresses.title');
+        $this->Form->text('Addresses.first_name');
+        $this->Form->text('Addresses.last_name');
+        $this->Form->text('Addresses.address');
+        $this->Form->text('Addresses.city');
+        $this->Form->text('Addresses.phone');
+
+        $result = $this->Form->fields;
+        $expected = [
+            'Addresses.id' => '123456', 'Addresses.title', 'Addresses.last_name',
+            'Addresses.city', 'Addresses.phone'
+        ];
+        $this->assertEquals($expected, $result);
+        $result = $this->Form->secure($expected, ['data-foo' => 'bar', 'debugSecurity' => true]);
+
+        $hash = 'a303becbdd99cb42ca14a1cf7e63dfd48696a3c5%3AAddresses.id';
+        $tokenDebug = urlencode(json_encode([
+            '/articles/add',
+            [
+                'Addresses.id' => '123456',
+                'Addresses.title',
+                'Addresses.last_name',
+                'Addresses.city',
+                'Addresses.phone'
+            ],
+            [
+                'first_name',
+                'address'
+            ]
+        ]));
+
+        $expected = [
+            'div' => ['style' => 'display:none;'],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[fields]',
+                'value' => $hash,
+                'data-foo' => 'bar',
+            ]],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[unlocked]',
+                'value' => 'address%7Cfirst_name',
+                'data-foo' => 'bar',
+            ]],
+            ['input' => [
+                'type' => 'hidden', 'name' => '_Token[debug]',
+                'value' => $tokenDebug,
+                'data-foo' => 'bar'
+            ]],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * testFormSecurityInputUnlockedFieldsDebugSecurityFalse method
+     *
+     * Debug is false, debugSecurity is true -> no debug
+     *
+     * @return void
+     */
+    public function testFormSecurityInputUnlockedFieldsDebugSecurityDebugFalse()
+    {
+        $this->Form->request['_Token'] = [
+            'unlockedFields' => ['first_name', 'address']
+        ];
+        $this->Form->create();
+        $this->assertEquals($this->Form->request['_Token']['unlockedFields'], $this->Form->unlockField());
+
+        $this->Form->hidden('Addresses.id', ['value' => '123456']);
+        $this->Form->text('Addresses.title');
+        $this->Form->text('Addresses.first_name');
+        $this->Form->text('Addresses.last_name');
+        $this->Form->text('Addresses.address');
+        $this->Form->text('Addresses.city');
+        $this->Form->text('Addresses.phone');
+
+        $result = $this->Form->fields;
+        $expected = [
+            'Addresses.id' => '123456', 'Addresses.title', 'Addresses.last_name',
+            'Addresses.city', 'Addresses.phone'
+        ];
+        $this->assertEquals($expected, $result);
+        Configure::write('debug', false);
+        $result = $this->Form->secure($expected, ['data-foo' => 'bar', 'debugSecurity' => true]);
+
+        $hash = 'a303becbdd99cb42ca14a1cf7e63dfd48696a3c5%3AAddresses.id';
         $expected = [
             'div' => ['style' => 'display:none;'],
             ['input' => [
@@ -1509,6 +1811,60 @@ class FormHelperTest extends TestCase
             ]],
             '/div'
         ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * testFormSecurityInputUnlockedFieldsDebugSecurityFalse method
+     *
+     * Test single record form with debugSecurity param.
+     *
+     * @return void
+     */
+    public function testFormSecurityInputUnlockedFieldsDebugSecurityFalse()
+    {
+        $this->Form->request['_Token'] = [
+            'unlockedFields' => ['first_name', 'address']
+        ];
+        $this->Form->create();
+        $this->assertEquals($this->Form->request['_Token']['unlockedFields'], $this->Form->unlockField());
+
+        $this->Form->hidden('Addresses.id', ['value' => '123456']);
+        $this->Form->text('Addresses.title');
+        $this->Form->text('Addresses.first_name');
+        $this->Form->text('Addresses.last_name');
+        $this->Form->text('Addresses.address');
+        $this->Form->text('Addresses.city');
+        $this->Form->text('Addresses.phone');
+
+        $result = $this->Form->fields;
+        $expected = [
+            'Addresses.id' => '123456', 'Addresses.title', 'Addresses.last_name',
+            'Addresses.city', 'Addresses.phone'
+        ];
+        $this->assertEquals($expected, $result);
+
+        $result = $this->Form->secure($expected, ['data-foo' => 'bar', 'debugSecurity' => false]);
+
+        $hash = 'a303becbdd99cb42ca14a1cf7e63dfd48696a3c5%3AAddresses.id';
+
+        $expected = [
+            'div' => ['style' => 'display:none;'],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[fields]',
+                'value' => $hash,
+                'data-foo' => 'bar',
+            ]],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[unlocked]',
+                'value' => 'address%7Cfirst_name',
+                'data-foo' => 'bar',
+            ]],
+            '/div'
+        ];
+
         $this->assertHtml($expected, $result);
     }
 
@@ -1615,20 +1971,22 @@ class FormHelperTest extends TestCase
         $expected = [
             'input' => [
                 'type' => 'hidden',
-                'name' => 'stuff',
-            ]];
-            $this->assertHtml($expected, $result);
+                'name' => 'stuff'
+            ]
+        ];
 
-            $result = $this->Form->hidden('hidden', ['value' => '0']);
-            $expected = ['input' => [
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->hidden('hidden', ['value' => '0']);
+        $expected = ['input' => [
             'type' => 'hidden',
             'name' => 'hidden',
             'value' => '0'
-            ]];
-            $this->assertHtml($expected, $result);
+        ]];
+        $this->assertHtml($expected, $result);
 
-            $result = $this->Form->input('something', ['type' => 'checkbox']);
-            $expected = [
+        $result = $this->Form->input('something', ['type' => 'checkbox']);
+        $expected = [
             'div' => ['class' => 'input checkbox'],
             ['input' => [
                 'type' => 'hidden',
@@ -1645,23 +2003,29 @@ class FormHelperTest extends TestCase
             'Something',
             '/label',
             '/div'
-            ];
-            $this->assertHtml($expected, $result);
+        ];
+        $this->assertHtml($expected, $result);
 
-            $result = $this->Form->fields;
-            $expected = [
-                'ratio',
-                'population',
-                'published',
-                'other',
-                'stuff' => '',
-                'hidden' => '0',
-                'something'
-            ];
-            $this->assertEquals($expected, $result);
+        $result = $this->Form->fields;
+        $expectedFields = [
+            'ratio',
+            'population',
+            'published',
+            'other',
+            'stuff' => '',
+            'hidden' => '0',
+            'something'
+        ];
+        $this->assertEquals($expectedFields, $result);
 
-            $result = $this->Form->secure($this->Form->fields);
-            $expected = [
+        $result = $this->Form->secure($this->Form->fields);
+        $tokenDebug = urlencode(json_encode([
+            '/articles/add',
+            $expectedFields,
+            []
+        ]));
+
+        $expected = [
             'div' => ['style' => 'display:none;'],
             ['input' => [
                 'type' => 'hidden',
@@ -1673,9 +2037,13 @@ class FormHelperTest extends TestCase
                 'name' => '_Token[unlocked]',
                 'value' => ''
             ]],
+            ['input' => [
+                'type' => 'hidden', 'name' => '_Token[debug]',
+                'value' => $tokenDebug,
+            ]],
             '/div'
-            ];
-            $this->assertHtml($expected, $result);
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
@@ -1697,7 +2065,11 @@ class FormHelperTest extends TestCase
         $this->Form->select('select_box', [1, 2], [
             'name' => 'Option[General.select_role]',
         ]);
-        $expected = ['Option.General.default_role', 'Option.General.select_role'];
+        $expected[] = 'Option.General.select_role';
+        $this->assertEquals($expected, $this->Form->fields);
+
+        $this->Form->text('other.things[]');
+        $expected[] = 'other.things';
         $this->assertEquals($expected, $this->Form->fields);
     }
 
@@ -1909,6 +2281,29 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * test reset unlockFields, when create new form.
+     *
+     * @return void
+     */
+    public function testResetUnlockFields()
+    {
+        $this->Form->request['_Token'] = [
+            'key' => 'testKey',
+            'unlockedFields' => []
+        ];
+
+        $this->Form->unlockField('Contact.id');
+        $this->Form->create('Contact');
+        $this->Form->hidden('Contact.id', ['value' => 1]);
+        $this->assertEmpty($this->Form->fields, 'Field should be unlocked');
+        $this->Form->end();
+
+        $this->Form->create('Contact');
+        $this->Form->hidden('Contact.id', ['value' => 1]);
+        $this->assertEquals(1, $this->Form->fields['Contact.id'], 'Hidden input should be secured.');
+    }
+
+    /**
      * Test that only the path + query elements of a form's URL show up in their hash.
      *
      * @return void
@@ -1983,7 +2378,10 @@ class FormHelperTest extends TestCase
     public function testErrorMessageDisplay()
     {
         $this->article['errors'] = [
-            'Article' => ['title' => 'error message']
+            'Article' => [
+                'title' => 'error message',
+                'content' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars'
+            ]
         ];
         $this->Form->create($this->article);
 
@@ -2019,6 +2417,58 @@ class FormHelperTest extends TestCase
                 'type' => 'text', 'name' => 'Article[title]',
                 'id' => 'article-title', 'class' => 'form-error'
             ],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+
+
+        $result = $this->Form->input('Article.content');
+        $expected = [
+            'div' => ['class' => 'input text error'],
+            'label' => ['for' => 'article-content'],
+            'Content',
+            '/label',
+            'input' => [
+                'type' => 'text', 'name' => 'Article[content]',
+                'id' => 'article-content', 'class' => 'form-error'
+            ],
+            ['div' => ['class' => 'error-message']],
+            'some &lt;strong&gt;test&lt;/strong&gt; data with &lt;a href=&quot;#&quot;&gt;HTML&lt;/a&gt; chars',
+            '/div',
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->input('Article.content', ['error' => ['escape' => true]]);
+        $expected = [
+            'div' => ['class' => 'input text error'],
+            'label' => ['for' => 'article-content'],
+            'Content',
+            '/label',
+            'input' => [
+                'type' => 'text', 'name' => 'Article[content]',
+                'id' => 'article-content', 'class' => 'form-error'
+            ],
+            ['div' => ['class' => 'error-message']],
+            'some &lt;strong&gt;test&lt;/strong&gt; data with &lt;a href=&quot;#&quot;&gt;HTML&lt;/a&gt; chars',
+            '/div',
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->input('Article.content', ['error' => ['escape' => false]]);
+        $expected = [
+            'div' => ['class' => 'input text error'],
+            'label' => ['for' => 'article-content'],
+            'Content',
+            '/label',
+            'input' => [
+                'type' => 'text', 'name' => 'Article[content]',
+                'id' => 'article-content', 'class' => 'form-error'
+            ],
+            ['div' => ['class' => 'error-message']],
+            'some <strong>test</strong> data with <a href="#">HTML</a> chars',
+            '/div',
             '/div'
         ];
         $this->assertHtml($expected, $result);
@@ -6385,6 +6835,12 @@ class FormHelperTest extends TestCase
         $this->Form->request->params['_Token'] = ['unlockedFields' => []];
 
         $result = $this->Form->postButton('Delete', '/posts/delete/1');
+        $tokenDebug = urlencode(json_encode([
+                '/posts/delete/1',
+                [],
+                []
+            ]));
+
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1', 'accept-charset' => 'utf-8',
@@ -6399,6 +6855,10 @@ class FormHelperTest extends TestCase
             ['div' => ['style' => 'display:none;']],
             ['input' => ['type' => 'hidden', 'name' => '_Token[fields]', 'value' => 'preg:/[\w\d%]+/']],
             ['input' => ['type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '']],
+            ['input' => [
+                'type' => 'hidden', 'name' => '_Token[debug]',
+                'value' => $tokenDebug,
+            ]],
             '/div',
             '/form',
         ];
@@ -6440,6 +6900,32 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
+        $result = $this->Form->postLink(
+            'Delete',
+            '/posts/delete/1',
+            ['target' => '_blank', 'class' => 'btn btn-danger']
+        );
+        $expected = [
+            'form' => [
+                'method' => 'post', 'target' => '_blank', 'action' => '/posts/delete/1',
+                'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
+            ],
+            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
+            '/form',
+            'a' => ['class' => 'btn btn-danger', 'href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'],
+            'Delete',
+            '/a'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test the confirm option for postLink()
+     *
+     * @return void
+     */
+    public function testPostLinkWithConfirm()
+    {
         $result = $this->Form->postLink('Delete', '/posts/delete/1', ['confirm' => 'Confirm?']);
         $expected = [
             'form' => [
@@ -6457,7 +6943,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->postLink(
             'Delete',
             '/posts/delete/1',
-            ['escape' => false, 'confirm' => '\'Confirm\' this "deletion"?']
+            ['escape' => false, 'confirm' => "'Confirm'\nthis \"deletion\"?"]
         );
         $expected = [
             'form' => [
@@ -6466,39 +6952,8 @@ class FormHelperTest extends TestCase
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
-            'a' => ['href' => '#', 'onclick' => 'preg:/if \(confirm\(&quot;&#039;Confirm&#039; this \\\\&quot;deletion\\\\&quot;\?&quot;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/'],
+            'a' => ['href' => '#', 'onclick' => "preg:/if \(confirm\(&quot;&#039;Confirm&#039;\\nthis \\\\&quot;deletion\\\\&quot;\?&quot;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/"],
             'Delete',
-            '/a'
-        ];
-        $this->assertHtml($expected, $result);
-
-        $result = $this->Form->postLink('Delete', '/posts/delete/1', ['target' => '_blank']);
-        $expected = [
-            'form' => [
-                'method' => 'post', 'target' => '_blank', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
-            ],
-            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
-            '/form',
-            'a' => ['href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'],
-            'Delete',
-            '/a'
-        ];
-        $this->assertHtml($expected, $result);
-
-        $result = $this->Form->postLink(
-            '',
-            ['controller' => 'items', 'action' => 'delete', 10],
-            ['class' => 'btn btn-danger', 'escape' => false, 'confirm' => 'Confirm thing']
-        );
-        $expected = [
-            'form' => [
-                'method' => 'post', 'action' => '/items/delete/10',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
-            ],
-            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
-            '/form',
-            'a' => ['class' => 'btn btn-danger', 'href' => '#', 'onclick' => 'preg:/if \(confirm\(\&quot\;Confirm thing\&quot\;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/'],
             '/a'
         ];
         $this->assertHtml($expected, $result);
@@ -6571,6 +7026,87 @@ class FormHelperTest extends TestCase
             '/posts/delete/1',
             ['data' => ['id' => 1]]
         );
+        $tokenDebug = urlencode(json_encode([
+            '/posts/delete/1',
+            [
+                'id' => 1
+            ],
+            []
+        ]));
+        $expected = [
+            'form' => [
+                'method' => 'post', 'action' => '/posts/delete/1',
+                'name', 'style' => 'display:none;'
+            ],
+            ['input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'value' => '1']],
+            'div' => ['style' => 'display:none;'],
+            ['input' => ['type' => 'hidden', 'name' => '_Token[fields]', 'value' => $hash]],
+            ['input' => ['type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '']],
+            ['input' => [
+                'type' => 'hidden', 'name' => '_Token[debug]',
+                'value' => $tokenDebug,
+            ]],
+            '/div',
+            '/form',
+            'a' => ['href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'],
+            'Delete',
+            '/a'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test that postLink doesn't modify the fields in the containing form.
+     *
+     * postLink() calls inside open forms should not modify the field list
+     * for the form.
+     *
+     * @return void
+     */
+    public function testPostLinkSecurityHashBlockMode()
+    {
+        $hash = Security::hash(
+            '/posts/delete/1' .
+            serialize([]) .
+            '' .
+            Security::salt()
+        );
+        $hash .= '%3A';
+        $this->Form->request->params['_Token']['key'] = 'test';
+
+        $this->Form->create('Post', ['url' => ['action' => 'add']]);
+        $this->Form->input('title');
+        $this->Form->postLink('Delete', '/posts/delete/1', ['block' => true]);
+        $result = $this->View->fetch('postLink');
+
+        $this->assertEquals(['title'], $this->Form->fields);
+        $this->assertContains($hash, $result, 'Should contain the correct hash.');
+        $this->assertAttributeEquals('/articles/add', '_lastAction', $this->Form, 'lastAction was should be restored.');
+    }
+
+    /**
+     * Test that security does not include debug token if debug is false.
+     *
+     * @return void
+     */
+    public function testPostLinkSecurityHashNoDebugMode()
+    {
+        Configure::write('debug', false);
+        $hash = Security::hash(
+            '/posts/delete/1' .
+            serialize(['id' => '1']) .
+            '' .
+            Security::salt()
+        );
+        $hash .= '%3Aid';
+        $this->Form->request->params['_Token']['key'] = 'test';
+
+        $result = $this->Form->postLink(
+            'Delete',
+            '/posts/delete/1',
+            ['data' => ['id' => 1]]
+        );
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
@@ -6624,6 +7160,11 @@ class FormHelperTest extends TestCase
         $this->Form->end();
 
         $result = $this->Form->postLink('Delete', '/posts/delete/1');
+        $tokenDebug = urlencode(json_encode([
+            '/posts/delete/1',
+            [],
+            []
+        ]));
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
@@ -6634,6 +7175,10 @@ class FormHelperTest extends TestCase
             'div' => ['style' => 'display:none;'],
             ['input' => ['type' => 'hidden', 'name' => '_Token[fields]', 'value' => 'preg:/[\w\d%]+/']],
             ['input' => ['type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '']],
+            ['input' => [
+                'type' => 'hidden', 'name' => '_Token[debug]',
+                'value' => $tokenDebug,
+            ]],
             '/div',
             '/form',
             'a' => ['href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'],
@@ -7393,5 +7938,64 @@ class FormHelperTest extends TestCase
         $mock = $this->getMock('Cake\View\Form\ContextInterface');
         $this->assertSame($mock, $this->Form->context($mock));
         $this->assertSame($mock, $this->Form->context());
+    }
+
+    /**
+     * testAutoDomId
+     *
+     * @return void
+     */
+    public function testAutoDomId()
+    {
+        $result = $this->Form->text('field', ['id' => true]);
+        $expected = [
+            'input' => ['type' => 'text', 'name' => 'field', 'id' => 'field'],
+        ];
+        $this->assertHtml($expected, $result);
+
+        // Ensure id => doesn't cause problem when multiple inputs are generated.
+        $result = $this->Form->radio('field', ['option A', 'option B'], ['id' => true]);
+        $expected = [
+            'input' => ['type' => 'hidden', 'name' => 'field', 'value' => ''],
+            ['label' => ['for' => 'field-0']],
+            ['input' => ['type' => 'radio', 'name' => 'field', 'value' => '0', 'id' => 'field-0']],
+            'option A',
+            '/label',
+            ['label' => ['for' => 'field-1']],
+            ['input' => ['type' => 'radio', 'name' => 'field', 'value' => '1', 'id' => 'field-1']],
+            'option B',
+            '/label',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->select(
+            'multi_field',
+            ['first', 'second'],
+            ['multiple' => 'checkbox', 'id' => true]
+        );
+        $expected = [
+            'input' => [
+                'type' => 'hidden', 'name' => 'multi_field', 'value' => ''
+            ],
+            ['div' => ['class' => 'checkbox']],
+                ['label' => ['for' => 'multi-field-0']],
+                    ['input' => [
+                        'type' => 'checkbox', 'name' => 'multi_field[]',
+                        'value' => '0', 'id' => 'multi-field-0'
+                    ]],
+                    'first',
+                    '/label',
+                    '/div',
+                    ['div' => ['class' => 'checkbox']],
+                    ['label' => ['for' => 'multi-field-1']],
+                    ['input' => [
+                        'type' => 'checkbox', 'name' => 'multi_field[]',
+                        'value' => '1', 'id' => 'multi-field-1'
+                    ]],
+                    'second',
+                    '/label',
+                    '/div',
+        ];
+        $this->assertHtml($expected, $result);
     }
 }

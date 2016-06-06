@@ -15,10 +15,6 @@
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Core\Configure;
-use Cake\Database\Connection;
-use Cake\Database\Driver\Postgres;
-use Cake\Database\Query;
-use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use \PDO;
 
@@ -53,6 +49,7 @@ class PostgresTest extends TestCase
 
         $expected['flags'] += [
             PDO::ATTR_PERSISTENT => true,
+            PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
 
@@ -107,6 +104,7 @@ class PostgresTest extends TestCase
         $expected = $config;
         $expected['flags'] += [
             PDO::ATTR_PERSISTENT => false,
+            PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
 

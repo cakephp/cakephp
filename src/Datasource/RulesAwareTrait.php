@@ -29,6 +29,7 @@ use Cake\Event\EventDispatcherInterface;
  */
 trait RulesAwareTrait
 {
+
     /**
      * The domain rules to be applied to entities saved by this table
      *
@@ -42,7 +43,7 @@ trait RulesAwareTrait
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
      * @param string $operation The operation being run. Either 'create', 'update' or 'delete'.
-     * @param \ArrayObject|array $options The options To be passed to the rules.
+     * @param \ArrayObject|array|null $options The options To be passed to the rules.
      * @return bool
      */
     public function checkRules(EntityInterface $entity, $operation = RulesChecker::CREATE, $options = null)

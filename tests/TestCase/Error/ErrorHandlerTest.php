@@ -14,19 +14,15 @@
  */
 namespace Cake\Test\TestCase\Error;
 
-use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Error;
 use Cake\Error\ErrorHandler;
-use Cake\Error\ExceptionRenderer;
 use Cake\Error\PHP7ErrorException;
 use Cake\Log\Log;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Exception\NotFoundException;
 use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -86,6 +82,8 @@ class ErrorHandlerTest extends TestCase
 
         $request = new Request();
         $request->base = '';
+        $request->env('HTTP_REFERER', '/referer');
+
         Router::setRequestInfo($request);
         Configure::write('debug', true);
 
@@ -224,7 +222,9 @@ class ErrorHandlerTest extends TestCase
                 $this->logicalAnd(
                     $this->stringContains('Notice (8): Undefined variable: out in '),
                     $this->stringContains('Trace:'),
-                    $this->stringContains(__NAMESPACE__ . '\ErrorHandlerTest::testHandleErrorLoggingTrace()')
+                    $this->stringContains(__NAMESPACE__ . '\ErrorHandlerTest::testHandleErrorLoggingTrace()'),
+                    $this->stringContains('Request URL:'),
+                    $this->stringContains('Referer URL:')
                 )
             );
 
@@ -304,7 +304,9 @@ class ErrorHandlerTest extends TestCase
                     '[Cake\Routing\Exception\MissingControllerException] ' .
                     'Controller class Derp could not be found.'
                 ),
-                $this->stringContains('Exception Attributes:')
+                $this->stringContains('Exception Attributes:'),
+                $this->stringContains('Request URL:'),
+                $this->stringContains('Referer URL:')
             ));
 
         $this->_logger->expects($this->at(1))
@@ -432,5 +434,42 @@ class ErrorHandlerTest extends TestCase
 
         $errorHandler->handleException($error);
         $this->assertContains('Unexpected variable foo', $errorHandler->response->body(), 'message missing.');
+    }
+
+    /**
+     * Data provider for memory limit changing.
+     *
+     * @return array
+     */
+    public function memoryLimitProvider()
+    {
+        return [
+            // start, adjust, expected
+            ['256M', 4, '262148K'],
+            ['262144K', 4, '262148K'],
+            ['1G', 128, '1048704K'],
+        ];
+    }
+
+    /**
+     * Test increasing the memory limit.
+     *
+     * @dataProvider memoryLimitProvider
+     * @return void
+     */
+    public function testIncreaseMemoryLimit($start, $adjust, $expected)
+    {
+        $initial = ini_get('memory_limit');
+        $this->skipIf(strlen($initial) === 0, 'Cannot read memory limit, and cannot test increasing it.');
+
+        // phpunit.xml often has -1 as memory limit
+        ini_set('memory_limit', $start);
+
+        $errorHandler = new TestErrorHandler();
+        $this->assertNull($errorHandler->increaseMemoryLimit($adjust));
+        $new = ini_get('memory_limit');
+        $this->assertEquals($expected, $new, 'memory limit did not get increased.');
+
+        ini_set('memory_limit', $initial);
     }
 }

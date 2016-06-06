@@ -14,7 +14,7 @@
  */
 namespace Cake\Routing\Route;
 
-use Cake\Network\Response;
+use Cake\Routing\Exception\RedirectException;
 use Cake\Routing\Router;
 
 /**
@@ -22,6 +22,8 @@ use Cake\Routing\Router;
  * are useful when you want to have Routing layer redirects occur in your
  * application, for when URLs move.
  *
+ * Redirection is signalled by an exception that halts route matching and
+ * defines the redirect URL and status code.
  */
 class RedirectRoute extends Route
 {
@@ -30,13 +32,14 @@ class RedirectRoute extends Route
      * A Response object
      *
      * @var \Cake\Network\Response
+     * @deprecated 3.2.0 This property is unused.
      */
     public $response = null;
 
     /**
      * The location to redirect to. Either a string or a CakePHP array URL.
      *
-     * @var mixed
+     * @var array|string
      */
     public $redirect;
 
@@ -58,19 +61,18 @@ class RedirectRoute extends Route
 
     /**
      * Parses a string URL into an array. Parsed URLs will result in an automatic
-     * redirection
+     * redirection.
      *
-     * @param string $url The URL to parse
-     * @return bool False on failure
+     * @param string $url The URL to parse.
+     * @return false|null False on failure. An exception is raised on a successful match.
+     * @throws \Cake\Routing\Exception\RedirectException An exception is raised on successful match.
+     *   This is used to halt route matching and signal to the middleware that a redirect should happen.
      */
     public function parse($url)
     {
         $params = parent::parse($url);
         if (!$params) {
             return false;
-        }
-        if (!$this->response) {
-            $this->response = new Response();
         }
         $redirect = $this->redirect;
         if (count($this->redirect) === 1 && !isset($this->redirect['controller'])) {
@@ -91,20 +93,15 @@ class RedirectRoute extends Route
         if (isset($this->options['status']) && ($this->options['status'] >= 300 && $this->options['status'] < 400)) {
             $status = $this->options['status'];
         }
-        $this->response->header([
-            'Location' => Router::url($redirect, true)
-        ]);
-        $this->response->statusCode($status);
-        $this->response->send();
-        $this->response->stop();
+        throw new RedirectException(Router::url($redirect, true), $status);
     }
 
     /**
-     * There is no reverse routing redirection routes
+     * There is no reverse routing redirection routes.
      *
      * @param array $url Array of parameters to convert to a string.
      * @param array $context Array of request context parameters.
-     * @return mixed either false or a string url.
+     * @return bool Always false.
      */
     public function match(array $url, array $context = [])
     {

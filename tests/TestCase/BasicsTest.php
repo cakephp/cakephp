@@ -16,12 +16,8 @@
  */
 namespace Cake\Test\TestCase;
 
-use Cake\Cache\Cache;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
-use Cake\Filesystem\Folder;
-use Cake\Log\Log;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 

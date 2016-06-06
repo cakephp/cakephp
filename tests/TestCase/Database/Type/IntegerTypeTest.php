@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\Type;
-use Cake\Database\Type\IntegerType;
 use Cake\TestSuite\TestCase;
 use \PDO;
 
@@ -69,6 +68,8 @@ class IntegerTypeTest extends TestCase
      */
     public function testToDatabase()
     {
+        $this->assertNull($this->type->toDatabase(null, $this->driver));
+
         $result = $this->type->toDatabase('some data', $this->driver);
         $this->assertSame(0, $result);
 

@@ -21,6 +21,7 @@ use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestCase;
 use Cake\Test\Fixture\AssertIntegrationTestCase;
+use Cake\Utility\Security;
 
 /**
  * Self test of the IntegrationTestCase
@@ -144,6 +145,19 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test cookie encrypted
+     *
+     * @see CookieComponentControllerTest
+     */
+    public function testCookieEncrypted()
+    {
+        Security::salt('abcdabcdabcdabcdabcdabcdabcdabcdabcd');
+        $this->cookieEncrypted('KeyOfCookie', 'Encrypted with aes by default');
+        $request = $this->_buildRequest('/tasks/view', 'GET', []);
+        $this->assertStringStartsWith('Q2FrZQ==.', $request->cookies['KeyOfCookie']);
+    }
+
+    /**
      * Test sending get requests.
      *
      * @return void
@@ -210,6 +224,34 @@ class IntegrationTestCaseTest extends IntegrationTestCase
 
         $this->assertSession('An error message', 'Flash.flash.0.message');
         $this->assertCookie(1, 'remember_me');
+        $this->assertCookieNotSet('user_id');
+    }
+
+    /**
+     * Tests the failure message for assertCookieNotSet
+     *
+     * @expectedException PHPUnit_Framework_AssertionFailedError
+     * @expectedExceptionMessage Cookie 'remember_me' has been set
+     * @return void
+     */
+    public function testCookieNotSetFailure()
+    {
+        $this->post('/posts/index');
+        $this->assertCookieNotSet('remember_me');
+    }
+
+
+    /**
+     * Tests the failure message for assertCookieNotSet when no
+     * response whas generated
+     *
+     * @expectedException PHPUnit_Framework_AssertionFailedError
+     * @expectedExceptionMessage No response set, cannot assert cookies.
+     * @return void
+     */
+    public function testCookieNotSetFailureNoResponse()
+    {
+        $this->assertCookieNotSet('remember_me');
     }
 
     /**
@@ -226,7 +268,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
-     * Test posting to a secured form action action.
+     * Test posting to a secured form action.
      *
      * @return void
      */
@@ -236,6 +278,26 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $data = [
             'title' => 'Some title',
             'body' => 'Some text'
+        ];
+        $this->post('/posts/securePost', $data);
+        $this->assertResponseOk();
+        $this->assertResponseContains('Request was accepted');
+    }
+
+    /**
+     * Test posting to a secured form action with nested data.
+     *
+     * @return void
+     */
+    public function testPostSecuredFormNestedData()
+    {
+        $this->enableSecurityToken();
+        $data = [
+            'title' => 'New post',
+            'comments' => [
+                ['comment' => 'A new comment']
+            ],
+            'tags' => ['_ids' => [1, 2, 3, 4]]
         ];
         $this->post('/posts/securePost', $data);
         $this->assertResponseOk();
@@ -414,6 +476,19 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test the header contains assertion.
+     *
+     * @return void
+     */
+    public function testAssertHeaderContains()
+    {
+        $this->_response = new Response();
+        $this->_response->header('Etag', 'abc123');
+
+        $this->assertHeaderContains('Etag', 'abc');
+    }
+
+    /**
      * Test the content type assertion.
      *
      * @return void
@@ -489,5 +564,41 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testEventManagerReset2($prevEventManager)
     {
         $this->assertNotSame($prevEventManager, EventManager::instance());
+    }
+
+    /**
+     * Test sending file in requests.
+     *
+     * @return void
+     */
+    public function testSendFile()
+    {
+        $this->get('/posts/file');
+        $this->assertFileResponse(TEST_APP . 'TestApp' . DS . 'Controller' . DS . 'PostsController.php');
+    }
+
+    /**
+     * Test that assertFile requires a response
+     *
+     * @expectedException PHPUnit_Framework_AssertionFailedError
+     * @expectedExceptionMessage No response set, cannot assert file
+     * @return void
+     */
+    public function testAssertFileNoReponse()
+    {
+        $this->assertFileResponse('foo');
+    }
+
+    /**
+     * Test that assertFile requires a file
+     *
+     * @expectedException PHPUnit_Framework_AssertionFailedError
+     * @expectedExceptionMessage No file was sent in this response
+     * @return void
+     */
+    public function testAssertFileNoFile()
+    {
+        $this->get('/posts/get');
+        $this->assertFileResponse('foo');
     }
 }

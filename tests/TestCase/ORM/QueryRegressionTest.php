@@ -16,8 +16,6 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Plugin;
 use Cake\I18n\Time;
-use Cake\ORM\Query;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -35,13 +33,13 @@ class QueryRegressionTest extends TestCase
      */
     public $fixtures = [
         'core.articles',
+        'core.tags',
         'core.articles_tags',
         'core.authors',
         'core.authors_tags',
         'core.comments',
         'core.featured_tags',
         'core.special_tags',
-        'core.tags',
         'core.tags_translations',
         'core.translates',
         'core.users'
@@ -99,46 +97,6 @@ class QueryRegressionTest extends TestCase
             'finder' => 'list'
         ]);
         $table->find()->contain('Tags')->toArray();
-    }
-
-    /**
-     * Test that association proxy find() applies joins when conditions are involved.
-     *
-     * @return void
-     */
-    public function testBelongsToManyAssociationProxyFindWithConditions()
-    {
-        $table = TableRegistry::get('Articles');
-        $table->belongsToMany('Tags', [
-            'foreignKey' => 'article_id',
-            'associationForeignKey' => 'tag_id',
-            'conditions' => ['SpecialTags.highlighted' => true],
-            'through' => 'SpecialTags'
-        ]);
-        $query = $table->Tags->find();
-        $result = $query->toArray();
-        $this->assertCount(1, $result);
-    }
-
-    /**
-     * Test that association proxy find() with matching resolves joins correctly
-     *
-     * @return void
-     */
-    public function testBelongsToManyAssociationProxyFindWithConditionsMatching()
-    {
-        $table = TableRegistry::get('Articles');
-        $table->belongsToMany('Tags', [
-            'foreignKey' => 'article_id',
-            'associationForeignKey' => 'tag_id',
-            'conditions' => ['SpecialTags.highlighted' => true],
-            'through' => 'SpecialTags'
-        ]);
-        $query = $table->Tags->find()->matching('Articles', function ($query) {
-            return $query->where(['Articles.id' => 1]);
-        });
-        // The inner join on special_tags excludes the results.
-        $this->assertEquals(0, $query->count());
     }
 
     /**
@@ -623,6 +581,48 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
+     * Tests that getting the count of a query with bind is correct
+     *
+     * @see https://github.com/cakephp/cakephp/issues/8466
+     * @return void
+     */
+    public function testCountWithBind()
+    {
+        $table = TableRegistry::get('Articles');
+        $query = $table
+            ->find()
+            ->select(['title', 'id'])
+            ->where("title LIKE :val")
+            ->group(['id', 'title'])
+            ->bind(':val', '%Second%');
+        $count = $query->count();
+        $this->assertEquals(1, $count);
+    }
+
+    /**
+     * Tests that bind in subqueries works.
+     *
+     * @return void
+     */
+    public function testSubqueryBind()
+    {
+        $table = TableRegistry::get('Articles');
+        $sub = $table->find()
+            ->select(['id'])
+            ->where("title LIKE :val")
+            ->bind(':val', 'Second %');
+
+        $query = $table
+            ->find()
+            ->select(['title'])
+            ->where(["id NOT IN" => $sub]);
+        $result = $query->toArray();
+        $this->assertCount(2, $result);
+        $this->assertEquals('First Article', $result[0]->title);
+        $this->assertEquals('Third Article', $result[1]->title);
+    }
+
+    /**
      * Test that deep containments don't generate empty entities for
      * intermediary relations.
      *
@@ -1018,16 +1018,33 @@ class QueryRegressionTest extends TestCase
         $query->select([
             'id',
             'coalesced' => $query->func()->coalesce(
-                ['published' => 'literal', -1],
+                ['published' => 'identifier', -1],
                 ['integer']
             )
         ]);
         $result = $query->all()->first();
         $this->assertSame(
-            '-1',
+            -1,
             $result['coalesced'],
-            'Output values for functions are not cast yet.'
+            'Output values for functions should be casted'
         );
+    }
+
+    /**
+     * Test that the typemaps used in function expressions
+     * create the correct results.
+     *
+     * @return void
+     */
+    public function testTypemapInFunctions2()
+    {
+        $table = TableRegistry::get('Comments');
+        $query = $table->find();
+        $query->select([
+            'max' => $query->func()->max('created', ['datetime'])
+        ]);
+        $result = $query->all()->first();
+        $this->assertEquals(new Time('2007-03-18 10:55:23'), $result['max']);
     }
 
     /**
@@ -1187,8 +1204,9 @@ class QueryRegressionTest extends TestCase
      *
      * @return void
      */
-    public function testFormatResultsMemory()
+    public function testFormatResultsMemoryLeak()
     {
+        $this->skipIf(env('CODECOVERAGE') == 1, 'Running coverage this causes this tests to fail sometimes.');
         $table = TableRegistry::get('Articles');
         $table->belongsTo('Authors');
         $table->belongsToMany('Tags');
@@ -1235,5 +1253,21 @@ class QueryRegressionTest extends TestCase
         $query->orderDesc($query->newExpr()->add(['id' => 3]));
         // Not executing the query first, just getting the count
         $this->assertEquals(3, $query->count());
+    }
+
+    /**
+     * Tests that the now() function expression can be used in the
+     * where clause of a query
+     *
+     * @see https://github.com/cakephp/cakephp/issues/7943
+     * @return void
+     */
+    public function testFunctionInWhereClause()
+    {
+        $table = TableRegistry::get('Comments');
+        $table->updateAll(['updated' => Time::tomorrow()], ['id' => 6]);
+        $query = $table->find();
+        $result = $query->where(['updated >' => $query->func()->now('datetime')])->first();
+        $this->assertSame(6, $result->id);
     }
 }

@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Core\Configure;
-use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlite;
 use Cake\Testsuite\TestCase;
 use \PDO;
@@ -47,6 +46,7 @@ class SqliteTest extends TestCase
 
         $expected['flags'] += [
             PDO::ATTR_PERSISTENT => false,
+            PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
         $driver->expects($this->once())->method('_connect')
@@ -80,6 +80,7 @@ class SqliteTest extends TestCase
         $expected += ['username' => null, 'password' => null];
         $expected['flags'] += [
             PDO::ATTR_PERSISTENT => true,
+            PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
 

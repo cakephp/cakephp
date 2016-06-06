@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\Cache;
 use Cake\Cache\Cache;
 use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
@@ -93,6 +92,38 @@ class CacheTest extends TestCase
 
         $result = Cache::engine('tests');
         $this->assertInstanceOf('Cake\Cache\Engine\NullEngine', $result);
+    }
+
+    /**
+     * Test configuring an invalid class fails
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Cache engines must use Cake\Cache\CacheEngine
+     * @return void
+     */
+    public function testConfigInvalidClassType()
+    {
+        Cache::config('tests', [
+            'className' => '\StdClass'
+        ]);
+        Cache::engine('tests');
+    }
+
+    /**
+     * Test engine init failing causes an error
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage not properly configured
+     * @return void
+     */
+    public function testConfigFailedInit()
+    {
+        $mock = $this->getMockForAbstractClass('Cake\Cache\CacheEngine', [], '', true, true, true, ['init']);
+        $mock->method('init')->will($this->returnValue(false));
+        Cache::config('tests', [
+            'engine' => $mock
+        ]);
+        Cache::engine('tests');
     }
 
     /**
@@ -524,6 +555,37 @@ class CacheTest extends TestCase
 
         Cache::enable();
         Cache::clear(false, 'test_cache_disable_2');
+    }
+
+    /**
+     * test clearAll() method
+     *
+     * @return void
+     */
+    public function testClearAll()
+    {
+        Cache::config('configTest', [
+            'engine' => 'File',
+            'path' => TMP . 'tests'
+        ]);
+        Cache::config('anotherConfigTest', [
+            'engine' => 'File',
+            'path' => TMP . 'tests'
+        ]);
+
+        Cache::write('key_1', 'hello', 'configTest');
+        Cache::write('key_2', 'hello again', 'anotherConfigTest');
+
+        $this->assertSame(Cache::read('key_1', 'configTest'), 'hello');
+        $this->assertSame(Cache::read('key_2', 'anotherConfigTest'), 'hello again');
+
+        $result = Cache::clearAll();
+        $this->assertTrue($result['configTest']);
+        $this->assertTrue($result['anotherConfigTest']);
+        $this->assertFalse(Cache::read('key_1', 'configTest'));
+        $this->assertFalse(Cache::read('key_2', 'anotherConfigTest'));
+        Cache::drop('configTest');
+        Cache::drop('anotherConfigTest');
     }
 
     /**

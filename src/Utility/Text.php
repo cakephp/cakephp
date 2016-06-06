@@ -24,6 +24,13 @@ class Text
 {
 
     /**
+     * Default transliterator id string.
+     *
+     * @param string $_defaultTransliteratorId Transliterator identifier string.
+     */
+    protected static $_defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
+
+    /**
      * Generate a random UUID version 4
      *
      * Warning: This method should not be used as a random seed for any cryptographic operations.
@@ -63,7 +70,7 @@ class Text
      * @param string $separator The token to split the data on.
      * @param string $leftBound The left boundary to ignore separators in.
      * @param string $rightBound The right boundary to ignore separators in.
-     * @return mixed Array of tokens in $data or original input if empty.
+     * @return array|string Array of tokens in $data or original input if empty.
      */
     public static function tokenize($data, $separator = ',', $leftBound = '(', $rightBound = ')')
     {
@@ -138,7 +145,7 @@ class Text
      * corresponds to a variable placeholder name in $str.
      * Example:
      * ```
-     * Text::insert(':name is :age years old.', ['name' => 'Bob', '65']);
+     * Text::insert(':name is :age years old.', ['name' => 'Bob', 'age' => '65']);
      * ```
      * Returns: Bob is 65 years old.
      *
@@ -563,13 +570,12 @@ class Text
             $default['ellipsis'] = "\xe2\x80\xa6";
         }
         $options += $default;
-        extract($options);
 
-        if ($html) {
+        if ($options['html']) {
             if (mb_strlen(preg_replace('/<.*?>/', '', $text)) <= $length) {
                 return $text;
             }
-            $totalLength = mb_strlen(strip_tags($ellipsis));
+            $totalLength = mb_strlen(strip_tags($options['ellipsis']));
             $openTags = [];
             $truncate = '';
 
@@ -602,49 +608,70 @@ class Text
                         }
                     }
 
-                    $truncate .= mb_substr($tag[3], 0, $left + $entitiesLength);
+                    if (!$options['exact']) {
+                        $words = explode(' ', $tag[3]);
+                        // Keep at least one word.
+                        if (count($words) === 1) {
+                            $truncate .= mb_substr($tag[3], 0, $left + $entitiesLength);
+                        } else {
+                            $wordLength = 0;
+                            $addWords = [];
+                            // Append words until the length is crossed.
+                            foreach ($words as $word) {
+                                // Add words until we have enough letters.
+                                if ($wordLength < $left + $entitiesLength) {
+                                    $addWords[] = $word;
+                                }
+                                // Include inter-word space.
+                                $wordLength += mb_strlen($word) + 1;
+                            }
+                            $truncate .= implode(' ', $addWords);
+
+                            // If the string is longer than requested, find the last space and cut there.
+                            $lastSpace = mb_strrpos($truncate, ' ');
+                            if (mb_strlen($truncate) > $totalLength && $lastSpace !== false) {
+                                $remainder = mb_substr($truncate, $lastSpace);
+                                $truncate = mb_substr($truncate, 0, $lastSpace);
+
+                                // Re-add close tags that were cut off.
+                                preg_match_all('/<\/([a-z]+)>/', $remainder, $droppedTags, PREG_SET_ORDER);
+                                if ($droppedTags) {
+                                    foreach ($droppedTags as $closingTag) {
+                                        if (!in_array($closingTag[1], $openTags)) {
+                                            array_unshift($openTags, $closingTag[1]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        $truncate .= mb_substr($tag[3], 0, $left + $entitiesLength);
+                    }
                     break;
-                } else {
-                    $truncate .= $tag[3];
-                    $totalLength += $contentLength;
                 }
+                $truncate .= $tag[3];
+
+                $totalLength += $contentLength;
                 if ($totalLength >= $length) {
                     break;
                 }
             }
-        } else {
-            if (mb_strlen($text) <= $length) {
-                return $text;
+
+            $truncate .= $options['ellipsis'];
+
+            foreach ($openTags as $tag) {
+                $truncate .= '</' . $tag . '>';
             }
-            $truncate = mb_substr($text, 0, $length - mb_strlen($ellipsis));
+            return $truncate;
         }
-        if (!$exact) {
+
+        if (mb_strlen($text) <= $length) {
+            return $text;
+        }
+        $truncate = mb_substr($text, 0, $length - mb_strlen($options['ellipsis']));
+
+        if (!$options['exact']) {
             $spacepos = mb_strrpos($truncate, ' ');
-            if ($html) {
-                $truncateCheck = mb_substr($truncate, 0, $spacepos);
-                $lastOpenTag = mb_strrpos($truncateCheck, '<');
-                $lastCloseTag = mb_strrpos($truncateCheck, '>');
-                if ($lastOpenTag > $lastCloseTag) {
-                    preg_match_all('/<[\w]+[^>]*>/s', $truncate, $lastTagMatches);
-                    $lastTag = array_pop($lastTagMatches[0]);
-                    $spacepos = mb_strrpos($truncate, $lastTag) + mb_strlen($lastTag);
-                }
-                $bits = mb_substr($truncate, $spacepos);
-                preg_match_all('/<\/([a-z]+)>/', $bits, $droppedTags, PREG_SET_ORDER);
-                if (!empty($droppedTags)) {
-                    if (!empty($openTags)) {
-                        foreach ($droppedTags as $closingTag) {
-                            if (!in_array($closingTag[1], $openTags)) {
-                                array_unshift($openTags, $closingTag[1]);
-                            }
-                        }
-                    } else {
-                        foreach ($droppedTags as $closingTag) {
-                            $openTags[] = $closingTag[1];
-                        }
-                    }
-                }
-            }
             $truncate = mb_substr($truncate, 0, $spacepos);
 
             // If truncate still empty, then we don't need to count ellipsis in the cut.
@@ -653,14 +680,7 @@ class Text
             }
         }
 
-        $truncate .= $ellipsis;
-
-        if ($html) {
-            foreach ($openTags as $tag) {
-                $truncate .= '</' . $tag . '>';
-            }
-        }
-
+        $truncate .= $options['ellipsis'];
         return $truncate;
     }
 
@@ -713,7 +733,7 @@ class Text
      * Creates a comma separated list where the last two items are joined with 'and', forming natural language.
      *
      * @param array $list The list to be joined.
-     * @param string $and The word used to join the last and second last items together with. Defaults to 'and'.
+     * @param string|null $and The word used to join the last and second last items together with. Defaults to 'and'.
      * @param string $separator The separator used to join all the other items together. Defaults to ', '.
      * @return string The glued together string.
      * @link http://book.cakephp.org/3.0/en/core-libraries/string.html#converting-an-array-to-sentence-form
@@ -851,5 +871,89 @@ class Text
             return $default;
         }
         throw new InvalidArgumentException('No unit type.');
+    }
+
+    /**
+     * Get default transliterator identifier string.
+     *
+     * @return string Transliterator identifier.
+     */
+    public static function getTransliteratorId()
+    {
+        return static::$_defaultTransliteratorId;
+    }
+
+    /**
+     * Set default transliterator identifier string.
+     *
+     * @param string $transliteratorId Transliterator identifier.
+     * @return void
+     */
+    public static function setTransliteratorId($transliteratorId)
+    {
+        static::$_defaultTransliteratorId = $transliteratorId;
+    }
+
+    /**
+     * Transliterate string.
+     *
+     * @param string $string String to transliterate.
+     * @param string|null $transliteratorId Transliterator identifier. If null
+     *   Text::$_defaultTransliteratorId will be used.
+     * @return string
+     * @see http://php.net/manual/en/transliterator.transliterate.php
+     */
+    public static function transliterate($string, $transliteratorId = null)
+    {
+        $transliteratorId = $transliteratorId ?: static::$_defaultTransliteratorId;
+        return transliterator_transliterate($transliteratorId, $string);
+    }
+
+    /**
+     * Returns a string with all spaces converted to dashes (by default),
+     * characters transliterated to ASCII characters, and non word characters removed.
+     *
+     * ### Options:
+     *
+     * - `replacement`: Replacement string. Default '-'.
+     * - `transliteratorId`: A valid tranliterator id string.
+     *   If default `null` Text::$_defaultTransliteratorId to be used.
+     *   If `false` no transliteration will be done, only non words will be removed.
+     * - `preserve`: Specific non-word character to preserve. Default `null`.
+     *   For e.g. this option can be set to '.' to generate clean file names.
+     *
+     * @param string $string the string you want to slug
+     * @param array $options If string it will be use as replacement character
+     *   or an array of options.
+     * @return string
+     */
+    public static function slug($string, $options = [])
+    {
+        if (is_string($options)) {
+            $options = ['replacement' => $options];
+        }
+        $options += [
+            'replacement' => '-',
+            'transliteratorId' => null,
+            'preserve' => null
+        ];
+
+        if ($options['transliteratorId'] !== false) {
+            $string = static::transliterate($string, $options['transliteratorId']);
+        }
+
+        $regex = '^\s\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}';
+        if ($options['preserve']) {
+            $regex .= '(' . preg_quote($options['preserve'], '/') . ')';
+        }
+        $quotedReplacement = preg_quote($options['replacement'], '/');
+        $map = [
+            '/[' . $regex . ']/mu' => ' ',
+            '/[\s]+/mu' => $options['replacement'],
+            sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
+        ];
+        $string = preg_replace(array_keys($map), $map, $string);
+
+        return $string;
     }
 }

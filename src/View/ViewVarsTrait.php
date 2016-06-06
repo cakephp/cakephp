@@ -13,7 +13,6 @@
  */
 namespace Cake\View;
 
-use Cake\Core\App;
 use Cake\Event\EventDispatcherInterface;
 
 /**
@@ -71,8 +70,8 @@ trait ViewVarsTrait
     public function createView($viewClass = null)
     {
         $builder = $this->viewBuilder();
-        if ($viewClass === null) {
-            $viewClass = $this->viewClass;
+        if ($viewClass === null && $builder->className() === null) {
+            $builder->className($this->viewClass);
         }
         if ($viewClass) {
             $builder->className($viewClass);
@@ -123,7 +122,7 @@ trait ViewVarsTrait
      * Saves a variable or an associative array of variables for use inside a template.
      *
      * @param string|array $name A string or an array of data.
-     * @param string|array|null $value Value in case $name is a string (which then works as the key).
+     * @param string|array|null|bool $value Value in case $name is a string (which then works as the key).
      *   Unused if $name is an associative array, otherwise serves as the values to $name's keys.
      * @return $this
      */

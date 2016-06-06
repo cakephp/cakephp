@@ -21,11 +21,44 @@ class DateType extends DateTimeType
 {
 
     /**
+     * The class to use for representing date objects
+     *
+     * This property can only be used before an instance of this type
+     * class is constructed. After that use `useMutable()` or `useImmutable()` instead.
+     *
+     * @var string
+     * @deprecated Use DateType::useMutable() or DateType::useImmutable() instead.
+     */
+    public static $dateTimeClass = 'Cake\I18n\Date';
+
+    /**
      * Date format for DateTime object
      *
      * @var string
      */
     protected $_format = 'Y-m-d';
+
+    /**
+     * Change the preferred class name to the FrozenDate implementation.
+     *
+     * @return $this
+     */
+    public function useImmutable()
+    {
+        $this->_setClassName('Cake\I18n\FrozenDate', 'DateTimeImmutable');
+        return $this;
+    }
+
+    /**
+     * Change the preferred class name to the mutable Date implementation.
+     *
+     * @return $this
+     */
+    public function useMutable()
+    {
+        $this->_setClassName('Cake\I18n\Date', 'DateTime');
+        return $this;
+    }
 
     /**
      * Convert request data into a datetime object.
@@ -46,8 +79,8 @@ class DateType extends DateTimeType
      * Convert strings into Date instances.
      *
      * @param string $value The value to convert.
-     * @param Driver $driver The driver instance to convert with.
-     * @return \Carbon\Carbon
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
+     * @return \Cake\I18n\Date|\DateTime
      */
     public function toPHP($value, Driver $driver)
     {
@@ -63,7 +96,7 @@ class DateType extends DateTimeType
      */
     protected function _parseValue($value)
     {
-        $class = static::$dateTimeClass;
+        $class = $this->_className;
         return $class::parseDate($value, $this->_localeFormat);
     }
 }

@@ -180,9 +180,32 @@ class SqlserverSchema extends BaseSchema
 
         $field += [
             'null' => $row['null'] === '1' ? true : false,
-            'default' => $row['default'],
+            'default' => $this->_defaultValue($row['default']),
         ];
         $table->addColumn($row['name'], $field);
+    }
+
+    /**
+     * Manipulate the default value.
+     *
+     * Sqlite includes quotes and bared NULLs in default values.
+     * We need to remove those.
+     *
+     * @param string|null $default The default value.
+     * @return string|null
+     */
+    protected function _defaultValue($default)
+    {
+        if ($default === 'NULL') {
+            return null;
+        }
+
+        // Remove quotes
+        if (preg_match("/^'(.*)'$/", $default, $matches)) {
+            return str_replace("''", "'", $matches[1]);
+        }
+
+        return $default;
     }
 
     /**
@@ -321,10 +344,8 @@ class SqlserverSchema extends BaseSchema
             'integer' => ' INTEGER',
             'biginteger' => ' BIGINT',
             'boolean' => ' BIT',
-            'binary' => ' VARBINARY(MAX)',
             'float' => ' FLOAT',
             'decimal' => ' DECIMAL',
-            'text' => ' NVARCHAR(MAX)',
             'date' => ' DATE',
             'time' => ' TIME',
             'datetime' => ' DATETIME',
@@ -343,7 +364,21 @@ class SqlserverSchema extends BaseSchema
             }
         }
 
-        if ($data['type'] === 'string') {
+        if ($data['type'] === 'text' && $data['length'] !== Table::LENGTH_TINY) {
+            $out .= ' NVARCHAR(MAX)';
+        }
+
+        if ($data['type'] === 'binary') {
+            $out .= ' VARBINARY';
+
+            if ($data['length'] !== Table::LENGTH_TINY) {
+                $out .= '(MAX)';
+            } else {
+                $out .= sprintf('(%s)', Table::LENGTH_TINY);
+            }
+        }
+
+        if ($data['type'] === 'string' || ($data['type'] === 'text' && $data['length'] === Table::LENGTH_TINY)) {
             $type = ' NVARCHAR';
 
             if (!empty($data['fixed'])) {
@@ -515,8 +550,8 @@ class SqlserverSchema extends BaseSchema
             $column = $table->column($pk[0]);
             if (in_array($column['type'], ['integer', 'biginteger'])) {
                 $queries[] = sprintf(
-                    'DBCC CHECKIDENT(%s, RESEED, 0)',
-                    $name
+                    "DBCC CHECKIDENT('%s', RESEED, 0)",
+                    $table->name()
                 );
             }
         }

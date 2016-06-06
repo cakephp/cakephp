@@ -221,11 +221,13 @@ SQL;
         $table = <<<SQL
 CREATE TABLE schema_articles (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
-title VARCHAR(20) DEFAULT 'testing',
+title VARCHAR(20) DEFAULT 'Let ''em eat cake',
 body TEXT,
 author_id INT(11) NOT NULL,
 published BOOLEAN DEFAULT 0,
 created DATETIME,
+field1 VARCHAR(10) DEFAULT NULL,
+field2 VARCHAR(10) DEFAULT 'NULL',
 CONSTRAINT "title_idx" UNIQUE ("title", "body")
 CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
 );
@@ -288,7 +290,7 @@ SQL;
             'title' => [
                 'type' => 'string',
                 'null' => true,
-                'default' => 'testing',
+                'default' => 'Let \'em eat cake',
                 'length' => 20,
                 'precision' => null,
                 'fixed' => null,
@@ -326,6 +328,24 @@ SQL;
                 'default' => null,
                 'length' => null,
                 'precision' => null,
+                'comment' => null,
+            ],
+            'field1' => [
+                'type' => 'string',
+                'null' => true,
+                'default' => null,
+                'length' => 10,
+                'precision' => null,
+                'fixed' => null,
+                'comment' => null,
+            ],
+            'field2' => [
+                'type' => 'string',
+                'null' => true,
+                'default' => 'NULL',
+                'length' => 10,
+                'precision' => null,
+                'fixed' => null,
                 'comment' => null,
             ],
         ];
@@ -452,6 +472,21 @@ SQL;
             [
                 'body',
                 ['type' => 'text', 'null' => false],
+                '"body" TEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_TINY, 'null' => false],
+                '"body" VARCHAR(' . Table::LENGTH_TINY . ') NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM, 'null' => false],
+                '"body" TEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
                 '"body" TEXT NOT NULL'
             ],
             // Integers
@@ -974,14 +1009,9 @@ SQL;
     protected function _getMockedDriver()
     {
         $driver = new \Cake\Database\Driver\Sqlite();
-        $mock = $this->getMock('FakePdo', ['quote', 'quoteIdentifier', 'prepare']);
+        $mock = $this->getMock('FakePdo', ['quote', 'prepare']);
         $mock->expects($this->any())
             ->method('quote')
-            ->will($this->returnCallback(function ($value) {
-                return '"' . $value . '"';
-            }));
-        $mock->expects($this->any())
-            ->method('quoteIdentifier')
             ->will($this->returnCallback(function ($value) {
                 return '"' . $value . '"';
             }));

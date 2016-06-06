@@ -43,9 +43,8 @@ Help us keep CakePHP open and inclusive. Please read and follow our [Code of Con
 ## Which branch to base the work
 
 * Bugfix branches will be based on master.
-* New features that are backwards compatible will be based on next minor release
-  branch.
-* New features or other non backwards compatible changes will go in the next major release branch.
+* New features that are backwards compatible will be based on the appropriate 'next' branch. For example if you want to contribute to the next 3.x branch, you should base your changes on `3.next`.
+* New features or other non backwards compatible changes will go in the next major release branch. Development on 4.0 has not started yet, so breaking changes are unlikely to be merged in.
 
 ## Submitting Changes
 
@@ -56,9 +55,13 @@ Help us keep CakePHP open and inclusive. Please read and follow our [Code of Con
 ## Test cases and codesniffer
 
 CakePHP tests requires [PHPUnit](http://www.phpunit.de/manual/current/en/installation.html).
+To install PHPUnit use composer:
+
+    php composer.phar require "phpunit/phpunit:*"
+
 To run the test cases locally use the following command:
 
-    phpunit --stderr tests/TestCase/
+    vendor/bin/phpunit
 
 You can copy file `phpunit.xml.dist` to `phpunit.xml` and modify the database
 driver settings as required to run tests for particular database.
@@ -69,7 +72,7 @@ CakePHP fork on GitHub for automated test builds.
 
 To run the sniffs for CakePHP coding standards:
 
-    phpcs -p --extensions=php --standard=CakePHP ./src
+    vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src
 
 Check the [cakephp-codesniffer](https://github.com/cakephp/cakephp-codesniffer)
 repository to setup the CakePHP standard. The [README](https://github.com/cakephp/cakephp-codesniffer/blob/master/README.md) contains installation info
@@ -86,4 +89,4 @@ If you've found a security related issue in CakePHP, please don't open an issue 
 * [Development Roadmaps](https://github.com/cakephp/cakephp/wiki#roadmaps)
 * [General GitHub documentation](https://help.github.com/)
 * [GitHub pull request documentation](https://help.github.com/send-pull-requests/)
-* #cakephp IRC channel on freenode.org
+* `#cakephp` IRC channel on freenode.org

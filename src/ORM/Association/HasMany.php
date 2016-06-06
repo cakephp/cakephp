@@ -16,6 +16,8 @@
 namespace Cake\ORM\Association;
 
 use Cake\Collection\Collection;
+use Cake\Database\Expression\FieldInterface;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
@@ -123,7 +125,7 @@ class HasMany extends Association
      * the target table
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
      * the saved entity
-     * @see Table::save()
+     * @see \Cake\ORM\Table::save()
      * @throws \InvalidArgumentException when the association data cannot be traversed.
      */
     public function saveAssociated(EntityInterface $entity, array $options = [])
@@ -198,7 +200,7 @@ class HasMany extends Association
      *
      * ```
      * $user = $users->get(1);
-     * $allArticles = $articles->find('all')->execute();
+     * $allArticles = $articles->find('all')->toArray();
      * $users->Articles->link($user, $allArticles);
      * ```
      *
@@ -304,7 +306,8 @@ class HasMany extends Association
 
         $this->_unlink($foreignKey, $target, $conditions, $options);
 
-        if ($options['cleanProperty']) {
+        $result = $sourceEntity->get($property);
+        if ($options['cleanProperty'] && $result !== null) {
             $sourceEntity->set(
                 $property,
                 (new Collection($sourceEntity->get($property)))
@@ -384,8 +387,8 @@ class HasMany extends Association
      * Skips deleting records present in $remainingEntities
      *
      * @param array $properties array of foreignKey properties
-     * @param EntityInterface $entity the entity which should have its associated entities unassigned
-     * @param Table $target The associated table
+     * @param \Cake\Datasource\EntityInterface $entity the entity which should have its associated entities unassigned
+     * @param \Cake\ORM\Table $target The associated table
      * @param array $remainingEntities Entities that should not be deleted
      * @param array $options list of options accepted by `Table::delete()`
      * @return bool success
@@ -425,7 +428,7 @@ class HasMany extends Association
      * The action which is taken depends on the dependency between source and targets and also on foreign key nullability
      *
      * @param array $foreignKey array of foreign key properties
-     * @param Table $target The associated table
+     * @param \Cake\ORM\Table $target The associated table
      * @param array $conditions The conditions that specifies what are the objects to be unlinked
      * @param array $options list of options accepted by `Table::delete()`
      * @return bool success
@@ -436,28 +439,33 @@ class HasMany extends Association
 
         if ($mustBeDependent) {
             if ($this->_cascadeCallbacks) {
+                $conditions = new QueryExpression($conditions);
+                $conditions->traverse(function ($entry) use ($target) {
+                    if ($entry instanceof FieldInterface) {
+                        $entry->setField($target->aliasField($entry->getField()));
+                    }
+                });
                 $query = $this->find('all')->where($conditions);
                 $ok = true;
                 foreach ($query as $assoc) {
                     $ok = $ok && $target->delete($assoc, $options);
                 }
                 return $ok;
-            } else {
-                $target->deleteAll($conditions);
-                return true;
             }
-        } else {
-            $updateFields = array_fill_keys($foreignKey, null);
-            $target->updateAll($updateFields, $conditions);
-            return true;
 
+            $target->deleteAll($conditions);
+            return true;
         }
+
+        $updateFields = array_fill_keys($foreignKey, null);
+        $target->updateAll($updateFields, $conditions);
+        return true;
     }
 
     /**
      * Checks the nullable flag of the foreign key
      *
-     * @param Table $table the table containing the foreign key
+     * @param \Cake\ORM\Table $table the table containing the foreign key
      * @param array $properties the list of fields that compose the foreign key
      * @return bool
      */

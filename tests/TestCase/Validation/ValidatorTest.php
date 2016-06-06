@@ -644,7 +644,21 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests custom error mesages generated when a field is not allowed to be empty
+     * Tests custom error messages generated when a field is allowed to be empty
+     *
+     * @return void
+     */
+    public function testCustomErrorsWithAllowedEmpty()
+    {
+        $validator = new Validator;
+        $validator->allowEmpty('title', false, 'Custom message');
+        $errors = $validator->errors(['title' => null]);
+        $expected = ['title' => ['_empty' => 'Custom message']];
+        $this->assertEquals($expected, $errors);
+    }
+
+    /**
+     * Tests custom error messages generated when a field is not allowed to be empty
      *
      * @return void
      */
@@ -1046,5 +1060,570 @@ class ValidatorTest extends TestCase
         $validator->addNestedMany('user', $inner);
         $this->assertNotEmpty($validator->errors(['user' => [['username' => 'example']]], true));
         $this->assertEmpty($validator->errors(['user' => [['username' => 'a']]], false));
+    }
+
+    /**
+     * Tests the notBlank proxy method
+     *
+     * @return void
+     */
+    public function testNotBlank()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'notBlank');
+        $this->assertNotEmpty($validator->errors(['username' => '  ']));
+    }
+
+    /**
+     * Tests the alphanumeric proxy method
+     *
+     * @return void
+     */
+    public function testAlphanumeric()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'alphaNumeric');
+        $this->assertNotEmpty($validator->errors(['username' => '$']));
+    }
+
+    /**
+     * Tests the lengthBetween proxy method
+     *
+     * @return void
+     */
+    public function testLengthBetween()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'lengthBetween', [5, 7], [5, 7]);
+        $this->assertNotEmpty($validator->errors(['username' => 'foo']));
+    }
+
+    /**
+     * Tests the lengthBetween proxy method
+     *
+     * @expectedException InvalidArgumentException
+     * @return void
+     */
+    public function testLengthBetweenFailure()
+    {
+        $validator = new Validator();
+        $validator->lengthBetween('username', [7]);
+    }
+
+    /**
+     * Tests the creditCard proxy method
+     *
+     * @return void
+     */
+    public function testCreditCard()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'creditCard', 'all', ['all', true], 'cc');
+        $this->assertNotEmpty($validator->errors(['username' => 'foo']));
+    }
+
+    /**
+     * Tests the greaterThan proxy method
+     *
+     * @return void
+     */
+    public function testGreaterThan()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'greaterThan', 5, ['>', 5], 'comparison');
+        $this->assertNotEmpty($validator->errors(['username' => 2]));
+    }
+
+    /**
+     * Tests the greaterThanOrEqual proxy method
+     *
+     * @return void
+     */
+    public function testGreaterThanOrEqual()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'greaterThanOrEqual', 5, ['>=', 5], 'comparison');
+        $this->assertNotEmpty($validator->errors(['username' => 2]));
+    }
+
+    /**
+     * Tests the lessThan proxy method
+     *
+     * @return void
+     */
+    public function testLessThan()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'lessThan', 5, ['<', 5], 'comparison');
+        $this->assertNotEmpty($validator->errors(['username' => 5]));
+    }
+
+    /**
+     * Tests the lessThanOrEqual proxy method
+     *
+     * @return void
+     */
+    public function testLessThanOrEqual()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'lessThanOrEqual', 5, ['<=', 5], 'comparison');
+        $this->assertNotEmpty($validator->errors(['username' => 6]));
+    }
+
+    /**
+     * Tests the equals proxy method
+     *
+     * @return void
+     */
+    public function testEquals()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'equals', 5, ['=', 5], 'comparison');
+        $this->assertNotEmpty($validator->errors(['username' => 6]));
+    }
+
+    /**
+     * Tests the notEquals proxy method
+     *
+     * @return void
+     */
+    public function testNotEquals()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'notEquals', 5, ['!=', 5], 'comparison');
+        $this->assertNotEmpty($validator->errors(['username' => 5]));
+    }
+
+    /**
+     * Tests the sameAs proxy method
+     *
+     * @return void
+     */
+    public function testSameAs()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'sameAs', 'other', ['other'], 'compareWith');
+        $this->assertNotEmpty($validator->errors(['username' => 'foo']));
+    }
+
+    /**
+     * Tests the containsNonAlphaNumeric proxy method
+     *
+     * @return void
+     */
+    public function testContainsNonAlphaNumeric()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'containsNonAlphaNumeric', 2, [2]);
+        $this->assertNotEmpty($validator->errors(['username' => '$']));
+    }
+
+    /**
+     * Tests the date proxy method
+     *
+     * @return void
+     */
+    public function testDate()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'date', ['ymd'], [['ymd']]);
+        $this->assertNotEmpty($validator->errors(['username' => 'not a date']));
+    }
+
+
+    /**
+     * Tests the dateTime proxy method
+     *
+     * @return void
+     */
+    public function testDateTime()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'dateTime', ['ymd'], [['ymd']], 'datetime');
+        $this->assertNotEmpty($validator->errors(['username' => 'not a date']));
+    }
+
+    /**
+     * Tests the time proxy method
+     *
+     * @return void
+     */
+    public function testTime()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'time');
+        $this->assertNotEmpty($validator->errors(['username' => 'not a time']));
+    }
+
+    /**
+     * Tests the localizedTime proxy method
+     *
+     * @return void
+     */
+    public function testLocalizedTime()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'localizedTime', 'date', ['date']);
+        $this->assertNotEmpty($validator->errors(['username' => 'not a date']));
+    }
+
+    /**
+     * Tests the boolean proxy method
+     *
+     * @return void
+     */
+    public function testBoolean()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'boolean');
+        $this->assertNotEmpty($validator->errors(['username' => 'not a boolean']));
+    }
+
+    /**
+     * Tests the decimal proxy method
+     *
+     * @return void
+     */
+    public function testDecimal()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'decimal', 2, [2]);
+        $this->assertNotEmpty($validator->errors(['username' => 10.1]));
+    }
+
+    /**
+     * Tests the ip proxy methods
+     *
+     * @return void
+     */
+    public function testIps()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'ip');
+        $this->assertNotEmpty($validator->errors(['username' => 'not ip']));
+
+
+        $this->assertProxyMethod($validator, 'ipv4', null, ['ipv4'], 'ip');
+        $this->assertNotEmpty($validator->errors(['username' => 'not ip']));
+
+        $this->assertProxyMethod($validator, 'ipv6', null, ['ipv6'], 'ip');
+        $this->assertNotEmpty($validator->errors(['username' => 'not ip']));
+    }
+
+    /**
+     * Tests the minLength proxy method
+     *
+     * @return void
+     */
+    public function testMinLength()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'minLength', 2, [2]);
+        $this->assertNotEmpty($validator->errors(['username' => 'a']));
+    }
+
+    /**
+     * Tests the maxLength proxy method
+     *
+     * @return void
+     */
+    public function testMaxLength()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'maxLength', 2, [2]);
+        $this->assertNotEmpty($validator->errors(['username' => 'aaa']));
+    }
+
+    /**
+     * Tests the numeric proxy method
+     *
+     * @return void
+     */
+    public function testNumeric()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'numeric');
+        $this->assertEmpty($validator->errors(['username' => '22']));
+        $this->assertNotEmpty($validator->errors(['username' => 'a']));
+    }
+
+    /**
+     * Tests the naturalNumber proxy method
+     *
+     * @return void
+     */
+    public function testNaturalNumber()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'naturalNumber', null, [false]);
+        $this->assertNotEmpty($validator->errors(['username' => 0]));
+    }
+
+    /**
+     * Tests the nonNegativeInteger proxy method
+     *
+     * @return void
+     */
+    public function testNonNegativeInteger()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'nonNegativeInteger', null, [true], 'naturalNumber');
+        $this->assertNotEmpty($validator->errors(['username' => -1]));
+    }
+
+    /**
+     * Tests the range proxy method
+     *
+     * @return void
+     */
+    public function testRange()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'range', [1, 4], [1, 4]);
+        $this->assertNotEmpty($validator->errors(['username' => 5]));
+    }
+
+    /**
+     * Tests the range failure case
+     *
+     * @expectedException InvalidArgumentException
+     * @return void
+     */
+    public function testRangeFailure()
+    {
+        $validator = new Validator();
+        $validator->range('username', [1]);
+    }
+    /**
+     * Tests the url proxy method
+     *
+     * @return void
+     */
+    public function testUrl()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'url', null, [false]);
+        $this->assertNotEmpty($validator->errors(['username' => 'not url']));
+    }
+
+    /**
+     * Tests the urlWithProtocol proxy method
+     *
+     * @return void
+     */
+    public function testUrlWithProtocol()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'urlWithProtocol', null, [true], 'url');
+        $this->assertNotEmpty($validator->errors(['username' => 'google.com']));
+    }
+
+    /**
+     * Tests the inList proxy method
+     *
+     * @return void
+     */
+    public function testInList()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'inList', ['a', 'b'], [['a', 'b']]);
+        $this->assertNotEmpty($validator->errors(['username' => 'c']));
+    }
+
+    /**
+     * Tests the uuid proxy method
+     *
+     * @return void
+     */
+    public function testUuid()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'uuid');
+        $this->assertNotEmpty($validator->errors(['username' => 'not uuid']));
+    }
+
+    /**
+     * Tests the uploadedFile proxy method
+     *
+     * @return void
+     */
+    public function testUploadedFile()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'uploadedFile', ['foo' => 'bar'], [['foo' => 'bar']]);
+        $this->assertNotEmpty($validator->errors(['username' => []]));
+    }
+
+    /**
+     * Tests the latlog proxy methods
+     *
+     * @return void
+     */
+    public function testLatLong()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'latLong', null, [], 'geoCoordinate');
+        $this->assertNotEmpty($validator->errors(['username' => 2000]));
+
+        $this->assertProxyMethod($validator, 'latitude');
+        $this->assertNotEmpty($validator->errors(['username' => 2000]));
+
+        $this->assertProxyMethod($validator, 'longitude');
+        $this->assertNotEmpty($validator->errors(['username' => 2000]));
+    }
+
+    /**
+     * Tests the ascii proxy method
+     *
+     * @return void
+     */
+    public function testAscii()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'ascii');
+        $this->assertNotEmpty($validator->errors(['username' => 'ü']));
+    }
+
+    /**
+     * Tests the utf8 proxy methods
+     *
+     * @return void
+     */
+    public function testUtf8()
+    {
+        // Grinning face
+        $extended = 'some' . "\xf0\x9f\x98\x80" . 'value';
+        $validator = new Validator();
+
+        $this->assertProxyMethod($validator, 'utf8', null, [['extended' => false]]);
+        $this->assertEmpty($validator->errors(['username' => 'ü']));
+        $this->assertNotEmpty($validator->errors(['username' => $extended]));
+    }
+
+    /**
+     * Test utf8extended proxy method.
+     *
+     * @return void
+     */
+    public function testUtf8Extended()
+    {
+        // Grinning face
+        $extended = 'some' . "\xf0\x9f\x98\x80" . 'value';
+        $validator = new Validator();
+
+        $this->assertProxyMethod($validator, 'utf8Extended', null, [['extended' => true]], 'utf8');
+        $this->assertEmpty($validator->errors(['username' => 'ü']));
+        $this->assertEmpty($validator->errors(['username' => $extended]));
+    }
+
+    /**
+     * Tests the email proxy method
+     *
+     * @return void
+     */
+    public function testEmail()
+    {
+        $validator = new Validator();
+        $validator->email('username');
+        $this->assertEmpty($validator->errors(['username' => 'test@example.com']));
+        $this->assertNotEmpty($validator->errors(['username' => 'not an email']));
+    }
+
+    /**
+     * Tests the integer proxy method
+     *
+     * @return void
+     */
+    public function testInteger()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'integer', null, [], 'isInteger');
+        $this->assertNotEmpty($validator->errors(['username' => 'not integer']));
+    }
+
+    /**
+     * Tests the multiple proxy method
+     *
+     * @return void
+     */
+    public function testMultiple()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod(
+            $validator,
+            'multipleOptions',
+            ['min' => 1, 'caseInsensitive' => true],
+            [['min' => 1], false],
+            'multiple'
+        );
+        $this->assertNotEmpty($validator->errors(['username' => '']));
+    }
+
+    /**
+     * Tests the hasAtLeast method
+     *
+     * @return void
+     */
+    public function testHasAtLeast()
+    {
+        $validator = new Validator();
+        $validator->hasAtLeast('things', 3);
+        $this->assertEmpty($validator->errors(['things' => [1, 2, 3]]));
+        $this->assertEmpty($validator->errors(['things' => [1, 2, 3, 4]]));
+        $this->assertNotEmpty($validator->errors(['things' => [1, 2]]));
+        $this->assertNotEmpty($validator->errors(['things' => []]));
+        $this->assertNotEmpty($validator->errors(['things' => 'string']));
+
+        $this->assertEmpty($validator->errors(['things' => ['_ids' => [1, 2, 3]]]));
+        $this->assertEmpty($validator->errors(['things' => ['_ids' => [1, 2, 3, 4]]]));
+        $this->assertNotEmpty($validator->errors(['things' => ['_ids' => [1, 2]]]));
+        $this->assertNotEmpty($validator->errors(['things' => ['_ids' => []]]));
+        $this->assertNotEmpty($validator->errors(['things' => ['_ids' => 'string']]));
+    }
+
+    /**
+     * Tests the hasAtMost method
+     *
+     * @return void
+     */
+    public function testHasAtMost()
+    {
+        $validator = new Validator();
+        $validator->hasAtMost('things', 3);
+        $this->assertEmpty($validator->errors(['things' => [1, 2, 3]]));
+        $this->assertEmpty($validator->errors(['things' => [1]]));
+        $this->assertNotEmpty($validator->errors(['things' => [1, 2, 3, 4]]));
+
+        $this->assertEmpty($validator->errors(['things' => ['_ids' => [1, 2, 3]]]));
+        $this->assertEmpty($validator->errors(['things' => ['_ids' => [1, 2]]]));
+        $this->assertNotEmpty($validator->errors(['things' => ['_ids' => [1, 2, 3, 4]]]));
+    }
+
+    protected function assertProxyMethod($validator, $method, $extra = null, $pass = [], $name = null)
+    {
+        $name = $name ?: $method;
+        if ($extra !== null) {
+            $this->assertSame($validator, $validator->{$method}('username', $extra));
+        } else {
+            $this->assertSame($validator, $validator->{$method}('username'));
+        }
+
+        $rule = $validator->field('username')->rule($method);
+        $this->assertNotEmpty($rule, "Rule was not found for $method");
+        $this->assertNull($rule->get('message'), 'Message is present when it should not be');
+        $this->assertNull($rule->get('on'), 'On clause is present when it should not be');
+        $this->assertEquals($name, $rule->get('rule'), 'Rule name does not match');
+        $this->assertEquals($pass, $rule->get('pass'), 'Passed options are different');
+        $this->assertEquals('default', $rule->get('provider'), 'Provider does not match');
+
+        if ($extra !== null) {
+            $validator->{$method}('username', $extra, 'the message', 'create');
+        } else {
+            $validator->{$method}('username', 'the message', 'create');
+        }
+
+        $rule = $validator->field('username')->rule($method);
+        $this->assertEquals('the message', $rule->get('message'), 'Error messages are not the same');
+        $this->assertEquals('create', $rule->get('on'), 'On clause is wrong');
     }
 }

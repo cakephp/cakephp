@@ -24,13 +24,13 @@ $pluginPath = Configure::read('App.paths.plugins.0');
 
 $pluginDot = empty($plugin) ? null : $plugin . '.';
 if (empty($plugin)) {
-    $filePath = APP_DIR . DS;
+    $filePath = APP_DIR . DIRECTORY_SEPARATOR;
 }
 if (!empty($plugin) && Plugin::loaded($plugin)) {
     $filePath = Plugin::classPath($plugin);
 }
 if (!empty($plugin) && !Plugin::loaded($plugin)) {
-    $filePath = $pluginPath . h($plugin) . DS . 'src' . DS;
+    $filePath = $pluginPath . h($plugin) . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR;
 }
 
 $this->layout = 'dev_error';
@@ -48,7 +48,7 @@ $this->start('file');
 ?>
 <p class="error">
     <strong>Error: </strong>
-    <?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'Model' . DS . 'Behavior' . DS . h($class) . '.php'); ?>
+    <?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'Model' . DIRECTORY_SEPARATOR . 'Behavior' . DIRECTORY_SEPARATOR . h($class) . '.php'); ?>
 </p>
 
 <?php

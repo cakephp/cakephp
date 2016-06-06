@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Routing\Route;
 
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
@@ -205,6 +204,25 @@ class RouteTest extends TestCase
         $this->assertNotRegExp($result, '/posts/nameofarticle');
         $this->assertNotRegExp($result, '/posts/nameofarticle-12347');
         $this->assertEquals(['url_title', 'id'], $route->keys);
+    }
+
+    public function testRouteCompilingWithUnicodePatterns()
+    {
+        $route = new Route(
+            '/test/:slug',
+            ['controller' => 'Pages', 'action' => 'display'],
+            ['pass' => ['slug'], 'multibytePattern' => false, 'slug' => '[A-zА-я\-\ ]+']
+        );
+        $result = $route->compile();
+        $this->assertNotRegExp($result, '/test/bla-blan-тест');
+
+        $route = new Route(
+            '/test/:slug',
+            ['controller' => 'Pages', 'action' => 'display'],
+            ['pass' => ['slug'], 'multibytePattern' => true, 'slug' => '[A-zА-я\-\ ]+']
+        );
+        $result = $route->compile();
+        $this->assertRegExp($result, '/test/bla-blan-тест');
     }
 
     /**

@@ -556,7 +556,7 @@ TEXT;
         $this->assertSame($this->Text->truncate($text1, 15, ['html' => true]), "The quick brow\xe2\x80\xa6");
         $this->assertSame($this->Text->truncate($text1, 15, ['exact' => false, 'html' => true]), "The quick\xe2\x80\xa6");
         $this->assertSame($this->Text->truncate($text2, 10, ['html' => true]), "Heiz&ouml;lr&uuml;c\xe2\x80\xa6");
-        $this->assertSame($this->Text->truncate($text2, 10, ['exact' => false, 'html' => true]), "Heiz&ouml;\xe2\x80\xa6");
+        $this->assertSame($this->Text->truncate($text2, 10, ['exact' => false, 'html' => true]), "Heiz&ouml;lr&uuml;c\xe2\x80\xa6");
         $this->assertSame($this->Text->truncate($text3, 20, ['html' => true]), "<b>&copy; 2005-2007, Cake S\xe2\x80\xa6</b>");
         $this->assertSame($this->Text->truncate($text4, 15, ['html' => true]), "<img src=\"mypic.jpg\"> This image ta\xe2\x80\xa6");
         $this->assertSame($this->Text->truncate($text4, 45, ['html' => true]), "<img src=\"mypic.jpg\"> This image tag is not XHTML conform!<br><hr/><b>But the\xe2\x80\xa6</b>");
@@ -576,43 +576,31 @@ TEXT;
             'exact' => false,
             'html' => true
         ]);
-        $expected = '<p><span style="font-size: medium;"><a>...</a></span></p>';
+        $expected = '<p><span style="font-size: medium;"><a>Iamates...</a></span></p>';
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test truncate() method with both exact and html.
+     * @return void
+     */
+    public function testTruncateExactHtml()
+    {
+        $text = '<a href="http://example.org">hello</a> world';
+        $expected = '<a href="http://example.org">hell..</a>';
+        $result = Text::truncate($text, 6, [
+            'ellipsis' => '..',
+            'exact' => true,
+            'html' => true
+        ]);
         $this->assertEquals($expected, $result);
 
-        $text = '<p><span style="font-size: medium;">El biógrafo de Steve Jobs, Walter
-Isaacson, explica porqué Jobs le pidió que le hiciera su biografía en
-este artículo de El País.</span></p>
-<p><span style="font-size: medium;"><span style="font-size:
-large;">Por qué Steve era distinto.</span></span></p>
-<p><span style="font-size: medium;"><a href="http://www.elpais.com/
-articulo/primer/plano/Steve/era/distinto/elpepueconeg/
-20111009elpneglse_4/Tes">http://www.elpais.com/articulo/primer/plano/
-Steve/era/distinto/elpepueconeg/20111009elpneglse_4/Tes</a></span></p>
-<p><span style="font-size: medium;">Ya se ha publicado la biografía de
-Steve Jobs escrita por Walter Isaacson  "<strong>Steve Jobs by Walter
-Isaacson</strong>", aquí os dejamos la dirección de amazon donde
-podeís adquirirla.</span></p>
-<p><span style="font-size: medium;"><a>http://www.amazon.com/Steve-
-Jobs-Walter-Isaacson/dp/1451648537</a></span></p>';
-        $result = $this->Text->truncate($text, 500, [
-            'ellipsis' => '... ',
+        $expected = '<a href="http://example.org">hell..</a>';
+        $result = Text::truncate($text, 6, [
+            'ellipsis' => '..',
             'exact' => false,
             'html' => true
         ]);
-        $expected = '<p><span style="font-size: medium;">El biógrafo de Steve Jobs, Walter
-Isaacson, explica porqué Jobs le pidió que le hiciera su biografía en
-este artículo de El País.</span></p>
-<p><span style="font-size: medium;"><span style="font-size:
-large;">Por qué Steve era distinto.</span></span></p>
-<p><span style="font-size: medium;"><a href="http://www.elpais.com/
-articulo/primer/plano/Steve/era/distinto/elpepueconeg/
-20111009elpneglse_4/Tes">http://www.elpais.com/articulo/primer/plano/
-Steve/era/distinto/elpepueconeg/20111009elpneglse_4/Tes</a></span></p>
-<p><span style="font-size: medium;">Ya se ha publicado la biografía de
-Steve Jobs escrita por Walter Isaacson  "<strong>Steve Jobs by Walter
-Isaacson</strong>", aquí os dejamos la dirección de amazon donde
-podeís adquirirla.</span></p>
-<p><span style="font-size: medium;"><a>... </a></span></p>';
         $this->assertEquals($expected, $result);
     }
 
@@ -1587,5 +1575,177 @@ podeís adquirirla.</span></p>
             [['size' => '512', 'default' => 'Unknown type'], 512],
             [['size' => '2VB', 'default' => 'Unknown type'], 'Unknown type']
         ];
+    }
+
+    /**
+     * Test getting/setting default transliterator id.
+     *
+     * @return void
+     */
+    public function testGetSetTransliteratorId()
+    {
+        $defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
+        $this->assertEquals($defaultTransliteratorId, Text::getTransliteratorId());
+
+        $expected = 'Latin-ASCII; [\u0080-\u7fff] remove';
+        Text::setTransliteratorId($expected);
+        $this->assertEquals($expected, Text::getTransliteratorId());
+
+        Text::setTransliteratorId($defaultTransliteratorId);
+    }
+
+    /**
+     * Data provider for testTransliterate()
+     *
+     * @return array
+     */
+    public function transliterateInputProvider()
+    {
+        return [
+            [
+                'Foo Bar: Not just for breakfast any-more', null,
+                'Foo Bar: Not just for breakfast any-more'
+            ],
+            [
+                'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', null,
+                'A ae Ubermensch pa hoyeste niva! I a lublu PHP! est. fi '
+            ],
+            [
+                'Äpfel Über Öl grün ärgert groß öko', null,
+                'Apfel Uber Ol grun argert gross oko'
+            ],
+            [
+                'La langue française est un attribut de souveraineté en France', null,
+                'La langue francaise est un attribut de souverainete en France'
+            ],
+            [
+                '!@$#exciting stuff! - what !@-# was that?', null,
+                '!@$#exciting stuff! - what !@-# was that?'
+            ],
+            [
+                'controller/action/りんご/1', null,
+                'controller/action/ringo/1'
+            ],
+            [
+                'の話が出たので大丈夫かなあと', null,
+                'no huaga chutanode da zhang fukanaato'
+            ],
+            [
+                'posts/view/한국어/page:1/sort:asc', null,
+                'posts/view/hangug-eo/page:1/sort:asc'
+            ],
+            [
+                "non\xc2\xa0breaking\xc2\xa0space", null,
+                'non breaking space'
+            ]
+        ];
+    }
+
+    /**
+     * testTransliterate method
+     *
+     * @param string $string String
+     * @param string $transliteratorId Transliterator Id
+     * @param String $expected Exepected string
+     * @return void
+     * @dataProvider transliterateInputProvider
+     */
+    public function testTransliterate($string, $transliteratorId, $expected)
+    {
+        $result = Text::transliterate($string, $transliteratorId);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function slugInputProvider()
+    {
+        return [
+            [
+                'Foo Bar: Not just for breakfast any-more', [],
+                'Foo-Bar-Not-just-for-breakfast-any-more'
+            ],
+            [
+                'Foo Bar: Not just for breakfast any-more', ['replacement' => '_'],
+                'Foo_Bar_Not_just_for_breakfast_any_more'
+            ],
+            [
+                'Foo Bar: Not just for breakfast any-more', ['replacement' => '+'],
+                'Foo+Bar+Not+just+for+breakfast+any+more'
+            ],
+            [
+                'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', [],
+                'A-ae-Ubermensch-pa-hoyeste-niva-I-a-lublu-PHP-est-fi'
+            ],
+            [
+                'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', ['transliteratorId' => 'Latin-ASCII'],
+                'A-ae-Ubermensch-pa-hoyeste-niva-И-я-люблю-PHP-есть-fi'
+            ],
+            [
+                'Äpfel Über Öl grün ärgert groß öko', [],
+                'Apfel-Uber-Ol-grun-argert-gross-oko'
+            ],
+            [
+                'The truth - and- more- news', [],
+                'The-truth-and-more-news'
+            ],
+            [
+                'The truth: and more news', [],
+                'The-truth-and-more-news'
+            ],
+            [
+                'La langue française est un attribut de souveraineté en France', [],
+                'La-langue-francaise-est-un-attribut-de-souverainete-en-France'
+            ],
+            [
+                '!@$#exciting stuff! - what !@-# was that?', [],
+                'exciting-stuff-what-was-that'
+            ],
+            [
+                '20% of profits went to me!', [],
+                '20-of-profits-went-to-me'
+            ],
+            [
+                '#this melts your face1#2#3', [],
+                'this-melts-your-face1-2-3'
+            ],
+            [
+                'controller/action/りんご/1', ['transliteratorId' => false],
+                'controller-action-りんご-1'
+            ],
+            [
+                'の話が出たので大丈夫かなあと', ['transliteratorId' => false],
+                'の話が出たので大丈夫かなあと'
+            ],
+            [
+                'posts/view/한국어/page:1/sort:asc', ['transliteratorId' => false],
+                'posts-view-한국어-page-1-sort-asc'
+            ],
+            [
+                "non\xc2\xa0breaking\xc2\xa0space", [],
+                'non-breaking-space'
+            ],
+            [
+                'Foo Bar: Not just for breakfast any-more', ['replacement' => ''],
+                'FooBarNotjustforbreakfastanymore'
+            ],
+            [
+                'clean!_me.tar.gz', ['preserve' => '.'],
+                'clean-me.tar.gz'
+            ]
+        ];
+    }
+
+    /**
+     * testSlug method
+     *
+     * @param string $string String
+     * @param array $options Options
+     * @param String $expected Exepected string
+     * @return void
+     * @dataProvider slugInputProvider
+     */
+    public function testSlug($string, $options, $expected)
+    {
+        $result = Text::slug($string, $options);
+        $this->assertEquals($expected, $result);
     }
 }

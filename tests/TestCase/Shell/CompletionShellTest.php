@@ -16,11 +16,8 @@ namespace Cake\Test\TestCase\Shell;
 
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOutput;
-use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Shell\CompletionShell;
-use Cake\Shell\Task\CommandTask;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -164,7 +161,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['options', 'orm_cache']);
         $output = $this->out->output;
 
-        $expected = "--help -h --verbose -v --quiet -q --connection -c\n";
+        $expected = "--connection -c --help -h --quiet -q --verbose -v\n";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -178,7 +175,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['options', 'sample', 'sample']);
         $output = $this->out->output;
 
-        $expected = "--help -h --verbose -v --quiet -q --sample -s\n";
+        $expected = "--help -h --quiet -q --sample -s --verbose -v\n";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -206,7 +203,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['subcommands', 'app.sample']);
         $output = $this->out->output;
 
-        $expected = "derp sample\n";
+        $expected = "derp load sample\n";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -264,7 +261,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['subcommands', 'sample']);
         $output = $this->out->output;
 
-        $expected = "derp sample\n";
+        $expected = "derp load sample\n";
         $this->assertTextEquals($expected, $output);
     }
 

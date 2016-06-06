@@ -20,7 +20,6 @@ use Cake\Auth\DigestAuthenticate;
 use Cake\I18n\Time;
 use Cake\Network\Exception\UnauthorizedException;
 use Cake\Network\Request;
-use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 

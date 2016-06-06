@@ -15,9 +15,7 @@
 namespace Cake\Test\TestCase\ORM\Behavior;
 
 use Cake\Collection\Collection;
-use Cake\Event\Event;
 use Cake\I18n\I18n;
-use Cake\ORM\Behavior\TranslateBehavior;
 use Cake\ORM\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
@@ -94,8 +92,9 @@ class TranslateBehaviorTest extends TestCase
         $i18n = $items->getByProperty('_i18n');
 
         $this->assertEquals('\TestApp\Model\Table\I18nTable', $i18n->name());
-        $this->assertEquals('custom_i18n_table', $i18n->target()->table());
+        $this->assertInstanceOf('TestApp\Model\Table\I18nTable', $i18n->target());
         $this->assertEquals('test_custom_i18n_datasource', $i18n->target()->connection()->configName());
+        $this->assertEquals('custom_i18n_table', $i18n->target()->table());
     }
 
     /**
@@ -135,6 +134,35 @@ class TranslateBehaviorTest extends TestCase
             3 => ['Title #3' => 'Content #3'],
         ];
         $this->assertSame($expected, $results);
+    }
+
+    /**
+     * Test that iterating in a formatResults() does not drop data.
+     *
+     * @return void
+     */
+    public function testFindTranslationsFormatResultsIteration()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $table->locale('eng');
+        $results = $table->find('translations')
+            ->limit(1)
+            ->formatResults(function ($results) {
+                foreach ($results as $res) {
+                    $res->first = 'val';
+                }
+                foreach ($results as $res) {
+                    $res->second = 'loop';
+                }
+                return $results;
+            })
+            ->toArray();
+        $this->assertCount(1, $results);
+        $this->assertSame('Title #1', $results[0]->title);
+        $this->assertSame('val', $results[0]->first);
+        $this->assertSame('loop', $results[0]->second);
+        $this->assertNotEmpty($results[0]->_translations);
     }
 
     /**

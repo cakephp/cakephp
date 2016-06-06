@@ -17,10 +17,9 @@ namespace Cake\Database\Type;
 use Cake\Database\Driver;
 use Cake\Database\Type;
 use Cake\Utility\Text;
-use PDO;
 
 /**
- * Provides behavior for the uuid type
+ * Provides behavior for the UUID type
  */
 class UuidType extends StringType
 {
@@ -29,8 +28,8 @@ class UuidType extends StringType
      * Casts given value from a PHP type to one acceptable by database
      *
      * @param mixed $value value to be converted to database equivalent
-     * @param Driver $driver object from which database preferences and configuration will be extracted
-     * @return mixed
+     * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
+     * @return string|null
      */
     public function toDatabase($value, Driver $driver)
     {
@@ -52,14 +51,14 @@ class UuidType extends StringType
     }
 
     /**
-     * Marshalls request data into a PHP string
+     * Marshals request data into a PHP string
      *
      * @param mixed $value The value to convert.
      * @return string|null Converted value.
      */
     public function marshal($value)
     {
-        if ($value === null || $value === '') {
+        if ($value === null || $value === '' || is_array($value)) {
             return null;
         }
         return (string)$value;

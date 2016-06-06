@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ShellDispatcher;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
@@ -146,6 +145,32 @@ class ShellDispatcherTest extends TestCase
         $this->assertInstanceOf('TestApp\Shell\SampleShell', $result);
         $this->assertEmpty($result->plugin);
         $this->assertEquals('Sample', $result->name);
+    }
+
+    /**
+     * Verify dispatch handling stop errors
+     *
+     * @return void
+     */
+    public function testDispatchShellWithAbort()
+    {
+        $io = $this->getMock('Cake\Console\ConsoleIo');
+        $shell = $this->getMock('Cake\Console\Shell', ['main'], [$io]);
+        $shell->expects($this->once())
+            ->method('main')
+            ->will($this->returnCallback(function () use ($shell) {
+                $shell->abort('Bad things', 99);
+            }));
+
+        $dispatcher = $this->getMock('Cake\Console\ShellDispatcher', ['findShell']);
+        $dispatcher->expects($this->any())
+            ->method('findShell')
+            ->with('aborter')
+            ->will($this->returnValue($shell));
+
+        $dispatcher->args = ['aborter'];
+        $result = $dispatcher->dispatch();
+        $this->assertSame(99, $result, 'Should return the exception error code.');
     }
 
     /**
@@ -315,5 +340,45 @@ class ShellDispatcherTest extends TestCase
         $this->dispatcher->args = [];
         $this->assertNull($this->dispatcher->shiftArgs());
         $this->assertSame([], $this->dispatcher->args);
+    }
+
+    /**
+     * Test how `bin/cake --help` works.
+     *
+     * @return void
+     */
+    public function testHelpOption()
+    {
+        $mockShell = $this->getMock('Cake\Shell\CommandListShell', ['main', 'initialize', 'startup']);
+        $mockShell->expects($this->once())
+            ->method('main');
+
+        $dispatcher = $this->getMock('Cake\Console\ShellDispatcher', ['findShell', '_stop']);
+        $dispatcher->expects($this->once())
+            ->method('findShell')
+            ->with('command_list')
+            ->will($this->returnValue($mockShell));
+        $dispatcher->args = ['--help'];
+        $dispatcher->dispatch();
+    }
+
+    /**
+     * Test how `bin/cake --version` works.
+     *
+     * @return void
+     */
+    public function testVersionOption()
+    {
+        $mockShell = $this->getMock('Cake\Shell\CommandListShell', ['main', 'initialize', 'startup']);
+        $mockShell->expects($this->once())
+            ->method('main');
+
+        $dispatcher = $this->getMock('Cake\Console\ShellDispatcher', ['findShell', '_stop']);
+        $dispatcher->expects($this->once())
+            ->method('findShell')
+            ->with('command_list')
+            ->will($this->returnValue($mockShell));
+        $dispatcher->args = ['--version'];
+        $dispatcher->dispatch();
     }
 }
