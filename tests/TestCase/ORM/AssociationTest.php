@@ -456,7 +456,7 @@ class AssociationTest extends TestCase
      */
     public function testLocatorInConstructor()
     {
-        $locator = $this->getMock('Cake\ORM\Locator\LocatorInterface');
+        $locator = $this->getMockBuilder('Cake\ORM\Locator\LocatorInterface')->getMock();
         $config = [
             'className' => '\Cake\Test\TestCase\ORM\TestTable',
             'tableLocator' => $locator

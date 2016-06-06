@@ -49,7 +49,7 @@ class ConnectionTest extends TestCase
      */
     public function getMockFormDriver()
     {
-        $driver = $this->getMock('Cake\Database\Driver');
+        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $driver->expects($this->once())
             ->method('enabled')
             ->will($this->returnValue(true));
@@ -112,7 +112,10 @@ class ConnectionTest extends TestCase
      */
     public function testDisabledDriver()
     {
-        $mock = $this->getMock('\Cake\Database\Connection\Driver', ['enabled'], [], 'DriverMock');
+        $mock = $this->getMockBuilder('\Cake\Database\Connection\Driver')
+            ->setMethods(['enabled'])
+            ->setMockClassName('DriverMock')
+            ->getMock();
         $connection = new Connection(['driver' => $mock]);
     }
 
@@ -686,7 +689,9 @@ class ConnectionTest extends TestCase
      */
     public function testQuoteIdentifier()
     {
-        $driver = $this->getMock('Cake\Database\Driver\Sqlite', ['enabled']);
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')
+            ->setMethods(['enabled'])
+            ->getMock();
         $driver->expects($this->once())
             ->method('enabled')
             ->will($this->returnValue(true));
@@ -816,7 +821,7 @@ class ConnectionTest extends TestCase
      */
     public function testLogFunction()
     {
-        $logger = $this->getMock('\Cake\Database\Log\QueryLogger');
+        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
         $this->connection->logger($logger);
         $logger->expects($this->once())->method('log')
             ->with($this->logicalAnd(
@@ -843,7 +848,7 @@ class ConnectionTest extends TestCase
         $driver = $this->getMockFormDriver();
         $connection->driver($driver);
 
-        $logger = $this->getMock('\Cake\Database\Log\QueryLogger');
+        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
         $connection->logger($logger);
         $logger->expects($this->at(0))->method('log')
             ->with($this->logicalAnd(
@@ -869,13 +874,12 @@ class ConnectionTest extends TestCase
     public function testLogCommitTransaction()
     {
         $driver = $this->getMockFormDriver();
-        $connection = $this->getMock(
-            '\Cake\Database\Connection',
-            ['connect'],
-            [['driver' => $driver]]
-        );
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect'])
+            ->setConstructorArgs([['driver' => $driver]])
+            ->getMock();
 
-        $logger = $this->getMock('\Cake\Database\Log\QueryLogger');
+        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
         $connection->logger($logger);
 
         $logger->expects($this->at(1))->method('log')
@@ -897,11 +901,10 @@ class ConnectionTest extends TestCase
     public function testTransactionalSuccess()
     {
         $driver = $this->getMockFormDriver();
-        $connection = $this->getMock(
-            '\Cake\Database\Connection',
-            ['connect', 'commit', 'begin'],
-            [['driver' => $driver]]
-        );
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'commit', 'begin'])
+            ->setConstructorArgs([['driver' => $driver]])
+            ->getMock();
         $connection->expects($this->at(0))->method('begin');
         $connection->expects($this->at(1))->method('commit');
         $result = $connection->transactional(function ($conn) use ($connection) {
@@ -920,11 +923,10 @@ class ConnectionTest extends TestCase
     public function testTransactionalFail()
     {
         $driver = $this->getMockFormDriver();
-        $connection = $this->getMock(
-            '\Cake\Database\Connection',
-            ['connect', 'commit', 'begin', 'rollback'],
-            [['driver' => $driver]]
-        );
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'commit', 'begin', 'rollback'])
+            ->setConstructorArgs([['driver' => $driver]])
+            ->getMock();
         $connection->expects($this->at(0))->method('begin');
         $connection->expects($this->at(1))->method('rollback');
         $connection->expects($this->never())->method('commit');
@@ -946,11 +948,10 @@ class ConnectionTest extends TestCase
     public function testTransactionalWithException()
     {
         $driver = $this->getMockFormDriver();
-        $connection = $this->getMock(
-            '\Cake\Database\Connection',
-            ['connect', 'commit', 'begin', 'rollback'],
-            [['driver' => $driver]]
-        );
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'commit', 'begin', 'rollback'])
+            ->setConstructorArgs([['driver' => $driver]])
+            ->getMock();
         $connection->expects($this->at(0))->method('begin');
         $connection->expects($this->at(1))->method('rollback');
         $connection->expects($this->never())->method('commit');
@@ -968,16 +969,17 @@ class ConnectionTest extends TestCase
     public function testSchemaCollection()
     {
         $driver = $this->getMockFormDriver();
-        $connection = $this->getMock(
-            '\Cake\Database\Connection',
-            ['connect'],
-            [['driver' => $driver]]
-        );
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect'])
+            ->setConstructorArgs([['driver' => $driver]])
+            ->getMock();
 
         $schema = $connection->schemaCollection();
         $this->assertInstanceOf('Cake\Database\Schema\Collection', $schema);
 
-        $schema = $this->getMock('Cake\Database\Schema\Collection', [], [$connection]);
+        $schema = $this->getMockBuilder('Cake\Database\Schema\Collection')
+            ->setConstructorArgs([$connection])
+            ->getMock();
         $connection->schemaCollection($schema);
         $this->assertSame($schema, $connection->schemaCollection());
     }

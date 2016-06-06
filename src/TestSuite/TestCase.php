@@ -608,7 +608,10 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         $options += ['alias' => $baseClass, 'connection' => $connection];
         $options += TableRegistry::config($alias);
 
-        $mock = $this->getMock($options['className'], $methods, [$options]);
+        $mock = $this->getMockBuilder($options['className'])
+            ->setMethods($methods)
+            ->setConstructorArgs([$options])
+            ->getMock();
 
         if (empty($options['entityClass']) && $mock->entityClass() === '\Cake\ORM\Entity') {
             $parts = explode('\\', $options['className']);

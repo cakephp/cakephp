@@ -80,7 +80,7 @@ trait ModelAwareTrait
      *
      * @param string|null $modelClass Name of model class to load. Defaults to $this->modelClass
      * @param string|null $modelType The type of repository to load. Defaults to the modelType() value.
-     * @return object The model instance created.
+     * @return \Cake\Datasource\RepositoryInterface The model instance created.
      * @throws \Cake\Datasource\Exception\MissingModelException If the model class cannot be found.
      * @throws \InvalidArgumentException When using a type that has not been registered.
      * @throws \UnexpectedValueException If no model type has been defined

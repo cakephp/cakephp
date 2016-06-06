@@ -2316,7 +2316,7 @@ class TableTest extends TestCase
             ['execute', 'addDefaultTypes'],
             [null, $table]
         );
-        $statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
+        $statement = $this->getMockBuilder('\Cake\Database\Statement\StatementDecorator')->getMock();
         $data = new \Cake\ORM\Entity([
             'username' => 'superuser',
             'created' => new Time('2013-10-10 00:00'),
@@ -2513,7 +2513,7 @@ class TableTest extends TestCase
         $table->expects($this->once())->method('query')
             ->will($this->returnValue($query));
 
-        $statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
+        $statement = $this->getMockBuilder('\Cake\Database\Statement\StatementDecorator')->getMock();
         $statement->expects($this->once())
             ->method('rowCount')
             ->will($this->returnValue(0));
@@ -2697,7 +2697,7 @@ class TableTest extends TestCase
         $table->expects($this->once())->method('query')
             ->will($this->returnValue($query));
 
-        $statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
+        $statement = $this->getMockBuilder('\Cake\Database\Statement\StatementDecorator')->getMock();
         $statement->expects($this->once())
             ->method('errorCode')
             ->will($this->returnValue('00000'));
@@ -3021,7 +3021,7 @@ class TableTest extends TestCase
         $entity = new \Cake\ORM\Entity(['id' => 1, 'name' => 'mark']);
         $options = new \ArrayObject(['atomic' => true, 'checkRules' => false, '_primary' => true]);
 
-        $mock = $this->getMock('Cake\Event\EventManager');
+        $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
 
         $mock->expects($this->at(0))
             ->method('on');
@@ -3136,7 +3136,7 @@ class TableTest extends TestCase
         $entity = new \Cake\ORM\Entity(['id' => 1, 'name' => 'mark']);
         $options = new \ArrayObject(['atomic' => true, 'cascade' => true]);
 
-        $mock = $this->getMock('Cake\Event\EventManager');
+        $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $mock->expects($this->at(2))
             ->method('dispatch')
             ->will($this->returnCallback(function ($event) {
@@ -3159,7 +3159,7 @@ class TableTest extends TestCase
         $entity = new \Cake\ORM\Entity(['id' => 1, 'name' => 'mark']);
         $options = new \ArrayObject(['atomic' => true, 'cascade' => true]);
 
-        $mock = $this->getMock('Cake\Event\EventManager');
+        $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $mock->expects($this->at(2))
             ->method('dispatch')
             ->will($this->returnCallback(function ($event) {

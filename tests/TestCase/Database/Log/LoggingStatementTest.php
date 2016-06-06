@@ -31,9 +31,9 @@ class LoggingStatementTest extends TestCase
      */
     public function testExecuteNoParams()
     {
-        $inner = $this->getMock('PDOStatement');
+        $inner = $this->getMockBuilder('PDOStatement')->getMock();
         $inner->expects($this->once())->method('rowCount')->will($this->returnValue(3));
-        $logger = $this->getMock('\Cake\Database\Log\QueryLogger');
+        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
         $logger->expects($this->once())
             ->method('log')
             ->with($this->logicalAnd(
@@ -56,9 +56,9 @@ class LoggingStatementTest extends TestCase
      */
     public function testExecuteWithParams()
     {
-        $inner = $this->getMock('PDOStatement');
+        $inner = $this->getMockBuilder('PDOStatement')->getMock();
         $inner->expects($this->once())->method('rowCount')->will($this->returnValue(4));
-        $logger = $this->getMock('\Cake\Database\Log\QueryLogger');
+        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
         $logger->expects($this->once())
             ->method('log')
             ->with($this->logicalAnd(
@@ -81,9 +81,9 @@ class LoggingStatementTest extends TestCase
      */
     public function testExecuteWithBinding()
     {
-        $inner = $this->getMock('PDOStatement');
+        $inner = $this->getMockBuilder('PDOStatement')->getMock();
         $inner->expects($this->any())->method('rowCount')->will($this->returnValue(4));
-        $logger = $this->getMock('\Cake\Database\Log\QueryLogger');
+        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
         $logger->expects($this->at(0))
             ->method('log')
             ->with($this->logicalAnd(
@@ -105,7 +105,7 @@ class LoggingStatementTest extends TestCase
         $date = new \DateTime('2013-01-01');
         $inner->expects($this->at(0))->method('bindValue')->with('a', 1);
         $inner->expects($this->at(1))->method('bindValue')->with('b', $date);
-        $driver = $this->getMock('\Cake\Database\Driver');
+        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
         $st = new LoggingStatement($inner, $driver);
         $st->queryString = 'SELECT bar FROM foo';
         $st->logger($logger);
@@ -126,10 +126,10 @@ class LoggingStatementTest extends TestCase
     public function testExecuteWithError()
     {
         $exception = new \LogicException('This is bad');
-        $inner = $this->getMock('PDOStatement');
+        $inner = $this->getMockBuilder('PDOStatement')->getMock();
         $inner->expects($this->once())->method('execute')
             ->will($this->throwException($exception));
-        $logger = $this->getMock('\Cake\Database\Log\QueryLogger');
+        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
         $logger->expects($this->once())
             ->method('log')
             ->with($this->logicalAnd(

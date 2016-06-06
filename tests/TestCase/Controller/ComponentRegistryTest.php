@@ -108,7 +108,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testLoadWithEnableFalse()
     {
-        $mock = $this->getMock('Cake\Event\EventManager');
+        $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $mock->expects($this->never())
             ->method('attach');
 

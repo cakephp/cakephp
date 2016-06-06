@@ -331,7 +331,7 @@ class ResultSetTest extends TestCase
         $query->autoFields(false);
 
         $row = ['Other__field' => 'test'];
-        $statement = $this->getMock('Cake\Database\StatementInterface');
+        $statement = $this->getMockBuilder('Cake\Database\StatementInterface')->getMock();
         $statement->method('fetch')
             ->will($this->onConsecutiveCalls($row, $row));
         $statement->method('rowCount')
