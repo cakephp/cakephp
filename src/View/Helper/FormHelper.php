@@ -1131,7 +1131,7 @@ class FormHelper extends Helper
             case 'multicheckbox':
                 $opts = $options['options'];
                 unset($options['options']);
-                return $this->multicheckbox($fieldName, $opts, $options);
+                return $this->multiCheckbox($fieldName, $opts, $options);
             default:
                 return $this->{$options['type']}($fieldName, $options);
         }
@@ -2021,7 +2021,7 @@ class FormHelper extends Helper
                 'day' => (int)$options['val']
             ];
         }
-        return $this->datetime($fieldName, $options);
+        return $this->dateTime($fieldName, $options);
     }
 
     /**
@@ -2055,7 +2055,7 @@ class FormHelper extends Helper
             ];
         }
 
-        return $this->datetime($fieldName, $options);
+        return $this->dateTime($fieldName, $options);
     }
 
     /**
@@ -2085,7 +2085,7 @@ class FormHelper extends Helper
                 'day' => date('d')
             ];
         }
-        return $this->datetime($fieldName, $options);
+        return $this->dateTime($fieldName, $options);
     }
 
     /**
@@ -2117,7 +2117,7 @@ class FormHelper extends Helper
                 'minute' => date('i'),
             ];
         }
-        return $this->datetime($fieldName, $options);
+        return $this->dateTime($fieldName, $options);
     }
 
     /**
@@ -2147,7 +2147,7 @@ class FormHelper extends Helper
                 'minute' => (int)$options['val'],
             ];
         }
-        return $this->datetime($fieldName, $options);
+        return $this->dateTime($fieldName, $options);
     }
 
     /**
@@ -2176,7 +2176,7 @@ class FormHelper extends Helper
                 'meridian' => $hour > 11 ? 'pm' : 'am',
             ];
         }
-        return $this->datetime($fieldName, $options);
+        return $this->dateTime($fieldName, $options);
     }
 
     /**
