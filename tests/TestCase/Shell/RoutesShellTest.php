@@ -33,8 +33,12 @@ class RoutesShellTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->io = $this->getMock('Cake\Console\ConsoleIo', ['helper', 'out', 'err']);
-        $this->table = $this->getMock('Cake\Shell\Helper\TableHelper', [], [$this->io]);
+        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')
+            ->setMethods(['helper', 'out', 'err'])
+            ->getMock();
+        $this->table = $this->getMockBuilder('Cake\Shell\Helper\TableHelper')
+            ->setConstructorArgs([$this->io])
+            ->getMock();
         $this->io->expects($this->any())
             ->method('helper')
             ->with('table')

@@ -90,7 +90,9 @@ class TextHelperTest extends TestCase
         $methods = [
             'stripLinks', 'excerpt', 'toList'
         ];
-        $String = $this->getMock(__NAMESPACE__ . '\StringMock', $methods);
+        $String = $this->getMockBuilder(__NAMESPACE__ . '\StringMock')
+            ->setMethods($methods)
+            ->getMock();
         $Text = new TextHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\StringMock']);
         $Text->attach($String);
         foreach ($methods as $method) {
@@ -101,7 +103,9 @@ class TextHelperTest extends TestCase
         $methods = [
             'highlight', 'truncate'
         ];
-        $String = $this->getMock(__NAMESPACE__ . '\StringMock', $methods);
+        $String = $this->getMockBuilder(__NAMESPACE__ . '\StringMock')
+            ->setMethods($methods)
+            ->getMock();
         $Text = new TextHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\StringMock']);
         $Text->attach($String);
         foreach ($methods as $method) {
@@ -112,7 +116,9 @@ class TextHelperTest extends TestCase
         $methods = [
             'tail'
         ];
-        $String = $this->getMock(__NAMESPACE__ . '\StringMock', $methods);
+        $String = $this->getMockBuilder(__NAMESPACE__ . '\StringMock')
+            ->setMethods($methods)
+            ->getMock();
         $Text = new TextHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\StringMock']);
         $Text->attach($String);
         foreach ($methods as $method) {

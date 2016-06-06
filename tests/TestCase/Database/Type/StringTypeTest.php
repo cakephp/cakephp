@@ -55,7 +55,9 @@ class StringTypeTest extends TestCase
      */
     public function testToDatabase()
     {
-        $obj = $this->getMock('StdClass', ['__toString']);
+        $obj = $this->getMockBuilder('StdClass')
+            ->setMethods(['__toString'])
+            ->getMock();
         $obj->method('__toString')->will($this->returnValue('toString called'));
 
         $this->assertNull($this->type->toDatabase(null, $this->driver));

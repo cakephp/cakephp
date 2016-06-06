@@ -399,7 +399,10 @@ class FormHelperTest extends TestCase
     public function contextSelectionProvider()
     {
         $entity = new Article();
-        $collection = $this->getMock('Cake\Collection\Collection', ['extract'], [[$entity]]);
+        $collection = $this->getMockBuilder('Cake\Collection\Collection')
+            ->setMethods(['extract'])
+            ->setConstructorArgs([[$entity]])
+            ->getMock();
         $emptyCollection = new Collection([]);
         $emptyArray = [];
         $arrayObject = new \ArrayObject([]);
@@ -3190,11 +3193,10 @@ class FormHelperTest extends TestCase
      */
     public function testInputDatetime()
     {
-        $this->Form = $this->getMock(
-            'Cake\View\Helper\FormHelper',
-            ['datetime'],
-            [new View()]
-        );
+        $this->Form = $this->getMockBuilder('Cake\View\Helper\FormHelper')
+            ->setMethods(['datetime'])
+            ->setConstructorArgs([new View()])
+            ->getMock();
         $this->Form->expects($this->once())->method('datetime')
             ->with('prueba', [
                 'type' => 'datetime',
@@ -3231,11 +3233,10 @@ class FormHelperTest extends TestCase
      */
     public function testInputDatetimeIdPrefix()
     {
-        $this->Form = $this->getMock(
-            'Cake\View\Helper\FormHelper',
-            ['datetime'],
-            [new View()]
-        );
+        $this->Form = $this->getMockBuilder('Cake\View\Helper\FormHelper')
+            ->setMethods(['datetime'])
+            ->setConstructorArgs([new View()])
+            ->getMock();
 
         $this->Form->create(false, ['idPrefix' => 'prefix']);
 
