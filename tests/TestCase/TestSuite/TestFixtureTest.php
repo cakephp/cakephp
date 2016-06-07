@@ -319,7 +319,9 @@ class TestFixtureTest extends TestCase
     public function testCreate()
     {
         $fixture = new ArticlesFixture();
-        $db = $this->createMock('Cake\Database\Connection');
+        $db = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
         $table = $this->getMockBuilder('Cake\Database\Schema\Table')
             ->setConstructorArgs(['articles'])
             ->getMock();
@@ -349,7 +351,9 @@ class TestFixtureTest extends TestCase
     public function testCreateError()
     {
         $fixture = new ArticlesFixture();
-        $db = $this->createMock('Cake\Database\Connection');
+        $db = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
         $table = $this->getMockBuilder('Cake\Database\Schema\Table')
             ->setConstructorArgs(['articles'])
             ->getMock();
@@ -371,7 +375,9 @@ class TestFixtureTest extends TestCase
     {
         $fixture = new ArticlesFixture();
 
-        $db = $this->createMock('Cake\Database\Connection');
+        $db = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
         $query = $this->getMockBuilder('Cake\Database\Query')
             ->setConstructorArgs([$db])
             ->getMock();
@@ -427,7 +433,9 @@ class TestFixtureTest extends TestCase
     {
         $fixture = new ImportsFixture();
 
-        $db = $this->createMock('Cake\Database\Connection');
+        $db = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
         $query = $this->getMockBuilder('Cake\Database\Query')
             ->setConstructorArgs([$db])
             ->getMock();
@@ -473,7 +481,9 @@ class TestFixtureTest extends TestCase
     {
         $fixture = new StringsTestsFixture();
 
-        $db = $this->createMock('Cake\Database\Connection');
+        $db = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
         $query = $this->getMockBuilder('Cake\Database\Query')
             ->setConstructorArgs([$db])
             ->getMock();
@@ -529,7 +539,9 @@ class TestFixtureTest extends TestCase
     {
         $fixture = new ArticlesFixture();
 
-        $db = $this->createMock('Cake\Database\Connection');
+        $db = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
         $statement = $this->getMockBuilder('\PDOStatement')
             ->setMethods(['closeCursor'])
             ->getMock();
@@ -559,7 +571,9 @@ class TestFixtureTest extends TestCase
     {
         $fixture = new ArticlesFixture();
 
-        $db = $this->createMock('Cake\Database\Connection');
+        $db = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
         $statement = $this->getMockBuilder('\PDOStatement')
             ->setMethods(['closeCursor'])
             ->getMock();
