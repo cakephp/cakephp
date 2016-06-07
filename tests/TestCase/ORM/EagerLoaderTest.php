@@ -159,7 +159,10 @@ class EagerLoaderTest extends TestCase
             ]
         ];
 
-        $query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection, $this->table]);
+        $query = $this->getMockBuilder('\Cake\ORM\Query')
+            ->setMethods(['join'])
+            ->setConstructorArgs([$this->connection, $this->table])
+            ->getMock();
 
         $query->typeMap($this->clientsTypeMap);
 
@@ -445,11 +448,10 @@ class EagerLoaderTest extends TestCase
             ]
         ];
 
-        $query = $this->getMock(
-            '\Cake\ORM\Query',
-            ['join'],
-            [$this->connection, $this->table]
-        );
+        $query = $this->getMockBuilder('\Cake\ORM\Query')
+            ->setMethods(['join'])
+            ->setConstructorArgs([$this->connection, $this->table])
+            ->getMock();
 
         $loader = new EagerLoader;
         $loader->contain($contains);

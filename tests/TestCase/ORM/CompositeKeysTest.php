@@ -588,11 +588,10 @@ class CompositeKeyTest extends TestCase
     public function testFindThreadedCompositeKeys()
     {
         $table = TableRegistry::get('SiteAuthors');
-        $query = $this->getMock(
-            '\Cake\ORM\Query',
-            ['_addDefaultFields', 'execute'],
-            [null, $table]
-        );
+        $query = $this->getMockBuilder('\Cake\ORM\Query')
+            ->setMethods(['_addDefaultFields', 'execute'])
+            ->setConstructorArgs([null, $table])
+            ->getMock();
 
         $items = new \Cake\Datasource\ResultSetDecorator([
             ['id' => 1, 'name' => 'a', 'site_id' => 1, 'parent_id' => null],

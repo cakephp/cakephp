@@ -293,7 +293,9 @@ class BehaviorRegistryTest extends TestCase
             ->getMock();
         $this->Behaviors->set('Sluggable', $mockedBehavior);
 
-        $query = $this->getMock('Cake\ORM\Query', [], [null, null]);
+        $query = $this->getMockBuilder('Cake\ORM\Query')
+            ->setConstructorArgs([null, null])
+            ->getMock();
         $mockedBehavior
             ->expects($this->once())
             ->method('findNoSlug')
