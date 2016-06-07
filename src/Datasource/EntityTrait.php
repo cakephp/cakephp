@@ -15,6 +15,7 @@
 namespace Cake\Datasource;
 
 use Cake\Collection\Collection;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use Traversable;
@@ -242,13 +243,39 @@ trait EntityTrait
         $options += ['setter' => true, 'guard' => $guard];
 
         foreach ($property as $p => $value) {
+            $nested = false;
+            if (strpos($p, '.') > 0 && !array_key_exists($p, $this->_properties)) {
+                list($p, $nested) = explode('.', $p, 2);
+            }
+
             if ($options['guard'] === true && !$this->accessible($p)) {
                 continue;
             }
 
             $this->dirty($p, true);
 
-            if (!array_key_exists($p, $this->_original) &&
+            if ($nested) {
+                if (!array_key_exists($p, $this->_properties)
+                    || is_null($this->_properties[$p])
+                ) {
+                    $value = new \Cake\ORM\Entity([$nested => $value]);
+                    //$value = Hash::insert([], $nested, $value); //@TODO: Hash::insert() is the other option to generate arrays down the chain instead of Entities, but this has drawbacks like not preserving the ability to ::getOriginal() down the chain. The most fidelity is preserved by using Entities.
+                } elseif ($this->_properties[$p] instanceof EntityInterface) {
+                    $this->_properties[$p]->set($nested, $value, $options);
+                    continue; // In the recursive case, don't update ::$_original till we get to the bottom of the path. ONLY traverse the chain until that point.
+                } elseif (is_array($this->_properties[$p])
+                    || $this->_properties[$p] instanceof ArrayAccess
+                ) {
+                    $value = Hash::insert($this->_properties[$p], $nested, $value);
+                } else {
+                    throw new InvalidArgumentException(sprintf(
+                        'Cannot set dotted property when a traversal segment contains a scalar value: %s',
+                        $p
+                    ));
+                }
+            }
+
+           if (!array_key_exists($p, $this->_original) &&
                 array_key_exists($p, $this->_properties) &&
                 $this->_properties[$p] !== $value
             ) {
@@ -273,6 +300,16 @@ trait EntityTrait
     /**
      * Returns the value of a property by name
      *
+     * Supports simple dotted paths for traversing deep into an Entity's
+     * properties.
+     *
+     * ### Example:
+     *
+     * ```
+     * $entity = new Entity(['sizes' => ['med' => 5, 'lrg' => 15]]);
+     * $entity->get('sizes.med'); // 5
+     * ```
+     *
      * @param string $property the name of the property to retrieve
      * @return mixed
      * @throws \InvalidArgumentException if an empty property name is passed
@@ -281,6 +318,23 @@ trait EntityTrait
     {
         if (!strlen((string)$property)) {
             throw new InvalidArgumentException('Cannot get an empty property');
+        }
+
+        $nested = false;
+        if (strpos($property, '.') > 0 && !array_key_exists($property, $this->_properties)) {
+            list($property, $nested) = explode('.', $property, 2);
+        }
+
+        if ($nested) {
+            if ($this->_properties[$property] instanceof EntityInterface) {
+                $result = $this->_properties[$property]->get($nested);
+                return $result;
+            } elseif (is_array($this->_properties[$property])
+                || ($this->_properties[$property] instanceof \ArrayAccess)
+            ) {
+                $value = Hash::get($this->_properties[$property], $nested);
+                return $value; //@TODO: Or remove this line and let getters engage below?
+            }
         }
 
         $value = null;
@@ -294,6 +348,7 @@ trait EntityTrait
             $result = $this->{$method}($value);
             return $result;
         }
+
         return $value;
     }
 
@@ -309,9 +364,18 @@ trait EntityTrait
         if (!strlen((string)$property)) {
             throw new InvalidArgumentException('Cannot get an empty property');
         }
+
+        if (strpos($property, '.') > 0) {
+            list($property, $nested) = explode('.', $property, 2);
+            if ($this->_properties[$property] instanceof EntityInterface) {
+                return $this->_properties[$property]->getOriginal($nested);
+            }
+        }
+
         if (array_key_exists($property, $this->_original)) {
             return $this->_original[$property];
         }
+
         return $this->get($property);
     }
 

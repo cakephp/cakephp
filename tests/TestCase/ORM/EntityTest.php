@@ -46,6 +46,31 @@ class EntityTest extends TestCase
         $this->assertSame(1, $entity->id);
         $this->assertEquals(1, $entity->getOriginal('id'));
         $this->assertEquals('bar', $entity->getOriginal('foo'));
+
+        $entity->set('level1.level2.level3', 'three');
+        $this->assertSame('three', $entity->level1->level2->level3);
+        $this->assertEquals('three', $entity->getOriginal('level1.level2.level3'));
+        $entity->set('level1.level2.level3', '333');
+        $this->assertEquals('three', $entity->getOriginal('level1.level2.level3'));
+
+        $entity->ary = [];
+        $entity->set('ary.season1.power9000', 'Goku');
+        $this->assertSame('Goku', $entity->ary['season1']['power9000']);
+    }
+
+    /**
+     * Tests setting a deep property that contains a segment already assigned as a scalar (string).
+     *
+     * @return void
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetDottedScalarPath()
+    {
+        $entity = new Entity(['scalarKey' => 'this string does not implement ::set()']);
+        $entity->set(
+            'scalarKey.canNotTraverseHere',
+            'Not allowed since scalarKey is not an array or Entity.'
+        );
     }
 
     /**
@@ -68,29 +93,58 @@ class EntityTest extends TestCase
         $this->assertSame(3, $entity->thing);
         $this->assertEquals('bar', $entity->getOriginal('foo'));
         $this->assertEquals(1, $entity->getOriginal('id'));
+
+        $entity->deeply = new Entity(['nested' => new Entity(['id' => 4])]);
+        $entity->set(['foo' => ['bar' => 'baz'], 'deeply.nested.id' => 5, 'thing' => 6]);
+        $this->assertEquals('baz', $entity->foo['bar']);
+        $this->assertSame(5, $entity->deeply->nested->id);
+        $this->assertSame(6, $entity->thing);
+        $this->assertEquals(4, $entity->getOriginal('deeply.nested.id'));
+        $entity->set(['deeply.nested.id' => 7]);
+        $this->assertSame(7, $entity->deeply->nested->id);
+        $this->assertEquals(4, $entity->getOriginal('deeply.nested.id'));
     }
 
     /**
-     * Test that getOriginal() retains falsey values.
+     * Test that getOriginal() retains falsey values and recurses into nested entities.
      *
      * @return void
      */
     public function testGetOriginal()
     {
         $entity = new Entity(
-            ['false' => false, 'null' => null, 'zero' => 0, 'empty' => ''],
+            ['false' => false, 'null' => null, 'zero' => 0, 'empty' => '', 'nested' => new Entity(['deep' => 42])],
             ['markNew' => true]
         );
         $this->assertNull($entity->getOriginal('null'));
         $this->assertFalse($entity->getOriginal('false'));
         $this->assertSame(0, $entity->getOriginal('zero'));
         $this->assertSame('', $entity->getOriginal('empty'));
+        $this->assertSame(42, $entity->getOriginal('nested.deep'));
 
         $entity->set(['false' => 'y', 'null' => 'y', 'zero' => 'y', 'empty' => '']);
+        $entity->nested->set('deep', 256);
         $this->assertNull($entity->getOriginal('null'));
         $this->assertFalse($entity->getOriginal('false'));
         $this->assertSame(0, $entity->getOriginal('zero'));
         $this->assertSame('', $entity->getOriginal('empty'));
+        $this->assertSame(42, $entity->getOriginal('nested.deep'));
+    }
+
+    /**
+     * Test that getOriginal() throws an exception on empty param.
+     *
+     * @return void
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetOriginalEmptyParam()
+    {
+        $entity = new Entity(
+            ['foo' => 'bar'],
+            ['markNew' => true]
+        );
+
+        $entity->getOriginal('');
     }
 
     /**
@@ -162,7 +216,7 @@ class EntityTest extends TestCase
      */
     public function testSetOneParamWithSetter()
     {
-        $entity = $this->getMock('\Cake\ORM\Entity', ['_setName']);
+        $entity = $this->getMock('\Cake\ORM\Entity', ['_setName', '_setStar']);
         $entity->expects($this->once())->method('_setName')
             ->with('Jones')
             ->will($this->returnCallback(function ($name) {
@@ -171,6 +225,22 @@ class EntityTest extends TestCase
             }));
         $entity->set('name', 'Jones');
         $this->assertEquals('Dr. Jones', $entity->name);
+
+        $movie = $this->getMock('\Cake\ORM\Entity', ['_setYear', '_setStar']);
+        $movie->expects($this->once())->method('_setYear')
+            ->with(1981)
+            ->willReturn(1981);
+
+        // Confirm that the setter for a final segment of a dotted path is called.
+        $entity->set('film', $movie);
+        $entity->set('film.year', 1981);
+        $this->assertEquals(1981, $entity->film->year);
+
+        // Confirm that the setter for an intermediate segment of a dotted path is NOT called.
+        $movie->set('star', $entity, ['setter' => false]);
+        $entity->expects($this->never())->method('_setStar');
+        $movie->set('star.hat', 'fedora');
+        $this->assertEquals('fedora', $movie->star->hat);
     }
 
     /**
@@ -317,6 +387,37 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Tests get with nested paths and getters.
+     *
+     * @return void
+     */
+    public function testNestedGetCustomGetters()
+    {
+        $top = $this->getMock('\Cake\ORM\Entity', ['_getNested']);
+        $top->expects($this->any())
+            ->method('_getNested')
+            ->will($this->returnCallback(function ($nested) {
+                $nested->extra .= 'added';
+                return $nested;
+            }));
+
+        $nested = $this->getMock('\Cake\ORM\Entity', ['_getDeep']);
+        $nested->expects($this->any())
+            ->method('_getDeep')
+            ->will($this->returnCallback(function ($deep) {
+                return $deep . ' modified';
+            }));
+        $top->set('nested', $nested);
+        $this->assertNull($nested->extra);
+        $this->assertSame($nested, $top->get('nested')); // 1
+
+        $nested->set('deep', 'story');
+        $this->assertEquals('story modified', $top->get('nested.deep'));
+        $this->assertEquals('story modified', $nested->get('deep'));
+        $this->assertEquals('added', $nested->extra);
+    }
+
+    /**
      * Tests that the get cache is cleared by unsetProperty.
      *
      * @return void
@@ -350,6 +451,39 @@ class EntityTest extends TestCase
         $entity->virtualProperties(['ListIdName']);
         $this->assertSame('A name', $entity->list_id_name, 'underscored virtual field should be accessible');
         $this->assertSame('A name', $entity->listIdName, 'Camelbacked virtual field should be accessible');
+    }
+
+    /**
+     * Tests that the get can retrieve dotted notation paths via Hash::get.
+     *
+     * @return void
+     */
+    public function testGetDotted()
+    {
+        $entity = $this->getMock('\Cake\ORM\Entity', ['_getArtifacts', '_getLocations']);
+        $entity->expects($this->any())->method('_getArtifacts')
+            ->will($this->returnCallback(function ($artifacts) {
+                $artifacts['crusade'] = 'cup';
+                return $artifacts;
+            }));
+        $entity->expects($this->any())->method('_getLocations')
+            ->will($this->returnCallback(function ($locations) {
+                $locations['crusade'] = 'venice';
+                return $locations;
+            }));
+        $entity->set('artifacts', new Entity(['raiders' => 'ark', 'temple' => 'stones']));
+        $entity->set('locations', ['raiders' => 'desert', 'temple' => 'jungle']);
+
+        $this->assertEquals('ark', $entity->artifacts->get('raiders'));
+        $this->assertEquals('cup', $entity->get('artifacts.crusade'));
+        $this->assertNull($entity->get('artifacts.kingdom'));
+
+        $this->assertEquals('desert', $entity->locations['raiders']);
+        $this->assertEquals('jungle', $entity->get('locations.temple'));
+        $this->assertNull($entity->get('locations.kingdom'));
+
+        $entity = new Entity(['a' => new \ArrayObject(['b' => 'fizz/buzz'])]); // Object that implements ArrayAccess
+        $this->assertEquals('fizz/buzz', $entity->get('a.b'));
     }
 
     /**
@@ -477,6 +611,14 @@ class EntityTest extends TestCase
         $entity->expects($this->once())->method('_getThings')
             ->will($this->returnValue(0));
         $this->assertTrue($entity->has('things'));
+
+        $child = new Entity(['name' => 'child']);
+        $parent = new Entity(['name' => 'parent', 'child' => $child]);
+        $this->assertTrue($parent->has('child'));
+        $this->assertTrue($parent->has('child.name'));
+        $this->assertFalse($parent->has('child.notThere'));
+        $this->assertTrue($parent->has(['name', 'child.name']));
+        $this->assertFalse($parent->has(['name', 'child.missing']));
     }
 
     /**
@@ -1339,7 +1481,7 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests that setitng an empty property name does nothing
+     * Tests that settng an empty property name does nothing
      *
      * @expectedException \InvalidArgumentException
      * @dataProvider emptyNamesProvider
@@ -1372,5 +1514,23 @@ class EntityTest extends TestCase
         $this->assertTrue($cloned->dirty());
         $this->assertTrue($cloned->dirty('a'));
         $this->assertTrue($cloned->dirty('b'));
+    }
+
+    /**
+     * Tests the invalid method.
+     *
+     * @return void
+     */
+    public function testInvalid()
+    {
+        $entity = new Entity(['a' => 1]);
+        $this->assertEmpty([], $entity->invalid());
+
+        $entity->invalid('a', 'Must be a float');
+        $this->assertEquals('Must be a float', $entity->invalid('a'));
+
+        $result = $entity->invalid('a', 'Must really be monetary', true);
+        $this->assertEquals('Must really be monetary', $entity->invalid('a'));
+        $this->assertSame($entity, $result);
     }
 }
