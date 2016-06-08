@@ -576,7 +576,7 @@ trait CollectionTrait
     public function through(callable $handler)
     {
         $result = $handler($this);
-        return $result instanceof CollectionInterface ? $result: new Collection($result);
+        return $result instanceof CollectionInterface ? $result : new Collection($result);
     }
 
     /**
@@ -657,5 +657,26 @@ trait CollectionTrait
     public function _unwrap()
     {
         return $this->unwrap();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return \Cake\Collection
+     */
+    public function transpose()
+    {
+        $result = array();
+        foreach ($this->toArray() as $row => $columns) {
+            foreach ($columns as $row2 => $column2) {
+                $result[$row2][$row] = $column2;
+            }
+        }
+        return new Collection($result);
+
+        // when cakephp require PHP >= 5.6
+        // return (new Collection(array_map(function (...$line) {
+        //     return $line;
+        // }, ...$this->toArray())));
     }
 }
