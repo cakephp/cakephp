@@ -410,7 +410,7 @@ class RequestActionTraitTest extends TestCase
         $result = $this->object->requestAction('/request_action/session_test');
         $this->assertNull($result);
 
-        $session = $this->getMock('Cake\Network\Session');
+        $session = $this->getMockBuilder('Cake\Network\Session')->getMock();
         $session->expects($this->once())
             ->method('read')
             ->with('foo')

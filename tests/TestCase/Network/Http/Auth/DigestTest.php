@@ -33,10 +33,9 @@ class DigestTest extends TestCase
     {
         parent::setUp();
 
-        $this->client = $this->getMock(
-            'Cake\Network\Http\Client',
-            ['send']
-        );
+        $this->client = $this->getMockBuilder('Cake\Network\Http\Client')
+            ->setMethods(['send'])
+            ->getMock();
         $this->auth = new Digest($this->client);
     }
 

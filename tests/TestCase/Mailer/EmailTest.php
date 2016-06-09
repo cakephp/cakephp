@@ -806,7 +806,7 @@ class EmailTest extends TestCase
         $result = $this->CakeEmail->transport();
         $this->assertInstanceOf('Cake\Mailer\Transport\DebugTransport', $result);
 
-        $instance = $this->getMock('Cake\Mailer\Transport\DebugTransport');
+        $instance = $this->getMockBuilder('Cake\Mailer\Transport\DebugTransport')->getMock();
         $this->CakeEmail->transport($instance);
         $this->assertSame($instance, $this->CakeEmail->transport());
     }
@@ -1444,7 +1444,10 @@ class EmailTest extends TestCase
      */
     public function testSendWithLog()
     {
-        $log = $this->getMock('Cake\Log\Engine\BaseLog', ['log'], [['scopes' => 'email']]);
+        $log = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
+            ->setMethods(['log'])
+            ->setConstructorArgs([['scopes' => 'email']])
+            ->getMock();
 
         $message = 'Logging This';
 
@@ -1478,7 +1481,10 @@ class EmailTest extends TestCase
     {
         $message = 'Logging This';
 
-        $log = $this->getMock('Cake\Log\Engine\BaseLog', ['log'], ['scopes' => ['email']]);
+        $log = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
+            ->setMethods(['log'])
+            ->setConstructorArgs(['scopes' => ['email']])
+            ->getMock();
         $log->expects($this->once())
             ->method('log')
             ->with(
@@ -2486,7 +2492,7 @@ class EmailTest extends TestCase
     /**
      * @param mixed $charset
      * @param mixed $headerCharset
-     * @return CakeEmail
+     * @return \Cake\Mailer\Email
      */
     protected function _getEmailByOldStyleCharset($charset, $headerCharset)
     {
@@ -2511,7 +2517,7 @@ class EmailTest extends TestCase
     /**
      * @param mixed $charset
      * @param mixed $headerCharset
-     * @return CakeEmail
+     * @return \Cake\Mailer\Email
      */
     protected function _getEmailByNewStyleCharset($charset, $headerCharset)
     {
@@ -2662,7 +2668,7 @@ HTML;
      */
     public function testMockTransport()
     {
-        $mock = $this->getMock('\Cake\Mailer\AbstractTransport');
+        $mock = $this->getMockBuilder('\Cake\Mailer\AbstractTransport')->getMock();
         $config = ['from' => 'tester@example.org', 'transport' => 'default'];
 
         Email::config('default', $config);

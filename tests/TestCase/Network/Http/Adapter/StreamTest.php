@@ -100,10 +100,9 @@ class StreamTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->stream = $this->getMock(
-            'Cake\Network\Http\Adapter\Stream',
-            ['_send']
-        );
+        $this->stream = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+            ->setMethods(['_send'])
+            ->getMock();
         stream_wrapper_unregister('http');
         stream_wrapper_register('http', __NAMESPACE__ . '\CakeStreamWrapper');
     }

@@ -75,10 +75,9 @@ class SmtpTransportTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->socket = $this->getMock(
-            'Cake\Network\Socket',
-            ['read', 'write', 'connect', 'disconnect', 'enableCrypto']
-        );
+        $this->socket = $this->getMockBuilder('Cake\Network\Socket')
+            ->setMethods(['read', 'write', 'connect', 'disconnect', 'enableCrypto'])
+            ->getMock();
 
         $this->SmtpTransport = new SmtpTestTransport();
         $this->SmtpTransport->setSocket($this->socket);
@@ -379,7 +378,9 @@ class SmtpTransportTest extends TestCase
      */
     public function testSendData()
     {
-        $email = $this->getMock('Cake\Mailer\Email', ['message']);
+        $email = $this->getMockBuilder('Cake\Mailer\Email')
+            ->setMethods(['message'])
+            ->getMock();
         $email->from('noreply@cakephp.org', 'CakePHP Test');
         $email->returnPath('pleasereply@cakephp.org', 'CakePHP Return');
         $email->to('cake@cakephp.org', 'CakePHP');
@@ -618,7 +619,9 @@ class SmtpTransportTest extends TestCase
     {
         $this->SmtpTransport->config(['keepAlive' => true]);
 
-        $email = $this->getMock('Cake\Mailer\Email', ['message']);
+        $email = $this->getMockBuilder('Cake\Mailer\Email')
+            ->setMethods(['message'])
+            ->getMock();
         $email->from('noreply@cakephp.org', 'CakePHP Test');
         $email->to('cake@cakephp.org', 'CakePHP');
         $email->expects($this->exactly(2))->method('message')->will($this->returnValue(['First Line']));
@@ -680,7 +683,9 @@ class SmtpTransportTest extends TestCase
      */
     public function testSendDefaults()
     {
-        $email = $this->getMock('Cake\Mailer\Email', ['message']);
+        $email = $this->getMockBuilder('Cake\Mailer\Email')
+            ->setMethods(['message'])
+            ->getMock();
         $email->from('noreply@cakephp.org', 'CakePHP Test');
         $email->to('cake@cakephp.org', 'CakePHP');
         $email->expects($this->once())->method('message')->will($this->returnValue(['First Line']));

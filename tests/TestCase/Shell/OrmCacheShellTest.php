@@ -40,10 +40,10 @@ class OrmCacheShellTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->io = $this->getMock('Cake\Console\ConsoleIo');
+        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
         $this->shell = new OrmCacheShell($this->io);
 
-        $this->cache = $this->getMock('Cake\Cache\CacheEngine');
+        $this->cache = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $this->cache->expects($this->any())
             ->method('init')
             ->will($this->returnValue(true));

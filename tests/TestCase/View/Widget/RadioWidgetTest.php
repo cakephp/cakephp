@@ -40,7 +40,7 @@ class RadioWidgetTest extends TestCase
             'radioWrapper' => '{{label}}',
         ];
         $this->templates = new StringTemplate($templates);
-        $this->context = $this->getMock('Cake\View\Form\ContextInterface');
+        $this->context = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
     }
 
     /**

@@ -947,7 +947,9 @@ class ValidatorTest extends TestCase
             ->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
 
-        $thing = $this->getMock('\stdClass', ['isCool']);
+        $thing = $this->getMockBuilder('\stdClass')
+            ->setMethods(['isCool'])
+            ->getMock();
         $thing->expects($this->once())->method('isCool')
             ->will($this->returnCallback(function ($data, $context) use ($thing) {
                 $this->assertEquals('bar', $data);
@@ -990,7 +992,9 @@ class ValidatorTest extends TestCase
             'rule' => ['isCool', 'and', 'awesome'],
             'provider' => 'thing'
         ]);
-        $thing = $this->getMock('\stdClass', ['isCool']);
+        $thing = $this->getMockBuilder('\stdClass')
+            ->setMethods(['isCool'])
+            ->getMock();
         $thing->expects($this->once())->method('isCool')
             ->will($this->returnCallback(function ($data, $a, $b, $context) use ($thing) {
                 $this->assertEquals('bar', $data);

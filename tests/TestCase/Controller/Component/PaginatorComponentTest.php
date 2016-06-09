@@ -73,7 +73,9 @@ class PaginatorComponentTest extends TestCase
         $registry = new ComponentRegistry($controller);
         $this->Paginator = new PaginatorComponent($registry, []);
 
-        $this->Post = $this->getMock('Cake\ORM\Table', [], [], '', false);
+        $this->Post = $this->getMockBuilder('Cake\ORM\Table')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
@@ -466,7 +468,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortInvalidDirection()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -527,7 +529,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistFailure()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -550,7 +552,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistTrusted()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -580,7 +582,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistEmpty()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -608,7 +610,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistNotInSchema()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -637,7 +639,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistMultiple()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -668,7 +670,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortMultiple()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -696,7 +698,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWithString()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -718,7 +720,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortNoSort()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -740,7 +742,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortInvalidAlias()
     {
-        $model = $this->getMock('Cake\ORM\Table');
+        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -751,27 +753,58 @@ class PaginatorComponentTest extends TestCase
         $this->assertEquals([], $result['order']);
     }
 
+    public function checkLimitProvider()
+    {
+        return [
+            'out of bounds' => [
+                ['limit' => 1000000, 'maxLimit' => 100],
+                100,
+            ],
+            'limit is nan' => [
+                ['limit' => 'sheep!', 'maxLimit' => 100],
+                1,
+            ],
+            'negative limit' => [
+                ['limit' => '-1', 'maxLimit' => 100],
+                1,
+            ],
+            'unset limit' => [
+                ['limit' => null, 'maxLimit' => 100],
+                1,
+            ],
+            'limit = 0' => [
+                ['limit' => 0, 'maxLimit' => 100],
+                1,
+            ],
+            'limit = 0' => [
+                ['limit' => 0, 'maxLimit' => 0],
+                1,
+            ],
+            'limit = null' => [
+                ['limit' => null, 'maxLimit' => 0],
+                1,
+            ],
+            'bad input, results in 1' => [
+                ['limit' => null, 'maxLimit' => null],
+                1,
+            ],
+            'bad input, results in 1' => [
+                ['limit' => false, 'maxLimit' => false],
+                1,
+            ],
+        ];
+    }
+
     /**
      * test that maxLimit is respected
      *
+     * @dataProvider checkLimitProvider
      * @return void
      */
-    public function testCheckLimit()
+    public function testCheckLimit($input, $expected)
     {
-        $result = $this->Paginator->checkLimit(['limit' => 1000000, 'maxLimit' => 100]);
-        $this->assertEquals(100, $result['limit']);
-
-        $result = $this->Paginator->checkLimit(['limit' => 'sheep!', 'maxLimit' => 100]);
-        $this->assertEquals(1, $result['limit']);
-
-        $result = $this->Paginator->checkLimit(['limit' => '-1', 'maxLimit' => 100]);
-        $this->assertEquals(1, $result['limit']);
-
-        $result = $this->Paginator->checkLimit(['limit' => null, 'maxLimit' => 100]);
-        $this->assertEquals(1, $result['limit']);
-
-        $result = $this->Paginator->checkLimit(['limit' => 0, 'maxLimit' => 100]);
-        $this->assertEquals(1, $result['limit']);
+        $result = $this->Paginator->checkLimit($input);
+        $this->assertSame($expected, $result['limit']);
     }
 
     /**
@@ -1019,14 +1052,13 @@ class PaginatorComponentTest extends TestCase
      * Helper method for making mocks.
      *
      * @param array $methods
-     * @return Table
+     * @return \Cake\ORM\Table
      */
     protected function _getMockPosts($methods = [])
     {
-        return $this->getMock(
-            'TestApp\Model\Table\PaginatorPostsTable',
-            $methods,
-            [[
+        return $this->getMockBuilder('TestApp\Model\Table\PaginatorPostsTable')
+            ->setMethods($methods)
+            ->setConstructorArgs([[
                 'connection' => ConnectionManager::get('test'),
                 'alias' => 'PaginatorPosts',
                 'schema' => [
@@ -1037,14 +1069,14 @@ class PaginatorComponentTest extends TestCase
                     'published' => ['type' => 'string', 'length' => 1, 'default' => 'N'],
                     '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
                 ]
-            ]]
-        );
+            ]])
+            ->getMock();
     }
 
     /**
      * Helper method for mocking queries.
      *
-     * @return Query
+     * @return \Cake\ORM\Query
      */
     protected function _getMockFindQuery($table = null)
     {
@@ -1053,7 +1085,9 @@ class PaginatorComponentTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $results = $this->getMock('Cake\ORM\ResultSet', [], [], '', false);
+        $results = $this->getMockBuilder('Cake\ORM\ResultSet')
+            ->disableOriginalConstructor()
+            ->getMock();
         $query->expects($this->any())
             ->method('count')
             ->will($this->returnValue(2));

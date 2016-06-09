@@ -179,7 +179,7 @@ class TypeTest extends TestCase
         );
         $type = Type::build('biginteger');
         $integer = time() * time();
-        $driver = $this->getMock('\Cake\Database\Driver');
+        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
         $this->assertSame($integer, $type->toPHP($integer, $driver));
         $this->assertSame($integer, $type->toPHP('' . $integer, $driver));
         $this->assertSame(3, $type->toPHP(3.57, $driver));
@@ -194,7 +194,7 @@ class TypeTest extends TestCase
     {
         $type = Type::build('biginteger');
         $integer = time() * time();
-        $driver = $this->getMock('\Cake\Database\Driver');
+        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
         $this->assertEquals(PDO::PARAM_INT, $type->toStatement($integer, $driver));
     }
 
@@ -206,7 +206,7 @@ class TypeTest extends TestCase
     public function testDecimalToPHP()
     {
         $type = Type::build('decimal');
-        $driver = $this->getMock('\Cake\Database\Driver');
+        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
 
         $this->assertSame(3.14159, $type->toPHP('3.14159', $driver));
         $this->assertSame(3.14159, $type->toPHP(3.14159, $driver));
@@ -223,7 +223,7 @@ class TypeTest extends TestCase
     {
         $type = Type::build('decimal');
         $string = '12.55';
-        $driver = $this->getMock('\Cake\Database\Driver');
+        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
         $this->assertEquals(PDO::PARAM_STR, $type->toStatement($string, $driver));
     }
 
@@ -234,7 +234,7 @@ class TypeTest extends TestCase
      */
     public function testSet()
     {
-        $instance = $this->getMock('Cake\Database\Type');
+        $instance = $this->getMockBuilder('Cake\Database\Type')->getMock();
         Type::set('random', $instance);
         $this->assertSame($instance, Type::build('random'));
     }

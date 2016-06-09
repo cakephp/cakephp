@@ -44,7 +44,7 @@ class ShellTestShell extends Shell
     /**
      * name property
      *
-     * @var name
+     * @var string
      */
     public $name = 'ShellTestShell';
 
@@ -143,7 +143,9 @@ class ShellTest extends TestCase
     {
         parent::setUp();
 
-        $this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
+        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->Shell = new ShellTestShell($this->io);
 
         if (is_dir(TMP . 'shell_test')) {
@@ -682,8 +684,11 @@ class ShellTest extends TestCase
      */
     public function testRunCommandMain()
     {
-        $io = $this->getMock('Cake\Console\ConsoleIo');
-        $shell = $this->getMock('Cake\Console\Shell', ['main', 'startup'], [$io]);
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['main', 'startup'])
+            ->setConstructorArgs([$io])
+            ->getMock();
 
         $shell->expects($this->once())->method('startup');
         $shell->expects($this->once())->method('main')
@@ -701,8 +706,11 @@ class ShellTest extends TestCase
      */
     public function testRunCommandWithMethod()
     {
-        $io = $this->getMock('Cake\Console\ConsoleIo');
-        $shell = $this->getMock('Cake\Console\Shell', ['hitMe', 'startup'], [$io]);
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['hitMe', 'startup'])
+            ->setConstructorArgs([$io])
+            ->getMock();
 
         $shell->expects($this->once())->method('startup');
         $shell->expects($this->once())->method('hitMe')
@@ -723,9 +731,15 @@ class ShellTest extends TestCase
      */
     public function testRunCommandWithExtra()
     {
-        $Parser = $this->getMock('Cake\Console\ConsoleOptionParser', ['help'], ['knife']);
-        $io = $this->getMock('Cake\Console\ConsoleIo');
-        $Shell = $this->getMock('Cake\Console\Shell', ['getOptionParser', 'slice', '_welcome', 'param'], [$io]);
+        $Parser = $this->getMockBuilder('Cake\Console\ConsoleOptionParser')
+            ->setMethods(['help'])
+            ->setConstructorArgs(['knife'])
+            ->getMock();
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
+        $Shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['getOptionParser', 'slice', '_welcome', 'param'])
+            ->setConstructorArgs([$io])
+            ->getMock();
         $Parser->addSubCommand('slice');
         $Shell->expects($this->once())
             ->method('getOptionParser')
@@ -865,8 +879,11 @@ TEXT;
      */
     public function testRunCommandAutoMethodOff()
     {
-        $io = $this->getMock('Cake\Console\ConsoleIo');
-        $shell = $this->getMock('Cake\Console\Shell', ['hit_me', 'startup'], [$io]);
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['hit_me', 'startup'])
+            ->setConstructorArgs([$io])
+            ->getMock();
 
         $shell->expects($this->never())->method('startup');
         $shell->expects($this->never())->method('hit_me');
@@ -885,9 +902,15 @@ TEXT;
      */
     public function testRunCommandWithMethodNotInSubcommands()
     {
-        $parser = $this->getMock('Cake\Console\ConsoleOptionParser', ['help'], ['knife']);
-        $io = $this->getMock('Cake\Console\ConsoleIo');
-        $shell = $this->getMock('Cake\Console\Shell', ['getOptionParser', 'roll', 'startup'], [$io]);
+        $parser = $this->getMockBuilder('Cake\Console\ConsoleOptionParser')
+            ->setMethods(['help'])
+            ->setConstructorArgs(['knife'])
+            ->getMock();
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['getOptionParser', 'roll', 'startup'])
+            ->setConstructorArgs([$io])
+            ->getMock();
 
         $parser->addSubCommand('slice');
 
@@ -912,9 +935,15 @@ TEXT;
      */
     public function testRunCommandWithMethodInSubcommands()
     {
-        $parser = $this->getMock('Cake\Console\ConsoleOptionParser', ['help'], ['knife']);
-        $io = $this->getMock('Cake\Console\ConsoleIo');
-        $shell = $this->getMock('Cake\Console\Shell', ['getOptionParser', 'slice', 'startup'], [$io]);
+        $parser = $this->getMockBuilder('Cake\Console\ConsoleOptionParser')
+            ->setMethods(['help'])
+            ->setConstructorArgs(['knife'])
+            ->getMock();
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['getOptionParser', 'slice', 'startup'])
+            ->setConstructorArgs([$io])
+            ->getMock();
 
         $parser->addSubCommand('slice');
 
@@ -937,11 +966,17 @@ TEXT;
      */
     public function testRunCommandWithMissingMethodInSubcommands()
     {
-        $parser = $this->getMock('Cake\Console\ConsoleOptionParser', ['help'], ['knife']);
+        $parser = $this->getMockBuilder('Cake\Console\ConsoleOptionParser')
+            ->setMethods(['help'])
+            ->setConstructorArgs(['knife'])
+            ->getMock();
         $parser->addSubCommand('slice');
 
-        $io = $this->getMock('Cake\Console\ConsoleIo');
-        $shell = $this->getMock('Cake\Console\Shell', ['getOptionParser', 'startup'], [$io]);
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['getOptionParser', 'startup'])
+            ->setConstructorArgs([$io])
+            ->getMock();
         $shell->expects($this->any())
             ->method('getOptionParser')
             ->will($this->returnValue($parser));
@@ -967,8 +1002,10 @@ TEXT;
             ->disableOriginalConstructor()
             ->getMock();
 
-        $shell->io($this->getMock('Cake\Console\ConsoleIo'));
-        $parser = $this->getMock('Cake\Console\ConsoleOptionParser', [], [], '', false);
+        $shell->io($this->getMockBuilder('Cake\Console\ConsoleIo')->getMock());
+        $parser = $this->getMockBuilder('Cake\Console\ConsoleOptionParser')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $parser->expects($this->once())->method('help');
         $shell->expects($this->once())->method('getOptionParser')
@@ -990,8 +1027,10 @@ TEXT;
             ->setMethods(['startup', 'getOptionParser', 'out', 'hr'])
             ->disableOriginalConstructor()
             ->getMock();
-        $shell->io($this->getMock('Cake\Console\ConsoleIo'));
-        $parser = $this->getMock('Cake\Console\ConsoleOptionParser', [], [], '', false);
+        $shell->io($this->getMockBuilder('Cake\Console\ConsoleIo')->getMock());
+        $parser = $this->getMockBuilder('Cake\Console\ConsoleOptionParser')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $parser->expects($this->once())->method('help');
         $shell->expects($this->once())->method('getOptionParser')
@@ -1009,14 +1048,19 @@ TEXT;
      */
     public function testRunCommandTriggeringHelp()
     {
-        $parser = $this->getMock('Cake\Console\ConsoleOptionParser', [], [], '', false);
+        $parser = $this->getMockBuilder('Cake\Console\ConsoleOptionParser')
+            ->disableOriginalConstructor()
+            ->getMock();
         $parser->expects($this->once())->method('parse')
             ->with(['--help'])
             ->will($this->returnValue([['help' => true], []]));
         $parser->expects($this->once())->method('help');
 
-        $shell = $this->getMock('Cake\Console\Shell', ['getOptionParser', 'out', 'startup', '_welcome'], [], '', false);
-        $shell->io($this->getMock('Cake\Console\ConsoleIo'));
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['getOptionParser', 'out', 'startup', '_welcome'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $shell->io($this->getMockBuilder('Cake\Console\ConsoleIo')->getMock());
         $shell->expects($this->once())->method('getOptionParser')
             ->will($this->returnValue($parser));
         $shell->expects($this->once())->method('out');
@@ -1031,9 +1075,15 @@ TEXT;
      */
     public function testRunCommandNotCallUnexposedTask()
     {
-        $shell = $this->getMock('Cake\Console\Shell', ['startup', 'hasTask', 'out'], [], '', false);
-        $shell->io($this->getMock('Cake\Console\ConsoleIo'));
-        $task = $this->getMock('Cake\Console\Shell', ['runCommand'], [], '', false);
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['startup', 'hasTask', 'out'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $shell->io($this->getMockBuilder('Cake\Console\ConsoleIo')->getMock());
+        $task = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['runCommand'])
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $task->expects($this->never())
             ->method('runCommand');
@@ -1058,11 +1108,17 @@ TEXT;
     {
         $parser = new ConsoleOptionParser('knife');
         $parser->addSubcommand('slice');
-        $io = $this->getMock('Cake\Console\ConsoleIo');
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
 
-        $shell = $this->getMock('Cake\Console\Shell', ['hasTask', 'startup', 'getOptionParser'], [], '', false);
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['hasTask', 'startup', 'getOptionParser'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $shell->io($io);
-        $task = $this->getMock('Cake\Console\Shell', ['main', 'runCommand'], [], '', false);
+        $task = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['main', 'runCommand'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $task->io($io);
         $task->expects($this->once())
             ->method('runCommand')
@@ -1221,7 +1277,9 @@ TEXT;
      */
     public function testQuietLog()
     {
-        $io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')
+            ->disableOriginalConstructor()
+            ->getMock();
         $io->expects($this->once())
             ->method('level')
             ->with(Shell::QUIET);
@@ -1232,7 +1290,10 @@ TEXT;
             ->method('setLoggers')
             ->with(ConsoleIo::QUIET);
 
-        $this->Shell = $this->getMock(__NAMESPACE__ . '\ShellTestShell', ['welcome'], [$io]);
+        $this->Shell = $this->getMockBuilder(__NAMESPACE__ . '\ShellTestShell')
+            ->setMethods(['welcome'])
+            ->setConstructorArgs([$io])
+            ->getMock();
         $this->Shell->runCommand(['foo', '--quiet']);
     }
 

@@ -93,8 +93,12 @@ class RelativeTimeFormatter
     public function timeAgoInWords(DatetimeInterface $time, array $options = [])
     {
         $options = $this->_options($options, FrozenTime::class);
+
+        $timezone = null;
         if ($options['timezone']) {
-            $time = $time->timezone($options['timezone']);
+            $timezone = $options['timezone'];
+        } elseif ($time instanceof Time || $time instanceof FrozenTime) {
+            $timezone = $time->getDefaultOutputTimezone();
         }
 
         $now = $options['from']->format('U');
@@ -114,7 +118,7 @@ class RelativeTimeFormatter
         }
 
         if ($diff > abs($now - (new FrozenTime($options['end']))->format('U'))) {
-            return sprintf($options['absoluteString'], $time->i18nFormat($options['format']));
+            return sprintf($options['absoluteString'], $time->i18nFormat($options['format'], $timezone));
         }
 
         $diffData = $this->_diffData($futureTime, $pastTime, $backwards, $options);

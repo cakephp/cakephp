@@ -40,17 +40,15 @@ class CommandListShellTest extends TestCase
         $this->out = new ConsoleOutput();
         $io = new ConsoleIo($this->out);
 
-        $this->Shell = $this->getMock(
-            'Cake\Shell\CommandListShell',
-            ['in', 'err', '_stop', 'clear'],
-            [$io]
-        );
+        $this->Shell = $this->getMockBuilder('Cake\Shell\CommandListShell')
+            ->setMethods(['in', 'err', '_stop', 'clear'])
+            ->setConstructorArgs([$io])
+            ->getMock();
 
-        $this->Shell->Command = $this->getMock(
-            'Cake\Shell\Task\CommandTask',
-            ['in', '_stop', 'err', 'clear'],
-            [$io]
-        );
+        $this->Shell->Command = $this->getMockBuilder('Cake\Shell\Task\CommandTask')
+            ->setMethods(['in', '_stop', 'err', 'clear'])
+            ->setConstructorArgs([$io])
+            ->getMock();
     }
 
     /**

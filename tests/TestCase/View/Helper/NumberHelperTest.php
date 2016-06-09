@@ -107,7 +107,9 @@ class NumberHelperTest extends TestCase
      */
     public function testNumberHelperProxyMethodCalls($method)
     {
-        $number = $this->getMock(__NAMESPACE__ . '\NumberMock', [$method]);
+        $number = $this->getMockBuilder(__NAMESPACE__ . '\NumberMock')
+            ->setMethods([$method])
+            ->getMock();
         $helper = new NumberHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\NumberMock']);
         $helper->attach($number);
         $number->expects($this->at(0))
