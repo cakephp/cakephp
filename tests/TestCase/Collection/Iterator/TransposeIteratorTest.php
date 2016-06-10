@@ -55,8 +55,6 @@ class TransposeIteratorTest extends TestCase
             ['2012', '200', '300', '400'],
         ];
 
-//        debug($transposed->toList());
-
         $this->assertEquals($expected, $transposed->toList());
     }
 }
