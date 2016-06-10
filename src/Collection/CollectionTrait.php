@@ -666,16 +666,14 @@ trait CollectionTrait
      */
     public function transpose()
     {
-        $length = $this->map(function ($row) {
-            return count($row);
-        });
-
+        $length = count($this->first());
         $result = [];
-
-        for ($i = 0; $i < min($length->toList()); $i++) {
-            $result[] = array_column($this->toArray(), $i);
+        foreach ($this->toArray() as $column => $row) {
+            if (count($row) != $length) {
+                throw new \LogicException('Child arrays do not have even length');
+            }
+            $result[] = array_column($this->toArray(), $column);
         }
-
         return new Collection($result);
     }
 }

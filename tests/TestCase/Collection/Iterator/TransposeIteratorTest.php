@@ -40,7 +40,13 @@ class TransposeIteratorTest extends TestCase
         $this->assertEquals($expected, $transposed->toList());
     }
 
-    public function testTransposeUnEvenLengths()
+    /**
+     * Tests that provided arrays do not have even length
+     *
+     * @expectedException \LogicException
+     * @return void
+     */
+    public function testTransposeUnEvenLengthShouldThrowException()
     {
         $collection = new Collection([
             ['Products', '2012', '2013', '2014'],
@@ -48,12 +54,7 @@ class TransposeIteratorTest extends TestCase
             ['Product B', '300'],
             ['Product C', '400', '300'],
         ]);
-        $transposed = $collection->transpose();
-        $expected = [
-            ['Products', 'Product A', 'Product B', 'Product C'],
-            ['2012', '200', '300', '400'],
-        ];
 
-        $this->assertEquals($expected, $transposed->toList());
+        $collection->transpose();
     }
 }
