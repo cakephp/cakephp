@@ -666,17 +666,16 @@ trait CollectionTrait
      */
     public function transpose()
     {
-        $result = array();
-        foreach ($this->toArray() as $row => $columns) {
-            foreach ($columns as $row2 => $column2) {
-                $result[$row2][$row] = $column2;
-            }
-        }
-        return new Collection($result);
+        $length = $this->map(function ($row) {
+            return count($row);
+        });
 
-        // when cakephp require PHP >= 5.6
-        // return (new Collection(array_map(function (...$line) {
-        //     return $line;
-        // }, ...$this->toArray())));
+        $result = [];
+
+        for ($i = 0; $i < min($length->toList()); $i++) {
+            $result[] = array_column($this->toArray(), $i);
+        }
+
+        return new Collection($result);
     }
 }

@@ -971,8 +971,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * // ]
      *
      * ```
-     *
-     *
+     * 
      * @return Collection
      */
     public function transpose();
