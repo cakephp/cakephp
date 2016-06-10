@@ -15,7 +15,6 @@
 
 namespace Cake\Test\TestCase\Collection\Iterator;
 
-
 use Cake\Collection\Collection;
 use Cake\TestSuite\TestCase;
 
