@@ -30,15 +30,32 @@ class TransposeIteratorTest extends TestCase
             ['Product B', '300', '200', '100'],
             ['Product C', '400', '300', '200'],
         ]);
-
         $transposed = $collection->transpose();
-
         $expected = [
             ['Products', 'Product A', 'Product B', 'Product C'],
             ['2012', '200', '300', '400'],
             ['2013', '100', '200', '300'],
             ['2014', '50', '100', '200'],
         ];
+
+        $this->assertEquals($expected, $transposed->toList());
+    }
+
+    public function testTransposeUnEvenLengths()
+    {
+        $collection = new Collection([
+            ['Products', '2012', '2013', '2014'],
+            ['Product A', '200', '100', '50'],
+            ['Product B', '300'],
+            ['Product C', '400', '300'],
+        ]);
+        $transposed = $collection->transpose();
+        $expected = [
+            ['Products', 'Product A', 'Product B', 'Product C'],
+            ['2012', '200', '300', '400'],
+        ];
+
+//        debug($transposed->toList());
 
         $this->assertEquals($expected, $transposed->toList());
     }
