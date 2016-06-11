@@ -32,7 +32,7 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public $fixtures = [
         'core.articles', 'core.articles_tags', 'core.authors', 'core.tags',
-        'core.special_tags', 'core.categories', 'core.site_articles', 'core.site_authors'    
+        'core.special_tags', 'core.categories', 'core.site_articles', 'core.site_authors'
     ];
 
     /**
