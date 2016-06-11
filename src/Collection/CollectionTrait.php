@@ -667,12 +667,13 @@ trait CollectionTrait
     public function transpose()
     {
         $length = count($this->first());
+        $arrayValue = $this->toArray();
         $result = [];
-        foreach ($this->toArray() as $column => $row) {
+        foreach ($arrayValue as $column => $row) {
             if (count($row) != $length) {
                 throw new \LogicException('Child arrays do not have even length');
             }
-            $result[] = array_column($this->toArray(), $column);
+            $result[] = array_column($arrayValue, $column);
         }
         return new Collection($result);
     }
