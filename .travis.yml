@@ -1,9 +1,9 @@
 language: php
 
 php:
+  - 7.0
   - 5.5
   - 5.6
-  - 7.0
 
 dist: trusty
 
@@ -41,7 +41,7 @@ matrix:
     - php: hhvm
 
 before_install:
-  - if [ $HHVM != 1 ]; then phpenv config-rm xdebug.ini; fi
+  - if [ $HHVM != 1 && $TRAVIS_PHP_VERSION != 7.* ]; then phpenv config-rm xdebug.ini; fi
 
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
 
@@ -72,7 +72,7 @@ before_script:
   - composer install --prefer-dist --no-interaction
 
 script:
-  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.* ]]; then export CODECOVERAGE=1 ; phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml; fi
+  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.* ]]; then export CODECOVERAGE=1; vendor/bin/phpunit --coverage-clover=clover.xml; fi
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.* ]]; then vendor/bin/phpunit; fi
 
   - if [[ $PHPCS = 1 ]]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi
