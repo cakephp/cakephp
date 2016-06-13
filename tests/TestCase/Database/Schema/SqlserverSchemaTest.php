@@ -61,7 +61,7 @@ SQL;
         $table = <<<SQL
 CREATE TABLE schema_articles (
 id BIGINT PRIMARY KEY,
-title VARCHAR(20),
+title VARCHAR(20) COLLATE Japanese_Unicode_CI_AI,
 body VARCHAR(1000),
 author_id INTEGER NOT NULL,
 published BIT DEFAULT 0,
@@ -237,11 +237,13 @@ SQL;
             'default' => 'Default value',
             'char_length' => $length,
             'precision' => $precision,
-            'scale' => $scale
+            'scale' => $scale,
+            'collation_name' => 'Collate information',
         ];
         $expected += [
             'null' => true,
             'default' => 'Default value',
+            'collate' => 'Collate information',
         ];
 
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')->getMock();
@@ -303,6 +305,7 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'fixed' => null,
+                'collate' => 'Japanese_Unicode_CI_AI',
             ],
             'body' => [
                 'type' => 'string',
@@ -312,6 +315,7 @@ SQL;
                 'precision' => null,
                 'fixed' => null,
                 'comment' => null,
+                'collate' => 'SQL_Latin1_General_CP1_CI_AS',
             ],
             'author_id' => [
                 'type' => 'integer',
@@ -357,6 +361,7 @@ SQL;
                 'precision' => null,
                 'fixed' => null,
                 'comment' => null,
+                'collate' => 'SQL_Latin1_General_CP1_CI_AS',
             ],
             'field2' => [
                 'type' => 'string',
@@ -366,6 +371,7 @@ SQL;
                 'precision' => null,
                 'fixed' => null,
                 'comment' => null,
+                'collate' => 'SQL_Latin1_General_CP1_CI_AS',
             ],
             'field3' => [
                 'type' => 'string',
@@ -375,6 +381,7 @@ SQL;
                 'precision' => null,
                 'fixed' => null,
                 'comment' => null,
+                'collate' => 'SQL_Latin1_General_CP1_CI_AS',
             ],
         ];
         $this->assertEquals(['id'], $result->primaryKey());
@@ -505,7 +512,7 @@ SQL;
             [
                 'role',
                 ['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
-                "[role] NVARCHAR(10) NOT NULL DEFAULT [admin]"
+                "[role] NVARCHAR(10) NOT NULL DEFAULT 'admin'"
             ],
             [
                 'title',
@@ -840,6 +847,13 @@ SQL;
                 'null' => false,
             ])
             ->addColumn('body', ['type' => 'text'])
+            ->addColumn('hash', [
+                'type' => 'string',
+                'fixed' => true,
+                'length' => 40,
+                'collate' => 'Latin1_General_BIN',
+                'null' => false,
+            ])
             ->addColumn('created', 'datetime')
             ->addConstraint('primary', [
                 'type' => 'primary',
@@ -855,6 +869,7 @@ CREATE TABLE [schema_articles] (
 [id] INTEGER IDENTITY(1, 1),
 [title] NVARCHAR(255) NOT NULL,
 [body] NVARCHAR(MAX),
+[hash] NCHAR(40) COLLATE Latin1_General_BIN NOT NULL,
 [created] DATETIME,
 PRIMARY KEY ([id])
 )
@@ -929,7 +944,7 @@ SQL;
         $mock->expects($this->any())
             ->method('quote')
             ->will($this->returnCallback(function ($value) {
-                return '[' . $value . ']';
+                return "'$value'";
             }));
         $driver->connection($mock);
         return $driver;

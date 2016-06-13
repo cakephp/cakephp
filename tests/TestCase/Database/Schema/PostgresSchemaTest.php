@@ -217,11 +217,13 @@ SQL;
             'default' => 'Default value',
             'comment' => 'Comment section',
             'char_length' => null,
+            'collation_name' => 'Collate information',
         ];
         $expected += [
             'null' => true,
             'default' => 'Default value',
             'comment' => 'Comment section',
+            'collate' => 'Collate information',
         ];
 
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')->getMock();
@@ -299,6 +301,7 @@ SQL;
                 'precision' => null,
                 'comment' => 'a title',
                 'fixed' => null,
+                'collate' => null,
             ],
             'body' => [
                 'type' => 'text',
@@ -307,6 +310,7 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'collate' => null,
             ],
             'author_id' => [
                 'type' => 'integer',
@@ -417,6 +421,7 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'fixed' => null,
+                'collate' => null,
             ],
             'bio' => [
                 'type' => 'date',
@@ -623,6 +628,11 @@ SQL;
                 ['type' => 'string'],
                 '"title" VARCHAR'
             ],
+            [
+                'title',
+                ['type' => 'string', 'length' => 255, 'null' => false, 'collate' => 'C'],
+                '"title" VARCHAR(255) COLLATE "C" NOT NULL'
+            ],
             // Text
             [
                 'body',
@@ -643,6 +653,11 @@ SQL;
                 'body',
                 ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
                 '"body" TEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'null' => false, 'collate' => 'C'],
+                '"body" TEXT COLLATE "C" NOT NULL'
             ],
             // Integers
             [
@@ -981,6 +996,13 @@ SQL;
                 'comment' => 'This is the title',
             ])
             ->addColumn('body', ['type' => 'text'])
+            ->addColumn('hash', [
+                'type' => 'string',
+                'fixed' => true,
+                'length' => 40,
+                'collate' => 'C',
+                'null' => false,
+            ])
             ->addColumn('created', 'datetime')
             ->addConstraint('primary', [
                 'type' => 'primary',
@@ -996,6 +1018,7 @@ CREATE TABLE "schema_articles" (
 "id" SERIAL,
 "title" VARCHAR NOT NULL,
 "body" TEXT,
+"hash" CHAR(40) COLLATE "C" NOT NULL,
 "created" TIMESTAMP,
 PRIMARY KEY ("id")
 )
