@@ -841,6 +841,11 @@ abstract class Association
         $bindingKey = (array)$this->bindingKey();
 
         if (count($foreignKey) !== count($bindingKey)) {
+            if (empty($bindingKey)) {
+                $msg = 'The "%s" table does not define a primary key. Please set one.';
+                throw new RuntimeException(sprintf($msg, $this->target()->table()));
+            }
+
             $msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';
             throw new RuntimeException(sprintf(
                 $msg,
