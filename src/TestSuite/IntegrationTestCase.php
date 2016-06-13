@@ -20,6 +20,7 @@ use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\Stub\Response;
+use Cake\TestSuite\RequestDispatcher;
 use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -43,6 +44,14 @@ abstract class IntegrationTestCase extends TestCase
 {
     use CookieCryptTrait;
     use SecureFieldTokenTrait;
+
+    /**
+     * Track whether or not tests are run against
+     * the PSR7 HTTP stack.
+     *
+     * @var bool
+     */
+    protected $_useHttpServer = false;
 
     /**
      * The data used to build the next request.
@@ -130,6 +139,18 @@ abstract class IntegrationTestCase extends TestCase
     protected $_cookieEncriptionKey = null;
 
     /**
+     * Auto-detect if the Http middleware stack should be used.
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $namespace = Configure::read('App.namespace');
+        $this->_useHttpServer = class_exists($namespace . '\Application');
+    }
+
+    /**
      * Clears the state used for requests.
      *
      * @return void
@@ -148,6 +169,18 @@ abstract class IntegrationTestCase extends TestCase
         $this->_requestSession = null;
         $this->_securityToken = false;
         $this->_csrfToken = false;
+        $this->_useHttpServer = false;
+    }
+
+    /**
+     * Toggle whether or not you want to use the HTTP Server stack.
+     *
+     * @param bool $enable Enable/disable the usage of the Http Stack.
+     * @return void
+     */
+    public function useHttpServer($enable)
+    {
+        $this->_useHttpServer = (bool)$enable;
     }
 
     /**
@@ -352,16 +385,16 @@ abstract class IntegrationTestCase extends TestCase
      */
     protected function _sendRequest($url, $method, $data = [])
     {
-        $request = $this->_buildRequest($url, $method, $data);
-        $response = new Response();
-        $dispatcher = DispatcherFactory::create();
-        $dispatcher->eventManager()->on(
-            'Dispatcher.invokeController',
-            ['priority' => 999],
-            [$this, 'controllerSpy']
-        );
+        if ($this->_useHttpServer) {
+            // The PSR7 mode will need to convert back into a cake request.
+            // and figure out how to handle the session data.
+            throw new \LogicException('Not implemented yet.');
+        } else {
+            $dispatcher = new RequestDispatcher($this);
+        }
         try {
-            $dispatcher->dispatch($request, $response);
+            $request = $this->_buildRequest($url, $method, $data);
+            $response = $dispatcher->execute($request);
             $this->_requestSession = $request->session();
             $this->_response = $response;
         } catch (PHPUnit_Exception $e) {
