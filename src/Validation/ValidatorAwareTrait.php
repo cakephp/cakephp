@@ -111,7 +111,7 @@ trait ValidatorAwareTrait
             }
 
             if (!$validator instanceof Validator) {
-                throw new RuntimeException(sprintf('The %s::%s() validation method must return an instance of %s.', self::class, 'validation' . ucfirst($name), Validator::class));
+                throw new RuntimeException(sprintf('The %s::%s() validation method must return an instance of %s.', __CLASS__, 'validation' . ucfirst($name), Validator::class));
             }
         }
 
