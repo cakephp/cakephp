@@ -3224,7 +3224,7 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    public function functionTestValidationWithDefiner()
+    public function testValidationWithDefiner()
     {
         $table = $this->getMockBuilder('\Cake\ORM\Table')
             ->setMethods(['validationForOtherStuff'])
@@ -3235,6 +3235,23 @@ class TableTest extends TestCase
         $this->assertInstanceOf('Cake\Validation\Validator', $other);
         $this->assertNotSame($other, $table->validator());
         $this->assertSame($table, $other->provider('table'));
+    }
+
+    /**
+     * Tests that a RuntimeException is thrown if the custom validator does not return an Validator instance
+     *
+     * @return void
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage The Cake\ORM\Table::validationBad validation method must return an instance of Cake\Validation\Validator.
+     */
+    public function testValidationWithBadDefiner()
+    {
+        $table = $this->getMockBuilder('\Cake\ORM\Table')
+            ->setMethods(['validationBad'])
+            ->getMock();
+        $table->expects($this->once())
+            ->method('validationBad');
+        $table->validator('bad');
     }
 
     /**
