@@ -92,6 +92,7 @@ trait ValidatorAwareTrait
      * @param \Cake\Validation\Validator|null $validator The validator instance to store,
      *   use null to get a validator.
      * @return \Cake\Validation\Validator
+     * @throws \RuntimeException
      */
     public function validator($name = null, Validator $validator = null)
     {
