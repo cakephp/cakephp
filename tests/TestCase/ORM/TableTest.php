@@ -3242,7 +3242,7 @@ class TableTest extends TestCase
      *
      * @return void
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage The Cake\ORM\Table::validationBad validation method must return an instance of Cake\Validation\Validator.
+     * @expectedExceptionMessage The Cake\ORM\Table::validationBad() validation method must return an instance of Cake\Validation\Validator.
      */
     public function testValidationWithBadDefiner()
     {
