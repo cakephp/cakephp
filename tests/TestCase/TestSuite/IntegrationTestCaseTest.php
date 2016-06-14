@@ -43,6 +43,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         DispatcherFactory::clear();
         DispatcherFactory::add('Routing');
         DispatcherFactory::add('ControllerFactory');
+        $this->useHttpServer(false);
     }
 
     /**
@@ -173,6 +174,23 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test sending get requests with Http\Server
+     *
+     * @return void
+     */
+    public function testGetHttpServer()
+    {
+        DispatcherFactory::clear();
+        $this->useHttpServer(true);
+        $this->assertNull($this->_response);
+
+        $this->get('/request_action/test_request_action');
+        $this->assertNotEmpty($this->_response);
+        $this->assertInstanceOf('Cake\Network\Response', $this->_response);
+        $this->assertEquals('This is a test', $this->_response->body());
+    }
+
+    /**
      * Test sending requests stores references to controller/view/layout.
      *
      * @return void
@@ -189,6 +207,39 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->assertTemplate('index');
         $this->assertLayout('default');
         $this->assertEquals('value', $this->viewVariable('test'));
+    }
+
+    /**
+     * Test PSR7 requests store references to controller/view/layout
+     *
+     * @return void
+     */
+    public function testRequestSetsPropertiesHttpServer()
+    {
+        $this->markTestIncomplete('not done');
+        DispatcherFactory::clear();
+        $this->useHttpServer(true);
+
+        $this->post('/posts/index');
+        $this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
+        $this->assertNotEmpty($this->_viewName, 'View name not set');
+        $this->assertContains('Template' . DS . 'Posts' . DS . 'index.ctp', $this->_viewName);
+        $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
+        $this->assertContains('Template' . DS . 'Layout' . DS . 'default.ctp', $this->_layoutName);
+
+        $this->assertTemplate('index');
+        $this->assertLayout('default');
+        $this->assertEquals('value', $this->viewVariable('test'));
+    }
+
+    /**
+     * Test that the PSR7 requests get post, cookies, and other request data passed along.
+     *
+     * @return void
+     */
+    public function testPsrRequestData()
+    {
+        $this->markTestIncomplete('not done');
     }
 
     /**
@@ -241,7 +292,6 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->post('/posts/index');
         $this->assertCookieNotSet('remember_me');
     }
-
 
     /**
      * Tests the failure message for assertCookieNotSet when no

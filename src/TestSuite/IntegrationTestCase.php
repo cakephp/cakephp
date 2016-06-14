@@ -386,9 +386,7 @@ abstract class IntegrationTestCase extends TestCase
     protected function _sendRequest($url, $method, $data = [])
     {
         if ($this->_useHttpServer) {
-            // The PSR7 mode will need to convert back into a cake request.
-            // and figure out how to handle the session data.
-            throw new \LogicException('Not implemented yet.');
+            $dispatcher = new MiddlewareDispatcher($this);
         } else {
             $dispatcher = new RequestDispatcher($this);
         }
@@ -414,8 +412,11 @@ abstract class IntegrationTestCase extends TestCase
      * @param \Cake\Controller\Controller $controller Controller instance.
      * @return void
      */
-    public function controllerSpy($event, $controller)
+    public function controllerSpy($event, $controller = null)
     {
+        if (!$controller) {
+            $controller = $event->subject();
+        }
         $this->_controller = $controller;
         $events = $controller->eventManager();
         $events->on('View.beforeRender', function ($event, $viewFile) {
