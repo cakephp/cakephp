@@ -14,8 +14,8 @@
  */
 namespace Cake\Validation;
 
-use \RuntimeException;
 use Cake\Event\EventDispatcherInterface;
+use RuntimeException;
 
 /**
  * A trait that provides methods for building and
