@@ -666,7 +666,7 @@ trait CollectionTrait
      */
     public function transpose()
     {
-        $arrayValue = $this->toArray();
+        $arrayValue = $this->toList();
         $length = count(current($arrayValue));
         $result = [];
         foreach ($arrayValue as $column => $row) {
