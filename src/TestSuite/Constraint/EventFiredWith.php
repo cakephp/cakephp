@@ -47,6 +47,10 @@ class EventFiredWith extends PHPUnit_Framework_Constraint
         $this->_eventManager = $eventManager;
         $this->_dataKey = $dataKey;
         $this->_dataValue = $dataValue;
+
+        if ($this->_eventManager->getEventList() === null) {
+            throw new PHPUnit_Framework_AssertionFailedError('The event manager you are asserting against is not configured to track events.');
+        }
     }
 
     /**
