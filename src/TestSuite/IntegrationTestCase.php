@@ -19,8 +19,8 @@ use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
-use Cake\TestSuite\Stub\Response;
 use Cake\TestSuite\RequestDispatcher;
+use Cake\TestSuite\Stub\Response;
 use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -139,7 +139,7 @@ abstract class IntegrationTestCase extends TestCase
     protected $_cookieEncriptionKey = null;
 
     /**
-     * Auto-detect if the Http middleware stack should be used.
+     * Auto-detect if the HTTP middleware stack should be used.
      *
      * @return void
      */
@@ -175,7 +175,7 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * Toggle whether or not you want to use the HTTP Server stack.
      *
-     * @param bool $enable Enable/disable the usage of the Http Stack.
+     * @param bool $enable Enable/disable the usage of the HTTP Stack.
      * @return void
      */
     public function useHttpServer($enable)
@@ -409,7 +409,7 @@ abstract class IntegrationTestCase extends TestCase
      * Adds additional event spies to the controller/view event manager.
      *
      * @param \Cake\Event\Event $event A dispatcher event.
-     * @param \Cake\Controller\Controller $controller Controller instance.
+     * @param \Cake\Controller\Controller|null $controller Controller instance.
      * @return void
      */
     public function controllerSpy($event, $controller = null)
