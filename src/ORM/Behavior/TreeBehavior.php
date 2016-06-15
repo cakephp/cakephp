@@ -878,7 +878,7 @@ class TreeBehavior extends Behavior
             $exp = $query->newExpr();
 
             $movement = clone $exp;
-            $movement ->add($field)->add("$shift")->tieWith($dir);
+            $movement->add($field)->add("$shift")->tieWith($dir);
 
             $inverse = clone $exp;
             $movement = $mark ?
