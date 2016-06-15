@@ -882,7 +882,7 @@ class TreeBehavior extends Behavior
 
             $inverse = clone $exp;
             $movement = $mark ?
-                $inverse->add($movement)->tieWith('*')->add('-1'):
+                $inverse->add($movement)->tieWith('*')->add('-1') :
                 $movement;
 
             $where = clone $exp;
