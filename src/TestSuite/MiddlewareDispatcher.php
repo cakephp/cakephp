@@ -68,19 +68,13 @@ class MiddlewareDispatcher
 
         $server = new Server($app);
 
-        // TODO How to handle passing all headers.
-        // The Request doesn't expose a way to read all headers values.
         // TODO How to pass session data? PSR7 requests don't handle sessions..
         // TODO pass php://input stream, base, webroot
-        $serverData = [
-            'REQUEST_URI' => $request->here,
-            'REQUEST_METHOD' => $request->method(),
-        ];
         $psrRequest = ServerRequestFactory::fromGlobals(
-            array_merge($_SERVER, $serverData),
-            $request->query,
-            $request->data(),
-            $request->cookies
+            array_merge($_SERVER, $request['environment'], ['REQUEST_URI' => $request['url']]),
+            $request['query'],
+            $request['post'],
+            $request['cookies']
         );
         $response = $server->run($psrRequest);
         return ResponseTransformer::toCake($response);

@@ -134,7 +134,7 @@ class RequestActionController extends AppController
             'params' => $this->request->params,
             'query' => $this->request->query,
             'url' => $this->request->url,
-            'contentType' => $this->request->env('CONTENT_TYPE'),
+            'contentType' => $this->request->contentType(),
         ]));
         return $this->response;
     }

@@ -393,7 +393,7 @@ abstract class IntegrationTestCase extends TestCase
         try {
             $request = $this->_buildRequest($url, $method, $data);
             $response = $dispatcher->execute($request);
-            $this->_requestSession = $request->session();
+            $this->_requestSession = $request['session'];
             $this->_response = $response;
         } catch (PHPUnit_Exception $e) {
             throw $e;
@@ -455,7 +455,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string|array $url The URL
      * @param string $method The HTTP method
      * @param array|null $data The request data.
-     * @return \Cake\Network\Request The built request.
+     * @return array The request context
      */
     protected function _buildRequest($url, $method, $data)
     {
@@ -486,7 +486,7 @@ abstract class IntegrationTestCase extends TestCase
         $env['REQUEST_METHOD'] = $method;
         $props['environment'] = $env;
         $props = Hash::merge($props, $this->_request);
-        return new Request($props);
+        return $props;
     }
 
     /**

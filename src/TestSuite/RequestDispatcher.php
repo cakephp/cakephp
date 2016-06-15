@@ -40,11 +40,12 @@ class RequestDispatcher
     /**
      * Run a request and get the response.
      *
-     * @param \Cake\Network\Request $request The request to execute.
+     * @param array $request The request context to execute.
      * @return \Cake\Network\Response The generated response.
      */
     public function execute($request)
     {
+        $request = new Request($request);
         $response = new Response();
         $dispatcher = DispatcherFactory::create();
         $dispatcher->eventManager()->on(
