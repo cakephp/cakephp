@@ -222,7 +222,7 @@ class Router
      */
     public static function redirect($route, $url, $options = [])
     {
-        $options['routeClass'] = 'Cake\Routing\Route\RedirectRoute';
+        $options += ['routeClass' => 'Cake\Routing\Route\RedirectRoute'];
         if (is_string($url)) {
             $url = ['redirect' => $url];
         }
