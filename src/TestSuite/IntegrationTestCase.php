@@ -15,7 +15,6 @@ namespace Cake\TestSuite;
 
 use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
-use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
