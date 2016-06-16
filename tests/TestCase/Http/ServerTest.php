@@ -57,7 +57,9 @@ class ServerTest extends TestCase
      */
     public function testAppGetSet()
     {
-        $app = $this->getMock('Cake\Http\BaseApplication', [], [$this->config]);
+        $app = $this->getMockBuilder('Cake\Http\BaseApplication')
+            ->setConstructorArgs([$this->config])
+            ->getMock();
         $server = new Server($app);
         $this->assertSame($app, $server->getApp($app));
     }
@@ -160,7 +162,7 @@ class ServerTest extends TestCase
             ->withHeader('X-First', 'first')
             ->withHeader('X-Second', 'second');
 
-        $emitter = $this->getMock('Zend\Diactoros\Response\EmitterInterface');
+        $emitter = $this->getMockBuilder('Zend\Diactoros\Response\EmitterInterface')->getMock();
         $emitter->expects($this->once())
             ->method('emit')
             ->with($final);

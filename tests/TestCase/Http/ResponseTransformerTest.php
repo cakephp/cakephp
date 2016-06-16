@@ -198,7 +198,9 @@ class ResponseTransformerTest extends TestCase
      */
     public function testToPsrBodyFileResponse()
     {
-        $cake = $this->getMock('Cake\Network\Response', ['_clearBuffer']);
+        $cake = $this->getMockBuilder('Cake\Network\Response')
+            ->setMethods(['_clearBuffer'])
+            ->getMock();
         $cake->file(__FILE__, ['name' => 'some-file.php', 'download' => true]);
 
         $result = ResponseTransformer::toPsr($cake);
@@ -225,7 +227,9 @@ class ResponseTransformerTest extends TestCase
     public function testToPsrBodyFileResponseFileRange()
     {
         $_SERVER['HTTP_RANGE'] = 'bytes=10-20';
-        $cake = $this->getMock('Cake\Network\Response', ['_clearBuffer']);
+        $cake = $this->getMockBuilder('Cake\Network\Response')
+            ->setMethods(['_clearBuffer'])
+            ->getMock();
         $path = TEST_APP . 'webroot/css/cake.generic.css';
         $cake->file($path, ['name' => 'test-asset.css', 'download' => true]);
 

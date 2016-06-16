@@ -77,7 +77,9 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $factory = function ($exception) {
             $this->assertInstanceOf('LogicException', $exception);
             $cakeResponse = new CakeResponse;
-            $mock = $this->getMock('StdClass', ['render']);
+            $mock = $this->getMockBuilder('StdClass')
+                ->setMethods(['render'])
+                ->getMock();
             $mock->expects($this->once())
                 ->method('render')
                 ->will($this->returnValue($cakeResponse));
@@ -124,7 +126,9 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $response = new Response();
 
         $factory = function ($exception) {
-            $mock = $this->getMock('StdClass', ['render']);
+            $mock = $this->getMockBuilder('StdClass')
+                ->setMethods(['render'])
+                ->getMock();
             $mock->expects($this->once())
                 ->method('render')
                 ->will($this->throwException(new LogicException('Rendering failed')));
