@@ -25,7 +25,7 @@ use Cake\TestSuite\Stub\Response;
  *
  * @internal
  */
-class RequestDispatcher
+class LegacyRequestDispatcher
 {
     /**
      * Constructor

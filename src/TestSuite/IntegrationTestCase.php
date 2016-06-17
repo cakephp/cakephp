@@ -18,7 +18,8 @@ use Cake\Database\Exception as DatabaseException;
 use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
-use Cake\TestSuite\RequestDispatcher;
+use Cake\TestSuite\LegacyRequestDispatcher;
+use Cake\TestSuite\MiddlewareDispatcher;
 use Cake\TestSuite\Stub\Response;
 use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
@@ -384,11 +385,7 @@ abstract class IntegrationTestCase extends TestCase
      */
     protected function _sendRequest($url, $method, $data = [])
     {
-        if ($this->_useHttpServer) {
-            $dispatcher = new MiddlewareDispatcher($this);
-        } else {
-            $dispatcher = new RequestDispatcher($this);
-        }
+        $dispatcher = $this->_makeDispatcher();
         try {
             $request = $this->_buildRequest($url, $method, $data);
             $response = $dispatcher->execute($request);
@@ -402,6 +399,19 @@ abstract class IntegrationTestCase extends TestCase
             $this->_exception = $e;
             $this->_handleError($e);
         }
+    }
+
+    /**
+     * Get the correct dispatcher instance.
+     *
+     * @return object A dispatcher instance
+     */
+    protected function _makeDispatcher()
+    {
+        if ($this->_useHttpServer) {
+            return new MiddlewareDispatcher($this);
+        }
+        return new LegacyRequestDispatcher($this);
     }
 
     /**
