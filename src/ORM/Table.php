@@ -19,6 +19,7 @@ use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Type;
+use Cake\Datasource\AssociationCollection;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;

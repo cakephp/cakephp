@@ -18,6 +18,7 @@ use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Type;
+use Cake\Datasource\AssociationsNormalizerTrait;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
 use RuntimeException;

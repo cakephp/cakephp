@@ -12,7 +12,7 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\ORM;
+namespace Cake\Datasource;
 
 use ArrayIterator;
 use Cake\Datasource\EntityInterface;
@@ -33,7 +33,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Stored associations
      *
-     * @var \Cake\ORM\Association[]
+     * @var \Cake\Datasource\AssociationInterface[]
      */
     protected $_items = [];
 
@@ -47,7 +47,7 @@ class AssociationCollection implements IteratorAggregate
      * @param \Cake\ORM\Association $association The association to add.
      * @return \Cake\ORM\Association The association object being added.
      */
-    public function add($alias, Association $association)
+    public function add($alias, AssociationInterface $association)
     {
         list(, $alias) = pluginSplit($alias);
 
@@ -161,14 +161,14 @@ class AssociationCollection implements IteratorAggregate
      * Parent associations include any association where the given table
      * is the owning side.
      *
-     * @param \Cake\ORM\Table $table The table entity is for.
+     * @param \Cake\Datasource\RepositoryInterface $table The table entity is for.
      * @param \Cake\Datasource\EntityInterface $entity The entity to save associated data for.
      * @param array $associations The list of associations to save parents from.
      *   associations not in this list will not be saved.
      * @param array $options The options for the save operation.
      * @return bool Success
      */
-    public function saveParents(Table $table, EntityInterface $entity, $associations, array $options = [])
+    public function saveParents(RepositoryInterface $table, EntityInterface $entity, $associations, array $options = [])
     {
         if (empty($associations)) {
             return true;
@@ -183,14 +183,14 @@ class AssociationCollection implements IteratorAggregate
      * Child associations include any association where the given table
      * is not the owning side.
      *
-     * @param \Cake\ORM\Table $table The table entity is for.
+     * @param \Cake\Datasource\RepositoryInterface $table The table entity is for.
      * @param \Cake\Datasource\EntityInterface $entity The entity to save associated data for.
      * @param array $associations The list of associations to save children from.
      *   associations not in this list will not be saved.
      * @param array $options The options for the save operation.
      * @return bool Success
      */
-    public function saveChildren(Table $table, EntityInterface $entity, array $associations, array $options)
+    public function saveChildren(RepositoryInterface $table, EntityInterface $entity, array $associations, array $options)
     {
         if (empty($associations)) {
             return true;
@@ -202,7 +202,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Helper method for saving an association's data.
      *
-     * @param \Cake\ORM\Table $table The table the save is currently operating on
+     * @param \Cake\Datasource\RepositoryInterface $table The table the save is currently operating on
      * @param \Cake\Datasource\EntityInterface $entity The entity to save
      * @param array $associations Array of associations to save.
      * @param array $options Original options

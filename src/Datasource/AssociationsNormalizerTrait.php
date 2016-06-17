@@ -12,7 +12,7 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\ORM;
+namespace Cake\Datasource;
 
 /**
  * Contains methods for parsing the associated tables array that is typically
@@ -31,21 +31,21 @@ trait AssociationsNormalizerTrait
     protected function _normalizeAssociations($associations)
     {
         $result = [];
-        foreach ((array)$associations as $table => $options) {
+        foreach ((array)$associations as $repository => $options) {
             $pointer =& $result;
 
-            if (is_int($table)) {
-                $table = $options;
+            if (is_int($repository)) {
+                $repository = $options;
                 $options = [];
             }
 
-            if (!strpos($table, '.')) {
-                $result[$table] = $options;
+            if (!strpos($repository, '.')) {
+                $result[$repository] = $options;
                 continue;
             }
 
-            $path = explode('.', $table);
-            $table = array_pop($path);
+            $path = explode('.', $repository);
+            $repository = array_pop($path);
             $first = array_shift($path);
             $pointer += [$first => []];
             $pointer =& $pointer[$first];
@@ -58,8 +58,8 @@ trait AssociationsNormalizerTrait
                 $pointer =& $pointer['associated'][$t];
             }
 
-            $pointer['associated'] += [$table => []];
-            $pointer['associated'][$table] = $options + $pointer['associated'][$table];
+            $pointer['associated'] += [$repository => []];
+            $pointer['associated'][$repository] = $options + $pointer['associated'][$repository];
         }
 
         return isset($result['associated']) ? $result['associated'] : $result;

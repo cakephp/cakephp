@@ -12,9 +12,9 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\ORM;
+namespace Cake\Test\TestCase\Datasource;
 
-use Cake\ORM\AssociationCollection;
+use Cake\Datasource\AssociationCollection;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
