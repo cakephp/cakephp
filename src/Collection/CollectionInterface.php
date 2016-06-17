@@ -945,4 +945,34 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @return \Iterator
      */
     public function unwrap();
+
+
+    /**
+     * Transpose rows and columns into columns and rows
+     *
+     * ### Example:
+     *
+     * ```
+     * $items = [
+     *       ['Products', '2012', '2013', '2014'],
+     *       ['Product A', '200', '100', '50'],
+     *       ['Product B', '300', '200', '100'],
+     *       ['Product C', '400', '300', '200'],
+     * ]
+     *
+     * $transpose = (new Collection($items))->transpose()->toList();
+     *
+     * // Returns
+     * // [
+     * //     ['Products', 'Product A', 'Product B', 'Product C'],
+     * //     ['2012', '200', '300', '400'],
+     * //     ['2013', '100', '200', '300'],
+     * //     ['2014', '50', '100', '200'],
+     * // ]
+     *
+     * ```
+     *
+     * @return Collection
+     */
+    public function transpose();
 }
