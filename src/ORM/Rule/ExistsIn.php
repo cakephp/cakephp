@@ -129,7 +129,7 @@ class ExistsIn
     }
 
     /**
-     * Check whether or not the entity fields are nullable and null.
+     * Checks whether or not the given entity fields are nullable and null.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to check.
      * @param \Cake\ORM\Table $source The table to use schema from.
@@ -148,7 +148,8 @@ class ExistsIn
     }
 
     /**
-     * Check whether there are nullable nulls in at least one part of the foreign key.
+     * Checks whether or not the give entity fields are null and map to schema NULL
+     * or are not null and map to schema NOT NULL.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to check.
      * @param \Cake\ORM\Table $source The table to use schema from.
@@ -158,10 +159,15 @@ class ExistsIn
     {
         $schema = $source->schema();
         foreach ($this->_fields as $field) {
-            if ($schema->isNullable($field) && $entity->get($field) === null) {
-                return true;
+            $isNullable = $schema->isNullable($field);
+            $value = $entity->get($field);
+            if (!$isNullable && $value === null) {
+                return false;
+            }
+            if ($isNullable && $value !== null) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 }
