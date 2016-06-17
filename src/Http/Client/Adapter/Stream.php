@@ -293,26 +293,15 @@ class Stream
      */
     protected function _open($url)
     {
-        set_error_handler([$this, '_connectionErrorHandler']);
+        set_error_handler(function ($code, $message) {
+            $this->_connectionErrors[] = $message;
+        });
         $this->_stream = fopen($url, 'rb', false, $this->_context);
         restore_error_handler();
 
         if (!$this->_stream || !empty($this->_connectionErrors)) {
             throw new Exception(implode("\n", $this->_connectionErrors));
         }
-    }
-
-    /**
-     * Local error handler to capture errors triggered during
-     * stream connection.
-     *
-     * @param int $code Error code.
-     * @param string $message Error message.
-     * @return void
-     */
-    protected function _connectionErrorHandler($code, $message)
-    {
-        $this->_connectionErrors[] = $message;
     }
 
     /**
