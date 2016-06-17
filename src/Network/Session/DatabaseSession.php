@@ -158,7 +158,7 @@ class DatabaseSession implements SessionHandlerInterface
      */
     public function gc($maxlifetime)
     {
-        $this->_table->deleteAll(['expires <' => time() - $maxlifetime]);
+        $this->_table->deleteAll(['expires <' => time()]);
         return true;
     }
 }
