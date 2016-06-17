@@ -1602,4 +1602,41 @@ class CollectionTest extends TestCase
         $expected = [[1, 2], [3, [4, 5]], [6, [7, [8, 9], 10]], [11]];
         $this->assertEquals($expected, $chunked);
     }
+
+    public function testTranspose()
+    {
+        $collection = new Collection([
+            ['Products', '2012', '2013', '2014'],
+            ['Product A', '200', '100', '50'],
+            ['Product B', '300', '200', '100'],
+            ['Product C', '400', '300', '200'],
+        ]);
+        $transposed = $collection->transpose();
+        $expected = [
+            ['Products', 'Product A', 'Product B', 'Product C'],
+            ['2012', '200', '300', '400'],
+            ['2013', '100', '200', '300'],
+            ['2014', '50', '100', '200'],
+        ];
+
+        $this->assertEquals($expected, $transposed->toList());
+    }
+
+    /**
+     * Tests that provided arrays do not have even length
+     *
+     * @expectedException \LogicException
+     * @return void
+     */
+    public function testTransposeUnEvenLengthShouldThrowException()
+    {
+        $collection = new Collection([
+            ['Products', '2012', '2013', '2014'],
+            ['Product A', '200', '100', '50'],
+            ['Product B', '300'],
+            ['Product C', '400', '300'],
+        ]);
+
+        $collection->transpose();
+    }
 }

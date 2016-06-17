@@ -30,6 +30,7 @@ use Cake\Collection\Iterator\UnfoldIterator;
 use Cake\Collection\Iterator\ZipIterator;
 use Countable;
 use LimitIterator;
+use LogicException;
 use RecursiveIteratorIterator;
 use Traversable;
 
@@ -662,7 +663,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      *
-     * @return \Cake\Collection
+     * @return \Cake\Collection\CollectionInterface
      */
     public function transpose()
     {
@@ -671,7 +672,7 @@ trait CollectionTrait
         $result = [];
         foreach ($arrayValue as $column => $row) {
             if (count($row) != $length) {
-                throw new \LogicException('Child arrays do not have even length');
+                throw new LogicException('Child arrays do not have even length');
             }
             $result[] = array_column($arrayValue, $column);
         }

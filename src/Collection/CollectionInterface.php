@@ -946,7 +946,6 @@ interface CollectionInterface extends Iterator, JsonSerializable
      */
     public function unwrap();
 
-
     /**
      * Transpose rows and columns into columns and rows
      *
@@ -969,10 +968,9 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * //     ['2013', '100', '200', '300'],
      * //     ['2014', '50', '100', '200'],
      * // ]
-     *
      * ```
      *
-     * @return Collection
+     * @return \Cake\Collection\CollectionInterface
      */
     public function transpose();
 }
