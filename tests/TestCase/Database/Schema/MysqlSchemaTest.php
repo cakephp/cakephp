@@ -990,7 +990,9 @@ SQL;
     public function testCreateSqlJson()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
         $connection->expects($this->any())
             ->method('driver')
             ->will($this->returnValue($driver));

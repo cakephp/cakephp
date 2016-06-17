@@ -1145,10 +1145,16 @@ TEXT;
     {
         $parser = new ConsoleOptionParser('knife');
         $parser->addSubcommand('slice');
-        $io = $this->getMock('Cake\Console\ConsoleIo');
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
 
-        $shell = $this->getMock('Cake\Console\Shell', ['hasTask', 'getOptionParser'], [$io]);
-        $task = $this->getMock('Cake\Console\Shell', ['main', '_welcome'], [$io]);
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['hasTask', 'getOptionParser'])
+            ->setConstructorArgs([$io])
+            ->getMock();
+        $task = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['main', '_welcome'])
+            ->setConstructorArgs([$io])
+            ->getMock();
 
         $shell->expects($this->once())
             ->method('getOptionParser')
