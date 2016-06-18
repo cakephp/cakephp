@@ -57,6 +57,7 @@ class RequestTransformer
             'url' => $request->getUri()->getPath(),
             'base' => $request->getAttribute('base', ''),
             'webroot' => $request->getAttribute('webroot', '/'),
+            'session' => $request->getAttribute('session', null),
         ]);
     }
 

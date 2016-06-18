@@ -18,6 +18,7 @@ use Cake\Core\Configure;
 use Cake\Http\RequestTransformer;
 use Cake\Http\ServerRequestFactory;
 use Cake\Network\Request;
+use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -258,5 +259,21 @@ class RequestTransformerTest extends TestCase
         $cake = RequestTransformer::toCake($psr);
 
         $this->assertEquals('/thisapp', ini_get('session.cookie_path'));
+    }
+
+    /**
+     * Test transforming session objects
+     *
+     * @return void
+     */
+    public function testToCakeSession()
+    {
+        $psr = ServerRequestFactory::fromGlobals();
+        $session = new Session(['defaults' => 'php']);
+        $session->write('test', 'value');
+        $psr = $psr->withAttribute('session', $session);
+        $cake = RequestTransformer::toCake($psr);
+
+        $this->assertSame($session, $cake->session());
     }
 }
