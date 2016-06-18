@@ -76,6 +76,7 @@ class MiddlewareDispatcher
             $request['post'],
             $request['cookies']
         );
+        $psrRequest = $psrRequest->withAttribute('session', $request['session']);
         $response = $server->run($psrRequest);
         return ResponseTransformer::toCake($response);
     }

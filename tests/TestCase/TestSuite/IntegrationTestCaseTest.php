@@ -243,6 +243,21 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->assertHeader('X-Middleware', 'true');
     }
 
+    /**
+     * Test that the PSR7 requests get cookies
+     *
+     * @return void
+     */
+    public function testSessionHttpServer()
+    {
+        $this->useHttpServer(true);
+
+        $this->session(['foo' => 'session data']);
+        $this->get('/request_action/session_test');
+        $this->assertResponseOk();
+        $this->assertResponseContains('session data');
+        $this->assertHeader('X-Middleware', 'true');
+    }
 
     /**
      * Test sending requests stores references to controller/view/layout.
