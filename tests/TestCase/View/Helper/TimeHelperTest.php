@@ -166,6 +166,18 @@ class TimeHelperTest extends TestCase
     }
 
     /**
+     * test nice with outputTimezone
+     *
+     * @return void
+     */
+    public function testNiceOutputTimezone()
+    {
+        $this->Time->config('outputTimezone', 'America/Vancouver');
+        $time = '2014-04-20 20:00';
+        $this->assertTimeFormat('Apr 20, 2014, 1:00 PM', $this->Time->nice($time));
+    }
+
+    /**
      * testToUnix method
      *
      * @return void
@@ -227,7 +239,12 @@ class TimeHelperTest extends TestCase
      */
     public function testToRssOutputTimezone()
     {
-        $this->markTestIncomplete();
+        $this->Time->config('outputTimezone', 'America/Vancouver');
+        $dateTime = new Time;
+        $vancouver = clone $dateTime;
+        $vancouver->timezone('America/Vancouver');
+
+        $this->assertEquals($vancouver->format('r'), $this->Time->toRss($vancouver));
     }
 
     /**
@@ -249,22 +266,15 @@ class TimeHelperTest extends TestCase
     {
         $result = $this->Time->isToday('+1 day');
         $this->assertFalse($result);
+
         $result = $this->Time->isToday('+1 days');
         $this->assertFalse($result);
+
         $result = $this->Time->isToday('+0 day');
         $this->assertTrue($result);
+
         $result = $this->Time->isToday('-1 day');
         $this->assertFalse($result);
-    }
-
-    /**
-     * test isToday with outputTimezone
-     *
-     * @return void
-     */
-    public function testIsTodayOutputTimezone()
-    {
-        $this->markTestIncomplete();
     }
 
     /**
@@ -286,16 +296,6 @@ class TimeHelperTest extends TestCase
     }
 
     /**
-     * test isFuture with outputTimezone
-     *
-     * @return void
-     */
-    public function testIsFutureOutputTimezone()
-    {
-        $this->markTestIncomplete();
-    }
-
-    /**
      * testIsPast method
      *
      * @return void
@@ -311,16 +311,6 @@ class TimeHelperTest extends TestCase
         $this->assertTrue($this->Time->isPast('-1 day'));
         $this->assertTrue($this->Time->isPast('-1 week'));
         $this->assertTrue($this->Time->isPast('-1 month'));
-    }
-
-    /**
-     * test isPast with outputTimezone
-     *
-     * @return void
-     */
-    public function testIsPastOutputTimezone()
-    {
-        $this->markTestIncomplete();
     }
 
     /**
@@ -346,16 +336,6 @@ class TimeHelperTest extends TestCase
     }
 
     /**
-     * test isThisWeek with outputTimezone
-     *
-     * @return void
-     */
-    public function testIsThisWeekOutputTimezone()
-    {
-        $this->markTestIncomplete();
-    }
-
-    /**
      * testIsThisMonth method
      *
      * @return void
@@ -373,16 +353,6 @@ class TimeHelperTest extends TestCase
     }
 
     /**
-     * test isThisMonth with outputTimezone
-     *
-     * @return void
-     */
-    public function testIsThisMonthOutputTimezone()
-    {
-        $this->markTestIncomplete();
-    }
-
-    /**
      * testIsThisYear method
      *
      * @return void
@@ -393,16 +363,6 @@ class TimeHelperTest extends TestCase
         $this->assertTrue($result);
         $result = $this->Time->isThisYear(mktime(0, 0, 0, mt_rand(1, 12), mt_rand(1, 28), date('Y')));
         $this->assertTrue($result);
-    }
-
-    /**
-     * test isThisYear with outputTimezone
-     *
-     * @return void
-     */
-    public function testIsThisYearOutputTimezone()
-    {
-        $this->markTestIncomplete();
     }
 
     /**
@@ -427,16 +387,6 @@ class TimeHelperTest extends TestCase
     }
 
     /**
-     * test wasYesterday with outputTimezone
-     *
-     * @return void
-     */
-    public function testWasYesterdayOutputTimezone()
-    {
-        $this->markTestIncomplete();
-    }
-
-    /**
      * testIsTomorrow method
      *
      * @return void
@@ -451,16 +401,6 @@ class TimeHelperTest extends TestCase
         $this->assertFalse($result);
         $result = $this->Time->isTomorrow('-1 day');
         $this->assertFalse($result);
-    }
-
-    /**
-     * test isTomorrow with outputTimezone
-     *
-     * @return void
-     */
-    public function testIsTomorrowOutputTimezone()
-    {
-        $this->markTestIncomplete();
     }
 
     /**
@@ -510,16 +450,6 @@ class TimeHelperTest extends TestCase
     }
 
     /**
-     * test wasWithinLast with outputTimezone
-     *
-     * @return void
-     */
-    public function testWasWithinLastOutputTimezone()
-    {
-        $this->markTestIncomplete();
-    }
-
-    /**
      * testWasWithinLast method
      *
      * @return void
@@ -566,16 +496,6 @@ class TimeHelperTest extends TestCase
     }
 
     /**
-     * test isWithinNext with outputTimezone
-     *
-     * @return void
-     */
-    public function testIsWithinNextOutputTimezone()
-    {
-        $this->markTestIncomplete();
-    }
-
-    /**
      * test formatting dates taking in account preferred i18n locale file
      *
      * @return void
@@ -611,7 +531,32 @@ class TimeHelperTest extends TestCase
      */
     public function testFormatOutputTimezone()
     {
-        $this->markTestIncomplete();
+        $this->Time->config('outputTimezone', 'America/Vancouver');
+
+        $time = strtotime('Thu Jan 14 8:59:28 2010 UTC');
+        $result = $this->Time->format($time);
+        $expected = '1/14/10, 12:59 AM';
+        $this->assertTimeFormat($expected, $result);
+
+        $time = new Time('Thu Jan 14 8:59:28 2010', 'UTC');
+        $result = $this->Time->format($time);
+        $expected = '1/14/10, 12:59 AM';
+        $this->assertTimeFormat($expected, $result);
+    }
+
+    /**
+     * test i18nFormat with outputTimezone
+     *
+     * @return void
+     */
+    public function testI18nFormatOutputTimezone()
+    {
+        $this->Time->config('outputTimezone', 'America/Vancouver');
+
+        $time = strtotime('Thu Jan 14 8:59:28 2010 UTC');
+        $result = $this->Time->i18nFormat($time, \IntlDateFormatter::SHORT);
+        $expected = '1/14/10, 12:59:28 AM';
+        $this->assertStringStartsWith($expected, $result);
     }
 
     /**
