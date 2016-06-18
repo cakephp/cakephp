@@ -114,6 +114,33 @@ class TimeHelperTest extends TestCase
     }
 
     /**
+     * Test output timezone with timeAgoInWords
+     *
+     * @return void
+     */
+    public function testTimeAgoInWordsOutputTimezone()
+    {
+        $Time = new TimeHelper($this->View, ['outputTimezone' => 'America/Vancouver']);
+        $timestamp = new Time('+8 years, +4 months +2 weeks +3 days');
+        $result = $Time->timeAgoInWords($timestamp, [
+            'end' => '1 years',
+            'element' => 'span'
+        ]);
+        $vancouver = clone $timestamp;
+        $vancouver->timezone('America/Vancouver');
+
+        $expected = [
+            'span' => [
+                'title' => $vancouver->__toString(),
+                'class' => 'time-ago-in-words'
+            ],
+            'on ' . $vancouver->format('n/j/y'),
+            '/span'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * testToQuarter method
      *
      * @return void
@@ -160,6 +187,20 @@ class TimeHelperTest extends TestCase
     }
 
     /**
+     * testToAtom method
+     *
+     * @return void
+     */
+    public function testToAtomOutputTimezone()
+    {
+        $this->Time->config('outputTimezone', 'America/Vancouver');
+        $dateTime = new Time;
+        $vancouver = clone $dateTime;
+        $vancouver->timezone('America/Vancouver');
+        $this->assertEquals($vancouver->format(Time::ATOM), $this->Time->toAtom($vancouver));
+    }
+
+    /**
      * testToRss method
      *
      * @return void
@@ -177,6 +218,16 @@ class TimeHelperTest extends TestCase
             $time = $yourTime->format('U');
             $this->assertEquals($yourTime->format('r'), $this->Time->toRss($time, $timezone), "Failed on $timezone");
         }
+    }
+
+    /**
+     * test toRss with outputTimezone
+     *
+     * @return void
+     */
+    public function testToRssOutputTimezone()
+    {
+        $this->markTestIncomplete();
     }
 
     /**
@@ -205,6 +256,17 @@ class TimeHelperTest extends TestCase
         $result = $this->Time->isToday('-1 day');
         $this->assertFalse($result);
     }
+
+    /**
+     * test isToday with outputTimezone
+     *
+     * @return void
+     */
+    public function testIsTodayOutputTimezone()
+    {
+        $this->markTestIncomplete();
+    }
+
     /**
      * testIsFuture method
      *
@@ -224,6 +286,16 @@ class TimeHelperTest extends TestCase
     }
 
     /**
+     * test isFuture with outputTimezone
+     *
+     * @return void
+     */
+    public function testIsFutureOutputTimezone()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
      * testIsPast method
      *
      * @return void
@@ -239,6 +311,16 @@ class TimeHelperTest extends TestCase
         $this->assertTrue($this->Time->isPast('-1 day'));
         $this->assertTrue($this->Time->isPast('-1 week'));
         $this->assertTrue($this->Time->isPast('-1 month'));
+    }
+
+    /**
+     * test isPast with outputTimezone
+     *
+     * @return void
+     */
+    public function testIsPastOutputTimezone()
+    {
+        $this->markTestIncomplete();
     }
 
     /**
@@ -264,6 +346,16 @@ class TimeHelperTest extends TestCase
     }
 
     /**
+     * test isThisWeek with outputTimezone
+     *
+     * @return void
+     */
+    public function testIsThisWeekOutputTimezone()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
      * testIsThisMonth method
      *
      * @return void
@@ -281,6 +373,16 @@ class TimeHelperTest extends TestCase
     }
 
     /**
+     * test isThisMonth with outputTimezone
+     *
+     * @return void
+     */
+    public function testIsThisMonthOutputTimezone()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
      * testIsThisYear method
      *
      * @return void
@@ -291,6 +393,16 @@ class TimeHelperTest extends TestCase
         $this->assertTrue($result);
         $result = $this->Time->isThisYear(mktime(0, 0, 0, mt_rand(1, 12), mt_rand(1, 28), date('Y')));
         $this->assertTrue($result);
+    }
+
+    /**
+     * test isThisYear with outputTimezone
+     *
+     * @return void
+     */
+    public function testIsThisYearOutputTimezone()
+    {
+        $this->markTestIncomplete();
     }
 
     /**
@@ -315,6 +427,16 @@ class TimeHelperTest extends TestCase
     }
 
     /**
+     * test wasYesterday with outputTimezone
+     *
+     * @return void
+     */
+    public function testWasYesterdayOutputTimezone()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
      * testIsTomorrow method
      *
      * @return void
@@ -329,6 +451,16 @@ class TimeHelperTest extends TestCase
         $this->assertFalse($result);
         $result = $this->Time->isTomorrow('-1 day');
         $this->assertFalse($result);
+    }
+
+    /**
+     * test isTomorrow with outputTimezone
+     *
+     * @return void
+     */
+    public function testIsTomorrowOutputTimezone()
+    {
+        $this->markTestIncomplete();
     }
 
     /**
@@ -378,6 +510,16 @@ class TimeHelperTest extends TestCase
     }
 
     /**
+     * test wasWithinLast with outputTimezone
+     *
+     * @return void
+     */
+    public function testWasWithinLastOutputTimezone()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
      * testWasWithinLast method
      *
      * @return void
@@ -424,6 +566,16 @@ class TimeHelperTest extends TestCase
     }
 
     /**
+     * test isWithinNext with outputTimezone
+     *
+     * @return void
+     */
+    public function testIsWithinNextOutputTimezone()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
      * test formatting dates taking in account preferred i18n locale file
      *
      * @return void
@@ -450,6 +602,16 @@ class TimeHelperTest extends TestCase
         $result = $this->Time->format($time, \IntlDateFormatter::FULL);
         $expected = 'jeudi 14 janvier 2010 13:59:28 UTC';
         $this->assertTimeFormat($expected, $result);
+    }
+
+    /**
+     * test format with outputTimezone
+     *
+     * @return void
+     */
+    public function testFormatOutputTimezone()
+    {
+        $this->markTestIncomplete();
     }
 
     /**
