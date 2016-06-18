@@ -229,7 +229,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
-     * Test that the PSR7 requests get post data
+     * Test that the PSR7 requests receive post data
      *
      * @return void
      */
@@ -240,6 +240,20 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->post('/request_action/post_pass', ['title' => 'value']);
         $data = json_decode($this->_response->body());
         $this->assertEquals('value', $data->title);
+        $this->assertHeader('X-Middleware', 'true');
+    }
+
+    /**
+     * Test that the PSR7 requests receive encoded data.
+     *
+     * @return void
+     */
+    public function testInputDataHttpServer()
+    {
+        $this->useHttpServer(true);
+
+        $this->post('/request_action/input_test', '{"hello":"world"}');
+        $this->assertSame('world', $this->_response->body());
         $this->assertHeader('X-Middleware', 'true');
     }
 

@@ -167,6 +167,17 @@ class RequestActionController extends AppController
     }
 
     /**
+     * Tests input data transmission
+     *
+     * @return \Cake\Network\Response
+     */
+    public function input_test()
+    {
+        $this->response->body($this->request->input('json_decode')->hello);
+        return $this->response;
+    }
+
+    /**
      * Tests exception handling
      *
      * @throws \Cake\Network\Exception\NotFoundException
