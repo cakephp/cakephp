@@ -67,9 +67,6 @@ class MiddlewareDispatcher
         );
 
         $server = new Server($app);
-
-        // TODO How to pass session data? PSR7 requests don't handle sessions..
-        // TODO pass php://input stream, base, webroot
         $psrRequest = ServerRequestFactory::fromGlobals(
             array_merge($_SERVER, $request['environment'], ['REQUEST_URI' => $request['url']]),
             $request['query'],
