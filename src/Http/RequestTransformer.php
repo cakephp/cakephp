@@ -48,6 +48,12 @@ class RequestTransformer
             $post = Hash::merge($post, $files);
         }
 
+        $input = null;
+        $stream = $request->getBody();
+        if ($stream->getSize()) {
+            $input = $stream->getContents();
+        }
+
         return new CakeRequest([
             'query' => $request->getQueryParams(),
             'post' => $post,
@@ -58,6 +64,7 @@ class RequestTransformer
             'base' => $request->getAttribute('base', ''),
             'webroot' => $request->getAttribute('webroot', '/'),
             'session' => $request->getAttribute('session', null),
+            'input' => $input,
         ]);
     }
 
