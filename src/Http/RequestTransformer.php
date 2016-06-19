@@ -48,11 +48,8 @@ class RequestTransformer
             $post = Hash::merge($post, $files);
         }
 
-        $input = null;
-        $stream = $request->getBody();
-        if ($stream->getSize()) {
-            $input = $stream->getContents();
-        }
+        $input = $request->getBody()->getContents();
+        $input = $input === '' ? null : $input;
 
         return new CakeRequest([
             'query' => $request->getQueryParams(),
