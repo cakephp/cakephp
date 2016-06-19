@@ -141,6 +141,42 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Asserts that a global event was fired. You must track events in your event manager for this assertion to work
+     *
+     * @param string $name Event name
+     * @param EventManager $eventManager Event manager to check, defaults to global event manager
+     * @param string $message Assertion failure message
+     * @return void
+     */
+    public function assertEventFired($name, $eventManager = null, $message = '')
+    {
+        if (!$eventManager) {
+            $eventManager = EventManager::instance();
+        }
+        $this->assertThat($name, new Constraint\EventFired($eventManager), $message);
+    }
+
+    /**
+     * Asserts an event was fired with data
+     *
+     * If a third argument is passed, that value is used to compare with the value in $dataKey
+     *
+     * @param string $name Event name
+     * @param string $dataKey Data key
+     * @param string $dataValue Data value
+     * @param EventManager $eventManager Event manager to check, defaults to global event manager
+     * @param string $message Assertion failure message
+     * @return void
+     */
+    public function assertEventFiredWith($name, $dataKey, $dataValue, $eventManager = null, $message = '')
+    {
+        if (!$eventManager) {
+            $eventManager = EventManager::instance();
+        }
+        $this->assertThat($name, new Constraint\EventFiredWith($eventManager, $dataKey, $dataValue), $message);
+    }
+
+    /**
      * Assert text equality, ignoring differences in newlines.
      * Helpful for doing cross platform tests of blocks of text.
      *
