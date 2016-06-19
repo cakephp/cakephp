@@ -18,7 +18,9 @@ use Cake\Core\Configure;
 use Cake\Http\RequestTransformer;
 use Cake\Http\ServerRequestFactory;
 use Cake\Network\Request;
+use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
+use Zend\Diactoros\Stream;
 
 /**
  * Test for RequestTransformer
@@ -258,5 +260,38 @@ class RequestTransformerTest extends TestCase
         $cake = RequestTransformer::toCake($psr);
 
         $this->assertEquals('/thisapp', ini_get('session.cookie_path'));
+    }
+
+    /**
+     * Test transforming session objects
+     *
+     * @return void
+     */
+    public function testToCakeSession()
+    {
+        $psr = ServerRequestFactory::fromGlobals();
+        $session = new Session(['defaults' => 'php']);
+        $session->write('test', 'value');
+        $psr = $psr->withAttribute('session', $session);
+        $cake = RequestTransformer::toCake($psr);
+
+        $this->assertSame($session, $cake->session());
+    }
+
+    /**
+     * Test transforming request bodies
+     *
+     * @return void
+     */
+    public function testToCakeRequestBody()
+    {
+        $psr = ServerRequestFactory::fromGlobals();
+        $stream = new Stream('php://memory', 'rw');
+        $stream->write('{"hello":"world"}');
+        $stream->rewind();
+        $psr = $psr->withBody($stream);
+
+        $cake = RequestTransformer::toCake($psr);
+        $this->assertSame(['hello' => 'world'], $cake->input('json_decode', true));
     }
 }
