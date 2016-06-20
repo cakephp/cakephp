@@ -1222,17 +1222,19 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function findOrCreate($search, callable $callback = null)
     {
-        $query = $this->find()->where($search);
-        $row = $query->first();
-        if ($row) {
-            return $row;
-        }
-        $entity = $this->newEntity();
-        $entity->set($search, ['guard' => false]);
-        if ($callback) {
-            $callback($entity);
-        }
-        return $this->save($entity) ?: $entity;
+        $this->connection()->transactional(function() use($search, $callback) {
+            $query = $this->find()->where($search);
+            $row = $query->first();
+            if ($row) {
+                return $row;
+            }
+            $entity = $this->newEntity();
+            $entity->set($search, ['guard' => false]);
+            if ($callback) {
+                $callback($entity);
+            }
+            return $this->save($entity) ?: $entity;
+        });
     }
 
     /**
