@@ -134,7 +134,7 @@ class RequestActionController extends AppController
             'params' => $this->request->params,
             'query' => $this->request->query,
             'url' => $this->request->url,
-            'contentType' => $this->request->env('CONTENT_TYPE'),
+            'contentType' => $this->request->contentType(),
         ]));
         return $this->response;
     }
@@ -163,6 +163,17 @@ class RequestActionController extends AppController
     public function session_test()
     {
         $this->response->body($this->request->session()->read('foo'));
+        return $this->response;
+    }
+
+    /**
+     * Tests input data transmission
+     *
+     * @return \Cake\Network\Response
+     */
+    public function input_test()
+    {
+        $this->response->body($this->request->input('json_decode')->hello);
         return $this->response;
     }
 

@@ -33,7 +33,7 @@ class JsonTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = Type::build('json');
-        $this->driver = $this->getMock('Cake\Database\Driver');
+        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
     }
 
     /**

@@ -165,13 +165,10 @@ class AuthComponentTest extends TestCase
      */
     public function testIdentifyArrayAccess()
     {
-        $AuthLoginFormAuthenticate = $this->getMock(
-            'Cake\Controller\Component\Auth\FormAuthenticate',
-            ['authenticate'],
-            [],
-            '',
-            false
-        );
+        $AuthLoginFormAuthenticate = $this->getMockBuilder('Cake\Controller\Component\Auth\FormAuthenticate')
+            ->setMethods(['authenticate'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->Auth->authenticate = [
             'AuthLoginForm' => [
                 'userModel' => 'AuthUsers'
@@ -315,13 +312,10 @@ class AuthComponentTest extends TestCase
      */
     public function testIsAuthorizedWithArrayObject()
     {
-        $AuthMockOneAuthorize = $this->getMock(
-            'Cake\Controller\Component\BaseAuthorize',
-            ['authorize'],
-            [],
-            '',
-            false
-        );
+        $AuthMockOneAuthorize = $this->getMockBuilder('Cake\Controller\Component\BaseAuthorize')
+            ->setMethods(['authorize'])
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->Auth->setAuthorizeObject(0, $AuthMockOneAuthorize);
         $request = $this->Auth->request;

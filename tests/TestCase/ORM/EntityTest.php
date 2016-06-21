@@ -714,7 +714,9 @@ class EntityTest extends TestCase
      */
     public function testJsonSerializeRecursive()
     {
-        $phone = $this->getMock(Entity::class, ['jsonSerialize']);
+        $phone = $this->getMockBuilder(Entity::class)
+            ->setMethods(['jsonSerialize'])
+            ->getMock();
         $phone->expects($this->once())->method('jsonSerialize')->will($this->returnValue('12345'));
         $data = ['name' => 'James', 'age' => 20, 'phone' => $phone];
         $entity = new Entity($data);

@@ -35,7 +35,7 @@ class ControllerFactoryTest extends TestCase
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
         $this->factory = new ControllerFactory();
-        $this->response = $this->getMock('Cake\Network\Response');
+        $this->response = $this->getMockBuilder('Cake\Network\Response')->getMock();
     }
 
     /**
