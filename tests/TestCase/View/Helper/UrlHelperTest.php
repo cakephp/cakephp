@@ -296,6 +296,9 @@ class UrlHelperTest extends TestCase
 
         $result = $this->Helper->image('cid:foo.jpg');
         $this->assertEquals('cid:foo.jpg', $result);
+
+        $result = $this->Helper->image('CID:foo.jpg');
+        $this->assertEquals('CID:foo.jpg', $result);
     }
 
     /**

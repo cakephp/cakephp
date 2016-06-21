@@ -120,7 +120,7 @@ class UrlHelper extends Helper
         if (is_array($path)) {
             return $this->build($path, !empty($options['fullBase']));
         }
-        if (strpos($path, '://') !== false || preg_match('/^[a-z]+:/', $path)) {
+        if (strpos($path, '://') !== false || preg_match('/^[a-z]+:/i', $path)) {
             return $path;
         }
         if (!array_key_exists('plugin', $options) || $options['plugin'] !== false) {
