@@ -799,7 +799,7 @@ class BelongsToMany extends Association
     {
         if ($conditions !== null) {
             $this->_conditions = $conditions;
-            $this->_targetConditions = $this->_junctionConditions = [];
+            $this->_targetConditions = $this->_junctionConditions = null;
         }
         return $this->_conditions;
     }
