@@ -749,20 +749,35 @@ class Postgres extends DboSource {
  * @return void
  */
 	public function resultSet(&$results) {
-		$this->map = array();
-		$numFields = $results->columnCount();
+		$this->map = [];
 		$index = 0;
-		$j = 0;
-
-		while ($j < $numFields) {
-			$column = $results->getColumnMeta($j);
-			if (strpos($column['name'], '__')) {
-				list($table, $name) = explode('__', $column['name']);
-				$this->map[$index++] = array($table, $name, $column['native_type']);
-			} else {
-				$this->map[$index++] = array(0, $column['name'], $column['native_type']);
+		$local_to_remote = [
+			'integer' => 'int4',
+			'string' => 'varchar',
+			'boolean' => 'bool',
+			'NULL' => 'null'
+		];
+		foreach ($results as $row) {
+			$this->first_row = $row;
+			foreach ($row as $colname => $colval) {
+				if ("queryString" == $colname)
+					continue;
+				if (strpos($colname, '__')) {
+					list($table, $name) = explode('__', $colname, 2);
+				} else {
+					list($table, $name) = [0, $colname];
+				}
+				$local_type = gettype($colval);
+				if (array_key_exists($local_type, $local_to_remote)) {
+					$remote_type = $local_to_remote[$local_type];
+				} else {
+					var_dump("Could not determine remote type for $local_type");
+					var_dump($results);
+					exit;
+				}
+				$this->map[$index++] = array($table, $name, $remote_type);
 			}
-			$j++;
+			break;
 		}
 	}
 
@@ -772,9 +787,15 @@ class Postgres extends DboSource {
  * @return array
  */
 	public function fetchResult() {
-		if ($row = $this->_result->fetch(PDO::FETCH_NUM)) {
-			$resultRow = array();
-
+		$row = null;
+		if ($this->first_row) {
+			$row = $this->first_row;
+			$this->first_row = null;
+		} else {
+			$row = $this->_result->fetch(PDO::FETCH_NUM);
+		}
+		if ($row) {
+			$resultRow = [];
 			foreach ($this->map as $index => $meta) {
 				list($table, $column, $type) = $meta;
 
