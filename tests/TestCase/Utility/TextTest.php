@@ -569,6 +569,7 @@ TEXT;
         $this->assertSame('Vive la R' . chr(195) . chr(169) . 'pu...', $this->Text->truncate($text8, 15));
         $this->assertSame('НОПРСТУ...', $this->Text->truncate($text9, 10));
         $this->assertSame('http://example.com/somethin...', $this->Text->truncate($text10, 30));
+        $this->assertSame('1 <b>2...</b>', $this->Text->truncate('1 <b>2 345</b>', 6, ['exact' => false, 'html' => true, 'ellipsis' => '...']));
 
         $text = '<p><span style="font-size: medium;"><a>Iamatestwithnospacesandhtml</a></span></p>';
         $result = $this->Text->truncate($text, 10, [
@@ -1820,9 +1821,6 @@ HTML;
         $substr = function () use ($method) {
             return $method->invokeArgs(null, func_get_args());
         };
-
-        $text = '&#x3042;&#x3044;&#x3046;&#x3048;&#x3048;';
-        $this->assertEquals('&#x3044;&#x3046;&#x3048;', $substr($text, 1, -1, ['html' => true, 'trimWidth' => true]));
 
         $text = 'データベースアクセス &amp; ORM';
         $this->assertEquals('アクセス', $substr($text, 6, 4, []));
