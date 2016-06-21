@@ -2870,6 +2870,28 @@ class RouterTest extends TestCase
     }
 
     /**
+     * Test that redirect() works with another route class.
+     *
+     * @return void
+     */
+    public function testRedirectWithAnotherRouteClass()
+    {
+        $route1 = $this->getMockBuilder('Cake\Routing\Route\RedirectRoute')
+            ->setConstructorArgs(['/mobile\''])
+            ->getMock();
+        $class = '\\' . get_class($route1);
+
+        Router::redirect('/mobile', '/', [
+            'status' => 301,
+            'routeClass' => $class
+        ]);
+
+        $routes = Router::routes();
+        $route = $routes[0];
+        $this->assertInstanceOf($class, $route);
+    }
+
+    /**
      * Test that the compatibility method for incoming urls works.
      *
      * @return void
