@@ -136,7 +136,7 @@ class Postgres extends DboSource {
 					$this->_execute("SET $key TO $value");
 				}
 			}
-		} catch (PDOException $e) {
+        } catch (PDOException $e) {
 			throw new MissingConnectionException(array(
 				'class' => get_class($this),
 				'message' => $e->getMessage()
@@ -755,7 +755,8 @@ class Postgres extends DboSource {
 			'integer' => 'int4',
 			'string' => 'varchar',
 			'boolean' => 'bool',
-			'NULL' => 'null'
+            'NULL' => 'null',
+            'resource' => 'binary',
 		];
 		foreach ($results as $row) {
 			$this->first_row = $row;
@@ -771,9 +772,7 @@ class Postgres extends DboSource {
 				if (array_key_exists($local_type, $local_to_remote)) {
 					$remote_type = $local_to_remote[$local_type];
 				} else {
-					var_dump("Could not determine remote type for $local_type");
-					var_dump($results);
-					exit;
+                    throw new \Exception("Could not determine remote type for $local_type");
 				}
 				$this->map[$index++] = array($table, $name, $remote_type);
 			}
