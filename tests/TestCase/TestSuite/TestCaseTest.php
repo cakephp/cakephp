@@ -17,6 +17,9 @@ namespace Cake\Test\TestCase\TestSuite;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
+use Cake\Event\Event;
+use Cake\Event\EventList;
+use Cake\Event\EventManager;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -44,6 +47,80 @@ class SecondaryPostsTable extends Table
  */
 class TestCaseTest extends TestCase
 {
+
+    /**
+     * tests trying to assertEventFired without configuring an event list
+     *
+     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     */
+    public function testEventFiredMisconfiguredEventList()
+    {
+        $manager = EventManager::instance();
+        $this->assertEventFired('my.event', $manager);
+    }
+
+    /**
+     * tests trying to assertEventFired without configuring an event list
+     *
+     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     */
+    public function testEventFiredWithMisconfiguredEventList()
+    {
+        $manager = EventManager::instance();
+        $this->assertEventFiredWith('my.event', 'some', 'data', $manager);
+    }
+
+    /**
+     * tests assertEventFiredWith
+     *
+     * @return void
+     */
+    public function testEventFiredWith()
+    {
+        $manager = EventManager::instance();
+        $manager->setEventList(new EventList());
+        $manager->trackEvents(true);
+
+        $event = new Event('my.event', $this, [
+            'some' => 'data'
+        ]);
+        $manager->dispatch($event);
+        $this->assertEventFiredWith('my.event', 'some', 'data');
+
+        $manager = new EventManager();
+        $manager->setEventList(new EventList());
+        $manager->trackEvents(true);
+
+        $event = new Event('my.event', $this, [
+            'other' => 'data'
+        ]);
+        $manager->dispatch($event);
+        $this->assertEventFiredWith('my.event', 'other', 'data', $manager);
+    }
+
+    /**
+     * tests assertEventFired
+     *
+     * @return void
+     */
+    public function testEventFired()
+    {
+        $manager = EventManager::instance();
+        $manager->setEventList(new EventList());
+        $manager->trackEvents(true);
+
+        $event = new Event('my.event');
+        $manager->dispatch($event);
+        $this->assertEventFired('my.event');
+
+        $manager = new EventManager();
+        $manager->setEventList(new EventList());
+        $manager->trackEvents(true);
+
+        $event = new Event('my.event');
+        $manager->dispatch($event);
+        $this->assertEventFired('my.event', $manager);
+    }
 
     /**
      * testAssertHtml

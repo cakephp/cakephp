@@ -402,7 +402,7 @@ trait DateFormatTrait
             }
             return static::$diffFormatter;
         }
-        return static::$diffFormatter = $translator;
+        return static::$diffFormatter = $formatter;
     }
 
     /**

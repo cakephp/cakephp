@@ -64,16 +64,15 @@ class ExistsIn
     public function __invoke(EntityInterface $entity, array $options)
     {
         if (is_string($this->_repository)) {
-            $alias = $this->_repository;
-            $this->_repository = $options['repository']->association($alias);
-
-            if (empty($this->_repository)) {
+            $repository = $options['repository']->association($this->_repository);
+            if (!$repository) {
                 throw new RuntimeException(sprintf(
                     "ExistsIn rule for '%s' is invalid. The '%s' association is not defined.",
                     implode(', ', $this->_fields),
-                    $alias
+                    $this->_repository
                 ));
             }
+            $this->_repository = $repository;
         }
 
         $source = $target = $this->_repository;
