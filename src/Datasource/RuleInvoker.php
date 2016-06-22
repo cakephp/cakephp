@@ -105,7 +105,7 @@ class RuleInvoker
      * @param \Cake\Datasouce\EntityInterface $entity The entity the rule
      *   should apply to.
      * @param array $scope The rule's scope/options.
-     * @return boolean Whether or not the rule passed.
+     * @return bool Whether or not the rule passed.
      */
     public function __invoke($entity, $scope)
     {
