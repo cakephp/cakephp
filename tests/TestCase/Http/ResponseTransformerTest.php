@@ -119,6 +119,42 @@ class ResponseTransformerTest extends TestCase
     }
 
     /**
+     * Test conversion getting cookies.
+     *
+     * @return void
+     */
+    public function testToCakeCookies()
+    {
+        $cookies = [
+            'remember me=1";"1',
+            'forever=yes; Expires=Wed, 13 Jan 2021 12:30:40 GMT; Path=/some/path; Domain=example.com; HttpOnly; Secure'
+        ];
+        $psr = new PsrResponse('php://memory', 200, ['Set-Cookie' => $cookies]);
+        $result = ResponseTransformer::toCake($psr);
+        $expected = [
+            'name' => 'remember me',
+            'value' => '1";"1',
+            'path' => '/',
+            'domain' => '',
+            'expire' => 0,
+            'secure' => false,
+            'httpOnly' => false,
+        ];
+        $this->assertEquals($expected, $result->cookie('remember me'));
+
+        $expected = [
+            'name' => 'forever',
+            'value' => 'yes',
+            'path' => '/some/path',
+            'domain' => 'example.com',
+            'expire' => 1610541040,
+            'secure' => true,
+            'httpOnly' => true,
+        ];
+        $this->assertEquals($expected, $result->cookie('forever'));
+    }
+
+    /**
      * Test conversion setting the status code.
      *
      * @return void
