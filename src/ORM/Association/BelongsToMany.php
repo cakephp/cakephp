@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM\Association;
 
+use Cake\Core\App;
 use Cake\Database\ExpressionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
@@ -176,28 +177,27 @@ class BelongsToMany extends Association
      */
     public function junction($table = null)
     {
+        if ($table === null && $this->_junctionTable) {
+            return $this->_junctionTable;
+        }
+
         $tableLocator = $this->tableLocator();
+        if ($table === null && $this->_through) {
+            $table = $this->_through;
+        } elseif ($table === null) {
+            $tableName = $this->_junctionTableName();
+            $tableAlias = Inflector::camelize($tableName);
 
-        if ($table === null) {
-            if (!empty($this->_junctionTable)) {
-                return $this->_junctionTable;
-            }
+            $config = [];
+            if (!$tableLocator->exists($tableAlias)) {
+                $config = ['table' => $tableName];
 
-            if (!empty($this->_through)) {
-                $table = $this->_through;
-            } else {
-                $tableName = $this->_junctionTableName();
-                $tableAlias = Inflector::camelize($tableName);
-
-                $config = [];
-                if (!$tableLocator->exists($tableAlias)) {
-                    $config = [
-                        'table' => $tableName,
-                        'connection' => $this->source()->connection()
-                    ];
+                // Propagate the connection if we'll get an auto-model
+                if (!App::className($tableAlias, 'Model/Table', 'Table')) {
+                    $config['connection'] = $this->source()->connection();
                 }
-                $table = $tableLocator->get($tableAlias, $config);
             }
+            $table = $tableLocator->get($tableAlias, $config);
         }
 
         if (is_string($table)) {
