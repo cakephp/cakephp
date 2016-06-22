@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM;
 
+use Cake\Collection\Collection;
 use Cake\Core\ConventionsTrait;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
@@ -774,8 +775,20 @@ abstract class Association
         }
 
         $property = $options['propertyPath'];
-        $query->formatResults(function ($results) use ($formatters, $property) {
-            $extracted = $results->extract($property)->compile();
+        $propertyPath = explode('.', $property);
+        $query->formatResults(function ($results) use ($formatters, $property, $propertyPath) {
+            $extracted = [];
+            foreach ($results as $result) {
+                foreach ($propertyPath as $propertyPathItem) {
+                    if (!isset($result[$propertyPathItem])) {
+                        $result = null;
+                        break;
+                    }
+                    $result = $result[$propertyPathItem];
+                }
+                $extracted[] = $result;
+            }
+            $extracted = new Collection($extracted);
             foreach ($formatters as $callable) {
                 $extracted = new ResultSetDecorator($callable($extracted));
             }
