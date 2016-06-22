@@ -161,7 +161,8 @@ trait PDODriverTrait
      * @return string
      * @throws TransactionIsolationLevelNotSupportedException
      */
-    public function transactionIsolationLevel($isolationLevel = null) {
+    public function transactionIsolationLevel($isolationLevel = null)
+    {
         if (!is_null($isolationLevel) && strlen($isolationLevel) > 0) {
             //TODO: Check if the isolation level is supported
             //TODO: Set the isolation level

@@ -18,6 +18,7 @@ use Cake\Core\App;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
+use Cake\Database\Exception\TransactionIsolationLevelNotSupportedException;
 use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
@@ -771,7 +772,15 @@ class Connection implements ConnectionInterface
         ];
     }
 
-    private function isolationLevel($isolationLevel = null)
+    /**
+     * Returns the connection's isolationLevel
+     * Sets it, if a value is given
+     *
+     * @param string $isolationLevel Transaction Isolation Level
+     * @return string
+     * @throws TransactionIsolationLevelNotSupportedException
+     */
+    public function isolationLevel($isolationLevel = null)
     {
         return $this->_driver->transactionIsolationLevel($isolationLevel);
     }
