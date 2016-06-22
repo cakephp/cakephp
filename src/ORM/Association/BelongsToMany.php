@@ -191,7 +191,10 @@ class BelongsToMany extends Association
 
                 $config = [];
                 if (!$tableLocator->exists($tableAlias)) {
-                    $config = ['table' => $tableName];
+                    $config = [
+                        'table' => $tableName,
+                        'connection' => $this->source()->connection()
+                    ];
                 }
                 $table = $tableLocator->get($tableAlias, $config);
             }
@@ -200,8 +203,8 @@ class BelongsToMany extends Association
         if (is_string($table)) {
             $table = $tableLocator->get($table);
         }
-        $target = $this->target();
         $source = $this->source();
+        $target = $this->target();
 
         $this->_generateSourceAssociations($table, $source);
         $this->_generateTargetAssociations($table, $source, $target);
