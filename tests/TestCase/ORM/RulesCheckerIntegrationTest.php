@@ -319,6 +319,30 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Ensure that add(isUnique()) only invokes a rule once.
+     *
+     * @return void
+     */
+    public function testIsUniqueRuleSingleInvocation()
+    {
+        $entity = new Entity([
+            'name' => 'larry'
+        ]);
+
+        $table = TableRegistry::get('Authors');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->isUnique(['name']), '_isUnique', ['errorField' => 'title']);
+        $this->assertFalse($table->save($entity));
+
+        $this->assertEquals(
+            ['_isUnique' => 'This value is already in use'],
+            $entity->errors('title'),
+            'Provided field should have errors'
+        );
+        $this->assertEmpty($entity->errors('name'), 'Errors should not apply to original field.');
+    }
+
+    /**
      * Tests the isUnique domain rule
      *
      * @group save
@@ -416,6 +440,32 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->errors('author_id'));
+    }
+
+    /**
+     * Ensure that add(existsIn()) only invokes a rule once.
+     *
+     * @return void
+     */
+    public function testExistsInRuleSingleInvocation()
+    {
+        $entity = new Entity([
+            'title' => 'larry',
+            'author_id' => 500,
+        ]);
+
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->existsIn('author_id', 'Authors'), '_existsIn', ['errorField' => 'other']);
+        $this->assertFalse($table->save($entity));
+
+        $this->assertEquals(
+            ['_existsIn' => 'This value does not exist'],
+            $entity->errors('other'),
+            'Provided field should have errors'
+        );
+        $this->assertEmpty($entity->errors('author_id'), 'Errors should not apply to original field.');
     }
 
     /**
