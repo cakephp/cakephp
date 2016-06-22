@@ -119,6 +119,42 @@ class ResponseTransformerTest extends TestCase
     }
 
     /**
+     * Test conversion getting cookies.
+     *
+     * @return void
+     */
+    public function testToCakeCookies()
+    {
+        $cookies = [
+            'remember me=1";"1',
+            'forever=yes; Expires=Wed, 13 Jan 2021 12:30:40 GMT; Path=/some/path; Domain=example.com; HttpOnly; Secure'
+        ];
+        $psr = new PsrResponse('php://memory', 200, ['Set-Cookie' => $cookies]);
+        $result = ResponseTransformer::toCake($psr);
+        $expected = [
+            'name' => 'remember me',
+            'value' => '1";"1',
+            'path' => '/',
+            'domain' => '',
+            'expire' => 0,
+            'secure' => false,
+            'httpOnly' => false,
+        ];
+        $this->assertEquals($expected, $result->cookie('remember me'));
+
+        $expected = [
+            'name' => 'forever',
+            'value' => 'yes',
+            'path' => '/some/path',
+            'domain' => 'example.com',
+            'expire' => 1610541040,
+            'secure' => true,
+            'httpOnly' => true,
+        ];
+        $this->assertEquals($expected, $result->cookie('forever'));
+    }
+
+    /**
      * Test conversion setting the status code.
      *
      * @return void
@@ -128,6 +164,68 @@ class ResponseTransformerTest extends TestCase
         $cake = new CakeResponse(['status' => 403]);
         $result = ResponseTransformer::toPsr($cake);
         $this->assertSame(403, $result->getStatusCode());
+    }
+
+    /**
+     * Test conversion setting cookies
+     *
+     * @return void
+     */
+    public function testToPsrCookieSimple()
+    {
+        $cake = new CakeResponse(['status' => 200]);
+        $cake->cookie([
+            'name' => 'remember_me',
+            'value' => 1
+        ]);
+        $result = ResponseTransformer::toPsr($cake);
+        $this->assertEquals('remember_me=1; Path=/', $result->getHeader('Set-Cookie')[0]);
+    }
+
+    /**
+     * Test conversion setting multiple cookies
+     *
+     * @return void
+     */
+    public function testToPsrCookieMultiple()
+    {
+        $cake = new CakeResponse(['status' => 200]);
+        $cake->cookie([
+            'name' => 'remember_me',
+            'value' => 1
+        ]);
+        $cake->cookie([
+            'name' => 'forever',
+            'value' => 2
+        ]);
+        $result = ResponseTransformer::toPsr($cake);
+        $this->assertEquals('remember_me=1; Path=/', $result->getHeader('Set-Cookie')[0]);
+        $this->assertEquals('forever=2; Path=/', $result->getHeader('Set-Cookie')[1]);
+    }
+
+    /**
+     * Test conversion setting cookie attributes
+     *
+     * @return void
+     */
+    public function testToPsrCookieAttributes()
+    {
+        $cake = new CakeResponse(['status' => 200]);
+        $cake->cookie([
+            'name' => 'remember me',
+            'value' => '1 1',
+            'path' => '/some/path',
+            'domain' => 'example.com',
+            'expire' => strtotime('2021-01-13 12:30:40'),
+            'secure' => true,
+            'httpOnly' => true,
+        ]);
+        $result = ResponseTransformer::toPsr($cake);
+        $this->assertEquals(
+            'remember+me=1+1; Expires=Wed, 13 Jan 2021 12:30:40 GMT; Path=/some/path; Domain=example.com; HttpOnly; Secure',
+            $result->getHeader('Set-Cookie')[0],
+            'Cookie attributes should exist, and name/value should be encoded'
+        );
     }
 
     /**

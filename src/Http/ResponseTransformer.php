@@ -43,6 +43,9 @@ class ResponseTransformer
             'body' => static::getBody($response),
         ];
         $cake = new CakeResponse($data);
+        foreach (static::parseCookies($response->getHeader('Set-Cookie')) as $cookie) {
+            $cake->cookie($cookie);
+        }
         $cake->header(static::collapseHeaders($response));
         return $cake;
     }
@@ -61,6 +64,53 @@ class ResponseTransformer
         }
         $stream->rewind();
         return $stream->getContents();
+    }
+
+    /**
+     * Parse the Set-Cookie headers in a PSR7 response
+     * into the format CakePHP expects.
+     *
+     * @param array $cookieHeader A list of Set-Cookie headers.
+     * @return array Parsed cookie data.
+     */
+    protected static function parseCookies(array $cookieHeader)
+    {
+        $cookies = [];
+        foreach ($cookieHeader as $cookie) {
+            if (strpos($cookie, '";"') !== false) {
+                $cookie = str_replace('";"', "{__cookie_replace__}", $cookie);
+                $parts = preg_split('/\;[ \t]*/', $cookie);
+                $parts = str_replace("{__cookie_replace__}", '";"', $parts);
+            } else {
+                $parts = preg_split('/\;[ \t]*/', $cookie);
+            }
+
+            list($name, $value) = explode('=', array_shift($parts), 2);
+            $parsed = compact('name', 'value');
+
+            foreach ($parts as $part) {
+                if (strpos($part, '=') !== false) {
+                    list($key, $value) = explode('=', $part);
+                } else {
+                    $key = $part;
+                    $value = true;
+                }
+
+                $key = strtolower($key);
+                if ($key === 'httponly') {
+                    $key = 'httpOnly';
+                }
+                if ($key === 'expires') {
+                    $key = 'expire';
+                    $value = strtotime($value);
+                }
+                if (!isset($parsed[$key])) {
+                    $parsed[$key] = $value;
+                }
+            }
+            $cookies[] = $parsed;
+        }
+        return $cookies;
     }
 
     /**
@@ -95,8 +145,44 @@ class ResponseTransformer
         if (!isset($headers['Content-Type'])) {
             $headers['Content-Type'] = $response->type();
         }
+        if ($response->cookie()) {
+            $headers['Set-Cookie'] = static::buildCookieHeader($response->cookie());
+        }
         $stream = static::getStream($response);
         return new DiactorosResponse($stream, $status, $headers);
+    }
+
+    /**
+     * Convert an array of cookies into header lines.
+     *
+     * @param array $cookies The cookies to serialize.
+     * @return array A list of cookie header values.
+     */
+    protected static function buildCookieHeader($cookies)
+    {
+        $headers = [];
+        foreach ($cookies as $cookie) {
+            $parts = [
+                sprintf('%s=%s', urlencode($cookie['name']), urlencode($cookie['value']))
+            ];
+            if ($cookie['expire']) {
+                $cookie['expire'] = gmdate('D, d M Y H:i:s T', $cookie['expire']);
+            }
+            $attributes = [
+                'expire' => 'Expires=%s',
+                'path' => 'Path=%s',
+                'domain' => 'Domain=%s',
+                'httpOnly' => 'HttpOnly',
+                'secure' => 'Secure',
+            ];
+            foreach ($attributes as $key => $attr) {
+                if ($cookie[$key]) {
+                    $parts[] = sprintf($attr, $cookie[$key]);
+                }
+            }
+            $headers[] = implode('; ', $parts);
+        }
+        return $headers;
     }
 
     /**

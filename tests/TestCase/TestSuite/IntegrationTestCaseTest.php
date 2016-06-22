@@ -353,6 +353,21 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test flash and cookie assertions
+     *
+     * @return void
+     */
+    public function testFlashSessionAndCookieAssertsHttpServer()
+    {
+        $this->useHttpServer(true);
+        $this->post('/posts/index');
+
+        $this->assertSession('An error message', 'Flash.flash.0.message');
+        $this->assertCookieNotSet('user_id');
+        $this->assertCookie(1, 'remember_me');
+    }
+
+    /**
      * Tests the failure message for assertCookieNotSet
      *
      * @expectedException PHPUnit_Framework_AssertionFailedError
