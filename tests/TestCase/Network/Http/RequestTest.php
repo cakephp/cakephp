@@ -15,6 +15,7 @@ namespace Cake\Test\TestCase\Network\Http;
 
 use Cake\Network\Http\Request;
 use Cake\TestSuite\TestCase;
+use Zend\Diactoros\Uri;
 
 /**
  * HTTP request test.
@@ -36,6 +37,25 @@ class RequestTest extends TestCase
     }
 
     /**
+     * Test that url() modifies the PSR7 stream
+     *
+     * @return void
+     */
+    public function testUrlInteroperability()
+    {
+        $request = new Request();
+        $request->url('http://example.com');
+        $this->assertSame('http://example.com', $request->url());
+        $this->assertSame('http://example.com', $request->getUri()->__toString());
+
+        $uri = 'http://example.com/test';
+        $request = new Request();
+        $request = $request->withUri(new Uri($uri));
+        $this->assertSame($uri, $request->url());
+        $this->assertSame($uri, $request->getUri()->__toString());
+    }
+
+    /**
      * test method method.
      *
      * @return void
@@ -46,6 +66,23 @@ class RequestTest extends TestCase
         $this->assertSame($request, $request->method(Request::METHOD_GET));
 
         $this->assertEquals(Request::METHOD_GET, $request->method());
+    }
+
+    /**
+     * test method interop.
+     *
+     * @return void
+     */
+    public function testMethodInteroperability()
+    {
+        $request = new Request();
+        $this->assertSame($request, $request->method(Request::METHOD_GET));
+        $this->assertEquals(Request::METHOD_GET, $request->method());
+        $this->assertEquals(Request::METHOD_GET, $request->getMethod());
+
+        $request = $request->withMethod(Request::METHOD_GET);
+        $this->assertEquals(Request::METHOD_GET, $request->method());
+        $this->assertEquals(Request::METHOD_GET, $request->getMethod());
     }
 
     /**
@@ -72,6 +109,45 @@ class RequestTest extends TestCase
         $this->assertSame($request, $request->body($data));
 
         $this->assertEquals($data, $request->body());
+    }
+
+    /**
+     * test body method with array payload
+     *
+     * @return void
+     */
+    public function testBodyArray()
+    {
+        $request = new Request();
+        $data = [
+            'a' => 'b',
+            'c' => 'd',
+            'e' => ['f', 'g']
+        ];
+        $request->body($data);
+        $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaderLine('content-type'));
+        $this->assertEquals(
+            'a=b&c=d&e%5B0%5D=f&e%5B1%5D=g',
+            $request->body(),
+            'Body should be serialized'
+        );
+    }
+
+    /**
+     * Test that body() modifies the PSR7 stream
+     *
+     * @return void
+     */
+    public function testBodyInteroperability()
+    {
+        $request = new Request();
+        $this->assertSame('', $request->body());
+
+        $data = '{"json":"data"}';
+        $request = new Request();
+        $request->body($data);
+        $this->assertSame($data, $request->body());
+        $this->assertSame($data, '' . $request->getBody());
     }
 
     /**
@@ -104,6 +180,35 @@ class RequestTest extends TestCase
     }
 
     /**
+     * Test the default headers
+     *
+     * @return void
+     */
+    public function testDefaultHeaders()
+    {
+        $request = new Request();
+        $this->assertEquals('CakePHP', $request->getHeaderLine('User-Agent'));
+        $this->assertEquals('close', $request->getHeaderLine('Connection'));
+    }
+
+    /**
+     * Test that header() and PSR7 methods play nice.
+     *
+     * @return void
+     */
+    public function testHeaderMethodInteroperability()
+    {
+        $request = new Request();
+        $request->header('Content-Type', 'application/json');
+        $this->assertEquals('application/json', $request->header('Content-Type'), 'Old getter should work');
+
+        $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'), 'getHeaderLine works');
+        $this->assertEquals('application/json', $request->getHeaderLine('content-type'), 'getHeaderLine works');
+        $this->assertEquals(['application/json'], $request->getHeader('Content-Type'), 'getHeader works');
+        $this->assertEquals(['application/json'], $request->getHeader('content-type'), 'getHeader works');
+    }
+
+    /**
      * test cookie method.
      *
      * @return void
@@ -132,5 +237,21 @@ class RequestTest extends TestCase
         $this->assertSame($request, $request, 'Should return self');
 
         $this->assertSame('1.0', $request->version());
+    }
+
+    /**
+     * test version interop.
+     *
+     * @return void
+     */
+    public function testVersionInteroperability()
+    {
+        $request = new Request();
+        $this->assertEquals('1.1', $request->version());
+        $this->assertEquals('1.1', $request->getProtocolVersion());
+
+        $request = $request->withProtocolVersion('1.0');
+        $this->assertEquals('1.0', $request->version());
+        $this->assertEquals('1.0', $request->getProtocolVersion());
     }
 }

@@ -2421,7 +2421,11 @@ class FormHelper extends Helper
             unset($options['value']);
         }
         if (!isset($options['val'])) {
-            $options['val'] = $context->val($field);
+            $valOptions = [
+                'default' => isset($options['default']) ? $options['default'] : null,
+                'schemaDefault' => isset($options['schemaDefault']) ? $options['schemaDefault'] : true,
+            ];
+            $options['val'] = $context->val($field, $valOptions);
         }
         if (!isset($options['val']) && isset($options['default'])) {
             $options['val'] = $options['default'];

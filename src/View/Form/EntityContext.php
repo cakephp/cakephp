@@ -207,16 +207,26 @@ class EntityContext implements ContextInterface
      * Traverses the entity data and finds the value for $path.
      *
      * @param string $field The dot separated path to the value.
+     * @param array $options Options:
+     *   - `default`: Default value to return if no value found in request
+     *     data or entity.
+     *   - `schemaDefault`: Boolen indicating whether default value from table
+     *     schema should be used if it's not explicitly provided.
      * @return mixed The value of the field or null on a miss.
      */
-    public function val($field)
+    public function val($field, $options = [])
     {
+        $options += [
+            'default' => null,
+            'schemaDefault' => true
+        ];
+
         $val = $this->_request->data($field);
         if ($val !== null) {
             return $val;
         }
         if (empty($this->_context['entity'])) {
-            return null;
+            return $options['default'];
         }
         $parts = explode('.', $field);
         $entity = $this->entity($parts);
@@ -226,13 +236,44 @@ class EntityContext implements ContextInterface
         }
 
         if ($entity instanceof EntityInterface) {
-            return $entity->get(array_pop($parts));
+            $part = array_pop($parts);
+            $val = $entity->get($part);
+            if ($val !== null) {
+                return $val;
+            }
+            if ($options['default'] !== null
+                || !$options['schemaDefault']
+                || !$entity->isNew()
+            ) {
+                return $options['default'];
+            }
+            return $this->_schemaDefault($part, $entity);
         }
         if (is_array($entity)) {
             $key = array_pop($parts);
             return isset($entity[$key]) ? $entity[$key] : null;
         }
         return null;
+    }
+
+    /**
+     * Get default value from table schema for given entity field.
+     *
+     * @param string $field Field name.
+     * @param \Cake\Datasource\EntityInterface $entity The entity.
+     * @return mixed
+     */
+    protected function _schemaDefault($field, $entity)
+    {
+        $table = $this->_getTable($entity);
+        if ($table === false) {
+            return null;
+        }
+        $defaults = $table->schema()->defaultValues();
+        if (!array_key_exists($field, $defaults)) {
+            return null;
+        }
+        return $defaults[$field];
     }
 
     /**

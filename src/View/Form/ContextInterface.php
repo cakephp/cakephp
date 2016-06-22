@@ -46,6 +46,14 @@ interface ContextInterface
     /**
      * Get the current value for a given field.
      *
+     * Classes implementing this method can optionally have a second argument
+     * `$options`. Valid key for `$options` array are:
+     *
+     *   - `default`: Default value to return if no value found in request
+     *     data or context record.
+     *   - `schemaDefault`: Boolen indicating whether default value from
+     *      context's schema should be used if it's not explicitly provided.
+     *
      * @param string $field A dot separated path to the field a value
      *   is needed for.
      * @return mixed

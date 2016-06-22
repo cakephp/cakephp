@@ -165,6 +165,10 @@ class MysqlSchemaTest extends TestCase
                 'DOUBLE(10,4) UNSIGNED',
                 ['type' => 'float', 'length' => 10, 'precision' => 4, 'unsigned' => true]
             ],
+            [
+                'JSON',
+                ['type' => 'json', 'length' => null]
+            ],
         ];
     }
 
@@ -213,32 +217,43 @@ class MysqlSchemaTest extends TestCase
         $this->_needsConnection();
         $connection->execute('DROP TABLE IF EXISTS schema_articles');
         $connection->execute('DROP TABLE IF EXISTS schema_authors');
+        $connection->execute('DROP TABLE IF EXISTS schema_json');
 
         $table = <<<SQL
-CREATE TABLE schema_authors (
-id INT(11) PRIMARY KEY AUTO_INCREMENT,
-name VARCHAR(50),
-bio TEXT,
-created DATETIME
-)ENGINE=InnoDB
+            CREATE TABLE schema_authors (
+                id INT(11) PRIMARY KEY AUTO_INCREMENT,
+                name VARCHAR(50),
+                bio TEXT,
+                created DATETIME
+            )ENGINE=InnoDB
 SQL;
         $connection->execute($table);
 
         $table = <<<SQL
-CREATE TABLE schema_articles (
-id BIGINT PRIMARY KEY AUTO_INCREMENT,
-title VARCHAR(20) COMMENT 'A title',
-body TEXT,
-author_id INT(11) NOT NULL,
-published BOOLEAN DEFAULT 0,
-allow_comments TINYINT(1) DEFAULT 0,
-created DATETIME,
-KEY `author_idx` (`author_id`),
-UNIQUE KEY `length_idx` (`title`(4)),
-FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT
-) ENGINE=InnoDB COLLATE=utf8_general_ci
+            CREATE TABLE schema_articles (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                title VARCHAR(20) COMMENT 'A title',
+                body TEXT,
+                author_id INT(11) NOT NULL,
+                published BOOLEAN DEFAULT 0,
+                allow_comments TINYINT(1) DEFAULT 0,
+                created DATETIME,
+                KEY `author_idx` (`author_id`),
+                UNIQUE KEY `length_idx` (`title`(4)),
+                FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT
+            ) ENGINE=InnoDB COLLATE=utf8_general_ci
 SQL;
         $connection->execute($table);
+
+        if ($connection->driver()->supportsNativeJson()) {
+            $table = <<<SQL
+                CREATE TABLE schema_json (
+                    id INT(11) PRIMARY KEY AUTO_INCREMENT,
+                    data JSON NOT NULL
+                )
+SQL;
+            $connection->execute($table);
+        }
     }
 
     /**
@@ -920,6 +935,11 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
+        $driver->connection()
+            ->expects($this->any())
+            ->method('getAttribute')
+            ->will($this->returnValue('5.6.0'));
+
         $table = (new Table('posts'))->addColumn('id', [
                 'type' => 'integer',
                 'null' => false
@@ -932,6 +952,9 @@ SQL;
             ->addColumn('body', [
                 'type' => 'text',
                 'comment' => ''
+            ])
+            ->addColumn('data', [
+                'type' => 'json'
             ])
             ->addColumn('created', 'datetime')
             ->addConstraint('primary', [
@@ -949,7 +972,57 @@ CREATE TABLE `posts` (
 `id` INTEGER NOT NULL AUTO_INCREMENT,
 `title` VARCHAR(255) NOT NULL COMMENT 'The title',
 `body` TEXT,
+`data` LONGTEXT,
 `created` DATETIME,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci
+SQL;
+        $result = $table->createSql($connection);
+        $this->assertCount(1, $result);
+        $this->assertTextEquals($expected, $result[0]);
+    }
+
+    /**
+     * Integration test for converting a Schema\Table with native JSON
+     *
+     * @return void
+     */
+    public function testCreateSqlJson()
+    {
+        $driver = $this->_getMockedDriver();
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())
+            ->method('driver')
+            ->will($this->returnValue($driver));
+
+        $driver->connection()
+            ->expects($this->any())
+            ->method('getAttribute')
+            ->will($this->returnValue('5.7.0'));
+
+        $table = (new Table('posts'))->addColumn('id', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addColumn('data', [
+                'type' => 'json'
+            ])
+            ->addConstraint('primary', [
+                'type' => 'primary',
+                'columns' => ['id']
+            ])
+            ->options([
+                'engine' => 'InnoDB',
+                'charset' => 'utf8',
+                'collate' => 'utf8_general_ci',
+            ]);
+
+        $expected = <<<SQL
+CREATE TABLE `posts` (
+`id` INTEGER NOT NULL AUTO_INCREMENT,
+`data` JSON,
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci
 SQL;
@@ -1100,6 +1173,35 @@ SQL;
     }
 
     /**
+     * Tests json column parsing on Mysql 5.7+
+     *
+     * @return void
+     */
+    public function testDescribeJson()
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_createTables($connection);
+        $this->skipIf(!$connection->driver()->supportsNativeJson(), 'Does not support native json');
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_json');
+        $this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+        $expected = [
+            'type' => 'json',
+            'null' => false,
+            'default' => null,
+            'length' => null,
+            'precision' => null,
+            'comment' => null,
+        ];
+        $this->assertEquals(
+            $expected,
+            $result->column('data'),
+            'Field definition does not match for data'
+        );
+    }
+
+    /**
      * Get a schema instance with a mocked driver/pdo instances
      *
      * @return MysqlSchema
@@ -1108,7 +1210,7 @@ SQL;
     {
         $driver = new \Cake\Database\Driver\Mysql();
         $mock = $this->getMockBuilder('FakePdo')
-            ->setMethods(['quote'])
+            ->setMethods(['quote', 'quoteIdentifier', 'getAttribute'])
             ->getMock();
         $mock->expects($this->any())
             ->method('quote')

@@ -159,6 +159,47 @@ class AuthComponentTest extends TestCase
     }
 
     /**
+     * Test identify with user record as ArrayObject instance.
+     *
+     * @return void
+     */
+    public function testIdentifyArrayAccess()
+    {
+        $AuthLoginFormAuthenticate = $this->getMockBuilder('Cake\Controller\Component\Auth\FormAuthenticate')
+            ->setMethods(['authenticate'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->Auth->authenticate = [
+            'AuthLoginForm' => [
+                'userModel' => 'AuthUsers'
+            ]
+        ];
+
+        $this->Auth->setAuthenticateObject(0, $AuthLoginFormAuthenticate);
+
+        $this->Auth->request->data = [
+            'AuthUsers' => [
+                'username' => 'mark',
+                'password' => Security::hash('cake', null, true)
+            ]
+        ];
+
+        $user = new \ArrayObject([
+            'id' => 1,
+            'username' => 'mark'
+        ]);
+
+        $AuthLoginFormAuthenticate->expects($this->once())
+            ->method('authenticate')
+            ->with($this->Auth->request)
+            ->will($this->returnValue($user));
+
+        $result = $this->Auth->identify();
+        $this->assertEquals($user, $result);
+        $this->assertSame($AuthLoginFormAuthenticate, $this->Auth->authenticationProvider());
+    }
+
+    /**
      * testRedirectVarClearing method
      *
      * @return void
@@ -262,6 +303,32 @@ class AuthComponentTest extends TestCase
 
         $this->assertTrue($this->Auth->isAuthorized(['User'], $request));
         $this->assertSame($AuthMockTwoAuthorize, $this->Auth->authorizationProvider());
+    }
+
+    /**
+     * test isAuthorized passing it an ArrayObject instance.
+     *
+     * @return void
+     */
+    public function testIsAuthorizedWithArrayObject()
+    {
+        $AuthMockOneAuthorize = $this->getMockBuilder('Cake\Controller\Component\BaseAuthorize')
+            ->setMethods(['authorize'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->Auth->setAuthorizeObject(0, $AuthMockOneAuthorize);
+        $request = $this->Auth->request;
+
+        $user = new \ArrayObject(['User']);
+
+        $AuthMockOneAuthorize->expects($this->once())
+            ->method('authorize')
+            ->with($user, $request)
+            ->will($this->returnValue(true));
+
+        $this->assertTrue($this->Auth->isAuthorized($user, $request));
+        $this->assertSame($AuthMockOneAuthorize, $this->Auth->authorizationProvider());
     }
 
     /**

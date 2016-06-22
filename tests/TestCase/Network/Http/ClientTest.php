@@ -13,10 +13,12 @@
  */
 namespace Cake\Test\TestCase\Network\Http;
 
+use Cake\Core\Configure;
 use Cake\Network\Http\Client;
 use Cake\Network\Http\Request;
 use Cake\Network\Http\Response;
 use Cake\TestSuite\TestCase;
+use Zend\Diactoros\Uri;
 
 /**
  * HTTP client test.
@@ -172,13 +174,15 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->logicalAnd(
-                $this->isInstanceOf('Cake\Network\Http\Request'),
-                $this->attributeEqualTo('_method', Request::METHOD_GET),
-                $this->attributeEqualTo('_url', 'http://cakephp.org/test.html'),
-                $this->attributeEqualTo('_headers', $headers),
-                $this->attributeEqualTo('_cookies', $cookies)
-            ))
+            ->with($this->callback(function ($request) use ($cookies, $headers) {
+                $this->assertInstanceOf('Cake\Network\Http\Request', $request);
+                $this->assertEquals(Request::METHOD_GET, $request->getMethod());
+                $this->assertEquals('http://cakephp.org/test.html', $request->getUri() . '');
+                $this->assertEquals($cookies, $request->cookies());
+                $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('content-type'));
+                $this->assertEquals($headers['Connection'], $request->getHeaderLine('connection'));
+                return true;
+            }))
             ->will($this->returnValue([$response]));
 
         $http = new Client(['adapter' => $mock]);
@@ -203,11 +207,14 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->logicalAnd(
-                $this->isInstanceOf('Cake\Network\Http\Request'),
-                $this->attributeEqualTo('_method', Request::METHOD_GET),
-                $this->attributeEqualTo('_url', 'http://cakephp.org/search?q=hi+there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3')
-            ))
+            ->with($this->callback(function ($request) {
+                $this->assertEquals(Request::METHOD_GET, $request->getMethod());
+                $this->assertEquals(
+                    'http://cakephp.org/search?q=hi+there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3',
+                    $request->getUri() . ''
+                );
+                return true;
+            }))
             ->will($this->returnValue([$response]));
 
         $http = new Client([
@@ -235,10 +242,13 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->logicalAnd(
-                $this->isInstanceOf('Cake\Network\Http\Request'),
-                $this->attributeEqualTo('_url', 'http://cakephp.org/search?q=hi+there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3')
-            ))
+            ->with($this->callback(function ($request) {
+                $this->assertEquals(
+                    'http://cakephp.org/search?q=hi+there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3',
+                    $request->getUri() . ''
+                );
+                return true;
+            }))
             ->will($this->returnValue([$response]));
 
         $http = new Client([
@@ -268,12 +278,12 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->logicalAnd(
-                $this->isInstanceOf('Cake\Network\Http\Request'),
-                $this->attributeEqualTo('_method', Request::METHOD_GET),
-                $this->attributeEqualTo('_url', 'http://cakephp.org/search'),
-                $this->attributeEqualTo('_body', 'some data')
-            ))
+            ->with($this->callback(function ($request) {
+                $this->assertEquals(Request::METHOD_GET, $request->getMethod());
+                $this->assertEquals('http://cakephp.org/search', '' . $request->getUri());
+                $this->assertEquals('some data', '' . $request->getBody());
+                return true;
+            }))
             ->will($this->returnValue([$response]));
 
         $http = new Client([
@@ -322,19 +332,18 @@ class ClientTest extends TestCase
             ->setMethods(['send'])
             ->getMock();
         $headers = [
-            'Connection' => 'close',
-            'User-Agent' => 'CakePHP',
             'Authorization' => 'Basic ' . base64_encode('mark:secret'),
             'Proxy-Authorization' => 'Basic ' . base64_encode('mark:pass'),
         ];
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->logicalAnd(
-                $this->isInstanceOf('Cake\Network\Http\Request'),
-                $this->attributeEqualTo('_method', Request::METHOD_GET),
-                $this->attributeEqualTo('_url', 'http://cakephp.org/'),
-                $this->attributeEqualTo('_headers', $headers)
-            ))
+            ->with($this->callback(function ($request) use ($headers) {
+                $this->assertEquals(Request::METHOD_GET, $request->getMethod());
+                $this->assertEquals('http://cakephp.org/', '' . $request->getUri());
+                $this->assertEquals($headers['Authorization'], $request->getHeaderLine('Authorization'));
+                $this->assertEquals($headers['Proxy-Authorization'], $request->getHeaderLine('Proxy-Authorization'));
+                return true;
+            }))
             ->will($this->returnValue([$response]));
 
         $http = new Client([
@@ -344,6 +353,44 @@ class ClientTest extends TestCase
         $result = $http->get('/', [], [
             'auth' => ['username' => 'mark', 'password' => 'secret'],
             'proxy' => ['username' => 'mark', 'password' => 'pass'],
+        ]);
+        $this->assertSame($result, $response);
+    }
+
+    /**
+     * Test authentication adapter that mutates request.
+     *
+     * @return void
+     */
+    public function testAuthenticationWithMutation()
+    {
+        Configure::write('App.namespace', 'TestApp');
+        $response = new Response();
+        $mock = $this->getMockBuilder('Cake\Network\Http\Adapter\Stream')
+            ->setMethods(['send'])
+            ->getMock();
+        $headers = [
+            'Authorization' => 'Bearer abc123',
+            'Proxy-Authorization' => 'Bearer abc123',
+        ];
+        $mock->expects($this->once())
+            ->method('send')
+            ->with($this->callback(function ($request) use ($headers) {
+                $this->assertEquals(Request::METHOD_GET, $request->getMethod());
+                $this->assertEquals('http://cakephp.org/', '' . $request->getUri());
+                $this->assertEquals($headers['Authorization'], $request->getHeaderLine('Authorization'));
+                $this->assertEquals($headers['Proxy-Authorization'], $request->getHeaderLine('Proxy-Authorization'));
+                return true;
+            }))
+            ->will($this->returnValue([$response]));
+
+        $http = new Client([
+            'host' => 'cakephp.org',
+            'adapter' => $mock
+        ]);
+        $result = $http->get('/', [], [
+            'auth' => ['type' => 'TestApp\Http\CompatAuth'],
+            'proxy' => ['type' => 'TestApp\Http\CompatAuth'],
         ]);
         $this->assertSame($result, $response);
     }
@@ -380,11 +427,12 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->logicalAnd(
-                $this->isInstanceOf('Cake\Network\Http\Request'),
-                $this->attributeEqualTo('_method', $method),
-                $this->attributeEqualTo('_url', 'http://cakephp.org/projects/add')
-            ))
+            ->with($this->callback(function ($request) use ($method) {
+                $this->assertInstanceOf('Cake\Network\Http\Request', $request);
+                $this->assertEquals($method, $request->getMethod());
+                $this->assertEquals('http://cakephp.org/projects/add', '' . $request->getUri());
+                return true;
+            }))
             ->will($this->returnValue([$response]));
 
         $http = new Client([
@@ -421,8 +469,6 @@ class ClientTest extends TestCase
         $response = new Response();
         $data = 'some data';
         $headers = [
-            'Connection' => 'close',
-            'User-Agent' => 'CakePHP',
             'Content-Type' => $mime,
             'Accept' => $mime,
         ];
@@ -432,11 +478,12 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->logicalAnd(
-                $this->attributeEqualTo('_method', Request::METHOD_POST),
-                $this->attributeEqualTo('_body', $data),
-                $this->attributeEqualTo('_headers', $headers)
-            ))
+            ->with($this->callback(function ($request) use ($headers) {
+                $this->assertEquals(Request::METHOD_POST, $request->getMethod());
+                $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('Content-Type'));
+                $this->assertEquals($headers['Accept'], $request->getHeaderLine('Accept'));
+                return true;
+            }))
             ->will($this->returnValue([$response]));
 
         $http = new Client([
@@ -455,21 +502,17 @@ class ClientTest extends TestCase
     {
         $response = new Response();
         $data = 'some=value&more=data';
-        $headers = [
-            'Connection' => 'close',
-            'User-Agent' => 'CakePHP',
-            'Content-Type' => 'application/x-www-form-urlencoded',
-        ];
 
         $mock = $this->getMockBuilder('Cake\Network\Http\Adapter\Stream')
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->any())
             ->method('send')
-            ->with($this->logicalAnd(
-                $this->attributeEqualTo('_body', $data),
-                $this->attributeEqualTo('_headers', $headers)
-            ))
+            ->with($this->callback(function ($request) use ($data) {
+                $this->assertEquals($data, '' . $request->getBody());
+                $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaderLine('content-type'));
+                return true;
+            }))
             ->will($this->returnValue([$response]));
 
         $http = new Client([
@@ -557,11 +600,12 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->logicalAnd(
-                $this->isInstanceOf('Cake\Network\Http\Request'),
-                $this->attributeEqualTo('_method', Request::METHOD_HEAD),
-                $this->attributeEqualTo('_url', 'http://cakephp.org/search?q=hi+there')
-            ))
+            ->with($this->callback(function ($request) {
+                $this->assertInstanceOf('Cake\Network\Http\Request', $request);
+                $this->assertEquals(Request::METHOD_HEAD, $request->getMethod());
+                $this->assertEquals('http://cakephp.org/search?q=hi+there', '' . $request->getUri());
+                return true;
+            }))
             ->will($this->returnValue([$response]));
 
         $http = new Client([

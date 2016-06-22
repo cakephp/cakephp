@@ -309,7 +309,7 @@ class ShellTest extends TestCase
     {
         $this->io->expects($this->once())
             ->method('err')
-            ->with('Just a test', 1);
+            ->with('<error>Just a test</error>', 1);
 
         $this->Shell->err('Just a test');
     }
@@ -1122,7 +1122,7 @@ TEXT;
         $task->io($io);
         $task->expects($this->once())
             ->method('runCommand')
-            ->with(['one'], false);
+            ->with(['one'], false, ['requested' => true]);
 
         $shell->expects($this->once())->method('getOptionParser')
             ->will($this->returnValue($parser));
@@ -1134,6 +1134,47 @@ TEXT;
 
         $shell->Slice = $task;
         $shell->runCommand(['slice', 'one']);
+    }
+
+    /**
+     * test that runCommand will invoke a task
+     *
+     * @return void
+     */
+    public function testRunCommandInvokeTask()
+    {
+        $parser = new ConsoleOptionParser('knife');
+        $parser->addSubcommand('slice');
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
+
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['hasTask', 'getOptionParser'])
+            ->setConstructorArgs([$io])
+            ->getMock();
+        $task = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['main', '_welcome'])
+            ->setConstructorArgs([$io])
+            ->getMock();
+
+        $shell->expects($this->once())
+            ->method('getOptionParser')
+            ->will($this->returnValue($parser));
+
+        $shell->expects($this->any())
+            ->method('hasTask')
+            ->will($this->returnValue(true));
+
+        $task->expects($this->never())
+            ->method('_welcome');
+
+        // One welcome message output.
+        $io->expects($this->at(2))
+            ->method('out')
+            ->with($this->stringContains('Welcome to CakePHP'));
+
+        $shell->Slice = $task;
+        $shell->runCommand(['slice', 'one']);
+        $this->assertTrue($task->params['requested'], 'Task is requested, no welcome.');
     }
 
     /**

@@ -100,16 +100,17 @@ class StreamTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->stream = $this->getMockBuilder('Cake\Network\Http\Adapter\Stream')
+        $this->stream = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
             ->setMethods(['_send'])
             ->getMock();
-        stream_wrapper_register('cakephp', __NAMESPACE__ . '\CakeStreamWrapper');
+        stream_wrapper_unregister('http');
+        stream_wrapper_register('http', __NAMESPACE__ . '\CakeStreamWrapper');
     }
 
     public function tearDown()
     {
         parent::tearDown();
-        stream_wrapper_unregister('cakephp');
+        stream_wrapper_restore('http');
     }
 
     /**
@@ -142,7 +143,7 @@ class StreamTest extends TestCase
     {
         $stream = new Stream();
         $request = new Request();
-        $request->url('cakephp://dummy/');
+        $request->url('http://dummy/');
 
         $responses = $stream->send($request, []);
         $this->assertInstanceOf('Cake\Network\Http\Response', $responses[0]);
@@ -407,7 +408,7 @@ class StreamTest extends TestCase
     public function testKeepDeadline()
     {
         $request = new Request();
-        $request->url('cakephp://dummy/?sleep');
+        $request->url('http://dummy/?sleep');
         $options = [
             'timeout' => 5,
         ];
@@ -422,13 +423,13 @@ class StreamTest extends TestCase
      * Test that an exception is raised when timed out.
      *
      * @expectedException \Cake\Core\Exception\Exception
-     * @expectedExceptionMessage Connection timed out cakephp://dummy/?sleep
+     * @expectedExceptionMessage Connection timed out http://dummy/?sleep
      * @return void
      */
     public function testMissDeadline()
     {
         $request = new Request();
-        $request->url('cakephp://dummy/?sleep');
+        $request->url('http://dummy/?sleep');
         $options = [
             'timeout' => 2,
         ];

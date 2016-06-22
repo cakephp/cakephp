@@ -5395,6 +5395,12 @@ class TableTest extends TestCase
         $this->assertEquals('New body', $article->body);
         $this->assertEquals('N', $article->published);
         $this->assertEquals(2, $article->author_id);
+
+        $query = $articles->find()->where(['author_id' => 2, 'title' => 'First Article']);
+        $article = $articles->findOrCreate($query);
+        $this->assertEquals('First Article', $article->title);
+        $this->assertEquals(2, $article->author_id);
+        $this->assertFalse($article->isNew());
     }
 
     /**

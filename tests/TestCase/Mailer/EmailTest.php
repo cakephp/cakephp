@@ -72,6 +72,16 @@ class TestEmail extends Email
     }
 
     /**
+     * Decode to protected method
+     *
+     * @return string
+     */
+    public function decode($text)
+    {
+        return $this->_decode($text);
+    }
+
+    /**
      * Render to protected method
      *
      * @return array
@@ -581,9 +591,11 @@ class EmailTest extends TestCase
         $this->CakeEmail->subject(1);
         $this->assertSame('1', $this->CakeEmail->subject());
 
-        $this->CakeEmail->subject('هذه رسالة بعنوان طويل مرسل للمستلم');
+        $input = 'هذه رسالة بعنوان طويل مرسل للمستلم';
+        $this->CakeEmail->subject($input);
         $expected = '=?UTF-8?B?2YfYsNmHINix2LPYp9mE2Kkg2KjYudmG2YjYp9mGINi32YjZitmEINmF2LE=?=' . "\r\n" . ' =?UTF-8?B?2LPZhCDZhNmE2YXYs9iq2YTZhQ==?=';
         $this->assertSame($expected, $this->CakeEmail->subject());
+        $this->assertSame($input, $this->CakeEmail->getOriginalSubject());
     }
 
     /**
@@ -2364,6 +2376,26 @@ class EmailTest extends TestCase
         $expected = "=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n" .
             " =?ISO-2022-JP?B?ZGluZxskQiQ5JGskTiQsQDUkNyQkJHMkQCQxJEkkJCRDJD8kJCRJGyhC?=\r\n" .
             " =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=";
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test CakeEmail::_decode function
+     *
+     * @return void
+     */
+    public function testDecode()
+    {
+        $this->CakeEmail->headerCharset = 'ISO-2022-JP';
+        $result = $this->CakeEmail->decode('=?ISO-2022-JP?B?GyRCRnxLXDhsGyhC?=');
+        $expected = '日本語';
+        $this->assertSame($expected, $result);
+
+        $this->CakeEmail->headerCharset = 'ISO-2022-JP';
+        $result = $this->CakeEmail->decode("=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n" .
+            " =?ISO-2022-JP?B?ZGluZxskQiQ5JGskTiQsQDUkNyQkJHMkQCQxJEkkJCRDJD8kJCRJGyhC?=\r\n" .
+            " =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=");
+        $expected = '長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？';
         $this->assertSame($expected, $result);
     }
 

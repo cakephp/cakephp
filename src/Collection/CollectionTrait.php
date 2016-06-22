@@ -30,6 +30,7 @@ use Cake\Collection\Iterator\UnfoldIterator;
 use Cake\Collection\Iterator\ZipIterator;
 use Countable;
 use LimitIterator;
+use LogicException;
 use RecursiveIteratorIterator;
 use Traversable;
 
@@ -657,5 +658,24 @@ trait CollectionTrait
     public function _unwrap()
     {
         return $this->unwrap();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return \Cake\Collection\CollectionInterface
+     */
+    public function transpose()
+    {
+        $arrayValue = $this->toList();
+        $length = count(current($arrayValue));
+        $result = [];
+        foreach ($arrayValue as $column => $row) {
+            if (count($row) != $length) {
+                throw new LogicException('Child arrays do not have even length');
+            }
+            $result[] = array_column($arrayValue, $column);
+        }
+        return new Collection($result);
     }
 }

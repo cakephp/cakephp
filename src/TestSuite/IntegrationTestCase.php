@@ -15,10 +15,11 @@ namespace Cake\TestSuite;
 
 use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
-use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
+use Cake\TestSuite\LegacyRequestDispatcher;
+use Cake\TestSuite\MiddlewareDispatcher;
 use Cake\TestSuite\Stub\Response;
 use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
@@ -43,6 +44,14 @@ abstract class IntegrationTestCase extends TestCase
 {
     use CookieCryptTrait;
     use SecureFieldTokenTrait;
+
+    /**
+     * Track whether or not tests are run against
+     * the PSR7 HTTP stack.
+     *
+     * @var bool
+     */
+    protected $_useHttpServer = false;
 
     /**
      * The data used to build the next request.
@@ -125,10 +134,21 @@ abstract class IntegrationTestCase extends TestCase
 
     /**
      *
-     *
      * @var null|string
      */
     protected $_cookieEncriptionKey = null;
+
+    /**
+     * Auto-detect if the HTTP middleware stack should be used.
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $namespace = Configure::read('App.namespace');
+        $this->_useHttpServer = class_exists($namespace . '\Application');
+    }
 
     /**
      * Clears the state used for requests.
@@ -149,6 +169,18 @@ abstract class IntegrationTestCase extends TestCase
         $this->_requestSession = null;
         $this->_securityToken = false;
         $this->_csrfToken = false;
+        $this->_useHttpServer = false;
+    }
+
+    /**
+     * Toggle whether or not you want to use the HTTP Server stack.
+     *
+     * @param bool $enable Enable/disable the usage of the HTTP Stack.
+     * @return void
+     */
+    public function useHttpServer($enable)
+    {
+        $this->_useHttpServer = (bool)$enable;
     }
 
     /**
@@ -353,17 +385,11 @@ abstract class IntegrationTestCase extends TestCase
      */
     protected function _sendRequest($url, $method, $data = [])
     {
-        $request = $this->_buildRequest($url, $method, $data);
-        $response = new Response();
-        $dispatcher = DispatcherFactory::create();
-        $dispatcher->eventManager()->on(
-            'Dispatcher.beforeDispatch',
-            ['priority' => 999],
-            [$this, 'controllerSpy']
-        );
+        $dispatcher = $this->_makeDispatcher();
         try {
-            $dispatcher->dispatch($request, $response);
-            $this->_requestSession = $request->session();
+            $request = $this->_buildRequest($url, $method, $data);
+            $response = $dispatcher->execute($request);
+            $this->_requestSession = $request['session'];
             $this->_response = $response;
         } catch (PHPUnit_Exception $e) {
             throw $e;
@@ -376,18 +402,32 @@ abstract class IntegrationTestCase extends TestCase
     }
 
     /**
+     * Get the correct dispatcher instance.
+     *
+     * @return object A dispatcher instance
+     */
+    protected function _makeDispatcher()
+    {
+        if ($this->_useHttpServer) {
+            return new MiddlewareDispatcher($this);
+        }
+        return new LegacyRequestDispatcher($this);
+    }
+
+    /**
      * Adds additional event spies to the controller/view event manager.
      *
      * @param \Cake\Event\Event $event A dispatcher event.
+     * @param \Cake\Controller\Controller|null $controller Controller instance.
      * @return void
      */
-    public function controllerSpy($event)
+    public function controllerSpy($event, $controller = null)
     {
-        if (empty($event->data['controller'])) {
-            return;
+        if (!$controller) {
+            $controller = $event->subject();
         }
-        $this->_controller = $event->data['controller'];
-        $events = $this->_controller->eventManager();
+        $this->_controller = $controller;
+        $events = $controller->eventManager();
         $events->on('View.beforeRender', function ($event, $viewFile) {
             if (!$this->_viewName) {
                 $this->_viewName = $viewFile;
@@ -424,7 +464,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string|array $url The URL
      * @param string $method The HTTP method
      * @param array|null $data The request data.
-     * @return \Cake\Network\Request The built request.
+     * @return array The request context
      */
     protected function _buildRequest($url, $method, $data)
     {
@@ -455,7 +495,7 @@ abstract class IntegrationTestCase extends TestCase
         $env['REQUEST_METHOD'] = $method;
         $props['environment'] = $env;
         $props = Hash::merge($props, $this->_request);
-        return new Request($props);
+        return $props;
     }
 
     /**
