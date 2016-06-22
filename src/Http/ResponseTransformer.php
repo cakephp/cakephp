@@ -95,8 +95,44 @@ class ResponseTransformer
         if (!isset($headers['Content-Type'])) {
             $headers['Content-Type'] = $response->type();
         }
+        if ($response->cookie()) {
+            $headers['Set-Cookie'] = static::buildCookieHeader($response->cookie());
+        }
         $stream = static::getStream($response);
         return new DiactorosResponse($stream, $status, $headers);
+    }
+
+    /**
+     * Convert an array of cookies into header lines.
+     *
+     * @param array $cookies The cookies to serialize.
+     * @return array A list of cookie header values.
+     */
+    protected static function buildCookieHeader($cookies)
+    {
+        $headers = [];
+        foreach ($cookies as $cookie) {
+            $parts = [
+                sprintf('%s=%s', urlencode($cookie['name']), urlencode($cookie['value']))
+            ];
+            if ($cookie['expire']) {
+                $cookie['expire'] = gmdate('D, d M Y H:i:s T', $cookie['expire']);
+            }
+            $attributes = [
+                'expire' => 'Expires=%s',
+                'path' => 'Path=%s',
+                'domain' => 'Domain=%s',
+                'httpOnly' => 'HttpOnly',
+                'secure' => 'Secure',
+            ];
+            foreach ($attributes as $key => $attr) {
+                if ($cookie[$key]) {
+                    $parts[] = sprintf($attr, $cookie[$key]);
+                }
+            }
+            $headers[] = implode('; ', $parts);
+        }
+        return $headers;
     }
 
     /**
