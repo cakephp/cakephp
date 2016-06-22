@@ -548,11 +548,12 @@ class Connection implements ConnectionInterface
      * ```
      * $connection->transactional(function ($connection) {
      *   $connection->newQuery()->delete('users')->execute();
-     * });
+     * }, Connection::SERIALIZABLE);
      * ```
      */
-    public function transactional(callable $callback)
+    public function transactional(callable $callback, $isolationLevel = null)
     {
+        $this->isolationLevel($isolationLevel);
         $this->begin();
 
         try {
@@ -768,5 +769,10 @@ class Connection implements ConnectionInterface
             'logQueries' => $this->_logQueries,
             'logger' => $this->_logger
         ];
+    }
+
+    private function isolationLevel($isolationLevel = null)
+    {
+        return $this->_driver->transactionIsolationLevel($isolationLevel);
     }
 }

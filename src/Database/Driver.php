@@ -14,6 +14,7 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Exception\TransactionIsolationLevelNotSupportedException;
 use InvalidArgumentException;
 use PDO;
 
@@ -361,4 +362,14 @@ abstract class Driver
             'connected' => $this->isConnected()
         ];
     }
+
+    /**
+     * Returns the session isolationLevel
+     * Sets it, if a value is given
+     *
+     * @param string $isolationLevel Transaction Isolation Level
+     * @return string
+     * @throws TransactionIsolationLevelNotSupportedException
+     */
+    abstract public function transactionIsolationLevel($isolationLevel = null);
 }

@@ -44,11 +44,12 @@ interface ConnectionInterface
      * The callback will receive the connection instance as its first argument.
      *
      * @param callable $transaction The callback to execute within a transaction.
+     * @param string|null $isolationLevel The isolation level to use for the transaction.
      * @return mixed The return value of the callback.
      * @throws \Exception Will re-throw any exception raised in $callback after
      *   rolling back the transaction.
      */
-    public function transactional(callable $transaction);
+    public function transactional(callable $transaction, $isolationLevel = null);
 
     /**
      * Run an operation with constraints disabled.
