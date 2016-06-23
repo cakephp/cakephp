@@ -330,6 +330,11 @@ class BelongsToMany extends Association
      */
     public function attachTo(Query $query, array $options = [])
     {
+        if (!empty($options['negateMatch'])) {
+            $this->_appendNotMatching($query, $options);
+            return;
+        }
+
         $junction = $this->junction();
         $belongsTo = $junction->association($this->source()->alias());
         $cond = $belongsTo->_joinCondition(['foreignKey' => $belongsTo->foreignKey()]);
@@ -363,14 +368,38 @@ class BelongsToMany extends Association
      */
     protected function _appendNotMatching($query, $options)
     {
-        $target = $this->junction();
-        if (!empty($options['negateMatch'])) {
-            $primaryKey = $query->aliasFields((array)$target->primaryKey(), $target->alias());
-            $query->andWhere(function ($exp) use ($primaryKey) {
-                array_map([$exp, 'isNull'], $primaryKey);
-                return $exp;
-            });
+        if (empty($options['negateMatch'])) {
+            return;
         }
+
+        $options += ['conditions' => []];
+        $junction = $this->junction();
+        $belongsTo = $junction->association($this->source()->alias());
+        $conds = $belongsTo->_joinCondition(['foreignKey' => $belongsTo->foreignKey()]);
+
+        $subquery = $this->find()
+            ->select(array_values($conds))
+            ->where($options['conditions']);
+
+        $subquery = $options['queryBuilder']($subquery);
+
+        $assoc = $this->junction()->association($this->target()->alias());
+        $conditions = $assoc->_joinCondition([
+            'foreignKey' => $this->targetForeignKey()
+        ]);
+        $subquery = $this->_appendJunctionJoin($subquery, $conditions);
+
+        $query->andWhere(function ($exp) use ($subquery, $conds) {
+            if (count($conds) === 1) {
+                return $exp->notIn(key($conds), $subquery);
+            }
+            return $this->_createTupleCondition(
+                $subquery,
+                array_keys($conds),
+                $subquery,
+                'NOT IN'
+            );
+        });
     }
 
     /**

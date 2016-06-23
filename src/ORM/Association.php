@@ -575,6 +575,7 @@ abstract class Association
         $dummy = $this
             ->find($finder, $opts)
             ->eagerLoaded(true);
+
         if (!empty($options['queryBuilder'])) {
             $dummy = $options['queryBuilder']($dummy);
             if (!($dummy instanceof Query)) {
