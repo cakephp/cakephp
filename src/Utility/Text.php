@@ -649,6 +649,20 @@ class Text
     }
 
     /**
+     * Truncate text with specified width.
+     *
+     * @param string $text String to truncate.
+     * @param int $length Length of returned string, including ellipsis.
+     * @param array $options An array of HTML attributes and options.
+     * @return string Trimmed string.
+     * @see \Cake\Utility\Text::truncate()
+     */
+    public static function truncateWidth($text, $length = 100, array $options = [])
+    {
+        return static::truncate($text, $length, ['trimWidth' => true] + $options);
+    }
+
+    /**
      * Get string length.
      *
      * ### Options:

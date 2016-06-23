@@ -570,6 +570,7 @@ TEXT;
         $this->assertSame('НОПРСТУ...', $this->Text->truncate($text9, 10));
         $this->assertSame('http://example.com/somethin...', $this->Text->truncate($text10, 30));
         $this->assertSame('1 <b>2...</b>', $this->Text->truncate('1 <b>2 345</b>', 6, ['exact' => false, 'html' => true, 'ellipsis' => '...']));
+        $this->assertSame('&amp;', $this->Text->truncate('&amp;', 1, ['html' => true]));
 
         $text = '<p><span style="font-size: medium;"><a>Iamatestwithnospacesandhtml</a></span></p>';
         $result = $this->Text->truncate($text, 10, [
@@ -1781,6 +1782,17 @@ HTML;
     {
         $result = Text::slug($string, $options);
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Text truncateWidth method
+     *
+     * @return void
+     */
+    public function testTruncateWidth()
+    {
+        $this->assertSame('<p>あ...', Text::truncateWidth('<p>あいうえお</p>', 8));
+        $this->assertSame('<p>あい...</p>', Text::truncateWidth('<p>あいうえお</p>', 8, ['html' => true, 'ellipsis' => '...']));
     }
 
     /**
