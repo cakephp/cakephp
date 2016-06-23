@@ -746,6 +746,20 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test sending file with psr7 stack
+     *
+     * @return void
+     */
+    public function testSendFileHttpServer()
+    {
+        DispatcherFactory::clear();
+        $this->useHttpServer(true);
+
+        $this->get('/posts/file');
+        $this->assertFileResponse(TEST_APP . 'TestApp' . DS . 'Controller' . DS . 'PostsController.php');
+    }
+
+    /**
      * Test that assertFile requires a response
      *
      * @expectedException PHPUnit_Framework_AssertionFailedError
