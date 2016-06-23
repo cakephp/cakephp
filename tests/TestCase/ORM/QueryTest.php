@@ -2993,22 +2993,21 @@ class QueryTest extends TestCase
 
         $results = $table
             ->find()
-            ->select(['total_articles' => 'count(articles.id)'])
+            ->select([
+                'authors.id',
+                'total_articles' => 'count(tags.id)'])
             ->leftJoinWith('articles.tags', function ($q) {
                 return $q->where(['tags.name' => 'tag3']);
             })
-            ->autoFields(true)
-            ->group(['authors.id', 'authors.name']);
+            ->group(['authors.id']);
 
         $expected = [
-            1 => 2,
+            1 => 0,
             2 => 0,
             3 => 1,
             4 => 0
         ];
         $this->assertEquals($expected, $results->combine('id', 'total_articles')->toArray());
-        $fields = ['total_articles', 'id', 'name'];
-        $this->assertEquals($fields, array_keys($results->first()->toArray()));
     }
 
     /**
