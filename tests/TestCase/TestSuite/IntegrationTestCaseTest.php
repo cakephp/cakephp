@@ -470,6 +470,20 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test that exceptions being thrown are handled correctly by the psr7 stack.
+     *
+     * @return void
+     */
+    public function testWithExpectedExceptionHttpServer()
+    {
+        DispatcherFactory::clear();
+        $this->useHttpServer(true);
+
+        $this->get('/tests_apps/throw_exception');
+        $this->assertResponseCode(500);
+    }
+
+    /**
      * Test that exceptions being thrown are handled correctly.
      *
      * @expectedException PHPUnit_Framework_AssertionFailedError
@@ -491,6 +505,21 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->post('/tests_apps/redirect_to');
         $this->assertResponseSuccess();
         $this->assertResponseCode(302);
+    }
+
+    /**
+     * Test redirecting and psr7 stack
+     *
+     * @return void
+     */
+    public function testRedirectHttpServer()
+    {
+        DispatcherFactory::clear();
+        $this->useHttpServer(true);
+
+        $this->post('/tests_apps/redirect_to');
+        $this->assertResponseCode(302);
+        $this->assertHeader('X-Middleware', 'true');
     }
 
     /**
