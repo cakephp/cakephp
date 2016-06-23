@@ -2302,6 +2302,7 @@ class DboSource extends DataSource {
 
 		$this->_transactionNesting = 0;
 		if ($this->fullDebug) {
+			$this->took = $this->numRows = $this->affected = false;
 			$this->logQuery('BEGIN');
 		}
 		return $this->_transactionStarted = $this->_connection->beginTransaction();
@@ -2315,6 +2316,7 @@ class DboSource extends DataSource {
 	protected function _beginNested() {
 		$query = 'SAVEPOINT LEVEL' . ++$this->_transactionNesting;
 		if ($this->fullDebug) {
+			$this->took = $this->numRows = $this->affected = false;
 			$this->logQuery($query);
 		}
 		$this->_connection->exec($query);
@@ -2335,6 +2337,7 @@ class DboSource extends DataSource {
 
 		if ($this->_transactionNesting === 0) {
 			if ($this->fullDebug) {
+				$this->took = $this->numRows = $this->affected = false;
 				$this->logQuery('COMMIT');
 			}
 			$this->_transactionStarted = false;
@@ -2357,6 +2360,7 @@ class DboSource extends DataSource {
 	protected function _commitNested() {
 		$query = 'RELEASE SAVEPOINT LEVEL' . $this->_transactionNesting--;
 		if ($this->fullDebug) {
+			$this->took = $this->numRows = $this->affected = false;
 			$this->logQuery($query);
 		}
 		$this->_connection->exec($query);
@@ -2377,6 +2381,7 @@ class DboSource extends DataSource {
 
 		if ($this->_transactionNesting === 0) {
 			if ($this->fullDebug) {
+				$this->took = $this->numRows = $this->affected = false;
 				$this->logQuery('ROLLBACK');
 			}
 			$this->_transactionStarted = false;
@@ -2399,6 +2404,7 @@ class DboSource extends DataSource {
 	protected function _rollbackNested() {
 		$query = 'ROLLBACK TO SAVEPOINT LEVEL' . $this->_transactionNesting--;
 		if ($this->fullDebug) {
+			$this->took = $this->numRows = $this->affected = false;
 			$this->logQuery($query);
 		}
 		$this->_connection->exec($query);
@@ -3190,10 +3196,13 @@ class DboSource extends DataSource {
 				$statement->bindValue($i, $val, $columnMap[$col]);
 				$i += 1;
 			}
+			$t = microtime(true);
 			$statement->execute();
 			$statement->closeCursor();
 
 			if ($this->fullDebug) {
+				$this->took = round((microtime(true) - $t) * 1000, 0);
+				$this->numRows = $this->affected = $statement->rowCount();
 				$this->logQuery($sql, $value);
 			}
 		}
