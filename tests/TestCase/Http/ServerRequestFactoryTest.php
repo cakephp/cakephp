@@ -46,6 +46,25 @@ class ServerRequestFactoryTest extends TestCase
     }
 
     /**
+     * Test fromGlobals includes the session
+     *
+     * @return void
+     */
+    public function testFromGlobalsUrlSession()
+    {
+        Configure::write('App.base', '/basedir');
+        $server = [
+            'DOCUMENT_ROOT' => '/cake/repo/branches/1.2.x.x/webroot',
+            'PHP_SELF' => '/index.php',
+            'REQUEST_URI' => '/posts/add',
+        ];
+        $res = ServerRequestFactory::fromGlobals($server);
+        $session = $res->getAttribute('session');
+        $this->assertInstanceOf('Cake\Network\Session', $session);
+        $this->assertEquals('/basedir/', ini_get('session.cookie_path'), 'Needs trailing / for cookie to work');
+    }
+
+    /**
      * Test fromGlobals with App.base defined.
      *
      * @return void

@@ -259,7 +259,7 @@ class RequestTransformerTest extends TestCase
         $psr = ServerRequestFactory::fromGlobals($server);
         $cake = RequestTransformer::toCake($psr);
 
-        $this->assertEquals('/thisapp', ini_get('session.cookie_path'));
+        $this->assertEquals('/thisapp/', ini_get('session.cookie_path'));
     }
 
     /**
