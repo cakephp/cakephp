@@ -18,6 +18,7 @@ use Cake\Http\ResponseTransformer;
 use Cake\Network\Response as CakeResponse;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Response as PsrResponse;
+use Zend\Diactoros\Stream;
 
 /**
  * Test case for the response transformer.
@@ -116,6 +117,27 @@ class ResponseTransformerTest extends TestCase
         $psr->getBody()->write('A message for you');
         $result = ResponseTransformer::toCake($psr);
         $this->assertSame('A message for you', $result->body());
+    }
+
+    /**
+     * Test conversion with a file body.
+     *
+     * @return void
+     */
+    public function testToCakeFileStream()
+    {
+        $stream = new Stream('file://' . __FILE__, 'rb');
+        $psr = new PsrResponse($stream, 200, ['Content-Disposition' => 'attachment; filename="test.php"']);
+        $result = ResponseTransformer::toCake($psr);
+
+        $this->assertNotEmpty($result->getFile(), 'Should convert file responses.');
+
+        $headers = $result->header();
+        $this->assertArrayHasKey('Content-Length', $headers);
+        $this->assertArrayHasKey('Content-Disposition', $headers);
+        $this->assertArrayHasKey('Content-Transfer-Encoding', $headers);
+        $this->assertArrayHasKey('Accept-Ranges', $headers);
+        $this->assertEquals('attachment; filename="test.php"', $headers['Content-Disposition']);
     }
 
     /**

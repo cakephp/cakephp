@@ -38,12 +38,17 @@ class ResponseTransformer
      */
     public static function toCake(PsrResponse $response)
     {
+        $body = static::getBody($response);
         $data = [
             'status' => $response->getStatusCode(),
-            'body' => static::getBody($response),
+            'body' => $body['body'],
         ];
         $cake = new CakeResponse($data);
-        foreach (static::parseCookies($response->getHeader('Set-Cookie')) as $cookie) {
+        if ($body['file']) {
+            $cake->file($body['file']);
+        }
+        $cookies = static::parseCookies($response->getHeader('Set-Cookie'));
+        foreach ($cookies as $cookie) {
             $cake->cookie($cookie);
         }
         $cake->header(static::collapseHeaders($response));
@@ -54,16 +59,19 @@ class ResponseTransformer
      * Get the response body from a PSR7 Response.
      *
      * @param PsrResponse $response The response to convert.
-     * @return string The response body.
+     * @return array A hash of 'body' and 'file'
      */
     protected static function getBody(PsrResponse $response)
     {
         $stream = $response->getBody();
+        if ($stream->getMetadata('wrapper_type') === 'plainfile') {
+            return ['body' => '', 'file' => $stream->getMetadata('uri')];
+        }
         if ($stream->getSize() === 0) {
-            return '';
+            return ['body' => '', 'file' => false];
         }
         $stream->rewind();
-        return $stream->getContents();
+        return ['body' => $stream->getContents(), 'file' => false];
     }
 
     /**
@@ -195,7 +203,7 @@ class ResponseTransformer
     {
         $stream = 'php://memory';
         $body = $response->body();
-        if (is_string($body)) {
+        if (is_string($body) && strlen($body)) {
             $stream = new Stream('php://memory', 'wb');
             $stream->write($body);
             return $stream;
