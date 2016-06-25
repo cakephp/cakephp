@@ -32,13 +32,39 @@ use Zend\Diactoros\Stream;
 class MiddlewareDispatcher
 {
     /**
+     * The test case being run.
+     *
+     * @var \Cake\TestSuite\IntegrationTestCase
+     */
+    protected $_test;
+
+    /**
+     * The application class name
+     *
+     * @var string
+     */
+    protected $_class;
+
+    /**
+     * Constructor arguments for your application class.
+     *
+     * @var array
+     */
+    protected $_constructorArgs;
+
+    /**
      * Constructor
      *
      * @param \Cake\TestSuite\IntegrationTestCase $test The test case to run.
+     * @param string $class The application class name. Defaults to App\Application.
+     * @param array|null $constructorArgs The constructor arguments for your application class.
+     *   Defaults to `['./config']`
      */
-    public function __construct($test)
+    public function __construct($test, $class = null, $constructorArgs = null)
     {
         $this->_test = $test;
+        $this->_class = $class ?: Configure::read('App.namespace') . '\Application';
+        $this->_constructorArgs = $constructorArgs ?: ['./config'];
     }
 
     /**
@@ -50,13 +76,12 @@ class MiddlewareDispatcher
     public function execute($request)
     {
         try {
-            $namespace = Configure::read('App.namespace');
-            $reflect = new ReflectionClass($namespace . '\Application');
-            $app = $reflect->newInstance('./config');
+            $reflect = new ReflectionClass($this->_class);
+            $app = $reflect->newInstanceArgs($this->_constructorArgs);
         } catch (ReflectionException $e) {
             throw new LogicException(sprintf(
                 'Cannot load "%s" for use in integration testing.',
-                $class
+                $this->_class
             ));
         }
 

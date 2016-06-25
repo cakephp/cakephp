@@ -27,6 +27,7 @@ use Cake\Utility\Security;
 use Cake\Utility\Text;
 use Cake\View\Helper\SecureFieldTokenTrait;
 use Exception;
+use LogicException;
 use PHPUnit_Exception;
 use PHPUnit_Framework_Constraint_IsEqual;
 
@@ -52,6 +53,20 @@ abstract class IntegrationTestCase extends TestCase
      * @var bool
      */
     protected $_useHttpServer = false;
+
+    /**
+     * The customized application class name.
+     *
+     * @var string|null
+     */
+    protected $_appClass;
+
+    /**
+     * The customized application constructor arguments.
+     *
+     * @var array|null
+     */
+    protected $_appArgs;
 
     /**
      * The data used to build the next request.
@@ -167,6 +182,8 @@ abstract class IntegrationTestCase extends TestCase
         $this->_viewName = null;
         $this->_layoutName = null;
         $this->_requestSession = null;
+        $this->_appClass = null;
+        $this->_appArgs = null;
         $this->_securityToken = false;
         $this->_csrfToken = false;
         $this->_useHttpServer = false;
@@ -181,6 +198,22 @@ abstract class IntegrationTestCase extends TestCase
     public function useHttpServer($enable)
     {
         $this->_useHttpServer = (bool)$enable;
+    }
+
+    /**
+     * Configure the application class to use in integration tests.
+     *
+     * Combined with `useHttpServer()` to customize the class name and constructor arguments
+     * of your application class.
+     *
+     * @param string $class The application class name.
+     * @param array|null $constructorArgs The constructor arguments for your application class.
+     *   @return void
+     */
+    public function configApplication($class, $constructorArgs)
+    {
+        $this->_appClass = $class;
+        $this->_appArgs = $constructorArgs;
     }
 
     /**
@@ -395,6 +428,8 @@ abstract class IntegrationTestCase extends TestCase
             throw $e;
         } catch (DatabaseException $e) {
             throw $e;
+        } catch (LogicException $e) {
+            throw $e;
         } catch (Exception $e) {
             $this->_exception = $e;
             $this->_handleError($e);
@@ -409,7 +444,7 @@ abstract class IntegrationTestCase extends TestCase
     protected function _makeDispatcher()
     {
         if ($this->_useHttpServer) {
-            return new MiddlewareDispatcher($this);
+            return new MiddlewareDispatcher($this, $this->_appClass, $this->_appArgs);
         }
         return new LegacyRequestDispatcher($this);
     }
