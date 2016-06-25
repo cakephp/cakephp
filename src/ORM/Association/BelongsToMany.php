@@ -382,7 +382,7 @@ class BelongsToMany extends Association
 
         $subquery = $options['queryBuilder']($subquery);
 
-        $assoc = $this->junction()->association($this->target()->alias());
+        $assoc = $junction->association($this->target()->alias());
         $conditions = $assoc->_joinCondition([
             'foreignKey' => $this->targetForeignKey()
         ]);
