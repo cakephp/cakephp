@@ -12,7 +12,7 @@
  * @since         3.1.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Auth;
+namespace Cake\Test\TestCase\Auth\Storage;
 
 use Cake\Auth\Storage\SessionStorage;
 use Cake\Network\Request;
