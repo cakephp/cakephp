@@ -1785,14 +1785,14 @@ HTML;
     }
 
     /**
-     * Text truncateWidth method
+     * Text truncateByWidth method
      *
      * @return void
      */
-    public function testTruncateWidth()
+    public function testTruncateByWidth()
     {
-        $this->assertSame('<p>あ...', Text::truncateWidth('<p>あいうえお</p>', 8));
-        $this->assertSame('<p>あい...</p>', Text::truncateWidth('<p>あいうえお</p>', 8, ['html' => true, 'ellipsis' => '...']));
+        $this->assertSame('<p>あ...', Text::truncateByWidth('<p>あいうえお</p>', 8));
+        $this->assertSame('<p>あい...</p>', Text::truncateByWidth('<p>あいうえお</p>', 8, ['html' => true, 'ellipsis' => '...']));
     }
 
     /**
