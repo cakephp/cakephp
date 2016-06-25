@@ -169,6 +169,29 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Tests the junction passes the source connection name on.
+     *
+     * @return void
+     */
+    public function testJunctionConnection()
+    {
+        $mock = $this->getMockBuilder('Cake\Database\Connection')
+                ->setMethods(['driver'])
+                ->setConstructorArgs(['name' => 'other_source'])
+                ->getMock();
+        ConnectionManager::config('other_source', $mock);
+        $this->article->connection(ConnectionManager::get('other_source'));
+
+        $assoc = new BelongsToMany('Test', [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag
+        ]);
+        $junction = $assoc->junction();
+        $this->assertSame($mock, $junction->connection());
+        ConnectionManager::drop('other_source');
+    }
+
+    /**
      * Tests the junction method custom keys
      *
      * @return void
