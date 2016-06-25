@@ -208,7 +208,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @param string $class The application class name.
      * @param array|null $constructorArgs The constructor arguments for your application class.
-     *   @return void
+     * @return void
      */
     public function configApplication($class, $constructorArgs)
     {
