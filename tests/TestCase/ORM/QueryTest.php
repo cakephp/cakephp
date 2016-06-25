@@ -3029,7 +3029,6 @@ class QueryTest extends TestCase
             })
             ->autoFields(true)
             ->where(['ArticlesTags.tag_id' => 3])
-            ->distinct(['authors.id'])
             ->all();
 
         $expected = ['id' => 2, 'title' => 'Second Article'];
@@ -3165,8 +3164,9 @@ class QueryTest extends TestCase
             ->hydrate(false)
             ->notMatching('tags', function ($q) {
                 return $q->where(['tags.name' => 'tag2']);
-            })
-            ->toArray();
+            });
+
+        $results = $results->toArray();
 
         $expected = [
             [
@@ -3200,6 +3200,7 @@ class QueryTest extends TestCase
 
         $results = $table->find()
             ->hydrate(false)
+            ->select('authors.id')
             ->notMatching('articles.tags', function ($q) {
                 return $q->where(['tags.name' => 'tag3']);
             })
