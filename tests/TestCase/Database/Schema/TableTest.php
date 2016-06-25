@@ -217,6 +217,7 @@ class TableTest extends TestCase
             'null' => null,
             'fixed' => null,
             'comment' => null,
+            'collate' => null,
         ];
         $this->assertEquals($expected, $result);
 
