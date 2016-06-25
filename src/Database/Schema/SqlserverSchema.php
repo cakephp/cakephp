@@ -163,7 +163,7 @@ class SqlserverSchema extends BaseSchema
         $field += [
             'null' => $row['null'] === '1' ? true : false,
             'default' => $this->_defaultValue($row['default']),
-            'collate' => !empty($row['collation_name']) ? $row['collation_name'] : null,
+            'collate' => $row['collation_name'],
         ];
         $table->addColumn($row['name'], $field);
     }
@@ -376,7 +376,7 @@ class SqlserverSchema extends BaseSchema
         }
 
         $hasCollate = ['text', 'string'];
-        if (in_array($data['type'], $hasCollate, true) && isset($data['collate'])) {
+        if (in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {
             $out .= ' COLLATE ' . $data['collate'];
         }
 

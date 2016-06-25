@@ -362,7 +362,7 @@ class MysqlSchema extends BaseSchema
         }
 
         $hasCollate = ['text', 'string'];
-        if (in_array($data['type'], $hasCollate, true) && isset($data['collate'])) {
+        if (in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {
             $out .= ' COLLATE ' . $data['collate'];
         }
 

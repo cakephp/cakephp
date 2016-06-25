@@ -217,13 +217,13 @@ SQL;
             'default' => 'Default value',
             'comment' => 'Comment section',
             'char_length' => null,
-            'collation_name' => 'Collate information',
+            'collation_name' => 'ja_JP.utf8',
         ];
         $expected += [
             'null' => true,
             'default' => 'Default value',
             'comment' => 'Comment section',
-            'collate' => 'Collate information',
+            'collate' => 'ja_JP.utf8',
         ];
 
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')->getMock();

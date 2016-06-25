@@ -238,12 +238,12 @@ SQL;
             'char_length' => $length,
             'precision' => $precision,
             'scale' => $scale,
-            'collation_name' => 'Collate information',
+            'collation_name' => 'Japanese_Unicode_CI_AI',
         ];
         $expected += [
             'null' => true,
             'default' => 'Default value',
-            'collate' => 'Collate information',
+            'collate' => 'Japanese_Unicode_CI_AI',
         ];
 
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')->getMock();
@@ -519,6 +519,11 @@ SQL;
                 ['type' => 'string'],
                 '[title] NVARCHAR(255)'
             ],
+            [
+                'title',
+                ['type' => 'string', 'length' => 25, 'null' => false, 'collate' => 'Japanese_Unicode_CI_AI'],
+                '[title] NVARCHAR(25) COLLATE Japanese_Unicode_CI_AI NOT NULL'
+            ],
             // Text
             [
                 'body',
@@ -539,6 +544,11 @@ SQL;
                 'body',
                 ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
                 '[body] NVARCHAR(MAX) NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'null' => false, 'collate' => 'Japanese_Unicode_CI_AI'],
+                '[body] NVARCHAR(MAX) COLLATE Japanese_Unicode_CI_AI NOT NULL'
             ],
             // Integers
             [

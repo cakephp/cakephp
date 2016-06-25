@@ -181,13 +181,13 @@ class MysqlSchemaTest extends TestCase
             'Type' => $type,
             'Null' => 'YES',
             'Default' => 'Default value',
-            'Collation' => 'Collate information',
+            'Collation' => 'utf8_general_ci',
             'Comment' => 'Comment section',
         ];
         $expected += [
             'null' => true,
             'default' => 'Default value',
-            'collate' => 'Collate information',
+            'collate' => 'utf8_general_ci',
             'comment' => 'Comment section',
         ];
 

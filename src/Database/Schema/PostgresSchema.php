@@ -154,7 +154,7 @@ class PostgresSchema extends BaseSchema
         $field += [
             'default' => $this->_defaultValue($row['default']),
             'null' => $row['null'] === 'YES' ? true : false,
-            'collate' => !empty($row['collation_name']) ? $row['collation_name'] : null,
+            'collate' => $row['collation_name'],
             'comment' => $row['comment']
         ];
         $field['length'] = $row['char_length'] ?: $field['length'];
@@ -373,7 +373,7 @@ class PostgresSchema extends BaseSchema
         }
 
         $hasCollate = ['text', 'string'];
-        if (in_array($data['type'], $hasCollate, true) && isset($data['collate'])) {
+        if (in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {
             $out .= ' COLLATE "' . $data['collate'] . '"';
         }
 
