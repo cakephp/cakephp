@@ -15,6 +15,7 @@
 namespace Cake\Http;
 
 use Cake\Core\Configure;
+use Cake\Network\Session;
 use Cake\Utility\Hash;
 use Zend\Diactoros\ServerRequestFactory as BaseFactory;
 
@@ -39,8 +40,16 @@ abstract class ServerRequestFactory extends BaseFactory
     ) {
         $request = parent::fromGlobals($server, $query, $body, $cookies, $files);
         list($base, $webroot) = static::getBase($request);
+
+        $sessionConfig = (array)Configure::read('Session') + [
+            'defaults' => 'php',
+            'cookiePath' => $webroot
+        ];
+        $session = Session::create($sessionConfig);
         $request = $request->withAttribute('base', $base)
-            ->withAttribute('webroot', $webroot);
+            ->withAttribute('webroot', $webroot)
+            ->withAttribute('session', $session);
+
         if ($base) {
             $request = static::updatePath($base, $request);
         }
