@@ -378,7 +378,8 @@ class BelongsToMany extends Association
 
         $subquery = $this->find()
             ->select(array_values($conds))
-            ->where($options['conditions']);
+            ->where($options['conditions'])
+            ->andWhere($this->junctionConditions());
 
         $subquery = $options['queryBuilder']($subquery);
 

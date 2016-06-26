@@ -2995,7 +2995,8 @@ class QueryTest extends TestCase
             ->find()
             ->select([
                 'authors.id',
-                'total_articles' => 'count(tags.id)'])
+                'tagged_articles' => 'count(tags.id)'
+            ])
             ->leftJoinWith('articles.tags', function ($q) {
                 return $q->where(['tags.name' => 'tag3']);
             })
@@ -3007,7 +3008,7 @@ class QueryTest extends TestCase
             3 => 1,
             4 => 0
         ];
-        $this->assertEquals($expected, $results->combine('id', 'total_articles')->toArray());
+        $this->assertEquals($expected, $results->combine('id', 'tagged_articles')->toArray());
     }
 
     /**
