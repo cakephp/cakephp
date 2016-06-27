@@ -78,7 +78,7 @@ class TableHelper extends Helper
      */
     protected function _render($row, $widths, $options = [])
     {
-        if (!$row || !is_array($row)) {
+        if (!is_array($row) || count($row) === 0) {
             return;
         }
 
@@ -102,7 +102,7 @@ class TableHelper extends Helper
      */
     public function output($rows)
     {
-        if (!$rows || !is_array($rows)) {
+        if (!is_array($rows) || count($rows) === 0) {
             return;
         }
 
