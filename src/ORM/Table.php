@@ -1222,7 +1222,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function findOrCreate($search, callable $callback = null)
     {
-        $this->connection()->transactional(function () use ($search, $callback) {
+        return $this->connection()->transactional(function () use ($search, $callback) {
             $query = $this->find()->where($search);
             $row = $query->first();
             if ($row) {
