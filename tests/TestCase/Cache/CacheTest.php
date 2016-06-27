@@ -354,6 +354,24 @@ class CacheTest extends TestCase
     }
 
     /**
+     * testGroupConfigsWithCacheInstance method
+     */
+    public function testGroupConfigsWithCacheInstance()
+    {
+        Cache::drop('test');
+        $cache = new FileEngine();
+        $cache->init([
+            'duration' => 300,
+            'engine' => 'File',
+            'groups' => ['users', 'comments'],
+        ]);
+        Cache::config('cached', $cache);
+
+        $result = Cache::groupConfigs('users');
+        $this->assertEquals(['users' => ['cached']], $result);
+    }
+
+    /**
      * testGroupConfigsThrowsException method
      * @expectedException \InvalidArgumentException
      */

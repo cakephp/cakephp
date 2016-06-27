@@ -153,6 +153,10 @@ class Cache
         $config = static::$_config[$name];
         $registry->load($name, $config);
 
+        if ($config['className'] instanceof CacheEngine) {
+            $config = $config['className']->config();
+        }
+
         if (!empty($config['groups'])) {
             foreach ($config['groups'] as $group) {
                 static::$_groups[$group][] = $name;
