@@ -14,16 +14,19 @@
  */
 namespace Cake\Datasource;
 
+use Cake\Database\Schema\Table;
+
 /**
  * Defines the interface for getting the schema.
  */
 interface TableSchemaInterface
 {
+
     /**
      * Get and set the schema for this fixture.
      *
-     * @param array|\Cake\Database\Schema\Table|null $schema The table to set.
-     * @return array|\Cake\Database\Schema\Table|null
+     * @param \Cake\Database\Schema\Table|null $schema The table to set.
+     * @return \Cake\Database\Schema\Table|null
      */
-    public function schema($schema = null);
+    public function schema(Table $schema = null);
 }
