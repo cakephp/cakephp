@@ -1896,10 +1896,23 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function __debugInfo()
     {
+        try {
+            $restore = set_error_handler(function ($errno, $errstr) {
+                throw new RuntimeException($errstr, $errno);
+            }, E_ALL);
+            $sql = $this->sql();
+            $params = $this->valueBinder()->bindings();
+        } catch (RuntimeException $e) {
+            $sql = 'SQL could not be generated for this query as it is incomplete.';
+            $params = [];
+        } finally {
+            restore_error_handler();
+        }
+
         return [
             '(help)' => 'This is a Query object, to get the results execute or iterate it.',
-            'sql' => $this->sql(),
-            'params' => $this->valueBinder()->bindings(),
+            'sql' => $sql,
+            'params' => $params,
             'defaultTypes' => $this->defaultTypes(),
             'decorators' => count($this->_resultDecorators),
             'executed' => $this->_iterator ? true : false

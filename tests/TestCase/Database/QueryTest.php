@@ -3478,6 +3478,20 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests __debugInfo on incomplete query
+     *
+     * @return void
+     */
+    public function testDebugInfoIncompleteQuery()
+    {
+        $query = (new Query($this->connection))
+            ->insert(['title']);
+        $result = $query->__debugInfo();
+        $this->assertContains('incomplete', $result['sql']);
+        $this->assertSame([], $result['params']);
+    }
+
+    /**
      * Tests that it is possible to pass ExpressionInterface to isNull and isNotNull
      *
      * @return void
