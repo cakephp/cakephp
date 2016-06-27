@@ -1268,22 +1268,22 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $query = $this->find();
         if (is_callable($search)) {
-            call_user_func($search, $query);
+            $search($query);
         } elseif (is_array($search)) {
             $query->where($search);
         } else {
             throw new InvalidArgumentException('Search criteria must be an array or callable');
         }
         $row = $query->first();
-        if ($row) {
+        if ($row !== null) {
             return $row;
         }
         $entity = $this->newEntity();
         if ($options['defaults'] && is_array($search)) {
             $entity->set($search, ['guard' => false]);
         }
-        if ($callback) {
-            $callback($entity);
+        if ($callback !== null) {
+            $entity = $callback($entity) ?: $entity;
         }
         unset($options['defaults']);
         return $this->save($entity, $options) ?: $entity;
