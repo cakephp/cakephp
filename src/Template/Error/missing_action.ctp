@@ -26,18 +26,33 @@ if (!empty($prefix)) {
     $prefixNs = '\\' . $prefix;
     $prefix .= DIRECTORY_SEPARATOR;
 }
+
+// Controller MissingAction support
+if (isset($controller)) {
+    $baseClass = $namespace . '\Controller\AppController';
+    $extends = 'AppController';
+    $type = 'Controller';
+    $class = $controller;
+}
+// Mailer MissingActionException support
+if (isset($mailer)) {
+    $baseClass = 'Cake\Mailer\Mailer';
+    $type = $extends = 'Mailer';
+    $class = $mailer;
+}
+
 if (empty($plugin)) {
-    $path = APP_DIR . DIRECTORY_SEPARATOR . 'Controller' . DIRECTORY_SEPARATOR . $prefix . h($controller) . '.php' ;
+    $path = APP_DIR . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $prefix . h($class) . '.php' ;
 } else {
-    $path = Plugin::classPath($plugin) . 'Controller' . DIRECTORY_SEPARATOR . $prefix . h($controller) . '.php';
+    $path = Plugin::classPath($plugin) . $type . DIRECTORY_SEPARATOR . $prefix . h($class) . '.php';
 }
 
 $this->layout = 'dev_error';
 
-$this->assign('title', sprintf('Missing Method in %s', h($controller)));
+$this->assign('title', sprintf('Missing Method in %s', h($class)));
 $this->assign(
     'subheading',
-    sprintf('The action <em>%s</em> is not defined in <em>%s</em>', h($action), h($controller))
+    sprintf('The action <em>%s</em> is not defined in <em>%s</em>', h($action), h($class))
 );
 $this->assign('templateName', 'missing_action.ctp');
 
@@ -45,17 +60,17 @@ $this->start('file');
 ?>
 <p class="error">
     <strong>Error: </strong>
-    <?= sprintf('Create <em>%s::%s()</em> in file: %s.', h($controller),  h($action), $path); ?>
+    <?= sprintf('Create <em>%s::%s()</em> in file: %s.', h($class),  h($action), $path); ?>
 </p>
 
 <?php
 $code = <<<PHP
 <?php
-namespace {$namespace}\Controller{$prefixNs};
+namespace {$namespace}\\{$type}{$prefixNs};
 
-use {$namespace}\Controller\AppController;
+use {$baseClass};
 
-class {$controller} extends AppController
+class {$class} extends {$extends}
 {
 
     public function {$action}()

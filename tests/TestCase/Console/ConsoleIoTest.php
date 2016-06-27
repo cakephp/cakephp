@@ -35,9 +35,15 @@ class ConsoleIoTest extends TestCase
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
 
-        $this->out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
-        $this->err = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
-        $this->in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
+        $this->out = $this->getMockBuilder('Cake\Console\ConsoleOutput')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->err = $this->getMockBuilder('Cake\Console\ConsoleOutput')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->in = $this->getMockBuilder('Cake\Console\ConsoleInput')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->io = new ConsoleIo($this->out, $this->err, $this->in);
     }
 

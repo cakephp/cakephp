@@ -33,9 +33,14 @@ class UnloadTaskTest extends TestCase
     {
         parent::setUp();
 
-        $this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
+        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->Task = $this->getMock('Cake\Shell\Task\UnloadTask', ['in', 'out', 'err', '_stop'], [$this->io]);
+        $this->Task = $this->getMockBuilder('Cake\Shell\Task\UnloadTask')
+            ->setMethods(['in', 'out', 'err', '_stop'])
+            ->setConstructorArgs([$this->io])
+            ->getMock();
 
         $this->bootstrap = ROOT . DS . 'config' . DS . 'bootstrap.php';
 

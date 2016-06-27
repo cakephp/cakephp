@@ -60,7 +60,7 @@ trait DateFormatTrait
     /**
      * Caches whether or not this class is a subclass of a Date or MutableDate
      *
-     * @var boolean
+     * @var bool
      */
     protected static $_isDateInstance;
 
@@ -402,7 +402,7 @@ trait DateFormatTrait
             }
             return static::$diffFormatter;
         }
-        return static::$diffFormatter = $translator;
+        return static::$diffFormatter = $formatter;
     }
 
     /**

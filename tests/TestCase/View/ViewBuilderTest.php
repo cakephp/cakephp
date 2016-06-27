@@ -109,9 +109,9 @@ class ViewBuilderTest extends TestCase
      */
     public function testBuildComplete()
     {
-        $request = $this->getMock('Cake\Network\Request');
-        $response = $this->getMock('Cake\Network\Response');
-        $events = $this->getMock('Cake\Event\EventManager');
+        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $events = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
 
         $builder = new ViewBuilder();
         $builder->name('Articles')

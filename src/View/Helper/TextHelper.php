@@ -162,7 +162,7 @@ class TextHelper extends Helper
         $replace = [];
         foreach ($this->_placeholders as $hash => $url) {
             $link = $url;
-            if (!preg_match('#^[a-z]+\://#', $url)) {
+            if (!preg_match('#^[a-z]+\://#i', $url)) {
                 $url = 'http://' . $url;
             }
             $replace[$hash] = $this->Html->link($link, $url, $htmlOptions);

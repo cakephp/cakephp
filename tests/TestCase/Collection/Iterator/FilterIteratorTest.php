@@ -32,7 +32,9 @@ class FilterIteratorTest extends TestCase
     public function testFilter()
     {
         $items = new \ArrayIterator([1, 2, 3]);
-        $callable = $this->getMock('stdClass', ['__invoke']);
+        $callable = $this->getMockBuilder(\StdClass::class)
+            ->setMethods(['__invoke'])
+            ->getMock();
         $callable->expects($this->at(0))
             ->method('__invoke')
             ->with(1, 0, $items)

@@ -36,7 +36,7 @@ class FormTest extends TestCase
         $this->assertInstanceOf('Cake\Form\Schema', $schema);
         $this->assertSame($schema, $form->schema(), 'Same instance each time');
 
-        $schema = $this->getMock('Cake\Form\Schema');
+        $schema = $this->getMockBuilder('Cake\Form\Schema')->getMock();
         $this->assertSame($schema, $form->schema($schema));
         $this->assertSame($schema, $form->schema());
     }
@@ -54,7 +54,7 @@ class FormTest extends TestCase
         $this->assertInstanceOf('Cake\Validation\Validator', $validator);
         $this->assertSame($validator, $form->validator(), 'Same instance each time');
 
-        $validator = $this->getMock('Cake\Validation\Validator');
+        $validator = $this->getMockBuilder('Cake\Validation\Validator')->getMock();
         $this->assertSame($validator, $form->validator($validator));
         $this->assertSame($validator, $form->validator());
     }
@@ -122,7 +122,9 @@ class FormTest extends TestCase
      */
     public function testExecuteInvalid()
     {
-        $form = $this->getMock('Cake\Form\Form', ['_execute']);
+        $form = $this->getMockBuilder('Cake\Form\Form')
+            ->setMethods(['_execute'])
+            ->getMock();
         $form->validator()
             ->add('email', 'format', ['rule' => 'email']);
         $data = [
@@ -141,7 +143,9 @@ class FormTest extends TestCase
      */
     public function testExecuteValid()
     {
-        $form = $this->getMock('Cake\Form\Form', ['_execute']);
+        $form = $this->getMockBuilder('Cake\Form\Form')
+            ->setMethods(['_execute'])
+            ->getMock();
         $form->validator()
             ->add('email', 'format', ['rule' => 'email']);
         $data = [

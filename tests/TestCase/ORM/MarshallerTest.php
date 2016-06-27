@@ -360,6 +360,7 @@ class MarshallerTest extends TestCase
     public function testOneWithAdditionalName()
     {
         $data = [
+            'title' => 'Original Title',
             'Articles' => [
                 'title' => 'My title',
                 'body' => 'My content',
@@ -376,7 +377,8 @@ class MarshallerTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Entity', $result);
         $this->assertTrue($result->dirty(), 'Should be a dirty entity.');
         $this->assertTrue($result->isNew(), 'Should be new');
-        $this->assertEquals($data['Articles']['title'], $result->title);
+        $this->assertFalse($result->has('Articles'), 'No prefixed field.');
+        $this->assertEquals($data['title'], $result->title, 'Data from prefix should be merged.');
         $this->assertEquals($data['Articles']['user']['username'], $result->user->username);
     }
 
@@ -2920,5 +2922,59 @@ class MarshallerTest extends TestCase
         $this->assertEquals('not a secret', $entity->user->password);
         $this->assertFalse($entity->dirty('user'));
         $this->assertTrue($entity->user->isNew());
+    }
+
+    public function testEnsurePrimaryKeyBeingReadFromTableForHandlingEmptyStringPrimaryKey()
+    {
+        $data = [
+            'id' => ''
+        ];
+
+        $articles = TableRegistry::get('Articles');
+        $articles->schema()->dropConstraint('primary');
+        $articles->primaryKey('id');
+
+        $marshall = new Marshaller($articles);
+        $result = $marshall->one($data);
+
+        $this->assertFalse($result->dirty('id'));
+        $this->assertNull($result->id);
+    }
+
+    public function testEnsurePrimaryKeyBeingReadFromTableWhenLoadingBelongsToManyRecordsByPrimaryKey()
+    {
+        $data = [
+            'tags' => [
+                [
+                    'id' => 1
+                ],
+                [
+                    'id' => 2
+                ]
+            ]
+        ];
+
+        $tags = TableRegistry::get('Tags');
+        $tags->schema()->dropConstraint('primary');
+        $tags->primaryKey('id');
+
+        $marshall = new Marshaller($this->articles);
+        $result = $marshall->one($data, ['associated' => ['Tags']]);
+
+        $expected = [
+            'tags' => [
+                [
+                    'id' => 1,
+                    'name' => 'tag1',
+                    'description' => 'A big description'
+                ],
+                [
+                    'id' => 2,
+                    'name' => 'tag2',
+                    'description' => 'Another big description'
+                ]
+            ]
+        ];
+        $this->assertEquals($expected, $result->toArray());
     }
 }

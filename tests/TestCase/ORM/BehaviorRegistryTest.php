@@ -293,7 +293,9 @@ class BehaviorRegistryTest extends TestCase
             ->getMock();
         $this->Behaviors->set('Sluggable', $mockedBehavior);
 
-        $query = $this->getMock('Cake\ORM\Query', [], [null, null]);
+        $query = $this->getMockBuilder('Cake\ORM\Query')
+            ->setConstructorArgs([null, null])
+            ->getMock();
         $mockedBehavior
             ->expects($this->once())
             ->method('findNoSlug')
@@ -367,7 +369,7 @@ class BehaviorRegistryTest extends TestCase
      */
     public function testSetTable()
     {
-        $table = $this->getMock('Cake\ORM\Table');
+        $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $table->expects($this->once())->method('eventManager');
 
         $this->Behaviors->setTable($table);

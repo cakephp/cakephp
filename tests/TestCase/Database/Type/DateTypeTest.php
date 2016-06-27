@@ -34,7 +34,7 @@ class DateTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new DateType();
-        $this->driver = $this->getMock('Cake\Database\Driver');
+        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
     }
 
     /**

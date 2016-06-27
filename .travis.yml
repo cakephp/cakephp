@@ -1,9 +1,9 @@
 language: php
 
 php:
+  - 7.0
   - 5.5
   - 5.6
-  - 7.0
 
 dist: trusty
 
@@ -41,7 +41,7 @@ matrix:
     - php: hhvm
 
 before_install:
-  - if [ $HHVM != 1 ]; then phpenv config-rm xdebug.ini; fi
+  - if [ $HHVM != 1 && $TRAVIS_PHP_VERSION != 7.* ]; then phpenv config-rm xdebug.ini; fi
 
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
 
@@ -62,7 +62,6 @@ before_install:
   - if [[ $TRAVIS_PHP_VERSION != 'hhvm' ]] ; then echo 'apc.enable_cli = 1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
   - if [[ $TRAVIS_PHP_VERSION =~ 5.[56] ]] ; then echo yes | pecl install apcu-4.0.10; fi
   - if [[ $TRAVIS_PHP_VERSION = 7.* ]] ; then echo yes | pecl install apcu; fi
-  - if [[ $TRAVIS_PHP_VERSION = 7.* ]] ; then pecl config-set preferred_state beta; echo yes | pecl install apcu_bc; fi
   - if [[ $TRAVIS_PHP_VERSION = 'hhvm' ]] ; then composer require lorenzo/multiple-iterator=~1.0; fi
 
   - phpenv rehash
@@ -72,10 +71,10 @@ before_script:
   - composer install --prefer-dist --no-interaction
 
 script:
-  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.* ]]; then export CODECOVERAGE=1 ; phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml; fi
+  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.* ]]; then export CODECOVERAGE=1; vendor/bin/phpunit --coverage-clover=clover.xml; fi
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.* ]]; then vendor/bin/phpunit; fi
 
-  - if [ $PHPCS = 1 ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi
+  - if [[ $PHPCS = 1 ]]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi
 
 after_success:
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.* ]]; then bash <(curl -s https://codecov.io/bash); fi

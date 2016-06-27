@@ -289,20 +289,37 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Each association might define special options when eager loaded, the allowed
      * options that can be set per association are:
      *
-     * - foreignKey: Used to set a different field to match both tables, if set to false
+     * - `foreignKey`: Used to set a different field to match both tables, if set to false
      *   no join conditions will be generated automatically. `false` can only be used on
      *   joinable associations and cannot be used with hasMany or belongsToMany associations.
-     * - fields: An array with the fields that should be fetched from the association
-     * - queryBuilder: Equivalent to passing a callable instead of an options array
+     * - `fields`: An array with the fields that should be fetched from the association.
+     * - `finder`: The finder to use when loading associated records. Either the name of the
+     *   finder as a string, or an array to define options to pass to the finder.
+     * - `queryBuilder`: Equivalent to passing a callable instead of an options array.
      *
      * ### Example:
      *
      * ```
      * // Set options for the hasMany articles that will be eagerly loaded for an author
      * $query->contain([
-     *   'Articles' => [
-     *     'fields' => ['title', 'author_id']
-     *   ]
+     *     'Articles' => [
+     *         'fields' => ['title', 'author_id']
+     *     ]
+     * ]);
+     * ```
+     *
+     * Finders can be configured to use options.
+     *
+     * ```
+     * // Retrieve translations for the articles, but only those for the `en` and `es` locales
+     * $query->contain([
+     *     'Articles' => [
+     *         'finder' => [
+     *             'translations' => [
+     *                 'locales' => ['en', 'es']
+     *             ]
+     *         ]
+     *     ]
      * ]);
      * ```
      *
@@ -312,12 +329,12 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * ```
      * // Use special join conditions for getting an Articles's belongsTo 'authors'
      * $query->contain([
-     *   'Authors' => [
-     *     'foreignKey' => false,
-     *     'queryBuilder' => function ($q) {
-     *       return $q->where(...); // Add full filtering conditions
-     *     }
-     *   ]
+     *     'Authors' => [
+     *         'foreignKey' => false,
+     *         'queryBuilder' => function ($q) {
+     *             return $q->where(...); // Add full filtering conditions
+     *         }
+     *     ]
      * ]);
      * ```
      *
@@ -325,11 +342,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * with the list of previously configured associations to be contained in the
      * result.
      *
-     * If called with an empty first argument and $override is set to true, the
+     * If called with an empty first argument and `$override` is set to true, the
      * previous list will be emptied.
      *
-     * @param array|string|null $associations list of table aliases to be queried
-     * @param bool $override whether override previous list with the one passed
+     * @param array|string|null $associations List of table aliases to be queried.
+     * @param bool $override Whether override previous list with the one passed
      * defaults to merging previous list with the new one.
      * @return array|$this
      */

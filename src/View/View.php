@@ -707,7 +707,8 @@ class View implements EventDispatcherInterface
      * Appending to a new block will create the block.
      *
      * @param string $name Name of the block
-     * @param mixed $value The content for the block.
+     * @param mixed $value The content for the block. Value will be type cast
+     *   to string.
      * @return void
      * @see \Cake\View\ViewBlock::concat()
      */
@@ -722,7 +723,8 @@ class View implements EventDispatcherInterface
      * Prepending to a new block will create the block.
      *
      * @param string $name Name of the block
-     * @param mixed $value The content for the block.
+     * @param mixed $value The content for the block. Value will be type cast
+     *   to string.
      * @return void
      * @see \Cake\View\ViewBlock::concat()
      */
@@ -736,7 +738,8 @@ class View implements EventDispatcherInterface
      * existing content.
      *
      * @param string $name Name of the block
-     * @param mixed $value The content for the block.
+     * @param mixed $value The content for the block. Value will be type cast
+     *   to string.
      * @return void
      * @see \Cake\View\ViewBlock::set()
      */
@@ -764,7 +767,7 @@ class View implements EventDispatcherInterface
      *
      * @param string $name Name of the block
      * @param string $default Default text
-     * @return string default The block content or $default if the block does not exist.
+     * @return string The block content or $default if the block does not exist.
      * @see \Cake\View\ViewBlock::get()
      */
     public function fetch($name, $default = '')

@@ -158,7 +158,13 @@ class RouteBuilderTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/articles', ['controller' => 'Articles']);
         $routes->connect('/', ['action' => 'index']);
 
-        $expected = ['plugin' => null, 'controller' => 'Articles', 'action' => 'index', 'pass' => []];
+        $expected = [
+            'plugin' => null,
+            'controller' => 'Articles',
+            'action' => 'index',
+            'pass' => [],
+            '_matchedRoute' => '/articles',
+        ];
         $this->assertEquals($expected, $this->collection->parse('/articles'));
         $this->assertEquals($expected, $this->collection->parse('/articles/'));
     }

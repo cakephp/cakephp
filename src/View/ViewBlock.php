@@ -129,7 +129,8 @@ class ViewBlock
      * of the new capturing context will be added to the existing block context.
      *
      * @param string $name Name of the block
-     * @param mixed $value The content for the block
+     * @param mixed $value The content for the block. Value will be type cast
+     *   to string.
      * @param string $mode If ViewBlock::APPEND content will be appended to existing content.
      *   If ViewBlock::PREPEND it will be prepended.
      * @return void
@@ -156,7 +157,8 @@ class ViewBlock
      * existing content.
      *
      * @param string $name Name of the block
-     * @param mixed $value The content for the block.
+     * @param mixed $value The content for the block. Value will be type cast
+     *   to string.
      * @return void
      */
     public function set($name, $value)

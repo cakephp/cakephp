@@ -36,11 +36,10 @@ class CookieComponentTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $controller = $this->getMock(
-            'Cake\Controller\Controller',
-            ['redirect'],
-            [new Request(), new Response()]
-        );
+        $controller = $this->getMockBuilder('Cake\Controller\Controller')
+            ->setMethods(['redirect'])
+            ->setConstructorArgs([new Request(), new Response()])
+            ->getMock();
         $controller->loadComponent('Cookie');
         $this->Controller = $controller;
         $this->Cookie = $controller->Cookie;

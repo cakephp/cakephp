@@ -1027,7 +1027,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
-     * Add an ORDER BY clause with an ASC direction.
+     * Add an ORDER BY clause with a DESC direction.
      *
      * This method allows you to set complex expressions
      * as order conditions unlike order()
