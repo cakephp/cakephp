@@ -1249,7 +1249,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 return $this->_processFindOrCreate($search, $callback, $options);
             });
         }
-        $redundant = 0;
         return $this->_processFindOrCreate($search, $callback, $options);
     }
 
