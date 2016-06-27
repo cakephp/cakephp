@@ -20,9 +20,10 @@ namespace Cake\Datasource;
 interface TableSchemaInterface
 {
     /**
-     * Get the schema for this fixture.
+     * Get and set the schema for this fixture.
      *
+     * @param array|\Cake\Database\Schema\Table|null $schema The table to set.
      * @return array|\Cake\Database\Schema\Table|null
      */
-    public function schema();
+    public function schema($schema = null);
 }
