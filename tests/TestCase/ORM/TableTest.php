@@ -5364,25 +5364,25 @@ class TableTest extends TestCase
     {
         $articles = TableRegistry::get('Articles');
 
-        $callback_executed = false;
-        $first_article = $articles->findOrCreate(['title' => 'Not there'], function ($article) use (&$callback_executed) {
+        $callbackExecuted = false;
+        $firstArticle = $articles->findOrCreate(['title' => 'Not there'], function ($article) use (&$callbackExecuted) {
             $this->assertTrue($article instanceof EntityInterface);
             $article->body = 'New body';
-            $callback_executed = true;
+            $callbackExecuted = true;
         });
-        $this->assertTrue($callback_executed);
-        $this->assertFalse($first_article->isNew());
-        $this->assertNotNull($first_article->id);
-        $this->assertEquals('Not there', $first_article->title);
-        $this->assertEquals('New body', $first_article->body);
+        $this->assertTrue($callbackExecuted);
+        $this->assertFalse($firstArticle->isNew());
+        $this->assertNotNull($firstArticle->id);
+        $this->assertEquals('Not there', $firstArticle->title);
+        $this->assertEquals('New body', $firstArticle->body);
 
-        $second_article = $articles->findOrCreate(['title' => 'Not there'], function ($article) {
+        $secondArticle = $articles->findOrCreate(['title' => 'Not there'], function ($article) {
             $this->fail('Should not be called for existing entities.');
         });
-        $this->assertFalse($second_article->isNew());
-        $this->assertNotNull($second_article->id);
-        $this->assertEquals('Not there', $second_article->title);
-        $this->assertEquals($first_article->id, $second_article->id);
+        $this->assertFalse($secondArticle->isNew());
+        $this->assertNotNull($secondArticle->id);
+        $this->assertEquals('Not there', $secondArticle->title);
+        $this->assertEquals($firstArticle->id, $secondArticle->id);
     }
 
     /**
@@ -5411,16 +5411,16 @@ class TableTest extends TestCase
     {
         $articles = TableRegistry::get('Articles');
 
-        $callback_executed = false;
+        $callbackExecuted = false;
         $article = $articles->findOrCreate(
             ['author_id' => 2, 'title' => 'First Article'],
-            function ($article) use (&$callback_executed) {
+            function ($article) use (&$callbackExecuted) {
                 $this->assertInstanceOf('Cake\Datasource\EntityInterface', $article);
                 $article->set(['published' => 'N', 'body' => 'New body']);
-                $callback_executed = true;
+                $callbackExecuted = true;
             }
         );
-        $this->assertTrue($callback_executed);
+        $this->assertTrue($callbackExecuted);
         $this->assertFalse($article->isNew());
         $this->assertNotNull($article->id);
         $this->assertEquals('First Article', $article->title);
@@ -5438,7 +5438,7 @@ class TableTest extends TestCase
     {
         $articles = TableRegistry::get('Articles');
 
-        $article = $articles->findOrCreate(['title'=>'Just Something New']);
+        $article = $articles->findOrCreate(['title' => 'Just Something New']);
         $this->assertFalse($article->isNew());
         $this->assertNotNull($article->id);
         $this->assertEquals('Just Something New', $article->title);
@@ -5453,19 +5453,19 @@ class TableTest extends TestCase
     {
         $articles = TableRegistry::get('Articles');
 
-        $called_1 = false;
-        $called_2 = false;
-        $article = $articles->findOrCreate(function ($query) use (&$called_1) {
+        $calledOne = false;
+        $calledTwo = false;
+        $article = $articles->findOrCreate(function ($query) use (&$calledOne) {
             $this->assertInstanceOf('Cake\ORM\Query', $query);
             $query->where(['title' => 'Something Else']);
-            $called_1 = true;
-        }, function ($article) use (&$called_2) {
+            $calledOne = true;
+        }, function ($article) use (&$calledTwo) {
             $this->assertInstanceOf('Cake\Datasource\EntityInterface', $article);
             $article->title = 'Set Defaults Here';
-            $called_2 = true;
+            $calledTwo = true;
         });
-        $this->assertTrue($called_1);
-        $this->assertTrue($called_2);
+        $this->assertTrue($calledOne);
+        $this->assertTrue($calledTwo);
         $this->assertFalse($article->isNew());
         $this->assertNotNull($article->id);
         $this->assertEquals('Set Defaults Here', $article->title);

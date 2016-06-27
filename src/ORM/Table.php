@@ -1217,7 +1217,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * If the $search properties do not match the properties of the entity, then you
      * should disable defaults and define all default values using the callback.
      *
-     * If your find conditions require custom order, associations or conditions. The $search
+     * If your find conditions require custom order, associations or conditions, then the $search
      * parameter can be a callable that takes the Query as the argument. Allowing you to
      * customize the find results.
      *
@@ -1229,7 +1229,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   transaction (default: true)
      * - defaults: Whether to use the search criteria as default values for the new entity (default: true)
      *
-     * @param array|callable $search The criteria to find an existing record by, or a callable tha will
+     * @param array|callable $search The criteria to find an existing record by, or a callable that will
      *   customize the find query.
      * @param callable|null $callback A callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
@@ -1240,9 +1240,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function findOrCreate($search, callable $callback = null, $options = [])
     {
         $options = array_merge([
-                'atomic' => true,
-                'defaults' => true
-            ], $options);
+            'atomic' => true,
+            'defaults' => true
+        ], $options);
 
         if ($options['atomic']) {
             return $this->connection()->transactional(function () use ($search, $callback, $options) {
@@ -1264,12 +1264,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array $options The options to use when saving.
      * @return EntityInterface An entity.
      */
-    protected function _processFindOrCreate($search, callable $callback = null, $options)
+    protected function _processFindOrCreate($search, callable $callback = null, $options = [])
     {
         $query = $this->find();
-        if(is_callable($search)) {
+        if (is_callable($search)) {
             call_user_func($search, $query);
-        } else if(is_array($search)) {
+        } elseif (is_array($search)) {
             $query->where($search);
         } else {
             throw new InvalidArgumentException('Search criteria must be an array or callable');
@@ -1279,7 +1279,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $row;
         }
         $entity = $this->newEntity();
-        if($options['defaults'] && is_array($search)) {
+        if ($options['defaults'] && is_array($search)) {
             $entity->set($search, ['guard' => false]);
         }
         if ($callback) {
