@@ -1215,8 +1215,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * entity will be saved and returned.
      *
      * If your find conditions require custom order, associations or conditions, then the $search
-     * parameter can be a callable that takes the Query as the argument. Allowing you to
-     * customize the find results.
+     * parameter can be a callable that takes the Query as the argument, or a \Cake\ORM\Query object passed
+     * as the $search parameter. Allowing you to customize the find results.
      *
      * ### Options
      *
@@ -1226,11 +1226,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   transaction (default: true)
      * - defaults: Whether to use the search criteria as default values for the new entity (default: true)
      *
-     * @param array|\Cake\ORM\Query $search The criteria to find existing
-     *   records by. Note that when you pass a query object you'll have to use
-     *   the 2nd arg of the method to modify the entity data before saving.     
-     * @param array|callable $search The criteria to find an existing record by, or a callable that will
-     *   customize the find query.
+     * @param array|callable|\Cake\ORM\Query $search The criteria to find an existing record by, or a
+     *   callable that will customize the find query.
      * @param callable|null $callback A callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
      *   is persisted.
@@ -1265,7 +1262,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _processFindOrCreate($search, callable $callback = null, $options = [])
     {
-        $query = $this->find();
+        $query = ($search instanceof Query) ? $search : $this->find();
         if (is_callable($search)) {
             $search($query);
         } elseif (is_array($search)) {
@@ -1286,20 +1283,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
         unset($options['defaults']);
         return $this->save($entity, $options) ?: $entity;
-    }
-
-    /**
-     * Gets the query object for findOrCreate().
-     *
-     * @param array|\Cake\ORM\Query|string $search The criteria to find existing records by.
-     * @return \Cake\ORM\Query
-     */
-    protected function _getFindOrCreateQuery($search)
-    {
-        if ($search instanceof Query) {
-            return $search;
-        }
-        return $this->find()->where($search);
     }
 
     /**
