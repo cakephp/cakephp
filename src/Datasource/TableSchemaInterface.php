@@ -22,7 +22,7 @@ interface TableSchemaInterface
     /**
      * Get the schema for this fixture.
      *
-     * @return array
+     * @return array|\Cake\Database\Schema\Table|null
      */
     public function schema();
 }
