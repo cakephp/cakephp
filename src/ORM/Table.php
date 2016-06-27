@@ -1205,8 +1205,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Finds an existing record or creates a new one.
      *
-     * Using the attributes defined in $search a find() will be done to locate
-     * an existing record. If records matches the conditions, the first record
+     * A find() will be done to locate an existing record using the attributes
+     * defined in $search. If records matches the conditions, the first record
      * will be returned.
      *
      * If no record can be found, a new entity will be created
@@ -1214,27 +1214,79 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * called allowing you to define additional default values. The new
      * entity will be saved and returned.
      *
-     * @param array $search The criteria to find existing records by.
+     * If the $search properties do not match the properties of the entity, then you
+     * should disable defaults and define all default values using the callback.
+     *
+     * If your find conditions require custom order, associations or conditions. The $search
+     * parameter can be a callable that takes the Query as the argument. Allowing you to
+     * customize the find results.
+     *
+     * ### Options
+     *
+     * The options array is passed to the save method with exception to the following keys:
+     *
+     * - atomic: Whether to execute the methods for find, save and callbacks inside a database
+     *   transaction (default: true)
+     * - defaults: Whether to use the search criteria as default values for the new entity (default: true)
+     *
+     * @param array|callable $search The criteria to find an existing record by, or a callable tha will
+     *   customize the find query.
      * @param callable|null $callback A callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
      *   is persisted.
-     * @return \Cake\Datasource\EntityInterface An entity.
+     * @param array $options The options to use when saving.
+     * @return EntityInterface An entity.
      */
-    public function findOrCreate($search, callable $callback = null)
+    public function findOrCreate($search, callable $callback = null, $options = [])
     {
-        return $this->connection()->transactional(function () use ($search, $callback) {
-            $query = $this->find()->where($search);
-            $row = $query->first();
-            if ($row) {
-                return $row;
-            }
-            $entity = $this->newEntity();
+        $options = array_merge([
+                'atomic' => true,
+                'defaults' => true
+            ], $options);
+
+        if ($options['atomic']) {
+            return $this->connection()->transactional(function () use ($search, $callback, $options) {
+                return $this->_processFindOrCreate($search, $callback, $options);
+            });
+        } else {
+            return $this->_processFindOrCreate($search, $callback, $options);
+        }
+    }
+
+    /**
+     * Performs the actual find and/or create of an entity based on the passed options.
+     *
+     * @param array|callable $search The criteria to find an existing record by, or a callable tha will
+     *   customize the find query.
+     * @param callable|null $callback A callback that will be invoked for newly
+     *   created entities. This callback will be called *before* the entity
+     *   is persisted.
+     * @param array $options The options to use when saving.
+     * @return EntityInterface An entity.
+     */
+    protected function _processFindOrCreate($search, callable $callback = null, $options)
+    {
+        $query = $this->find();
+        if(is_callable($search)) {
+            call_user_func($search, $query);
+        } else if(is_array($search)) {
+            $query->where($search);
+        } else {
+            throw new InvalidArgumentException('Search criteria must be an array or callable');
+        }
+        $row = $query->first();
+        if ($row) {
+            return $row;
+        }
+        $entity = $this->newEntity();
+        if($options['defaults'] && is_array($search)) {
             $entity->set($search, ['guard' => false]);
-            if ($callback) {
-                $callback($entity);
-            }
-            return $this->save($entity) ?: $entity;
-        });
+        }
+        if ($callback) {
+            $callback($entity);
+        }
+        unset($options['defaults']);
+        return $this->save($entity, $options) ?: $entity;
     }
 
     /**

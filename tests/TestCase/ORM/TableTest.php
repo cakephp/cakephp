@@ -22,6 +22,7 @@ use Cake\Database\Exception;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\I18n\Time;
@@ -5355,26 +5356,43 @@ class TableTest extends TestCase
     }
 
     /**
-     * Test the findOrCreate method.
+     * Test that findOrCreate creates a new entity, and then finds that entity.
      *
      * @return void
      */
-    public function testFindOrCreate()
+    public function testFindOrCreateNewEntity()
     {
         $articles = TableRegistry::get('Articles');
 
-        $article = $articles->findOrCreate(['title' => 'Not there'], function ($article) {
+        $callback_executed = false;
+        $first_article = $articles->findOrCreate(['title' => 'Not there'], function ($article) use (&$callback_executed) {
+            $this->assertTrue($article instanceof EntityInterface);
             $article->body = 'New body';
+            $callback_executed = true;
         });
-        $this->assertFalse($article->isNew());
-        $this->assertNotNull($article->id);
-        $this->assertEquals('Not there', $article->title);
-        $this->assertEquals('New body', $article->body);
+        $this->assertTrue($callback_executed);
+        $this->assertFalse($first_article->isNew());
+        $this->assertNotNull($first_article->id);
+        $this->assertEquals('Not there', $first_article->title);
+        $this->assertEquals('New body', $first_article->body);
 
-        $article = $articles->findOrCreate(['title' => 'Not there']);
-        $this->assertFalse($article->isNew());
-        $this->assertNotNull($article->id);
-        $this->assertEquals('Not there', $article->title);
+        $second_article = $articles->findOrCreate(['title' => 'Not there'], function ($article) {
+            $this->fail('Should not be called for existing entities.');
+        });
+        $this->assertFalse($second_article->isNew());
+        $this->assertNotNull($second_article->id);
+        $this->assertEquals('Not there', $second_article->title);
+        $this->assertEquals($first_article->id, $second_article->id);
+    }
+
+    /**
+     * Test that findOrCreate finds fixture data.
+     *
+     * @return void
+     */
+    public function testFindOrCreateExistingEntity()
+    {
+        $articles = TableRegistry::get('Articles');
 
         $article = $articles->findOrCreate(['title' => 'First Article'], function ($article) {
             $this->fail('Should not be called for existing entities.');
@@ -5382,19 +5400,140 @@ class TableTest extends TestCase
         $this->assertFalse($article->isNew());
         $this->assertNotNull($article->id);
         $this->assertEquals('First Article', $article->title);
+    }
 
+    /**
+     * Test that findOrCreate uses the search conditions as defaults for new entity.
+     *
+     * @return void
+     */
+    public function testFindOrCreateDefaults()
+    {
+        $articles = TableRegistry::get('Articles');
+
+        $callback_executed = false;
         $article = $articles->findOrCreate(
             ['author_id' => 2, 'title' => 'First Article'],
-            function ($article) {
+            function ($article) use (&$callback_executed) {
+                $this->assertInstanceOf('Cake\Datasource\EntityInterface', $article);
                 $article->set(['published' => 'N', 'body' => 'New body']);
+                $callback_executed = true;
             }
         );
+        $this->assertTrue($callback_executed);
         $this->assertFalse($article->isNew());
         $this->assertNotNull($article->id);
         $this->assertEquals('First Article', $article->title);
         $this->assertEquals('New body', $article->body);
         $this->assertEquals('N', $article->published);
         $this->assertEquals(2, $article->author_id);
+    }
+
+    /**
+     * Test that findOrCreate adds new entity without using a callback.
+     *
+     * @return void
+     */
+    public function testFindOrCreateNoCallable()
+    {
+        $articles = TableRegistry::get('Articles');
+
+        $article = $articles->findOrCreate(['title'=>'Just Something New']);
+        $this->assertFalse($article->isNew());
+        $this->assertNotNull($article->id);
+        $this->assertEquals('Just Something New', $article->title);
+    }
+
+    /**
+     * Test that findOrCreate executes search conditions as a callable.
+     *
+     * @return void
+     */
+    public function testFindOrCreateSearchCallable()
+    {
+        $articles = TableRegistry::get('Articles');
+
+        $called_1 = false;
+        $called_2 = false;
+        $article = $articles->findOrCreate(function ($query) use (&$called_1) {
+            $this->assertInstanceOf('Cake\ORM\Query', $query);
+            $query->where(['title' => 'Something Else']);
+            $called_1 = true;
+        }, function ($article) use (&$called_2) {
+            $this->assertInstanceOf('Cake\Datasource\EntityInterface', $article);
+            $article->title = 'Set Defaults Here';
+            $called_2 = true;
+        });
+        $this->assertTrue($called_1);
+        $this->assertTrue($called_2);
+        $this->assertFalse($article->isNew());
+        $this->assertNotNull($article->id);
+        $this->assertEquals('Set Defaults Here', $article->title);
+    }
+
+    /**
+     * Test that findOrCreate options disable defaults.
+     *
+     * @return void
+     */
+    public function testFindOrCreateNoDefaults()
+    {
+        $articles = TableRegistry::get('Articles');
+
+        $article = $articles->findOrCreate(['title' => 'A New Article', 'published' => 'Y'], function ($article) {
+            $this->assertInstanceOf('Cake\Datasource\EntityInterface', $article);
+            $article->title = 'A Different Title';
+        }, ['defaults' => false]);
+        $this->assertFalse($article->isNew());
+        $this->assertNotNull($article->id);
+        $this->assertEquals('A Different Title', $article->title);
+        $this->assertNull($article->published, 'Expected Null since defaults are disabled.');
+    }
+
+    /**
+     * Test that findOrCreate executes callable inside transaction.
+     *
+     * @return void
+     */
+    public function testFindOrCreateTransactions()
+    {
+        $articles = TableRegistry::get('Articles');
+
+        $article = $articles->findOrCreate(function ($query) {
+            $this->assertInstanceOf('Cake\ORM\Query', $query);
+            $query->where(['title' => 'Find Something New']);
+            $this->assertTrue($this->connection->inTransaction());
+        }, function ($article) {
+            $this->assertInstanceOf('Cake\Datasource\EntityInterface', $article);
+            $this->assertTrue($this->connection->inTransaction());
+            $article->title = 'Success';
+        });
+        $this->assertFalse($article->isNew());
+        $this->assertNotNull($article->id);
+        $this->assertEquals('Success', $article->title);
+    }
+
+    /**
+     * Test that findOrCreate executes callable without transaction.
+     *
+     * @return void
+     */
+    public function testFindOrCreateNoTransaction()
+    {
+        $articles = TableRegistry::get('Articles');
+
+        $article = $articles->findOrCreate(function ($query) {
+            $this->assertInstanceOf('Cake\ORM\Query', $query);
+            $query->where(['title' => 'Find Something New']);
+            $this->assertFalse($this->connection->inTransaction());
+        }, function ($article) {
+            $this->assertInstanceOf('Cake\Datasource\EntityInterface', $article);
+            $this->assertFalse($this->connection->inTransaction());
+            $article->title = 'Success';
+        }, ['atomic' => false]);
+        $this->assertFalse($article->isNew());
+        $this->assertNotNull($article->id);
+        $this->assertEquals('Success', $article->title);
     }
 
     /**
