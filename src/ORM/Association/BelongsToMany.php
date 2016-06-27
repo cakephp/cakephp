@@ -16,6 +16,7 @@ namespace Cake\ORM\Association;
 
 use Cake\Core\App;
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Query;
@@ -330,7 +331,10 @@ class BelongsToMany extends Association
      */
     public function attachTo(Query $query, array $options = [])
     {
-        parent::attachTo($query, $options);
+        if (!empty($options['negateMatch'])) {
+            $this->_appendNotMatching($query, $options);
+            return;
+        }
 
         $junction = $this->junction();
         $belongsTo = $junction->association($this->source()->alias());
@@ -343,15 +347,20 @@ class BelongsToMany extends Association
 
         // Attach the junction table as well we need it to populate _joinData.
         $assoc = $this->_targetTable->association($junction->alias());
-        $query->removeJoin($assoc->name());
-        $options = array_intersect_key($options, ['joinType' => 1, 'fields' => 1]);
-        $options += [
+        $newOptions = array_intersect_key($options, ['joinType' => 1, 'fields' => 1]);
+        $newOptions += [
             'conditions' => $cond,
             'includeFields' => $includeFields,
-            'foreignKey' => $this->targetForeignKey(),
+            'foreignKey' => false,
         ];
-        $assoc->attachTo($query, $options);
+        $assoc->attachTo($query, $newOptions);
         $query->eagerLoader()->addToJoinsMap($junction->alias(), $assoc, true);
+
+        parent::attachTo($query, $options);
+
+        $foreignKey = $this->targetForeignKey();
+        $thisJoin = $query->clause('join')[$this->name()];
+        $thisJoin['conditions']->add($assoc->_joinCondition(['foreignKey' => $foreignKey]));
     }
 
     /**
@@ -359,14 +368,41 @@ class BelongsToMany extends Association
      */
     protected function _appendNotMatching($query, $options)
     {
-        $target = $this->junction();
-        if (!empty($options['negateMatch'])) {
-            $primaryKey = $query->aliasFields((array)$target->primaryKey(), $target->alias());
-            $query->andWhere(function ($exp) use ($primaryKey) {
-                array_map([$exp, 'isNull'], $primaryKey);
-                return $exp;
-            });
+        if (empty($options['negateMatch'])) {
+            return;
         }
+        $options += ['conditions' => []];
+        $junction = $this->junction();
+        $belongsTo = $junction->association($this->source()->alias());
+        $conds = $belongsTo->_joinCondition(['foreignKey' => $belongsTo->foreignKey()]);
+
+        $subquery = $this->find()
+            ->select(array_values($conds))
+            ->where($options['conditions'])
+            ->andWhere($this->junctionConditions());
+
+        $subquery = $options['queryBuilder']($subquery);
+
+        $assoc = $junction->association($this->target()->alias());
+        $conditions = $assoc->_joinCondition([
+            'foreignKey' => $this->targetForeignKey()
+        ]);
+        $subquery = $this->_appendJunctionJoin($subquery, $conditions);
+
+        $query
+            ->andWhere(function ($exp) use ($subquery, $conds) {
+                $identifiers = [];
+                foreach (array_keys($conds) as $field) {
+                    $identifiers = new IdentifierExpression($field);
+                }
+                $identifiers = $subquery->newExpr()->add($identifiers)->tieWith(',');
+                $nullExp = clone $exp;
+                return $exp
+                    ->or_([
+                        $exp->notIn($identifiers, $subquery),
+                        $nullExp->and(array_map([$nullExp, 'isNull'], array_keys($conds))),
+                    ]);
+            });
     }
 
     /**

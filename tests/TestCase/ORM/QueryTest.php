@@ -2993,22 +2993,22 @@ class QueryTest extends TestCase
 
         $results = $table
             ->find()
-            ->select(['total_articles' => 'count(articles.id)'])
+            ->select([
+                'authors.id',
+                'tagged_articles' => 'count(tags.id)'
+            ])
             ->leftJoinWith('articles.tags', function ($q) {
                 return $q->where(['tags.name' => 'tag3']);
             })
-            ->autoFields(true)
-            ->group(['authors.id', 'authors.name']);
+            ->group(['authors.id']);
 
         $expected = [
-            1 => 2,
+            1 => 0,
             2 => 0,
             3 => 1,
             4 => 0
         ];
-        $this->assertEquals($expected, $results->combine('id', 'total_articles')->toArray());
-        $fields = ['total_articles', 'id', 'name'];
-        $this->assertEquals($fields, array_keys($results->first()->toArray()));
+        $this->assertEquals($expected, $results->combine('id', 'tagged_articles')->toArray());
     }
 
     /**
@@ -3030,7 +3030,6 @@ class QueryTest extends TestCase
             })
             ->autoFields(true)
             ->where(['ArticlesTags.tag_id' => 3])
-            ->distinct(['authors.id'])
             ->all();
 
         $expected = ['id' => 2, 'title' => 'Second Article'];
@@ -3166,8 +3165,9 @@ class QueryTest extends TestCase
             ->hydrate(false)
             ->notMatching('tags', function ($q) {
                 return $q->where(['tags.name' => 'tag2']);
-            })
-            ->toArray();
+            });
+
+        $results = $results->toArray();
 
         $expected = [
             [
@@ -3201,6 +3201,7 @@ class QueryTest extends TestCase
 
         $results = $table->find()
             ->hydrate(false)
+            ->select('authors.id')
             ->notMatching('articles.tags', function ($q) {
                 return $q->where(['tags.name' => 'tag3']);
             })
