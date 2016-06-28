@@ -20,6 +20,7 @@ namespace Cake\Test\TestCase\Event;
 
 use Cake\Event\Decorator\ConditionDecorator;
 use Cake\Event\Event;
+use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -49,13 +50,47 @@ class ConditionDecoratorTest extends TestCase
         $this->assertFalse($decorator->canTrigger($event));
 
         $result = $decorator($event);
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $event = new Event('decorator.test', $this, ['canTrigger' => true]);
         $this->assertTrue($decorator->canTrigger($event));
 
         $result = $decorator($event);
         $this->assertEquals('success', $result);
+    }
+
+    /**
+     * testCascadingEvents
+     *
+     * @return void
+     */
+    public function testCascadingEvents()
+    {
+        $callable = function (Event $event) {
+            $event->data['counter']++;
+            return $event;
+        };
+
+        $listener1 = new ConditionDecorator($callable, [
+            'if' => function (Event $event) {
+                return false;
+            }
+        ]);
+
+        $listener2 = function(Event $event) {
+            $event->data['counter']++;
+            return $event;
+        };
+
+        EventManager::instance()->on('decorator.test2', $listener1);
+        EventManager::instance()->on('decorator.test2', $listener2);
+
+        $event = new Event('decorator.test2', $this, [
+            'counter' => 1
+        ]);
+
+        EventManager::instance()->dispatch($event);
+        $this->assertEquals(2, $event->data['counter']);
     }
 
     /**

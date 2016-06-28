@@ -31,7 +31,7 @@ class ConditionDecorator extends AbstractDecorator
     {
         $args = func_get_args();
         if (!$this->canTrigger($args[0])) {
-            return false;
+            return;
         }
         return $this->_call($args);
     }
