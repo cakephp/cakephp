@@ -1600,6 +1600,28 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test reset unlockFields, when create new form.
+ *
+ * @return void
+ */
+	public function testResetUnlockFields() {
+		$this->Form->request['_Token'] = array(
+			'key' => 'testKey',
+			'unlockedFields' => array()
+		);
+
+		$this->Form->unlockField('Contact.id');
+		$this->Form->create('Contact');
+		$this->Form->hidden('Contact.id', array('value' => 1));
+		$this->assertEmpty($this->Form->fields, 'Field should be unlocked');
+		$this->Form->end();
+
+		$this->Form->create('Contact');
+		$this->Form->hidden('Contact.id', array('value' => 1));
+		$this->assertEquals(1, $this->Form->fields['Contact.id'], 'Hidden input should be secured.');
+	}
+
+/**
  * testTagIsInvalid method
  *
  * @return void
@@ -3932,6 +3954,25 @@ class FormHelperTest extends CakeTestCase {
 			'option A',
 			'/label',
 			'br' => array(),
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1')),
+			array('label' => array('for' => 'ModelField1')),
+			'option B',
+			'/label',
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->radio('Model.field', array('option A', 'option B'), array('fieldset' => 'classy-stuff'));
+		$expected = array(
+			'fieldset' => array('class' => 'classy-stuff'),
+			'legend' => array(),
+			'Field',
+			'/legend',
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField0')),
+			array('label' => array('for' => 'ModelField0')),
+			'option A',
+			'/label',
 			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1', 'id' => 'ModelField1')),
 			array('label' => array('for' => 'ModelField1')),
 			'option B',

@@ -97,6 +97,7 @@ class CakeRequest implements ArrayAccess {
  */
 	protected $_detectors = array(
 		'get' => array('env' => 'REQUEST_METHOD', 'value' => 'GET'),
+		'patch' => array('env' => 'REQUEST_METHOD', 'value' => 'PATCH'),
 		'post' => array('env' => 'REQUEST_METHOD', 'value' => 'POST'),
 		'put' => array('env' => 'REQUEST_METHOD', 'value' => 'PUT'),
 		'delete' => array('env' => 'REQUEST_METHOD', 'value' => 'DELETE'),
@@ -1124,6 +1125,9 @@ class CakeRequest implements ArrayAccess {
  * @return bool
  */
 	public function offsetExists($name) {
+		if ($name === 'url' || $name === 'data') {
+			return true;
+		}
 		return isset($this->params[$name]);
 	}
 

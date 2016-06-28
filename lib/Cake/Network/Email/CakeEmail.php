@@ -1203,7 +1203,7 @@ class CakeEmail {
  * @throws SocketException
  */
 	public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'fast', $send = true) {
-		$class = __CLASS__;
+		$class = get_called_class();
 		/** @var CakeEmail $instance */
 		$instance = new $class($transportConfig);
 		if ($to !== null) {

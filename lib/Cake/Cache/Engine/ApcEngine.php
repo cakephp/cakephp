@@ -32,6 +32,13 @@ class ApcEngine extends CacheEngine {
 	protected $_compiledGroupNames = array();
 
 /**
+ * APC or APCu extension
+ *
+ * @var string
+ */
+	protected $_apcExtension = 'apc';
+
+/**
  * Initialize the Cache Engine
  *
  * Called automatically by the cache frontend
@@ -47,6 +54,10 @@ class ApcEngine extends CacheEngine {
 		}
 		$settings += array('engine' => 'Apc');
 		parent::init($settings);
+		if (function_exists('apcu_dec')) {
+			$this->_apcExtension = 'apcu';
+			return true;
+		}
 		return function_exists('apc_dec');
 	}
 
@@ -63,8 +74,9 @@ class ApcEngine extends CacheEngine {
 		if ($duration) {
 			$expires = time() + $duration;
 		}
-		apc_store($key . '_expires', $expires, $duration);
-		return apc_store($key, $value, $duration);
+		$func = $this->_apcExtension . '_store';
+		$func($key . '_expires', $expires, $duration);
+		return $func($key, $value, $duration);
 	}
 
 /**
@@ -75,11 +87,12 @@ class ApcEngine extends CacheEngine {
  */
 	public function read($key) {
 		$time = time();
-		$cachetime = (int)apc_fetch($key . '_expires');
+		$func = $this->_apcExtension . '_fetch';
+		$cachetime = (int)$func($key . '_expires');
 		if ($cachetime !== 0 && ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime)) {
 			return false;
 		}
-		return apc_fetch($key);
+		return $func($key);
 	}
 
 /**
@@ -90,7 +103,8 @@ class ApcEngine extends CacheEngine {
  * @return New incremented value, false otherwise
  */
 	public function increment($key, $offset = 1) {
-		return apc_inc($key, $offset);
+		$func = $this->_apcExtension . '_inc';
+		return $func($key, $offset);
 	}
 
 /**
@@ -101,7 +115,8 @@ class ApcEngine extends CacheEngine {
  * @return New decremented value, false otherwise
  */
 	public function decrement($key, $offset = 1) {
-		return apc_dec($key, $offset);
+		$func = $this->_apcExtension . '_dec';
+		return $func($key, $offset);
 	}
 
 /**
@@ -111,7 +126,8 @@ class ApcEngine extends CacheEngine {
  * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public function delete($key) {
-		return apc_delete($key);
+		$func = $this->_apcExtension . '_delete';
+		return $func($key);
 	}
 
 /**
@@ -125,19 +141,20 @@ class ApcEngine extends CacheEngine {
 		if ($check) {
 			return true;
 		}
+		$func = $this->_apcExtension . '_delete';
 		if (class_exists('APCIterator', false)) {
 			$iterator = new APCIterator(
 				'user',
 				'/^' . preg_quote($this->settings['prefix'], '/') . '/',
 				APC_ITER_NONE
 			);
-			apc_delete($iterator);
+			$func($iterator);
 			return true;
 		}
-		$cache = apc_cache_info('user');
+		$cache = $this->_apcExtension === 'apc' ? apc_cache_info('user') : apcu_cache_info();
 		foreach ($cache['cache_list'] as $key) {
 			if (strpos($key['info'], $this->settings['prefix']) === 0) {
-				apc_delete($key['info']);
+				$func($key['info']);
 			}
 		}
 		return true;
@@ -157,11 +174,13 @@ class ApcEngine extends CacheEngine {
 			}
 		}
 
-		$groups = apc_fetch($this->_compiledGroupNames);
+		$fetchFunc = $this->_apcExtension . '_fetch';
+		$storeFunc = $this->_apcExtension . '_store';
+		$groups = $fetchFunc($this->_compiledGroupNames);
 		if (count($groups) !== count($this->settings['groups'])) {
 			foreach ($this->_compiledGroupNames as $group) {
 				if (!isset($groups[$group])) {
-					apc_store($group, 1);
+					$storeFunc($group, 1);
 					$groups[$group] = 1;
 				}
 			}
@@ -184,7 +203,8 @@ class ApcEngine extends CacheEngine {
  * @return bool success
  */
 	public function clearGroup($group) {
-		apc_inc($this->settings['prefix'] . $group, 1, $success);
+		$func = $this->_apcExtension . '_inc';
+		$func($this->settings['prefix'] . $group, 1, $success);
 		return $success;
 	}
 
@@ -203,7 +223,8 @@ class ApcEngine extends CacheEngine {
 		if ($duration) {
 			$expires = time() + $duration;
 		}
-		apc_add($key . '_expires', $expires, $duration);
-		return apc_add($key, $value, $duration);
+		$func = $this->_apcExtension . '_add';
+		$func($key . '_expires', $expires, $duration);
+		return $func($key, $value, $duration);
 	}
 }
