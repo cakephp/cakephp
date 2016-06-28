@@ -1236,10 +1236,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function findOrCreate($search, callable $callback = null, $options = [])
     {
-        $options = array_merge([
+        $options = $options + [
             'atomic' => true,
             'defaults' => true
-        ], $options);
+        ];
 
         if ($options['atomic']) {
             return $this->connection()->transactional(function () use ($search, $callback, $options) {
