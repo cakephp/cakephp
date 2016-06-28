@@ -806,14 +806,19 @@ class Shell
         }
 
         $File = new File($path, true);
-        if ($File->exists() && $File->writable()) {
-            $File->write($contents);
-            $this->_io->out(sprintf('<success>Wrote</success> `%s`', $path));
-            return true;
-        }
 
-        $this->_io->err(sprintf('<error>Could not write to `%s`</error>.', $path), 2);
-        return false;
+        try {
+            if ($File->exists() && $File->writable()) {
+                $File->write($contents);
+                $this->_io->out(sprintf('<success>Wrote</success> `%s`', $path));
+                return true;
+            }
+
+            $this->_io->err(sprintf('<error>Could not write to `%s`</error>.', $path), 2);
+            return false;
+        } finally {
+            $File->close();
+        }
     }
 
     /**
