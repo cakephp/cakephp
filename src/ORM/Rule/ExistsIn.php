@@ -40,14 +40,28 @@ class ExistsIn
     protected $_repository;
 
     /**
+     * Options for the constructor
+     *
+     * @var array
+     */
+    protected $_options = [];
+
+    /**
      * Constructor.
+     *
+     * Available option for $options is 'allowPartialNulls' flag.
+     * Set to true to accept composite foreign keys where one or more nullable columns are null.
      *
      * @param string|array $fields The field or fields to check existence as primary key.
      * @param object|string $repository The repository where the field will be looked for,
      * or the association name for the repository.
+     * @param array $options The options that modify the rules behavior.
      */
-    public function __construct($fields, $repository)
+    public function __construct($fields, $repository, array $options = [])
     {
+        $options += ['allowPartialNulls' => false];
+        $this->_options = $options;
+
         $this->_fields = (array)$fields;
         $this->_repository = $repository;
     }
@@ -99,6 +113,16 @@ class ExistsIn
             return true;
         }
 
+        if ($this->_options['allowPartialNulls']) {
+            $schema = $source->schema();
+            foreach ($this->_fields as $i => $field) {
+                if ($schema->column($field) && $schema->isNullable($field) && $entity->get($field) === null) {
+                    unset($bindingKey[$i]);
+                    unset($this->_fields[$i]);
+                }
+            }
+        }
+
         $primary = array_map(
             [$target, 'aliasField'],
             $bindingKey
@@ -107,11 +131,12 @@ class ExistsIn
             $primary,
             $entity->extract($this->_fields)
         );
+
         return $target->exists($conditions);
     }
 
     /**
-     * Check whether or not the entity fields are nullable and null.
+     * Checks whether or not the given entity fields are nullable and null.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to check.
      * @param \Cake\ORM\Table $source The table to use schema from.
