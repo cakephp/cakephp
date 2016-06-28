@@ -556,6 +556,7 @@ class Connection implements ConnectionInterface
         $this->begin();
 
         $result = false;
+        
         try {
             $result = $callback($this);
         } finally {
