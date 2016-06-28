@@ -32,6 +32,7 @@ class TableHelper extends Helper
         'rowSeparator' => false,
         'headerStyle' => 'info',
     ];
+    
     /**
      * Calculate the column widths
      *
@@ -76,9 +77,9 @@ class TableHelper extends Helper
      * @param array $options Options to be passed.
      * @return void
      */
-    protected function _render($row, $widths, $options = [])
+    protected function _render(array $row, $widths, $options = [])
     {
-        if (!is_array($row) || count($row) === 0) {
+        if (count($row) === 0) {
             return;
         }
 
