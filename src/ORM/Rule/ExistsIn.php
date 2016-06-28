@@ -110,11 +110,18 @@ class ExistsIn
             return true;
         }
 
-        if ($this->_options['allowPartialNulls'] && $this->_checkPartialSchemaNulls($entity, $source)) {
-            return true;
-        }
         if ($this->_fieldsAreNull($entity, $source)) {
             return true;
+        }
+
+        if ($this->_options['allowPartialNulls']) {
+            $schema = $source->schema();
+            foreach ($this->_fields as $i => $field) {
+                if ($schema->column($field) && $schema->isNullable($field) && $entity->get($field) === null) {
+                    unset($bindingKey[$i]);
+                    unset($this->_fields[$i]);
+                }
+            }
         }
 
         $primary = array_map(
@@ -125,6 +132,7 @@ class ExistsIn
             $primary,
             $entity->extract($this->_fields)
         );
+
         return $target->exists($conditions);
     }
 
@@ -145,29 +153,5 @@ class ExistsIn
             }
         }
         return $nulls === count($this->_fields);
-    }
-
-    /**
-     * Checks whether or not the give entity fields are null and map to schema NULL
-     * or are not null and map to schema NOT NULL.
-     *
-     * @param \Cake\Datasource\EntityInterface $entity The entity to check.
-     * @param \Cake\ORM\Table $source The table to use schema from.
-     * @return bool
-     */
-    protected function _checkPartialSchemaNulls($entity, $source)
-    {
-        $schema = $source->schema();
-        foreach ($this->_fields as $field) {
-            $isNullable = $schema->isNullable($field);
-            $value = $entity->get($field);
-            if (!$isNullable && $value === null) {
-                return false;
-            }
-            if ($isNullable && $value !== null) {
-                return false;
-            }
-        }
-        return true;
     }
 }
