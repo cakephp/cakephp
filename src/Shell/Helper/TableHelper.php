@@ -32,6 +32,7 @@ class TableHelper extends Helper
         'rowSeparator' => false,
         'headerStyle' => 'info',
     ];
+    
     /**
      * Calculate the column widths
      *
@@ -76,8 +77,12 @@ class TableHelper extends Helper
      * @param array $options Options to be passed.
      * @return void
      */
-    protected function _render($row, $widths, $options = [])
+    protected function _render(array $row, $widths, $options = [])
     {
+        if (count($row) === 0) {
+            return;
+        }
+
         $out = '';
         foreach ($row as $i => $column) {
             $pad = $widths[$i] - mb_strlen($column);
@@ -98,6 +103,10 @@ class TableHelper extends Helper
      */
     public function output($rows)
     {
+        if (!is_array($rows) || count($rows) === 0) {
+            return;
+        }
+
         $config = $this->config();
         $widths = $this->_calculateWidths($rows);
 
@@ -105,6 +114,10 @@ class TableHelper extends Helper
         if ($config['headers'] === true) {
             $this->_render(array_shift($rows), $widths, ['style' => $config['headerStyle']]);
             $this->_rowSeparator($widths);
+        }
+
+        if (!$rows) {
+            return;
         }
 
         foreach ($rows as $line) {

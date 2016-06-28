@@ -263,7 +263,7 @@ abstract class Cell
         try {
             return $this->render();
         } catch (Exception $e) {
-            trigger_error('Could not render cell - ' . $e->getMessage(), E_USER_WARNING);
+            trigger_error(sprintf('Could not render cell - %s [%s, line %d]', $e->getMessage(), $e->getFile(), $e->getLine()), E_USER_WARNING);
             return '';
         }
     }
