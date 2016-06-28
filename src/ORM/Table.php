@@ -1236,7 +1236,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function findOrCreate($search, callable $callback = null, $options = [])
     {
-        $options = $options + [
+        $options += [
             'atomic' => true,
             'defaults' => true
         ];
