@@ -555,19 +555,17 @@ class Connection implements ConnectionInterface
     {
         $this->begin();
 
+        $result = false;
         try {
             $result = $callback($this);
-        } catch (Exception $e) {
-            $this->rollback();
-            throw $e;
+        } finally {
+            if ($result === false) {
+                $this->rollback();
+            } else {
+                $this->commit();
+            }
         }
 
-        if ($result === false) {
-            $this->rollback();
-            return false;
-        }
-
-        $this->commit();
         return $result;
     }
 
