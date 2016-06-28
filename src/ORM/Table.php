@@ -35,6 +35,7 @@ use Cake\ORM\Association\HasOne;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
+use Cake\Validation\Validation;
 use Cake\Validation\ValidatorAwareTrait;
 use InvalidArgumentException;
 use RuntimeException;
@@ -1221,17 +1222,19 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function findOrCreate($search, callable $callback = null)
     {
-        $query = $this->find()->where($search);
-        $row = $query->first();
-        if ($row) {
-            return $row;
-        }
-        $entity = $this->newEntity();
-        $entity->set($search, ['guard' => false]);
-        if ($callback) {
-            $callback($entity);
-        }
-        return $this->save($entity) ?: $entity;
+        return $this->connection()->transactional(function () use ($search, $callback) {
+            $query = $this->find()->where($search);
+            $row = $query->first();
+            if ($row) {
+                return $row;
+            }
+            $entity = $this->newEntity();
+            $entity->set($search, ['guard' => false]);
+            if ($callback) {
+                $callback($entity);
+            }
+            return $this->save($entity) ?: $entity;
+        });
     }
 
     /**

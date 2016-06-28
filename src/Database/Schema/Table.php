@@ -137,6 +137,10 @@ class Table
     protected static $_columnExtras = [
         'string' => [
             'fixed' => null,
+            'collate' => null,
+        ],
+        'text' => [
+            'collate' => null,
         ],
         'integer' => [
             'unsigned' => null,
@@ -603,10 +607,12 @@ class Table
                     $attrs['columns']
                 ));
 
-                $this->_constraints[$name]['references'][1] = array_unique(array_merge(
-                    (array)$this->_constraints[$name]['references'][1],
-                    [$attrs['references'][1]]
-                ));
+                if (isset($this->_constraints[$name]['references'])) {
+                    $this->_constraints[$name]['references'][1] = array_unique(array_merge(
+                        (array)$this->_constraints[$name]['references'][1],
+                        [$attrs['references'][1]]
+                    ));
+                }
                 return $this;
             }
         } else {

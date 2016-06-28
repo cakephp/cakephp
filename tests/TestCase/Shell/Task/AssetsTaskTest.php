@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Shell\Task;
 
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;
@@ -40,13 +39,14 @@ class AssetsTaskTest extends TestCase
             'Skip AssetsTask tests on windows to prevent side effects for UrlHelper tests on AppVeyor.'
         );
 
-        $this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
+        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->Task = $this->getMock(
-            'Cake\Shell\Task\AssetsTask',
-            ['in', 'out', 'err', '_stop'],
-            [$this->io]
-        );
+        $this->Task = $this->getMockBuilder('Cake\Shell\Task\AssetsTask')
+            ->setMethods(['in', 'out', 'err', '_stop'])
+            ->setConstructorArgs([$this->io])
+            ->getMock();
     }
 
     /**
@@ -129,11 +129,10 @@ class AssetsTaskTest extends TestCase
     {
         Plugin::load('TestTheme');
 
-        $shell = $this->getMock(
-            'Cake\Shell\Task\AssetsTask',
-            ['in', 'out', 'err', '_stop', '_createSymlink', '_copyDirectory'],
-            [$this->io]
-        );
+        $shell = $this->getMockBuilder('Cake\Shell\Task\AssetsTask')
+            ->setMethods(['in', 'out', 'err', '_stop', '_createSymlink', '_copyDirectory'])
+            ->setConstructorArgs([$this->io])
+            ->getMock();
 
         $this->assertTrue(is_dir(WWW_ROOT . 'test_theme'));
 

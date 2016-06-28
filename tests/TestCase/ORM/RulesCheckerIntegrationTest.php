@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\Entity;
+use Cake\ORM\RulesChecker;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -29,7 +30,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.tags'];
+    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.tags', 'core.categories'];
 
     /**
      * Tear down
@@ -318,6 +319,30 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Ensure that add(isUnique()) only invokes a rule once.
+     *
+     * @return void
+     */
+    public function testIsUniqueRuleSingleInvocation()
+    {
+        $entity = new Entity([
+            'name' => 'larry'
+        ]);
+
+        $table = TableRegistry::get('Authors');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->isUnique(['name']), '_isUnique', ['errorField' => 'title']);
+        $this->assertFalse($table->save($entity));
+
+        $this->assertEquals(
+            ['_isUnique' => 'This value is already in use'],
+            $entity->errors('title'),
+            'Provided field should have errors'
+        );
+        $this->assertEmpty($entity->errors('name'), 'Errors should not apply to original field.');
+    }
+
+    /**
      * Tests the isUnique domain rule
      *
      * @group save
@@ -370,6 +395,32 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Tests isUnique with multiple fields emulates SQL UNIQUE keys
+     *
+     * @group save
+     * @return void
+     */
+    public function testIsUniqueMultipleFieldsOneIsNull()
+    {
+        $entity = new Entity([
+            'author_id' => null,
+            'title' => 'First Article'
+        ]);
+        $table = TableRegistry::get('Articles');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->isUnique(['title', 'author_id'], 'Nope'));
+
+        $this->assertSame($entity, $table->save($entity));
+
+        // Make a matching record
+        $entity = new Entity([
+            'author_id' => null,
+            'title' => 'New Article'
+        ]);
+        $this->assertSame($entity, $table->save($entity));
+    }
+
+    /**
      * Tests the existsIn domain rule
      *
      * @group save
@@ -389,6 +440,32 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->errors('author_id'));
+    }
+
+    /**
+     * Ensure that add(existsIn()) only invokes a rule once.
+     *
+     * @return void
+     */
+    public function testExistsInRuleSingleInvocation()
+    {
+        $entity = new Entity([
+            'title' => 'larry',
+            'author_id' => 500,
+        ]);
+
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->existsIn('author_id', 'Authors'), '_existsIn', ['errorField' => 'other']);
+        $this->assertFalse($table->save($entity));
+
+        $this->assertEquals(
+            ['_existsIn' => 'This value does not exist'],
+            $entity->errors('other'),
+            'Provided field should have errors'
+        );
+        $this->assertEmpty($entity->errors('author_id'), 'Errors should not apply to original field.');
     }
 
     /**
@@ -431,6 +508,30 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $this->assertEquals($entity, $table->save($entity));
         $this->assertEquals([], $entity->errors('author_id'));
+    }
+
+    /**
+     * Test ExistsIn on a new entity that doesn't have the field populated.
+     *
+     * This use case is important for saving records and their
+     * associated belongsTo records in one pass.
+     *
+     * @return void
+     */
+    public function testExistsInNotNullValueNewEntity()
+    {
+        $entity = new Entity([
+            'name' => 'A Category',
+        ]);
+        $table = TableRegistry::get('Categories');
+        $table->belongsTo('Categories', [
+            'foreignKey' => 'parent_id',
+            'bindingKey' => 'id',
+        ]);
+        $rules = $table->rulesChecker();
+        $rules->add($rules->existsIn('parent_id', 'Categories'));
+        $this->assertTrue($table->checkRules($entity, RulesChecker::CREATE));
+        $this->assertEmpty($entity->errors('parent_id'));
     }
 
     /**
@@ -859,5 +960,58 @@ class RulesCheckerIntegrationTest extends TestCase
         });
 
         $this->assertSame($entity, $table->save($entity));
+    }
+
+    /**
+     * Tests that associated items have a count of X.
+     *
+     * @group save
+     * @return void
+     */
+    public function testCountOfAssociatedItems()
+    {
+        $entity = new \Cake\ORM\Entity([
+            'title' => 'A Title',
+            'body' => 'A body'
+        ]);
+        $entity->tags = [
+            new \Cake\ORM\Entity([
+                'name' => 'Something New'
+            ]),
+            new \Cake\ORM\Entity([
+                'name' => '100'
+            ])
+        ];
+
+        TableRegistry::get('ArticlesTags');
+
+        $table = TableRegistry::get('articles');
+        $table->belongsToMany('tags');
+
+        $rules = $table->rulesChecker();
+        $rules->add($rules->validCount('tags', 3));
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals($entity->errors(), [
+            'tags' => [
+                '_validCount' => 'The count does not match >3'
+            ]
+        ]);
+
+        // Testing that undesired types fail
+        $entity->tags = null;
+        $this->assertFalse($table->save($entity));
+
+        $entity->tags = new \stdClass();
+        $this->assertFalse($table->save($entity));
+
+        $entity->tags = 'string';
+        $this->assertFalse($table->save($entity));
+
+        $entity->tags = 123456;
+        $this->assertFalse($table->save($entity));
+
+        $entity->tags = 0.512;
+        $this->assertFalse($table->save($entity));
     }
 }

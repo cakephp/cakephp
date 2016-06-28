@@ -55,17 +55,15 @@ class CompletionShellTest extends TestCase
         $this->out = new TestCompletionStringOutput();
         $io = new ConsoleIo($this->out);
 
-        $this->Shell = $this->getMock(
-            'Cake\Shell\CompletionShell',
-            ['in', '_stop', 'clear'],
-            [$io]
-        );
+        $this->Shell = $this->getMockBuilder('Cake\Shell\CompletionShell')
+            ->setMethods(['in', '_stop', 'clear'])
+            ->setConstructorArgs([$io])
+            ->getMock();
 
-        $this->Shell->Command = $this->getMock(
-            'Cake\Shell\Task\CommandTask',
-            ['in', '_stop', 'clear'],
-            [$io]
-        );
+        $this->Shell->Command = $this->getMockBuilder('Cake\Shell\Task\CommandTask')
+            ->setMethods(['in', '_stop', 'clear'])
+            ->setConstructorArgs([$io])
+            ->getMock();
     }
 
     /**
@@ -203,7 +201,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['subcommands', 'app.sample']);
         $output = $this->out->output;
 
-        $expected = "derp sample\n";
+        $expected = "derp load sample\n";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -261,7 +259,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['subcommands', 'sample']);
         $output = $this->out->output;
 
-        $expected = "derp sample\n";
+        $expected = "derp load sample\n";
         $this->assertTextEquals($expected, $output);
     }
 

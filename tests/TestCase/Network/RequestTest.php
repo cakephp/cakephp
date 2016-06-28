@@ -178,6 +178,20 @@ class RequestTest extends TestCase
     }
 
     /**
+     * Test that URL in path is handled correctly.
+     */
+    public function testUrlInPath()
+    {
+        $_SERVER['REQUEST_URI'] = '/jump/http://cakephp.org';
+        $request = Request::createFromGlobals();
+        $this->assertEquals('jump/http://cakephp.org', $request->url);
+
+        $_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/jump/http://cakephp.org';
+        $request = Request::createFromGlobals();
+        $this->assertEquals('jump/http://cakephp.org', $request->url);
+    }
+
+    /**
      * Test addParams() method
      *
      * @return void
@@ -573,6 +587,14 @@ class RequestTest extends TestCase
         $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
         $result = $request->referer(true);
         $this->assertSame('/some/path', $result);
+
+        $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/0');
+        $result = $request->referer(true);
+        $this->assertSame('/0', $result);
+
+        $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/');
+        $result = $request->referer(true);
+        $this->assertSame('/', $result);
 
         $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
         $result = $request->referer(false);
@@ -2292,7 +2314,9 @@ class RequestTest extends TestCase
      */
     public function testInput()
     {
-        $request = $this->getMock('Cake\Network\Request', ['_readInput']);
+        $request = $this->getMockBuilder('Cake\Network\Request')
+            ->setMethods(['_readInput'])
+            ->getMock();
         $request->expects($this->once())->method('_readInput')
             ->will($this->returnValue('I came from stdin'));
 
@@ -2307,7 +2331,9 @@ class RequestTest extends TestCase
      */
     public function testInputDecode()
     {
-        $request = $this->getMock('Cake\Network\Request', ['_readInput']);
+        $request = $this->getMockBuilder('Cake\Network\Request')
+            ->setMethods(['_readInput'])
+            ->getMock();
         $request->expects($this->once())->method('_readInput')
             ->will($this->returnValue('{"name":"value"}'));
 
@@ -2329,7 +2355,9 @@ class RequestTest extends TestCase
 </post>
 XML;
 
-        $request = $this->getMock('Cake\Network\Request', ['_readInput']);
+        $request = $this->getMockBuilder('Cake\Network\Request')
+            ->setMethods(['_readInput'])
+            ->getMock();
         $request->expects($this->once())->method('_readInput')
             ->will($this->returnValue($xml));
 

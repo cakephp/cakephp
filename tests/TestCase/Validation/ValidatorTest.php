@@ -644,7 +644,21 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests custom error mesages generated when a field is not allowed to be empty
+     * Tests custom error messages generated when a field is allowed to be empty
+     *
+     * @return void
+     */
+    public function testCustomErrorsWithAllowedEmpty()
+    {
+        $validator = new Validator;
+        $validator->allowEmpty('title', false, 'Custom message');
+        $errors = $validator->errors(['title' => null]);
+        $expected = ['title' => ['_empty' => 'Custom message']];
+        $this->assertEquals($expected, $errors);
+    }
+
+    /**
+     * Tests custom error messages generated when a field is not allowed to be empty
      *
      * @return void
      */
@@ -744,7 +758,9 @@ class ValidatorTest extends TestCase
             ->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
 
-        $thing = $this->getMock('\stdClass', ['isCool']);
+        $thing = $this->getMockBuilder('\stdClass')
+            ->setMethods(['isCool'])
+            ->getMock();
         $thing->expects($this->once())->method('isCool')
             ->will($this->returnCallback(function ($data, $context) use ($thing) {
                 $this->assertEquals('bar', $data);
@@ -787,7 +803,9 @@ class ValidatorTest extends TestCase
             'rule' => ['isCool', 'and', 'awesome'],
             'provider' => 'thing'
         ]);
-        $thing = $this->getMock('\stdClass', ['isCool']);
+        $thing = $this->getMockBuilder('\stdClass')
+            ->setMethods(['isCool'])
+            ->getMock();
         $thing->expects($this->once())->method('isCool')
             ->will($this->returnCallback(function ($data, $a, $b, $context) use ($thing) {
                 $this->assertEquals('bar', $data);
@@ -1543,6 +1561,46 @@ class ValidatorTest extends TestCase
             'multiple'
         );
         $this->assertNotEmpty($validator->errors(['username' => '']));
+    }
+
+    /**
+     * Tests the hasAtLeast method
+     *
+     * @return void
+     */
+    public function testHasAtLeast()
+    {
+        $validator = new Validator();
+        $validator->hasAtLeast('things', 3);
+        $this->assertEmpty($validator->errors(['things' => [1, 2, 3]]));
+        $this->assertEmpty($validator->errors(['things' => [1, 2, 3, 4]]));
+        $this->assertNotEmpty($validator->errors(['things' => [1, 2]]));
+        $this->assertNotEmpty($validator->errors(['things' => []]));
+        $this->assertNotEmpty($validator->errors(['things' => 'string']));
+
+        $this->assertEmpty($validator->errors(['things' => ['_ids' => [1, 2, 3]]]));
+        $this->assertEmpty($validator->errors(['things' => ['_ids' => [1, 2, 3, 4]]]));
+        $this->assertNotEmpty($validator->errors(['things' => ['_ids' => [1, 2]]]));
+        $this->assertNotEmpty($validator->errors(['things' => ['_ids' => []]]));
+        $this->assertNotEmpty($validator->errors(['things' => ['_ids' => 'string']]));
+    }
+
+    /**
+     * Tests the hasAtMost method
+     *
+     * @return void
+     */
+    public function testHasAtMost()
+    {
+        $validator = new Validator();
+        $validator->hasAtMost('things', 3);
+        $this->assertEmpty($validator->errors(['things' => [1, 2, 3]]));
+        $this->assertEmpty($validator->errors(['things' => [1]]));
+        $this->assertNotEmpty($validator->errors(['things' => [1, 2, 3, 4]]));
+
+        $this->assertEmpty($validator->errors(['things' => ['_ids' => [1, 2, 3]]]));
+        $this->assertEmpty($validator->errors(['things' => ['_ids' => [1, 2]]]));
+        $this->assertNotEmpty($validator->errors(['things' => ['_ids' => [1, 2, 3, 4]]]));
     }
 
     protected function assertProxyMethod($validator, $method, $extra = null, $pass = [], $name = null)

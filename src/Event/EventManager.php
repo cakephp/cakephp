@@ -54,6 +54,20 @@ class EventManager
     protected $_isGlobal = false;
 
     /**
+     * The event list object.
+     *
+     * @var \Cake\Event\EventList|null
+     */
+    protected $_eventList;
+
+    /**
+     * Enables automatic adding of events to the event list object if it is present.
+     *
+     * @param bool
+     */
+    protected $_trackEvents = false;
+
+    /**
      * Returns the globally available instance of a Cake\Event\EventManager
      * this is used for dispatching events attached from outside the scope
      * other managers were created. Usually for creating hook systems or inter-class
@@ -346,6 +360,9 @@ class EventManager
 
         $listeners = $this->listeners($event->name());
         if (empty($listeners)) {
+            if ($this->_trackEvents) {
+                $this->addEventToList($event);
+            }
             return $event;
         }
 
@@ -360,6 +377,10 @@ class EventManager
             if ($result !== null) {
                 $event->result = $result;
             }
+        }
+
+        if ($this->_trackEvents) {
+            $this->addEventToList($event);
         }
         return $event;
     }
@@ -461,6 +482,63 @@ class EventManager
     }
 
     /**
+     * Returns the event list.
+     *
+     * @return \Cake\Event\EventList
+     */
+    public function getEventList()
+    {
+        return $this->_eventList;
+    }
+
+    /**
+     * Adds an event to the list if the event list object is present.
+     *
+     * @param \Cake\Event\Event $event An event to add to the list.
+     * @return void
+     */
+    public function addEventToList(Event $event)
+    {
+        if ($this->_eventList) {
+            $this->_eventList->add($event);
+        }
+    }
+
+    /**
+     * Enables / disables event tracking at runtime.
+     *
+     * @param bool $enabled True or false to enable / disable it.
+     * @return void
+     */
+    public function trackEvents($enabled)
+    {
+        $this->_trackEvents = (bool)$enabled;
+    }
+
+    /**
+     * Enables the listing of dispatched events.
+     *
+     * @param \Cake\Event\EventList $eventList The event list object to use.
+     * @return void
+     */
+    public function setEventList(EventList $eventList)
+    {
+        $this->_eventList = $eventList;
+        $this->_trackEvents = true;
+    }
+
+    /**
+     * Disables the listing of dispatched events.
+     *
+     * @return void
+     */
+    public function unsetEventList()
+    {
+        $this->_eventList = null;
+        $this->_trackEvents = false;
+    }
+
+    /**
      * Debug friendly object properties.
      *
      * @return array
@@ -472,6 +550,11 @@ class EventManager
         $properties['_listeners'] = [];
         foreach ($this->_listeners as $key => $listeners) {
             $properties['_listeners'][$key] = count($listeners) . ' listener(s)';
+        }
+        if ($this->_eventList) {
+            foreach ($this->_eventList as $event) {
+                $properties['_dispatchedEvents'][] = $event->name() . ' with subject ' . get_class($event->subject());
+            }
         }
         return $properties;
     }

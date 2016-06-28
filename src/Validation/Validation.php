@@ -180,7 +180,7 @@ class Validation
                 'enroute' => '/^2(?:014|149)\\d{11}$/',
                 'jcb' => '/^(3\\d{4}|2100|1800)\\d{11}$/',
                 'maestro' => '/^(?:5020|6\\d{3})\\d{12}$/',
-                'mc' => '/^5[1-5]\\d{14}$/',
+                'mc' => '/^(5[1-5]\\d{14})|(2(?:22[1-9]|2[3-9][0-9]|[3-6][0-9]{2}|7[0-1][0-9]|720)\\d{12})$/',
                 'solo' => '/^(6334[5-9][0-9]|6767[0-9]{2})\\d{10}(\\d{2,3})?$/',
                 'switch' => '/^(?:49(03(0[2-9]|3[5-9])|11(0[1-2]|7[4-9]|8[1-2])|36[0-9]{2})\\d{10}(\\d{2,3})?)|(?:564182\\d{10}(\\d{2,3})?)|(6(3(33[0-4][0-9])|759[0-9]{2})\\d{10}(\\d{2,3})?)$/',
                 'visa' => '/^4\\d{12}(\\d{3})?$/',
@@ -213,6 +213,24 @@ class Validation
             }
         }
         return false;
+    }
+
+    /**
+     * Used to check the count of a given value of type array or Countable.
+     *
+     * @param array|\Countable $check The value to check the count on.
+     * @param string $operator Can be either a word or operand
+     *    is greater >, is less <, greater or equal >=
+     *    less or equal <=, is less <, equal to ==, not equal !=
+     * @param int $expectedCount The expected count value.
+     * @return bool Success
+     */
+    public static function numElements($check, $operator, $expectedCount)
+    {
+        if (!is_array($check) && !$check instanceof \Countable) {
+            return false;
+        }
+        return self::comparison(count($check), $operator, $expectedCount);
     }
 
     /**

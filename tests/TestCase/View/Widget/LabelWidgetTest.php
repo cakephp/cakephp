@@ -36,7 +36,7 @@ class LabelWidgetTest extends TestCase
             'label' => '<label{{attrs}}>{{text}}</label>',
         ];
         $this->templates = new StringTemplate($templates);
-        $this->context = $this->getMock('Cake\View\Form\ContextInterface');
+        $this->context = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
     }
 
     /**

@@ -339,6 +339,12 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('5467639122779531', ['mc']));
         $this->assertTrue(Validation::cc('5297350261550024', ['mc']));
         $this->assertTrue(Validation::cc('5162739131368058', ['mc']));
+        //Mastercard (additional 2016 BIN)
+        $this->assertTrue(Validation::cc('2221000000000009', ['mc']));
+        $this->assertTrue(Validation::cc('2720999999999996', ['mc']));
+        $this->assertTrue(Validation::cc('2223000010005798', ['mc']));
+        $this->assertTrue(Validation::cc('2623430710235708', ['mc']));
+        $this->assertTrue(Validation::cc('2420452519835723', ['mc']));
         //Solo 16
         $this->assertTrue(Validation::cc('6767432107064987', ['solo']));
         $this->assertTrue(Validation::cc('6334667758225411', ['solo']));
@@ -2761,5 +2767,28 @@ class ValidationTest extends TestCase
 
         // Grinning face
         $this->assertTrue(Validation::utf8('some' . "\xf0\x9f\x98\x80" . 'value', ['extended' => true]));
+    }
+
+    /**
+     * Test numElements
+     *
+     * @return void
+     */
+    public function testNumElements()
+    {
+        $array = ['cake', 'php'];
+        $this->assertTrue(Validation::numElements($array, '==', 2));
+        $this->assertFalse(Validation::numElements($array, '>', 3));
+        $this->assertFalse(Validation::numElements($array, '<', 1));
+
+        $callable = function () {
+            return '';
+        };
+
+        $this->assertFalse(Validation::numElements(null, '==', 0));
+        $this->assertFalse(Validation::numElements(new \stdClass(), '==', 0));
+        $this->assertFalse(Validation::numElements($callable, '==', 0));
+        $this->assertFalse(Validation::numElements(false, '==', 0));
+        $this->assertFalse(Validation::numElements(true, '==', 0));
     }
 }

@@ -312,32 +312,11 @@ class RulesChecker
             $name = null;
         }
 
-        return function ($entity, $scope) use ($rule, $name, $options) {
-            $pass = $rule($entity, $options + $scope);
-            if ($pass === true || empty($options['errorField'])) {
-                return $pass === true;
-            }
-
-            $message = 'invalid';
-            if (isset($options['message'])) {
-                $message = $options['message'];
-            }
-            if (is_string($pass)) {
-                $message = $pass;
-            }
-            if ($name) {
-                $message = [$name => $message];
-            } else {
-                $message = [$message];
-            }
-            $entity->errors($options['errorField'], $message);
-
-            if ($entity instanceof InvalidPropertyInterface && isset($entity->{$options['errorField']})) {
-                $invalidValue = $entity->{$options['errorField']};
-                $entity->invalid($options['errorField'], $invalidValue);
-            }
-
-            return $pass === true;
-        };
+        if (!($rule instanceof RuleInvoker)) {
+            $rule = new RuleInvoker($rule, $name, $options);
+        } else {
+            $rule->setOptions($options)->setName($name);
+        }
+        return $rule;
     }
 }

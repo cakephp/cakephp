@@ -336,11 +336,10 @@ class Request implements ArrayAccess
         if (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '://') === false) {
             $uri = $_SERVER['REQUEST_URI'];
         } elseif (isset($_SERVER['REQUEST_URI'])) {
-            $qPosition = strpos($_SERVER['REQUEST_URI'], '?');
-            if ($qPosition !== false && strpos($_SERVER['REQUEST_URI'], '://') > $qPosition) {
-                $uri = $_SERVER['REQUEST_URI'];
-            } else {
-                $uri = substr($_SERVER['REQUEST_URI'], strlen(Configure::read('App.fullBaseUrl')));
+            $uri = $_SERVER['REQUEST_URI'];
+            $fullBaseUrl = Configure::read('App.fullBaseUrl');
+            if (strpos($uri, $fullBaseUrl) === 0) {
+                $uri = substr($_SERVER['REQUEST_URI'], strlen($fullBaseUrl));
             }
         } elseif (isset($_SERVER['PHP_SELF'], $_SERVER['SCRIPT_NAME'])) {
             $uri = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
@@ -547,6 +546,9 @@ class Request implements ArrayAccess
         if (!empty($ref) && !empty($base)) {
             if ($local && strpos($ref, $base) === 0) {
                 $ref = substr($ref, strlen($base));
+                if (!strlen($ref)) {
+                    $ref = '/';
+                }
                 if ($ref[0] !== '/') {
                     $ref = '/' . $ref;
                 }
@@ -1347,6 +1349,9 @@ class Request implements ArrayAccess
      */
     public function offsetExists($name)
     {
+        if ($name === 'url' || $name === 'data') {
+            return true;
+        }
         return isset($this->params[$name]);
     }
 

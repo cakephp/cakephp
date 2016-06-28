@@ -183,7 +183,7 @@ class I18n
      *      $package = new Package('default');
      *      $messages = (...); // Fetch messages for locale from external service.
      *      $package->setMessages($message);
-     *      $package->setFallback('default);
+     *      $package->setFallback('default');
      *      return $package;
      *  });
      * ```

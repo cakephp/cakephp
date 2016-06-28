@@ -6,7 +6,6 @@
 [![Code Consistency](https://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/grade.svg)](http://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/)
 [![Total Downloads](https://img.shields.io/packagist/dt/cakephp/cakephp.svg?style=flat-square)](https://packagist.org/packages/cakephp/cakephp)
 [![Latest Stable Version](https://img.shields.io/packagist/v/cakephp/cakephp.svg?style=flat-square&label=stable)](https://packagist.org/packages/cakephp/cakephp)
-[![Latest Unstable Version](https://img.shields.io/packagist/vpre/cakephp/cakephp.svg?style=flat-square&label=unstable)](https://packagist.org/packages/cakephp/cakephp)
 
 [CakePHP](http://www.cakephp.org) is a rapid development framework for PHP which
 uses commonly known design patterns like Associative Data
@@ -58,9 +57,11 @@ tests for CakePHP by doing the following:
 
 ## Get Support!
 
+[Slack](http://cakesf.herokuapp.com/) - Join us on Slack.
+
 [#cakephp](http://webchat.freenode.net/?channels=#cakephp) on irc.freenode.net - Come chat with us, we have cake.
 
-[Google Group](https://groups.google.com/group/cake-php) - Community mailing list and forum.
+[Forum](http://discourse.cakephp.org/) - Offical CakePHP forum.
 
 [GitHub Issues](https://github.com/cakephp/cakephp/issues) - Got issues? Please tell us!
 

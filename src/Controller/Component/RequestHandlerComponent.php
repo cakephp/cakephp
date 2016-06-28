@@ -159,7 +159,7 @@ class RequestHandlerComponent extends Component
     protected function _setExtension($request, $response)
     {
         $accept = $request->parseAccept();
-        if (empty($accept)) {
+        if (empty($accept) || current($accept)[0] === 'text/html') {
             return;
         }
 
@@ -202,11 +202,16 @@ class RequestHandlerComponent extends Component
         if (empty($this->ext) || in_array($this->ext, ['html', 'htm'])) {
             $this->_setExtension($request, $this->response);
         }
-        if (empty($this->ext) && $request->is('ajax')) {
+
+        $request->params['isAjax'] = $request->is('ajax');
+
+        if (empty($this->ext) && $request->params['isAjax']) {
             $this->ext = 'ajax';
         }
 
-        $request->params['isAjax'] = $this->request->is('ajax');
+        if ($request->is(['get', 'head', 'options'])) {
+            return;
+        }
 
         foreach ($this->config('inputTypeMap') as $type => $handler) {
             if (!is_callable($handler[0])) {
@@ -310,8 +315,8 @@ class RequestHandlerComponent extends Component
 
         if (!empty($this->ext) && $isRecognized) {
             $this->renderAs($event->subject(), $this->ext);
-        } elseif (empty($this->ext) || in_array($this->ext, ['html', 'htm'])) {
-            $this->respondAs('html', ['charset' => Configure::read('App.encoding')]);
+        } else {
+            $this->response->charset(Configure::read('App.encoding'));
         }
 
         if ($this->_config['checkHttpCache'] &&

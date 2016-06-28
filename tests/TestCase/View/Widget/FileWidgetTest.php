@@ -36,7 +36,7 @@ class FileWidgetTest extends TestCase
             'file' => '<input type="file" name="{{name}}"{{attrs}}>',
         ];
         $this->templates = new StringTemplate($templates);
-        $this->context = $this->getMock('Cake\View\Form\ContextInterface');
+        $this->context = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
     }
 
     /**

@@ -30,7 +30,7 @@ class SqlserverSchema extends BaseSchema
         $sql = "SELECT TABLE_NAME
             FROM INFORMATION_SCHEMA.TABLES
             WHERE TABLE_SCHEMA = ?
-            AND TABLE_TYPE = 'BASE TABLE'
+            AND (TABLE_TYPE = 'BASE TABLE' OR TABLE_TYPE = 'VIEW')
             ORDER BY TABLE_NAME";
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
         return [$sql, [$schema]];
@@ -50,8 +50,9 @@ class SqlserverSchema extends BaseSchema
             AC.scale AS [scale],
             AC.is_identity AS [autoincrement],
             AC.is_nullable AS [null],
-            OBJECT_DEFINITION(AC.default_object_id) AS [default]
-            FROM sys.[tables] T
+            OBJECT_DEFINITION(AC.default_object_id) AS [default],
+            AC.collation_name AS [collation_name]
+            FROM sys.[objects] T
             INNER JOIN sys.[schemas] S ON S.[schema_id] = T.[schema_id]
             INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id]
             INNER JOIN sys.[types] TY ON TY.[user_type_id] = AC.[user_type_id]
@@ -161,9 +162,33 @@ class SqlserverSchema extends BaseSchema
 
         $field += [
             'null' => $row['null'] === '1' ? true : false,
-            'default' => $row['default'],
+            'default' => $this->_defaultValue($row['default']),
+            'collate' => $row['collation_name'],
         ];
         $table->addColumn($row['name'], $field);
+    }
+
+    /**
+     * Manipulate the default value.
+     *
+     * Sqlite includes quotes and bared NULLs in default values.
+     * We need to remove those.
+     *
+     * @param string|null $default The default value.
+     * @return string|null
+     */
+    protected function _defaultValue($default)
+    {
+        if ($default === 'NULL') {
+            return null;
+        }
+
+        // Remove quotes
+        if (preg_match("/^'(.*)'$/", $default, $matches)) {
+            return str_replace("''", "'", $matches[1]);
+        }
+
+        return $default;
     }
 
     /**
@@ -348,6 +373,11 @@ class SqlserverSchema extends BaseSchema
             }
 
             $out .= sprintf('%s(%d)', $type, $data['length']);
+        }
+
+        $hasCollate = ['text', 'string'];
+        if (in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {
+            $out .= ' COLLATE ' . $data['collate'];
         }
 
         if ($data['type'] === 'float' && isset($data['precision'])) {

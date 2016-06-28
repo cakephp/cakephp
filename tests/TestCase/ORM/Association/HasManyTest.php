@@ -20,6 +20,7 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\IdentifierQuoter;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
+use Cake\ORM\Association;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
@@ -56,11 +57,10 @@ class HasManyTest extends TestCase
             ]
         ]);
         $connection = ConnectionManager::get('test');
-        $this->article = $this->getMock(
-            'Cake\ORM\Table',
-            ['find', 'deleteAll', 'delete'],
-            [['alias' => 'Articles', 'table' => 'articles', 'connection' => $connection]]
-        );
+        $this->article = $this->getMockBuilder('Cake\ORM\Table')
+            ->setMethods(['find', 'deleteAll', 'delete'])
+            ->setConstructorArgs([['alias' => 'Articles', 'table' => 'articles', 'connection' => $connection]])
+            ->getMock();
         $this->article->schema([
             'id' => ['type' => 'integer'],
             'title' => ['type' => 'string'],
@@ -387,7 +387,10 @@ class HasManyTest extends TestCase
         $this->author->primaryKey(['id', 'site_id']);
         $association = new HasMany('Articles', $config);
         $keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
-        $query = $this->getMock('Cake\ORM\Query', ['all', 'andWhere'], [null, null]);
+        $query = $this->getMockBuilder('Cake\ORM\Query')
+            ->setMethods(['all', 'andWhere'])
+            ->setConstructorArgs([null, null])
+            ->getMock();
         $this->article->method('find')
             ->with('all')
             ->will($this->returnValue($query));
@@ -485,7 +488,10 @@ class HasManyTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities()
     {
-        $mock = $this->getMock('Cake\ORM\Table', ['saveAssociated'], [], '', false);
+        $mock = $this->getMockBuilder('Cake\ORM\Table')
+            ->setMethods(['saveAssociated'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $config = [
             'sourceTable' => $this->author,
             'targetTable' => $mock,
@@ -526,13 +532,43 @@ class HasManyTest extends TestCase
      */
     public function testPropertyNoPlugin()
     {
-        $mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+        $mock = $this->getMockBuilder('Cake\ORM\Table')
+            ->disableOriginalConstructor()
+            ->getMock();
         $config = [
             'sourceTable' => $this->author,
             'targetTable' => $mock,
         ];
         $association = new HasMany('Contacts.Addresses', $config);
         $this->assertEquals('addresses', $association->property());
+    }
+
+    /**
+     * Test that the ValueBinder is reset when using strategy = Association::STRATEGY_SUBQUERY
+     *
+     * @return void
+     */
+    public function testValueBinderUpdateOnSubQueryStrategy()
+    {
+        $Authors = TableRegistry::get('Authors');
+        $Authors->hasMany('Articles', [
+            'strategy' => Association::STRATEGY_SUBQUERY
+        ]);
+
+        $query = $Authors->find();
+        $authorsAndArticles = $query
+            ->select([
+                'id',
+                'slug' => $query->func()->concat([
+                    '---',
+                    'name' => 'identifier'
+                ])
+            ])
+            ->contain('Articles')
+            ->where(['name' => 'mariano'])
+            ->first();
+
+        $this->assertCount(2, $authorsAndArticles->get('articles'));
     }
 
     /**
