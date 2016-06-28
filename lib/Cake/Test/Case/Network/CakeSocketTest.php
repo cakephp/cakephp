@@ -318,11 +318,6 @@ class CakeSocketTest extends CakeTestCase {
  * @return void
  */
 	public function testEnableCrypto() {
-		// testing on ssl server
-		$this->_connectSocketToSslTls();
-		$this->assertTrue($this->Socket->enableCrypto('sslv3', 'client'));
-		$this->Socket->disconnect();
-
 		// testing on tls server
 		$this->_connectSocketToSslTls();
 		$this->assertTrue($this->Socket->enableCrypto('tls', 'client'));
