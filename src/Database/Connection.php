@@ -561,7 +561,7 @@ class Connection implements ConnectionInterface
         try {
             $result = $callback($this);
         } finally {
-            if($result === false) {
+            if ($result === false) {
                 $this->rollback();
             } else {
                 $this->commit();
