@@ -359,7 +359,7 @@ class AuthComponent extends Component {
 			return true;
 		}
 
-		if (!$controller->request->is('ajax')) {
+		if (!$controller->request->is('ajax') && !$controller->request->is('json')) {
 			$this->flash($this->authError);
 			$this->Session->write('Auth.redirect', $controller->request->here(false));
 			$controller->redirect($this->loginAction);
