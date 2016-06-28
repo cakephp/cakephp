@@ -260,6 +260,8 @@ class DateTimeWidget implements WidgetInterface
             } else {
                 $date = clone $value;
             }
+        } catch (\Throwable $e) {
+            $date = new DateTime();
         } catch (Exception $e) {
             $date = new DateTime();
         }

@@ -262,10 +262,12 @@ abstract class Cell
     {
         try {
             return $this->render();
+        } catch (\Throwable $e) {
+            trigger_error('Could not render cell - ' . $e->getMessage(), E_USER_WARNING);
         } catch (Exception $e) {
             trigger_error('Could not render cell - ' . $e->getMessage(), E_USER_WARNING);
-            return '';
         }
+        return '';
     }
 
     /**

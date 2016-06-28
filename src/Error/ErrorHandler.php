@@ -144,6 +144,16 @@ class ErrorHandler extends BaseErrorHandler
             $response = $error->render();
             $this->_clearOutput();
             $this->_sendResponse($response);
+        } catch (\Throwable $e) {
+            // Disable trace for internal errors.
+            $this->_options['trace'] = false;
+            $message = sprintf(
+                "[%s] %s\n%s", // Keeping same message format
+                get_class($e),
+                $e->getMessage(),
+                $e->getTraceAsString()
+            );
+            trigger_error($message, E_USER_ERROR);
         } catch (Exception $e) {
             // Disable trace for internal errors.
             $this->_options['trace'] = false;

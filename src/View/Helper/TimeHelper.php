@@ -325,6 +325,7 @@ class TimeHelper extends Helper
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
      * @return string Formatted and translated date string
      * @throws \Exception When the date cannot be parsed
+     * @throws \Throwable When the date cannot be parsed
      * @see \Cake\I18n\Time::i18nFormat()
      */
     public function i18nFormat($date, $format = null, $invalid = false, $timezone = null)
@@ -336,12 +337,17 @@ class TimeHelper extends Helper
         try {
             $time = new Time($date);
             return $time->i18nFormat($format, $timezone);
+        } catch (\Throwable $e) {
+            if ($invalid === false) {
+                throw $e;
+            }
         } catch (Exception $e) {
             if ($invalid === false) {
                 throw $e;
             }
-            return $invalid;
         }
+        
+        return $invalid;
     }
 
     /**

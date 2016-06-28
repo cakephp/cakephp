@@ -369,6 +369,9 @@ abstract class IntegrationTestCase extends TestCase
             throw $e;
         } catch (DatabaseException $e) {
             throw $e;
+        } catch (\Throwable $e) {
+            $this->_exception = $e;
+            $this->_handleError($e);
         } catch (Exception $e) {
             $this->_exception = $e;
             $this->_handleError($e);

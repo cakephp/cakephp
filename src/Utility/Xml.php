@@ -150,6 +150,8 @@ class Xml
                 $xml = new DOMDocument();
                 $xml->loadXML($input);
             }
+        } catch (\Throwable $e) {
+            $xml = null;
         } catch (Exception $e) {
             $xml = null;
         }

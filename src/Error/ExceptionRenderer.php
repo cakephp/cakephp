@@ -124,6 +124,8 @@ class ExceptionRenderer
             $controller = new $class($request, $response);
             $controller->startupProcess();
             $startup = true;
+        } catch (\Throwable $e) {
+            $startup = false;
         } catch (Exception $e) {
             $startup = false;
         }
@@ -135,6 +137,7 @@ class ExceptionRenderer
             try {
                 $event = new Event('Controller.startup', $controller);
                 $controller->RequestHandler->startup($event);
+            } catch (\Throwable $e) {
             } catch (Exception $e) {
             }
         }
@@ -330,10 +333,10 @@ class ExceptionRenderer
             if (isset($attributes['plugin']) && $attributes['plugin'] === $this->controller->plugin) {
                 $this->controller->plugin = null;
             }
-            return $this->_outputMessageSafe('error500');
+        } catch (\Throwable $e) {
         } catch (Exception $e) {
-            return $this->_outputMessageSafe('error500');
         }
+        return $this->_outputMessageSafe('error500');
     }
 
     /**

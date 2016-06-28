@@ -545,9 +545,10 @@ class Debugger
                 return $out . "\n" .
                     substr(static::_array($var->__debugInfo(), $depth - 1, $indent), 1, -1) .
                     $end . '}';
+            } catch (\Throwable $e) {
+                return sprintf("%s\n(unable to export object: %s)\n }", $out, $e->getMessage());
             } catch (Exception $e) {
-                $message = $e->getMessage();
-                return $out . "\n(unable to export object: $message)\n }";
+                return sprintf("%s\n(unable to export object: %s)\n }", $out, $e->getMessage());
             }
         }
 

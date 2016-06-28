@@ -45,7 +45,8 @@ class LoggingStatement extends StatementDecorator
      *
      * @param array|null $params List of values to be bound to query
      * @return bool True on success, false otherwise
-     * @throws \Exception Re-throws any exception raised during query execution.
+     * @throws Exception Re-throws any exception raised during query execution.
+     * @throws \Throwable Re-throws any errors raised during query execution.
      */
     public function execute($params = null)
     {
@@ -54,6 +55,11 @@ class LoggingStatement extends StatementDecorator
 
         try {
             $result = parent::execute($params);
+        } catch (\Throwable $e) {
+            $e->queryString = $this->queryString;
+            $query->error = $e;
+            $this->_log($query, $params, $t);
+            throw $e;
         } catch (Exception $e) {
             $e->queryString = $this->queryString;
             $query->error = $e;

@@ -120,6 +120,7 @@ class TranslatorRegistry extends TranslatorLocator
     {
         try {
             return parent::get($name, $locale);
+        } catch (\Throwable $e) {
         } catch (Exception $e) {
         }
 
