@@ -1262,13 +1262,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _processFindOrCreate($search, callable $callback = null, $options = [])
     {
-        $query = ($search instanceof Query) ? $search : $this->find();
         if (is_callable($search)) {
+            $query = $this->find();
             $search($query);
         } elseif (is_array($search)) {
-            $query->where($search);
+            $query = $this->find()->where($search);
+        } elseif ($search instanceof Query) {
+            $query = $search;
         } else {
-            throw new InvalidArgumentException('Search criteria must be an array or callable');
+            throw new InvalidArgumentException('Search criteria must be an array, callable or Query');
         }
         $row = $query->first();
         if ($row !== null) {
