@@ -182,6 +182,8 @@ class Connection implements ConnectionInterface
         try {
             $this->_driver->connect();
             return true;
+        } catch (\Throwable $e) {
+            throw new MissingConnectionException(['reason' => $e->getMessage()]);
         } catch (Exception $e) {
             throw new MissingConnectionException(['reason' => $e->getMessage()]);
         }
@@ -555,19 +557,17 @@ class Connection implements ConnectionInterface
     {
         $this->begin();
 
+        $result = false;
         try {
             $result = $callback($this);
-        } catch (Exception $e) {
-            $this->rollback();
-            throw $e;
+        } finally {
+            if ($result === false) {
+                $this->rollback();
+            } else {
+                $this->commit();
+            }
         }
 
-        if ($result === false) {
-            $this->rollback();
-            return false;
-        }
-
-        $this->commit();
         return $result;
     }
 
@@ -587,14 +587,10 @@ class Connection implements ConnectionInterface
         $this->disableForeignKeys();
 
         try {
-            $result = $callback($this);
-        } catch (Exception $e) {
+            return $callback($this);
+        } finally {
             $this->enableForeignKeys();
-            throw $e;
         }
-
-        $this->enableForeignKeys();
-        return $result;
     }
 
     /**

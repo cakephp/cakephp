@@ -201,6 +201,8 @@ class Folder
 
         try {
             $iterator = new DirectoryIterator($this->path);
+        } catch (\Throwable $e) {
+            return [$dirs, $files];
         } catch (Exception $e) {
             return [$dirs, $files];
         }
@@ -495,14 +497,16 @@ class Folder
         if (!$path) {
             $path = $this->path;
         }
-        $subdirectories = [];
 
         try {
             $iterator = new DirectoryIterator($path);
+        } catch (\Throwable $e) {
+            return [];
         } catch (Exception $e) {
             return [];
         }
 
+        $subdirectories = [];
         foreach ($iterator as $item) {
             if (!$item->isDir() || $item->isDot()) {
                 continue;
@@ -543,11 +547,10 @@ class Folder
         try {
             $directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::KEY_AS_PATHNAME | RecursiveDirectoryIterator::CURRENT_AS_SELF);
             $iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::SELF_FIRST);
+        } catch (\Throwable $e) {
+            return $type === null ? [[], []] : [];
         } catch (Exception $e) {
-            if ($type === null) {
-                return [[], []];
-            }
-            return [];
+            return $type === null ? [[], []] : [];
         }
 
         foreach ($iterator as $itemPath => $fsIterator) {
@@ -680,6 +683,8 @@ class Folder
             try {
                 $directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::CURRENT_AS_SELF);
                 $iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::CHILD_FIRST);
+            } catch (\Throwable $e) {
+                return false;
             } catch (Exception $e) {
                 return false;
             }

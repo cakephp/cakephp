@@ -293,6 +293,15 @@ class TestFixture implements FixtureInterface
                 $stmt->execute();
                 $stmt->closeCursor();
             }
+        } catch (\Throwable $e) {
+            $msg = sprintf(
+                'Fixture creation for "%s" failed "%s"',
+                $this->table,
+                $e->getMessage()
+            );
+            Log::error($msg);
+            trigger_error($msg, E_USER_WARNING);
+            return false;
         } catch (Exception $e) {
             $msg = sprintf(
                 'Fixture creation for "%s" failed "%s"',
@@ -324,6 +333,8 @@ class TestFixture implements FixtureInterface
             foreach ($sql as $stmt) {
                 $db->execute($stmt)->closeCursor();
             }
+        } catch (\Throwable $e) {
+            return false;
         } catch (Exception $e) {
             return false;
         }

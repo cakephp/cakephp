@@ -427,6 +427,9 @@ class Socket
         }
         try {
             $enableCryptoResult = stream_socket_enable_crypto($this->connection, $enable, $this->_encryptMethods[$type . '_' . $clientOrServer]);
+        } catch (\Throwable $e) {
+            $this->setLastError(null, $e->getMessage());
+            throw new SocketException($e->getMessage());
         } catch (Exception $e) {
             $this->setLastError(null, $e->getMessage());
             throw new SocketException($e->getMessage());

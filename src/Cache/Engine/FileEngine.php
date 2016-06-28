@@ -311,6 +311,8 @@ class FileEngine extends CacheEngine
 
             try {
                 $file = new SplFileObject($path . $entry, 'r');
+            } catch (\Throwable $e) {
+                continue;
             } catch (Exception $e) {
                 continue;
             }
@@ -391,6 +393,9 @@ class FileEngine extends CacheEngine
             $exists = file_exists($path->getPathname());
             try {
                 $this->_File = $path->openFile('c+');
+            } catch (\Throwable $e) {
+                trigger_error($e->getMessage(), E_USER_WARNING);
+                return false;
             } catch (Exception $e) {
                 trigger_error($e->getMessage(), E_USER_WARNING);
                 return false;

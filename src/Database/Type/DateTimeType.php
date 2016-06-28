@@ -160,6 +160,8 @@ class DateTimeType extends Type
             if ($date) {
                 return $date;
             }
+        } catch (\Throwable $e) {
+            return $value;
         } catch (Exception $e) {
             return $value;
         }
