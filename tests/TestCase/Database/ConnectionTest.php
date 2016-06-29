@@ -947,10 +947,10 @@ class ConnectionTest extends TestCase
      */
     public function testTransactionalWithException()
     {
-        //$driver = $this->getMockFormDriver();
+        $driver = $this->getMockFormDriver();
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
             //->setMethods(['connect', 'commit', 'begin', 'rollback'])
-            //->setConstructorArgs([['driver' => $driver]])
+            ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
         //$connection->expects($this->at(0))->method('begin');
         //$connection->expects($this->at(1))->method('rollback');
