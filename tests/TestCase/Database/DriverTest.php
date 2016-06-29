@@ -31,6 +31,8 @@ class DriverTest extends TestCase
      */
     public function setUp()
     {
+        parent::setUp();
+
         $this->driver = $this->getMockForAbstractClass(Driver::class);
     }
 
