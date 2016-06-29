@@ -72,7 +72,7 @@ before_script:
 
 script:
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.* ]]; then export CODECOVERAGE=1; vendor/bin/phpunit --coverage-clover=clover.xml; fi
-  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.* ]]; then vendor/bin/phpunit; fi
+  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.* ]]; then vendor/bin/phpunit --debug --verbose; fi
 
   - if [[ $PHPCS = 1 ]]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi
 
