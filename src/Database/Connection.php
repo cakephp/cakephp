@@ -556,14 +556,16 @@ class Connection implements ConnectionInterface
         $this->begin();
 
         $result = false;
-        
+
         try {
             $result = $callback($this);
         } finally {
-            if ($result === false) {
-                $this->rollback();
-            } else {
-                $this->commit();
+            if ($this->isConnected()) {
+                if ($result === false) {
+                    $this->rollback();
+                } else {
+                    $this->commit();
+                }
             }
         }
 
