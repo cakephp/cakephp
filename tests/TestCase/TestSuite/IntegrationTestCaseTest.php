@@ -178,6 +178,21 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test customizing the app class.
+     *
+     * @expectedException LogicException
+     * @expectedExceptionMessage Cannot load "TestApp\MissingApp" for use in integration
+     * @return void
+     */
+    public function testConfigApplication()
+    {
+        DispatcherFactory::clear();
+        $this->useHttpServer(true);
+        $this->configApplication('TestApp\MissingApp', []);
+        $this->get('/request_action/test_request_action');
+    }
+
+    /**
      * Test sending get requests with Http\Server
      *
      * @return void
