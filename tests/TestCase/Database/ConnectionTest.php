@@ -961,6 +961,28 @@ class ConnectionTest extends TestCase
         });
     }
 
+    public function testTransactionalThrowConnection()
+    {
+        try {
+            $this->connection->transactional(function(){
+                throw new \InvalidArgumentException;
+            });
+        } catch(\InvalidArgumentException $e) {
+            $this->fail("EXCEPTION WAS CAUGHT");
+        }
+        $this->fail("NO EXCEPTION WAS CAUGHT");
+    }
+
+    public function testTransactionalBasicThrow()
+    {
+        try {
+            throw new \InvalidArgumentException;
+        } catch(\InvalidArgumentException $e) {
+            $this->fail("EXCEPTION WAS CAUGHT");
+        }
+        $this->fail("NO EXCEPTION WAS CAUGHT");
+    }
+
     /**
      * Tests it is possible to set a schema collection object
      *
