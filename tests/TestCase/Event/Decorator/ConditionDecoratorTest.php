@@ -77,7 +77,7 @@ class ConditionDecoratorTest extends TestCase
             }
         ]);
 
-        $listener2 = function(Event $event) {
+        $listener2 = function (Event $event) {
             $event->data['counter']++;
             return $event;
         };
