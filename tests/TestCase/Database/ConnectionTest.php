@@ -983,6 +983,16 @@ class ConnectionTest extends TestCase
         $this->fail("NO EXCEPTION WAS CAUGHT");
     }
 
+    public function testTransactionalBasicFinally()
+    {
+        try {
+            throw new \InvalidArgumentException;
+        } finally {
+            $this->fail("FINALLY WAS CAUGHT");
+        }
+        $this->fail("No FINALLY WAS CAUGHT");
+    }
+
     /**
      * Tests it is possible to set a schema collection object
      *
