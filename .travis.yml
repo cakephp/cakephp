@@ -1,17 +1,17 @@
 language: php
 
 php:
-  - 7.0
+#  - 7.0
   - 5.5
-  - 5.6
+#  - 5.6
 
 dist: trusty
 
 env:
   matrix:
     - DB=mysql db_dsn='mysql://root@0.0.0.0/cakephp_test'
-    - DB=pgsql db_dsn='postgres://postgres@127.0.0.1/cakephp_test'
-    - DB=sqlite db_dsn='sqlite:///:memory:'
+#    - DB=pgsql db_dsn='postgres://postgres@127.0.0.1/cakephp_test'
+#    - DB=sqlite db_dsn='sqlite:///:memory:'
   global:
     - DEFAULT=1
 
@@ -27,15 +27,15 @@ cache:
 matrix:
   fast_finish: true
 
-  include:
-    - php: 7.0
-      env: PHPCS=1 DEFAULT=0
-
-    - php: hhvm
-      env: HHVM=1 DB=sqlite db_dsn='sqlite:///:memory:'
-
-    - php: hhvm
-      env: HHVM=1 DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
+#  include:
+#    - php: 7.0
+#      env: PHPCS=1 DEFAULT=0
+#
+#    - php: hhvm
+#      env: HHVM=1 DB=sqlite db_dsn='sqlite:///:memory:'
+#
+#    - php: hhvm
+#      env: HHVM=1 DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
 
   allow_failures:
     - php: hhvm
@@ -71,13 +71,13 @@ before_script:
   - composer install --prefer-dist --no-interaction
 
 script:
-  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.* ]]; then export CODECOVERAGE=1; vendor/bin/phpunit --coverage-clover=clover.xml; fi
-  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.* ]]; then vendor/bin/phpunit; fi
+#  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.* ]]; then export CODECOVERAGE=1; vendor/bin/phpunit --coverage-clover=clover.xml; fi
+  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.* ]]; then vendor/bin/phpunit --debug --verbose --filter testTransactional; fi
 
-  - if [[ $PHPCS = 1 ]]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi
+#  - if [[ $PHPCS = 1 ]]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi
 
-after_success:
-  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.* ]]; then bash <(curl -s https://codecov.io/bash); fi
+#after_success:
+#  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.* ]]; then bash <(curl -s https://codecov.io/bash); fi
 
 notifications:
   email: false

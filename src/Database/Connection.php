@@ -559,8 +559,6 @@ class Connection implements ConnectionInterface
 
         try {
             $result = $callback($this);
-        } catch (\Exception $e) {
-            throw $e;
         } finally {
             if ($result === false) {
                 $this->rollback();
