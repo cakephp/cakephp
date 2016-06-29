@@ -15,11 +15,11 @@
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Driver;
+use Cake\Database\Mysql;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
-use PDO;
 
 /**
  * Tests Driver class
@@ -99,7 +99,7 @@ class DriverTest extends TestCase
      */
     public function testSchemaValue($input, $expected)
     {
-        $this->driver->_connection = $this->getMockBuilder(PDO::class)
+        $this->driver->_connection = $this->getMockBuilder(Mysql::class)
             ->disableOriginalConstructor()
             ->setMethods(['quote'])
             ->getMock();
@@ -120,7 +120,7 @@ class DriverTest extends TestCase
      */
     public function testLastInsertId()
     {
-        $connection = $this->getMockBuilder(PDO::class)
+        $connection = $this->getMockBuilder(Mysql::class)
             ->disableOriginalConstructor()
             ->setMethods(['lastInsertId'])
             ->getMock();
