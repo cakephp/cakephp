@@ -663,11 +663,10 @@ class FormHelper extends AppHelper {
 		if (!$field) {
 			$field = $this->entity();
 		} elseif (is_string($field)) {
-			$field = Hash::filter(explode('.', $field));
+			$field = explode('.', $field);
 		}
-
 		if (is_array($field)) {
-			$field = array_filter($field, 'strlen');
+			$field = Hash::filter($field);
 		}
 
 		foreach ($this->_unlockedFields as $unlockField) {
