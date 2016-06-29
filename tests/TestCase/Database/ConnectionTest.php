@@ -957,40 +957,10 @@ class ConnectionTest extends TestCase
         $connection->expects($this->never())->method('commit');
         $connection->transactional(function ($conn) use ($connection) {
             $this->assertSame($connection, $conn);
-            throw new \InvalidArgumentException;
+            $this->fail("TRANSACTIONAL CALLBACK WAS EXECUTED");
+            //throw new \InvalidArgumentException;
         });
-    }
-
-    public function testTransactionalThrowConnection()
-    {
-        try {
-            $this->connection->transactional(function(){
-                throw new \InvalidArgumentException;
-            });
-        } catch(\InvalidArgumentException $e) {
-            $this->fail("EXCEPTION WAS CAUGHT");
-        }
-        $this->fail("NO EXCEPTION WAS CAUGHT");
-    }
-
-    public function testTransactionalBasicThrow()
-    {
-        try {
-            throw new \InvalidArgumentException;
-        } catch(\InvalidArgumentException $e) {
-            $this->fail("EXCEPTION WAS CAUGHT");
-        }
-        $this->fail("NO EXCEPTION WAS CAUGHT");
-    }
-
-    public function testTransactionalBasicFinally()
-    {
-        try {
-            throw new \InvalidArgumentException;
-        } finally {
-            $this->fail("FINALLY WAS CAUGHT");
-        }
-        $this->fail("No FINALLY WAS CAUGHT");
+        $this->fail("CALLBACK WAS NOT EXECUTED");
     }
 
     /**
