@@ -735,12 +735,19 @@ class Inflector
      * @deprecated 3.2.7 Use Text::slug() instead.
      * @param string $string the string you want to slug
      * @param string $replacement will replace keys in map
+     * @param string|bool $filename Whether the string is a filename
      * @return string
      * @link http://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-url-safe-strings
      */
-    public static function slug($string, $replacement = '-')
+    public static function slug($string, $replacement = '-', $filename = false)
     {
         $quotedReplacement = preg_quote($replacement, '/');
+
+				if ($filename == true) {
+					$string = explode('.', $string);
+					$extension = array_pop($string);
+					$string = implode('.', $string);
+				}
 
         $map = [
             '/[^\s\p{Zs}\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]/mu' => ' ',
@@ -753,6 +760,13 @@ class Inflector
             array_values(static::$_transliteration),
             $string
         );
-        return preg_replace(array_keys($map), array_values($map), $string);
+
+        $result = preg_replace(array_keys($map), array_values($map), $string);
+
+				if ($filename == true) {
+					$result .= '.'.$extension;
+				}
+
+				return $result;
     }
 }
