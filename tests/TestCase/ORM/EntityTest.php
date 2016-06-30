@@ -991,7 +991,22 @@ class EntityTest extends TestCase
         $data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
         $entity = new Entity($data);
         $entity->hiddenProperties(['secret']);
-        $this->assertEquals(['name' => 'mark', 'id' => 1], $entity->toArray());
+        $expected = ['name' => 'mark', 'id' => 1];
+        $this->assertEquals($expected, $entity->toArray());
+        $this->assertEquals($expected, $entity->toArray(['includeHidden' => false]));
+    }
+
+    /**
+     * Test that toArray array includes hidden properties when `$includeHiddenProperties` param is set to true.
+     *
+     * @return void
+     */
+    public function testToArrayIncludeHiddenProperties()
+    {
+        $data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
+        $entity = new Entity($data);
+        $entity->hiddenProperties(['secret']);
+        $this->assertEquals($data, $entity->toArray(['includeHidden' => true]));
     }
 
     /**
@@ -1021,6 +1036,26 @@ class EntityTest extends TestCase
         $expected = ['email' => 'mark@example.com'];
         $this->assertEquals($expected, $entity->toArray());
         $this->assertEquals(['name'], $entity->hiddenProperties());
+    }
+
+    /**
+     * Test that allProperties includes standard properties, virtual properties and hidden properties
+     */
+    public function testAllProperties()
+    {
+        $entity = $this->getMock('\Cake\ORM\Entity', ['_getName']);
+        $entity->accessible('*', true);
+
+        $entity->expects($this->any())
+            ->method('_getName')
+            ->will($this->returnValue('Jose'));
+        $entity->virtualProperties(['name']);
+
+        $entity->set(['email' => 'mark@example.com', "secret" => "sauce"]);
+
+        $entity->hiddenProperties(['secret']);
+
+        $this->assertEquals(['email', 'secret', 'name'], $entity->allProperties());
     }
 
     /**

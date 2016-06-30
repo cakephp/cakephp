@@ -99,9 +99,14 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * *Note* hidden properties are not visible, and will not be output
      * by toArray().
      *
+     * ### Options
+     *
+     * * `includeHidden` Include hidden properties in array
+     *
+     * @param array $options List of options
      * @return array
      */
-    public function toArray();
+    public function toArray($options = []);
 
     /**
      * Returns an array with the requested properties
