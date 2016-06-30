@@ -23,7 +23,8 @@
         "ext-mbstring": "*",
         "cakephp/chronos": "*",
         "aura/intl": "1.1.*",
-        "psr/log": "1.0"
+        "psr/log": "1.0",
+        "cakephp/debug_kit": "~3.0"
     },
     "suggest": {
       "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation."
