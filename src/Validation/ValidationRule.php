@@ -18,6 +18,7 @@
  */
 namespace Cake\Validation;
 
+use Cake\Utility\Text;
 use InvalidArgumentException;
 
 /**
@@ -140,10 +141,19 @@ class ValidationRule
             $result = $callable($value, $context);
         }
 
-        if ($result === false) {
-            return $this->_message ?: false;
+        if ($result !== false) {
+            return $result;
         }
-        return $result;
+
+        if (!$this->_message) {
+            return false;
+        }
+    
+        if (class_exists('Cake\Utility\Text', false)) {
+            return Text::insert($this->_message, $context['data']);
+        }
+
+        return $this->_message;
     }
 
     /**
