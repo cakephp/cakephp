@@ -523,10 +523,11 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param array|string|null $tables list of tables to be joined in the query
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset joins with passed list or not
+     * @param bool $subquery whether this is a subquery
      * @see \Cake\Database\Type
      * @return $this
      */
-    public function join($tables = null, $types = [], $overwrite = false)
+    public function join($tables = null, $types = [], $overwrite = false, $subquery = false)
     {
         if ($tables === null) {
             return $this->_parts['join'];
@@ -551,7 +552,7 @@ class Query implements ExpressionInterface, IteratorAggregate
                 $t['conditions'] = $this->newExpr()->add($t['conditions'], $types);
             }
             $alias = is_string($alias) ? $alias : null;
-            $joins[$alias ?: $i++] = $t + ['type' => 'INNER', 'alias' => $alias];
+            $joins[$alias ?: $i++] = $t + ['type' => 'INNER', 'alias' => $alias, 'subquery' => $subquery];
         }
 
         if ($overwrite) {
@@ -655,11 +656,12 @@ class Query implements ExpressionInterface, IteratorAggregate
      * to use for joining.
      * @param array $types a list of types associated to the conditions used for converting
      * values to the corresponding database representation.
+     * @param bool $subquery whether this is a subquery
      * @return $this
      */
-    public function innerJoin($table, $conditions = [], $types = [])
+    public function innerJoin($table, $conditions = [], $types = [], $subquery = false)
     {
-        return $this->join($this->_makeJoin($table, $conditions, 'INNER'), $types);
+        return $this->join($this->_makeJoin($table, $conditions, 'INNER'), $types, false, $subquery);
     }
 
     /**

@@ -901,7 +901,12 @@ class QueryTest extends TestCase
         $expected = new QueryExpression(['a > b'], $typeMap);
         $result = $query->clause('join');
         $this->assertEquals([
-            'table_a' => ['alias' => 'table_a', 'type' => 'INNER', 'conditions' => $expected]
+            'table_a' => [
+                'alias' => 'table_a',
+                'type' => 'INNER',
+                'conditions' => $expected,
+                'subquery' => false
+            ]
         ], $result);
 
         $expected = new OrderByExpression(['a' => 'ASC']);

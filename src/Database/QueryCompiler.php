@@ -223,8 +223,13 @@ class QueryCompiler
         $joins = '';
         foreach ($parts as $join) {
             if ($join['table'] instanceof ExpressionInterface) {
-                $join['table'] = '(' . $join['table']->sql($generator) . ')';
+                $join['table'] = $join['table']->sql($generator);
             }
+
+            if ($join['subquery']) {
+                $join['table'] = '(' . $join['table'] . ')';
+            }
+
             $joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
             if (isset($join['conditions']) && count($join['conditions'])) {
                 $joins .= sprintf(' ON %s', $join['conditions']->sql($generator));

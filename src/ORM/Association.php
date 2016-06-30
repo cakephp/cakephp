@@ -16,6 +16,7 @@ namespace Cake\ORM;
 
 use Cake\Collection\Collection;
 use Cake\Core\ConventionsTrait;
+use Cake\Database\Expression\CrossSchemaTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetDecorator;
@@ -544,13 +545,21 @@ abstract class Association
     {
         $target = $this->target();
         $joinType = empty($options['joinType']) ? $this->joinType() : $options['joinType'];
+
+        $table = $target->table();
+        if ($this->source()->connection()->supportsCrossWith($target->connection())) {
+            $table = new CrossSchemaTableExpression(
+                $target->connection()->driver()->schema(), $table
+            );
+        }
+
         $options += [
             'includeFields' => true,
             'foreignKey' => $this->foreignKey(),
             'conditions' => [],
             'fields' => [],
             'type' => $joinType,
-            'table' => $target->table(),
+            'table' => $table,
             'finder' => $this->finder()
         ];
 

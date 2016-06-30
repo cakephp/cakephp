@@ -154,7 +154,9 @@ trait SelectableAssociationTrait
         $conditions = isset($conditions) ? $conditions : $query->newExpr([$key => $filter]);
         return $query->innerJoin(
             [$aliasedTable => $subquery],
-            $conditions
+            $conditions,
+            [],
+            true
         );
     }
 

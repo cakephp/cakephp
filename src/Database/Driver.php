@@ -265,6 +265,16 @@ abstract class Driver
     }
 
     /**
+     * Returns the schema name that's being used
+     *
+     * @return string
+     */
+    public function schema()
+    {
+        return $this->_config['schema'];
+    }
+
+    /**
      * Returns last id generated for a table or sequence in database
      *
      * @param string|null $table table name or sequence to get last insert value from
