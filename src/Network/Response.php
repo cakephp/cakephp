@@ -16,6 +16,7 @@ namespace Cake\Network;
 
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
+use Cake\Routing\Router;
 use Cake\Network\Exception\NotFoundException;
 use DateTime;
 use DateTimeZone;
@@ -632,6 +633,9 @@ class Response
         if ($url === null) {
             $headers = $this->header();
             return isset($headers['Location']) ? $headers['Location'] : null;
+        }
+        if (is_array($url)) {
+            $url = Router::url($url);
         }
         $this->header('Location', $url);
         return null;
