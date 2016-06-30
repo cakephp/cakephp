@@ -144,19 +144,35 @@ class AssociationCollectionTest extends TestCase
      */
     public function testType()
     {
+        $belongsToCases = ['BelongsTo', 'belongsTo', 'belongsto'];
+        $belongsToManyCases = ['BelongsToMany', 'belongsToMany', 'belongstomany'];
+
         $belongsTo = new BelongsTo('');
         $this->associations->add('Users', $belongsTo);
 
         $belongsToMany = new BelongsToMany('');
         $this->associations->add('Tags', $belongsToMany);
 
-        $this->assertSame([$belongsTo], $this->associations->type('BelongsTo'));
-        $this->assertSame([$belongsToMany], $this->associations->type('BelongsToMany'));
-        $this->assertSame([], $this->associations->type('HasMany'));
-        $this->assertSame(
-            [$belongsTo, $belongsToMany],
-            $this->associations->type(['BelongsTo', 'BelongsToMany'])
-        );
+        foreach ($belongsToCases as $belongsToType) {
+            $this->assertSame(
+                [$belongsTo],
+                $this->associations->type($belongsToType)
+            );
+            foreach ($belongsToManyCases as $belongsToManyType) {
+                $this->assertSame(
+                    [$belongsToMany],
+                    $this->associations->type($belongsToManyType)
+                );
+                $this->assertSame(
+                    [$belongsTo, $belongsToMany],
+                    $this->associations->type([$belongsToType, $belongsToManyType])
+                );
+            }
+        }
+
+        foreach (['HasMany', 'hasMany', 'FooBar', 'DoesNotExist'] as $value) {
+            $this->assertSame([], $this->associations->type($value));
+        }
     }
 
     /**

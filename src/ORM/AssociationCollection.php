@@ -114,11 +114,11 @@ class AssociationCollection implements IteratorAggregate
      */
     public function type($class)
     {
-        $class = (array)$class;
+        $class = array_map('strtolower', (array)$class);
 
         $out = array_filter($this->_items, function ($assoc) use ($class) {
             list(, $name) = namespaceSplit(get_class($assoc));
-            return in_array($name, $class, true);
+            return in_array(strtolower($name), $class, true);
         });
         return array_values($out);
     }
