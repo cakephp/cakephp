@@ -18,6 +18,7 @@ use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
+use Cake\Datasource\TableSchemaInterface;
 use Cake\Log\Log;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
@@ -27,7 +28,7 @@ use Exception;
  * Cake TestFixture is responsible for building and destroying tables to be used
  * during testing.
  */
-class TestFixture implements FixtureInterface
+class TestFixture implements FixtureInterface, TableSchemaInterface
 {
 
     /**
