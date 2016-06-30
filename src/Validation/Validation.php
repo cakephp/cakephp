@@ -1184,7 +1184,7 @@ class Validation
     /**
      * Check that the input value is an array.
      *
-     * @param array $value
+     * @param array $value The value to check
      * @return bool
      */
     public static function isArray($value)

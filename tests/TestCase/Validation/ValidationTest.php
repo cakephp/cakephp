@@ -2677,8 +2677,8 @@ class ValidationTest extends TestCase
     public function testIsArray()
     {
         $this->assertTrue(Validation::isArray([]));
-        $this->assertTrue(Validation::isArray([1,2,3]));
-        $this->assertTrue(Validation::isArray(['key'=>'value']));
+        $this->assertTrue(Validation::isArray([1, 2, 3]));
+        $this->assertTrue(Validation::isArray(['key' => 'value']));
         $this->assertFalse(Validation::isArray('[1,2,3]'));
         $this->assertFalse(Validation::isArray(new Collection([])));
         $this->assertFalse(Validation::isArray(10));
