@@ -111,6 +111,43 @@ class FlashComponentTest extends TestCase
     }
 
     /**
+     * test setting messages with stacking turned off
+     *
+     * @return void
+     * @covers \Cake\Controller\Component\FlashComponent::set
+     */
+    public function testSetNoStacking()
+    {
+        $this->assertNull($this->Session->read('Flash.flash'));
+
+        $this->Flash->config('stacked', false);
+
+        $this->Flash->set('This is a test message');
+        $expected = [
+            [
+                'message' => 'This is a test message',
+                'key' => 'flash',
+                'element' => 'Flash/default',
+                'params' => []
+            ]
+        ];
+        $result = $this->Session->read('Flash.flash');
+        $this->assertEquals($expected, $result);
+
+        $this->Flash->set('This is another test message');
+        $expected = [
+            [
+                'message' => 'This is another test message',
+                'key' => 'flash',
+                'element' => 'Flash/default',
+                'params' => []
+            ]
+        ];
+        $result = $this->Session->read('Flash.flash');
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * test setting messages with using the clear option
      *
      * @return void
@@ -223,7 +260,7 @@ class FlashComponentTest extends TestCase
         ];
         $result = $this->Session->read('Flash.flash');
         $this->assertEquals($expected, $result, 'Element is ignored in magic call.');
-        
+
         $this->Flash->success('It worked', ['plugin' => 'MyPlugin']);
 
         $expected[] = [

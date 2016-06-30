@@ -47,7 +47,8 @@ class FlashComponent extends Component
         'key' => 'flash',
         'element' => 'default',
         'params' => [],
-        'clear' => false
+        'clear' => false,
+        'stacked' => true
     ];
 
     /**
@@ -75,6 +76,7 @@ class FlashComponent extends Component
      * - `element` The element used to render the flash message. Default to 'default'.
      * - `params` An array of variables to make available when using an element
      * - `clear` A bool stating if the current stack should be cleared to start a new one
+     * - `stacked` A boolean indicating whether to use stacked messages. Default true.
      *
      * @param string|\Exception $message Message to be flashed. If an instance
      *   of \Exception the exception message will be used and code will be set
@@ -100,7 +102,7 @@ class FlashComponent extends Component
         }
 
         $messages = [];
-        if ($options['clear'] === false) {
+        if ($options['stacked'] === true && $options['clear'] === false) {
             $messages = $this->_session->read('Flash.' . $options['key']);
         }
 
