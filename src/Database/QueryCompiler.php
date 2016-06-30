@@ -14,6 +14,8 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Expression\QueryExpression;
+
 /**
  * Responsible for compiling a Query object into its SQL representation
  *
@@ -222,9 +224,15 @@ class QueryCompiler
     {
         $joins = '';
         foreach ($parts as $join) {
+            $subquery = $join['table'] instanceof Query || $join['table'] instanceof QueryExpression;
             if ($join['table'] instanceof ExpressionInterface) {
-                $join['table'] = '(' . $join['table']->sql($generator) . ')';
+                $join['table'] = $join['table']->sql($generator);
             }
+
+            if ($subquery) {
+                $join['table'] = '(' . $join['table'] . ')';
+            }
+
             $joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
             if (isset($join['conditions']) && count($join['conditions'])) {
                 $joins .= sprintf(' ON %s', $join['conditions']->sql($generator));
