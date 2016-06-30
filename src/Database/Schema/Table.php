@@ -156,6 +156,9 @@ class Table
         'float' => [
             'unsigned' => null,
         ],
+        'enum' => [
+            'members' => null,
+        ],
     ];
 
     /**

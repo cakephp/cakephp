@@ -57,6 +57,7 @@ class Type
     protected static $_basicTypes = [
         'string' => ['callback' => ['\Cake\Database\Type', 'strval']],
         'text' => ['callback' => ['\Cake\Database\Type', 'strval']],
+        'enum' => ['callback' => ['\Cake\Database\Type', 'strval']],
         'boolean' => [
             'callback' => ['\Cake\Database\Type', 'boolval'],
             'pdo' => PDO::PARAM_BOOL
