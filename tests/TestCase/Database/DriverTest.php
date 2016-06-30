@@ -21,6 +21,8 @@ use Cake\Database\QueryCompiler;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 
+use PDO;
+
 /**
  * Tests Driver class
  */
@@ -99,18 +101,31 @@ class DriverTest extends TestCase
      */
     public function testSchemaValue($input, $expected)
     {
+        $result = $this->driver->schemaValue($input);
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test schemaValue().
+     * Asserting that quote() is being called because none of the conditions were met before.
+     *
+     * @return void
+     */
+    public function testSchemaValueConnectionQuoting()
+    {
+        $value = 'string';
+
         $this->driver->_connection = $this->getMockBuilder(Mysql::class)
             ->disableOriginalConstructor()
             ->setMethods(['quote'])
             ->getMock();
 
         $this->driver->_connection
-            ->expects($this->any())
+            ->expects($this->once())
             ->method('quote')
-            ->willReturn($expected);
+            ->with($value, PDO::PARAM_STR);
 
-        $result = $this->driver->schemaValue($input);
-        $this->assertSame($expected, $result);
+        $this->driver->schemaValue($value);
     }
 
     /**
@@ -174,7 +189,6 @@ class DriverTest extends TestCase
      * Test compileQuery().
      *
      * @return void
-     * @group new
      */
     public function testCompileQuery()
     {
@@ -250,8 +264,7 @@ class DriverTest extends TestCase
             [true, 'TRUE'],
             [1, 1],
             ['0', '0'],
-            ['42', '42'],
-            ['string', true]
+            ['42', '42']
         ];
     }
 }
