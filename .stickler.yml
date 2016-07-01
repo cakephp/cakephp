@@ -1,0 +1,2 @@
+branches:
+  ignore: ['2.x', '2.next']
