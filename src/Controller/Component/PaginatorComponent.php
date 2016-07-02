@@ -159,7 +159,7 @@ class PaginatorComponent extends Component
         $options = $this->validateSort($object, $options);
         $options = $this->checkLimit($options);
 
-        $options += ['page' => 1];
+        $options += ['page' => 1, 'prefix' => null];
         $options['page'] = (int)$options['page'] < 1 ? 1 : (int)$options['page'];
         list($finder, $options) = $this->_extractFinder($options);
 
@@ -204,7 +204,7 @@ class PaginatorComponent extends Component
             'limit' => $defaults['limit'] != $limit ? $limit : null,
             'sortDefault' => $sortDefault,
             'directionDefault' => $directionDefault,
-            'prefix' => Hash::get($options, 'prefix', null),
+            'prefix' => $options['prefix'],
         ];
 
         if (!isset($request['paging'])) {
