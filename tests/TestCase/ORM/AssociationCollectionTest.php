@@ -25,6 +25,10 @@ use Cake\TestSuite\TestCase;
  */
 class AssociationCollectionTest extends TestCase
 {
+    /**
+     * @var AssociationCollection
+     */
+    public $associations;
 
     /**
      * setup
@@ -138,38 +142,44 @@ class AssociationCollectionTest extends TestCase
     }
 
     /**
+     *  Data provider for AssociationCollection::type
+     */
+    public function associationCollectionType()
+    {
+        return [
+            ['BelongsTo','BelongsToMany'],
+            ['belongsTo','belongsToMany'],
+            ['belongsto','belongstomany']
+        ];
+    }
+
+    /**
      * Test getting association names by type.
      *
-     * @return void
+     * @param string $belongsToStr
+     * @param string $belongsToManyStr
+     * @dataProvider associationCollectionType
      */
-    public function testType()
+    public function testType($belongsToStr, $belongsToManyStr)
     {
-        $belongsToCases = ['BelongsTo', 'belongsTo', 'belongsto'];
-        $belongsToManyCases = ['BelongsToMany', 'belongsToMany', 'belongstomany'];
-
         $belongsTo = new BelongsTo('');
         $this->associations->add('Users', $belongsTo);
 
         $belongsToMany = new BelongsToMany('');
         $this->associations->add('Tags', $belongsToMany);
 
-        foreach ($belongsToCases as $belongsToType) {
-            $this->assertSame(
-                [$belongsTo],
-                $this->associations->type($belongsToType)
-            );
-            foreach ($belongsToManyCases as $belongsToManyType) {
-                $this->assertSame(
-                    [$belongsToMany],
-                    $this->associations->type($belongsToManyType)
-                );
-                $this->assertSame(
-                    [$belongsTo, $belongsToMany],
-                    $this->associations->type([$belongsToType, $belongsToManyType])
-                );
-            }
-        }
+        $this->assertSame([$belongsTo], $this->associations->type($belongsToStr));
+        $this->assertSame([$belongsToMany], $this->associations->type($belongsToManyStr));
+        $this->assertSame([$belongsTo, $belongsToMany], $this->associations->type([$belongsToStr, $belongsToManyStr]));
+    }
 
+    /**
+     * Type should return empty array.
+     *
+     * @return void
+     */
+    public function hasTypeReturnsEmptyArray()
+    {
         foreach (['HasMany', 'hasMany', 'FooBar', 'DoesNotExist'] as $value) {
             $this->assertSame([], $this->associations->type($value));
         }
