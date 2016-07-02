@@ -147,9 +147,9 @@ class AssociationCollectionTest extends TestCase
     public function associationCollectionType()
     {
         return [
-            ['BelongsTo','BelongsToMany'],
-            ['belongsTo','belongsToMany'],
-            ['belongsto','belongstomany']
+            ['BelongsTo', 'BelongsToMany'],
+            ['belongsTo', 'belongsToMany'],
+            ['belongsto', 'belongstomany']
         ];
     }
 
