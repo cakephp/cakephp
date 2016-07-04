@@ -949,16 +949,18 @@ class ConnectionTest extends TestCase
     {
         $driver = $this->getMockFormDriver();
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
-            ->setMethods(['connect', 'commit', 'begin', 'rollback'])
+            //->setMethods(['connect', 'commit', 'begin', 'rollback'])
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
-        $connection->expects($this->at(0))->method('begin');
-        $connection->expects($this->at(1))->method('rollback');
-        $connection->expects($this->never())->method('commit');
+        //$connection->expects($this->at(0))->method('begin');
+        //$connection->expects($this->at(1))->method('rollback');
+        //$connection->expects($this->never())->method('commit');
         $connection->transactional(function ($conn) use ($connection) {
             $this->assertSame($connection, $conn);
-            throw new \InvalidArgumentException;
+            $this->fail("TRANSACTIONAL CALLBACK WAS EXECUTED");
+            //throw new \InvalidArgumentException;
         });
+        $this->fail("CALLBACK WAS NOT EXECUTED");
     }
 
     /**
