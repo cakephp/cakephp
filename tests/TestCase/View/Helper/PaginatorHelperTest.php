@@ -446,7 +446,7 @@ class PaginatorHelperTest extends TestCase
                 'sort' => 'date',
                 'direction' => 'asc',
                 'page' => 1,
-                'prefix' => 'article',
+                'scope' => 'article',
             ]
         ];
 
@@ -784,7 +784,7 @@ class PaginatorHelperTest extends TestCase
             ['base' => '', 'here' => 'posts/index', 'webroot' => '/']
         ]);
 
-        $this->Paginator->request->params['paging']['Article']['prefix'] = 'article';
+        $this->Paginator->request->params['paging']['Article']['scope'] = 'article';
         $this->Paginator->request->params['paging']['Article']['page'] = 3;
         $this->Paginator->request->params['paging']['Article']['prevPage'] = true;
         $this->Paginator->options(['model' => 'Article']);

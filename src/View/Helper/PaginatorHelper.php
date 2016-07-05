@@ -478,7 +478,7 @@ class PaginatorHelper extends Helper
         ];
 
         if (!empty($this->_config['options']['url'])) {
-            $key = implode('.', array_filter(['options.url', Hash::get($paging, 'prefix', null)]));
+            $key = implode('.', array_filter(['options.url', Hash::get($paging, 'scope', null)]));
             $url = array_merge($url, Hash::get($this->_config, $key, []));
         }
 
@@ -496,10 +496,10 @@ class PaginatorHelper extends Helper
         ) {
             $url['sort'] = $url['direction'] = null;
         }
-        if (!empty($paging['prefix'])) {
-            $url = [$paging['prefix'] => $url] + $this->_config['options']['url'];
-            if (empty($url[$paging['prefix']]['page'])) {
-                unset($url[$paging['prefix']]['page']);
+        if (!empty($paging['scope'])) {
+            $url = [$paging['scope'] => $url] + $this->_config['options']['url'];
+            if (empty($url[$paging['scope']]['page'])) {
+                unset($url[$paging['scope']]['page']);
             }
         }
         return $this->Url->build($url, $full);

@@ -159,7 +159,7 @@ class PaginatorComponent extends Component
         $options = $this->validateSort($object, $options);
         $options = $this->checkLimit($options);
 
-        $options += ['page' => 1, 'prefix' => null];
+        $options += ['page' => 1, 'scope' => null];
         $options['page'] = (int)$options['page'] < 1 ? 1 : (int)$options['page'];
         list($finder, $options) = $this->_extractFinder($options);
 
@@ -204,7 +204,7 @@ class PaginatorComponent extends Component
             'limit' => $defaults['limit'] != $limit ? $limit : null,
             'sortDefault' => $sortDefault,
             'directionDefault' => $directionDefault,
-            'prefix' => $options['prefix'],
+            'scope' => $options['scope'],
         ];
 
         if (!isset($request['paging'])) {
@@ -259,10 +259,10 @@ class PaginatorComponent extends Component
     {
         $defaults = $this->getDefaults($alias, $settings);
         $request = $this->_registry->getController()->request;
-        $prefix = Hash::get($settings, 'prefix', null);
+        $scope = Hash::get($settings, 'scope', null);
         $query = $request->query;
-        if ($prefix) {
-            $query = Hash::get($request->query, $prefix, []);
+        if ($scope) {
+            $query = Hash::get($request->query, $scope, []);
         }
         $request = array_intersect_key($query, array_flip($this->_config['whitelist']));
         return array_merge($defaults, $request);
