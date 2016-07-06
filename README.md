@@ -37,41 +37,29 @@ tests for CakePHP by doing the following:
 
 ## Some Handy Links
 
-[CakePHP](http://www.cakephp.org) - The rapid development PHP framework.
-
-[CookBook](http://book.cakephp.org) - The CakePHP user documentation; start learning here!
-
-[API](http://api.cakephp.org) - A reference to CakePHP's classes.
-
-[Plugins](http://plugins.cakephp.org) - A repository of extensions to the framework.
-
-[The Bakery](http://bakery.cakephp.org) - Tips, tutorials and articles.
-
-[Community Center](http://community.cakephp.org) - A source for everything community related.
-
-[Training](http://training.cakephp.org) - Join a live session and get skilled with the framework.
-
-[CakeFest](http://cakefest.org) - Don't miss our annual CakePHP conference.
-
-[Cake Software Foundation](http://cakefoundation.org) - Promoting development related to CakePHP.
+* [CakePHP](http://www.cakephp.org) - The rapid development PHP framework.
+* [CookBook](http://book.cakephp.org) - The CakePHP user documentation; start learning here!
+* [API](http://api.cakephp.org) - A reference to CakePHP's classes.
+* [Plugins](http://plugins.cakephp.org) - A repository of extensions to the framework.
+* [The Bakery](http://bakery.cakephp.org) - Tips, tutorials and articles.
+* [Community Center](http://community.cakephp.org) - A source for everything community related.
+* [Training](http://training.cakephp.org) - Join a live session and get skilled with the framework.
+* [CakeFest](http://cakefest.org) - Don't miss our annual CakePHP conference.
+* [Cake Software Foundation](http://cakefoundation.org) - Promoting development related to CakePHP.
 
 ## Get Support!
 
-[Slack](http://cakesf.herokuapp.com/) - Join us on Slack.
-
-[#cakephp](http://webchat.freenode.net/?channels=#cakephp) on irc.freenode.net - Come chat with us, we have cake.
-
-[Forum](http://discourse.cakephp.org/) - Offical CakePHP forum.
-
-[GitHub Issues](https://github.com/cakephp/cakephp/issues) - Got issues? Please tell us!
+* [Slack](http://cakesf.herokuapp.com/) - Join us on Slack.
+* [#cakephp](http://webchat.freenode.net/?channels=#cakephp) on irc.freenode.net - Come chat with us, we have cake.
+* [Forum](http://discourse.cakephp.org/) - Offical CakePHP forum.
+* [GitHub Issues](https://github.com/cakephp/cakephp/issues) - Got issues? Please tell us!
 
 [Roadmaps](https://github.com/cakephp/cakephp/wiki#roadmaps) - Want to contribute? Get involved!
 
 ## Contributing
 
-[CONTRIBUTING.md](.github/CONTRIBUTING.md) - Quick pointers for contributing to the CakePHP project.
-
-[CookBook "Contributing" Section](http://book.cakephp.org/3.0/en/contributing.html) - Details about contributing to the project.
+* [CONTRIBUTING.md](.github/CONTRIBUTING.md) - Quick pointers for contributing to the CakePHP project.
+* [CookBook "Contributing" Section](http://book.cakephp.org/3.0/en/contributing.html) - Details about contributing to the project.
 
 # Security
 
