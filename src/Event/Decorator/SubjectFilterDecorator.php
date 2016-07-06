@@ -19,13 +19,18 @@ use RuntimeException;
 
 /**
  * Event Subject Filter Decorator
+ *
+ * Use this decorator to allow your event listener to only
+ * be invoked if event subject matches the `allowedSubject` option.
+ *
+ * The `allowedSubject` option can be a list of class names, if you want
+ * to check multiple classes.
  */
 class SubjectFilterDecorator extends AbstractDecorator
 {
 
     /**
-     * @inheritdoc
-     * @return mixed
+     * {@inheritDoc}
      */
     public function __invoke()
     {

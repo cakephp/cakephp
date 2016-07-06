@@ -14,6 +14,9 @@
  */
 namespace Cake\Event\Decorator;
 
+/**
+ * Common base class for event decorator subclasses.
+ */
 abstract class AbstractDecorator
 {
 
