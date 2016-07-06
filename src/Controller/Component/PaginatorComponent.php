@@ -142,6 +142,22 @@ class PaginatorComponent extends Component
      * $results = $paginator->paginate($query);
      * ```
      *
+     * ### Scoping Request parameters
+     *
+     * By using request parameter scopes you can paginate multiple queries in the same controller action:
+     *
+     * ```
+     * $articles = $paginator->paginate($articlesQuery, ['scope' => 'articles']);
+     * $tags = $paginator->paginate($tagsQuery, ['scope' => 'tags']);
+     * ```
+     *
+     * Each of the above queries will use different query string parameter sets
+     * for pagination data. An example URL paginating both results would be:
+     *
+     * ```
+     * /dashboard?articles[page]=1&tags[page]=2
+     * ```
+     *
      * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface $object The table or query to paginate.
      * @param array $settings The settings/configuration used for pagination.
      * @return \Cake\Datasource\ResultSetInterface Query results

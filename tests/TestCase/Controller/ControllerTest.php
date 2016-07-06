@@ -728,7 +728,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller($request, $response);
         $Controller->request->query = [
             'url' => [],
-            'prefix' => [
+            'posts' => [
                 'page' => 2,
                 'limit' => 2,
             ]
@@ -751,8 +751,9 @@ class ControllerTest extends TestCase
         $this->assertSame($Controller->request->params['paging']['Posts']['pageCount'], 1);
         $this->assertSame($Controller->request->params['paging']['Posts']['prevPage'], false);
         $this->assertSame($Controller->request->params['paging']['Posts']['nextPage'], false);
+        $this->assertNull($Controller->request->params['paging']['Posts']['scope']);
 
-        $results = $Controller->paginate(TableRegistry::get('Posts'), ['prefix' => 'prefix']);
+        $results = $Controller->paginate(TableRegistry::get('Posts'), ['scope' => 'posts']);
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
         $this->assertCount(1, $results);
 
@@ -760,6 +761,7 @@ class ControllerTest extends TestCase
         $this->assertSame($Controller->request->params['paging']['Posts']['pageCount'], 2);
         $this->assertSame($Controller->request->params['paging']['Posts']['prevPage'], true);
         $this->assertSame($Controller->request->params['paging']['Posts']['nextPage'], false);
+        $this->assertSame($Controller->request->params['paging']['Posts']['scope'], 'posts');
     }
 
     /**
