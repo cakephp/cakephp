@@ -894,7 +894,7 @@ class Request implements ArrayAccess
     public function header($name)
     {
         $name = str_replace('-', '_', $name);
-        if (strtoupper(substr($name, 0, 8)) !== 'CONTENT_') {
+        if (!in_array(strtoupper($name), ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
             $name = 'HTTP_' . $name;
         }
         return $this->env($name);
