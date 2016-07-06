@@ -893,7 +893,10 @@ class Request implements ArrayAccess
      */
     public function header($name)
     {
-        $name = 'HTTP_' . str_replace('-', '_', $name);
+        $name = str_replace('-', '_', $name);
+        if (strtoupper(substr($name, 0, 8)) !== 'CONTENT_') {
+            $name = 'HTTP_' . $name;
+        }
         return $this->env($name);
     }
 
