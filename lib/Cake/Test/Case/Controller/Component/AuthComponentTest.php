@@ -1722,11 +1722,11 @@ class AuthComponentTest extends CakeTestCase {
 	}
 
 /**
- * testStatelessLoginSetsUser method
+ * testStatelessLoginSetUserNoSessionStart method
  *
  * @return void
  */
-	public function testStatelessLoginSetsUser() {
+	public function testStatelessLoginSetUserNoSessionStart() {
 		$user = array(
 			'id' => 1,
 			'username' => 'mark'
@@ -1738,6 +1738,8 @@ class AuthComponentTest extends CakeTestCase {
 
 		$this->assertTrue($this->Auth->loggedIn());
 		$this->assertEquals($user, $this->Auth->user());
+
+		$this->assertNull($this->Auth->Session->started());
 	}
 
 /**
