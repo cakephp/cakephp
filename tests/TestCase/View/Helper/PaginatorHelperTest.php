@@ -424,6 +424,42 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
+     * test multiple pagination sort links
+     *
+     * @return void
+     */
+    public function testSortLinksMultiplePagination()
+    {
+        Router::setRequestInfo([
+            ['plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => [], 'url' => ['url' => 'accounts/']],
+            ['base' => '', 'here' => '/accounts/', 'webroot' => '/']
+        ]);
+
+        $this->Paginator->options(['model' => 'Articles']);
+        $this->Paginator->request['paging'] = [
+            'Articles' => [
+                'current' => 9,
+                'count' => 62,
+                'prevPage' => false,
+                'nextPage' => true,
+                'pageCount' => 7,
+                'sort' => 'date',
+                'direction' => 'asc',
+                'page' => 1,
+                'scope' => 'article',
+            ]
+        ];
+
+        $result = $this->Paginator->sort('title');
+        $expected = [
+            'a' => ['href' => '/accounts/index?article%5Bsort%5D=title&amp;article%5Bdirection%5D=asc'],
+            'Title',
+            '/a'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test creating paging links for missing models.
      *
      * @return void
@@ -677,7 +713,7 @@ class PaginatorHelperTest extends TestCase
      *
      * @return void
      */
-    public function testUrlGenerationWithPrefixes()
+    public function testGenerateUrlWithPrefixes()
     {
         Configure::write('Routing.prefixes', ['members']);
         Router::reload();
@@ -733,6 +769,60 @@ class PaginatorHelperTest extends TestCase
         $options = ['controller' => 'posts', 'sort' => 'Article.name', 'direction' => 'desc'];
         $result = $this->Paginator->generateUrl($options);
         $expected = '/posts/index?page=2&amp;sort=Article.name&amp;direction=desc';
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * test generateUrl with multiple pagination
+     *
+     * @return void
+     */
+    public function testGenerateUrlMultiplePagination()
+    {
+        Router::setRequestInfo([
+            ['controller' => 'posts', 'action' => 'index', 'plugin' => null],
+            ['base' => '', 'here' => 'posts/index', 'webroot' => '/']
+        ]);
+
+        $this->Paginator->request->params['paging']['Article']['scope'] = 'article';
+        $this->Paginator->request->params['paging']['Article']['page'] = 3;
+        $this->Paginator->request->params['paging']['Article']['prevPage'] = true;
+        $this->Paginator->options(['model' => 'Article']);
+
+        $result = $this->Paginator->generateUrl([]);
+        $expected = '/posts/index?article%5Bpage%5D=3';
+        $this->assertEquals($expected, $result);
+
+        $result = $this->Paginator->sort('name');
+        $expected = [
+            'a' => ['href' => '/posts/index?article%5Bpage%5D=3&amp;article%5Bsort%5D=name&amp;article%5Bdirection%5D=asc'],
+            'Name',
+            '/a'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Paginator->next('next');
+        $expected = [
+            'li' => ['class' => 'next'],
+            'a' => ['href' => '/posts/index?article%5Bpage%5D=4', 'rel' => 'next'],
+            'next',
+            '/a',
+            '/li'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Paginator->prev('prev');
+        $expected = [
+            'li' => ['class' => 'prev'],
+            'a' => ['href' => '/posts/index?article%5Bpage%5D=2', 'rel' => 'prev'],
+            'prev',
+            '/a',
+            '/li'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Paginator->generateUrl(['sort' => 'name']);
+        $expected = '/posts/index?article%5Bpage%5D=3&amp;article%5Bsort%5D=name';
         $this->assertEquals($expected, $result);
     }
 
@@ -2253,6 +2343,12 @@ class PaginatorHelperTest extends TestCase
     {
         $this->Paginator->request = new Request();
         $this->assertNull($this->Paginator->defaultModel());
+
+        $this->Paginator->defaultModel('Article');
+        $this->assertEquals('Article', $this->Paginator->defaultModel());
+
+        $this->Paginator->options(['model' => 'Client']);
+        $this->assertEquals('Client', $this->Paginator->defaultModel());
     }
 
     /**
