@@ -1739,7 +1739,7 @@ class AuthComponentTest extends CakeTestCase {
 		$this->assertTrue($this->Auth->loggedIn());
 		$this->assertEquals($user, $this->Auth->user());
 
-		$this->assertNull($this->Auth->Session->started());
+		$this->assertFalse($this->Auth->Session->started());
 	}
 
 /**
