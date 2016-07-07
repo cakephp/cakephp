@@ -137,6 +137,10 @@ class Table
     protected static $_columnExtras = [
         'string' => [
             'fixed' => null,
+            'collate' => null,
+        ],
+        'text' => [
+            'collate' => null,
         ],
         'integer' => [
             'unsigned' => null,

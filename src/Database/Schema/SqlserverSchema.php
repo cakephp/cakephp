@@ -50,7 +50,8 @@ class SqlserverSchema extends BaseSchema
             AC.scale AS [scale],
             AC.is_identity AS [autoincrement],
             AC.is_nullable AS [null],
-            OBJECT_DEFINITION(AC.default_object_id) AS [default]
+            OBJECT_DEFINITION(AC.default_object_id) AS [default],
+            AC.collation_name AS [collation_name]
             FROM sys.[objects] T
             INNER JOIN sys.[schemas] S ON S.[schema_id] = T.[schema_id]
             INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id]
@@ -162,6 +163,7 @@ class SqlserverSchema extends BaseSchema
         $field += [
             'null' => $row['null'] === '1' ? true : false,
             'default' => $this->_defaultValue($row['default']),
+            'collate' => $row['collation_name'],
         ];
         $table->addColumn($row['name'], $field);
     }
@@ -372,6 +374,11 @@ class SqlserverSchema extends BaseSchema
             }
 
             $out .= sprintf('%s(%d)', $type, $data['length']);
+        }
+
+        $hasCollate = ['text', 'string'];
+        if (in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {
+            $out .= ' COLLATE ' . $data['collate'];
         }
 
         if ($data['type'] === 'float' && isset($data['precision'])) {

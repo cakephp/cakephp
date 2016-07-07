@@ -185,13 +185,13 @@ class MysqlSchemaTest extends TestCase
             'Type' => $type,
             'Null' => 'YES',
             'Default' => 'Default value',
-            'Collation' => 'Collate information',
+            'Collation' => 'utf8_general_ci',
             'Comment' => 'Comment section',
         ];
         $expected += [
             'null' => true,
             'default' => 'Default value',
-            'collate' => 'Collate information',
+            'collate' => 'utf8_general_ci',
             'comment' => 'Comment section',
         ];
 
@@ -306,6 +306,7 @@ SQL;
                 'precision' => null,
                 'comment' => 'A title',
                 'fixed' => null,
+                'collate' => 'utf8_general_ci',
             ],
             'body' => [
                 'type' => 'text',
@@ -314,6 +315,7 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'collate' => 'utf8_general_ci',
             ],
             'author_id' => [
                 'type' => 'integer',
@@ -496,6 +498,11 @@ SQL;
                 ['type' => 'uuid'],
                 '`id` CHAR(36)'
             ],
+            [
+                'title',
+                ['type' => 'string', 'length' => 255, 'null' => false, 'collate' => 'utf8_unicode_ci'],
+                '`title` VARCHAR(255) COLLATE utf8_unicode_ci NOT NULL'
+            ],
             // Text
             [
                 'body',
@@ -516,6 +523,11 @@ SQL;
                 'body',
                 ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
                 '`body` LONGTEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'null' => false, 'collate' => 'utf8_unicode_ci'],
+                '`body` TEXT COLLATE utf8_unicode_ci NOT NULL'
             ],
             // Blob / binary
             [
@@ -956,6 +968,13 @@ SQL;
             ->addColumn('data', [
                 'type' => 'json'
             ])
+            ->addColumn('hash', [
+                'type' => 'string',
+                'fixed' => true,
+                'length' => 40,
+                'collate' => 'latin1_bin',
+                'null' => false,
+            ])
             ->addColumn('created', 'datetime')
             ->addConstraint('primary', [
                 'type' => 'primary',
@@ -973,6 +992,7 @@ CREATE TABLE `posts` (
 `title` VARCHAR(255) NOT NULL COMMENT 'The title',
 `body` TEXT,
 `data` LONGTEXT,
+`hash` CHAR(40) COLLATE latin1_bin NOT NULL,
 `created` DATETIME,
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci

@@ -300,6 +300,10 @@ class TextHelperTest extends TestCase
                 'This is a test that includes <a href="http://www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment">www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment</a>',
             ],
             [
+                'This is a test that includes Http://example.com/test.php?foo=bar text',
+                'This is a test that includes <a href="Http://example.com/test.php?foo=bar">Http://example.com/test.php?foo=bar</a> text',
+            ],
+            [
                 'This is a test that includes http://example.com/test.php?foo=bar text',
                 'This is a test that includes <a href="http://example.com/test.php?foo=bar">http://example.com/test.php?foo=bar</a> text',
             ],

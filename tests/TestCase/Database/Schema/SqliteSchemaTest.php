@@ -296,6 +296,7 @@ SQL;
                 'precision' => null,
                 'fixed' => null,
                 'comment' => null,
+                'collate' => null,
             ],
             'body' => [
                 'type' => 'text',
@@ -304,6 +305,7 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'collate' => null,
             ],
             'author_id' => [
                 'type' => 'integer',
@@ -339,6 +341,7 @@ SQL;
                 'precision' => null,
                 'fixed' => null,
                 'comment' => null,
+                'collate' => null,
             ],
             'field2' => [
                 'type' => 'string',
@@ -348,6 +351,7 @@ SQL;
                 'precision' => null,
                 'fixed' => null,
                 'comment' => null,
+                'collate' => null,
             ],
         ];
         $this->assertInstanceOf('Cake\Database\Schema\Table', $result);

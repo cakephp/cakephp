@@ -1434,6 +1434,23 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Add a validation rule to ensure that a field contains an array.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @return $this
+     */
+    public function isArray($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'isArray', $extra + [
+                'rule' => 'isArray'
+            ]);
+    }
+
+    /**
      * Add a validation rule for a multiple select. Comparison is case sensitive by default.
      *
      * @param string $field The field you want to apply the rule to.

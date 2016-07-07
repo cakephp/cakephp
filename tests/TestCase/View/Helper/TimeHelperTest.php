@@ -114,6 +114,33 @@ class TimeHelperTest extends TestCase
     }
 
     /**
+     * Test output timezone with timeAgoInWords
+     *
+     * @return void
+     */
+    public function testTimeAgoInWordsOutputTimezone()
+    {
+        $Time = new TimeHelper($this->View, ['outputTimezone' => 'America/Vancouver']);
+        $timestamp = new Time('+8 years, +4 months +2 weeks +3 days');
+        $result = $Time->timeAgoInWords($timestamp, [
+            'end' => '1 years',
+            'element' => 'span'
+        ]);
+        $vancouver = clone $timestamp;
+        $vancouver->timezone('America/Vancouver');
+
+        $expected = [
+            'span' => [
+                'title' => $vancouver->__toString(),
+                'class' => 'time-ago-in-words'
+            ],
+            'on ' . $vancouver->format('n/j/y'),
+            '/span'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * testToQuarter method
      *
      * @return void
@@ -139,6 +166,18 @@ class TimeHelperTest extends TestCase
     }
 
     /**
+     * test nice with outputTimezone
+     *
+     * @return void
+     */
+    public function testNiceOutputTimezone()
+    {
+        $this->Time->config('outputTimezone', 'America/Vancouver');
+        $time = '2014-04-20 20:00';
+        $this->assertTimeFormat('Apr 20, 2014, 1:00 PM', $this->Time->nice($time));
+    }
+
+    /**
      * testToUnix method
      *
      * @return void
@@ -157,6 +196,20 @@ class TimeHelperTest extends TestCase
     {
         $dateTime = new \DateTime;
         $this->assertEquals($dateTime->format($dateTime::ATOM), $this->Time->toAtom($dateTime->getTimestamp()));
+    }
+
+    /**
+     * testToAtom method
+     *
+     * @return void
+     */
+    public function testToAtomOutputTimezone()
+    {
+        $this->Time->config('outputTimezone', 'America/Vancouver');
+        $dateTime = new Time;
+        $vancouver = clone $dateTime;
+        $vancouver->timezone('America/Vancouver');
+        $this->assertEquals($vancouver->format(Time::ATOM), $this->Time->toAtom($vancouver));
     }
 
     /**
@@ -180,6 +233,21 @@ class TimeHelperTest extends TestCase
     }
 
     /**
+     * test toRss with outputTimezone
+     *
+     * @return void
+     */
+    public function testToRssOutputTimezone()
+    {
+        $this->Time->config('outputTimezone', 'America/Vancouver');
+        $dateTime = new Time;
+        $vancouver = clone $dateTime;
+        $vancouver->timezone('America/Vancouver');
+
+        $this->assertEquals($vancouver->format('r'), $this->Time->toRss($vancouver));
+    }
+
+    /**
      * testOfGmt method
      *
      * @return void
@@ -198,13 +266,17 @@ class TimeHelperTest extends TestCase
     {
         $result = $this->Time->isToday('+1 day');
         $this->assertFalse($result);
+
         $result = $this->Time->isToday('+1 days');
         $this->assertFalse($result);
+
         $result = $this->Time->isToday('+0 day');
         $this->assertTrue($result);
+
         $result = $this->Time->isToday('-1 day');
         $this->assertFalse($result);
     }
+
     /**
      * testIsFuture method
      *
@@ -450,6 +522,41 @@ class TimeHelperTest extends TestCase
         $result = $this->Time->format($time, \IntlDateFormatter::FULL);
         $expected = 'jeudi 14 janvier 2010 13:59:28 UTC';
         $this->assertTimeFormat($expected, $result);
+    }
+
+    /**
+     * test format with outputTimezone
+     *
+     * @return void
+     */
+    public function testFormatOutputTimezone()
+    {
+        $this->Time->config('outputTimezone', 'America/Vancouver');
+
+        $time = strtotime('Thu Jan 14 8:59:28 2010 UTC');
+        $result = $this->Time->format($time);
+        $expected = '1/14/10, 12:59 AM';
+        $this->assertTimeFormat($expected, $result);
+
+        $time = new Time('Thu Jan 14 8:59:28 2010', 'UTC');
+        $result = $this->Time->format($time);
+        $expected = '1/14/10, 12:59 AM';
+        $this->assertTimeFormat($expected, $result);
+    }
+
+    /**
+     * test i18nFormat with outputTimezone
+     *
+     * @return void
+     */
+    public function testI18nFormatOutputTimezone()
+    {
+        $this->Time->config('outputTimezone', 'America/Vancouver');
+
+        $time = strtotime('Thu Jan 14 8:59:28 2010 UTC');
+        $result = $this->Time->i18nFormat($time, \IntlDateFormatter::SHORT);
+        $expected = '1/14/10, 12:59:28 AM';
+        $this->assertStringStartsWith($expected, $result);
     }
 
     /**

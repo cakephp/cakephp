@@ -369,6 +369,11 @@ class MysqlSchema extends BaseSchema
             $out .= ' UNSIGNED';
         }
 
+        $hasCollate = ['text', 'string'];
+        if (in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {
+            $out .= ' COLLATE ' . $data['collate'];
+        }
+
         if (isset($data['null']) && $data['null'] === false) {
             $out .= ' NOT NULL';
         }

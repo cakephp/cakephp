@@ -25,6 +25,10 @@ use Cake\TestSuite\TestCase;
  */
 class AssociationCollectionTest extends TestCase
 {
+    /**
+     * @var AssociationCollection
+     */
+    public $associations;
 
     /**
      * setup
@@ -138,11 +142,25 @@ class AssociationCollectionTest extends TestCase
     }
 
     /**
+     *  Data provider for AssociationCollection::type
+     */
+    public function associationCollectionType()
+    {
+        return [
+            ['BelongsTo', 'BelongsToMany'],
+            ['belongsTo', 'belongsToMany'],
+            ['belongsto', 'belongstomany']
+        ];
+    }
+
+    /**
      * Test getting association names by type.
      *
-     * @return void
+     * @param string $belongsToStr
+     * @param string $belongsToManyStr
+     * @dataProvider associationCollectionType
      */
-    public function testType()
+    public function testType($belongsToStr, $belongsToManyStr)
     {
         $belongsTo = new BelongsTo('');
         $this->associations->add('Users', $belongsTo);
@@ -150,13 +168,21 @@ class AssociationCollectionTest extends TestCase
         $belongsToMany = new BelongsToMany('');
         $this->associations->add('Tags', $belongsToMany);
 
-        $this->assertSame([$belongsTo], $this->associations->type('BelongsTo'));
-        $this->assertSame([$belongsToMany], $this->associations->type('BelongsToMany'));
-        $this->assertSame([], $this->associations->type('HasMany'));
-        $this->assertSame(
-            [$belongsTo, $belongsToMany],
-            $this->associations->type(['BelongsTo', 'BelongsToMany'])
-        );
+        $this->assertSame([$belongsTo], $this->associations->type($belongsToStr));
+        $this->assertSame([$belongsToMany], $this->associations->type($belongsToManyStr));
+        $this->assertSame([$belongsTo, $belongsToMany], $this->associations->type([$belongsToStr, $belongsToManyStr]));
+    }
+
+    /**
+     * Type should return empty array.
+     *
+     * @return void
+     */
+    public function hasTypeReturnsEmptyArray()
+    {
+        foreach (['HasMany', 'hasMany', 'FooBar', 'DoesNotExist'] as $value) {
+            $this->assertSame([], $this->associations->type($value));
+        }
     }
 
     /**

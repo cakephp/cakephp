@@ -104,7 +104,7 @@ class OrmCacheShellTest extends TestCase
      */
     public function testBuildNoArgs()
     {
-        $this->cache->expects($this->at(2))
+        $this->cache->expects($this->at(3))
             ->method('write')
             ->with('test_articles');
 
@@ -179,7 +179,7 @@ class OrmCacheShellTest extends TestCase
      */
     public function testClearNoArgs()
     {
-        $this->cache->expects($this->at(2))
+        $this->cache->expects($this->at(3))
             ->method('delete')
             ->with('test_articles');
 

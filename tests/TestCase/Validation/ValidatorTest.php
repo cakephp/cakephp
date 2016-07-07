@@ -1736,6 +1736,17 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the isArray proxy method
+     */
+    public function testIsArray()
+    {
+        $validator = new Validator();
+        $validator->isArray('username');
+        $this->assertEmpty($validator->errors(['username' => [1, 2, 3]]));
+        $this->assertNotEmpty($validator->errors(['username' => 'is not an array']));
+    }
+
+    /**
      * Tests the multiple proxy method
      *
      * @return void
@@ -1793,6 +1804,15 @@ class ValidatorTest extends TestCase
         $this->assertNotEmpty($validator->errors(['things' => ['_ids' => [1, 2, 3, 4]]]));
     }
 
+    /**
+     * Tests that a rule in the Validator class exists and was configured as expected.
+     *
+     * @param Validator $validator
+     * @param string $method
+     * @param mixed $extra
+     * @param array $pass
+     * @param string|null $name
+     */
     protected function assertProxyMethod($validator, $method, $extra = null, $pass = [], $name = null)
     {
         $name = $name ?: $method;
