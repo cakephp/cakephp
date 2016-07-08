@@ -50,7 +50,10 @@ if (!function_exists('debug')) {
         $lineInfo = '';
         if ($showFrom) {
             $trace = Debugger::trace(['start' => 1, 'depth' => 2, 'format' => 'array']);
-            $search = [ROOT];
+            $search = [];
+            if (defined('ROOT')) {
+                $search = [ROOT];
+            }
             if (defined('CAKE_CORE_INCLUDE_PATH')) {
                 array_unshift($search, CAKE_CORE_INCLUDE_PATH);
             }
