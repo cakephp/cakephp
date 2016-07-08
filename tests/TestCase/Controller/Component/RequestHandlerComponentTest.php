@@ -773,8 +773,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->assertEquals('json', $this->RequestHandler->requestedWith());
 
         $this->request->env('REQUEST_METHOD', 'POST');
-        $this->request->env('CONTENT_TYPE', '');
-        $this->request->env('HTTP_CONTENT_TYPE', 'application/json');
+        $this->request->env('CONTENT_TYPE', 'application/json');
 
         $result = $this->RequestHandler->requestedWith(['json', 'xml']);
         $this->assertEquals('json', $result);
