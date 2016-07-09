@@ -1607,7 +1607,7 @@ TEXT;
                 'Foo Bar: Not just for breakfast any-more'
             ],
             [
-                'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', null,
+                'A æ Übérmensch på høyeste nivå! И я люблю PHP! ест. ﬁ ¦', null,
                 'A ae Ubermensch pa hoyeste niva! I a lublu PHP! est. fi '
             ],
             [
