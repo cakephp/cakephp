@@ -64,5 +64,4 @@ class TableRegressionTest extends TestCase
         $entity = $table->newEntity(['name' => 'Jon']);
         $table->save($entity);
     }
-
 }
