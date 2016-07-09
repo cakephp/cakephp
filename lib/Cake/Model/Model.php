@@ -1035,13 +1035,13 @@ class Model extends Object implements CakeEventListener {
 						unset($association[$assoc]);
 						$assoc = $value;
 						$value = array();
-
-						if (strpos($assoc, '.') !== false) {
-							list($plugin, $assoc) = pluginSplit($assoc, true);
-							$association[$assoc] = array('className' => $plugin . $assoc);
-						} else {
-							$association[$assoc] = $value;
-						}
+						$association[$assoc] = $value;
+					}
+                                        
+					if (!isset($value['className']) && strpos($assoc, '.') !== false) {
+						unset($association[$assoc]);
+						list($plugin, $assoc) = pluginSplit($assoc, true);
+						$association[$assoc] = array('className' => $plugin . $assoc) + $value;
 					}
 
 					$this->_generateAssociation($type, $assoc);
