@@ -382,6 +382,7 @@ class FormHelper extends AppHelper {
 		if (isset($options['action'])) {
 			trigger_error('Using key `action` is deprecated, use `url` directly instead.', E_USER_DEPRECATED);
 		}
+
 		if (is_array($options['url']) && isset($options['url']['action'])) {
 			$options['action'] = $options['url']['action'];
 		}
@@ -393,7 +394,7 @@ class FormHelper extends AppHelper {
 
 		if ($options['action'] === null && $options['url'] === null) {
 			$options['action'] = $this->request->here(false);
-		} elseif (is_array($options['url'])) {
+		} elseif (empty($options['url']) || is_array($options['url'])) {
 			if (empty($options['url']['controller'])) {
 				if (!empty($model)) {
 					$options['url']['controller'] = Inflector::underscore(Inflector::pluralize($model));
@@ -559,6 +560,7 @@ class FormHelper extends AppHelper {
 		$this->setEntity(null);
 		$out .= $this->Html->useTag('formend');
 
+		$this->_unlockedFields = array();
 		$this->_View->modelScope = false;
 		$this->requestType = null;
 		return $out;
@@ -661,7 +663,10 @@ class FormHelper extends AppHelper {
 		if (!$field) {
 			$field = $this->entity();
 		} elseif (is_string($field)) {
-			$field = Hash::filter(explode('.', $field));
+			$field = explode('.', $field);
+		}
+		if (is_array($field)) {
+			$field = Hash::filter($field);
 		}
 
 		foreach ($this->_unlockedFields as $unlockField) {
@@ -931,9 +936,12 @@ class FormHelper extends AppHelper {
 
 		if (isset($options['legend'])) {
 			$legend = $options['legend'];
+			unset($options['legend']);
 		}
+
 		if (isset($options['fieldset'])) {
 			$fieldset = $options['fieldset'];
+			unset($options['fieldset']);
 		}
 
 		if (empty($fields)) {
@@ -971,7 +979,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (is_string($fieldset)) {
-			$fieldsetClass = sprintf(' class="%s"', $fieldset);
+			$fieldsetClass = array('class' => $fieldset);
 		} else {
 			$fieldsetClass = '';
 		}
@@ -1509,6 +1517,7 @@ class FormHelper extends AppHelper {
  * - `between` - the string between legend and input set or array of strings to insert
  *    strings between each input block
  * - `legend` - control whether or not the widget set has a fieldset & legend
+ * - `fieldset` - sets the class of the fieldset. Fieldset is only generated if legend attribute is provided
  * - `value` - indicate a value that is should be checked
  * - `label` - boolean to indicate whether or not labels for widgets show be displayed
  * - `hiddenField` - boolean to indicate if you want the results of radio() to include
@@ -1541,6 +1550,12 @@ class FormHelper extends AppHelper {
 			unset($attributes['legend']);
 		} elseif (count($options) > 1) {
 			$legend = __(Inflector::humanize($this->field()));
+		}
+
+		$fieldsetAttrs = '';
+		if (isset($attributes['fieldset'])) {
+			$fieldsetAttrs = array('class' => $attributes['fieldset']);
+			unset($attributes['fieldset']);
 		}
 
 		$label = true;
@@ -1636,8 +1651,10 @@ class FormHelper extends AppHelper {
 		if (is_array($between)) {
 			$between = '';
 		}
+
 		if ($legend) {
-			$out = $this->Html->useTag('fieldset', '', $this->Html->useTag('legend', $legend) . $between . $out);
+			$out = $this->Html->useTag('legend', $legend) . $between . $out;
+			$out = $this->Html->useTag('fieldset', $fieldsetAttrs, $out);
 		}
 		return $out;
 	}
