@@ -828,11 +828,11 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests new allowPartialNulls flag with author id set to null
+     * Tests new allowNullableNulls flag with author id set to null
      *
      * @return
      */
-    public function testExistsInAllowPartialNullsWithAuthorIdNullA()
+    public function testExistsInAllowNullableNullsWithAuthorIdNullA()
     {
         $entity = new Entity([
             'id' => 10,
@@ -845,17 +845,17 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
-            'allowPartialNulls' => true
+            'allowNullableNulls' => true
         ]));
         $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
     }
 
     /**
-     * Tests new allowPartialNulls flag with author id set to null
+     * Tests new allowNullableNulls flag with author id set to null
      *
      * @return
      */
-    public function testExistsInAllowPartialNullsWithAuthorIdNullB()
+    public function testExistsInAllowNullableNullsWithAuthorIdNullB()
     {
         $entity = new Entity([
             'id' => 10,
@@ -868,17 +868,17 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
-            'allowPartialNulls' => false
+            'allowNullableNulls' => false
         ]));
         $this->assertFalse($table->save($entity));
     }
 
     /**
-     * Tests new allowPartialNulls flag with author id set to null
+     * Tests new allowNullableNulls flag with author id set to null
      *
      * @return
      */
-    public function testExistsInAllowPartialNullsWithAuthorIdNullC()
+    public function testExistsInAllowNullableNullsWithAuthorIdNullC()
     {
         $entity = new Entity([
             'id' => 10,
@@ -895,11 +895,11 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests new allowPartialNulls flag with author id set to null
+     * Tests new allowNullableNulls flag with author id set to null
      *
      * @return
      */
-    public function testExistsInAllowPartialNullsWithAuthorIdNullD()
+    public function testExistsInAllowNullableNullsWithAuthorIdNullD()
     {
         $entity = new Entity([
             'id' => 10,
@@ -912,7 +912,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
-            'allowPartialNulls' => false,
+            'allowNullableNulls' => false,
             'message' => 'Niente'
         ]));
         $this->assertFalse($table->save($entity));
@@ -920,11 +920,11 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests new allowPartialNulls flag with author id set to null
+     * Tests new allowNullableNulls flag with author id set to null
      *
      * @return
      */
-    public function testExistsInAllowPartialNullsWithAuthorIdNullE()
+    public function testExistsInAllowNullableNullsWithAuthorIdNullE()
     {
         $entity = new Entity([
             'id' => 10,
@@ -937,18 +937,18 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
-            'allowPartialNulls' => true,
+            'allowNullableNulls' => true,
             'message' => 'Niente'
         ]));
         $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
     }
 
     /**
-     * Tests new allowPartialNulls flag with author id set to 1
+     * Tests new allowNullableNulls flag with author id set to 1
      *
      * @return
      */
-    public function testExistsInAllowPartialNullsWithAuthorId1A()
+    public function testExistsInAllowNullableNullsWithAuthorId1A()
     {
         $entity = new Entity([
             'id' => 10,
@@ -960,16 +960,16 @@ class RulesCheckerIntegrationTest extends TestCase
         $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
-        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowPartialNulls' => true]));
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowNullableNulls' => true]));
         $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
     }
 
     /**
-     * Tests new allowPartialNulls flag with author id set to 1
+     * Tests new allowNullableNulls flag with author id set to 1
      *
      * @return
      */
-    public function testExistsInAllowPartialNullsWithAuthorIdB()
+    public function testExistsInAllowNullableNullsWithAuthorIdB()
     {
         $entity = new Entity([
             'id' => 10,
@@ -981,16 +981,16 @@ class RulesCheckerIntegrationTest extends TestCase
         $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
-        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowPartialNulls' => false]));
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowNullableNulls' => false]));
         $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
     }
 
     /**
-     * Tests new allowPartialNulls flag with author id set to 1
+     * Tests new allowNullableNulls flag with author id set to 1
      *
      * @return
      */
-    public function testExistsInAllowPartialNullsWithAuthorId1C()
+    public function testExistsInAllowNullableNullsWithAuthorId1C()
     {
         $entity = new Entity([
             'id' => 10,
@@ -1007,11 +1007,11 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests new allowPartialNulls flag with author id set to 1
+     * Tests new allowNullableNulls flag with author id set to 1
      *
      * @return
      */
-    public function testExistsInAllowPartialNullsWithAuthorId1E()
+    public function testExistsInAllowNullableNullsWithAuthorId1E()
     {
         $entity = new Entity([
             'id' => 10,
@@ -1024,17 +1024,17 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
-            'allowPartialNulls' => true,
+            'allowNullableNulls' => true,
             'message' => 'will not error']));
         $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
     }
 
     /**
-     * Tests new allowPartialNulls flag with author id set to 1
+     * Tests new allowNullableNulls flag with author id set to 1
      *
      * @return
      */
-    public function testExistsInAllowPartialNullsWithAuthorId1F()
+    public function testExistsInAllowNullableNullsWithAuthorId1F()
     {
         $entity = new Entity([
             'id' => 10,
@@ -1047,17 +1047,17 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
-            'allowPartialNulls' => false,
+            'allowNullableNulls' => false,
             'message' => 'will not error']));
         $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
     }
 
     /**
-     * Tests new allowPartialNulls flag with author id set to 99999999 (does not exist)
+     * Tests new allowNullableNulls flag with author id set to 99999999 (does not exist)
      *
      * @return
      */
-    public function testExistsInAllowPartialNullsWithAuthorId1G()
+    public function testExistsInAllowNullableNullsWithAuthorId1G()
     {
         $entity = new Entity([
             'id' => 10,
@@ -1070,19 +1070,19 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
-            'allowPartialNulls' => true,
+            'allowNullableNulls' => true,
             'message' => 'will error']));
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['author_id' => ['_existsIn' => 'will error']], $entity->errors());
     }
 
     /**
-     * Tests new allowPartialNulls flag with author id set to 99999999 (does not exist)
+     * Tests new allowNullableNulls flag with author id set to 99999999 (does not exist)
      * and site_id set to 99999999 (does not exist)
      *
      * @return
      */
-    public function testExistsInAllowPartialNullsWithAuthorId1H()
+    public function testExistsInAllowNullableNullsWithAuthorId1H()
     {
         $entity = new Entity([
             'id' => 10,
@@ -1095,19 +1095,19 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
-            'allowPartialNulls' => true,
+            'allowNullableNulls' => true,
             'message' => 'will error']));
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['author_id' => ['_existsIn' => 'will error']], $entity->errors());
     }
 
     /**
-     * Tests new allowPartialNulls flag with author id set to 1 (does exist)
+     * Tests new allowNullableNulls flag with author id set to 1 (does exist)
      * and site_id set to 99999999 (does not exist)
      *
      * @return
      */
-    public function testExistsInAllowPartialNullsWithAuthorId1I()
+    public function testExistsInAllowNullableNullsWithAuthorId1I()
     {
         $entity = new Entity([
             'id' => 10,
@@ -1120,7 +1120,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
-            'allowPartialNulls' => true,
+            'allowNullableNulls' => true,
             'message' => 'will error']));
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['author_id' => ['_existsIn' => 'will error']], $entity->errors());

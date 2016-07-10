@@ -71,9 +71,9 @@ class RulesChecker extends BaseRulesChecker
      * $rules->add($rules->existsIn('site_id', new SitesTable(), 'Invalid Site'));
      * ```
      *
-     * Available $options are error 'message' and 'allowPartialNulls' flag.
+     * Available $options are error 'message' and 'allowNullableNulls' flag.
      * 'message' sets a custom error message.
-     * Set 'allowPartialNulls' to true to accept composite foreign keys where one or more nullable columns are null.
+     * Set 'allowNullableNulls' to true to accept composite foreign keys where one or more nullable columns are null.
      *
      * @param string|array $field The field or list of fields to check for existence by
      * primary key lookup in the other table.
