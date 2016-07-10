@@ -1037,7 +1037,7 @@ class Model extends Object implements CakeEventListener {
 						$value = array();
 						$association[$assoc] = $value;
 					}
-                                        
+
 					if (!isset($value['className']) && strpos($assoc, '.') !== false) {
 						unset($association[$assoc]);
 						list($plugin, $assoc) = pluginSplit($assoc, true);
