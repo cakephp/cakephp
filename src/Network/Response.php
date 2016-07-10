@@ -328,7 +328,7 @@ class Response
      * Content type to send. This can be an 'extension' that will be transformed using the $_mimetypes array
      * or a complete mime-type
      *
-     * @var int
+     * @var string
      */
     protected $_contentType = 'text/html';
 
