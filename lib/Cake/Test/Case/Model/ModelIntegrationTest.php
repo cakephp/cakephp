@@ -1617,10 +1617,12 @@ class ModelIntegrationTest extends BaseModelTest {
 	public function testAutoConstructPluginAssociations() {
 		$Comment = ClassRegistry::init('TestPluginComment');
 
-		$this->assertEquals(2, count($Comment->belongsTo), 'Too many associations');
+		$this->assertEquals(3, count($Comment->belongsTo), 'Too many associations');
 		$this->assertFalse(isset($Comment->belongsTo['TestPlugin.User']));
+		$this->assertFalse(isset($Comment->belongsTo['TestPlugin.Source']));
 		$this->assertTrue(isset($Comment->belongsTo['User']), 'Missing association');
 		$this->assertTrue(isset($Comment->belongsTo['TestPluginArticle']), 'Missing association');
+		$this->assertTrue(isset($Comment->belongsTo['Source']), 'Missing association');
 	}
 
 /**
