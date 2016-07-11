@@ -21,6 +21,7 @@ use Cake\Network\Session;
 /**
  * Provides the requestAction() method for doing sub-requests
  *
+ * @deprecated 3.3.0 Use view cells instead.
  */
 trait RequestActionTrait
 {
@@ -97,6 +98,8 @@ trait RequestActionTrait
      */
     public function requestAction($url, array $extra = [])
     {
+        trigger_error('requestAction() is deprecated. Use view cells instead.', E_USER_DEPRECATED);
+
         if (empty($url)) {
             return false;
         }
