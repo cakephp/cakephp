@@ -28,10 +28,10 @@ class RoutingMiddleware
 {
 
     /**
-     * @param ServerRequestInterface $request  The request.
-     * @param ResponseInterface $response The response.
-     * @param callable $next The next middleware to call
-     * @return \Psr\Http\Message\ResponseInterface A response
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request.
+     * @param \Psr\Http\Message\ResponseInterface $response The response.
+     * @param callable $next The next middleware to call.
+     * @return \Psr\Http\Message\ResponseInterface A response.
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
