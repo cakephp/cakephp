@@ -448,7 +448,11 @@ abstract class IntegrationTestCase extends TestCase
         $env = [];
         if (isset($this->_request['headers'])) {
             foreach ($this->_request['headers'] as $k => $v) {
-                $env['HTTP_' . str_replace('-', '_', strtoupper($k))] = $v;
+                $name = strtoupper(str_replace('-', '_', $k));
+                if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
+                    $name = 'HTTP_' . $name;
+                }
+                $env[$name] = $v;
             }
             unset($this->_request['headers']);
         }

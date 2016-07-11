@@ -53,7 +53,11 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testRequestBuilding()
     {
         $this->configRequest([
-            'headers' => ['X-CSRF-Token' => 'abc123'],
+            'headers' => [
+                'X-CSRF-Token' => 'abc123',
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json'
+            ],
             'base' => '',
             'webroot' => '/',
             'environment' => [
@@ -66,6 +70,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $request = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
 
         $this->assertEquals('abc123', $request->header('X-CSRF-Token'));
+        $this->assertEquals('application/json', $request->header('Content-Type'));
         $this->assertEquals('tasks/add', $request->url);
         $this->assertArrayHasKey('split_token', $request->cookies);
         $this->assertEquals('def345', $request->cookies['split_token']);
