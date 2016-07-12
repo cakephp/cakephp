@@ -436,7 +436,7 @@ abstract class IntegrationTestCase extends TestCase
         list ($url, $query) = $this->_url($url);
         $tokenUrl = $url;
 
-        if (!empty($query)) {
+        if ($query) {
             $tokenUrl .= '?' . http_build_query($query);
         }
 
