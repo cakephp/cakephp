@@ -147,6 +147,13 @@ class RequestTransformerTest extends TestCase
     public function testToCakeUploadedFiles()
     {
         $files = [
+            'no_file' => [
+                'name' => ['file' => ''],
+                'type' => ['file' => ''],
+                'tmp_name' => ['file' => ''],
+                'error' => ['file' => UPLOAD_ERR_NO_FILE],
+                'size' => ['file' => 0]
+            ],
             'image_main' => [
                 'name' => ['file' => 'born on.txt'],
                 'type' => ['file' => 'text/plain'],
@@ -203,6 +210,15 @@ class RequestTransformerTest extends TestCase
                     'tmp_name' => __FILE__,
                     'error' => 0,
                     'size' => 17178,
+                ]
+            ],
+            'no_file' => [
+                'file' => [
+                    'name' => '',
+                    'type' => '',
+                    'tmp_name' => '',
+                    'error' => UPLOAD_ERR_NO_FILE,
+                    'size' => 0,
                 ]
             ],
             'pictures' => [

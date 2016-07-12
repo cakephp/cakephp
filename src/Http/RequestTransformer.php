@@ -134,11 +134,17 @@ class RequestTransformer
      */
     protected static function convertFile($file)
     {
+        $error = $file->getError();
+        $tmpName = '';
+        if ($error === UPLOAD_ERR_OK) {
+            $tmpName = $file->getStream()->getMetadata('uri');
+        }
+
         return [
             'name' => $file->getClientFilename(),
             'type' => $file->getClientMediaType(),
-            'tmp_name' => $file->getStream()->getMetadata('uri'),
-            'error' => $file->getError(),
+            'tmp_name' => $tmpName,
+            'error' => $error,
             'size' => $file->getSize(),
         ];
     }
