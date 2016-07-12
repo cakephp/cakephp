@@ -61,6 +61,11 @@ class ActionDispatcher
         if ($eventManager) {
             $this->eventManager($eventManager);
         }
+
+        // Compatibility with DispatcherFilters.
+        foreach (DispatcherFactory::filters() as $filter) {
+            $this->addFilter($filter);
+        }
         $this->factory = $factory ?: new ControllerFactory();
     }
 
