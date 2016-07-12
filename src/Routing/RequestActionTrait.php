@@ -21,6 +21,7 @@ use Cake\Network\Session;
 /**
  * Provides the requestAction() method for doing sub-requests
  *
+ * @deprecated 3.3.0 This trait will be removed in 4.0.0
  */
 trait RequestActionTrait
 {
@@ -94,6 +95,7 @@ trait RequestActionTrait
      *    also be used to submit GET/POST data, and passed arguments.
      * @return mixed Boolean true or false on success/failure, or contents
      *    of rendered action if 'return' is set in $extra.
+     * @deprecated 3.3.0 You should refactor your code to use View Cells instead of this method.
      */
     public function requestAction($url, array $extra = [])
     {
