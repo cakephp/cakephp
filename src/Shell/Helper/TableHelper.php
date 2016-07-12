@@ -43,10 +43,10 @@ class TableHelper extends Helper
     {
         $widths = [];
         foreach ($rows as $line) {
-            for ($i = 0, $len = count($line); $i < $len; $i++) {
-                $columnLength = mb_strlen($line[$i]);
-                if ($columnLength > (isset($widths[$i]) ? $widths[$i] : 0)) {
-                    $widths[$i] = $columnLength;
+            foreach ($line as $k => $v) {
+                $columnLength = mb_strlen($line[$k]);
+                if ($columnLength > (isset($widths[$k]) ? $widths[$k] : 0)) {
+                    $widths[$k] = $columnLength;
                 }
             }
         }
