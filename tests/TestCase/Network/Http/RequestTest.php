@@ -22,6 +22,45 @@ use Zend\Diactoros\Uri;
  */
 class RequestTest extends TestCase
 {
+    /**
+     * test string ata, header and constructor
+     *
+     * @return void
+     */
+    public function testConstructorStringData()
+    {
+        $headers = [
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer valid-token',
+        ];
+        $data = ['a' => 'b', 'c' => 'd'];
+        $request = new Request('http://example.com', 'POST', $headers, json_encode($data));
+
+        $this->assertEquals('http://example.com', $request->url());
+        $this->assertEquals('POST', $request->getMethod());
+        $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
+        $this->assertEquals(json_encode($data), $request->body());
+    }
+
+    /**
+     * test array data, header and constructor
+     *
+     * @return void
+     */
+    public function testConstructorArrayData()
+    {
+        $headers = [
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer valid-token',
+        ];
+        $data = ['a' => 'b', 'c' => 'd'];
+        $request = new Request('http://example.com', 'POST', $headers, $data);
+
+        $this->assertEquals('http://example.com', $request->url());
+        $this->assertEquals('POST', $request->getMethod());
+        $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaderLine('Content-Type'));
+        $this->assertEquals('a=b&c=d', $request->body());
+    }
 
     /**
      * test url method
