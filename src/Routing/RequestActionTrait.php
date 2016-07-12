@@ -99,8 +99,6 @@ trait RequestActionTrait
      */
     public function requestAction($url, array $extra = [])
     {
-        trigger_error('requestAction() is deprecated. Use view cells instead.', E_USER_DEPRECATED);
-
         if (empty($url)) {
             return false;
         }
