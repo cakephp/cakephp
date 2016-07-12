@@ -103,11 +103,11 @@ class TreeBehavior extends Behavior
         $dirty = $entity->dirty($config['parent']);
         $level = $config['level'];
 
-        if ($isNew && $parent) {
-            if ($entity->get($primaryKey[0]) == $parent) {
-                throw new RuntimeException("Cannot set a node's parent as itself");
-            }
+        if ($parent && $entity->get($primaryKey) == $parent) {
+            throw new RuntimeException("Cannot set a node's parent as itself");
+        }
 
+        if ($isNew && $parent) {
             $parentNode = $this->_getNode($parent);
             $edge = $parentNode->get($config['right']);
             $entity->set($config['left'], $edge);
