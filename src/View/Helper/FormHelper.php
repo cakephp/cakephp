@@ -709,7 +709,7 @@ class FormHelper extends Helper
 
         if (is_array($text)) {
             $tmp = [];
-            foreach ($error as $e) {
+            foreach ($error as $e => $m) {
                 if (isset($text[$e])) {
                     $tmp[] = $text[$e];
                 } else {
