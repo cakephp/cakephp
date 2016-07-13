@@ -915,7 +915,7 @@ class ExceptionRendererTest extends CakeTestCase {
 
 		ob_start();
 		$ExceptionRenderer->render();
-		$result = ob_get_clean();
+		ob_get_clean();
 
 		$this->assertTrue($callable->afterDispatchCalled);
 	}
