@@ -159,6 +159,14 @@ class FormHelper extends Helper
     const SECURE_SKIP = 'skip';
 
     /**
+     * Constant used internally to indicate optional fields in the
+     * securing process.
+     *
+     * @var string
+     */
+    const SECURE_OPTIONAL = 'optional';
+
+    /**
      * Defines the type of form being created. Set by FormHelper::create().
      *
      * @var string
@@ -174,6 +182,17 @@ class FormHelper extends Helper
      * @var array
      */
     protected $_unlockedFields = [];
+
+    /**
+     * An array of field names that have been excluded from
+     * the Token hash used by SecurityComponent's validatePost method,
+     * but which must maintain their values *if* they are present
+     *
+     * @see FormHelper::_secure()
+     * @see SecurityComponent::validatePost()
+     * @var array
+     */
+    protected $_optionalFields = [];
 
     /**
      * Registry for input widgets.
@@ -419,7 +438,7 @@ class FormHelper extends Helper
 
         $htmlAttributes += $options;
 
-        $this->fields = [];
+        $this->fields = $this->_optionalFields = [];
         if ($this->requestType !== 'get') {
             $append .= $this->_csrfField();
         }
@@ -531,6 +550,7 @@ class FormHelper extends Helper
             $out .= $this->secure($this->fields, $secureAttributes);
             $this->fields = [];
             $this->_unlockedFields = [];
+            $this->_optionalFields = [];
         }
         $out .= $this->formatTemplate('formEnd', []);
 
@@ -571,7 +591,8 @@ class FormHelper extends Helper
         $tokenData = $this->_buildFieldToken(
             $this->_lastAction,
             $fields,
-            $this->_unlockedFields
+            $this->_unlockedFields,
+            $this->_optionalFields
         );
         $tokenFields = array_merge($secureAttributes, [
             'value' => $tokenData['fields'],
@@ -581,12 +602,19 @@ class FormHelper extends Helper
             'value' => $tokenData['unlocked'],
         ]);
         $out .= $this->hidden('_Token.unlocked', $tokenUnlocked);
+        if (!empty($tokenData['optional'])) {
+            $tokenOptional = array_merge($secureAttributes, [
+                'value' => $tokenData['optional'],
+            ]);
+            $out .= $this->hidden('_Token.optional', $tokenOptional);
+        }
         if ($debugSecurity) {
             $tokenDebug = array_merge($secureAttributes, [
                 'value' => urlencode(json_encode([
                     $this->_lastAction,
                     $fields,
-                    $this->_unlockedFields
+                    $this->_unlockedFields,
+                    $this->_optionalFields
                 ])),
             ]);
             $out .= $this->hidden('_Token.debug', $tokenDebug);
@@ -620,10 +648,37 @@ class FormHelper extends Helper
     }
 
     /**
+     * Add to or get the list of fields that are currently optional.
+     * Optional fields are not included in the field hash used by SecurityComponent,
+     * but their value must be retained *if* the field is present in the data.
+     * Making a field optional once its been added to the list of secured fields will
+     * remove it from the list of fields.
+     *
+     * @param string|null $name The dot separated name for the field.
+     * @param string|null $value The value required for the field.
+     * @return mixed Either null, or the list of fields.
+     * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#working-with-securitycomponent
+     */
+    public function optionalField($name = null, $value = null)
+    {
+        if ($name === null) {
+            return $this->_optionalFields;
+        }
+        $this->_optionalFields[$name] = $value;
+
+        // Optional fields must also not be locked
+        $index = array_search($name, $this->fields);
+        if ($index !== false) {
+            unset($this->fields[$index]);
+        }
+        unset($this->fields[$name]);
+    }
+
+    /**
      * Determine which fields of a form should be used for hash.
      * Populates $this->fields
      *
-     * @param bool $lock Whether this field should be part of the validation
+     * @param mixed $lock Whether this field should be part of the validation
      *   or excluded as part of the unlockedFields.
      * @param string|array $field Reference to field to be secured. Can be dot
      *   separated string to indicate nesting or array of fieldname parts.
@@ -650,10 +705,13 @@ class FormHelper extends Helper
         $field = implode('.', $field);
         $field = preg_replace('/(\.\d+)+$/', '', $field);
 
-        if ($lock) {
+        if ($lock === self::SECURE_OPTIONAL) {
+            $this->optionalField($field, $value);
+        } elseif ($lock) {
             if (!in_array($field, $this->fields)) {
                 if ($value !== null) {
-                    return $this->fields[$field] = $value;
+                    $this->fields[$field] = $value;
+                    return;
                 }
                 if (isset($this->fields[$field]) && $value === null) {
                     unset($this->fields[$field]);
@@ -1550,8 +1608,8 @@ class FormHelper extends Helper
             ['secure' => static::SECURE_SKIP]
         ));
 
-        if ($secure === true) {
-            $this->_secure(true, $this->_secureFieldName($options['name']), (string)$options['val']);
+        if ($secure === true || $secure === self::SECURE_OPTIONAL) {
+            $this->_secure($secure, $this->_secureFieldName($options['name']), (string)$options['val']);
         }
 
         $options['type'] = 'hidden';
@@ -2595,7 +2653,11 @@ class FormHelper extends Helper
         $out = $widget->render($data, $this->context());
         if (isset($data['name']) && $secure !== null && $secure !== self::SECURE_SKIP) {
             foreach ($widget->secureFields($data) as $field) {
-                $this->_secure($secure, $this->_secureFieldName($field));
+                if ($secure === self::SECURE_OPTIONAL && array_key_exists('val', $data)) {
+                    $this->_secure($secure, $this->_secureFieldName($field), $data['val']);
+                } else {
+                    $this->_secure($secure, $this->_secureFieldName($field));
+                }
             }
         }
         return $out;

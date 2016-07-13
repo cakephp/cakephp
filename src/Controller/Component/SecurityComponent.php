@@ -325,7 +325,7 @@ class SecurityComponent extends Component
         $hashParts = $this->_hashParts($controller);
         $check = Security::hash(implode('', $hashParts), 'sha1');
 
-        if ($token === $check) {
+        if ($token === $check && $this->_validateOptionalFields($controller, $token)) {
             return true;
         }
 
@@ -382,11 +382,13 @@ class SecurityComponent extends Component
     {
         $fieldList = $this->_fieldsList($controller->request->data);
         $unlocked = $this->_sortedUnlocked($controller->request->data);
+        $optional = $this->_sortedOptional($controller->request->data);
 
         return [
             $controller->request->here(),
             serialize($fieldList),
             $unlocked,
+            $optional,
             Security::salt()
         ];
     }
@@ -402,6 +404,7 @@ class SecurityComponent extends Component
         $locked = '';
         $token = urldecode($check['_Token']['fields']);
         $unlocked = $this->_unlocked($check);
+        $optional = $this->_optional($check);
 
         if (strpos($token, ':')) {
             list($token, $locked) = explode(':', $token, 2);
@@ -434,6 +437,7 @@ class SecurityComponent extends Component
 
         foreach ($fieldList as $i => $key) {
             $isLocked = (is_array($locked) && in_array($key, $locked));
+            $isOptional = (array_key_exists($key, $optional));
 
             if (!empty($unlockedFields)) {
                 foreach ($unlockedFields as $off) {
@@ -446,7 +450,7 @@ class SecurityComponent extends Component
                 }
             }
 
-            if ($isUnlocked || $isLocked) {
+            if ($isUnlocked || $isLocked || $isOptional) {
                 unset($fieldList[$i]);
                 if ($isLocked) {
                     $lockedFields[$key] = $fields[$key];
@@ -486,6 +490,56 @@ class SecurityComponent extends Component
     }
 
     /**
+     * Get the optional string
+     *
+     * @param array $data Data array
+     * @return array Optional fields and the values they must have if present
+     */
+    protected function _optional(array $data)
+    {
+        if (empty($data['_Token']['optional'])) {
+            return [];
+        }
+        return json_decode(urldecode($data['_Token']['optional']), true);
+    }
+
+    /**
+     * Get the sorted optional string
+     *
+     * @param array $data Data array
+     * @return string
+     */
+    protected function _sortedOptional($data)
+    {
+        $optional = $this->_optional($data);
+        ksort($optional, SORT_STRING);
+        return implode('|', array_keys($optional));
+    }
+
+    /**
+     * Validate that any optional fields are either not present or the value matches
+     *
+     * @param \Cake\Controller\Controller $controller Instantiating controller
+     * @param string $token The token string used in hashing
+     * @return bool true if no errors are found
+     */
+    protected function _validateOptionalFields(Controller $controller, $token)
+    {
+        $fields = $controller->request->data;
+        unset($fields['_Token'], $fields['_csrfToken']);
+        $fields = Hash::flatten($fields);
+        $optional = $this->_optional($controller->request->data);
+        foreach ($optional as $name => $hash) {
+            if (array_key_exists($name, $fields)) {
+                if ($hash !== Security::hash($name . $fields[$name] . $token, 'sha1')) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
      * Create a message for humans to understand why Security token is not matching
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
@@ -496,7 +550,7 @@ class SecurityComponent extends Component
     {
         $messages = [];
         $expectedParts = json_decode(urldecode($controller->request->data['_Token']['debug']), true);
-        if (!is_array($expectedParts) || count($expectedParts) !== 3) {
+        if (!is_array($expectedParts) || count($expectedParts) !== 4) {
             return 'Invalid security debug token.';
         }
         $expectedUrl = Hash::get($expectedParts, 0);
@@ -529,7 +583,17 @@ class SecurityComponent extends Component
             'Missing unlocked field: \'%s\''
         );
 
-        $messages = array_merge($messages, $fieldsMessages, $unlockFieldsMessages);
+        $optionalFields = Hash::get($expectedParts, 3);
+        $check = $controller->request->data;
+        unset($check['_Token'], $check['_csrfToken']);
+        $fields = Hash::flatten($check);
+        $optionalMessages = $this->_matchOptionalFields(
+            $fields,
+            $optionalFields,
+            'Tampered optional field \'%s\' in POST data (expected value \'%s\' but found \'%s\')'
+        );
+
+        $messages = array_merge($messages, $fieldsMessages, $unlockFieldsMessages, $optionalMessages);
         return implode(', ', $messages);
     }
 
@@ -652,5 +716,24 @@ class SecurityComponent extends Component
             }
         }
         return sprintf($missingMessage, implode(', ', $expectedFieldNames));
+    }
+
+    /**
+     * Generate array of messages for the optional fields in POST data
+     *
+     * @param array $dataFields Fields array, containing the POST data fields
+     * @param array $optionalFields Fields array, containing the optional fields and their required values, if present
+     * @param string $stringKeyMessage Message string if tampered found in data fields indexed by string (protected)
+     * @return array Error messages
+     */
+    protected function _matchOptionalFields($dataFields, $optionalFields, $stringKeyMessage)
+    {
+        $messages = [];
+        foreach ((array)$optionalFields as $key => $value) {
+            if (isset($dataFields[$key]) && $value !== $dataFields[$key]) {
+                $messages[] = sprintf($stringKeyMessage, $key, $value, $dataFields[$key]);
+            }
+        }
+        return $messages;
     }
 }
