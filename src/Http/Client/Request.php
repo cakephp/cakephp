@@ -45,12 +45,12 @@ class Request extends Message implements RequestInterface
         $this->validateMethod($method);
         $this->method = $method;
         $this->uri = $this->createUri($url);
-        $this->body($data);
         $headers += [
             'Connection' => 'close',
             'User-Agent' => 'CakePHP'
         ];
         $this->addHeaders($headers);
+        $this->body($data);
     }
 
     /**

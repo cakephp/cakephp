@@ -163,7 +163,7 @@ class ClientTest extends TestCase
         $headers = [
             'User-Agent' => 'Cake',
             'Connection' => 'close',
-            'Content-Type' => 'application/json',
+            'Content-Type' => 'application/x-www-form-urlencoded',
         ];
         $cookies = [
             'split' => 'value'
