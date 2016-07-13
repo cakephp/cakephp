@@ -164,9 +164,13 @@ class CakeResponseTest extends CakeTestCase {
 		$headers += array('Location' => 'http://example.com');
 		$this->assertEquals($headers, $response->header());
 
-		//Headers with the same name are overwritten
+		// Headers with the same name are overwritten
 		$response->header('Location', 'http://example2.com');
 		$headers = array('Location' => 'http://example2.com');
+		$this->assertEquals($headers, $response->header());
+
+		$response->header('Date', null);
+		$headers += array('Date' => null);
 		$this->assertEquals($headers, $response->header());
 
 		$response->header(array('WWW-Authenticate' => 'Negotiate'));
