@@ -1673,15 +1673,27 @@ class TableTest extends TestCase
     public function testImplementedEvents()
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')
-            ->setMethods(['beforeFind', 'beforeSave', 'afterSave', 'beforeDelete', 'afterDelete'])
+            ->setMethods([
+                'buildValidator',
+                'beforeMarshal',
+                'beforeFind',
+                'beforeSave',
+                'afterSave',
+                'beforeDelete',
+                'afterDelete',
+                'afterRules'
+            ])
             ->getMock();
         $result = $table->implementedEvents();
         $expected = [
+            'Model.beforeMarshal' => 'beforeMarshal',
+            'Model.buildValidator' => 'buildValidator',
             'Model.beforeFind' => 'beforeFind',
             'Model.beforeSave' => 'beforeSave',
             'Model.afterSave' => 'afterSave',
             'Model.beforeDelete' => 'beforeDelete',
             'Model.afterDelete' => 'afterDelete',
+            'Model.afterRules' => 'afterRules',
         ];
         $this->assertEquals($expected, $result, 'Events do not match.');
     }

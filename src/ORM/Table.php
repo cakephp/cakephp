@@ -2252,6 +2252,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * The conventional method map is:
      *
      * - Model.beforeMarshal => beforeMarshal
+     * - Model.buildValidator => buildValidator
      * - Model.beforeFind => beforeFind
      * - Model.beforeSave => beforeSave
      * - Model.afterSave => afterSave
@@ -2268,6 +2269,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $eventMap = [
             'Model.beforeMarshal' => 'beforeMarshal',
+            'Model.buildValidator' => 'buildValidator',
             'Model.beforeFind' => 'beforeFind',
             'Model.beforeSave' => 'beforeSave',
             'Model.afterSave' => 'afterSave',
