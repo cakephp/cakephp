@@ -236,11 +236,11 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * ### Example:
      * ```
-     *  $query->select(['title'])->from('articles')->traverse(function ($value, $clause) {
-     *      if ($clause === 'select') {
-     *          var_dump($value);
-     *      }
-     *  }, ['select', 'from']);
+     * $query->select(['title'])->from('articles')->traverse(function ($value, $clause) {
+     *     if ($clause === 'select') {
+     *         var_dump($value);
+     *     }
+     * }, ['select', 'from']);
      * ```
      *
      * @param callable $visitor A function or callable to be executed for each part
@@ -410,10 +410,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ### Examples:
      *
      * ```
-     *  $query->from(['p' => 'posts']); // Produces FROM posts p
-     *  $query->from('authors'); // Appends authors: FROM posts p, authors
-     *  $query->from(['products'], true); // Resets the list: FROM products
-     *  $query->from(['sub' => $countQuery]); // FROM (SELECT ...) sub
+     * $query->from(['p' => 'posts']); // Produces FROM posts p
+     * $query->from('authors'); // Appends authors: FROM posts p, authors
+     * $query->from(['products'], true); // Resets the list: FROM products
+     * $query->from(['sub' => $countQuery]); // FROM (SELECT ...) sub
      * ```
      *
      * @param array|\Cake\Database\ExpressionInterface|string $tables tables to be added to the list
@@ -457,33 +457,33 @@ class Query implements ExpressionInterface, IteratorAggregate
      * A join can be fully described and aliased using the array notation:
      *
      * ```
-     *  $query->join([
-     *      'a' => [
-     *          'table' => 'authors',
-     *          'type' => 'LEFT',
-     *          'conditions' => 'a.id = b.author_id'
-     *      ]
-     *  ]);
-     *  // Produces LEFT JOIN authors a ON a.id = b.author_id
+     * $query->join([
+     *     'a' => [
+     *         'table' => 'authors',
+     *         'type' => 'LEFT',
+     *         'conditions' => 'a.id = b.author_id'
+     *     ]
+     * ]);
+     * // Produces LEFT JOIN authors a ON a.id = b.author_id
      * ```
      *
      * You can even specify multiple joins in an array, including the full description:
      *
      * ```
-     *  $query->join([
-     *      'a' => [
-     *          'table' => 'authors',
-     *          'type' => 'LEFT',
-     *          'conditions' => 'a.id = b.author_id'
-     *      ],
-     *      'p' => [
-     *          'table' => 'publishers',
-     *          'type' => 'INNER',
-     *          'conditions' => 'p.id = b.publisher_id AND p.name = "Cake Software Foundation"'
-     *      ]
-     *  ]);
-     *  // LEFT JOIN authors a ON a.id = b.author_id
-     *  // INNER JOIN publishers p ON p.id = b.publisher_id AND p.name = "Cake Software Foundation"
+     * $query->join([
+     *     'a' => [
+     *         'table' => 'authors',
+     *         'type' => 'LEFT',
+     *         'conditions' => 'a.id = b.author_id'
+     *     ],
+     *     'p' => [
+     *         'table' => 'publishers',
+     *         'type' => 'INNER',
+     *         'conditions' => 'p.id = b.publisher_id AND p.name = "Cake Software Foundation"'
+     *     ]
+     * ]);
+     * // LEFT JOIN authors a ON a.id = b.author_id
+     * // INNER JOIN publishers p ON p.id = b.publisher_id AND p.name = "Cake Software Foundation"
      * ```
      *
      * ### Using conditions and types
@@ -497,14 +497,14 @@ class Query implements ExpressionInterface, IteratorAggregate
      * using the second parameter of this function.
      *
      * ```
-     *  $query->join(['a' => [
-     *      'table' => 'articles',
-     *      'conditions' => [
-     *          'a.posted >=' => new DateTime('-3 days'),
-     *          'a.published' => true,
-     *          'a.author_id = authors.id'
-     *      ]
-     *  ]], ['a.posted' => 'datetime', 'a.published' => 'boolean'])
+     * $query->join(['a' => [
+     *     'table' => 'articles',
+     *     'conditions' => [
+     *         'a.posted >=' => new DateTime('-3 days'),
+     *         'a.published' => true,
+     *         'a.author_id = authors.id'
+     *     ]
+     * ]], ['a.posted' => 'datetime', 'a.published' => 'boolean'])
      * ```
      *
      * ### Overwriting joins
@@ -515,9 +515,9 @@ class Query implements ExpressionInterface, IteratorAggregate
      * with another list if the third parameter for this function is set to true.
      *
      * ```
-     *  $query->join(['alias' => 'table']); // joins table with as alias
-     *  $query->join(['alias' => 'another_table']); // joins another_table with as alias
-     *  $query->join(['something' => 'different_table'], [], true); // resets joins list
+     * $query->join(['alias' => 'table']); // joins table with as alias
+     * $query->join(['alias' => 'another_table']); // joins another_table with as alias
+     * $query->join(['something' => 'different_table'], [], true); // resets joins list
      * ```
      *
      * @param array|string|null $tables list of tables to be joined in the query
@@ -707,11 +707,11 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ### Conditions using operators:
      *
      * ```
-     *  $query->where([
-     *      'posted >=' => new DateTime('3 days ago'),
-     *      'title LIKE' => 'Hello W%',
-     *      'author_id' => 1,
-     *  ], ['posted' => 'datetime']);
+     * $query->where([
+     *     'posted >=' => new DateTime('3 days ago'),
+     *     'title LIKE' => 'Hello W%',
+     *     'author_id' => 1,
+     * ], ['posted' => 'datetime']);
      * ```
      *
      * The previous example produces:
@@ -724,11 +724,11 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ### Nesting conditions with conjunctions:
      *
      * ```
-     *  $query->where([
-     *      'author_id !=' => 1,
-     *      'OR' => ['published' => true, 'posted <' => new DateTime('now')],
-     *      'NOT' => ['title' => 'Hello']
-     *  ], ['published' => boolean, 'posted' => 'datetime']
+     * $query->where([
+     *     'author_id !=' => 1,
+     *     'OR' => ['published' => true, 'posted <' => new DateTime('now')],
+     *     'NOT' => ['title' => 'Hello']
+     * ], ['published' => boolean, 'posted' => 'datetime']
      * ```
      *
      * The previous example produces:
@@ -749,8 +749,8 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ### Using expressions objects:
      *
      * ```
-     *  $exp = $query->newExpr()->add(['id !=' => 100, 'author_id' != 1])->tieWith('OR');
-     *  $query->where(['published' => true], ['published' => 'boolean'])->where($exp);
+     * $exp = $query->newExpr()->add(['id !=' => 100, 'author_id' != 1])->tieWith('OR');
+     * $query->where(['published' => true], ['published' => 'boolean'])->where($exp);
      * ```
      *
      * The previous example produces:
@@ -767,13 +767,13 @@ class Query implements ExpressionInterface, IteratorAggregate
      * added the list of conditions for the query using the AND operator.
      *
      * ```
-     *  $query
-     *  ->where(['title !=' => 'Hello World'])
-     *  ->where(function ($exp, $query) {
-     *      $or = $exp->or_(['id' => 1]);
-     *      $and = $exp->and_(['id >' => 2, 'id <' => 10]);
-     *  return $or->add($and);
-     *  });
+     * $query
+     *   ->where(['title !=' => 'Hello World'])
+     *   ->where(function ($exp, $query) {
+     *     $or = $exp->or_(['id' => 1]);
+     *     $and = $exp->and_(['id >' => 2, 'id <' => 10]);
+     *    return $or->add($and);
+     *   });
      * ```
      *
      * * The previous example produces:
@@ -783,7 +783,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ### Conditions as strings:
      *
      * ```
-     *  $query->where(['articles.author_id = authors.id', 'modified IS NULL']);
+     * $query->where(['articles.author_id = authors.id', 'modified IS NULL']);
      * ```
      *
      * The previous example produces:
@@ -1213,8 +1213,8 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ### Examples
      *
      * ```
-     *  $query->offset(10) // generates OFFSET 10
-     *  $query->offset($query->newExpr()->add(['1 + 1'])); // OFFSET (1 + 1)
+     * $query->offset(10) // generates OFFSET 10
+     * $query->offset($query->newExpr()->add(['1 + 1'])); // OFFSET (1 + 1)
      * ```
      *
      * @param int|\Cake\Database\ExpressionInterface $num number of records to be skipped
@@ -1242,8 +1242,8 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ### Examples
      *
      * ```
-     *  $union = (new Query($conn))->select(['id', 'title'])->from(['a' => 'articles']);
-     *  $query->select(['id', 'name'])->from(['d' => 'things'])->union($union);
+     * $union = (new Query($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+     * $query->select(['id', 'name'])->from(['d' => 'things'])->union($union);
      * ```
      *
      * Will produce:
@@ -1414,7 +1414,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * ```
      * $query->update('articles')->set(function ($exp) {
-     *  return $exp->eq('title', 'The title', 'string');
+     *   return $exp->eq('title', 'The title', 'string');
      * });
      * ```
      *

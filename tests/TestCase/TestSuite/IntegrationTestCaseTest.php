@@ -54,7 +54,11 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testRequestBuilding()
     {
         $this->configRequest([
-            'headers' => ['X-CSRF-Token' => 'abc123'],
+            'headers' => [
+                'X-CSRF-Token' => 'abc123',
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json'
+            ],
             'base' => '',
             'webroot' => '/',
             'environment' => [
@@ -67,6 +71,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $request = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
 
         $this->assertEquals('abc123', $request['environment']['HTTP_X_CSRF_TOKEN']);
+        $this->assertEquals('application/json', $request['environment']['CONTENT_TYPE']);
         $this->assertEquals('/tasks/add', $request['url']);
         $this->assertArrayHasKey('split_token', $request['cookies']);
         $this->assertEquals('def345', $request['cookies']['split_token']);
@@ -454,6 +459,23 @@ class IntegrationTestCaseTest extends IntegrationTestCase
             'tags' => ['_ids' => [1, 2, 3, 4]]
         ];
         $this->post('/posts/securePost', $data);
+        $this->assertResponseOk();
+        $this->assertResponseContains('Request was accepted');
+    }
+
+    /**
+     * Test posting to a secured form action.
+     *
+     * @return void
+     */
+    public function testPostSecuredFormWithQuery()
+    {
+        $this->enableSecurityToken();
+        $data = [
+            'title' => 'Some title',
+            'body' => 'Some text'
+        ];
+        $this->post('/posts/securePost?foo=bar', $data);
         $this->assertResponseOk();
         $this->assertResponseContains('Request was accepted');
     }
