@@ -138,6 +138,7 @@ class MessagesFileLoader
 
         $messages = (new $class)->parse($file);
         $package->setMessages($messages);
+
         return $package;
     }
 

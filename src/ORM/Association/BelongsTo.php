@@ -52,8 +52,10 @@ class BelongsTo extends Association
             if ($this->_foreignKey === null) {
                 $this->_foreignKey = $this->_modelKey($this->target()->alias());
             }
+
             return $this->_foreignKey;
         }
+
         return parent::foreignKey($key);
     }
 
@@ -79,6 +81,7 @@ class BelongsTo extends Association
     protected function _propertyName()
     {
         list(, $name) = pluginSplit($this->_name);
+
         return Inflector::underscore(Inflector::singularize($name));
     }
 
@@ -136,6 +139,7 @@ class BelongsTo extends Association
             $targetEntity->extract((array)$this->bindingKey())
         );
         $entity->set($properties, ['guard' => false]);
+
         return $entity;
     }
 
@@ -214,6 +218,7 @@ class BelongsTo extends Association
             }
             $resultMap[implode(';', $values)] = $result;
         }
+
         return $resultMap;
     }
 }

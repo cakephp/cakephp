@@ -114,6 +114,7 @@ class IniConfig implements ConfigEngineInterface
                 }
             }
         }
+
         return $values;
     }
 
@@ -139,6 +140,7 @@ class IniConfig implements ConfigEngineInterface
                 $values[$key] = $value;
             }
         }
+
         return $values;
     }
 
@@ -172,6 +174,7 @@ class IniConfig implements ConfigEngineInterface
         $contents = trim(implode("\n", $result));
 
         $filename = $this->_getFilePath($key);
+
         return file_put_contents($filename, $contents) > 0;
     }
 
@@ -192,6 +195,7 @@ class IniConfig implements ConfigEngineInterface
         if ($value === false) {
             return 'false';
         }
+
         return (string)$value;
     }
 }

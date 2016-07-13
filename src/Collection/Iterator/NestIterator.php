@@ -54,6 +54,7 @@ class NestIterator extends Collection implements RecursiveIterator
     public function getChildren()
     {
         $property = $this->_propertyExtractor($this->_nestKey);
+
         return new self($property($this->current()), $this->_nestKey);
     }
 

@@ -95,6 +95,7 @@ class Mysql extends Driver
                 $connection->exec($command);
             }
         }
+
         return true;
     }
 
@@ -123,6 +124,7 @@ class Mysql extends Driver
         if ($isObject && $query->bufferResults() === false) {
             $result->bufferResults(false);
         }
+
         return $result;
     }
 

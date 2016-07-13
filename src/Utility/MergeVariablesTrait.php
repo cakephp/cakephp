@@ -111,6 +111,7 @@ trait MergeVariablesTrait
                 $current[$key] = $value;
             }
         }
+
         return $current;
     }
 }

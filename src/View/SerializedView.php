@@ -90,6 +90,7 @@ class SerializedView extends View
             if ($result === false) {
                 throw new RuntimeException('Serialization of View data failed.');
             }
+
             return (string)$result;
         }
         if ($view !== false && $this->_getViewFileName($view)) {

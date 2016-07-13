@@ -302,20 +302,24 @@ class Router
                 $path = '/' . implode('/', [$prefix, $pluginUrl]);
                 $params = ['prefix' => $prefix, 'plugin' => $plugin];
                 static::scope($path, $params, $callback);
+
                 return;
             }
 
             if ($prefix) {
                 static::prefix($prefix, $callback);
+
                 return;
             }
 
             if ($plugin) {
                 static::plugin($plugin, $callback);
+
                 return;
             }
 
             static::scope('/', $callback);
+
             return;
         }
     }
@@ -335,6 +339,7 @@ class Router
         if (strpos($url, '/') !== 0) {
             $url = '/' . $url;
         }
+
         return static::$_collection->parse($url);
     }
 
@@ -414,6 +419,7 @@ class Router
             static::_setContext($last);
             reset(static::$_requests);
         }
+
         return $removed;
     }
 
@@ -428,6 +434,7 @@ class Router
         if ($current) {
             return end(static::$_requests);
         }
+
         return isset(static::$_requests[0]) ? static::$_requests[0] : null;
     }
 
@@ -442,6 +449,7 @@ class Router
         if (empty(static::$_initialState)) {
             static::$_collection = new RouteCollection();
             static::$_initialState = get_class_vars(get_called_class());
+
             return;
         }
         foreach (static::$_initialState as $key => $val) {
@@ -500,6 +508,7 @@ class Router
         foreach (static::$_urlFilters as $filter) {
             $url = $filter($url, $request);
         }
+
         return $url;
     }
 
@@ -570,6 +579,7 @@ class Router
             if ($full) {
                 $output = static::fullBaseUrl() . $output;
             }
+
             return $output;
         }
         if (is_array($url)) {
@@ -634,6 +644,7 @@ class Router
                 $output = static::fullBaseUrl() . $output;
             }
         }
+
         return $output . $frag;
     }
 
@@ -661,6 +672,7 @@ class Router
         if (empty(static::$_fullBaseUrl)) {
             static::$_fullBaseUrl = Configure::read('App.fullBaseUrl');
         }
+
         return static::$_fullBaseUrl;
     }
 
@@ -708,6 +720,7 @@ class Router
         if (!empty($url)) {
             $params['?'] = $url;
         }
+
         return Router::url($params, $full);
     }
 
@@ -743,6 +756,7 @@ class Router
         if (empty($url)) {
             return '/';
         }
+
         return $url;
     }
 
@@ -773,12 +787,14 @@ class Router
             if (!static::$initialized) {
                 static::_loadRoutes();
             }
+
             return array_unique(array_merge(static::$_defaultExtensions, $collection->extensions()));
         }
         $extensions = (array)$extensions;
         if ($merge) {
             $extensions = array_unique(array_merge(static::$_defaultExtensions, $extensions));
         }
+
         return static::$_defaultExtensions = $extensions;
     }
 
@@ -803,6 +819,7 @@ class Router
         $options += ['separator' => ':'];
         if (empty($request->params['pass'])) {
             $request->params['named'] = [];
+
             return $request;
         }
         $named = [];
@@ -832,6 +849,7 @@ class Router
             $named = array_merge_recursive($named, [$key => $value]);
         }
         $request->params['named'] = $named;
+
         return $request;
     }
 
@@ -956,6 +974,7 @@ class Router
         if (!static::$initialized) {
             static::_loadRoutes();
         }
+
         return static::$_collection->routes();
     }
 

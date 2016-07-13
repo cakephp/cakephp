@@ -62,6 +62,7 @@ class BoolType extends Type
         if (is_string($value) && !is_numeric($value)) {
             return strtolower($value) === 'true' ? true : false;
         }
+
         return !empty($value);
     }
 
@@ -98,6 +99,7 @@ class BoolType extends Type
         if ($value === 'false') {
             return false;
         }
+
         return !empty($value);
     }
 }

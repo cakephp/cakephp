@@ -72,6 +72,7 @@ class EventList implements \ArrayAccess, \Countable
         if ($this->offsetExists($offset)) {
             return $this->_events[$offset];
         }
+
         return null;
     }
 
@@ -124,6 +125,7 @@ class EventList implements \ArrayAccess, \Countable
                 return true;
             }
         }
+
         return false;
     }
 }

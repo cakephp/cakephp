@@ -79,6 +79,7 @@ class FileWidget implements WidgetInterface
         foreach (['name', 'type', 'tmp_name', 'error', 'size'] as $suffix) {
             $fields[] = $data['name'] . '[' . $suffix . ']';
         }
+
         return $fields;
     }
 }

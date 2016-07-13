@@ -166,6 +166,7 @@ abstract class Mailer implements EventListenerInterface
                 join('', array_slice(explode('\\', get_class($this)), -1))
             );
         }
+
         return static::$name;
     }
 
@@ -178,6 +179,7 @@ abstract class Mailer implements EventListenerInterface
     public function layout($layout)
     {
         $this->_email->viewBuilder()->layout($layout);
+
         return $this;
     }
 
@@ -201,6 +203,7 @@ abstract class Mailer implements EventListenerInterface
     public function __call($method, $args)
     {
         call_user_func_array([$this->_email, $method], $args);
+
         return $this;
     }
 
@@ -214,6 +217,7 @@ abstract class Mailer implements EventListenerInterface
     public function set($key, $value = null)
     {
         $this->_email->viewVars(is_string($key) ? [$key => $value] : $key);
+
         return $this;
     }
 
@@ -257,6 +261,7 @@ abstract class Mailer implements EventListenerInterface
     protected function reset()
     {
         $this->_email = clone $this->_clonedEmail;
+
         return $this;
     }
 

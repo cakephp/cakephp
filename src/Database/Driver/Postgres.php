@@ -82,6 +82,7 @@ class Postgres extends Driver
         foreach ($config['init'] as $command) {
             $connection->exec($command);
         }
+
         return true;
     }
 

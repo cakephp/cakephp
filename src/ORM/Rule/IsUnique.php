@@ -82,6 +82,7 @@ class IsUnique
         foreach ($conditions as $key => $value) {
             $aliased["$alias.$key"] = $value;
         }
+
         return $aliased;
     }
 }

@@ -87,6 +87,7 @@ class GreedyCommentsTable extends Table
             $options['conditions'] = [];
         }
         $options['conditions'] = array_merge($options['conditions'], ['Comments.published' => 'Y']);
+
         return parent::find($type, $options);
     }
 }
@@ -1620,6 +1621,7 @@ class MarshallerTest extends TestCase
         $this->articles->Tags->eventManager()
             ->on('Model.beforeFind', function ($event, $query) use (&$called) {
                 $called = true;
+
                 return $query->where(['Tags.id >=' => 1]);
             });
 

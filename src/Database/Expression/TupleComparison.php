@@ -64,6 +64,7 @@ class TupleComparison extends Comparison
         $values = $this->_stringifyValues($generator);
 
         $field = implode(', ', $fields);
+
         return sprintf($template, $field, $this->_operator, $values);
     }
 
@@ -126,6 +127,7 @@ class TupleComparison extends Comparison
     {
         $placeholder = $generator->placeholder('tuple');
         $generator->bind($placeholder, $value, $type);
+
         return $placeholder;
     }
 
@@ -148,6 +150,7 @@ class TupleComparison extends Comparison
         if ($value instanceof ExpressionInterface) {
             $callable($value);
             $value->traverse($callable);
+
             return;
         }
 

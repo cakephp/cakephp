@@ -226,8 +226,10 @@ class FrozenTime extends Chronos implements JsonSerializable
                     $groupedIdentifiers[$item[0]] = [$tz => $item[0] . $abbr];
                 }
             }
+
             return $groupedIdentifiers;
         }
+
         return array_combine($identifiers, $identifiers);
     }
 
@@ -248,6 +250,7 @@ class FrozenTime extends Chronos implements JsonSerializable
         if (is_numeric($tmp)) {
             $timeInterval = $tmp . ' days';
         }
+
         return parent::wasWithinLast($timeInterval);
     }
 
@@ -268,6 +271,7 @@ class FrozenTime extends Chronos implements JsonSerializable
         if (is_numeric($tmp)) {
             $timeInterval = $tmp . ' days';
         }
+
         return parent::isWithinNext($timeInterval);
     }
 }

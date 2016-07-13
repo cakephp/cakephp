@@ -97,6 +97,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $result = $query->select(function ($q) use ($query) {
             $this->assertSame($query, $q);
+
             return ['1 + 2', '1 + 5'];
         })->execute();
         $this->assertEquals([3, 6], $result->fetch());
@@ -393,6 +394,7 @@ class QueryTest extends TestCase
             ->innerJoin(['c' => 'comments'], function ($exp, $q) use ($query, $types) {
                 $this->assertSame($q, $query);
                 $exp->add(['created <' => new \DateTime('2007-03-18 10:45:23')], $types);
+
                 return $exp;
             })
             ->execute();
@@ -406,6 +408,7 @@ class QueryTest extends TestCase
             ->innerJoin('comments', function ($exp, $q) use ($query, $types) {
                 $this->assertSame($q, $query);
                 $exp->add(['created >' => new \DateTime('2007-03-18 10:45:23')], $types);
+
                 return $exp;
             })
             ->execute();
@@ -1028,6 +1031,7 @@ class QueryTest extends TestCase
             ->where(function ($exp) {
                 $field = clone $exp;
                 $field->add('SELECT min(id) FROM comments');
+
                 return $exp
                     ->eq($field, 100, 'integer');
             })
@@ -1375,6 +1379,7 @@ class QueryTest extends TestCase
             ->where(function ($exp) {
                 $from = new \DateTime('2007-03-18 10:51:00');
                 $to = new \DateTime('2007-03-18 10:54:00');
+
                 return $exp->between('created', $from, $to, 'datetime');
             })
             ->execute();
@@ -1403,6 +1408,7 @@ class QueryTest extends TestCase
             ->from('comments')
             ->where(function ($exp, $q) {
                 $field = $q->func()->coalesce([new IdentifierExpression('id'), 1 => 'literal']);
+
                 return $exp->between($field, 5, 6, 'integer');
             })
             ->execute();
@@ -1432,6 +1438,7 @@ class QueryTest extends TestCase
             ->where(function ($exp, $q) {
                 $from = $q->newExpr("'2007-03-18 10:51:00'");
                 $to = $q->newExpr("'2007-03-18 10:54:00'");
+
                 return $exp->between('created', $from, $to);
             })
             ->execute();
@@ -1459,6 +1466,7 @@ class QueryTest extends TestCase
             ->from('comments')
             ->where(function ($exp) {
                 $and = $exp->and_(['id' => 2, 'id >' => 1]);
+
                 return $exp->add($and);
             })
             ->execute();
@@ -1472,6 +1480,7 @@ class QueryTest extends TestCase
             ->from('comments')
             ->where(function ($exp) {
                 $and = $exp->and_(['id' => 2, 'id <' => 2]);
+
                 return $exp->add($and);
             })
             ->execute();
@@ -1486,6 +1495,7 @@ class QueryTest extends TestCase
                 $and = $exp->and_(function ($and) {
                     return $and->eq('id', 1)->gt('id', 0);
                 });
+
                 return $exp->add($and);
             })
             ->execute();
@@ -1500,6 +1510,7 @@ class QueryTest extends TestCase
             ->where(function ($exp) {
                 $or = $exp->or_(['id' => 1]);
                 $and = $exp->and_(['id >' => 2, 'id <' => 4]);
+
                 return $or->add($and);
             })
             ->execute();
@@ -1516,6 +1527,7 @@ class QueryTest extends TestCase
                 $or = $exp->or_(function ($or) {
                     return $or->eq('id', 1)->eq('id', 2);
                 });
+
                 return $or;
             })
             ->execute();
@@ -2401,6 +2413,7 @@ class QueryTest extends TestCase
             ->order(['id' => 'ASC'])
             ->decorateResults(function ($row) {
                 $row['modified_id'] = $row['id'] + 1;
+
                 return $row;
             })
             ->execute();
@@ -2411,6 +2424,7 @@ class QueryTest extends TestCase
 
         $result = $query->decorateResults(function ($row) {
             $row['modified_id']--;
+
             return $row;
         })->execute();
 
@@ -2422,6 +2436,7 @@ class QueryTest extends TestCase
         $result = $query
             ->decorateResults(function ($row) {
                 $row['foo'] = 'bar';
+
                 return $row;
             }, true)
             ->execute();
@@ -3829,6 +3844,7 @@ class QueryTest extends TestCase
             ->where(function ($expr) {
                 $from = new \DateTime('2007-03-18 10:45:00');
                 $to = new \DateTime('2007-03-18 10:48:00');
+
                 return $expr->between('created', $from, $to);
             });
         $this->assertCount(2, $query->execute()->fetchAll());

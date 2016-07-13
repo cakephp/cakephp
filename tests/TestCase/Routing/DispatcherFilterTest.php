@@ -117,6 +117,7 @@ class DispatcherFilterTest extends TestCase
         $matcher = function ($request, $response) {
             $this->assertInstanceOf('Cake\Network\Request', $request);
             $this->assertInstanceOf('Cake\Network\Response', $response);
+
             return true;
         };
 

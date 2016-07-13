@@ -131,6 +131,7 @@ class MapReduce implements IteratorAggregate
         if (!$this->_executed) {
             $this->_execute();
         }
+
         return new ArrayIterator($this->_result);
     }
 

@@ -28,6 +28,7 @@ class Test2DispatcherFilter extends DispatcherFilter
     {
         $event->data['response']->statusCode(500);
         $event->stopPropagation();
+
         return $event->data['response'];
     }
 

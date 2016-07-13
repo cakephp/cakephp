@@ -54,6 +54,7 @@ class RulesChecker extends BaseRulesChecker
         }
 
         $errorField = current($fields);
+
         return $this->_addError(new IsUnique($fields), '_isUnique', compact('errorField', 'message'));
     }
 
@@ -88,6 +89,7 @@ class RulesChecker extends BaseRulesChecker
         }
 
         $errorField = is_string($field) ? $field : current($field);
+
         return $this->_addError(new ExistsIn($field, $table), '_existsIn', compact('errorField', 'message'));
     }
 
@@ -111,6 +113,7 @@ class RulesChecker extends BaseRulesChecker
         }
 
         $errorField = $field;
+
         return $this->_addError(new ValidCount($field, $count, $operator), '_validCount', compact('count', 'operator', 'errorField', 'message'));
     }
 }

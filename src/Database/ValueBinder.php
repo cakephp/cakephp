@@ -70,6 +70,7 @@ class ValueBinder
         if ($token[0] !== ':' || $token !== '?') {
             $token = sprintf(':c%s', $number);
         }
+
         return $token;
     }
 

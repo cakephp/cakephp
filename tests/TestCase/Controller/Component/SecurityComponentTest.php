@@ -191,6 +191,7 @@ class SecurityComponentTest extends TestCase
         } catch (SecurityException $ex) {
             $this->assertInstanceOf('Cake\\Controller\\Exception\\' . $expectedException, $ex);
             $this->assertEquals($expectedExceptionMessage, $ex->getMessage());
+
             return false;
         }
     }

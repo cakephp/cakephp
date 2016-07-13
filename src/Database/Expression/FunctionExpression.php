@@ -84,6 +84,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
             return $this->_name;
         }
         $this->_name = $name;
+
         return $this;
     }
 
@@ -145,6 +146,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
             }
             $parts[] = $condition;
         }
+
         return $this->_name . sprintf('(%s)', implode(
             $this->_conjunction . ' ',
             $parts

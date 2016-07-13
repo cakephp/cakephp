@@ -296,6 +296,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $components->setController($this);
             $this->_components = $components;
         }
+
         return $this->_components;
     }
 
@@ -319,6 +320,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     {
         list(, $prop) = pluginSplit($name);
         $this->{$prop} = $this->components()->load($name, $config);
+
         return $this->{$prop};
     }
 
@@ -336,6 +338,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.', $name, $method),
                 E_USER_DEPRECATED
             );
+
             return $this->viewBuilder()->{$name}();
         }
 
@@ -343,6 +346,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($class !== $name) {
             return false;
         }
+
         return $this->loadModel($plugin . $class);
     }
 
@@ -374,6 +378,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 E_USER_DEPRECATED
             );
             $this->viewBuilder()->{$method}($value);
+
             return;
         }
 
@@ -426,6 +431,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             ]);
         }
         $callable = [$this, $request->params['action']];
+
         return call_user_func_array($callable, $request->params['pass']);
     }
 
@@ -568,6 +574,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $this->request->params['action'] = $action;
         $args = func_get_args();
         unset($args[0]);
+
         return call_user_func_array([&$this, $action], $args);
     }
 
@@ -609,6 +616,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $this->View = $this->createView();
         $this->response->body($this->View->render($view, $layout));
+
         return $this->response;
     }
 
@@ -627,6 +635,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             );
             $viewPath = implode(DIRECTORY_SEPARATOR, $prefixes) . DIRECTORY_SEPARATOR . $viewPath;
         }
+
         return $viewPath;
     }
 
@@ -647,6 +656,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($referer === '/' && $default && $default !== $referer) {
             return Router::url($default, !$local);
         }
+
         return $referer;
     }
 
@@ -685,6 +695,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if (empty($table)) {
             throw new RuntimeException('Unable to locate an object compatible with paginate.');
         }
+
         return $this->Paginator->paginate($table, $this->paginate);
     }
 

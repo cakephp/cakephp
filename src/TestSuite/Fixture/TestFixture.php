@@ -269,8 +269,10 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
     {
         if ($schema) {
             $this->_schema = $schema;
+
             return null;
         }
+
         return $this->_schema;
     }
 
@@ -302,8 +304,10 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
             );
             Log::error($msg);
             trigger_error($msg, E_USER_WARNING);
+
             return false;
         }
+
         return true;
     }
 
@@ -328,6 +332,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
         } catch (Exception $e) {
             return false;
         }
+
         return true;
     }
 
@@ -347,6 +352,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
             }
             $statement = $query->execute();
             $statement->closeCursor();
+
             return $statement;
         }
 
@@ -401,6 +407,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
         foreach ($this->_constraints as $name => $data) {
             $this->_schema->dropConstraint($name);
         }
+
         return true;
     }
 
@@ -424,6 +431,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
         foreach ($this->records as $record) {
             $values[] = array_merge($default, $record);
         }
+
         return [$fields, $values, $types];
     }
 
@@ -436,6 +444,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
         foreach ($sql as $stmt) {
             $db->execute($stmt)->closeCursor();
         }
+
         return true;
     }
 }

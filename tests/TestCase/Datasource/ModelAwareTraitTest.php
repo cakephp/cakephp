@@ -108,6 +108,7 @@ class ModelAwareTraitTest extends TestCase
         $stub->modelFactory('Test', function ($name) {
             $mock = new \StdClass();
             $mock->name = $name;
+
             return $mock;
         });
 
@@ -130,6 +131,7 @@ class ModelAwareTraitTest extends TestCase
         $stub->modelFactory('Test', function ($name) {
             $mock = new \StdClass();
             $mock->name = $name;
+
             return $mock;
         });
         $stub->modelType('Test');

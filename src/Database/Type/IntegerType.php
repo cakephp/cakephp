@@ -59,6 +59,7 @@ class IntegerType extends Type
         if ($value === null) {
             return null;
         }
+
         return (int)$value;
     }
 
@@ -91,6 +92,7 @@ class IntegerType extends Type
         if (is_array($value)) {
             return 1;
         }
+
         return null;
     }
 }

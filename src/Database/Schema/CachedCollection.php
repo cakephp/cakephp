@@ -97,6 +97,7 @@ class CachedCollection extends Collection
         if ($enable === true) {
             $enable = '_cake_model_';
         }
+
         return $this->_cache = $enable;
     }
 }

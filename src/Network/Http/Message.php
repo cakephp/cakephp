@@ -159,6 +159,7 @@ class Message
         $parts = explode('-', trim($name));
         $parts = array_map('strtolower', $parts);
         $parts = array_map('ucfirst', $parts);
+
         return implode('-', $parts);
     }
 
@@ -204,6 +205,7 @@ class Message
             return $this->_body;
         }
         $this->_body = $body;
+
         return $this;
     }
 }

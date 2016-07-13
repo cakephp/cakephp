@@ -178,6 +178,7 @@ class Hash
             }
             $context = [$_key => $next];
         }
+
         return $context[$_key];
     }
 
@@ -277,6 +278,7 @@ class Hash
                 return false;
             }
         }
+
         return true;
     }
 
@@ -295,6 +297,7 @@ class Hash
         $noTokens = strpos($path, '[') === false;
         if ($noTokens && strpos($path, '.') === false) {
             $data[$path] = $values;
+
             return $data;
         }
 
@@ -322,6 +325,7 @@ class Hash
                 }
             }
         }
+
         return $data;
     }
 
@@ -349,6 +353,7 @@ class Hash
             if ($op === 'insert') {
                 if ($i === $last) {
                     $_list[$key] = $values;
+
                     return $data;
                 }
                 if (!isset($_list[$key])) {
@@ -361,6 +366,7 @@ class Hash
             } elseif ($op === 'remove') {
                 if ($i === $last) {
                     unset($_list[$key]);
+
                     return $data;
                 }
                 if (!isset($_list[$key])) {
@@ -388,6 +394,7 @@ class Hash
 
         if ($noExpansion && $noTokens && strpos($path, '.') === false) {
             unset($data[$path]);
+
             return $data;
         }
 
@@ -423,6 +430,7 @@ class Hash
                 unset($data[$k]);
             }
         }
+
         return $data;
     }
 
@@ -485,12 +493,14 @@ class Hash
                     }
                     $out[$group[$i]][$keys[$i]] = $vals[$i];
                 }
+
                 return $out;
             }
         }
         if (empty($vals)) {
             return [];
         }
+
         return array_combine($keys, $vals);
     }
 
@@ -540,6 +550,7 @@ class Hash
             }
             $out[] = vsprintf($format, $args);
         }
+
         return $out;
     }
 
@@ -578,6 +589,7 @@ class Hash
                 list($needle, $data) = array_pop($stack);
             }
         }
+
         return true;
     }
 
@@ -600,6 +612,7 @@ class Hash
         if (!is_array($results)) {
             return false;
         }
+
         return count($results) > 0;
     }
 
@@ -619,6 +632,7 @@ class Hash
                 $data[$k] = static::filter($v, $callback);
             }
         }
+
         return array_filter($data, $callback);
     }
 
@@ -671,6 +685,7 @@ class Hash
                 reset($data);
             }
         }
+
         return $result;
     }
 
@@ -705,6 +720,7 @@ class Hash
             $stack = [[$child, &$result]];
             static::_merge($stack, $result);
         }
+
         return $result;
     }
 
@@ -732,6 +748,7 @@ class Hash
         }
         unset($curArg);
         static::_merge($stack, $return);
+
         return $return;
     }
 
@@ -775,6 +792,7 @@ class Hash
         if (empty($data)) {
             return false;
         }
+
         return $data === array_filter($data, 'is_numeric');
     }
 
@@ -804,6 +822,7 @@ class Hash
                 break;
             }
         }
+
         return $depth;
     }
 
@@ -827,6 +846,7 @@ class Hash
                 }
             }
         }
+
         return empty($depth) ? 0 : max($depth);
     }
 
@@ -843,6 +863,7 @@ class Hash
     public static function map(array $data, $path, $function)
     {
         $values = (array)static::extract($data, $path);
+
         return array_map($function, $values);
     }
 
@@ -858,6 +879,7 @@ class Hash
     public static function reduce(array $data, $path, $function)
     {
         $values = (array)static::extract($data, $path);
+
         return array_reduce($values, $function);
     }
 
@@ -889,6 +911,7 @@ class Hash
     public static function apply(array $data, $path, $function)
     {
         $values = (array)static::extract($data, $path);
+
         return call_user_func($function, $values);
     }
 
@@ -996,6 +1019,7 @@ class Hash
                 $sorted[$k] = $data[$k];
             }
         }
+
         return $sorted;
     }
 
@@ -1021,6 +1045,7 @@ class Hash
                 $stack[] = ['id' => $id, 'value' => $r];
             }
         }
+
         return $stack;
     }
 
@@ -1051,6 +1076,7 @@ class Hash
             }
             next($intersection);
         }
+
         return $data + $compare;
     }
 
@@ -1077,6 +1103,7 @@ class Hash
                 $data[$key] = static::mergeDiff($data[$key], $compare[$key]);
             }
         }
+
         return $data;
     }
 
@@ -1113,6 +1140,7 @@ class Hash
             }
             $data = $newList;
         }
+
         return $data;
     }
 
@@ -1193,6 +1221,7 @@ class Hash
                 unset($return[$i]);
             }
         }
+
         return array_values($return);
     }
 }

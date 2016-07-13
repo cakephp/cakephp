@@ -757,6 +757,7 @@ class CookieComponentTest extends TestCase
         foreach ($array as $key => $value) {
             $string .= ',' . $key . '|' . $value;
         }
+
         return substr($string, 1);
     }
 
@@ -782,6 +783,7 @@ class CookieComponentTest extends TestCase
         if (is_array($value)) {
             $value = $this->_implode($value);
         }
+
         return "Q2FrZQ==." . base64_encode(Security::encrypt($value, $this->Cookie->config('key')));
     }
 }

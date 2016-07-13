@@ -1231,11 +1231,13 @@ class RouterTest extends TestCase
         Router::addUrlFilter(function ($url, $request) use (&$calledCount) {
             $calledCount++;
             $url['lang'] = $request->lang;
+
             return $url;
         });
         Router::addUrlFilter(function ($url, $request) use (&$calledCount) {
             $calledCount++;
             $url[] = '1234';
+
             return $url;
         });
         $result = Router::url(['controller' => 'tasks', 'action' => 'edit']);

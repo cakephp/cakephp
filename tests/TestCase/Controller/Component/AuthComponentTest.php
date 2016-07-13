@@ -1162,6 +1162,7 @@ class AuthComponentTest extends TestCase
         EventManager::instance()->on('Auth.afterIdentify', function ($event) {
             $user = $event->data[0];
             $user['from_callback'] = true;
+
             return $user;
         });
 

@@ -76,6 +76,7 @@ class TypeMap
             return $this->_defaults;
         }
         $this->_defaults = $defaults;
+
         return $this;
     }
 
@@ -115,6 +116,7 @@ class TypeMap
             return $this->_types;
         }
         $this->_types = $types;
+
         return $this;
     }
 
@@ -134,6 +136,7 @@ class TypeMap
         if (isset($this->_defaults[$column])) {
             return $this->_defaults[$column];
         }
+
         return null;
     }
 

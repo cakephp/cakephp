@@ -204,6 +204,7 @@ class Client
             unset($data['_content']);
         }
         $url = $this->buildUrl($url, $data, $options);
+
         return $this->_doRequest(
             Request::METHOD_GET,
             $url,
@@ -224,6 +225,7 @@ class Client
     {
         $options = $this->_mergeOptions($options);
         $url = $this->buildUrl($url, [], $options);
+
         return $this->_doRequest(Request::METHOD_POST, $url, $data, $options);
     }
 
@@ -239,6 +241,7 @@ class Client
     {
         $options = $this->_mergeOptions($options);
         $url = $this->buildUrl($url, [], $options);
+
         return $this->_doRequest(Request::METHOD_PUT, $url, $data, $options);
     }
 
@@ -254,6 +257,7 @@ class Client
     {
         $options = $this->_mergeOptions($options);
         $url = $this->buildUrl($url, [], $options);
+
         return $this->_doRequest(Request::METHOD_PATCH, $url, $data, $options);
     }
 
@@ -269,6 +273,7 @@ class Client
     {
         $options = $this->_mergeOptions($options);
         $url = $this->buildUrl($url, [], $options);
+
         return $this->_doRequest(Request::METHOD_OPTIONS, $url, $data, $options);
     }
 
@@ -284,6 +289,7 @@ class Client
     {
         $options = $this->_mergeOptions($options);
         $url = $this->buildUrl($url, [], $options);
+
         return $this->_doRequest(Request::METHOD_TRACE, $url, $data, $options);
     }
 
@@ -299,6 +305,7 @@ class Client
     {
         $options = $this->_mergeOptions($options);
         $url = $this->buildUrl($url, [], $options);
+
         return $this->_doRequest(Request::METHOD_DELETE, $url, $data, $options);
     }
 
@@ -314,6 +321,7 @@ class Client
     {
         $options = $this->_mergeOptions($options);
         $url = $this->buildUrl($url, $data, $options);
+
         return $this->_doRequest(Request::METHOD_HEAD, $url, '', $options);
     }
 
@@ -334,6 +342,7 @@ class Client
             $data,
             $options
         );
+
         return $this->send($request, $options);
     }
 
@@ -365,6 +374,7 @@ class Client
         foreach ($responses as $response) {
             $this->_cookies->store($response, $url);
         }
+
         return array_pop($responses);
     }
 
@@ -404,6 +414,7 @@ class Client
             $out .= ':' . $options['port'];
         }
         $out .= '/' . ltrim($url, '/');
+
         return $out;
     }
 
@@ -442,6 +453,7 @@ class Client
         if (isset($options['proxy'])) {
             $this->_addProxy($request, $options);
         }
+
         return $request;
     }
 
@@ -468,6 +480,7 @@ class Client
         if (!isset($typeMap[$type])) {
             throw new Exception("Unknown type alias '$type'.");
         }
+
         return [
             'Accept' => $typeMap[$type],
             'Content-Type' => $typeMap[$type],
@@ -531,6 +544,7 @@ class Client
                 sprintf('Invalid authentication type %s', $name)
             );
         }
+
         return new $class($this, $options);
     }
 }

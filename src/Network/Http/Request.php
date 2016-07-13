@@ -72,6 +72,7 @@ class Request extends Message
             throw new Exception('Invalid method type');
         }
         $this->_method = $method;
+
         return $this;
     }
 
@@ -87,6 +88,7 @@ class Request extends Message
             return $this->_url;
         }
         $this->_url = $url;
+
         return $this;
     }
 
@@ -122,6 +124,7 @@ class Request extends Message
     {
         if ($value === null && is_string($name)) {
             $name = $this->_normalizeHeader($name);
+
             return isset($this->_headers[$name]) ? $this->_headers[$name] : null;
         }
         if ($value !== null && !is_array($name)) {
@@ -131,6 +134,7 @@ class Request extends Message
             $key = $this->_normalizeHeader($key);
             $this->_headers[$key] = $val;
         }
+
         return $this;
     }
 
@@ -170,6 +174,7 @@ class Request extends Message
         foreach ($name as $key => $val) {
             $this->_cookies[$key] = $val;
         }
+
         return $this;
     }
 
@@ -187,6 +192,7 @@ class Request extends Message
         }
 
         $this->_version = $version;
+
         return $this;
     }
 }

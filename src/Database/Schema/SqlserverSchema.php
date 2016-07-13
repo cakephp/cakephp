@@ -33,6 +33,7 @@ class SqlserverSchema extends BaseSchema
             AND (TABLE_TYPE = 'BASE TABLE' OR TABLE_TYPE = 'VIEW')
             ORDER BY TABLE_NAME";
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+
         return [$sql, [$schema]];
     }
 
@@ -60,6 +61,7 @@ class SqlserverSchema extends BaseSchema
             ORDER BY column_id";
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+
         return [$sql, [$tableName, $schema]];
     }
 
@@ -211,6 +213,7 @@ class SqlserverSchema extends BaseSchema
             ORDER BY I.[index_id], IC.[index_column_id]";
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+
         return [$sql, [$tableName, $schema]];
     }
 
@@ -244,6 +247,7 @@ class SqlserverSchema extends BaseSchema
                 'type' => $type,
                 'columns' => $columns
             ]);
+
             return;
         }
         $table->addIndex($name, [
@@ -270,6 +274,7 @@ class SqlserverSchema extends BaseSchema
             WHERE FK.is_ms_shipped = 0 AND T.name = ? AND S.name = ?";
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+
         return [$sql, [$tableName, $schema]];
     }
 
@@ -295,6 +300,7 @@ class SqlserverSchema extends BaseSchema
     protected function _foreignOnClause($on)
     {
         $parent = parent::_foreignOnClause($on);
+
         return $parent === 'RESTRICT' ? parent::_foreignOnClause(Table::ACTION_SET_NULL) : $parent;
     }
 
@@ -313,6 +319,7 @@ class SqlserverSchema extends BaseSchema
             case 'SET_DEFAULT':
                 return Table::ACTION_SET_DEFAULT;
         }
+
         return Table::ACTION_SET_NULL;
     }
 
@@ -456,6 +463,7 @@ class SqlserverSchema extends BaseSchema
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
         );
+
         return sprintf(
             'CREATE INDEX %s ON %s (%s)',
             $this->_driver->quoteIdentifier($name),
@@ -477,6 +485,7 @@ class SqlserverSchema extends BaseSchema
         if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
             $out .= ' UNIQUE';
         }
+
         return $this->_keySql($out, $data);
     }
 
@@ -503,6 +512,7 @@ class SqlserverSchema extends BaseSchema
                 $this->_foreignOnClause($data['delete'])
             );
         }
+
         return $prefix . ' (' . implode(', ', $columns) . ')';
     }
 
@@ -519,6 +529,7 @@ class SqlserverSchema extends BaseSchema
         foreach ($indexes as $index) {
             $out[] = $index;
         }
+
         return $out;
     }
 
@@ -543,6 +554,7 @@ class SqlserverSchema extends BaseSchema
                 );
             }
         }
+
         return $queries;
     }
 }

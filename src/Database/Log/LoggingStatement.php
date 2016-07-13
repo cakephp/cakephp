@@ -63,6 +63,7 @@ class LoggingStatement extends StatementDecorator
 
         $query->numRows = $this->rowCount();
         $this->_log($query, $params, $t);
+
         return $result;
     }
 
@@ -116,6 +117,7 @@ class LoggingStatement extends StatementDecorator
         if ($instance === null) {
             return $this->_logger;
         }
+
         return $this->_logger = $instance;
     }
 }

@@ -100,6 +100,7 @@ class Digest
         if (!empty($credentials['qop']) && empty($credentials['nc'])) {
             $credentials['nc'] = 1;
         }
+
         return $credentials;
     }
 
@@ -136,6 +137,7 @@ class Digest
         if (!empty($credentials['qop'])) {
             $authHeader .= ', qop="auth", nc=' . $nc . ', cnonce="' . $credentials['cnonce'] . '"';
         }
+
         return $authHeader;
     }
 }

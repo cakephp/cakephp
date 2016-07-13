@@ -124,6 +124,7 @@ class ShellDispatcher
     public static function run($argv, $extra = [])
     {
         $dispatcher = new ShellDispatcher($argv);
+
         return $dispatcher->dispatch($extra);
     }
 
@@ -185,6 +186,7 @@ class ShellDispatcher
         if ($result === null || $result === true) {
             return 0;
         }
+
         return 1;
     }
 
@@ -204,20 +206,24 @@ class ShellDispatcher
 
         if (!$shell) {
             $this->help();
+
             return false;
         }
         if (in_array($shell, ['help', '--help', '-h'])) {
             $this->help();
+
             return true;
         }
         if (in_array($shell, ['version', '--version'])) {
             $this->version();
+
             return true;
         }
 
         $Shell = $this->findShell($shell);
 
         $Shell->initialize();
+
         return $Shell->runCommand($this->args, true, $extra);
     }
 
@@ -318,6 +324,7 @@ class ShellDispatcher
         }
 
         $class = array_map('Cake\Utility\Inflector::camelize', explode('.', $shell));
+
         return implode('.', $class);
     }
 
@@ -333,6 +340,7 @@ class ShellDispatcher
         if (class_exists($class)) {
             return $class;
         }
+
         return false;
     }
 
@@ -348,6 +356,7 @@ class ShellDispatcher
         list($plugin) = pluginSplit($shortName);
         $instance = new $className();
         $instance->plugin = trim($plugin, '.');
+
         return $instance;
     }
 

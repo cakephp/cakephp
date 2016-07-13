@@ -310,6 +310,7 @@ class Session
 
         if ($this->_isCLI) {
             $_SESSION = [];
+
             return $this->_started = true;
         }
 
@@ -329,6 +330,7 @@ class Session
 
         if ($this->_timedOut()) {
             $this->destroy();
+
             return $this->start();
         }
 
@@ -412,6 +414,7 @@ class Session
         if ($value !== null) {
             $this->_overwrite($_SESSION, Hash::remove($_SESSION, $name));
         }
+
         return $value;
     }
 
@@ -594,6 +597,7 @@ class Session
         }
 
         $this->write('Config.time', time());
+
         return $result;
     }
 }

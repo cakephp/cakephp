@@ -272,6 +272,7 @@ class ConnectionManagerTest extends TestCase
         $connection = new FakeConnection;
         $callable = function ($alias) use ($connection) {
             $this->assertEquals('test_variant', $alias);
+
             return $connection;
         };
 

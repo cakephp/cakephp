@@ -163,8 +163,10 @@ class BelongsToMany extends Association
             if ($this->_targetForeignKey === null) {
                 $this->_targetForeignKey = $this->_modelKey($this->target()->alias());
             }
+
             return $this->_targetForeignKey;
         }
+
         return $this->_targetForeignKey = $key;
     }
 
@@ -209,6 +211,7 @@ class BelongsToMany extends Association
         $this->_generateSourceAssociations($table, $source);
         $this->_generateTargetAssociations($table, $source, $target);
         $this->_generateJunctionAssociations($table, $source, $target);
+
         return $this->_junctionTable = $table;
     }
 
@@ -364,6 +367,7 @@ class BelongsToMany extends Association
             $primaryKey = $query->aliasFields((array)$target->primaryKey(), $target->alias());
             $query->andWhere(function ($exp) use ($primaryKey) {
                 array_map([$exp, 'isNull'], $primaryKey);
+
                 return $exp;
             });
         }
@@ -440,6 +444,7 @@ class BelongsToMany extends Association
             }
             $resultMap[implode(';', $values)][] = $result;
         }
+
         return $resultMap;
     }
 
@@ -469,10 +474,12 @@ class BelongsToMany extends Association
             foreach ($hasMany->find('all')->where($conditions)->toList() as $related) {
                 $table->delete($related, $options);
             }
+
             return true;
         }
 
         $conditions = array_merge($conditions, $hasMany->conditions());
+
         return $table->deleteAll($conditions);
     }
 
@@ -505,6 +512,7 @@ class BelongsToMany extends Association
             $msg = sprintf('Invalid save strategy "%s"', $strategy);
             throw new InvalidArgumentException($msg);
         }
+
         return $this->_saveStrategy = $strategy;
     }
 
@@ -606,6 +614,7 @@ class BelongsToMany extends Association
 
             if (!empty($options['atomic'])) {
                 $original[$k]->errors($entity->errors());
+
                 return false;
             }
         }
@@ -614,10 +623,12 @@ class BelongsToMany extends Association
         $success = $this->_saveLinks($parentEntity, $persisted, $options);
         if (!$success && !empty($options['atomic'])) {
             $parentEntity->set($this->property(), $original);
+
             return false;
         }
 
         $parentEntity->set($this->property(), $entities);
+
         return $parentEntity;
     }
 
@@ -804,6 +815,7 @@ class BelongsToMany extends Association
             $this->_conditions = $conditions;
             $this->_targetConditions = $this->_junctionConditions = null;
         }
+
         return $this->_conditions;
     }
 
@@ -835,6 +847,7 @@ class BelongsToMany extends Association
                 $matching[$field] = $value;
             }
         }
+
         return $this->_targetConditions = $matching;
     }
 
@@ -866,6 +879,7 @@ class BelongsToMany extends Association
                 $matching[$field] = $value;
             }
         }
+
         return $this->_junctionConditions = $matching;
     }
 
@@ -900,6 +914,7 @@ class BelongsToMany extends Association
             'foreignKey' => $this->targetForeignKey()
         ]);
         $conditions += $this->junctionConditions();
+
         return $this->_appendJunctionJoin($query, $conditions);
     }
 
@@ -927,6 +942,7 @@ class BelongsToMany extends Association
             ->addDefaultTypes($assoc->target())
             ->join($matching + $joins, [], true);
         $query->eagerLoader()->addToJoinsMap($name, $assoc);
+
         return $query;
     }
 
@@ -1022,6 +1038,7 @@ class BelongsToMany extends Association
                 ksort($targetEntities);
                 $sourceEntity->set($property, array_values($targetEntities));
                 $sourceEntity->dirty($property, false);
+
                 return true;
             }
         );
@@ -1225,6 +1242,7 @@ class BelongsToMany extends Association
             ->select($query->aliasFields((array)$assoc->foreignKey(), $name));
 
         $assoc->attachTo($query);
+
         return $query;
     }
 
@@ -1265,6 +1283,7 @@ class BelongsToMany extends Association
                 ->association($this->junction()->alias())
                 ->name();
         }
+
         return $this->_junctionAssociationName;
     }
 
@@ -1287,8 +1306,10 @@ class BelongsToMany extends Association
                 sort($tablesNames);
                 $this->_junctionTableName = implode('_', $tablesNames);
             }
+
             return $this->_junctionTableName;
         }
+
         return $this->_junctionTableName = $name;
     }
 

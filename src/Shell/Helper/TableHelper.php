@@ -50,6 +50,7 @@ class TableHelper extends Helper
                 }
             }
         }
+
         return $widths;
     }
 

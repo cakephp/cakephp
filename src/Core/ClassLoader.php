@@ -128,8 +128,10 @@ class ClassLoader
     {
         if (file_exists($file)) {
             require $file;
+
             return true;
         }
+
         return false;
     }
 }

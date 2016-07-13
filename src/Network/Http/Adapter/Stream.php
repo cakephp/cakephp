@@ -78,6 +78,7 @@ class Stream
         $this->_connectionErrors = [];
 
         $this->_buildContext($request, $options);
+
         return $this->_send($request);
     }
 
@@ -106,6 +107,7 @@ class Stream
             $body = $i == $last ? $content : '';
             $responses[] = new Response($headerSlice, $body);
         }
+
         return $responses;
     }
 
@@ -177,6 +179,7 @@ class Stream
         }
         if (is_string($content)) {
             $this->_contextOptions['content'] = $content;
+
             return;
         }
         if (is_array($content)) {
@@ -185,6 +188,7 @@ class Stream
             $type = $formData->contentType();
             $request->header('Content-Type', $type);
             $this->_contextOptions['content'] = (string)$formData;
+
             return;
         }
         $this->_contextOptions['content'] = $content;
@@ -291,6 +295,7 @@ class Stream
         if (isset($headers['headers']) && is_array($headers['headers'])) {
             $headers = $headers['headers'];
         }
+
         return $this->createResponses($headers, $content);
     }
 

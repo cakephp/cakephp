@@ -69,6 +69,7 @@ abstract class AbstractTransport
         if (!empty($out)) {
             $out = substr($out, 0, -1 * strlen($eol));
         }
+
         return $out;
     }
 }
