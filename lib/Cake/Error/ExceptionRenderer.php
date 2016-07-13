@@ -20,9 +20,12 @@
  */
 
 App::uses('Sanitize', 'Utility');
+App::uses('Dispatcher', 'Routing');
 App::uses('Router', 'Routing');
-App::uses('CakeResponse', 'Network');
 App::uses('Controller', 'Controller');
+App::uses('CakeRequest', 'Network');
+App::uses('CakeResponse', 'Network');
+App::uses('CakeEvent', 'Event');
 
 /**
  * Exception Renderer.
@@ -287,7 +290,7 @@ class ExceptionRenderer {
 	protected function _outputMessage($template) {
 		try {
 			$this->controller->render($template);
-			$this->controller->afterFilter();
+			$this->_shutdown();
 			$this->controller->response->send();
 		} catch (MissingViewException $e) {
 			$attributes = $e->getAttributes();
@@ -325,6 +328,17 @@ class ExceptionRenderer {
 		$this->controller->response->body($view->render($template, 'error'));
 		$this->controller->response->type('html');
 		$this->controller->response->send();
+	}
+
+	protected function _shutdown() {
+		$this->controller->afterFilter();
+
+		$Dispatcher = new Dispatcher();
+		$afterDispatchEvent = new CakeEvent('Dispatcher.afterDispatch', $Dispatcher, array(
+			'request' => $this->controller->request,
+			'response' => $this->controller->response
+		));
+		$Dispatcher->getEventManager()->dispatch($afterDispatchEvent);
 	}
 
 }
