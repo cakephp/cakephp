@@ -310,6 +310,23 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test posting to a secured form action.
+     *
+     * @return void
+     */
+    public function testPostSecuredFormWithQuery()
+    {
+        $this->enableSecurityToken();
+        $data = [
+            'title' => 'Some title',
+            'body' => 'Some text'
+        ];
+        $this->post('/posts/securePost?foo=bar', $data);
+        $this->assertResponseOk();
+        $this->assertResponseContains('Request was accepted');
+    }
+
+    /**
      * Test posting to a secured form action action.
      *
      * @return void

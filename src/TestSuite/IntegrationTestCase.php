@@ -434,10 +434,15 @@ abstract class IntegrationTestCase extends TestCase
         $session = Session::create($sessionConfig);
         $session->write($this->_session);
         list ($url, $query) = $this->_url($url);
+        $tokenUrl = $url;
+
+        if ($query) {
+            $tokenUrl .= '?' . http_build_query($query);
+        }
 
         $props = [
             'url' => $url,
-            'post' => $this->_addTokens($url, $data),
+            'post' => $this->_addTokens($tokenUrl, $data),
             'cookies' => $this->_cookie,
             'session' => $session,
             'query' => $query
