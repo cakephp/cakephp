@@ -20,6 +20,7 @@ App::uses('ExceptionRenderer', 'Error');
 App::uses('Controller', 'Controller');
 App::uses('Component', 'Controller');
 App::uses('Router', 'Routing');
+App::uses('CakeEvent', 'Event');
 
 /**
  * Short description for class.
@@ -57,6 +58,26 @@ class BlueberryComponent extends Component {
  */
 	public function initialize(Controller $controller) {
 		$this->testName = 'BlueberryComponent';
+	}
+
+}
+
+/**
+ * AfterDispatchEventCallable class
+ *
+ * @package       Cake.Test.Case.Error
+ */
+class AfterDispatchEventCallable {
+
+	public $afterDispatchCalled = false;
+/**
+ * AfterDispatchEventCallable::afterDispatch()
+ *
+ * @param mixed $event
+ * @return mixed boolean to stop the event dispatching or null to continue
+ */
+	public function afterDispatch(CakeEvent $event) {
+		$this->afterDispatchCalled = true;
 	}
 
 }
@@ -876,5 +897,26 @@ class ExceptionRendererTest extends CakeTestCase {
 		$this->assertContains('There was an error in the SQL query', $result);
 		$this->assertContains(h('SELECT * from poo_query < 5 and :seven'), $result);
 		$this->assertContains("'seven' => (int) 7", $result);
+	}
+
+/**
+ * Tests that exception renderer dispatches Dispatcher.afterDispatch event on error response
+ *
+ * @return void
+ */
+	public function testAfterDispatchEventOnErrorResponse() {
+		$callable = new AfterDispatchEventCallable();
+		Configure::write('Dispatcher.filters', array(
+			array('callable' => array($callable, 'afterDispatch'), 'on' => 'after')
+		));
+
+		$exception = new Exception('Oh no!');
+		$ExceptionRenderer = new ExceptionRenderer($exception);
+
+		ob_start();
+		$ExceptionRenderer->render();
+		$result = ob_get_clean();
+
+		$this->assertTrue($callable->afterDispatchCalled);
 	}
 }
