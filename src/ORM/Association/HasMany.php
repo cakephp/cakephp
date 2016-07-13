@@ -352,7 +352,7 @@ class HasMany extends Association
      * $author->articles = [$article1, $article2, $article3, $article4];
      * $authors->save($author);
      * $articles = [$article1, $article3];
-     * $authors->association('articles')->replaceLinks($author, $articles);
+     * $authors->association('articles')->replace($author, $articles);
      * ```
      *
      * `$author->get('articles')` will contain only `[$article1, $article3]` at the end
