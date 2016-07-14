@@ -642,7 +642,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Returns the referring URL for this request.
      *
-     * @param string|null $default Default URL to use if HTTP_REFERER cannot be read from headers
+     * @param string|array|null $default Default URL to use if HTTP_REFERER cannot be read from headers
      * @param bool $local If true, restrict referring URLs to local server
      * @return string Referring URL
      */
