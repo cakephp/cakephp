@@ -331,7 +331,8 @@ class ExceptionRenderer {
 	}
 
 	protected function _shutdown() {
-		$this->controller->afterFilter();
+		$afterFilterEvent = new CakeEvent('Controller.shutdown', $this->controller);
+		$this->controller->getEventManager()->dispatch($afterFilterEvent);
 
 		$Dispatcher = new Dispatcher();
 		$afterDispatchEvent = new CakeEvent('Dispatcher.afterDispatch', $Dispatcher, array(
