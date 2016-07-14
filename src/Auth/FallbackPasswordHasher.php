@@ -89,6 +89,7 @@ class FallbackPasswordHasher extends AbstractPasswordHasher
                 return true;
             }
         }
+
         return false;
     }
 

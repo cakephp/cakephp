@@ -58,6 +58,7 @@ class InflectedRoute extends Route
                 $params['plugin'] = Inflector::camelize($vendor) . '/' . Inflector::camelize($plugin);
             }
         }
+
         return $params;
     }
 
@@ -78,6 +79,7 @@ class InflectedRoute extends Route
             $this->_inflectedDefaults = true;
             $this->defaults = $this->_underscore($this->defaults);
         }
+
         return parent::match($url, $context);
     }
 
@@ -95,6 +97,7 @@ class InflectedRoute extends Route
         if (!empty($url['plugin'])) {
             $url['plugin'] = Inflector::underscore($url['plugin']);
         }
+
         return $url;
     }
 }

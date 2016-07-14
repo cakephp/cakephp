@@ -144,6 +144,7 @@ abstract class BaseErrorHandler
         }
         $this->_displayError($data, $debug);
         $this->_logError($log, $data);
+
         return true;
     }
 
@@ -215,6 +216,7 @@ abstract class BaseErrorHandler
         $this->_logError(LOG_ERR, $data);
 
         $this->handleException(new FatalErrorException($description, 500, $file, $line));
+
         return true;
     }
 
@@ -278,6 +280,7 @@ abstract class BaseErrorHandler
             $message .= "\nTrace:\n" . $trace . "\n";
         }
         $message .= "\n\n";
+
         return Log::write($level, $message);
     }
 
@@ -305,6 +308,7 @@ abstract class BaseErrorHandler
                 }
             }
         }
+
         return Log::error($this->_getMessage($exception));
     }
 
@@ -326,6 +330,7 @@ abstract class BaseErrorHandler
         if ($clientIp && $clientIp !== '::1') {
             $message .= "\nClient IP: " . $clientIp;
         }
+
         return $message;
     }
 
@@ -363,6 +368,7 @@ abstract class BaseErrorHandler
         if (!empty($config['trace'])) {
             $message .= "\nStack Trace:\n" . $exception->getTraceAsString() . "\n\n";
         }
+
         return $message;
     }
 
@@ -400,6 +406,7 @@ abstract class BaseErrorHandler
 
         $error = $levelMap[$code];
         $log = $logMap[$error];
+
         return [ucfirst($error), $log];
     }
 }

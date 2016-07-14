@@ -40,6 +40,7 @@ class CacheRegistry extends ObjectRegistry
         if (is_object($class)) {
             return $class;
         }
+
         return App::className($class, 'Cache/Engine', 'Engine');
     }
 
@@ -96,6 +97,7 @@ class CacheRegistry extends ObjectRegistry
         if ($config['probability'] && time() % $config['probability'] === 0) {
             $instance->gc();
         }
+
         return $instance;
     }
 

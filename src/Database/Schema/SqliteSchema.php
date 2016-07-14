@@ -116,6 +116,7 @@ class SqliteSchema extends BaseSchema
             'PRAGMA table_info(%s)',
             $this->_driver->quoteIdentifier($tableName)
         );
+
         return [$sql, []];
     }
 
@@ -185,6 +186,7 @@ class SqliteSchema extends BaseSchema
             'PRAGMA index_list(%s)',
             $this->_driver->quoteIdentifier($tableName)
         );
+
         return [$sql, []];
     }
 
@@ -229,6 +231,7 @@ class SqliteSchema extends BaseSchema
     public function describeForeignKeySql($tableName, $config)
     {
         $sql = sprintf('PRAGMA foreign_key_list(%s)', $this->_driver->quoteIdentifier($tableName));
+
         return [$sql, []];
     }
 
@@ -336,6 +339,7 @@ class SqliteSchema extends BaseSchema
         if (isset($data['default'])) {
             $out .= ' DEFAULT ' . $this->_driver->schemaValue($data['default']);
         }
+
         return $out;
     }
 
@@ -377,6 +381,7 @@ class SqliteSchema extends BaseSchema
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
         );
+
         return sprintf(
             'CONSTRAINT %s %s (%s)%s',
             $this->_driver->quoteIdentifier($name),
@@ -418,6 +423,7 @@ class SqliteSchema extends BaseSchema
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
         );
+
         return sprintf(
             'CREATE INDEX %s ON %s (%s)',
             $this->_driver->quoteIdentifier($name),
@@ -439,6 +445,7 @@ class SqliteSchema extends BaseSchema
         foreach ($indexes as $index) {
             $out[] = $index;
         }
+
         return $out;
     }
 
@@ -454,6 +461,7 @@ class SqliteSchema extends BaseSchema
         }
 
         $sql[] = sprintf('DELETE FROM "%s"', $name);
+
         return $sql;
     }
 
@@ -470,6 +478,7 @@ class SqliteSchema extends BaseSchema
         $result->execute();
         $this->_hasSequences = (bool)$result->rowCount();
         $result->closeCursor();
+
         return $this->_hasSequences;
     }
 }

@@ -261,6 +261,7 @@ abstract class Driver
         ) {
             return $value;
         }
+
         return $this->_connection->quote($value, PDO::PARAM_STR);
     }
 
@@ -311,6 +312,7 @@ abstract class Driver
         if ($enable === null) {
             return $this->_autoQuoting;
         }
+
         return $this->_autoQuoting = (bool)$enable;
     }
 
@@ -328,6 +330,7 @@ abstract class Driver
         $processor = $this->newCompiler();
         $translator = $this->queryTranslator($query->type());
         $query = $translator($query);
+
         return [$query, $processor->compile($query, $generator)];
     }
 

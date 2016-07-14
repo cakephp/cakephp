@@ -57,6 +57,7 @@ class CakeStreamWrapper implements \ArrayAccess
         if (isset($this->_query['sleep'])) {
             sleep(1);
         }
+
         return fread($this->_stream, $count);
     }
 

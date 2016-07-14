@@ -195,6 +195,7 @@ class Shell
         if ($io !== null) {
             $this->_io = $io;
         }
+
         return $this->_io;
     }
 
@@ -256,6 +257,7 @@ class Shell
         }
         $this->_taskMap = $this->Tasks->normalizeArray((array)$this->tasks);
         $this->taskNames = array_merge($this->taskNames, array_keys($this->_taskMap));
+
         return true;
     }
 
@@ -285,6 +287,7 @@ class Shell
             if (!$method->isPublic()) {
                 return false;
             }
+
             return $method->getDeclaringClass()->name !== 'Cake\Console\Shell';
         } catch (ReflectionException $e) {
             return false;
@@ -342,6 +345,7 @@ class Shell
         }
 
         $dispatcher = new ShellDispatcher($args, false);
+
         return $dispatcher->dispatch($extra);
     }
 
@@ -359,6 +363,7 @@ class Shell
 
         if (is_string($args[0]) && count($args) === 1) {
             $args = explode(' ', $args[0]);
+
             return [$args, $extra];
         }
 
@@ -414,6 +419,7 @@ class Shell
         } catch (ConsoleException $e) {
             $this->err('<error>Error: ' . $e->getMessage() . '</error>');
             $this->out($this->OptionParser->help($command));
+
             return false;
         }
 
@@ -436,27 +442,32 @@ class Shell
         if ($isMethod && $autoMethod && count($subcommands) === 0) {
             array_shift($this->args);
             $this->startup();
+
             return call_user_func_array([$this, $method], $this->args);
         }
 
         if ($isMethod && isset($subcommands[$command])) {
             $this->startup();
+
             return call_user_func_array([$this, $method], $this->args);
         }
 
         if ($this->hasTask($command) && isset($subcommands[$command])) {
             $this->startup();
             array_shift($argv);
+
             return $this->{$method}->runCommand($argv, false, ['requested' => true]);
         }
 
         if ($this->hasMethod('main')) {
             $this->command = 'main';
             $this->startup();
+
             return call_user_func_array([$this, 'main'], $this->args);
         }
 
         $this->out($this->OptionParser->help($command));
+
         return false;
     }
 
@@ -496,6 +507,7 @@ class Shell
         } else {
             $this->_welcome();
         }
+
         return $this->out($this->OptionParser->help($command, $format));
     }
 
@@ -511,6 +523,7 @@ class Shell
     {
         $name = ($this->plugin ? $this->plugin . '.' : '') . $this->name;
         $parser = new ConsoleOptionParser($name);
+
         return $parser;
     }
 
@@ -530,6 +543,7 @@ class Shell
             $this->{$name}->initialize();
             $this->{$name}->loadTasks();
         }
+
         return $this->{$name};
     }
 
@@ -544,6 +558,7 @@ class Shell
         if (!isset($this->params[$name])) {
             return null;
         }
+
         return $this->params[$name];
     }
 
@@ -564,6 +579,7 @@ class Shell
         if ($options) {
             return $this->_io->askChoice($prompt, $options, $default);
         }
+
         return $this->_io->ask($prompt, $default);
     }
 
@@ -750,6 +766,7 @@ class Shell
         }
 
         $this->_stop($exitCode);
+
         return $exitCode;
     }
 
@@ -791,6 +808,7 @@ class Shell
             if (strtolower($key) === 'q') {
                 $this->_io->out('<error>Quitting</error>.', 2);
                 $this->_stop();
+
                 return false;
             }
             if (strtolower($key) === 'a') {
@@ -799,6 +817,7 @@ class Shell
             }
             if (strtolower($key) !== 'y') {
                 $this->_io->out(sprintf('Skip `%s`', $path), 2);
+
                 return false;
             }
         } else {
@@ -811,10 +830,12 @@ class Shell
             if ($File->exists() && $File->writable()) {
                 $File->write($contents);
                 $this->_io->out(sprintf('<success>Wrote</success> `%s`', $path));
+
                 return true;
             }
 
             $this->_io->err(sprintf('<error>Could not write to `%s`</error>.', $path), 2);
+
             return false;
         } finally {
             $File->close();
@@ -833,6 +854,7 @@ class Shell
         $shortPath = str_replace(ROOT, null, $file);
         $shortPath = str_replace('..' . DIRECTORY_SEPARATOR, '', $shortPath);
         $shortPath = str_replace(DIRECTORY_SEPARATOR, '/', $shortPath);
+
         return str_replace('//', DIRECTORY_SEPARATOR, $shortPath);
     }
 

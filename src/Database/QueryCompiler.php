@@ -109,6 +109,7 @@ class QueryCompiler
                 }
             }
         }
+
         return $sql;
     }
 
@@ -132,8 +133,10 @@ class QueryCompiler
             }
             if (isset($this->_templates[$name])) {
                 $parts = $this->_stringifyExpressions((array)$parts, $generator);
+
                 return $sql .= sprintf($this->_templates[$name], implode(', ', $parts));
             }
+
             return $sql .= $this->{'_build' . ucfirst($name) . 'Part'}($parts, $query, $generator);
         };
     }
@@ -201,6 +204,7 @@ class QueryCompiler
             }
             $normalized[] = $p;
         }
+
         return sprintf($select, implode(', ', $normalized));
     }
 
@@ -235,6 +239,7 @@ class QueryCompiler
                 $joins .= ' ON 1 = 1';
             }
         }
+
         return $joins;
     }
 
@@ -258,6 +263,7 @@ class QueryCompiler
             }
             $set[] = $part;
         }
+
         return ' SET ' . implode('', $set);
     }
 
@@ -280,12 +286,14 @@ class QueryCompiler
             if ($this->_orderedUnion) {
                 return "{$prefix}({$p['query']})";
             }
+
             return $prefix . $p['query'];
         }, $parts);
 
         if ($this->_orderedUnion) {
             return sprintf(")\nUNION %s", implode("\nUNION ", $parts));
         }
+
         return sprintf("\nUNION %s", implode("\nUNION ", $parts));
     }
 
@@ -370,6 +378,7 @@ class QueryCompiler
             }
             $result[$k] = $expression;
         }
+
         return $result;
     }
 }

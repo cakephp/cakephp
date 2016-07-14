@@ -79,6 +79,7 @@ class I18n
         if (class_exists('Cake\Cache\Cache')) {
             static::$_collection->setCacher(Cache::engine('_cake_core_'));
         }
+
         return static::$_collection;
     }
 
@@ -131,6 +132,7 @@ class I18n
 
             $packages = static::translators()->getPackages();
             $packages->set($name, $locale, $loader);
+
             return null;
         }
 
@@ -217,6 +219,7 @@ class I18n
             if (isset(static::$_collection)) {
                 static::translators()->setLocale($locale);
             }
+
             return null;
         }
 
@@ -241,6 +244,7 @@ class I18n
         if (static::$_defaultLocale === null) {
             static::$_defaultLocale = Locale::getDefault() ?: static::DEFAULT_LOCALE;
         }
+
         return static::$_defaultLocale;
     }
 

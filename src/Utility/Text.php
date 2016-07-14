@@ -192,6 +192,7 @@ class Text
                 $offset = $pos + strlen($val);
                 $str = substr_replace($str, $val, $pos, 1);
             }
+
             return ($options['clean']) ? static::cleanInsert($str, $options) : $str;
         }
 
@@ -215,6 +216,7 @@ class Text
         if (!isset($options['format']) && isset($options['before'])) {
             $str = str_replace($options['escape'] . $options['before'], $options['before'], $str);
         }
+
         return ($options['clean']) ? static::cleanInsert($str, $options) : $str;
     }
 
@@ -281,6 +283,7 @@ class Text
                 $str = preg_replace($kleenex, $clean['replacement'], $str);
                 break;
         }
+
         return $str;
     }
 
@@ -316,6 +319,7 @@ class Text
             }
             $wrapped = implode("\n", $chunks);
         }
+
         return $wrapped;
     }
 
@@ -344,6 +348,7 @@ class Text
         if (!empty($options['indentAt']) && $options['indentAt'] === 0) {
             $indentLength = !empty($options['indent']) ? strlen($options['indent']) : 0;
             $options['width'] = $options['width'] - $indentLength;
+
             return self::wrap($text, $options);
         }
 
@@ -369,6 +374,7 @@ class Text
             $chunks = array_merge($chunks, $newChunks);
             $wrapped = implode("\n", $chunks);
         }
+
         return $wrapped;
     }
 
@@ -387,6 +393,7 @@ class Text
         foreach ($paragraphs as &$paragraph) {
             $paragraph = static::_wordWrap($paragraph, $width, $break, $cut);
         }
+
         return implode($break, $paragraphs);
     }
 
@@ -408,6 +415,7 @@ class Text
                 $parts[] = trim($part);
                 $text = trim(mb_substr($text, mb_strlen($part)));
             }
+
             return implode($break, $parts);
         }
 
@@ -691,10 +699,12 @@ class Text
             $pattern,
             function ($match) use ($strlen) {
                 $utf8 = html_entity_decode($match[0], ENT_HTML5 | ENT_QUOTES, 'UTF-8');
+
                 return str_repeat(' ', $strlen($utf8, 'UTF-8'));
             },
             $text
         );
+
         return $strlen($replace);
     }
 
@@ -810,6 +820,7 @@ class Text
             if (mb_strwidth($lastWord) === mb_strlen($lastWord)) {
                 $text = mb_substr($text, 0, $spacepos);
             }
+
             return $text;
         }
 
@@ -898,6 +909,7 @@ class Text
                 return true;
             }
         }
+
         return false;
     }
 
@@ -938,6 +950,7 @@ class Text
                 }
             }
         }
+
         return $map;
     }
 
@@ -964,6 +977,7 @@ class Text
                 $ascii .= chr(128 + ($utf8 % 64));
             }
         }
+
         return $ascii;
     }
 
@@ -991,11 +1005,13 @@ class Text
         }
         if ($i !== false) {
             $size = substr($size, 0, $l);
+
             return $size * pow(1024, $i + 1);
         }
 
         if (substr($size, -1) === 'B' && ctype_digit(substr($size, 0, -1))) {
             $size = substr($size, 0, -1);
+
             return (int)$size;
         }
 
@@ -1038,6 +1054,7 @@ class Text
     public static function transliterate($string, $transliteratorId = null)
     {
         $transliteratorId = $transliteratorId ?: static::$_defaultTransliteratorId;
+
         return transliterator_transliterate($transliteratorId, $string);
     }
 

@@ -245,6 +245,7 @@ abstract class Association
         if ($name !== null) {
             $this->_name = $name;
         }
+
         return $this->_name;
     }
 
@@ -260,6 +261,7 @@ abstract class Association
         if ($cascadeCallbacks !== null) {
             $this->_cascadeCallbacks = $cascadeCallbacks;
         }
+
         return $this->_cascadeCallbacks;
     }
 
@@ -285,6 +287,7 @@ abstract class Association
         if ($table === null) {
             return $this->_sourceTable;
         }
+
         return $this->_sourceTable = $table;
     }
 
@@ -336,6 +339,7 @@ abstract class Association
         if ($conditions !== null) {
             $this->_conditions = $conditions;
         }
+
         return $this->_conditions;
     }
 
@@ -375,6 +379,7 @@ abstract class Association
         if ($key !== null) {
             $this->_foreignKey = $key;
         }
+
         return $this->_foreignKey;
     }
 
@@ -394,6 +399,7 @@ abstract class Association
         if ($dependent !== null) {
             $this->_dependent = $dependent;
         }
+
         return $this->_dependent;
     }
 
@@ -406,6 +412,7 @@ abstract class Association
     public function canBeJoined(array $options = [])
     {
         $strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
+
         return $strategy == $this::STRATEGY_JOIN;
     }
 
@@ -421,6 +428,7 @@ abstract class Association
         if ($type === null) {
             return $this->_joinType;
         }
+
         return $this->_joinType = $type;
     }
 
@@ -448,6 +456,7 @@ abstract class Association
                 );
             }
         }
+
         return $this->_propertyName;
     }
 
@@ -459,6 +468,7 @@ abstract class Association
     protected function _propertyName()
     {
         list(, $name) = pluginSplit($this->_name);
+
         return Inflector::underscore($name);
     }
 
@@ -482,6 +492,7 @@ abstract class Association
             }
             $this->_strategy = $name;
         }
+
         return $this->_strategy;
     }
 
@@ -498,6 +509,7 @@ abstract class Association
         if ($finder !== null) {
             $this->_finder = $finder;
         }
+
         return $this->_finder;
     }
 
@@ -614,6 +626,7 @@ abstract class Association
             $primaryKey = $query->aliasFields((array)$target->primaryKey(), $this->_name);
             $query->andWhere(function ($exp) use ($primaryKey) {
                 array_map([$exp, 'isNull'], $primaryKey);
+
                 return $exp;
             });
         }
@@ -638,6 +651,7 @@ abstract class Association
             $row[$sourceAlias][$this->property()] = $row[$nestKey];
             unset($row[$nestKey]);
         }
+
         return $row;
     }
 
@@ -657,6 +671,7 @@ abstract class Association
         if (isset($row[$sourceAlias])) {
             $row[$sourceAlias][$this->property()] = null;
         }
+
         return $row;
     }
 
@@ -675,6 +690,7 @@ abstract class Association
     {
         $type = $type ?: $this->finder();
         list($type, $opts) = $this->_extractFinder($type);
+
         return $this->target()
             ->find($type, $options + $opts)
             ->where($this->conditions());
@@ -715,6 +731,7 @@ abstract class Association
             ->where($this->conditions())
             ->where($conditions)
             ->clause('where');
+
         return $target->updateAll($fields, $expression);
     }
 
@@ -733,6 +750,7 @@ abstract class Association
             ->where($this->conditions())
             ->where($conditions)
             ->clause('where');
+
         return $target->deleteAll($expression);
     }
 
@@ -822,6 +840,7 @@ abstract class Association
             foreach ($formatters as $callable) {
                 $extracted = new ResultSetDecorator($callable($extracted));
             }
+
             return $results->insert($property, $extracted);
         }, Query::PREPEND);
     }

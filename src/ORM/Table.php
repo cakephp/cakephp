@@ -346,6 +346,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
             $this->_table = Inflector::underscore($table);
         }
+
         return $this->_table;
     }
 
@@ -362,6 +363,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $alias = substr(end($alias), 0, -5) ?: $this->_table;
             $this->_alias = $alias;
         }
+
         return $this->_alias;
     }
 
@@ -390,6 +392,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($this->_registryAlias === null) {
             $this->_registryAlias = $this->alias();
         }
+
         return $this->_registryAlias;
     }
 
@@ -430,6 +433,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                         ->describe($this->table())
                 );
             }
+
             return $this->_schema;
         }
 
@@ -488,6 +492,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function hasField($field)
     {
         $schema = $this->schema();
+
         return $schema->column($field) !== null;
     }
 
@@ -509,6 +514,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
             $this->_primaryKey = $key;
         }
+
         return $this->_primaryKey;
     }
 
@@ -534,6 +540,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 $this->_displayField = 'name';
             }
         }
+
         return $this->_displayField;
     }
 
@@ -740,6 +747,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $options += ['sourceTable' => $this];
         $association = new BelongsTo($associated, $options);
+
         return $this->_associations->add($association->name(), $association);
     }
 
@@ -783,6 +791,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $options += ['sourceTable' => $this];
         $association = new HasOne($associated, $options);
+
         return $this->_associations->add($association->name(), $association);
     }
 
@@ -832,6 +841,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $options += ['sourceTable' => $this];
         $association = new HasMany($associated, $options);
+
         return $this->_associations->add($association->name(), $association);
     }
 
@@ -883,6 +893,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $options += ['sourceTable' => $this];
         $association = new BelongsToMany($associated, $options);
+
         return $this->_associations->add($association->name(), $association);
     }
 
@@ -945,6 +956,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $query = $this->query();
         $query->select();
+
         return $this->callFinder($type, $query, $options);
     }
 
@@ -1138,6 +1150,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 foreach ($fields as $field) {
                     $matches[] = $row[$field];
                 }
+
                 return implode(';', $matches);
             };
         }
@@ -1199,6 +1212,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
             $query->cache($cacheKey, $cacheConfig);
         }
+
         return $query->firstOrFail();
     }
 
@@ -1247,6 +1261,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 return $this->_processFindOrCreate($search, $callback, $options);
             });
         }
+
         return $this->_processFindOrCreate($search, $callback, $options);
     }
 
@@ -1285,6 +1300,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $entity = $callback($entity) ?: $entity;
         }
         unset($options['defaults']);
+
         return $this->save($entity, $options) ?: $entity;
     }
 
@@ -1321,6 +1337,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ->where($conditions);
         $statement = $query->execute();
         $statement->closeCursor();
+
         return $statement->rowCount();
     }
 
@@ -1334,6 +1351,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ->where($conditions);
         $statement = $query->execute();
         $statement->closeCursor();
+
         return $statement->rowCount();
     }
 
@@ -1555,6 +1573,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($success) {
             return $entity;
         }
+
         return false;
     }
 
@@ -1626,6 +1645,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         }
         $statement->closeCursor();
+
         return $success;
     }
 
@@ -1646,6 +1666,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
         $typeName = $this->schema()->columnType($primary[0]);
         $type = Type::build($typeName);
+
         return $type->newId();
     }
 
@@ -1683,6 +1704,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $success = $entity;
         }
         $statement->closeCursor();
+
         return $success;
     }
 
@@ -1719,6 +1741,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     $entity->isNew(true);
                 }
             }
+
             return false;
         }
 
@@ -1780,6 +1803,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 'options' => $options
             ]);
         }
+
         return $success;
     }
 
@@ -1922,6 +1946,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             foreach ($fields as $field) {
                 $conditions[$this->aliasField($field)] = array_shift($args);
             }
+
             return $conditions;
         };
 
@@ -1992,6 +2017,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 $property
             ));
         }
+
         return $association;
     }
 
@@ -2080,12 +2106,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($data === null) {
             $class = $this->entityClass();
             $entity = new $class([], ['source' => $this->registryAlias()]);
+
             return $entity;
         }
         if (!isset($options['associated'])) {
             $options['associated'] = $this->_associations->keys();
         }
         $marshaller = $this->marshaller();
+
         return $marshaller->one($data, $options);
     }
 
@@ -2123,6 +2151,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $options['associated'] = $this->_associations->keys();
         }
         $marshaller = $this->marshaller();
+
         return $marshaller->many($data, $options);
     }
 
@@ -2163,6 +2192,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $options['associated'] = $this->_associations->keys();
         }
         $marshaller = $this->marshaller();
+
         return $marshaller->merge($entity, $data, $options);
     }
 
@@ -2197,6 +2227,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $options['associated'] = $this->_associations->keys();
         }
         $marshaller = $this->marshaller();
+
         return $marshaller->mergeMany($entities, $data, $options);
     }
 
@@ -2252,6 +2283,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             isset($options['scope']) ? (array)$options['scope'] : []
         );
         $rule = new IsUnique($fields);
+
         return $rule($entity, ['repository' => $this]);
     }
 
@@ -2301,6 +2333,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
             $events[$event] = $method;
         }
+
         return $events;
     }
 
@@ -2361,6 +2394,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $conn = $this->connection();
         $associations = $this->_associations ?: false;
         $behaviors = $this->_behaviors ?: false;
+
         return [
             'registryAlias' => $this->registryAlias(),
             'table' => $this->table(),

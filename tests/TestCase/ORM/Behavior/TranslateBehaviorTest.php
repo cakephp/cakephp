@@ -68,6 +68,7 @@ class TranslateBehaviorTest extends TestCase
             if (!$translations) {
                 return [];
             }
+
             return array_map(function ($t) {
                 return $t->toArray();
             }, $translations);
@@ -155,6 +156,7 @@ class TranslateBehaviorTest extends TestCase
                 foreach ($results as $res) {
                     $res->second = 'loop';
                 }
+
                 return $results;
             })
             ->toArray();

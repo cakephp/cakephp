@@ -83,6 +83,7 @@ class SessionStorage implements StorageInterface
         }
 
         $this->_user = $this->_session->read($this->_config['key']) ?: false;
+
         return $this->_user;
     }
 
@@ -128,6 +129,7 @@ class SessionStorage implements StorageInterface
 
         if ($url === false) {
             $this->_session->delete($this->_config['redirect']);
+
             return null;
         }
 

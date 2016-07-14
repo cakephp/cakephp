@@ -125,6 +125,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
     {
         $placeholder = $generator->placeholder('c');
         $generator->bind($placeholder, $value, $type);
+
         return $placeholder;
     }
 

@@ -281,6 +281,7 @@ class PaginatorComponent extends Component
             $query = Hash::get($request->query, $scope, []);
         }
         $request = array_intersect_key($query, array_flip($this->_config['whitelist']));
+
         return array_merge($defaults, $request);
     }
 
@@ -302,6 +303,7 @@ class PaginatorComponent extends Component
         ) {
             $defaults['maxLimit'] = $defaults['limit'];
         }
+
         return $defaults + $this->config();
     }
 
@@ -349,11 +351,13 @@ class PaginatorComponent extends Component
             $inWhitelist = in_array($field, $options['sortWhitelist'], true);
             if (!$inWhitelist) {
                 $options['order'] = [];
+
                 return $options;
             }
         }
 
         $options['order'] = $this->_prefix($object, $options['order'], $inWhitelist);
+
         return $options;
     }
 
@@ -394,6 +398,7 @@ class PaginatorComponent extends Component
                 $tableOrder[$alias . '.' . $field] = $value;
             }
         }
+
         return $tableOrder;
     }
 
@@ -410,6 +415,7 @@ class PaginatorComponent extends Component
             $options['limit'] = 1;
         }
         $options['limit'] = max(min($options['limit'], $options['maxLimit']), 1);
+
         return $options;
     }
 }

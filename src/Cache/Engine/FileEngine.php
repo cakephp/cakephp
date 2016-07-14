@@ -102,6 +102,7 @@ class FileEngine extends CacheEngine
         if (!empty($this->_groupPrefix)) {
             $this->_groupPrefix = str_replace('_', DIRECTORY_SEPARATOR, $this->_groupPrefix);
         }
+
         return $this->_active();
     }
 
@@ -199,6 +200,7 @@ class FileEngine extends CacheEngine
             if ($this->_config['lock']) {
                 $this->_File->flock(LOCK_UN);
             }
+
             return false;
         }
 
@@ -221,6 +223,7 @@ class FileEngine extends CacheEngine
             }
             $data = unserialize((string)$data);
         }
+
         return $data;
     }
 
@@ -285,6 +288,7 @@ class FileEngine extends CacheEngine
                 $cleared[] = $path;
             }
         }
+
         return true;
     }
 
@@ -393,6 +397,7 @@ class FileEngine extends CacheEngine
                 $this->_File = $path->openFile('c+');
             } catch (Exception $e) {
                 trigger_error($e->getMessage(), E_USER_WARNING);
+
                 return false;
             }
             unset($path);
@@ -405,6 +410,7 @@ class FileEngine extends CacheEngine
                 ), E_USER_WARNING);
             }
         }
+
         return true;
     }
 
@@ -427,8 +433,10 @@ class FileEngine extends CacheEngine
                 '%s is not writable',
                 $this->_config['path']
             ), E_USER_WARNING);
+
             return false;
         }
+
         return true;
     }
 
@@ -449,6 +457,7 @@ class FileEngine extends CacheEngine
             '_',
             strval($key)
         ));
+
         return $key;
     }
 
@@ -480,6 +489,7 @@ class FileEngine extends CacheEngine
                 //@codingStandardsIgnoreEnd
             }
         }
+
         return true;
     }
 }

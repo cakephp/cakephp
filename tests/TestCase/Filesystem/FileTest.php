@@ -598,6 +598,7 @@ class FileTest extends TestCase
             $message = sprintf('[FileTest] Skipping %s because "%s" not writeable!', $caller, $shortPath);
             $this->markTestSkipped($message);
         }
+
         return false;
     }
 

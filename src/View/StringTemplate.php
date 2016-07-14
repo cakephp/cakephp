@@ -158,6 +158,7 @@ class StringTemplate
     {
         $this->config($templates);
         $this->_compileTemplates(array_keys($templates));
+
         return $this;
     }
 
@@ -241,6 +242,7 @@ class StringTemplate
             }
             $replace[] = $replacement;
         }
+
         return vsprintf($template, $replace);
     }
 
@@ -289,6 +291,7 @@ class StringTemplate
             }
         }
         $out = trim(implode(' ', $attributes));
+
         return $out ? $insertBefore . $out : '';
     }
 
@@ -317,6 +320,7 @@ class StringTemplate
         if ($isMinimized) {
             return '';
         }
+
         return $key . '="' . ($escape ? h($value) : $value) . '"';
     }
 }

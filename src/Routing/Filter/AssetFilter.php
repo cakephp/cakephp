@@ -89,6 +89,7 @@ class AssetFilter extends DispatcherFilter
         $pathSegments = explode('.', $url);
         $ext = array_pop($pathSegments);
         $this->_deliverAsset($request, $response, $assetFile, $ext);
+
         return $response;
     }
 
@@ -112,6 +113,7 @@ class AssetFilter extends DispatcherFilter
                 $parts = array_slice($parts, $i + 1);
                 $fileFragment = implode(DIRECTORY_SEPARATOR, $parts);
                 $pluginWebroot = Plugin::path($plugin) . 'webroot' . DIRECTORY_SEPARATOR;
+
                 return $pluginWebroot . $fileFragment;
             }
         }

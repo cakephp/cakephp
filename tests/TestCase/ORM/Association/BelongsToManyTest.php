@@ -438,6 +438,7 @@ class BelongsToManyTest extends TestCase
                 $this->assertEquals($expected, $e->toArray());
                 $this->assertEquals(['foo' => 'bar'], $opts);
                 $this->assertTrue($e->isNew());
+
                 return $entity;
             }));
 
@@ -448,6 +449,7 @@ class BelongsToManyTest extends TestCase
                 $this->assertEquals($expected, $e->toArray());
                 $this->assertEquals(['foo' => 'bar'], $opts);
                 $this->assertTrue($e->isNew());
+
                 return $entity;
             }));
 

@@ -109,6 +109,7 @@ class ArrayContext implements ContextInterface
                 return isset($data['columns']) ? (array)$data['columns'] : [];
             }
         }
+
         return [];
     }
 
@@ -118,6 +119,7 @@ class ArrayContext implements ContextInterface
     public function isPrimaryKey($field)
     {
         $primaryKey = $this->primaryKey();
+
         return in_array($field, $primaryKey);
     }
 
@@ -138,6 +140,7 @@ class ArrayContext implements ContextInterface
                 return false;
             }
         }
+
         return true;
     }
 
@@ -173,6 +176,7 @@ class ArrayContext implements ContextInterface
         if (empty($this->_context['defaults']) || !is_array($this->_context['defaults'])) {
             return null;
         }
+
         return Hash::get($this->_context['defaults'], $field);
     }
 
@@ -190,6 +194,7 @@ class ArrayContext implements ContextInterface
             return false;
         }
         $required = Hash::get($this->_context['required'], $field);
+
         return (bool)$required;
     }
 
@@ -200,6 +205,7 @@ class ArrayContext implements ContextInterface
     {
         $schema = $this->_context['schema'];
         unset($schema['_constraints'], $schema['_indexes']);
+
         return array_keys($schema);
     }
 
@@ -216,6 +222,7 @@ class ArrayContext implements ContextInterface
             return null;
         }
         $schema = Hash::get($this->_context['schema'], $field);
+
         return isset($schema['type']) ? $schema['type'] : null;
     }
 
@@ -232,6 +239,7 @@ class ArrayContext implements ContextInterface
         }
         $schema = (array)Hash::get($this->_context['schema'], $field);
         $whitelist = ['length' => null, 'precision' => null];
+
         return array_intersect_key($schema, $whitelist);
     }
 
@@ -246,6 +254,7 @@ class ArrayContext implements ContextInterface
         if (empty($this->_context['errors'])) {
             return false;
         }
+
         return (bool)Hash::check($this->_context['errors'], $field);
     }
 
@@ -261,6 +270,7 @@ class ArrayContext implements ContextInterface
         if (empty($this->_context['errors'])) {
             return [];
         }
+
         return Hash::get($this->_context['errors'], $field);
     }
 }

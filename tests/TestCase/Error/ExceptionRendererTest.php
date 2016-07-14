@@ -108,6 +108,7 @@ class TestErrorController extends Controller
     public function index()
     {
         $this->autoRender = false;
+
         return 'what up';
     }
 }
@@ -198,6 +199,7 @@ class ExceptionRendererTest extends TestCase
         $error->controller->response = $this->getMockBuilder('Cake\Network\Response')
             ->setMethods(['_sendHeader'])
             ->getMock();
+
         return $error;
     }
 

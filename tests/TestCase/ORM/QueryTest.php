@@ -1650,6 +1650,7 @@ class QueryTest extends TestCase
             ->group(['author_id'])
             ->counter(function ($q) use ($query) {
                 $this->assertNotSame($q, $query);
+
                 return $q->select([], true)->group([], true)->count();
             });
 
@@ -1751,6 +1752,7 @@ class QueryTest extends TestCase
         $identity = function ($a) {
             return $a;
         };
+
         return [
             ['filter', $identity],
             ['reject', $identity],
@@ -2079,6 +2081,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection, $table);
         $query->select()->formatResults(function ($results) {
             $this->assertInstanceOf('Cake\ORM\ResultSet', $results);
+
             return $results->indexBy('id');
         });
         $this->assertEquals([1, 2, 3, 4], array_keys($query->toArray()));
@@ -2095,6 +2098,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection, $table);
         $query->select()->formatResults(function ($results) {
             $this->assertInstanceOf('Cake\ORM\ResultSet', $results);
+
             return $results->indexBy('id');
         });
 
@@ -2206,12 +2210,14 @@ class QueryTest extends TestCase
                     ->formatResults(function ($authors) {
                         return $authors->map(function ($author) {
                             $author->idCopy = $author->id;
+
                             return $author;
                         });
                     })
                     ->formatResults(function ($authors) {
                         return $authors->map(function ($author) {
                             $author->idCopy = $author->idCopy + 2;
+
                             return $author;
                         });
                     });
@@ -2241,12 +2247,14 @@ class QueryTest extends TestCase
                 ->formatResults(function ($results) {
                     return $results->map(function ($result) {
                         $result->idCopy = $result->id;
+
                         return $result;
                     });
                 })
                 ->formatResults(function ($results) {
                     return $results->map(function ($result) {
                         $result->idCopy = $result->idCopy + 2;
+
                         return $result;
                     });
                 });
@@ -2288,6 +2296,7 @@ class QueryTest extends TestCase
             return $q->formatResults(function ($results) {
                 return $results->map(function ($tag) {
                     $tag->name .= ' - visited';
+
                     return $tag;
                 });
             });
@@ -2472,6 +2481,7 @@ class QueryTest extends TestCase
         $table->hasMany('articles');
         $query = $table->find()->contain(['articles' => function ($q) {
             $this->assertTrue($q->eagerLoaded());
+
             return $q;
         }]);
         $this->assertFalse($query->eagerLoaded());

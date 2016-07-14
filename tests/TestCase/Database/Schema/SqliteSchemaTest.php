@@ -1039,6 +1039,7 @@ SQL;
                 return '"' . $value . '"';
             }));
         $driver->connection($mock);
+
         return $driver;
     }
 }

@@ -76,6 +76,7 @@ trait SqliteDialectTrait
     protected function _expressionTranslators()
     {
         $namespace = 'Cake\Database\Expression';
+
         return [
             $namespace . '\FunctionExpression' => '_transformFunctionExpression',
             $namespace . '\TupleComparison' => '_transformTupleComparison'
@@ -125,6 +126,7 @@ trait SqliteDialectTrait
                                 $p = ['value' => '%' . $this->_dateParts[$value], 'type' => null];
                             }
                         }
+
                         return $p;
                     });
                 break;
@@ -136,6 +138,7 @@ trait SqliteDialectTrait
                         if ($key === 1) {
                             $p = ['value' => $p, 'type' => null];
                         }
+
                         return $p;
                     });
                 break;
@@ -162,6 +165,7 @@ trait SqliteDialectTrait
         if (!$this->_schemaDialect) {
             $this->_schemaDialect = new SqliteSchema($this);
         }
+
         return $this->_schemaDialect;
     }
 

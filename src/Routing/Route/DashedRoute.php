@@ -47,6 +47,7 @@ class DashedRoute extends Route
             return Inflector::camelize($plugin);
         }
         list($vendor, $plugin) = explode('/', $plugin, 2);
+
         return Inflector::camelize($vendor) . '/' . Inflector::camelize($plugin);
     }
 
@@ -78,6 +79,7 @@ class DashedRoute extends Route
                 $params['action']
             ));
         }
+
         return $params;
     }
 
@@ -98,6 +100,7 @@ class DashedRoute extends Route
             $this->_inflectedDefaults = true;
             $this->defaults = $this->_dasherize($this->defaults);
         }
+
         return parent::match($url, $context);
     }
 
@@ -114,6 +117,7 @@ class DashedRoute extends Route
                 $url[$element] = Inflector::dasherize($url[$element]);
             }
         }
+
         return $url;
     }
 }

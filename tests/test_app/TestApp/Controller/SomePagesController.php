@@ -51,6 +51,7 @@ class SomePagesController extends Controller
     public function responseGenerator()
     {
         $this->response->body('new response');
+
         return $this->response;
     }
 

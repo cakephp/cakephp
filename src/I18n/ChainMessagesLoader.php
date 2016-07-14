@@ -76,6 +76,7 @@ class ChainMessagesLoader
                 return $package;
             }
         }
+
         return new Package;
     }
 }

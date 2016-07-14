@@ -35,6 +35,7 @@ trait SelectableAssociationTrait
     public function requiresKeys(array $options = [])
     {
         $strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
+
         return $strategy === $this::STRATEGY_SELECT;
     }
 
@@ -46,6 +47,7 @@ trait SelectableAssociationTrait
         $options += $this->_defaultOptions();
         $fetchQuery = $this->_buildQuery($options);
         $resultMap = $this->_buildResultMap($fetchQuery, $options);
+
         return $this->_resultInjector($fetchQuery, $resultMap, $options);
     }
 
@@ -180,6 +182,7 @@ trait SelectableAssociationTrait
         }
 
         $conditions = isset($conditions) ? $conditions : $query->newExpr([$key => $filter]);
+
         return $query->innerJoin(
             [$aliasedTable => $subquery],
             $conditions
@@ -202,6 +205,7 @@ trait SelectableAssociationTrait
         }
 
         $conditions = isset($conditions) ? $conditions : [$key . ' IN' => $filter];
+
         return $query->andWhere($conditions);
     }
 
@@ -224,6 +228,7 @@ trait SelectableAssociationTrait
                 $types[] = $defaults[$k];
             }
         }
+
         return new TupleComparison($keys, $filter, $types, $operator);
     }
 
@@ -261,6 +266,7 @@ trait SelectableAssociationTrait
 
         $fields = $this->_subqueryFields($query);
         $filterQuery->select($fields['select'], true)->group($fields['group']);
+
         return $filterQuery;
     }
 
@@ -292,6 +298,7 @@ trait SelectableAssociationTrait
                 }
             });
         }
+
         return ['select' => $fields, 'group' => $group];
     }
 
@@ -335,10 +342,12 @@ trait SelectableAssociationTrait
         }
 
         $sourceKey = $sourceKeys[0];
+
         return function ($row) use ($resultMap, $sourceKey, $nestKey) {
             if (isset($row[$sourceKey], $resultMap[$row[$sourceKey]])) {
                 $row[$nestKey] = $resultMap[$row[$sourceKey]];
             }
+
             return $row;
         };
     }
@@ -365,6 +374,7 @@ trait SelectableAssociationTrait
             if (isset($resultMap[$key])) {
                 $row[$nestKey] = $resultMap[$key];
             }
+
             return $row;
         };
     }

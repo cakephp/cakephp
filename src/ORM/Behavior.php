@@ -195,6 +195,7 @@ class Behavior implements EventListenerInterface
         if (isset($config[$key]) && $config[$key] === []) {
             $this->config($key, [], false);
             unset($config[$key]);
+
             return $config;
         }
 
@@ -207,6 +208,7 @@ class Behavior implements EventListenerInterface
         }
         $this->config($key, array_flip($indexedCustom), false);
         unset($config[$key]);
+
         return $config;
     }
 
@@ -278,6 +280,7 @@ class Behavior implements EventListenerInterface
                 ];
             }
         }
+
         return $events;
     }
 

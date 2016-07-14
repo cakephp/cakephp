@@ -233,9 +233,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             if ($this->_eagerLoader === null) {
                 $this->_eagerLoader = new EagerLoader;
             }
+
             return $this->_eagerLoader;
         }
         $this->_eagerLoader = $instance;
+
         return $this;
     }
 
@@ -364,6 +366,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         $result = $loader->contain($associations);
         $this->_addAssociationsToTypeMap($this->repository(), $this->typeMap(), $result);
+
         return $this;
     }
 
@@ -449,6 +452,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $this->eagerLoader()->matching($assoc, $builder);
         $this->_dirty();
+
         return $this;
     }
 
@@ -522,6 +526,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             'fields' => false
         ]);
         $this->_dirty();
+
         return $this;
     }
 
@@ -567,6 +572,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             'fields' => false
         ]);
         $this->_dirty();
+
         return $this;
     }
 
@@ -628,6 +634,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             'negateMatch' => true
         ]);
         $this->_dirty();
+
         return $this;
     }
 
@@ -725,6 +732,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $clone->formatResults(null, true);
         $clone->selectTypeMap(new TypeMap());
         $clone->decorateResults(null, true);
+
         return $clone;
     }
 
@@ -770,6 +778,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $counter = $this->_counter;
         if ($counter) {
             $query->counter(null);
+
             return (int)$counter($query);
         }
 
@@ -812,6 +821,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         $result = $statement->fetch('assoc')['count'];
         $statement->closeCursor();
+
         return (int)$result;
     }
 
@@ -836,6 +846,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function counter($counter)
     {
         $this->_counter = $counter;
+
         return $this;
     }
 
@@ -856,6 +867,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         $this->_dirty();
         $this->_hydrate = (bool)$enable;
+
         return $this;
     }
 
@@ -870,6 +882,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         if ($this->_type !== 'select' && $this->_type !== null) {
             throw new RuntimeException('You cannot cache the results of non-select queries.');
         }
+
         return $this->_cache($key, $config);
     }
 
@@ -885,6 +898,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                 'You cannot call all() on a non-select query. Use execute() instead.'
             );
         }
+
         return $this->_all();
     }
 
@@ -917,6 +931,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         $this->_transformQuery();
         $sql = parent::sql($binder);
+
         return $sql;
     }
 
@@ -932,10 +947,12 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $this->triggerBeforeFind();
         if ($this->_results) {
             $decorator = $this->_decoratorClass();
+
             return new $decorator($this->_results);
         }
 
         $statement = $this->eagerLoader()->loadExternal($this, $this->execute());
+
         return new ResultSet($this, $statement);
     }
 
@@ -1044,6 +1061,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function update($table = null)
     {
         $table = $table ?: $this->repository()->table();
+
         return parent::update($table);
     }
 
@@ -1060,6 +1078,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $repo = $this->repository();
         $this->from([$repo->alias() => $repo->table()]);
+
         return parent::delete();
     }
 
@@ -1080,6 +1099,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $table = $this->repository()->table();
         $this->into($table);
+
         return parent::insert($columns, $types);
     }
 
@@ -1105,6 +1125,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function __debugInfo()
     {
         $eagerLoader = $this->eagerLoader();
+
         return parent::__debugInfo() + [
             'hydrate' => $this->_hydrate,
             'buffered' => $this->_useBufferedResults,
@@ -1144,6 +1165,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             return $this->_autoFields;
         }
         $this->_autoFields = (bool)$value;
+
         return $this;
     }
 

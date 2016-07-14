@@ -915,6 +915,7 @@ class QueryRegressionTest extends TestCase
                 $result = $q->sql();
                 $this->assertNotContains(':c2', $result, 'Only 2 bindings as there are only 2 rows.');
                 $this->assertNotContains(':c3', $result, 'Only 2 bindings as there are only 2 rows.');
+
                 return $q;
             }])
             ->toArray();
@@ -1003,6 +1004,7 @@ class QueryRegressionTest extends TestCase
             ->select(function ($query) use ($table) {
                 $allCommentsCount = $table->find()->select($query->func()->count('*'));
                 $countToFloat = $query->newExpr([$query->func()->count('*'), '1.0'])->type('*');
+
                 return [
                     'ratio' => $query
                         ->newExpr($countToFloat)

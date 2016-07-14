@@ -195,6 +195,7 @@ class SecurityComponent extends Component
         if (!$this->_config['blackHoleCallback']) {
             $this->_throwException($exception);
         }
+
         return $this->_callback($controller, $this->_config['blackHoleCallback'], [$error, $exception]);
     }
 
@@ -253,6 +254,7 @@ class SecurityComponent extends Component
                 }
             }
         }
+
         return true;
     }
 
@@ -306,6 +308,7 @@ class SecurityComponent extends Component
                 }
             }
         }
+
         return true;
     }
 
@@ -369,6 +372,7 @@ class SecurityComponent extends Component
         if (strpos($token, ':')) {
             list($token, ) = explode(':', $token, 2);
         }
+
         return $token;
     }
 
@@ -456,6 +460,7 @@ class SecurityComponent extends Component
         sort($fieldList, SORT_STRING);
         ksort($lockedFields, SORT_STRING);
         $fieldList += $lockedFields;
+
         return $fieldList;
     }
 
@@ -482,6 +487,7 @@ class SecurityComponent extends Component
         $unlocked = $this->_unlocked($data);
         $unlocked = explode('|', $unlocked);
         sort($unlocked, SORT_STRING);
+
         return implode('|', $unlocked);
     }
 
@@ -530,6 +536,7 @@ class SecurityComponent extends Component
         );
 
         $messages = array_merge($messages, $fieldsMessages, $unlockFieldsMessages);
+
         return implode(', ', $messages);
     }
 
@@ -550,6 +557,7 @@ class SecurityComponent extends Component
         if ($expectedFieldsMessage !== null) {
             $messages[] = $expectedFieldsMessage;
         }
+
         return $messages;
     }
 
@@ -566,6 +574,7 @@ class SecurityComponent extends Component
             if ($this->session->check('_Token')) {
                 $request->params['_Token'] = $this->session->read('_Token');
             }
+
             return false;
         }
         $token = [
@@ -578,6 +587,7 @@ class SecurityComponent extends Component
         $request->params['_Token'] = [
             'unlockedFields' => $token['unlockedFields']
         ];
+
         return true;
     }
 
@@ -595,6 +605,7 @@ class SecurityComponent extends Component
         if (!is_callable([$controller, $method])) {
             throw new BadRequestException('The request has been black-holed');
         }
+
         return call_user_func_array([&$controller, $method], empty($params) ? null : $params);
     }
 
@@ -651,6 +662,7 @@ class SecurityComponent extends Component
                 $expectedFieldNames[] = $key;
             }
         }
+
         return sprintf($missingMessage, implode(', ', $expectedFieldNames));
     }
 }

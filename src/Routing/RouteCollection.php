@@ -130,6 +130,7 @@ class RouteCollection
                 if ($queryParameters) {
                     $r['?'] = $queryParameters;
                 }
+
                 return $r;
             }
         }

@@ -111,6 +111,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
         if ($this->_index === 0 && !$this->_started) {
             $this->_started = true;
             parent::rewind();
+
             return;
         }
 
@@ -128,6 +129,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
             $current = $this->_buffer->offsetGet($this->_index);
             $this->_current = $current['value'];
             $this->_key = $current['key'];
+
             return true;
         }
 
@@ -143,6 +145,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
         }
 
         $this->_finished = !$valid;
+
         return $valid;
     }
 

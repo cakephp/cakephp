@@ -77,6 +77,7 @@ class ControllerAuthorize extends BaseAuthorize
             }
             $this->_Controller = $controller;
         }
+
         return $this->_Controller;
     }
 

@@ -297,6 +297,7 @@ class AuthComponent extends Component
             if ($result instanceof Response) {
                 $event->stopPropagation();
             }
+
             return $result;
         }
 
@@ -308,6 +309,7 @@ class AuthComponent extends Component
         }
 
         $event->stopPropagation();
+
         return $this->_unauthorized($controller);
     }
 
@@ -334,6 +336,7 @@ class AuthComponent extends Component
     protected function _isAllowed(Controller $controller)
     {
         $action = strtolower($controller->request->params['action']);
+
         return in_array($action, array_map('strtolower', $this->allowedActions));
     }
 
@@ -368,6 +371,7 @@ class AuthComponent extends Component
         if (!$controller->request->is('ajax')) {
             $this->flash($this->_config['authError']);
             $this->storage()->redirectUrl($controller->request->here(false));
+
             return $controller->redirect($this->_config['loginAction']);
         }
 
@@ -378,9 +382,11 @@ class AuthComponent extends Component
                 $this->RequestHandler->ajaxLayout
             );
             $response->statusCode(403);
+
             return $response;
         }
         $this->response->statusCode(403);
+
         return $this->response;
     }
 
@@ -428,6 +434,7 @@ class AuthComponent extends Component
         } else {
             $url = $this->_config['unauthorizedRedirect'];
         }
+
         return $controller->redirect($url);
     }
 
@@ -493,9 +500,11 @@ class AuthComponent extends Component
         foreach ($this->_authorizeObjects as $authorizer) {
             if ($authorizer->authorize($user, $request) === true) {
                 $this->_authorizationProvider = $authorizer;
+
                 return true;
             }
         }
+
         return false;
     }
 
@@ -534,6 +543,7 @@ class AuthComponent extends Component
             $config = (array)$config + $global;
             $this->_authorizeObjects[$alias] = new $className($this->_registry, $config);
         }
+
         return $this->_authorizeObjects;
     }
 
@@ -576,6 +586,7 @@ class AuthComponent extends Component
         if ($actions === null) {
             $controller = $this->_registry->getController();
             $this->allowedActions = get_class_methods($controller);
+
             return;
         }
         $this->allowedActions = array_merge($this->allowedActions, (array)$actions);
@@ -605,6 +616,7 @@ class AuthComponent extends Component
     {
         if ($actions === null) {
             $this->allowedActions = [];
+
             return;
         }
         foreach ((array)$actions as $action) {
@@ -650,6 +662,7 @@ class AuthComponent extends Component
         $this->dispatchEvent('Auth.logout', [$user]);
         $this->storage()->redirectUrl(false);
         $this->storage()->delete();
+
         return Router::normalize($this->_config['logoutRedirect']);
     }
 
@@ -670,6 +683,7 @@ class AuthComponent extends Component
         if ($key === null) {
             return $user;
         }
+
         return Hash::get($user, $key);
     }
 
@@ -687,6 +701,7 @@ class AuthComponent extends Component
         $user = $this->user();
         if ($user) {
             $this->storage()->redirectUrl(false);
+
             return true;
         }
 
@@ -702,6 +717,7 @@ class AuthComponent extends Component
                     $result = $event->result;
                 }
                 $this->storage()->write($result);
+
                 return true;
             }
         }
@@ -746,6 +762,7 @@ class AuthComponent extends Component
         if (is_array($redir)) {
             return Router::url($redir + ['_base' => false]);
         }
+
         return $redir;
     }
 
@@ -773,9 +790,11 @@ class AuthComponent extends Component
                 if ($event->result !== null) {
                     return $event->result;
                 }
+
                 return $result;
             }
         }
+
         return false;
     }
 
@@ -815,6 +834,7 @@ class AuthComponent extends Component
             $this->_authenticateObjects[$alias] = new $className($this->_registry, $config);
             $this->eventManager()->on($this->_authenticateObjects[$alias]);
         }
+
         return $this->_authenticateObjects;
     }
 
@@ -829,6 +849,7 @@ class AuthComponent extends Component
     {
         if ($storage !== null) {
             $this->_storage = $storage;
+
             return null;
         }
 
@@ -882,11 +903,13 @@ class AuthComponent extends Component
 
             if ($value === false) {
                 $this->config('storage', 'Memory');
+
                 return;
             }
 
             $this->config('storage', 'Session');
             $this->storage()->config('key', $value);
+
             return;
         }
 

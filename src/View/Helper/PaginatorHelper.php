@@ -121,6 +121,7 @@ class PaginatorHelper extends Helper
         if (!isset($this->request->params['paging']) || empty($this->request->params['paging'][$model])) {
             return [];
         }
+
         return $this->request->params['paging'][$model];
     }
 
@@ -137,6 +138,7 @@ class PaginatorHelper extends Helper
         if (!isset($params[$key])) {
             return null;
         }
+
         return $params[$key];
     }
 
@@ -188,6 +190,7 @@ class PaginatorHelper extends Helper
         if (isset($params['page'])) {
             return $params['page'];
         }
+
         return 1;
     }
 
@@ -208,6 +211,7 @@ class PaginatorHelper extends Helper
         if (!empty($options['sort'])) {
             return $options['sort'];
         }
+
         return null;
     }
 
@@ -235,6 +239,7 @@ class PaginatorHelper extends Helper
         if ($dir === 'desc') {
             return 'desc';
         }
+
         return 'asc';
     }
 
@@ -335,6 +340,7 @@ class PaginatorHelper extends Helper
             'active' => 'prevActive',
             'disabled' => 'prevDisabled'
         ];
+
         return $this->_toggledLink($title, $enabled, $options, $templates);
     }
 
@@ -374,6 +380,7 @@ class PaginatorHelper extends Helper
             'active' => 'nextActive',
             'disabled' => 'nextDisabled'
         ];
+
         return $this->_toggledLink($title, $enabled, $options, $templates);
     }
 
@@ -454,6 +461,7 @@ class PaginatorHelper extends Helper
             'text' => $options['escape'] ? h($title) : $title,
             'url' => $this->generateUrl($url, $options['model']),
         ];
+
         return $this->templater()->format($template, $vars);
     }
 
@@ -502,6 +510,7 @@ class PaginatorHelper extends Helper
                 unset($url[$paging['scope']]['page']);
             }
         }
+
         return $this->Url->build($url, $full);
     }
 
@@ -547,6 +556,7 @@ class PaginatorHelper extends Helper
         if ($paging === []) {
             return false;
         }
+
         return $page <= $paging['pageCount'];
     }
 
@@ -560,6 +570,7 @@ class PaginatorHelper extends Helper
     protected function _hasPage($model, $page)
     {
         $params = $this->params($model);
+
         return !empty($params) && $params[$page . 'Page'];
     }
 
@@ -581,6 +592,7 @@ class PaginatorHelper extends Helper
             return null;
         }
         list($this->_defaultModel) = array_keys($this->request->params['paging']);
+
         return $this->_defaultModel;
     }
 
@@ -645,6 +657,7 @@ class PaginatorHelper extends Helper
         $map += [
             'model' => strtolower(Inflector::humanize(Inflector::tableize($options['model'])))
         ];
+
         return $this->templater()->format($template, $map);
     }
 
@@ -737,6 +750,7 @@ class PaginatorHelper extends Helper
             $start = 1;
             $end = $params['page'] + ($options['modulus'] - $params['page']) + 1;
         }
+
         return [$start, $end];
     }
 
@@ -754,6 +768,7 @@ class PaginatorHelper extends Helper
             'text' => $options['text'],
             'url' => $this->generateUrl($url, $options['model']),
         ];
+
         return $templater->format('number', $vars);
     }
 
@@ -811,6 +826,7 @@ class PaginatorHelper extends Helper
 
         $out .= $options['after'];
         $out .= $this->_lastNumber($ellipsis, $params, $end, $options);
+
         return $out;
     }
 
@@ -834,6 +850,7 @@ class PaginatorHelper extends Helper
                 $out .= $ellipsis;
             }
         }
+
         return $out;
     }
 
@@ -857,6 +874,7 @@ class PaginatorHelper extends Helper
             }
             $out .= $this->last($offset, $options);
         }
+
         return $out;
     }
 
@@ -888,6 +906,7 @@ class PaginatorHelper extends Helper
             }
         }
         $out .= $options['after'];
+
         return $out;
     }
 
@@ -950,6 +969,7 @@ class PaginatorHelper extends Helper
                 'text' => $first
             ]);
         }
+
         return $out;
     }
 
@@ -1010,6 +1030,7 @@ class PaginatorHelper extends Helper
                 'text' => $last
             ]);
         }
+
         return $out;
     }
 

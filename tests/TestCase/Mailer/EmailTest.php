@@ -2356,6 +2356,7 @@ class EmailTest extends TestCase
                 $result[$type] = $flag;
             }
         }
+
         return $result['text'] && $result['html'];
     }
 

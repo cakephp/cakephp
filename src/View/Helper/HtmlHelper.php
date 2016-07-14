@@ -157,6 +157,7 @@ class HtmlHelper extends Helper
     public function addCrumb($name, $link = null, array $options = [])
     {
         $this->_crumbs[] = [$name, $link, $options];
+
         return $this;
     }
 
@@ -183,6 +184,7 @@ class HtmlHelper extends Helper
         if (isset($this->_docTypes[$type])) {
             return $this->_docTypes[$type];
         }
+
         return null;
     }
 
@@ -302,6 +304,7 @@ class HtmlHelper extends Helper
         if (empty($charset)) {
             $charset = strtolower(Configure::read('App.encoding'));
         }
+
         return $this->formatTemplate('charset', [
             'charset' => (!empty($charset) ? $charset : 'utf-8')
         ]);
@@ -365,6 +368,7 @@ class HtmlHelper extends Helper
         }
 
         $templater = $this->templater();
+
         return $templater->format('link', [
             'url' => $url,
             'attrs' => $templater->formatAttributes($options),
@@ -431,6 +435,7 @@ class HtmlHelper extends Helper
             if (empty($options['block'])) {
                 return $out . "\n";
             }
+
             return null;
         }
 
@@ -524,6 +529,7 @@ class HtmlHelper extends Helper
             if (empty($options['block'])) {
                 return $out . "\n";
             }
+
             return null;
         }
 
@@ -622,6 +628,7 @@ class HtmlHelper extends Helper
         $buffer = ob_get_clean();
         $options = $this->_scriptBlockOptions;
         $this->_scriptBlockOptions = [];
+
         return $this->scriptBlock($buffer, $options);
     }
 
@@ -651,6 +658,7 @@ class HtmlHelper extends Helper
         if ($oneLine) {
             return implode(' ', $out);
         }
+
         return implode("\n", $out);
     }
 
@@ -682,8 +690,10 @@ class HtmlHelper extends Helper
                     $out[] = $crumb[0];
                 }
             }
+
             return implode($separator, $out);
         }
+
         return null;
     }
 
@@ -744,6 +754,7 @@ class HtmlHelper extends Helper
                 'attrs' => $this->templater()->formatAttributes($options)
             ]);
         }
+
         return $this->formatTemplate('ul', [
             'content' => $result,
             'attrs' => $this->templater()->formatAttributes($ulOptions)
@@ -772,6 +783,7 @@ class HtmlHelper extends Helper
             unset($startText['url'], $startText['text']);
             array_unshift($crumbs, [$text, $url, $startText + ['escape' => $escape]]);
         }
+
         return $crumbs;
     }
 
@@ -834,6 +846,7 @@ class HtmlHelper extends Helper
                 'content' => $image
             ]);
         }
+
         return $image;
     }
 
@@ -943,6 +956,7 @@ class HtmlHelper extends Helper
 
             $cellsOut[] = $this->tableCell($cell, $cellOptions);
         }
+
         return $cellsOut;
     }
 
@@ -1003,6 +1017,7 @@ class HtmlHelper extends Helper
         } else {
             $tag = 'tag';
         }
+
         return $this->formatTemplate($tag, [
             'attrs' => $this->templater()->formatAttributes($options),
             'tag' => $name,
@@ -1028,6 +1043,7 @@ class HtmlHelper extends Helper
         if (!empty($class)) {
             $options['class'] = $class;
         }
+
         return $this->tag('div', $text, $options);
     }
 
@@ -1055,6 +1071,7 @@ class HtmlHelper extends Helper
         if ($text === null) {
             $tag = 'parastart';
         }
+
         return $this->formatTemplate($tag, [
             'attrs' => $this->templater()->formatAttributes($options),
             'content' => $text,
@@ -1183,6 +1200,7 @@ class HtmlHelper extends Helper
             'pathPrefix' => null,
             'text' => null
         ]);
+
         return $this->tag($tag, $text, $options);
     }
 
@@ -1208,6 +1226,7 @@ class HtmlHelper extends Helper
     {
         $options += ['tag' => 'ul'];
         $items = $this->_nestedListItem($list, $options, $itemOptions);
+
         return $this->formatTemplate($options['tag'], [
             'attrs' => $this->templater()->formatAttributes($options, ['tag']),
             'content' => $items
@@ -1243,6 +1262,7 @@ class HtmlHelper extends Helper
             ]);
             $index++;
         }
+
         return $out;
     }
 

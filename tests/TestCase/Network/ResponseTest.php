@@ -1200,6 +1200,7 @@ class ResponseTest extends TestCase
                 ->method('is')
                 ->with('ssl')
                 ->will($this->returnValue(true));
+
             return $secureRequest;
         };
 

@@ -304,6 +304,7 @@ abstract class IntegrationTestCase extends TestCase
         if (isset($this->_cookieEncriptionKey)) {
             return $this->_cookieEncriptionKey;
         }
+
         return Security::salt();
     }
 
@@ -539,6 +540,7 @@ abstract class IntegrationTestCase extends TestCase
         $env['REQUEST_METHOD'] = $method;
         $props['environment'] = $env;
         $props = Hash::merge($props, $this->_request);
+
         return $props;
     }
 
@@ -568,6 +570,7 @@ abstract class IntegrationTestCase extends TestCase
                 $data['_csrfToken'] = $this->_cookie['csrfToken'];
             }
         }
+
         return $data;
     }
 
@@ -606,6 +609,7 @@ abstract class IntegrationTestCase extends TestCase
         if (isset($this->_controller->viewVars[$name])) {
             return $this->_controller->viewVars[$name];
         }
+
         return null;
     }
 
@@ -701,6 +705,7 @@ abstract class IntegrationTestCase extends TestCase
         $result = $this->_response->header();
         if ($url === null) {
             $this->assertTrue(!empty($result['Location']), $message);
+
             return;
         }
         if (empty($result['Location'])) {

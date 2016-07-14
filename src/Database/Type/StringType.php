@@ -63,6 +63,7 @@ class StringType extends Type implements OptionalConvertInterface
         if ($value === null) {
             return null;
         }
+
         return (string)$value;
     }
 
@@ -92,6 +93,7 @@ class StringType extends Type implements OptionalConvertInterface
         if (is_array($value)) {
             return '';
         }
+
         return (string)$value;
     }
 

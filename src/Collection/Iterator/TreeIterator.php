@@ -94,6 +94,7 @@ class TreeIterator extends RecursiveIteratorIterator
                 return $counter++;
             };
         }
+
         return new TreePrinter(
             $this->getInnerIterator(),
             $valuePath,

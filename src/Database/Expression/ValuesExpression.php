@@ -95,6 +95,7 @@ class ValuesExpression implements ExpressionInterface
         }
         if ($data instanceof Query) {
             $this->query($data);
+
             return;
         }
         $this->_values[] = $data;
@@ -115,6 +116,7 @@ class ValuesExpression implements ExpressionInterface
         }
         $this->_columns = $cols;
         $this->_castedExpressions = false;
+
         return $this;
     }
 
@@ -155,6 +157,7 @@ class ValuesExpression implements ExpressionInterface
         }
         $this->_values = $values;
         $this->_castedExpressions = false;
+
         return $this;
     }
 
@@ -226,6 +229,7 @@ class ValuesExpression implements ExpressionInterface
         if ($this->query()) {
             return ' ' . $this->query()->sql($generator);
         }
+
         return sprintf(' VALUES (%s)', implode('), (', $placeholders));
     }
 

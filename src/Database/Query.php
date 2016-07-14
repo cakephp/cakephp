@@ -160,6 +160,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         }
         $this->_dirty();
         $this->_connection = $connection;
+
         return $this;
     }
 
@@ -196,6 +197,7 @@ class Query implements ExpressionInterface, IteratorAggregate
 
         $this->_iterator = $this->_decorateStatement($statement);
         $this->_dirty = false;
+
         return $this->_iterator;
     }
 
@@ -253,6 +255,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         foreach ($parts as $name) {
             $visitor($this->_parts[$name], $name);
         }
+
         return $this;
     }
 
@@ -309,6 +312,7 @@ class Query implements ExpressionInterface, IteratorAggregate
 
         $this->_dirty();
         $this->_type = 'select';
+
         return $this;
     }
 
@@ -358,6 +362,7 @@ class Query implements ExpressionInterface, IteratorAggregate
 
         $this->_parts['distinct'] = $on;
         $this->_dirty();
+
         return $this;
     }
 
@@ -390,6 +395,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             $this->_parts['modifier'] = [];
         }
         $this->_parts['modifier'] = array_merge($this->_parts['modifier'], (array)$modifiers);
+
         return $this;
     }
 
@@ -437,6 +443,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         }
 
         $this->_dirty();
+
         return $this;
     }
 
@@ -561,6 +568,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         }
 
         $this->_dirty();
+
         return $this;
     }
 
@@ -577,6 +585,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     {
         unset($this->_parts['join'][$name]);
         $this->_dirty();
+
         return $this;
     }
 
@@ -809,6 +818,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             $this->_parts['where'] = $this->newExpr();
         }
         $this->_conjugate('where', $conditions, 'AND', $types);
+
         return $this;
     }
 
@@ -871,6 +881,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function andWhere($conditions, $types = [])
     {
         $this->_conjugate('where', $conditions, 'AND', $types);
+
         return $this;
     }
 
@@ -933,6 +944,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function orWhere($conditions, $types = [])
     {
         $this->_conjugate('where', $conditions, 'OR', $types);
+
         return $this;
     }
 
@@ -997,6 +1009,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             $this->_parts['order'] = new OrderByExpression();
         }
         $this->_conjugate('order', $fields, '', []);
+
         return $this;
     }
 
@@ -1023,6 +1036,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             $this->_parts['order'] = new OrderByExpression();
         }
         $this->_parts['order']->add(new OrderClauseExpression($field, 'ASC'));
+
         return $this;
     }
 
@@ -1049,6 +1063,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             $this->_parts['order'] = new OrderByExpression();
         }
         $this->_parts['order']->add(new OrderClauseExpression($field, 'DESC'));
+
         return $this;
     }
 
@@ -1086,6 +1101,7 @@ class Query implements ExpressionInterface, IteratorAggregate
 
         $this->_parts['group'] = array_merge($this->_parts['group'], array_values($fields));
         $this->_dirty();
+
         return $this;
     }
 
@@ -1107,6 +1123,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             $this->_parts['having'] = $this->newExpr();
         }
         $this->_conjugate('having', $conditions, 'AND', $types);
+
         return $this;
     }
 
@@ -1124,6 +1141,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function andHaving($conditions, $types = [])
     {
         $this->_conjugate('having', $conditions, 'AND', $types);
+
         return $this;
     }
 
@@ -1141,6 +1159,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function orHaving($conditions, $types = [])
     {
         $this->_conjugate('having', $conditions, 'OR', $types);
+
         return $this;
     }
 
@@ -1173,6 +1192,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             $offset = PHP_INT_MAX;
         }
         $this->offset((int)$offset);
+
         return $this;
     }
 
@@ -1199,6 +1219,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             $num = (int)$num;
         }
         $this->_parts['limit'] = $num;
+
         return $this;
     }
 
@@ -1227,6 +1248,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             $num = (int)$num;
         }
         $this->_parts['offset'] = $num;
+
         return $this;
     }
 
@@ -1264,6 +1286,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             'query' => $query
         ];
         $this->_dirty();
+
         return $this;
     }
 
@@ -1298,6 +1321,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             'query' => $query
         ];
         $this->_dirty();
+
         return $this;
     }
 
@@ -1325,6 +1349,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         } else {
             $this->_parts['values']->columns($columns);
         }
+
         return $this;
     }
 
@@ -1339,6 +1364,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         $this->_dirty();
         $this->_type = 'insert';
         $this->_parts['insert'][0] = $table;
+
         return $this;
     }
 
@@ -1370,10 +1396,12 @@ class Query implements ExpressionInterface, IteratorAggregate
         $this->_dirty();
         if ($data instanceof ValuesExpression) {
             $this->_parts['values'] = $data;
+
             return $this;
         }
 
         $this->_parts['values']->add($data);
+
         return $this;
     }
 
@@ -1390,6 +1418,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         $this->_dirty();
         $this->_type = 'update';
         $this->_parts['update'][0] = $table;
+
         return $this;
     }
 
@@ -1436,12 +1465,14 @@ class Query implements ExpressionInterface, IteratorAggregate
         if ($this->_parts['set']->isCallable($key)) {
             $exp = $this->newExpr()->tieWith(',');
             $this->_parts['set']->add($key($exp));
+
             return $this;
         }
 
         if (is_array($key) || $key instanceof ExpressionInterface) {
             $types = (array)$value;
             $this->_parts['set']->add($key, $types);
+
             return $this;
         }
 
@@ -1469,6 +1500,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         if ($table !== null) {
             $this->from($table);
         }
+
         return $this;
     }
 
@@ -1491,6 +1523,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     {
         $this->_dirty();
         $this->_parts['epilog'] = $expression;
+
         return $this;
     }
 
@@ -1550,6 +1583,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         if (empty($this->_functionsBuilder)) {
             $this->_functionsBuilder = new FunctionsBuilder;
         }
+
         return $this->_functionsBuilder;
     }
 
@@ -1566,6 +1600,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         if (empty($this->_iterator) || $this->_dirty) {
             $this->_iterator = $this->execute();
         }
+
         return $this->_iterator;
     }
 
@@ -1666,6 +1701,7 @@ class Query implements ExpressionInterface, IteratorAggregate
                 foreach ($expression as $e) {
                     $visitor($e);
                 }
+
                 return null;
             }
 
@@ -1677,6 +1713,7 @@ class Query implements ExpressionInterface, IteratorAggregate
                 }
             }
         };
+
         return $this->traverse($visitor);
     }
 
@@ -1704,6 +1741,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function bind($param, $value, $type = 'string')
     {
         $this->valueBinder()->bind($param, $value, $type);
+
         return $this;
     }
 
@@ -1725,9 +1763,11 @@ class Query implements ExpressionInterface, IteratorAggregate
             if ($this->_valueBinder === null) {
                 $this->_valueBinder = new ValueBinder;
             }
+
             return $this->_valueBinder;
         }
         $this->_valueBinder = $binder;
+
         return $this;
     }
 
@@ -1755,6 +1795,7 @@ class Query implements ExpressionInterface, IteratorAggregate
 
         $this->_dirty();
         $this->_useBufferedResults = (bool)$enable;
+
         return $this;
     }
 
@@ -1778,6 +1819,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         }
 
         $this->_selectTypeMap = $typeMap;
+
         return $this;
     }
 
@@ -1793,6 +1835,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         foreach ($this->_resultDecorators as $f) {
             $statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
         }
+
         return $statement;
     }
 
@@ -1810,6 +1853,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         $expression = $this->_parts[$part] ?: $this->newExpr();
         if (empty($append)) {
             $this->_parts[$part] = $expression;
+
             return;
         }
 

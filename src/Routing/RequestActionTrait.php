@@ -156,6 +156,7 @@ trait RequestActionTrait
         $dispatcher = DispatcherFactory::create();
         $result = $dispatcher->dispatch($request, new Response());
         Router::popRequest();
+
         return $result;
     }
 }

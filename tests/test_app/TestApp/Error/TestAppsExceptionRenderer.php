@@ -29,6 +29,7 @@ class TestAppsExceptionRenderer extends ExceptionRenderer
             $controller = new Controller($request, $response);
             $controller->viewBuilder()->templatePath('Error');
         }
+
         return $controller;
     }
 }

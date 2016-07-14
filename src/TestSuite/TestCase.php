@@ -82,6 +82,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         if ($shouldSkip) {
             $this->markTestSkipped($message);
         }
+
         return $shouldSkip;
     }
 
@@ -496,11 +497,13 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
                     debug($regex);
                 }
                 $this->assertRegExp($expression, $string, sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description));
+
                 return false;
             }
         }
 
         $this->assertTrue(true, '%s');
+
         return true;
     }
 
@@ -537,6 +540,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             }
             $len = count($asserts);
         } while ($len > 0);
+
         return $string;
     }
 
@@ -612,6 +616,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         if (!$condition) {
             $this->markTestSkipped($message);
         }
+
         return $condition;
     }
 
@@ -659,6 +664,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         }
 
         TableRegistry::set($baseClass, $mock);
+
         return $mock;
     }
 }

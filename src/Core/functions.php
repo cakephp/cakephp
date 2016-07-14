@@ -43,6 +43,7 @@ if (!function_exists('h')) {
             foreach ($text as $k => $t) {
                 $texts[$k] = h($t, $double, $charset);
             }
+
             return $texts;
         } elseif (is_object($text)) {
             if (method_exists($text, '__toString')) {
@@ -64,6 +65,7 @@ if (!function_exists('h')) {
         if (is_string($double)) {
             $charset = $double;
         }
+
         return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, ($charset) ? $charset : $defaultCharset, $double);
     }
 
@@ -92,8 +94,10 @@ if (!function_exists('pluginSplit')) {
             if ($dotAppend) {
                 $parts[0] .= '.';
             }
+
             return $parts;
         }
+
         return [$plugin, $name];
     }
 
@@ -114,6 +118,7 @@ if (!function_exists('namespaceSplit')) {
         if ($pos === false) {
             return ['', $class];
         }
+
         return [substr($class, 0, $pos), substr($class, $pos + 1)];
     }
 
@@ -191,6 +196,7 @@ if (!function_exists('env')) {
             if (isset($_SERVER['HTTPS'])) {
                 return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
             }
+
             return (strpos(env('SCRIPT_URI'), 'https://') === 0);
         }
 
@@ -228,12 +234,14 @@ if (!function_exists('env')) {
                 if (!strpos($name, '.php')) {
                     $offset = 4;
                 }
+
                 return substr($filename, 0, -(strlen($name) + $offset));
             case 'PHP_SELF':
                 return str_replace(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
             case 'CGI_MODE':
                 return (PHP_SAPI === 'cgi');
         }
+
         return $default;
     }
 

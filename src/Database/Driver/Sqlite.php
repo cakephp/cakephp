@@ -67,6 +67,7 @@ class Sqlite extends Driver
                 $this->connection()->exec($command);
             }
         }
+
         return true;
     }
 
@@ -95,6 +96,7 @@ class Sqlite extends Driver
         if ($isObject && $query->bufferResults() === false) {
             $result->bufferResults(false);
         }
+
         return $result;
     }
 

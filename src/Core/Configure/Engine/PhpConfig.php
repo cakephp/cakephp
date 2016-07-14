@@ -95,6 +95,7 @@ class PhpConfig implements ConfigEngineInterface
         $contents = '<?php' . "\n" . 'return ' . var_export($data, true) . ';';
 
         $filename = $this->_getFilePath($key);
+
         return file_put_contents($filename, $contents) > 0;
     }
 }

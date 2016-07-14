@@ -67,6 +67,7 @@ class QueryLogger
             if (is_bool($p)) {
                 return $p ? '1' : '0';
             }
+
             return is_string($p) ? "'$p'" : $p;
         }, $query->params);
 

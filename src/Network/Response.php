@@ -616,6 +616,7 @@ class Response
             }
             $this->_headers[$header] = is_array($value) ? array_map('trim', $value) : trim($value);
         }
+
         return $this->_headers;
     }
 
@@ -632,9 +633,11 @@ class Response
     {
         if ($url === null) {
             $headers = $this->header();
+
             return isset($headers['Location']) ? $headers['Location'] : null;
         }
         $this->header('Location', $url);
+
         return null;
     }
 
@@ -650,6 +653,7 @@ class Response
         if ($content === null) {
             return $this->_body;
         }
+
         return $this->_body = $content;
     }
 
@@ -669,6 +673,7 @@ class Response
         if (!isset($this->_statusCodes[$code])) {
             throw new InvalidArgumentException('Unknown status code');
         }
+
         return $this->_status = $code;
     }
 
@@ -715,11 +720,13 @@ class Response
                 throw new InvalidArgumentException('Invalid status code');
             }
             $this->_statusCodes = $code + $this->_statusCodes;
+
             return true;
         }
         if (!isset($this->_statusCodes[$code])) {
             return null;
         }
+
         return [$code => $this->_statusCodes[$code]];
     }
 
@@ -765,6 +772,7 @@ class Response
             foreach ($contentType as $type => $definition) {
                 $this->_mimeTypes[$type] = $definition;
             }
+
             return $this->_contentType;
         }
         if (isset($this->_mimeTypes[$contentType])) {
@@ -774,6 +782,7 @@ class Response
         if (strpos($contentType, '/') === false) {
             return false;
         }
+
         return $this->_contentType = $contentType;
     }
 
@@ -790,6 +799,7 @@ class Response
         if (isset($this->_mimeTypes[$alias])) {
             return $this->_mimeTypes[$alias];
         }
+
         return false;
     }
 
@@ -812,6 +822,7 @@ class Response
                 return $alias;
             }
         }
+
         return null;
     }
 
@@ -827,6 +838,7 @@ class Response
         if ($charset === null) {
             return $this->_charset;
         }
+
         return $this->_charset = $charset;
     }
 
@@ -886,6 +898,7 @@ class Response
                 return null;
             }
             $sharable = $public || !($private || $noCache);
+
             return $sharable;
         }
         if ($public) {
@@ -900,6 +913,7 @@ class Response
         if (!$time) {
             $this->_setCacheControl();
         }
+
         return (bool)$public;
     }
 
@@ -921,6 +935,7 @@ class Response
         if (isset($this->_cacheDirectives['s-maxage'])) {
             return $this->_cacheDirectives['s-maxage'];
         }
+
         return null;
     }
 
@@ -942,6 +957,7 @@ class Response
         if (isset($this->_cacheDirectives['max-age'])) {
             return $this->_cacheDirectives['max-age'];
         }
+
         return null;
     }
 
@@ -966,6 +982,7 @@ class Response
             }
             $this->_setCacheControl();
         }
+
         return array_key_exists('must-revalidate', $this->_cacheDirectives);
     }
 
@@ -1008,6 +1025,7 @@ class Response
         if (isset($this->_headers['Expires'])) {
             return $this->_headers['Expires'];
         }
+
         return null;
     }
 
@@ -1033,6 +1051,7 @@ class Response
         if (isset($this->_headers['Last-Modified'])) {
             return $this->_headers['Last-Modified'];
         }
+
         return null;
     }
 
@@ -1080,6 +1099,7 @@ class Response
         if (isset($this->_headers['Vary'])) {
             return explode(', ', $this->_headers['Vary']);
         }
+
         return null;
     }
 
@@ -1112,6 +1132,7 @@ class Response
         if (isset($this->_headers['Etag'])) {
             return $this->_headers['Etag'];
         }
+
         return null;
     }
 
@@ -1132,6 +1153,7 @@ class Response
             $result = new DateTime($time);
         }
         $result->setTimeZone(new DateTimeZone('UTC'));
+
         return $result;
     }
 
@@ -1146,6 +1168,7 @@ class Response
         $compressionEnabled = ini_get("zlib.output_compression") !== '1' &&
             extension_loaded("zlib") &&
             (strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
+
         return $compressionEnabled && ob_start('ob_gzhandler');
     }
 
@@ -1183,6 +1206,7 @@ class Response
         if ($protocol !== null) {
             $this->_protocol = $protocol;
         }
+
         return $this->_protocol;
     }
 
@@ -1201,6 +1225,7 @@ class Response
         if (isset($this->_headers['Content-Length'])) {
             return $this->_headers['Content-Length'];
         }
+
         return null;
     }
 
@@ -1235,6 +1260,7 @@ class Response
         if ($notModified) {
             $this->notModified();
         }
+
         return $notModified;
     }
 
@@ -1250,6 +1276,7 @@ class Response
         if (!is_string($this->_body) && is_callable($this->_body)) {
             return '';
         }
+
         return (string)$this->_body;
     }
 
@@ -1302,6 +1329,7 @@ class Response
             if (!isset($this->_cookies[$options])) {
                 return null;
             }
+
             return $this->_cookies[$options];
         }
 
@@ -1375,6 +1403,7 @@ class Response
             ->allowMethods((array)$allowedMethods)
             ->allowHeaders((array)$allowedHeaders)
             ->build();
+
         return $builder;
     }
 
@@ -1503,6 +1532,7 @@ class Response
             $this->header([
                 'Content-Range' => 'bytes 0-' . $lastByte . '/' . $fileSize
             ]);
+
             return;
         }
 
@@ -1543,6 +1573,7 @@ class Response
         while (!feof($file->handle)) {
             if (!$this->_isActive()) {
                 $file->close();
+
                 return false;
             }
             $offset = $file->offset();
@@ -1555,6 +1586,7 @@ class Response
             echo fread($file->handle, $bufferSize);
         }
         $file->close();
+
         return true;
     }
 

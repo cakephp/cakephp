@@ -922,6 +922,7 @@ class PaginatorComponentTest extends TestCase
             foreach ($result as $record) {
                 $ids[] = $record->title;
             }
+
             return $ids;
         };
 
@@ -1183,6 +1184,7 @@ class PaginatorComponentTest extends TestCase
             ->will($this->returnValue(2));
 
         $query->repository($table);
+
         return $query;
     }
 }

@@ -151,6 +151,7 @@ class ExistsIn
                 $nulls++;
             }
         }
+
         return $nulls === count($this->_fields);
     }
 }

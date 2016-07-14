@@ -220,6 +220,7 @@ abstract class Cell
         if ($cache) {
             return Cache::remember($cache['key'], $render, $cache['config']);
         }
+
         return $render();
     }
 
@@ -245,6 +246,7 @@ abstract class Cell
         if ($this->_cache === true) {
             return $default;
         }
+
         return $this->_cache + $default;
     }
 
@@ -264,6 +266,7 @@ abstract class Cell
             return $this->render();
         } catch (Exception $e) {
             trigger_error(sprintf('Could not render cell - %s [%s, line %d]', $e->getMessage(), $e->getFile(), $e->getLine()), E_USER_WARNING);
+
             return '';
         }
     }

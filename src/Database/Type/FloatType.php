@@ -57,6 +57,7 @@ class FloatType extends Type
         if (is_array($value)) {
             return 1;
         }
+
         return floatval($value);
     }
 
@@ -76,6 +77,7 @@ class FloatType extends Type
         if (is_array($value)) {
             return 1;
         }
+
         return floatval($value);
     }
 
@@ -126,12 +128,14 @@ class FloatType extends Type
     {
         if ($enable === false) {
             $this->_useLocaleParser = $enable;
+
             return $this;
         }
         if (static::$numberClass === 'Cake\I18n\Number' ||
             is_subclass_of(static::$numberClass, 'Cake\I18n\Number')
         ) {
             $this->_useLocaleParser = $enable;
+
             return $this;
         }
         throw new RuntimeException(
@@ -149,6 +153,7 @@ class FloatType extends Type
     protected function _parseValue($value)
     {
         $class = static::$numberClass;
+
         return $class::parseFloat($value);
     }
 }

@@ -138,6 +138,7 @@ class Connection implements ConnectionInterface
         if (empty($this->_config['name'])) {
             return '';
         }
+
         return $this->_config['name'];
     }
 
@@ -168,6 +169,7 @@ class Connection implements ConnectionInterface
         if (!$driver->enabled()) {
             throw new MissingExtensionException(['driver' => get_class($driver)]);
         }
+
         return $this->_driver = $driver;
     }
 
@@ -181,6 +183,7 @@ class Connection implements ConnectionInterface
     {
         try {
             $this->_driver->connect();
+
             return true;
         } catch (Exception $e) {
             throw new MissingConnectionException(['reason' => $e->getMessage()]);
@@ -242,6 +245,7 @@ class Connection implements ConnectionInterface
         } else {
             $statement = $this->query($query);
         }
+
         return $statement;
     }
 
@@ -284,6 +288,7 @@ class Connection implements ConnectionInterface
     {
         $statement = $this->prepare($sql);
         $statement->execute();
+
         return $statement;
     }
 
@@ -331,6 +336,7 @@ class Connection implements ConnectionInterface
     public function insert($table, array $data, array $types = [])
     {
         $columns = array_keys($data);
+
         return $this->newQuery()->insert($columns, $types)
             ->into($table)
             ->values($data)
@@ -383,6 +389,7 @@ class Connection implements ConnectionInterface
             $this->_driver->beginTransaction();
             $this->_transactionLevel = 0;
             $this->_transactionStarted = true;
+
             return;
         }
 
@@ -408,6 +415,7 @@ class Connection implements ConnectionInterface
             if ($this->_logQueries) {
                 $this->log('COMMIT');
             }
+
             return $this->_driver->commitTransaction();
         }
         if ($this->useSavePoints()) {
@@ -415,6 +423,7 @@ class Connection implements ConnectionInterface
         }
 
         $this->_transactionLevel--;
+
         return true;
     }
 
@@ -437,12 +446,14 @@ class Connection implements ConnectionInterface
                 $this->log('ROLLBACK');
             }
             $this->_driver->rollbackTransaction();
+
             return true;
         }
 
         if ($useSavePoint) {
             $this->rollbackSavepoint($this->_transactionLevel--);
         }
+
         return true;
     }
 
@@ -564,10 +575,12 @@ class Connection implements ConnectionInterface
 
         if ($result === false) {
             $this->rollback();
+
             return false;
         }
 
         $this->commit();
+
         return $result;
     }
 
@@ -594,6 +607,7 @@ class Connection implements ConnectionInterface
         }
 
         $this->enableForeignKeys();
+
         return $result;
     }
 
@@ -617,6 +631,7 @@ class Connection implements ConnectionInterface
     public function quote($value, $type = null)
     {
         list($value, $type) = $this->cast($value, $type);
+
         return $this->_driver->quote($value, $type);
     }
 
@@ -677,6 +692,7 @@ class Connection implements ConnectionInterface
             if ($this->_logger === null) {
                 $this->_logger = new QueryLogger;
             }
+
             return $this->_logger;
         }
         $this->_logger = $instance;
@@ -738,6 +754,7 @@ class Connection implements ConnectionInterface
     {
         $log = new LoggingStatement($statement, $this->driver());
         $log->logger($this->logger());
+
         return $log;
     }
 

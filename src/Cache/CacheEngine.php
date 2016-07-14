@@ -112,6 +112,7 @@ abstract class CacheEngine
         foreach ($data as $key => $value) {
             $return[$key] = $this->write($key, $value);
         }
+
         return $return;
     }
 
@@ -136,6 +137,7 @@ abstract class CacheEngine
         foreach ($keys as $key) {
             $return[$key] = $this->read($key);
         }
+
         return $return;
     }
 
@@ -187,6 +189,7 @@ abstract class CacheEngine
         foreach ($keys as $key) {
             $return[$key] = $this->delete($key);
         }
+
         return $return;
     }
 
@@ -206,6 +209,7 @@ abstract class CacheEngine
         if ($cachedValue === false) {
             return $this->write($key, $value);
         }
+
         return false;
     }
 
@@ -252,6 +256,7 @@ abstract class CacheEngine
         }
 
         $key = preg_replace('/[\s]+/', '_', strtolower(trim(str_replace([DIRECTORY_SEPARATOR, '/', '.'], '_', strval($key)))));
+
         return $prefix . $key;
     }
 

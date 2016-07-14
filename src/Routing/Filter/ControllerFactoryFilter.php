@@ -62,6 +62,7 @@ class ControllerFactoryFilter extends DispatcherFilter
     protected function _getController($request, $response)
     {
         $factory = new ControllerFactory();
+
         return $factory->create($request, $response);
     }
 }

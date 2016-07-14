@@ -30,6 +30,7 @@ class TestAuthComponent extends AuthComponent
                 return;
             }
             $this->authCheckCalledFrom = $event->name();
+
             return;
         }
 

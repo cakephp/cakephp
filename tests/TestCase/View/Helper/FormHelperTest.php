@@ -332,6 +332,7 @@ class FormHelperTest extends TestCase
         $this->Form->addContextProvider('test', function ($request, $data) use ($context, $stub) {
             $this->assertInstanceOf('Cake\Network\Request', $request);
             $this->assertEquals($context, $data['entity']);
+
             return $stub;
         });
         $this->Form->create($context);

@@ -61,6 +61,7 @@ class RoutingFilter extends DispatcherFilter
             $response = $event->data['response'];
             $response->statusCode($e->getCode());
             $response->header('Location', $e->getMessage());
+
             return $response;
         }
     }

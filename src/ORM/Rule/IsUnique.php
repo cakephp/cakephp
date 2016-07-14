@@ -103,6 +103,7 @@ class IsUnique
                 $aliased["$alias.$key IS"] = $value;
             }
         }
+
         return $aliased;
     }
 }
