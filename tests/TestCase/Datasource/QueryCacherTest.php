@@ -64,6 +64,7 @@ class QueryCacherTest extends TestCase
 
         $cacher = new QueryCacher(function ($q) use ($query) {
             $this->assertSame($query, $q);
+
             return 'my_key';
         }, 'queryCache');
 

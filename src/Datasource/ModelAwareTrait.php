@@ -115,6 +115,7 @@ trait ModelAwareTrait
         if (!$this->{$alias}) {
             throw new MissingModelException([$modelClass, $modelType]);
         }
+
         return $this->{$alias};
     }
 

@@ -326,6 +326,7 @@ class CounterCacheBehaviorTest extends TestCase
             'Users' => [
                 'posts_published' => function (Event $event, EntityInterface $entity, Table $table) {
                     $query = new Query($this->connection);
+
                     return $query->select(4);
                 }
             ]

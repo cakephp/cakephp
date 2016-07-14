@@ -231,6 +231,7 @@ class EagerLoadable
         if ($this->_forMatching !== null) {
             $config = ['matching' => $this->_forMatching] + $config;
         }
+
         return [
             $this->_name => [
                 'associations' => $associations,

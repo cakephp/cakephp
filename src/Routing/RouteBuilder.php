@@ -182,6 +182,7 @@ class RouteBuilder
         if ($routeKey !== false) {
             return substr($this->_path, 0, $routeKey);
         }
+
         return $this->_path;
     }
 
@@ -209,6 +210,7 @@ class RouteBuilder
         if ($value !== null) {
             $this->_namePrefix = $value;
         }
+
         return $this->_namePrefix;
     }
 

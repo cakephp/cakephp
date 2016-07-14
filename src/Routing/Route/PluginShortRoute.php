@@ -36,6 +36,7 @@ class PluginShortRoute extends InflectedRoute
             return false;
         }
         $params['controller'] = $params['plugin'];
+
         return $params;
     }
 
@@ -57,6 +58,7 @@ class PluginShortRoute extends InflectedRoute
         $this->defaults['controller'] = $url['controller'];
         $result = parent::match($url, $context);
         unset($this->defaults['controller']);
+
         return $result;
     }
 }

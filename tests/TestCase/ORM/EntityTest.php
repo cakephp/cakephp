@@ -169,6 +169,7 @@ class EntityTest extends TestCase
             ->with('Jones')
             ->will($this->returnCallback(function ($name) {
                 $this->assertEquals('Jones', $name);
+
                 return 'Dr. ' . $name;
             }));
         $entity->set('name', 'Jones');
@@ -190,12 +191,14 @@ class EntityTest extends TestCase
             ->with('Jones')
             ->will($this->returnCallback(function ($name) {
                 $this->assertEquals('Jones', $name);
+
                 return 'Dr. ' . $name;
             }));
         $entity->expects($this->once())->method('_setStuff')
             ->with(['a', 'b'])
             ->will($this->returnCallback(function ($stuff) {
                 $this->assertEquals(['a', 'b'], $stuff);
+
                 return ['c', 'd'];
             }));
         $entity->set(['name' => 'Jones', 'stuff' => ['a', 'b']]);
@@ -394,6 +397,7 @@ class EntityTest extends TestCase
             ->with('Jones')
             ->will($this->returnCallback(function ($name) {
                 $this->assertEquals('Jones', $name);
+
                 return 'Dr. ' . $name;
             }));
         $entity->name = 'Jones';
@@ -436,6 +440,7 @@ class EntityTest extends TestCase
             ->with('Jones')
             ->will($this->returnCallback(function ($name) {
                 $this->assertSame('Jones', $name);
+
                 return 'Dr. ' . $name;
             }));
         $entity->set('name', 'Jones');

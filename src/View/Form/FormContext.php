@@ -92,6 +92,7 @@ class FormContext implements ContextInterface
         if ($this->type($field) !== 'boolean') {
             return $validator->isEmptyAllowed($field, $this->isCreate()) === false;
         }
+
         return false;
     }
 
@@ -118,6 +119,7 @@ class FormContext implements ContextInterface
     {
         $column = (array)$this->_form->schema()->field($field);
         $whitelist = ['length' => null, 'precision' => null];
+
         return array_intersect_key($column, $whitelist);
     }
 
@@ -127,6 +129,7 @@ class FormContext implements ContextInterface
     public function hasError($field)
     {
         $errors = $this->error($field);
+
         return count($errors) > 0;
     }
 

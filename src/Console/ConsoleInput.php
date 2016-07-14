@@ -62,8 +62,10 @@ class ConsoleInput
             if (strlen($line) > 0) {
                 readline_add_history($line);
             }
+
             return $line;
         }
+
         return fgets($this->_input);
     }
 
@@ -77,6 +79,7 @@ class ConsoleInput
     {
         $readFds = [$this->_input];
         $readyFds = stream_select($readFds, $writeFds, $errorFds, $timeout);
+
         return ($readyFds > 0);
     }
 }

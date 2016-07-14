@@ -118,11 +118,13 @@ class MysqlSchema extends BaseSchema
         if (strpos($col, 'text') !== false) {
             $lengthName = substr($col, 0, -4);
             $length = isset(Table::$columnLengths[$lengthName]) ? Table::$columnLengths[$lengthName] : null;
+
             return ['type' => 'text', 'length' => $length];
         }
         if (strpos($col, 'blob') !== false || $col === 'binary') {
             $lengthName = substr($col, 0, -4);
             $length = isset(Table::$columnLengths[$lengthName]) ? Table::$columnLengths[$lengthName] : null;
+
             return ['type' => 'binary', 'length' => $length];
         }
         if (strpos($col, 'float') !== false || strpos($col, 'double') !== false) {
@@ -141,6 +143,7 @@ class MysqlSchema extends BaseSchema
                 'unsigned' => $unsigned
             ];
         }
+
         return ['type' => 'text', 'length' => null];
     }
 
@@ -276,6 +279,7 @@ class MysqlSchema extends BaseSchema
         if (isset($options['collate'])) {
             $content .= sprintf(' COLLATE=%s', $options['collate']);
         }
+
         return [$content];
     }
 
@@ -396,6 +400,7 @@ class MysqlSchema extends BaseSchema
         if (isset($data['comment']) && $data['comment'] !== '') {
             $out .= ' COMMENT ' . $this->_driver->schemaValue($data['comment']);
         }
+
         return $out;
     }
 
@@ -410,6 +415,7 @@ class MysqlSchema extends BaseSchema
                 [$this->_driver, 'quoteIdentifier'],
                 $data['columns']
             );
+
             return sprintf('PRIMARY KEY (%s)', implode(', ', $columns));
         }
 
@@ -421,6 +427,7 @@ class MysqlSchema extends BaseSchema
             $out = 'CONSTRAINT ';
         }
         $out .= $this->_driver->quoteIdentifier($name);
+
         return $this->_keySql($out, $data);
     }
 
@@ -476,6 +483,7 @@ class MysqlSchema extends BaseSchema
             $out = 'FULLTEXT KEY ';
         }
         $out .= $this->_driver->quoteIdentifier($name);
+
         return $this->_keySql($out, $data);
     }
 
@@ -507,6 +515,7 @@ class MysqlSchema extends BaseSchema
                 $this->_foreignOnClause($data['delete'])
             );
         }
+
         return $prefix . ' (' . implode(', ', $columns) . ')';
     }
 }

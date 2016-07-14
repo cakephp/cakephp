@@ -48,6 +48,7 @@ class TextareaWidget extends BasicWidget
             'rows' => 5,
             'templateVars' => []
         ];
+
         return $this->_templates->format('textarea', [
             'name' => $data['name'],
             'value' => $data['escape'] ? h($data['val']) : $data['val'],

@@ -54,6 +54,7 @@ class TimeHelper extends Helper
         if ($timezone) {
             return $timezone;
         }
+
         return $this->config('outputTimezone');
     }
 
@@ -80,6 +81,7 @@ class TimeHelper extends Helper
     public function nice($dateString = null, $timezone = null, $locale = null)
     {
         $timezone = $this->_getTimezone($timezone);
+
         return (new Time($dateString))->nice($timezone, $locale);
     }
 
@@ -217,6 +219,7 @@ class TimeHelper extends Helper
     public function toAtom($dateString, $timezone = null)
     {
         $timezone = $this->_getTimezone($timezone) ?: date_default_timezone_get();
+
         return (new Time($dateString))->timezone($timezone)->toAtomString();
     }
 
@@ -230,6 +233,7 @@ class TimeHelper extends Helper
     public function toRss($dateString, $timezone = null)
     {
         $timezone = $this->_getTimezone($timezone) ?: date_default_timezone_get();
+
         return (new Time($dateString))->timezone($timezone)->toRssString();
     }
 
@@ -287,6 +291,7 @@ class TimeHelper extends Helper
                 $element['tag']
             );
         }
+
         return $relativeDate;
     }
 
@@ -371,11 +376,13 @@ class TimeHelper extends Helper
 
         try {
             $time = new Time($date);
+
             return $time->i18nFormat($format, $timezone);
         } catch (Exception $e) {
             if ($invalid === false) {
                 throw $e;
             }
+
             return $invalid;
         }
     }

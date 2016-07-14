@@ -172,6 +172,7 @@ class EntityContext implements ContextInterface
         $parts = explode('.', $field);
         $table = $this->_getTable($parts);
         $primaryKey = (array)$table->primaryKey();
+
         return in_array(array_pop($parts), $primaryKey);
     }
 
@@ -198,6 +199,7 @@ class EntityContext implements ContextInterface
         if ($entity instanceof EntityInterface) {
             return $entity->isNew() !== false;
         }
+
         return true;
     }
 
@@ -230,8 +232,10 @@ class EntityContext implements ContextInterface
         }
         if (is_array($entity)) {
             $key = array_pop($parts);
+
             return isset($entity[$key]) ? $entity[$key] : null;
         }
+
         return null;
     }
 
@@ -250,6 +254,7 @@ class EntityContext implements ContextInterface
         }
         $table = $this->_getTable($path, false);
         $primary = $table ? (array)$table->primaryKey() : ['id'];
+
         return (new Collection($values))->extract($primary[0])->toArray();
     }
 
@@ -293,6 +298,7 @@ class EntityContext implements ContextInterface
 
             if (!$isLast && $next === null && $prop !== '_ids') {
                 $table = $this->_getTable($path);
+
                 return $table->newEntity();
             }
 
@@ -333,6 +339,7 @@ class EntityContext implements ContextInterface
                     return $val;
                 }
             }
+
             return false;
         }
     }
@@ -361,6 +368,7 @@ class EntityContext implements ContextInterface
         if ($this->type($field) !== 'boolean') {
             return $validator->isEmptyAllowed($fieldName, $isNew) === false;
         }
+
         return false;
     }
 
@@ -374,6 +382,7 @@ class EntityContext implements ContextInterface
     public function fieldNames()
     {
         $table = $this->_getTable('0');
+
         return $table->schema()->columns();
     }
 
@@ -394,6 +403,7 @@ class EntityContext implements ContextInterface
 
         if (isset($this->_validator[$key])) {
             $this->_validator[$key]->provider('entity', $entity);
+
             return $this->_validator[$key];
         }
 
@@ -409,6 +419,7 @@ class EntityContext implements ContextInterface
 
         $validator = $table->validator($method);
         $validator->provider('entity', $entity);
+
         return $this->_validator[$key] = $validator;
     }
 
@@ -465,6 +476,7 @@ class EntityContext implements ContextInterface
     {
         $parts = explode('.', $field);
         $table = $this->_getTable($parts);
+
         return $table->schema()->baseColumnType(array_pop($parts));
     }
 
@@ -480,6 +492,7 @@ class EntityContext implements ContextInterface
         $table = $this->_getTable($parts);
         $column = (array)$table->schema()->column(array_pop($parts));
         $whitelist = ['length' => null, 'precision' => null];
+
         return array_intersect_key($column, $whitelist);
     }
 
@@ -508,6 +521,7 @@ class EntityContext implements ContextInterface
         if ($entity instanceof EntityInterface) {
             return $entity->errors(array_pop($parts));
         }
+
         return [];
     }
 }

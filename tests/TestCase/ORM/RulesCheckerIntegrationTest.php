@@ -67,6 +67,7 @@ class RulesCheckerIntegrationTest extends TestCase
             ->add(
                 function (Entity $author, array $options) use ($table) {
                     $this->assertSame($options['repository'], $table->association('authors')->target());
+
                     return false;
                 },
                 ['errorField' => 'name', 'message' => 'This is an error']
@@ -150,6 +151,7 @@ class RulesCheckerIntegrationTest extends TestCase
             ->add(
                 function (Entity $entity, $options) use ($table) {
                     $this->assertSame($table, $options['_sourceTable']);
+
                     return $entity->title === '1';
                 },
                 ['errorField' => 'title', 'message' => 'This is an error']
@@ -635,6 +637,7 @@ class RulesCheckerIntegrationTest extends TestCase
                 );
                 $this->assertEquals('create', $operation);
                 $event->stopPropagation();
+
                 return true;
             },
             'Model.beforeRules'
@@ -675,6 +678,7 @@ class RulesCheckerIntegrationTest extends TestCase
                 $this->assertEquals('create', $operation);
                 $this->assertFalse($result);
                 $event->stopPropagation();
+
                 return true;
             },
             'Model.afterRules'
@@ -852,6 +856,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add(function ($entity, $options) {
             $this->assertEquals('bar', $options['foo']);
             $this->assertEquals('option', $options['another']);
+
             return false;
         }, ['another' => 'option']);
 
@@ -871,6 +876,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->addDelete(function ($entity, $options) {
             $this->assertEquals('bar', $options['foo']);
             $this->assertEquals('option', $options['another']);
+
             return false;
         }, ['another' => 'option']);
 
@@ -956,6 +962,7 @@ class RulesCheckerIntegrationTest extends TestCase
             $result = $rule($entity, $options);
             $this->assertTrue($result);
             $entity->author_id = $id;
+
             return true;
         });
 

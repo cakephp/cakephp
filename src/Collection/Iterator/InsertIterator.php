@@ -117,6 +117,7 @@ class InsertIterator extends Collection
         }
 
         $pointer[$this->_target] = $this->_values->current();
+
         return $row;
     }
 

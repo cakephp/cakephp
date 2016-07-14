@@ -44,10 +44,12 @@ class Mcrypt
 
         if ($operation === 'encrypt') {
             $iv = mcrypt_create_iv($ivSize, MCRYPT_DEV_URANDOM);
+
             return $iv . '$$' . mcrypt_encrypt($algorithm, $cryptKey, $text, $mode, $iv);
         }
         $iv = mb_substr($text, 0, $ivSize, '8bit');
         $text = mb_substr($text, $ivSize + 2, null, '8bit');
+
         return rtrim(mcrypt_decrypt($algorithm, $cryptKey, $text, $mode, $iv), "\0");
     }
 
@@ -105,6 +107,7 @@ class Mcrypt
         }
         $padLen = ord($padChar);
         $result = mb_substr($plain, 0, -$padLen, '8bit');
+
         return $result === '' ? false : $result;
     }
 }

@@ -57,6 +57,7 @@ class TestDispatcher extends Dispatcher
     protected function _invoke(Controller $controller)
     {
         $this->controller = $controller;
+
         return parent::_invoke($controller);
     }
 }

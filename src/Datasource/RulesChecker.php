@@ -135,6 +135,7 @@ class RulesChecker
     public function add(callable $rule, $name = null, array $options = [])
     {
         $this->_rules[] = $this->_addError($rule, $name, $options);
+
         return $this;
     }
 
@@ -159,6 +160,7 @@ class RulesChecker
     public function addCreate(callable $rule, $name = null, array $options = [])
     {
         $this->_createRules[] = $this->_addError($rule, $name, $options);
+
         return $this;
     }
 
@@ -183,6 +185,7 @@ class RulesChecker
     public function addUpdate(callable $rule, $name = null, array $options = [])
     {
         $this->_updateRules[] = $this->_addError($rule, $name, $options);
+
         return $this;
     }
 
@@ -207,6 +210,7 @@ class RulesChecker
     public function addDelete(callable $rule, $name = null, array $options = [])
     {
         $this->_deleteRules[] = $this->_addError($rule, $name, $options);
+
         return $this;
     }
 
@@ -293,6 +297,7 @@ class RulesChecker
         foreach ($rules as $rule) {
             $success = $rule($entity, $options) && $success;
         }
+
         return $success;
     }
 
@@ -317,6 +322,7 @@ class RulesChecker
         } else {
             $rule->setOptions($options)->setName($name);
         }
+
         return $rule;
     }
 }

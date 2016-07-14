@@ -50,6 +50,7 @@ class AssociationCollection implements IteratorAggregate
     public function add($alias, Association $association)
     {
         list(, $alias) = pluginSplit($alias);
+
         return $this->_items[strtolower($alias)] = $association;
     }
 
@@ -65,6 +66,7 @@ class AssociationCollection implements IteratorAggregate
         if (isset($this->_items[$alias])) {
             return $this->_items[$alias];
         }
+
         return null;
     }
 
@@ -81,6 +83,7 @@ class AssociationCollection implements IteratorAggregate
                 return $assoc;
             }
         }
+
         return null;
     }
 
@@ -118,8 +121,10 @@ class AssociationCollection implements IteratorAggregate
 
         $out = array_filter($this->_items, function ($assoc) use ($class) {
             list(, $name) = namespaceSplit(get_class($assoc));
+
             return in_array(strtolower($name), $class, true);
         });
+
         return array_values($out);
     }
 
@@ -168,6 +173,7 @@ class AssociationCollection implements IteratorAggregate
         if (empty($associations)) {
             return true;
         }
+
         return $this->_saveAssociations($table, $entity, $associations, $options, false);
     }
 
@@ -189,6 +195,7 @@ class AssociationCollection implements IteratorAggregate
         if (empty($associations)) {
             return true;
         }
+
         return $this->_saveAssociations($table, $entity, $associations, $options, true);
     }
 
@@ -228,6 +235,7 @@ class AssociationCollection implements IteratorAggregate
                 return false;
             }
         }
+
         return true;
     }
 
@@ -248,6 +256,7 @@ class AssociationCollection implements IteratorAggregate
         if (!empty($nested)) {
             $options = (array)$nested + $options;
         }
+
         return (bool)$association->saveAssociated($entity, $options);
     }
 

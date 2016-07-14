@@ -44,6 +44,7 @@ class UnloadTask extends Shell
         if (empty($plugin)) {
             $this->err('<error>You must provide a plugin name in CamelCase format.</error>');
             $this->err('To unload an "Example" plugin, run <info>`cake plugin unload Example`</info>.');
+
             return false;
         }
 
@@ -73,6 +74,7 @@ class UnloadTask extends Shell
 
             return true;
         }
+
         return false;
     }
 

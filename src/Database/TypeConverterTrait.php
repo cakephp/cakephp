@@ -37,6 +37,7 @@ trait TypeConverterTrait
             $value = $type->toDatabase($value, $this->_driver);
             $type = $type->toStatement($value, $this->_driver);
         }
+
         return [$value, $type];
     }
 
@@ -57,6 +58,7 @@ trait TypeConverterTrait
             $types = array_intersect_key($types, $positions);
             $types = array_combine($positions, $types);
         }
+
         return $types;
     }
 }

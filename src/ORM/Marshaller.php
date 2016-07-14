@@ -79,6 +79,7 @@ class Marshaller
                 $map[$assoc->property()] = ['association' => $assoc] + $nested + ['associated' => []];
             }
         }
+
         return $map;
     }
 
@@ -161,6 +162,7 @@ class Marshaller
         if (!isset($options['fieldList'])) {
             $entity->set($properties);
             $entity->errors($errors);
+
             return $entity;
         }
 
@@ -171,6 +173,7 @@ class Marshaller
         }
 
         $entity->errors($errors);
+
         return $entity;
     }
 
@@ -260,6 +263,7 @@ class Marshaller
         if ($assoc->type() === Association::MANY_TO_MANY) {
             return $marshaller->_belongsToMany($assoc, $value, (array)$options);
         }
+
         return $marshaller->many($value, (array)$options);
     }
 
@@ -292,6 +296,7 @@ class Marshaller
             }
             $output[] = $this->one($record, $options);
         }
+
         return $output;
     }
 
@@ -386,6 +391,7 @@ class Marshaller
                 $record->set('_joinData', $joinData);
             }
         }
+
         return $records;
     }
 
@@ -527,6 +533,7 @@ class Marshaller
                     $entity->dirty($field, $properties[$field]->dirty());
                 }
             }
+
             return $entity;
         }
 
@@ -540,6 +547,7 @@ class Marshaller
         }
 
         $entity->errors($errors);
+
         return $entity;
     }
 
@@ -583,6 +591,7 @@ class Marshaller
                 foreach ($primary as $key) {
                     $keys[] = isset($el[$key]) ? $el[$key] : '';
                 }
+
                 return implode(';', $keys);
             })
             ->map(function ($element, $key) {
@@ -617,6 +626,7 @@ class Marshaller
             })
             ->reduce(function ($query, $keys) use ($primary) {
                 $fields = array_map([$this->_table, 'aliasField'], $primary);
+
                 return $query->orWhere($query->newExpr()->and_(array_combine($fields, $keys)));
             }, $this->_table->find());
 
@@ -664,6 +674,7 @@ class Marshaller
         if ($assoc->type() === Association::MANY_TO_MANY) {
             return $marshaller->_mergeBelongsToMany($original, $assoc, $value, (array)$options);
         }
+
         return $marshaller->mergeMany($original, $value, (array)$options);
     }
 

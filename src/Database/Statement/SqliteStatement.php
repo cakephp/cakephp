@@ -53,8 +53,10 @@ class SqliteStatement extends StatementDecorator
             $changes->execute();
             $count = $changes->fetch()[0];
             $changes->closeCursor();
+
             return (int)$count;
         }
+
         return parent::rowCount();
     }
 }

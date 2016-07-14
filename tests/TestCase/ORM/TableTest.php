@@ -345,6 +345,7 @@ class TableTest extends TestCase
             ->with($schema)
             ->will($this->returnCallback(function ($schema) {
                 $schema->columnType('username', 'integer');
+
                 return $schema;
             }));
         $result = $table->schema();
@@ -2176,6 +2177,7 @@ class TableTest extends TestCase
         ]);
         $listener = function ($e, $entity) {
             $e->stopPropagation();
+
             return $entity;
         };
         $table->eventManager()->on('Model.beforeSave', $listener);

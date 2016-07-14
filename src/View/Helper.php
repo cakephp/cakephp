@@ -151,6 +151,7 @@ class Helper implements EventListenerInterface
         if (isset($this->_helperMap[$name]) && !isset($this->{$name})) {
             $config = ['enabled' => false] + (array)$this->_helperMap[$name]['config'];
             $this->{$name} = $this->_View->loadHelper($this->_helperMap[$name]['class'], $config);
+
             return $this->{$name};
         }
     }
@@ -173,6 +174,7 @@ class Helper implements EventListenerInterface
         if ($escape) {
             $confirm = h($confirm);
         }
+
         return $confirm;
     }
 
@@ -191,6 +193,7 @@ class Helper implements EventListenerInterface
         } else {
             $options[$key] = $class;
         }
+
         return $options;
     }
 
@@ -221,6 +224,7 @@ class Helper implements EventListenerInterface
                 $events[$event] = $method;
             }
         }
+
         return $events;
     }
 

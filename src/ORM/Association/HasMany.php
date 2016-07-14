@@ -111,6 +111,7 @@ class HasMany extends Association
             $msg = sprintf('Invalid save strategy "%s"', $strategy);
             throw new InvalidArgumentException($msg);
         }
+
         return $this->_saveStrategy = $strategy;
     }
 
@@ -180,11 +181,13 @@ class HasMany extends Association
             if (!empty($options['atomic'])) {
                 $original[$k]->errors($targetEntity->errors());
                 $entity->set($this->property(), $original);
+
                 return false;
             }
         }
 
         $entity->set($this->property(), $targetEntities);
+
         return $entity;
     }
 
@@ -379,6 +382,7 @@ class HasMany extends Association
             $sourceEntity = $result;
         }
         $this->saveStrategy($saveStrategy);
+
         return $ok;
     }
 
@@ -450,15 +454,18 @@ class HasMany extends Association
                 foreach ($query as $assoc) {
                     $ok = $ok && $target->delete($assoc, $options);
                 }
+
                 return $ok;
             }
 
             $target->deleteAll($conditions);
+
             return true;
         }
 
         $updateFields = array_fill_keys($foreignKey, null);
         $target->updateAll($updateFields, $conditions);
+
         return true;
     }
 

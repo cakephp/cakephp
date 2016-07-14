@@ -141,6 +141,7 @@ class ExceptionRenderer
         if (empty($controller)) {
             $controller = new Controller($request, $response);
         }
+
         return $controller;
     }
 
@@ -189,6 +190,7 @@ class ExceptionRenderer
         if ($unwrapped instanceof CakeException && $isDebug) {
             $this->controller->set($unwrapped->getAttributes());
         }
+
         return $this->_outputMessage($template);
     }
 
@@ -207,6 +209,7 @@ class ExceptionRenderer
             $this->controller->response->body($result);
             $result = $this->controller->response;
         }
+
         return $result;
     }
     /**
@@ -225,6 +228,7 @@ class ExceptionRenderer
         }
 
         $method = Inflector::variable($baseClass) ?: 'error500';
+
         return $this->method = $method;
     }
 
@@ -271,6 +275,7 @@ class ExceptionRenderer
             if ($code < 500) {
                 $template = 'error400';
             }
+
             return $this->template = $template;
         }
 
@@ -279,6 +284,7 @@ class ExceptionRenderer
             if ($code < 500) {
                 $template = 'error400';
             }
+
             return $this->template = $template;
         }
 
@@ -305,6 +311,7 @@ class ExceptionRenderer
         if ($errorCode >= 400 && $errorCode < 506) {
             $code = $errorCode;
         }
+
         return $code;
     }
 
@@ -318,18 +325,21 @@ class ExceptionRenderer
     {
         try {
             $this->controller->render($template);
+
             return $this->_shutdown();
         } catch (MissingTemplateException $e) {
             $attributes = $e->getAttributes();
             if (isset($attributes['file']) && strpos($attributes['file'], 'error500') !== false) {
                 return $this->_outputMessageSafe('error500');
             }
+
             return $this->_outputMessage('error500');
         } catch (MissingPluginException $e) {
             $attributes = $e->getAttributes();
             if (isset($attributes['plugin']) && $attributes['plugin'] === $this->controller->plugin) {
                 $this->controller->plugin = null;
             }
+
             return $this->_outputMessageSafe('error500');
         } catch (Exception $e) {
             return $this->_outputMessageSafe('error500');
@@ -355,6 +365,7 @@ class ExceptionRenderer
 
         $this->controller->response->body($view->render($template, 'error'));
         $this->controller->response->type('html');
+
         return $this->controller->response;
     }
 
@@ -374,6 +385,7 @@ class ExceptionRenderer
             'response' => $this->controller->response
         ];
         $result = $dispatcher->dispatchEvent('Dispatcher.afterDispatch', $args);
+
         return $result->data['response'];
     }
 }

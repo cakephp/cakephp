@@ -74,6 +74,7 @@ class CommandTask extends Shell
         foreach ($shells as $shell) {
             $shellList[$type][] = Inflector::underscore(str_replace('Shell', '', $shell));
         }
+
         return $shellList;
     }
 
@@ -98,6 +99,7 @@ class CommandTask extends Shell
             }
             $shells[] = substr($file, 0, -4);
         }
+
         return $shells;
     }
 
@@ -252,6 +254,7 @@ class CommandTask extends Shell
                 $options[] = "-$short";
             }
         }
+
         return $options;
     }
 }

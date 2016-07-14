@@ -74,6 +74,7 @@ class ValidatorTest extends TestCase
         $inner = new Validator();
         $inner->add('username', 'not-blank', ['rule' => function () use ($inner, $validator) {
             $this->assertSame($validator->providers(), $inner->providers(), 'Providers should match');
+
             return false;
         }]);
         $validator->addNested('user', $inner);
@@ -110,6 +111,7 @@ class ValidatorTest extends TestCase
         $inner = new Validator();
         $inner->add('comment', 'not-blank', ['rule' => function () use ($inner, $validator) {
             $this->assertSame($validator->providers(), $inner->providers(), 'Providers should match');
+
             return false;
         }]);
         $validator->addNestedMany('comments', $inner);
@@ -205,6 +207,7 @@ class ValidatorTest extends TestCase
             $this->assertEquals([], $context['providers']);
             $this->assertEquals('title', $context['field']);
             $this->assertTrue($context['newRecord']);
+
             return $require;
         });
         $this->assertTrue($validator->isPresenceRequired('title', true));
@@ -558,6 +561,7 @@ class ValidatorTest extends TestCase
             $this->assertEquals([], $context['data']);
             $this->assertEquals([], $context['providers']);
             $this->assertTrue($context['newRecord']);
+
             return $allow;
         });
         $this->assertTrue($validator->isEmptyAllowed('title', true));
@@ -579,6 +583,7 @@ class ValidatorTest extends TestCase
             $this->assertEquals([], $context['data']);
             $this->assertEquals([], $context['providers']);
             $this->assertFalse($context['newRecord']);
+
             return $prevent;
         });
         $this->assertFalse($validator->isEmptyAllowed('title', false));
@@ -778,6 +783,7 @@ class ValidatorTest extends TestCase
                     'field' => 'title'
                 ];
                 $this->assertEquals($expected, $context);
+
                 return "That ain't cool, yo";
             }));
 
@@ -825,6 +831,7 @@ class ValidatorTest extends TestCase
                     'field' => 'title'
                 ];
                 $this->assertEquals($expected, $context);
+
                 return "That ain't cool, yo";
             }));
         $validator->provider('thing', $thing);
@@ -846,6 +853,7 @@ class ValidatorTest extends TestCase
         $validator->add('name', 'myRule', [
             'rule' => function ($data, $provider) {
                 $this->assertEquals('foo', $data);
+
                 return 'You fail';
             }
         ]);

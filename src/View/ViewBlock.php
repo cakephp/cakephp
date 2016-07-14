@@ -105,6 +105,7 @@ class ViewBlock
         if ($this->_discardActiveBufferOnEnd) {
             $this->_discardActiveBufferOnEnd = false;
             ob_end_clean();
+
             return;
         }
         if (!empty($this->_active)) {
@@ -139,6 +140,7 @@ class ViewBlock
     {
         if ($value === null) {
             $this->start($name, $mode);
+
             return;
         }
 
@@ -178,6 +180,7 @@ class ViewBlock
         if (!isset($this->_blocks[$name])) {
             return $default;
         }
+
         return $this->_blocks[$name];
     }
 
@@ -210,6 +213,7 @@ class ViewBlock
     public function active()
     {
         end($this->_active);
+
         return key($this->_active);
     }
 

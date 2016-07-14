@@ -57,6 +57,7 @@ trait ViewVarsTrait
         if (!isset($this->_viewBuilder)) {
             $this->_viewBuilder = new ViewBuilder();
         }
+
         return $this->_viewBuilder;
     }
 
@@ -110,6 +111,7 @@ trait ViewVarsTrait
             }
         }
         $builder->options($viewOptions);
+
         return $builder->build(
             $this->viewVars,
             isset($this->request) ? $this->request : null,
@@ -138,6 +140,7 @@ trait ViewVarsTrait
             $data = [$name => $value];
         }
         $this->viewVars = $data + $this->viewVars;
+
         return $this;
     }
 

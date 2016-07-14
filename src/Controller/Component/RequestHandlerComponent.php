@@ -238,6 +238,7 @@ class RequestHandlerComponent extends Component
             if (isset($xml->data)) {
                 return Xml::toArray($xml->data);
             }
+
             return Xml::toArray($xml);
         } catch (XmlException $e) {
             return [];
@@ -280,6 +281,7 @@ class RequestHandlerComponent extends Component
             'cookies' => $request->cookies
         ]));
         $response->statusCode(200);
+
         return $response;
     }
 
@@ -365,6 +367,7 @@ class RequestHandlerComponent extends Component
     public function isMobile()
     {
         $request = $this->request;
+
         return $request->is('mobile') || $this->accepts('wap');
     }
 
@@ -420,11 +423,13 @@ class RequestHandlerComponent extends Component
                     return true;
                 }
             }
+
             return false;
         }
         if (is_string($type)) {
             return in_array($this->mapAlias($type), $accepted);
         }
+
         return false;
     }
 
@@ -452,6 +457,7 @@ class RequestHandlerComponent extends Component
                     return $t;
                 }
             }
+
             return false;
         }
 
@@ -496,6 +502,7 @@ class RequestHandlerComponent extends Component
             if (empty($this->ext) && !empty($accepts)) {
                 return $accepts[0];
             }
+
             return $this->ext;
         }
 
@@ -505,6 +512,7 @@ class RequestHandlerComponent extends Component
             if (!empty($this->ext)) {
                 return in_array($this->ext, $types);
             }
+
             return in_array($types[0], $accepts);
         }
 
@@ -512,6 +520,7 @@ class RequestHandlerComponent extends Component
         if (empty($intersect)) {
             return false;
         }
+
         return $intersect[0];
     }
 
@@ -640,6 +649,7 @@ class RequestHandlerComponent extends Component
         if (!empty($options['attachment'])) {
             $response->download($options['attachment']);
         }
+
         return true;
     }
 
@@ -652,6 +662,7 @@ class RequestHandlerComponent extends Component
     public function responseType()
     {
         $response = $this->response;
+
         return $response->mapType($response->type());
     }
 
@@ -674,8 +685,10 @@ class RequestHandlerComponent extends Component
             if (is_array($type)) {
                 return $type[0];
             }
+
             return $type;
         }
+
         return null;
     }
 
@@ -725,6 +738,7 @@ class RequestHandlerComponent extends Component
         } elseif (is_array($type)) {
             $this->config('viewClassMap', $type, true);
         }
+
         return $this->config('viewClassMap');
     }
 }

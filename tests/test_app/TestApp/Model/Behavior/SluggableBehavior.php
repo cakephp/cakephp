@@ -30,12 +30,14 @@ class SluggableBehavior extends Behavior
     public function beforeFind(Event $event, Query $query, $options = [])
     {
         $query->where(['slug' => 'test']);
+
         return $query;
     }
 
     public function findNoSlug(Query $query, $options = [])
     {
         $query->where(['slug' => null]);
+
         return $query;
     }
 

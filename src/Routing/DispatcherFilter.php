@@ -173,6 +173,7 @@ class DispatcherFilter implements EventListenerInterface
             $response = $event->data['response'];
             $pass = $this->_config['when']($request, $response);
         }
+
         return $pass;
     }
 

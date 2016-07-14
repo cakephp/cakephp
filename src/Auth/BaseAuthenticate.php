@@ -176,6 +176,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
         }
 
         $passwordHasher = $this->_config['passwordHasher'];
+
         return $this->_passwordHasher = PasswordHasherFactory::build($passwordHasher);
     }
 

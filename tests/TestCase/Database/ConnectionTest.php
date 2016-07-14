@@ -53,6 +53,7 @@ class ConnectionTest extends TestCase
         $driver->expects($this->once())
             ->method('enabled')
             ->will($this->returnValue(true));
+
         return $driver;
     }
 
@@ -909,6 +910,7 @@ class ConnectionTest extends TestCase
         $connection->expects($this->at(1))->method('commit');
         $result = $connection->transactional(function ($conn) use ($connection) {
             $this->assertSame($connection, $conn);
+
             return 'thing';
         });
         $this->assertEquals('thing', $result);
@@ -932,6 +934,7 @@ class ConnectionTest extends TestCase
         $connection->expects($this->never())->method('commit');
         $result = $connection->transactional(function ($conn) use ($connection) {
             $this->assertSame($connection, $conn);
+
             return false;
         });
         $this->assertFalse($result);

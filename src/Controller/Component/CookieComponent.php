@@ -166,12 +166,14 @@ class CookieComponent extends Component
         if ($option === null) {
             $default = $this->_config;
             $local = isset($this->_keyConfig[$keyname]) ? $this->_keyConfig[$keyname] : [];
+
             return $local + $default;
         }
         if (!is_array($option)) {
             $option = [$option => $value];
         }
         $this->_keyConfig[$keyname] = $option;
+
         return null;
     }
 
@@ -227,6 +229,7 @@ class CookieComponent extends Component
     public function read($key = null)
     {
         $this->_load($key);
+
         return Hash::get($this->_values, $key);
     }
 
@@ -266,6 +269,7 @@ class CookieComponent extends Component
         if (empty($key)) {
             return false;
         }
+
         return $this->read($key) !== null;
     }
 

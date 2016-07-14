@@ -386,6 +386,7 @@ class FixtureManager
                 $dbs[$fixture->connection()][$f] = $fixture;
             }
         }
+
         return $dbs;
     }
 

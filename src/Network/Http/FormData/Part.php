@@ -215,6 +215,7 @@ class Part
         }
         $out .= "\r\n";
         $out .= (string)$this->_value;
+
         return $out;
     }
 }

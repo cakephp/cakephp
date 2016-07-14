@@ -109,6 +109,7 @@ class ExistsIn
             $primary,
             $entity->extract($this->_fields)
         );
+
         return $target->exists($conditions);
     }
 
@@ -128,6 +129,7 @@ class ExistsIn
                 $nulls++;
             }
         }
+
         return $nulls === count($this->_fields);
     }
 }

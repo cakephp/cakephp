@@ -67,6 +67,7 @@ class Dispatcher
                 return $beforeEvent->result->body();
             }
             $beforeEvent->result->send();
+
             return null;
         }
 

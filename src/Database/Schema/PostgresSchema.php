@@ -29,6 +29,7 @@ class PostgresSchema extends BaseSchema
     {
         $sql = 'SELECT table_name as name FROM information_schema.tables WHERE table_schema = ? ORDER BY name';
         $schema = empty($config['schema']) ? 'public' : $config['schema'];
+
         return [$sql, [$schema]];
     }
 
@@ -56,6 +57,7 @@ class PostgresSchema extends BaseSchema
         ORDER BY ordinal_position';
 
         $schema = empty($config['schema']) ? 'public' : $config['schema'];
+
         return [$sql, [$tableName, $schema, $config['database']]];
     }
 
@@ -130,6 +132,7 @@ class PostgresSchema extends BaseSchema
         ) {
             return ['type' => 'decimal', 'length' => null];
         }
+
         return ['type' => 'text', 'length' => null];
     }
 
@@ -212,6 +215,7 @@ class PostgresSchema extends BaseSchema
         if (!empty($config['schema'])) {
             $schema = $config['schema'];
         }
+
         return [$sql, [$schema, $tableName]];
     }
 
@@ -230,6 +234,7 @@ class PostgresSchema extends BaseSchema
         }
         if ($type === Table::CONSTRAINT_PRIMARY || $type === Table::CONSTRAINT_UNIQUE) {
             $this->_convertConstraint($table, $name, $type, $row);
+
             return;
         }
         $index = $table->index($name);
@@ -289,6 +294,7 @@ class PostgresSchema extends BaseSchema
         ORDER BY name, a.attnum, ab.attnum DESC";
 
         $schema = empty($config['schema']) ? 'public' : $config['schema'];
+
         return [$sql, [$schema, $tableName]];
     }
 
@@ -321,6 +327,7 @@ class PostgresSchema extends BaseSchema
         if ($clause === 'c') {
             return Table::ACTION_CASCADE;
         }
+
         return Table::ACTION_SET_NULL;
     }
 
@@ -401,6 +408,7 @@ class PostgresSchema extends BaseSchema
             }
             $out .= ' DEFAULT ' . $this->_driver->schemaValue($defaultValue);
         }
+
         return $out;
     }
 
@@ -453,6 +461,7 @@ class PostgresSchema extends BaseSchema
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
         );
+
         return sprintf(
             'CREATE INDEX %s ON %s (%s)',
             $this->_driver->quoteIdentifier($name),
@@ -474,6 +483,7 @@ class PostgresSchema extends BaseSchema
         if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
             $out .= ' UNIQUE';
         }
+
         return $this->_keySql($out, $data);
     }
 
@@ -500,6 +510,7 @@ class PostgresSchema extends BaseSchema
                 $this->_foreignOnClause($data['delete'])
             );
         }
+
         return $prefix . ' (' . implode(', ', $columns) . ')';
     }
 
@@ -528,6 +539,7 @@ class PostgresSchema extends BaseSchema
                 );
             }
         }
+
         return $out;
     }
 
@@ -537,6 +549,7 @@ class PostgresSchema extends BaseSchema
     public function truncateTableSql(Table $table)
     {
         $name = $this->_driver->quoteIdentifier($table->name());
+
         return [
             sprintf('TRUNCATE %s RESTART IDENTITY CASCADE', $name)
         ];
@@ -554,6 +567,7 @@ class PostgresSchema extends BaseSchema
             'DROP TABLE %s CASCADE',
             $this->_driver->quoteIdentifier($table->name())
         );
+
         return [$sql];
     }
 }

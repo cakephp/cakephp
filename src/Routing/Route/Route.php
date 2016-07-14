@@ -150,6 +150,7 @@ class Route
             return $this->_compiledRoute;
         }
         $this->_writeRoute();
+
         return $this->_compiledRoute;
     }
 
@@ -166,6 +167,7 @@ class Route
         if (empty($this->template) || ($this->template === '/')) {
             $this->_compiledRoute = '#^/*$#';
             $this->keys = [];
+
             return;
         }
         $route = $this->template;
@@ -251,6 +253,7 @@ class Route
             }
             $name .= $value . $glue;
         }
+
         return $this->_name = strtolower($name);
     }
 
@@ -327,6 +330,7 @@ class Route
         }
 
         $route['_matchedRoute'] = $this->template;
+
         return $route;
     }
 
@@ -351,9 +355,11 @@ class Route
         foreach ($this->_extensions as $name) {
             if (strtolower($name) === $ext) {
                 $url = substr($url, 0, ($len + 1) * -1);
+
                 return [$url, $ext];
             }
         }
+
         return [$url, null];
     }
 
@@ -378,6 +384,7 @@ class Route
             }
             $pass[] = rawurldecode($param);
         }
+
         return $pass;
     }
 
@@ -397,6 +404,7 @@ class Route
                 $url[$persistKey] = $params[$persistKey];
             }
         }
+
         return $url;
     }
 
@@ -532,6 +540,7 @@ class Route
             }
         }
         $url += $hostOptions;
+
         return $this->_writeUrl($url, $pass, $query);
     }
 
@@ -555,6 +564,7 @@ class Route
         if (!in_array(strtoupper($url['_method']), (array)$this->defaults['_method'])) {
             return false;
         }
+
         return true;
     }
 
@@ -623,6 +633,7 @@ class Route
         if (!empty($query)) {
             $out .= rtrim('?' . http_build_query($query), '?');
         }
+
         return $out;
     }
 
@@ -640,8 +651,10 @@ class Route
         $star = strpos($this->template, '*');
         if ($star !== false) {
             $path = rtrim(substr($this->template, 0, $star), '/');
+
             return $path === '' ? '/' : $path;
         }
+
         return $this->template;
     }
 
@@ -661,6 +674,7 @@ class Route
         foreach ($fields as $field => $value) {
             $obj->$field = $value;
         }
+
         return $obj;
     }
 }

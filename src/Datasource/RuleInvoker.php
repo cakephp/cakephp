@@ -80,6 +80,7 @@ class RuleInvoker
     public function setOptions(array $options)
     {
         $this->options = $options + $this->options;
+
         return $this;
     }
 
@@ -96,6 +97,7 @@ class RuleInvoker
         if ($name) {
             $this->name = $name;
         }
+
         return $this;
     }
 

@@ -134,6 +134,7 @@ class DateTimeWidgetTest extends TestCase
     public static function selectedValuesProvider()
     {
         $date = new \DateTime('2014-01-20 12:30:45');
+
         return [
             'DateTime' => [$date],
             'string' => [$date->format('Y-m-d H:i:s')],

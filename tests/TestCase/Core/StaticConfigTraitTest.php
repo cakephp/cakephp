@@ -46,6 +46,7 @@ class TestConnectionManagerStaticConfig
         }
 
         unset($config['path']);
+
         return $config;
     }
 

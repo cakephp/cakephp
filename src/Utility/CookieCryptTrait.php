@@ -69,6 +69,7 @@ trait CookieCryptTrait
         if ($encrypt === 'aes') {
             $cipher = Security::encrypt($value, $key);
         }
+
         return $prefix . base64_encode($cipher);
     }
 
@@ -108,6 +109,7 @@ trait CookieCryptTrait
         foreach ($values as $name => $value) {
             $decrypted[$name] = $this->_decode($value, $mode, $key);
         }
+
         return $decrypted;
     }
 
@@ -136,6 +138,7 @@ trait CookieCryptTrait
         if ($encrypt === 'aes') {
             $value = Security::decrypt($value, $key);
         }
+
         return $this->_explode($value);
     }
 
@@ -162,6 +165,7 @@ trait CookieCryptTrait
         $first = substr($string, 0, 1);
         if ($first === '{' || $first === '[') {
             $ret = json_decode($string, true);
+
             return ($ret !== null) ? $ret : $string;
         }
         $array = [];
@@ -172,6 +176,7 @@ trait CookieCryptTrait
             }
             $array[$key[0]] = $key[1];
         }
+
         return $array;
     }
 }
