@@ -86,6 +86,7 @@ class FormContext implements ContextInterface
         if ($val !== null) {
             return $val;
         }
+
         return $options['default'];
     }
 

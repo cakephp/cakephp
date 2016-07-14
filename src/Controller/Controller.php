@@ -663,8 +663,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 if ($url[0] !== '/') {
                     $url = '/' . $url;
                 }
+
                 return $url;
             }
+
             return $url;
         }
 

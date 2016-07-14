@@ -336,6 +336,7 @@ class BelongsToMany extends Association
     {
         if (!empty($options['negateMatch'])) {
             $this->_appendNotMatching($query, $options);
+
             return;
         }
 

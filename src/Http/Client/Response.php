@@ -269,6 +269,7 @@ class Response extends Message implements ResponseInterface
             static::STATUS_CREATED,
             static::STATUS_ACCEPTED
         ];
+
         return in_array($this->code, $codes);
     }
 
@@ -285,6 +286,7 @@ class Response extends Message implements ResponseInterface
             static::STATUS_SEE_OTHER,
             static::STATUS_TEMPORARY_REDIRECT,
         ];
+
         return (
             in_array($this->code, $codes) &&
             $this->getHeaderLine('Location')
@@ -324,6 +326,7 @@ class Response extends Message implements ResponseInterface
         $new = clone $this;
         $new->code = $code;
         $new->reasonPhrase = $reasonPhrase;
+
         return $new;
     }
 
@@ -363,6 +366,7 @@ class Response extends Message implements ResponseInterface
         if (empty($matches[1])) {
             return null;
         }
+
         return $matches[1];
     }
 
@@ -386,6 +390,7 @@ class Response extends Message implements ResponseInterface
         if (count($header) === 1) {
             return $header[0];
         }
+
         return $header;
     }
 
@@ -411,6 +416,7 @@ class Response extends Message implements ResponseInterface
         if ($all) {
             return $this->getCookieData($name);
         }
+
         return $this->getCookie($name);
     }
 
@@ -435,6 +441,7 @@ class Response extends Message implements ResponseInterface
         if (!isset($this->_cookies[$name])) {
             return null;
         }
+
         return $this->_cookies[$name]['value'];
     }
 
@@ -449,6 +456,7 @@ class Response extends Message implements ResponseInterface
         if (!isset($this->_cookies[$name])) {
             return null;
         }
+
         return $this->_cookies[$name];
     }
 
@@ -486,6 +494,7 @@ class Response extends Message implements ResponseInterface
         if ($parser) {
             return $parser($stream->getContents());
         }
+
         return $stream->getContents();
     }
 
@@ -499,6 +508,7 @@ class Response extends Message implements ResponseInterface
         if (!empty($this->_json)) {
             return $this->_json;
         }
+
         return $this->_json = json_decode($this->_getBody(), true);
     }
 
@@ -516,8 +526,10 @@ class Response extends Message implements ResponseInterface
         $data = simplexml_load_string($this->_getBody());
         if ($data) {
             $this->_xml = $data;
+
             return $this->_xml;
         }
+
         return null;
     }
 
@@ -532,6 +544,7 @@ class Response extends Message implements ResponseInterface
         foreach ($this->headers as $key => $values) {
             $out[$key] = implode(',', $values);
         }
+
         return $out;
     }
 
@@ -543,6 +556,7 @@ class Response extends Message implements ResponseInterface
     protected function _getBody()
     {
         $this->stream->rewind();
+
         return $this->stream->getContents();
     }
 
@@ -562,6 +576,7 @@ class Response extends Message implements ResponseInterface
         if (substr($key, 0, 4) === '_get') {
             return $this->{$key}();
         }
+
         return $this->{$key};
     }
 
@@ -579,8 +594,10 @@ class Response extends Message implements ResponseInterface
         $key = $this->_exposedProperties[$name];
         if (substr($key, 0, 4) === '_get') {
             $val = $this->{$key}();
+
             return $val !== null;
         }
+
         return isset($this->$key);
     }
 }

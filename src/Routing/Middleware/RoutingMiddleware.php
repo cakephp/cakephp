@@ -48,6 +48,7 @@ class RoutingMiddleware
                 $response->getHeaders()
             );
         }
+
         return $next($request, $response);
     }
 }

@@ -64,6 +64,7 @@ class ConditionDecoratorTest extends TestCase
     {
         $callable = function (Event $event) {
             $event->data['counter']++;
+
             return $event;
         };
 
@@ -75,6 +76,7 @@ class ConditionDecoratorTest extends TestCase
 
         $listener2 = function (Event $event) {
             $event->data['counter']++;
+
             return $event;
         };
 

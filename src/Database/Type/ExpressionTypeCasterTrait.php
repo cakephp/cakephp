@@ -74,6 +74,7 @@ trait ExpressionTypeCasterTrait
                 $result[$k] = $object;
             }
         }
+
         return $result;
     }
 }

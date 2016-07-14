@@ -36,8 +36,10 @@ class Application extends BaseApplication
         $middleware->push(new RoutingMiddleware());
         $middleware->push(function ($req, $res, $next) {
             $res = $next($req, $res);
+
             return $res->withHeader('X-Middleware', 'true');
         });
+
         return $middleware;
     }
 }

@@ -53,6 +53,7 @@ class FactoryLocatorTest extends TestCase
         FactoryLocator::add('Test', function ($name) {
             $mock = new \StdClass();
             $mock->name = $name;
+
             return $mock;
         });
 
@@ -109,6 +110,7 @@ class FactoryLocatorTest extends TestCase
         $stub->modelFactory('Table', function ($name) {
             $mock = new \StdClass();
             $mock->name = $name;
+
             return $mock;
         });
 
@@ -131,6 +133,7 @@ class FactoryLocatorTest extends TestCase
         FactoryLocator::add('Test', function ($name) {
             $mock = new \StdClass();
             $mock->name = $name;
+
             return $mock;
         });
         $stub->modelType('Test');

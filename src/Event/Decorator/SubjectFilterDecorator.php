@@ -38,6 +38,7 @@ class SubjectFilterDecorator extends AbstractDecorator
         if (!$this->canTrigger($args[0])) {
             return false;
         }
+
         return $this->_call($args);
     }
 
@@ -56,6 +57,7 @@ class SubjectFilterDecorator extends AbstractDecorator
         if (is_string($this->_options['allowedSubject'])) {
             $this->_options['allowedSubject'] = [$this->_options['allowedSubject']];
         }
+
         return in_array($class, $this->_options['allowedSubject']);
     }
 }

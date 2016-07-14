@@ -87,6 +87,7 @@ class Server
                 is_object($response) ? get_class($response) : $response
             ));
         }
+
         return $response;
     }
 
@@ -115,6 +116,7 @@ class Server
     public function setApp(BaseApplication $app)
     {
         $this->app = $app;
+
         return $this;
     }
 
@@ -137,6 +139,7 @@ class Server
     public function setRunner(Runner $runner)
     {
         $this->runner = $runner;
+
         return $this;
     }
 }

@@ -53,6 +53,7 @@ abstract class ServerRequestFactory extends BaseFactory
         if ($base) {
             $request = static::updatePath($base, $request);
         }
+
         return $request;
     }
 
@@ -80,6 +81,7 @@ abstract class ServerRequestFactory extends BaseFactory
         ) {
             $path = '/';
         }
+
         return $request->withUri($uri->withPath($path));
     }
 
@@ -121,6 +123,7 @@ abstract class ServerRequestFactory extends BaseFactory
                 $base = '';
             }
             $base = implode('/', array_map('rawurlencode', explode('/', $base)));
+
             return [$base, $base . '/'];
         }
 
@@ -140,6 +143,7 @@ abstract class ServerRequestFactory extends BaseFactory
                 $webrootDir .= $webroot . '/';
             }
         }
+
         return [$base . $file, $webrootDir];
     }
 }

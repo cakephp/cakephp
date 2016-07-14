@@ -83,6 +83,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             $mock->expects($this->once())
                 ->method('render')
                 ->will($this->returnValue($cakeResponse));
+
             return $mock;
         };
         $middleware = new ErrorHandlerMiddleware($factory);
@@ -132,6 +133,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             $mock->expects($this->once())
                 ->method('render')
                 ->will($this->throwException(new LogicException('Rendering failed')));
+
             return $mock;
         };
         $middleware = new ErrorHandlerMiddleware($factory);

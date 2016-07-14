@@ -81,6 +81,7 @@ class RequestTransformer
             '_ext' => null,
             'pass' => []
         ];
+
         return $params;
     }
 
@@ -123,6 +124,7 @@ class RequestTransformer
                 $data = Hash::insert($data, $newPath, static::convertFile($file));
             }
         }
+
         return $data;
     }
 

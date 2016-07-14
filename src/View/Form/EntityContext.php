@@ -249,6 +249,7 @@ class EntityContext implements ContextInterface
             ) {
                 return $options['default'];
             }
+
             return $this->_schemaDefault($part, $entity);
         }
         if (is_array($entity)) {
@@ -277,6 +278,7 @@ class EntityContext implements ContextInterface
         if (!array_key_exists($field, $defaults)) {
             return null;
         }
+
         return $defaults[$field];
     }
 

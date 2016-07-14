@@ -96,6 +96,7 @@ TEXT;
             }
         }
         printf($template, $lineInfo, $var);
+
         return $originalVar;
     }
 

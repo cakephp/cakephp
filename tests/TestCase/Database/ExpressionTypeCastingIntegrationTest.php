@@ -58,6 +58,7 @@ class OrderedUuidType extends Type implements ExpressionTypeInterface
                 ['string', 'integer', 'integer']
             );
         };
+
         return new FunctionExpression(
             'CONCAT',
             [$substr(15, 4), $substr(10, 4), $substr(1, 8), $substr(20, 4), $substr(25)]

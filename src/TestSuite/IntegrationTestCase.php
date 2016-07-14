@@ -447,6 +447,7 @@ abstract class IntegrationTestCase extends TestCase
         if ($this->_useHttpServer) {
             return new MiddlewareDispatcher($this, $this->_appClass, $this->_appArgs);
         }
+
         return new LegacyRequestDispatcher($this);
     }
 

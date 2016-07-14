@@ -72,6 +72,7 @@ class RunnerTest extends TestCase
     {
         $one = function ($req, $res, $next) {
             $res = $this->getMockBuilder('Psr\Http\Message\ResponseInterface')->getMock();
+
             return $next($req, $res);
         };
         $this->stack->push($one);
@@ -95,14 +96,17 @@ class RunnerTest extends TestCase
         $log = [];
         $one = function ($req, $res, $next) use (&$log) {
             $log[] = 'one';
+
             return $next($req, $res);
         };
         $two = function ($req, $res, $next) use (&$log) {
             $log[] = 'two';
+
             return $next($req, $res);
         };
         $three = function ($req, $res, $next) use (&$log) {
             $log[] = 'three';
+
             return $next($req, $res);
         };
         $this->stack->push($one)->push($two)->push($three);

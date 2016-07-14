@@ -187,6 +187,7 @@ class ServerTest extends TestCase
             $this->assertInstanceOf('Cake\Http\MiddlewareStack', $middleware);
             $middleware->push(function ($req, $res, $next) {
                 $this->called = true;
+
                 return $next($req, $res);
             });
             $this->middleware = $middleware;

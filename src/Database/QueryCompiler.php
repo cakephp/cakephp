@@ -356,6 +356,7 @@ class QueryCompiler
         if ($parts === []) {
             return '';
         }
+
         return ' ' . implode(' ', $this->_stringifyExpressions($parts, $generator, false));
     }
 

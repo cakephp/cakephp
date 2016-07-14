@@ -74,6 +74,7 @@ class Request extends Message implements RequestInterface
             throw new Exception('Invalid method type');
         }
         $this->method = $method;
+
         return $this;
     }
 
@@ -93,6 +94,7 @@ class Request extends Message implements RequestInterface
             return '' . $this->getUri();
         }
         $this->uri = $this->createUri($url);
+
         return $this;
     }
 
@@ -135,6 +137,7 @@ class Request extends Message implements RequestInterface
             if ($val === '') {
                 return null;
             }
+
             return $val;
         }
 
@@ -142,6 +145,7 @@ class Request extends Message implements RequestInterface
             $name = [$name => $value];
         }
         $this->addHeaders($name);
+
         return $this;
     }
 
@@ -196,6 +200,7 @@ class Request extends Message implements RequestInterface
         foreach ($name as $key => $val) {
             $this->_cookies[$key] = $val;
         }
+
         return $this;
     }
 
@@ -216,6 +221,7 @@ class Request extends Message implements RequestInterface
         }
 
         $this->protocol = $version;
+
         return $this;
     }
 
@@ -232,6 +238,7 @@ class Request extends Message implements RequestInterface
     {
         if ($body === null) {
             $body = $this->getBody();
+
             return $body ? $body->__toString() : '';
         }
         if (is_array($body)) {
@@ -243,6 +250,7 @@ class Request extends Message implements RequestInterface
         $stream = new Stream('php://memory', 'rw');
         $stream->write($body);
         $this->stream = $stream;
+
         return $this;
     }
 }

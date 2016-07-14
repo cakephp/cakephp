@@ -67,6 +67,7 @@ class ErrorHandlerMiddleware
         $renderer = $this->getRenderer($exception);
         try {
             $response = $renderer->render();
+
             return ResponseTransformer::toPsr($response);
         } catch (\Exception $e) {
             $message = sprintf(
@@ -82,6 +83,7 @@ class ErrorHandlerMiddleware
             $response = $response->withStatus(500)
                 ->withBody($body);
         }
+
         return $response;
     }
 
@@ -99,9 +101,11 @@ class ErrorHandlerMiddleware
             if (!$class) {
                 throw new \Exception("The '{$this->renderer}' renderer class could not be found.");
             }
+
             return new $class($exception);
         }
         $factory = $this->renderer;
+
         return $factory($exception);
     }
 }

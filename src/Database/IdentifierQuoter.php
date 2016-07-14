@@ -97,6 +97,7 @@ class IdentifierQuoter
         }
         if ($expression instanceof CrossSchemaTableExpression) {
             $this->_quoteCrossSchemaTableExpression($expression);
+
             return;
         }
     }

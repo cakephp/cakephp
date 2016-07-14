@@ -697,6 +697,7 @@ trait CollectionTrait
             }
             $result[] = array_column($arrayValue, $column);
         }
+
         return new Collection($result);
     }
 }

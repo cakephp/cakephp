@@ -1315,6 +1315,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($search instanceof Query) {
             return $search;
         }
+
         return $this->find()->where($search);
     }
 

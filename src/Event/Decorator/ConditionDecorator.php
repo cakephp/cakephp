@@ -35,6 +35,7 @@ class ConditionDecorator extends AbstractDecorator
         if (!$this->canTrigger($args[0])) {
             return;
         }
+
         return $this->_call($args);
     }
 
@@ -65,11 +66,13 @@ class ConditionDecorator extends AbstractDecorator
             if ($condition === 'unless') {
                 return false;
             }
+
             return true;
         }
         if (!is_callable($this->_options[$condition])) {
             throw new RuntimeException(self::class . ' the `' . $condition . '` condition is not a callable!');
         }
+
         return $this->_options[$condition]($event);
     }
 }

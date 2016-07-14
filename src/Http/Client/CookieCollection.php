@@ -103,6 +103,7 @@ class CookieCollection
             }
             $out[$cookie['name']] = $cookie['value'];
         }
+
         return $out;
     }
 

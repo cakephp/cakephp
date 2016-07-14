@@ -75,6 +75,7 @@ class ControllerFactory
         if ($reflection->isAbstract() || $reflection->isInterface()) {
             return $this->missingController($request);
         }
+
         return $reflection->newInstance($request, $response, $controller);
     }
 

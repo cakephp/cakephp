@@ -102,6 +102,7 @@ class ActionDispatcher
         }
 
         $afterEvent = $this->dispatchEvent('Dispatcher.afterDispatch', compact('request', 'response'));
+
         return $afterEvent->data['response'];
     }
 

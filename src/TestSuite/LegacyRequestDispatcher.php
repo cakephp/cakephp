@@ -54,6 +54,7 @@ class LegacyRequestDispatcher
             [$this->_test, 'controllerSpy']
         );
         $dispatcher->dispatch($request, $response);
+
         return $response;
     }
 }

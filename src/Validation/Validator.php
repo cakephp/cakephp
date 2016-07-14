@@ -581,6 +581,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             );
         }
         $settings += $defaults;
+
         return [$fieldName => $settings];
     }
 

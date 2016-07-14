@@ -114,6 +114,7 @@ trait SelectableAssociationTrait
         }
 
         $this->_assertFieldsPresent($fetchQuery, (array)$key);
+
         return $fetchQuery;
     }
 

@@ -67,6 +67,7 @@ class Dispatcher
         if (isset($request->params['return'])) {
             return $response->body();
         }
+
         return $response->send();
     }
 

@@ -167,6 +167,7 @@ class Message
             return $this->_body;
         }
         $this->_body = $body;
+
         return $this;
     }
 }

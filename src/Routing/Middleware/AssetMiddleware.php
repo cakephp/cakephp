@@ -98,8 +98,10 @@ class AssetMiddleware
         if ($this->isNotModified($request, $file)) {
             $headers = $response->getHeaders();
             $headers['Last-Modified'] = date(DATE_RFC850, $modifiedTime);
+
             return new Response('php://memory', 304, $headers);
         }
+
         return $this->deliverAsset($request, $response, $file);
     }
 
@@ -116,6 +118,7 @@ class AssetMiddleware
         if (!$modifiedSince) {
             return false;
         }
+
         return strtotime($modifiedSince) === $file->lastChange();
     }
 
@@ -139,9 +142,11 @@ class AssetMiddleware
                 $parts = array_slice($parts, $i + 1);
                 $fileFragment = implode(DIRECTORY_SEPARATOR, $parts);
                 $pluginWebroot = Plugin::path($plugin) . 'webroot' . DIRECTORY_SEPARATOR;
+
                 return $pluginWebroot . $fileFragment;
             }
         }
+
         return '';
     }
 
@@ -161,6 +166,7 @@ class AssetMiddleware
         $maxAge = $expire - time();
 
         $stream = new Stream(fopen($file->path, 'rb'));
+
         return $response->withBody($stream)
             ->withHeader('Content-Type', $contentType)
             ->withHeader('Cache-Control', 'public,max-age=' . $maxAge)
@@ -181,6 +187,7 @@ class AssetMiddleware
         if (isset($this->typeMap[$extension])) {
             return $this->typeMap[$extension];
         }
+
         return $file->mime() ?: 'application/octet-stream';
     }
 }

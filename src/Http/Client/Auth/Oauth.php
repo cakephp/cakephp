@@ -82,6 +82,7 @@ class Oauth
             default:
                 throw new Exception(sprintf('Unknown Oauth signature method %s', $credentials['method']));
         }
+
         return $request->withHeader('Authorization', $value);
     }
 
@@ -149,6 +150,7 @@ class Oauth
         $values['oauth_signature'] = base64_encode(
             hash_hmac('sha1', $baseString, $key, true)
         );
+
         return $this->_buildAuth($values);
     }
 
@@ -240,6 +242,7 @@ class Oauth
             $this->_normalizedParams($request, $oauthValues),
         ];
         $parts = array_map([$this, '_encode'], $parts);
+
         return implode('&', $parts);
     }
 
@@ -265,6 +268,7 @@ class Oauth
         $out = $scheme . '://';
         $out .= strtolower($uri->getHost());
         $out .= $uri->getPath();
+
         return $out;
     }
 
@@ -308,6 +312,7 @@ class Oauth
                 $pairs[] = "$k=$val";
             }
         }
+
         return implode('&', $pairs);
     }
 
@@ -325,6 +330,7 @@ class Oauth
             $params[] = $key . '="' . $this->_encode($value) . '"';
         }
         $out .= implode(',', $params);
+
         return $out;
     }
 

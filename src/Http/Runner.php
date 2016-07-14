@@ -47,6 +47,7 @@ class Runner
     {
         $this->middleware = $middleware;
         $this->index = 0;
+
         return $this->__invoke($request, $response);
     }
 
@@ -60,6 +61,7 @@ class Runner
         $next = $this->middleware->get($this->index);
         if ($next) {
             $this->index++;
+
             return $next($request, $response, $this);
         }
 

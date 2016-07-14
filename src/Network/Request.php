@@ -676,6 +676,7 @@ class Request implements ArrayAccess
         $detect = static::$_detectors[$type];
         if (is_callable($detect)) {
             array_unshift($args, $this);
+
             return call_user_func_array($detect, $args);
         }
         if (isset($detect['env']) && $this->_environmentDetector($detect)) {

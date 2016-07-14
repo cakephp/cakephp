@@ -24,6 +24,7 @@ class CakesController extends Controller
     public function index()
     {
         $this->response->body('Hello Jane');
+
         return $this->response;
     }
 
@@ -56,6 +57,7 @@ class CakesController extends Controller
         parent::startupProcess();
         if ($this->request->param('stop') === 'startup') {
             $this->response->body('startup stop');
+
             return $this->response;
         }
     }
@@ -68,6 +70,7 @@ class CakesController extends Controller
         parent::shutdownProcess();
         if ($this->request->param('stop') === 'shutdown') {
             $this->response->body('shutdown stop');
+
             return $this->response;
         }
     }

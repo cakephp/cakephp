@@ -137,6 +137,7 @@ class ValuesExpression implements ExpressionInterface
             }
             $columns[] = $col;
         }
+
         return $columns;
     }
 
@@ -153,6 +154,7 @@ class ValuesExpression implements ExpressionInterface
             if (!$this->_castedExpressions) {
                 $this->_processExpressions();
             }
+
             return $this->_values;
         }
         $this->_values = $values;

@@ -43,6 +43,7 @@ class MiddlewareStack implements Countable
         if (isset($this->stack[$index])) {
             return $this->stack[$index];
         }
+
         return null;
     }
 
@@ -55,6 +56,7 @@ class MiddlewareStack implements Countable
     public function push(callable $callable)
     {
         $this->stack[] = $callable;
+
         return $this;
     }
 
@@ -67,6 +69,7 @@ class MiddlewareStack implements Countable
     public function prepend(callable $callable)
     {
         array_unshift($this->stack, $callable);
+
         return $this;
     }
 
@@ -83,6 +86,7 @@ class MiddlewareStack implements Countable
     public function insertAt($index, callable $callable)
     {
         array_splice($this->stack, $index, 0, $callable);
+
         return $this;
     }
 
@@ -135,6 +139,7 @@ class MiddlewareStack implements Countable
         if ($found) {
             return $this->insertAt($i + 1, $callable);
         }
+
         return $this->push($callable);
     }
 

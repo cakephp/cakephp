@@ -1538,6 +1538,7 @@ class Email implements JsonSerializable, Serializable
         mb_internal_encoding($this->_appCharset);
         $return = mb_decode_mimeheader($text);
         mb_internal_encoding($restore);
+
         return $return;
     }
 

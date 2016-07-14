@@ -52,6 +52,7 @@ class ResponseTransformer
             $cake->cookie($cookie);
         }
         $cake->header(static::collapseHeaders($response));
+
         return $cake;
     }
 
@@ -71,6 +72,7 @@ class ResponseTransformer
             return ['body' => '', 'file' => false];
         }
         $stream->rewind();
+
         return ['body' => $stream->getContents(), 'file' => false];
     }
 
@@ -118,6 +120,7 @@ class ResponseTransformer
             }
             $cookies[] = $parsed;
         }
+
         return $cookies;
     }
 
@@ -137,6 +140,7 @@ class ResponseTransformer
                 $out[$name] = $value;
             }
         }
+
         return $out;
     }
 
@@ -157,6 +161,7 @@ class ResponseTransformer
             $headers['Set-Cookie'] = static::buildCookieHeader($response->cookie());
         }
         $stream = static::getStream($response);
+
         return new DiactorosResponse($stream, $status, $headers);
     }
 
@@ -190,6 +195,7 @@ class ResponseTransformer
             }
             $headers[] = implode('; ', $parts);
         }
+
         return $headers;
     }
 
@@ -206,17 +212,21 @@ class ResponseTransformer
         if (is_string($body) && strlen($body)) {
             $stream = new Stream('php://memory', 'wb');
             $stream->write($body);
+
             return $stream;
         }
         if (is_callable($body)) {
             $stream = new CallbackStream($body);
+
             return $stream;
         }
         $file = $response->getFile();
         if ($file) {
             $stream = new Stream($file->path, 'rb');
+
             return $stream;
         }
+
         return $stream;
     }
 }

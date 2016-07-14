@@ -712,6 +712,7 @@ abstract class Association
                 ->find('all', ['conditions' => $conditions])
                 ->clause('where');
         }
+
         return $this->target()->exists($conditions);
     }
 

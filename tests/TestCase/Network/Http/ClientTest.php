@@ -181,6 +181,7 @@ class ClientTest extends TestCase
                 $this->assertEquals($cookies, $request->cookies());
                 $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('content-type'));
                 $this->assertEquals($headers['Connection'], $request->getHeaderLine('connection'));
+
                 return true;
             }))
             ->will($this->returnValue([$response]));
@@ -213,6 +214,7 @@ class ClientTest extends TestCase
                     'http://cakephp.org/search?q=hi+there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3',
                     $request->getUri() . ''
                 );
+
                 return true;
             }))
             ->will($this->returnValue([$response]));
@@ -247,6 +249,7 @@ class ClientTest extends TestCase
                     'http://cakephp.org/search?q=hi+there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3',
                     $request->getUri() . ''
                 );
+
                 return true;
             }))
             ->will($this->returnValue([$response]));
@@ -282,6 +285,7 @@ class ClientTest extends TestCase
                 $this->assertEquals(Request::METHOD_GET, $request->getMethod());
                 $this->assertEquals('http://cakephp.org/search', '' . $request->getUri());
                 $this->assertEquals('some data', '' . $request->getBody());
+
                 return true;
             }))
             ->will($this->returnValue([$response]));
@@ -342,6 +346,7 @@ class ClientTest extends TestCase
                 $this->assertEquals('http://cakephp.org/', '' . $request->getUri());
                 $this->assertEquals($headers['Authorization'], $request->getHeaderLine('Authorization'));
                 $this->assertEquals($headers['Proxy-Authorization'], $request->getHeaderLine('Proxy-Authorization'));
+
                 return true;
             }))
             ->will($this->returnValue([$response]));
@@ -380,6 +385,7 @@ class ClientTest extends TestCase
                 $this->assertEquals('http://cakephp.org/', '' . $request->getUri());
                 $this->assertEquals($headers['Authorization'], $request->getHeaderLine('Authorization'));
                 $this->assertEquals($headers['Proxy-Authorization'], $request->getHeaderLine('Proxy-Authorization'));
+
                 return true;
             }))
             ->will($this->returnValue([$response]));
@@ -431,6 +437,7 @@ class ClientTest extends TestCase
                 $this->assertInstanceOf('Cake\Network\Http\Request', $request);
                 $this->assertEquals($method, $request->getMethod());
                 $this->assertEquals('http://cakephp.org/projects/add', '' . $request->getUri());
+
                 return true;
             }))
             ->will($this->returnValue([$response]));
@@ -482,6 +489,7 @@ class ClientTest extends TestCase
                 $this->assertEquals(Request::METHOD_POST, $request->getMethod());
                 $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('Content-Type'));
                 $this->assertEquals($headers['Accept'], $request->getHeaderLine('Accept'));
+
                 return true;
             }))
             ->will($this->returnValue([$response]));
@@ -511,6 +519,7 @@ class ClientTest extends TestCase
             ->with($this->callback(function ($request) use ($data) {
                 $this->assertEquals($data, '' . $request->getBody());
                 $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaderLine('content-type'));
+
                 return true;
             }))
             ->will($this->returnValue([$response]));
@@ -604,6 +613,7 @@ class ClientTest extends TestCase
                 $this->assertInstanceOf('Cake\Network\Http\Request', $request);
                 $this->assertEquals(Request::METHOD_HEAD, $request->getMethod());
                 $this->assertEquals('http://cakephp.org/search?q=hi+there', '' . $request->getUri());
+
                 return true;
             }))
             ->will($this->returnValue([$response]));

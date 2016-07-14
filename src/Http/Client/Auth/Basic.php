@@ -38,6 +38,7 @@ class Basic
             $value = $this->_generateHeader($credentials['username'], $credentials['password']);
             $request = $request->withHeader('Authorization', $value);
         }
+
         return $request;
     }
 
@@ -55,6 +56,7 @@ class Basic
             $value = $this->_generateHeader($credentials['username'], $credentials['password']);
             $request = $request->withHeader('Proxy-Authorization', $value);
         }
+
         return $request;
     }
 
