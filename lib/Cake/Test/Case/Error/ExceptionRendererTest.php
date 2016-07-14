@@ -880,11 +880,11 @@ class ExceptionRendererTest extends CakeTestCase {
 	}
 
 /**
- * Tests that exception renderer dispatches Dispatcher.afterDispatch event on error response
+ * Test that rendering exceptions triggers shutdown events.
  *
  * @return void
  */
-	public function testAfterDispatchEventOnErrorResponse() {
+	public function testRenderShutdownEvents() {
 		$fired = array();
 		$listener = function ($event) use (&$fired) {
 			$fired[] = $event->name();
