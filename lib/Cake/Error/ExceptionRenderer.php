@@ -330,6 +330,13 @@ class ExceptionRenderer {
 		$this->controller->response->send();
 	}
 
+/**
+ * Run the shutdown events.
+ *
+ * Triggers the afterFilter and afterDispatch events.
+ *
+ * @return void
+ */
 	protected function _shutdown() {
 		$afterFilterEvent = new CakeEvent('Controller.shutdown', $this->controller);
 		$this->controller->getEventManager()->dispatch($afterFilterEvent);
