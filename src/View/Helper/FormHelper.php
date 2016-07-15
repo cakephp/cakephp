@@ -712,7 +712,7 @@ class FormHelper extends Helper
             foreach ($error as $k => $e) {
                 if (isset($text[$k])) {
                     $tmp[] = $text[$k];
-                } else if (isset($text[$e])) {
+                } elseif (isset($text[$e])) {
                     $tmp[] = $text[$e];
                 } else {
                     $tmp[] = $e;
