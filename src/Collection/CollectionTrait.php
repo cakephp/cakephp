@@ -448,6 +448,7 @@ trait CollectionTrait
                     $parents[$id] = $isObject ? $parents[$id] : new ArrayIterator($parents[$id], 1);
                     $mapReduce->emit($parents[$id]);
                 }
+
                 return null;
             }
 
