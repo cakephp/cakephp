@@ -766,6 +766,11 @@ class RouteTest extends TestCase
         $this->assertEquals('posts', $result['controller']);
         $this->assertEquals('view', $result['action']);
         $this->assertEquals('∂∂', $result['slug']);
+
+        $result = $route->parse('/posts/ABC%2FD');
+        $this->assertEquals('posts', $result['controller']);
+        $this->assertEquals('view', $result['action']);
+        $this->assertEquals('ABC/D', $result['slug']);
     }
 
     /**
