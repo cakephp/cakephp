@@ -2267,6 +2267,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             [$context['field']],
             isset($options['scope']) ? (array)$options['scope'] : []
         );
+        $values = $entity->extract($fields);
+        foreach ($values as $field) {
+            if ($field !== null && !is_scalar($field)) {
+                return false;
+            }
+        }
         $rule = new IsUnique($fields);
 
         return $rule($entity, ['repository' => $this]);
