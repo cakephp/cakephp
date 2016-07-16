@@ -1425,7 +1425,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * the specified amount of elements
      *
      * @param string $field The field you want to apply the rule to.
-     * @param int $count The number maximim amount of elements the field should have
+     * @param int $count The number maximum amount of elements the field should have
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
