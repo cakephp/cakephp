@@ -1085,14 +1085,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * You can customize what fields are used for nesting results, by default the
      * primary key and the `parent_id` fields are used. If you wish to change
-     * these defaults you need to provide the keys `keyField`, `parentField` or `childrenKey` in
+     * these defaults you need to provide the keys `keyField`, `parentField` or `nestingKey` in
      * `$options`:
      *
      * ```
      * $table->find('threaded', [
      *  'keyField' => 'id',
      *  'parentField' => 'ancestor_id'
-     *  'childrenKey' => 'children'
+     *  'nestingKey' => 'children'
      * ]);
      * ```
      *
