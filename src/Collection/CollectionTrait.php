@@ -422,22 +422,22 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      */
-    public function nest($idPath, $parentPath)
+    public function nest($idPath, $parentPath, $nestingKey = 'children')
     {
         $parents = [];
         $idPath = $this->_propertyExtractor($idPath);
         $parentPath = $this->_propertyExtractor($parentPath);
         $isObject = true;
 
-        $mapper = function ($row, $key, $mapReduce) use (&$parents, $idPath, $parentPath) {
-            $row['children'] = [];
+        $mapper = function ($row, $key, $mapReduce) use (&$parents, $idPath, $parentPath, $nestingKey) {
+            $row[$nestingKey] = [];
             $id = $idPath($row, $key);
             $parentId = $parentPath($row, $key);
             $parents[$id] =& $row;
             $mapReduce->emitIntermediate($id, $parentId);
         };
 
-        $reducer = function ($values, $key, $mapReduce) use (&$parents, &$isObject) {
+        $reducer = function ($values, $key, $mapReduce) use (&$parents, &$isObject, $nestingKey) {
             static $foundOutType = false;
             if (!$foundOutType) {
                 $isObject = is_object(current($parents));
@@ -456,7 +456,7 @@ trait CollectionTrait
             foreach ($values as $id) {
                 $children[] =& $parents[$id];
             }
-            $parents[$key]['children'] = $children;
+            $parents[$key][$nestingKey] = $children;
         };
 
         return (new Collection(new MapReduce($this->unwrap(), $mapper, $reducer)))
