@@ -721,7 +721,7 @@ class Router
             $params['?'] = $url;
         }
 
-        return Router::url($params, $full);
+        return static::url($params, $full);
     }
 
     /**
@@ -736,12 +736,12 @@ class Router
     public static function normalize($url = '/')
     {
         if (is_array($url)) {
-            $url = Router::url($url);
+            $url = static::url($url);
         }
         if (preg_match('/^[a-z\-]+:\/\//', $url)) {
             return $url;
         }
-        $request = Router::getRequest();
+        $request = static::getRequest();
 
         if (!empty($request->base) && stristr($url, $request->base)) {
             $url = preg_replace('/^' . preg_quote($request->base, '/') . '/', '', $url, 1);
