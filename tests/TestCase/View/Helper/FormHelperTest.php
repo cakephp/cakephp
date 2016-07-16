@@ -4151,6 +4151,56 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * test error translation can use rule names for translating.
+     *
+     * @return void
+     */
+    public function testErrorRuleName()
+    {
+        $this->article['errors'] = [
+            'Article' => [
+                'field' => ['email' => 'Your email was not good']
+            ]
+        ];
+        $this->Form->create($this->article);
+
+        $result = $this->Form->error('Article.field');
+        $expected = [
+            ['div' => ['class' => 'error-message']],
+            'Your email was not good',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->error('Article.field', ['email' => 'Email in use']);
+        $expected = [
+            ['div' => ['class' => 'error-message']],
+            'Email in use',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->error('Article.field', ['Your email was not good' => 'Email in use']);
+        $expected = [
+            ['div' => ['class' => 'error-message']],
+            'Email in use',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->error('Article.field', [
+            'email' => 'Key is preferred',
+            'Your email was not good' => 'Email in use'
+        ]);
+        $expected = [
+            ['div' => ['class' => 'error-message']],
+            'Key is preferred',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test error with nested lists.
      *
      * @return void
