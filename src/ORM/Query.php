@@ -56,8 +56,8 @@ use Traversable;
  * @method \Cake\Collection\CollectionInterface append(array|Traversable $items) Appends more rows to the result of the query.
  * @method \Cake\Collection\CollectionInterface combine($k, $v, $g = null) Returns the values of the column $v index by column $k,
  *   and grouped by $g.
- * @method \Cake\Collection\CollectionInterface nest($k, $p) Creates a tree structure by nesting the values of column $p into that
- *   with the same value for $k.
+ * @method \Cake\Collection\CollectionInterface nest($k, $p, $n = 'children') Creates a tree structure by nesting the values of column $p into that
+ *   with the same value for $k using $n as the nesting key.
  * @method array toArray() Returns a key-value array with the results of this query.
  * @method array toList() Returns a numerically indexed array with the results of this query.
  * @method \Cake\Collection\CollectionInterface stopWhen(callable $c) Returns each row until the callable returns true.
