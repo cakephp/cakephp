@@ -206,6 +206,13 @@ class FormHelper extends Helper
     protected $_lastAction = '';
 
     /**
+     * The values sources to be used to retrieve prefilled input values from.
+     *
+     * @var array
+     */
+    protected $_valuesSources = [];
+
+    /**
      * Construct the widgets and binds the default context providers
      *
      * @param \Cake\View\View $View The View this helper is being attached to.
@@ -359,7 +366,7 @@ class FormHelper extends Helper
             'encoding' => strtolower(Configure::read('App.encoding')),
             'templates' => null,
             'idPrefix' => null,
-            'valuesSources' => [],
+            'valuesSources' => 'context',
         ];
 
         if (isset($options['action'])) {
@@ -2676,11 +2683,27 @@ class FormHelper extends Helper
         return [];
     }
 
+    /**
+     * Gets the value sources.
+     *
+     * Returns a list, but at least one item, of valid sources, such as: `'context'`, `'data'` and `'query'`.
+     *
+     * @return array List of value sources.
+     */
     public function getValuesSources()
     {
         return $this->_valuesSources;
     }
 
+    /**
+     * Sets the value sources.
+     *
+     * Valid values are `'context'`, `'data'` and `'query'`.
+     * You need to supply one valid context or multiple, as a list of strings. Order sets priority.
+     *
+     * @param string|array $sources A string or a list of strings identifying a source.
+     * @return $this
+     */
     public function setValuesSources($sources)
     {
         $this->_valuesSources = array_values(array_intersect((array)$sources, ['context', 'data', 'query']));
@@ -2688,6 +2711,12 @@ class FormHelper extends Helper
         return $this;
     }
 
+    /**
+     * Gets a single field value from the sources available.
+     *
+     * @param string $fieldname The fieldname to fetch the value for.
+     * @return string Field value derived from sources.
+     */
     public function getSourceValue($fieldname)
     {
         foreach ($this->getValuesSources() as $valuesSource) {
