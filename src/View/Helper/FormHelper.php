@@ -2694,8 +2694,8 @@ class FormHelper extends Helper
             if ($valuesSource === 'context') {
                 return $this->_getContext()->val($fieldname);
             }
-            if (isset($this->request->{$valuesSource}[$fieldname])) {
-                return $this->request->{$valuesSource}[$fieldname];
+            if ($this->request->{$valuesSource}($fieldname) !== null) {
+                return $this->request->{$valuesSource}($fieldname);
             }
         }
     }
