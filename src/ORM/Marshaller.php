@@ -147,6 +147,8 @@ class Marshaller
             $marshallOptions['forceNew'] = $options['forceNew'];
         }
 
+        $hasTranslations = $this->_hasTranslations($options);
+
         $errors = $this->_validate($data, $options, true);
         $properties = [];
         foreach ($data as $key => $value) {
@@ -166,6 +168,8 @@ class Marshaller
             } elseif ($columnType) {
                 $converter = Type::build($columnType);
                 $value = $converter->marshal($value);
+            } elseif ($key === '_translations' && $hasTranslations) {
+                $value = $this->_mergeTranslations(null, $value, $errors, $options);
             }
             $properties[$key] = $value;
         }
@@ -226,7 +230,7 @@ class Marshaller
      */
     protected function _prepareDataAndOptions($data, $options)
     {
-        $options += ['validate' => true];
+        $options += ['validate' => true, 'translations' => true];
 
         $tableName = $this->_table->alias();
         if (isset($data[$tableName])) {
@@ -450,6 +454,51 @@ class Marshaller
     }
 
     /**
+     * Call translation merge. Validations errors during merge will be added to `$errors` param
+     *
+     * @param \Cake\Datasource\EntityInterface $original The original entity
+     * @param array $data key value list of languages with fields to be merged into the translate entity
+     * @param array $errors array with entity errors
+     * @param array $options list of options
+     * @return array|null
+     */
+    protected function _mergeTranslations($original, array $data, array &$errors, array $options = [])
+    {
+        $result = $this->_table->mergeTranslations($original, $data, $this, $options);
+
+        if (is_array($result)) {
+            if ((bool)$result[1]) {
+                $errors['_translations'] = $result[1];
+            }
+            $result = $result[0];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Return if table contains translate behavior or we specificate to use via `translations` options.
+     *
+     * In case that $options has `fieldList` option and `_translations` field is not present inside it, it will include
+     *
+     * ### Options:
+     *
+     * - translations: Set to false to disable translations
+     *
+     * @param array $options List of options
+     * @return bool
+     */
+    protected function _hasTranslations(array &$options = [])
+    {
+        $hasTranslations = ($this->_table->behaviors()->hasMethod('mergeTranslations') && (bool)$options['translations']);
+        if ($hasTranslations && !empty($options['fieldList']) && !in_array('_translations', $options['fieldList'])) {
+            array_push($options['fieldList'], '_translations');
+        }
+
+        return $hasTranslations;
+    }
+
+    /**
      * Merges `$data` into `$entity` and recursively does the same for each one of
      * the association names passed in `$options`. When merging associations, if an
      * entity is not present in the parent entity for a given association, a new one
@@ -503,6 +552,8 @@ class Marshaller
             }
         }
 
+        $hasTranslations = $this->_hasTranslations($options);
+
         $errors = $this->_validate($data + $keys, $options, $isNew);
         $schema = $this->_table->schema();
         $properties = $marshalledAssocs = [];
@@ -530,6 +581,8 @@ class Marshaller
                 ) {
                     continue;
                 }
+            } elseif ($key === '_translations' && $hasTranslations) {
+                $value = $this->_mergeTranslations($original, $value, $errors, $options);
             }
 
             $properties[$key] = $value;
