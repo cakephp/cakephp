@@ -359,11 +359,14 @@ class FormHelper extends Helper
             'encoding' => strtolower(Configure::read('App.encoding')),
             'templates' => null,
             'idPrefix' => null,
+            'values' => ['data', 'context'],
         ];
 
         if (isset($options['action'])) {
             trigger_error('Using key `action` is deprecated, use `url` directly instead.', E_USER_DEPRECATED);
         }
+
+        $this->setValuesSources($options['values']);
 
         if ($options['idPrefix'] !== null) {
             $this->_idPrefix = $options['idPrefix'];
@@ -472,7 +475,7 @@ class FormHelper extends Helper
 
         $pk = $context->primaryKey();
         if (count($pk)) {
-            $id = $context->val($pk[0]);
+            $id = $this->getSourceValue($pk[0]);
         }
         if (empty($action[0]) && isset($id)) {
             $action[0] = $id;
@@ -2466,7 +2469,7 @@ class FormHelper extends Helper
             unset($options['value']);
         }
         if (!isset($options['val'])) {
-            $options['val'] = $context->val($field);
+            $options['val'] = $this->getSourceValue($field);
         }
         if (!isset($options['val']) && isset($options['default'])) {
             $options['val'] = $options['default'];
@@ -2672,4 +2675,28 @@ class FormHelper extends Helper
     {
         return [];
     }
+
+    public function getValuesSources()
+    {
+        return $this->_valuesSources;
+    }
+
+    public function setValuesSources($sources)
+    {
+        $this->_valuesSources = array_values(array_intersect((array)$sources, ['context', 'data', 'query']));
+        return $this;
+    }
+
+    public function getSourceValue($fieldname)
+    {
+        foreach ($this->getValuesSources() as $valuesSource) {
+            if ($valuesSource === 'context') {
+                return $this->_getContext()->val($fieldname);
+            }
+            if (isset($this->request->{$valuesSource}[$fieldname])) {
+                return $this->request->{$valuesSource}[$fieldname];
+            }
+        }
+    }
+
 }
