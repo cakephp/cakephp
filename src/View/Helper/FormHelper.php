@@ -359,14 +359,14 @@ class FormHelper extends Helper
             'encoding' => strtolower(Configure::read('App.encoding')),
             'templates' => null,
             'idPrefix' => null,
-            'values' => ['data', 'context'],
+            'valuesSources' => [],
         ];
 
         if (isset($options['action'])) {
             trigger_error('Using key `action` is deprecated, use `url` directly instead.', E_USER_DEPRECATED);
         }
 
-        $this->setValuesSources($options['values']);
+        $this->setValuesSources($options['valuesSources']);
 
         if ($options['idPrefix'] !== null) {
             $this->_idPrefix = $options['idPrefix'];
