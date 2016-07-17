@@ -2684,6 +2684,7 @@ class FormHelper extends Helper
     public function setValuesSources($sources)
     {
         $this->_valuesSources = array_values(array_intersect((array)$sources, ['context', 'data', 'query']));
+
         return $this;
     }
 
