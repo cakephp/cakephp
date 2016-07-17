@@ -523,7 +523,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
     /**
      * Redirects to given $url, after turning off $this->autoRender.
-     * Script execution is halted after the redirect.
      *
      * @param string|array $url A string or array-based URL pointing to another location within the app,
      *     or an absolute URL
