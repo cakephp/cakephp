@@ -15,7 +15,7 @@ namespace Cake\ORM\Exception;
 use Cake\Core\Exception\Exception;
 
 /**
- * Used when a behavior cannot be found.
+ * Used when a transaction was rolled back from a callback event.
  *
  */
 class RolledbackTransactionException extends Exception
