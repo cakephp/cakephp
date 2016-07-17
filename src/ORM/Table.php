@@ -1366,13 +1366,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   transaction (default: true)
      * - checkRules: Whether or not to check the rules on entity before saving, if the checking
      *   fails, it will abort the save operation. (default:true)
-     * - associated: If true it will save all associated entities as they are found
+     * - associated: If `true` it will save 1st level associated entities as they are found
      *   in the passed `$entity` whenever the property defined for the association
-     *   is marked as dirty. Associated records are saved recursively unless told
-     *   otherwise. If an array, it will be interpreted as the list of associations
+     *   is marked as dirty. If an array, it will be interpreted as the list of associations
      *   to be saved. It is possible to provide different options for saving on associated
      *   table objects using this key by making the custom options the array value.
-     *   If false no associated records will be saved. (default: true)
+     *   If `false` no associated records will be saved. (default: `true`)
      * - checkExisting: Whether or not to check if the entity already exists, assuming that the
      *   entity is marked as not new, and the primary key has been set.
      *
