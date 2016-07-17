@@ -606,15 +606,19 @@ class BelongsToMany extends Association
                 $entity = clone $entity;
             }
 
-            if ($table->save($entity, $options)) {
+            $saved = $table->save($entity, $options);
+            if ($saved) {
                 $entities[$k] = $entity;
                 $persisted[] = $entity;
                 continue;
             }
 
+            // Saving the new linked entity failed, copy errors back into the
+            // original entity if applicable and abort.
             if (!empty($options['atomic'])) {
                 $original[$k]->errors($entity->errors());
-
+            }
+            if (!$saved) {
                 return false;
             }
         }
