@@ -374,6 +374,7 @@ class FormHelper extends Helper
         }
 
         $this->setValuesSources($options['valuesSources']);
+        unset($options['valuesSources']);
 
         if ($options['idPrefix'] !== null) {
             $this->_idPrefix = $options['idPrefix'];
@@ -2715,7 +2716,7 @@ class FormHelper extends Helper
      * Gets a single field value from the sources available.
      *
      * @param string $fieldname The fieldname to fetch the value for.
-     * @return string Field value derived from sources.
+     * @return string|null Field value derived from sources.
      */
     public function getSourceValue($fieldname)
     {
