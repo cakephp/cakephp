@@ -210,7 +210,7 @@ class FormHelper extends Helper
      *
      * @var array
      */
-    protected $_valuesSources = [];
+    protected $_valuesSources = ['context'];
 
     /**
      * Construct the widgets and binds the default context providers
