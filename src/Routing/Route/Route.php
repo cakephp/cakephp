@@ -291,7 +291,6 @@ class Route
         for ($i = 0; $i <= $count; $i++) {
             unset($route[$i]);
         }
-        $route = array_map('urldecode', $route);
         $route['pass'] = [];
 
         // Assign defaults, set passed args to pass
