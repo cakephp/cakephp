@@ -268,7 +268,7 @@ abstract class Cell
         } catch (Exception $e) {
             trigger_error(sprintf('Could not render cell - %s [%s, line %d]', $e->getMessage(), $e->getFile(), $e->getLine()), E_USER_WARNING);
             return '';
-        } catch(Error $e) {
+        } catch (Error $e) {
             throw new Error(sprintf('Could not render cell - %s [%s, line %d]', $e->getMessage(), $e->getFile(), $e->getLine()));
         }
     }
