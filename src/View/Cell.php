@@ -258,8 +258,9 @@ abstract class Cell
      *
      * *Note* This method will trigger an error when view rendering has a problem.
      * This is because PHP will not allow a __toString() method to throw an exception.
+     *
      * @return string Rendered cell
-     * @throws Error Include error details for PHP 7 fatal errors.
+     * @throws \Error Include error details for PHP 7 fatal errors.
      */
     public function __toString()
     {
