@@ -2371,6 +2371,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Gets a SaveOptionsBuilder instance.
      *
+     * @param array $options Options to load into the builder.
      * @return \Cake\ORM\SaveOptionsBuilder
      */
     public function getSaveOptionsBuilder(array $options = [])
