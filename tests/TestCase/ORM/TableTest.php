@@ -6012,6 +6012,18 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test getting the save options builder.
+     *
+     * @return void
+     */
+    public function getSaveOptionsBuilder()
+    {
+        $table = TableRegistry::get('Authors');
+        $result = $table->getSaveOptionsBuilder();
+        $this->assertInstanceOf('Cake\ORM\SaveOptionsBuilder', $result);
+    }
+
+    /**
      * Helper method to skip tests when connection is SQLServer.
      *
      * @return void
