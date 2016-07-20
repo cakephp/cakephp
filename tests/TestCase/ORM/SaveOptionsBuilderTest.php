@@ -210,17 +210,18 @@ class SaveOptionsBuilderTest extends TestCase
     }
 
     /**
-     * Test setting user defined options using the magic __call()
+     * testSettingCustomOptions
      *
      * @return void
      */
-    public function testMagicCall()
+    public function testSettingCustomOptions()
     {
-        $options = [
+        $expected = [
             'myOption' => true,
         ];
 
-        $builder = new SaveOptionsBuilder($this->table, $options);
-        $this->assertEquals($options, $builder->toArray());
+        $builder = new SaveOptionsBuilder($this->table);
+        $builder->set('myOption', true);
+        $this->assertEquals($expected, $builder->toArray());
     }
 }

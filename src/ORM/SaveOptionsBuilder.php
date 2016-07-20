@@ -92,6 +92,7 @@ class SaveOptionsBuilder extends ArrayObject
      *
      * @param \Cake\ORM\Table $table Table object.
      * @param array $associations An associations array.
+     * @return void
      */
     protected function _associated(Table $table, array $associations)
     {
@@ -114,6 +115,7 @@ class SaveOptionsBuilder extends ArrayObject
      * @throws \RuntimeException If no such association exists for the given table.
      * @param \Cake\ORM\Table $table Table object.
      * @param string $association Association name.
+     * @return void
      */
     protected function _checkAssociation(Table $table, $association)
     {
@@ -194,13 +196,16 @@ class SaveOptionsBuilder extends ArrayObject
     /**
      * Setting custom options.
      *
+     * @param string $option Option key.
+     * @param mixed $value Option value.
      * @return \Cake\ORM\SaveOptionsBuilder
      */
-    public function __call($name, $args)
+    public function set($option, $value)
     {
-        if (isset($args[0])) {
-            $this->_options[$name] = $args[0];
-            return $this;
+        if (method_exists($this, $option)) {
+            return $this->{$option}($value);
         }
+        $this->_options[$option] = $value;
+        return $this;
     }
 }
