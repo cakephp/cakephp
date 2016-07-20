@@ -1442,6 +1442,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function save(EntityInterface $entity, $options = [])
     {
+        if ($options instanceof SaveOptionsBuilder) {
+            $options = $options->toArray();
+        }
+
         $options = new ArrayObject($options + [
             'atomic' => true,
             'associated' => true,
@@ -2113,6 +2117,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function newEntity($data = null, array $options = [])
     {
+        if ($options instanceof SaveOptionsBuilder) {
+            $options = $options->toArray();
+        }
+
         if ($data === null) {
             $class = $this->entityClass();
             $entity = new $class([], ['source' => $this->registryAlias()]);
@@ -2157,6 +2165,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function newEntities(array $data, array $options = [])
     {
+        if ($options instanceof SaveOptionsBuilder) {
+            $options = $options->toArray();
+        }
+
         if (!isset($options['associated'])) {
             $options['associated'] = $this->_associations->keys();
         }
@@ -2198,6 +2210,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function patchEntity(EntityInterface $entity, array $data, array $options = [])
     {
+        if ($options instanceof SaveOptionsBuilder) {
+            $options = $options->toArray();
+        }
+
         if (!isset($options['associated'])) {
             $options['associated'] = $this->_associations->keys();
         }
@@ -2233,6 +2249,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function patchEntities($entities, array $data, array $options = [])
     {
+        if ($options instanceof SaveOptionsBuilder) {
+            $options = $options->toArray();
+        }
+
         if (!isset($options['associated'])) {
             $options['associated'] = $this->_associations->keys();
         }
@@ -2362,6 +2382,16 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function buildRules(RulesChecker $rules)
     {
         return $rules;
+    }
+
+    /**
+     * Gets a SaveOptionsBuilder instance.
+     *
+     * @return \Cake\ORM\SaveOptionsBuilder
+     */
+    public function getSaveOptionsBuilder()
+    {
+        return new SaveOptionsBuilder();
     }
 
     /**
