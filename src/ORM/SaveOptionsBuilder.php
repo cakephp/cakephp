@@ -14,10 +14,8 @@
  */
 namespace Cake\ORM;
 
-use ArrayAccess;
 use ArrayObject;
 use RuntimeException;
-use Cake\ORM\AssociationsNormalizerTrait;
 
 /**
  * OOP style Save Option Builder.
@@ -27,7 +25,7 @@ use Cake\ORM\AssociationsNormalizerTrait;
  *
  * @see \Cake\Datasource\RulesChecker
  */
-class SaveOptionsBuilder extends ArrayObject implements ArrayAccess
+class SaveOptionsBuilder extends ArrayObject
 {
 
     use AssociationsNormalizerTrait;
@@ -54,21 +52,26 @@ class SaveOptionsBuilder extends ArrayObject implements ArrayAccess
     public function __construct(Table $table, array $options = [])
     {
         $this->_table = $table;
-        $this->parseArray($options);
+        $this->parseArrayOptions($options);
     }
 
     /**
      * Takes an options array and populates the option object with the data.
      *
-     * @param array $array Options array
+     * This can be used to turn an options array into the object.
+     *
+     * @throws \InvalidArgumentException If a given option key does not exist.
+     * @param array $array Options array.
      * @return \Cake\ORM\SaveOptionsBuilder
      */
-    public function parseArray($array)
+    public function parseArrayOptions($array)
     {
         foreach ($array as $key => $value) {
             if (method_exists($this, $key)) {
                 $this->{$key}($value);
+                continue;
             }
+            throw new \InvalidArgumentException(sprintf('Key `%s` is not a valid option!', $key));
         }
         return $this;
     }
@@ -88,7 +91,13 @@ class SaveOptionsBuilder extends ArrayObject implements ArrayAccess
         return $this;
     }
 
-    protected function _associated(Table $table, $associations)
+    /**
+     * Checks that the associations exists recursively.
+     *
+     * @param \Cake\ORM\Table $table Table object.
+     * @param array $associations An associations array.
+     */
+    protected function _associated(Table $table, array $associations)
     {
         foreach ($associations as $key => $associated) {
             if (is_int($key)) {
@@ -103,6 +112,13 @@ class SaveOptionsBuilder extends ArrayObject implements ArrayAccess
         }
     }
 
+    /**
+     * Checks if an association exists.
+     *
+     * @throws \RuntimeException If no such association exists for the given table.
+     * @param \Cake\ORM\Table $table Table object.
+     * @param string $association Association name.
+     */
     protected function _checkAssociation(Table $table, $association)
     {
         if (!$table->associations()->has($association)) {
@@ -177,71 +193,5 @@ class SaveOptionsBuilder extends ArrayObject implements ArrayAccess
     public function toArray()
     {
         return $this->_options;
-    }
-
-    /**
-     * Whether a offset exists
-     *
-     * @link http://php.net/manual/en/arrayaccess.offsetexists.php
-     * @param mixed $offset <p>
-     * An offset to check for.
-     * </p>
-     * @return boolean true on success or false on failure.
-     * </p>
-     * <p>
-     * The return value will be casted to boolean if non-boolean was returned.
-     * @since 5.0.0
-     */
-    public function offsetExists($offset)
-    {
-        return isset($this->_options[$offset]);
-    }
-
-    /**
-     * Offset to retrieve
-     *
-     * @link http://php.net/manual/en/arrayaccess.offsetget.php
-     * @param mixed $offset <p>
-     * The offset to retrieve.
-     * </p>
-     * @return mixed Can return all value types.
-     * @since 5.0.0
-     */
-    public function offsetGet($offset)
-    {
-        return $this->_options[$offset];
-    }
-
-    /**
-     * Offset to set
-     *
-     * @link http://php.net/manual/en/arrayaccess.offsetset.php
-     * @param mixed $offset <p>
-     * The offset to assign the value to.
-     * </p>
-     * @param mixed $value <p>
-     * The value to set.
-     * </p>
-     * @return void
-     * @since 5.0.0
-     */
-    public function offsetSet($offset, $value)
-    {
-        $this->{$offset}($value);
-    }
-
-    /**
-     * Offset to unset
-     *
-     * @link http://php.net/manual/en/arrayaccess.offsetunset.php
-     * @param mixed $offset <p>
-     * The offset to unset.
-     * </p>
-     * @return void
-     * @since 5.0.0
-     */
-    public function offsetUnset($offset)
-    {
-        unset($this->_options[$offset]);
     }
 }

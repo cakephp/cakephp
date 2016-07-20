@@ -181,4 +181,45 @@ class SaveOptionsBuilderTest extends TestCase
         $result = $builder->toArray();
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * testParseOptionsArray
+     *
+     * @return void
+     */
+    public function testParseOptionsArray()
+    {
+        $options = [
+            'associated' => [
+                'Authors' => [],
+                'Comments' => [
+                    'associated' => [
+                        (int)0 => 'Users'
+                    ]
+                ]
+            ],
+            'guard' => false,
+            'checkRules' => false,
+            'checkExisting' => true,
+            'atomic' => true,
+            'validate' => 'default'
+        ];
+
+        $builder = new SaveOptionsBuilder($this->table, $options);
+        $this->assertEquals($options, $builder->toArray());
+    }
+
+    /**
+     * testParseOptionsArrayInvalidArgumentException
+     *
+     * @expectedException \InvalidArgumentException
+     */
+    public function testParseOptionsArrayInvalidArgumentException() {
+        $options = [
+            'does-not-exist' => 'no-really',
+            'validate' => 'default'
+        ];
+
+        new SaveOptionsBuilder($this->table, $options);
+    }
 }
