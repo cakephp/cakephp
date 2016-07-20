@@ -20,6 +20,7 @@ App::uses('ExceptionRenderer', 'Error');
 App::uses('Controller', 'Controller');
 App::uses('Component', 'Controller');
 App::uses('Router', 'Routing');
+App::uses('CakeEventManager', 'Event');
 
 /**
  * Short description for class.
@@ -876,5 +877,31 @@ class ExceptionRendererTest extends CakeTestCase {
 		$this->assertContains('There was an error in the SQL query', $result);
 		$this->assertContains(h('SELECT * from poo_query < 5 and :seven'), $result);
 		$this->assertContains("'seven' => (int) 7", $result);
+	}
+
+/**
+ * Test that rendering exceptions triggers shutdown events.
+ *
+ * @return void
+ */
+	public function testRenderShutdownEvents() {
+		$fired = array();
+		$listener = function ($event) use (&$fired) {
+			$fired[] = $event->name();
+		};
+
+		$EventManager = CakeEventManager::instance();
+		$EventManager->attach($listener, 'Controller.shutdown');
+		$EventManager->attach($listener, 'Dispatcher.afterDispatch');
+
+		$exception = new Exception('Terrible');
+		$ExceptionRenderer = new ExceptionRenderer($exception);
+
+		ob_start();
+		$ExceptionRenderer->render();
+		ob_get_clean();
+
+		$expected = array('Controller.shutdown', 'Dispatcher.afterDispatch');
+		$this->assertEquals($expected, $fired);
 	}
 }
