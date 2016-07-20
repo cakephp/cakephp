@@ -210,16 +210,17 @@ class SaveOptionsBuilderTest extends TestCase
     }
 
     /**
-     * testParseOptionsArrayInvalidArgumentException
+     * Test setting user defined options using the magic __call()
      *
-     * @expectedException \InvalidArgumentException
+     * @return void
      */
-    public function testParseOptionsArrayInvalidArgumentException() {
+    public function testMagicCall()
+    {
         $options = [
-            'does-not-exist' => 'no-really',
-            'validate' => 'default'
+            'myOption' => true,
         ];
 
-        new SaveOptionsBuilder($this->table, $options);
+        $builder = new SaveOptionsBuilder($this->table, $options);
+        $this->assertEquals($options, $builder->toArray());
     }
 }

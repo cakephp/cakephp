@@ -67,11 +67,7 @@ class SaveOptionsBuilder extends ArrayObject
     public function parseArrayOptions($array)
     {
         foreach ($array as $key => $value) {
-            if (method_exists($this, $key)) {
-                $this->{$key}($value);
-                continue;
-            }
-            throw new \InvalidArgumentException(sprintf('Key `%s` is not a valid option!', $key));
+            $this->{$key}($value);
         }
         return $this;
     }
@@ -193,5 +189,18 @@ class SaveOptionsBuilder extends ArrayObject
     public function toArray()
     {
         return $this->_options;
+    }
+
+    /**
+     * Setting custom options.
+     *
+     * @return \Cake\ORM\SaveOptionsBuilder
+     */
+    public function __call($name, $args)
+    {
+        if (isset($args[0])) {
+            $this->_options[$name] = $args[0];
+            return $this;
+        }
     }
 }
