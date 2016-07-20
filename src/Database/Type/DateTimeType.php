@@ -122,10 +122,6 @@ class DateTimeType extends Type
             list($value) = explode('.', $value);
         }
 
-        if ($this->_datetimeInstance === null) {
-            $this->_datetimeInstance = new $this->_className;
-        }
-
         $instance = clone $this->_datetimeInstance;
 
         return $instance->modify($value);
@@ -261,7 +257,7 @@ class DateTimeType extends Type
             $class = $fallback;
         }
         $this->_className = $class;
-        $this->_datetimeInstance = null;
+        $this->_datetimeInstance = new $this->_className;
     }
 
     /**
