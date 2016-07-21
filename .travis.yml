@@ -43,7 +43,7 @@ matrix:
     - php: 7.1
 
 before_install:
-  - if [ $HHVM != 1 && $TRAVIS_PHP_VERSION != 7.* ]; then phpenv config-rm xdebug.ini; fi
+  - if [ $HHVM != 1 && $TRAVIS_PHP_VERSION != 7.0 ]; then phpenv config-rm xdebug.ini; fi
 
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
 
@@ -73,8 +73,11 @@ before_script:
   - composer install --prefer-dist --no-interaction
 
 script:
-  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.0 ]]; then export CODECOVERAGE=1; vendor/bin/phpunit --coverage-clover=clover.xml; fi
-  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.0 ]]; then vendor/bin/phpunit; fi
+  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.0 && $DB = 'mysql' ]]; then export CODECOVERAGE=1; vendor/bin/phpunit --coverage-clover=clover.xml; fi
+  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.0 && $DB != 'mysql' ]]; then export CODECOVERAGE=1; vendor/bin/phpunit --testsuite "Database Test Suite" --coverage-clover=clover.xml; fi
+
+  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.0 && $DB = 'mysql' ]]; then vendor/bin/phpunit; fi
+  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.0 && $DB != 'mysql' ]]; then vendor/bin/phpunit --testsuite "Database Test Suite" tests/TestCase/DatabaseSuite.php; fi
 
   - if [[ $PHPCS = 1 ]]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi
 
