@@ -296,6 +296,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function select($fields = [], $overwrite = false)
     {
+        if (empty($fields)) {
+            return $this->_parts['select'];
+        }
+
         if (!is_string($fields) && is_callable($fields)) {
             $fields = $fields($this);
         }
