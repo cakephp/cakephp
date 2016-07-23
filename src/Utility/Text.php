@@ -518,6 +518,7 @@ class Text
         do {
             $text = preg_replace('#</?a([/\s][^>]*)?(>|$)#i', '', $text, -1, $count);
         } while ($count);
+
         return $text;
     }
 
