@@ -329,19 +329,17 @@ class TranslateBehavior extends Behavior
 
     /**
      * Merges `$data` into `$original` entity recursively using Marshaller merge method, if
-     * original entity is null, new one will be created.
+     * original entity not has language entity, new one will be created.
      * The translated entity may only contain the fields defined in the
      * behavior configuration (`fields`), you can use `fieldList` option as a
      * whitelist of fields to be assigned.
      *
      * The result will be and array [entities, errors]:
-     *  - entities indexed by locale name
-     *  - errors indexed by locale name
+     *  - entities: translated entity indexed by locale name
+     *  - errors: array indexed by locale name
      * or null if there are no fields to merge.
      *
-     * ## Note: Translated entity data not will be validated during merge.
-     *
-     * @param \Cake\Datasource\EntityInterface $original The original entity
+     * @param array $original The original entity data
      * @param array $data key value list of languages with fields to be merged into the translate entity
      * @param \Cake\ORM\Marshaller $marshaller Marshaller
      * @param array $options list of options for Marshaller
