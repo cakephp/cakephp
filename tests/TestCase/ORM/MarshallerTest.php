@@ -2987,372 +2987,295 @@ class MarshallerTest extends TestCase
      */
     public function testHasTranslations()
     {
-        // Mocks
-        $mockBehavior = $this->_getMockBehaviors();
-        $mockBehavior->expects($this->at(1))
-            ->method('hasMethod')
-            ->with('mergeTranslations')
-            ->will($this->returnValue(true));
-        $mockBehavior->expects($this->at(2))
-            ->method('hasMethod')
-            ->with('mergeTranslations')
-            ->will($this->returnValue(true));
-        $mockBehavior->expects($this->at(3))
-            ->method('hasMethod')
-            ->with('mergeTranslations')
-            ->will($this->returnValue(true));
-        $mockBehavior->expects($this->at(4))
-            ->method('hasMethod')
-            ->with('mergeTranslations')
-            ->will($this->returnValue(true));
-        $mockBehavior->expects($this->at(5))
-            ->method('hasMethod')
-            ->with('mergeTranslations')
-            ->will($this->returnValue(false));
+        // Translate Behavior not attached
+        $table = TableRegistry::get('Articles');
 
-        $mockTable = $this->_getMockTable(['mergeTranslations'], ['behaviors' => $mockBehavior]);
+        $marshall = new Marshaller($table);
+        $method = $this->_getProtectedMethod($marshall, '_hasTranslations');
+        $marshallOptions = [
+            'validate' => true,
+            'translations' => true
+        ];
 
-        $marshall = new Marshaller($mockTable);
+        $result = $method->invokeArgs($marshall, [$marshallOptions]);
+        $this->assertFalse($result, 'should return false');
+        unset($marshall);
+
+        // Translate Behavior is attached
+        $table->behaviors()->load('Translate');
+
+        $marshall = new Marshaller($table);
         $method = $this->_getProtectedMethod($marshall, '_hasTranslations');
 
-        $options = ['translations' => true];
-        $args = [&$options];
+        $result = $method->invokeArgs($marshall, [$marshallOptions]);
+        $this->assertTrue($result, 'should return true');
 
-        // Must return true
-        $this->assertTrue($method->invokeArgs($marshall, $args));
-
-        // Add _translations to fieldList
-        $options['translations'] = true;
-        $options['fieldList'] = ['title'];
-        $this->assertTrue($method->invokeArgs($marshall, $args));
-        $this->assertContains('_translations', $options['fieldList']);
-
-        // Call again, now _translations is already inside fieldList
-        $this->assertTrue($method->invokeArgs($marshall, $args));
-        $this->assertEquals(['title', '_translations'], $options['fieldList']);
-
-        // Return false
-        $options['translations'] = false;
-        $this->assertFalse($method->invokeArgs($marshall, $args));
-
-        // Table not has behavior
-        $options['translations'] = true;
-        $this->assertFalse($method->invokeArgs($marshall, $args));
+        //
+        $marshallOptions['translations'] = false;
+        $result = $method->invokeArgs($marshall, [$marshallOptions]);
+        $this->assertFalse($result, 'should return false');
     }
 
-    /**
-     * Test Merge translation without errors
-     *
-     * @return void
-     */
-    public function testMergeTranslations()
+    public function testAddTranslationToFieldList()
     {
-        // Mocks
-        $mockBehavior = $this->_getMockBehaviors();
-        $mockTable = $this->_getMockTable(['mergeTranslations'], ['behaviors' => $mockBehavior]);
+        $table = TableRegistry::get('Articles');
 
-        $marshall = new Marshaller($mockTable);
-        $method = $this->_getProtectedMethod($marshall, '_mergeTranslations');
-
-        $errors = [];
-        $data = ['en' => ['title' => 'Hi'], 'es' => ['title' => 'hola']];
-        $args = [
-            null,
-            $data,
-            &$errors
+        $marshall = new Marshaller($table);
+        $method = $this->_getProtectedMethod($marshall, '_addTranslationsToFieldList');
+        $marshallOptions = [
+            'validate' => true,
+            'translations' => true
         ];
 
-        $returnValue = [
-            [
-                'en' => null,
-                'es' => null
-            ],
-            []
-        ];
-        $mockTable->expects($this->once())
-            ->method('mergeTranslations')
-            ->with(
-                $this->isNull(),
-                $this->equalTo($data),
-                $this->isInstanceOf('Cake\ORM\Marshaller'),
-                $this->equalTo([])
-            )
-            ->will($this->returnValue($returnValue));
+        // FieldList not present
+        $result = $method->invokeArgs($marshall, [$marshallOptions]);
+        $this->assertArrayNotHasKey('fieldList', $result);
 
-        $result = $method->invokeArgs($marshall, $args);
+        // Empty fieldlist
+        $marshallOptions['fieldList'] = [];
+        $result = $method->invokeArgs($marshall, [$marshallOptions]);
+        $this->assertEmpty($result['fieldList']);
 
-        $this->assertEquals($returnValue[0], $result);
-        $this->assertEmpty($errors);
+        // FieldList not has _translations
+        $marshallOptions['fieldList'] = ['name'];
+        $result = $method->invokeArgs($marshall, [$marshallOptions]);
+        $expected = ['name', '_translations'];
+        $this->assertEquals($expected, $result['fieldList']);
+
+        // FieldList has _translations
+        $result = $method->invokeArgs($marshall, [$marshallOptions]);
+        $expected = ['name', '_translations'];
+        $this->assertEquals($expected, $result['fieldList']);
     }
 
-    /**
-     * Test Merge translation with errors, add to `$errors` parameter
-     *
-     * @return void
-     */
-    public function testMergeTranslationsWithErrors()
+    public function testMergeTransaltionsWithOneMethod()
     {
-        // Mocks
-        $mockBehavior = $this->_getMockBehaviors();
-        $mockTable = $this->_getMockTable(['mergeTranslations'], ['behaviors' => $mockBehavior]);
+        $this->articles->behaviors()->load('Translate', [
+            'fields' => ['title', 'body']
+        ]);
 
-        $marshall = new Marshaller($mockTable);
-        $method = $this->_getProtectedMethod($marshall, '_mergeTranslations');
-
-        $errors = [];
-        $data = ['en' => ['title' => 'Hi'], 'es' => ['title' => 'hola']];
-        $args = [
-            null,
-            $data,
-            &$errors
-        ];
-
-        $returnValue = [
-            [
-                'en' => null,
-                'es' => null
-            ],
-            [
-                'en' => []
+        $data = [
+            'author_id' => 1,
+            '_translations' => [
+                'en' => [
+                    'title' => 'English Title',
+                    'body' => 'English Content'
+                ],
+                'es' => [
+                    'title' => 'Titulo Español',
+                    'body' => 'Contenido Español'
+                ]
             ]
         ];
-        $mockTable->expects($this->once())
-            ->method('mergeTranslations')
-            ->with(
-                $this->isNull(),
-                $this->equalTo($data),
-                $this->isInstanceOf('Cake\ORM\Marshaller'),
-                $this->equalTo([])
-            )
-            ->will($this->returnValue($returnValue));
 
-        $result = $method->invokeArgs($marshall, $args);
+        $marshall = new Marshaller($this->articles);
+        $result = $marshall->one($data, []);
 
-        $this->assertEquals($returnValue[0], $result);
-        $this->assertArrayHasKey('_translations', $errors);
-    }
+        $translations = $result->get('_translations');
 
-    /**
-     * Test Merge translation when return null value
-     *
-     * @return void
-     */
-    public function testMergeTranslationsReturnNull()
-    {
-        // Mocks
-        $mockBehavior = $this->_getMockBehaviors();
-        $mockTable = $this->_getMockTable(['mergeTranslations'], ['behaviors' => $mockBehavior]);
-
-        $marshall = new Marshaller($mockTable);
-        $method = $this->_getProtectedMethod($marshall, '_mergeTranslations');
-
-        $errors = [];
-        $data = ['en' => ['title' => 'Hi'], 'es' => ['title' => 'hola']];
-        $args = [
-            null,
-            $data,
-            &$errors
-        ];
-
-        $mockTable->expects($this->once())
-            ->method('mergeTranslations')
-            ->with(
-                $this->isNull(),
-                $this->equalTo($data),
-                $this->isInstanceOf('Cake\ORM\Marshaller'),
-                $this->equalTo([])
-            )
-            ->will($this->returnValue(null));
-
-        $this->assertNull($method->invokeArgs($marshall, $args));
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * Test calling One method from Marshaller
-     *
-     * @return void
-     */
-    public function testMergeTranslationsViaOneMethod()
-    {
-        $data = [
-           'author_id' => 1,
-           '_translations' => [
-               'en' => [
-                   'title' => 'Title EN'
-               ],
-               'es' => [
-                   'title' => 'Title ES'
-               ]
-           ]
-        ];
-
-        $expectedMarshallerOptions = [
-           'validate' => true,
-           'translations' => true
-        ];
-
-        // Mocks
-        $mockBehavior = $this->_getMockBehaviors();
-        $mockBehavior->expects($this->any())
-           ->method('hasMethod')
-           ->with('mergeTranslations')
-           ->will($this->returnValue(true));
-
-        $mockTable = $this->_getMockTable(['mergeTranslations'], ['behaviors' => $mockBehavior]);
-        $mockTable->expects($this->at(0))
-           ->method('mergeTranslations')
-           ->with(
-               $this->isNull(),
-               $this->equalTo($data['_translations']),
-               $this->isInstanceOf('Cake\ORM\Marshaller'),
-               $this->equalTo($expectedMarshallerOptions)
-           )
-           ->will($this->returnValue(true));
-
-        // Second Call
-        $returnValue = [
-           [
-               'en' => null,
-               'es' => null
-           ],
-           [
-               'en' => []
-           ]
-        ];
-        $mockTable->expects($this->at(1))
-           ->method('mergeTranslations')
-           ->with(
-               $this->isNull(),
-               $this->equalTo($data['_translations']),
-               $this->isInstanceOf('Cake\ORM\Marshaller'),
-               $this->equalTo($expectedMarshallerOptions)
-           )
-           ->will($this->returnValue($returnValue));
-
-        $marshall = new Marshaller($mockTable);
-        $result = $marshall->one($data);
-
-        $this->assertTrue($result->get('_translations'));
         $this->assertEmpty($result->errors());
-
-        // With errors
-        $result = $marshall->one($data);
-        $this->assertEquals($returnValue[0], $result->get('_translations'));
-        $this->assertNotEmpty($result->errors());
-        $this->assertArrayHasKey('_translations', $result->errors());
+        $this->assertCount(2, $translations);
+        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['en']);
+        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['es']);
+        $this->assertEquals($data['_translations']['en'], $translations['en']->toArray());
     }
 
-    /**
-     * Test calling merge method from Marshaller
-     *
-     * @return void
-     */
-    public function testMergeTranslationsViaMergeMethod()
+    public function testMergeTranslationsWithOneMethodAndReturnErrors()
     {
+        $this->articles->behaviors()->load('Translate', [
+            'fields' => ['title', 'body'],
+            'validator' => 'custom'
+        ]);
+
+        $validator = (new Validator)->add('title', 'notBlank', ['rule' => 'notBlank']);
+        $this->articles->validator('custom', $validator);
+
         $data = [
-          'author_id' => 1,
-          '_translations' => [
-              'en' => [
-                  'title' => 'Title EN'
-              ],
-              'es' => [
-                  'title' => 'Title ES'
-              ]
-          ]
-        ];
-
-        $expectedMarshallerOptions = [
-          'validate' => true,
-          'translations' => true
-        ];
-
-        // Mocks
-        $mockBehavior = $this->_getMockBehaviors();
-        $mockBehavior->expects($this->any())
-          ->method('hasMethod')
-          ->with('mergeTranslations')
-          ->will($this->returnValue(true));
-
-        $mockTable = $this->_getMockTable(['mergeTranslations'], ['behaviors' => $mockBehavior]);
-        $mockTable->expects($this->at(0))
-          ->method('mergeTranslations')
-          ->with(
-              $this->isNull(),
-              $this->equalTo($data['_translations']),
-              $this->isInstanceOf('Cake\ORM\Marshaller'),
-              $this->equalTo($expectedMarshallerOptions)
-          )
-          ->will($this->returnValue(true));
-
-        // Second Call
-        $returnValue = [
-          [
-              'en' => null,
-              'es' => null
-          ],
-          [
-              'en' => []
-          ]
-        ];
-        $mockTable->expects($this->at(1))
-          ->method('mergeTranslations')
-          ->with(
-              $this->isTrue(), // _translation value inside entity is true (see last expect call)
-              $this->equalTo($data['_translations']),
-              $this->isInstanceOf('Cake\ORM\Marshaller'),
-              $this->equalTo($expectedMarshallerOptions)
-          )
-          ->will($this->returnValue($returnValue));
-
-        $entity = $this->articles->newEntity();
-
-        $marshall = new Marshaller($mockTable);
-        $marshall->merge($entity, $data);
-
-        $this->assertTrue($entity->get('_translations'));
-        $this->assertEmpty($entity->errors());
-
-        // Now with errors
-        $marshall->merge($entity, $data);
-        $this->assertEquals($returnValue[0], $entity->get('_translations'));
-        $this->assertNotEmpty($entity->errors());
-        $this->assertArrayHasKey('_translations', $entity->errors());
-    }
-
-    /**
-     * Helper method for making mocks.
-     *
-     * @param array $methods
-     * @return \Cake\ORM\Table (Mock)
-     */
-    protected function _getMockTable(array $methods = [], array $config = [])
-    {
-        $config += [
-            'alias' => 'Articles',
-            'schema' => [
-                'id' => ['type' => 'integer']
+            'author_id' => 1,
+            '_translations' => [
+                'en' => [
+                    'title' => 'English Title',
+                    'body' => 'English Content'
+                ],
+                'es' => [
+                    'title' => '',
+                    'body' => ''
+                ]
             ]
         ];
 
-        return $this->getMockBuilder('Cake\ORM\Table')
-            ->setMethods($methods)
-            ->setConstructorArgs([$config])
-            ->getMock();
+        $marshall = new Marshaller($this->articles);
+        $result = $marshall->one($data, []);
+
+        $expected = [
+            'es' => [
+                'title' => [
+                    '_empty' => 'This field cannot be left empty'
+                ]
+            ]
+        ];
+        $errors = $result->errors();
+        $this->assertNotEmpty($errors);
+        $this->assertArrayHasKey('_translations', $errors);
+        $this->assertEquals($expected, $errors['_translations']);
     }
 
-    /**
-     * Helper method for making mocks.
-     *
-     * @param array $methods
-     * @return Cake\ORM\BehaviorRegistry (Mock)
-     */
-    protected function _getMockBehaviors(array $methods = [])
+    public function testMergeTransaltionsWithMergeMethod()
     {
-        return $this->getMockBuilder('Cake\ORM\BehaviorRegistry')
-            ->disableOriginalConstructor()
-            ->setMethods($methods)
-            ->getMock();
+        $this->articles->behaviors()->load('Translate', [
+            'fields' => ['title', 'body']
+        ]);
+
+        $data = [
+            'author_id' => 1,
+            '_translations' => [
+                'en' => [
+                    'title' => 'English Title',
+                    'body' => 'English Content'
+                ],
+                'es' => [
+                    'title' => 'Titulo Español',
+                    'body' => 'Contenido Español'
+                ]
+            ]
+        ];
+
+        $marshall = new Marshaller($this->articles);
+        $entity = $this->articles->newEntity();
+        $result = $marshall->merge($entity, $data, []);
+
+        $translations = $result->get('_translations');
+
+        $this->assertSame($entity, $result);
+        $this->assertEmpty($result->errors());
+        $this->assertTrue($result->dirty('_translations'));
+        $this->assertCount(2, $translations);
+        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['en']);
+        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['es']);
+        $this->assertEquals($data['_translations']['en'], $translations['en']->toArray());
+    }
+
+    public function testMergeTranslationsWithOneMethodWithFieldList()
+    {
+        $this->articles->behaviors()->load('Translate', [
+            'fields' => ['title', 'body'],
+            'validator' => 'custom'
+        ]);
+
+        $validator = (new Validator)->add('title', 'notBlank', ['rule' => 'notBlank']);
+        $this->articles->validator('custom', $validator);
+
+        $data = [
+            'author_id' => 1,
+            '_translations' => [
+                'en' => [
+                    'title' => 'English Title',
+                    'body' => 'English Content'
+                ],
+                'es' => [
+                    'title' => 'Titulo Español',
+                    'body' => ''
+                ]
+            ]
+        ];
+
+        $marshall = new Marshaller($this->articles);
+        $result = $marshall->one($data, ['fieldList' => ['author_id', 'title']]);
+
+        $expected = [
+            'en' => [
+                'title' => 'English Title'
+            ],
+            'es' => [
+                'title' => 'Titulo Español'
+            ]
+        ];
+        $translations = $result->get('_translations');
+
+        $this->assertTrue($result->has('author_id'));
+        $this->assertEmpty($result->errors());
+        $this->assertEquals($expected['en'], $translations['en']->toArray());
+        $this->assertEquals($expected['es'], $translations['es']->toArray());
+    }
+
+    public function testMergeTranslationsWithMergeMethodAndReturnErrors()
+    {
+        $this->articles->behaviors()->load('Translate', [
+            'fields' => ['title', 'body'],
+            'validator' => 'custom'
+        ]);
+
+        $validator = (new Validator)->add('title', 'notBlank', ['rule' => 'notBlank']);
+        $this->articles->validator('custom', $validator);
+
+        $data = [
+            'author_id' => 1,
+            '_translations' => [
+                'en' => [
+                    'title' => 'English Title',
+                    'body' => 'English Content'
+                ],
+                'es' => [
+                    'title' => '',
+                    'body' => ''
+                ]
+            ]
+        ];
+
+        $marshall = new Marshaller($this->articles);
+        $entity = $this->articles->newEntity();
+        $result = $marshall->merge($entity, $data, []);
+
+        $expected = [
+            'es' => [
+                'title' => [
+                    '_empty' => 'This field cannot be left empty'
+                ]
+            ]
+        ];
+        $errors = $result->errors();
+        $this->assertArrayHasKey('_translations', $errors);
+        $this->assertEquals($expected, $errors['_translations']);
+    }
+
+    public function testMergeTranslationsWithMergeMethodUpdateFields()
+    {
+        $this->articles->behaviors()->load('Translate', [
+            'fields' => ['title', 'body'],
+            'validator' => 'custom'
+        ]);
+
+        $validator = (new Validator)->add('title', 'notBlank', ['rule' => 'notBlank']);
+        $this->articles->validator('custom', $validator);
+
+        $data = [
+            'author_id' => 1,
+            '_translations' => [
+                'en' => [
+                    'title' => 'English Title',
+                    'body' => 'English Content'
+                ],
+                'es' => [
+                    'title' => 'Titulo Español',
+                    'body' => ''
+                ]
+            ]
+        ];
+        $marshall = new Marshaller($this->articles);
+        $entity = $this->articles->newEntity($data);
+
+        $updateData = [
+            '_translations' => [
+                'es' => [
+                    'body' => 'Contenido Español'
+                ]
+            ]
+        ];
+        $result = $marshall->merge($entity, $updateData, []);
+
+        $entityData = $result->toArray();
+        $this->assertEquals('Contenido Español', $entityData['_translations']['es']['body']);
+        $this->assertEmpty($result->errors());
     }
 
     protected function _getProtectedMethod($obj, $name)
