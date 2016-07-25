@@ -47,6 +47,7 @@ class DashedRoute extends Route
             return Inflector::camelize($plugin);
         }
         list($vendor, $plugin) = explode('/', $plugin, 2);
+
         return Inflector::camelize($vendor) . '/' . Inflector::camelize($plugin);
     }
 
@@ -56,11 +57,12 @@ class DashedRoute extends Route
      * camelBacked form.
      *
      * @param string $url The URL to parse
+     * @param string $method The HTTP method.
      * @return array|false An array of request parameters, or false on failure.
      */
-    public function parse($url)
+    public function parse($url, $method = '')
     {
-        $params = parent::parse($url);
+        $params = parent::parse($url, $method);
         if (!$params) {
             return false;
         }
@@ -77,6 +79,7 @@ class DashedRoute extends Route
                 $params['action']
             ));
         }
+
         return $params;
     }
 
@@ -97,6 +100,7 @@ class DashedRoute extends Route
             $this->_inflectedDefaults = true;
             $this->defaults = $this->_dasherize($this->defaults);
         }
+
         return parent::match($url, $context);
     }
 
@@ -113,6 +117,7 @@ class DashedRoute extends Route
                 $url[$element] = Inflector::dasherize($url[$element]);
             }
         }
+
         return $url;
     }
 }

@@ -38,8 +38,8 @@ class CellTest extends TestCase
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
         Plugin::load(['TestPlugin', 'TestTheme']);
-        $request = $this->getMock('Cake\Network\Request');
-        $response = $this->getMock('Cake\Network\Response');
+        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $this->View = new \Cake\View\View($request, $response);
     }
 
@@ -143,6 +143,20 @@ class CellTest extends TestCase
     }
 
     /**
+     * Tests that cell action setting the templatePath
+     *
+     * @return void
+     */
+    public function testSettingCellTemplatePathFromAction()
+    {
+        $appCell = $this->View->cell('Articles::customTemplatePath');
+
+        $this->assertContains('Articles subdir custom_template_path template', "{$appCell}");
+        $this->assertEquals('custom_template_path', $appCell->template);
+        $this->assertEquals('Cell/Articles/Subdir', $appCell->viewBuilder()->templatePath());
+    }
+
+    /**
      * Tests that cell action setting the template using the ViewBuilder renders the correct template
      *
      * @return void
@@ -229,6 +243,28 @@ class CellTest extends TestCase
     }
 
     /**
+     * Tests that using namespaced cells works.
+     *
+     * @return void
+     */
+    public function testNamespacedCell()
+    {
+        $cell = $this->View->cell('Admin/Menu');
+        $this->assertContains('Admin Menu Cell', $cell->render());
+    }
+
+    /**
+     * Tests that using namespaced cells in plugins works
+     *
+     * @return void
+     */
+    public function testPluginNamespacedCell()
+    {
+        $cell = $this->View->cell('TestPlugin.Admin/Menu');
+        $this->assertContains('Test Plugin Admin Menu Cell', $cell->render());
+    }
+
+    /**
      * Test that plugin cells can render other view templates.
      *
      * @return void
@@ -308,8 +344,8 @@ class CellTest extends TestCase
      */
     public function testCellInheritsCustomViewClass()
     {
-        $request = $this->getMock('Cake\Network\Request');
-        $response = $this->getMock('Cake\Network\Response');
+        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $view = new CustomJsonView($request, $response);
         $cell = $view->cell('Articles');
         $this->assertSame('TestApp\View\CustomJsonView', $cell->viewClass);
@@ -322,7 +358,7 @@ class CellTest extends TestCase
      */
     public function testCachedRenderSimple()
     {
-        $mock = $this->getMock('Cake\Cache\CacheEngine');
+        $mock = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $mock->method('init')
             ->will($this->returnValue(true));
         $mock->method('read')
@@ -345,7 +381,7 @@ class CellTest extends TestCase
      */
     public function testReadCachedCell()
     {
-        $mock = $this->getMock('Cake\Cache\CacheEngine');
+        $mock = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $mock->method('init')
             ->will($this->returnValue(true));
         $mock->method('read')
@@ -367,7 +403,7 @@ class CellTest extends TestCase
      */
     public function testCachedRenderArrayConfig()
     {
-        $mock = $this->getMock('Cake\Cache\CacheEngine');
+        $mock = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $mock->method('init')
             ->will($this->returnValue(true));
         $mock->method('read')
@@ -392,7 +428,7 @@ class CellTest extends TestCase
      */
     public function testCachedRenderSimpleCustomTemplate()
     {
-        $mock = $this->getMock('Cake\Cache\CacheEngine');
+        $mock = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $mock->method('init')
             ->will($this->returnValue(true));
         $mock->method('read')

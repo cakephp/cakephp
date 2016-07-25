@@ -126,6 +126,7 @@ class ViewBuilder implements JsonSerializable, Serializable
         }
 
         $this->_templatePath = $path;
+
         return $this;
     }
 
@@ -142,6 +143,7 @@ class ViewBuilder implements JsonSerializable, Serializable
         }
 
         $this->_layoutPath = $path;
+
         return $this;
     }
 
@@ -160,6 +162,7 @@ class ViewBuilder implements JsonSerializable, Serializable
         }
 
         $this->_autoLayout = (bool)$autoLayout;
+
         return $this;
     }
 
@@ -177,6 +180,7 @@ class ViewBuilder implements JsonSerializable, Serializable
         }
 
         $this->_plugin = $name;
+
         return $this;
     }
 
@@ -196,6 +200,7 @@ class ViewBuilder implements JsonSerializable, Serializable
             $helpers = array_merge($this->_helpers, $helpers);
         }
         $this->_helpers = $helpers;
+
         return $this;
     }
 
@@ -213,6 +218,7 @@ class ViewBuilder implements JsonSerializable, Serializable
         }
 
         $this->_theme = $theme;
+
         return $this;
     }
 
@@ -230,6 +236,7 @@ class ViewBuilder implements JsonSerializable, Serializable
         }
 
         $this->_template = $name;
+
         return $this;
     }
 
@@ -248,6 +255,7 @@ class ViewBuilder implements JsonSerializable, Serializable
         }
 
         $this->_layout = $name;
+
         return $this;
     }
 
@@ -269,6 +277,7 @@ class ViewBuilder implements JsonSerializable, Serializable
             $options = array_merge($this->_options, $options);
         }
         $this->_options = $options;
+
         return $this;
     }
 
@@ -284,6 +293,7 @@ class ViewBuilder implements JsonSerializable, Serializable
             return $this->_name;
         }
         $this->_name = $name;
+
         return $this;
     }
 
@@ -304,6 +314,7 @@ class ViewBuilder implements JsonSerializable, Serializable
             return $this->_className;
         }
         $this->_className = $name;
+
         return $this;
     }
 
@@ -314,9 +325,9 @@ class ViewBuilder implements JsonSerializable, Serializable
      * If that class does not exist, then Cake\View\View will be used.
      *
      * @param array $vars The view variables/context to use.
-     * @param \Cake\Network\Request $request The request to use.
-     * @param \Cake\Network\Response $response The response to use.
-     * @param \Cake\Event\EventManager $events The event manager to use.
+     * @param \Cake\Network\Request|null $request The request to use.
+     * @param \Cake\Network\Response|null $response The response to use.
+     * @param \Cake\Event\EventManager|null $events The event manager to use.
      * @return \Cake\View\View
      * @throws \Cake\View\Exception\MissingViewException
      */
@@ -348,6 +359,7 @@ class ViewBuilder implements JsonSerializable, Serializable
             'viewVars' => $vars,
         ];
         $data += $this->_options;
+
         return new $className($request, $response, $events, $data);
     }
 
@@ -398,6 +410,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     public function serialize()
     {
         $array = $this->jsonSerialize();
+
         return serialize($array);
     }
 

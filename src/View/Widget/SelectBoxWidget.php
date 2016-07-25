@@ -126,6 +126,7 @@ class SelectBoxWidget extends BasicWidget
             unset($data['multiple']);
         }
         $attrs = $this->_templates->formatAttributes($data);
+
         return $this->_templates->format($template, [
             'name' => $name,
             'templateVars' => $data['templateVars'],
@@ -161,6 +162,7 @@ class SelectBoxWidget extends BasicWidget
             $disabled = $data['disabled'];
         }
         $templateVars = $data['templateVars'];
+
         return $this->_renderOptions($options, $disabled, $selected, $templateVars, $data['escape']);
     }
 
@@ -181,6 +183,7 @@ class SelectBoxWidget extends BasicWidget
         if (is_array($value)) {
             return $value;
         }
+
         return [];
     }
 
@@ -270,6 +273,7 @@ class SelectBoxWidget extends BasicWidget
                 'attrs' => $this->_templates->formatAttributes($optAttrs, ['text', 'value']),
             ]);
         }
+
         return $out;
     }
 
@@ -287,9 +291,12 @@ class SelectBoxWidget extends BasicWidget
         }
         $isArray = is_array($selected);
         if (!$isArray) {
+            $selected = $selected === false ? '0' : $selected;
+
             return (string)$key === (string)$selected;
         }
         $strict = !is_numeric($key);
+
         return in_array((string)$key, $selected, $strict);
     }
 
@@ -306,6 +313,7 @@ class SelectBoxWidget extends BasicWidget
             return false;
         }
         $strict = !is_numeric($key);
+
         return in_array((string)$key, $disabled, $strict);
     }
 }

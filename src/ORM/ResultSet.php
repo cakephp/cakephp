@@ -258,6 +258,7 @@ class ResultSet implements ResultSetInterface
             $valid = $this->_index < $this->_count;
             if ($valid && $this->_results[$this->_index] !== null) {
                 $this->_current = $this->_results[$this->_index];
+
                 return true;
             }
             if (!$valid) {
@@ -291,6 +292,7 @@ class ResultSet implements ResultSetInterface
             if ($this->_statement && !$this->_useBuffering) {
                 $this->_statement->closeCursor();
             }
+
             return $result;
         }
     }
@@ -307,6 +309,7 @@ class ResultSet implements ResultSetInterface
         while ($this->valid()) {
             $this->next();
         }
+
         return serialize($this->_results);
     }
 
@@ -340,6 +343,7 @@ class ResultSet implements ResultSetInterface
         if ($this->_statement) {
             return $this->_count = $this->_statement->rowCount();
         }
+
         return $this->_count = count($this->_results);
     }
 
@@ -456,6 +460,7 @@ class ResultSet implements ResultSetInterface
         if ($row === false) {
             return $row;
         }
+
         return $this->_groupResult($row);
     }
 

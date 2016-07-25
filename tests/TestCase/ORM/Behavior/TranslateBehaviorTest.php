@@ -15,9 +15,7 @@
 namespace Cake\Test\TestCase\ORM\Behavior;
 
 use Cake\Collection\Collection;
-use Cake\Event\Event;
 use Cake\I18n\I18n;
-use Cake\ORM\Behavior\TranslateBehavior;
 use Cake\ORM\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
@@ -70,6 +68,7 @@ class TranslateBehaviorTest extends TestCase
             if (!$translations) {
                 return [];
             }
+
             return array_map(function ($t) {
                 return $t->toArray();
             }, $translations);
@@ -94,8 +93,9 @@ class TranslateBehaviorTest extends TestCase
         $i18n = $items->getByProperty('_i18n');
 
         $this->assertEquals('\TestApp\Model\Table\I18nTable', $i18n->name());
-        $this->assertEquals('custom_i18n_table', $i18n->target()->table());
+        $this->assertInstanceOf('TestApp\Model\Table\I18nTable', $i18n->target());
         $this->assertEquals('test_custom_i18n_datasource', $i18n->target()->connection()->configName());
+        $this->assertEquals('custom_i18n_table', $i18n->target()->table());
     }
 
     /**
@@ -156,6 +156,7 @@ class TranslateBehaviorTest extends TestCase
                 foreach ($results as $res) {
                     $res->second = 'loop';
                 }
+
                 return $results;
             })
             ->toArray();

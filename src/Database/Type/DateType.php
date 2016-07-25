@@ -46,6 +46,7 @@ class DateType extends DateTimeType
     public function useImmutable()
     {
         $this->_setClassName('Cake\I18n\FrozenDate', 'DateTimeImmutable');
+
         return $this;
     }
 
@@ -57,6 +58,7 @@ class DateType extends DateTimeType
     public function useMutable()
     {
         $this->_setClassName('Cake\I18n\Date', 'DateTime');
+
         return $this;
     }
 
@@ -72,6 +74,7 @@ class DateType extends DateTimeType
         if ($date instanceof DateTime) {
             $date->setTime(0, 0, 0);
         }
+
         return $date;
     }
 
@@ -88,6 +91,7 @@ class DateType extends DateTimeType
         if ($date instanceof DateTime) {
             $date->setTime(0, 0, 0);
         }
+
         return $date;
     }
 
@@ -97,22 +101,7 @@ class DateType extends DateTimeType
     protected function _parseValue($value)
     {
         $class = $this->_className;
+
         return $class::parseDate($value, $this->_localeFormat);
-    }
-
-    /**
-     * Test that toImmutable changes all the methods to create frozen time instances.
-     *
-     * @return void
-     */
-    public function testToImmutableAndToMutable()
-    {
-        $this->type->useImmutable();
-        $this->assertInstanceOf('DateTimeImmutable', $this->type->marshal('2015-11-01'));
-        $this->assertInstanceOf('DateTimeImmutable', $this->type->toPhp('2015-11-01', $this->driver));
-
-        $this->type->useMutable();
-        $this->assertInstanceOf('DateTime', $this->type->marshal('2015-11-01'));
-        $this->assertInstanceOf('DateTime', $this->type->toPhp('2015-11-01', $this->driver));
     }
 }

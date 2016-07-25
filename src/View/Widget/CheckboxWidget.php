@@ -77,6 +77,7 @@ class CheckboxWidget extends BasicWidget
         if (array_key_exists('checked', $data)) {
             return (bool)$data['checked'];
         }
+
         return (string)$data['val'] === (string)$data['value'];
     }
 }

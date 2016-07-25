@@ -14,9 +14,6 @@
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
-use Cake\Core\Configure;
-use Cake\Database\Connection;
-use Cake\Database\Driver\Mysql;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use \PDO;
@@ -47,7 +44,9 @@ class MysqlTest extends TestCase
      */
     public function testConnectionConfigDefault()
     {
-        $driver = $this->getMock('Cake\Database\Driver\Mysql', ['_connect', 'connection']);
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+            ->setMethods(['_connect', 'connection'])
+            ->getMock();
         $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8';
         $expected = [
             'persistent' => true,
@@ -67,7 +66,9 @@ class MysqlTest extends TestCase
             PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
-        $connection = $this->getMock('StdClass', ['exec']);
+        $connection = $this->getMockBuilder('StdClass')
+            ->setMethods(['exec'])
+            ->getMock();
 
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);
@@ -100,11 +101,10 @@ class MysqlTest extends TestCase
                 'this too',
             ]
         ];
-        $driver = $this->getMock(
-            'Cake\Database\Driver\Mysql',
-            ['_connect', 'connection'],
-            [$config]
-        );
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([$config])
+            ->getMock();
         $dsn = 'mysql:host=foo;port=3440;dbname=bar;charset=a-language';
         $expected = $config;
         $expected['init'][] = "SET time_zone = 'Antartica'";
@@ -115,7 +115,9 @@ class MysqlTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
-        $connection = $this->getMock('StdClass', ['exec']);
+        $connection = $this->getMockBuilder('StdClass')
+            ->setMethods(['exec'])
+            ->getMock();
         $connection->expects($this->at(0))->method('exec')->with('Execute this');
         $connection->expects($this->at(1))->method('exec')->with('this too');
         $connection->expects($this->at(2))->method('exec')->with("SET time_zone = 'Antartica'");
@@ -142,5 +144,24 @@ class MysqlTest extends TestCase
 
         $connection->connect();
         $this->assertTrue($connection->isConnected(), 'Should be connected.');
+    }
+
+    public function testRollbackTransactionAutoConnect()
+    {
+        $connection = ConnectionManager::get('test');
+        $connection->disconnect();
+
+        $driver = $connection->driver();
+        $this->assertFalse($driver->rollbackTransaction());
+        $this->assertTrue($driver->isConnected());
+    }
+
+    public function testCommitTransactionAutoConnect()
+    {
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->driver();
+
+        $this->assertFalse($driver->commitTransaction());
+        $this->assertTrue($driver->isConnected());
     }
 }

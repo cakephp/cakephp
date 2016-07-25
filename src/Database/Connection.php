@@ -14,6 +14,7 @@
  */
 namespace Cake\Database;
 
+use Cake\Core\App;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
@@ -137,6 +138,7 @@ class Connection implements ConnectionInterface
         if (empty($this->_config['name'])) {
             return '';
         }
+
         return $this->_config['name'];
     }
 
@@ -158,14 +160,16 @@ class Connection implements ConnectionInterface
             return $this->_driver;
         }
         if (is_string($driver)) {
-            if (!class_exists($driver)) {
+            $className = App::className($driver, 'Database/Driver');
+            if (!$className || !class_exists($className)) {
                 throw new MissingDriverException(['driver' => $driver]);
             }
-            $driver = new $driver($config);
+            $driver = new $className($config);
         }
         if (!$driver->enabled()) {
             throw new MissingExtensionException(['driver' => get_class($driver)]);
         }
+
         return $this->_driver = $driver;
     }
 
@@ -179,6 +183,7 @@ class Connection implements ConnectionInterface
     {
         try {
             $this->_driver->connect();
+
             return true;
         } catch (Exception $e) {
             throw new MissingConnectionException(['reason' => $e->getMessage()]);
@@ -240,6 +245,7 @@ class Connection implements ConnectionInterface
         } else {
             $statement = $this->query($query);
         }
+
         return $statement;
     }
 
@@ -282,6 +288,7 @@ class Connection implements ConnectionInterface
     {
         $statement = $this->prepare($sql);
         $statement->execute();
+
         return $statement;
     }
 
@@ -329,6 +336,7 @@ class Connection implements ConnectionInterface
     public function insert($table, array $data, array $types = [])
     {
         $columns = array_keys($data);
+
         return $this->newQuery()->insert($columns, $types)
             ->into($table)
             ->values($data)
@@ -381,6 +389,7 @@ class Connection implements ConnectionInterface
             $this->_driver->beginTransaction();
             $this->_transactionLevel = 0;
             $this->_transactionStarted = true;
+
             return;
         }
 
@@ -406,6 +415,7 @@ class Connection implements ConnectionInterface
             if ($this->_logQueries) {
                 $this->log('COMMIT');
             }
+
             return $this->_driver->commitTransaction();
         }
         if ($this->useSavePoints()) {
@@ -413,6 +423,7 @@ class Connection implements ConnectionInterface
         }
 
         $this->_transactionLevel--;
+
         return true;
     }
 
@@ -435,12 +446,14 @@ class Connection implements ConnectionInterface
                 $this->log('ROLLBACK');
             }
             $this->_driver->rollbackTransaction();
+
             return true;
         }
 
         if ($useSavePoint) {
             $this->rollbackSavepoint($this->_transactionLevel--);
         }
+
         return true;
     }
 
@@ -562,10 +575,12 @@ class Connection implements ConnectionInterface
 
         if ($result === false) {
             $this->rollback();
+
             return false;
         }
 
         $this->commit();
+
         return $result;
     }
 
@@ -592,6 +607,7 @@ class Connection implements ConnectionInterface
         }
 
         $this->enableForeignKeys();
+
         return $result;
     }
 
@@ -609,12 +625,13 @@ class Connection implements ConnectionInterface
      * Quotes value to be used safely in database query.
      *
      * @param mixed $value The value to quote.
-     * @param string $type Type to be used for determining kind of quoting to perform
+     * @param string|null $type Type to be used for determining kind of quoting to perform
      * @return string Quoted value
      */
     public function quote($value, $type = null)
     {
         list($value, $type) = $this->cast($value, $type);
+
         return $this->_driver->quote($value, $type);
     }
 
@@ -675,6 +692,7 @@ class Connection implements ConnectionInterface
             if ($this->_logger === null) {
                 $this->_logger = new QueryLogger;
             }
+
             return $this->_logger;
         }
         $this->_logger = $instance;
@@ -694,6 +712,38 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Check if cross talk is supported between two connections
+     *
+     * @param ConnectionInterface $target Connection to check cross talk with
+     *
+     * @return bool
+     */
+    public function supportsCrossWith(ConnectionInterface $target)
+    {
+        $sourceConfig = $this->config();
+        $targetConfig = $target->config();
+
+        // No need to do report cross support in case the same connection is being used
+        if ($sourceConfig['name'] === $targetConfig['name']) {
+            return false;
+        }
+
+        $configToCheck = [
+            'driver',
+            'host',
+            'port'
+        ];
+
+        foreach ($configToCheck as $config) {
+            if ((isset($sourceConfig[$config])) && ($sourceConfig[$config] !== $targetConfig[$config])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Returns a new statement object that will log the activity
      * for the passed original statement instance.
      *
@@ -704,6 +754,7 @@ class Connection implements ConnectionInterface
     {
         $log = new LoggingStatement($statement, $this->driver());
         $log->logger($this->logger());
+
         return $log;
     }
 

@@ -14,11 +14,6 @@
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
-use Cake\Core\Configure;
-use Cake\Database\Connection;
-use Cake\Database\Driver\Postgres;
-use Cake\Database\Query;
-use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use \PDO;
 
@@ -35,7 +30,9 @@ class PostgresTest extends TestCase
      */
     public function testConnectionConfigDefault()
     {
-        $driver = $this->getMock('Cake\Database\Driver\Postgres', ['_connect', 'connection']);
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
+            ->setMethods(['_connect', 'connection'])
+            ->getMock();
         $dsn = 'pgsql:host=localhost;port=5432;dbname=cake';
         $expected = [
             'persistent' => true,
@@ -57,7 +54,9 @@ class PostgresTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
 
-        $connection = $this->getMock('stdClass', ['exec', 'quote']);
+        $connection = $this->getMockBuilder('stdClass')
+            ->setMethods(['exec', 'quote'])
+            ->getMock();
         $connection->expects($this->any())
             ->method('quote')
             ->will($this->onConsecutiveCalls(
@@ -98,11 +97,10 @@ class PostgresTest extends TestCase
             'schema' => 'fooblic',
             'init' => ['Execute this', 'this too']
         ];
-        $driver = $this->getMock(
-            'Cake\Database\Driver\Postgres',
-            ['_connect', 'connection'],
-            [$config]
-        );
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([$config])
+            ->getMock();
         $dsn = 'pgsql:host=foo;port=3440;dbname=bar';
 
         $expected = $config;
@@ -112,7 +110,9 @@ class PostgresTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
 
-        $connection = $this->getMock('stdClass', ['exec', 'quote']);
+        $connection = $this->getMockBuilder('stdClass')
+            ->setMethods(['exec', 'quote'])
+            ->getMock();
         $connection->expects($this->any())
             ->method('quote')
             ->will($this->onConsecutiveCalls(
@@ -145,11 +145,10 @@ class PostgresTest extends TestCase
      */
     public function testInsertReturning()
     {
-        $driver = $this->getMock(
-            'Cake\Database\Driver\Postgres',
-            ['_connect', 'connection'],
-            [[]]
-        );
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([[]])
+            ->getMock();
         $connection = $this
             ->getMockBuilder('\Cake\Database\Connection')
             ->setMethods(['connect'])

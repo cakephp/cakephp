@@ -53,8 +53,8 @@ class ClassLoader
     {
         $prefix = trim($prefix, '\\') . '\\';
 
-        $baseDir = rtrim($baseDir, '/') . DS;
-        $baseDir = rtrim($baseDir, DS) . '/';
+        $baseDir = rtrim($baseDir, '/') . DIRECTORY_SEPARATOR;
+        $baseDir = rtrim($baseDir, DIRECTORY_SEPARATOR) . '/';
 
         if (!isset($this->_prefixes[$prefix])) {
             $this->_prefixes[$prefix] = [];
@@ -108,7 +108,7 @@ class ClassLoader
         }
 
         foreach ($this->_prefixes[$prefix] as $baseDir) {
-            $file = $baseDir . str_replace('\\', DS, $relativeClass) . '.php';
+            $file = $baseDir . str_replace('\\', DIRECTORY_SEPARATOR, $relativeClass) . '.php';
 
             if ($this->_requireFile($file)) {
                 return $file;
@@ -128,8 +128,10 @@ class ClassLoader
     {
         if (file_exists($file)) {
             require $file;
+
             return true;
         }
+
         return false;
     }
 }

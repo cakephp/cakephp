@@ -462,7 +462,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * // Total: 6
      * ```
      *
-     * @param string|callable $matcher The property name to sum or a function
+     * @param string|callable|null $matcher The property name to sum or a function
      * If no value is passed, an identity function will be used.
      * that will return the value of the property to sum.
      * @return float|int
@@ -620,9 +620,10 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * whether an element is parent of another
      * @param callable|string $parentPath the column name path to use for determining
      * whether an element is child of another
+     * @param string $nestingKey The key name under which children are nested
      * @return \Cake\Collection\CollectionInterface
      */
-    public function nest($idPath, $parentPath);
+    public function nest($idPath, $parentPath, $nestingKey = 'children');
 
     /**
      * Returns a new collection containing each of the elements found in `$values` as
@@ -840,7 +841,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * });
      * ```
      *
-     * @param callable $transformer A callable function that will receive each of
+     * @param callable|null $transformer A callable function that will receive each of
      * the items in the collection and should return an array or Traversable object
      * @return \Cake\Collection\CollectionInterface
      */
@@ -945,4 +946,32 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @return \Iterator
      */
     public function unwrap();
+
+    /**
+     * Transpose rows and columns into columns and rows
+     *
+     * ### Example:
+     *
+     * ```
+     * $items = [
+     *       ['Products', '2012', '2013', '2014'],
+     *       ['Product A', '200', '100', '50'],
+     *       ['Product B', '300', '200', '100'],
+     *       ['Product C', '400', '300', '200'],
+     * ]
+     *
+     * $transpose = (new Collection($items))->transpose()->toList();
+     *
+     * // Returns
+     * // [
+     * //     ['Products', 'Product A', 'Product B', 'Product C'],
+     * //     ['2012', '200', '300', '400'],
+     * //     ['2013', '100', '200', '300'],
+     * //     ['2014', '50', '100', '200'],
+     * // ]
+     * ```
+     *
+     * @return \Cake\Collection\CollectionInterface
+     */
+    public function transpose();
 }

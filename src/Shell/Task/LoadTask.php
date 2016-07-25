@@ -34,16 +34,17 @@ class LoadTask extends Shell
     /**
      * Execution method always used for tasks.
      *
-     * @param string $plugin The plugin name.
+     * @param string|null $plugin The plugin name.
      * @return bool
      */
     public function main($plugin = null)
     {
-        $this->bootstrap = ROOT . DS . 'config' . DS . 'bootstrap.php';
+        $this->bootstrap = ROOT . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
         if (empty($plugin)) {
             $this->err('<error>You must provide a plugin name in CamelCase format.</error>');
             $this->err('To load an "Example" plugin, run <info>`cake plugin load Example`</info>.');
+
             return false;
         }
 
@@ -80,8 +81,10 @@ class LoadTask extends Shell
             $bootstrap->append(str_replace(', []', '', sprintf($append, $plugin, $options)));
             $this->out('');
             $this->out(sprintf('%s modified', $this->bootstrap));
+
             return true;
         }
+
         return false;
     }
 

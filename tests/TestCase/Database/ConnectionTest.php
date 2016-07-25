@@ -29,8 +29,9 @@ class ConnectionTest extends TestCase
 
     public function setUp()
     {
-        $this->connection = ConnectionManager::get('test');
         parent::setUp();
+        $this->connection = ConnectionManager::get('test');
+        Configure::write('App.namespace', 'TestApp');
     }
 
     public function tearDown()
@@ -48,10 +49,11 @@ class ConnectionTest extends TestCase
      */
     public function getMockFormDriver()
     {
-        $driver = $this->getMock('Cake\Database\Driver');
+        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $driver->expects($this->once())
             ->method('enabled')
             ->will($this->returnValue(true));
+
         return $driver;
     }
 
@@ -111,8 +113,29 @@ class ConnectionTest extends TestCase
      */
     public function testDisabledDriver()
     {
-        $mock = $this->getMock('\Cake\Database\Connection\Driver', ['enabled'], [], 'DriverMock');
+        $mock = $this->getMockBuilder('\Cake\Database\Connection\Driver')
+            ->setMethods(['enabled'])
+            ->setMockClassName('DriverMock')
+            ->getMock();
         $connection = new Connection(['driver' => $mock]);
+    }
+
+    /**
+     * Tests that the `driver` option supports the short classname/plugin syntax.
+     *
+     * @return void
+     */
+    public function testDriverOptionClassNameSupport()
+    {
+        $connection = new Connection(['driver' => 'TestDriver']);
+        $this->assertInstanceOf('\TestApp\Database\Driver\TestDriver', $connection->driver());
+
+        $connection = new Connection(['driver' => 'TestPlugin.TestDriver']);
+        $this->assertInstanceOf('\TestPlugin\Database\Driver\TestDriver', $connection->driver());
+
+        list(, $name) = namespaceSplit(get_class($this->connection->driver()));
+        $connection = new Connection(['driver' => $name]);
+        $this->assertInstanceOf(get_class($this->connection->driver()), $connection->driver());
     }
 
     /**
@@ -667,7 +690,9 @@ class ConnectionTest extends TestCase
      */
     public function testQuoteIdentifier()
     {
-        $driver = $this->getMock('Cake\Database\Driver\Sqlite', ['enabled']);
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')
+            ->setMethods(['enabled'])
+            ->getMock();
         $driver->expects($this->once())
             ->method('enabled')
             ->will($this->returnValue(true));
@@ -797,7 +822,7 @@ class ConnectionTest extends TestCase
      */
     public function testLogFunction()
     {
-        $logger = $this->getMock('\Cake\Database\Log\QueryLogger');
+        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
         $this->connection->logger($logger);
         $logger->expects($this->once())->method('log')
             ->with($this->logicalAnd(
@@ -824,7 +849,7 @@ class ConnectionTest extends TestCase
         $driver = $this->getMockFormDriver();
         $connection->driver($driver);
 
-        $logger = $this->getMock('\Cake\Database\Log\QueryLogger');
+        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
         $connection->logger($logger);
         $logger->expects($this->at(0))->method('log')
             ->with($this->logicalAnd(
@@ -850,13 +875,12 @@ class ConnectionTest extends TestCase
     public function testLogCommitTransaction()
     {
         $driver = $this->getMockFormDriver();
-        $connection = $this->getMock(
-            '\Cake\Database\Connection',
-            ['connect'],
-            [['driver' => $driver]]
-        );
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect'])
+            ->setConstructorArgs([['driver' => $driver]])
+            ->getMock();
 
-        $logger = $this->getMock('\Cake\Database\Log\QueryLogger');
+        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
         $connection->logger($logger);
 
         $logger->expects($this->at(1))->method('log')
@@ -878,15 +902,15 @@ class ConnectionTest extends TestCase
     public function testTransactionalSuccess()
     {
         $driver = $this->getMockFormDriver();
-        $connection = $this->getMock(
-            '\Cake\Database\Connection',
-            ['connect', 'commit', 'begin'],
-            [['driver' => $driver]]
-        );
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'commit', 'begin'])
+            ->setConstructorArgs([['driver' => $driver]])
+            ->getMock();
         $connection->expects($this->at(0))->method('begin');
         $connection->expects($this->at(1))->method('commit');
         $result = $connection->transactional(function ($conn) use ($connection) {
             $this->assertSame($connection, $conn);
+
             return 'thing';
         });
         $this->assertEquals('thing', $result);
@@ -901,16 +925,16 @@ class ConnectionTest extends TestCase
     public function testTransactionalFail()
     {
         $driver = $this->getMockFormDriver();
-        $connection = $this->getMock(
-            '\Cake\Database\Connection',
-            ['connect', 'commit', 'begin', 'rollback'],
-            [['driver' => $driver]]
-        );
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'commit', 'begin', 'rollback'])
+            ->setConstructorArgs([['driver' => $driver]])
+            ->getMock();
         $connection->expects($this->at(0))->method('begin');
         $connection->expects($this->at(1))->method('rollback');
         $connection->expects($this->never())->method('commit');
         $result = $connection->transactional(function ($conn) use ($connection) {
             $this->assertSame($connection, $conn);
+
             return false;
         });
         $this->assertFalse($result);
@@ -927,11 +951,10 @@ class ConnectionTest extends TestCase
     public function testTransactionalWithException()
     {
         $driver = $this->getMockFormDriver();
-        $connection = $this->getMock(
-            '\Cake\Database\Connection',
-            ['connect', 'commit', 'begin', 'rollback'],
-            [['driver' => $driver]]
-        );
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'commit', 'begin', 'rollback'])
+            ->setConstructorArgs([['driver' => $driver]])
+            ->getMock();
         $connection->expects($this->at(0))->method('begin');
         $connection->expects($this->at(1))->method('rollback');
         $connection->expects($this->never())->method('commit');
@@ -949,17 +972,46 @@ class ConnectionTest extends TestCase
     public function testSchemaCollection()
     {
         $driver = $this->getMockFormDriver();
-        $connection = $this->getMock(
-            '\Cake\Database\Connection',
-            ['connect'],
-            [['driver' => $driver]]
-        );
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect'])
+            ->setConstructorArgs([['driver' => $driver]])
+            ->getMock();
 
         $schema = $connection->schemaCollection();
         $this->assertInstanceOf('Cake\Database\Schema\Collection', $schema);
 
-        $schema = $this->getMock('Cake\Database\Schema\Collection', [], [$connection]);
+        $schema = $this->getMockBuilder('Cake\Database\Schema\Collection')
+            ->setConstructorArgs([$connection])
+            ->getMock();
         $connection->schemaCollection($schema);
         $this->assertSame($schema, $connection->schemaCollection());
+    }
+
+    /**
+     * Tests supportsCrossWith
+     *
+     * @return void
+     */
+    public function testSupportsCrossWith()
+    {
+        $connection = new Connection(ConnectionManager::config('test'));
+        $targetConnection = new Connection(ConnectionManager::config('test'));
+
+        $this->assertFalse($connection->supportsCrossWith($targetConnection), 'The same connection can\'t used in cross');
+
+        $connection = new Connection(ConnectionManager::config('test'));
+        $targetConnection = new Connection(['name' => 'test2'] + ConnectionManager::config('test'));
+
+        $this->assertTrue($connection->supportsCrossWith($targetConnection), 'Cross should be supported on databases on the same server');
+
+        $connection = new Connection(ConnectionManager::config('test'));
+        $targetConnection = new Connection(['port' => 999999] + ConnectionManager::config('test'));
+
+        $this->assertFalse($connection->supportsCrossWith($targetConnection), 'Cross is not supported across different server instances');
+
+        $connection = new Connection(ConnectionManager::config('test'));
+        $targetConnection = new Connection(['host' => 'db2.example.com'] + ConnectionManager::config('test'));
+
+        $this->assertFalse($connection->supportsCrossWith($targetConnection), 'Cross is not supported across different server instances');
     }
 }

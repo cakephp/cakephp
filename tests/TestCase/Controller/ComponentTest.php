@@ -19,10 +19,8 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ClassRegistry;
 use TestApp\Controller\ComponentTestController;
 use TestApp\Controller\Component\AppleComponent;
-use TestApp\Controller\Component\OrangeComponent;
 
 /**
  * ComponentTest class
@@ -80,7 +78,7 @@ class ComponentTest extends TestCase
      */
     public function testInnerComponentsAreNotEnabled()
     {
-        $mock = $this->getMock('Cake\Event\EventManager');
+        $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $controller = new Controller();
         $controller->eventManager($mock);
 

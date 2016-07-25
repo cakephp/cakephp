@@ -67,6 +67,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
         } catch (Exception\MissingHelperException $exception) {
             if ($this->_View->plugin) {
                 $this->load($this->_View->plugin . '.' . $helper);
+
                 return true;
             }
         }
@@ -92,6 +93,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
         if (isset($this->$name)) {
             return $this->_loaded[$name];
         }
+
         return null;
     }
 
@@ -148,6 +150,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
         if ($enable) {
             $this->eventManager()->on($instance);
         }
+
         return $instance;
     }
 }

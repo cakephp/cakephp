@@ -14,19 +14,13 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
-use Cake\Filesystem\Folder;
 use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ClassRegistry;
-use Cake\View\Helper\FormHelper;
 use Cake\View\Helper\HtmlHelper;
-use Cake\View\View;
 
 /**
  * HtmlHelperTest class
@@ -64,8 +58,9 @@ class HtmlHelperTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
-        $this->View = $this->getMock('Cake\View\View', ['append']);
+        $this->View = $this->getMockBuilder('Cake\View\View')
+            ->setMethods(['append'])
+            ->getMock();
         $this->Html = new HtmlHelper($this->View);
         $this->Html->request = new Request();
         $this->Html->request->webroot = '';
@@ -340,6 +335,10 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->image('/test/view/1.gif');
         $expected = ['img' => ['src' => '/test/view/1.gif', 'alt' => '']];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->image('cid:cakephp_logo');
+        $expected = ['img' => ['src' => 'cid:cakephp_logo', 'alt' => '']];
         $this->assertHtml($expected, $result);
     }
 
@@ -1287,6 +1286,11 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
+        $this->Html->addCrumb('Fifth', [
+            'plugin' => false,
+            'controller' => 'controller',
+            'action' => 'action',
+        ]);
         $result = $this->Html->getCrumbs('-', 'Start');
         $expected = [
             ['a' => ['href' => '/']],
@@ -1305,7 +1309,11 @@ class HtmlHelperTest extends TestCase
             'Third',
             '/a',
             '-',
-            'Fourth'
+            'Fourth',
+            '-',
+            ['a' => ['href' => '/controller/action']],
+            'Fifth',
+            '/a',
         ];
         $this->assertHtml($expected, $result);
     }

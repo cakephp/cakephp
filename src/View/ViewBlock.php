@@ -64,7 +64,7 @@ class ViewBlock
     /**
      * Should the currently captured content be discarded on ViewBlock::end()
      *
-     * @see ViewBlock::end()
+     * @see \Cake\View\ViewBlock::end()
      * @var bool
      */
     protected $_discardActiveBufferOnEnd = false;
@@ -98,13 +98,14 @@ class ViewBlock
      * End a capturing block. The compliment to ViewBlock::start()
      *
      * @return void
-     * @see ViewBlock::start()
+     * @see \Cake\View\ViewBlock::start()
      */
     public function end()
     {
         if ($this->_discardActiveBufferOnEnd) {
             $this->_discardActiveBufferOnEnd = false;
             ob_end_clean();
+
             return;
         }
         if (!empty($this->_active)) {
@@ -129,7 +130,8 @@ class ViewBlock
      * of the new capturing context will be added to the existing block context.
      *
      * @param string $name Name of the block
-     * @param mixed $value The content for the block
+     * @param mixed $value The content for the block. Value will be type cast
+     *   to string.
      * @param string $mode If ViewBlock::APPEND content will be appended to existing content.
      *   If ViewBlock::PREPEND it will be prepended.
      * @return void
@@ -138,6 +140,7 @@ class ViewBlock
     {
         if ($value === null) {
             $this->start($name, $mode);
+
             return;
         }
 
@@ -156,7 +159,8 @@ class ViewBlock
      * existing content.
      *
      * @param string $name Name of the block
-     * @param mixed $value The content for the block.
+     * @param mixed $value The content for the block. Value will be type cast
+     *   to string.
      * @return void
      */
     public function set($name, $value)
@@ -176,6 +180,7 @@ class ViewBlock
         if (!isset($this->_blocks[$name])) {
             return $default;
         }
+
         return $this->_blocks[$name];
     }
 
@@ -208,6 +213,7 @@ class ViewBlock
     public function active()
     {
         end($this->_active);
+
         return key($this->_active);
     }
 

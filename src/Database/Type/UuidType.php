@@ -61,6 +61,7 @@ class UuidType extends StringType
         if ($value === null || $value === '' || is_array($value)) {
             return null;
         }
+
         return (string)$value;
     }
 }

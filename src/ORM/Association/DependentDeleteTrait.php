@@ -47,10 +47,12 @@ trait DependentDeleteTrait
             foreach ($this->find()->where($conditions)->toList() as $related) {
                 $table->delete($related, $options);
             }
+
             return true;
         }
 
         $conditions = array_merge($conditions, $this->conditions());
+
         return $table->deleteAll($conditions);
     }
 }

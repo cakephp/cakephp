@@ -14,6 +14,7 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Expression\CrossSchemaTableExpression;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
@@ -65,6 +66,7 @@ class IdentifierQuoter
 
         $query->traverseExpressions([$this, 'quoteExpression']);
         $query->valueBinder($binder);
+
         return $query;
     }
 
@@ -78,16 +80,24 @@ class IdentifierQuoter
     {
         if ($expression instanceof FieldInterface) {
             $this->_quoteComparison($expression);
+
             return;
         }
 
         if ($expression instanceof OrderByExpression) {
             $this->_quoteOrderBy($expression);
+
             return;
         }
 
         if ($expression instanceof IdentifierExpression) {
             $this->_quoteIdentifierExpression($expression);
+
+            return;
+        }
+        if ($expression instanceof CrossSchemaTableExpression) {
+            $this->_quoteCrossSchemaTableExpression($expression);
+
             return;
         }
     }
@@ -134,6 +144,7 @@ class IdentifierQuoter
             $alias = is_numeric($alias) ? $alias : $this->_driver->quoteIdentifier($alias);
             $result[$alias] = $value;
         }
+
         return $result;
     }
 
@@ -233,11 +244,13 @@ class IdentifierQuoter
         $expression->iterateParts(function ($part, &$field) {
             if (is_string($field)) {
                 $field = $this->_driver->quoteIdentifier($field);
+
                 return $part;
             }
             if (is_string($part) && strpos($part, ' ') === false) {
                 return $this->_driver->quoteIdentifier($part);
             }
+
             return $part;
         });
     }
@@ -253,5 +266,21 @@ class IdentifierQuoter
         $expression->setIdentifier(
             $this->_driver->quoteIdentifier($expression->getIdentifier())
         );
+    }
+
+    /**
+     * Quotes the cross schema table identifier
+     *
+     * @param CrossSchemaTableExpression $expression The identifier to quote
+     * @return void
+     */
+    protected function _quoteCrossSchemaTableExpression(CrossSchemaTableExpression $expression)
+    {
+        if (!$expression->schema() instanceof ExpressionInterface) {
+            $expression->schema($this->_driver->quoteIdentifier($expression->schema()));
+        }
+        if (!$expression->table() instanceof ExpressionInterface) {
+            $expression->table($this->_driver->quoteIdentifier($expression->table()));
+        }
     }
 }

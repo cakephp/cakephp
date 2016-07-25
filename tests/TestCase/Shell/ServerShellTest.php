@@ -14,8 +14,6 @@
  */
 namespace Cake\Test\TestCase\Shell;
 
-use Cake\Cache\Cache;
-use Cake\Datasource\ConnectionManager;
 use Cake\Shell\ServerShell;
 use Cake\TestSuite\TestCase;
 
@@ -33,7 +31,7 @@ class ServerShellTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->io = $this->getMock('Cake\Console\ConsoleIo');
+        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
         $this->shell = new ServerShell($this->io);
     }
 

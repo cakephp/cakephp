@@ -151,6 +151,7 @@ class NumberHelper extends Helper
     {
         $formatted = $this->_engine->format($number, $options);
         $options += ['escape' => true];
+
         return $options['escape'] ? h($formatted) : $formatted;
     }
 
@@ -174,7 +175,7 @@ class NumberHelper extends Helper
      * - `escape` - Whether or not to escape html in resulting string
      *
      * @param float $number Value to format.
-     * @param string $currency International currency name such as 'USD', 'EUR', 'JPY', 'CAD'
+     * @param string|null $currency International currency name such as 'USD', 'EUR', 'JPY', 'CAD'
      * @param array $options Options list.
      * @return string Number formatted as a currency.
      */
@@ -182,6 +183,7 @@ class NumberHelper extends Helper
     {
         $formatted = $this->_engine->currency($number, $currency, $options);
         $options += ['escape' => true];
+
         return $options['escape'] ? h($formatted) : $formatted;
     }
 
@@ -205,6 +207,7 @@ class NumberHelper extends Helper
     {
         $formatted = $this->_engine->formatDelta($value, $options);
         $options += ['escape' => true];
+
         return $options['escape'] ? h($formatted) : $formatted;
     }
 

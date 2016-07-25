@@ -15,6 +15,7 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\ValueBinder;
 
 /**
@@ -24,6 +25,8 @@ use Cake\Database\ValueBinder;
  */
 class CaseExpression implements ExpressionInterface
 {
+
+    use ExpressionTypeCasterTrait;
 
     /**
      * A list of strings or other expression objects that represent the conditions of
@@ -113,17 +116,19 @@ class CaseExpression implements ExpressionInterface
     {
         $rawValues = array_values($values);
         $keyValues = array_keys($values);
+
         foreach ($conditions as $k => $c) {
             $numericKey = is_numeric($k);
 
             if ($numericKey && empty($c)) {
                 continue;
             }
+
             if (!$c instanceof ExpressionInterface) {
                 continue;
             }
-            array_push($this->_conditions, $c);
 
+            array_push($this->_conditions, $c);
             $value = isset($rawValues[$k]) ? $rawValues[$k] : 1;
 
             if ($value === 'literal') {
@@ -131,17 +136,24 @@ class CaseExpression implements ExpressionInterface
                 array_push($this->_values, $value);
                 continue;
             }
+
             if ($value === 'identifier') {
                 $value = new IdentifierExpression($keyValues[$k]);
                 array_push($this->_values, $value);
                 continue;
             }
+
+            $type = isset($types[$k]) ? $types[$k] : null;
+
+            if ($type !== null && !$value instanceof ExpressionInterface) {
+                $value = $this->_castToExpression($value, $type);
+            }
+
             if ($value instanceof ExpressionInterface) {
                 array_push($this->_values, $value);
                 continue;
             }
 
-            $type = isset($types[$k]) ? $types[$k] : null;
             array_push($this->_values, ['value' => $value, 'type' => $type]);
         }
     }
@@ -150,7 +162,7 @@ class CaseExpression implements ExpressionInterface
      * Sets the default value
      *
      * @param \Cake\Database\ExpressionInterface|string|array|null $value Value to set
-     * @param string $type Type of value
+     * @param string|null $type Type of value
      *
      * @return void
      */
@@ -159,7 +171,13 @@ class CaseExpression implements ExpressionInterface
         if (is_array($value)) {
             end($value);
             $value = key($value);
-        } elseif ($value !== null && !$value instanceof ExpressionInterface) {
+        }
+
+        if ($value !== null && !$value instanceof ExpressionInterface) {
+            $value = $this->_castToExpression($value, $type);
+        }
+
+        if (!$value instanceof ExpressionInterface) {
             $value = ['value' => $value, 'type' => $type];
         }
 

@@ -107,6 +107,7 @@ class AuthTestController extends Controller
     public function redirect($url, $status = null)
     {
         $this->testUrl = Router::url($url);
+
         return parent::redirect($url, $status);
     }
 

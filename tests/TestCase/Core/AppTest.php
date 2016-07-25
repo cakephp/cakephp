@@ -62,6 +62,7 @@ class AppTest extends TestCase
             if ($checkCake) {
                 return (bool)$expected;
             }
+
             return false;
         };
         $return = TestApp::classname($class, $type, $suffix);
@@ -84,6 +85,25 @@ class AppTest extends TestCase
 
         $return = TestApp::shortName($class, $type, $suffix);
         $this->assertSame($expected, $return);
+    }
+
+    /**
+     * testShortNameWithNestedAppNamespace
+     *
+     * @return void
+     */
+    public function testShortNameWithNestedAppNamespace()
+    {
+        Configure::write('App.namespace', 'TestApp/Nested');
+
+        $return = TestApp::shortName(
+            'TestApp/Nested/Controller/PagesController',
+            'Controller',
+            'Controller'
+        );
+        $this->assertSame('Pages', $return);
+
+        Configure::write('App.namespace', 'TestApp');
     }
 
     /**
@@ -179,6 +199,8 @@ class AppTest extends TestCase
             ['Cake\Exists\In\AlsoCake', 'Exists/In', 'Cake', 'Also'],
             ['Cake\Exists\In\Subfolder\AlsoCake', 'Exists/In/Subfolder', 'Cake', 'Also'],
             ['Cake\Suffix\No', 'Suffix', '', 'No'],
+
+            ['Muffin\Webservice\Webservice\EndpointWebservice', 'Webservice', 'Webservice', 'Muffin/Webservice.Endpoint'],
 
             // Real examples returning classnames
             ['Cake\Core\App', 'Core', '', 'App'],

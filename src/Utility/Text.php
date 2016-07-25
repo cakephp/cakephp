@@ -24,6 +24,13 @@ class Text
 {
 
     /**
+     * Default transliterator id string.
+     *
+     * @param string $_defaultTransliteratorId Transliterator identifier string.
+     */
+    protected static $_defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
+
+    /**
      * Generate a random UUID version 4
      *
      * Warning: This method should not be used as a random seed for any cryptographic operations.
@@ -138,7 +145,7 @@ class Text
      * corresponds to a variable placeholder name in $str.
      * Example:
      * ```
-     * Text::insert(':name is :age years old.', ['name' => 'Bob', '65']);
+     * Text::insert(':name is :age years old.', ['name' => 'Bob', 'age' => '65']);
      * ```
      * Returns: Bob is 65 years old.
      *
@@ -185,6 +192,7 @@ class Text
                 $offset = $pos + strlen($val);
                 $str = substr_replace($str, $val, $pos, 1);
             }
+
             return ($options['clean']) ? static::cleanInsert($str, $options) : $str;
         }
 
@@ -208,6 +216,7 @@ class Text
         if (!isset($options['format']) && isset($options['before'])) {
             $str = str_replace($options['escape'] . $options['before'], $options['before'], $str);
         }
+
         return ($options['clean']) ? static::cleanInsert($str, $options) : $str;
     }
 
@@ -274,6 +283,7 @@ class Text
                 $str = preg_replace($kleenex, $clean['replacement'], $str);
                 break;
         }
+
         return $str;
     }
 
@@ -309,6 +319,7 @@ class Text
             }
             $wrapped = implode("\n", $chunks);
         }
+
         return $wrapped;
     }
 
@@ -337,6 +348,7 @@ class Text
         if (!empty($options['indentAt']) && $options['indentAt'] === 0) {
             $indentLength = !empty($options['indent']) ? strlen($options['indent']) : 0;
             $options['width'] = $options['width'] - $indentLength;
+
             return self::wrap($text, $options);
         }
 
@@ -362,6 +374,7 @@ class Text
             $chunks = array_merge($chunks, $newChunks);
             $wrapped = implode("\n", $chunks);
         }
+
         return $wrapped;
     }
 
@@ -380,6 +393,7 @@ class Text
         foreach ($paragraphs as &$paragraph) {
             $paragraph = static::_wordWrap($paragraph, $width, $break, $cut);
         }
+
         return implode($break, $paragraphs);
     }
 
@@ -401,6 +415,7 @@ class Text
                 $parts[] = trim($part);
                 $text = trim(mb_substr($text, mb_strlen($part)));
             }
+
             return implode($break, $parts);
         }
 
@@ -547,6 +562,7 @@ class Text
      * - `ellipsis` Will be used as ending and appended to the trimmed string
      * - `exact` If false, $text will not be cut mid-word
      * - `html` If true, HTML tags would be handled correctly
+     * - `trimWidth` If true, $text will be truncated with the width
      *
      * @param string $text String to truncate.
      * @param int $length Length of returned string, including ellipsis.
@@ -557,111 +573,258 @@ class Text
     public static function truncate($text, $length = 100, array $options = [])
     {
         $default = [
-            'ellipsis' => '...', 'exact' => true, 'html' => false
+            'ellipsis' => '...', 'exact' => true, 'html' => false, 'trimWidth' => false,
         ];
         if (!empty($options['html']) && strtolower(mb_internal_encoding()) === 'utf-8') {
             $default['ellipsis'] = "\xe2\x80\xa6";
         }
         $options += $default;
-        extract($options);
 
-        if ($html) {
-            if (mb_strlen(preg_replace('/<.*?>/', '', $text)) <= $length) {
-                return $text;
-            }
-            $totalLength = mb_strlen(strip_tags($ellipsis));
+        $prefix = '';
+        $suffix = $options['ellipsis'];
+
+        if ($options['html']) {
+            $ellipsisLength = self::_strlen(strip_tags($options['ellipsis']), $options);
+
+            $truncateLength = 0;
+            $totalLength = 0;
             $openTags = [];
             $truncate = '';
 
             preg_match_all('/(<\/?([\w+]+)[^>]*>)?([^<>]*)/', $text, $tags, PREG_SET_ORDER);
             foreach ($tags as $tag) {
-                if (!preg_match('/img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param/s', $tag[2])) {
-                    if (preg_match('/<[\w]+[^>]*>/s', $tag[0])) {
-                        array_unshift($openTags, $tag[2]);
-                    } elseif (preg_match('/<\/([\w]+)[^>]*>/s', $tag[0], $closeTag)) {
-                        $pos = array_search($closeTag[1], $openTags);
-                        if ($pos !== false) {
-                            array_splice($openTags, $pos, 1);
-                        }
-                    }
-                }
-                $truncate .= $tag[1];
+                $contentLength = self::_strlen($tag[3], $options);
 
-                $contentLength = mb_strlen(preg_replace('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i', ' ', $tag[3]));
-                if ($contentLength + $totalLength > $length) {
-                    $left = $length - $totalLength;
-                    $entitiesLength = 0;
-                    if (preg_match_all('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i', $tag[3], $entities, PREG_OFFSET_CAPTURE)) {
-                        foreach ($entities[0] as $entity) {
-                            if ($entity[1] + 1 - $entitiesLength <= $left) {
-                                $left--;
-                                $entitiesLength += mb_strlen($entity[0]);
-                            } else {
-                                break;
+                if ($truncate === '') {
+                    if (!preg_match('/img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param/i', $tag[2])) {
+                        if (preg_match('/<[\w]+[^>]*>/', $tag[0])) {
+                            array_unshift($openTags, $tag[2]);
+                        } elseif (preg_match('/<\/([\w]+)[^>]*>/', $tag[0], $closeTag)) {
+                            $pos = array_search($closeTag[1], $openTags);
+                            if ($pos !== false) {
+                                array_splice($openTags, $pos, 1);
                             }
                         }
                     }
 
-                    $truncate .= mb_substr($tag[3], 0, $left + $entitiesLength);
-                    break;
+                    $prefix .= $tag[1];
+
+                    if ($totalLength + $contentLength + $ellipsisLength > $length) {
+                        $truncate = $tag[3];
+                        $truncateLength = $length - $totalLength;
+                    } else {
+                        $prefix .= $tag[3];
+                    }
                 }
 
-                $truncate .= $tag[3];
                 $totalLength += $contentLength;
-                if ($totalLength >= $length) {
+                if ($totalLength > $length) {
                     break;
                 }
             }
-        } else {
-            if (mb_strlen($text) <= $length) {
+
+            if ($totalLength <= $length) {
                 return $text;
             }
-            $truncate = mb_substr($text, 0, $length - mb_strlen($ellipsis));
-        }
-        if (!$exact) {
-            $spacepos = mb_strrpos($truncate, ' ');
-            if ($html) {
-                $truncateCheck = mb_substr($truncate, 0, $spacepos);
-                $lastOpenTag = mb_strrpos($truncateCheck, '<');
-                $lastCloseTag = mb_strrpos($truncateCheck, '>');
-                if ($lastOpenTag > $lastCloseTag) {
-                    preg_match_all('/<[\w]+[^>]*>/s', $truncate, $lastTagMatches);
-                    $lastTag = array_pop($lastTagMatches[0]);
-                    $spacepos = mb_strrpos($truncate, $lastTag) + mb_strlen($lastTag);
-                }
-                $bits = mb_substr($truncate, $spacepos);
-                preg_match_all('/<\/([a-z]+)>/', $bits, $droppedTags, PREG_SET_ORDER);
-                if (!empty($droppedTags)) {
-                    if (!empty($openTags)) {
-                        foreach ($droppedTags as $closingTag) {
-                            if (!in_array($closingTag[1], $openTags)) {
-                                array_unshift($openTags, $closingTag[1]);
-                            }
-                        }
-                    } else {
-                        foreach ($droppedTags as $closingTag) {
-                            $openTags[] = $closingTag[1];
-                        }
-                    }
-                }
-            }
-            $truncate = mb_substr($truncate, 0, $spacepos);
 
-            // If truncate still empty, then we don't need to count ellipsis in the cut.
-            if (mb_strlen($truncate) === 0) {
-                $truncate = mb_substr($text, 0, $length);
-            }
-        }
+            $text = $truncate;
+            $length = $truncateLength;
 
-        $truncate .= $ellipsis;
-
-        if ($html) {
             foreach ($openTags as $tag) {
-                $truncate .= '</' . $tag . '>';
+                $suffix .= '</' . $tag . '>';
+            }
+        } else {
+            if (self::_strlen($text, $options) <= $length) {
+                return $text;
+            }
+            $ellipsisLength = self::_strlen($options['ellipsis'], $options);
+        }
+
+        $result = self::_substr($text, 0, $length - $ellipsisLength, $options);
+
+        if (!$options['exact']) {
+            if (self::_substr($text, $length - $ellipsisLength, 1, $options) !== ' ') {
+                $result = self::_removeLastWord($result);
+            }
+
+            // If result is empty, then we don't need to count ellipsis in the cut.
+            if (!strlen($result)) {
+                $result = self::_substr($text, 0, $length, $options);
             }
         }
 
-        return $truncate;
+        return $prefix . $result . $suffix;
+    }
+
+    /**
+     * Truncate text with specified width.
+     *
+     * @param string $text String to truncate.
+     * @param int $length Length of returned string, including ellipsis.
+     * @param array $options An array of HTML attributes and options.
+     * @return string Trimmed string.
+     * @see \Cake\Utility\Text::truncate()
+     */
+    public static function truncateByWidth($text, $length = 100, array $options = [])
+    {
+        return static::truncate($text, $length, ['trimWidth' => true] + $options);
+    }
+
+    /**
+     * Get string length.
+     *
+     * ### Options:
+     *
+     * - `html` If true, HTML entities will be handled as decoded characters.
+     * - `trimWidth` If true, the width will return.
+     *
+     * @param string $text The string being checked for length
+     * @param array $options An array of options.
+     * @return string
+     */
+    protected static function _strlen($text, array $options)
+    {
+        if (empty($options['trimWidth'])) {
+            $strlen = 'mb_strlen';
+        } else {
+            $strlen = 'mb_strwidth';
+        }
+
+        if (empty($options['html'])) {
+            return $strlen($text);
+        }
+
+        $pattern = '/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i';
+        $replace = preg_replace_callback(
+            $pattern,
+            function ($match) use ($strlen) {
+                $utf8 = html_entity_decode($match[0], ENT_HTML5 | ENT_QUOTES, 'UTF-8');
+
+                return str_repeat(' ', $strlen($utf8, 'UTF-8'));
+            },
+            $text
+        );
+
+        return $strlen($replace);
+    }
+
+    /**
+     * Return part of a string.
+     *
+     * ### Options:
+     *
+     * - `html` If true, HTML entities will be handled as decoded characters.
+     * - `trimWidth` If true, will be truncated with specified width.
+     *
+     * @param string $text The input string.
+     * @param int $start The position to begin extracting.
+     * @param int $length The desired length.
+     * @param array $options An array of options.
+     * @return string
+     */
+    protected static function _substr($text, $start, $length, array $options)
+    {
+        if (empty($options['trimWidth'])) {
+            $substr = 'mb_substr';
+        } else {
+            $substr = 'mb_strimwidth';
+        }
+
+        $maxPosition = self::_strlen($text, ['trimWidth' => false] + $options);
+        if ($start < 0) {
+            $start += $maxPosition;
+            if ($start < 0) {
+                $start = 0;
+            }
+        }
+        if ($start >= $maxPosition) {
+            return '';
+        }
+
+        if ($length === null) {
+            $length = self::_strlen($text, $options);
+        }
+
+        if ($length < 0) {
+            $text = self::_substr($text, $start, null, $options);
+            $start = 0;
+            $length += self::_strlen($text, $options);
+        }
+
+        if ($length <= 0) {
+            return '';
+        }
+
+        if (empty($options['html'])) {
+            return (string)$substr($text, $start, $length);
+        }
+
+        $totalOffset = 0;
+        $totalLength = 0;
+        $result = '';
+
+        $pattern = '/(&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};)/i';
+        $parts = preg_split($pattern, $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        foreach ($parts as $part) {
+            $offset = 0;
+
+            if ($totalOffset < $start) {
+                $len = self::_strlen($part, ['trimWidth' => false] + $options);
+                if ($totalOffset + $len <= $start) {
+                    $totalOffset += $len;
+                    continue;
+                }
+
+                $offset = $start - $totalOffset;
+                $totalOffset = $start;
+            }
+
+            $len = self::_strlen($part, $options);
+            if ($offset !== 0 || $totalLength + $len > $length) {
+                if (strpos($part, '&') === 0 && preg_match($pattern, $part)
+                    && $part !== html_entity_decode($part, ENT_HTML5 | ENT_QUOTES, 'UTF-8')
+                ) {
+                    // Entities cannot be passed substr.
+                    continue;
+                }
+
+                $part = $substr($part, $offset, $length - $totalLength);
+                $len = self::_strlen($part, $options);
+            }
+
+            $result .= $part;
+            $totalLength += $len;
+            if ($totalLength >= $length) {
+                break;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Removes the last word from the input text.
+     *
+     * @param string $text The input text
+     * @return string
+     */
+    protected static function _removeLastWord($text)
+    {
+        $spacepos = mb_strrpos($text, ' ');
+
+        if ($spacepos !== false) {
+            $lastWord = mb_strrpos($text, $spacepos);
+
+            // Some languages are written without word separation.
+            // We recognize a string as a word if it doesn't contain any full-width characters.
+            if (mb_strwidth($lastWord) === mb_strlen($lastWord)) {
+                $text = mb_substr($text, 0, $spacepos);
+            }
+
+            return $text;
+        }
+
+        return '';
     }
 
     /**
@@ -713,7 +876,7 @@ class Text
      * Creates a comma separated list where the last two items are joined with 'and', forming natural language.
      *
      * @param array $list The list to be joined.
-     * @param string $and The word used to join the last and second last items together with. Defaults to 'and'.
+     * @param string|null $and The word used to join the last and second last items together with. Defaults to 'and'.
      * @param string $separator The separator used to join all the other items together. Defaults to ', '.
      * @return string The glued together string.
      * @link http://book.cakephp.org/3.0/en/core-libraries/string.html#converting-an-array-to-sentence-form
@@ -746,6 +909,7 @@ class Text
                 return true;
             }
         }
+
         return false;
     }
 
@@ -786,6 +950,7 @@ class Text
                 }
             }
         }
+
         return $map;
     }
 
@@ -812,6 +977,7 @@ class Text
                 $ascii .= chr(128 + ($utf8 % 64));
             }
         }
+
         return $ascii;
     }
 
@@ -839,11 +1005,13 @@ class Text
         }
         if ($i !== false) {
             $size = substr($size, 0, $l);
+
             return $size * pow(1024, $i + 1);
         }
 
         if (substr($size, -1) === 'B' && ctype_digit(substr($size, 0, -1))) {
             $size = substr($size, 0, -1);
+
             return (int)$size;
         }
 
@@ -851,5 +1019,90 @@ class Text
             return $default;
         }
         throw new InvalidArgumentException('No unit type.');
+    }
+
+    /**
+     * Get default transliterator identifier string.
+     *
+     * @return string Transliterator identifier.
+     */
+    public static function getTransliteratorId()
+    {
+        return static::$_defaultTransliteratorId;
+    }
+
+    /**
+     * Set default transliterator identifier string.
+     *
+     * @param string $transliteratorId Transliterator identifier.
+     * @return void
+     */
+    public static function setTransliteratorId($transliteratorId)
+    {
+        static::$_defaultTransliteratorId = $transliteratorId;
+    }
+
+    /**
+     * Transliterate string.
+     *
+     * @param string $string String to transliterate.
+     * @param string|null $transliteratorId Transliterator identifier. If null
+     *   Text::$_defaultTransliteratorId will be used.
+     * @return string
+     * @see http://php.net/manual/en/transliterator.transliterate.php
+     */
+    public static function transliterate($string, $transliteratorId = null)
+    {
+        $transliteratorId = $transliteratorId ?: static::$_defaultTransliteratorId;
+
+        return transliterator_transliterate($transliteratorId, $string);
+    }
+
+    /**
+     * Returns a string with all spaces converted to dashes (by default),
+     * characters transliterated to ASCII characters, and non word characters removed.
+     *
+     * ### Options:
+     *
+     * - `replacement`: Replacement string. Default '-'.
+     * - `transliteratorId`: A valid tranliterator id string.
+     *   If default `null` Text::$_defaultTransliteratorId to be used.
+     *   If `false` no transliteration will be done, only non words will be removed.
+     * - `preserve`: Specific non-word character to preserve. Default `null`.
+     *   For e.g. this option can be set to '.' to generate clean file names.
+     *
+     * @param string $string the string you want to slug
+     * @param array $options If string it will be use as replacement character
+     *   or an array of options.
+     * @return string
+     */
+    public static function slug($string, $options = [])
+    {
+        if (is_string($options)) {
+            $options = ['replacement' => $options];
+        }
+        $options += [
+            'replacement' => '-',
+            'transliteratorId' => null,
+            'preserve' => null
+        ];
+
+        if ($options['transliteratorId'] !== false) {
+            $string = static::transliterate($string, $options['transliteratorId']);
+        }
+
+        $regex = '^\s\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}';
+        if ($options['preserve']) {
+            $regex .= '(' . preg_quote($options['preserve'], '/') . ')';
+        }
+        $quotedReplacement = preg_quote($options['replacement'], '/');
+        $map = [
+            '/[' . $regex . ']/mu' => ' ',
+            '/[\s]+/mu' => $options['replacement'],
+            sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
+        ];
+        $string = preg_replace(array_keys($map), $map, $string);
+
+        return $string;
     }
 }

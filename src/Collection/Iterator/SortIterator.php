@@ -15,7 +15,7 @@
 namespace Cake\Collection\Iterator;
 
 use Cake\Collection\Collection;
-use DateTime;
+use DateTimeInterface;
 
 /**
  * An iterator that will return the passed items in order. The order is given by
@@ -68,7 +68,7 @@ class SortIterator extends Collection
         $results = [];
         foreach ($items as $key => $value) {
             $value = $callback($value);
-            if ($value instanceof DateTime && $type === SORT_NUMERIC) {
+            if ($value instanceof DateTimeInterface && $type === SORT_NUMERIC) {
                 $value = $value->format('U');
             }
             $results[$key] = $value;

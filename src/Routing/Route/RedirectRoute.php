@@ -14,7 +14,6 @@
  */
 namespace Cake\Routing\Route;
 
-use Cake\Network\Response;
 use Cake\Routing\Exception\RedirectException;
 use Cake\Routing\Router;
 
@@ -65,13 +64,14 @@ class RedirectRoute extends Route
      * redirection.
      *
      * @param string $url The URL to parse.
+     * @param string $method The HTTP method being used.
      * @return false|null False on failure. An exception is raised on a successful match.
      * @throws \Cake\Routing\Exception\RedirectException An exception is raised on successful match.
      *   This is used to halt route matching and signal to the middleware that a redirect should happen.
      */
-    public function parse($url)
+    public function parse($url, $method = '')
     {
-        $params = parent::parse($url);
+        $params = parent::parse($url, $method);
         if (!$params) {
             return false;
         }

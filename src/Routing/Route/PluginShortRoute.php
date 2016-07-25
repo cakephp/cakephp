@@ -27,15 +27,17 @@ class PluginShortRoute extends InflectedRoute
      * controller parameter.
      *
      * @param string $url The URL to parse
+     * @param string $method The HTTP method
      * @return array|false An array of request parameters, or boolean false on failure.
      */
-    public function parse($url)
+    public function parse($url, $method = '')
     {
-        $params = parent::parse($url);
+        $params = parent::parse($url, $method);
         if (!$params) {
             return false;
         }
         $params['controller'] = $params['plugin'];
+
         return $params;
     }
 
@@ -57,6 +59,7 @@ class PluginShortRoute extends InflectedRoute
         $this->defaults['controller'] = $url['controller'];
         $result = parent::match($url, $context);
         unset($this->defaults['controller']);
+
         return $result;
     }
 }

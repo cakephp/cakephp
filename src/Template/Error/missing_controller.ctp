@@ -23,16 +23,16 @@ $prefixPath = '';
 if (!empty($prefix)) {
     $prefix = array_map('\Cake\Utility\Inflector::camelize', explode('/', $prefix));
     $prefixNs = '\\' . implode('\\', $prefix);
-    $prefixPath = implode(DS, $prefix) . DS;
+    $prefixPath = implode(DIRECTORY_SEPARATOR, $prefix) . DIRECTORY_SEPARATOR;
 }
 
 if (!empty($plugin)) {
     $namespace = str_replace('/', '\\', $plugin);
 }
 if (empty($plugin)) {
-    $path = APP_DIR . DS . 'Controller' . DS . $prefixPath . h($class) . 'Controller.php' ;
+    $path = APP_DIR . DIRECTORY_SEPARATOR . 'Controller' . DIRECTORY_SEPARATOR . $prefixPath . h($class) . 'Controller.php' ;
 } else {
-    $path = Plugin::classPath($plugin) . 'Controller' . DS . $prefixPath . h($class) . 'Controller.php';
+    $path = Plugin::classPath($plugin) . 'Controller' . DIRECTORY_SEPARATOR . $prefixPath . h($class) . 'Controller.php';
 }
 
 $this->layout = 'dev_error';

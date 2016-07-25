@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\Type;
-use Cake\Database\Type\IntegerType;
 use Cake\TestSuite\TestCase;
 use \PDO;
 
@@ -34,7 +33,7 @@ class IntegerTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = Type::build('integer');
-        $this->driver = $this->getMock('Cake\Database\Driver');
+        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
     }
 
     /**

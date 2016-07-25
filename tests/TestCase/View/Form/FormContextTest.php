@@ -99,6 +99,19 @@ class FormContextTest extends TestCase
     }
 
     /**
+     * Test getting default value
+     *
+     * @return void
+     */
+    public function testValDefault()
+    {
+        $context = new FormContext($this->request, ['entity' => new Form()]);
+
+        $result = $context->val('title', ['default' => 'default default']);
+        $this->assertEquals('default default', $result);
+    }
+
+    /**
      * Test isRequired
      *
      * @return void
@@ -199,7 +212,9 @@ class FormContextTest extends TestCase
         $this->assertEquals([], $context->error('Alias.name'));
         $this->assertEquals([], $context->error('nope.nope'));
 
-        $mock = $this->getMock('Cake\Validation\Validator', ['errors']);
+        $mock = $this->getMockBuilder('Cake\Validation\Validator')
+            ->setMethods(['errors'])
+            ->getMock();
         $mock->expects($this->once())
             ->method('errors')
             ->willReturn(['key' => 'should be an array, not a string']);

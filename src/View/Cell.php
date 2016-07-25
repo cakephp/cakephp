@@ -133,9 +133,9 @@ abstract class Cell
     /**
      * Constructor.
      *
-     * @param \Cake\Network\Request $request The request to use in the cell.
-     * @param \Cake\Network\Response $response The response to use in the cell.
-     * @param \Cake\Event\EventManager $eventManager The eventManager to bind events to.
+     * @param \Cake\Network\Request|null $request The request to use in the cell.
+     * @param \Cake\Network\Response|null $response The response to use in the cell.
+     * @param \Cake\Event\EventManager|null $eventManager The eventManager to bind events to.
      * @param array $cellOptions Cell options to apply.
      */
     public function __construct(
@@ -187,6 +187,8 @@ abstract class Cell
                 ));
             }
 
+            $builder = $this->viewBuilder();
+
             if ($template !== null &&
                 strpos($template, '/') === false &&
                 strpos($template, '.') === false
@@ -194,16 +196,18 @@ abstract class Cell
                 $template = Inflector::underscore($template);
             }
             if ($template === null) {
-                $template = $this->viewBuilder()->template() ?: $this->template;
+                $template = $builder->template() ?: $this->template;
             }
+            $builder->layout(false)
+                ->template($template);
 
-            $builder = $this->viewBuilder();
-            $builder->layout(false);
-            $builder->template($template);
-
-            $className = substr(strrchr(get_class($this), "\\"), 1);
-            $name = substr($className, 0, -4);
-            $builder->templatePath('Cell' . DS . $name);
+            $className = get_class($this);
+            $namePrefix = '\View\Cell\\';
+            $name = substr($className, strpos($className, $namePrefix) + strlen($namePrefix));
+            $name = substr($name, 0, -4);
+            if (!$builder->templatePath()) {
+                $builder->templatePath('Cell' . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name));
+            }
 
             $this->View = $this->createView();
             try {
@@ -216,6 +220,7 @@ abstract class Cell
         if ($cache) {
             return Cache::remember($cache['key'], $render, $cache['config']);
         }
+
         return $render();
     }
 
@@ -241,6 +246,7 @@ abstract class Cell
         if ($this->_cache === true) {
             return $default;
         }
+
         return $this->_cache + $default;
     }
 
@@ -259,7 +265,8 @@ abstract class Cell
         try {
             return $this->render();
         } catch (Exception $e) {
-            trigger_error('Could not render cell - ' . $e->getMessage(), E_USER_WARNING);
+            trigger_error(sprintf('Could not render cell - %s [%s, line %d]', $e->getMessage(), $e->getFile(), $e->getLine()), E_USER_WARNING);
+
             return '';
         }
     }

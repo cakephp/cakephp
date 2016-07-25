@@ -52,6 +52,7 @@ trait EventDispatcherTrait
         } elseif (empty($this->_eventManager)) {
             $this->_eventManager = new EventManager();
         }
+
         return $this->_eventManager;
     }
 

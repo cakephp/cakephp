@@ -19,7 +19,6 @@ use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
@@ -653,6 +652,26 @@ class EntityContextTest extends TestCase
 
         $result = $context->val('user.groups._ids');
         $this->assertEquals([1, 4], $result);
+    }
+
+    /**
+     * Test getting default value from table schema.
+     *
+     * @return void
+     */
+    public function testValSchemaDefault()
+    {
+        $table = TableRegistry::get('Articles');
+        $column = $table->schema()->column('title');
+        $table->schema()->addColumn('title', ['default' => 'default title'] + $column);
+        $row = $table->newEntity();
+
+        $context = new EntityContext($this->request, [
+            'entity' => $row,
+            'table' => 'Articles',
+        ]);
+        $result = $context->val('title');
+        $this->assertEquals('default title', $result);
     }
 
     /**

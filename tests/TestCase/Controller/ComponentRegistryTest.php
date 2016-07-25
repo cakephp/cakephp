@@ -18,7 +18,6 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AuthComponent;
 use Cake\Controller\Component\CookieComponent;
 use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -109,7 +108,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testLoadWithEnableFalse()
     {
-        $mock = $this->getMock('Cake\Event\EventManager');
+        $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $mock->expects($this->never())
             ->method('attach');
 

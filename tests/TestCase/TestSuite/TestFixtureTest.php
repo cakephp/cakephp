@@ -281,31 +281,35 @@ class TestFixtureTest extends TestCase
     public function testInitNoImportNoFields()
     {
         $db = ConnectionManager::get('test');
-        $collection = $db->schemaCollection();
-        if (!in_array('letters', $collection->listTables())) {
-            $table = new Table('letters', [
-                'id' => ['type' => 'integer'],
-                'letter' => ['type' => 'string', 'length' => 1]
-            ]);
-            $table->addConstraint('primary', ['type' => 'primary', 'columns' => ['id']]);
-            $sql = $table->createSql($db);
+        $table = new Table('letters', [
+            'id' => ['type' => 'integer'],
+            'letter' => ['type' => 'string', 'length' => 1]
+        ]);
+        $table->addConstraint('primary', ['type' => 'primary', 'columns' => ['id']]);
+        $sql = $table->createSql($db);
 
-            foreach ($sql as $stmt) {
-                $db->execute($stmt);
-            }
+        foreach ($sql as $stmt) {
+            $db->execute($stmt);
         }
 
         $fixture = new LettersFixture();
         $fixture->init();
         $this->assertEquals(['id', 'letter'], $fixture->schema()->columns());
 
-        $db = $this->getMock('Cake\Database\Connection', ['prepare', 'execute'], [], '', false);
+        $db = $this->getMockBuilder('Cake\Database\Connection')
+            ->setMethods(['prepare', 'execute'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $db->expects($this->never())
             ->method('prepare');
         $db->expects($this->never())
             ->method('execute');
         $this->assertTrue($fixture->create($db));
         $this->assertTrue($fixture->drop($db));
+
+        // Cleanup.
+        $db = ConnectionManager::get('test');
+        $db->execute('DROP TABLE letters');
     }
 
     /**
@@ -316,15 +320,21 @@ class TestFixtureTest extends TestCase
     public function testCreate()
     {
         $fixture = new ArticlesFixture();
-        $db = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
+        $db = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $table = $this->getMockBuilder('Cake\Database\Schema\Table')
+            ->setConstructorArgs(['articles'])
+            ->getMock();
         $table->expects($this->once())
             ->method('createSql')
             ->with($db)
             ->will($this->returnValue(['sql', 'sql']));
         $fixture->schema($table);
 
-        $statement = $this->getMock('\PDOStatement', ['execute', 'closeCursor']);
+        $statement = $this->getMockBuilder('\PDOStatement')
+            ->setMethods(['execute', 'closeCursor'])
+            ->getMock();
         $statement->expects($this->atLeastOnce())->method('closeCursor');
         $statement->expects($this->atLeastOnce())->method('execute');
         $db->expects($this->exactly(2))
@@ -342,8 +352,12 @@ class TestFixtureTest extends TestCase
     public function testCreateError()
     {
         $fixture = new ArticlesFixture();
-        $db = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
+        $db = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $table = $this->getMockBuilder('Cake\Database\Schema\Table')
+            ->setConstructorArgs(['articles'])
+            ->getMock();
         $table->expects($this->once())
             ->method('createSql')
             ->with($db)
@@ -362,8 +376,12 @@ class TestFixtureTest extends TestCase
     {
         $fixture = new ArticlesFixture();
 
-        $db = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $query = $this->getMock('Cake\Database\Query', [], [$db]);
+        $db = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $query = $this->getMockBuilder('Cake\Database\Query')
+            ->setConstructorArgs([$db])
+            ->getMock();
         $db->expects($this->once())
             ->method('newQuery')
             ->will($this->returnValue($query));
@@ -396,7 +414,9 @@ class TestFixtureTest extends TestCase
             ->with($expected[2])
             ->will($this->returnSelf());
 
-        $statement = $this->getMock('\PDOStatement', ['closeCursor']);
+        $statement = $this->getMockBuilder('\PDOStatement')
+            ->setMethods(['closeCursor'])
+            ->getMock();
         $statement->expects($this->once())->method('closeCursor');
         $query->expects($this->once())
             ->method('execute')
@@ -414,8 +434,12 @@ class TestFixtureTest extends TestCase
     {
         $fixture = new ImportsFixture();
 
-        $db = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $query = $this->getMock('Cake\Database\Query', [], [$db]);
+        $db = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $query = $this->getMockBuilder('Cake\Database\Query')
+            ->setConstructorArgs([$db])
+            ->getMock();
         $db->expects($this->once())
             ->method('newQuery')
             ->will($this->returnValue($query));
@@ -438,7 +462,9 @@ class TestFixtureTest extends TestCase
             ->with($expected[0])
             ->will($this->returnSelf());
 
-        $statement = $this->getMock('\PDOStatement', ['closeCursor']);
+        $statement = $this->getMockBuilder('\PDOStatement')
+            ->setMethods(['closeCursor'])
+            ->getMock();
         $statement->expects($this->once())->method('closeCursor');
         $query->expects($this->once())
             ->method('execute')
@@ -456,8 +482,12 @@ class TestFixtureTest extends TestCase
     {
         $fixture = new StringsTestsFixture();
 
-        $db = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $query = $this->getMock('Cake\Database\Query', [], [$db]);
+        $db = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $query = $this->getMockBuilder('Cake\Database\Query')
+            ->setConstructorArgs([$db])
+            ->getMock();
         $db->expects($this->once())
             ->method('newQuery')
             ->will($this->returnValue($query));
@@ -490,7 +520,9 @@ class TestFixtureTest extends TestCase
             ->with($expected[2])
             ->will($this->returnSelf());
 
-        $statement = $this->getMock('\PDOStatement', ['closeCursor']);
+        $statement = $this->getMockBuilder('\PDOStatement')
+            ->setMethods(['closeCursor'])
+            ->getMock();
         $statement->expects($this->once())->method('closeCursor');
         $query->expects($this->once())
             ->method('execute')
@@ -508,14 +540,20 @@ class TestFixtureTest extends TestCase
     {
         $fixture = new ArticlesFixture();
 
-        $db = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $statement = $this->getMock('\PDOStatement', ['closeCursor']);
+        $db = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $statement = $this->getMockBuilder('\PDOStatement')
+            ->setMethods(['closeCursor'])
+            ->getMock();
         $statement->expects($this->once())->method('closeCursor');
         $db->expects($this->once())->method('execute')
             ->with('sql')
             ->will($this->returnValue($statement));
 
-        $table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
+        $table = $this->getMockBuilder('Cake\Database\Schema\Table')
+            ->setConstructorArgs(['articles'])
+            ->getMock();
         $table->expects($this->once())
             ->method('dropSql')
             ->with($db)
@@ -534,14 +572,20 @@ class TestFixtureTest extends TestCase
     {
         $fixture = new ArticlesFixture();
 
-        $db = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $statement = $this->getMock('\PDOStatement', ['closeCursor']);
+        $db = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $statement = $this->getMockBuilder('\PDOStatement')
+            ->setMethods(['closeCursor'])
+            ->getMock();
         $statement->expects($this->once())->method('closeCursor');
         $db->expects($this->once())->method('execute')
             ->with('sql')
             ->will($this->returnValue($statement));
 
-        $table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
+        $table = $this->getMockBuilder('Cake\Database\Schema\Table')
+            ->setConstructorArgs(['articles'])
+            ->getMock();
         $table->expects($this->once())
             ->method('truncateSql')
             ->with($db)

@@ -119,6 +119,7 @@ class ConsoleIo
         if ($level !== null) {
             $this->_level = $level;
         }
+
         return $this->_level;
     }
 
@@ -166,8 +167,10 @@ class ConsoleIo
     {
         if ($level <= $this->_level) {
             $this->_lastWritten = $this->_out->write($message, $newlines);
+
             return $this->_lastWritten;
         }
+
         return true;
     }
 
@@ -181,7 +184,7 @@ class ConsoleIo
      *
      * @param array|string $message The message to output.
      * @param int $newlines Number of newlines to append.
-     * @param int $size The number of bytes to overwrite. Defaults to the
+     * @param int|null $size The number of bytes to overwrite. Defaults to the
      *    length of the last message output.
      * @return void
      */
@@ -269,7 +272,7 @@ class ConsoleIo
     /**
      * Add a new output style or get defined styles.
      *
-     * @param string $style The style to get or create.
+     * @param string|null $style The style to get or create.
      * @param array|bool|null $definition The array definition of the style to change or create a style
      *   or false to remove a style.
      * @return mixed If you are getting styles, the style or null will be returned. If you are creating/modifying
@@ -311,6 +314,7 @@ class ConsoleIo
         while ($in === '' || !in_array($in, $options)) {
             $in = $this->_getInput($prompt, $printOptions, $default);
         }
+
         return $in;
     }
 
@@ -340,6 +344,7 @@ class ConsoleIo
         if ($default !== null && ($result === '' || $result === null)) {
             return $default;
         }
+
         return $result;
     }
 
@@ -394,6 +399,7 @@ class ConsoleIo
     public function helper($name, array $settings = [])
     {
         $name = ucfirst($name);
+
         return $this->_helpers->load($name, $settings);
     }
 }

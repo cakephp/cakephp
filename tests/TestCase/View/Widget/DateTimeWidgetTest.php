@@ -40,7 +40,7 @@ class DateTimeWidgetTest extends TestCase
             'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}'
         ];
         $this->templates = new StringTemplate($templates);
-        $this->context = $this->getMock('Cake\View\Form\ContextInterface');
+        $this->context = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
         $this->selectBox = new SelectBoxWidget($this->templates);
         $this->DateTime = new DateTimeWidget($this->templates, $this->selectBox);
     }
@@ -134,6 +134,7 @@ class DateTimeWidgetTest extends TestCase
     public static function selectedValuesProvider()
     {
         $date = new \DateTime('2014-01-20 12:30:45');
+
         return [
             'DateTime' => [$date],
             'string' => [$date->format('Y-m-d H:i:s')],
@@ -779,6 +780,27 @@ class DateTimeWidgetTest extends TestCase
 
         $this->assertContains('<select name="date[meridian]">', $result);
         $this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+    }
+
+    /**
+     * Test rendering 12 hour widgets with empty options and no value.
+     *
+     * @return void
+     */
+    public function testRenderHourWidget12Empty()
+    {
+        $result = $this->DateTime->render([
+            'val' => ['hour' => '', 'minute' => '', 'meridian' => ''],
+            'year' => false,
+            'month' => false,
+            'day' => false,
+            'hour' => ['format' => 12, 'empty' => '--'],
+            'minute' => ['empty' => '--'],
+            'second' => false,
+            'meridian' => ['empty' => '--'],
+        ], $this->context);
+        $this->assertContains('<option value="" selected="selected">--</option>', $result);
+        $this->assertNotRegExp('/value="\d+" selected="selected"/', $result);
     }
 
     /**

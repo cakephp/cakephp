@@ -46,7 +46,7 @@ class Configure
      * Configured engine classes, used to load config files from resources
      *
      * @var array
-     * @see Configure::load()
+     * @see \Cake\Core\Configure::load()
      */
     protected static $_engines = [];
 
@@ -99,6 +99,7 @@ class Configure
                 ini_set('display_errors', $config['debug'] ? 1 : 0);
             }
         }
+
         return true;
     }
 
@@ -112,7 +113,7 @@ class Configure
      * Configure::read('Name.key'); will return only the value of Configure::Name[key]
      * ```
      *
-     * @param string $var Variable to obtain. Use '.' to access array elements.
+     * @param string|null $var Variable to obtain. Use '.' to access array elements.
      * @return mixed Value stored in configure, or null.
      * @link http://book.cakephp.org/3.0/en/development/configuration.html#reading-configuration-data
      */
@@ -121,6 +122,7 @@ class Configure
         if ($var === null) {
             return static::$_values;
         }
+
         return Hash::get(static::$_values, $var);
     }
 
@@ -135,6 +137,7 @@ class Configure
         if (empty($var)) {
             return false;
         }
+
         return static::read($var) !== null;
     }
 
@@ -162,6 +165,7 @@ class Configure
         if (static::check($var) === false) {
             throw new RuntimeException(sprintf('Expected configuration key "%s" not found.', $var));
         }
+
         return static::read($var);
     }
 
@@ -200,10 +204,12 @@ class Configure
             }
             $value = static::$_values[$var];
             unset(static::$_values[$var]);
+
             return $value;
         }
         $value = Hash::get(static::$_values, $var);
         static::delete($var);
+
         return $value;
     }
 
@@ -239,6 +245,7 @@ class Configure
         if ($name !== null) {
             return isset(static::$_engines[$name]);
         }
+
         return array_keys(static::$_engines);
     }
 
@@ -255,6 +262,7 @@ class Configure
             return false;
         }
         unset(static::$_engines[$name]);
+
         return true;
     }
 
@@ -338,6 +346,7 @@ class Configure
         if (!empty($keys) && is_array($keys)) {
             $values = array_intersect_key($values, array_flip($keys));
         }
+
         return (bool)$engine->dump($key, $values);
     }
 
@@ -356,6 +365,7 @@ class Configure
             }
             static::config($config, new PhpConfig());
         }
+
         return static::$_engines[$config];
     }
 
@@ -375,6 +385,7 @@ class Configure
             $config = require CORE_PATH . 'config/config.php';
             static::write($config);
         }
+
         return static::$_values['Cake']['version'];
     }
 
@@ -385,7 +396,7 @@ class Configure
      *
      * @param string $name The storage name for the saved configuration.
      * @param string $cacheConfig The cache configuration to save into. Defaults to 'default'
-     * @param array $data Either an array of data to store, or leave empty to store all values.
+     * @param array|null $data Either an array of data to store, or leave empty to store all values.
      * @return bool Success
      */
     public static function store($name, $cacheConfig = 'default', $data = null)
@@ -393,6 +404,7 @@ class Configure
         if ($data === null) {
             $data = static::$_values;
         }
+
         return Cache::write($name, $data, $cacheConfig);
     }
 
@@ -410,6 +422,7 @@ class Configure
         if ($values) {
             return static::write($values);
         }
+
         return false;
     }
 
@@ -421,6 +434,7 @@ class Configure
     public static function clear()
     {
         static::$_values = [];
+
         return true;
     }
 }

@@ -72,6 +72,16 @@ class TestEmail extends Email
     }
 
     /**
+     * Decode to protected method
+     *
+     * @return string
+     */
+    public function decode($text)
+    {
+        return $this->_decode($text);
+    }
+
+    /**
      * Render to protected method
      *
      * @return array
@@ -103,6 +113,9 @@ class EmailTest extends TestCase
         $this->transports = [
             'debug' => [
                 'className' => 'Debug'
+            ],
+            'badClassName' => [
+                'className' => 'TestFalse'
             ]
         ];
         Email::configTransport($this->transports);
@@ -119,6 +132,7 @@ class EmailTest extends TestCase
         Log::drop('email');
         Email::drop('test');
         Email::dropTransport('debug');
+        Email::dropTransport('badClassName');
         Email::dropTransport('test_smtp');
     }
 
@@ -357,6 +371,20 @@ class EmailTest extends TestCase
     }
 
     /**
+     * Tests not found transport class name exception
+     *
+     * @return void
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Transport class "TestFalse" not found.
+     */
+    public function testClassNameException()
+    {
+        $email = new Email();
+        $email->transport('badClassName');
+    }
+
+    /**
      * Tests that it is possible to unset the email pattern and make use of filter_var() instead.
      *
      * @return void
@@ -563,9 +591,11 @@ class EmailTest extends TestCase
         $this->CakeEmail->subject(1);
         $this->assertSame('1', $this->CakeEmail->subject());
 
-        $this->CakeEmail->subject('هذه رسالة بعنوان طويل مرسل للمستلم');
+        $input = 'هذه رسالة بعنوان طويل مرسل للمستلم';
+        $this->CakeEmail->subject($input);
         $expected = '=?UTF-8?B?2YfYsNmHINix2LPYp9mE2Kkg2KjYudmG2YjYp9mGINi32YjZitmEINmF2LE=?=' . "\r\n" . ' =?UTF-8?B?2LPZhCDZhNmE2YXYs9iq2YTZhQ==?=';
         $this->assertSame($expected, $this->CakeEmail->subject());
+        $this->assertSame($input, $this->CakeEmail->getOriginalSubject());
     }
 
     /**
@@ -776,7 +806,7 @@ class EmailTest extends TestCase
         $result = $this->CakeEmail->transport();
         $this->assertInstanceOf('Cake\Mailer\Transport\DebugTransport', $result);
 
-        $instance = $this->getMock('Cake\Mailer\Transport\DebugTransport');
+        $instance = $this->getMockBuilder('Cake\Mailer\Transport\DebugTransport')->getMock();
         $this->CakeEmail->transport($instance);
         $this->assertSame($instance, $this->CakeEmail->transport());
     }
@@ -1414,7 +1444,10 @@ class EmailTest extends TestCase
      */
     public function testSendWithLog()
     {
-        $log = $this->getMock('Cake\Log\Engine\BaseLog', ['log'], [['scopes' => 'email']]);
+        $log = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
+            ->setMethods(['log'])
+            ->setConstructorArgs([['scopes' => 'email']])
+            ->getMock();
 
         $message = 'Logging This';
 
@@ -1448,7 +1481,10 @@ class EmailTest extends TestCase
     {
         $message = 'Logging This';
 
-        $log = $this->getMock('Cake\Log\Engine\BaseLog', ['log'], ['scopes' => ['email']]);
+        $log = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
+            ->setMethods(['log'])
+            ->setConstructorArgs(['scopes' => ['email']])
+            ->getMock();
         $log->expects($this->once())
             ->method('log')
             ->with(
@@ -2053,7 +2089,7 @@ class EmailTest extends TestCase
         $this->assertNotEmpty($result);
 
         $result = $this->CakeEmail->getBoundary();
-        $this->assertNotEmpty($result);
+        $this->assertRegExp('/^[0-9a-f]{32}$/', $result);
     }
 
     /**
@@ -2320,6 +2356,7 @@ class EmailTest extends TestCase
                 $result[$type] = $flag;
             }
         }
+
         return $result['text'] && $result['html'];
     }
 
@@ -2340,6 +2377,26 @@ class EmailTest extends TestCase
         $expected = "=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n" .
             " =?ISO-2022-JP?B?ZGluZxskQiQ5JGskTiQsQDUkNyQkJHMkQCQxJEkkJCRDJD8kJCRJGyhC?=\r\n" .
             " =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=";
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test CakeEmail::_decode function
+     *
+     * @return void
+     */
+    public function testDecode()
+    {
+        $this->CakeEmail->headerCharset = 'ISO-2022-JP';
+        $result = $this->CakeEmail->decode('=?ISO-2022-JP?B?GyRCRnxLXDhsGyhC?=');
+        $expected = '日本語';
+        $this->assertSame($expected, $result);
+
+        $this->CakeEmail->headerCharset = 'ISO-2022-JP';
+        $result = $this->CakeEmail->decode("=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n" .
+            " =?ISO-2022-JP?B?ZGluZxskQiQ5JGskTiQsQDUkNyQkJHMkQCQxJEkkJCRDJD8kJCRJGyhC?=\r\n" .
+            " =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=");
+        $expected = '長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？';
         $this->assertSame($expected, $result);
     }
 
@@ -2436,7 +2493,7 @@ class EmailTest extends TestCase
     /**
      * @param mixed $charset
      * @param mixed $headerCharset
-     * @return CakeEmail
+     * @return \Cake\Mailer\Email
      */
     protected function _getEmailByOldStyleCharset($charset, $headerCharset)
     {
@@ -2461,7 +2518,7 @@ class EmailTest extends TestCase
     /**
      * @param mixed $charset
      * @param mixed $headerCharset
-     * @return CakeEmail
+     * @return \Cake\Mailer\Email
      */
     protected function _getEmailByNewStyleCharset($charset, $headerCharset)
     {
@@ -2612,7 +2669,7 @@ HTML;
      */
     public function testMockTransport()
     {
-        $mock = $this->getMock('\Cake\Mailer\AbstractTransport');
+        $mock = $this->getMockBuilder('\Cake\Mailer\AbstractTransport')->getMock();
         $config = ['from' => 'tester@example.org', 'transport' => 'default'];
 
         Email::config('default', $config);

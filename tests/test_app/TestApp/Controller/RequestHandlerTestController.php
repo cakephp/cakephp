@@ -59,4 +59,15 @@ class RequestHandlerTestController extends Controller
         $this->viewBuilder()->layout('ajax2');
         $this->destination();
     }
+
+    /**
+     * test method for testing that response type set in action doesn't get
+     * overridden by RequestHandlerComponent::beforeRender()
+     *
+     * @return void
+     */
+    public function set_response_type()
+    {
+        $this->response->type('txt');
+    }
 }

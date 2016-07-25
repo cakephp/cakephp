@@ -52,6 +52,7 @@ class OrderByExpression extends QueryExpression
             }
             $order[] = is_numeric($k) ? $direction : sprintf('%s %s', $k, $direction);
         }
+
         return sprintf('ORDER BY %s', implode(', ', $order));
     }
 

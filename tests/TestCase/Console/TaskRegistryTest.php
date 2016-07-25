@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\TaskRegistry;
-use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
@@ -34,7 +33,9 @@ class TaskRegistryTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $shell = $this->getMock('Cake\Console\Shell', [], [], '', false);
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->Tasks = new TaskRegistry($shell);
     }
 
@@ -82,8 +83,12 @@ class TaskRegistryTest extends TestCase
      */
     public function testLoadPluginTask()
     {
-        $dispatcher = $this->getMock('Cake\Console\ShellDispatcher', [], [], '', false);
-        $shell = $this->getMock('Cake\Console\Shell', [], [], '', false);
+        $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->disableOriginalConstructor()
+            ->getMock();
         Plugin::load('TestPlugin');
         $this->Tasks = new TaskRegistry($shell, $dispatcher);
 

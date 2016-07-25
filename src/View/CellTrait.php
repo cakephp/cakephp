@@ -112,6 +112,7 @@ trait CellTrait
             $class = get_class($this);
             $builder->className($class);
             $instance->viewClass = $class;
+
             return $instance;
         }
 
@@ -123,6 +124,7 @@ trait CellTrait
             $builder->className($this->viewClass);
             $instance->viewClass = $this->viewClass;
         }
+
         return $instance;
     }
 }

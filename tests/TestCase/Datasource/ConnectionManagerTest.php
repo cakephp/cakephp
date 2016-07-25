@@ -11,9 +11,7 @@
  */
 namespace Cake\Test\TestCase\Datasource;
 
-use Cake\Core\App;
 use Cake\Core\Plugin;
-use Cake\Database\Driver\Sqlite;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
@@ -274,6 +272,7 @@ class ConnectionManagerTest extends TestCase
         $connection = new FakeConnection;
         $callable = function ($alias) use ($connection) {
             $this->assertEquals('test_variant', $alias);
+
             return $connection;
         };
 

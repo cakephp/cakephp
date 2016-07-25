@@ -15,12 +15,11 @@
 namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\FormAuthenticate;
-use Cake\Cache\Cache;
-use Cake\Core\App;
-use Cake\Core\Configure;
+use Cake\Controller\ComponentRegistry;
 use Cake\Core\Plugin;
 use Cake\I18n\Time;
 use Cake\Network\Request;
+use Cake\Network\Response;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -48,7 +47,7 @@ class FormAuthenticateTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->Collection = $this->getMock('Cake\Controller\ComponentRegistry');
+        $this->Collection = $this->getMockBuilder(ComponentRegistry::class)->getMock();
         $this->auth = new FormAuthenticate($this->Collection, [
             'userModel' => 'Users'
         ]);
@@ -63,7 +62,7 @@ class FormAuthenticateTest extends TestCase
         ]);
         $AuthUsers->updateAll(['password' => $password], []);
 
-        $this->response = $this->getMock('Cake\Network\Response');
+        $this->response = $this->getMockBuilder(Response::class)->getMock();
     }
 
     /**
@@ -146,16 +145,13 @@ class FormAuthenticateTest extends TestCase
             'password' => ''
         ];
 
-        $this->auth = $this->getMock(
-            'Cake\Auth\FormAuthenticate',
-            ['_checkFields'],
-            [
+        $this->auth = $this->getMockBuilder(FormAuthenticate::class)
+            ->setMethods(['_checkFields'])
+            ->setConstructorArgs([
                 $this->Collection,
-                [
-                    'userModel' => 'Users'
-                ]
-            ]
-        );
+                ['userModel' => 'Users']
+            ])
+            ->getMock();
 
         // Simulate that check for ensuring password is not empty is missing.
         $this->auth->expects($this->once())
@@ -307,6 +303,55 @@ class FormAuthenticateTest extends TestCase
             'username' => 'mariano',
         ];
         $this->assertEquals($expected, $result, 'Result should not contain "created" and "modified" fields');
+
+        $this->auth->config([
+            'finder' => ['auth' => ['return_created' => true]]
+        ]);
+
+        $result = $this->auth->authenticate($request, $this->response);
+        $expected = [
+            'id' => 1,
+            'username' => 'mariano',
+            'created' => new Time('2007-03-17 01:16:23'),
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test using custom finder
+     *
+     * @return void
+     */
+    public function testFinderOptions()
+    {
+        $request = new Request('posts/index');
+        $request->data = [
+            'username' => 'mariano',
+            'password' => 'password'
+        ];
+
+        $this->auth->config([
+            'userModel' => 'AuthUsers',
+            'finder' => 'username'
+        ]);
+
+        $result = $this->auth->authenticate($request, $this->response);
+        $expected = [
+            'id' => 1,
+            'username' => 'mariano',
+        ];
+        $this->assertEquals($expected, $result);
+
+        $this->auth->config([
+            'finder' => ['username' => ['username' => 'nate']]
+        ]);
+
+        $result = $this->auth->authenticate($request, $this->response);
+        $expected = [
+            'id' => 5,
+            'username' => 'nate',
+        ];
+        $this->assertEquals($expected, $result);
     }
 
     /**

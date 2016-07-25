@@ -535,7 +535,7 @@ TEXT;
         $text1 = 'The quick brown fox jumps over the lazy dog';
         $text2 = 'Heiz&ouml;lr&uuml;cksto&szlig;abd&auml;mpfung';
         $text3 = '<b>&copy; 2005-2007, Cake Software Foundation, Inc.</b><br />written by Alexander Wegener';
-        $text4 = '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Great, or?';
+        $text4 = '<IMG src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Great, or?';
         $text5 = '0<b>1<i>2<span class="myclass">3</span>4<u>5</u>6</i>7</b>8<b>9</b>0';
         $text6 = '<p><strong>Extra dates have been announced for this year\'s tour.</strong></p><p>Tickets for the new shows in</p>';
         $text7 = 'El moño está en el lugar correcto. Eso fue lo que dijo la niña, ¿habrá dicho la verdad?';
@@ -543,32 +543,34 @@ TEXT;
         $text9 = 'НОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыь';
         $text10 = 'http://example.com/something/foo:bar';
 
-        $this->assertSame($this->Text->truncate('Hello', 3), '...');
-        $this->assertSame($this->Text->truncate('Hello', 3, ['exact' => false]), 'Hel...');
-        $this->assertSame($this->Text->truncate($text1, 15), 'The quick br...');
-        $this->assertSame($this->Text->truncate($text1, 15, ['exact' => false]), 'The quick...');
-        $this->assertSame($this->Text->truncate($text1, 100), 'The quick brown fox jumps over the lazy dog');
-        $this->assertSame($this->Text->truncate($text2, 10), 'Heiz&ou...');
-        $this->assertSame($this->Text->truncate($text2, 10, ['exact' => false]), 'Heiz&ouml;...');
-        $this->assertSame($this->Text->truncate($text3, 20), '<b>&copy; 2005-20...');
-        $this->assertSame($this->Text->truncate($text4, 15), '<img src="my...');
-        $this->assertSame($this->Text->truncate($text5, 6, ['ellipsis' => '']), '0<b>1<');
-        $this->assertSame($this->Text->truncate($text1, 15, ['html' => true]), "The quick brow\xe2\x80\xa6");
-        $this->assertSame($this->Text->truncate($text1, 15, ['exact' => false, 'html' => true]), "The quick\xe2\x80\xa6");
-        $this->assertSame($this->Text->truncate($text2, 10, ['html' => true]), "Heiz&ouml;lr&uuml;c\xe2\x80\xa6");
-        $this->assertSame($this->Text->truncate($text2, 10, ['exact' => false, 'html' => true]), "Heiz&ouml;\xe2\x80\xa6");
-        $this->assertSame($this->Text->truncate($text3, 20, ['html' => true]), "<b>&copy; 2005-2007, Cake S\xe2\x80\xa6</b>");
-        $this->assertSame($this->Text->truncate($text4, 15, ['html' => true]), "<img src=\"mypic.jpg\"> This image ta\xe2\x80\xa6");
-        $this->assertSame($this->Text->truncate($text4, 45, ['html' => true]), "<img src=\"mypic.jpg\"> This image tag is not XHTML conform!<br><hr/><b>But the\xe2\x80\xa6</b>");
-        $this->assertSame($this->Text->truncate($text4, 90, ['html' => true]), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Great,' . "\xe2\x80\xa6");
-        $this->assertSame($this->Text->truncate($text5, 6, ['ellipsis' => '', 'html' => true]), '0<b>1<i>2<span class="myclass">3</span>4<u>5</u></i></b>');
-        $this->assertSame($this->Text->truncate($text5, 20, ['ellipsis' => '', 'html' => true]), $text5);
-        $this->assertSame($this->Text->truncate($text6, 57, ['exact' => false, 'html' => true]), "<p><strong>Extra dates have been announced for this year's\xe2\x80\xa6</strong></p>");
-        $this->assertSame($this->Text->truncate($text7, 255), $text7);
-        $this->assertSame($this->Text->truncate($text7, 15), 'El moño está...');
-        $this->assertSame($this->Text->truncate($text8, 15), 'Vive la R' . chr(195) . chr(169) . 'pu...');
-        $this->assertSame($this->Text->truncate($text9, 10), 'НОПРСТУ...');
-        $this->assertSame($this->Text->truncate($text10, 30), 'http://example.com/somethin...');
+        $this->assertSame('...', $this->Text->truncate('Hello', 3));
+        $this->assertSame('Hel...', $this->Text->truncate('Hello', 3, ['exact' => false]));
+        $this->assertSame('The quick br...', $this->Text->truncate($text1, 15));
+        $this->assertSame('The quick...', $this->Text->truncate($text1, 15, ['exact' => false]));
+        $this->assertSame('The quick brown fox jumps over the lazy dog', $this->Text->truncate($text1, 100));
+        $this->assertSame('Heiz&ou...', $this->Text->truncate($text2, 10));
+        $this->assertSame('Heiz&ouml;...', $this->Text->truncate($text2, 10, ['exact' => false]));
+        $this->assertSame('<b>&copy; 2005-20...', $this->Text->truncate($text3, 20));
+        $this->assertSame('<IMG src="my...', $this->Text->truncate($text4, 15));
+        $this->assertSame('0<b>1<', $this->Text->truncate($text5, 6, ['ellipsis' => '']));
+        $this->assertSame("The quick brow\xe2\x80\xa6", $this->Text->truncate($text1, 15, ['html' => true]));
+        $this->assertSame("The quick\xe2\x80\xa6", $this->Text->truncate($text1, 15, ['exact' => false, 'html' => true]));
+        $this->assertSame("Heiz&ouml;lr&uuml;c\xe2\x80\xa6", $this->Text->truncate($text2, 10, ['html' => true]));
+        $this->assertSame("Heiz&ouml;lr&uuml;ck\xe2\x80\xa6", $this->Text->truncate($text2, 10, ['exact' => false, 'html' => true]));
+        $this->assertSame("<b>&copy; 2005-2007, Cake S\xe2\x80\xa6</b>", $this->Text->truncate($text3, 20, ['html' => true]));
+        $this->assertSame("<IMG src=\"mypic.jpg\"> This image ta\xe2\x80\xa6", $this->Text->truncate($text4, 15, ['html' => true]));
+        $this->assertSame("<IMG src=\"mypic.jpg\"> This image tag is not XHTML conform!<br><hr/><b>But the\xe2\x80\xa6</b>", $this->Text->truncate($text4, 45, ['html' => true]));
+        $this->assertSame('<IMG src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Great,' . "\xe2\x80\xa6", $this->Text->truncate($text4, 90, ['html' => true]));
+        $this->assertSame('0<b>1<i>2<span class="myclass">3</span>4<u>5</u></i></b>', $this->Text->truncate($text5, 6, ['ellipsis' => '', 'html' => true]));
+        $this->assertSame($text5, $this->Text->truncate($text5, 20, ['ellipsis' => '', 'html' => true]));
+        $this->assertSame("<p><strong>Extra dates have been announced for this year's\xe2\x80\xa6</strong></p>", $this->Text->truncate($text6, 48, ['exact' => false, 'html' => true]));
+        $this->assertSame($text7, $this->Text->truncate($text7, 255));
+        $this->assertSame('El moño está...', $this->Text->truncate($text7, 15));
+        $this->assertSame('Vive la R' . chr(195) . chr(169) . 'pu...', $this->Text->truncate($text8, 15));
+        $this->assertSame('НОПРСТУ...', $this->Text->truncate($text9, 10));
+        $this->assertSame('http://example.com/somethin...', $this->Text->truncate($text10, 30));
+        $this->assertSame('1 <b>2...</b>', $this->Text->truncate('1 <b>2 345</b>', 6, ['exact' => false, 'html' => true, 'ellipsis' => '...']));
+        $this->assertSame('&amp;', $this->Text->truncate('&amp;', 1, ['html' => true]));
 
         $text = '<p><span style="font-size: medium;"><a>Iamatestwithnospacesandhtml</a></span></p>';
         $result = $this->Text->truncate($text, 10, [
@@ -576,43 +578,31 @@ TEXT;
             'exact' => false,
             'html' => true
         ]);
-        $expected = '<p><span style="font-size: medium;"><a>...</a></span></p>';
+        $expected = '<p><span style="font-size: medium;"><a>Iamatestwi...</a></span></p>';
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test truncate() method with both exact and html.
+     * @return void
+     */
+    public function testTruncateExactHtml()
+    {
+        $text = '<a href="http://example.org">hello</a> world';
+        $expected = '<a href="http://example.org">hell..</a>';
+        $result = Text::truncate($text, 6, [
+            'ellipsis' => '..',
+            'exact' => true,
+            'html' => true
+        ]);
         $this->assertEquals($expected, $result);
 
-        $text = '<p><span style="font-size: medium;">El biógrafo de Steve Jobs, Walter
-Isaacson, explica porqué Jobs le pidió que le hiciera su biografía en
-este artículo de El País.</span></p>
-<p><span style="font-size: medium;"><span style="font-size:
-large;">Por qué Steve era distinto.</span></span></p>
-<p><span style="font-size: medium;"><a href="http://www.elpais.com/
-articulo/primer/plano/Steve/era/distinto/elpepueconeg/
-20111009elpneglse_4/Tes">http://www.elpais.com/articulo/primer/plano/
-Steve/era/distinto/elpepueconeg/20111009elpneglse_4/Tes</a></span></p>
-<p><span style="font-size: medium;">Ya se ha publicado la biografía de
-Steve Jobs escrita por Walter Isaacson  "<strong>Steve Jobs by Walter
-Isaacson</strong>", aquí os dejamos la dirección de amazon donde
-podeís adquirirla.</span></p>
-<p><span style="font-size: medium;"><a>http://www.amazon.com/Steve-
-Jobs-Walter-Isaacson/dp/1451648537</a></span></p>';
-        $result = $this->Text->truncate($text, 500, [
-            'ellipsis' => '... ',
+        $expected = '<a href="http://example.org">hello..</a>';
+        $result = Text::truncate($text, 6, [
+            'ellipsis' => '..',
             'exact' => false,
             'html' => true
         ]);
-        $expected = '<p><span style="font-size: medium;">El biógrafo de Steve Jobs, Walter
-Isaacson, explica porqué Jobs le pidió que le hiciera su biografía en
-este artículo de El País.</span></p>
-<p><span style="font-size: medium;"><span style="font-size:
-large;">Por qué Steve era distinto.</span></span></p>
-<p><span style="font-size: medium;"><a href="http://www.elpais.com/
-articulo/primer/plano/Steve/era/distinto/elpepueconeg/
-20111009elpneglse_4/Tes">http://www.elpais.com/articulo/primer/plano/
-Steve/era/distinto/elpepueconeg/20111009elpneglse_4/Tes</a></span></p>
-<p><span style="font-size: medium;">Ya se ha publicado la biografía de
-Steve Jobs escrita por Walter Isaacson  "<strong>Steve Jobs by Walter
-Isaacson</strong>", aquí os dejamos la dirección de amazon donde
-podeís adquirirla.</span></p>
-<p><span style="font-size: medium;"><a>... </a></span></p>';
         $this->assertEquals($expected, $result);
     }
 
@@ -638,6 +628,39 @@ podeís adquirirla.</span></p>
         ]);
         $expected = '<b>&copy; 2005-2007, Cake Software F...</b>';
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test truncate() method with trimWidth
+     *
+     * @return void
+     */
+    public function testTruncateTrimWidth()
+    {
+        $text = 'The quick brown fox jumps over the lazy dog';
+        $this->assertEquals('The quick brown...', Text::truncate($text, 18, ['ellipsis' => '...', 'trimWidth' => false]));
+        $this->assertEquals('The quick brown...', Text::truncate($text, 18, ['ellipsis' => '...', 'trimWidth' => true]));
+
+        $text = 'はしこい茶色の狐はのろまな犬を飛び越える';
+        $this->assertEquals('はしこい茶色の狐はのろまな犬を...', Text::truncate($text, 18, ['ellipsis' => '...', 'trimWidth' => false]));
+        $this->assertEquals('はしこい茶色の...', Text::truncate($text, 18, ['ellipsis' => '...', 'trimWidth' => true]));
+
+        $text = 'はしこい茶色の狐 - The quick brown fox';
+        $this->assertEquals('はしこい茶色の狐 - The quick bro...', Text::truncate($text, 27, ['ellipsis' => '...', 'trimWidth' => false]));
+        $this->assertEquals('はしこい茶色の狐 - The q...', Text::truncate($text, 27, ['ellipsis' => '...', 'trimWidth' => true]));
+        $this->assertEquals('はしこい茶色の狐 - The...', Text::truncate($text, 27, ['ellipsis' => '...', 'trimWidth' => true, 'exact' => false]));
+
+        $text = '<p>はしこい<font color="brown">茶色</font>の狐はのろまな犬を飛び越える</p>';
+        $this->assertEquals('<p>はしこい<font color="brown">茶色</font>の狐はのろまな犬を...</p>', Text::truncate($text, 18, ['ellipsis' => '...', 'trimWidth' => false, 'html' => true]));
+        $this->assertEquals('<p>はしこい<font color="brown">茶色</font>の...</p>', Text::truncate($text, 18, ['ellipsis' => '...', 'trimWidth' => true, 'html' => true]));
+
+        $text = <<<HTML
+<IMG src="mypic.jpg">このimageタグはXHTMLに準拠していない！<br>
+<hr/><b>でも次のimageタグは準拠しているはず <img src="mypic.jpg" alt="私の、私自身そして私" /></b><br />
+素晴らしい、でしょ?
+HTML;
+        $this->assertEquals("<IMG src=\"mypic.jpg\">このimageタグはXHTMLに準拠していない！<br>\n<hr/><b>でも次の…</b>", Text::truncate($text, 30, ['html' => true]));
+        $this->assertEquals("<IMG src=\"mypic.jpg\">このimageタグはXHTMLに準拠し…", Text::truncate($text, 30, ['html' => true, 'trimWidth' => true]));
     }
 
     /**
@@ -1587,5 +1610,275 @@ podeís adquirirla.</span></p>
             [['size' => '512', 'default' => 'Unknown type'], 512],
             [['size' => '2VB', 'default' => 'Unknown type'], 'Unknown type']
         ];
+    }
+
+    /**
+     * Test getting/setting default transliterator id.
+     *
+     * @return void
+     */
+    public function testGetSetTransliteratorId()
+    {
+        $defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
+        $this->assertEquals($defaultTransliteratorId, Text::getTransliteratorId());
+
+        $expected = 'Latin-ASCII; [\u0080-\u7fff] remove';
+        Text::setTransliteratorId($expected);
+        $this->assertEquals($expected, Text::getTransliteratorId());
+
+        Text::setTransliteratorId($defaultTransliteratorId);
+    }
+
+    /**
+     * Data provider for testTransliterate()
+     *
+     * @return array
+     */
+    public function transliterateInputProvider()
+    {
+        return [
+            [
+                'Foo Bar: Not just for breakfast any-more', null,
+                'Foo Bar: Not just for breakfast any-more'
+            ],
+            [
+                'A æ Übérmensch på høyeste nivå! И я люблю PHP! ест. ﬁ ¦', null,
+                'A ae Ubermensch pa hoyeste niva! I a lublu PHP! est. fi '
+            ],
+            [
+                'Äpfel Über Öl grün ärgert groß öko', null,
+                'Apfel Uber Ol grun argert gross oko'
+            ],
+            [
+                'La langue française est un attribut de souveraineté en France', null,
+                'La langue francaise est un attribut de souverainete en France'
+            ],
+            [
+                '!@$#exciting stuff! - what !@-# was that?', null,
+                '!@$#exciting stuff! - what !@-# was that?'
+            ],
+            [
+                'controller/action/りんご/1', null,
+                'controller/action/ringo/1'
+            ],
+            [
+                'の話が出たので大丈夫かなあと', null,
+                'no huaga chutanode da zhang fukanaato'
+            ],
+            [
+                'posts/view/한국어/page:1/sort:asc', null,
+                'posts/view/hangug-eo/page:1/sort:asc'
+            ],
+            [
+                "non\xc2\xa0breaking\xc2\xa0space", null,
+                'non breaking space'
+            ]
+        ];
+    }
+
+    /**
+     * testTransliterate method
+     *
+     * @param string $string String
+     * @param string $transliteratorId Transliterator Id
+     * @param String $expected Exepected string
+     * @return void
+     * @dataProvider transliterateInputProvider
+     */
+    public function testTransliterate($string, $transliteratorId, $expected)
+    {
+        $result = Text::transliterate($string, $transliteratorId);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function slugInputProvider()
+    {
+        return [
+            [
+                'Foo Bar: Not just for breakfast any-more', [],
+                'Foo-Bar-Not-just-for-breakfast-any-more'
+            ],
+            [
+                'Foo Bar: Not just for breakfast any-more', ['replacement' => '_'],
+                'Foo_Bar_Not_just_for_breakfast_any_more'
+            ],
+            [
+                'Foo Bar: Not just for breakfast any-more', ['replacement' => '+'],
+                'Foo+Bar+Not+just+for+breakfast+any+more'
+            ],
+            [
+                'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', [],
+                'A-ae-Ubermensch-pa-hoyeste-niva-I-a-lublu-PHP-est-fi'
+            ],
+            [
+                'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', ['transliteratorId' => 'Latin-ASCII'],
+                'A-ae-Ubermensch-pa-hoyeste-niva-И-я-люблю-PHP-есть-fi'
+            ],
+            [
+                'Äpfel Über Öl grün ärgert groß öko', [],
+                'Apfel-Uber-Ol-grun-argert-gross-oko'
+            ],
+            [
+                'The truth - and- more- news', [],
+                'The-truth-and-more-news'
+            ],
+            [
+                'The truth: and more news', [],
+                'The-truth-and-more-news'
+            ],
+            [
+                'La langue française est un attribut de souveraineté en France', [],
+                'La-langue-francaise-est-un-attribut-de-souverainete-en-France'
+            ],
+            [
+                '!@$#exciting stuff! - what !@-# was that?', [],
+                'exciting-stuff-what-was-that'
+            ],
+            [
+                '20% of profits went to me!', [],
+                '20-of-profits-went-to-me'
+            ],
+            [
+                '#this melts your face1#2#3', [],
+                'this-melts-your-face1-2-3'
+            ],
+            [
+                'controller/action/りんご/1', ['transliteratorId' => false],
+                'controller-action-りんご-1'
+            ],
+            [
+                'の話が出たので大丈夫かなあと', ['transliteratorId' => false],
+                'の話が出たので大丈夫かなあと'
+            ],
+            [
+                'posts/view/한국어/page:1/sort:asc', ['transliteratorId' => false],
+                'posts-view-한국어-page-1-sort-asc'
+            ],
+            [
+                "non\xc2\xa0breaking\xc2\xa0space", [],
+                'non-breaking-space'
+            ],
+            [
+                'Foo Bar: Not just for breakfast any-more', ['replacement' => ''],
+                'FooBarNotjustforbreakfastanymore'
+            ],
+            [
+                'clean!_me.tar.gz', ['preserve' => '.'],
+                'clean-me.tar.gz'
+            ]
+        ];
+    }
+
+    /**
+     * testSlug method
+     *
+     * @param string $string String
+     * @param array $options Options
+     * @param String $expected Exepected string
+     * @return void
+     * @dataProvider slugInputProvider
+     */
+    public function testSlug($string, $options, $expected)
+    {
+        $result = Text::slug($string, $options);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Text truncateByWidth method
+     *
+     * @return void
+     */
+    public function testTruncateByWidth()
+    {
+        $this->assertSame('<p>あ...', Text::truncateByWidth('<p>あいうえお</p>', 8));
+        $this->assertSame('<p>あい...</p>', Text::truncateByWidth('<p>あいうえお</p>', 8, ['html' => true, 'ellipsis' => '...']));
+    }
+
+    /**
+     * Test _strlen method
+     *
+     * @return void
+     */
+    public function testStrlen()
+    {
+        $method = new \ReflectionMethod('Cake\Utility\Text', '_strlen');
+        $method->setAccessible(true);
+        $strlen = function () use ($method) {
+            return $method->invokeArgs(null, func_get_args());
+        };
+
+        $text = 'データベースアクセス &amp; ORM';
+        $this->assertEquals(20, $strlen($text, []));
+        $this->assertEquals(16, $strlen($text, ['html' => true]));
+        $this->assertEquals(30, $strlen($text, ['trimWidth' => true]));
+        $this->assertEquals(26, $strlen($text, ['html' => true, 'trimWidth' => true]));
+
+        $text = '&undefined;';
+        $this->assertEquals(11, $strlen($text, []));
+        $this->assertEquals(11, $strlen($text, ['trimWidth' => true]));
+        $this->assertEquals(11, $strlen($text, ['html' => true]));
+        $this->assertEquals(11, $strlen($text, ['html' => true, 'trimWidth' => true]));
+    }
+
+    /**
+     * Test _substr method
+     *
+     * @return void
+     */
+    public function testSubstr()
+    {
+        $method = new \ReflectionMethod('Cake\Utility\Text', '_substr');
+        $method->setAccessible(true);
+        $substr = function () use ($method) {
+            return $method->invokeArgs(null, func_get_args());
+        };
+
+        $text = 'データベースアクセス &amp; ORM';
+        $this->assertEquals('アクセス', $substr($text, 6, 4, []));
+        $this->assertEquals('アクセス', $substr($text, 6, 8, ['trimWidth' => true]));
+        $this->assertEquals('アクセス', $substr($text, 6, 4, ['html' => true]));
+        $this->assertEquals(' &amp; ', $substr($text, 10, 7, []));
+        $this->assertEquals(' &amp; ', $substr($text, 10, 7, ['trimWidth' => true]));
+        $this->assertEquals(' &amp; ', $substr($text, 10, 3, ['html' => true]));
+        $this->assertEquals(' &amp; ', $substr($text, -10, 7, []));
+        $this->assertEquals(' &amp; ', $substr($text, -10, 7, ['trimWidth' => true]));
+        $this->assertEquals(' &amp; ', $substr($text, -6, 3, ['html' => true]));
+        $this->assertEquals(' &amp; ', $substr($text, -10, -3, []));
+        $this->assertEquals(' &amp; ', $substr($text, -10, -3, ['trimWidth' => true]));
+        $this->assertEquals(' &amp; ', $substr($text, -6, -3, ['html' => true]));
+        $this->assertEquals('ORM', $substr($text, -3, 1000, []));
+        $this->assertEquals('ORM', $substr($text, -3, 1000, ['trimWidth' => true]));
+        $this->assertEquals('ORM', $substr($text, -3, 1000, ['html' => true]));
+        $this->assertEquals('ORM', $substr($text, -3, null, []));
+        $this->assertEquals('ORM', $substr($text, -3, null, ['trimWidth' => true]));
+        $this->assertEquals('ORM', $substr($text, -3, null, ['html' => true]));
+        $this->assertEquals('データ', $substr($text, -1000, 3, []));
+        $this->assertEquals('データ', $substr($text, -1000, 6, ['trimWidth' => true]));
+        $this->assertEquals('データ', $substr($text, -1000, 3, ['html' => true]));
+        $this->assertEquals('', $substr($text, 0, 0, []));
+        $this->assertEquals('', $substr($text, 0, 0, ['trimWidth' => true]));
+        $this->assertEquals('', $substr($text, 0, 0, ['html' => true]));
+        $this->assertEquals('', $substr($text, 1000, 1, []));
+        $this->assertEquals('', $substr($text, 1000, 1, ['trimWidth' => true]));
+        $this->assertEquals('', $substr($text, 1000, 1, ['html' => true]));
+        $this->assertEquals('', $substr($text, 0, -1000, []));
+        $this->assertEquals('', $substr($text, 0, -1000, ['trimWidth' => true]));
+        $this->assertEquals('', $substr($text, 0, -1000, ['html' => true]));
+
+        // ABCDE
+        $text = '&#65;&#66;&#67;&#68;&#69;';
+        $this->assertEquals('&#66;&#67;&#68;', $substr($text, 1, 3, ['html' => true]));
+        $this->assertEquals('&#66;&#67;&#68;', $substr($text, 1, 3, ['html' => true, 'trimWidth' => true]));
+        $this->assertEquals('&#66;&#67;&#68;', $substr($text, -4, -1, ['html' => true]));
+        $this->assertEquals('&#66;&#67;&#68;', $substr($text, -4, -1, ['html' => true, 'trimWidth' => true]));
+
+        // あいうえお
+        $text = '&#x3042;&#x3044;&#x3046;&#x3048;&#x304a;';
+        $this->assertEquals('&#x3044;&#x3046;&#x3048;', $substr($text, 1, 3, ['html' => true]));
+        $this->assertEquals('&#x3044;&#x3046;&#x3048;', $substr($text, 1, 6, ['html' => true, 'trimWidth' => true]));
+        $this->assertEquals('&#x3044;&#x3046;&#x3048;', $substr($text, -4, -1, ['html' => true]));
+        $this->assertEquals('&#x3044;&#x3046;&#x3048;', $substr($text, -4, -1, ['html' => true, 'trimWidth' => true]));
+        $this->assertEquals('&#x3044;&#x3046;&#x3048;', $substr($text, -4, -2, ['html' => true, 'trimWidth' => true]));
     }
 }

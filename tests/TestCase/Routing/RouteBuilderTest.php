@@ -158,7 +158,13 @@ class RouteBuilderTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/articles', ['controller' => 'Articles']);
         $routes->connect('/', ['action' => 'index']);
 
-        $expected = ['plugin' => null, 'controller' => 'Articles', 'action' => 'index', 'pass' => []];
+        $expected = [
+            'plugin' => null,
+            'controller' => 'Articles',
+            'action' => 'index',
+            'pass' => [],
+            '_matchedRoute' => '/articles',
+        ];
         $this->assertEquals($expected, $this->collection->parse('/articles'));
         $this->assertEquals($expected, $this->collection->parse('/articles/'));
     }
@@ -252,8 +258,8 @@ class RouteBuilderTest extends TestCase
      */
     public function testConnectConflictingParameters()
     {
-        $routes = new RouteBuilder($this->collection, '/admin', ['prefix' => 'admin']);
-        $routes->connect('/', ['prefix' => 'manager', 'controller' => 'Dashboard', 'action' => 'view']);
+        $routes = new RouteBuilder($this->collection, '/admin', ['plugin' => 'TestPlugin']);
+        $routes->connect('/', ['plugin' => 'TestPlugin2', 'controller' => 'Dashboard', 'action' => 'view']);
     }
 
     /**
@@ -364,6 +370,39 @@ class RouteBuilderTest extends TestCase
         );
         $this->assertEquals('json', $all[0]->options['_ext']);
         $this->assertEquals('Articles', $all[0]->defaults['controller']);
+    }
+
+    /**
+     * Test connecting resources with a prefix
+     *
+     * @return void
+     */
+    public function testResourcesPrefix()
+    {
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->resources('Articles', ['prefix' => 'rest']);
+        $all = $this->collection->routes();
+        $this->assertEquals('rest', $all[0]->defaults['prefix']);
+    }
+
+    /**
+     * Test that resource prefixes work within a prefixed scope.
+     *
+     * @return void
+     */
+    public function testResourcesNestedPrefix()
+    {
+        $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
+        $routes->resources('Articles', ['prefix' => 'rest']);
+
+        $all = $this->collection->routes();
+        $this->assertCount(5, $all);
+
+        $this->assertEquals('/api/articles', $all[0]->template);
+        foreach ($all as $route) {
+            $this->assertEquals('api/rest', $route->defaults['prefix']);
+            $this->assertEquals('Articles', $route->defaults['controller']);
+        }
     }
 
     /**

@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Routing;
 
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
-use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
 
@@ -69,6 +68,7 @@ class RouteCollectionTest extends TestCase
             'pass' => [],
             'plugin' => null,
             'key' => 'value',
+            '_matchedRoute' => '/b',
         ];
         $this->assertEquals($expected, $result);
 
@@ -81,6 +81,7 @@ class RouteCollectionTest extends TestCase
             'plugin' => null,
             'key' => 'value',
             '?' => ['one' => 'two'],
+            '_matchedRoute' => '/b/:id',
         ];
         $this->assertEquals($expected, $result);
 
@@ -90,7 +91,8 @@ class RouteCollectionTest extends TestCase
             'pass' => [],
             'plugin' => null,
             'controller' => 'Media',
-            'action' => 'search'
+            'action' => 'search',
+            '_matchedRoute' => '/b/media/search/*',
         ];
         $this->assertEquals($expected, $result);
 
@@ -100,7 +102,8 @@ class RouteCollectionTest extends TestCase
             'pass' => ['thing'],
             'plugin' => null,
             'controller' => 'Media',
-            'action' => 'search'
+            'action' => 'search',
+            '_matchedRoute' => '/b/media/search/*',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -122,9 +125,10 @@ class RouteCollectionTest extends TestCase
             'plugin' => null,
             'controller' => 'Events',
             'action' => 'index',
-            'day' => 15,
+            'day' => '15',
             'month' => 'октомври',
             '?' => ['test' => 'foo'],
+            '_matchedRoute' => '/ден/:day-:month',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -139,7 +143,7 @@ class RouteCollectionTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/', []);
 
         $routes->resources('Articles');
-        $routes->connect('/:controller', ['action' => 'index'], [], ['routeClass' => 'InflectedRoute']);
+        $routes->connect('/:controller', ['action' => 'index'], ['routeClass' => 'InflectedRoute']);
         $routes->connect('/:controller/:action', [], ['routeClass' => 'InflectedRoute']);
 
         $result = $this->collection->parse('/articles/add');
@@ -147,7 +151,9 @@ class RouteCollectionTest extends TestCase
             'controller' => 'Articles',
             'action' => 'add',
             'plugin' => null,
-            'pass' => []
+            'pass' => [],
+            '_matchedRoute' => '/:controller/:action',
+
         ];
         $this->assertEquals($expected, $result);
     }
@@ -168,8 +174,7 @@ class RouteCollectionTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/b');
         $routes->connect('/', ['controller' => 'Articles']);
 
-        $result = $this->collection->match(['plugin' => null, 'controller' => 'Articles', 'action' => 'add'], $context);
-        $this->assertFalse($result, 'No matches');
+        $this->collection->match(['plugin' => null, 'controller' => 'Articles', 'action' => 'add'], $context);
     }
 
     /**
@@ -222,12 +227,31 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
+     * Test match() throws an error on named routes that fail to match
+     *
+     * @expectedException \Cake\Routing\Exception\MissingRouteException
+     * @expectedExceptionMessage A named route was found for "fail", but matching failed
+     */
+    public function testMatchNamedError()
+    {
+        $context = [
+            '_base' => '/',
+            '_scheme' => 'http',
+            '_host' => 'example.org',
+        ];
+        $routes = new RouteBuilder($this->collection, '/b');
+        $routes->connect('/:lang/articles', ['controller' => 'Articles'], ['_name' => 'fail']);
+
+        $this->collection->match(['_name' => 'fail'], $context);
+    }
+
+    /**
      * Test matching routes with names and failing
      *
      * @expectedException \Cake\Routing\Exception\MissingRouteException
      * @return void
      */
-    public function testMatchNamedError()
+    public function testMatchNamedMissingError()
     {
         $context = [
             '_base' => '/',

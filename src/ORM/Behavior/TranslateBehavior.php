@@ -339,6 +339,7 @@ class TranslateBehavior extends Behavior
         if ($locale === null) {
             return $this->_locale ?: I18n::locale();
         }
+
         return $this->_locale = (string)$locale;
     }
 
@@ -368,11 +369,13 @@ class TranslateBehavior extends Behavior
     {
         $locales = isset($options['locales']) ? $options['locales'] : [];
         $targetAlias = $this->_translationTable->alias();
+
         return $query
             ->contain([$targetAlias => function ($q) use ($locales, $targetAlias) {
                 if ($locales) {
                     $q->where(["$targetAlias.locale IN" => $locales]);
                 }
+
                 return $q;
             }])
             ->formatResults([$this, 'groupTranslations'], $query::PREPEND);
@@ -477,6 +480,7 @@ class TranslateBehavior extends Behavior
             $row->set('_translations', $result, $options);
             unset($row['_i18n']);
             $row->clean();
+
             return $row;
         });
     }

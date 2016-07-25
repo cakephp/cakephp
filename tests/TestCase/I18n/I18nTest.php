@@ -129,6 +129,7 @@ class I18nTest extends TestCase
             $package->setMessages([
                 'Cow' => 'Le moo'
             ]);
+
             return $package;
         });
 
@@ -205,6 +206,7 @@ class I18nTest extends TestCase
             $package->setMessages([
                 'Cow' => 'Le moo'
             ]);
+
             return $package;
         });
 
@@ -254,6 +256,7 @@ class I18nTest extends TestCase
                 'The {0} is tasty' => 'The {0} is delicious',
                 'Average price {0}' => 'Price Average {0}',
             ]);
+
             return $package;
         });
         $this->assertEquals('Le moo', __d('custom', 'Cow'));
@@ -281,6 +284,7 @@ class I18nTest extends TestCase
                     'Les Moos'
                 ]
             ]);
+
             return $package;
         });
         $this->assertEquals('Le Moo', __dn('custom', 'Cow', 'Cows', 1));
@@ -304,6 +308,7 @@ class I18nTest extends TestCase
                     ]
                 ]
             ]);
+
             return $package;
         });
 
@@ -326,6 +331,12 @@ class I18nTest extends TestCase
             $package->setMessages([
                 'letter' => [
                     '_context' => [
+                        'character' => 'The letter {0}',
+                        'communication' => 'She wrote a letter to {0}',
+                    ]
+                ],
+                'letters' => [
+                    '_context' => [
                         'character' => [
                             'The letter {0}',
                             'The letters {0} and {1}'
@@ -337,6 +348,7 @@ class I18nTest extends TestCase
                     ]
                 ]
             ]);
+
             return $package;
         });
         $this->assertEquals('The letters A and B', __xn('character', 'letter', 'letters', 2, ['A', 'B']));
@@ -369,6 +381,7 @@ class I18nTest extends TestCase
                     ]
                 ]
             ]);
+
             return $package;
         });
 
@@ -391,6 +404,12 @@ class I18nTest extends TestCase
             $package->setMessages([
                 'letter' => [
                     '_context' => [
+                        'character' => 'The letter {0}',
+                        'communication' => 'She wrote a letter to {0}',
+                    ]
+                ],
+                'letters' => [
+                    '_context' => [
                         'character' => [
                             'The letter {0}',
                             'The letters {0} and {1}'
@@ -402,6 +421,7 @@ class I18nTest extends TestCase
                     ]
                 ]
             ]);
+
             return $package;
         });
         $this->assertEquals(
@@ -503,6 +523,7 @@ class I18nTest extends TestCase
             $package->setMessages([
                 'Dog' => 'Le bark'
             ]);
+
             return $package;
         });
 
@@ -511,6 +532,7 @@ class I18nTest extends TestCase
             $package->setMessages([
                 'Cow' => 'Le moo'
             ]);
+
             return $package;
         });
 
@@ -531,12 +553,14 @@ class I18nTest extends TestCase
         I18n::translator('default', 'fr_FR', function () {
             $package = new Package('default');
             $package->setMessages(['Dog' => 'Le bark']);
+
             return $package;
         });
 
         I18n::translator('custom', 'fr_FR', function () {
             $package = new Package('default');
             $package->setMessages(['Cow' => 'Le moo']);
+
             return $package;
         });
 
@@ -558,6 +582,7 @@ class I18nTest extends TestCase
             $package->setMessages([
                 'Dog' => 'Le bark'
             ]);
+
             return $package;
         });
         I18n::config('custom', function ($name, $locale) {
@@ -566,6 +591,7 @@ class I18nTest extends TestCase
             $package->setMessages([
                 'Cow' => 'Le moo',
             ]);
+
             return $package;
         });
 

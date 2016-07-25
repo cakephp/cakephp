@@ -108,7 +108,7 @@ class MapReduce implements IteratorAggregate
      * @param callable $mapper the mapper callback. This function will receive 3 arguments.
      * The first one is the current value, second the current results key and third is
      * this class instance so you can call the result emitters.
-     * @param callable $reducer the reducer callback. This function will receive 3 arguments.
+     * @param callable|null $reducer the reducer callback. This function will receive 3 arguments.
      * The first one is the list of values inside a bucket, second one is the name
      * of the bucket that was created during the mapping phase and third one is an
      * instance of this class.
@@ -131,6 +131,7 @@ class MapReduce implements IteratorAggregate
         if (!$this->_executed) {
             $this->_execute();
         }
+
         return new ArrayIterator($this->_result);
     }
 
@@ -152,7 +153,7 @@ class MapReduce implements IteratorAggregate
      * for this record.
      *
      * @param mixed $value The value to be appended to the final list of results
-     * @param string $key and optional key to assign to the value
+     * @param string|null $key and optional key to assign to the value
      * @return void
      */
     public function emit($value, $key = null)

@@ -21,7 +21,7 @@ use SimpleXmlElement;
  * An object to represent a single option used in the command line.
  * ConsoleOptionParser creates these when you use addOption()
  *
- * @see ConsoleOptionParser::addOption()
+ * @see \Cake\Console\ConsoleOptionParser::addOption()
  */
 class ConsoleInputOption
 {
@@ -142,6 +142,7 @@ class ConsoleInputOption
         if (strlen($name) < $width) {
             $name = str_pad($name, $width, ' ');
         }
+
         return sprintf('%s%s%s', $name, $this->_help, $default);
     }
 
@@ -160,6 +161,7 @@ class ConsoleInputOption
         if (!empty($this->_choices)) {
             $default = ' ' . implode('|', $this->_choices);
         }
+
         return sprintf('[%s%s]', $name, $default);
     }
 
@@ -205,6 +207,7 @@ class ConsoleInputOption
                 )
             );
         }
+
         return true;
     }
 
@@ -229,6 +232,7 @@ class ConsoleInputOption
         foreach ($this->_choices as $valid) {
             $choices->addChild('choice', $valid);
         }
+
         return $parent;
     }
 }

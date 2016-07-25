@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
+use Cake\ORM\Exception\MissingAssociationException;
 use Cake\ORM\Marshaller;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -87,6 +88,7 @@ class GreedyCommentsTable extends Table
             $options['conditions'] = [];
         }
         $options['conditions'] = array_merge($options['conditions'], ['Comments.published' => 'Y']);
+
         return parent::find($type, $options);
     }
 }
@@ -360,6 +362,7 @@ class MarshallerTest extends TestCase
     public function testOneWithAdditionalName()
     {
         $data = [
+            'title' => 'Original Title',
             'Articles' => [
                 'title' => 'My title',
                 'body' => 'My content',
@@ -376,7 +379,8 @@ class MarshallerTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Entity', $result);
         $this->assertTrue($result->dirty(), 'Should be a dirty entity.');
         $this->assertTrue($result->isNew(), 'Should be new');
-        $this->assertEquals($data['Articles']['title'], $result->title);
+        $this->assertFalse($result->has('Articles'), 'No prefixed field.');
+        $this->assertEquals($data['title'], $result->title, 'Data from prefix should be merged.');
         $this->assertEquals($data['Articles']['user']['username'], $result->user->username);
     }
 
@@ -895,6 +899,41 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test belongsToMany association with the ForceNewTarget to force saving
+     * new records on the target tables with BTM relationships when the primaryKey(s)
+     * of the target table is specified.
+     *
+     * @return void
+     */
+    public function testBelongsToManyWithForceNew()
+    {
+        $data = [
+            'title' => 'Fourth Article',
+            'body' => 'Fourth Article Body',
+            'author_id' => 1,
+            'tags' => [
+                [
+                    'id' => 3
+                ],
+                [
+                    'id' => 4,
+                    'name' => 'tag4'
+                ]
+            ]
+        ];
+
+        $marshaller = new Marshaller($this->articles);
+        $article = $marshaller->one($data, [
+            'associated' => ['Tags'],
+            'forceNew' => true
+        ]);
+
+        $this->assertFalse($article->tags[0]->isNew(), 'The tag should not be new');
+        $this->assertTrue($article->tags[1]->isNew(), 'The tag should be new');
+        $this->assertSame('tag4', $article->tags[1]->name, 'Property should match request data.');
+    }
+
+    /**
      * Test HasMany association with _ids attribute
      *
      * @return void
@@ -1094,6 +1133,35 @@ class MarshallerTest extends TestCase
             $data[1]['user']['username'],
             $result[1]->user->username
         );
+    }
+
+    /**
+     * Test if exception is raised when called with [associated => NonExistingAssociation]
+     * Previously such association were simply ignored
+     *
+     * @expectedException \InvalidArgumentException
+     * @return void
+     */
+    public function testManyInvalidAssociation()
+    {
+        $data = [
+            [
+                'comment' => 'First post',
+                'user_id' => 2,
+                'user' => [
+                    'username' => 'mark',
+                ],
+            ],
+            [
+                'comment' => 'Second post',
+                'user_id' => 2,
+                'user' => [
+                    'username' => 'jose',
+                ],
+            ],
+        ];
+        $marshall = new Marshaller($this->comments);
+        $marshall->many($data, ['associated' => ['Users', 'People']]);
     }
 
     /**
@@ -1583,6 +1651,7 @@ class MarshallerTest extends TestCase
         $this->articles->Tags->eventManager()
             ->on('Model.beforeFind', function ($event, $query) use (&$called) {
                 $called = true;
+
                 return $query->where(['Tags.id >=' => 1]);
             });
 
@@ -2148,6 +2217,30 @@ class MarshallerTest extends TestCase
         $this->assertCount(2, $result, 'Should have two records');
         $this->assertSame($entities[0], $result[0], 'Should retain object');
         $this->assertSame($entities[1], $result[1], 'Should retain object');
+    }
+
+    /**
+     * Test mergeMany() with forced contain to ensure aliases are used in queries.
+     *
+     * @return void
+     */
+    public function testMergeManyExistingQueryAliases()
+    {
+        $entities = [
+            new OpenEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2], ['markClean' => true]),
+        ];
+
+        $data = [
+            ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 1],
+            ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
+        ];
+        $this->comments->eventManager()->on('Model.beforeFind', function ($event, $query) {
+            return $query->contain(['Articles']);
+        });
+        $marshall = new Marshaller($this->comments);
+        $result = $marshall->mergeMany($entities, $data);
+
+        $this->assertSame($entities[0], $result[0]);
     }
 
     /**
@@ -2861,5 +2954,59 @@ class MarshallerTest extends TestCase
         $this->assertEquals('not a secret', $entity->user->password);
         $this->assertFalse($entity->dirty('user'));
         $this->assertTrue($entity->user->isNew());
+    }
+
+    public function testEnsurePrimaryKeyBeingReadFromTableForHandlingEmptyStringPrimaryKey()
+    {
+        $data = [
+            'id' => ''
+        ];
+
+        $articles = TableRegistry::get('Articles');
+        $articles->schema()->dropConstraint('primary');
+        $articles->primaryKey('id');
+
+        $marshall = new Marshaller($articles);
+        $result = $marshall->one($data);
+
+        $this->assertFalse($result->dirty('id'));
+        $this->assertNull($result->id);
+    }
+
+    public function testEnsurePrimaryKeyBeingReadFromTableWhenLoadingBelongsToManyRecordsByPrimaryKey()
+    {
+        $data = [
+            'tags' => [
+                [
+                    'id' => 1
+                ],
+                [
+                    'id' => 2
+                ]
+            ]
+        ];
+
+        $tags = TableRegistry::get('Tags');
+        $tags->schema()->dropConstraint('primary');
+        $tags->primaryKey('id');
+
+        $marshall = new Marshaller($this->articles);
+        $result = $marshall->one($data, ['associated' => ['Tags']]);
+
+        $expected = [
+            'tags' => [
+                [
+                    'id' => 1,
+                    'name' => 'tag1',
+                    'description' => 'A big description'
+                ],
+                [
+                    'id' => 2,
+                    'name' => 'tag2',
+                    'description' => 'Another big description'
+                ]
+            ]
+        ];
+        $this->assertEquals($expected, $result->toArray());
     }
 }

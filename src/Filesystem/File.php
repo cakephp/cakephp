@@ -112,6 +112,7 @@ class File
                 return true;
             }
         }
+
         return false;
     }
 
@@ -134,6 +135,7 @@ class File
         }
 
         $this->handle = fopen($this->path, $mode);
+
         return is_resource($this->handle);
     }
 
@@ -171,6 +173,7 @@ class File
         if ($bytes === false) {
             $this->close();
         }
+
         return trim($data);
     }
 
@@ -190,6 +193,7 @@ class File
         } elseif ($this->open() === true) {
             return fseek($this->handle, $offset, $seek) === 0;
         }
+
         return false;
     }
 
@@ -208,6 +212,7 @@ class File
         if (DIRECTORY_SEPARATOR === '\\' || $forceWindows === true) {
             $lineBreak = "\r\n";
         }
+
         return strtr($data, ["\r\n" => $lineBreak, "\n" => $lineBreak, "\r" => $lineBreak]);
     }
 
@@ -236,6 +241,7 @@ class File
                 flock($this->handle, LOCK_UN);
             }
         }
+
         return $success;
     }
 
@@ -261,6 +267,7 @@ class File
         if (!is_resource($this->handle)) {
             return true;
         }
+
         return fclose($this->handle);
     }
 
@@ -278,6 +285,7 @@ class File
         if ($this->exists()) {
             return unlink($this->path);
         }
+
         return false;
     }
 
@@ -307,6 +315,7 @@ class File
         if (!isset($this->info['mime'])) {
             $this->info['mime'] = $this->mime();
         }
+
         return $this->info;
     }
 
@@ -323,6 +332,7 @@ class File
         if (isset($this->info['extension'])) {
             return $this->info['extension'];
         }
+
         return false;
     }
 
@@ -342,6 +352,7 @@ class File
         if ($this->name) {
             return $this->name;
         }
+
         return false;
     }
 
@@ -360,6 +371,7 @@ class File
         if (!$ext) {
             $ext = $this->ext();
         }
+
         return preg_replace("/(?:[^\w\.-]+)/", "_", basename($name, $ext));
     }
 
@@ -396,6 +408,7 @@ class File
                 $this->path = $this->Folder->slashTerm($dir) . $this->name;
             }
         }
+
         return $this->path;
     }
 
@@ -407,6 +420,7 @@ class File
     public function exists()
     {
         $this->clearStatCache();
+
         return (file_exists($this->path) && is_file($this->path));
     }
 
@@ -420,6 +434,7 @@ class File
         if ($this->exists()) {
             return substr(sprintf('%o', fileperms($this->path)), -4);
         }
+
         return false;
     }
 
@@ -433,6 +448,7 @@ class File
         if ($this->exists()) {
             return filesize($this->path);
         }
+
         return false;
     }
 
@@ -476,6 +492,7 @@ class File
         if ($this->exists()) {
             return fileowner($this->path);
         }
+
         return false;
     }
 
@@ -489,6 +506,7 @@ class File
         if ($this->exists()) {
             return filegroup($this->path);
         }
+
         return false;
     }
 
@@ -502,6 +520,7 @@ class File
         if ($this->exists()) {
             return fileatime($this->path);
         }
+
         return false;
     }
 
@@ -515,6 +534,7 @@ class File
         if ($this->exists()) {
             return filemtime($this->path);
         }
+
         return false;
     }
 
@@ -540,6 +560,7 @@ class File
         if (!$this->exists() || is_file($dest) && !$overwrite) {
             return false;
         }
+
         return copy($this->path, $dest);
     }
 
@@ -561,11 +582,13 @@ class File
                 return false;
             }
             list($type) = explode(';', $type);
+
             return $type;
         }
         if (function_exists('mime_content_type')) {
             return mime_content_type($this->pwd());
         }
+
         return false;
     }
 

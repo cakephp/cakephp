@@ -30,9 +30,10 @@ class SqlserverSchema extends BaseSchema
         $sql = "SELECT TABLE_NAME
             FROM INFORMATION_SCHEMA.TABLES
             WHERE TABLE_SCHEMA = ?
-            AND TABLE_TYPE = 'BASE TABLE'
+            AND (TABLE_TYPE = 'BASE TABLE' OR TABLE_TYPE = 'VIEW')
             ORDER BY TABLE_NAME";
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+
         return [$sql, [$schema]];
     }
 
@@ -50,8 +51,9 @@ class SqlserverSchema extends BaseSchema
             AC.scale AS [scale],
             AC.is_identity AS [autoincrement],
             AC.is_nullable AS [null],
-            OBJECT_DEFINITION(AC.default_object_id) AS [default]
-            FROM sys.[tables] T
+            OBJECT_DEFINITION(AC.default_object_id) AS [default],
+            AC.collation_name AS [collation_name]
+            FROM sys.[objects] T
             INNER JOIN sys.[schemas] S ON S.[schema_id] = T.[schema_id]
             INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id]
             INNER JOIN sys.[types] TY ON TY.[user_type_id] = AC.[user_type_id]
@@ -59,6 +61,7 @@ class SqlserverSchema extends BaseSchema
             ORDER BY column_id";
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+
         return [$sql, [$tableName, $schema]];
     }
 
@@ -161,9 +164,33 @@ class SqlserverSchema extends BaseSchema
 
         $field += [
             'null' => $row['null'] === '1' ? true : false,
-            'default' => $row['default'],
+            'default' => $this->_defaultValue($row['default']),
+            'collate' => $row['collation_name'],
         ];
         $table->addColumn($row['name'], $field);
+    }
+
+    /**
+     * Manipulate the default value.
+     *
+     * Sqlite includes quotes and bared NULLs in default values.
+     * We need to remove those.
+     *
+     * @param string|null $default The default value.
+     * @return string|null
+     */
+    protected function _defaultValue($default)
+    {
+        if ($default === 'NULL') {
+            return null;
+        }
+
+        // Remove quotes
+        if (preg_match("/^'(.*)'$/", $default, $matches)) {
+            return str_replace("''", "'", $matches[1]);
+        }
+
+        return $default;
     }
 
     /**
@@ -186,6 +213,7 @@ class SqlserverSchema extends BaseSchema
             ORDER BY I.[index_id], IC.[index_column_id]";
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+
         return [$sql, [$tableName, $schema]];
     }
 
@@ -219,6 +247,7 @@ class SqlserverSchema extends BaseSchema
                 'type' => $type,
                 'columns' => $columns
             ]);
+
             return;
         }
         $table->addIndex($name, [
@@ -245,6 +274,7 @@ class SqlserverSchema extends BaseSchema
             WHERE FK.is_ms_shipped = 0 AND T.name = ? AND S.name = ?";
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+
         return [$sql, [$tableName, $schema]];
     }
 
@@ -270,6 +300,7 @@ class SqlserverSchema extends BaseSchema
     protected function _foreignOnClause($on)
     {
         $parent = parent::_foreignOnClause($on);
+
         return $parent === 'RESTRICT' ? parent::_foreignOnClause(Table::ACTION_SET_NULL) : $parent;
     }
 
@@ -288,6 +319,7 @@ class SqlserverSchema extends BaseSchema
             case 'SET_DEFAULT':
                 return Table::ACTION_SET_DEFAULT;
         }
+
         return Table::ACTION_SET_NULL;
     }
 
@@ -302,15 +334,14 @@ class SqlserverSchema extends BaseSchema
             'integer' => ' INTEGER',
             'biginteger' => ' BIGINT',
             'boolean' => ' BIT',
-            'binary' => ' VARBINARY(MAX)',
             'float' => ' FLOAT',
             'decimal' => ' DECIMAL',
-            'text' => ' NVARCHAR(MAX)',
             'date' => ' DATE',
             'time' => ' TIME',
             'datetime' => ' DATETIME',
             'timestamp' => ' DATETIME',
-            'uuid' => ' UNIQUEIDENTIFIER'
+            'uuid' => ' UNIQUEIDENTIFIER',
+            'json' => ' NVARCHAR(MAX)',
         ];
 
         if (isset($typeMap[$data['type']])) {
@@ -324,7 +355,21 @@ class SqlserverSchema extends BaseSchema
             }
         }
 
-        if ($data['type'] === 'string') {
+        if ($data['type'] === 'text' && $data['length'] !== Table::LENGTH_TINY) {
+            $out .= ' NVARCHAR(MAX)';
+        }
+
+        if ($data['type'] === 'binary') {
+            $out .= ' VARBINARY';
+
+            if ($data['length'] !== Table::LENGTH_TINY) {
+                $out .= '(MAX)';
+            } else {
+                $out .= sprintf('(%s)', Table::LENGTH_TINY);
+            }
+        }
+
+        if ($data['type'] === 'string' || ($data['type'] === 'text' && $data['length'] === Table::LENGTH_TINY)) {
             $type = ' NVARCHAR';
 
             if (!empty($data['fixed'])) {
@@ -336,6 +381,11 @@ class SqlserverSchema extends BaseSchema
             }
 
             $out .= sprintf('%s(%d)', $type, $data['length']);
+        }
+
+        $hasCollate = ['text', 'string'];
+        if (in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {
+            $out .= ' COLLATE ' . $data['collate'];
         }
 
         if ($data['type'] === 'float' && isset($data['precision'])) {
@@ -414,6 +464,7 @@ class SqlserverSchema extends BaseSchema
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
         );
+
         return sprintf(
             'CREATE INDEX %s ON %s (%s)',
             $this->_driver->quoteIdentifier($name),
@@ -435,6 +486,7 @@ class SqlserverSchema extends BaseSchema
         if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
             $out .= ' UNIQUE';
         }
+
         return $this->_keySql($out, $data);
     }
 
@@ -461,6 +513,7 @@ class SqlserverSchema extends BaseSchema
                 $this->_foreignOnClause($data['delete'])
             );
         }
+
         return $prefix . ' (' . implode(', ', $columns) . ')';
     }
 
@@ -477,6 +530,7 @@ class SqlserverSchema extends BaseSchema
         foreach ($indexes as $index) {
             $out[] = $index;
         }
+
         return $out;
     }
 
@@ -496,11 +550,12 @@ class SqlserverSchema extends BaseSchema
             $column = $table->column($pk[0]);
             if (in_array($column['type'], ['integer', 'biginteger'])) {
                 $queries[] = sprintf(
-                    'DBCC CHECKIDENT(%s, RESEED, 0)',
-                    $name
+                    "DBCC CHECKIDENT('%s', RESEED, 0)",
+                    $table->name()
                 );
             }
         }
+
         return $queries;
     }
 }

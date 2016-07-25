@@ -34,7 +34,9 @@ class ConsoleOutputTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->output = $this->getMock('Cake\Console\ConsoleOutput', ['_write']);
+        $this->output = $this->getMockBuilder('Cake\Console\ConsoleOutput')
+            ->setMethods(['_write'])
+            ->getMock();
         $this->output->outputAs(ConsoleOutput::COLOR);
     }
 
@@ -115,8 +117,8 @@ class ConsoleOutputTest extends TestCase
         $this->assertNull($this->output->styles('made_up_goop'));
 
         $result = $this->output->styles();
-        $this->assertNotEmpty($result, 'error', 'Error is missing');
-        $this->assertNotEmpty($result, 'warning', 'Warning is missing');
+        $this->assertNotEmpty($result, 'Error is missing');
+        $this->assertNotEmpty($result, 'Warning is missing');
     }
 
     /**

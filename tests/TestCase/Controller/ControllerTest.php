@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Controller;
 
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
@@ -24,10 +23,7 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
-use Cake\TestSuite\Fixture\TestModel;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ClassRegistry;
-use Cake\Utility\Hash;
 use TestApp\Controller\Admin\PostsController;
 use TestPlugin\Controller\TestPluginController;
 
@@ -275,7 +271,7 @@ class ControllerTest extends TestCase
     public function testTableAutoload()
     {
         $request = new Request('controller_posts/index');
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $Controller = new Controller($request, $response);
         $Controller->modelClass = 'SiteArticles';
 
@@ -303,7 +299,7 @@ class ControllerTest extends TestCase
     public function testLoadModel()
     {
         $request = new Request('controller_posts/index');
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $Controller = new Controller($request, $response);
 
         $this->assertFalse(isset($Controller->Articles));
@@ -481,7 +477,7 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(null, new Response());
 
-        $response = $Controller->redirect('http://cakephp.org', (int)$code, false);
+        $response = $Controller->redirect('http://cakephp.org', (int)$code);
         $this->assertEquals($code, $response->statusCode());
         $this->assertEquals('http://cakephp.org', $response->header()['Location']);
         $this->assertFalse($Controller->autoRender);
@@ -512,42 +508,35 @@ class ControllerTest extends TestCase
      */
     public function testRedirectBeforeRedirectModifyingStatusCode()
     {
-        $Response = $this->getMock('Cake\Network\Response', ['stop']);
+        $Response = $this->getMockBuilder('Cake\Network\Response')
+            ->setMethods(['stop'])
+            ->getMock();
         $Controller = new Controller(null, $Response);
 
         $Controller->eventManager()->attach(function ($event, $url, $response) {
             $response->statusCode(302);
         }, 'Controller.beforeRedirect');
 
-        $response = $Controller->redirect('http://cakephp.org', 301, false);
+        $response = $Controller->redirect('http://cakephp.org', 301);
 
         $this->assertEquals('http://cakephp.org', $response->header()['Location']);
         $this->assertEquals(302, $response->statusCode());
     }
 
-    /**
-     * test that beforeRedirect callback returning false in controller
-     *
-     * @return void
-     */
-    public function testRedirectBeforeRedirectListenerReturnFalse()
+    public function testRedirectBeforeRedirectListenerReturnResponse()
     {
-        $Response = $this->getMock('Cake\Network\Response', ['stop', 'header']);
+        $Response = $this->getMockBuilder('Cake\Network\Response')
+            ->setMethods(['stop', 'header', 'statusCode'])
+            ->getMock();
         $Controller = new Controller(null, $Response);
 
-        $Controller->eventManager()->attach(function ($event, $url, $response) {
-            return false;
-        }, 'Controller.beforeRedirect');
-
-        $Controller->response->expects($this->never())
-            ->method('stop');
-        $Controller->response->expects($this->never())
-            ->method('header');
-        $Controller->response->expects($this->never())
-            ->method('statusCode');
+        $newResponse = new Response;
+        $Controller->eventManager()->on('Controller.beforeRedirect', function ($event, $url, $response) use ($newResponse) {
+            return $newResponse;
+        });
 
         $result = $Controller->redirect('http://cakephp.org');
-        $this->assertNull($result);
+        $this->assertSame($newResponse, $result);
     }
 
     /**
@@ -586,7 +575,9 @@ class ControllerTest extends TestCase
      */
     public function testReferer()
     {
-        $request = $this->getMock('Cake\Network\Request', ['referer']);
+        $request = $this->getMockBuilder('Cake\Network\Request')
+            ->setMethods(['referer'])
+            ->getMock();
         $request->expects($this->any())->method('referer')
             ->with(true)
             ->will($this->returnValue('/posts/index'));
@@ -595,7 +586,9 @@ class ControllerTest extends TestCase
         $result = $Controller->referer(null, true);
         $this->assertEquals('/posts/index', $result);
 
-        $request = $this->getMock('Cake\Network\Request', ['referer']);
+        $request = $this->getMockBuilder('Cake\Network\Request')
+            ->setMethods(['referer'])
+            ->getMock();
         $request->expects($this->any())->method('referer')
             ->with(true)
             ->will($this->returnValue('/posts/index'));
@@ -603,7 +596,9 @@ class ControllerTest extends TestCase
         $result = $Controller->referer(['controller' => 'posts', 'action' => 'index'], true);
         $this->assertEquals('/posts/index', $result);
 
-        $request = $this->getMock('Cake\Network\Request', ['referer']);
+        $request = $this->getMockBuilder('Cake\Network\Request')
+            ->setMethods(['referer'])
+            ->getMock();
 
         $request->expects($this->any())->method('referer')
             ->with(false)
@@ -627,7 +622,9 @@ class ControllerTest extends TestCase
      */
     public function testRefererSlash()
     {
-        $request = $this->getMock('Cake\Network\Request', ['referer']);
+        $request = $this->getMockBuilder('Cake\Network\Request')
+            ->setMethods(['referer'])
+            ->getMock();
         $request->base = '/base';
         Router::pushRequest($request);
 
@@ -640,7 +637,7 @@ class ControllerTest extends TestCase
 
         $controller = new Controller($request);
         $result = $controller->referer('/some/path', true);
-        $this->assertEquals('/base/some/path', $result);
+        $this->assertEquals('/some/path', $result);
     }
 
     /**
@@ -666,7 +663,7 @@ class ControllerTest extends TestCase
      */
     public function testStartupProcess()
     {
-        $eventManager = $this->getMock('Cake\Event\EventManager');
+        $eventManager = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $controller = new Controller(null, null, null, $eventManager);
 
         $eventManager->expects($this->at(0))->method('dispatch')
@@ -677,7 +674,7 @@ class ControllerTest extends TestCase
                     $this->attributeEqualTo('_subject', $controller)
                 )
             )
-            ->will($this->returnValue($this->getMock('Cake\Event\Event', null, [], '', false)));
+            ->will($this->returnValue($this->getMockBuilder('Cake\Event\Event')->disableOriginalConstructor()->getMock()));
 
         $eventManager->expects($this->at(1))->method('dispatch')
             ->with(
@@ -687,7 +684,7 @@ class ControllerTest extends TestCase
                     $this->attributeEqualTo('_subject', $controller)
                 )
             )
-            ->will($this->returnValue($this->getMock('Cake\Event\Event', null, [], '', false)));
+            ->will($this->returnValue($this->getMockBuilder('Cake\Event\Event')->disableOriginalConstructor()->getMock()));
 
         $controller->startupProcess();
     }
@@ -699,7 +696,7 @@ class ControllerTest extends TestCase
      */
     public function testShutdownProcess()
     {
-        $eventManager = $this->getMock('Cake\Event\EventManager');
+        $eventManager = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $controller = new Controller(null, null, null, $eventManager);
 
         $eventManager->expects($this->once())->method('dispatch')
@@ -710,7 +707,7 @@ class ControllerTest extends TestCase
                     $this->attributeEqualTo('_subject', $controller)
                 )
             )
-            ->will($this->returnValue($this->getMock('Cake\Event\Event', null, [], '', false)));
+            ->will($this->returnValue($this->getMockBuilder('Cake\Event\Event')->disableOriginalConstructor()->getMock()));
 
         $controller->shutdownProcess();
     }
@@ -724,10 +721,19 @@ class ControllerTest extends TestCase
     {
         $request = new Request('controller_posts/index');
         $request->params['pass'] = [];
-        $response = $this->getMock('Cake\Network\Response', ['httpCodes']);
+        $response = $this->getMockBuilder('Cake\Network\Response')
+            ->setMethods(['httpCodes'])
+            ->getMock();
 
         $Controller = new Controller($request, $response);
-        $Controller->request->query['url'] = [];
+        $Controller->request->query = [
+            'url' => [],
+            'posts' => [
+                'page' => 2,
+                'limit' => 2,
+            ]
+        ];
+
         $this->assertEquals([], $Controller->paginate);
 
         $this->assertNotContains('Paginator', $Controller->helpers);
@@ -735,14 +741,27 @@ class ControllerTest extends TestCase
 
         $results = $Controller->paginate('Posts');
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
+        $this->assertCount(3, $results);
 
         $results = $Controller->paginate(TableRegistry::get('Posts'));
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
+        $this->assertCount(3, $results);
 
         $this->assertSame($Controller->request->params['paging']['Posts']['page'], 1);
         $this->assertSame($Controller->request->params['paging']['Posts']['pageCount'], 1);
         $this->assertSame($Controller->request->params['paging']['Posts']['prevPage'], false);
         $this->assertSame($Controller->request->params['paging']['Posts']['nextPage'], false);
+        $this->assertNull($Controller->request->params['paging']['Posts']['scope']);
+
+        $results = $Controller->paginate(TableRegistry::get('Posts'), ['scope' => 'posts']);
+        $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
+        $this->assertCount(1, $results);
+
+        $this->assertSame($Controller->request->params['paging']['Posts']['page'], 2);
+        $this->assertSame($Controller->request->params['paging']['Posts']['pageCount'], 2);
+        $this->assertSame($Controller->request->params['paging']['Posts']['prevPage'], true);
+        $this->assertSame($Controller->request->params['paging']['Posts']['nextPage'], false);
+        $this->assertSame($Controller->request->params['paging']['Posts']['scope'], 'posts');
     }
 
     /**
@@ -754,7 +773,9 @@ class ControllerTest extends TestCase
     {
         $request = new Request('controller_posts/index');
         $request->params['pass'] = [];
-        $response = $this->getMock('Cake\Network\Response', ['httpCodes']);
+        $response = $this->getMockBuilder('Cake\Network\Response')
+            ->setMethods(['httpCodes'])
+            ->getMock();
 
         $Controller = new Controller($request, $response);
         $Controller->request->query['url'] = [];
@@ -775,7 +796,7 @@ class ControllerTest extends TestCase
     {
         $url = new Request('test/missing');
         $url->addParams(['controller' => 'Test', 'action' => 'missing']);
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $Controller = new TestController($url, $response);
         $Controller->invokeAction();
@@ -792,7 +813,7 @@ class ControllerTest extends TestCase
     {
         $url = new Request('test/private_m/');
         $url->addParams(['controller' => 'Test', 'action' => 'private_m']);
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $Controller = new TestController($url, $response);
         $Controller->invokeAction();
@@ -809,7 +830,7 @@ class ControllerTest extends TestCase
     {
         $url = new Request('test/protected_m/');
         $url->addParams(['controller' => 'Test', 'action' => 'protected_m']);
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $Controller = new TestController($url, $response);
         $Controller->invokeAction();
@@ -826,7 +847,7 @@ class ControllerTest extends TestCase
     {
         $url = new Request('test/redirect/');
         $url->addParams(['controller' => 'Test', 'action' => 'redirect']);
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $Controller = new TestController($url, $response);
         $Controller->invokeAction();
@@ -845,7 +866,7 @@ class ControllerTest extends TestCase
             'action' => 'returner',
             'pass' => []
         ]);
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $Controller = new TestController($url, $response);
         $result = $Controller->invokeAction();
@@ -863,7 +884,7 @@ class ControllerTest extends TestCase
         $request->addParams([
             'prefix' => 'admin'
         ]);
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
         $Controller->eventManager()->on('Controller.beforeRender', function (Event $e) {
             return $e->subject()->response;
@@ -874,7 +895,7 @@ class ControllerTest extends TestCase
         $request->addParams([
             'prefix' => 'admin/super'
         ]);
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
         $Controller->eventManager()->on('Controller.beforeRender', function (Event $e) {
             return $e->subject()->response;
@@ -902,7 +923,7 @@ class ControllerTest extends TestCase
     public function testComponents()
     {
         $request = new Request('/');
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $controller = new TestController($request, $response);
         $this->assertInstanceOf('Cake\Controller\ComponentRegistry', $controller->components());
@@ -919,8 +940,10 @@ class ControllerTest extends TestCase
     public function testComponentsWithCustomRegistry()
     {
         $request = new Request('/');
-        $response = $this->getMock('Cake\Network\Response');
-        $componentRegistry = $this->getMock('Cake\Controller\ComponentRegistry', ['offsetGet']);
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $componentRegistry = $this->getMockBuilder('Cake\Controller\ComponentRegistry')
+            ->setMethods(['offsetGet'])
+            ->getMock();
 
         $controller = new TestController($request, $response, null, null, $componentRegistry);
         $this->assertInstanceOf(get_class($componentRegistry), $controller->components());
@@ -937,7 +960,7 @@ class ControllerTest extends TestCase
     public function testLoadComponent()
     {
         $request = new Request('/');
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $controller = new TestController($request, $response);
         $result = $controller->loadComponent('Paginator');
@@ -956,7 +979,7 @@ class ControllerTest extends TestCase
     public function testLoadComponentDuplicate()
     {
         $request = new Request('/');
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $controller = new TestController($request, $response);
         $this->assertNotEmpty($controller->loadComponent('Paginator'));
@@ -977,7 +1000,7 @@ class ControllerTest extends TestCase
     public function testIsAction()
     {
         $request = new Request('/');
-        $response = $this->getMock('Cake\Network\Response');
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $controller = new TestController($request, $response);
 
         $this->assertFalse($controller->isAction('redirect'));

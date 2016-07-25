@@ -335,8 +335,8 @@ class ViewTest extends TestCase
      */
     public function testGetTemplate()
     {
-        $request = $this->getMock('Cake\Network\Request');
-        $response = $this->getMock('Cake\Network\Response');
+        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $viewOptions = [
             'plugin' => null,
@@ -411,8 +411,8 @@ class ViewTest extends TestCase
      */
     public function testPluginGetTemplateAbsoluteFail()
     {
-        $request = $this->getMock('Cake\Network\Request');
-        $response = $this->getMock('Cake\Network\Response');
+        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $viewOptions = [
             'plugin' => null,
@@ -519,6 +519,41 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test that multiple paths can be used in App.paths.templates.
+     *
+     * @return void
+     */
+    public function testMultipleAppPaths()
+    {
+        $viewOptions = ['plugin' => 'TestPlugin',
+            'name' => 'TestPlugin',
+            'viewPath' => 'Tests',
+            'view' => 'index',
+            'theme' => 'TestTheme'
+        ];
+
+        $paths = Configure::read('App.paths.templates');
+        $paths[] = Plugin::classPath('TestPlugin') . 'Template' . DS;
+        Configure::write('App.paths.templates', $paths);
+
+        $View = new TestView(null, null, null, $viewOptions);
+        $paths = $View->paths('TestPlugin');
+        $pluginPath = Plugin::path('TestPlugin');
+        $themePath = Plugin::path('TestTheme');
+        $expected = [
+            $themePath . 'src' . DS . 'Template' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
+            $themePath . 'src' . DS . 'Template' . DS,
+            TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
+            $pluginPath . 'src' . DS . 'Template' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
+            $pluginPath . 'src' . DS . 'Template' . DS,
+            TEST_APP . 'TestApp' . DS . 'Template' . DS,
+            TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src' . DS . 'Template' . DS,
+            CAKE . 'Template' . DS,
+        ];
+        $this->assertPathEquals($expected, $paths);
+    }
+
+    /**
      * Test that CamelCase'd plugins still find their view files.
      *
      * @return void
@@ -556,8 +591,8 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages'
         ];
-        $request = $this->getMock('Cake\Network\Request');
-        $response = $this->getMock('Cake\Network\Response');
+        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $View = new TestView(null, null, null, $viewOptions);
 
@@ -602,8 +637,8 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages',
         ];
-        $request = $this->getMock('Cake\Network\Request');
-        $response = $this->getMock('Cake\Network\Response');
+        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $view = new TestView(null, null, null, $viewOptions);
         $view->ext('.php');
@@ -722,8 +757,8 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages',
         ];
-        $request = $this->getMock('Cake\Network\Request');
-        $response = $this->getMock('Cake\Network\Response');
+        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $view = new TestView(null, null, null, $viewOptions);
         $view->ext('.php');
@@ -742,8 +777,8 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages'
         ];
-        $request = $this->getMock('Cake\Network\Request');
-        $response = $this->getMock('Cake\Network\Response');
+        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $View = new TestView($request, $response, null, $viewOptions);
         $View->getViewFileName('does_not_exist');
@@ -1109,7 +1144,7 @@ class ViewTest extends TestCase
         $View = $this->PostsController->createView();
         $View->templatePath($this->PostsController->name);
 
-        $manager = $this->getMock('Cake\Event\EventManager');
+        $manager = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $View->eventManager($manager);
 
         $manager->expects($this->at(0))->method('dispatch')
@@ -1886,6 +1921,7 @@ TEXT;
      */
     public function testMemoryLeakInPaths()
     {
+        $this->skipIf(env('CODECOVERAGE') == 1, 'Running coverage this causes this tests to fail sometimes.');
         $this->ThemeController->plugin = null;
         $this->ThemeController->name = 'Posts';
 

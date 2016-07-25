@@ -33,7 +33,7 @@ class TimeTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new TimeType();
-        $this->driver = $this->getMock('Cake\Database\Driver');
+        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
     }
 
     /**

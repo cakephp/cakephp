@@ -82,7 +82,9 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMock('stdClass', ['__invoke']);
+        $callable = $this->getMockBuilder(\StdClass::class)
+            ->setMethods(['__invoke'])
+            ->getMock();
         $callable->expects($this->at(0))
             ->method('__invoke')
             ->with(1, 'a');
@@ -118,7 +120,10 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMock('stdClass', ['__invoke']);
+        $callable = $this->getMockBuilder(\StdClass::class)
+            ->setMethods(['__invoke'])
+            ->getMock();
+
         $callable->expects($this->once())
             ->method('__invoke')
             ->with(3, 'c');
@@ -141,6 +146,7 @@ class CollectionTest extends TestCase
         $collection = new Collection($items);
         $result = $collection->reject(function ($v, $k, $items) use ($collection) {
             $this->assertSame($collection->getInnerIterator(), $items);
+
             return $v > 2;
         });
         $this->assertEquals(['a' => 1, 'b' => 2], iterator_to_array($result));
@@ -156,7 +162,10 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMock('stdClass', ['__invoke']);
+        $callable = $this->getMockBuilder(\StdClass::class)
+            ->setMethods(['__invoke'])
+            ->getMock();
+
         $callable->expects($this->at(0))
             ->method('__invoke')
             ->with(1, 'a')
@@ -181,7 +190,10 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMock('stdClass', ['__invoke']);
+        $callable = $this->getMockBuilder(\StdClass::class)
+            ->setMethods(['__invoke'])
+            ->getMock();
+
         $callable->expects($this->at(0))
             ->method('__invoke')
             ->with(1, 'a')
@@ -191,6 +203,16 @@ class CollectionTest extends TestCase
             ->with(2, 'b')
             ->will($this->returnValue(false));
         $callable->expects($this->exactly(2))->method('__invoke');
+        $this->assertFalse($collection->every($callable));
+
+        $items = [];
+        $collection = new Collection($items);
+        $callable = $this->getMockBuilder(\StdClass::class)
+            ->setMethods(['__invoke'])
+            ->getMock();
+
+        $callable->expects($this->never())
+            ->method('__invoke');
         $this->assertFalse($collection->every($callable));
     }
 
@@ -203,7 +225,10 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMock('stdClass', ['__invoke']);
+        $callable = $this->getMockBuilder(\StdClass::class)
+            ->setMethods(['__invoke'])
+            ->getMock();
+
         $callable->expects($this->at(0))
             ->method('__invoke')
             ->with(1, 'a')
@@ -225,7 +250,10 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMock('stdClass', ['__invoke']);
+        $callable = $this->getMockBuilder(\StdClass::class)
+            ->setMethods(['__invoke'])
+            ->getMock();
+
         $callable->expects($this->at(0))
             ->method('__invoke')
             ->with(1, 'a')
@@ -267,6 +295,7 @@ class CollectionTest extends TestCase
         $collection = new Collection($items);
         $map = $collection->map(function ($v, $k, $it) use ($collection) {
             $this->assertSame($collection->getInnerIterator(), $it);
+
             return $v * $v;
         });
         $this->assertInstanceOf('Cake\Collection\Iterator\ReplaceIterator', $map);
@@ -282,7 +311,10 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMock('stdClass', ['__invoke']);
+        $callable = $this->getMockBuilder(\StdClass::class)
+            ->setMethods(['__invoke'])
+            ->getMock();
+
         $callable->expects($this->at(0))
             ->method('__invoke')
             ->with(10, 1, 'a')
@@ -307,7 +339,10 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
         $collection = new Collection($items);
-        $callable = $this->getMock('stdClass', ['__invoke']);
+        $callable = $this->getMockBuilder(\StdClass::class)
+            ->setMethods(['__invoke'])
+            ->getMock();
+
         $callable->expects($this->at(0))
             ->method('__invoke')
             ->with(1, 2, 'b')
@@ -752,7 +787,10 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMock('stdClass', ['__invoke']);
+        $callable = $this->getMockBuilder(\StdClass::class)
+            ->setMethods(['__invoke'])
+            ->getMock();
+
         $callable->expects($this->at(0))
             ->method('__invoke')
             ->with(1, 'a')
@@ -876,11 +914,116 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests the nest method with alternate nesting key
+     *
+     * @return void
+     */
+    public function testNestAlternateNestingKey()
+    {
+        $items = [
+            ['id' => 1, 'parent_id' => null],
+            ['id' => 2, 'parent_id' => 1],
+            ['id' => 3, 'parent_id' => 1],
+            ['id' => 4, 'parent_id' => 1],
+            ['id' => 5, 'parent_id' => 6],
+            ['id' => 6, 'parent_id' => null],
+            ['id' => 7, 'parent_id' => 1],
+            ['id' => 8, 'parent_id' => 6],
+            ['id' => 9, 'parent_id' => 6],
+            ['id' => 10, 'parent_id' => 6]
+        ];
+        $collection = (new Collection($items))->nest('id', 'parent_id', 'nodes');
+        $expected = [
+            [
+                'id' => 1,
+                'parent_id' => null,
+                'nodes' => [
+                    ['id' => 2, 'parent_id' => 1, 'nodes' => []],
+                    ['id' => 3, 'parent_id' => 1, 'nodes' => []],
+                    ['id' => 4, 'parent_id' => 1, 'nodes' => []],
+                    ['id' => 7, 'parent_id' => 1, 'nodes' => []]
+                ]
+            ],
+            [
+                'id' => 6,
+                'parent_id' => null,
+                'nodes' => [
+                    ['id' => 5, 'parent_id' => 6, 'nodes' => []],
+                    ['id' => 8, 'parent_id' => 6, 'nodes' => []],
+                    ['id' => 9, 'parent_id' => 6, 'nodes' => []],
+                    ['id' => 10, 'parent_id' => 6, 'nodes' => []]
+                ]
+            ]
+        ];
+        $this->assertEquals($expected, $collection->toArray());
+    }
+
+    /**
      * Tests the nest method with more than one level
      *
      * @return void
      */
     public function testNestMultiLevel()
+    {
+        $items = [
+            ['id' => 1, 'parent_id' => null],
+            ['id' => 2, 'parent_id' => 1],
+            ['id' => 3, 'parent_id' => 2],
+            ['id' => 4, 'parent_id' => 2],
+            ['id' => 5, 'parent_id' => 3],
+            ['id' => 6, 'parent_id' => null],
+            ['id' => 7, 'parent_id' => 3],
+            ['id' => 8, 'parent_id' => 4],
+            ['id' => 9, 'parent_id' => 6],
+            ['id' => 10, 'parent_id' => 6]
+        ];
+        $collection = (new Collection($items))->nest('id', 'parent_id', 'nodes');
+        $expected = [
+            [
+                'id' => 1,
+                'parent_id' => null,
+                'nodes' => [
+                    [
+                        'id' => 2,
+                        'parent_id' => 1,
+                        'nodes' => [
+                            [
+                                'id' => 3,
+                                'parent_id' => 2,
+                                'nodes' => [
+                                    ['id' => 5, 'parent_id' => 3, 'nodes' => []],
+                                    ['id' => 7, 'parent_id' => 3, 'nodes' => []]
+                                ]
+                            ],
+                            [
+                                'id' => 4,
+                                'parent_id' => 2,
+                                'nodes' => [
+                                    ['id' => 8, 'parent_id' => 4, 'nodes' => []]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'id' => 6,
+                'parent_id' => null,
+                'nodes' => [
+                    ['id' => 9, 'parent_id' => 6, 'nodes' => []],
+                    ['id' => 10, 'parent_id' => 6, 'nodes' => []]
+                ]
+            ]
+        ];
+        $this->assertEquals($expected, $collection->toArray());
+    }
+
+    /**
+     * Tests the nest method with more than one level
+     *
+     * @return void
+     */
+    public function testNestMultiLevelAlternateNestingKey()
     {
         $items = [
             ['id' => 1, 'parent_id' => null],
@@ -989,6 +1132,66 @@ class CollectionTest extends TestCase
                 'children' => [
                     new ArrayObject(['id' => 9, 'parent_id' => 6, 'children' => []]),
                     new ArrayObject(['id' => 10, 'parent_id' => 6, 'children' => []])
+                ]
+            ])
+        ];
+        $this->assertEquals($expected, $collection->toArray());
+    }
+
+    /**
+     * Tests the nest method with more than one level
+     *
+     * @return void
+     */
+    public function testNestObjectsAlternateNestingKey()
+    {
+        $items = [
+            new ArrayObject(['id' => 1, 'parent_id' => null]),
+            new ArrayObject(['id' => 2, 'parent_id' => 1]),
+            new ArrayObject(['id' => 3, 'parent_id' => 2]),
+            new ArrayObject(['id' => 4, 'parent_id' => 2]),
+            new ArrayObject(['id' => 5, 'parent_id' => 3]),
+            new ArrayObject(['id' => 6, 'parent_id' => null]),
+            new ArrayObject(['id' => 7, 'parent_id' => 3]),
+            new ArrayObject(['id' => 8, 'parent_id' => 4]),
+            new ArrayObject(['id' => 9, 'parent_id' => 6]),
+            new ArrayObject(['id' => 10, 'parent_id' => 6])
+        ];
+        $collection = (new Collection($items))->nest('id', 'parent_id', 'nodes');
+        $expected = [
+            new ArrayObject([
+                'id' => 1,
+                'parent_id' => null,
+                'nodes' => [
+                    new ArrayObject([
+                        'id' => 2,
+                        'parent_id' => 1,
+                        'nodes' => [
+                            new ArrayObject([
+                                'id' => 3,
+                                'parent_id' => 2,
+                                'nodes' => [
+                                    new ArrayObject(['id' => 5, 'parent_id' => 3, 'nodes' => []]),
+                                    new ArrayObject(['id' => 7, 'parent_id' => 3, 'nodes' => []])
+                                ]
+                            ]),
+                            new ArrayObject([
+                                'id' => 4,
+                                'parent_id' => 2,
+                                'nodes' => [
+                                    new ArrayObject(['id' => 8, 'parent_id' => 4, 'nodes' => []])
+                                ]
+                            ])
+                        ]
+                    ])
+                ]
+            ]),
+            new ArrayObject([
+                'id' => 6,
+                'parent_id' => null,
+                'nodes' => [
+                    new ArrayObject(['id' => 9, 'parent_id' => 6, 'nodes' => []]),
+                    new ArrayObject(['id' => 10, 'parent_id' => 6, 'nodes' => []])
                 ]
             ])
         ];
@@ -1211,6 +1414,7 @@ class CollectionTest extends TestCase
         $items = [1, 2, 3];
         $collection = (new Collection($items))->through(function ($collection) {
             $list = $collection->toList();
+
             return array_merge($list, $list);
         });
 
@@ -1565,5 +1769,42 @@ class CollectionTest extends TestCase
         $chunked = $collection->chunk(2)->toList();
         $expected = [[1, 2], [3, [4, 5]], [6, [7, [8, 9], 10]], [11]];
         $this->assertEquals($expected, $chunked);
+    }
+
+    public function testTranspose()
+    {
+        $collection = new Collection([
+            ['Products', '2012', '2013', '2014'],
+            ['Product A', '200', '100', '50'],
+            ['Product B', '300', '200', '100'],
+            ['Product C', '400', '300', '200'],
+        ]);
+        $transposed = $collection->transpose();
+        $expected = [
+            ['Products', 'Product A', 'Product B', 'Product C'],
+            ['2012', '200', '300', '400'],
+            ['2013', '100', '200', '300'],
+            ['2014', '50', '100', '200'],
+        ];
+
+        $this->assertEquals($expected, $transposed->toList());
+    }
+
+    /**
+     * Tests that provided arrays do not have even length
+     *
+     * @expectedException \LogicException
+     * @return void
+     */
+    public function testTransposeUnEvenLengthShouldThrowException()
+    {
+        $collection = new Collection([
+            ['Products', '2012', '2013', '2014'],
+            ['Product A', '200', '100', '50'],
+            ['Product B', '300'],
+            ['Product C', '400', '300'],
+        ]);
+
+        $collection->transpose();
     }
 }

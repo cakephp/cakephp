@@ -67,6 +67,7 @@ trait IdGeneratorTrait
             $check = $idSuffix . $count++;
         }
         $this->_idSuffixes[] = $check;
+
         return trim($name . '-' . $check, '-');
     }
 
@@ -82,6 +83,7 @@ trait IdGeneratorTrait
         if (!empty($this->_idPrefix)) {
             $domId = $this->_idPrefix . '-' . $domId;
         }
+
         return $domId;
     }
 }

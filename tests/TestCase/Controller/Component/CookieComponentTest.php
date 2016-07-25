@@ -16,8 +16,6 @@ namespace Cake\Test\TestCase\Controller\Component;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\CookieComponent;
-use Cake\Controller\Controller;
-use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -38,11 +36,10 @@ class CookieComponentTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $controller = $this->getMock(
-            'Cake\Controller\Controller',
-            ['redirect'],
-            [new Request(), new Response()]
-        );
+        $controller = $this->getMockBuilder('Cake\Controller\Controller')
+            ->setMethods(['redirect'])
+            ->setConstructorArgs([new Request(), new Response()])
+            ->getMock();
         $controller->loadComponent('Cookie');
         $this->Controller = $controller;
         $this->Cookie = $controller->Cookie;
@@ -362,6 +359,45 @@ class CookieComponentTest extends TestCase
 
         $result = $this->Controller->response->cookie('Closed');
         $this->assertContains('Q2FrZQ==.', $result['value']);
+    }
+
+    /**
+     * Test writing with a custom encryption key using ConfigKey
+     *
+     * @return void
+     */
+    public function testWriteConfigKeyWithCustomEncryptionKey()
+    {
+        $name = 'sampleCookieTest';
+        $value = 'some data';
+        $encryption = 'aes';
+        $prefix = "Q2FrZQ==.";
+        $key = 'justanotherencryptionkeyjustanotherencryptionkey';
+
+        $this->Cookie->configKey($name, compact('key', 'encryption'));
+        $this->Cookie->write($name, $value);
+
+        $cookie = $this->Controller->response->cookie($name);
+
+        $this->assertEquals($value, Security::decrypt(base64_decode(substr($cookie['value'], strlen($prefix))), $key));
+    }
+
+    /**
+     * Test reading with a custom encryption key using ConfigKey
+     *
+     * @return void
+     */
+    public function testReadConfigKeyWithCustomEncryptionKey()
+    {
+        $name = 'sampleCookieTest';
+        $value = 'some data';
+        $encryption = 'aes';
+        $key = 'justanotherencryptionkeyjustanotherencryptionkey';
+
+        $this->Cookie->configKey($name, compact('key', 'encryption'));
+        $this->Cookie->write($name, $value);
+
+        $this->assertEquals('some data', $this->Cookie->read($name));
     }
 
     /**
@@ -721,6 +757,7 @@ class CookieComponentTest extends TestCase
         foreach ($array as $key => $value) {
             $string .= ',' . $key . '|' . $value;
         }
+
         return substr($string, 1);
     }
 
@@ -746,6 +783,7 @@ class CookieComponentTest extends TestCase
         if (is_array($value)) {
             $value = $this->_implode($value);
         }
+
         return "Q2FrZQ==." . base64_encode(Security::encrypt($value, $this->Cookie->config('key')));
     }
 }

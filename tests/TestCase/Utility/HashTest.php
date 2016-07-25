@@ -658,9 +658,6 @@ class HashTest extends TestCase
         $result = Hash::merge(['foo'], ['bar']);
         $this->assertEquals($result, ['foo', 'bar']);
 
-        $result = Hash::merge(['foo'], ['user' => 'bob', 'no-bar'], 'bar');
-        $this->assertEquals($result, ['foo', 'user' => 'bob', 'no-bar', 'bar']);
-
         $a = ['foo', 'foo2'];
         $b = ['bar', 'bar2'];
         $expected = ['foo', 'foo2', 'bar', 'bar2'];
@@ -680,30 +677,6 @@ class HashTest extends TestCase
         $b = ['users' => 'none'];
         $expected = ['users' => 'none'];
         $this->assertEquals($expected, Hash::merge($a, $b));
-
-        $a = ['users' => ['lisa' => ['id' => 5, 'pw' => 'secret']], 'cakephp'];
-        $b = ['users' => ['lisa' => ['pw' => 'new-pass', 'age' => 23]], 'ice-cream'];
-        $expected = [
-            'users' => ['lisa' => ['id' => 5, 'pw' => 'new-pass', 'age' => 23]],
-            'cakephp',
-            'ice-cream'
-        ];
-        $result = Hash::merge($a, $b);
-        $this->assertEquals($expected, $result);
-
-        $c = [
-            'users' => ['lisa' => ['pw' => 'you-will-never-guess', 'age' => 25, 'pet' => 'dog']],
-            'chocolate'
-        ];
-        $expected = [
-            'users' => ['lisa' => ['id' => 5, 'pw' => 'you-will-never-guess', 'age' => 25, 'pet' => 'dog']],
-            'cakephp',
-            'ice-cream',
-            'chocolate'
-        ];
-        $this->assertEquals($expected, Hash::merge($a, $b, $c));
-
-        $this->assertEquals($expected, Hash::merge($a, $b, [], $c));
 
         $a = [
             'Tree',
@@ -734,6 +707,54 @@ class HashTest extends TestCase
             'Transactional'
         ];
         $this->assertEquals($expected, Hash::merge($a, $b));
+    }
+
+    /**
+     * Test that merge() works with variadic arguments.
+     *
+     * @return void
+     */
+    public function testMergeVariadic()
+    {
+        $result = Hash::merge(
+            ['hkuc' => ['lion']],
+            ['hkuc' => 'lion']
+        );
+        $expected = ['hkuc' => 'lion'];
+        $this->assertEquals($expected, $result);
+
+        $result = Hash::merge(
+            ['hkuc' => ['lion']],
+            ['hkuc' => ['lion']],
+            ['hkuc' => 'lion']
+        );
+        $this->assertEquals($expected, $result);
+
+        $result = Hash::merge(['foo'], ['user' => 'bob', 'no-bar'], 'bar');
+        $this->assertEquals($result, ['foo', 'user' => 'bob', 'no-bar', 'bar']);
+
+        $a = ['users' => ['lisa' => ['id' => 5, 'pw' => 'secret']], 'cakephp'];
+        $b = ['users' => ['lisa' => ['pw' => 'new-pass', 'age' => 23]], 'ice-cream'];
+        $expected = [
+            'users' => ['lisa' => ['id' => 5, 'pw' => 'new-pass', 'age' => 23]],
+            'cakephp',
+            'ice-cream'
+        ];
+        $result = Hash::merge($a, $b);
+        $this->assertEquals($expected, $result);
+
+        $c = [
+            'users' => ['lisa' => ['pw' => 'you-will-never-guess', 'age' => 25, 'pet' => 'dog']],
+            'chocolate'
+        ];
+        $expected = [
+            'users' => ['lisa' => ['id' => 5, 'pw' => 'you-will-never-guess', 'age' => 25, 'pet' => 'dog']],
+            'cakephp',
+            'ice-cream',
+            'chocolate'
+        ];
+        $this->assertEquals($expected, Hash::merge($a, $b, $c));
+        $this->assertEquals($expected, Hash::merge($a, $b, [], $c));
     }
 
     /**
@@ -890,6 +911,21 @@ class HashTest extends TestCase
     public function testExtractInvalidArgument()
     {
         Hash::extract('foo', '');
+    }
+
+    /**
+     * Test the extraction of a single value filtered by another field.
+     *
+     * @dataProvider articleDataSets
+     * @return void
+     */
+    public function testExtractSingleValueWithFilteringByAnotherField($data)
+    {
+        $result = Hash::extract($data, '{*}.Article[id=1].title');
+        $this->assertEquals([0 => 'First Article'], $result);
+
+        $result = Hash::extract($data, '{*}.Article[id=2].title');
+        $this->assertEquals([0 => 'Second Article'], $result);
     }
 
     /**

@@ -446,7 +446,6 @@ class FileTest extends TestCase
             $this->assertEquals($data, file_get_contents($tmpFile));
             $this->assertTrue(is_resource($TmpFile->handle));
             $TmpFile->close();
-
         }
         unlink($tmpFile);
     }
@@ -599,6 +598,7 @@ class FileTest extends TestCase
             $message = sprintf('[FileTest] Skipping %s because "%s" not writeable!', $caller, $shortPath);
             $this->markTestSkipped($message);
         }
+
         return false;
     }
 

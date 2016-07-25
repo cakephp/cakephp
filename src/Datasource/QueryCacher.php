@@ -63,6 +63,7 @@ class QueryCacher
         if (empty($result)) {
             return null;
         }
+
         return $result;
     }
 
@@ -77,6 +78,7 @@ class QueryCacher
     {
         $key = $this->_resolveKey($query);
         $storage = $this->_resolveCacher();
+
         return $storage->write($key, $results);
     }
 
@@ -98,6 +100,7 @@ class QueryCacher
             $msg = sprintf('Cache key functions must return a string. Got %s.', var_export($key, true));
             throw new RuntimeException($msg);
         }
+
         return $key;
     }
 
@@ -111,6 +114,7 @@ class QueryCacher
         if (is_string($this->_config)) {
             return Cache::engine($this->_config);
         }
+
         return $this->_config;
     }
 }

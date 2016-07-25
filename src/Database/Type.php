@@ -40,6 +40,7 @@ class Type
         'decimal' => 'Cake\Database\Type\FloatType',
         'float' => 'Cake\Database\Type\FloatType',
         'integer' => 'Cake\Database\Type\IntegerType',
+        'json' => 'Cake\Database\Type\JsonType',
         'string' => 'Cake\Database\Type\StringType',
         'text' => 'Cake\Database\Type\StringType',
         'time' => 'Cake\Database\Type\TimeType',
@@ -80,7 +81,7 @@ class Type
     /**
      * Constructor
      *
-     * @param string $name The name identifying this type
+     * @param string|null $name The name identifying this type
      */
     public function __construct($name = null)
     {
@@ -120,6 +121,7 @@ class Type
         foreach (self::$_types as $name => $type) {
             $result[$name] = isset(static::$_builtTypes[$name]) ? static::$_builtTypes[$name] : static::build($name);
         }
+
         return $result;
     }
 
@@ -152,6 +154,7 @@ class Type
         }
         if (is_array($type)) {
             self::$_types = $type;
+
             return null;
         }
         if ($className === null) {
@@ -237,6 +240,7 @@ class Type
                 return $typeInfo['callback']($value);
             }
         }
+
         return $value;
     }
 
@@ -270,6 +274,7 @@ class Type
         if (is_string($value) && !is_numeric($value)) {
             return strtolower($value) === 'true' ? true : false;
         }
+
         return !empty($value);
     }
 
@@ -287,6 +292,7 @@ class Type
         if (is_array($value)) {
             $value = '';
         }
+
         return strval($value);
     }
 

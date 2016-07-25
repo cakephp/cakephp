@@ -109,7 +109,7 @@ class Socket
      * Constructor.
      *
      * @param array $config Socket configuration, which will be merged with the base configuration
-     * @see Socket::$_baseConfig
+     * @see \Cake\Network\Socket::$_baseConfig
      */
     public function __construct(array $config = [])
     {
@@ -174,6 +174,7 @@ class Socket
         if ($this->connected) {
             stream_set_timeout($this->connection, $this->_config['timeout']);
         }
+
         return $this->connected;
     }
 
@@ -243,6 +244,7 @@ class Socket
         if (!$this->connection) {
             return null;
         }
+
         return stream_context_get_options($this->connection);
     }
 
@@ -256,6 +258,7 @@ class Socket
         if (Validation::ip($this->_config['host'])) {
             return gethostbyaddr($this->_config['host']);
         }
+
         return gethostbyaddr($this->address());
     }
 
@@ -269,6 +272,7 @@ class Socket
         if (Validation::ip($this->_config['host'])) {
             return $this->_config['host'];
         }
+
         return gethostbyname($this->_config['host']);
     }
 
@@ -282,6 +286,7 @@ class Socket
         if (Validation::ip($this->_config['host'])) {
             return [$this->_config['host']];
         }
+
         return gethostbynamel($this->_config['host']);
     }
 
@@ -295,6 +300,7 @@ class Socket
         if (!empty($this->lastError)) {
             return $this->lastError['num'] . ': ' . $this->lastError['str'];
         }
+
         return null;
     }
 
@@ -324,12 +330,13 @@ class Socket
             }
         }
         $totalBytes = strlen($data);
-        for ($written = 0, $rv = 0; $written < $totalBytes; $written += $rv) {
+        for ($written = 0; $written < $totalBytes; $written += $rv) {
             $rv = fwrite($this->connection, substr($data, $written));
             if ($rv === false || $rv === 0) {
                 return $written;
             }
         }
+
         return $written;
     }
 
@@ -353,10 +360,13 @@ class Socket
             $info = stream_get_meta_data($this->connection);
             if ($info['timed_out']) {
                 $this->setLastError(E_WARNING, 'Connection timed out');
+
                 return false;
             }
+
             return $buffer;
         }
+
         return false;
     }
 
@@ -369,6 +379,7 @@ class Socket
     {
         if (!is_resource($this->connection)) {
             $this->connected = false;
+
             return true;
         }
         $this->connected = !fclose($this->connection);
@@ -376,6 +387,7 @@ class Socket
         if (!$this->connected) {
             $this->connection = null;
         }
+
         return !$this->connected;
     }
 
@@ -390,7 +402,7 @@ class Socket
     /**
      * Resets the state of this Socket instance to it's initial state (before Object::__construct got executed)
      *
-     * @param array $state Array with key and values to reset
+     * @param array|null $state Array with key and values to reset
      * @return bool True on success
      */
     public function reset($state = null)
@@ -406,6 +418,7 @@ class Socket
         foreach ($state as $property => $value) {
             $this->{$property} = $value;
         }
+
         return true;
     }
 
@@ -433,6 +446,7 @@ class Socket
         }
         if ($enableCryptoResult === true) {
             $this->encrypted = $enable;
+
             return true;
         }
         $errorMessage = 'Unable to perform enableCrypto operation on the current socket';

@@ -88,7 +88,7 @@ interface StatementInterface
      * that binding parameters from this method will not perform any custom type conversion
      * as it would normally happen when calling `bindValue`
      *
-     * @param array $params list of values to be bound to query
+     * @param array|null $params list of values to be bound to query
      * @return bool true on success, false otherwise
      */
     public function execute($params = null);

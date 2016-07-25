@@ -37,6 +37,7 @@ class RequestActionController extends AppController
     public function test_request_action()
     {
         $this->response->body('This is a test');
+
         return $this->response;
     }
 
@@ -50,6 +51,7 @@ class RequestActionController extends AppController
     public function another_ra_test($id, $other)
     {
         $this->response->body($id + $other);
+
         return $this->response;
     }
 
@@ -61,6 +63,7 @@ class RequestActionController extends AppController
     public function normal_request_action()
     {
         $this->response->body('Hello World');
+
         return $this->response;
     }
 
@@ -72,6 +75,7 @@ class RequestActionController extends AppController
     public function return_here()
     {
         $this->response->body($this->here);
+
         return $this->response;
     }
 
@@ -94,6 +98,7 @@ class RequestActionController extends AppController
     public function post_pass()
     {
         $this->response->body(json_encode($this->request->data));
+
         return $this->response;
     }
 
@@ -105,6 +110,7 @@ class RequestActionController extends AppController
     public function query_pass()
     {
         $this->response->body(json_encode($this->request->query));
+
         return $this->response;
     }
 
@@ -116,6 +122,7 @@ class RequestActionController extends AppController
     public function cookie_pass()
     {
         $this->response->body(json_encode($this->request->cookies));
+
         return $this->response;
     }
 
@@ -134,8 +141,9 @@ class RequestActionController extends AppController
             'params' => $this->request->params,
             'query' => $this->request->query,
             'url' => $this->request->url,
-            'contentType' => $this->request->env('CONTENT_TYPE'),
+            'contentType' => $this->request->contentType(),
         ]));
+
         return $this->response;
     }
 
@@ -152,6 +160,7 @@ class RequestActionController extends AppController
             $content = 'return found';
         }
         $this->response->body($content);
+
         return $this->response;
     }
 
@@ -163,6 +172,19 @@ class RequestActionController extends AppController
     public function session_test()
     {
         $this->response->body($this->request->session()->read('foo'));
+
+        return $this->response;
+    }
+
+    /**
+     * Tests input data transmission
+     *
+     * @return \Cake\Network\Response
+     */
+    public function input_test()
+    {
+        $this->response->body($this->request->input('json_decode')->hello);
+
         return $this->response;
     }
 

@@ -167,6 +167,24 @@ class ArrayContextTest extends TestCase
     }
 
     /**
+     * Test getting default value
+     *
+     * @return void
+     */
+    public function testValDefault()
+    {
+        $context = new ArrayContext($this->request, [
+            'defaults' => [
+                'title' => 'Default value',
+            ]
+        ]);
+
+        $this->assertEquals('Default value', $context->val('title'));
+        $result = $context->val('title', ['default' => 'explicit default']);
+        $this->assertEquals('explicit default', $result);
+    }
+
+    /**
      * Test isRequired
      *
      * @return void

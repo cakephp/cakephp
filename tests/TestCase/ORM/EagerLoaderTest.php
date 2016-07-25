@@ -20,7 +20,6 @@ use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\EagerLoader;
 use Cake\ORM\Query;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -160,7 +159,10 @@ class EagerLoaderTest extends TestCase
             ]
         ];
 
-        $query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection, $this->table]);
+        $query = $this->getMockBuilder('\Cake\ORM\Query')
+            ->setMethods(['join'])
+            ->setConstructorArgs([$this->connection, $this->table])
+            ->getMock();
 
         $query->typeMap($this->clientsTypeMap);
 
@@ -446,11 +448,10 @@ class EagerLoaderTest extends TestCase
             ]
         ];
 
-        $query = $this->getMock(
-            '\Cake\ORM\Query',
-            ['join'],
-            [$this->connection, $this->table]
-        );
+        $query = $this->getMockBuilder('\Cake\ORM\Query')
+            ->setMethods(['join'])
+            ->setConstructorArgs([$this->connection, $this->table])
+            ->getMock();
 
         $loader = new EagerLoader;
         $loader->contain($contains);
@@ -521,11 +522,13 @@ class EagerLoaderTest extends TestCase
             $quoter = function ($e) {
                 return $this->connection->driver()->quoteIdentifier($e);
             };
+
             return array_combine(
                 array_map($quoter, array_keys($elements)),
                 array_map($quoter, array_values($elements))
             );
         }
+
         return $elements;
     }
 }

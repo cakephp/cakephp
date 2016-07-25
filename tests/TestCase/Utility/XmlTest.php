@@ -18,7 +18,6 @@ use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Xml;
 
 /**

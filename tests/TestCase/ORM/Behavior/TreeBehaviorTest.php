@@ -14,9 +14,6 @@
  */
 namespace Cake\Test\TestCase\ORM\Behavior;
 
-use Cake\Collection\Collection;
-use Cake\Event\Event;
-use Cake\ORM\Behavior\TranslateBehavior;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -887,6 +884,35 @@ class TreeBehaviorTest extends TestCase
             '25:26 - 13:carpentry',
         ];
         $this->assertMpttValues($expected, $this->table);
+    }
+
+    /**
+     * Tests making a node its own parent as an existing entity
+     *
+     * @expectedException RuntimeException
+     * @expectedExceptionMessage Cannot set a node's parent as itself
+     * @return void
+     */
+    public function testReParentSelf()
+    {
+        $entity = $this->table->get(1);
+        $entity->parent_id = $entity->id;
+        $this->table->save($entity);
+    }
+
+    /**
+     * Tests making a node its own parent as a new entity.
+     *
+     * @expectedException RuntimeException
+     * @expectedExceptionMessage Cannot set a node's parent as itself
+     * @return void
+     */
+    public function testReParentSelfNewEntity()
+    {
+        $entity = $this->table->newEntity(['name' => 'root']);
+        $entity->id = 1;
+        $entity->parent_id = $entity->id;
+        $this->table->save($entity);
     }
 
     /**

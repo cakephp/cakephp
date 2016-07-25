@@ -101,6 +101,7 @@ class DateTimeType extends Type
             $class = $this->_className;
             $value = new $class('@' . $value);
         }
+
         return $value->format($this->_format);
     }
 
@@ -121,7 +122,12 @@ class DateTimeType extends Type
             list($value) = explode('.', $value);
         }
 
+        if ($this->_datetimeInstance === null) {
+            $this->_datetimeInstance = new $this->_className;
+        }
+
         $instance = clone $this->_datetimeInstance;
+
         return $instance->modify($value);
     }
 
@@ -201,10 +207,12 @@ class DateTimeType extends Type
     {
         if ($enable === false) {
             $this->_useLocaleParser = $enable;
+
             return $this;
         }
         if (method_exists($this->_className, 'parseDateTime')) {
             $this->_useLocaleParser = $enable;
+
             return $this;
         }
         throw new RuntimeException(
@@ -224,6 +232,7 @@ class DateTimeType extends Type
     public function setLocaleFormat($format)
     {
         $this->_localeFormat = $format;
+
         return $this;
     }
 
@@ -235,6 +244,7 @@ class DateTimeType extends Type
     public function useImmutable()
     {
         $this->_setClassName('Cake\I18n\FrozenTime', 'DateTimeImmutable');
+
         return $this;
     }
 
@@ -251,7 +261,7 @@ class DateTimeType extends Type
             $class = $fallback;
         }
         $this->_className = $class;
-        $this->_datetimeInstance = new $this->_className;
+        $this->_datetimeInstance = null;
     }
 
     /**
@@ -262,6 +272,7 @@ class DateTimeType extends Type
     public function useMutable()
     {
         $this->_setClassName('Cake\I18n\Time', 'DateTime');
+
         return $this;
     }
 
@@ -275,6 +286,7 @@ class DateTimeType extends Type
     protected function _parseValue($value)
     {
         $class = $this->_className;
+
         return $class::parseDateTime($value, $this->_localeFormat);
     }
 }

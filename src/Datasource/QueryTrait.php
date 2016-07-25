@@ -39,7 +39,7 @@ trait QueryTrait
      * When set, query execution will be bypassed.
      *
      * @var \Cake\Datasource\ResultSetInterface
-     * @see setResult()
+     * @see \Cake\Datasource\QueryTrait::setResult()
      */
     protected $_results;
 
@@ -97,6 +97,7 @@ trait QueryTrait
             return $this->_repository;
         }
         $this->_repository = $table;
+
         return $this;
     }
 
@@ -115,6 +116,7 @@ trait QueryTrait
     public function setResult($results)
     {
         $this->_results = $results;
+
         return $this;
     }
 
@@ -171,9 +173,11 @@ trait QueryTrait
     {
         if ($key === false) {
             $this->_cache = null;
+
             return $this;
         }
         $this->_cache = new QueryCacher($key, $config);
+
         return $this;
     }
 
@@ -190,6 +194,7 @@ trait QueryTrait
             return $this->_eagerLoaded;
         }
         $this->_eagerLoaded = $value;
+
         return $this;
     }
 
@@ -202,7 +207,7 @@ trait QueryTrait
      * If no $alias is passed, the default table for this query will be used.
      *
      * @param string $field The field to alias
-     * @param string $alias the alias used to prefix the field
+     * @param string|null $alias the alias used to prefix the field
      * @return array
      */
     public function aliasField($field, $alias = null)
@@ -275,6 +280,7 @@ trait QueryTrait
             }
         }
         $this->_results = $results;
+
         return $this->_results;
     }
 
@@ -316,6 +322,7 @@ trait QueryTrait
             return $this->_mapReduce;
         }
         $this->_mapReduce[] = compact('mapper', 'reducer');
+
         return $this;
     }
 
@@ -368,10 +375,12 @@ trait QueryTrait
 
         if ($mode === self::PREPEND) {
             array_unshift($this->_formatters, $formatter);
+
             return $this;
         }
 
         $this->_formatters[] = $formatter;
+
         return $this;
     }
 
@@ -392,6 +401,7 @@ trait QueryTrait
         if ($this->_dirty) {
             $this->limit(1);
         }
+
         return $this->all()->first();
     }
 
@@ -446,6 +456,7 @@ trait QueryTrait
         $resultSetClass = $this->_decoratorClass();
         if (in_array($method, get_class_methods($resultSetClass))) {
             $results = $this->all();
+
             return call_user_func_array([$results, $method], $arguments);
         }
         throw new BadMethodCallException(

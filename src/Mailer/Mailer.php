@@ -79,36 +79,36 @@ use Cake\Mailer\Exception\MissingActionException;
  * Our mailer could either be registered in the application bootstrap, or
  * in the Table class' initialize() hook.
  *
- * @method Email to($email = null, $name = null)
- * @method Email from($email = null, $name = null)
- * @method Email sender($email = null, $name = null)
- * @method Email replyTo($email = null, $name = null)
- * @method Email readReceipt($email = null, $name = null)
- * @method Email returnPath($email = null, $name = null)
- * @method Email addTo($email, $name = null)
- * @method Email cc($email = null, $name = null)
- * @method Email addCc($email, $name = null)
- * @method Email bcc($email = null, $name = null)
- * @method Email addBcc($email, $name = null)
- * @method Email charset($charset = null)
- * @method Email headerCharset($charset = null)
- * @method Email subject($subject = null)
- * @method Email setHeaders(array $headers)
- * @method Email addHeaders(array $headers)
- * @method Email getHeaders(array $include = [])
- * @method Email template($template = false, $layout = false)
- * @method Email viewRender($viewClass = null)
- * @method Email viewVars($viewVars = null)
- * @method Email theme($theme = null)
- * @method Email helpers($helpers = null)
- * @method Email emailFormat($format = null)
- * @method Email transport($name = null)
- * @method Email messageId($message = null)
- * @method Email domain($domain = null)
- * @method Email attachments($attachments = null)
- * @method Email addAttachments($attachments)
- * @method Email message($type = null)
- * @method Email profile($config = null)
+ * @method \Cake\Mailer\Email to($email = null, $name = null)
+ * @method \Cake\Mailer\Email from($email = null, $name = null)
+ * @method \Cake\Mailer\Email sender($email = null, $name = null)
+ * @method \Cake\Mailer\Email replyTo($email = null, $name = null)
+ * @method \Cake\Mailer\Email readReceipt($email = null, $name = null)
+ * @method \Cake\Mailer\Email returnPath($email = null, $name = null)
+ * @method \Cake\Mailer\Email addTo($email, $name = null)
+ * @method \Cake\Mailer\Email cc($email = null, $name = null)
+ * @method \Cake\Mailer\Email addCc($email, $name = null)
+ * @method \Cake\Mailer\Email bcc($email = null, $name = null)
+ * @method \Cake\Mailer\Email addBcc($email, $name = null)
+ * @method \Cake\Mailer\Email charset($charset = null)
+ * @method \Cake\Mailer\Email headerCharset($charset = null)
+ * @method \Cake\Mailer\Email subject($subject = null)
+ * @method \Cake\Mailer\Email setHeaders(array $headers)
+ * @method \Cake\Mailer\Email addHeaders(array $headers)
+ * @method \Cake\Mailer\Email getHeaders(array $include = [])
+ * @method \Cake\Mailer\Email template($template = false, $layout = false)
+ * @method \Cake\Mailer\Email viewRender($viewClass = null)
+ * @method \Cake\Mailer\Email viewVars($viewVars = null)
+ * @method \Cake\Mailer\Email theme($theme = null)
+ * @method \Cake\Mailer\Email helpers($helpers = null)
+ * @method \Cake\Mailer\Email emailFormat($format = null)
+ * @method \Cake\Mailer\Email transport($name = null)
+ * @method \Cake\Mailer\Email messageId($message = null)
+ * @method \Cake\Mailer\Email domain($domain = null)
+ * @method \Cake\Mailer\Email attachments($attachments = null)
+ * @method \Cake\Mailer\Email addAttachments($attachments)
+ * @method \Cake\Mailer\Email message($type = null)
+ * @method \Cake\Mailer\Email profile($config = null)
  */
 abstract class Mailer implements EventListenerInterface
 {
@@ -166,6 +166,7 @@ abstract class Mailer implements EventListenerInterface
                 join('', array_slice(explode('\\', get_class($this)), -1))
             );
         }
+
         return static::$name;
     }
 
@@ -178,6 +179,7 @@ abstract class Mailer implements EventListenerInterface
     public function layout($layout)
     {
         $this->_email->viewBuilder()->layout($layout);
+
         return $this;
     }
 
@@ -201,6 +203,7 @@ abstract class Mailer implements EventListenerInterface
     public function __call($method, $args)
     {
         call_user_func_array([$this->_email, $method], $args);
+
         return $this;
     }
 
@@ -214,6 +217,7 @@ abstract class Mailer implements EventListenerInterface
     public function set($key, $value = null)
     {
         $this->_email->viewVars(is_string($key) ? [$key => $value] : $key);
+
         return $this;
     }
 
@@ -257,6 +261,7 @@ abstract class Mailer implements EventListenerInterface
     protected function reset()
     {
         $this->_email = clone $this->_clonedEmail;
+
         return $this;
     }
 

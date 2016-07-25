@@ -18,7 +18,6 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
-use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -332,7 +331,7 @@ class ResultSetTest extends TestCase
         $query->autoFields(false);
 
         $row = ['Other__field' => 'test'];
-        $statement = $this->getMock('Cake\Database\StatementInterface');
+        $statement = $this->getMockBuilder('Cake\Database\StatementInterface')->getMock();
         $statement->method('fetch')
             ->will($this->onConsecutiveCalls($row, $row));
         $statement->method('rowCount')

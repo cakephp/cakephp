@@ -37,7 +37,7 @@ use Cake\Network\Request;
  * The above is simple implementation that would only authorize users of the
  * 'admin' role to access admin routing.
  *
- * @see AuthComponent::$authenticate
+ * @see \Cake\Controller\Component\AuthComponent::$authenticate
  */
 class ControllerAuthorize extends BaseAuthorize
 {
@@ -77,13 +77,14 @@ class ControllerAuthorize extends BaseAuthorize
             }
             $this->_Controller = $controller;
         }
+
         return $this->_Controller;
     }
 
     /**
      * Checks user authorization using a controller callback.
      *
-     * @param array $user Active user data
+     * @param array|\ArrayAccess $user Active user data
      * @param \Cake\Network\Request $request Request instance.
      * @return bool
      */

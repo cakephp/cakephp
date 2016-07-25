@@ -90,6 +90,8 @@ class Response
         'html' => ['text/html', '*/*'],
         'json' => 'application/json',
         'xml' => ['application/xml', 'text/xml'],
+        'xhtml' => ['application/xhtml+xml', 'application/xhtml', 'text/xhtml'],
+        'webp' => 'image/webp',
         'rss' => 'application/rss+xml',
         'ai' => 'application/postscript',
         'bcpio' => 'application/x-bcpio',
@@ -269,6 +271,7 @@ class Response
         'xbm' => 'image/x-xbitmap',
         'xpm' => 'image/x-xpixmap',
         'xwd' => 'image/x-xwindowdump',
+        'psd' => ['application/photoshop', 'application/psd', 'image/psd', 'image/x-photoshop', 'image/photoshop', 'zz-application/zz-winassoc-psd'],
         'ice' => 'x-conference/x-cooltalk',
         'iges' => 'model/iges',
         'igs' => 'model/iges',
@@ -283,7 +286,6 @@ class Response
         'javascript' => 'application/javascript',
         'form' => 'application/x-www-form-urlencoded',
         'file' => 'multipart/form-data',
-        'xhtml' => ['application/xhtml+xml', 'application/xhtml', 'text/xhtml'],
         'xhtml-mobile' => 'application/vnd.wap.xhtml+xml',
         'atom' => 'application/atom+xml',
         'amf' => 'application/x-amf',
@@ -292,7 +294,6 @@ class Response
         'wmlscript' => 'text/vnd.wap.wmlscript',
         'wbmp' => 'image/vnd.wap.wbmp',
         'woff' => 'application/x-font-woff',
-        'webp' => 'image/webp',
         'appcache' => 'text/cache-manifest',
         'manifest' => 'text/cache-manifest',
         'htc' => 'text/x-component',
@@ -327,7 +328,7 @@ class Response
      * Content type to send. This can be an 'extension' that will be transformed using the $_mimetypes array
      * or a complete mime-type
      *
-     * @var int
+     * @var string
      */
     protected $_contentType = 'text/html';
 
@@ -615,6 +616,7 @@ class Response
             }
             $this->_headers[$header] = is_array($value) ? array_map('trim', $value) : trim($value);
         }
+
         return $this->_headers;
     }
 
@@ -631,9 +633,11 @@ class Response
     {
         if ($url === null) {
             $headers = $this->header();
+
             return isset($headers['Location']) ? $headers['Location'] : null;
         }
         $this->header('Location', $url);
+
         return null;
     }
 
@@ -649,6 +653,7 @@ class Response
         if ($content === null) {
             return $this->_body;
         }
+
         return $this->_body = $content;
     }
 
@@ -668,6 +673,7 @@ class Response
         if (!isset($this->_statusCodes[$code])) {
             throw new InvalidArgumentException('Unknown status code');
         }
+
         return $this->_status = $code;
     }
 
@@ -714,11 +720,13 @@ class Response
                 throw new InvalidArgumentException('Invalid status code');
             }
             $this->_statusCodes = $code + $this->_statusCodes;
+
             return true;
         }
         if (!isset($this->_statusCodes[$code])) {
             return null;
         }
+
         return [$code => $this->_statusCodes[$code]];
     }
 
@@ -764,6 +772,7 @@ class Response
             foreach ($contentType as $type => $definition) {
                 $this->_mimeTypes[$type] = $definition;
             }
+
             return $this->_contentType;
         }
         if (isset($this->_mimeTypes[$contentType])) {
@@ -773,6 +782,7 @@ class Response
         if (strpos($contentType, '/') === false) {
             return false;
         }
+
         return $this->_contentType = $contentType;
     }
 
@@ -789,6 +799,7 @@ class Response
         if (isset($this->_mimeTypes[$alias])) {
             return $this->_mimeTypes[$alias];
         }
+
         return false;
     }
 
@@ -811,6 +822,7 @@ class Response
                 return $alias;
             }
         }
+
         return null;
     }
 
@@ -826,6 +838,7 @@ class Response
         if ($charset === null) {
             return $this->_charset;
         }
+
         return $this->_charset = $charset;
     }
 
@@ -885,6 +898,7 @@ class Response
                 return null;
             }
             $sharable = $public || !($private || $noCache);
+
             return $sharable;
         }
         if ($public) {
@@ -899,6 +913,7 @@ class Response
         if (!$time) {
             $this->_setCacheControl();
         }
+
         return (bool)$public;
     }
 
@@ -920,6 +935,7 @@ class Response
         if (isset($this->_cacheDirectives['s-maxage'])) {
             return $this->_cacheDirectives['s-maxage'];
         }
+
         return null;
     }
 
@@ -941,6 +957,7 @@ class Response
         if (isset($this->_cacheDirectives['max-age'])) {
             return $this->_cacheDirectives['max-age'];
         }
+
         return null;
     }
 
@@ -965,6 +982,7 @@ class Response
             }
             $this->_setCacheControl();
         }
+
         return array_key_exists('must-revalidate', $this->_cacheDirectives);
     }
 
@@ -1007,6 +1025,7 @@ class Response
         if (isset($this->_headers['Expires'])) {
             return $this->_headers['Expires'];
         }
+
         return null;
     }
 
@@ -1032,6 +1051,7 @@ class Response
         if (isset($this->_headers['Last-Modified'])) {
             return $this->_headers['Last-Modified'];
         }
+
         return null;
     }
 
@@ -1079,6 +1099,7 @@ class Response
         if (isset($this->_headers['Vary'])) {
             return explode(', ', $this->_headers['Vary']);
         }
+
         return null;
     }
 
@@ -1111,6 +1132,7 @@ class Response
         if (isset($this->_headers['Etag'])) {
             return $this->_headers['Etag'];
         }
+
         return null;
     }
 
@@ -1131,6 +1153,7 @@ class Response
             $result = new DateTime($time);
         }
         $result->setTimeZone(new DateTimeZone('UTC'));
+
         return $result;
     }
 
@@ -1145,6 +1168,7 @@ class Response
         $compressionEnabled = ini_get("zlib.output_compression") !== '1' &&
             extension_loaded("zlib") &&
             (strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
+
         return $compressionEnabled && ob_start('ob_gzhandler');
     }
 
@@ -1182,6 +1206,7 @@ class Response
         if ($protocol !== null) {
             $this->_protocol = $protocol;
         }
+
         return $this->_protocol;
     }
 
@@ -1200,6 +1225,7 @@ class Response
         if (isset($this->_headers['Content-Length'])) {
             return $this->_headers['Content-Length'];
         }
+
         return null;
     }
 
@@ -1234,6 +1260,7 @@ class Response
         if ($notModified) {
             $this->notModified();
         }
+
         return $notModified;
     }
 
@@ -1249,6 +1276,7 @@ class Response
         if (!is_string($this->_body) && is_callable($this->_body)) {
             return '';
         }
+
         return (string)$this->_body;
     }
 
@@ -1301,6 +1329,7 @@ class Response
             if (!isset($this->_cookies[$options])) {
                 return null;
             }
+
             return $this->_cookies[$options];
         }
 
@@ -1348,7 +1377,7 @@ class Response
      * cors($request, ['http://www.cakephp.org', '*.google.com', 'https://myproject.github.io']);
      * ```
      *
-     * *Note* The `$allowedDomains`, `$allowedMethods`, `$allowedHeaders` parameters are deprectated.
+     * *Note* The `$allowedDomains`, `$allowedMethods`, `$allowedHeaders` parameters are deprecated.
      * Instead the builder object should be used.
      *
      * @param \Cake\Network\Request $request Request object
@@ -1374,6 +1403,7 @@ class Response
             ->allowMethods((array)$allowedMethods)
             ->allowHeaders((array)$allowedHeaders)
             ->build();
+
         return $builder;
     }
 
@@ -1453,8 +1483,17 @@ class Response
             $this->header('Content-Length', $fileSize);
         }
 
-        $this->_clearBuffer();
         $this->_file = $file;
+    }
+
+    /**
+     * Get the current file if one exists.
+     *
+     * @return \Cake\Filesystem\File|null The file to use in the response or null
+     */
+    public function getFile()
+    {
+        return $this->_file;
     }
 
     /**
@@ -1469,11 +1508,16 @@ class Response
      */
     protected function _fileRange($file, $httpRange)
     {
-        list(, $range) = explode('=', $httpRange);
-        list($start, $end) = explode('-', $range);
-
         $fileSize = $file->size();
         $lastByte = $fileSize - 1;
+        $start = 0;
+        $end = $lastByte;
+
+        preg_match('/^bytes\s*=\s*(\d+)?\s*-\s*(\d+)?$/', $httpRange, $matches);
+        if ($matches) {
+            $start = $matches[1];
+            $end = isset($matches[2]) ? $matches[2] : '';
+        }
 
         if ($start === '') {
             $start = $fileSize - $end;
@@ -1488,6 +1532,7 @@ class Response
             $this->header([
                 'Content-Range' => 'bytes 0-' . $lastByte . '/' . $fileSize
             ]);
+
             return;
         }
 
@@ -1510,6 +1555,8 @@ class Response
     protected function _sendFile($file, $range)
     {
         $compress = $this->outputCompressed();
+        ob_implicit_flush(true);
+
         $file->open('rb');
 
         $end = $start = false;
@@ -1526,6 +1573,7 @@ class Response
         while (!feof($file->handle)) {
             if (!$this->_isActive()) {
                 $file->close();
+
                 return false;
             }
             $offset = $file->offset();
@@ -1536,11 +1584,9 @@ class Response
                 $bufferSize = $end - $offset + 1;
             }
             echo fread($file->handle, $bufferSize);
-            if (!$compress) {
-                $this->_flushBuffer();
-            }
         }
         $file->close();
+
         return true;
     }
 
@@ -1558,6 +1604,7 @@ class Response
      * Clears the contents of the topmost output buffer and discards them
      *
      * @return bool
+     * @deprecated 3.2.4 This function is not needed anymore
      */
     protected function _clearBuffer()
     {
@@ -1570,6 +1617,7 @@ class Response
      * Flushes the contents of the output buffer
      *
      * @return void
+     * @deprecated 3.2.4 This function is not needed anymore
      */
     protected function _flushBuffer()
     {

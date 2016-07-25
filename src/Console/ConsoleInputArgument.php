@@ -21,7 +21,7 @@ use SimpleXmlElement;
  * An object to represent a single argument used in the command line.
  * ConsoleOptionParser creates these when you use addArgument()
  *
- * @see ConsoleOptionParser::addArgument()
+ * @see \Cake\Console\ConsoleOptionParser::addArgument()
  */
 class ConsoleInputArgument
 {
@@ -116,6 +116,7 @@ class ConsoleInputArgument
         if (!empty($this->_choices)) {
             $optional .= sprintf(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
         }
+
         return sprintf('%s%s%s', $name, $this->_help, $optional);
     }
 
@@ -134,6 +135,7 @@ class ConsoleInputArgument
         if (!$this->isRequired()) {
             $name = '[' . $name . ']';
         }
+
         return $name;
     }
 
@@ -169,6 +171,7 @@ class ConsoleInputArgument
                 )
             );
         }
+
         return true;
     }
 
@@ -188,6 +191,7 @@ class ConsoleInputArgument
         foreach ($this->_choices as $valid) {
             $choices->addChild('choice', $valid);
         }
+
         return $parent;
     }
 }

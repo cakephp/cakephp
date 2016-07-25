@@ -19,7 +19,6 @@ use Cake\Core\Configure;
 use Cake\Error\Debugger;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
-use Cake\View\View;
 
 /**
  * DebuggerTestCaseDebugger class
@@ -388,7 +387,9 @@ TEXT;
      */
     public function testLog()
     {
-        $mock = $this->getMock('Cake\Log\Engine\BaseLog', ['log']);
+        $mock = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
+            ->setMethods(['log'])
+            ->getMock();
         Log::config('test', ['engine' => $mock]);
 
         $mock->expects($this->at(0))
@@ -420,7 +421,9 @@ TEXT;
      */
     public function testLogDepth()
     {
-        $mock = $this->getMock('Cake\Log\Engine\BaseLog', ['log']);
+        $mock = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
+            ->setMethods(['log'])
+            ->getMock();
         Log::config('test', ['engine' => $mock]);
 
         $mock->expects($this->at(0))

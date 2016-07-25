@@ -116,6 +116,7 @@ class Plugin
                 list($name, $conf) = (is_numeric($name)) ? [$conf, $config] : [$name, $conf];
                 static::load($name, $conf);
             }
+
             return;
         }
 
@@ -135,10 +136,10 @@ class Plugin
 
         if (empty($config['path'])) {
             $paths = App::path('Plugin');
-            $pluginPath = str_replace('/', DS, $plugin);
+            $pluginPath = str_replace('/', DIRECTORY_SEPARATOR, $plugin);
             foreach ($paths as $path) {
                 if (is_dir($path . $pluginPath)) {
-                    $config['path'] = $path . $pluginPath . DS;
+                    $config['path'] = $path . $pluginPath . DIRECTORY_SEPARATOR;
                     break;
                 }
             }
@@ -148,9 +149,9 @@ class Plugin
             throw new MissingPluginException(['plugin' => $plugin]);
         }
 
-        $config['classPath'] = $config['path'] . $config['classBase'] . DS;
+        $config['classPath'] = $config['path'] . $config['classBase'] . DIRECTORY_SEPARATOR;
         if (!isset($config['configPath'])) {
-            $config['configPath'] = $config['path'] . 'config' . DS;
+            $config['configPath'] = $config['path'] . 'config' . DIRECTORY_SEPARATOR;
         }
 
         static::$_plugins[$plugin] = $config;
@@ -162,11 +163,11 @@ class Plugin
             }
             static::$_loader->addNamespace(
                 str_replace('/', '\\', $plugin),
-                $config['path'] . $config['classBase'] . DS
+                $config['path'] . $config['classBase'] . DIRECTORY_SEPARATOR
             );
             static::$_loader->addNamespace(
                 str_replace('/', '\\', $plugin) . '\Test',
-                $config['path'] . 'tests' . DS
+                $config['path'] . 'tests' . DIRECTORY_SEPARATOR
             );
         }
 
@@ -185,11 +186,12 @@ class Plugin
         if (Configure::check('plugins')) {
             return;
         }
-        $vendorFile = dirname(dirname(__DIR__)) . DS . 'cakephp-plugins.php';
+        $vendorFile = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
         if (!file_exists($vendorFile)) {
-            $vendorFile = dirname(dirname(dirname(dirname(__DIR__)))) . DS . 'cakephp-plugins.php';
+            $vendorFile = dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
             if (!file_exists($vendorFile)) {
                 Configure::write(['plugins' => []]);
+
                 return;
             }
         }
@@ -263,6 +265,7 @@ class Plugin
         if (empty(static::$_plugins[$plugin])) {
             throw new MissingPluginException(['plugin' => $plugin]);
         }
+
         return static::$_plugins[$plugin]['path'];
     }
 
@@ -278,6 +281,7 @@ class Plugin
         if (empty(static::$_plugins[$plugin])) {
             throw new MissingPluginException(['plugin' => $plugin]);
         }
+
         return static::$_plugins[$plugin]['classPath'];
     }
 
@@ -293,6 +297,7 @@ class Plugin
         if (empty(static::$_plugins[$plugin])) {
             throw new MissingPluginException(['plugin' => $plugin]);
         }
+
         return static::$_plugins[$plugin]['configPath'];
     }
 
@@ -301,7 +306,7 @@ class Plugin
      *
      * @param string $plugin name of the plugin
      * @return mixed
-     * @see Plugin::load() for examples of bootstrap configuration
+     * @see \Cake\Core\Plugin::load() for examples of bootstrap configuration
      */
     public static function bootstrap($plugin)
     {
@@ -320,7 +325,7 @@ class Plugin
     /**
      * Loads the routes file for a plugin, or all plugins configured to load their respective routes file
      *
-     * @param string $plugin name of the plugin, if null will operate on all plugins having enabled the
+     * @param string|null $plugin name of the plugin, if null will operate on all plugins having enabled the
      * loading of routes files
      * @return bool
      */
@@ -330,12 +335,14 @@ class Plugin
             foreach (static::loaded() as $p) {
                 static::routes($p);
             }
+
             return true;
         }
         $config = static::$_plugins[$plugin];
         if ($config['routes'] === false) {
             return false;
         }
+
         return (bool)static::_includeFile(
             $config['configPath'] . 'routes.php',
             $config['ignoreMissing']
@@ -346,7 +353,7 @@ class Plugin
      * Returns true if the plugin $plugin is already loaded
      * If plugin is null, it will return a list of all loaded plugins
      *
-     * @param string $plugin Plugin name.
+     * @param string|null $plugin Plugin name.
      * @return bool|array Boolean true if $plugin is already loaded.
      *   If $plugin is null, returns a list of plugins that have been loaded
      */
@@ -357,13 +364,14 @@ class Plugin
         }
         $return = array_keys(static::$_plugins);
         sort($return);
+
         return $return;
     }
 
     /**
      * Forgets a loaded plugin or all of them if first parameter is null
      *
-     * @param string $plugin name of the plugin to forget
+     * @param string|null $plugin name of the plugin to forget
      * @return void
      */
     public static function unload($plugin = null)
@@ -387,6 +395,7 @@ class Plugin
         if ($ignoreMissing && !is_file($file)) {
             return false;
         }
+
         return include $file;
     }
 }

@@ -20,7 +20,7 @@ use Cake\Error\Debugger;
     <?= $this->Html->charset() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
-        Error: <?= $this->fetch('title') ?>
+        Error: <?= h($this->fetch('title')) ?>
     </title>
     <?= $this->Html->meta('icon') ?>
     <style>
@@ -202,7 +202,7 @@ use Cake\Error\Debugger;
 <body>
     <header>
         <h1 class="header-title">
-            <?= $this->fetch('title') ?>
+            <?= h($this->fetch('title')) ?>
             <span class="header-type"><?= get_class($error) ?></span>
         </h1>
         <div class="header-help">
@@ -227,7 +227,7 @@ use Cake\Error\Debugger;
         <?php if ($this->fetch('templateName')): ?>
         <p class="customize">
             If you want to customize this error message, create
-            <em><?= APP_DIR . DS . 'Template' . DS . 'Error' . DS . $this->fetch('templateName') ?></em>
+            <em><?= APP_DIR . DIRECTORY_SEPARATOR . 'Template' . DIRECTORY_SEPARATOR . 'Error' . DIRECTORY_SEPARATOR . $this->fetch('templateName') ?></em>
         </p>
         <?php endif; ?>
     </div>

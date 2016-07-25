@@ -29,6 +29,7 @@ class PostgresSchema extends BaseSchema
     {
         $sql = 'SELECT table_name as name FROM information_schema.tables WHERE table_schema = ? ORDER BY name';
         $schema = empty($config['schema']) ? 'public' : $config['schema'];
+
         return [$sql, [$schema]];
     }
 
@@ -42,6 +43,7 @@ class PostgresSchema extends BaseSchema
             data_type AS type,
             is_nullable AS null, column_default AS default,
             character_maximum_length AS char_length,
+            c.collation_name,
             d.description as comment,
             ordinal_position,
             pg_get_serial_sequence(attr.attrelid::regclass::text, attr.attname) IS NOT NULL AS has_serial
@@ -55,6 +57,7 @@ class PostgresSchema extends BaseSchema
         ORDER BY ordinal_position';
 
         $schema = empty($config['schema']) ? 'public' : $config['schema'];
+
         return [$sql, [$tableName, $schema, $config['database']]];
     }
 
@@ -129,6 +132,11 @@ class PostgresSchema extends BaseSchema
         ) {
             return ['type' => 'decimal', 'length' => null];
         }
+
+        if (strpos($col, 'json') !== false) {
+            return ['type' => 'json', 'length' => null];
+        }
+
         return ['type' => 'text', 'length' => null];
     }
 
@@ -153,6 +161,7 @@ class PostgresSchema extends BaseSchema
         $field += [
             'default' => $this->_defaultValue($row['default']),
             'null' => $row['null'] === 'YES' ? true : false,
+            'collate' => $row['collation_name'],
             'comment' => $row['comment']
         ];
         $field['length'] = $row['char_length'] ?: $field['length'];
@@ -191,33 +200,27 @@ class PostgresSchema extends BaseSchema
      */
     public function describeIndexSql($tableName, $config)
     {
-        $sql = 'SELECT
-            c2.relname,
-            a.attname,
-            i.indisprimary,
-            i.indisunique
-        FROM pg_catalog.pg_class AS c,
-            pg_catalog.pg_class AS c2,
-            pg_catalog.pg_index AS i,
-            pg_catalog.pg_attribute AS a
-        WHERE c.oid  = (
-            SELECT c.oid
-            FROM pg_catalog.pg_class c
-            LEFT JOIN pg_catalog.pg_namespace AS n ON n.oid = c.relnamespace
-            WHERE c.relname = ?
-                AND n.nspname = ?
-        )
-        AND c.oid = i.indrelid
-        AND c.oid = a.attrelid
+        $sql = "SELECT
+        c2.relname,
+        a.attname,
+        i.indisprimary,
+        i.indisunique
+        FROM pg_catalog.pg_namespace n
+        INNER JOIN pg_catalog.pg_class c ON (n.oid = c.relnamespace)
+        INNER JOIN pg_catalog.pg_index i ON (c.oid = i.indrelid)
+        INNER JOIN pg_catalog.pg_class c2 ON (c2.oid = i.indexrelid)
+        INNER JOIN pg_catalog.pg_attribute a ON (a.attrelid = c.oid AND i.indrelid::regclass = a.attrelid::regclass)
+        WHERE n.nspname = ?
         AND a.attnum = ANY(i.indkey)
-        AND i.indexrelid = c2.oid
-        ORDER BY i.indisprimary DESC, i.indisunique DESC, c2.relname, a.attnum';
+        AND c.relname = ?
+        ORDER BY i.indisprimary DESC, i.indisunique DESC, c.relname, a.attnum";
 
         $schema = 'public';
         if (!empty($config['schema'])) {
             $schema = $config['schema'];
         }
-        return [$sql, [$tableName, $schema]];
+
+        return [$sql, [$schema, $tableName]];
     }
 
     /**
@@ -235,6 +238,7 @@ class PostgresSchema extends BaseSchema
         }
         if ($type === Table::CONSTRAINT_PRIMARY || $type === Table::CONSTRAINT_UNIQUE) {
             $this->_convertConstraint($table, $name, $type, $row);
+
             return;
         }
         $index = $table->index($name);
@@ -276,43 +280,26 @@ class PostgresSchema extends BaseSchema
     public function describeForeignKeySql($tableName, $config)
     {
         $sql = "SELECT
-            rc.constraint_name AS name,
-            tc.constraint_type AS type,
-            kcu.column_name,
-            rc.match_option AS match_type,
-            rc.update_rule AS on_update,
-            rc.delete_rule AS on_delete,
-
-            kc.table_name AS references_table,
-            kc.column_name AS references_field
-
-            FROM information_schema.referential_constraints rc
-
-            JOIN information_schema.table_constraints tc
-                ON tc.constraint_name = rc.constraint_name
-                AND tc.constraint_schema = rc.constraint_schema
-                AND tc.constraint_name = rc.constraint_name
-                AND tc.table_schema = rc.constraint_schema
-
-            JOIN information_schema.key_column_usage kcu
-                ON kcu.constraint_name = rc.constraint_name
-                AND kcu.constraint_schema = rc.constraint_schema
-                AND kcu.constraint_name = rc.constraint_name
-                AND kcu.constraint_schema = rc.constraint_schema
-
-            JOIN information_schema.key_column_usage kc
-                ON kc.ordinal_position = kcu.position_in_unique_constraint
-                AND kc.constraint_name = rc.unique_constraint_name
-                AND kc.constraint_schema = rc.constraint_schema
-
-            WHERE kcu.table_name = ?
-              AND rc.constraint_schema = ?
-              AND tc.constraint_type = 'FOREIGN KEY'
-
-            ORDER BY rc.constraint_name, kcu.ordinal_position";
+        c.conname AS name,
+        c.contype AS type,
+        a.attname AS column_name,
+        c.confmatchtype AS match_type,
+        c.confupdtype AS on_update,
+        c.confdeltype AS on_delete,
+        c.confrelid::regclass AS references_table,
+        ab.attname AS references_field
+        FROM pg_catalog.pg_namespace n
+        INNER JOIN pg_catalog.pg_class cl ON (n.oid = cl.relnamespace)
+        INNER JOIN pg_catalog.pg_constraint c ON (n.oid = c.connamespace)
+        INNER JOIN pg_catalog.pg_attribute a ON (a.attrelid = cl.oid AND c.conrelid = a.attrelid AND a.attnum = ANY(c.conkey))
+        INNER JOIN pg_catalog.pg_attribute ab ON (a.attrelid = cl.oid AND c.confrelid = ab.attrelid AND ab.attnum = ANY(c.confkey))
+        WHERE n.nspname = ?
+        AND cl.relname = ?
+        ORDER BY name, a.attnum, ab.attnum DESC";
 
         $schema = empty($config['schema']) ? 'public' : $config['schema'];
-        return [$sql, [$tableName, $schema]];
+
+        return [$sql, [$schema, $tableName]];
     }
 
     /**
@@ -335,15 +322,16 @@ class PostgresSchema extends BaseSchema
      */
     protected function _convertOnClause($clause)
     {
-        if ($clause === 'RESTRICT') {
+        if ($clause === 'r') {
             return Table::ACTION_RESTRICT;
         }
-        if ($clause === 'NO ACTION') {
+        if ($clause === 'a') {
             return Table::ACTION_NO_ACTION;
         }
-        if ($clause === 'CASCADE') {
+        if ($clause === 'c') {
             return Table::ACTION_CASCADE;
         }
+
         return Table::ACTION_SET_NULL;
     }
 
@@ -359,12 +347,12 @@ class PostgresSchema extends BaseSchema
             'binary' => ' BYTEA',
             'float' => ' FLOAT',
             'decimal' => ' DECIMAL',
-            'text' => ' TEXT',
             'date' => ' DATE',
             'time' => ' TIME',
             'datetime' => ' TIMESTAMP',
             'timestamp' => ' TIMESTAMP',
             'uuid' => ' UUID',
+            'json' => ' JSONB'
         ];
 
         if (isset($typeMap[$data['type']])) {
@@ -380,7 +368,11 @@ class PostgresSchema extends BaseSchema
             $out .= $type;
         }
 
-        if ($data['type'] === 'string') {
+        if ($data['type'] === 'text' && $data['length'] !== Table::LENGTH_TINY) {
+            $out .= ' TEXT';
+        }
+
+        if ($data['type'] === 'string' || ($data['type'] === 'text' && $data['length'] === Table::LENGTH_TINY)) {
             $isFixed = !empty($data['fixed']);
             $type = ' VARCHAR';
             if ($isFixed) {
@@ -390,6 +382,11 @@ class PostgresSchema extends BaseSchema
             if (isset($data['length']) && $data['length'] != 36) {
                 $out .= '(' . (int)$data['length'] . ')';
             }
+        }
+
+        $hasCollate = ['text', 'string'];
+        if (in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {
+            $out .= ' COLLATE "' . $data['collate'] . '"';
         }
 
         if ($data['type'] === 'float' && isset($data['precision'])) {
@@ -416,6 +413,7 @@ class PostgresSchema extends BaseSchema
             }
             $out .= ' DEFAULT ' . $this->_driver->schemaValue($defaultValue);
         }
+
         return $out;
     }
 
@@ -468,6 +466,7 @@ class PostgresSchema extends BaseSchema
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
         );
+
         return sprintf(
             'CREATE INDEX %s ON %s (%s)',
             $this->_driver->quoteIdentifier($name),
@@ -489,6 +488,7 @@ class PostgresSchema extends BaseSchema
         if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
             $out .= ' UNIQUE';
         }
+
         return $this->_keySql($out, $data);
     }
 
@@ -515,6 +515,7 @@ class PostgresSchema extends BaseSchema
                 $this->_foreignOnClause($data['delete'])
             );
         }
+
         return $prefix . ' (' . implode(', ', $columns) . ')';
     }
 
@@ -543,6 +544,7 @@ class PostgresSchema extends BaseSchema
                 );
             }
         }
+
         return $out;
     }
 
@@ -552,6 +554,7 @@ class PostgresSchema extends BaseSchema
     public function truncateTableSql(Table $table)
     {
         $name = $this->_driver->quoteIdentifier($table->name());
+
         return [
             sprintf('TRUNCATE %s RESTART IDENTITY CASCADE', $name)
         ];
@@ -569,6 +572,7 @@ class PostgresSchema extends BaseSchema
             'DROP TABLE %s CASCADE',
             $this->_driver->quoteIdentifier($table->name())
         );
+
         return [$sql];
     }
 }

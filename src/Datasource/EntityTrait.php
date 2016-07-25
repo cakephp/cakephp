@@ -292,8 +292,10 @@ trait EntityTrait
 
         if ($method) {
             $result = $this->{$method}($value);
+
             return $result;
         }
+
         return $value;
     }
 
@@ -312,12 +314,31 @@ trait EntityTrait
         if (array_key_exists($property, $this->_original)) {
             return $this->_original[$property];
         }
+
         return $this->get($property);
     }
 
     /**
+     * Gets all original values of the entity.
+     *
+     * @return array
+     */
+    public function getOriginalValues()
+    {
+        $originals = $this->_original;
+        $originalKeys = array_keys($originals);
+        foreach ($this->_properties as $key => $value) {
+            if (!in_array($key, $originalKeys)) {
+                $originals[$key] = $value;
+            }
+        }
+
+        return $originals;
+    }
+
+    /**
      * Returns whether this entity contains a property named $property
-     * regardless of if it is empty.
+     * that contains a non-null value.
      *
      * ### Example:
      *
@@ -327,6 +348,14 @@ trait EntityTrait
      * $entity->has('name'); // false
      * $entity->has('last_name'); // false
      * ```
+     *
+     * You can check multiple properties by passing an array:
+     *
+     * ```
+     * $entity->has(['name', 'last_name']);
+     * ```
+     *
+     * All properties must not be null to get a truthy result.
      *
      * When checking multiple properties. All properties must not be null
      * in order for true to be returned.
@@ -341,6 +370,7 @@ trait EntityTrait
                 return false;
             }
         }
+
         return true;
     }
 
@@ -383,6 +413,7 @@ trait EntityTrait
             return $this->_hidden;
         }
         $this->_hidden = $properties;
+
         return $this;
     }
 
@@ -401,6 +432,7 @@ trait EntityTrait
             return $this->_virtual;
         }
         $this->_virtual = $properties;
+
         return $this;
     }
 
@@ -417,6 +449,7 @@ trait EntityTrait
     {
         $properties = array_keys($this->_properties);
         $properties = array_merge($properties, $this->_virtual);
+
         return array_diff($properties, $this->_hidden);
     }
 
@@ -449,6 +482,7 @@ trait EntityTrait
                 $result[$property] = $value;
             }
         }
+
         return $result;
     }
 
@@ -459,7 +493,7 @@ trait EntityTrait
      */
     public function jsonSerialize()
     {
-        return $this->toArray();
+        return $this->extract($this->visibleProperties());
     }
 
     /**
@@ -497,7 +531,7 @@ trait EntityTrait
     }
 
     /**
-     * Implements unset($result[$offset);
+     * Implements unset($result[$offset]);
      *
      * @param mixed $offset The offset to remove.
      * @return void
@@ -518,6 +552,7 @@ trait EntityTrait
     protected static function _accessor($property, $type)
     {
         $class = static::class;
+
         if (isset(static::$_accessors[$class][$type][$property])) {
             return static::$_accessors[$class][$type][$property];
         }
@@ -537,8 +572,10 @@ trait EntityTrait
             }
             $field = lcfirst(substr($method, 4));
             $snakeField = Inflector::underscore($field);
+            $titleField = ucfirst($field);
             static::$_accessors[$class][$prefix][$snakeField] = $method;
             static::$_accessors[$class][$prefix][$field] = $method;
+            static::$_accessors[$class][$prefix][$titleField] = $method;
         }
 
         if (!isset(static::$_accessors[$class][$type][$property])) {
@@ -564,6 +601,7 @@ trait EntityTrait
                 $result[$property] = $this->get($property);
             }
         }
+
         return $result;
     }
 
@@ -583,6 +621,7 @@ trait EntityTrait
         foreach ($properties as $property) {
             $result[$property] = $this->getOriginal($property);
         }
+
         return $result;
     }
 
@@ -605,6 +644,7 @@ trait EntityTrait
                 $result[$property] = $original;
             }
         }
+
         return $result;
     }
 
@@ -616,7 +656,7 @@ trait EntityTrait
      * When called with no arguments it will return whether or not there are any
      * dirty property in the entity
      *
-     * @param string $property the field to set or check status for
+     * @param string|null $property the field to set or check status for
      * @param null|bool $isDirty true means the property was changed, false means
      * it was not changed and null will make the function return current state
      * for that property
@@ -634,11 +674,13 @@ trait EntityTrait
 
         if ($isDirty === false) {
             unset($this->_dirty[$property]);
+
             return false;
         }
 
         $this->_dirty[$property] = true;
         unset($this->_errors[$property], $this->_invalid[$property]);
+
         return true;
     }
 
@@ -720,6 +762,7 @@ trait EntityTrait
     {
         if ($field === null) {
             $diff = array_diff_key($this->_properties, $this->_errors);
+
             return $this->_errors + (new Collection($diff))
                 ->filter(function ($value) {
                     return is_array($value) || $value instanceof EntityInterface;
@@ -736,6 +779,7 @@ trait EntityTrait
             if ($errors) {
                 return $errors;
             }
+
             return $this->_nestedErrors($field);
         }
 
@@ -792,6 +836,7 @@ trait EntityTrait
         if (count($path) <= 1) {
             return $this->_readError($entity, array_pop($path));
         }
+
         return [];
     }
 
@@ -799,7 +844,7 @@ trait EntityTrait
      * Read the error(s) from one or many objects.
      *
      * @param array|\Cake\Datasource\EntityTrait $object The object to read errors from.
-     * @param string $path The field name for errors.
+     * @param string|null $path The field name for errors.
      * @return array
      */
     protected function _readError($object, $path = null)
@@ -813,8 +858,10 @@ trait EntityTrait
                     return $val->errors();
                 }
             }, $object);
+
             return array_filter($array);
         }
+
         return [];
     }
 
@@ -838,6 +885,7 @@ trait EntityTrait
 
         if (is_string($field) && $value === null) {
             $value = isset($this->_invalid[$field]) ? $this->_invalid[$field] : null;
+
             return $value;
         }
 
@@ -885,7 +933,7 @@ trait EntityTrait
      * ```
      *
      * @param string|array $property single or list of properties to change its accessibility
-     * @param bool $set true marks the property as accessible, false will
+     * @param bool|null $set true marks the property as accessible, false will
      * mark it as protected.
      * @return $this|bool
      */
@@ -904,6 +952,7 @@ trait EntityTrait
                 return (bool)$set;
             }, $this->_accessible);
             $this->_accessible['*'] = (bool)$set;
+
             return $this;
         }
 
@@ -920,7 +969,7 @@ trait EntityTrait
      * If called with no arguments, it returns the alias of the repository
      * this entity came from if it is known.
      *
-     * @param string $alias the alias of the repository
+     * @param string|null $alias the alias of the repository
      * @return string|$this
      */
     public function source($alias = null)

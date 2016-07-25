@@ -139,6 +139,7 @@ class EagerLoader
         $this->_normalized = null;
         $this->_loadExternal = [];
         $this->_aliasList = [];
+
         return $this->_containments = $associations;
     }
 
@@ -161,7 +162,7 @@ class EagerLoader
     /**
      * Set whether or not contained associations will load fields automatically.
      *
-     * @param bool $value The value to set.
+     * @param bool|null $value The value to set.
      * @return bool The current value.
      */
     public function autoFields($value = null)
@@ -169,6 +170,7 @@ class EagerLoader
         if ($value !== null) {
             $this->_autoFields = (bool)$value;
         }
+
         return $this->_autoFields;
     }
 
@@ -213,6 +215,7 @@ class EagerLoader
         }
 
         $pointer[$last] = ['queryBuilder' => $builder, 'matching' => true] + $options;
+
         return $this->_matching->contain($containments);
     }
 
@@ -378,6 +381,7 @@ class EagerLoader
         $matching = $this->_matching ? $this->_matching->normalized($repository) : [];
         $this->_fixStrategies();
         $this->_loadExternal = [];
+
         return $this->_resolveJoins($contain, $matching);
     }
 
@@ -396,6 +400,7 @@ class EagerLoader
         }
 
         $this->attachableAssociations($repository);
+
         return $this->_loadExternal;
     }
 
@@ -541,6 +546,7 @@ class EagerLoader
             $loadable->canBeJoined(false);
             $this->_loadExternal[] = $loadable;
         }
+
         return $result;
     }
 
@@ -586,6 +592,7 @@ class EagerLoader
             );
             $statement = new CallbackStatement($statement, $driver, $f);
         }
+
         return $statement;
     }
 
@@ -634,6 +641,7 @@ class EagerLoader
         $visitor($this->_matching->normalized($table), true);
         $visitor($this->normalized($table));
         $visitor($this->_joinsMap);
+
         return $map;
     }
 
@@ -734,6 +742,7 @@ class EagerLoader
         }
 
         $statement->rewind();
+
         return $keys;
     }
 }

@@ -15,9 +15,6 @@
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Core\Configure;
-use Cake\Database\Connection;
-use Cake\Database\Driver\Sqlserver;
-use Cake\Database\Query;
 use Cake\TestSuite\TestCase;
 use \PDO;
 
@@ -57,11 +54,10 @@ class SqlserverTest extends TestCase
             'init' => ['Execute this', 'this too'],
             'settings' => ['config1' => 'value1', 'config2' => 'value2'],
         ];
-        $driver = $this->getMock(
-            'Cake\Database\Driver\Sqlserver',
-            ['_connect', 'connection'],
-            [$config]
-        );
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([$config])
+            ->getMock();
         $dsn = 'sqlsrv:Server=foo;Database=bar;MultipleActiveResultSets=false';
 
         $expected = $config;
@@ -72,7 +68,9 @@ class SqlserverTest extends TestCase
             PDO::SQLSRV_ATTR_ENCODING => 'a-language'
         ];
 
-        $connection = $this->getMock('stdClass', ['exec', 'quote']);
+        $connection = $this->getMockBuilder('stdClass')
+            ->setMethods(['exec', 'quote'])
+            ->getMock();
         $connection->expects($this->any())
             ->method('quote')
             ->will($this->onConsecutiveCalls(
@@ -103,21 +101,19 @@ class SqlserverTest extends TestCase
      */
     public function testSelectLimitVersion12()
     {
-        $driver = $this->getMock(
-            'Cake\Database\Driver\Sqlserver',
-            ['_connect', 'connection', '_version'],
-            [[]]
-        );
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+            ->setMethods(['_connect', 'connection', '_version'])
+            ->setConstructorArgs([[]])
+            ->getMock();
         $driver
             ->expects($this->any())
             ->method('_version')
             ->will($this->returnValue(12));
 
-        $connection = $this->getMock(
-            '\Cake\Database\Connection',
-            ['connect', 'driver'],
-            [['log' => false]]
-        );
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
         $connection
             ->expects($this->any())
             ->method('driver')
@@ -158,21 +154,19 @@ class SqlserverTest extends TestCase
      */
     public function testSelectLimitOldServer()
     {
-        $driver = $this->getMock(
-            'Cake\Database\Driver\Sqlserver',
-            ['_connect', 'connection', '_version'],
-            [[]]
-        );
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+            ->setMethods(['_connect', 'connection', '_version'])
+            ->setConstructorArgs([[]])
+            ->getMock();
         $driver
             ->expects($this->any())
             ->method('_version')
             ->will($this->returnValue(8));
 
-        $connection = $this->getMock(
-            '\Cake\Database\Connection',
-            ['connect', 'driver'],
-            [['log' => false]]
-        );
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
         $connection
             ->expects($this->any())
             ->method('driver')
@@ -224,16 +218,14 @@ class SqlserverTest extends TestCase
      */
     public function testInsertUsesOutput()
     {
-        $driver = $this->getMock(
-            'Cake\Database\Driver\Sqlserver',
-            ['_connect', 'connection'],
-            [[]]
-        );
-        $connection = $this->getMock(
-            '\Cake\Database\Connection',
-            ['connect', 'driver'],
-            [['log' => false]]
-        );
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([[]])
+            ->getMock();
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
         $connection
             ->expects($this->any())
             ->method('driver')

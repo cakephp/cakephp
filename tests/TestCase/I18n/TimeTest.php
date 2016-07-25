@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\I18n;
 
 use Cake\I18n\FrozenTime;
+use Cake\I18n\I18n;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 
@@ -34,9 +35,9 @@ class TimeTest extends TestCase
         parent::setUp();
         $this->now = Time::getTestNow();
         $this->frozenNow = FrozenTime::getTestNow();
-        $this->locale = Time::$defaultLocale;
-        Time::$defaultLocale = 'en_US';
-        FrozenTime::$defaultLocale = 'en_US';
+        $this->locale = Time::getDefaultLocale();
+        Time::setDefaultLocale('en_US');
+        FrozenTime::setDefaultLocale('en_US');
     }
 
     /**
@@ -48,13 +49,14 @@ class TimeTest extends TestCase
     {
         parent::tearDown();
         Time::setTestNow($this->now);
-        Time::$defaultLocale = $this->locale;
+        Time::setDefaultLocale($this->locale);
         Time::resetToStringFormat();
 
         FrozenTime::setTestNow($this->frozenNow);
-        FrozenTime::$defaultLocale = $this->locale;
+        FrozenTime::setDefaultLocale($this->locale);
         FrozenTime::resetToStringFormat();
         date_default_timezone_set('UTC');
+        I18n::locale(I18n::DEFAULT_LOCALE);
     }
 
     /**
@@ -310,6 +312,10 @@ class TimeTest extends TestCase
         ]);
         $expected = 'in about a day';
         $this->assertEquals($expected, $result);
+
+        $time = new $class('+20 days');
+        $result = $time->timeAgoInWords(['accuracy' => 'month']);
+        $this->assertEquals('in about a month', $result);
     }
 
     /**
@@ -390,6 +396,10 @@ class TimeTest extends TestCase
         $time = new $class('-23 hours');
         $result = $time->timeAgoInWords(['accuracy' => 'day']);
         $this->assertEquals('about a day ago', $result);
+
+        $time = new $class('-20 days');
+        $result = $time->timeAgoInWords(['accuracy' => 'month']);
+        $this->assertEquals('about a month ago', $result);
     }
 
     /**
@@ -437,7 +447,7 @@ class TimeTest extends TestCase
         $expected = '00:59:28';
         $this->assertTimeFormat($expected, $result);
 
-        $class::$defaultLocale = 'fr-FR';
+        $class::setDefaultLocale('fr-FR');
         $result = $time->i18nFormat(\IntlDateFormatter::FULL);
         $expected = 'jeudi 14 janvier 2010 13:59:28 UTC';
         $this->assertTimeFormat($expected, $result);
@@ -552,7 +562,7 @@ class TimeTest extends TestCase
     public function testToString($class)
     {
         $time = new $class('2014-04-20 22:10');
-        $class::$defaultLocale = 'fr-FR';
+        $class::setDefaultLocale('fr-FR');
         $class::setToStringFormat(\IntlDateFormatter::FULL);
         $this->assertTimeFormat('dimanche 20 avril 2014 22:10:00 UTC', (string)$time);
     }
@@ -700,8 +710,12 @@ class TimeTest extends TestCase
      */
     public function testJsonEnconde($class)
     {
+        if (version_compare(INTL_ICU_VERSION, '50.0', '<')) {
+            $this->markTestSkipped('ICU 5x is needed');
+        }
+
         $time = new $class('2014-04-20 10:10:10');
-        $this->assertEquals('"2014-04-20T10:10:10+0000"', json_encode($time));
+        $this->assertEquals('"2014-04-20T10:10:10+00:00"', json_encode($time));
 
         $class::setJsonEncodeFormat('yyyy-MM-dd HH:mm:ss');
         $this->assertEquals('"2014-04-20 10:10:10"', json_encode($time));
@@ -740,7 +754,7 @@ class TimeTest extends TestCase
         $this->assertNotNull($time);
         $this->assertEquals('2013-10-13 00:54', $time->format('Y-m-d H:i'));
 
-        $class::$defaultLocale = 'fr-FR';
+        $class::setDefaultLocale('fr-FR');
         $time = $class::parseDateTime('13 10, 2013 12:54');
         $this->assertNotNull($time);
         $this->assertEquals('2013-10-13 12:54', $time->format('Y-m-d H:i'));
@@ -765,7 +779,7 @@ class TimeTest extends TestCase
         $this->assertNotNull($time);
         $this->assertEquals('2013-10-13 00:00', $time->format('Y-m-d H:i'));
 
-        $class::$defaultLocale = 'fr-FR';
+        $class::setDefaultLocale('fr-FR');
         $time = $class::parseDate('13 10, 2013 12:54');
         $this->assertNotNull($time);
         $this->assertEquals('2013-10-13 00:00', $time->format('Y-m-d H:i'));
@@ -790,13 +804,27 @@ class TimeTest extends TestCase
         $this->assertNotNull($time);
         $this->assertEquals('00:54:00', $time->format('H:i:s'));
 
-        $class::$defaultLocale = 'fr-FR';
+        $class::setDefaultLocale('fr-FR');
         $time = $class::parseTime('23:54');
         $this->assertNotNull($time);
         $this->assertEquals('23:54:00', $time->format('H:i:s'));
 
         $time = $class::parseTime('31c2:54');
         $this->assertNull($time);
+    }
+
+    /**
+     * Tests that timeAgoInWords when using a russian locale does not break things
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testRussianTimeAgoInWords($class)
+    {
+        I18n::locale('ru_RU');
+        $time = new $class('5 days ago');
+        $result = $time->timeAgoInWords();
+        $this->assertEquals('5 days ago', $result);
     }
 
     /**
@@ -808,10 +836,43 @@ class TimeTest extends TestCase
     public function testParseDateDifferentTimezone($class)
     {
         date_default_timezone_set('Europe/Paris');
-        $class::$defaultLocale = 'fr-FR';
+        $class::setDefaultLocale('fr-FR');
         $result = $class::parseDate('12/03/2015');
         $this->assertEquals('2015-03-12', $result->format('Y-m-d'));
         $this->assertEquals(new \DateTimeZone('Europe/Paris'), $result->tz);
+    }
+
+    /**
+     * Tests the default locale setter.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testGetSetDefaultLocale($class)
+    {
+        $class::setDefaultLocale('fr-FR');
+        $this->assertSame('fr-FR', $class::getDefaultLocale());
+    }
+
+    /**
+     * Tests the default locale setter.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testDefaultLocaleEffectsFormatting($class)
+    {
+        $result = $class::parseDate('12/03/2015');
+        $this->assertRegExp('/Dec 3, 2015[ ,]+12:00 AM/', $result->nice());
+
+        $class::setDefaultLocale('fr-FR');
+
+        $result = $class::parseDate('12/03/2015');
+        $this->assertRegexp('/12 mars 2015 (?:à )?00:00/', $result->nice());
+
+        $expected = 'Y-m-d';
+        $result = $class::parseDate('12/03/2015');
+        $this->assertEquals('2015-03-12', $result->format($expected));
     }
 
     /**

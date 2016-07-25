@@ -14,10 +14,8 @@
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
-use Cake\Core\Configure;
-use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlite;
-use Cake\Testsuite\TestCase;
+use Cake\TestSuite\TestCase;
 use \PDO;
 
 /**
@@ -33,7 +31,9 @@ class SqliteTest extends TestCase
      */
     public function testConnectionConfigDefault()
     {
-        $driver = $this->getMock('Cake\Database\Driver\Sqlite', ['_connect']);
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')
+            ->setMethods(['_connect'])
+            ->getMock();
         $dsn = 'sqlite::memory:';
         $expected = [
             'persistent' => false,
@@ -70,11 +70,10 @@ class SqliteTest extends TestCase
             'encoding' => 'a-language',
             'init' => ['Execute this', 'this too']
         ];
-        $driver = $this->getMock(
-            'Cake\Database\driver\Sqlite',
-            ['_connect', 'connection'],
-            [$config]
-        );
+        $driver = $this->getMockBuilder('Cake\Database\driver\Sqlite')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([$config])
+            ->getMock();
         $dsn = 'sqlite:bar.db';
 
         $expected = $config;
@@ -85,7 +84,9 @@ class SqliteTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
 
-        $connection = $this->getMock('StdClass', ['exec']);
+        $connection = $this->getMockBuilder('StdClass')
+            ->setMethods(['exec'])
+            ->getMock();
         $connection->expects($this->at(0))->method('exec')->with('Execute this');
         $connection->expects($this->at(1))->method('exec')->with('this too');
         $connection->expects($this->exactly(2))->method('exec');
@@ -126,7 +127,9 @@ class SqliteTest extends TestCase
     public function testSchemaValue($input, $expected)
     {
         $driver = new Sqlite();
-        $mock = $this->getMock('FakePdo', ['quote', 'quoteIdentifier']);
+        $mock = $this->getMockBuilder('FakePdo')
+            ->setMethods(['quote', 'quoteIdentifier'])
+            ->getMock();
         $mock->expects($this->any())
             ->method('quote')
             ->will($this->returnCallback(function ($value) {

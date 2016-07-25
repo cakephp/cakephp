@@ -16,11 +16,8 @@ namespace Cake\Test\TestCase\Shell;
 
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOutput;
-use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Shell\CompletionShell;
-use Cake\Shell\Task\CommandTask;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -58,17 +55,15 @@ class CompletionShellTest extends TestCase
         $this->out = new TestCompletionStringOutput();
         $io = new ConsoleIo($this->out);
 
-        $this->Shell = $this->getMock(
-            'Cake\Shell\CompletionShell',
-            ['in', '_stop', 'clear'],
-            [$io]
-        );
+        $this->Shell = $this->getMockBuilder('Cake\Shell\CompletionShell')
+            ->setMethods(['in', '_stop', 'clear'])
+            ->setConstructorArgs([$io])
+            ->getMock();
 
-        $this->Shell->Command = $this->getMock(
-            'Cake\Shell\Task\CommandTask',
-            ['in', '_stop', 'clear'],
-            [$io]
-        );
+        $this->Shell->Command = $this->getMockBuilder('Cake\Shell\Task\CommandTask')
+            ->setMethods(['in', '_stop', 'clear'])
+            ->setConstructorArgs([$io])
+            ->getMock();
     }
 
     /**
@@ -123,7 +118,7 @@ class CompletionShellTest extends TestCase
         $output = $this->out->output;
 
         $expected = "TestPlugin.example TestPlugin.sample TestPluginTwo.example unique welcome " .
-            "i18n orm_cache plugin routes server i18m sample testing_dispatch\n";
+            "cache i18n orm_cache plugin routes server i18m sample testing_dispatch\n";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -164,7 +159,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['options', 'orm_cache']);
         $output = $this->out->output;
 
-        $expected = "--help -h --verbose -v --quiet -q --connection -c\n";
+        $expected = "--connection -c --help -h --quiet -q --verbose -v\n";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -178,7 +173,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['options', 'sample', 'sample']);
         $output = $this->out->output;
 
-        $expected = "--help -h --verbose -v --quiet -q --sample -s\n";
+        $expected = "--help -h --quiet -q --sample -s --verbose -v\n";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -206,7 +201,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['subcommands', 'app.sample']);
         $output = $this->out->output;
 
-        $expected = "derp sample\n";
+        $expected = "derp load sample\n";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -264,7 +259,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['subcommands', 'sample']);
         $output = $this->out->output;
 
-        $expected = "derp sample\n";
+        $expected = "derp load sample\n";
         $this->assertTextEquals($expected, $output);
     }
 

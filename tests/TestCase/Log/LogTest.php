@@ -13,7 +13,6 @@
  */
 namespace Cake\Test\TestCase\Log;
 
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Log\Engine\FileLog;
@@ -620,6 +619,7 @@ class LogTest extends TestCase
         $instance = new FileLog;
         Log::config('default', function ($alias) use ($instance) {
             $this->assertEquals('default', $alias);
+
             return $instance;
         });
         $this->assertSame($instance, Log::engine('default'));

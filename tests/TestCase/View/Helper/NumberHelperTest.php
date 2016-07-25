@@ -16,7 +16,6 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
@@ -108,7 +107,9 @@ class NumberHelperTest extends TestCase
      */
     public function testNumberHelperProxyMethodCalls($method)
     {
-        $number = $this->getMock(__NAMESPACE__ . '\NumberMock', [$method]);
+        $number = $this->getMockBuilder(__NAMESPACE__ . '\NumberMock')
+            ->setMethods([$method])
+            ->getMock();
         $helper = new NumberHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\NumberMock']);
         $helper->attach($number);
         $number->expects($this->at(0))

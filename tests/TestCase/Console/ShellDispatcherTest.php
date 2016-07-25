@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ShellDispatcher;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
@@ -37,7 +36,9 @@ class ShellDispatcherTest extends TestCase
         parent::setUp();
         Plugin::load('TestPlugin');
         Configure::write('App.namespace', 'TestApp');
-        $this->dispatcher = $this->getMock('Cake\Console\ShellDispatcher', ['_stop']);
+        $this->dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
+            ->setMethods(['_stop'])
+            ->getMock();
     }
 
     /**
@@ -155,15 +156,20 @@ class ShellDispatcherTest extends TestCase
      */
     public function testDispatchShellWithAbort()
     {
-        $io = $this->getMock('Cake\Console\ConsoleIo');
-        $shell = $this->getMock('Cake\Console\Shell', ['main'], [$io]);
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['main'])
+            ->setConstructorArgs([$io])
+            ->getMock();
         $shell->expects($this->once())
             ->method('main')
             ->will($this->returnCallback(function () use ($shell) {
                 $shell->abort('Bad things', 99);
             }));
 
-        $dispatcher = $this->getMock('Cake\Console\ShellDispatcher', ['findShell']);
+        $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
+            ->setMethods(['findShell'])
+            ->getMock();
         $dispatcher->expects($this->any())
             ->method('findShell')
             ->with('aborter')
@@ -181,8 +187,10 @@ class ShellDispatcherTest extends TestCase
      */
     public function testDispatchShellWithMain()
     {
-        $dispatcher = $this->getMock('Cake\Console\ShellDispatcher', ['findShell']);
-        $Shell = $this->getMock('Cake\Console\Shell');
+        $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
+            ->setMethods(['findShell'])
+            ->getMock();
+        $Shell = $this->getMockBuilder('Cake\Console\Shell')->getMock();
 
         $Shell->expects($this->exactly(2))->method('initialize');
         $Shell->expects($this->at(0))->method('runCommand')
@@ -213,8 +221,10 @@ class ShellDispatcherTest extends TestCase
      */
     public function testDispatchShellWithoutMain()
     {
-        $dispatcher = $this->getMock('Cake\Console\ShellDispatcher', ['findShell']);
-        $Shell = $this->getMock('Cake\Console\Shell');
+        $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
+            ->setMethods(['findShell'])
+            ->getMock();
+        $Shell = $this->getMockBuilder('Cake\Console\Shell')->getMock();
 
         $Shell->expects($this->once())->method('initialize');
         $Shell->expects($this->once())->method('runCommand')
@@ -238,11 +248,10 @@ class ShellDispatcherTest extends TestCase
      */
     public function testDispatchShortPluginAlias()
     {
-        $dispatcher = $this->getMock(
-            'Cake\Console\ShellDispatcher',
-            ['_shellExists', '_createShell']
-        );
-        $Shell = $this->getMock('Cake\Console\Shell');
+        $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
+            ->setMethods(['_shellExists', '_createShell'])
+            ->getMock();
+        $Shell = $this->getMockBuilder('Cake\Console\Shell')->getMock();
 
         $dispatcher->expects($this->at(1))
             ->method('_shellExists')
@@ -266,11 +275,10 @@ class ShellDispatcherTest extends TestCase
      */
     public function testDispatchShortPluginAliasCamelized()
     {
-        $dispatcher = $this->getMock(
-            'Cake\Console\ShellDispatcher',
-            ['_shellExists', '_createShell']
-        );
-        $Shell = $this->getMock('Cake\Console\Shell');
+        $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
+            ->setMethods(['_shellExists', '_createShell'])
+            ->getMock();
+        $Shell = $this->getMockBuilder('Cake\Console\Shell')->getMock();
 
         $dispatcher->expects($this->at(1))
             ->method('_shellExists')
@@ -294,11 +302,10 @@ class ShellDispatcherTest extends TestCase
      */
     public function testDispatchShortPluginAliasConflict()
     {
-        $dispatcher = $this->getMock(
-            'Cake\Console\ShellDispatcher',
-            ['_shellExists', '_createShell']
-        );
-        $Shell = $this->getMock('Cake\Console\Shell');
+        $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
+            ->setMethods(['_shellExists', '_createShell'])
+            ->getMock();
+        $Shell = $this->getMockBuilder('Cake\Console\Shell')->getMock();
 
         $dispatcher->expects($this->at(1))
             ->method('_shellExists')
@@ -341,5 +348,53 @@ class ShellDispatcherTest extends TestCase
         $this->dispatcher->args = [];
         $this->assertNull($this->dispatcher->shiftArgs());
         $this->assertSame([], $this->dispatcher->args);
+    }
+
+    /**
+     * Test how `bin/cake --help` works.
+     *
+     * @return void
+     */
+    public function testHelpOption()
+    {
+        $mockShell = $this->getMockBuilder('Cake\Shell\CommandListShell')
+            ->setMethods(['main', 'initialize', 'startup'])
+            ->getMock();
+        $mockShell->expects($this->once())
+            ->method('main');
+
+        $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
+            ->setMethods(['findShell', '_stop'])
+            ->getMock();
+        $dispatcher->expects($this->once())
+            ->method('findShell')
+            ->with('command_list')
+            ->will($this->returnValue($mockShell));
+        $dispatcher->args = ['--help'];
+        $dispatcher->dispatch();
+    }
+
+    /**
+     * Test how `bin/cake --version` works.
+     *
+     * @return void
+     */
+    public function testVersionOption()
+    {
+        $mockShell = $this->getMockBuilder('Cake\Shell\CommandListShell')
+            ->setMethods(['main', 'initialize', 'startup'])
+            ->getMock();
+        $mockShell->expects($this->once())
+            ->method('main');
+
+        $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
+            ->setMethods(['findShell', '_stop'])
+            ->getMock();
+        $dispatcher->expects($this->once())
+            ->method('findShell')
+            ->with('command_list')
+            ->will($this->returnValue($mockShell));
+        $dispatcher->args = ['--version'];
+        $dispatcher->dispatch();
     }
 }
