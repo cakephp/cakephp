@@ -73,8 +73,8 @@ class Server
         $request = $request ?: ServerRequestFactory::fromGlobals();
         $response = $response ?: new Response();
 
-        $middleware = $this->app->middleware(new MiddlewareStack());
-        if (!($middleware instanceof MiddlewareStack)) {
+        $middleware = $this->app->middleware(new MiddlewareQueue());
+        if (!($middleware instanceof MiddlewareQueue)) {
             throw new RuntimeException('The application `middleware` method did not return a middleware queue.');
         }
         $this->dispatchEvent('Server.buildMiddleware', ['middleware' => $middleware]);

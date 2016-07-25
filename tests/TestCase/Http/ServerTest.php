@@ -184,7 +184,7 @@ class ServerTest extends TestCase
         $this->called = false;
 
         $server->eventManager()->on('Server.buildMiddleware', function ($event, $middleware) {
-            $this->assertInstanceOf('Cake\Http\MiddlewareStack', $middleware);
+            $this->assertInstanceOf('Cake\Http\MiddlewareQueue', $middleware);
             $middleware->add(function ($req, $res, $next) {
                 $this->called = true;
 

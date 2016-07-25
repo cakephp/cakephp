@@ -21,7 +21,7 @@ use LogicException;
  * Provides methods for creating and manipulating a "queue" of middleware callables.
  * This queue is used to process a request and response via \Cake\Http\Runner.
  */
-class MiddlewareStack implements Countable
+class MiddlewareQueue implements Countable
 {
     /**
      * The queue of middleware callables.

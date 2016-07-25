@@ -33,12 +33,12 @@ class Runner
     /**
      * The middleware queue being run.
      *
-     * @var MiddlewareStack
+     * @var MiddlewareQueue
      */
     protected $middleware;
 
     /**
-     * @param \Cake\Http\MiddlewareStack $middleware The middleware queue
+     * @param \Cake\Http\MiddlewareQueue $middleware The middleware queue
      * @param \Psr\Http\Message\ServerRequestInterface $request The Server Request
      * @param \Psr\Http\Message\ResponseInterface $response The response
      * @return \Psr\Http\Message\ResponseInterface A response object

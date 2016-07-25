@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase;
 
-use Cake\Http\MiddlewareStack;
+use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
 use Cake\TestSuite\TestCase;
 use RuntimeException;
@@ -32,7 +32,7 @@ class RunnerTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->stack = new MiddlewareStack();
+        $this->stack = new MiddlewareQueue();
 
         $this->ok = function ($req, $res, $next) {
             return $next($req, $res);

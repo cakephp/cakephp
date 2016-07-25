@@ -14,14 +14,14 @@
  */
 namespace Cake\Test\TestCase\Http;
 
-use Cake\Http\MiddlewareStack;
+use Cake\Http\MiddlewareQueue;
 use Cake\TestSuite\TestCase;
 use TestApp\Middleware\SampleMiddleware;
 
 /**
- * Test case for the MiddlewareStack
+ * Test case for the MiddlewareQueue
  */
-class MiddlewareStackTest extends TestCase
+class MiddlewareQueueTest extends TestCase
 {
     /**
      * Test get()
@@ -30,7 +30,7 @@ class MiddlewareStackTest extends TestCase
      */
     public function testGet()
     {
-        $stack = new MiddlewareStack();
+        $stack = new MiddlewareQueue();
         $cb = function () {
         };
         $stack->add($cb);
@@ -46,7 +46,7 @@ class MiddlewareStackTest extends TestCase
      */
     public function testPushReturn()
     {
-        $stack = new MiddlewareStack();
+        $stack = new MiddlewareQueue();
         $cb = function () {
         };
         $this->assertSame($stack, $stack->add($cb));
@@ -64,7 +64,7 @@ class MiddlewareStackTest extends TestCase
         $two = function () {
         };
 
-        $stack = new MiddlewareStack();
+        $stack = new MiddlewareQueue();
         $this->assertCount(0, $stack);
 
         $stack->add($one);
@@ -86,7 +86,7 @@ class MiddlewareStackTest extends TestCase
     {
         $cb = function () {
         };
-        $stack = new MiddlewareStack();
+        $stack = new MiddlewareQueue();
         $this->assertSame($stack, $stack->prepend($cb));
     }
 
@@ -102,7 +102,7 @@ class MiddlewareStackTest extends TestCase
         $two = function () {
         };
 
-        $stack = new MiddlewareStack();
+        $stack = new MiddlewareQueue();
         $this->assertCount(0, $stack);
 
         $stack->add($one);
@@ -129,13 +129,13 @@ class MiddlewareStackTest extends TestCase
         $three = function () {
         };
 
-        $stack = new MiddlewareStack();
+        $stack = new MiddlewareQueue();
         $stack->add($one)->add($two)->insertAt(0, $three);
         $this->assertSame($three, $stack->get(0));
         $this->assertSame($one, $stack->get(1));
         $this->assertSame($two, $stack->get(2));
 
-        $stack = new MiddlewareStack();
+        $stack = new MiddlewareQueue();
         $stack->add($one)->add($two)->insertAt(1, $three);
         $this->assertSame($one, $stack->get(0));
         $this->assertSame($three, $stack->get(1));
@@ -154,7 +154,7 @@ class MiddlewareStackTest extends TestCase
         $two = function () {
         };
 
-        $stack = new MiddlewareStack();
+        $stack = new MiddlewareQueue();
         $stack->add($one)->insertAt(99, $two);
 
         $this->assertCount(2, $stack);
@@ -174,7 +174,7 @@ class MiddlewareStackTest extends TestCase
         $two = function () {
         };
 
-        $stack = new MiddlewareStack();
+        $stack = new MiddlewareQueue();
         $stack->add($one)->insertAt(-1, $two);
 
         $this->assertCount(2, $stack);
@@ -194,7 +194,7 @@ class MiddlewareStackTest extends TestCase
         $two = new SampleMiddleware();
         $three = function () {
         };
-        $stack = new MiddlewareStack();
+        $stack = new MiddlewareQueue();
         $stack->add($one)->add($two)->insertBefore(SampleMiddleware::class, $three);
 
         $this->assertCount(3, $stack);
@@ -217,7 +217,7 @@ class MiddlewareStackTest extends TestCase
         $two = new SampleMiddleware();
         $three = function () {
         };
-        $stack = new MiddlewareStack();
+        $stack = new MiddlewareQueue();
         $stack->add($one)->add($two)->insertBefore('InvalidClassName', $three);
     }
 
@@ -233,7 +233,7 @@ class MiddlewareStackTest extends TestCase
         };
         $three = function () {
         };
-        $stack = new MiddlewareStack();
+        $stack = new MiddlewareQueue();
         $stack->add($one)->add($two)->insertAfter(SampleMiddleware::class, $three);
 
         $this->assertCount(3, $stack);
@@ -254,7 +254,7 @@ class MiddlewareStackTest extends TestCase
         };
         $three = function () {
         };
-        $stack = new MiddlewareStack();
+        $stack = new MiddlewareQueue();
         $stack->add($one)->add($two)->insertAfter('InvalidClass', $three);
 
         $this->assertCount(3, $stack);
