@@ -285,6 +285,22 @@ class QueryExpression implements ExpressionInterface, Countable
     }
 
     /**
+     * Adds a new condition to the expression object in the form "field LIKE %value%".
+     *
+     * @param string $field Database field to be compared against value
+     * @param mixed $value The value to be bound to $field for comparison
+     * @param string $type the type name for $value as configured using the Type map.
+     * @return $this
+     */
+    public function search($field, $value, $type = null)
+    {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
+        return $this->add(new SearchExpression($field, $value, $type));
+    }
+
+    /**
      * Adds a new condition to the expression object in the form "field NOT LIKE value".
      *
      * @param string $field Database field to be compared against value
