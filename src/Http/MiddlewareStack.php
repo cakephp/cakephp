@@ -18,18 +18,17 @@ use Countable;
 use LogicException;
 
 /**
- * Provides methods for creating and manipulating a 'stack' of
- * middleware callables. This stack is used to process a request and response
- * via \Cake\Http\Runner.
+ * Provides methods for creating and manipulating a "queue" of middleware callables.
+ * This queue is used to process a request and response via \Cake\Http\Runner.
  */
 class MiddlewareStack implements Countable
 {
     /**
-     * The stack of middleware callables.
+     * The queue of middleware callables.
      *
      * @var array
      */
-    protected $stack = [];
+    protected $queue = [];
 
     /**
      * Get the middleware object at the provided index.
@@ -40,35 +39,35 @@ class MiddlewareStack implements Countable
      */
     public function get($index)
     {
-        if (isset($this->stack[$index])) {
-            return $this->stack[$index];
+        if (isset($this->queue[$index])) {
+            return $this->queue[$index];
         }
 
         return null;
     }
 
     /**
-     * Append a middleware callable to the end of the stack.
+     * Append a middleware callable to the end of the queue.
      *
      * @param callable $callable The middleware callable to append.
      * @return $this
      */
-    public function push(callable $callable)
+    public function add(callable $callable)
     {
-        $this->stack[] = $callable;
+        $this->queue[] = $callable;
 
         return $this;
     }
 
     /**
-     * Prepend a middleware callable to the start of the stack.
+     * Prepend a middleware callable to the start of the queue.
      *
      * @param callable $callable The middleware callable to prepend.
      * @return $this
      */
     public function prepend(callable $callable)
     {
-        array_unshift($this->stack, $callable);
+        array_unshift($this->queue, $callable);
 
         return $this;
     }
@@ -85,7 +84,7 @@ class MiddlewareStack implements Countable
      */
     public function insertAt($index, callable $callable)
     {
-        array_splice($this->stack, $index, 0, $callable);
+        array_splice($this->queue, $index, 0, $callable);
 
         return $this;
     }
@@ -95,7 +94,7 @@ class MiddlewareStack implements Countable
      *
      * Finds the index of the first middleware that matches the provided class,
      * and inserts the supplied callable before it. If the class is not found,
-     * this method will behave like push().
+     * this method will behave like add().
      *
      * @param string $class The classname to insert the middleware before.
      * @param callable $callable The middleware to insert
@@ -104,7 +103,7 @@ class MiddlewareStack implements Countable
     public function insertBefore($class, $callable)
     {
         $found = false;
-        foreach ($this->stack as $i => $object) {
+        foreach ($this->queue as $i => $object) {
             if (is_a($object, $class)) {
                 $found = true;
                 break;
@@ -121,7 +120,7 @@ class MiddlewareStack implements Countable
      *
      * Finds the index of the first middleware that matches the provided class,
      * and inserts the supplied callable after it. If the class is not found,
-     * this method will behave like push().
+     * this method will behave like add().
      *
      * @param string $class The classname to insert the middleware before.
      * @param callable $callable The middleware to insert
@@ -130,7 +129,7 @@ class MiddlewareStack implements Countable
     public function insertAfter($class, $callable)
     {
         $found = false;
-        foreach ($this->stack as $i => $object) {
+        foreach ($this->queue as $i => $object) {
             if (is_a($object, $class)) {
                 $found = true;
                 break;
@@ -140,7 +139,7 @@ class MiddlewareStack implements Countable
             return $this->insertAt($i + 1, $callable);
         }
 
-        return $this->push($callable);
+        return $this->add($callable);
     }
 
     /**
@@ -152,6 +151,6 @@ class MiddlewareStack implements Countable
      */
     public function count()
     {
-        return count($this->stack);
+        return count($this->queue);
     }
 }

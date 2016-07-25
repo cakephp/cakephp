@@ -13,7 +13,7 @@ class BadResponseApplication extends BaseApplication
      */
     public function middleware($middleware)
     {
-        $middleware->push(function ($req, $res, $next) {
+        $middleware->add(function ($req, $res, $next) {
             return 'Not a response';
         });
 

@@ -54,7 +54,7 @@ class RunnerTest extends TestCase
      */
     public function testRunSingle()
     {
-        $this->stack->push($this->ok);
+        $this->stack->add($this->ok);
         $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();
         $res = $this->getMockBuilder('Psr\Http\Message\ResponseInterface')->getMock();
 
@@ -75,7 +75,7 @@ class RunnerTest extends TestCase
 
             return $next($req, $res);
         };
-        $this->stack->push($one);
+        $this->stack->add($one);
         $runner = new Runner();
 
         $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();
@@ -109,7 +109,7 @@ class RunnerTest extends TestCase
 
             return $next($req, $res);
         };
-        $this->stack->push($one)->push($two)->push($three);
+        $this->stack->add($one)->add($two)->add($three);
         $runner = new Runner();
 
         $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();
@@ -130,7 +130,7 @@ class RunnerTest extends TestCase
      */
     public function testRunExceptionInMiddleware()
     {
-        $this->stack->push($this->ok)->push($this->fail);
+        $this->stack->add($this->ok)->add($this->fail);
         $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();
         $res = $this->getMockBuilder('Psr\Http\Message\ResponseInterface')->getMock();
 
@@ -145,7 +145,7 @@ class RunnerTest extends TestCase
      */
     public function testRunNextNotCalled()
     {
-        $this->stack->push($this->noNext);
+        $this->stack->add($this->noNext);
         $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();
         $res = $this->getMockBuilder('Psr\Http\Message\ResponseInterface')->getMock();
 

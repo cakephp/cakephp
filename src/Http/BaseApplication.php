@@ -43,7 +43,7 @@ abstract class BaseApplication
     }
 
     /**
-     * @param \Cake\Http\MiddlewareStack $middleware The middleware stack to set in your App Class
+     * @param \Cake\Http\MiddlewareStack $middleware The middleware queue to set in your App Class
      * @return \Cake\Http\MiddlewareStack
      */
     abstract public function middleware($middleware);
