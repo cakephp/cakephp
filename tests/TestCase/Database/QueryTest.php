@@ -1200,6 +1200,28 @@ class QueryTest extends TestCase
             ->select(['title'])
             ->from('articles')
             ->where(function ($exp) {
+                return $exp->search('title', 'Article');
+            })
+            ->execute();
+        $this->assertCount(3, $result);
+        $result->closeCursor();
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['title'])
+            ->from('articles')
+            ->where(function ($exp) {
+                return $exp->search('id', '');
+            })
+            ->execute();
+        $this->assertCount(3, $result);
+        $result->closeCursor();
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['title'])
+            ->from('articles')
+            ->where(function ($exp) {
                 return $exp->notLike('title', '%Article%');
             })
             ->execute();

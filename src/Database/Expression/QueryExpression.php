@@ -310,6 +310,7 @@ class QueryExpression implements ExpressionInterface, Countable
         if ($type === null) {
             $type = $this->_calculateType($field);
         }
+
         return $this->add(new SearchExpression($field, $value, $type));
     }
 
