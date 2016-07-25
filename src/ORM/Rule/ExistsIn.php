@@ -67,9 +67,10 @@ class ExistsIn
             $repository = $options['repository']->association($this->_repository);
             if (!$repository) {
                 throw new RuntimeException(sprintf(
-                    "ExistsIn rule for '%s' is invalid. The '%s' association is not defined.",
+                    "ExistsIn rule for '%s' is invalid. '%s' is not associated with '%s'.",
                     implode(', ', $this->_fields),
-                    $this->_repository
+                    $this->_repository,
+                    get_class($options['repository'])
                 ));
             }
             $this->_repository = $repository;
