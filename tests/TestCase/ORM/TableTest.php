@@ -32,6 +32,7 @@ use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
+use Cake\ORM\SaveOptionsBuilder;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -3812,6 +3813,30 @@ class TableTest extends TestCase
         ];
         $result = $articles->save($article);
         $this->assertSame($result, $article);
+    }
+
+    /**
+     * Test that a save call takes a SaveOptionBuilder object as well.
+     *
+     * @group save
+     * @return void
+     */
+    public function testSaveWithOptionBuilder()
+    {
+        $table = $this->getMockBuilder('\Cake\ORM\Table')
+            ->setMethods(['_processSave'])
+            ->getMock();
+
+        $optionBuilder = new SaveOptionsBuilder($table, [
+            'associated' => []
+        ]);
+
+        $entity = new \Cake\ORM\Entity(
+            ['id' => 'foo'],
+            ['markNew' => false, 'markClean' => true]
+        );
+
+        $this->assertSame($entity, $table->save($entity, $optionBuilder));
     }
 
     /**
