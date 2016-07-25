@@ -60,6 +60,18 @@ class MiddlewareQueue implements Countable
     }
 
     /**
+     * Alias for MiddlewareQueue::add().
+     *
+     * @param callable $callable The middleware callable to append.
+     * @return $this
+     * @see MiddlewareQueue::add()
+     */
+    public function push(callable $callable)
+    {
+        return $this->add($callable);
+    }
+
+    /**
      * Prepend a middleware callable to the start of the queue.
      *
      * @param callable $callable The middleware callable to prepend.
