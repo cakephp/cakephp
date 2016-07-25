@@ -351,7 +351,7 @@ class CompositeKeyTest extends TestCase
     }
 
     /**
-     * Tests loding hasOne with composite keys
+     * Tests loading hasOne with composite keys
      *
      * @dataProvider strategiesProviderHasOne
      * @return void
