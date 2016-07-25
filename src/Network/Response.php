@@ -73,6 +73,7 @@ class Response
         417 => 'Expectation Failed',
         422 => 'Unprocessable Entity',
         429 => 'Too Many Requests',
+        451 => 'Unavailable For Legal Reasons',
         500 => 'Internal Server Error',
         501 => 'Not Implemented',
         502 => 'Bad Gateway',
