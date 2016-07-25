@@ -112,7 +112,7 @@ class MiddlewareQueue implements Countable
      * @param callable $callable The middleware to insert
      * @return $this
      */
-    public function insertBefore($class, $callable)
+    public function insertBefore($class, callable $callable)
     {
         $found = false;
         foreach ($this->queue as $i => $object) {
@@ -138,7 +138,7 @@ class MiddlewareQueue implements Countable
      * @param callable $callable The middleware to insert
      * @return $this
      */
-    public function insertAfter($class, $callable)
+    public function insertAfter($class, callable $callable)
     {
         $found = false;
         foreach ($this->queue as $i => $object) {
