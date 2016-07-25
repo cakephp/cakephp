@@ -439,7 +439,7 @@ class Mysql extends DboSource {
 		}
 		$complexConditions = false;
 		foreach ((array)$conditions as $key => $value) {
-			if (strpos($key, $model->alias) === false) {
+			if (strpos($key, '.') !== false && strpos($key, $model->alias) === false) {
 				$complexConditions = true;
 				break;
 			}

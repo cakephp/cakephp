@@ -4046,6 +4046,27 @@ SQL;
 	}
 
 /**
+ * Test deletes without complex conditions.
+ *
+ * @return void
+ */
+	public function testDeleteNoComplexCondition() {
+		$this->loadFixtures('Article', 'User');
+		$test = ConnectionManager::getDatasource('test');
+		$db = $test->config['database'];
+
+		$this->Dbo = $this->getMock('Mysql', array('execute'), array($test->config));
+
+		$this->Dbo->expects($this->at(0))->method('execute')
+			->with("DELETE `Article` FROM `$db`.`articles` AS `Article`   WHERE `id` = 1");
+
+		$Article = new Article();
+
+		$conditions = array('id' => 1);
+		$this->Dbo->delete($Article, $conditions);
+	}
+
+/**
  * Test truncate with a mock.
  *
  * @return void
