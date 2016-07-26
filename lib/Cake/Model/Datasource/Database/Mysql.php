@@ -438,8 +438,9 @@ class Mysql extends DboSource {
 			$alias = $joins = false;
 		}
 		$complexConditions = false;
+		$fields = array_keys($this->describe($model));
 		foreach ((array)$conditions as $key => $value) {
-			if (strpos($key, $model->alias) === false) {
+			if (strpos($key, $model->alias) === false && !in_array($key, $fields, true)) {
 				$complexConditions = true;
 				break;
 			}
