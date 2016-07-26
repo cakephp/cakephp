@@ -3823,20 +3823,49 @@ class TableTest extends TestCase
      */
     public function testSaveWithOptionBuilder()
     {
-        $table = $this->getMockBuilder('\Cake\ORM\Table')
-            ->setMethods(['_processSave'])
-            ->getMock();
+        $articles = new Table([
+            'table' => 'articles',
+            'connection' => $this->connection,
+        ]);
+        $articles->belongsTo('Authors');
 
-        $optionBuilder = new SaveOptionsBuilder($table, [
+        $optionBuilder = new SaveOptionsBuilder($articles, [
+            'associated' => [
+                'Authors'
+            ]
+        ]);
+
+        $entity = $articles->newEntity([
+            'title' => 'test save options',
+            'author' => [
+                'name' => 'author name'
+            ]
+        ]);
+
+        $articles->save($entity, $optionBuilder);
+        $this->assertFalse($entity->isNew());
+        $this->assertEquals('test save options', $entity->title);
+        $this->assertNotEmpty($entity->id);
+        $this->assertNotEmpty($entity->author->id);
+        $this->assertEquals('author name', $entity->author->name);
+
+        $entity = $articles->newEntity([
+            'title' => 'test save options 2',
+            'author' => [
+                'name' => 'author name'
+            ]
+        ]);
+
+        $optionBuilder = new SaveOptionsBuilder($articles, [
             'associated' => []
         ]);
 
-        $entity = new \Cake\ORM\Entity(
-            ['id' => 'foo'],
-            ['markNew' => false, 'markClean' => true]
-        );
-
-        $this->assertSame($entity, $table->save($entity, $optionBuilder));
+        $articles->save($entity, $optionBuilder);
+        $this->assertFalse($entity->isNew());
+        $this->assertEquals('test save options 2', $entity->title);
+        $this->assertNotEmpty($entity->id);
+        $this->assertEmpty($entity->author->id);
+        $this->assertTrue($entity->author->isNew());
     }
 
     /**
