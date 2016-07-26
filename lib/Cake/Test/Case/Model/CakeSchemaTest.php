@@ -954,6 +954,63 @@ class CakeSchemaTest extends CakeTestCase {
 	}
 
 /**
+ * Test comparing with field length/limit changed from some non-default value to the default
+ *
+ * @return void
+ */
+	public function testCompareLimitToDefault() {
+		$old = array(
+			'posts' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 1, 'key' => 'primary'),
+				'author_id' => array('type' => 'integer', 'null' => false, 'limit' => 5),
+				'title' => array('type' => 'string', 'null' => true, 'length' => 45),
+				'indexes' => array(
+					'PRIMARY' => array('column' => 'id', 'unique' => true)
+				),
+				'tableParameters' => array(
+					'charset' => 'latin1',
+					'collate' => 'latin1_general_ci'
+				)
+			),
+		);
+		$new = array(
+			'posts' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'key' => 'primary'),
+				'author_id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'varchar', 'null' => true),
+				'indexes' => array(
+					'PRIMARY' => array('column' => 'id', 'unique' => true)
+				),
+				'tableParameters' => array(
+					'charset' => 'latin1',
+					'collate' => 'latin1_general_ci'
+				)
+			),
+		);
+		$compare = $this->Schema->compare($old, $new);
+		$expected = array(
+			'posts' => array(
+				'change' => array(
+					'id' => array(
+						'type' => 'integer',
+						'null' => false,
+						'key' => 'primary'
+					),
+					'author_id' => array(
+						'type' => 'integer',
+						'null' => false,
+					),
+					'title' => array(
+						'type' => 'varchar',
+						'null' => true,
+					)
+				)
+			),
+		);
+		$this->assertEquals($expected, $compare, 'Invalid SQL, field length change not detected');
+	}
+
+/**
  * testSchemaLoading method
  *
  * @return void
