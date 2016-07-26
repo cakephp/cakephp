@@ -8,23 +8,23 @@ use Psr\Http\Message\ServerRequestInterface;
 class MiddlewareApplication extends BaseApplication
 {
     /**
-     * @param \Cake\Http\MiddlewareStack $middleware The middleware stack to set in your App Class
-     * @return \Cake\Http\MiddlewareStack
+     * @param \Cake\Http\MiddlewareQueue $middleware The middleware stack to set in your App Class
+     * @return \Cake\Http\MiddlewareQueue
      */
     public function middleware($middleware)
     {
         $middleware
-            ->push(function ($req, $res, $next) {
+            ->add(function ($req, $res, $next) {
                 $res = $res->withHeader('X-First', 'first');
 
                 return $next($req, $res);
             })
-            ->push(function ($req, $res, $next) {
+            ->add(function ($req, $res, $next) {
                 $res = $res->withHeader('X-Second', 'second');
 
                 return $next($req, $res);
             })
-            ->push(function ($req, $res, $next) {
+            ->add(function ($req, $res, $next) {
                 if ($req->hasHeader('X-pass')) {
                     $res = $res->withHeader('X-pass', $req->getHeaderLine('X-pass'));
                 }

@@ -60,7 +60,7 @@ class Server
      * - App->middleware() - Attach any application middleware here.
      * - Trigger the 'Server.buildMiddleware' event. You can use this to modify the
      *   from event listeners.
-     * - Run the middleware stack including the application.
+     * - Run the middleware queue including the application.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request  The request to use or null.
      * @param \Psr\Http\Message\ResponseInterface      $response The response to use or null.
@@ -73,12 +73,12 @@ class Server
         $request = $request ?: ServerRequestFactory::fromGlobals();
         $response = $response ?: new Response();
 
-        $middleware = $this->app->middleware(new MiddlewareStack());
-        if (!($middleware instanceof MiddlewareStack)) {
-            throw new RuntimeException('The application `middleware` method did not return a middleware stack.');
+        $middleware = $this->app->middleware(new MiddlewareQueue());
+        if (!($middleware instanceof MiddlewareQueue)) {
+            throw new RuntimeException('The application `middleware` method did not return a middleware queue.');
         }
         $this->dispatchEvent('Server.buildMiddleware', ['middleware' => $middleware]);
-        $middleware->push($this->app);
+        $middleware->add($this->app);
         $response = $this->runner->run($middleware, $request, $response);
 
         if (!($response instanceof ResponseInterface)) {

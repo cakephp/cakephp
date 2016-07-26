@@ -18,27 +18,27 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Executes the middleware stack and provides the `next` callable
- * that allows the stack to be iterated.
+ * Executes the middleware queue and provides the `next` callable
+ * that allows the queue to be iterated.
  */
 class Runner
 {
     /**
-     * The current index in the middleware stack.
+     * The current index in the middleware queue.
      *
      * @var int
      */
     protected $index;
 
     /**
-     * The middleware stack being run.
+     * The middleware queue being run.
      *
-     * @var MiddlewareStack
+     * @var MiddlewareQueue
      */
     protected $middleware;
 
     /**
-     * @param \Cake\Http\MiddlewareStack $middleware The middleware stack
+     * @param \Cake\Http\MiddlewareQueue $middleware The middleware queue
      * @param \Psr\Http\Message\ServerRequestInterface $request The Server Request
      * @param \Psr\Http\Message\ResponseInterface $response The response
      * @return \Psr\Http\Message\ResponseInterface A response object
@@ -65,7 +65,7 @@ class Runner
             return $next($request, $response, $this);
         }
 
-        // End of the stack
+        // End of the queue
         return $response;
     }
 }

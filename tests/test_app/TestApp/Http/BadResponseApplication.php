@@ -8,12 +8,12 @@ use Psr\Http\Message\ServerRequestInterface;
 class BadResponseApplication extends BaseApplication
 {
     /**
-     * @param \Cake\Http\MiddlewareStack $middleware The middleware stack to set in your App Class
-     * @return \Cake\Http\MiddlewareStack
+     * @param \Cake\Http\MiddlewareQueue $middleware The middleware stack to set in your App Class
+     * @return \Cake\Http\MiddlewareQueue
      */
     public function middleware($middleware)
     {
-        $middleware->push(function ($req, $res, $next) {
+        $middleware->add(function ($req, $res, $next) {
             return 'Not a response';
         });
 

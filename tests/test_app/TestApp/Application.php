@@ -33,8 +33,8 @@ class Application extends BaseApplication
 
     public function middleware($middleware)
     {
-        $middleware->push(new RoutingMiddleware());
-        $middleware->push(function ($req, $res, $next) {
+        $middleware->add(new RoutingMiddleware());
+        $middleware->add(function ($req, $res, $next) {
             $res = $next($req, $res);
 
             return $res->withHeader('X-Middleware', 'true');
