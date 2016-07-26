@@ -486,9 +486,11 @@ class CakeSchema extends Object {
 
 			foreach ($fields as $field => $value) {
 				if (!empty($old[$table][$field])) {
-					$diff = !empty($this->_arrayDiffAssoc($value, $old[$table][$field]))
-						|| !empty($this->_arrayDiffAssoc($old[$table][$field], $value));
-					if ($diff && $field !== 'indexes' && $field !== 'tableParameters') {
+					$diff = $this->_arrayDiffAssoc($value, $old[$table][$field]);
+					if (empty($diff)) {
+						$diff = $this->_arrayDiffAssoc($old[$table][$field], $value);
+					}
+					if (!empty($diff) && $field !== 'indexes' && $field !== 'tableParameters') {
 						$tables[$table]['change'][$field] = $value;
 					}
 				}
