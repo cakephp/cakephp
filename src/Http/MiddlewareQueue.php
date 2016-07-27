@@ -157,12 +157,12 @@ class MiddlewareQueue implements Countable
      * Insert a middleware object before the first matching class.
      *
      * Finds the index of the first middleware that matches the provided class,
-     * and inserts the supplied callable before it. If the class is not found,
-     * this method will behave like add().
+     * and inserts the supplied callable before it.
      *
      * @param string $class The classname to insert the middleware before.
      * @param callable|string $middleware The middleware to insert.
      * @return $this
+     * @throws \LogicException If middlware to insert before is not found.
      */
     public function insertBefore($class, $middleware)
     {
