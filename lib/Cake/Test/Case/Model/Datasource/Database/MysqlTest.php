@@ -4060,9 +4060,14 @@ SQL;
 		$this->Dbo->expects($this->at(0))->method('execute')
 			->with("DELETE `Article` FROM `$db`.`articles` AS `Article`   WHERE `id` = 1");
 
+		$this->Dbo->expects($this->at(1))->method('execute')
+			->with("DELETE `Article` FROM `$db`.`articles` AS `Article`   WHERE NOT (`id` = 1)");
+
 		$Article = new Article();
 
 		$conditions = array('id' => 1);
+		$this->Dbo->delete($Article, $conditions);
+		$conditions = array('NOT' => array('id' => 1));
 		$this->Dbo->delete($Article, $conditions);
 	}
 
