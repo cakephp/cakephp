@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.3.0
+ * @since         3.2.13
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database;
@@ -40,9 +40,9 @@ interface TypeInterface
     public function toPHP($value, Driver $driver);
 
     /**
-     * Casts give value to Statement equivalent
+     * Casts given value to Statement equivalent
      *
-     * @param mixed $value value to be converted to PHP equivalent
+     * @param mixed $value value to be converted to PDO statement
      * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
      * @return mixed
      */
