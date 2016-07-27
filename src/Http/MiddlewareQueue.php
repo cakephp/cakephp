@@ -168,7 +168,9 @@ class MiddlewareQueue implements Countable
     {
         $found = false;
         foreach ($this->queue as $i => $object) {
-            if (is_a($object, $class)) {
+            if ((is_string($object) && $object === $class)
+                || is_a($object, $class)
+            ) {
                 $found = true;
                 break;
             }
@@ -194,7 +196,9 @@ class MiddlewareQueue implements Countable
     {
         $found = false;
         foreach ($this->queue as $i => $object) {
-            if (is_a($object, $class)) {
+            if ((is_string($object) && $object === $class)
+                || is_a($object, $class)
+            ) {
                 $found = true;
                 break;
             }
