@@ -323,6 +323,29 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test one() with an invalid association
+     *
+     * @expectedException RuntimeException
+     * @expectedExceptionMessage Cannot marshal data for "Derp" association. It is not associated with "Articles".
+     * @return void
+     */
+    public function testOneInvalidAssociation()
+    {
+        $data = [
+            'title' => 'My title',
+            'body' => 'My content',
+            'derp' => [
+                'id' => 1,
+                'username' => 'mark',
+            ]
+        ];
+        $marshall = new Marshaller($this->articles);
+        $marshall->one($data, [
+            'associated' => ['Derp']
+        ]);
+    }
+
+    /**
      * Test one() supports accessibleFields option for associations
      *
      * @return void
@@ -1302,6 +1325,33 @@ class MarshallerTest extends TestCase
             'author_id' => 1
         ];
         $this->assertEquals($expected, $result->toArray());
+    }
+
+    /**
+     * Test merge() with an invalid association
+     *
+     * @expectedException RuntimeException
+     * @expectedExceptionMessage Cannot marshal data for "Derp" association. It is not associated with "Articles".
+     * @return void
+     */
+    public function testMergeInvalidAssociation()
+    {
+        $data = [
+            'title' => 'My title',
+            'body' => 'My content',
+            'derp' => [
+                'id' => 1,
+                'username' => 'mark',
+            ]
+        ];
+        $article = new Entity([
+           'title' => 'title for post',
+           'body' => 'body',
+        ]);
+        $marshall = new Marshaller($this->articles);
+        $marshall->merge($article, $data, [
+            'associated' => ['Derp']
+        ]);
     }
 
     /**

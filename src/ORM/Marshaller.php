@@ -58,6 +58,7 @@ class Marshaller
      * Build the map of property => association names.
      *
      * @param array $options List of options containing the 'associated' key.
+     * @throws \RuntimeException When associations do not exist.
      * @return array
      */
     protected function _buildPropertyMap($options)
@@ -74,10 +75,18 @@ class Marshaller
                 $key = $nested;
                 $nested = [];
             }
-            $assoc = $this->_table->association($key);
-            if ($assoc) {
-                $map[$assoc->property()] = ['association' => $assoc] + $nested + ['associated' => []];
+            if ($key === '_joinData') {
+                continue;
             }
+            $assoc = $this->_table->association($key);
+            if (!$assoc) {
+                throw new RuntimeException(sprintf(
+                    'Cannot marshal data for "%s" association. It is not associated with "%s".',
+                    $key,
+                    $this->_table->alias()
+                ));
+            }
+            $map[$assoc->property()] = ['association' => $assoc] + $nested + ['associated' => []];
         }
 
         return $map;
