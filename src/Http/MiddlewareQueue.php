@@ -14,8 +14,10 @@
  */
 namespace Cake\Http;
 
+use Cake\Core\App;
 use Countable;
 use LogicException;
+use RuntimeException;
 
 /**
  * Provides methods for creating and manipulating a "queue" of middleware callables.
@@ -24,14 +26,21 @@ use LogicException;
 class MiddlewareQueue implements Countable
 {
     /**
-     * The queue of middleware callables.
+     * The queue of middlewares.
      *
      * @var array
      */
     protected $queue = [];
 
     /**
-     * Get the middleware object at the provided index.
+     * The queue of middleware callables.
+     *
+     * @var array
+     */
+    protected $callables = [];
+
+    /**
+     * Get the middleware at the provided index.
      *
      * @param int $index The index to fetch.
      * @return callable|null Either the callable middleware or null
@@ -39,22 +48,57 @@ class MiddlewareQueue implements Countable
      */
     public function get($index)
     {
-        if (isset($this->queue[$index])) {
-            return $this->queue[$index];
+        if (isset($this->callables[$index])) {
+            return $this->callables[$index];
         }
 
-        return null;
+        return $this->resolve($index);
+    }
+
+    /**
+     * Resolve middleware name to callable.
+     *
+     * @param int $index The index to fetch.
+     * @return callable|null Either the callable middleware or null
+     *   if the index is undefined.
+     */
+    protected function resolve($index)
+    {
+        if (!isset($this->queue[$index])) {
+            return null;
+        }
+
+        if (is_string($this->queue[$index])) {
+            $class = $this->queue[$index];
+            $className = App::className($class, 'Middleware', 'Middleware');
+            if (!$className || !class_exists($className)) {
+                throw new RuntimeException(sprintf(
+                    'Middleware "%s" was not found.',
+                    $class
+                ));
+            }
+
+            $callable = new $class;
+        } else {
+            $callable = $this->queue[$index];
+        }
+
+        return $this->callables[$index] = $callable;
     }
 
     /**
      * Append a middleware callable to the end of the queue.
      *
-     * @param callable $callable The middleware callable to append.
+     * @param callable|string|array $middleware The middleware(s) to append.
      * @return $this
      */
-    public function add(callable $callable)
+    public function add($middleware)
     {
-        $this->queue[] = $callable;
+        if (is_array($middleware)) {
+            return $this->queue = array_merge($this->queue, $middleware);
+        }
+
+        $this->queue[] = $middleware;
 
         return $this;
     }
@@ -62,24 +106,28 @@ class MiddlewareQueue implements Countable
     /**
      * Alias for MiddlewareQueue::add().
      *
-     * @param callable $callable The middleware callable to append.
+     * @param callable|string|array $middleware The middleware(s) to append.
      * @return $this
      * @see MiddlewareQueue::add()
      */
-    public function push(callable $callable)
+    public function push($middleware)
     {
-        return $this->add($callable);
+        return $this->add($middleware);
     }
 
     /**
-     * Prepend a middleware callable to the start of the queue.
+     * Prepend a middleware to the start of the queue.
      *
-     * @param callable $callable The middleware callable to prepend.
+     * @param callable|string|array $middleware The middleware(s) to prepend.
      * @return $this
      */
-    public function prepend(callable $callable)
+    public function prepend($middleware)
     {
-        array_unshift($this->queue, $callable);
+        if (is_array($middleware)) {
+            return $this->queue = array_merge($middleware, $this->queue);
+        }
+
+        array_unshift($this->queue, $middleware);
 
         return $this;
     }
