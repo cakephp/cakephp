@@ -143,12 +143,12 @@ class MiddlewareQueue implements Countable
      * and the existing element will be shifted one index greater.
      *
      * @param int $index The index to insert at.
-     * @param callable $callable The callable to insert.
+     * @param callable|string $middleware The middleware to insert.
      * @return $this
      */
-    public function insertAt($index, callable $callable)
+    public function insertAt($index, $middleware)
     {
-        array_splice($this->queue, $index, 0, $callable);
+        array_splice($this->queue, $index, 0, $middleware);
 
         return $this;
     }
@@ -161,10 +161,10 @@ class MiddlewareQueue implements Countable
      * this method will behave like add().
      *
      * @param string $class The classname to insert the middleware before.
-     * @param callable $callable The middleware to insert
+     * @param callable|string $middleware The middleware to insert.
      * @return $this
      */
-    public function insertBefore($class, callable $callable)
+    public function insertBefore($class, $middleware)
     {
         $found = false;
         foreach ($this->queue as $i => $object) {
@@ -174,7 +174,7 @@ class MiddlewareQueue implements Countable
             }
         }
         if ($found) {
-            return $this->insertAt($i, $callable);
+            return $this->insertAt($i, $middleware);
         }
         throw new LogicException(sprintf("No middleware matching '%s' could be found.", $class));
     }
@@ -187,10 +187,10 @@ class MiddlewareQueue implements Countable
      * this method will behave like add().
      *
      * @param string $class The classname to insert the middleware before.
-     * @param callable $callable The middleware to insert
+     * @param callable|string $middleware The middleware to insert.
      * @return $this
      */
-    public function insertAfter($class, callable $callable)
+    public function insertAfter($class, $middleware)
     {
         $found = false;
         foreach ($this->queue as $i => $object) {
@@ -200,10 +200,10 @@ class MiddlewareQueue implements Countable
             }
         }
         if ($found) {
-            return $this->insertAt($i + 1, $callable);
+            return $this->insertAt($i + 1, $middleware);
         }
 
-        return $this->add($callable);
+        return $this->add($middleware);
     }
 
     /**
