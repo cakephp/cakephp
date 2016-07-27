@@ -809,6 +809,15 @@ HTML;
         $expected = 'This <strong>is</strong> a test and <abbr>some</abbr> other text';
         $result = $this->Text->stripLinks($text);
         $this->assertEquals($expected, $result);
+
+        $text = '<a<a h> href=\'bla\'>test</a</a>>';
+        $this->assertEquals('test', $this->Text->stripLinks($text));
+
+        $text = '<a/href="#">test</a/>';
+        $this->assertEquals('test', $this->Text->stripLinks($text));
+
+        $text = '<a href="#"';
+        $this->assertEquals('', $this->Text->stripLinks($text));
     }
 
     /**

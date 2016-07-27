@@ -1013,7 +1013,7 @@ class PaginatorHelper extends Helper
         }
 
         $out = '';
-        $lower = $params['pageCount'] - $last + 1;
+        $lower = (int)$params['pageCount'] - (int)$last + 1;
 
         if (is_int($last) && $params['page'] <= $lower) {
             for ($i = $lower; $i <= $params['pageCount']; $i++) {

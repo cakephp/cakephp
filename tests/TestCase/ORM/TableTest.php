@@ -2427,7 +2427,7 @@ class TableTest extends TestCase
         $config = ConnectionManager::config('test');
 
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
-            ->setMethods(['begin', 'commit'])
+            ->setMethods(['begin', 'commit', 'inTransaction'])
             ->setConstructorArgs([$config])
             ->getMock();
         $connection->driver($this->connection->driver());
@@ -2441,6 +2441,7 @@ class TableTest extends TestCase
 
         $connection->expects($this->once())->method('begin');
         $connection->expects($this->once())->method('commit');
+        $connection->expects($this->any())->method('inTransaction')->will($this->returnValue(true));
         $data = new \Cake\ORM\Entity([
             'username' => 'superuser',
             'created' => new Time('2013-10-10 00:00'),

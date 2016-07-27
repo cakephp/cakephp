@@ -506,12 +506,20 @@ class Text
     /**
      * Strips given text of all links (<a href=....).
      *
+     * *Warning* This method is not an robust solution in preventing XSS
+     * or malicious HTML.
+     *
      * @param string $text Text
      * @return string The text without links
+     * @deprecated 3.2.12 This method will be removed in 4.0.0
      */
     public static function stripLinks($text)
     {
-        return preg_replace('|<a\s+[^>]+>|im', '', preg_replace('|<\/a>|im', '', $text));
+        do {
+            $text = preg_replace('#</?a([/\s][^>]*)?(>|$)#i', '', $text, -1, $count);
+        } while ($count);
+
+        return $text;
     }
 
     /**

@@ -342,7 +342,7 @@ class TableTest extends TestCase
      *
      * @return array
      */
-    public static function addConstaintErrorProvider()
+    public static function addConstraintErrorProvider()
     {
         return [
             // No properties
@@ -361,7 +361,7 @@ class TableTest extends TestCase
      * Test that an exception is raised when constraints
      * are added for fields that do not exist.
      *
-     * @dataProvider addConstaintErrorProvider
+     * @dataProvider addConstraintErrorProvider
      * @expectedException \Cake\Database\Exception
      * @return void
      */

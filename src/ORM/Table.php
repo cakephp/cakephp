@@ -33,6 +33,7 @@ use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\Exception\MissingEntityException;
+use Cake\ORM\Exception\RolledbackTransactionException;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validation;
@@ -1384,13 +1385,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   transaction (default: true)
      * - checkRules: Whether or not to check the rules on entity before saving, if the checking
      *   fails, it will abort the save operation. (default:true)
-     * - associated: If true it will save all associated entities as they are found
+     * - associated: If `true` it will save 1st level associated entities as they are found
      *   in the passed `$entity` whenever the property defined for the association
-     *   is marked as dirty. Associated records are saved recursively unless told
-     *   otherwise. If an array, it will be interpreted as the list of associations
+     *   is marked as dirty. If an array, it will be interpreted as the list of associations
      *   to be saved. It is possible to provide different options for saving on associated
      *   table objects using this key by making the custom options the array value.
-     *   If false no associated records will be saved. (default: true)
+     *   If `false` no associated records will be saved. (default: `true`)
      * - checkExisting: Whether or not to check if the entity already exists, assuming that the
      *   entity is marked as not new, and the primary key has been set.
      *
@@ -1455,6 +1455,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * $articles->save($entity, ['associated' => false]);
      * ```
      *
+     * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction
+     *   is aborted in the afterSave event.
      */
     public function save(EntityInterface $entity, $options = [])
     {
@@ -1505,6 +1507,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \ArrayObject $options the options to use for the save operation
      * @return \Cake\Datasource\EntityInterface|bool
      * @throws \RuntimeException When an entity is missing some of the primary keys.
+     * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction
+     *   is aborted in the afterSave event.
      */
     protected function _processSave($entity, $options)
     {
@@ -1552,32 +1556,53 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         if ($success) {
-            $success = $this->_associations->saveChildren(
-                $this,
-                $entity,
-                $options['associated'],
-                ['_primary' => false] + $options->getArrayCopy()
-            );
-            if ($success || !$options['atomic']) {
-                $this->dispatchEvent('Model.afterSave', compact('entity', 'options'));
-                $entity->clean();
-                if (!$options['atomic'] && !$options['_primary']) {
-                    $entity->isNew(false);
-                    $entity->source($this->registryAlias());
-                }
-                $success = true;
-            }
+            $success = $this->_onSaveSuccess($entity, $options);
         }
 
         if (!$success && $isNew) {
             $entity->unsetProperty($this->primaryKey());
             $entity->isNew(true);
         }
-        if ($success) {
-            return $entity;
+
+        return $success ? $entity : false;
+    }
+
+    /**
+     * Handles the saving of children associations and executing the afterSave logic
+     * once the entity for this table has been saved successfully.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
+     * @param \ArrayObject $options the options to use for the save operation
+     * @return bool True on success
+     * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction
+     *   is aborted in the afterSave event.
+     */
+    protected function _onSaveSuccess($entity, $options)
+    {
+        $success = $this->_associations->saveChildren(
+            $this,
+            $entity,
+            $options['associated'],
+            ['_primary' => false] + $options->getArrayCopy()
+        );
+
+        if (!$success && $options['atomic']) {
+            return false;
         }
 
-        return false;
+        $this->dispatchEvent('Model.afterSave', compact('entity', 'options'));
+
+        if ($options['atomic'] && !$this->connection()->inTransaction()) {
+            throw new RolledbackTransactionException(['table' => get_class($this)]);
+        }
+
+        $entity->clean();
+        if (!$options['atomic'] && !$options['_primary']) {
+            $entity->isNew(false);
+            $entity->source($this->registryAlias());
+        }
+
+        return true;
     }
 
     /**
@@ -1720,7 +1745,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param array|\Cake\ORM\ResultSet $entities Entities to save.
      * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
-     * @return bool|array|\Cake\ORM\ResultSet False on failure, entities list on succcess.
+     * @return bool|array|\Cake\ORM\ResultSet False on failure, entities list on success.
      */
     public function saveMany($entities, $options = [])
     {

@@ -1390,7 +1390,7 @@ class EntityTest extends TestCase
         return [[''], [null], [false]];
     }
     /**
-     * Tests that trying to get an empty propery name throws exception
+     * Tests that trying to get an empty propetry name throws exception
      *
      * @dataProvider emptyNamesProvider
      * @expectedException \InvalidArgumentException
@@ -1403,7 +1403,7 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests that setitng an empty property name does nothing
+     * Tests that setting an empty property name does nothing
      *
      * @expectedException \InvalidArgumentException
      * @dataProvider emptyNamesProvider

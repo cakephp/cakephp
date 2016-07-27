@@ -244,7 +244,10 @@ class QueryRegressionTest extends TestCase
      */
     public function strategyProvider()
     {
-        return [['append', 'replace']];
+        return [
+            ['append'],
+            ['replace'],
+        ];
     }
 
     /**

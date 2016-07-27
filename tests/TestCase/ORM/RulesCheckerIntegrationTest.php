@@ -634,7 +634,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @group save
      * @expectedException RuntimeException
-     * @expectedExceptionMessage ExistsIn rule for 'author_id' is invalid. The 'NotValid' association is not defined.
+     * @expectedExceptionMessage ExistsIn rule for 'author_id' is invalid. 'NotValid' is not associated with 'Cake\ORM\Table'.
      * @return void
      */
     public function testExistsInInvalidAssociation()

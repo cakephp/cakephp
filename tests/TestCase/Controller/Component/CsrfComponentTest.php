@@ -94,7 +94,8 @@ class CsrfComponentTest extends TestCase
     public static function safeHttpMethodProvider()
     {
         return [
-            ['GET', 'HEAD']
+            ['GET'],
+            ['HEAD'],
         ];
     }
 

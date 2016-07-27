@@ -135,7 +135,7 @@ abstract class Association
     /**
      * Whether or not cascaded deletes should also fire callbacks.
      *
-     * @var string
+     * @var bool
      */
     protected $_cascadeCallbacks = false;
 
