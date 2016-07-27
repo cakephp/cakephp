@@ -95,7 +95,9 @@ class MiddlewareQueue implements Countable
     public function add($middleware)
     {
         if (is_array($middleware)) {
-            return $this->queue = array_merge($this->queue, $middleware);
+            $this->queue = array_merge($this->queue, $middleware);
+
+            return $this;
         }
 
         $this->queue[] = $middleware;
@@ -124,7 +126,9 @@ class MiddlewareQueue implements Countable
     public function prepend($middleware)
     {
         if (is_array($middleware)) {
-            return $this->queue = array_merge($middleware, $this->queue);
+            $this->queue = array_merge($middleware, $this->queue);
+
+            return $this;
         }
 
         array_unshift($this->queue, $middleware);
