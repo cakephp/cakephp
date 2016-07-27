@@ -44,7 +44,7 @@ class MiddlewareQueueTest extends TestCase
      *
      * @return void
      */
-    public function testPushReturn()
+    public function testAddReturn()
     {
         $stack = new MiddlewareQueue();
         $cb = function () {
@@ -57,7 +57,7 @@ class MiddlewareQueueTest extends TestCase
      *
      * @return void
      */
-    public function testPushOrdering()
+    public function testAddOrdering()
     {
         $one = function () {
         };
