@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Http;
 
+use Cake\Core\Configure;
 use Cake\Http\MiddlewareQueue;
 use Cake\TestSuite\TestCase;
 use TestApp\Middleware\SampleMiddleware;
@@ -37,7 +38,6 @@ class MiddlewareQueueTest extends TestCase
         $this->assertSame($cb, $queue->get(0));
         $this->assertNull($queue->get(1));
     }
-
 
     /**
      * Test the return value of add()
@@ -112,6 +112,44 @@ class MiddlewareQueueTest extends TestCase
         $this->assertCount(2, $queue);
 
         $this->assertSame($two, $queue->get(0));
+        $this->assertSame($one, $queue->get(1));
+    }
+
+    /**
+     * Test updating queue using class name
+     *
+     * @return void
+     */
+    public function testAddingPrependingUsingString()
+    {
+        $appNamespace = Configure::read('App.namespace');
+        Configure::write('App.namespace', 'TestApp');
+
+        $queue = new MiddlewareQueue();
+        $queue->add('Sample');
+        $queue->prepend('TestApp\Middleware\SampleMiddleware');
+
+        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->get(0));
+        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->get(1));
+
+        Configure::write('App.namespace', $appNamespace);
+    }
+
+    /**
+     * Test updating queue using array
+     *
+     * @return void
+     */
+    public function testAddingPrependingUsingArray()
+    {
+        $one = function () {
+        };
+
+        $queue = new MiddlewareQueue();
+        $queue->add([$one]);
+        $queue->prepend(['TestApp\Middleware\SampleMiddleware']);
+
+        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->get(0));
         $this->assertSame($one, $queue->get(1));
     }
 

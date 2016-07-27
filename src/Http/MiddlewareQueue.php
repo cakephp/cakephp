@@ -78,7 +78,7 @@ class MiddlewareQueue implements Countable
                 ));
             }
 
-            $callable = new $class;
+            $callable = new $className;
         } else {
             $callable = $this->queue[$index];
         }
