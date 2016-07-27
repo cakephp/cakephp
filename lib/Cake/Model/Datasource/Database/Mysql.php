@@ -437,14 +437,7 @@ class Mysql extends DboSource {
 		if (empty($conditions)) {
 			$alias = $joins = false;
 		}
-		$complexConditions = false;
-		$fields = array_keys($this->describe($model));
-		foreach ((array)$conditions as $key => $value) {
-			if (strpos($key, $model->alias) === false && !in_array($key, $fields, true)) {
-				$complexConditions = true;
-				break;
-			}
-		}
+		$complexConditions = $this->_deleteNeedsComplexConditions($model, $conditions);
 		if (!$complexConditions) {
 			$joins = false;
 		}
@@ -458,6 +451,27 @@ class Mysql extends DboSource {
 			return false;
 		}
 		return true;
+	}
+
+/**
+ * Checks whether complex conditions are needed for a delete with the given conditions.
+ *
+ * @param Model $model The model to delete from.
+ * @param mixed $conditions The conditions to use.
+ * @return bool Whether or not complex conditions are needed
+ */
+	protected function _deleteNeedsComplexConditions(Model $model, $conditions) {
+		$fields = array_keys($this->describe($model));
+		foreach ((array)$conditions as $key => $value) {
+			if (in_array(strtolower(trim($key)), $this->_sqlBoolOps, true)) {
+				if ($this->_deleteNeedsComplexConditions($model, $value)) {
+					return true;
+				}
+			} elseif (strpos($key, $model->alias) === false && !in_array($key, $fields, true)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 /**
