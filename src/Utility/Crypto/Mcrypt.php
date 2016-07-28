@@ -20,6 +20,7 @@ namespace Cake\Utility\Crypto;
  * This class is not intended to be used directly and should only
  * be used in the context of Cake\Utility\Security.
  *
+ * @deprecated 3.3.0 It is recommended to use {@see Cake\Utility\Crypto\OpenSsl} instead.
  * @internal
  */
 class Mcrypt
