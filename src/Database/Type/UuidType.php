@@ -16,12 +16,13 @@ namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
 use Cake\Database\Type;
+use Cake\Database\TypeInterface;
 use Cake\Utility\Text;
 
 /**
  * Provides behavior for the UUID type
  */
-class UuidType extends StringType
+class UuidType extends StringType implements TypeInterface
 {
 
     /**

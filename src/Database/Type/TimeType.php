@@ -14,12 +14,14 @@
  */
 namespace Cake\Database\Type;
 
+use Cake\Database\TypeInterface;
+
 /**
  * Time type converter.
  *
  * Use to convert time instances to strings & back.
  */
-class TimeType extends DateTimeType
+class TimeType extends DateTimeType implements TypeInterface
 {
 
     /**
