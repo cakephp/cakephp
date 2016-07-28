@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Http;
 
+use Cake\Core\Configure;
 use Cake\Http\MiddlewareQueue;
 use Cake\TestSuite\TestCase;
 use TestApp\Middleware\SampleMiddleware;
@@ -24,32 +25,56 @@ use TestApp\Middleware\SampleMiddleware;
 class MiddlewareQueueTest extends TestCase
 {
     /**
+     * setUp
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->appNamespace = Configure::read('App.namespace');
+        Configure::write('App.namespace', 'TestApp');
+    }
+
+    /**
+     * tearDown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        Configure::write('App.namespace', $this->appNamespace);
+    }
+
+    /**
      * Test get()
      *
      * @return void
      */
     public function testGet()
     {
-        $stack = new MiddlewareQueue();
+        $queue = new MiddlewareQueue();
         $cb = function () {
         };
-        $stack->add($cb);
-        $this->assertSame($cb, $stack->get(0));
-        $this->assertNull($stack->get(1));
+        $queue->add($cb);
+        $this->assertSame($cb, $queue->get(0));
+        $this->assertNull($queue->get(1));
     }
-
 
     /**
      * Test the return value of add()
      *
      * @return void
      */
-    public function testPushReturn()
+    public function testAddReturn()
     {
-        $stack = new MiddlewareQueue();
+        $queue = new MiddlewareQueue();
         $cb = function () {
         };
-        $this->assertSame($stack, $stack->add($cb));
+        $this->assertSame($queue, $queue->add($cb));
     }
 
     /**
@@ -57,24 +82,24 @@ class MiddlewareQueueTest extends TestCase
      *
      * @return void
      */
-    public function testPushOrdering()
+    public function testAddOrdering()
     {
         $one = function () {
         };
         $two = function () {
         };
 
-        $stack = new MiddlewareQueue();
-        $this->assertCount(0, $stack);
+        $queue = new MiddlewareQueue();
+        $this->assertCount(0, $queue);
 
-        $stack->add($one);
-        $this->assertCount(1, $stack);
+        $queue->add($one);
+        $this->assertCount(1, $queue);
 
-        $stack->add($two);
-        $this->assertCount(2, $stack);
+        $queue->add($two);
+        $this->assertCount(2, $queue);
 
-        $this->assertSame($one, $stack->get(0));
-        $this->assertSame($two, $stack->get(1));
+        $this->assertSame($one, $queue->get(0));
+        $this->assertSame($two, $queue->get(1));
     }
 
     /**
@@ -86,8 +111,8 @@ class MiddlewareQueueTest extends TestCase
     {
         $cb = function () {
         };
-        $stack = new MiddlewareQueue();
-        $this->assertSame($stack, $stack->prepend($cb));
+        $queue = new MiddlewareQueue();
+        $this->assertSame($queue, $queue->prepend($cb));
     }
 
     /**
@@ -102,17 +127,50 @@ class MiddlewareQueueTest extends TestCase
         $two = function () {
         };
 
-        $stack = new MiddlewareQueue();
-        $this->assertCount(0, $stack);
+        $queue = new MiddlewareQueue();
+        $this->assertCount(0, $queue);
 
-        $stack->add($one);
-        $this->assertCount(1, $stack);
+        $queue->add($one);
+        $this->assertCount(1, $queue);
 
-        $stack->prepend($two);
-        $this->assertCount(2, $stack);
+        $queue->prepend($two);
+        $this->assertCount(2, $queue);
 
-        $this->assertSame($two, $stack->get(0));
-        $this->assertSame($one, $stack->get(1));
+        $this->assertSame($two, $queue->get(0));
+        $this->assertSame($one, $queue->get(1));
+    }
+
+    /**
+     * Test updating queue using class name
+     *
+     * @return void
+     */
+    public function testAddingPrependingUsingString()
+    {
+        $queue = new MiddlewareQueue();
+        $queue->add('Sample');
+        $queue->prepend('TestApp\Middleware\SampleMiddleware');
+
+        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->get(0));
+        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->get(1));
+    }
+
+    /**
+     * Test updating queue using array
+     *
+     * @return void
+     */
+    public function testAddingPrependingUsingArray()
+    {
+        $one = function () {
+        };
+
+        $queue = new MiddlewareQueue();
+        $queue->add([$one]);
+        $queue->prepend(['TestApp\Middleware\SampleMiddleware']);
+
+        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->get(0));
+        $this->assertSame($one, $queue->get(1));
     }
 
     /**
@@ -129,17 +187,17 @@ class MiddlewareQueueTest extends TestCase
         $three = function () {
         };
 
-        $stack = new MiddlewareQueue();
-        $stack->add($one)->add($two)->insertAt(0, $three);
-        $this->assertSame($three, $stack->get(0));
-        $this->assertSame($one, $stack->get(1));
-        $this->assertSame($two, $stack->get(2));
+        $queue = new MiddlewareQueue();
+        $queue->add($one)->add($two)->insertAt(0, $three);
+        $this->assertSame($three, $queue->get(0));
+        $this->assertSame($one, $queue->get(1));
+        $this->assertSame($two, $queue->get(2));
 
-        $stack = new MiddlewareQueue();
-        $stack->add($one)->add($two)->insertAt(1, $three);
-        $this->assertSame($one, $stack->get(0));
-        $this->assertSame($three, $stack->get(1));
-        $this->assertSame($two, $stack->get(2));
+        $queue = new MiddlewareQueue();
+        $queue->add($one)->add($two)->insertAt(1, $three);
+        $this->assertSame($one, $queue->get(0));
+        $this->assertSame($three, $queue->get(1));
+        $this->assertSame($two, $queue->get(2));
     }
 
     /**
@@ -154,12 +212,12 @@ class MiddlewareQueueTest extends TestCase
         $two = function () {
         };
 
-        $stack = new MiddlewareQueue();
-        $stack->add($one)->insertAt(99, $two);
+        $queue = new MiddlewareQueue();
+        $queue->add($one)->insertAt(99, $two);
 
-        $this->assertCount(2, $stack);
-        $this->assertSame($one, $stack->get(0));
-        $this->assertSame($two, $stack->get(1));
+        $this->assertCount(2, $queue);
+        $this->assertSame($one, $queue->get(0));
+        $this->assertSame($two, $queue->get(1));
     }
 
     /**
@@ -174,12 +232,12 @@ class MiddlewareQueueTest extends TestCase
         $two = function () {
         };
 
-        $stack = new MiddlewareQueue();
-        $stack->add($one)->insertAt(-1, $two);
+        $queue = new MiddlewareQueue();
+        $queue->add($one)->insertAt(-1, $two);
 
-        $this->assertCount(2, $stack);
-        $this->assertSame($two, $stack->get(0));
-        $this->assertSame($one, $stack->get(1));
+        $this->assertCount(2, $queue);
+        $this->assertSame($two, $queue->get(0));
+        $this->assertSame($one, $queue->get(1));
     }
 
     /**
@@ -194,13 +252,25 @@ class MiddlewareQueueTest extends TestCase
         $two = new SampleMiddleware();
         $three = function () {
         };
-        $stack = new MiddlewareQueue();
-        $stack->add($one)->add($two)->insertBefore(SampleMiddleware::class, $three);
+        $queue = new MiddlewareQueue();
+        $queue->add($one)->add($two)->insertBefore(SampleMiddleware::class, $three);
 
-        $this->assertCount(3, $stack);
-        $this->assertSame($one, $stack->get(0));
-        $this->assertSame($three, $stack->get(1));
-        $this->assertSame($two, $stack->get(2));
+        $this->assertCount(3, $queue);
+        $this->assertSame($one, $queue->get(0));
+        $this->assertSame($three, $queue->get(1));
+        $this->assertSame($two, $queue->get(2));
+
+        $two = SampleMiddleware::class;
+        $queue = new MiddlewareQueue();
+        $queue
+            ->add($one)
+            ->add($two)
+            ->insertBefore(SampleMiddleware::class, $three);
+
+        $this->assertCount(3, $queue);
+        $this->assertSame($one, $queue->get(0));
+        $this->assertSame($three, $queue->get(1));
+        $this->assertInstanceOf(SampleMiddleware::class, $queue->get(2));
     }
 
     /**
@@ -217,8 +287,8 @@ class MiddlewareQueueTest extends TestCase
         $two = new SampleMiddleware();
         $three = function () {
         };
-        $stack = new MiddlewareQueue();
-        $stack->add($one)->add($two)->insertBefore('InvalidClassName', $three);
+        $queue = new MiddlewareQueue();
+        $queue->add($one)->add($two)->insertBefore('InvalidClassName', $three);
     }
 
     /**
@@ -233,13 +303,25 @@ class MiddlewareQueueTest extends TestCase
         };
         $three = function () {
         };
-        $stack = new MiddlewareQueue();
-        $stack->add($one)->add($two)->insertAfter(SampleMiddleware::class, $three);
+        $queue = new MiddlewareQueue();
+        $queue->add($one)->add($two)->insertAfter(SampleMiddleware::class, $three);
 
-        $this->assertCount(3, $stack);
-        $this->assertSame($one, $stack->get(0));
-        $this->assertSame($three, $stack->get(1));
-        $this->assertSame($two, $stack->get(2));
+        $this->assertCount(3, $queue);
+        $this->assertSame($one, $queue->get(0));
+        $this->assertSame($three, $queue->get(1));
+        $this->assertSame($two, $queue->get(2));
+
+        $one = 'Sample';
+        $queue = new MiddlewareQueue();
+        $queue
+            ->add($one)
+            ->add($two)
+            ->insertAfter('Sample', $three);
+
+        $this->assertCount(3, $queue);
+        $this->assertInstanceOf(SampleMiddleware::class, $queue->get(0));
+        $this->assertSame($three, $queue->get(1));
+        $this->assertSame($two, $queue->get(2));
     }
 
     /**
@@ -254,12 +336,12 @@ class MiddlewareQueueTest extends TestCase
         };
         $three = function () {
         };
-        $stack = new MiddlewareQueue();
-        $stack->add($one)->add($two)->insertAfter('InvalidClass', $three);
+        $queue = new MiddlewareQueue();
+        $queue->add($one)->add($two)->insertAfter('InvalidClass', $three);
 
-        $this->assertCount(3, $stack);
-        $this->assertSame($one, $stack->get(0));
-        $this->assertSame($two, $stack->get(1));
-        $this->assertSame($three, $stack->get(2));
+        $this->assertCount(3, $queue);
+        $this->assertSame($one, $queue->get(0));
+        $this->assertSame($two, $queue->get(1));
+        $this->assertSame($three, $queue->get(2));
     }
 }
