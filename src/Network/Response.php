@@ -16,6 +16,7 @@ namespace Cake\Network;
 
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
+use Cake\Log\Log;
 use Cake\Network\Exception\NotFoundException;
 use DateTime;
 use DateTimeZone;
@@ -447,7 +448,10 @@ class Response
      */
     public function sendHeaders()
     {
-        if (headers_sent()) {
+        $file = $line = null;
+        if (headers_sent($file, $line)) {
+            Log::warning("Headers already sent in {$file}:{$line}");
+
             return;
         }
 

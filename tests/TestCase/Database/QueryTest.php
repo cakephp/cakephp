@@ -1104,7 +1104,7 @@ class QueryTest extends TestCase
      */
     public function testSelectWhereOperatorMethods()
     {
-        $this->loadFixtures('Articles', 'Comments');
+        $this->loadFixtures('Articles', 'Comments', 'Authors');
         $query = new Query($this->connection);
         $result = $query
             ->select(['title'])
@@ -2346,6 +2346,52 @@ class QueryTest extends TestCase
         ];
         $this->assertEquals($expected, $result->fetchAll('assoc'));
         $result->closeCursor();
+    }
+
+    /**
+     * Tests that Query objects can be included inside the where clause
+     * and be used as a EXISTS and NOT EXISTS conditions
+     *
+     * @return void
+     */
+    public function testSubqueryExistsWhere()
+    {
+        $this->loadFixtures('Articles', 'Authors');
+        $query = new Query($this->connection);
+        $subQuery = (new Query($this->connection))
+            ->select(['id'])
+            ->from('articles')
+            ->where(function ($exp) {
+                return $exp->equalFields('authors.id', 'articles.author_id');
+            });
+        $result = $query
+            ->select(['id'])
+            ->from('authors')
+            ->where(function ($exp) use ($subQuery) {
+                return $exp->exists($subQuery);
+            })
+            ->execute();
+        $this->assertCount(2, $result);
+        $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+        $this->assertEquals(['id' => 3], $result->fetch('assoc'));
+
+        $query = new Query($this->connection);
+        $subQuery = (new Query($this->connection))
+            ->select(['id'])
+            ->from('articles')
+            ->where(function ($exp) {
+                return $exp->equalFields('authors.id', 'articles.author_id');
+            });
+        $result = $query
+            ->select(['id'])
+            ->from('authors')
+            ->where(function ($exp) use ($subQuery) {
+                return $exp->notExists($subQuery);
+            })
+            ->execute();
+        $this->assertCount(2, $result);
+        $this->assertEquals(['id' => 2], $result->fetch('assoc'));
+        $this->assertEquals(['id' => 4], $result->fetch('assoc'));
     }
 
     /**

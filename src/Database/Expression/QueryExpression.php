@@ -373,6 +373,28 @@ class QueryExpression implements ExpressionInterface, Countable
     }
 
     /**
+     * Adds a new condition to the expression object in the form "EXISTS (...)".
+     *
+     * @param \Cake\Database\ExpressionInterface $query the inner query
+     * @return $this
+     */
+    public function exists(ExpressionInterface $query)
+    {
+        return $this->add(new UnaryExpression('EXISTS', $query, UnaryExpression::PREFIX));
+    }
+
+    /**
+     * Adds a new condition to the expression object in the form "NOT EXISTS (...)".
+     *
+     * @param \Cake\Database\ExpressionInterface $query the inner query
+     * @return $this
+     */
+    public function notExists(ExpressionInterface $query)
+    {
+        return $this->add(new UnaryExpression('NOT EXISTS', $query, UnaryExpression::PREFIX));
+    }
+
+    /**
      * Adds a new condition to the expression object in the form
      * "field BETWEEN from AND to".
      *

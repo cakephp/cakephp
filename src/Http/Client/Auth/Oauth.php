@@ -171,7 +171,7 @@ class Oauth
             throw new \RuntimeException('RSA-SHA1 signature method requires the OpenSSL extension.');
         }
 
-        $nonce = isset($credentials['nonce']) ? $credentials['nonce'] : Security::randomBytes(16);
+        $nonce = isset($credentials['nonce']) ? $credentials['nonce'] : bin2hex(Security::randomBytes(16));
         $timestamp = isset($credentials['timestamp']) ? $credentials['timestamp'] : time();
         $values = [
             'oauth_version' => '1.0',
