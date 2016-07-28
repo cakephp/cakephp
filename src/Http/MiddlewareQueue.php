@@ -77,7 +77,6 @@ class MiddlewareQueue implements Countable
                     $class
                 ));
             }
-
             $callable = new $className;
         } else {
             $callable = $this->queue[$index];
@@ -99,7 +98,6 @@ class MiddlewareQueue implements Countable
 
             return $this;
         }
-
         $this->queue[] = $middleware;
 
         return $this;
@@ -130,7 +128,6 @@ class MiddlewareQueue implements Countable
 
             return $this;
         }
-
         array_unshift($this->queue, $middleware);
 
         return $this;
