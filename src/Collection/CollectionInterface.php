@@ -620,9 +620,10 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * whether an element is parent of another
      * @param callable|string $parentPath the column name path to use for determining
      * whether an element is child of another
+     * @param string $childrenKey The key name to use for the children
      * @return \Cake\Collection\CollectionInterface
      */
-    public function nest($idPath, $parentPath);
+    public function nest($idPath, $parentPath, $childrenKey = null);
 
     /**
      * Returns a new collection containing each of the elements found in `$values` as

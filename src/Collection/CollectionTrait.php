@@ -421,22 +421,25 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      */
-    public function nest($idPath, $parentPath)
+    public function nest($idPath, $parentPath, $childrenKey = null)
     {
         $parents = [];
         $idPath = $this->_propertyExtractor($idPath);
         $parentPath = $this->_propertyExtractor($parentPath);
         $isObject = true;
+        if (empty($childrenKey)) {
+            $childrenKey = 'children';
+        }
 
-        $mapper = function ($row, $key, $mapReduce) use (&$parents, $idPath, $parentPath) {
-            $row['children'] = [];
+        $mapper = function ($row, $key, $mapReduce) use (&$parents, $idPath, $parentPath, $childrenKey) {
+            $row[$childrenKey] = [];
             $id = $idPath($row, $key);
             $parentId = $parentPath($row, $key);
             $parents[$id] =& $row;
             $mapReduce->emitIntermediate($id, $parentId);
         };
 
-        $reducer = function ($values, $key, $mapReduce) use (&$parents, &$isObject) {
+        $reducer = function ($values, $key, $mapReduce) use (&$parents, &$isObject, $childrenKey) {
             static $foundOutType = false;
             if (!$foundOutType) {
                 $isObject = is_object(current($parents));
@@ -447,7 +450,6 @@ trait CollectionTrait
                     $parents[$id] = $isObject ? $parents[$id] : new ArrayIterator($parents[$id], 1);
                     $mapReduce->emit($parents[$id]);
                 }
-
                 return null;
             }
 
@@ -455,7 +457,7 @@ trait CollectionTrait
             foreach ($values as $id) {
                 $children[] =& $parents[$id];
             }
-            $parents[$key]['children'] = $children;
+            $parents[$key][$childrenKey] = $children;
         };
 
         return (new Collection(new MapReduce($this->unwrap(), $mapper, $reducer)))
