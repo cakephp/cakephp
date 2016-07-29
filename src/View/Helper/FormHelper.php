@@ -1025,7 +1025,7 @@ class FormHelper extends Helper
         $options += ['id' => $this->_domId($fieldName)];
 
         if (strtolower($options['type']) === 'input') {
-                throw new Exception(sprintf('Input is an invalid type option for input field %s', $fieldName));
+                throw new RuntimeException(sprintf('Invalid type "input" used for field "%s"', $fieldName));
         }
 
         $templater = $this->templater();
