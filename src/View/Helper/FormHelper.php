@@ -1024,6 +1024,10 @@ class FormHelper extends Helper
         $options = $this->_parseOptions($fieldName, $options);
         $options += ['id' => $this->_domId($fieldName)];
 
+        if (strtolower($options['type']) == 'input') {
+                throw new Exception(sprintf('Input is an invalid type option for input field %s', $fieldName));
+        }
+
         $templater = $this->templater();
         $newTemplates = $options['templates'];
 
