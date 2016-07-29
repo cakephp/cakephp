@@ -22,7 +22,7 @@ use Cake\Utility\Text;
 /**
  * Provides behavior for the UUID type
  */
-class UuidType extends StringType implements TypeInterface
+class UuidType extends StringType
 {
 
     /**
