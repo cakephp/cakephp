@@ -3680,6 +3680,28 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test invalid 'input' type option to input() function.
+     *
+     * @expectedException \RuntimeException
+     * @return void
+     */
+    public function testInvalidInputTypeOptionLowercase()
+    {
+        $this->Form->input('text', ['type' => 'input']);
+    }
+
+    /**
+     * Test invalid 'Input' type option to input() function.
+     *
+     * @expectedException \RuntimeException
+     * @return void
+     */
+    public function testInvalidInputTypeOptionUppercase()
+    {
+        $this->Form->input('text', ['type' => 'Input']);
+    }
+
+    /**
      * Test that magic input() selects can easily be converted into radio types without error.
      *
      * @return void
