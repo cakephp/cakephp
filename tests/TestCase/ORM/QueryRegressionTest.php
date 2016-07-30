@@ -1184,6 +1184,37 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
+     * Tests that it is possible to contain to fetch
+     * associations off of a junction table.
+     *
+     * @return void
+     */
+    public function testBelongsToManyJoinDataAssociation()
+    {
+        $articles = TableRegistry::get('Articles');
+
+        $tags = TableRegistry::get('Tags');
+        $tags->hasMany('SpecialTags');
+
+        $specialTags = TableRegistry::get('SpecialTags');
+        $specialTags->belongsTo('Authors');
+        $specialTags->belongsTo('Articles');
+        $specialTags->belongsTo('Tags');
+
+        $articles->belongsToMany('Tags', [
+            'through' => $specialTags
+        ]);
+        $query = $articles->find()
+            ->contain(['Tags', 'Tags.SpecialTags.Authors'])
+            ->where(['Articles.id' => 1]);
+        $result = $query->first();
+        $this->assertNotEmpty($result->tags, 'Missing tags');
+        $this->assertNotEmpty($result->tags[0], 'Missing first tag');
+        $this->assertNotEmpty($result->tags[0]->_joinData, 'Missing _joinData');
+        $this->assertNotEmpty($result->tags[0]->_joinData->author, 'Missing author on _joinData');
+    }
+
+    /**
      * Tests that it is possible to use matching with dot notation
      * even when part of the part of the path in the dot notation is
      * shared for two different calls
