@@ -44,6 +44,8 @@ class TranslateBehaviorTest extends TestCase
     public $fixtures = [
         'core.articles',
         'core.authors',
+        'core.special_tags',
+        'core.tags',
         'core.comments',
         'core.translates'
     ];
@@ -659,6 +661,28 @@ class TranslateBehaviorTest extends TestCase
             return $r->toArray();
         }, $results->toArray());
         $this->assertEquals($expected, $results);
+    }
+
+    /**
+     * Tests that it is possible to translate belongsToMany associations
+     *
+     * @return void
+     */
+    public function testFindSingleLocaleBelongsToMany()
+    {
+        $table = TableRegistry::get('Articles');
+        $specialTags = TableRegistry::get('SpecialTags');
+        $specialTags->addBehavior('Translate', ['fields' => ['highlighted_time']]);
+
+        $table->belongsToMany('Tags', [
+            'through' => $specialTags
+        ]);
+        $specialTags->locale('eng');
+
+        $result = $table->get(2, ['contain' => 'Tags']);
+        $this->assertNotEmpty($result);
+        $this->assertNotEmpty($result->tags);
+        $this->assertEquals('Translated Time', $result->tags[0]->_joinData->highlighted_time);
     }
 
     /**
