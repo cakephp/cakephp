@@ -326,7 +326,7 @@ class HtmlHelper extends Helper
      *   over value of `escape`)
      * - `confirm` JavaScript confirmation message.
      *
-     * @param string $title The content to be wrapped by <a> tags.
+     * @param string $title The content to be wrapped by `<a>` tags.
      * @param string|array|null $url Cake-relative URL or array of URL parameters, or
      *   external URL (starts with http://)
      * @param array $options Array of options and HTML attributes.
@@ -420,7 +420,7 @@ class HtmlHelper extends Helper
      *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
      *   of your application. Otherwise, the path will be relative to your CSS path, usually webroot/css.
      * @param array $options Array of options and HTML arguments.
-     * @return string|null CSS <link /> or <style /> tag, depending on the type of link.
+     * @return string|null CSS `<link />` or `<style />` tag, depending on the type of link.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#linking-to-css-files
      */
     public function css($path, array $options = [])
@@ -561,7 +561,7 @@ class HtmlHelper extends Helper
      *
      * ### Options
      *
-     * - `safe` (boolean) Whether or not the $script should be wrapped in <![CDATA[ ]]>
+     * - `safe` (boolean) Whether or not the $script should be wrapped in `<![CDATA[ ]]>`
      * - `block` Set to true to append output to view block "script" or provide
      *   custom block name.
      *
