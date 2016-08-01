@@ -157,7 +157,7 @@ class Inflector
         '.*pox', '.*sheep', 'people', 'feedback', 'stadia', '.*?media',
         'chassis', 'clippers', 'debris', 'diabetes', 'equipment', 'gallows',
         'graffiti', 'headquarters', 'information', 'innings', 'news', 'nexus',
-        'proceedings', 'research', 'sea[- ]bass', 'series', 'species', 'weather'
+        'pokemon', 'proceedings', 'research', 'sea[- ]bass', 'series', 'species', 'weather'
     ];
 
     /**
