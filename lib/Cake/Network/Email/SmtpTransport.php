@@ -226,6 +226,7 @@ class SmtpTransport extends AbstractTransport {
 /**
  * Prepares the `from` email address.
  *
+ * @param CakeEmail $email CakeEmail
  * @return array
  */
 	protected function _prepareFromAddress($email) {
@@ -239,9 +240,10 @@ class SmtpTransport extends AbstractTransport {
 /**
  * Prepares the recipient email addresses.
  *
+ * @param CakeEmail $email CakeEmail
  * @return array
  */
-	protected function _prepareRecipientAddresses($email) {
+	protected function _prepareRecipientAddresses(CakeEmail $email) {
 		$to = $email->to();
 		$cc = $email->cc();
 		$bcc = $email->bcc();
@@ -251,18 +253,20 @@ class SmtpTransport extends AbstractTransport {
 /**
  * Prepares the message headers.
  *
+ * @param CakeEmail $email CakeEmail
  * @return array
  */
-	protected function _prepareMessageHeaders($email) {
+	protected function _prepareMessageHeaders(CakeEmail $email) {
 		return $email->getHeaders(array('from', 'sender', 'replyTo', 'readReceipt', 'to', 'cc', 'subject'));
 	}
 
 /**
  * Prepares the message body.
  *
+ * @param CakeEmail $email CakeEmail
  * @return string
  */
-	protected function _prepareMessage($email) {
+	protected function _prepareMessage(CakeEmail $email) {
 		$lines = $email->message();
 		$messages = array();
 		foreach ($lines as $line) {
@@ -278,10 +282,11 @@ class SmtpTransport extends AbstractTransport {
 /**
  * Send emails
  *
+ * @param CakeEmail $email CakeEmail
  * @return void
  * @throws SocketException
  */
-	protected function _sendRcpt($email) {
+	protected function _sendRcpt(CakeEmail $email) {
 		$from = $this->_prepareFromAddress($email);
 		$this->_smtpSend($this->_prepareFromCmd(key($from)));
 
@@ -294,10 +299,11 @@ class SmtpTransport extends AbstractTransport {
 /**
  * Send Data
  *
+ * @param CakeEmail $email CakeEmail
  * @return void
  * @throws SocketException
  */
-	protected function _sendData($email) {
+	protected function _sendData(CakeEmail $email) {
 		$this->_smtpSend('DATA', '354');
 
 		$headers = $this->_headersToString($this->_prepareMessageHeaders($email));
