@@ -30,7 +30,7 @@ class BoolType implements TypeInterface
     /**
      * Identifier name for this type
      *
-     * @var string
+     * @var string|null
      */
     protected $_name = null;
 
