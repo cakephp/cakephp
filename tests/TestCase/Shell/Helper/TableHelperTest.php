@@ -88,6 +88,30 @@ class TableHelperTest extends TestCase
     }
 
     /**
+     * Test output with multi-byte characters
+     *
+     * @return void
+     */
+    public function testOutputFullwidth()
+    {
+        $data = [
+            ['Header 1', 'Head', 'Long Header'],
+            ['short', '竜頭蛇尾', 'short'],
+            ['Longer thing', 'longerish', 'Longest Value'],
+        ];
+        $this->helper->output($data);
+        $expected = [
+            '+--------------+-----------+---------------+',
+            '| <info>Header 1</info>     | <info>Head</info>      | <info>Long Header</info>   |',
+            '+--------------+-----------+---------------+',
+            '| short        | 竜頭蛇尾  | short         |',
+            '| Longer thing | longerish | Longest Value |',
+            '+--------------+-----------+---------------+',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
      * Test output without headers
      *
      * @return void
