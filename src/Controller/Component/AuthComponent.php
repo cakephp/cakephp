@@ -498,14 +498,14 @@ class AuthComponent extends Component
             $this->constructAuthorize();
         }
         foreach ($this->_authorizeObjects as $authorizer) {
-            if ($authorizer->authorize($user, $request) === true) {
+            if ($authorizer->authorize($user, $request) === false) {
                 $this->_authorizationProvider = $authorizer;
 
-                return true;
+                return false;
             }
         }
 
-        return false;
+        return true;
     }
 
     /**
