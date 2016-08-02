@@ -229,7 +229,7 @@ class SmtpTransport extends AbstractTransport {
  * @param CakeEmail $email CakeEmail
  * @return array
  */
-	protected function _prepareFromAddress($email) {
+	protected function _prepareFromAddress(CakeEmail $email) {
 		$from = $email->returnPath();
 		if (empty($from)) {
 			$from = $email->from();
