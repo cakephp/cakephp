@@ -51,7 +51,12 @@ class ResponseTransformer
         foreach ($cookies as $cookie) {
             $cake->cookie($cookie);
         }
-        $cake->header(static::collapseHeaders($response));
+        $headers = static::collapseHeaders($response);
+        $cake->header($headers);
+ 
+        if (!empty($headers['Content-Type'])) {
+            $cake->type($headers['Content-Type']);
+        }
 
         return $cake;
     }
