@@ -58,7 +58,7 @@ class Marshaller
      * Build the map of property => association names.
      *
      * @param array $options List of options containing the 'associated' key.
-     * @throws \InvalidArgumentException
+     * @throws \InvalidArgumentException When associations do not exist.
      * @return array
      */
     protected function _buildPropertyMap($options)
@@ -84,9 +84,9 @@ class Marshaller
             // it is a missing association that we should error on.
             if (substr($key, 0, 1) !== "_") {
                 throw new \InvalidArgumentException(sprintf(
-                    "'%s' is not associated with '%s'",
-                    $this->_table->alias(),
-                    $key
+                    'Cannot marshal data for "%s" association. It is not associated with "%s".',
+                    $key,
+                    $this->_table->alias()
                 ));
             }
         }
