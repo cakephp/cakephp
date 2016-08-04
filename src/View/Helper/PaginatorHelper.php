@@ -486,7 +486,10 @@ class PaginatorHelper extends Helper
         ];
 
         if (!empty($this->_config['options']['url'])) {
-            $key = implode('.', array_filter(['options.url', Hash::get($paging, 'scope', null)]));
+            $key = 'options.url.?';
+            if (!empty($paging['scope'])) {
+                $key = 'options.url.?.' . $paging['scope'];
+            }
             $url = array_merge($url, Hash::get($this->_config, $key, []));
         }
 
