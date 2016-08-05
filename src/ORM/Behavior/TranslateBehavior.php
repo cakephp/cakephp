@@ -74,7 +74,7 @@ class TranslateBehavior extends Behavior
      */
     protected $_defaultConfig = [
         'implementedFinders' => ['translations' => 'findTranslations'],
-        'implementedMethods' => ['locale' => 'locale', 'mergeTranslations' => 'mergeTranslations'],
+        'implementedMethods' => ['locale' => 'locale'],
         'fields' => [],
         'translationTable' => 'I18n',
         'defaultLocale' => '',
@@ -327,44 +327,37 @@ class TranslateBehavior extends Behavior
         $entity->unsetProperty('_i18n');
     }
 
-    /**
-     * Merges `$data` into `$original` entity recursively using Marshaller merge method, if
-     * original entity not has language entity, new one will be created.
-     * The translated entity may only contain the fields defined in the
-     * behavior configuration (`fields`), you can use `fieldList` option as a
-     * whitelist of fields to be assigned.
-     *
-     * The result will be and array [entities, errors]:
-     *  - entities: translated entity indexed by locale name
-     *  - errors: array indexed by locale name
-     * or null if there are no fields to merge.
-     *
-     * @param array $original The original entity data
-     * @param array $data key value list of languages with fields to be merged into the translate entity
-     * @param \Cake\ORM\Marshaller $marshaller Marshaller
-     * @param array $options list of options for Marshaller
-     * @return array|null
-     */
-    public function mergeTranslations($original, array $data, \Cake\ORM\Marshaller $marshaller, array $options = [])
+    public function marshalPropertyMap($marshaller, $map, $options)
     {
-        $options['fieldList'] = (isset($options['fieldList'])) ? array_intersect($this->_config['fields'], $options['fieldList']) : $this->_config['fields'];
-        if (empty($options['fieldList'])) {
-            return null;
+        if (isset($options['translations']) && !$options['translations']) {
+            return [];
         }
 
-        $options['validate'] = $this->_config['validator'];
-        $errors = [];
-        foreach ($data as $language => $fields) {
-            if (!isset($original[$language])) {
-                $original[$language] = $this->_table->newEntity();
+        return [
+            '_translations' => function ($value, $entity) use ($marshaller, $options) {
+                $translations = $entity->get('_translations');
+                foreach ($this->_config['fields'] as $field) {
+                    $options['validate'] = $this->_config['validator'];
+                    $errors = [];
+                    if (!is_array($value)) {
+                        return;
+                    }
+                    foreach ($value as $language => $fields) {
+                        if (!isset($translations[$language])) {
+                            $translations[$language] = $this->_table->newEntity();
+                        }
+                        $marshaller->merge($translations[$language], $fields, $options);
+                        if ((bool)$translations[$language]->errors()) {
+                            $errors[$language] = $translations[$language]->errors();
+                        }
+                    }
+                    // Set errors into the root entity, so validation errors
+                    // match the original form data position.
+                    $entity->errors($errors);
+                }
+                return $translations;
             }
-            $marshaller->merge($original[$language], $fields, $options);
-            if ((bool)$original[$language]->errors()) {
-                $errors[$language] = $original[$language]->errors();
-            }
-        }
-
-        return [$original, $errors];
+        ];
     }
 
     /**

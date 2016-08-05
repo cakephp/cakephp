@@ -2980,75 +2980,7 @@ class MarshallerTest extends TestCase
         $this->assertEquals($expected, $result->toArray());
     }
 
-    /**
-     * Test all scenarios
-     *
-     * @return void
-     */
-    public function testHasTranslations()
-    {
-        // Translate Behavior not attached
-        $table = TableRegistry::get('Articles');
-
-        $marshall = new Marshaller($table);
-        $method = $this->_getProtectedMethod($marshall, '_hasTranslations');
-        $marshallOptions = [
-            'validate' => true,
-            'translations' => true
-        ];
-
-        $result = $method->invokeArgs($marshall, [$marshallOptions]);
-        $this->assertFalse($result, 'should return false');
-        unset($marshall);
-
-        // Translate Behavior is attached
-        $table->behaviors()->load('Translate');
-
-        $marshall = new Marshaller($table);
-        $method = $this->_getProtectedMethod($marshall, '_hasTranslations');
-
-        $result = $method->invokeArgs($marshall, [$marshallOptions]);
-        $this->assertTrue($result, 'should return true');
-
-        //
-        $marshallOptions['translations'] = false;
-        $result = $method->invokeArgs($marshall, [$marshallOptions]);
-        $this->assertFalse($result, 'should return false');
-    }
-
-    public function testAddTranslationToFieldList()
-    {
-        $table = TableRegistry::get('Articles');
-
-        $marshall = new Marshaller($table);
-        $method = $this->_getProtectedMethod($marshall, '_addTranslationsToFieldList');
-        $marshallOptions = [
-            'validate' => true,
-            'translations' => true
-        ];
-
-        // FieldList not present
-        $result = $method->invokeArgs($marshall, [$marshallOptions]);
-        $this->assertArrayNotHasKey('fieldList', $result);
-
-        // Empty fieldlist
-        $marshallOptions['fieldList'] = [];
-        $result = $method->invokeArgs($marshall, [$marshallOptions]);
-        $this->assertEmpty($result['fieldList']);
-
-        // FieldList not has _translations
-        $marshallOptions['fieldList'] = ['name'];
-        $result = $method->invokeArgs($marshall, [$marshallOptions]);
-        $expected = ['name', '_translations'];
-        $this->assertEquals($expected, $result['fieldList']);
-
-        // FieldList has _translations
-        $result = $method->invokeArgs($marshall, [$marshallOptions]);
-        $expected = ['name', '_translations'];
-        $this->assertEquals($expected, $result['fieldList']);
-    }
-
-    public function testMergeTransaltionsWithOneMethod()
+    public function testMergeTranslationsWithOneMethod()
     {
         $this->articles->behaviors()->load('Translate', [
             'fields' => ['title', 'body']
@@ -3180,7 +3112,7 @@ class MarshallerTest extends TestCase
         ];
 
         $marshall = new Marshaller($this->articles);
-        $result = $marshall->one($data, ['fieldList' => ['author_id', 'title']]);
+        $result = $marshall->one($data, ['fieldList' => ['author_id', 'title', '_translations']]);
 
         $expected = [
             'en' => [
@@ -3276,14 +3208,5 @@ class MarshallerTest extends TestCase
         $entityData = $result->toArray();
         $this->assertEquals('Contenido Español', $entityData['_translations']['es']['body']);
         $this->assertEmpty($result->errors());
-    }
-
-    protected function _getProtectedMethod($obj, $name)
-    {
-        $class = new \ReflectionClass($obj);
-        $method = $class->getMethod($name);
-        $method->setAccessible(true);
-
-        return $method;
     }
 }
