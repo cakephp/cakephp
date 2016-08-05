@@ -33,7 +33,7 @@ trait TypeConverterTrait
         if (is_string($type)) {
             $type = Type::build($type);
         }
-        if ($type instanceof Type) {
+        if ($type instanceof TypeInterface) {
             $value = $type->toDatabase($value, $this->_driver);
             $type = $type->toStatement($value, $this->_driver);
         }
