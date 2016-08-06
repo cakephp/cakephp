@@ -15,6 +15,7 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
+use Cake\Database\Type;
 use Cake\Database\TypeInterface;
 use InvalidArgumentException;
 use PDO;
@@ -24,7 +25,7 @@ use PDO;
  *
  * Use to convert bool data between PHP and the database types.
  */
-class BoolType implements TypeInterface
+class BoolType extends Type implements TypeInterface
 {
 
     /**
@@ -42,19 +43,6 @@ class BoolType implements TypeInterface
     public function __construct($name = null)
     {
         $this->_name = $name;
-    }
-
-    /**
-     * Returns the base type name that this class is inheriting.
-     * This is useful when extending base type for adding extra functionality
-     * but still want the rest of the framework to use the same assumptions it would
-     * do about the base type it inherits from.
-     *
-     * @return string
-     */
-    public function getBaseType()
-    {
-        return $this->_name;
     }
 
     /**

@@ -17,6 +17,7 @@ namespace Cake\Database\Type;
 use Cake\Core\Exception\Exception;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
+use Cake\Database\Type;
 use Cake\Database\TypeInterface;
 use PDO;
 
@@ -25,7 +26,7 @@ use PDO;
  *
  * Use to convert binary data between PHP and the database types.
  */
-class BinaryType implements TypeInterface
+class BinaryType extends Type implements TypeInterface
 {
 
     /**
@@ -43,19 +44,6 @@ class BinaryType implements TypeInterface
     public function __construct($name = null)
     {
         $this->_name = $name;
-    }
-
-    /**
-     * Returns the base type name that this class is inheriting.
-     * This is useful when extending base type for adding extra functionality
-     * but still want the rest of the framework to use the same assumptions it would
-     * do about the base type it inherits from.
-     *
-     * @return string
-     */
-    public function getBaseType()
-    {
-        return $this->_name;
     }
 
     /**
