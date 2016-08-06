@@ -1191,6 +1191,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testBelongsToManyJoinDataAssociation()
     {
+        $this->loadFixtures('Authors', 'Articles', 'Tags', 'SpecialTags');
         $articles = TableRegistry::get('Articles');
 
         $tags = TableRegistry::get('Tags');
@@ -1211,7 +1212,7 @@ class QueryRegressionTest extends TestCase
         $this->assertNotEmpty($result->tags, 'Missing tags');
         $this->assertNotEmpty($result->tags[0], 'Missing first tag');
         $this->assertNotEmpty($result->tags[0]->_joinData, 'Missing _joinData');
-        $this->assertNotEmpty($result->tags[0]->_joinData->author, 'Missing author on _joinData');
+        $this->assertNotEmpty($result->tags[0]->special_tags[0]->author, 'Missing author on _joinData');
     }
 
     /**

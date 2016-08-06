@@ -86,6 +86,14 @@ class EagerLoadable
     protected $_forMatching;
 
     /**
+     * The property name where the association result should be nested
+     * in the result.
+     *
+     * @var string
+     */
+    protected $_targetProperty;
+
+    /**
      * Constructor. The $config parameter accepts the following array
      * keys:
      *
@@ -96,6 +104,7 @@ class EagerLoadable
      * - aliasPath
      * - propertyPath
      * - forMatching
+     * - targetProperty
      *
      * The keys maps to the settable properties in this class.
      *
@@ -107,7 +116,7 @@ class EagerLoadable
         $this->_name = $name;
         $allowed = [
             'associations', 'instance', 'config', 'canBeJoined',
-            'aliasPath', 'propertyPath', 'forMatching'
+            'aliasPath', 'propertyPath', 'forMatching', 'targetProperty'
         ];
         foreach ($allowed as $property) {
             if (isset($config[$property])) {
@@ -213,6 +222,17 @@ class EagerLoadable
     public function forMatching()
     {
         return $this->_forMatching;
+    }
+
+    /**
+     * The property name where the result of this association
+     * should be nested at the end.
+     *
+     * @return string
+     */
+    public function targetProperty()
+    {
+        return $this->_targetProperty;
     }
 
     /**

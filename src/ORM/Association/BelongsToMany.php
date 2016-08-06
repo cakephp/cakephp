@@ -411,20 +411,6 @@ class BelongsToMany extends Association
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function transformRow($row, $nestKey, $joined)
-    {
-        $alias = $this->junction()->alias();
-        if ($joined) {
-            $row[$this->target()->alias()][$this->_junctionProperty] = $row[$alias];
-            unset($row[$alias]);
-        }
-
-        return parent::transformRow($row, $nestKey, $joined);
-    }
-
-    /**
      * Get the relationship type.
      *
      * @return string
@@ -458,21 +444,14 @@ class BelongsToMany extends Association
     {
         $resultMap = [];
         $key = (array)$options['foreignKey'];
-        $property = $this->target()->association($this->junction()->alias())->property();
         $hydrated = $fetchQuery->hydrate();
 
         foreach ($fetchQuery->all() as $result) {
-            if (!isset($result[$property])) {
+            if (!isset($result[$this->_junctionProperty])) {
                 throw new RuntimeException(sprintf(
                     '"%s" is missing from the belongsToMany results. Results cannot be created.',
                     $property
                 ));
-            }
-            $result[$this->_junctionProperty] = $result[$property];
-
-
-            if ($hydrated) {
-                $result->dirty($this->_junctionProperty, false);
             }
 
             $values = [];
@@ -966,7 +945,7 @@ class BelongsToMany extends Association
      * @param string|array $conditions The query conditions to use.
      * @return \Cake\ORM\Query The modified query.
      */
-    protected function _appendJunctionJoin($query, $conditions)
+    protected function _appendJunctionJoin($query, $conditions, $options = [])
     {
         $name = $this->_junctionAssociationName();
         $joins = $query->join();
@@ -982,7 +961,9 @@ class BelongsToMany extends Association
         $query
             ->addDefaultTypes($assoc->target())
             ->join($matching + $joins, [], true);
-        $query->eagerLoader()->addToJoinsMap($name, $assoc);
+
+        $targetProperty = empty($options['targetProperty']) ? null : $options['targetProperty'];
+        $query->eagerLoader()->addToJoinsMap($this->_name . '_Cjoin', $assoc, false, $targetProperty);
 
         return $query;
     }
@@ -1270,7 +1251,7 @@ class BelongsToMany extends Association
             $query = $queryBuilder($query);
         }
 
-        $query = $this->_appendJunctionJoin($query, []);
+        $query = $this->_appendJunctionJoin($query, [], ['targetProperty' => $this->_junctionProperty]);
 
         if ($query->autoFields() === null) {
             $query->autoFields($query->clause('select') === []);
@@ -1278,11 +1259,20 @@ class BelongsToMany extends Association
 
         // Ensure that association conditions are applied
         // and that the required keys are in the selected columns.
+
+        $tempName = $this->name();
+        $fields = $query->autoFields() ? $assoc->schema()->columns() : (array)$assoc->foreignKey();
+        $joinFields = [];
+        foreach ($fields as $f ) {
+            $joinFields[$tempName . '_Cjoin__' . $f] = "$name.$f";
+        }
+
+        $fields = array_combine(array_keys($joinFields), $fields);
         $query
             ->where($this->junctionConditions())
-            ->select($query->aliasFields((array)$assoc->foreignKey(), $name));
+            ->select($joinFields);
 
-        $assoc->attachTo($query);
+        $assoc->attachTo($query, ['aliasPath' => $assoc->alias(), 'includeFields' => false]);
         return $query;
     }
 

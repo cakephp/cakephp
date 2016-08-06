@@ -643,12 +643,13 @@ abstract class Association
      *   with this association
      * @return array
      */
-    public function transformRow($row, $nestKey, $joined)
+    public function transformRow($row, $nestKey, $joined, $targetProperty = null)
     {
         $sourceAlias = $this->source()->alias();
         $nestKey = $nestKey ?: $this->_name;
+        $targetProperty = $targetProperty ?: $this->property();
         if (isset($row[$sourceAlias])) {
-            $row[$sourceAlias][$this->property()] = $row[$nestKey];
+            $row[$sourceAlias][$targetProperty] = $row[$nestKey];
             unset($row[$nestKey]);
         }
 
