@@ -1261,7 +1261,7 @@ class BelongsToMany extends Association
         $schema = $assoc->schema();
         $joinFields = $types = [];
 
-        foreach ($schema->typeMap() as $f => $type ) {
+        foreach ($schema->typeMap() as $f => $type) {
             $key = $tempName . '__' . $f;
             $joinFields[$key] = "$name.$f";
             $types[$key] = $type;
