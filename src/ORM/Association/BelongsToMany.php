@@ -450,7 +450,7 @@ class BelongsToMany extends Association
             if (!isset($result[$this->_junctionProperty])) {
                 throw new RuntimeException(sprintf(
                     '"%s" is missing from the belongsToMany results. Results cannot be created.',
-                    $property
+                    $this->_junctionProperty
                 ));
             }
 
@@ -945,7 +945,7 @@ class BelongsToMany extends Association
      * @param string|array $conditions The query conditions to use.
      * @return \Cake\ORM\Query The modified query.
      */
-    protected function _appendJunctionJoin($query, $conditions, $options = [])
+    protected function _appendJunctionJoin($query, $conditions)
     {
         $name = $this->_junctionAssociationName();
         $joins = $query->join();
@@ -961,9 +961,6 @@ class BelongsToMany extends Association
         $query
             ->addDefaultTypes($assoc->target())
             ->join($matching + $joins, [], true);
-
-        $targetProperty = empty($options['targetProperty']) ? null : $options['targetProperty'];
-        $query->eagerLoader()->addToJoinsMap($this->_name . '_Cjoin', $assoc, false, $targetProperty);
 
         return $query;
     }
@@ -1251,7 +1248,7 @@ class BelongsToMany extends Association
             $query = $queryBuilder($query);
         }
 
-        $query = $this->_appendJunctionJoin($query, [], ['targetProperty' => $this->_junctionProperty]);
+        $query = $this->_appendJunctionJoin($query, []);
 
         if ($query->autoFields() === null) {
             $query->autoFields($query->clause('select') === []);
@@ -1260,18 +1257,24 @@ class BelongsToMany extends Association
         // Ensure that association conditions are applied
         // and that the required keys are in the selected columns.
 
-        $tempName = $this->name();
-        $fields = $query->autoFields() ? $assoc->schema()->columns() : (array)$assoc->foreignKey();
-        $joinFields = [];
-        foreach ($fields as $f ) {
-            $joinFields[$tempName . '_Cjoin__' . $f] = "$name.$f";
+        $tempName = $this->_name . '_CJoin';
+        $schema = $assoc->schema();
+        $joinFields = $types = [];
+
+        foreach ($schema->typeMap() as $f => $type ) {
+            $key = $tempName . '__' . $f;
+            $joinFields[$key] = "$name.$f";
+            $types[$key] = $type;
         }
 
-        $fields = array_combine(array_keys($joinFields), $fields);
         $query
             ->where($this->junctionConditions())
-            ->select($joinFields);
+            ->select($joinFields)
+            ->defaultTypes($types);
 
+        $query
+            ->eagerLoader()
+            ->addToJoinsMap($tempName, $assoc, false, $this->_junctionProperty);
         $assoc->attachTo($query, ['aliasPath' => $assoc->alias(), 'includeFields' => false]);
         return $query;
     }

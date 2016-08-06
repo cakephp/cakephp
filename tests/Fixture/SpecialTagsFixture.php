@@ -34,6 +34,7 @@ class SpecialTagsFixture extends TestFixture
         'tag_id' => ['type' => 'integer', 'null' => false],
         'highlighted' => ['type' => 'boolean', 'null' => true],
         'highlighted_time' => ['type' => 'timestamp', 'null' => true],
+        'extra_info' => ['type' => 'string'],
         'author_id' => ['type' => 'integer', 'null' => true],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id']],
@@ -47,8 +48,8 @@ class SpecialTagsFixture extends TestFixture
      * @var array
      */
     public $records = [
-        ['article_id' => 1, 'tag_id' => 3, 'highlighted' => false, 'highlighted_time' => null, 'author_id' => 1],
-        ['article_id' => 2, 'tag_id' => 1, 'highlighted' => true, 'highlighted_time' => '2014-06-01 10:10:00', 'author_id' => 2],
-        ['article_id' => 10, 'tag_id' => 10, 'highlighted' => true, 'highlighted_time' => '2014-06-01 10:10:00', 'author_id' => null]
+        ['article_id' => 1, 'tag_id' => 3, 'highlighted' => false, 'highlighted_time' => null, 'extra_info' => 'Foo', 'author_id' => 1],
+        ['article_id' => 2, 'tag_id' => 1, 'highlighted' => true, 'highlighted_time' => '2014-06-01 10:10:00', 'extra_info' => 'Bar', 'author_id' => 2],
+        ['article_id' => 10, 'tag_id' => 10, 'highlighted' => true, 'highlighted_time' => '2014-06-01 10:10:00', 'extra_info' => 'Baz', 'author_id' => null]
     ];
 }

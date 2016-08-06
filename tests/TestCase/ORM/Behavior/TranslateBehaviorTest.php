@@ -672,7 +672,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = TableRegistry::get('Articles');
         $specialTags = TableRegistry::get('SpecialTags');
-        $specialTags->addBehavior('Translate', ['fields' => ['highlighted_time']]);
+        $specialTags->addBehavior('Translate', ['fields' => ['extra_info']]);
 
         $table->belongsToMany('Tags', [
             'through' => $specialTags
@@ -682,7 +682,7 @@ class TranslateBehaviorTest extends TestCase
         $result = $table->get(2, ['contain' => 'Tags']);
         $this->assertNotEmpty($result);
         $this->assertNotEmpty($result->tags);
-        $this->assertEquals('Translated Time', $result->tags[0]->_joinData->highlighted_time);
+        $this->assertEquals('Translated Info', $result->tags[0]->special_tags[0]->extra_info);
     }
 
     /**

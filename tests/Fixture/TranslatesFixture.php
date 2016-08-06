@@ -80,6 +80,6 @@ class TranslatesFixture extends TestFixture
         ['locale' => 'eng', 'model' => 'Authors', 'foreign_key' => 1, 'field' => 'name', 'content' => 'May-rianoh'],
         ['locale' => 'dan', 'model' => 'NumberTrees', 'foreign_key' => 1, 'field' => 'name', 'content' => 'Elektroniker'],
         ['locale' => 'dan', 'model' => 'NumberTrees', 'foreign_key' => 11, 'field' => 'name', 'content' => 'Alien Tingerne'],
-        ['locale' => 'eng', 'model' => 'SpecialTags', 'foreign_key' => 2, 'field' => 'highlighted_time', 'content' => 'Translated Time'],
+        ['locale' => 'eng', 'model' => 'SpecialTags', 'foreign_key' => 2, 'field' => 'extra_info', 'content' => 'Translated Info'],
     ];
 }
