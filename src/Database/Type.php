@@ -21,7 +21,7 @@ use PDO;
  * Encapsulates all conversion functions for values coming from database into PHP and
  * going from PHP into database.
  */
-class Type
+class Type implements TypeInterface
 {
 
     /**
