@@ -3683,22 +3683,12 @@ class FormHelperTest extends TestCase
      * Test invalid 'input' type option to input() function.
      *
      * @expectedException \RuntimeException
+     * @expectedExceptionMessage Invalid type 'input' used for field 'text'
      * @return void
      */
-    public function testInvalidInputTypeOptionLowercase()
+    public function testInvalidInputTypeOption()
     {
         $this->Form->input('text', ['type' => 'input']);
-    }
-
-    /**
-     * Test invalid 'Input' type option to input() function.
-     *
-     * @expectedException \RuntimeException
-     * @return void
-     */
-    public function testInvalidInputTypeOptionUppercase()
-    {
-        $this->Form->input('text', ['type' => 'Input']);
     }
 
     /**
