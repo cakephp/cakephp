@@ -355,6 +355,7 @@ class TranslateBehavior extends Behavior
                     // match the original form data position.
                     $entity->errors($errors);
                 }
+
                 return $translations;
             }
         ];
