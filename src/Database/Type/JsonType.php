@@ -16,6 +16,7 @@ namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
 use Cake\Database\Type;
+use Cake\Database\TypeInterface;
 use InvalidArgumentException;
 use JsonSerializable;
 use PDO;
@@ -25,7 +26,7 @@ use PDO;
  *
  * Use to convert json data between PHP and the database types.
  */
-class JsonType extends Type
+class JsonType extends Type implements TypeInterface
 {
 
     /**
