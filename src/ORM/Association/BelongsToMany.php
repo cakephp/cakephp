@@ -468,15 +468,8 @@ class BelongsToMany extends Association
                     $property
                 ));
             }
-            $junctionData = $result[$property];
+            $result[$this->_junctionProperty] = $result[$property];
 
-            // Account for incorrectly nested data from hasMany
-            // bindings when junction tables have additional associations loaded
-            if (isset($result[$property][0])) {
-                $junctionData = $result[$property][0];
-            }
-            $result[$this->_junctionProperty] = $junctionData;
-            unset($result[$property]);
 
             if ($hydrated) {
                 $result->dirty($this->_junctionProperty, false);
@@ -1289,13 +1282,7 @@ class BelongsToMany extends Association
             ->where($this->junctionConditions())
             ->select($query->aliasFields((array)$assoc->foreignKey(), $name));
 
-        // If this hasMany attaches any other containments, then the junction
-        // table is queried twice. Ideally the EagerLoader could resolve the duplication,
-        // and merge the resulting eagerloadable instances.
-        //
-        // We have to define aliasPath, so any nested contains will work.
-        $assoc->attachTo($query, ['aliasPath' => $assoc->alias()]);
-
+        $assoc->attachTo($query);
         return $query;
     }
 
