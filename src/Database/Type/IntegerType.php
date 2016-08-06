@@ -15,7 +15,7 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
-use Cake\Database\Type;
+use Cake\Database\TypeInterface;
 use InvalidArgumentException;
 use PDO;
 
@@ -24,8 +24,52 @@ use PDO;
  *
  * Use to convert integer data between PHP and the database types.
  */
-class IntegerType extends Type
+class IntegerType implements TypeInterface
 {
+
+    /**
+     * Identifier name for this type
+     *
+     * @var string|null
+     */
+    protected $_name = null;
+
+    /**
+     * Constructor
+     *
+     * @param string|null $name The name identifying this type
+     */
+    public function __construct($name = null)
+    {
+        $this->_name = $name;
+    }
+
+    /**
+     * Returns the base type name that this class is inheriting.
+     * This is useful when extending base type for adding extra functionality
+     * but still want the rest of the framework to use the same assumptions it would
+     * do about the base type it inherits from.
+     *
+     * @return string
+     */
+    public function getBaseType()
+    {
+        return $this->_name;
+    }
+
+    /**
+     * Generate a new primary key value for a given type.
+     *
+     * This method can be used by types to create new primary key values
+     * when entities are inserted.
+     *
+     * @return mixed A new primary key value.
+     * @see \Cake\Database\Type\UuidType
+     */
+    public function newId()
+    {
+        return null;
+    }
 
     /**
      * Convert integer data into the database format.

@@ -16,6 +16,7 @@ namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
 use Cake\Database\Type;
+use Cake\Database\TypeInterface;
 use InvalidArgumentException;
 use PDO;
 
@@ -24,7 +25,7 @@ use PDO;
  *
  * Use to convert string data between PHP and the database types.
  */
-class StringType extends Type implements OptionalConvertInterface
+class StringType extends Type implements OptionalConvertInterface, TypeInterface
 {
 
     /**
