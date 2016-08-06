@@ -709,12 +709,12 @@ class BelongsToMany extends Association
      * `$article->get('tags')` will contain all tags in `$newTags` after liking
      *
      * @param \Cake\Datasource\EntityInterface $sourceEntity the row belonging to the `source` side
-     * of this association
+     *   of this association
      * @param array $targetEntities list of entities belonging to the `target` side
-     * of this association
+     *   of this association
      * @param array $options list of options to be passed to the internal `save` call
      * @throws \InvalidArgumentException when any of the values in $targetEntities is
-     * detected to not be already persisted
+     *   detected to not be already persisted
      * @return bool true on success, false otherwise
      */
     public function link(EntityInterface $sourceEntity, array $targetEntities, array $options = [])
@@ -759,14 +759,14 @@ class BelongsToMany extends Association
      * `$article->get('tags')` will contain only `[$tag4]` after deleting in the database
      *
      * @param \Cake\Datasource\EntityInterface $sourceEntity an entity persisted in the source table for
-     * this association
+     *   this association
      * @param array $targetEntities list of entities persisted in the target table for
-     * this association
+     *   this association
      * @param array|bool $options list of options to be passed to the internal `delete` call,
-     * or a `boolean`
+     *   or a `boolean`
      * @throws \InvalidArgumentException if non persisted entities are passed or if
-     * any of them is lacking a primary key value
-     * @return void
+     *   any of them is lacking a primary key value
+     * @return bool Success
      */
     public function unlink(EntityInterface $sourceEntity, array $targetEntities, $options = [])
     {
@@ -792,7 +792,7 @@ class BelongsToMany extends Association
 
         $existing = $sourceEntity->get($property) ?: [];
         if (!$options['cleanProperty'] || empty($existing)) {
-            return;
+            return true;
         }
 
         $storage = new SplObjectStorage;
@@ -808,6 +808,7 @@ class BelongsToMany extends Association
 
         $sourceEntity->set($property, array_values($existing));
         $sourceEntity->dirty($property, false);
+        return true;
     }
 
     /**
@@ -991,12 +992,12 @@ class BelongsToMany extends Association
      * `$article->get('tags')` will contain only `[$tag1, $tag3]` at the end
      *
      * @param \Cake\Datasource\EntityInterface $sourceEntity an entity persisted in the source table for
-     * this association
+     *   this association
      * @param array $targetEntities list of entities from the target table to be linked
      * @param array $options list of options to be passed to the internal `save`/`delete` calls
-     * when persisting/updating new links, or deleting existing ones
+     *   when persisting/updating new links, or deleting existing ones
      * @throws \InvalidArgumentException if non persisted entities are passed or if
-     * any of them is lacking a primary key value
+     *   any of them is lacking a primary key value
      * @return bool success
      */
     public function replaceLinks(EntityInterface $sourceEntity, array $targetEntities, array $options = [])

@@ -518,7 +518,7 @@ class BelongsToManyTest extends TestCase
         $initial = $entity->tags;
         $this->assertCount(1, $initial);
 
-        $assoc->unlink($entity, $entity->tags);
+        $this->assertTrue($assoc->unlink($entity, $entity->tags));
         $this->assertEmpty($entity->get('tags'), 'Property should be empty');
 
         $new = $articles->get(2, ['contain' => 'Tags']);
@@ -549,7 +549,7 @@ class BelongsToManyTest extends TestCase
         $initial = $entity->tags;
         $this->assertCount(1, $initial);
 
-        $assoc->unlink($entity, $initial, ['cleanProperty' => false]);
+        $this->assertTrue($assoc->unlink($entity, $initial, ['cleanProperty' => false]));
         $this->assertNotEmpty($entity->get('tags'), 'Property should not be empty');
         $this->assertEquals($initial, $entity->get('tags'), 'Property should be untouched');
 
