@@ -15,6 +15,7 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
+use Cake\Database\Type;
 use Cake\Database\TypeInterface;
 use DateTimeInterface;
 use Exception;
@@ -26,7 +27,7 @@ use RuntimeException;
  *
  * Use to convert datetime instances to strings & back.
  */
-class DateTimeType implements TypeInterface
+class DateTimeType extends Type implements TypeInterface
 {
 
     /**
