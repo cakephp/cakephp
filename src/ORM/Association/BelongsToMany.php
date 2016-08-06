@@ -808,6 +808,7 @@ class BelongsToMany extends Association
 
         $sourceEntity->set($property, array_values($existing));
         $sourceEntity->dirty($property, false);
+
         return true;
     }
 
