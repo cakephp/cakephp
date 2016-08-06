@@ -641,6 +641,8 @@ abstract class Association
      *   should be found
      * @param bool $joined Whether or not the row is a result of a direct join
      *   with this association
+     * @param string $targetProperty The property name in the source results where the association
+     * data shuld be nested in. Will use the default one if not provided.
      * @return array
      */
     public function transformRow($row, $nestKey, $joined, $targetProperty = null)
