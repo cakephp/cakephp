@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.2.13
+ * @since         3.2.14
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database;
@@ -68,4 +68,22 @@ interface TypeInterface
      * @return string
      */
     public function getBaseType();
+
+    /**
+     * Returns type identifier name for this object
+     *
+     * @return string
+     */
+    public function getName();
+
+    /**
+     * Generate a new primary key value for a given type.
+     *
+     * This method can be used by types to create new primary key values
+     * when entities are inserted.
+     *
+     * @return mixed A new primary key value.
+     * @see \Cake\Database\Type\UuidType
+     */
+    public function newId();
 }
