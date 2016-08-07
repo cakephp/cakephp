@@ -20,6 +20,7 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
+use Cake\ORM\MarshalParticipantInterface;
 use RuntimeException;
 
 /**
@@ -88,7 +89,7 @@ class Marshaller
             $assoc = $this->_table->association($key);
             // If the key is not a special field like _ids or _joinData
             // it is a missing association that we should error on.
-            if (!$assoc)
+            if (!$assoc) {
                 if (substr($key, 0, 1) !== '_') {
                     throw new \InvalidArgumentException(sprintf(
                         'Cannot marshal data for "%s" association. It is not associated with "%s".',
@@ -117,9 +118,8 @@ class Marshaller
         $behaviors = $this->_table->behaviors();
         foreach ($behaviors->loaded() as $name) {
             $behavior = $behaviors->get($name);
-            // TODO use an interface here.
-            if (method_exists($behavior, 'marshalPropertyMap')) {
-                $map = $behavior->marshalPropertyMap($this, $map, $options);
+            if ($behavior instanceof MarshalParticipantInterface) {
+                $map = $behavior->buildMarhshalMap($this, $map, $options);
             }
         }
 

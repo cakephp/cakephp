@@ -22,6 +22,7 @@ use Cake\I18n\I18n;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\MarshalParticipantInterface;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
@@ -38,7 +39,7 @@ use Cake\Utility\Inflector;
  * If you want to bring all or certain languages for each of the fetched records,
  * you can use the custom `translations` finders that is exposed to the table.
  */
-class TranslateBehavior extends Behavior
+class TranslateBehavior extends Behavior implements MarshalParticipantInterface
 {
 
     use LocatorAwareTrait;
@@ -327,7 +328,14 @@ class TranslateBehavior extends Behavior
         $entity->unsetProperty('_i18n');
     }
 
-    public function marshalPropertyMap($marshaller, $map, $options)
+    /**
+     * Add in _translations marshalling handlers if translation marshalling is
+     * enabled. You need to specifically enable translation marshalling by adding
+     * `'translations' => true` to the options provided to `Table::newEntity()` or `Table::patchEntity()`.
+     *
+     * {@inheritDoc}
+     */
+    public function buildMarhshalMap($marshaller, $map, $options)
     {
         if (isset($options['translations']) && !$options['translations']) {
             return [];
