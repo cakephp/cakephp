@@ -397,7 +397,7 @@ class CakeRequest implements ArrayAccess {
 
 /**
  * Get the content type used in this request.
- * 
+ *
  * @return string
  */
 	public function contentType() {
@@ -748,7 +748,12 @@ class CakeRequest implements ArrayAccess {
  * @return mixed Either false on no header being set or the value of the header.
  */
 	public static function header($name) {
-		$name = 'HTTP_' . strtoupper(str_replace('-', '_', $name));
+		$http_name = 'HTTP_' . strtoupper(str_replace('-', '_', $name));
+		if (isset($_SERVER[$http_name])) {
+			return $_SERVER[$http_name];
+		}
+		// Work around Apache issue handling the "Authorization" header
+		// differently than other headers.
 		if (isset($_SERVER[$name])) {
 			return $_SERVER[$name];
 		}
