@@ -1276,6 +1276,7 @@ class BelongsToMany extends Association
             ->eagerLoader()
             ->addToJoinsMap($tempName, $assoc, false, $this->_junctionProperty);
         $assoc->attachTo($query, ['aliasPath' => $assoc->alias(), 'includeFields' => false]);
+
         return $query;
     }
 

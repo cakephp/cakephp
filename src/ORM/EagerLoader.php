@@ -657,6 +657,8 @@ class EagerLoader
      * will be normalized
      * @param bool $asMatching Whether or not this join results should be treated as a
      * 'matching' association.
+     * @param string $targetProperty The property name where the results of the join should be nested at.
+     * If not passed, the default property for the association will be used.
      * @return void
      */
     public function addToJoinsMap($alias, Association $assoc, $asMatching = false, $targetProperty = null)
