@@ -71,6 +71,9 @@ class TestShell extends Shell {
 		))->addOption('coverage-clover', array(
 			'help' => __d('cake_console', '<file> Write code coverage data in Clover XML format.'),
 			'default' => false
+		))->addOption('coverage-text', array(
+			'help' => __d('cake_console', 'Output code coverage report in Text format.'),
+			'boolean' => true
 		))->addOption('testdox-html', array(
 			'help' => __d('cake_console', '<file> Write agile documentation in HTML format to file.'),
 			'default' => false
