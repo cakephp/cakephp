@@ -3006,6 +3006,12 @@ class MarshallerTest extends TestCase
         $this->assertTrue($entity->user->isNew());
     }
 
+    /**
+     * Test that primary key meta data is being read from the table
+     * and not the schema reflection when handling belongsToMany associations.
+     *
+     * @return void
+     */
     public function testEnsurePrimaryKeyBeingReadFromTableForHandlingEmptyStringPrimaryKey()
     {
         $data = [
@@ -3023,6 +3029,12 @@ class MarshallerTest extends TestCase
         $this->assertNull($result->id);
     }
 
+    /**
+     * Test that primary key meta data is being read from the table
+     * and not the schema reflection when handling belongsToMany associations.
+     *
+     * @return void
+     */
     public function testEnsurePrimaryKeyBeingReadFromTableWhenLoadingBelongsToManyRecordsByPrimaryKey()
     {
         $data = [
@@ -3060,6 +3072,13 @@ class MarshallerTest extends TestCase
         $this->assertEquals($expected, $result->toArray());
     }
 
+
+    /**
+     * Test one() propagates validation errors up.
+     *
+     * @return void
+     * @todo Move to TranslateBehavior test.
+     */
     public function testMergeTranslationsWithOneMethod()
     {
         $this->articles->behaviors()->load('Translate', [
@@ -3092,6 +3111,12 @@ class MarshallerTest extends TestCase
         $this->assertEquals($data['_translations']['en'], $translations['en']->toArray());
     }
 
+    /**
+     * Test one() propagates validation errors up.
+     *
+     * @return void
+     * @todo Move to TranslateBehavior test.
+     */
     public function testMergeTranslationsWithOneMethodAndReturnErrors()
     {
         $this->articles->behaviors()->load('Translate', [
@@ -3132,7 +3157,13 @@ class MarshallerTest extends TestCase
         $this->assertEquals($expected, $errors['_translations']);
     }
 
-    public function testMergeTransaltionsWithMergeMethod()
+    /**
+     * Test merge() creates new translations.
+     *
+     * @return void
+     * @todo Move to TranslateBehavior test.
+     */
+    public function testMergeTranslationsWithMergeMethodNewTranslations()
     {
         $this->articles->behaviors()->load('Translate', [
             'fields' => ['title', 'body']
@@ -3167,15 +3198,18 @@ class MarshallerTest extends TestCase
         $this->assertEquals($data['_translations']['en'], $translations['en']->toArray());
     }
 
+    /**
+     * Test that adding _translations to fieldList allows
+     * all translated entities in.
+     *
+     * @return void
+     * @todo Move to TranslateBehavior test.
+     */
     public function testMergeTranslationsWithOneMethodWithFieldList()
     {
         $this->articles->behaviors()->load('Translate', [
             'fields' => ['title', 'body'],
-            'validator' => 'custom'
         ]);
-
-        $validator = (new Validator)->add('title', 'notBlank', ['rule' => 'notBlank']);
-        $this->articles->validator('custom', $validator);
 
         $data = [
             'author_id' => 1,
@@ -3194,22 +3228,20 @@ class MarshallerTest extends TestCase
         $marshall = new Marshaller($this->articles);
         $result = $marshall->one($data, ['fieldList' => ['author_id', 'title', '_translations']]);
 
-        $expected = [
-            'en' => [
-                'title' => 'English Title'
-            ],
-            'es' => [
-                'title' => 'Titulo Español'
-            ]
-        ];
-        $translations = $result->get('_translations');
-
         $this->assertTrue($result->has('author_id'));
         $this->assertEmpty($result->errors());
-        $this->assertEquals($expected['en'], $translations['en']->toArray());
-        $this->assertEquals($expected['es'], $translations['es']->toArray());
+
+        $translations = $result->get('_translations');
+        $this->assertEquals(['title' => 'English Title'], $translations['en']->toArray());
+        $this->assertEquals(['title' => 'Titulo Español'], $translations['es']->toArray());
     }
 
+    /**
+     * Test merge() with translations and failing validation rules.
+     *
+     * @return void
+     * @todo Move to TranslateBehavior test.
+     */
     public function testMergeTranslationsWithMergeMethodAndReturnErrors()
     {
         $this->articles->behaviors()->load('Translate', [
@@ -3246,10 +3278,16 @@ class MarshallerTest extends TestCase
             ]
         ];
         $errors = $result->errors();
-        $this->assertArrayHasKey('_translations', $errors);
-        $this->assertEquals($expected, $errors['_translations']);
+        $this->assertArrayHasKey('_translations', $errors, 'Validation errors should propagate up');
+        $this->assertEquals($expected, $errors['_translations'], 'Translation validation errors should match');
     }
 
+    /**
+     * test merge with translations and passing validation rules applied
+     *
+     * @return void
+     * @todo Move to TranslateBehavior test.
+     */
     public function testMergeTranslationsWithMergeMethodUpdateFields()
     {
         $this->articles->behaviors()->load('Translate', [
