@@ -20,7 +20,7 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
-use Cake\ORM\MarshalParticipantInterface;
+use Cake\ORM\PropertyMarshalInterface;
 use RuntimeException;
 
 /**
@@ -118,7 +118,7 @@ class Marshaller
         $behaviors = $this->_table->behaviors();
         foreach ($behaviors->loaded() as $name) {
             $behavior = $behaviors->get($name);
-            if ($behavior instanceof MarshalParticipantInterface) {
+            if ($behavior instanceof PropertyMarshalInterface) {
                 $map = $behavior->buildMarhshalMap($this, $map, $options);
             }
         }

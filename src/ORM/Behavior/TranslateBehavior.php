@@ -22,7 +22,7 @@ use Cake\I18n\I18n;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\ORM\MarshalParticipantInterface;
+use Cake\ORM\PropertyMarshalInterface;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
@@ -39,7 +39,7 @@ use Cake\Utility\Inflector;
  * If you want to bring all or certain languages for each of the fetched records,
  * you can use the custom `translations` finders that is exposed to the table.
  */
-class TranslateBehavior extends Behavior implements MarshalParticipantInterface
+class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 {
 
     use LocatorAwareTrait;

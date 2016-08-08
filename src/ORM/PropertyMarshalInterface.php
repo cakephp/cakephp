@@ -20,7 +20,7 @@ namespace Cake\ORM;
  * This enables behaviors to define behavior for how the properties they provide/manage
  * should be marshalled.
  */
-interface MarshalParticipantInterface
+interface PropertyMarshalInterface
 {
     /**
      * Build a set of properties that should be included in the marshalling process.
