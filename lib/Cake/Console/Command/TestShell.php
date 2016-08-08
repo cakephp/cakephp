@@ -152,6 +152,7 @@ class TestShell extends Shell {
 			'default' => false
 		))->addOption('directive', array(
 			'help' => __d('cake_console', 'key[=value] Sets a php.ini value.'),
+			'short' => 'd',
 			'default' => false
 		))->addOption('fixture', array(
 			'help' => __d('cake_console', 'Choose a custom fixture manager.')
@@ -234,7 +235,11 @@ class TestShell extends Shell {
 			if ($value === false) {
 				continue;
 			}
-			$options[] = '--' . $param;
+			if ($param === 'directive') {
+				$options[] = '-d';
+			} else {
+				$options[] = '--' . $param;
+			}
 			if (is_string($value)) {
 				$options[] = $value;
 			}
