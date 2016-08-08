@@ -13,7 +13,7 @@
  */
 namespace Cake\Http\Client\Auth;
 
-use Cake\Network\Http\Request;
+use Cake\Http\Client\Request;
 
 /**
  * Basic authentication adapter for Cake\Network\Http\Client
