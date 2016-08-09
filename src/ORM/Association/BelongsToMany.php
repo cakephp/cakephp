@@ -411,20 +411,6 @@ class BelongsToMany extends Association
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function transformRow($row, $nestKey, $joined)
-    {
-        $alias = $this->junction()->alias();
-        if ($joined) {
-            $row[$this->target()->alias()][$this->_junctionProperty] = $row[$alias];
-            unset($row[$alias]);
-        }
-
-        return parent::transformRow($row, $nestKey, $joined);
-    }
-
-    /**
      * Get the relationship type.
      *
      * @return string
@@ -458,21 +444,14 @@ class BelongsToMany extends Association
     {
         $resultMap = [];
         $key = (array)$options['foreignKey'];
-        $property = $this->target()->association($this->junction()->alias())->property();
         $hydrated = $fetchQuery->hydrate();
 
         foreach ($fetchQuery->all() as $result) {
-            if (!isset($result[$property])) {
+            if (!isset($result[$this->_junctionProperty])) {
                 throw new RuntimeException(sprintf(
                     '"%s" is missing from the belongsToMany results. Results cannot be created.',
-                    $property
+                    $this->_junctionProperty
                 ));
-            }
-            $result[$this->_junctionProperty] = $result[$property];
-            unset($result[$property]);
-
-            if ($hydrated) {
-                $result->dirty($this->_junctionProperty, false);
             }
 
             $values = [];
@@ -982,7 +961,6 @@ class BelongsToMany extends Association
         $query
             ->addDefaultTypes($assoc->target())
             ->join($matching + $joins, [], true);
-        $query->eagerLoader()->addToJoinsMap($name, $assoc);
 
         return $query;
     }
@@ -1278,11 +1256,26 @@ class BelongsToMany extends Association
 
         // Ensure that association conditions are applied
         // and that the required keys are in the selected columns.
+
+        $tempName = $this->_name . '_CJoin';
+        $schema = $assoc->schema();
+        $joinFields = $types = [];
+
+        foreach ($schema->typeMap() as $f => $type) {
+            $key = $tempName . '__' . $f;
+            $joinFields[$key] = "$name.$f";
+            $types[$key] = $type;
+        }
+
         $query
             ->where($this->junctionConditions())
-            ->select($query->aliasFields((array)$assoc->foreignKey(), $name));
+            ->select($joinFields)
+            ->defaultTypes($types);
 
-        $assoc->attachTo($query);
+        $query
+            ->eagerLoader()
+            ->addToJoinsMap($tempName, $assoc, false, $this->_junctionProperty);
+        $assoc->attachTo($query, ['aliasPath' => $assoc->alias(), 'includeFields' => false]);
 
         return $query;
     }
