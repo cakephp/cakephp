@@ -486,7 +486,8 @@ class View implements EventDispatcherInterface
             $options['cache'] = $this->_elementCache($name, $data, $options);
         }
 
-        $file = $this->_getElementFileName($name);
+        $pluginCheck = isset($options['plugin']) && $options['plugin'] === false ? false : true;
+        $file = $this->_getElementFilename($name, $pluginCheck);
         if ($file && $options['cache']) {
             return $this->cache(function () use ($file, $data, $options) {
                 echo $this->_renderElement($file, $data, $options);
@@ -1146,6 +1147,7 @@ class View implements EventDispatcherInterface
             $name = $second;
             $plugin = $first;
         }
+        
         if (isset($this->plugin) && !$plugin && $fallback) {
             $plugin = $this->plugin;
         }
@@ -1193,9 +1195,9 @@ class View implements EventDispatcherInterface
      * @param string $name The name of the element to find.
      * @return string|false Either a string to the element filename or false when one can't be found.
      */
-    protected function _getElementFileName($name)
+    protected function _getElementFileName($name, $pluginCheck = true)
     {
-        list($plugin, $name) = $this->pluginSplit($name);
+        list($plugin, $name) = $this->pluginSplit($name, $pluginCheck);
 
         $paths = $this->_paths($plugin);
         $elementPaths = $this->_getSubPaths('Element');
