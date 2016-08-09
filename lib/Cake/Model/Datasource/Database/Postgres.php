@@ -199,8 +199,9 @@ class Postgres extends DboSource {
 		$this->_sequenceMap[$table] = array();
 		$cols = null;
 		if ($fields === null) {
-			$cols = $this->_execute(
-                "WITH pg_attribute_local AS (
+			try {
+				$cols = $this->_execute(
+					"WITH pg_attribute_local AS (
                     SELECT * FROM pg_attribute
                     WHERE attrelid = (? || '.' || ?)::regclass
                     AND attnum > 0 )
@@ -249,8 +250,17 @@ class Postgres extends DboSource {
                 AND (pg_has_role(c.relowner, 'USAGE'::text)
                 OR has_column_privilege(c.oid, a.attnum, 'SELECT, INSERT, UPDATE, REFERENCES'::text))
             	ORDER BY a.attnum",
-				array($this->config['schema'], $table)
-			);
+					array($table, $this->config['schema'])
+				);
+			} catch (PDOException $e) {
+				if ($e->errorInfo[1] == PGSQL_FATAL_ERROR && in_array($e->errorInfo[0], array('42P01', '0A000'))) {
+					//this error means this table does not exist and could not be cast as regclass
+					$cols = null;
+				} else {
+					//in all other cases, we wish to retain current behavior
+					throw $e;
+				}
+			}
 
 			// @codingStandardsIgnoreStart
 			// Postgres columns don't match the coding standards.
