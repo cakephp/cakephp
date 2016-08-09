@@ -187,70 +187,70 @@ class Postgres extends DboSource {
 		return $tables;
 	}
 
-    /**
-     * Returns an array of the fields in given table name.
-     *
-     * @param Model|string $model Name of database table to inspect
-     * @return array Fields in table. Keys are name and type
-     */
-    	public function describe($model) {
-    		$table = $this->fullTableName($model, false, false);
-    		$fields = parent::describe($table);
-    		$this->_sequenceMap[$table] = array();
-    		$cols = null;
-    		if ($fields === null) {
-    			$cols = $this->_execute(
-                    "WITH pg_attribute_local AS (
-                        SELECT * FROM pg_attribute
-                        WHERE attrelid = (? || '.' || ?)::regclass
-                        AND attnum > 0 )
-                	SELECT
-                	    nc.nspname::information_schema.sql_identifier AS schema,
-                	    a.attname::information_schema.sql_identifier AS name,
-                	    CASE
-                	        WHEN t.typtype = 'd'::\"char\" THEN
-                	        CASE
-                	            WHEN bt.typelem <> 0::oid AND bt.typlen = '-1'::integer THEN 'ARRAY'::text
-                	            WHEN nbt.nspname = 'pg_catalog'::name THEN format_type(t.typbasetype, NULL::integer)
-                	            ELSE 'USER-DEFINED'::text
-                	        END
-                	        ELSE
-                	        CASE
-                	            WHEN t.typelem <> 0::oid AND t.typlen = '-1'::integer THEN 'ARRAY'::text
-                	            WHEN nt.nspname = 'pg_catalog'::name THEN format_type(a.atttypid, NULL::integer)
-                	            ELSE 'USER-DEFINED'::text
-                	        END
-                	    END::information_schema.character_data AS type,
-                	    CASE
-                	        WHEN a.attnotnull OR t.typtype = 'd'::\"char\" AND t.typnotnull THEN 'NO'::text
-                	        ELSE 'YES'::text
-                	    END::information_schema.yes_or_no AS null,
-                	    pg_get_expr(ad.adbin, ad.adrelid)::information_schema.character_data AS default,
-                	    a.attnum::information_schema.cardinal_number AS position,
-                	    information_schema._pg_char_max_length(information_schema._pg_truetypid(a.*, t.*),
-                            information_schema._pg_truetypmod(a.*, t.*))::information_schema.cardinal_number
-                            AS char_length,
-                	    information_schema._pg_char_octet_length(information_schema._pg_truetypid(a.*, t.*),
-                            information_schema._pg_truetypmod(a.*, t.*))::information_schema.cardinal_number
-                            AS oct_length
-                	FROM pg_attribute_local a
-                	LEFT JOIN pg_attrdef ad ON a.attrelid = ad.adrelid AND a.attnum = ad.adnum
-                	     JOIN (pg_class c
-                	     JOIN pg_namespace nc ON c.relnamespace = nc.oid) ON a.attrelid = c.oid
-                	     JOIN (pg_type t
-                	     JOIN pg_namespace nt ON t.typnamespace = nt.oid) ON a.atttypid = t.oid
-                	LEFT JOIN (pg_type bt
-                	     JOIN pg_namespace nbt ON bt.typnamespace = nbt.oid) ON t.typtype = 'd'::\"char\"
-                         AND t.typbasetype = bt.oid
-                	WHERE NOT pg_is_other_temp_schema(nc.oid)
-                    AND a.attnum > 0
-                    AND NOT a.attisdropped
-                    AND (c.relkind = ANY (ARRAY['r'::\"char\", 'v'::\"char\", 'f'::\"char\"]))
-                    AND (pg_has_role(c.relowner, 'USAGE'::text)
-                    OR has_column_privilege(c.oid, a.attnum, 'SELECT, INSERT, UPDATE, REFERENCES'::text))
-                	ORDER BY a.attnum",
-    				array($table, $this->config['schema'])
-    			);
+/**
+ * Returns an array of the fields in given table name.
+ *
+ * @param Model|string $model Name of database table to inspect
+ * @return array Fields in table. Keys are name and type
+ */
+	public function describe($model) {
+		$table = $this->fullTableName($model, false, false);
+		$fields = parent::describe($table);
+		$this->_sequenceMap[$table] = array();
+		$cols = null;
+		if ($fields === null) {
+			$cols = $this->_execute(
+                "WITH pg_attribute_local AS (
+                    SELECT * FROM pg_attribute
+                    WHERE attrelid = (? || '.' || ?)::regclass
+                    AND attnum > 0 )
+            	SELECT
+            	    nc.nspname::information_schema.sql_identifier AS schema,
+            	    a.attname::information_schema.sql_identifier AS name,
+            	    CASE
+            	        WHEN t.typtype = 'd'::\"char\" THEN
+            	        CASE
+            	            WHEN bt.typelem <> 0::oid AND bt.typlen = '-1'::integer THEN 'ARRAY'::text
+            	            WHEN nbt.nspname = 'pg_catalog'::name THEN format_type(t.typbasetype, NULL::integer)
+            	            ELSE 'USER-DEFINED'::text
+            	        END
+            	        ELSE
+            	        CASE
+            	            WHEN t.typelem <> 0::oid AND t.typlen = '-1'::integer THEN 'ARRAY'::text
+            	            WHEN nt.nspname = 'pg_catalog'::name THEN format_type(a.atttypid, NULL::integer)
+            	            ELSE 'USER-DEFINED'::text
+            	        END
+            	    END::information_schema.character_data AS type,
+            	    CASE
+            	        WHEN a.attnotnull OR t.typtype = 'd'::\"char\" AND t.typnotnull THEN 'NO'::text
+            	        ELSE 'YES'::text
+            	    END::information_schema.yes_or_no AS null,
+            	    pg_get_expr(ad.adbin, ad.adrelid)::information_schema.character_data AS default,
+            	    a.attnum::information_schema.cardinal_number AS position,
+            	    information_schema._pg_char_max_length(information_schema._pg_truetypid(a.*, t.*),
+                        information_schema._pg_truetypmod(a.*, t.*))::information_schema.cardinal_number
+                        AS char_length,
+            	    information_schema._pg_char_octet_length(information_schema._pg_truetypid(a.*, t.*),
+                        information_schema._pg_truetypmod(a.*, t.*))::information_schema.cardinal_number
+                        AS oct_length
+            	FROM pg_attribute_local a
+            	LEFT JOIN pg_attrdef ad ON a.attrelid = ad.adrelid AND a.attnum = ad.adnum
+            	     JOIN (pg_class c
+            	     JOIN pg_namespace nc ON c.relnamespace = nc.oid) ON a.attrelid = c.oid
+            	     JOIN (pg_type t
+            	     JOIN pg_namespace nt ON t.typnamespace = nt.oid) ON a.atttypid = t.oid
+            	LEFT JOIN (pg_type bt
+            	     JOIN pg_namespace nbt ON bt.typnamespace = nbt.oid) ON t.typtype = 'd'::\"char\"
+                     AND t.typbasetype = bt.oid
+            	WHERE NOT pg_is_other_temp_schema(nc.oid)
+                AND a.attnum > 0
+                AND NOT a.attisdropped
+                AND (c.relkind = ANY (ARRAY['r'::\"char\", 'v'::\"char\", 'f'::\"char\"]))
+                AND (pg_has_role(c.relowner, 'USAGE'::text)
+                OR has_column_privilege(c.oid, a.attnum, 'SELECT, INSERT, UPDATE, REFERENCES'::text))
+            	ORDER BY a.attnum",
+				array($table, $this->config['schema'])
+			);
 
 			// @codingStandardsIgnoreStart
 			// Postgres columns don't match the coding standards.
