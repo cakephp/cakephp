@@ -356,6 +356,22 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
+     * Test the add() with some _name.
+	 * 
+     * @expectedException \Cake\Routing\Exception\DuplicateRouteException
+	 * 
+     * @return void
+     */
+    public function testAddingDuplicatedRoutesName()
+    {
+        $one = new Route('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
+        $two = new Route('/', ['controller' => 'Dashboards', 'action' => 'display']);
+        $this->collection->add($one,['_name' => 'test']);
+        $this->collection->add($two,['_name' => 'test']);
+
+    }
+
+    /**
      * Test basic get/set of extensions.
      *
      * @return void
