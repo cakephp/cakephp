@@ -249,7 +249,7 @@ class Postgres extends DboSource {
                 AND (pg_has_role(c.relowner, 'USAGE'::text)
                 OR has_column_privilege(c.oid, a.attnum, 'SELECT, INSERT, UPDATE, REFERENCES'::text))
             	ORDER BY a.attnum",
-				array($table, $this->config['schema'])
+				array($this->config['schema'], $table)
 			);
 
 			// @codingStandardsIgnoreStart
