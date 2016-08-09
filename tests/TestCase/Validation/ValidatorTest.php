@@ -1190,7 +1190,8 @@ class ValidatorTest extends TestCase
     public function testEquals()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'equals', 5, ['=', 5], 'comparison');
+        $this->assertProxyMethod($validator, 'equals', 5, ['==', 5], 'comparison');
+        $this->assertEmpty($validator->errors(['username' => 5]));
         $this->assertNotEmpty($validator->errors(['username' => 6]));
     }
 
