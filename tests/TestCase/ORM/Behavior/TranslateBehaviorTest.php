@@ -20,6 +20,7 @@ use Cake\ORM\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use Cake\Validation\Validator;
 
 /**
  * Stub entity class
@@ -1158,5 +1159,221 @@ class TranslateBehaviorTest extends TestCase
 
         $this->assertEquals('First Article1', $results['eng']['title']);
         $this->assertEquals('Description #1', $results['eng']['description']);
+    }
+
+    /**
+     * Test that no properties are enabled when the translations
+     * option is off.
+     *
+     * @return void
+     */
+    public function testBuildMarshalMapTranslationsOff()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+
+        $marshaller = $table->marshaller();
+        $translate = $table->behaviors()->get('Translate');
+        $result = $translate->buildMarhshalMap($marshaller, [], ['translations' => false]);
+        $this->assertSame([], $result);
+    }
+
+    /**
+     * Test building a marshal map with translations on.
+     *
+     * @return void
+     */
+    public function testBuildMarshalMapTranslationsOn()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $marshaller = $table->marshaller();
+        $translate = $table->behaviors()->get('Translate');
+
+        $result = $translate->buildMarhshalMap($marshaller, [], ['translations' => true]);
+        $this->assertArrayHasKey('_translations', $result);
+        $this->assertInstanceOf('Closure', $result['_translations']);
+
+        $result = $translate->buildMarhshalMap($marshaller, [], []);
+        $this->assertArrayHasKey('_translations', $result);
+        $this->assertInstanceOf('Closure', $result['_translations']);
+    }
+
+    /**
+     * Test marshalling non-array data
+     *
+     * @return void
+     */
+    public function testBuildMarshalMapNonArrayData()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $translate = $table->behaviors()->get('Translate');
+
+        $map = $translate->buildMarhshalMap($table->marshaller(), [], []);
+        $entity = $table->newEntity();
+        $result = $map['_translations']('garbage', $entity);
+        $this->assertNull($result, 'Non-array should not error out.');
+        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->get('_translations'));
+    }
+
+    /**
+     * Test buildMarshalMap() builds new entities.
+     *
+     * @return void
+     */
+    public function testBuildMarshalMapBuildEntities()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $translate = $table->behaviors()->get('Translate');
+
+        $map = $translate->buildMarhshalMap($table->marshaller(), [], []);
+        $entity = $table->newEntity();
+        $data = [
+            'en' => [
+                'title' => 'English Title',
+                'body' => 'English Content'
+            ],
+            'es' => [
+                'title' => 'Titulo Español',
+                'body' => 'Contenido Español'
+            ]
+        ];
+        $result = $map['_translations']($data, $entity);
+        $this->assertEmpty($entity->errors(), 'No validation errors.');
+        $this->assertCount(2, $result);
+        $this->assertArrayHasKey('en', $result);
+        $this->assertArrayHasKey('es', $result);
+        $this->assertEquals('English Title', $result['en']->title);
+        $this->assertEquals('Titulo Español', $result['es']->title);
+    }
+
+    /**
+     * Test that validation errors are added to the original entity.
+     *
+     * @return void
+     */
+    public function testBuildMarshalMapBuildEntitiesValidationErrors()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', [
+            'fields' => ['title', 'body'],
+            'validator' => 'custom'
+        ]);
+        $validator = (new Validator)->add('title', 'notBlank', ['rule' => 'notBlank']);
+        $table->validator('custom', $validator);
+        $translate = $table->behaviors()->get('Translate');
+
+        $entity = $table->newEntity();
+        $map = $translate->buildMarhshalMap($table->marshaller(), [], []);
+        $data = [
+            'en' => [
+                'title' => 'English Title',
+                'body' => 'English Content'
+            ],
+            'es' => [
+                'title' => '',
+                'body' => 'Contenido Español'
+            ]
+        ];
+        $result = $map['_translations']($data, $entity);
+        $this->assertNotEmpty($entity->errors(), 'Needs validation errors.');
+        $expected = [
+            'title' => [
+                '_empty' => 'This field cannot be left empty'
+            ]
+        ];
+        $this->assertEquals($expected, $entity->errors('es'));
+
+        $this->assertEquals('English Title', $result['en']->title);
+        $this->assertEquals('', $result['es']->title);
+    }
+
+    /**
+     * Test that marshalling updates existing translation entities.
+     *
+     * @return void
+     */
+    public function testBuildMarshalMapUpdateExistingEntities()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', [
+            'fields' => ['title', 'body'],
+        ]);
+        $translate = $table->behaviors()->get('Translate');
+
+        $entity = $table->newEntity();
+        $es = $table->newEntity(['title' => 'Old title', 'body' => 'Old body']);
+        $en = $table->newEntity(['title' => 'Old title', 'body' => 'Old body']);
+        $entity->set('_translations', [
+            'es' => $es,
+            'en' => $en,
+        ]);
+        $map = $translate->buildMarhshalMap($table->marshaller(), [], []);
+        $data = [
+            'en' => [
+                'title' => 'English Title',
+            ],
+            'es' => [
+                'title' => 'Spanish Title',
+            ]
+        ];
+        $result = $map['_translations']($data, $entity);
+        $this->assertEmpty($entity->errors(), 'No validation errors.');
+        $this->assertSame($en, $result['en']);
+        $this->assertSame($es, $result['es']);
+        $this->assertSame($en, $entity->get('_translations')['en']);
+        $this->assertSame($es, $entity->get('_translations')['es']);
+
+        $this->assertEquals('English Title', $result['en']->title);
+        $this->assertEquals('Spanish Title', $result['es']->title);
+        $this->assertEquals('Old body', $result['en']->body);
+        $this->assertEquals('Old body', $result['es']->body);
+    }
+
+    /**
+     * Test that updating translation records works with validations.
+     *
+     * @return void
+     */
+    public function testBuildMarshalMapUpdateEntitiesValidationErrors()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', [
+            'fields' => ['title', 'body'],
+            'validator' => 'custom'
+        ]);
+        $validator = (new Validator)->add('title', 'notBlank', ['rule' => 'notBlank']);
+        $table->validator('custom', $validator);
+        $translate = $table->behaviors()->get('Translate');
+
+        $entity = $table->newEntity();
+        $es = $table->newEntity(['title' => 'Old title', 'body' => 'Old body']);
+        $en = $table->newEntity(['title' => 'Old title', 'body' => 'Old body']);
+        $entity->set('_translations', [
+            'es' => $es,
+            'en' => $en,
+        ]);
+        $map = $translate->buildMarhshalMap($table->marshaller(), [], []);
+        $data = [
+            'en' => [
+                'title' => 'English Title',
+                'body' => 'English Content'
+            ],
+            'es' => [
+                'title' => '',
+                'body' => 'Contenido Español'
+            ]
+        ];
+        $result = $map['_translations']($data, $entity);
+        $this->assertNotEmpty($entity->errors(), 'Needs validation errors.');
+        $expected = [
+            'title' => [
+                '_empty' => 'This field cannot be left empty'
+            ]
+        ];
+        $this->assertEquals($expected, $entity->errors('es'));
     }
 }

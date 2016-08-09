@@ -2370,6 +2370,42 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test one() with translations
+     *
+     * @return void
+     */
+    public function testOneWithTranslations()
+    {
+        $this->articles->addBehavior('Translate', [
+            'fields' => ['title', 'body']
+        ]);
+
+        $data = [
+            'author_id' => 1,
+            '_translations' => [
+                'en' => [
+                    'title' => 'English Title',
+                    'body' => 'English Content'
+                ],
+                'es' => [
+                    'title' => 'Titulo Español',
+                    'body' => 'Contenido Español'
+                ]
+            ]
+        ];
+
+        $marshall = new Marshaller($this->articles);
+        $result = $marshall->one($data, []);
+        $this->assertEmpty($result->errors());
+
+        $translations = $result->get('_translations');
+        $this->assertCount(2, $translations);
+        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['en']);
+        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['es']);
+        $this->assertEquals($data['_translations']['en'], $translations['en']->toArray());
+    }
+
+    /**
      * Tests that it is possible to pass a fieldList option to the merge method
      *
      * @return void
@@ -2884,6 +2920,46 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test merge() with translate behavior integration
+     *
+     * @return void
+     */
+    public function testMergeWithTranslations()
+    {
+        $this->articles->addBehavior('Translate', [
+            'fields' => ['title', 'body']
+        ]);
+
+        $data = [
+            'author_id' => 1,
+            '_translations' => [
+                'en' => [
+                    'title' => 'English Title',
+                    'body' => 'English Content'
+                ],
+                'es' => [
+                    'title' => 'Titulo Español',
+                    'body' => 'Contenido Español'
+                ]
+            ]
+        ];
+
+        $marshall = new Marshaller($this->articles);
+        $entity = $this->articles->newEntity();
+        $result = $marshall->merge($entity, $data, []);
+
+        $this->assertSame($entity, $result);
+        $this->assertEmpty($result->errors());
+        $this->assertTrue($result->dirty('_translations'));
+
+        $translations = $result->get('_translations');
+        $this->assertCount(2, $translations);
+        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['en']);
+        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['es']);
+        $this->assertEquals($data['_translations']['en'], $translations['en']->toArray());
+    }
+
+    /**
      * Test Model.beforeMarshal event.
      *
      * @return void
@@ -3072,259 +3148,4 @@ class MarshallerTest extends TestCase
         $this->assertEquals($expected, $result->toArray());
     }
 
-
-    /**
-     * Test one() propagates validation errors up.
-     *
-     * @return void
-     * @todo Move to TranslateBehavior test.
-     */
-    public function testMergeTranslationsWithOneMethod()
-    {
-        $this->articles->behaviors()->load('Translate', [
-            'fields' => ['title', 'body']
-        ]);
-
-        $data = [
-            'author_id' => 1,
-            '_translations' => [
-                'en' => [
-                    'title' => 'English Title',
-                    'body' => 'English Content'
-                ],
-                'es' => [
-                    'title' => 'Titulo Español',
-                    'body' => 'Contenido Español'
-                ]
-            ]
-        ];
-
-        $marshall = new Marshaller($this->articles);
-        $result = $marshall->one($data, []);
-
-        $translations = $result->get('_translations');
-
-        $this->assertEmpty($result->errors());
-        $this->assertCount(2, $translations);
-        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['en']);
-        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['es']);
-        $this->assertEquals($data['_translations']['en'], $translations['en']->toArray());
-    }
-
-    /**
-     * Test one() propagates validation errors up.
-     *
-     * @return void
-     * @todo Move to TranslateBehavior test.
-     */
-    public function testMergeTranslationsWithOneMethodAndReturnErrors()
-    {
-        $this->articles->behaviors()->load('Translate', [
-            'fields' => ['title', 'body'],
-            'validator' => 'custom'
-        ]);
-
-        $validator = (new Validator)->add('title', 'notBlank', ['rule' => 'notBlank']);
-        $this->articles->validator('custom', $validator);
-
-        $data = [
-            'author_id' => 1,
-            '_translations' => [
-                'en' => [
-                    'title' => 'English Title',
-                    'body' => 'English Content'
-                ],
-                'es' => [
-                    'title' => '',
-                    'body' => ''
-                ]
-            ]
-        ];
-
-        $marshall = new Marshaller($this->articles);
-        $result = $marshall->one($data, []);
-
-        $expected = [
-            'es' => [
-                'title' => [
-                    '_empty' => 'This field cannot be left empty'
-                ]
-            ]
-        ];
-        $errors = $result->errors();
-        $this->assertNotEmpty($errors);
-        $this->assertArrayHasKey('_translations', $errors);
-        $this->assertEquals($expected, $errors['_translations']);
-    }
-
-    /**
-     * Test merge() creates new translations.
-     *
-     * @return void
-     * @todo Move to TranslateBehavior test.
-     */
-    public function testMergeTranslationsWithMergeMethodNewTranslations()
-    {
-        $this->articles->behaviors()->load('Translate', [
-            'fields' => ['title', 'body']
-        ]);
-
-        $data = [
-            'author_id' => 1,
-            '_translations' => [
-                'en' => [
-                    'title' => 'English Title',
-                    'body' => 'English Content'
-                ],
-                'es' => [
-                    'title' => 'Titulo Español',
-                    'body' => 'Contenido Español'
-                ]
-            ]
-        ];
-
-        $marshall = new Marshaller($this->articles);
-        $entity = $this->articles->newEntity();
-        $result = $marshall->merge($entity, $data, []);
-
-        $translations = $result->get('_translations');
-
-        $this->assertSame($entity, $result);
-        $this->assertEmpty($result->errors());
-        $this->assertTrue($result->dirty('_translations'));
-        $this->assertCount(2, $translations);
-        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['en']);
-        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['es']);
-        $this->assertEquals($data['_translations']['en'], $translations['en']->toArray());
-    }
-
-    /**
-     * Test that adding _translations to fieldList allows
-     * all translated entities in.
-     *
-     * @return void
-     * @todo Move to TranslateBehavior test.
-     */
-    public function testMergeTranslationsWithOneMethodWithFieldList()
-    {
-        $this->articles->behaviors()->load('Translate', [
-            'fields' => ['title', 'body'],
-        ]);
-
-        $data = [
-            'author_id' => 1,
-            '_translations' => [
-                'en' => [
-                    'title' => 'English Title',
-                    'body' => 'English Content'
-                ],
-                'es' => [
-                    'title' => 'Titulo Español',
-                    'body' => ''
-                ]
-            ]
-        ];
-
-        $marshall = new Marshaller($this->articles);
-        $result = $marshall->one($data, ['fieldList' => ['author_id', 'title', '_translations']]);
-
-        $this->assertTrue($result->has('author_id'));
-        $this->assertEmpty($result->errors());
-
-        $translations = $result->get('_translations');
-        $this->assertEquals(['title' => 'English Title'], $translations['en']->toArray());
-        $this->assertEquals(['title' => 'Titulo Español'], $translations['es']->toArray());
-    }
-
-    /**
-     * Test merge() with translations and failing validation rules.
-     *
-     * @return void
-     * @todo Move to TranslateBehavior test.
-     */
-    public function testMergeTranslationsWithMergeMethodAndReturnErrors()
-    {
-        $this->articles->behaviors()->load('Translate', [
-            'fields' => ['title', 'body'],
-            'validator' => 'custom'
-        ]);
-
-        $validator = (new Validator)->add('title', 'notBlank', ['rule' => 'notBlank']);
-        $this->articles->validator('custom', $validator);
-
-        $data = [
-            'author_id' => 1,
-            '_translations' => [
-                'en' => [
-                    'title' => 'English Title',
-                    'body' => 'English Content'
-                ],
-                'es' => [
-                    'title' => '',
-                    'body' => ''
-                ]
-            ]
-        ];
-
-        $marshall = new Marshaller($this->articles);
-        $entity = $this->articles->newEntity();
-        $result = $marshall->merge($entity, $data, []);
-
-        $expected = [
-            'es' => [
-                'title' => [
-                    '_empty' => 'This field cannot be left empty'
-                ]
-            ]
-        ];
-        $errors = $result->errors();
-        $this->assertArrayHasKey('_translations', $errors, 'Validation errors should propagate up');
-        $this->assertEquals($expected, $errors['_translations'], 'Translation validation errors should match');
-    }
-
-    /**
-     * test merge with translations and passing validation rules applied
-     *
-     * @return void
-     * @todo Move to TranslateBehavior test.
-     */
-    public function testMergeTranslationsWithMergeMethodUpdateFields()
-    {
-        $this->articles->behaviors()->load('Translate', [
-            'fields' => ['title', 'body'],
-            'validator' => 'custom'
-        ]);
-
-        $validator = (new Validator)->add('title', 'notBlank', ['rule' => 'notBlank']);
-        $this->articles->validator('custom', $validator);
-
-        $data = [
-            'author_id' => 1,
-            '_translations' => [
-                'en' => [
-                    'title' => 'English Title',
-                    'body' => 'English Content'
-                ],
-                'es' => [
-                    'title' => 'Titulo Español',
-                    'body' => ''
-                ]
-            ]
-        ];
-        $marshall = new Marshaller($this->articles);
-        $entity = $this->articles->newEntity($data);
-
-        $updateData = [
-            '_translations' => [
-                'es' => [
-                    'body' => 'Contenido Español'
-                ]
-            ]
-        ];
-        $result = $marshall->merge($entity, $updateData, []);
-
-        $entityData = $result->toArray();
-        $this->assertEquals('Contenido Español', $entityData['_translations']['es']['body']);
-        $this->assertEmpty($result->errors());
-    }
 }
