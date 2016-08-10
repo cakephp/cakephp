@@ -17,7 +17,7 @@ namespace TestPluginTwo\Model\Table;
 use Cake\ORM\Table;
 
 /**
- * Class CommentsTable
+ * CommentsTable
  */
 class CommentsTable extends Table
 {

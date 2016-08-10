@@ -19,7 +19,7 @@ use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class IniConfigTest
+ * IniConfigTest
  */
 class IniConfigTest extends TestCase
 {

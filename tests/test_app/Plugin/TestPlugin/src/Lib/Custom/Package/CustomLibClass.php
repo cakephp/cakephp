@@ -16,7 +16,7 @@
  */
 
 /**
- * Class CustomLibClass
+ * CustomLibClass
  */
 namespace TestPlugin\Lib\Custom\Package;
 

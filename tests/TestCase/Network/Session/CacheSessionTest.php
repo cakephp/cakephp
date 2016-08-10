@@ -23,7 +23,7 @@ use Cake\Network\Session\CacheSession;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class CacheSessionTest
+ * CacheSessionTest
  */
 class CacheSessionTest extends TestCase
 {

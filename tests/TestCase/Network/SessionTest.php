@@ -21,7 +21,7 @@ use Cake\Network\Session\DatabaseSession;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class TestCacheSession
+ * TestCacheSession
  */
 class TestCacheSession extends CacheSession
 {
@@ -33,7 +33,7 @@ class TestCacheSession extends CacheSession
 }
 
 /**
- * Class TestDatabaseSession
+ * TestDatabaseSession
  */
 class TestDatabaseSession extends DatabaseSession
 {

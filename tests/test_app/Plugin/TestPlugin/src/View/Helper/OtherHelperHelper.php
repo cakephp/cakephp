@@ -17,7 +17,7 @@ namespace TestPlugin\View\Helper;
 use Cake\View\Helper;
 
 /**
- * Class OtherHelperHelper
+ * OtherHelperHelper
  */
 class OtherHelperHelper extends Helper
 {

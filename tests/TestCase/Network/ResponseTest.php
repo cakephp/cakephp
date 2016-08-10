@@ -19,7 +19,7 @@ use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class ResponseTest
+ * ResponseTest
  */
 class ResponseTest extends TestCase
 {

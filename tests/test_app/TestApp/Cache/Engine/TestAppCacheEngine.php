@@ -16,7 +16,7 @@
  */
 
 /**
- * Class TestAppCacheEngine
+ * TestAppCacheEngine
  */
 namespace TestApp\Cache\Engine;
 

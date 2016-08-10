@@ -23,7 +23,7 @@ use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class ControllerAuthorizeTest
+ * ControllerAuthorizeTest
  */
 class ControllerAuthorizeTest extends TestCase
 {

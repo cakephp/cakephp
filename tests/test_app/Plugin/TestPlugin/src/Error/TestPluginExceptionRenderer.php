@@ -22,7 +22,7 @@ namespace TestPlugin\Error;
 use Cake\Error\ExceptionRenderer;
 
 /**
- * Class TestPluginExceptionRenderer
+ * TestPluginExceptionRenderer
  */
 class TestPluginExceptionRenderer extends ExceptionRenderer
 {

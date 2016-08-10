@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
 use TestApp\Shell\TestingDispatchShell;
 
 /**
- * Class for testing merging vars
+ * for testing merging vars
  */
 class MergeShell extends Shell
 {

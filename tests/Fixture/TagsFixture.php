@@ -18,7 +18,7 @@ use Cake\Database\Schema\Table;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Class TagFixture
+ * TagFixture
  */
 class TagsFixture extends TestFixture
 {

@@ -33,7 +33,7 @@ class HtmlAliasHelper extends Helper
 }
 
 /**
- * Class HelperRegistryTest
+ * HelperRegistryTest
  */
 class HelperRegistryTest extends TestCase
 {

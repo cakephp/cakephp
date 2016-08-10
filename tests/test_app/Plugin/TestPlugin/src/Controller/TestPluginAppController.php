@@ -19,7 +19,7 @@ namespace TestPlugin\Controller;
 use Cake\Controller\Controller;
 
 /**
- * Class TestPluginAppController
+ * TestPluginAppController
  */
 class TestPluginAppController extends Controller
 {

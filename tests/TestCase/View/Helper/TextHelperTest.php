@@ -21,7 +21,7 @@ use Cake\View\Helper\TextHelper;
 use Cake\View\View;
 
 /**
- * Class TextHelperTestObject
+ * TextHelperTestObject
  */
 class TextHelperTestObject extends TextHelper
 {

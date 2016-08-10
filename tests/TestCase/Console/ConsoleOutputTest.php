@@ -20,7 +20,7 @@ use Cake\Console\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class ConsoleOutputTest
+ * ConsoleOutputTest
  */
 class ConsoleOutputTest extends TestCase
 {

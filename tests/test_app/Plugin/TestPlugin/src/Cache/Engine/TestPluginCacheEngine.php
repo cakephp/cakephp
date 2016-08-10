@@ -16,7 +16,7 @@
  */
 
 /**
- * Class TestPluginCacheEngine
+ * TestPluginCacheEngine
  */
 namespace TestPlugin\Cache\Engine;
 

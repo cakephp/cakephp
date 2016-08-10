@@ -21,7 +21,7 @@ use Cake\Console\HelpFormatter;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class HelpFormatterTest
+ * HelpFormatterTest
  */
 class HelpFormatterTest extends TestCase
 {

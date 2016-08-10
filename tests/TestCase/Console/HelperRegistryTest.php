@@ -19,7 +19,7 @@ use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class HelperRegistryTest
+ * HelperRegistryTest
  */
 class HelperRegistryTest extends TestCase
 {
