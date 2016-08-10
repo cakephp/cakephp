@@ -19,7 +19,7 @@
 App::uses('BaseLog', 'Log/Engine');
 
 /**
- * Class TestAppLog
+ * TestAppLog
  *
  * @package       Cake.Test.TestApp.Lib.Log.Engine
  */

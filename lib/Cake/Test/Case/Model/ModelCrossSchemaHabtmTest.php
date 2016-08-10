@@ -21,7 +21,7 @@
 require_once dirname(__FILE__) . DS . 'ModelTestBase.php';
 
 /**
- * Class ModelCrossSchemaHabtmTest
+ * ModelCrossSchemaHabtmTest
  *
  * @package       Cake.Test.Case.Model
  */

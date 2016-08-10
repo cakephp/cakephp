@@ -19,7 +19,7 @@
 App::uses('ConsoleOutput', 'Console');
 
 /**
- * Class ConsoleOutputTest
+ * ConsoleOutputTest
  *
  * @package       Cake.Test.Case.Console
  */

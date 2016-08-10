@@ -20,7 +20,7 @@ App::uses('ShellDispatcher', 'Console');
 App::uses('TestShell', 'Console/Command');
 
 /**
- * Class TestTestShell
+ * TestTestShell
  *
  * @package       Cake.Test.Case.Console.Command
  */
@@ -37,7 +37,7 @@ class TestTestShell extends TestShell {
 }
 
 /**
- * Class TestShellTest
+ * TestShellTest
  *
  * @package       Cake.Test.Case.Console.Command
  */

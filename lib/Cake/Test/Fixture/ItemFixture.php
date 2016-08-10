@@ -17,7 +17,7 @@
  */
 
 /**
- * Class ItemFixture
+ * ItemFixture
  *
  * @package       Cake.Test.Fixture
  */

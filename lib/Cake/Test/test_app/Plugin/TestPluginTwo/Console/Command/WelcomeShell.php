@@ -17,7 +17,7 @@
  */
 
 /**
- * Class WelcomeShell
+ * WelcomeShell
  *
  * @package       Cake.Test.TestApp.Plugin.TestPluginTwo.Console.Command
  */

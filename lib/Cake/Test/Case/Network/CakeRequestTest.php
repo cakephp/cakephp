@@ -21,7 +21,7 @@ App::uses('Xml', 'Utility');
 App::uses('CakeRequest', 'Network');
 
 /**
- * Class TestCakeRequest
+ * TestCakeRequest
  *
  * @package       Cake.Test.Case.Network
  */
@@ -55,7 +55,7 @@ class TestCakeRequest extends CakeRequest {
 }
 
 /**
- * Class CakeRequestTest
+ * CakeRequestTest
  */
 class CakeRequestTest extends CakeTestCase {
 

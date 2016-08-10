@@ -21,7 +21,7 @@ App::uses('JsHelper', 'View/Helper');
 App::uses('MootoolsEngineHelper', 'View/Helper');
 
 /**
- * Class MootoolsEngineHelperTest
+ * MootoolsEngineHelperTest
  *
  * @package       Cake.Test.Case.View.Helper
  */

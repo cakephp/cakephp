@@ -19,7 +19,7 @@
 App::uses('CakeLogInterface', 'Log');
 
 /**
- * Class TestPluginLog
+ * TestPluginLog
  *
  * @package       Cake.Test.TestApp.Plugin.TestPlugin.Lib.Log.Engine
  */

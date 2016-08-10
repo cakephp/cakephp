@@ -17,7 +17,7 @@
  */
 
 /**
- * Class TagFixture
+ * TagFixture
  *
  * @package       Cake.Test.Fixture
  */

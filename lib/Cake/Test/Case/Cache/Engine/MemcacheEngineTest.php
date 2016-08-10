@@ -20,7 +20,7 @@ App::uses('Cache', 'Cache');
 App::uses('MemcacheEngine', 'Cache/Engine');
 
 /**
- * Class TestMemcacheEngine
+ * TestMemcacheEngine
  *
  * @package       Cake.Test.Case.Cache.Engine
  */

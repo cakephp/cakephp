@@ -18,7 +18,7 @@ App::uses('CakeResponse', 'Network');
 App::uses('CakeRequest', 'Network');
 
 /**
- * Class CakeResponseTest
+ * CakeResponseTest
  *
  * @package       Cake.Test.Case.Network
  */

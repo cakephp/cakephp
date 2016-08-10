@@ -17,7 +17,7 @@
  */
 
 /**
- * Class TranslatedItemFixture
+ * TranslatedItemFixture
  *
  * @package       Cake.Test.Fixture
  */

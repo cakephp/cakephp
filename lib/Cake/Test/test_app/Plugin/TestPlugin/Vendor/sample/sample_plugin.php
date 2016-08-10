@@ -17,7 +17,7 @@
  */
 
 /**
- * Class SamplePluginClassTestName
+ * SamplePluginClassTestName
  *
  * @package       Cake.Test.TestApp.Plugin.TestPlugin.Vendor.sample
  */

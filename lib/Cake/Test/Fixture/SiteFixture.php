@@ -17,7 +17,7 @@
  */
 
 /**
- * Class SiteFixture
+ * SiteFixture
  *
  * @package       Cake.Test.Fixture
  */

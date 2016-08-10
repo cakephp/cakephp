@@ -17,7 +17,7 @@
  */
 
 /**
- * Class PersisterOne
+ * PersisterOne
  *
  * @package       Cake.Test.TestApp.Model
  */

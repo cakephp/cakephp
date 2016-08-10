@@ -20,7 +20,7 @@ App::uses('ConsoleOptionParser', 'Console');
 App::uses('HelpFormatter', 'Console');
 
 /**
- * Class HelpFormatterTest
+ * HelpFormatterTest
  *
  * @package       Cake.Test.Case.Console
  */

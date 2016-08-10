@@ -17,7 +17,7 @@
  */
 
 /**
- * Class InnoFixture
+ * InnoFixture
  *
  * @package       Cake.Test.Fixture
  */

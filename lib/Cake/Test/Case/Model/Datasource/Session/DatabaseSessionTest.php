@@ -22,7 +22,7 @@ App::uses('DatabaseSession', 'Model/Datasource/Session');
 class_exists('CakeSession');
 
 /**
- * Class SessionTestModel
+ * SessionTestModel
  *
  * @package       Cake.Test.Case.Model.Datasource.Session
  */

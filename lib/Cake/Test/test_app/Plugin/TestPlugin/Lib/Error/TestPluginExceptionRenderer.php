@@ -22,7 +22,7 @@
 App::uses('ExceptionRenderer', 'Error');
 
 /**
- * Class TestPluginExceptionRenderer
+ * TestPluginExceptionRenderer
  *
  * @package       Cake.Test.TestApp.Plugin.TestPlugin.Lib.Error
  */
