@@ -1723,6 +1723,27 @@ class AuthComponentTest extends CakeTestCase {
 	}
 
 /**
+ * testStatelessLoginSetUserNoSessionStart method
+ *
+ * @return void
+ */
+	public function testStatelessLoginSetUserNoSessionStart() {
+		$user = array(
+			'id' => 1,
+			'username' => 'mark'
+		);
+
+		AuthComponent::$sessionKey = false;
+		$result = $this->Auth->login($user);
+		$this->assertTrue($result);
+
+		$this->assertTrue($this->Auth->loggedIn());
+		$this->assertEquals($user, $this->Auth->user());
+
+		$this->assertFalse($this->Auth->Session->started());
+	}
+
+/**
  * testStatelessAuthNoSessionStart method
  *
  * @return void

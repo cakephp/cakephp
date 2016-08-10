@@ -324,7 +324,7 @@ class HtmlHelper extends AppHelper {
  * - `escapeTitle` Set to false to disable escaping of title. (Takes precedence over value of `escape`)
  * - `confirm` JavaScript confirmation message.
  *
- * @param string $title The content to be wrapped by <a> tags.
+ * @param string $title The content to be wrapped by `<a>` tags.
  * @param string|array $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
  * @param array $options Array of options and HTML attributes.
  * @param string $confirmMessage JavaScript confirmation message. This
@@ -412,7 +412,7 @@ class HtmlHelper extends AppHelper {
  *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
  *   of your application. Otherwise, the path will be relative to your CSS path, usually webroot/css.
  * @param array $options Array of options and HTML arguments.
- * @return string CSS <link /> or <style /> tag, depending on the type of link.
+ * @return string CSS `<link />` or `<style />` tag, depending on the type of link.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::css
  */
 	public function css($path, $options = array()) {
@@ -580,7 +580,7 @@ class HtmlHelper extends AppHelper {
  *
  * ### Options
  *
- * - `safe` (boolean) Whether or not the $script should be wrapped in <![CDATA[ ]]>
+ * - `safe` (boolean) Whether or not the $script should be wrapped in `<![CDATA[ ]]>`
  * - `inline` (boolean) Whether or not the $script should be added to
  *   `$scripts_for_layout` / `script` block, or output inline. (Deprecated, use `block` instead)
  * - `block` Which block you want this script block appended to.

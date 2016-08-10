@@ -184,6 +184,13 @@ class DboSource extends DataSource {
 	protected $_sqlOps = array('like', 'ilike', 'rlike', 'or', 'not', 'in', 'between', 'regexp', 'similar to');
 
 /**
+ * The set of valid SQL boolean operations usable in a WHERE statement
+ *
+ * @var array
+ */
+	protected $_sqlBoolOps = array('and', 'or', 'not', 'and not', 'or not', 'xor', '||', '&&');
+
+/**
  * Indicates the level of nested transactions
  *
  * @var int
@@ -2678,7 +2685,6 @@ class DboSource extends DataSource {
 	public function conditionKeysToString($conditions, $quoteValues = true, Model $Model = null) {
 		$out = array();
 		$data = $columnType = null;
-		$bool = array('and', 'or', 'not', 'and not', 'or not', 'xor', '||', '&&');
 
 		foreach ($conditions as $key => $value) {
 			$join = ' AND ';
@@ -2695,8 +2701,8 @@ class DboSource extends DataSource {
 				continue;
 			} elseif (is_numeric($key) && is_string($value)) {
 				$out[] = $this->_quoteFields($value);
-			} elseif ((is_numeric($key) && is_array($value)) || in_array(strtolower(trim($key)), $bool)) {
-				if (in_array(strtolower(trim($key)), $bool)) {
+			} elseif ((is_numeric($key) && is_array($value)) || in_array(strtolower(trim($key)), $this->_sqlBoolOps)) {
+				if (in_array(strtolower(trim($key)), $this->_sqlBoolOps)) {
 					$join = ' ' . strtoupper($key) . ' ';
 				} else {
 					$key = $join;

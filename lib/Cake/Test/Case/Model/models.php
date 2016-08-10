@@ -2991,7 +2991,10 @@ class TestPluginComment extends CakeTestModel {
 			'className' => 'TestPlugin.TestPluginArticle',
 			'foreignKey' => 'article_id',
 		),
-		'TestPlugin.User'
+		'TestPlugin.User',
+		'TestPlugin.Source' => array(
+			'foreignKey' => 'source_id'
+		)
 	);
 }
 

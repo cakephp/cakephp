@@ -20,9 +20,12 @@
  */
 
 App::uses('Sanitize', 'Utility');
+App::uses('Dispatcher', 'Routing');
 App::uses('Router', 'Routing');
-App::uses('CakeResponse', 'Network');
 App::uses('Controller', 'Controller');
+App::uses('CakeRequest', 'Network');
+App::uses('CakeResponse', 'Network');
+App::uses('CakeEvent', 'Event');
 
 /**
  * Exception Renderer.
@@ -287,7 +290,7 @@ class ExceptionRenderer {
 	protected function _outputMessage($template) {
 		try {
 			$this->controller->render($template);
-			$this->controller->afterFilter();
+			$this->_shutdown();
 			$this->controller->response->send();
 		} catch (MissingViewException $e) {
 			$attributes = $e->getAttributes();
@@ -325,6 +328,25 @@ class ExceptionRenderer {
 		$this->controller->response->body($view->render($template, 'error'));
 		$this->controller->response->type('html');
 		$this->controller->response->send();
+	}
+
+/**
+ * Run the shutdown events.
+ *
+ * Triggers the afterFilter and afterDispatch events.
+ *
+ * @return void
+ */
+	protected function _shutdown() {
+		$afterFilterEvent = new CakeEvent('Controller.shutdown', $this->controller);
+		$this->controller->getEventManager()->dispatch($afterFilterEvent);
+
+		$Dispatcher = new Dispatcher();
+		$afterDispatchEvent = new CakeEvent('Dispatcher.afterDispatch', $Dispatcher, array(
+			'request' => $this->controller->request,
+			'response' => $this->controller->response
+		));
+		$Dispatcher->getEventManager()->dispatch($afterDispatchEvent);
 	}
 
 }
