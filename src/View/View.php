@@ -1191,7 +1191,7 @@ class View implements EventDispatcherInterface
      * Finds an element filename, returns false on failure.
      *
      * @param string $name The name of the element to find.
-     * @param boolean $pluginCheck - if false will ignore the request's plugin if parsed plugin is not loaded
+     * @param bool $pluginCheck - if false will ignore the request's plugin if parsed plugin is not loaded
      * @return string|false Either a string to the element filename or false when one can't be found.
      */
     protected function _getElementFileName($name, $pluginCheck = true)
