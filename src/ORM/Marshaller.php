@@ -20,6 +20,7 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
+use Cake\ORM\PropertyMarshalInterface;
 use RuntimeException;
 
 /**
@@ -55,39 +56,73 @@ class Marshaller
     }
 
     /**
-     * Build the map of property => association names.
+     * Build the map of property => marshalling callable.
      *
+     * @param array $data The data being marshalled.
      * @param array $options List of options containing the 'associated' key.
      * @throws \InvalidArgumentException When associations do not exist.
      * @return array
      */
-    protected function _buildPropertyMap($options)
+    protected function _buildPropertyMap($data, $options)
     {
-        if (empty($options['associated'])) {
-            return [];
+        $map = [];
+        $schema = $this->_table->schema();
+
+        // Is a concrete column?
+        foreach (array_keys($data) as $prop) {
+            $columnType = $schema->columnType($prop);
+            if ($columnType) {
+                $map[$prop] = function ($value, $entity) use ($columnType) {
+                    return Type::build($columnType)->marshal($value);
+                };
+            }
         }
 
-        $include = $options['associated'];
-        $map = [];
-        $include = $this->_normalizeAssociations($include);
+        // Map associations
+        $options += ['associated' => []];
+        $include = $this->_normalizeAssociations($options['associated']);
         foreach ($include as $key => $nested) {
             if (is_int($key) && is_scalar($nested)) {
                 $key = $nested;
                 $nested = [];
             }
             $assoc = $this->_table->association($key);
-            if ($assoc) {
-                $map[$assoc->property()] = ['association' => $assoc] + $nested + ['associated' => []];
-                continue;
-            }
             // If the key is not a special field like _ids or _joinData
             // it is a missing association that we should error on.
-            if (substr($key, 0, 1) !== "_") {
-                throw new \InvalidArgumentException(sprintf(
-                    'Cannot marshal data for "%s" association. It is not associated with "%s".',
-                    $key,
-                    $this->_table->alias()
-                ));
+            if (!$assoc) {
+                if (substr($key, 0, 1) !== '_') {
+                    throw new \InvalidArgumentException(sprintf(
+                        'Cannot marshal data for "%s" association. It is not associated with "%s".',
+                        $key,
+                        $this->_table->alias()
+                    ));
+                }
+                continue;
+            }
+            if (isset($options['forceNew'])) {
+                $nested['forceNew'] = $options['forceNew'];
+            }
+            if (isset($options['isMerge'])) {
+                $callback = function ($value, $entity) use ($assoc, $nested) {
+                    $options = $nested + ['associated' => []];
+
+                    return $this->_mergeAssociation($entity->get($assoc->property()), $assoc, $value, $options);
+                };
+            } else {
+                $callback = function ($value, $entity) use ($assoc, $nested) {
+                    $options = $nested + ['associated' => []];
+
+                    return $this->_marshalAssociation($assoc, $value, $options);
+                };
+            }
+            $map[$assoc->property()] = $callback;
+        }
+
+        $behaviors = $this->_table->behaviors();
+        foreach ($behaviors->loaded() as $name) {
+            $behavior = $behaviors->get($name);
+            if ($behavior instanceof PropertyMarshalInterface) {
+                $map = $behavior->buildMarhshalMap($this, $map, $options);
             }
         }
 
@@ -128,9 +163,6 @@ class Marshaller
     {
         list($data, $options) = $this->_prepareDataAndOptions($data, $options);
 
-        $propertyMap = $this->_buildPropertyMap($options);
-
-        $schema = $this->_table->schema();
         $primaryKey = (array)$this->_table->primaryKey();
         $entityClass = $this->_table->entityClass();
         $entity = new $entityClass();
@@ -141,13 +173,10 @@ class Marshaller
                 $entity->accessible($key, $value);
             }
         }
-
-        $marshallOptions = [];
-        if (isset($options['forceNew'])) {
-            $marshallOptions['forceNew'] = $options['forceNew'];
-        }
-
         $errors = $this->_validate($data, $options, true);
+
+        $options['isMerge'] = false;
+        $propertyMap = $this->_buildPropertyMap($data, $options);
         $properties = [];
         foreach ($data as $key => $value) {
             if (!empty($errors[$key])) {
@@ -156,18 +185,15 @@ class Marshaller
                 }
                 continue;
             }
-            $columnType = $schema->columnType($key);
-            if (isset($propertyMap[$key])) {
-                $assoc = $propertyMap[$key]['association'];
-                $value = $this->_marshalAssociation($assoc, $value, $propertyMap[$key] + $marshallOptions);
-            } elseif ($value === '' && in_array($key, $primaryKey, true)) {
+
+            if ($value === '' && in_array($key, $primaryKey, true)) {
                 // Skip marshalling '' for pk fields.
                 continue;
-            } elseif ($columnType) {
-                $converter = Type::build($columnType);
-                $value = $converter->marshal($value);
+            } elseif (isset($propertyMap[$key])) {
+                $properties[$key] = $propertyMap[$key]($value, $entity);
+            } else {
+                $properties[$key] = $value;
             }
-            $properties[$key] = $value;
         }
 
         if (!isset($options['fieldList'])) {
@@ -489,7 +515,6 @@ class Marshaller
     {
         list($data, $options) = $this->_prepareDataAndOptions($data, $options);
 
-        $propertyMap = $this->_buildPropertyMap($options);
         $isNew = $entity->isNew();
         $keys = [];
 
@@ -505,6 +530,8 @@ class Marshaller
 
         $errors = $this->_validate($data + $keys, $options, $isNew);
         $schema = $this->_table->schema();
+        $options['isMerge'] = true;
+        $propertyMap = $this->_buildPropertyMap($data, $options);
         $properties = $marshalledAssocs = [];
         foreach ($data as $key => $value) {
             if (!empty($errors[$key])) {
@@ -513,17 +540,12 @@ class Marshaller
                 }
                 continue;
             }
-
-            $columnType = $schema->columnType($key);
             $original = $entity->get($key);
 
             if (isset($propertyMap[$key])) {
-                $assoc = $propertyMap[$key]['association'];
-                $value = $this->_mergeAssociation($original, $assoc, $value, $propertyMap[$key]);
-                $marshalledAssocs[$key] = true;
-            } elseif ($columnType) {
-                $converter = Type::build($columnType);
-                $value = $converter->marshal($value);
+                $value = $propertyMap[$key]($value, $entity);
+
+                // Don't dirty complex objects that were objects before.
                 $isObject = is_object($value);
                 if ((!$isObject && $original === $value) ||
                     ($isObject && $original == $value)
@@ -531,7 +553,6 @@ class Marshaller
                     continue;
                 }
             }
-
             $properties[$key] = $value;
         }
 
@@ -539,9 +560,9 @@ class Marshaller
             $entity->set($properties);
             $entity->errors($errors);
 
-            foreach (array_keys($marshalledAssocs) as $field) {
-                if ($properties[$field] instanceof EntityInterface) {
-                    $entity->dirty($field, $properties[$field]->dirty());
+            foreach ($properties as $field => $value) {
+                if ($value instanceof EntityInterface) {
+                    $entity->dirty($field, $value->dirty());
                 }
             }
 
@@ -551,7 +572,7 @@ class Marshaller
         foreach ((array)$options['fieldList'] as $field) {
             if (array_key_exists($field, $properties)) {
                 $entity->set($field, $properties[$field]);
-                if ($properties[$field] instanceof EntityInterface && isset($marshalledAssocs[$field])) {
+                if ($properties[$field] instanceof EntityInterface) {
                     $entity->dirty($field, $properties[$field]->dirty());
                 }
             }

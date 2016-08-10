@@ -22,6 +22,7 @@ use Cake\I18n\I18n;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\PropertyMarshalInterface;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
@@ -38,7 +39,7 @@ use Cake\Utility\Inflector;
  * If you want to bring all or certain languages for each of the fetched records,
  * you can use the custom `translations` finders that is exposed to the table.
  */
-class TranslateBehavior extends Behavior
+class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 {
 
     use LocatorAwareTrait;
@@ -82,7 +83,8 @@ class TranslateBehavior extends Behavior
         'allowEmptyTranslations' => true,
         'onlyTranslated' => false,
         'strategy' => 'subquery',
-        'tableLocator' => null
+        'tableLocator' => null,
+        'validator' => false
     ];
 
     /**
@@ -324,6 +326,47 @@ class TranslateBehavior extends Behavior
     public function afterSave(Event $event, EntityInterface $entity)
     {
         $entity->unsetProperty('_i18n');
+    }
+
+    /**
+     * Add in _translations marshalling handlers if translation marshalling is
+     * enabled. You need to specifically enable translation marshalling by adding
+     * `'translations' => true` to the options provided to `Table::newEntity()` or `Table::patchEntity()`.
+     *
+     * {@inheritDoc}
+     */
+    public function buildMarhshalMap($marshaller, $map, $options)
+    {
+        if (isset($options['translations']) && !$options['translations']) {
+            return [];
+        }
+
+        return [
+            '_translations' => function ($value, $entity) use ($marshaller, $options) {
+                $translations = $entity->get('_translations');
+                foreach ($this->_config['fields'] as $field) {
+                    $options['validate'] = $this->_config['validator'];
+                    $errors = [];
+                    if (!is_array($value)) {
+                        return;
+                    }
+                    foreach ($value as $language => $fields) {
+                        if (!isset($translations[$language])) {
+                            $translations[$language] = $this->_table->newEntity();
+                        }
+                        $marshaller->merge($translations[$language], $fields, $options);
+                        if ((bool)$translations[$language]->errors()) {
+                            $errors[$language] = $translations[$language]->errors();
+                        }
+                    }
+                    // Set errors into the root entity, so validation errors
+                    // match the original form data position.
+                    $entity->errors($errors);
+                }
+
+                return $translations;
+            }
+        ];
     }
 
     /**

@@ -2370,6 +2370,42 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test one() with translations
+     *
+     * @return void
+     */
+    public function testOneWithTranslations()
+    {
+        $this->articles->addBehavior('Translate', [
+            'fields' => ['title', 'body']
+        ]);
+
+        $data = [
+            'author_id' => 1,
+            '_translations' => [
+                'en' => [
+                    'title' => 'English Title',
+                    'body' => 'English Content'
+                ],
+                'es' => [
+                    'title' => 'Titulo Español',
+                    'body' => 'Contenido Español'
+                ]
+            ]
+        ];
+
+        $marshall = new Marshaller($this->articles);
+        $result = $marshall->one($data, []);
+        $this->assertEmpty($result->errors());
+
+        $translations = $result->get('_translations');
+        $this->assertCount(2, $translations);
+        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['en']);
+        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['es']);
+        $this->assertEquals($data['_translations']['en'], $translations['en']->toArray());
+    }
+
+    /**
      * Tests that it is possible to pass a fieldList option to the merge method
      *
      * @return void
@@ -2884,6 +2920,46 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test merge() with translate behavior integration
+     *
+     * @return void
+     */
+    public function testMergeWithTranslations()
+    {
+        $this->articles->addBehavior('Translate', [
+            'fields' => ['title', 'body']
+        ]);
+
+        $data = [
+            'author_id' => 1,
+            '_translations' => [
+                'en' => [
+                    'title' => 'English Title',
+                    'body' => 'English Content'
+                ],
+                'es' => [
+                    'title' => 'Titulo Español',
+                    'body' => 'Contenido Español'
+                ]
+            ]
+        ];
+
+        $marshall = new Marshaller($this->articles);
+        $entity = $this->articles->newEntity();
+        $result = $marshall->merge($entity, $data, []);
+
+        $this->assertSame($entity, $result);
+        $this->assertEmpty($result->errors());
+        $this->assertTrue($result->dirty('_translations'));
+
+        $translations = $result->get('_translations');
+        $this->assertCount(2, $translations);
+        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['en']);
+        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['es']);
+        $this->assertEquals($data['_translations']['en'], $translations['en']->toArray());
+    }
+
+    /**
      * Test Model.beforeMarshal event.
      *
      * @return void
@@ -3006,6 +3082,12 @@ class MarshallerTest extends TestCase
         $this->assertTrue($entity->user->isNew());
     }
 
+    /**
+     * Test that primary key meta data is being read from the table
+     * and not the schema reflection when handling belongsToMany associations.
+     *
+     * @return void
+     */
     public function testEnsurePrimaryKeyBeingReadFromTableForHandlingEmptyStringPrimaryKey()
     {
         $data = [
@@ -3023,6 +3105,12 @@ class MarshallerTest extends TestCase
         $this->assertNull($result->id);
     }
 
+    /**
+     * Test that primary key meta data is being read from the table
+     * and not the schema reflection when handling belongsToMany associations.
+     *
+     * @return void
+     */
     public function testEnsurePrimaryKeyBeingReadFromTableWhenLoadingBelongsToManyRecordsByPrimaryKey()
     {
         $data = [
