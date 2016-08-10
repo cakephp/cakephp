@@ -26,7 +26,6 @@ use Cake\Utility\Security;
 
 /**
  * TestSecurityComponent
- *
  */
 class TestSecurityComponent extends SecurityComponent
 {
@@ -56,7 +55,6 @@ class TestSecurityComponent extends SecurityComponent
 
 /**
  * SecurityTestController
- *
  */
 class SecurityTestController extends Controller
 {

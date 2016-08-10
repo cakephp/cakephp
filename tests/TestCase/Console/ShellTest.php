@@ -36,7 +36,6 @@ class MergeShell extends Shell
 
 /**
  * ShellTestShell class
- *
  */
 class ShellTestShell extends Shell
 {
@@ -95,7 +94,6 @@ class ShellTestShell extends Shell
 
 /**
  * TestAppleTask class
- *
  */
 class TestAppleTask extends Shell
 {
@@ -103,7 +101,6 @@ class TestAppleTask extends Shell
 
 /**
  * TestBananaTask class
- *
  */
 class TestBananaTask extends Shell
 {
@@ -114,7 +111,6 @@ class_alias(__NAMESPACE__ . '\TestBananaTask', 'Cake\Shell\Task\TestBananaTask')
 
 /**
  * ShellTest class
- *
  */
 class ShellTest extends TestCase
 {

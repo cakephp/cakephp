@@ -15,7 +15,6 @@
 
 /**
  * Class ExampleShell
- *
  */
 namespace TestPluginTwo\Shell;
 

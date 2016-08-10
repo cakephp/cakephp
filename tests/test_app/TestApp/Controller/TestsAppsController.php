@@ -17,7 +17,6 @@
 
 /**
  * Class TestsAppsController
- *
  */
 namespace TestApp\Controller;
 

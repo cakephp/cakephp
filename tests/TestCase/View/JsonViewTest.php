@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * JsonViewTest
- *
  */
 class JsonViewTest extends TestCase
 {

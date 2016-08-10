@@ -25,7 +25,6 @@ use SimpleXMLElement;
  * XML handling for CakePHP.
  *
  * The methods in these classes enable the datasources that use XML to work.
- *
  */
 class Xml
 {

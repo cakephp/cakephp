@@ -20,7 +20,6 @@ use Cake\Network\Session;
 
 /**
  * Provides the requestAction() method for doing sub-requests
- *
  */
 trait RequestActionTrait
 {

@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Test case for FallbackPasswordHasher
- *
  */
 class FallbackPasswordHasherTest extends TestCase
 {

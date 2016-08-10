@@ -20,7 +20,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Class RoutesShellTest
- *
  */
 class RoutesShellTest extends TestCase
 {

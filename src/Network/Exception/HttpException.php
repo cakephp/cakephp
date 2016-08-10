@@ -21,7 +21,6 @@ use Cake\Core\Exception\Exception;
  *
  * You may also use this as a meaningful bridge to Cake\Core\Exception\Exception, e.g.:
  * throw new \Cake\Network\Exception\HttpException('HTTP Version Not Supported', 505);
- *
  */
 class HttpException extends Exception
 {

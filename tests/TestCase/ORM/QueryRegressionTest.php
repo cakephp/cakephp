@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Contains regression test for the Query builder
- *
  */
 class QueryRegressionTest extends TestCase
 {

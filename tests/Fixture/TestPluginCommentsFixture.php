@@ -18,7 +18,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class TestPluginCommentFixture
- *
  */
 class TestPluginCommentsFixture extends TestFixture
 {

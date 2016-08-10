@@ -17,7 +17,6 @@
 
 /**
  * Class TestPluginLibrary
- *
  */
 namespace TestPlugin\Lib;
 

@@ -23,7 +23,6 @@ use Cake\Utility\Text;
 
 /**
  * Integration tests for Table class with uuid primary keys.
- *
  */
 class TableUuidTest extends TestCase
 {

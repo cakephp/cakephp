@@ -18,7 +18,6 @@ use Cake\Utility\Text;
 
 /**
  * TextTest class
- *
  */
 class TextTest extends TestCase
 {

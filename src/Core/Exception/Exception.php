@@ -16,7 +16,6 @@ use RuntimeException;
 
 /**
  * Base class that all CakePHP Exceptions extend.
- *
  */
 class Exception extends RuntimeException
 {

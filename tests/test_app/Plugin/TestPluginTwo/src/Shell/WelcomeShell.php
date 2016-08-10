@@ -15,7 +15,6 @@
 
 /**
  * Class WelcomeShell
- *
  */
 namespace TestPluginTwo\Shell;
 

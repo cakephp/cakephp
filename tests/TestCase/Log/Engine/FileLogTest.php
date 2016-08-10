@@ -22,7 +22,6 @@ use JsonSerializable;
 
 /**
  * Class used for testing when an object is passed to a logger
- *
  */
 class StringObject
 {
@@ -40,7 +39,6 @@ class StringObject
 
 /**
  * Class used for testing when an serializable is passed to a logger
- *
  */
 class JsonObject implements JsonSerializable
 {
@@ -58,7 +56,6 @@ class JsonObject implements JsonSerializable
 
 /**
  * FileLogTest class
- *
  */
 class FileLogTest extends TestCase
 {

@@ -23,7 +23,6 @@ use Cake\Error\ExceptionRenderer;
 
 /**
  * Class TestPluginExceptionRenderer
- *
  */
 class TestPluginExceptionRenderer extends ExceptionRenderer
 {

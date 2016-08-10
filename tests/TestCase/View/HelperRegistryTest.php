@@ -34,7 +34,6 @@ class HtmlAliasHelper extends Helper
 
 /**
  * Class HelperRegistryTest
- *
  */
 class HelperRegistryTest extends TestCase
 {

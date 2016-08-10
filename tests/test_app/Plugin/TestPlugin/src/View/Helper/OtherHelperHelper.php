@@ -18,7 +18,6 @@ use Cake\View\Helper;
 
 /**
  * Class OtherHelperHelper
- *
  */
 class OtherHelperHelper extends Helper
 {

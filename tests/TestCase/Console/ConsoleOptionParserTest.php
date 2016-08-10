@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Class ConsoleOptionParserTest
- *
  */
 class ConsoleOptionParserTest extends TestCase
 {

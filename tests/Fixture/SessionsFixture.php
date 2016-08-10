@@ -19,7 +19,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class SessionFixture
- *
  */
 class SessionsFixture extends TestFixture
 {

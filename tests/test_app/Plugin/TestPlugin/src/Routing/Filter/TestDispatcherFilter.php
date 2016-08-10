@@ -19,7 +19,6 @@ use Cake\Routing\DispatcherFilter;
 
 /**
  * Class TestDispatcherFilter
- *
  */
 class TestDispatcherFilter extends DispatcherFilter
 {

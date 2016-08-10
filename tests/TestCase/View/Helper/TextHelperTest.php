@@ -22,7 +22,6 @@ use Cake\View\View;
 
 /**
  * Class TextHelperTestObject
- *
  */
 class TextHelperTestObject extends TextHelper
 {
@@ -40,7 +39,6 @@ class TextHelperTestObject extends TextHelper
 
 /**
  * StringMock class
- *
  */
 class StringMock
 {
@@ -48,7 +46,6 @@ class StringMock
 
 /**
  * TextHelperTest class
- *
  */
 class TextHelperTest extends TestCase
 {

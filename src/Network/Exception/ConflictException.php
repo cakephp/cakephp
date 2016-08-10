@@ -14,7 +14,6 @@ namespace Cake\Network\Exception;
 
 /**
  * Represents an HTTP 409 error.
- *
  */
 class ConflictException extends HttpException
 {

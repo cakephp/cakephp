@@ -20,7 +20,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Class JsonConfigTest
- *
  */
 class JsonConfigTest extends TestCase
 {

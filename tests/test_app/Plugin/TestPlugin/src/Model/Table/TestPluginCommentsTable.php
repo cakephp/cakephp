@@ -18,7 +18,6 @@ use Cake\ORM\Table;
 
 /**
  * Class TestPluginCommentsTable
- *
  */
 class TestPluginCommentsTable extends Table
 {

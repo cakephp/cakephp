@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Class CommandListShellTest
- *
  */
 class CommandListShellTest extends TestCase
 {

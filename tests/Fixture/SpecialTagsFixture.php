@@ -18,7 +18,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * A fixture for a join table containing additional data
- *
  */
 class SpecialTagsFixture extends TestFixture
 {

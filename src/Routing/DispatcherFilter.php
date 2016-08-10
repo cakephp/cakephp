@@ -62,7 +62,6 @@ use InvalidArgumentException;
  *
  * When using the `for` or `when` matchers, conditions will be re-checked on the before and after
  * callback as the conditions could change during the dispatch cycle.
- *
  */
 class DispatcherFilter implements EventListenerInterface
 {

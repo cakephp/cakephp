@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * ConfigureTest
- *
  */
 class ConfigureTest extends TestCase
 {

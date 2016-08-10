@@ -20,7 +20,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Class ResponseTest
- *
  */
 class ResponseTest extends TestCase
 {

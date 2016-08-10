@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests FunctionExpression class
- *
  */
 class FunctionExpressionTest extends TestCase
 {

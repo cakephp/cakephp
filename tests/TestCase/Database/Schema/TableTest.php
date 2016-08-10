@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Mock class for testing baseType inheritance
- *
  */
 class FooType extends Type
 {

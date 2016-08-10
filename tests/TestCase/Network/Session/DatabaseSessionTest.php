@@ -26,7 +26,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Database session test.
- *
  */
 class DatabaseSessionTest extends TestCase
 {

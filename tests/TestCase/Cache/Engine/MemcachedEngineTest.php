@@ -22,7 +22,6 @@ use \Memcached;
 
 /**
  * Class TestMemcachedEngine
- *
  */
 class TestMemcachedEngine extends MemcachedEngine
 {
@@ -51,7 +50,6 @@ class TestMemcachedEngine extends MemcachedEngine
 
 /**
  * MemcachedEngineTest class
- *
  */
 class MemcachedEngineTest extends TestCase
 {

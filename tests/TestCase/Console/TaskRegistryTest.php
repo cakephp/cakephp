@@ -20,7 +20,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Class TaskRegistryTest
- *
  */
 class TaskRegistryTest extends TestCase
 {

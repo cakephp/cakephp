@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Class ConsoleOutputTest
- *
  */
 class ConsoleOutputTest extends TestCase
 {

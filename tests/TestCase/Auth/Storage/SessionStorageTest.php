@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Test case for SessionStorage
- *
  */
 class SessionStorageTest extends TestCase
 {

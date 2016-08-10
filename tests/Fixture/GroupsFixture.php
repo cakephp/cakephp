@@ -18,7 +18,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class GroupsFixture
- *
  */
 class GroupsFixture extends TestFixture
 {

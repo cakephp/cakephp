@@ -18,7 +18,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class UuiditemFixture
- *
  */
 class UuiditemsFixture extends TestFixture
 {

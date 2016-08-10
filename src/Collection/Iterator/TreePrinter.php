@@ -20,7 +20,6 @@ use RecursiveIteratorIterator;
 /**
  * Iterator for flattening elements in a tree structure while adding some
  * visual markers for their relative position in the tree
- *
  */
 class TreePrinter extends RecursiveIteratorIterator
 {

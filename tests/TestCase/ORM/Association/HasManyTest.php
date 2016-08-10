@@ -28,7 +28,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests HasMany class
- *
  */
 class HasManyTest extends TestCase
 {

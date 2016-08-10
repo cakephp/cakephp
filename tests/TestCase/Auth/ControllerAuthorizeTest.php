@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Class ControllerAuthorizeTest
- *
  */
 class ControllerAuthorizeTest extends TestCase
 {

@@ -20,7 +20,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  * Class NumberTreeFixture
  *
  * Generates a tree of data for use testing the tree behavior
- *
  */
 class NumberTreesFixture extends TestFixture
 {

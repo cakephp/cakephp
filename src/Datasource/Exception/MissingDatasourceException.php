@@ -16,7 +16,6 @@ use Cake\Core\Exception\Exception;
 
 /**
  * Used when a datasource cannot be found.
- *
  */
 class MissingDatasourceException extends Exception
 {

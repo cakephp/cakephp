@@ -20,7 +20,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Class IniConfigTest
- *
  */
 class IniConfigTest extends TestCase
 {

@@ -15,7 +15,6 @@
 
 /**
  * Class UniqueShell
- *
  */
 namespace TestPluginTwo\Shell;
 

@@ -17,7 +17,6 @@
 
 /**
  * Class SampleShell
- *
  */
 namespace TestApp\Shell;
 

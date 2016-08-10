@@ -21,7 +21,6 @@ use Cake\Utility\Hash;
 
 /**
  * Class HashTest
- *
  */
 class HashTest extends TestCase
 {

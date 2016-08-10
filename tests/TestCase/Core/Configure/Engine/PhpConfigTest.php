@@ -20,7 +20,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Class PhpConfigTest
- *
  */
 class PhpConfigTest extends TestCase
 {

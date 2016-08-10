@@ -17,7 +17,6 @@
 
 /**
  * Class CustomLibClass
- *
  */
 namespace TestPlugin\Lib\Custom\Package;
 

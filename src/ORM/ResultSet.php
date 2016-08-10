@@ -27,7 +27,6 @@ use SplFixedArray;
  * This object is responsible for correctly nesting result keys reported from
  * the query, casting each field to the correct type and executing the extra
  * queries required for eager loading external associations.
- *
  */
 class ResultSet implements ResultSetInterface
 {

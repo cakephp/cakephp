@@ -18,7 +18,6 @@ use Cake\Network\Response;
 
 /**
  * SomePagesController class
- *
  */
 class SomePagesController extends Controller
 {

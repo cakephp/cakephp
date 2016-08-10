@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests the PoFileLoader
- *
  */
 class PoFileParserTest extends TestCase
 {

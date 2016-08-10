@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Class TestCompletionStringOutput
- *
  */
 class TestCompletionStringOutput extends ConsoleOutput
 {

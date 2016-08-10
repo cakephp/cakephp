@@ -17,7 +17,6 @@
 
 /**
  * Class OtherTaskTask
- *
  */
 namespace TestPlugin\Shell\Task;
 

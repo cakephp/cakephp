@@ -18,7 +18,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class TagsTranslationsFixture
- *
  */
 class TagsTranslationsFixture extends TestFixture
 {

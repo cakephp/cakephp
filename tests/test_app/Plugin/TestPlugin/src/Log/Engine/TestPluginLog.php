@@ -19,7 +19,6 @@ use Psr\Log\AbstractLogger;
 
 /**
  * Test Suite Test Plugin Logging stream class.
- *
  */
 class TestPluginLog extends AbstractLogger
 {

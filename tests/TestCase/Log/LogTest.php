@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * LogTest class
- *
  */
 class LogTest extends TestCase
 {

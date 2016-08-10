@@ -36,7 +36,6 @@ class Article extends Entity
 
 /**
  * Contact class
- *
  */
 class ContactsTable extends Table
 {
@@ -72,7 +71,6 @@ class ContactsTable extends Table
 
 /**
  * ValidateUser class
- *
  */
 class ValidateUsersTable extends Table
 {

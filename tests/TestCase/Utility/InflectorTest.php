@@ -19,7 +19,6 @@ use Cake\Utility\Inflector;
 
 /**
  * Short description for class.
- *
  */
 class InflectorTest extends TestCase
 {

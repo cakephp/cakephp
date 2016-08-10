@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Test case
- *
  */
 class DebugTransportTest extends TestCase
 {

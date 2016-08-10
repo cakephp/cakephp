@@ -15,7 +15,6 @@
 
 /**
  * Class ConfigureTestVendorSample
- *
  */
 class ConfigureTestVendorSample
 {

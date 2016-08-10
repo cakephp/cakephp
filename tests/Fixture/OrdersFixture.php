@@ -18,7 +18,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class OrdersFixture
- *
  */
 class OrdersFixture extends TestFixture
 {

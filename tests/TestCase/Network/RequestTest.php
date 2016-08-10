@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Class TestRequest
- *
  */
 class RequestTest extends TestCase
 {

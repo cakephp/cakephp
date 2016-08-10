@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests HasOne class
- *
  */
 class HasOneTest extends TestCase
 {

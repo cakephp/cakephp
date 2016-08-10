@@ -15,7 +15,6 @@
 
 /**
  * Class SamplePluginClassTestName
- *
  */
 class SamplePluginClassTestName
 {

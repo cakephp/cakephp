@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Class TestCacheSession
- *
  */
 class TestCacheSession extends CacheSession
 {
@@ -35,7 +34,6 @@ class TestCacheSession extends CacheSession
 
 /**
  * Class TestDatabaseSession
- *
  */
 class TestDatabaseSession extends DatabaseSession
 {
@@ -48,7 +46,6 @@ class TestDatabaseSession extends DatabaseSession
 
 /**
  * SessionTest class
- *
  */
 class SessionTest extends TestCase
 {

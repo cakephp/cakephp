@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Class CacheSessionTest
- *
  */
 class CacheSessionTest extends TestCase
 {

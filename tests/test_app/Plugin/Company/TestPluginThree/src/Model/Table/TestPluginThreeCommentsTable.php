@@ -18,7 +18,6 @@ use Cake\ORM\Table;
 
 /**
  * Class TestPluginThreeCommentsTable
- *
  */
 class TestPluginThreeCommentsTable extends Table
 {
