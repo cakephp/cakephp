@@ -199,11 +199,16 @@ class Postgres extends DboSource {
 		$this->_sequenceMap[$table] = array();
 		$cols = null;
 		if ($fields === null) {
+			//error_log(sprintf("schema: '%s' table: '%s'", $this->config['schema'], $table));
             try {
                 $cols = $this->_execute(
                     "WITH pg_attribute_local AS (
                     SELECT * FROM pg_attribute
-                    WHERE attrelid = (? || '.' || ?)::regclass
+					WHERE attrelid = format(
+						'%1\$I.%2\$I',
+						?::information_schema.sql_identifier,
+						?::information_schema.sql_identifier
+					)::regclass
                     AND attnum > 0 )
                 SELECT
                     nc.nspname::information_schema.sql_identifier AS schema,
@@ -253,7 +258,7 @@ class Postgres extends DboSource {
                     array($this->config['schema'], $table)
                 );
             } catch (PDOException $e) {
-                if ($e->errorInfo[1] == PGSQL_FATAL_ERROR && in_array($e->errorInfo[0], array('42P01', '0A000'))) {
+                if ($e->errorInfo[1] == 7 && in_array($e->errorInfo[0], array('42P01', '0A000'))) {
                     //this error means this table does not exist and could not be cast as regclass
                     $cols = null;
                 } else {
