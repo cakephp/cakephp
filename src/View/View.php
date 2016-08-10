@@ -475,6 +475,8 @@ class View implements EventDispatcherInterface
      * - `callbacks` - Set to true to fire beforeRender and afterRender helper callbacks for this element.
      *   Defaults to false.
      * - `ignoreMissing` - Used to allow missing elements. Set to true to not throw exceptions.
+     * - `plugin` - setting to false will force to use the application's element from plugin templates, when the
+     *   plugin has element with same name. Defaults to true
      * @return string Rendered Element
      * @throws \Cake\View\Exception\MissingElementException When an element is missing and `ignoreMissing`
      *   is false.
@@ -1147,7 +1149,6 @@ class View implements EventDispatcherInterface
             $name = $second;
             $plugin = $first;
         }
-        
         if (isset($this->plugin) && !$plugin && $fallback) {
             $plugin = $this->plugin;
         }
@@ -1193,6 +1194,7 @@ class View implements EventDispatcherInterface
      * Finds an element filename, returns false on failure.
      *
      * @param string $name The name of the element to find.
+     * @param bool $pluginCheck - if false will ignore the request's plugin if parsed plugin is not loaded
      * @return string|false Either a string to the element filename or false when one can't be found.
      */
     protected function _getElementFileName($name, $pluginCheck = true)
