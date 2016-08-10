@@ -199,142 +199,141 @@ class Postgres extends DboSource {
 		$this->_sequenceMap[$table] = array();
 		$cols = null;
 		if ($fields === null) {
-			//error_log(sprintf("schema: '%s' table: '%s'", $this->config['schema'], $table));
-            try {
-                $cols = $this->_execute(
-                    "WITH pg_attribute_local AS (
-                    SELECT * FROM pg_attribute
+			try {
+				$cols = $this->_execute(
+					"WITH pg_attribute_local AS (
+					SELECT * FROM pg_attribute
 					WHERE attrelid = format(
 						'%1\$I.%2\$I',
 						?::information_schema.sql_identifier,
 						?::information_schema.sql_identifier
 					)::regclass
-                    AND attnum > 0 )
-                SELECT
-                    nc.nspname::information_schema.sql_identifier AS schema,
-                    a.attname::information_schema.sql_identifier AS name,
-                    CASE
-                        WHEN t.typtype = 'd'::\"char\" THEN
-                        CASE
-                            WHEN bt.typelem <> 0::oid AND bt.typlen = '-1'::integer THEN 'ARRAY'::text
-                            WHEN nbt.nspname = 'pg_catalog'::name THEN format_type(t.typbasetype, NULL::integer)
-                            ELSE 'USER-DEFINED'::text
-                        END
-                        ELSE
-                        CASE
-                            WHEN t.typelem <> 0::oid AND t.typlen = '-1'::integer THEN 'ARRAY'::text
-                            WHEN nt.nspname = 'pg_catalog'::name THEN format_type(a.atttypid, NULL::integer)
-                            ELSE 'USER-DEFINED'::text
-                        END
-                    END::information_schema.character_data AS type,
-                    CASE
-                        WHEN a.attnotnull OR t.typtype = 'd'::\"char\" AND t.typnotnull THEN 'NO'::text
-                        ELSE 'YES'::text
-                    END::information_schema.yes_or_no AS null,
-                    pg_get_expr(ad.adbin, ad.adrelid)::information_schema.character_data AS default,
-                    a.attnum::information_schema.cardinal_number AS position,
-                    information_schema._pg_char_max_length(information_schema._pg_truetypid(a.*, t.*),
-                        information_schema._pg_truetypmod(a.*, t.*))::information_schema.cardinal_number
-                        AS char_length,
-                    information_schema._pg_char_octet_length(information_schema._pg_truetypid(a.*, t.*),
-                        information_schema._pg_truetypmod(a.*, t.*))::information_schema.cardinal_number
-                        AS oct_length
-                FROM pg_attribute_local a
-                LEFT JOIN pg_attrdef ad ON a.attrelid = ad.adrelid AND a.attnum = ad.adnum
-                     JOIN (pg_class c
-                     JOIN pg_namespace nc ON c.relnamespace = nc.oid) ON a.attrelid = c.oid
-                     JOIN (pg_type t
-                     JOIN pg_namespace nt ON t.typnamespace = nt.oid) ON a.atttypid = t.oid
-                LEFT JOIN (pg_type bt
-                     JOIN pg_namespace nbt ON bt.typnamespace = nbt.oid) ON t.typtype = 'd'::\"char\"
-                     AND t.typbasetype = bt.oid
-                WHERE NOT pg_is_other_temp_schema(nc.oid)
-                AND a.attnum > 0
-                AND NOT a.attisdropped
-                AND (c.relkind = ANY (ARRAY['r'::\"char\", 'v'::\"char\", 'f'::\"char\"]))
-                AND (pg_has_role(c.relowner, 'USAGE'::text)
-                OR has_column_privilege(c.oid, a.attnum, 'SELECT, INSERT, UPDATE, REFERENCES'::text))
-                ORDER BY a.attnum",
-                    array($this->config['schema'], $table)
-                );
-            } catch (PDOException $e) {
-                if ($e->errorInfo[1] == 7 && in_array($e->errorInfo[0], array('42P01', '0A000'))) {
-                    //this error means this table does not exist and could not be cast as regclass
-                    $cols = null;
-                } else {
-                    //in all other cases, we wish to retain current behavior
-                    throw $e;
-                }
-            }
+					AND attnum > 0 )
+				SELECT
+					nc.nspname::information_schema.sql_identifier AS schema,
+					a.attname::information_schema.sql_identifier AS name,
+					CASE
+						WHEN t.typtype = 'd'::\"char\" THEN
+						CASE
+							WHEN bt.typelem <> 0::oid AND bt.typlen = '-1'::integer THEN 'ARRAY'::text
+							WHEN nbt.nspname = 'pg_catalog'::name THEN format_type(t.typbasetype, NULL::integer)
+							ELSE 'USER-DEFINED'::text
+						END
+						ELSE
+						CASE
+							WHEN t.typelem <> 0::oid AND t.typlen = '-1'::integer THEN 'ARRAY'::text
+							WHEN nt.nspname = 'pg_catalog'::name THEN format_type(a.atttypid, NULL::integer)
+							ELSE 'USER-DEFINED'::text
+						END
+					END::information_schema.character_data AS type,
+					CASE
+						WHEN a.attnotnull OR t.typtype = 'd'::\"char\" AND t.typnotnull THEN 'NO'::text
+						ELSE 'YES'::text
+					END::information_schema.yes_or_no AS null,
+					pg_get_expr(ad.adbin, ad.adrelid)::information_schema.character_data AS default,
+					a.attnum::information_schema.cardinal_number AS position,
+					information_schema._pg_char_max_length(information_schema._pg_truetypid(a.*, t.*),
+						information_schema._pg_truetypmod(a.*, t.*))::information_schema.cardinal_number
+						AS char_length,
+					information_schema._pg_char_octet_length(information_schema._pg_truetypid(a.*, t.*),
+						information_schema._pg_truetypmod(a.*, t.*))::information_schema.cardinal_number
+						AS oct_length
+				FROM pg_attribute_local a
+				LEFT JOIN pg_attrdef ad ON a.attrelid = ad.adrelid AND a.attnum = ad.adnum
+					 JOIN (pg_class c
+					 JOIN pg_namespace nc ON c.relnamespace = nc.oid) ON a.attrelid = c.oid
+					 JOIN (pg_type t
+					 JOIN pg_namespace nt ON t.typnamespace = nt.oid) ON a.atttypid = t.oid
+				LEFT JOIN (pg_type bt
+					 JOIN pg_namespace nbt ON bt.typnamespace = nbt.oid) ON t.typtype = 'd'::\"char\"
+					 AND t.typbasetype = bt.oid
+				WHERE NOT pg_is_other_temp_schema(nc.oid)
+				AND a.attnum > 0
+				AND NOT a.attisdropped
+				AND (c.relkind = ANY (ARRAY['r'::\"char\", 'v'::\"char\", 'f'::\"char\"]))
+				AND (pg_has_role(c.relowner, 'USAGE'::text)
+				OR has_column_privilege(c.oid, a.attnum, 'SELECT, INSERT, UPDATE, REFERENCES'::text))
+				ORDER BY a.attnum",
+					array($this->config['schema'], $table)
+				);
+			} catch (PDOException $e) {
+				if ($e->errorInfo[1] == 7 && in_array($e->errorInfo[0], array('42P01', '0A000'))) {
+					//this error means this table does not exist and could not be cast as regclass
+					$cols = null;
+				} else {
+					//in all other cases, we wish to retain current behavior
+					throw $e;
+				}
+			}
 
 			// @codingStandardsIgnoreStart
 			// Postgres columns don't match the coding standards.
-            if ($cols) {
-                foreach ($cols as $c) {
-                    $type = $c->type;
-                    if (!empty($c->oct_length) && $c->char_length === null) {
-                        if ($c->type === 'character varying') {
-                            $length = null;
-                            $type = 'text';
-                        } elseif ($c->type === 'uuid') {
-                            $type = 'uuid';
-                            $length = 36;
-                        } else {
-                            $length = (int)$c->oct_length;
-                        }
-                    } elseif (!empty($c->char_length)) {
-                        $length = (int)$c->char_length;
-                    } else {
-                        $length = $this->length($c->type);
-                    }
-                    if (empty($length)) {
-                        $length = null;
-                    }
-                    $fields[$c->name] = array(
-                        'type' => $this->column($type),
-                        'null' => ($c->null === 'NO' ? false : true),
-                        'default' => preg_replace(
-                            "/^'(.*)'$/",
-                            "$1",
-                            preg_replace('/::.*/', '', $c->default)
-                        ),
-                        'length' => $length
-                    );
-                    if ($model instanceof Model) {
-                        if ($c->name === $model->primaryKey) {
-                            $fields[$c->name]['key'] = 'primary';
-                            if (
-                                $fields[$c->name]['type'] !== 'string' &&
-                                $fields[$c->name]['type'] !== 'uuid'
-                            ) {
-                                $fields[$c->name]['length'] = 11;
-                            }
-                        }
-                    }
-                    if (
-                        $fields[$c->name]['default'] === 'NULL' ||
-                        $c->default === null ||
-                        preg_match('/nextval\([\'"]?([\w.]+)/', $c->default, $seq)
-                    ) {
-                        $fields[$c->name]['default'] = null;
-                        if (!empty($seq) && isset($seq[1])) {
-                            if (strpos($seq[1], '.') === false) {
-                                $sequenceName = $c->schema . '.' . $seq[1];
-                            } else {
-                                $sequenceName = $seq[1];
-                            }
-                            $this->_sequenceMap[$table][$c->name] = $sequenceName;
-                        }
-                    }
-                    if ($fields[$c->name]['type'] === 'timestamp' && $fields[$c->name]['default'] === '') {
-                        $fields[$c->name]['default'] = null;
-                    }
-                    if ($fields[$c->name]['type'] === 'boolean' && !empty($fields[$c->name]['default'])) {
-                        $fields[$c->name]['default'] = constant($fields[$c->name]['default']);
-                    }
-                }
-                $this->_cacheDescription($table, $fields);
-            }
+			if ($cols) {
+				foreach ($cols as $c) {
+					$type = $c->type;
+					if (!empty($c->oct_length) && $c->char_length === null) {
+						if ($c->type === 'character varying') {
+							$length = null;
+							$type = 'text';
+						} elseif ($c->type === 'uuid') {
+							$type = 'uuid';
+							$length = 36;
+						} else {
+							$length = (int)$c->oct_length;
+						}
+					} elseif (!empty($c->char_length)) {
+						$length = (int)$c->char_length;
+					} else {
+						$length = $this->length($c->type);
+					}
+					if (empty($length)) {
+						$length = null;
+					}
+					$fields[$c->name] = array(
+						'type' => $this->column($type),
+						'null' => ($c->null === 'NO' ? false : true),
+						'default' => preg_replace(
+							"/^'(.*)'$/",
+							"$1",
+							preg_replace('/::.*/', '', $c->default)
+						),
+						'length' => $length
+					);
+					if ($model instanceof Model) {
+						if ($c->name === $model->primaryKey) {
+							$fields[$c->name]['key'] = 'primary';
+							if (
+								$fields[$c->name]['type'] !== 'string' &&
+								$fields[$c->name]['type'] !== 'uuid'
+							) {
+								$fields[$c->name]['length'] = 11;
+							}
+						}
+					}
+					if (
+						$fields[$c->name]['default'] === 'NULL' ||
+						$c->default === null ||
+						preg_match('/nextval\([\'"]?([\w.]+)/', $c->default, $seq)
+					) {
+						$fields[$c->name]['default'] = null;
+						if (!empty($seq) && isset($seq[1])) {
+							if (strpos($seq[1], '.') === false) {
+								$sequenceName = $c->schema . '.' . $seq[1];
+							} else {
+								$sequenceName = $seq[1];
+							}
+							$this->_sequenceMap[$table][$c->name] = $sequenceName;
+						}
+					}
+					if ($fields[$c->name]['type'] === 'timestamp' && $fields[$c->name]['default'] === '') {
+						$fields[$c->name]['default'] = null;
+					}
+					if ($fields[$c->name]['type'] === 'boolean' && !empty($fields[$c->name]['default'])) {
+						$fields[$c->name]['default'] = constant($fields[$c->name]['default']);
+					}
+				}
+				$this->_cacheDescription($table, $fields);
+			}
 		}
 		// @codingStandardsIgnoreEnd
 
