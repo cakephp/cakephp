@@ -192,6 +192,8 @@ class TableTest extends TestCase
     {
         $table = new Table(['alias' => 'Users']);
         $this->assertEquals('Users.id', $table->aliasField('id'));
+
+        $this->assertEquals('Users.id', $table->aliasField('Users.id'));
     }
 
     /**
