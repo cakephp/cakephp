@@ -371,11 +371,17 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Alias a field with the table's current alias.
      *
+     * If field is already aliased it will result in no-op.
+     *
      * @param string $field The field to alias.
      * @return string The field prefixed with the table alias.
      */
     public function aliasField($field)
     {
+        if (strpos($field, '.') !== false) {
+            return $field;
+        }
+
         return $this->alias() . '.' . $field;
     }
 
