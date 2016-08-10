@@ -192,6 +192,7 @@ class Postgres extends DboSource {
  *
  * @param Model|string $model Name of database table to inspect
  * @return array Fields in table. Keys are name and type
+ * @throws PDOException When a SQL error occurs.
  */
 	public function describe($model) {
 		$table = $this->fullTableName($model, false, false);
