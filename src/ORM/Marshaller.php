@@ -102,17 +102,20 @@ class Marshaller
             if (isset($options['forceNew'])) {
                 $nested['forceNew'] = $options['forceNew'];
             }
-            $new = function ($value, $entity) use ($assoc, $nested) {
-                $options = $nested + ['associated' => []];
+            if (isset($options['isMerge'])) {
+                $callback = function ($value, $entity) use ($assoc, $nested) {
+                    $options = $nested + ['associated' => []];
 
-                return $this->_marshalAssociation($assoc, $value, $options);
-            };
-            $merge = function ($value, $entity) use ($assoc, $nested) {
-                $options = $nested + ['associated' => []];
+                    return $this->_mergeAssociation($entity->get($assoc->property()), $assoc, $value, $options);
+                };
+            } else {
+                $callback = function ($value, $entity) use ($assoc, $nested) {
+                    $options = $nested + ['associated' => []];
 
-                return $this->_mergeAssociation($entity->get($assoc->property()), $assoc, $value, $options);
-            };
-            $map[$assoc->property()] = isset($options['isMerge']) ? $merge : $new;
+                    return $this->_marshalAssociation($assoc, $value, $options);
+                };
+            }
+            $map[$assoc->property()] = $callback;
         }
 
         $behaviors = $this->_table->behaviors();

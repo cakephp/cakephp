@@ -3147,5 +3147,4 @@ class MarshallerTest extends TestCase
         ];
         $this->assertEquals($expected, $result->toArray());
     }
-
 }
