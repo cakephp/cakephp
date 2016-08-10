@@ -1147,13 +1147,13 @@ class CakeRequestTest extends CakeTestCase {
 		$_SERVER['HTTP_X_THING'] = '';
 		$_SERVER['HTTP_HOST'] = 'localhost';
 		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-ca) AppleWebKit/534.8+ (KHTML, like Gecko) Version/5.0 Safari/533.16';
-		$_SERVER['ThatOneHeader'] = 'foobar';
+		$_SERVER['AUTHORIZATION'] = 'foobar';
 		$request = new CakeRequest('/', false);
 
 		$this->assertEquals($_SERVER['HTTP_HOST'], $request->header('host'));
 		$this->assertEquals($_SERVER['HTTP_USER_AGENT'], $request->header('User-Agent'));
 		$this->assertSame('', $request->header('X-thing'));
-		$this->assertEquals($_SERVER['ThatOneHeader'], $request->header('ThatOneHeader'));
+		$this->assertEquals($_SERVER['AUTHORIZATION'], $request->header('Authorization'));
 	}
 
 /**

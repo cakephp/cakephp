@@ -748,12 +748,13 @@ class CakeRequest implements ArrayAccess {
  * @return mixed Either false on no header being set or the value of the header.
  */
 	public static function header($name) {
-		$http_name = 'HTTP_' . strtoupper(str_replace('-', '_', $name));
-		if (isset($_SERVER[$http_name])) {
-			return $_SERVER[$http_name];
+		$name = strtoupper(str_replace('-', '_', $name));
+		$httpName = 'HTTP_' . $name;
+		if (isset($_SERVER[$httpName])) {
+			return $_SERVER[$httpName];
 		}
-		// Work around Apache issue handling the "Authorization" header
-		// differently than other headers.
+		// Work around Apache issues where 'Authorization' is not
+		// passed to PHP.
 		if (isset($_SERVER[$name])) {
 			return $_SERVER[$name];
 		}
