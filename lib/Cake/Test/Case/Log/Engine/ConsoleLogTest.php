@@ -19,7 +19,7 @@
 App::uses('ConsoleLog', 'Log/Engine');
 
 /**
- * Class TestConsoleLog
+ * TestConsoleLog
  *
  * @package       Cake.Test.Case.Log.Engine
  */
@@ -28,7 +28,7 @@ class TestConsoleLog extends ConsoleLog {
 }
 
 /**
- * Class TestCakeLog
+ * TestCakeLog
  *
  * @package       Cake.Test.Case.Log.Engine
  */

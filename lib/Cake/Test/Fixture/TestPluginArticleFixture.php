@@ -17,7 +17,7 @@
  */
 
 /**
- * Class TestPluginArticleFixture
+ * TestPluginArticleFixture
  *
  * @package       Cake.Test.Fixture
  */

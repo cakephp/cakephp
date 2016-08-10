@@ -17,7 +17,7 @@
  */
 
 /**
- * Class UuidTagFixture
+ * UuidTagFixture
  *
  * @package       Cake.Test.Fixture
  */

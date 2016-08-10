@@ -21,7 +21,7 @@ App::uses('DatabaseSession', 'Model/Datasource/Session');
 App::uses('CacheSession', 'Model/Datasource/Session');
 
 /**
- * Class TestCakeSession
+ * TestCakeSession
  *
  * @package       Cake.Test.Case.Model.Datasource
  */
@@ -38,7 +38,7 @@ class TestCakeSession extends CakeSession {
 }
 
 /**
- * Class TestCacheSession
+ * TestCacheSession
  *
  * @package       Cake.Test.Case.Model.Datasource
  */
@@ -51,7 +51,7 @@ class TestCacheSession extends CacheSession {
 }
 
 /**
- * Class TestDatabaseSession
+ * TestDatabaseSession
  *
  * @package       Cake.Test.Case.Model.Datasource
  */

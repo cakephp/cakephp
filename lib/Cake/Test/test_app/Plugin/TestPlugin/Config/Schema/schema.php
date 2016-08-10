@@ -19,7 +19,7 @@
  */
 
 /**
- * Class TestPluginAppSchema
+ * TestPluginAppSchema
  *
  * @package       Cake.Test.TestApp.Plugin.TestPlugin.Config.Schema
  */

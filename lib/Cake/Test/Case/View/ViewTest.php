@@ -220,7 +220,7 @@ class TestBeforeAfterHelper extends Helper {
 }
 
 /**
- * Class TestObjectWithToString
+ * TestObjectWithToString
  *
  * An object with the magic method __toString() for testing with view blocks.
  */
@@ -233,7 +233,7 @@ class TestObjectWithToString {
 }
 
 /**
- * Class TestObjectWithoutToString
+ * TestObjectWithoutToString
  *
  * An object without the magic method __toString() for testing with view blocks.
  */
@@ -241,7 +241,7 @@ class TestObjectWithoutToString {
 }
 
 /**
- * Class TestViewEventListener
+ * TestViewEventListener
  *
  * An event listener to test cakePHP events
  */

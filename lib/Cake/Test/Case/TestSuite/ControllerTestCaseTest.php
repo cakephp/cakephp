@@ -65,7 +65,7 @@ if (!class_exists('AppController', false)) {
 if (!class_exists('PostsController')) {
 
 /**
- * Class PostsController
+ * PostsController
  *
  * @package       Cake.Test.Case.TestSuite
  */

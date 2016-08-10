@@ -17,7 +17,7 @@
  */
 
 /**
- * Class TestPluginCacheEngine
+ * TestPluginCacheEngine
  *
  * @package       Cake.Test.TestApp.Plugin.TestPlugin.Lib.Cache.Engine
  */

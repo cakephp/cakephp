@@ -17,7 +17,7 @@
  */
 
 /**
- * Class OtherTaskTask
+ * OtherTaskTask
  *
  * @package       Cake.Test.TestApp.Plugin.TestPlugin.Console.Command.Task
  */

@@ -17,7 +17,7 @@
  */
 
 /**
- * Class TestPluginAuthors
+ * TestPluginAuthors
  *
  * @package       Cake.Test.TestApp.Plugin.TestPlugin.Model
  */

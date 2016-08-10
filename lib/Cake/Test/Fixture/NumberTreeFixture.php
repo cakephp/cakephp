@@ -19,7 +19,7 @@
  */
 
 /**
- * Class NumberTreeFixture
+ * NumberTreeFixture
  *
  * Generates a tree of data for use testing the tree behavior
  *

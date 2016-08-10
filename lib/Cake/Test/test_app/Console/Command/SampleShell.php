@@ -17,7 +17,7 @@
  */
 
 /**
- * Class SampleShell
+ * SampleShell
  *
  * @package       Cake.Test.TestApp.Console.Command
  */

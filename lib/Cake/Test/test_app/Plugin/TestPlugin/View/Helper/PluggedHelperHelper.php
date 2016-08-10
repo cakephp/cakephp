@@ -17,7 +17,7 @@
  */
 
 /**
- * Class PluggedHelperHelper
+ * PluggedHelperHelper
  *
  * @package       Cake.Test.TestApp.Plugin.TestPlugin.View.Helper
  */

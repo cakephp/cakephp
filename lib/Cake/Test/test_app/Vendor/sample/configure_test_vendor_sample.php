@@ -17,7 +17,7 @@
  */
 
 /**
- * Class ConfigureTestVendorSample
+ * ConfigureTestVendorSample
  *
  * @package       Cake.Test.TestApp.Vendor.sample
  */

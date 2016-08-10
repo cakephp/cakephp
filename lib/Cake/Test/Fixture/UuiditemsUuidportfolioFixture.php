@@ -17,7 +17,7 @@
  */
 
 /**
- * Class UuiditemsUuidportfolioFixture
+ * UuiditemsUuidportfolioFixture
  *
  * @package       Cake.Test.Fixture
  */

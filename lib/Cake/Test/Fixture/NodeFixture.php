@@ -17,7 +17,7 @@
  */
 
 /**
- * Class NodeFixture
+ * NodeFixture
  *
  * @package       Cake.Test.Fixture
  * @since         CakePHP(tm) v 1.2.0.6879 //Correct version number as needed**
