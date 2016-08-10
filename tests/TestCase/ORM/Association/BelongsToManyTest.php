@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests BelongsToMany class
- *
  */
 class BelongsToManyTest extends TestCase
 {

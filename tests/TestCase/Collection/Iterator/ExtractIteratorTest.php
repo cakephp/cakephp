@@ -20,7 +20,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * ExtractIterator Test
- *
  */
 class ExtractIteratorTest extends TestCase
 {

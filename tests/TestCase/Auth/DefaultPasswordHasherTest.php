@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Test case for DefaultPasswordHasher
- *
  */
 class DefaultPasswordHasherTest extends TestCase
 {

@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * FilterIterator test
- *
  */
 class FilterIteratorTest extends TestCase
 {

@@ -16,7 +16,6 @@ use Cake\Core\Exception\Exception;
 
 /**
  * Used when a Task cannot be found.
- *
  */
 class MissingTaskException extends Exception
 {

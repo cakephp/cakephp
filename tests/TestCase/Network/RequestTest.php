@@ -21,8 +21,7 @@ use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class TestRequest
- *
+ * TestRequest
  */
 class RequestTest extends TestCase
 {

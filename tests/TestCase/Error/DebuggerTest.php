@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * DebuggerTestCaseDebugger class
- *
  */
 class DebuggerTestCaseDebugger extends Debugger
 {
@@ -42,7 +41,6 @@ class DebuggableThing
  *
  * !!! Be careful with changing code below as it may
  * !!! change line numbers which are used in the tests
- *
  */
 class DebuggerTest extends TestCase
 {

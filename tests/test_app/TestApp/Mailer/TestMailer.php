@@ -18,7 +18,6 @@ use Cake\Mailer\Mailer;
 
 /**
  * Test Suite Test App Mailer class.
- *
  */
 class TestMailer extends Mailer
 {

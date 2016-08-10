@@ -40,7 +40,6 @@ namespace Cake\Console;
  * This would create orange 'Overwrite:' text, while the rest of the text would remain the normal color.
  * See ConsoleOutput::styles() to learn more about defining your own styles. Nested styles are not supported
  * at this time.
- *
  */
 class ConsoleOutput
 {

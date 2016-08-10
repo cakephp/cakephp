@@ -15,7 +15,6 @@ namespace TestPlugin\View\Cell;
 
 /**
  * DummyCell class
- *
  */
 class DummyCell extends \Cake\View\Cell
 {

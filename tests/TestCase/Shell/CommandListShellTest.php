@@ -21,8 +21,7 @@ use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class CommandListShellTest
- *
+ * CommandListShellTest
  */
 class CommandListShellTest extends TestCase
 {

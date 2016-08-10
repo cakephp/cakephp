@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * UnloadTaskTest class
- *
  */
 class UnloadTaskTest extends TestCase
 {

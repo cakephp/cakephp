@@ -15,7 +15,6 @@ namespace TestPlugin\View\Cell\Admin;
 
 /**
  * TestPlugin Admin Menu Cell
- *
  */
 class MenuCell extends \Cake\View\Cell
 {

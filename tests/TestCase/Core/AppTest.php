@@ -21,7 +21,6 @@ use TestApp\Core\TestApp;
 
 /**
  * AppTest class
- *
  */
 class AppTest extends TestCase
 {

@@ -29,7 +29,6 @@ use SplFileObject;
  * engine available, or have content which is not performance sensitive.
  *
  * You can configure a FileEngine cache, using Cache::config()
- *
  */
 class FileEngine extends CacheEngine
 {

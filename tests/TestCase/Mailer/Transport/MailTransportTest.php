@@ -20,7 +20,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Test case
- *
  */
 class MailTransportTest extends TestCase
 {

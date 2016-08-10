@@ -16,8 +16,7 @@
  */
 
 /**
- * Class TestsAppsController
- *
+ * TestsAppsController
  */
 namespace TestApp\Controller;
 

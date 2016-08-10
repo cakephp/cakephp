@@ -16,7 +16,6 @@ use Cake\Core\Exception\Exception;
 
 /**
  * Used when a shell method cannot be found.
- *
  */
 class MissingShellMethodException extends Exception
 {

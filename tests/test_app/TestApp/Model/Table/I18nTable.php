@@ -15,7 +15,6 @@ use Cake\ORM\Table;
 
 /**
  * I18n table class
- *
  */
 class I18nTable extends Table
 {

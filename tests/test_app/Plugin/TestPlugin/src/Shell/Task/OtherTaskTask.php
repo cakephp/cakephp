@@ -16,8 +16,7 @@
  */
 
 /**
- * Class OtherTaskTask
- *
+ * OtherTaskTask
  */
 namespace TestPlugin\Shell\Task;
 

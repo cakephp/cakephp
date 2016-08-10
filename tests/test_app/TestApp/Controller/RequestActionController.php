@@ -17,7 +17,6 @@ use Cake\Network\Exception\NotFoundException;
 
 /**
  * RequestActionController class
- *
  */
 class RequestActionController extends AppController
 {

@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Contains regression test for the Table class
- *
  */
 class TableRegressionTest extends TestCase
 {

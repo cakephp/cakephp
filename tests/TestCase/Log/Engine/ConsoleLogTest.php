@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * ConsoleLogTest class
- *
  */
 class ConsoleLogTest extends TestCase
 {

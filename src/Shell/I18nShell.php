@@ -21,7 +21,6 @@ use DirectoryIterator;
 
 /**
  * Shell for I18N management.
- *
  */
 class I18nShell extends Shell
 {

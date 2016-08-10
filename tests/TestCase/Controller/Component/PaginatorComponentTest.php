@@ -26,7 +26,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * PaginatorTestController class
- *
  */
 class PaginatorTestController extends Controller
 {

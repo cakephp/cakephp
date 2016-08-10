@@ -20,7 +20,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * WincacheEngineTest class
- *
  */
 class WincacheEngineTest extends TestCase
 {

@@ -47,7 +47,6 @@ class UsersTable extends Table
 
 /**
  * Tests Table class
- *
  */
 class TableTest extends TestCase
 {

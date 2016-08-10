@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Help to test SmtpTransport
- *
  */
 class SmtpTestTransport extends SmtpTransport
 {
@@ -63,7 +62,6 @@ class SmtpTestTransport extends SmtpTransport
 
 /**
  * Test case
- *
  */
 class SmtpTransportTest extends TestCase
 {

@@ -20,7 +20,6 @@ use Cake\Validation\Validator;
 
 /**
  * Tests Validator class
- *
  */
 class ValidatorTest extends TestCase
 {

@@ -24,7 +24,6 @@ use finfo;
  *
  * Used by Http\Client to upload POST/PUT data
  * and files.
- *
  */
 class FormData implements Countable
 {

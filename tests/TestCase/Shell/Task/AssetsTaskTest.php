@@ -20,7 +20,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * AssetsTaskTest class
- *
  */
 class AssetsTaskTest extends TestCase
 {

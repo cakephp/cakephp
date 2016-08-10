@@ -17,10 +17,9 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Class NumberTreeFixture
+ * NumberTreeFixture
  *
  * Generates a tree of data for use testing the tree behavior
- *
  */
 class NumberTreesFixture extends TestFixture
 {

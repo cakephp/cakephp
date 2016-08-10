@@ -14,7 +14,6 @@ namespace Cake\Network\Exception;
 
 /**
  * Represents an HTTP 406 error.
- *
  */
 class NotAcceptableException extends HttpException
 {

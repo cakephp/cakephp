@@ -64,7 +64,6 @@ class TestDispatcher extends Dispatcher
 
 /**
  * MyPluginAppController class
- *
  */
 class MyPluginAppController extends Controller
 {
@@ -78,7 +77,6 @@ interface DispatcherTestInterfaceController
 
 /**
  * MyPluginController class
- *
  */
 class MyPluginController extends MyPluginAppController
 {
@@ -124,7 +122,6 @@ class MyPluginController extends MyPluginAppController
 
 /**
  * OtherPagesController class
- *
  */
 class OtherPagesController extends MyPluginAppController
 {
@@ -160,7 +157,6 @@ class OtherPagesController extends MyPluginAppController
 
 /**
  * ArticlesTestAppController class
- *
  */
 class ArticlesTestAppController extends Controller
 {
@@ -168,7 +164,6 @@ class ArticlesTestAppController extends Controller
 
 /**
  * ArticlesTestController class
- *
  */
 class ArticlesTestController extends ArticlesTestAppController
 {
@@ -203,7 +198,6 @@ class ArticlesTestController extends ArticlesTestAppController
 
 /**
  * DispatcherTest class
- *
  */
 class DispatcherTest extends TestCase
 {

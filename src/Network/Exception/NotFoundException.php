@@ -14,7 +14,6 @@ namespace Cake\Network\Exception;
 
 /**
  * Represents an HTTP 404 error.
- *
  */
 class NotFoundException extends HttpException
 {

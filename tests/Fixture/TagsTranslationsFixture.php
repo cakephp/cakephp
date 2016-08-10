@@ -17,8 +17,7 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Class TagsTranslationsFixture
- *
+ * TagsTranslationsFixture
  */
 class TagsTranslationsFixture extends TestFixture
 {

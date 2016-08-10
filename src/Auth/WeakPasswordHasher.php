@@ -22,7 +22,6 @@ use Cake\Utility\Security;
  * Password hashing class that use weak hashing algorithms. This class is
  * intended only to be used with legacy databases where passwords have
  * not been migrated to a stronger algorithm yet.
- *
  */
 class WeakPasswordHasher extends AbstractPasswordHasher
 {

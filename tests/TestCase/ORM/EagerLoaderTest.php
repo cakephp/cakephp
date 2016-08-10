@@ -25,7 +25,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests EagerLoader
- *
  */
 class EagerLoaderTest extends TestCase
 {

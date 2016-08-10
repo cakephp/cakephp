@@ -20,7 +20,6 @@ use PDO;
 
 /**
  * Mock class for testing type registering
- *
  */
 class FooType extends \Cake\Database\Type
 {

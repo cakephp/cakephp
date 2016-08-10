@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests QueryLogger class
- *
  */
 class QueryLoggerTest extends TestCase
 {

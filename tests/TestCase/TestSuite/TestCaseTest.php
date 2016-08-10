@@ -43,7 +43,6 @@ class SecondaryPostsTable extends Table
 
 /**
  * TestCaseTest
- *
  */
 class TestCaseTest extends TestCase
 {

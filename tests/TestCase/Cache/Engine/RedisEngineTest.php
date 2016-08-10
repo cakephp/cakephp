@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * RedisEngineTest class
- *
  */
 class RedisEngineTest extends TestCase
 {

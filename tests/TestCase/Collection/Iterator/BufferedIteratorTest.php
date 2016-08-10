@@ -21,7 +21,6 @@ use NoRewindIterator;
 
 /**
  * BufferedIterator Test
- *
  */
 class BufferedIteratorTest extends TestCase
 {

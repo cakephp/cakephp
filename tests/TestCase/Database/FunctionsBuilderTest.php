@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests FunctionsBuilder class
- *
  */
 class FunctionsBuilderTest extends TestCase
 {
