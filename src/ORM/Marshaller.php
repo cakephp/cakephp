@@ -145,6 +145,11 @@ class Marshaller
             $marshallOptions['forceNew'] = $options['forceNew'];
         }
 
+        $hasTranslations = $this->_hasTranslations($options);
+        if ($hasTranslations) {
+            $options = $this->_addTranslationsToFieldList($options);
+        }
+
         $errors = $this->_validate($data, $options, true);
         $properties = [];
         foreach ($data as $key => $value) {
@@ -164,6 +169,11 @@ class Marshaller
             } elseif ($columnType) {
                 $converter = Type::build($columnType);
                 $value = $converter->marshal($value);
+            } elseif ($key === '_translations' && $hasTranslations) {
+                list($value, $translationsErrors) = $this->_mergeTranslations(null, $value, $options);
+                if (!empty($translationsErrors)) {
+                    $errors += $translationsErrors;
+                }
             }
             $properties[$key] = $value;
         }
@@ -224,7 +234,7 @@ class Marshaller
      */
     protected function _prepareDataAndOptions($data, $options)
     {
-        $options += ['validate' => true];
+        $options += ['validate' => true, 'translations' => true];
 
         $tableName = $this->_table->alias();
         if (isset($data[$tableName])) {
@@ -448,6 +458,59 @@ class Marshaller
     }
 
     /**
+     * Call translation merge
+     *
+     * @param \Cake\Datasource\EntityInterface $original The original entity
+     * @param array $data key value list of languages with fields to be merged into the translate entity
+     * @param array $options list of options
+     * @return array
+     */
+    protected function _mergeTranslations($original, array $data, array $options = [])
+    {
+        $result = $this->_table->mergeTranslations($original, $data, $this, $options);
+
+        $errors = [];
+        if (is_array($result)) {
+            if ((bool)$result[1]) {
+                $errors['_translations'] = $result[1];
+            }
+            $result = $result[0];
+        }
+
+        return [$result, $errors];
+    }
+
+    /**
+     * Return if table contains translate behavior or we specificate to use via `translations` options.
+     *
+     * ### Options:
+     *
+     * - translations: Set to false to disable translations
+     *
+     * @param array $options List of options
+     * @return bool
+     */
+    protected function _hasTranslations(array $options = [])
+    {
+        return ($this->_table->behaviors()->hasMethod('mergeTranslations') && (bool)$options['translations']);
+    }
+
+    /**
+     * Add `_translations` field to `fieldList` $options if it's not present inside
+     *
+     * @param array $options List of options
+     * @return array
+     */
+    protected function _addTranslationsToFieldList(array $options = [])
+    {
+        if (!empty($options['fieldList']) && !in_array('_translations', $options['fieldList'])) {
+            array_push($options['fieldList'], '_translations');
+        }
+
+        return $options;
+    }
+
+    /**
      * Merges `$data` into `$entity` and recursively does the same for each one of
      * the association names passed in `$options`. When merging associations, if an
      * entity is not present in the parent entity for a given association, a new one
@@ -501,6 +564,11 @@ class Marshaller
             }
         }
 
+        $hasTranslations = $this->_hasTranslations($options);
+        if ($hasTranslations) {
+            $options = $this->_addTranslationsToFieldList($options);
+        }
+
         $errors = $this->_validate($data + $keys, $options, $isNew);
         $schema = $this->_table->schema();
         $properties = $marshalledAssocs = [];
@@ -527,6 +595,11 @@ class Marshaller
                     ($isObject && $original == $value)
                 ) {
                     continue;
+                }
+            } elseif ($key === '_translations' && $hasTranslations) {
+                list($value, $translationsErrors) = $this->_mergeTranslations($original, $value, $options);
+                if (!empty($translationsErrors)) {
+                    $errors += $translationsErrors;
                 }
             }
 

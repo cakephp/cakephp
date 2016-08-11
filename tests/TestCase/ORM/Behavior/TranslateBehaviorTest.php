@@ -1068,4 +1068,290 @@ class TranslateBehaviorTest extends TestCase
         $this->assertEquals('New Body', $result->body);
         $this->assertSame($article->title, $result->title);
     }
+
+    /**
+     * Test return pair array with all translated entities and errors if occurs.
+     *
+     * @return void
+     */
+    public function testMergeTranslations()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $table->entityClass(__NAMESPACE__ . '\Article');
+
+        $data = [
+            'en' => [
+                'title' => 'Title EN',
+                'body' => 'Body EN'
+            ],
+            'es' => [
+                'title' => 'Title ES',
+                'body' => 'Body ES'
+            ]
+        ];
+
+        $marshaller = new \Cake\ORM\Marshaller($table);
+        $result = $table->mergeTranslations(null, $data, $marshaller, []);
+
+        $this->assertInternalType('array', $result, 'should return an array');
+        $this->assertCount(2, $result);
+
+        // Entities
+        $this->assertInstanceOf(__NAMESPACE__ . '\Article', $result[0]['en']);
+        $this->assertInstanceOf(__NAMESPACE__ . '\Article', $result[0]['es']);
+        $this->assertEquals($data['en'], $result[0]['en']->toArray());
+        $this->assertEquals($data['es'], $result[0]['es']->toArray());
+
+        // Errors
+        $this->assertEmpty($result[1], 'array errors should be empty');
+        $this->assertEmpty($result[0]['en']->errors());
+        $this->assertEmpty($result[0]['es']->errors());
+    }
+
+    /**
+     * Test method only could merge fields that are defined inside behavior's configuration
+     *
+     * @return void
+     */
+    public function testMergeTranslationsOnlyDefinedFields()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title']]);
+        $table->entityClass(__NAMESPACE__ . '\Article');
+
+        $data = [
+            'en' => [
+                'title' => 'Title EN',
+                'body' => 'Body EN'
+            ],
+            'es' => [
+                'title' => 'Title ES',
+                'body' => 'Body ES'
+            ]
+        ];
+
+        $marshaller = new \Cake\ORM\Marshaller($table);
+        $result = $table->mergeTranslations(null, $data, $marshaller, []);
+
+        $this->assertEquals(['title' => 'Title EN'], $result[0]['en']->toArray());
+        $this->assertEmpty($result[1], 'array errors should be empty');
+    }
+
+    /**
+     * Test only use properties defined in fieldList option
+     *
+     * @return void
+     */
+    public function testMergeTranslationsWithFieldList()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $table->entityClass(__NAMESPACE__ . '\Article');
+
+        $data = [
+            'en' => [
+                'title' => 'Title EN',
+                'body' => 'Body EN'
+            ],
+            'es' => [
+                'title' => 'Title ES',
+                'body' => 'Body ES'
+            ]
+        ];
+
+        $marshaller = new \Cake\ORM\Marshaller($table);
+        $result = $table->mergeTranslations(null, $data, $marshaller, ['fieldList' => ['body', 'author_id']]);
+
+        $this->assertEquals(['body' => 'Body EN'], $result[0]['en']->toArray());
+        $this->assertEmpty($result[1], 'array errors should be empty');
+    }
+
+    /**
+     * Test return null when we not have properties to attach to translated entities
+     *
+     * @return void
+     */
+    public function testMergeTranslationsFieldListNotContainsFields()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $table->entityClass(__NAMESPACE__ . '\Article');
+
+        $data = [
+            'en' => [
+                'title' => 'Title EN',
+                'body' => 'Body EN'
+            ],
+            'es' => [
+                'title' => 'Title ES',
+                'body' => 'Body ES'
+            ]
+        ];
+
+        $marshaller = new \Cake\ORM\Marshaller($table);
+        $result = $table->mergeTranslations(null, $data, $marshaller, ['fieldList' => []]);
+
+        $this->assertNull($result[0]['en'], 'should return null instead of an entity');
+        $this->assertNull($result[0]['es'], 'should return null instead of an entity');
+        $this->assertEmpty($result[1], 'array errors should be empty');
+
+        $result = $table->mergeTranslations(null, $data, $marshaller, ['fieldList' => ['author_id']]);
+        $this->assertNull($result[0]['en'], 'should return null instead of an entity');
+        $this->assertNull($result[0]['es'], 'should return null instead of an entity');
+        $this->assertEmpty($result[1], 'array errors should be empty');
+    }
+
+    /**
+     * Test merge method generates errors during validation
+     *
+     * @return void
+     */
+    public function testMergeTranslationsErrorsWhenValidate()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', [
+            'fields' => ['title', 'body'],
+            'validator' => (new \Cake\Validation\Validator)->add('title', 'notBlank', ['rule' => 'notBlank'])
+        ]);
+        $table->entityClass(__NAMESPACE__ . '\Article');
+
+        $data = [
+            'en' => [
+                'title' => 'Title EN',
+                'body' => 'Body EN'
+            ],
+            'es' => [
+                'title' => '',
+                'body' => 'Body ES'
+            ]
+        ];
+
+        $marshaller = new \Cake\ORM\Marshaller($table);
+        $result = $table->mergeTranslations(null, $data, $marshaller, []);
+
+        // Entity
+        $this->assertEmpty($result[0]['en']->errors());
+        $this->assertEquals($data['en'], $result[0]['en']->toArray());
+
+        $this->assertNotEmpty($result[0]['es']->errors());
+        $this->assertArrayHasKey('title', $result[0]['es']->invalid());
+        $this->assertEquals(['body' => 'Body ES'], $result[0]['es']->toArray());
+
+        // Errors
+        $expectedErrors = [
+            'es' => [
+                'title' => [
+                    '_empty' => 'This field cannot be left empty'
+                ]
+            ]
+        ];
+        $this->assertEquals($expectedErrors, $result[1], 'it should be have errors');
+
+        // All title props are empty
+        $data['en']['title'] = '';
+
+        $result = $table->mergeTranslations(null, $data, $marshaller, []);
+
+        $this->assertEquals(['body' => 'Body EN'], $result[0]['en']->toArray());
+        $this->assertEquals(['body' => 'Body ES'], $result[0]['es']->toArray());
+
+        $expectedErrors['en'] = [
+            'title' => [
+                '_empty' => 'This field cannot be left empty'
+            ]
+        ];
+        $this->assertEquals($expectedErrors, $result[1], 'it should be have errors');
+    }
+
+    /**
+     * Test save new entity with _translations field
+     *
+     * @return void
+     */
+    public function testSaveNewRecordWithTranslatesField()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', [
+            'fields' => ['title'],
+            'validator' => (new \Cake\Validation\Validator)->add('title', 'notBlank', ['rule' => 'notBlank'])
+        ]);
+        $table->entityClass(__NAMESPACE__ . '\Article');
+
+        $data = [
+            'author_id' => 1,
+            'published' => 'N',
+            '_translations' => [
+                'en' => [
+                    'title' => 'Title EN',
+                    'body' => 'Body EN'
+                ],
+                'es' => [
+                    'title' => 'Title ES'
+                ]
+            ]
+        ];
+
+        $article = $table->patchEntity($table->newEntity(), $data);
+        $result = $table->save($article);
+
+        $this->assertNotFalse($result);
+
+        $expected = [
+            [
+                'en' => [
+                    'title' => 'Title EN',
+                    'locale' => 'en'
+                ],
+                'es' => [
+                    'title' => 'Title ES',
+                    'locale' => 'es'
+                ]
+            ]
+        ];
+        $result = $table->find('translations')->where(['id' => $result->id]);
+        $this->assertEquals($expected, $this->_extractTranslations($result)->toArray());
+    }
+
+    /**
+     * Test update entity with _translations field.
+     *
+     * @return void
+     */
+    public function testSaveExistingRecordWithTranslatesField()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $table->entityClass(__NAMESPACE__ . '\Article');
+
+        $data = [
+            'author_id' => 1,
+            'published' => 'Y',
+            '_translations' => [
+                'eng' => [
+                    'title' => 'First Article1',
+                    'body' => 'First Article content has been updated'
+                ],
+                'spa' => [
+                    'title' => 'Mi nuevo titulo',
+                    'body' => 'Contenido Actualizado'
+                ]
+            ]
+        ];
+
+        $article = $table->find()->first();
+        $article = $table->patchEntity($article, $data);
+
+        $this->assertNotFalse($table->save($article));
+
+        $results = $this->_extractTranslations(
+            $table->find('translations')->where(['id' => 1])
+        )->first();
+
+        $this->assertEquals('Mi nuevo titulo', $results['spa']['title']);
+        $this->assertEquals('Contenido Actualizado', $results['spa']['body']);
+
+        $this->assertEquals('First Article1', $results['eng']['title']);
+        $this->assertEquals('Description #1', $results['eng']['description']);
+    }
 }
