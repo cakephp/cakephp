@@ -505,9 +505,16 @@ class PaginatorHelper extends Helper
             $url['sort'] = $url['direction'] = null;
         }
         if (!empty($paging['scope'])) {
-            $url = [$paging['scope'] => $url] + $this->_config['options']['url'];
-            if (empty($url[$paging['scope']]['page'])) {
-                unset($url[$paging['scope']]['page']);
+            $scope = $paging['scope'];
+            $currentParams = $this->_config['options']['url'];
+            // Merge existing query parameters in the scope.
+            if (isset($currentParams['?'][$scope]) && is_array($currentParams['?'][$scope])) {
+                $url += $currentParams['?'][$scope];
+                unset($currentParams['?'][$scope]);
+            }
+            $url = [$scope => $url] + $currentParams;
+            if (empty($url[$scope]['page'])) {
+                unset($url[$scope]['page']);
             }
         }
 

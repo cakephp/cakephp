@@ -827,6 +827,38 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
+     * test generateUrl with multiple pagination and query string values
+     *
+     * @return void
+     */
+    public function testGenerateUrlMultiplePaginationQueryStringData()
+    {
+        Router::setRequestInfo([
+            ['controller' => 'posts', 'action' => 'index', 'plugin' => null],
+            ['base' => '', 'here' => 'posts/index', 'webroot' => '/']
+        ]);
+        $this->View->request->params['paging']['Article']['scope'] = 'article';
+        $this->View->request->params['paging']['Article']['page'] = 3;
+        $this->View->request->params['paging']['Article']['prevPage'] = true;
+        $this->View->request->query = [
+            'article' => [
+                'puppy' => 'no'
+            ]
+        ];
+        // Need to run __construct to update _config['url']
+        $paginator = new PaginatorHelper($this->View);
+        $paginator->options(['model' => 'Article']);
+
+        $result = $paginator->generateUrl(['sort' => 'name']);
+        $expected = '/posts/index?article%5Bpage%5D=3&amp;article%5Bsort%5D=name&amp;article%5Bpuppy%5D=no';
+        $this->assertEquals($expected, $result);
+
+        $result = $paginator->generateUrl([]);
+        $expected = '/posts/index?article%5Bpage%5D=3&amp;article%5Bpuppy%5D=no';
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * testOptions method
      *
      * @return void
