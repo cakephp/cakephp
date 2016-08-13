@@ -14,8 +14,8 @@
  */
 namespace Cake\Routing;
 
-use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Exception\DuplicateNamedRouteException;
+use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Route\Route;
 
 /**
