@@ -203,8 +203,8 @@ class TranslatorRegistry extends TranslatorLocator
      */
     protected function _fallbackLoader($name, $locale)
     {
-        if ($this->_customFallbackLoader) {
-            return ($this->_customFallbackLoader)($name, $locale);
+        if ($loader = $this->_customFallbackLoader) {
+            return $loader($name, $locale);
         }
 
         $chain = new ChainMessagesLoader([
