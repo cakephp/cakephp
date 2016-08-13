@@ -1194,10 +1194,10 @@ class RouterTest extends TestCase
     /**
      * Test that using duplicate names causes exceptions.
      *
-     * @expectedException \Cake\Routing\Exception\DuplicateRouteException
+     * @expectedException \Cake\Routing\Exception\DuplicateNamedRouteException
      * @return void
      */
-    public function testDuplicateRouteException()
+    public function testDuplicateNamedRouteException()
     {
         Router::connect(
             '/users/:name',
@@ -1221,7 +1221,7 @@ class RouterTest extends TestCase
      *
      * @return void
      */
-    public function testNoDuplicateRouteException()
+    public function testNoDuplicateNamedRouteException()
     {
         Router::connect(
             '/users/:name',
@@ -1231,7 +1231,7 @@ class RouterTest extends TestCase
 		Router::connect(
             '/users/:name',
             ['controller' => 'users', 'action' => 'view'],
-            ['_name' => 'otherName']
+            ['_name' => 'test2']
         );
 		Router::connect(
             '/users/:name',
