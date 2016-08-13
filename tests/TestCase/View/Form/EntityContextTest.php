@@ -75,7 +75,7 @@ class EntityContextTest extends TestCase
         $row = new Article();
         $context = new EntityContext($this->request, [
             'entity' => $row,
-        ]);
+        ], 'post');
         $this->assertSame($row, $context->entity());
     }
 
@@ -89,7 +89,7 @@ class EntityContextTest extends TestCase
         $row = new Article();
         $context = new EntityContext($this->request, [
             'entity' => $row,
-        ]);
+        ], 'post');
         $this->assertEquals(['id'], $context->primaryKey());
     }
 
@@ -103,7 +103,7 @@ class EntityContextTest extends TestCase
         $row = new Article();
         $context = new EntityContext($this->request, [
             'entity' => $row,
-        ]);
+        ], 'post');
         $this->assertTrue($context->isPrimaryKey('id'));
         $this->assertFalse($context->isPrimaryKey('title'));
         $this->assertTrue($context->isPrimaryKey('1.id'));
@@ -124,7 +124,7 @@ class EntityContextTest extends TestCase
         $row = new Article();
         $context = new EntityContext($this->request, [
             'entity' => $row,
-        ]);
+        ], 'post');
         $this->assertTrue($context->isCreate());
 
         $row->isNew(false);
@@ -144,7 +144,7 @@ class EntityContextTest extends TestCase
     {
         $context = new EntityContext($this->request, [
             'entity' => $collection,
-        ]);
+        ], 'post');
         $this->assertTrue($context->isCreate());
     }
 
@@ -159,7 +159,7 @@ class EntityContextTest extends TestCase
         $row = new \StdClass();
         $context = new EntityContext($this->request, [
             'entity' => $row,
-        ]);
+        ], 'post');
     }
 
     /**
@@ -172,7 +172,7 @@ class EntityContextTest extends TestCase
     {
         $context = new EntityContext($this->request, [
             'entity' => new \Cake\ORM\Entity,
-        ]);
+        ], 'post');
     }
 
     /**
@@ -186,7 +186,7 @@ class EntityContextTest extends TestCase
         $entity->source('Articles');
         $context = new EntityContext($this->request, [
             'entity' => $entity,
-        ]);
+        ], 'post');
         $expected = ['id', 'author_id', 'title', 'body', 'published'];
         $this->assertEquals($expected, $context->fieldNames());
     }
@@ -200,7 +200,7 @@ class EntityContextTest extends TestCase
     {
         $context = new EntityContext($this->request, [
             'table' => 'Articles'
-        ]);
+        ], 'post');
 
         $this->assertNull($context->val('title'));
         $this->assertFalse($context->isRequired('title'));
@@ -228,7 +228,7 @@ class EntityContextTest extends TestCase
 
         $context = new EntityContext($this->request, [
             'entity' => $row,
-        ]);
+        ], 'post');
 
         $result = $context->val('title');
         $this->assertEquals($row->title, $result);
@@ -248,7 +248,7 @@ class EntityContextTest extends TestCase
     {
         $context = new EntityContext($this->request, [
             'entity' => $collection,
-        ]);
+        ], 'post');
 
         $result = $context->val('0.title');
         $this->assertEquals('First post', $result);
@@ -297,7 +297,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $collection,
             'table' => 'Articles',
-        ]);
+        ], 'post');
 
         $result = $context->val('0.title');
         $this->assertEquals('First post', $result);
@@ -327,7 +327,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $collection,
             'table' => 'Articles',
-        ]);
+        ], 'post');
 
         $result = $context->val('Articles.0.title');
         $this->assertEquals('First post', $result);
@@ -355,7 +355,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $collection,
             'table' => 'Articles',
-        ]);
+        ], 'post');
 
         $this->assertTrue($context->hasError('0.title'));
         $this->assertEquals(['Required field'], $context->error('0.title'));
@@ -381,7 +381,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $collection,
             'table' => 'Articles',
-        ]);
+        ], 'post');
 
         $this->assertEquals('string', $context->type('0.title'));
         $this->assertEquals('text', $context->type('1.body'));
@@ -411,7 +411,7 @@ class EntityContextTest extends TestCase
                 'Articles' => 'create',
                 'Users' => 'custom',
             ]
-        ]);
+        ], 'post');
         $this->assertFalse($context->isRequired('nope'));
 
         $this->assertTrue($context->isRequired('0.title'));
@@ -436,7 +436,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $row,
             'table' => 'Articles',
-        ]);
+        ], 'post');
         $result = $context->val('title');
         $this->assertEquals($row->title, $result);
 
@@ -467,7 +467,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $row,
             'table' => 'Articles',
-        ]);
+        ], 'post');
         $result = $context->val('types');
         $this->assertEquals($row->types, $result);
 
@@ -502,10 +502,38 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $row,
             'table' => 'Articles',
-        ]);
+        ], 'post');
         $this->assertEquals('New title', $context->val('title'));
         $this->assertEquals('yes', $context->val('notInEntity'));
         $this->assertEquals($row->body, $context->val('body'));
+    }
+
+
+    /**
+     * Test reading val from query data
+     */
+    public function testValReadsRequestQuery()
+    {
+        $row = new Article([
+            'title' => 'Entity title',
+            'author' => 'Entity author',
+            'body' => 'Entity body'
+        ]);
+        $this->request->data = [
+            'author' => 'Post author'
+        ];
+        $this->request->query = [
+            'title' => 'My title',
+            'body' => 'My body',
+            'author' => ''
+        ];
+        $context = new EntityContext($this->request, [
+            'entity' => $row,
+            'table' => 'Articles'
+        ], 'get');
+        $this->assertEquals('My title', $context->val('title'));
+        $this->assertEquals('My body', $context->val('body'));
+        $this->assertEquals('', $context->val('author'));
     }
 
     /**
@@ -529,7 +557,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $row,
             'table' => 'Articles',
-        ]);
+        ], 'post');
 
         $result = $context->val('user.fname');
         $this->assertEquals($row->user->fname, $result);
@@ -560,7 +588,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $row,
             'table' => 'Articles',
-        ]);
+        ], 'post');
 
         $result = $context->val('id');
         $this->assertEquals($row->id, $result);
@@ -588,7 +616,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $row,
             'table' => 'Articles',
-        ]);
+        ], 'post');
 
         $result = $context->val('user.articles.0.title');
         $this->assertEquals('First post', $result);
@@ -618,7 +646,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $row,
             'table' => 'Articles',
-        ]);
+        ], 'post');
 
         $result = $context->val('user.groups._ids');
         $this->assertEquals([1, 2], $result);
@@ -645,7 +673,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $row,
             'table' => 'Articles',
-        ]);
+        ], 'post');
 
         TableRegistry::get('Users')->belongsToMany('Groups');
         TableRegistry::get('Groups')->primaryKey('thing');
@@ -666,7 +694,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => new Entity(),
             'table' => 'Articles',
-        ]);
+        ], 'post');
         $articles = TableRegistry::get('Articles');
         $articles->schema()->addColumn('comments_on', [
             'type' => 'boolean'
@@ -694,7 +722,7 @@ class EntityContextTest extends TestCase
             'entity' => new Entity(),
             'table' => 'Articles',
             'validator' => 'create',
-        ]);
+        ], 'post');
 
         $this->assertTrue($context->isRequired('title'));
         $this->assertFalse($context->isRequired('body'));
@@ -730,7 +758,7 @@ class EntityContextTest extends TestCase
             'entity' => $row,
             'table' => 'Articles',
             'validator' => 'default',
-        ]);
+        ], 'post');
 
         $this->assertTrue($context->isRequired('comments.0.user_id'));
         $this->assertFalse($context->isRequired('comments.0.other'));
@@ -761,7 +789,7 @@ class EntityContextTest extends TestCase
             'entity' => $row,
             'table' => 'Articles',
             'validator' => 'default',
-        ]);
+        ], 'post');
 
         $this->assertFalse($context->isRequired('comments.0.starred'));
     }
@@ -793,7 +821,7 @@ class EntityContextTest extends TestCase
             'entity' => $row,
             'table' => 'Users',
             'validator' => 'default',
-        ]);
+        ], 'post');
 
         $this->assertTrue($context->isRequired('articles.0.title'));
     }
@@ -823,7 +851,7 @@ class EntityContextTest extends TestCase
             'entity' => $row,
             'table' => 'Articles',
             'validator' => 'default',
-        ]);
+        ], 'post');
 
         $this->assertTrue(
             $context->isRequired('comments.0.comment'),
@@ -858,7 +886,7 @@ class EntityContextTest extends TestCase
                 'Articles' => 'create',
                 'Comments' => 'custom'
             ]
-        ]);
+        ], 'post');
 
         $this->assertTrue($context->isRequired('title'));
         $this->assertFalse($context->isRequired('body'));
@@ -886,7 +914,7 @@ class EntityContextTest extends TestCase
                 'Articles' => 'create',
                 'Users' => 'custom'
             ]
-        ]);
+        ], 'post');
 
         $this->assertTrue($context->isRequired('user.username'));
         $this->assertFalse($context->isRequired('user.first_name'));
@@ -908,7 +936,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $row,
             'table' => 'Articles',
-        ]);
+        ], 'post');
 
         $this->assertEquals('string', $context->type('title'));
         $this->assertEquals('text', $context->type('body'));
@@ -932,7 +960,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $row,
             'table' => 'Articles',
-        ]);
+        ], 'post');
 
         $this->assertEquals('string', $context->type('user.username'));
         $this->assertEquals('text', $context->type('user.bio'));
@@ -955,7 +983,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $row,
             'table' => 'Articles',
-        ]);
+        ], 'post');
 
         $expected = [
             'length' => 255, 'precision' => null
@@ -992,7 +1020,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $row,
             'table' => 'Articles',
-        ]);
+        ], 'post');
 
         $this->assertFalse($context->hasError('title'));
         $this->assertFalse($context->hasError('nope'));
@@ -1019,7 +1047,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $row,
             'table' => 'Articles',
-        ]);
+        ], 'post');
 
         $this->assertTrue($context->hasError('user.username'));
         $this->assertFalse($context->hasError('user.nope'));
@@ -1048,7 +1076,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $row,
             'table' => 'Articles',
-        ]);
+        ], 'post');
 
         $this->assertEquals([], $context->error('title'));
 
@@ -1083,7 +1111,7 @@ class EntityContextTest extends TestCase
             'entity' => $row,
             'table' => 'Articles',
             'validator' => 'default',
-        ]);
+        ], 'post');
 
         $this->assertEquals([], $context->error('title'));
         $this->assertEquals([], $context->error('comments.0.user_id'));
@@ -1156,7 +1184,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => new Entity(),
             'table' => 'Articles',
-        ]);
+        ], 'post');
         $articles = TableRegistry::get('Articles');
         $this->assertEquals($articles->schema()->columns(), $context->fieldNames());
     }
@@ -1175,7 +1203,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $row,
             'table' => 'Articles',
-        ]);
+        ], 'post');
         $context->isRequired('title');
         $articles = TableRegistry::get('Articles');
         $this->assertSame($row, $articles->validator()->provider('entity'));
@@ -1194,7 +1222,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $row,
             'table' => 'Articles',
-        ]);
+        ], 'post');
 
         $validator = $articles->validator();
         $context->isRequired('user.articles.0.title');

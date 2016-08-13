@@ -42,14 +42,14 @@ class ArrayContextTest extends TestCase
      */
     public function testPrimaryKey()
     {
-        $context = new ArrayContext($this->request, []);
+        $context = new ArrayContext($this->request, [], 'post');
         $this->assertEquals([], $context->primaryKey());
 
         $context = new ArrayContext($this->request, [
             'schema' => [
                 '_constraints' => 'mistake',
             ]
-        ]);
+        ], 'post');
         $this->assertEquals([], $context->primaryKey());
 
         $data = [
@@ -59,7 +59,7 @@ class ArrayContextTest extends TestCase
                 ]
             ],
         ];
-        $context = new ArrayContext($this->request, $data);
+        $context = new ArrayContext($this->request, $data, 'post');
 
         $expected = ['id'];
         $this->assertEquals($expected, $context->primaryKey());
@@ -72,14 +72,14 @@ class ArrayContextTest extends TestCase
      */
     public function testIsPrimaryKey()
     {
-        $context = new ArrayContext($this->request, []);
+        $context = new ArrayContext($this->request, [], 'post');
         $this->assertFalse($context->isPrimaryKey('id'));
 
         $context = new ArrayContext($this->request, [
             'schema' => [
                 '_constraints' => 'mistake',
             ]
-        ]);
+        ], 'post');
         $this->assertFalse($context->isPrimaryKey('mistake'));
 
         $data = [
@@ -89,7 +89,7 @@ class ArrayContextTest extends TestCase
                 ]
             ],
         ];
-        $context = new ArrayContext($this->request, $data);
+        $context = new ArrayContext($this->request, $data, 'post');
         $this->assertTrue($context->isPrimaryKey('id'));
         $this->assertFalse($context->isPrimaryKey('name'));
 
@@ -100,7 +100,7 @@ class ArrayContextTest extends TestCase
                 ]
             ],
         ];
-        $context = new ArrayContext($this->request, $data);
+        $context = new ArrayContext($this->request, $data, 'post');
         $this->assertTrue($context->isPrimaryKey('id'));
         $this->assertTrue($context->isPrimaryKey('name'));
     }
@@ -112,7 +112,7 @@ class ArrayContextTest extends TestCase
      */
     public function testIsCreate()
     {
-        $context = new ArrayContext($this->request, []);
+        $context = new ArrayContext($this->request, [], 'post');
         $this->assertTrue($context->isCreate());
 
         $data = [
@@ -122,11 +122,11 @@ class ArrayContextTest extends TestCase
                 ]
             ],
         ];
-        $context = new ArrayContext($this->request, $data);
+        $context = new ArrayContext($this->request, $data, 'post');
         $this->assertTrue($context->isCreate());
 
         $data['defaults'] = ['id' => 2];
-        $context = new ArrayContext($this->request, $data);
+        $context = new ArrayContext($this->request, $data, 'post');
         $this->assertFalse($context->isCreate());
     }
 
@@ -148,9 +148,31 @@ class ArrayContextTest extends TestCase
                     'published' => 0
                 ]
             ]
-        ]);
+        ], 'post');
         $this->assertEquals('New title', $context->val('Articles.title'));
         $this->assertEquals('My copy', $context->val('Articles.body'));
+        $this->assertEquals(0, $context->val('Articles.published'));
+        $this->assertNull($context->val('Articles.nope'));
+    }
+
+    public function testValPresentFromQuery()
+    {
+        $this->request->query = [
+            'Articles' => [
+                'title' => 'My title',
+                'body' => 'My body',
+            ]
+        ];
+        $context = new ArrayContext($this->request, [
+            'defaults' => [
+                'Articles' => [
+                    'title' => 'Default value',
+                    'published' => 0
+                ]
+            ]
+        ], 'get');
+        $this->assertEquals('My title', $context->val('Articles.title'));
+        $this->assertEquals('My body', $context->val('Articles.body'));
         $this->assertEquals(0, $context->val('Articles.published'));
         $this->assertNull($context->val('Articles.nope'));
     }
@@ -162,7 +184,7 @@ class ArrayContextTest extends TestCase
      */
     public function testValMissing()
     {
-        $context = new ArrayContext($this->request, []);
+        $context = new ArrayContext($this->request, [], 'post');
         $this->assertNull($context->val('Comments.field'));
     }
 
@@ -180,7 +202,7 @@ class ArrayContextTest extends TestCase
                     'nope' => false
                 ]
             ]
-        ]);
+        ], 'post');
         $this->assertTrue($context->isRequired('Comments.required'));
         $this->assertFalse($context->isRequired('Comments.nope'));
         $this->assertFalse($context->isRequired('Articles.id'));
@@ -193,7 +215,7 @@ class ArrayContextTest extends TestCase
      */
     public function testIsRequiredUndefined()
     {
-        $context = new ArrayContext($this->request, []);
+        $context = new ArrayContext($this->request, [], 'post');
         $this->assertFalse($context->isRequired('Comments.field'));
     }
 
@@ -211,7 +233,7 @@ class ArrayContextTest extends TestCase
                     'comment' => ['length' => 255]
                 ]
             ]
-        ]);
+        ], 'post');
         $this->assertNull($context->type('Comments.undefined'));
         $this->assertEquals('integer', $context->type('Comments.id'));
         $this->assertNull($context->type('Comments.comment'));
@@ -224,7 +246,7 @@ class ArrayContextTest extends TestCase
      */
     public function testIsTypeUndefined()
     {
-        $context = new ArrayContext($this->request, []);
+        $context = new ArrayContext($this->request, [], 'post');
         $this->assertNull($context->type('Comments.undefined'));
     }
 
@@ -244,7 +266,7 @@ class ArrayContextTest extends TestCase
                     'floaty' => ['type' => 'float', 'precision' => 2, 'length' => 5],
                 ]
             ]
-        ]);
+        ], 'post');
         $this->assertEquals([], $context->attributes('Comments.id'));
         $this->assertEquals(['length' => 255], $context->attributes('Comments.comment'));
         $this->assertEquals(['precision' => 2, 'length' => 5], $context->attributes('Comments.decimal'));
@@ -258,7 +280,7 @@ class ArrayContextTest extends TestCase
      */
     public function testError()
     {
-        $context = new ArrayContext($this->request, []);
+        $context = new ArrayContext($this->request, [], 'post');
         $this->assertEquals([], $context->error('Comments.empty'));
 
         $context = new ArrayContext($this->request, [
@@ -269,7 +291,7 @@ class ArrayContextTest extends TestCase
                     'user_id' => 'A valid userid is required',
                 ]
             ]
-        ]);
+        ], 'post');
         $this->assertEquals(['Comment is required'], $context->error('Comments.comment'));
         $this->assertEquals('A valid userid is required', $context->error('Comments.user_id'));
         $this->assertEquals([], $context->error('Comments.empty'));
@@ -291,7 +313,7 @@ class ArrayContextTest extends TestCase
                     'user_id' => 'A valid userid is required',
                 ]
             ]
-        ]);
+        ], 'post');
         $this->assertFalse($context->hasError('Comments.not_there'));
         $this->assertFalse($context->hasError('Comments.empty'));
         $this->assertTrue($context->hasError('Comments.user_id'));

@@ -22,25 +22,19 @@ use Cake\Network\Request;
  * This context provider simply fulfils the interface requirements
  * that FormHelper has and allows access to the request data.
  */
-class NullContext implements ContextInterface
+class NullContext extends AbstractContext
 {
-
-    /**
-     * The request object.
-     *
-     * @var \Cake\Network\Request
-     */
-    protected $_request;
 
     /**
      * Constructor.
      *
      * @param \Cake\Network\Request $request The request object.
      * @param array $context Context info.
+     * @param string $requestType The type of request used by the form this context is attached to.
      */
-    public function __construct(Request $request, array $context)
+    public function __construct(Request $request, array $context, $requestType)
     {
-        $this->_request = $request;
+        parent::__construct($request, $requestType);
     }
 
     /**
@@ -65,14 +59,6 @@ class NullContext implements ContextInterface
     public function isCreate()
     {
         return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function val($field)
-    {
-        return $this->_request->data($field);
     }
 
     /**
