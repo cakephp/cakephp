@@ -358,11 +358,11 @@ class RouteCollectionTest extends TestCase
     /**
      * Test the add() with some _name.
 	 * 
-     * @expectedException \Cake\Routing\Exception\DuplicateRouteException
+     * @expectedException \Cake\Routing\Exception\DuplicateNamedRouteException
 	 * 
      * @return void
      */
-    public function testAddingDuplicatedRoutesName()
+    public function testAddingDuplicateNamedRoutes()
     {
         $one = new Route('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
         $two = new Route('/', ['controller' => 'Dashboards', 'action' => 'display']);

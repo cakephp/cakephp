@@ -19,7 +19,7 @@ use Cake\Error\Debugger;
 $this->layout = 'dev_error';
 
 $this->assign('title', 'Duplicate Route');
-$this->assign('templateName', 'duplicate_route.ctp');
+$this->assign('templateName', 'duplicate_named_route.ctp');
 
 $attributes = $error->getAttributes();
 

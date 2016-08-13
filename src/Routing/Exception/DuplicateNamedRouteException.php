@@ -15,10 +15,9 @@ namespace Cake\Routing\Exception;
 use Cake\Core\Exception\Exception;
 
 /**
- * Exception raised when a URL cannot be reverse routed
- * or when a URL cannot be parsed.
+ * Exception raised when a route names used twice.
  */
-class DuplicateRouteException extends Exception
+class DuplicateNamedRouteException extends Exception
 {
 
     /**
