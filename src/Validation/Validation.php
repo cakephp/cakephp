@@ -25,7 +25,6 @@ use RuntimeException;
  * Validation Class. Used for validation of model data
  *
  * Offers different validation methods.
- *
  */
 class Validation
 {

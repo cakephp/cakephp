@@ -19,7 +19,6 @@ use Cake\Filesystem\File;
 
 /**
  * Task for loading plugins.
- *
  */
 class LoadTask extends Shell
 {

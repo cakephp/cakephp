@@ -18,7 +18,6 @@ use Cake\Core\Exception\Exception;
 
 /**
  * Used when a mailer cannot be found.
- *
  */
 class MissingMailerException extends Exception
 {

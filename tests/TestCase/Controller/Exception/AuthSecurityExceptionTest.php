@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * AuthSecurityException Test class
- *
  */
 class AuthSecurityExceptionTest extends TestCase
 {

@@ -26,7 +26,6 @@ use SimpleXmlElement;
 
 /**
  * Help to test Email
- *
  */
 class TestEmail extends Email
 {

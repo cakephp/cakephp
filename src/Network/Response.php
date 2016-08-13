@@ -27,7 +27,6 @@ use InvalidArgumentException;
  *
  * By default controllers will use this class to render their response. If you are going to use
  * a custom response class it should subclass this object in order to ensure compatibility.
- *
  */
 class Response
 {

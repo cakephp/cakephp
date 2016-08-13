@@ -19,7 +19,6 @@ use Cake\Utility\Hash;
 
 /**
  * PaginatorPostsTable class
- *
  */
 class PaginatorPostsTable extends Table
 {

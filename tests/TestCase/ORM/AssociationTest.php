@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * A Test double used to assert that default tables are created
- *
  */
 class TestTable extends Table
 {
@@ -40,7 +39,6 @@ class TestTable extends Table
 
 /**
  * Tests Association class
- *
  */
 class AssociationTest extends TestCase
 {

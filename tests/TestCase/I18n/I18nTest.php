@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * I18nTest class
- *
  */
 class I18nTest extends TestCase
 {

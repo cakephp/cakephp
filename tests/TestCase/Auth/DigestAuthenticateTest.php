@@ -27,7 +27,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Test case for DigestAuthentication
- *
  */
 class DigestAuthenticateTest extends TestCase
 {

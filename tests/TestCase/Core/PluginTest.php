@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * PluginTest class
- *
  */
 class PluginTest extends TestCase
 {

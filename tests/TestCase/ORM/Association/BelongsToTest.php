@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests BelongsTo class
- *
  */
 class BelongsToTest extends TestCase
 {

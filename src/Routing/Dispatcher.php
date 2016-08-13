@@ -26,7 +26,6 @@ use LogicException;
  * Dispatcher converts Requests into controller actions. It uses the dispatched Request
  * to locate and load the correct controller. If found, the requested action is called on
  * the controller
- *
  */
 class Dispatcher
 {

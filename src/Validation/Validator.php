@@ -862,7 +862,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'equals', $extra + [
-            'rule' => ['comparison', '=', $value]
+            'rule' => ['comparison', '==', $value]
         ]);
     }
 

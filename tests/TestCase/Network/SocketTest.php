@@ -20,7 +20,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * SocketTest class
- *
  */
 class SocketTest extends TestCase
 {

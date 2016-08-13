@@ -29,7 +29,6 @@ use TestPlugin\Controller\TestPluginController;
 
 /**
  * AppController class
- *
  */
 class ControllerTestAppController extends Controller
 {
@@ -216,7 +215,6 @@ class TestComponent extends Component
 
 /**
  * AnotherTestController class
- *
  */
 class AnotherTestController extends ControllerTestAppController
 {
@@ -224,7 +222,6 @@ class AnotherTestController extends ControllerTestAppController
 
 /**
  * ControllerTest class
- *
  */
 class ControllerTest extends TestCase
 {

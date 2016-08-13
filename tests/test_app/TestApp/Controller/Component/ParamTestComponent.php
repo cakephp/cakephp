@@ -17,7 +17,6 @@ use Cake\Controller\Component;
 
 /**
  * ParamTestComponent
- *
  */
 class ParamTestComponent extends Component
 {

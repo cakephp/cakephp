@@ -19,7 +19,6 @@ use InvalidArgumentException;
 
 /**
  * Storage engine for CakePHP caching
- *
  */
 abstract class CacheEngine
 {

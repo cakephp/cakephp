@@ -25,7 +25,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Test case for BasicAuthentication
- *
  */
 class BasicAuthenticateTest extends TestCase
 {

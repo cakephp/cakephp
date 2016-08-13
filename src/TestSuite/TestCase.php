@@ -26,7 +26,6 @@ use PHPUnit_Framework_TestCase;
 
 /**
  * Cake TestCase class
- *
  */
 abstract class TestCase extends PHPUnit_Framework_TestCase
 {

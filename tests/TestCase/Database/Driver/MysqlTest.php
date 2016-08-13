@@ -20,7 +20,6 @@ use \PDO;
 
 /**
  * Tests Mysql driver
- *
  */
 class MysqlTest extends TestCase
 {

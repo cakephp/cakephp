@@ -44,7 +44,6 @@ class TestCollection extends \IteratorIterator implements CollectionInterface
 
 /**
  * CollectionTest
- *
  */
 class CollectionTest extends TestCase
 {

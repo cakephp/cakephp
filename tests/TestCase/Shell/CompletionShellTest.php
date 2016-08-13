@@ -21,8 +21,7 @@ use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class TestCompletionStringOutput
- *
+ * TestCompletionStringOutput
  */
 class TestCompletionStringOutput extends ConsoleOutput
 {
@@ -36,7 +35,7 @@ class TestCompletionStringOutput extends ConsoleOutput
 }
 
 /**
- * Class CompletionShellTest
+ * CompletionShellTest
  */
 class CompletionShellTest extends TestCase
 {

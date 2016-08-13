@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * TimeTest class
- *
  */
 class TimeTest extends TestCase
 {

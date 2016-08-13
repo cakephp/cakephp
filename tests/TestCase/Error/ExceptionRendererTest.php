@@ -45,7 +45,6 @@ use RuntimeException;
 
 /**
  * BlueberryComponent class
- *
  */
 class BlueberryComponent extends Component
 {
@@ -71,7 +70,6 @@ class BlueberryComponent extends Component
 
 /**
  * TestErrorController class
- *
  */
 class TestErrorController extends Controller
 {
@@ -115,7 +113,6 @@ class TestErrorController extends Controller
 
 /**
  * MyCustomExceptionRenderer class
- *
  */
 class MyCustomExceptionRenderer extends ExceptionRenderer
 {
@@ -133,7 +130,6 @@ class MyCustomExceptionRenderer extends ExceptionRenderer
 
 /**
  * Exception class for testing app error handlers and custom errors.
- *
  */
 class MissingWidgetThingException extends NotFoundException
 {
@@ -141,7 +137,6 @@ class MissingWidgetThingException extends NotFoundException
 
 /**
  * Exception class for testing app error handlers and custom errors.
- *
  */
 class MissingWidgetThing extends \Exception
 {
@@ -149,7 +144,6 @@ class MissingWidgetThing extends \Exception
 
 /**
  * ExceptionRendererTest class
- *
  */
 class ExceptionRendererTest extends TestCase
 {

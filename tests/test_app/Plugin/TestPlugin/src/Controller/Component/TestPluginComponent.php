@@ -14,8 +14,7 @@
  */
 
 /**
- * Class TestPluginComponent
- *
+ * TestPluginComponent
  */
 namespace TestPlugin\Controller\Component;
 

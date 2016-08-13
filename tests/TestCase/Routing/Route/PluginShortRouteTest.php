@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * test case for PluginShortRoute
- *
  */
 class PluginShortRouteTest extends TestCase
 {

@@ -27,7 +27,6 @@ use Cake\Utility\Security;
 
 /**
  * Test case for FormAuthentication
- *
  */
 class FormAuthenticateTest extends TestCase
 {

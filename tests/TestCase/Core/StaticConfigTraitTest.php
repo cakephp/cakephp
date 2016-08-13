@@ -129,7 +129,6 @@ class TestLogStaticConfig
 
 /**
  * StaticConfigTraitTest class
- *
  */
 class StaticConfigTraitTest extends TestCase
 {

@@ -19,8 +19,7 @@ use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class PhpConfigTest
- *
+ * PhpConfigTest
  */
 class PhpConfigTest extends TestCase
 {

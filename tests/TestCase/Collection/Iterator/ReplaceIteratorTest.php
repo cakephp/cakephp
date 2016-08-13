@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * ReplaceIterator Test
- *
  */
 class ReplaceIteratorTest extends TestCase
 {

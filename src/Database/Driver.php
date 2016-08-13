@@ -20,7 +20,6 @@ use PDO;
 /**
  * Represents a database diver containing all specificities for
  * a database engine including its SQL dialect
- *
  */
 abstract class Driver
 {

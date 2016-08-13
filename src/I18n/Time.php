@@ -23,7 +23,6 @@ use JsonSerializable;
 /**
  * Extends the built-in DateTime class to provide handy methods and locale-aware
  * formatting helpers
- *
  */
 class Time extends MutableDateTime implements JsonSerializable
 {

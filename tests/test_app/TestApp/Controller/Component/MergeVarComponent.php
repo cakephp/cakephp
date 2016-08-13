@@ -17,7 +17,6 @@ use Cake\Controller\Component;
 
 /**
  * MergeVar Component
- *
  */
 class MergeVarComponent extends Component
 {

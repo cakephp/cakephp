@@ -18,7 +18,6 @@ use Cake\Event\Event;
 
 /**
  * TestAuthComponent class
- *
  */
 class TestAuthComponent extends AuthComponent
 {

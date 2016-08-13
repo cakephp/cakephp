@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests Query class
- *
  */
 class QueryTest extends TestCase
 {

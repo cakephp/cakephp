@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * RouterTest class
- *
  */
 class RouterTest extends TestCase
 {

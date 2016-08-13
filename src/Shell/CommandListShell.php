@@ -23,7 +23,6 @@ use SimpleXmlElement;
 
 /**
  * Shows a list of commands available from the console.
- *
  */
 class CommandListShell extends Shell
 {

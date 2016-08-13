@@ -19,8 +19,7 @@ use Cake\Shell\RoutesShell;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class RoutesShellTest
- *
+ * RoutesShellTest
  */
 class RoutesShellTest extends TestCase
 {

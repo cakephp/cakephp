@@ -37,7 +37,6 @@ use Cake\Event\EventListenerInterface;
  * - `beforeRenderFile(Event $event, $viewFile)` - Called before any view fragment is rendered.
  * - `afterRenderFile(Event $event, $viewFile, $content)` - Called after any view fragment is rendered.
  *   If a listener returns a non-null value, the output of the rendered file will be set to that.
- *
  */
 class Helper implements EventListenerInterface
 {

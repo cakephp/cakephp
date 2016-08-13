@@ -175,9 +175,7 @@ class Type implements TypeInterface
     }
 
     /**
-     * Returns type identifier name for this object
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getName()
     {
@@ -185,12 +183,7 @@ class Type implements TypeInterface
     }
 
     /**
-     * Returns the base type name that this class is inheriting.
-     * This is useful when extending base type for adding extra functionality
-     * but still want the rest of the framework to use the same assumptions it would
-     * do about the base type it inherits from.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getBaseType()
     {
@@ -198,11 +191,7 @@ class Type implements TypeInterface
     }
 
     /**
-     * Casts given value from a PHP type to one acceptable by database
-     *
-     * @param mixed $value value to be converted to database equivalent
-     * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
-     * @return mixed
+     * {@inheritDoc}
      */
     public function toDatabase($value, Driver $driver)
     {
@@ -245,11 +234,7 @@ class Type implements TypeInterface
     }
 
     /**
-     * Casts give value to Statement equivalent
-     *
-     * @param mixed $value value to be converted to PHP equivalent
-     * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
-     * @return mixed
+     * {@inheritDoc}
      */
     public function toStatement($value, Driver $driver)
     {
@@ -297,13 +282,7 @@ class Type implements TypeInterface
     }
 
     /**
-     * Generate a new primary key value for a given type.
-     *
-     * This method can be used by types to create new primary key values
-     * when entities are inserted.
-     *
-     * @return mixed A new primary key value.
-     * @see \Cake\Database\Type\UuidType
+     * {@inheritDoc}
      */
     public function newId()
     {
@@ -311,13 +290,7 @@ class Type implements TypeInterface
     }
 
     /**
-     * Marshalls flat data into PHP objects.
-     *
-     * Most useful for converting request data into PHP objects
-     * that make sense for the rest of the ORM/Database layers.
-     *
-     * @param mixed $value The value to convert.
-     * @return mixed Converted value.
+     * {@inheritDoc}
      */
     public function marshal($value)
     {

@@ -23,7 +23,6 @@ use Exception;
 
 /**
  * ArticlesFixture class
- *
  */
 class ArticlesFixture extends TestFixture
 {
@@ -63,7 +62,6 @@ class ArticlesFixture extends TestFixture
 
 /**
  * StringsTestsFixture class
- *
  */
 class StringsTestsFixture extends TestFixture
 {
@@ -102,7 +100,6 @@ class StringsTestsFixture extends TestFixture
 
 /**
  * ImportsFixture class
- *
  */
 class ImportsFixture extends TestFixture
 {
@@ -127,7 +124,6 @@ class ImportsFixture extends TestFixture
 /**
  * This class allows testing the fixture data insertion when the properties
  * $fields and $import are not set
- *
  */
 class LettersFixture extends TestFixture
 {
@@ -146,7 +142,6 @@ class LettersFixture extends TestFixture
 
 /**
  * Test case for TestFixture
- *
  */
 class TestFixtureTest extends TestCase
 {

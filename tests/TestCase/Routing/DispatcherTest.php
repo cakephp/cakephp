@@ -25,7 +25,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * DispatcherTest class
- *
  */
 class DispatcherTest extends TestCase
 {

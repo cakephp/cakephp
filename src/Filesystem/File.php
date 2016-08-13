@@ -18,7 +18,6 @@ use finfo;
 
 /**
  * Convenience class for reading, writing and appending to files.
- *
  */
 class File
 {

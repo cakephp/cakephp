@@ -17,7 +17,6 @@ namespace Cake\Routing\Route;
 /**
  * Plugin short route, that copies the plugin param to the controller parameters
  * It is used for supporting /:plugin routes.
- *
  */
 class PluginShortRoute extends InflectedRoute
 {
