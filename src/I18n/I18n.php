@@ -201,6 +201,18 @@ class I18n
     }
 
     /**
+     * Registers a custom fallback translator loader
+     *
+     * @param callable $loader A callable object that should return a Package
+     * instance to be used for assembling a new translator.
+     * @return void
+     */
+    public static function fallbackConfig(callable $loader)
+    {
+        static::translators()->setCustomFallbackLoader($loader);
+    }
+
+    /**
      * Sets the default locale to use for future translator instances.
      * This also affects the `intl.default_locale` PHP setting.
      *
