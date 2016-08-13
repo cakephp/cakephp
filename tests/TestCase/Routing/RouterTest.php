@@ -1204,12 +1204,12 @@ class RouterTest extends TestCase
             ['controller' => 'users', 'action' => 'view'],
             ['_name' => 'test']
         );
-		Router::connect(
+        Router::connect(
             '/users/:name',
             ['controller' => 'users', 'action' => 'view'],
             ['_name' => 'otherName']
         );
-		Router::connect(
+        Router::connect(
             '/users/:name',
             ['controller' => 'users', 'action' => 'view'],
             ['_name' => 'test']
@@ -1228,12 +1228,12 @@ class RouterTest extends TestCase
             ['controller' => 'users', 'action' => 'view'],
             ['_name' => 'test']
         );
-		Router::connect(
+        Router::connect(
             '/users/:name',
             ['controller' => 'users', 'action' => 'view'],
             ['_name' => 'test2']
         );
-		Router::connect(
+        Router::connect(
             '/users/:name',
             ['controller' => 'users', 'action' => 'view'],
             ['_name' => 'test3']
