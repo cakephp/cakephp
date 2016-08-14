@@ -87,6 +87,7 @@ class AssetFilter extends DispatcherFilter
 
         $pathSegments = explode('.', $url);
         $ext = array_pop($pathSegments);
+
         return $this->_deliverAsset($request, $response, $assetFile, $ext);
     }
 
@@ -141,6 +142,7 @@ class AssetFilter extends DispatcherFilter
         }
         $response->cache(filemtime($assetFile), $this->_cacheTime);
         $response->file($assetFile);
+
         return $response;
     }
 }
