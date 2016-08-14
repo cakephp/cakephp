@@ -41,17 +41,7 @@ class CookieEncryptedUsingControllerTest extends IntegrationTestCase
         DispatcherFactory::clear();
         DispatcherFactory::add('Routing');
         DispatcherFactory::add('ControllerFactory');
-    }
-
-    /**
-     * tear down.
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->_useHttpServer = false;
+        $this->useHttpServer(false);
     }
 
     /**
@@ -157,7 +147,7 @@ class CookieEncryptedUsingControllerTest extends IntegrationTestCase
      */
     public function testCanAssertCookieEncryptedWithAesWhenUsingPsr7()
     {
-        $this->_useHttpServer = true;
+        $this->useHttpServer(true);
         $this->get('/cookie_component_test/set_cookie');
         $this->assertCookieEncrypted('abc', 'NameOfCookie', 'aes');
     }
