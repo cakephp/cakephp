@@ -87,9 +87,7 @@ class AssetFilter extends DispatcherFilter
 
         $pathSegments = explode('.', $url);
         $ext = array_pop($pathSegments);
-        $this->_deliverAsset($request, $response, $assetFile, $ext);
-
-        return $response;
+        return $this->_deliverAsset($request, $response, $assetFile, $ext);
     }
 
     /**
@@ -142,10 +140,7 @@ class AssetFilter extends DispatcherFilter
             $response->header('Content-Length', filesize($assetFile));
         }
         $response->cache(filemtime($assetFile), $this->_cacheTime);
-        $response->sendHeaders();
-        readfile($assetFile);
-        if ($compressionEnabled) {
-            ob_end_flush();
-        }
+        $response->file($assetFile);
+        return $response;
     }
 }
