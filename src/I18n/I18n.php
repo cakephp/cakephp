@@ -201,7 +201,7 @@ class I18n
     }
 
     /**
-     * Registers a custom fallback translator loader
+     * Registers a fallback translator loader
      *
      * @param callable $loader A callable object that should return a Package
      * instance to be used for assembling a new translator.
@@ -209,7 +209,7 @@ class I18n
      */
     public static function fallbackConfig(callable $loader)
     {
-        static::translators()->setCustomFallbackLoader($loader);
+        static::translators()->setFallbackLoader($loader);
     }
 
     /**
