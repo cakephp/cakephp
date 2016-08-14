@@ -44,6 +44,17 @@ class CookieEncryptedUsingControllerTest extends IntegrationTestCase
     }
 
     /**
+     * tear down.
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        $this->_useHttpServer = false;
+    }
+
+    /**
      * Can encrypt/decrypt the cookie value.
      */
     public function testCanEncryptAndDecryptWithAes()
@@ -139,5 +150,15 @@ class CookieEncryptedUsingControllerTest extends IntegrationTestCase
         Security::salt($key);
         $this->get('/cookie_component_test/set_cookie');
         $this->assertCookieEncrypted('abc', 'NameOfCookie', 'aes', $key);
+    }
+
+    /**
+     * Can AssertCookie even if encrypted with the aes when using PSR7 server.
+     */
+    public function testCanAssertCookieEncryptedWithAesWhenUsingPsr7()
+    {
+        $this->_useHttpServer = true;
+        $this->get('/cookie_component_test/set_cookie');
+        $this->assertCookieEncrypted('abc', 'NameOfCookie', 'aes');
     }
 }

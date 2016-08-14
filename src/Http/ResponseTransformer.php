@@ -101,7 +101,7 @@ class ResponseTransformer
             }
 
             list($name, $value) = explode('=', array_shift($parts), 2);
-            $parsed = compact('name', 'value');
+            $parsed = compact('name') + ['value' => urldecode($value)];
 
             foreach ($parts as $part) {
                 if (strpos($part, '=') !== false) {
