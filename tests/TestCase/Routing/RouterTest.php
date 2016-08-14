@@ -1234,30 +1234,6 @@ class RouterTest extends TestCase
     }
 
     /**
-     * Test that using defferent names not causes exceptions.
-     *
-     * @return void
-     */
-    public function testNoDuplicateNamedRouteException()
-    {
-        Router::connect(
-            '/users/:name',
-            ['controller' => 'users', 'action' => 'view'],
-            ['_name' => 'test']
-        );
-        Router::connect(
-            '/users/:name',
-            ['controller' => 'users', 'action' => 'view'],
-            ['_name' => 'test2']
-        );
-        Router::connect(
-            '/users/:name',
-            ['controller' => 'users', 'action' => 'view'],
-            ['_name' => 'test3']
-        );
-    }
-
-    /**
      * Test that url filters are applied to url params.
      *
      * @return void
