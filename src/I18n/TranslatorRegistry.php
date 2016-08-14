@@ -90,7 +90,7 @@ class TranslatorRegistry extends TranslatorLocator
     ) {
         parent::__construct($packages, $formatters, $factory, $locale);
 
-        $this->setFallbackLoader(function($name, $locale) {
+        $this->setFallbackLoader(function ($name, $locale) {
             $chain = new ChainMessagesLoader([
                 new MessagesFileLoader($name, $locale, 'mo'),
                 new MessagesFileLoader($name, $locale, 'po')
