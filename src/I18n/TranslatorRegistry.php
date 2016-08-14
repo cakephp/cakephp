@@ -36,14 +36,14 @@ class TranslatorRegistry extends TranslatorLocator
      *
      * @var array
      */
-    protected $_loaders;
+    public $_loaders;
 
     /**
-     * Fallback loader
+     * Fallback loader name
      *
-     * @var callable
+     * @var string
      */
-    protected $_fallbackLoader;
+    protected $_fallbackLoader = '_fallback';
 
     /**
      * The name of the default formatter to use for newly created
@@ -90,7 +90,7 @@ class TranslatorRegistry extends TranslatorLocator
     ) {
         parent::__construct($packages, $formatters, $factory, $locale);
 
-        $this->setFallbackLoader(function ($name, $locale) {
+        $this->registerLoader($this->_fallbackLoader, function ($name, $locale) {
             $chain = new ChainMessagesLoader([
                 new MessagesFileLoader($name, $locale, 'mo'),
                 new MessagesFileLoader($name, $locale, 'po')
@@ -199,17 +199,6 @@ class TranslatorRegistry extends TranslatorLocator
     }
 
     /**
-     * Set fallback loader function
-     *
-     * @param callable $loader A callable object that should return a Package
-     * @return void
-     */
-    public function setFallbackLoader(callable $loader)
-    {
-        $this->_fallbackLoader = $loader;
-    }
-
-    /**
      * Sets the name of the default messages formatter to use for future
      * translator instances.
      *
@@ -248,7 +237,7 @@ class TranslatorRegistry extends TranslatorLocator
      */
     protected function _fallbackLoader($name, $locale)
     {
-        return call_user_func($this->_fallbackLoader, $name, $locale);
+        return $this->_loaders[$this->_fallbackLoader]($name, $locale);
     }
 
     /**
