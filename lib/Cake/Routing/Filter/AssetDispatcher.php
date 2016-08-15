@@ -116,7 +116,7 @@ class AssetDispatcher extends DispatcherFilter {
 		if ($parts[0] === 'theme') {
 			$themeName = $parts[1];
 			unset($parts[0], $parts[1]);
-			$fileFragment = implode(DS, $parts);
+			$fileFragment = rtrim(implode(DS, $parts), '/');
 			$path = App::themePath($themeName) . 'webroot' . DS;
 			return $path . $fileFragment;
 		}
@@ -124,7 +124,7 @@ class AssetDispatcher extends DispatcherFilter {
 		$plugin = Inflector::camelize($parts[0]);
 		if ($plugin && CakePlugin::loaded($plugin)) {
 			unset($parts[0]);
-			$fileFragment = implode(DS, $parts);
+			$fileFragment = rtrim(implode(DS, $parts), '/');
 			$pluginWebroot = CakePlugin::path($plugin) . 'webroot' . DS;
 			return $pluginWebroot . $fileFragment;
 		}

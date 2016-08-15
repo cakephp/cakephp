@@ -57,6 +57,7 @@ class AssetDispatcherTest extends CakeTestCase {
 			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		), App::RESET);
+		CakePlugin::load('TestPlugin');
 
 		$request = new CakeRequest('theme/test_theme/ccss/cake.generic.css');
 		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
@@ -64,6 +65,16 @@ class AssetDispatcherTest extends CakeTestCase {
 		$this->assertTrue($event->isStopped());
 
 		$request = new CakeRequest('theme/test_theme/cjs/debug_kit.js');
+		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
+		$this->assertSame($response, $filter->beforeDispatch($event));
+		$this->assertTrue($event->isStopped());
+
+		$request = new CakeRequest('theme/test_theme/js/theme.js');
+		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
+		$this->assertSame($response, $filter->beforeDispatch($event));
+		$this->assertTrue($event->isStopped());
+
+		$request = new CakeRequest('theme/test_theme/js/theme.js/');
 		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
 		$this->assertSame($response, $filter->beforeDispatch($event));
 		$this->assertTrue($event->isStopped());
@@ -77,6 +88,17 @@ class AssetDispatcherTest extends CakeTestCase {
 		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
 		$this->assertSame($response, $filter->beforeDispatch($event));
 		$this->assertTrue($event->isStopped());
+
+		$request = new CakeRequest('test_plugin/js/test_plugin/test.js');
+		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
+		$this->assertSame($response, $filter->beforeDispatch($event));
+		$this->assertTrue($event->isStopped());
+
+		$request = new CakeRequest('test_plugin/js/test_plugin/test.js/');
+		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
+		$this->assertSame($response, $filter->beforeDispatch($event));
+		$this->assertTrue($event->isStopped());
+
 
 		$request = new CakeRequest('css/ccss/debug_kit.css');
 		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
