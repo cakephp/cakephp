@@ -3966,7 +3966,8 @@ class TableTest extends TestCase
 
         $newTag = new \TestApp\Model\Entity\Tag([
             'name' => 'Foo',
-            'description' => 'Foo desc'
+            'description' => 'Foo desc',
+            'created' => null,
         ], $source);
         $tags[] = new \TestApp\Model\Entity\Tag([
             'id' => 3

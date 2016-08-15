@@ -3136,12 +3136,14 @@ class MarshallerTest extends TestCase
                 [
                     'id' => 1,
                     'name' => 'tag1',
-                    'description' => 'A big description'
+                    'description' => 'A big description',
+                    'created' => new Time('2016-01-01 00:00'),
                 ],
                 [
                     'id' => 2,
                     'name' => 'tag2',
-                    'description' => 'Another big description'
+                    'description' => 'Another big description',
+                    'created' => new Time('2016-01-01 00:00'),
                 ]
             ]
         ];

@@ -1272,7 +1272,8 @@ class BelongsToMany extends Association
         $query
             ->where($this->junctionConditions())
             ->select($joinFields)
-            ->defaultTypes($types);
+            ->defaultTypes($types)
+            ->addDefaultTypes($this->target());
 
         $query
             ->eagerLoader()
