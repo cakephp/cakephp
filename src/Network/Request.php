@@ -627,14 +627,14 @@ class Request implements ArrayAccess
      */
     public function is($type)
     {
-        $args = func_get_args();
-        array_shift($args);
-
         if (is_array($type)) {
             $result = array_map([$this, 'is'], $type);
 
             return count(array_filter($result)) > 0;
         }
+        
+        $args = func_get_args();
+        array_shift($args);
 
         $type = strtolower($type);
         if (!isset(static::$_detectors[$type])) {
