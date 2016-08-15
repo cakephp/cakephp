@@ -36,7 +36,7 @@ class TranslatorRegistry extends TranslatorLocator
      *
      * @var array
      */
-    public $_loaders;
+    protected $_loaders;
 
     /**
      * Fallback loader name
