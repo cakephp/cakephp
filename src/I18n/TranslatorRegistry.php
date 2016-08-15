@@ -72,11 +72,11 @@ class TranslatorRegistry extends TranslatorLocator
      *
      * Constructor.
      *
-     * @param PackageLocator $packages The package locator.
+     * @param \Aura\Intl\PackageLocator $packages The package locator.
      *
-     * @param FormatterLocator $formatters The formatter locator.
+     * @param \Aura\Intl\FormatterLocator $formatters The formatter locator.
      *
-     * @param TranslatorFactory $factory A translator factory to
+     * @param \Aura\Intl\TranslatorFactory $factory A translator factory to
      * create translator objects for the locale and package.
      *
      * @param string $locale The default locale code to use.
