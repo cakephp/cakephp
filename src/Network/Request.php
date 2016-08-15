@@ -136,13 +136,6 @@ class Request implements ArrayAccess
     ];
 
     /**
-     * Instance cache for results of is(something) calls
-     *
-     * @var array
-     */
-    protected $_detectorCache = [];
-
-    /**
      * Copy of php://input. Since this stream can only be read once in most SAPI's
      * keep a copy of it so users don't need to know about that detail.
      *
@@ -646,21 +639,7 @@ class Request implements ArrayAccess
             return false;
         }
 
-        if (!isset($this->_detectorCache[$type])) {
-            $this->_detectorCache[$type] = $this->_is($type, $args);
-        }
-
-        return $this->_detectorCache[$type];
-    }
-
-    /**
-     * Clears the instance detector cache, used by the is() function
-     *
-     * @return void
-     */
-    public function clearDetectorCache()
-    {
-        $this->_detectorCache = [];
+        return $this->_is($type, $args);
     }
 
     /**
@@ -1291,7 +1270,6 @@ class Request implements ArrayAccess
     {
         if ($value !== null) {
             $this->_environment[$key] = $value;
-            $this->clearDetectorCache();
 
             return $this;
         }
