@@ -1269,16 +1269,20 @@ class QueryTest extends TestCase
             'name' => 'tag1',
             '_joinData' => ['article_id' => 1, 'tag_id' => 1],
             'description' => 'A big description',
+            'created' => new Time('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[0]->toArray());
+        $this->assertInstanceOf(Time::class, $first->tags[0]->created);
 
         $expected = [
             'id' => 2,
             'name' => 'tag2',
             '_joinData' => ['article_id' => 1, 'tag_id' => 2],
-            'description' => 'Another big description'
+            'description' => 'Another big description',
+            'created' => new Time('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[1]->toArray());
+        $this->assertInstanceOf(Time::class, $first->tags[1]->created);
     }
 
     /**
@@ -1303,7 +1307,6 @@ class QueryTest extends TestCase
                 });
             }, 'Model.beforeFind');
 
-
         $query = new Query($this->connection, $table);
 
         $results = $query
@@ -1322,18 +1325,20 @@ class QueryTest extends TestCase
             'name' => 'tag1',
             '_joinData' => ['article_id' => 1, 'tag_id' => 1],
             'description' => 'A big description',
+            'created' => new Time('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[0]->toArray());
-        $this->assertSame(1, $first->tags[0]->id);
+        $this->assertInstanceOf(Time::class, $first->tags[0]->created);
 
         $expected = [
             'id' => 2,
             'name' => 'tag2',
             '_joinData' => ['article_id' => 1, 'tag_id' => 2],
-            'description' => 'Another big description'
+            'description' => 'Another big description',
+            'created' => new Time('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[1]->toArray());
-        $this->assertSame(2, $first->tags[1]->id);
+        $this->assertInstanceOf(Time::class, $first->tags[0]->created);
     }
 
     /**
