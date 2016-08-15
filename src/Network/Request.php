@@ -577,8 +577,10 @@ class Request implements ArrayAccess
     {
         if (strpos($name, 'is') === 0) {
             $type = strtolower(substr($name, 2));
-
-            return $this->is($type);
+            
+            array_unshift($params, $type);
+            
+            return call_user_func_array([$this, 'is'], $params);
         }
         throw new BadMethodCallException(sprintf('Method %s does not exist', $name));
     }
