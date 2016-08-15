@@ -469,7 +469,7 @@ class I18nTest extends TestCase
      *
      * @return void
      */
-    public function testloaderFactory()
+    public function testLoaderFactory()
     {
         I18n::config('custom', function ($name, $locale) {
             $this->assertEquals('custom', $name);
@@ -508,6 +508,36 @@ class I18nTest extends TestCase
 
         $translator = I18n::translator();
         $this->assertEquals('%d is 1 (po translated)', $translator->translate('%d = 1'));
+    }
+
+    /**
+     * Tests that it is possible to register a fallback translators factory
+     *
+     * @return void
+     */
+    public function testFallbackLoaderFactory()
+    {
+        I18n::config('_fallback', function ($name) {
+            $package = new Package('default');
+
+            if ($name == 'custom') {
+                $package->setMessages([
+                    'Cow' => 'Le Moo custom',
+                ]);
+            } else {
+                $package->setMessages([
+                    'Cow' => 'Le Moo default',
+                ]);
+            }
+
+            return $package;
+        });
+
+        $translator = I18n::translator('custom');
+        $this->assertEquals('Le Moo custom', $translator->translate('Cow'));
+
+        $translator = I18n::translator();
+        $this->assertEquals('Le Moo default', $translator->translate('Cow'));
     }
 
     /**
