@@ -1324,6 +1324,7 @@ class QueryTest extends TestCase
             'description' => 'A big description',
         ];
         $this->assertEquals($expected, $first->tags[0]->toArray());
+        $this->assertSame(1, $first->tags[0]->id);
 
         $expected = [
             'id' => 2,
@@ -1332,6 +1333,7 @@ class QueryTest extends TestCase
             'description' => 'Another big description'
         ];
         $this->assertEquals($expected, $first->tags[1]->toArray());
+        $this->assertSame(2, $first->tags[1]->id);
     }
 
     /**
