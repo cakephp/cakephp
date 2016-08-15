@@ -134,6 +134,13 @@ class Request implements ArrayAccess
         'json' => ['accept' => ['application/json'], 'param' => '_ext', 'value' => 'json'],
         'xml' => ['accept' => ['application/xml', 'text/xml'], 'param' => '_ext', 'value' => 'xml'],
     ];
+    
+    /**
+     * Instance cache for results of is(something) calls
+     *
+     * @var array
+     */
+    protected $_detectorCache = [];
 
     /**
      * Copy of php://input. Since this stream can only be read once in most SAPI's
@@ -640,8 +647,26 @@ class Request implements ArrayAccess
         if (!isset(static::$_detectors[$type])) {
             return false;
         }
+        
+        if (empty($args)) {
+            if (!isset($this->_detectorCache[$type])) {
+                $this->_detectorCache[$type] = $this->_is($type);
+            }
 
+            return $this->_detectorCache[$type];
+        }
+        
         return $this->_is($type, $args);
+    }
+    
+    /**
+     * Clears the instance detector cache, used by the is() function
+     *
+     * @return void
+     */
+    public function clearDetectorCache()
+    {
+        $this->_detectorCache = [];
     }
 
     /**
@@ -1272,6 +1297,7 @@ class Request implements ArrayAccess
     {
         if ($value !== null) {
             $this->_environment[$key] = $value;
+            $this->clearDetectorCache();
 
             return $this;
         }
