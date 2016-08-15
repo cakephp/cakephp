@@ -70,7 +70,9 @@ class RequestTest extends TestCase
 
         $request->params = ['controller' => 'cake'];
         $this->assertTrue($request->is('controller', 'cake'));
+        $this->assertFalse($request->is('controller', 'nonExistingController'));
         $this->assertTrue($request->isController('cake'));
+        $this->assertFalse($request->isController('nonExistingController'));
     }
 
     /**
