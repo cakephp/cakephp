@@ -655,10 +655,10 @@ class Request implements ArrayAccess
 
             return $this->_detectorCache[$type];
         }
-		
+
         return $this->_is($type, $args);
     }
-	
+
     /**
      * Clears the instance detector cache, used by the is() function
      *
