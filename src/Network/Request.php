@@ -134,7 +134,7 @@ class Request implements ArrayAccess
         'json' => ['accept' => ['application/json'], 'param' => '_ext', 'value' => 'json'],
         'xml' => ['accept' => ['application/xml', 'text/xml'], 'param' => '_ext', 'value' => 'xml'],
     ];
-    
+
     /**
      * Instance cache for results of is(something) calls
      *
@@ -655,10 +655,10 @@ class Request implements ArrayAccess
 
             return $this->_detectorCache[$type];
         }
-        
+		
         return $this->_is($type, $args);
     }
-    
+	
     /**
      * Clears the instance detector cache, used by the is() function
      *
