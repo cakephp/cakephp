@@ -124,7 +124,7 @@ class AssetFilter extends DispatcherFilter
      * @param \Cake\Network\Response $response The response object to use.
      * @param string $assetFile Path to the asset file in the file system
      * @param string $ext The extension of the file to determine its mime type
-     * @return \Caken\Network\Response The updated response.
+     * @return \Cake\Network\Response The updated response.
      */
     protected function _deliverAsset(Request $request, Response $response, $assetFile, $ext)
     {
