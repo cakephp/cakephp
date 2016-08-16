@@ -545,11 +545,12 @@ class Marshaller
             if (isset($propertyMap[$key])) {
                 $value = $propertyMap[$key]($value, $entity);
 
-                // Arrays will be marked as dirty always because
-                // the original/updated could contain references to the
-                // same objects, even those those objects may have changed.
+                // Don't dirty scalar values and objects that didn't
+                // change. Arrays will always be marked as dirty because
+                // the original/updated list could contain references to the
+                // same objects, even though those objects may have changed internally.
                 if ((is_scalar($value) && $original === $value) ||
-                    (is_object($value) && $original == $value)
+                    (is_object($value) && !($value instanceof EntityInterface) && $original == $value)
                 ) {
                     continue;
                 }
