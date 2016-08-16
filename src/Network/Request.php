@@ -650,7 +650,7 @@ class Request implements ArrayAccess
         
         if (empty($args)) {
             if (!isset($this->_detectorCache[$type])) {
-                $this->_detectorCache[$type] = $this->_is($type);
+                $this->_detectorCache[$type] = $this->_is($type, $args);
             }
 
             return $this->_detectorCache[$type];
