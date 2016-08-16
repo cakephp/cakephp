@@ -548,8 +548,7 @@ class Marshaller
                 // Arrays will be marked as dirty always because
                 // the original/updated could contain references to the
                 // same objects, even those those objects may have changed.
-                if (
-                    (is_scalar($value) && $original === $value) ||
+                if ((is_scalar($value) && $original === $value) ||
                     (is_object($value) && $original == $value)
                 ) {
                     continue;
