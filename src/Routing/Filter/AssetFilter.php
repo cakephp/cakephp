@@ -60,8 +60,8 @@ class AssetFilter extends DispatcherFilter
     /**
      * Checks if a requested asset exists and sends it to the browser
      *
-     * @param \Cake\Event\Event $event containing the request and response object
-     * @return \Cake\Network\Response if the client is requesting a recognized asset, null otherwise
+     * @param \Cake\Event\Event $event Event containing the request and response object
+     * @return \Cake\Network\Response|null If the client is requesting a recognized asset, null otherwise
      * @throws \Cake\Network\Exception\NotFoundException When asset not found
      */
     public function beforeDispatch(Event $event)
@@ -87,9 +87,8 @@ class AssetFilter extends DispatcherFilter
 
         $pathSegments = explode('.', $url);
         $ext = array_pop($pathSegments);
-        $this->_deliverAsset($request, $response, $assetFile, $ext);
 
-        return $response;
+        return $this->_deliverAsset($request, $response, $assetFile, $ext);
     }
 
     /**
@@ -125,7 +124,7 @@ class AssetFilter extends DispatcherFilter
      * @param \Cake\Network\Response $response The response object to use.
      * @param string $assetFile Path to the asset file in the file system
      * @param string $ext The extension of the file to determine its mime type
-     * @return void
+     * @return \Cake\Network\Response The updated response.
      */
     protected function _deliverAsset(Request $request, Response $response, $assetFile, $ext)
     {
@@ -142,10 +141,8 @@ class AssetFilter extends DispatcherFilter
             $response->header('Content-Length', filesize($assetFile));
         }
         $response->cache(filemtime($assetFile), $this->_cacheTime);
-        $response->sendHeaders();
-        readfile($assetFile);
-        if ($compressionEnabled) {
-            ob_end_flush();
-        }
+        $response->file($assetFile);
+
+        return $response;
     }
 }

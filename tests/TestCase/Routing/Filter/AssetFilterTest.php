@@ -245,14 +245,12 @@ class AssetFilterTest extends TestCase
         $request = new Request($url);
         $event = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response'));
 
-        ob_start();
-        $filter->beforeDispatch($event);
-        $result = ob_get_contents();
-        ob_end_clean();
+        $response = $filter->beforeDispatch($event);
+        $result = $response->getFile();
 
         $path = TEST_APP . str_replace('/', DS, $file);
         $file = file_get_contents($path);
-        $this->assertEquals($file, $result);
+        $this->assertEquals($file, $result->read());
 
         $expected = filesize($path);
         $headers = $response->header();
