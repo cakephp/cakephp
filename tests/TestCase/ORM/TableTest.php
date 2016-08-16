@@ -3600,6 +3600,34 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests overwriting hasMany associations in an integration scenario.
+     *
+     * @return void
+     */
+    public function testSaveHasManyOverwrite()
+    {
+        $table = TableRegistry::get('authors');
+        $table->hasMany('articles');
+
+        $entity = $table->get(3, ['contain' => ['articles']]);
+        $data = [
+            'name' => 'big jose',
+            'articles' => [
+                [
+                    'id' => 2,
+                    'title' => 'New title'
+                ]
+            ]
+        ];
+        $entity = $table->patchEntity($entity, $data, ['associated' => 'articles']);
+        $this->assertSame($entity, $table->save($entity));
+
+        $entity = $table->get(3, ['contain' => ['articles']]);
+        $this->assertEquals('big jose', $entity->name, 'Author did not persist');
+        $this->assertEquals('New title', $entity->articles[0]->title, 'Article did not persist');
+    }
+
+    /**
      * Tests saving belongsToMany records
      *
      * @group save
