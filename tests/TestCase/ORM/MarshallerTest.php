@@ -1327,6 +1327,7 @@ class MarshallerTest extends TestCase
         $marshall = new Marshaller($this->articles);
         $entity = new Entity();
         $entity->accessible('*', true);
+        $entity->clean();
 
         $entity = $marshall->merge($entity, ['author_id' => $value]);
         $this->assertTrue($entity->dirty('author_id'), 'Field should be dirty');
@@ -1353,6 +1354,8 @@ class MarshallerTest extends TestCase
         $entity->accessible('*', false);
         $entity->accessible('author_id', true);
         $entity->isNew(false);
+        $entity->clean();
+
         $result = $marshall->merge($entity, $data, []);
 
         $expected = [
@@ -1474,6 +1477,7 @@ class MarshallerTest extends TestCase
         ]);
         $user->accessible('*', true);
         $entity->accessible('*', true);
+        $entity->clean();
 
         $data = [
             'body' => 'My Content',
@@ -1483,11 +1487,13 @@ class MarshallerTest extends TestCase
         ];
         $marshall = new Marshaller($this->articles);
         $marshall->merge($entity, $data, ['associated' => ['Users']]);
+
+        $this->assertTrue($entity->dirty('user'), 'association should be dirty');
+        $this->assertTrue($entity->dirty('body'), 'body should be dirty');
         $this->assertEquals('My Content', $entity->body);
         $this->assertSame($user, $entity->user);
         $this->assertEquals('mark', $entity->user->username);
         $this->assertEquals('not a secret', $entity->user->password);
-        $this->assertTrue($entity->dirty('user'));
     }
 
     /**
@@ -1502,6 +1508,8 @@ class MarshallerTest extends TestCase
             'title' => 'My Title'
         ]);
         $entity->accessible('*', true);
+        $entity->clean();
+
         $data = [
             'body' => 'My Content',
             'user' => [
@@ -1511,11 +1519,13 @@ class MarshallerTest extends TestCase
         ];
         $marshall = new Marshaller($this->articles);
         $marshall->merge($entity, $data, ['associated' => ['Users']]);
+
         $this->assertEquals('My Content', $entity->body);
         $this->assertInstanceOf('Cake\ORM\Entity', $entity->user);
         $this->assertEquals('mark', $entity->user->username);
         $this->assertEquals('not a secret', $entity->user->password);
         $this->assertTrue($entity->dirty('user'));
+        $this->assertTrue($entity->dirty('body'));
         $this->assertTrue($entity->user->isNew());
     }
 
@@ -1539,6 +1549,7 @@ class MarshallerTest extends TestCase
         $comment1->accessible('*', true);
         $comment2->accessible('*', true);
         $entity->accessible('*', true);
+        $entity->clean();
 
         $data = [
             'title' => 'Another title',
@@ -1553,10 +1564,11 @@ class MarshallerTest extends TestCase
             ]
         ];
         $marshall = new Marshaller($this->articles);
+
         $result = $marshall->merge($entity, $data, ['associated' => ['Users', 'Comments']]);
         $this->assertSame($entity, $result);
         $this->assertSame($user, $result->user);
-        $this->assertTrue($result->dirty('user'));
+        $this->assertTrue($result->dirty('user'), 'association should be dirty');
         $this->assertEquals('not so secret', $entity->user->password);
 
         $this->assertTrue($result->dirty('comments'));
@@ -1619,6 +1631,8 @@ class MarshallerTest extends TestCase
             'tags' => ['_ids' => [1, 2, 3]]
         ];
         $entity->accessible('*', true);
+        $entity->clean();
+
         $marshall = new Marshaller($this->articles);
         $result = $marshall->merge($entity, $data, ['associated' => ['Tags']]);
 
@@ -1651,6 +1665,7 @@ class MarshallerTest extends TestCase
             'tags' => ['_ids' => [1, 2, 3]]
         ];
         $entity->accessible('*', true);
+        $entity->clean();
 
         // Adding a forced join to have another table with the same column names
         $this->articles->Tags->eventManager()->attach(function ($e, $query) {
@@ -1689,6 +1704,8 @@ class MarshallerTest extends TestCase
             'tags' => ['_ids' => [1, 2, 3]]
         ];
         $entity->accessible('*', true);
+        $entity->clean();
+
         $marshall = new Marshaller($this->articles);
         $result = $marshall->merge($entity, $data, ['associated' => ['Tags']]);
 
