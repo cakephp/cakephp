@@ -2435,12 +2435,19 @@ class MarshallerTest extends TestCase
                     'title' => 'Titulo Español',
                     'body' => 'Contenido Español'
                 ]
+            ],
+            'user' => [
+                'id' => 1,
+                'username' => 'mark'
             ]
         ];
 
         $marshall = new Marshaller($this->articles);
-        $result = $marshall->one($data, []);
+        $result = $marshall->one($data, ['associated' => ['Users']]);
         $this->assertEmpty($result->errors());
+        $this->assertEquals(1, $result->author_id);
+        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $result->user);
+        $this->assertEquals('mark', $result->user->username);
 
         $translations = $result->get('_translations');
         $this->assertCount(2, $translations);
