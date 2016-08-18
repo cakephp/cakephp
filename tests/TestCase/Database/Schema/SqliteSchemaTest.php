@@ -1030,8 +1030,9 @@ SQL;
     protected function _getMockedDriver()
     {
         $driver = new \Cake\Database\Driver\Sqlite();
-        $mock = $this->getMockBuilder('FakePdo')
+        $mock = $this->getMockBuilder(\PDO::class)
             ->setMethods(['quote', 'prepare'])
+            ->disableOriginalConstructor()
             ->getMock();
         $mock->expects($this->any())
             ->method('quote')

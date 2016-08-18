@@ -15,7 +15,7 @@
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Driver;
-use Cake\Database\Mysql;
+use Cake\Database\Driver\Mysql;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\ValueBinder;
