@@ -145,7 +145,7 @@ class MiddlewareQueue implements Countable
      */
     public function insertAt($index, $middleware)
     {
-        array_splice($this->queue, $index, 0, $middleware);
+        array_splice($this->queue, $index, 0, [$middleware]);
 
         return $this;
     }
@@ -159,7 +159,7 @@ class MiddlewareQueue implements Countable
      * @param string $class The classname to insert the middleware before.
      * @param callable|string $middleware The middleware to insert.
      * @return $this
-     * @throws \LogicException If middlware to insert before is not found.
+     * @throws \LogicException If middleware to insert before is not found.
      */
     public function insertBefore($class, $middleware)
     {

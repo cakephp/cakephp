@@ -27,6 +27,8 @@ class CookieComponentTestController extends Controller
         'Cookie',
     ];
 
+    public $autoRender = false;
+
     /**
      * view
      *

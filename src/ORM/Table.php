@@ -1466,6 +1466,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function save(EntityInterface $entity, $options = [])
     {
+        if ($options instanceof SaveOptionsBuilder) {
+            $options = $options->toArray();
+        }
+
         $options = new ArrayObject($options + [
             'atomic' => true,
             'associated' => true,
@@ -2388,6 +2392,17 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function buildRules(RulesChecker $rules)
     {
         return $rules;
+    }
+
+    /**
+     * Gets a SaveOptionsBuilder instance.
+     *
+     * @param array $options Options to parse by the builder.
+     * @return \Cake\ORM\SaveOptionsBuilder
+     */
+    public function getSaveOptionsBuilder(array $options = [])
+    {
+        return new SaveOptionsBuilder($this, $options);
     }
 
     /**

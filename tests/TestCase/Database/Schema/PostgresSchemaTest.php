@@ -14,11 +14,13 @@
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Database\Driver\Postgres;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\PostgresSchema;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use PDO;
 
 /**
  * Postgres schema test case.
@@ -1196,9 +1198,14 @@ SQL;
      */
     protected function _getMockedDriver()
     {
-        $driver = new \Cake\Database\Driver\Postgres();
-        $mock = $this->getMockBuilder('FakePdo')
+        $driver = new Postgres();
+        $pdo = PDO::class;
+        if (version_compare(PHP_VERSION, '5.6', '<')) {
+            $pdo = 'FakePdo';
+        }
+        $mock = $this->getMockBuilder($pdo)
             ->setMethods(['quote'])
+            ->disableOriginalConstructor()
             ->getMock();
         $mock->expects($this->any())
             ->method('quote')
