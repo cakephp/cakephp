@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.3.0
+ * @since         3.3.1
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace TestApp\Middleware;
@@ -17,8 +17,9 @@ namespace TestApp\Middleware;
 /**
  * Testing stub for middleware tests.
  */
-class DumbMiddleWare {
-    function __invoke($request, $response, $next)
+class DumbMiddleWare
+{
+    public function __invoke($request, $response, $next)
     {
         return $next($request, $response);
     }
