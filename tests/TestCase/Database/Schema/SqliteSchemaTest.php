@@ -14,11 +14,13 @@
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Database\Driver\Sqlite;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqliteSchema;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use PDO;
 
 /**
  * Test case for Sqlite Schema Dialect.
@@ -1029,9 +1031,14 @@ SQL;
      */
     protected function _getMockedDriver()
     {
-        $driver = new \Cake\Database\Driver\Sqlite();
-        $mock = $this->getMockBuilder('FakePdo')
+        $driver = new Sqlite();
+        $pdo = PDO::class;
+        if (version_compare(PHP_VERSION, '5.6', '<')) {
+            $pdo = 'FakePdo';
+        }
+        $mock = $this->getMockBuilder($pdo)
             ->setMethods(['quote', 'prepare'])
+            ->disableOriginalConstructor()
             ->getMock();
         $mock->expects($this->any())
             ->method('quote')

@@ -14,11 +14,13 @@
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Database\Driver\Mysql;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\MysqlSchema;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use PDO;
 
 /**
  * Test case for Mysql Schema Dialect.
@@ -1228,9 +1230,14 @@ SQL;
      */
     protected function _getMockedDriver()
     {
-        $driver = new \Cake\Database\Driver\Mysql();
-        $mock = $this->getMockBuilder('FakePdo')
+        $driver = new Mysql();
+        $pdo = PDO::class;
+        if (version_compare(PHP_VERSION, '5.6', '<')) {
+            $pdo = 'FakePdo';
+        }
+        $mock = $this->getMockBuilder($pdo)
             ->setMethods(['quote', 'quoteIdentifier', 'getAttribute'])
+            ->disableOriginalConstructor()
             ->getMock();
         $mock->expects($this->any())
             ->method('quote')

@@ -14,6 +14,8 @@
  */
 namespace Cake\Test\TestCase\Controller\Component;
 
+use Cake\Auth\BaseAuthorize;
+use Cake\Auth\FormAuthenticate;
 use Cake\Controller\Component\AuthComponent;
 use Cake\Core\Configure;
 use Cake\Event\Event;
@@ -123,7 +125,7 @@ class AuthComponentTest extends TestCase
      */
     public function testIdentify()
     {
-        $AuthLoginFormAuthenticate = $this->getMockBuilder('Cake\Controller\Component\Auth\FormAuthenticate')
+        $AuthLoginFormAuthenticate = $this->getMockBuilder(FormAuthenticate::class)
             ->setMethods(['authenticate'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -164,7 +166,7 @@ class AuthComponentTest extends TestCase
      */
     public function testIdentifyArrayAccess()
     {
-        $AuthLoginFormAuthenticate = $this->getMockBuilder('Cake\Controller\Component\Auth\FormAuthenticate')
+        $AuthLoginFormAuthenticate = $this->getMockBuilder(FormAuthenticate::class)
             ->setMethods(['authenticate'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -269,15 +271,15 @@ class AuthComponentTest extends TestCase
      */
     public function testIsAuthorizedDelegation()
     {
-        $AuthMockOneAuthorize = $this->getMockBuilder('Cake\Controller\Component\BaseAuthorize')
+        $AuthMockOneAuthorize = $this->getMockBuilder(BaseAuthorize::class)
             ->setMethods(['authorize'])
             ->disableOriginalConstructor()
             ->getMock();
-        $AuthMockTwoAuthorize = $this->getMockBuilder('Cake\Controller\Component\BaseAuthorize')
+        $AuthMockTwoAuthorize = $this->getMockBuilder(BaseAuthorize::class)
             ->setMethods(['authorize'])
             ->disableOriginalConstructor()
             ->getMock();
-        $AuthMockThreeAuthorize = $this->getMockBuilder('Cake\Controller\Component\BaseAuthorize')
+        $AuthMockThreeAuthorize = $this->getMockBuilder(BaseAuthorize::class)
             ->setMethods(['authorize'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -311,7 +313,7 @@ class AuthComponentTest extends TestCase
      */
     public function testIsAuthorizedWithArrayObject()
     {
-        $AuthMockOneAuthorize = $this->getMockBuilder('Cake\Controller\Component\BaseAuthorize')
+        $AuthMockOneAuthorize = $this->getMockBuilder(BaseAuthorize::class)
             ->setMethods(['authorize'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -337,7 +339,7 @@ class AuthComponentTest extends TestCase
      */
     public function testIsAuthorizedUsingUserInSession()
     {
-        $AuthMockFourAuthorize = $this->getMockBuilder('Cake\Controller\Component\BaseAuthorize')
+        $AuthMockFourAuthorize = $this->getMockBuilder(BaseAuthorize::class)
             ->setMethods(['authorize'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -728,7 +730,7 @@ class AuthComponentTest extends TestCase
 
         $this->Auth->session->write('Auth.User.id', '1');
         $this->Auth->config('authenticate', ['Form']);
-        $this->getMockBuilder('Cake\Controller\Component\BaseAuthorize')
+        $this->getMockBuilder(BaseAuthorize::class)
             ->setMethods(['authorize'])
             ->disableOriginalConstructor()
             ->setMockClassName('NoLoginRedirectMockAuthorize')
