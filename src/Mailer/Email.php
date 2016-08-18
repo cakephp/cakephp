@@ -1386,7 +1386,7 @@ class Email implements JsonSerializable, Serializable
      * @return \Cake\Mailer\Email Instance of Cake\Mailer\Email
      * @throws \InvalidArgumentException
      */
-    public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'fast', $send = true)
+    public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'default', $send = true)
     {
         $class = __CLASS__;
         $instance = new $class($transportConfig);
