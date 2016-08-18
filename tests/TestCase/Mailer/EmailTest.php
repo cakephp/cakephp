@@ -1906,11 +1906,15 @@ class EmailTest extends TestCase
      */
     public function testDeliver()
     {
+        Email::dropTransport('default');
+        Email::configTransport('default', ['className' => 'Debug']);
+
         $instance = Email::deliver('all@cakephp.org', 'About', 'Everything ok', ['from' => 'root@cakephp.org'], false);
         $this->assertInstanceOf('Cake\Mailer\Email', $instance);
         $this->assertSame($instance->to(), ['all@cakephp.org' => 'all@cakephp.org']);
         $this->assertSame($instance->subject(), 'About');
         $this->assertSame($instance->from(), ['root@cakephp.org' => 'root@cakephp.org']);
+        $this->assertInstanceOf('Cake\Mailer\AbstractTransport', $instance->transport());
 
         $config = [
             'from' => 'cake@cakephp.org',
@@ -2668,6 +2672,8 @@ HTML;
      */
     public function testMockTransport()
     {
+        Email::dropTransport('default');
+
         $mock = $this->getMockBuilder('\Cake\Mailer\AbstractTransport')->getMock();
         $config = ['from' => 'tester@example.org', 'transport' => 'default'];
 
