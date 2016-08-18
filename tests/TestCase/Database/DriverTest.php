@@ -20,7 +20,6 @@ use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
-
 use PDO;
 
 /**

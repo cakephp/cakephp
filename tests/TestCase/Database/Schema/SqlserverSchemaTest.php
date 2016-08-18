@@ -14,11 +14,13 @@
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqlserverSchema;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use PDO;
 
 /**
  * SQL Server schema test case.
@@ -949,8 +951,12 @@ SQL;
      */
     protected function _getMockedDriver()
     {
-        $driver = new \Cake\Database\Driver\Sqlserver();
-        $mock = $this->getMockBuilder(\PDO::class)
+        $driver = new Sqlserver();
+        $pdo = PDO::class;
+        if (version_compare(PHP_VERSION, '5.6', '<')) {
+            $pdo = 'FakePdo';
+        }
+        $mock = $this->getMockBuilder($pdo)
             ->setMethods(['quote'])
             ->disableOriginalConstructor()
             ->getMock();
