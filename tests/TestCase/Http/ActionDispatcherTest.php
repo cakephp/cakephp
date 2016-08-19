@@ -79,7 +79,7 @@ class ActionDispatcherTest extends TestCase
             ->setMethods(['beforeDispatch', 'afterDispatch'])
             ->getMock();
         DispatcherFactory::add($filter);
-        $dispatcher = new ActionDispatcher();
+        $dispatcher = new ActionDispatcher(null, null, DispatcherFactory::filters());
         $this->assertCount(1, $dispatcher->getFilters());
         $this->assertSame($filter, $dispatcher->getFilters()[0]);
     }
