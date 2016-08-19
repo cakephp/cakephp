@@ -31,9 +31,9 @@ $this->start('subheading');
 
 <?php $this->start('file') ?>
 <p>Route names must be unique across your entire application.
-The same _name cannot be used twice,
-even if the names occur inside a different routing scope.
-remove duplicated route name in <?= 'config' . DIRECTORY_SEPARATOR . 'routes.php' ?></p>
+The same <code>_name</code> option cannot be used twice,
+even if the names occur in different routing scopes.
+Remove duplicate route names in your route configuration.</p>
 
 <?php if (!empty($attributes['context'])) : ?>
 <p>The passed context was:</p>

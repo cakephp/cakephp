@@ -23,7 +23,7 @@ class DuplicateNamedRouteException extends Exception
     /**
      * {@inheritDoc}
      */
-    protected $_messageTemplate = 'A named route was found for "%s" that is already used, route names must be unique across your entire application.';
+    protected $_messageTemplate = 'A route named "%s" has already been connected to "%s".';
 
     /**
      * {@inheritDoc}

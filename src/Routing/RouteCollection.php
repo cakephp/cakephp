@@ -79,7 +79,10 @@ class RouteCollection
         // Explicit names
         if (isset($options['_name'])) {
             if (isset($this->_named[$options['_name']])) {
-                throw new DuplicateNamedRouteException(['url' => $options['_name']]);
+                throw new DuplicateNamedRouteException([
+                    'name' => $options['_name'],
+                    'url' => $this->_named[$options['_name']]->template
+                ]);
             }
             $this->_named[$options['_name']] = $route;
         }
