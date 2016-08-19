@@ -260,7 +260,7 @@ class SecurityTest extends TestCase
     public function testEngineEquivalence()
     {
         $this->skipIf(!function_exists('mcrypt_encrypt') || version_compare(PHP_VERSION, '7.1', '>='), 'This needs mcrypt extension to be loaded.');
-        
+
         $restore = Security::engine();
         $txt = "Obi-wan you're our only hope";
         $key = 'This is my secret key phrase it is quite long.';
