@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\ResponseTransformer;
+use Cake\Network\Session;
 use Cake\Network\Response as CakeResponse;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Response as PsrResponse;
@@ -202,6 +203,28 @@ class ResponseTransformerTest extends TestCase
         ]);
         $result = ResponseTransformer::toPsr($cake);
         $this->assertEquals('remember_me=1; Path=/', $result->getHeader('Set-Cookie')[0]);
+    }
+
+    /**
+     * Test conversion setting cookies including the session cookie
+     *
+     * @return void
+     */
+    public function testToPsrCookieWithSession()
+    {
+        $session = new Session();
+        $session->write('things', 'things');
+        $cake = new CakeResponse(['status' => 200]);
+        $cake->cookie([
+            'name' => 'remember_me',
+            'value' => 1
+        ]);
+        $result = ResponseTransformer::toPsr($cake);
+        $this->assertEquals(
+            'remember_me=1; Path=/,CAKEPHP=; Path=/; HttpOnly',
+            $result->getHeaderLine('Set-Cookie'),
+            'Session cookie data was not retained.'
+        );
     }
 
     /**
