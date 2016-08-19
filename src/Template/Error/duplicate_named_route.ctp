@@ -42,28 +42,21 @@ Remove duplicate route names in your route configuration.</p>
 </pre>
 <?php endif; ?>
 
-<h3>Connected Routes</h3>
-<table cellspacing="0" cellpadding="0">
-<tr><th>Template</th><th>Defaults</th><th>Options</th></tr>
-<?php
-$url = false;
-if (!empty($attributes['url'])) {
-    $url = $attributes['url'];
-}
-foreach (Router::routes() as $route) :
-    if (isset($route->options['_name']) && $url === $route->options['_name']) :
-        echo '<tr class="error">';
-    else :
-        echo '<tr>';
-    endif;
+<?php if (isset($attributes['duplicate'])): ?>
+    <h3>Duplicate Route</h3>
+    <table cellspacing="0" cellpadding="0">
+    <tr><th>Template</th><th>Defaults</th><th>Options</th></tr>
+    <?php
+    $other = $attributes['duplicate'];
+    echo '<tr>';
     printf(
         '<td width="25%%">%s</td><td>%s</td><td width="20%%">%s</td>',
-        $route->template,
-        Debugger::exportVar($route->defaults),
-        Debugger::exportVar($route->options)
+        $other->template,
+        Debugger::exportVar($other->defaults),
+        Debugger::exportVar($other->options)
     );
     echo '</tr>';
-endforeach;
-?>
-</table>
+    ?>
+    </table>
+<?php endif; ?>
 <?php $this->end() ?>
