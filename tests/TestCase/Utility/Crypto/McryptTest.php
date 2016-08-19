@@ -31,7 +31,7 @@ class McryptTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->skipIf(!function_exists('mcrypt_encrypt'), 'No mcrypt skipping tests');
+        $this->skipIf(!function_exists('mcrypt_encrypt') || version_compare(PHP_VERSION, '7.1', '>='), 'No mcrypt skipping tests');
         $this->crypt = new Mcrypt();
     }
 
