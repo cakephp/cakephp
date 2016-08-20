@@ -162,8 +162,20 @@ class ResponseTransformer
         if (!isset($headers['Content-Type'])) {
             $headers['Content-Type'] = $response->type();
         }
-        if ($response->cookie()) {
-            $headers['Set-Cookie'] = static::buildCookieHeader($response->cookie());
+        $cookies = $response->cookie();
+        if ($cookies) {
+            $sessionCookie = session_get_cookie_params();
+            $sessionName = session_name();
+            $cookies[$sessionName] = [
+                'name' => $sessionName,
+                'value' => session_id(),
+                'expire' => $sessionCookie['lifetime'],
+                'path' => $sessionCookie['path'],
+                'secure' => $sessionCookie['secure'],
+                'domain' => $sessionCookie['domain'],
+                'httpOnly' => $sessionCookie['httponly'],
+            ];
+            $headers['Set-Cookie'] = static::buildCookieHeader($cookies);
         }
         $stream = static::getStream($response);
 

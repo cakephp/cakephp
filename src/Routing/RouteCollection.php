@@ -14,6 +14,7 @@
  */
 namespace Cake\Routing;
 
+use Cake\Routing\Exception\DuplicateNamedRouteException;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Route\Route;
 
@@ -77,6 +78,14 @@ class RouteCollection
 
         // Explicit names
         if (isset($options['_name'])) {
+            if (isset($this->_named[$options['_name']])) {
+                $matched = $this->_named[$options['_name']];
+                throw new DuplicateNamedRouteException([
+                    'name' => $options['_name'],
+                    'url' => $matched->template,
+                    'duplicate' => $matched,
+                ]);
+            }
             $this->_named[$options['_name']] = $route;
         }
 

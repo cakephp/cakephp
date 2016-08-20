@@ -14,6 +14,8 @@
  */
 namespace Cake\Test\TestCase\Routing;
 
+use Cake\Core\Configure;
+use Cake\Network\Request;
 use Cake\Routing\DispatcherFactory;
 use Cake\TestSuite\TestCase;
 
@@ -31,6 +33,7 @@ class DispatcherFactoryTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        Configure::write('App.namespace', 'TestApp');
         DispatcherFactory::clear();
     }
 
@@ -98,5 +101,33 @@ class DispatcherFactoryTest extends TestCase
         $result = DispatcherFactory::create();
         $this->assertInstanceOf('Cake\Routing\Dispatcher', $result);
         $this->assertCount(1, $result->filters());
+    }
+
+    /**
+     * test create() -> dispatch() -> response flow.
+     *
+     * @return void
+     */
+    public function testCreateDispatchWithFilters()
+    {
+        $url = new Request([
+            'url' => 'posts',
+            'params' => [
+                'controller' => 'Posts',
+                'action' => 'index',
+                'pass' => [],
+                'bare' => true,
+            ]
+        ]);
+        $response = $this->getMockBuilder('Cake\Network\Response')
+            ->setMethods(['send'])
+            ->getMock();
+        DispatcherFactory::add('ControllerFactory');
+        DispatcherFactory::add('Append');
+
+        $dispatcher = DispatcherFactory::create();
+        $result = $dispatcher->dispatch($url, $response);
+        $this->assertNull($result);
+        $this->assertEquals('posts index appended content', $response->body());
     }
 }

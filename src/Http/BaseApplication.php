@@ -14,6 +14,7 @@
  */
 namespace Cake\Http;
 
+use Cake\Routing\DispatcherFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -92,6 +93,6 @@ abstract class BaseApplication
      */
     protected function getDispatcher()
     {
-        return new ActionDispatcher();
+        return new ActionDispatcher(null, null, DispatcherFactory::filters());
     }
 }

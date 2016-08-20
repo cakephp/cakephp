@@ -43,7 +43,6 @@ matrix:
 
   allow_failures:
     - php: hhvm
-    - php: 7.1
 
 before_install:
   - if [ $HHVM != 1 && $TRAVIS_PHP_VERSION != 7.* ]; then phpenv config-rm xdebug.ini; fi

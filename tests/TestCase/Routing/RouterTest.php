@@ -1192,6 +1192,31 @@ class RouterTest extends TestCase
     }
 
     /**
+     * Test that using duplicate names causes exceptions.
+     *
+     * @expectedException \Cake\Routing\Exception\DuplicateNamedRouteException
+     * @return void
+     */
+    public function testDuplicateNamedRouteException()
+    {
+        Router::connect(
+            '/users/:name',
+            ['controller' => 'users', 'action' => 'view'],
+            ['_name' => 'test']
+        );
+        Router::connect(
+            '/users/:name',
+            ['controller' => 'users', 'action' => 'view'],
+            ['_name' => 'otherName']
+        );
+        Router::connect(
+            '/users/:name',
+            ['controller' => 'users', 'action' => 'view'],
+            ['_name' => 'test']
+        );
+    }
+
+    /**
      * Test that url filters are applied to url params.
      *
      * @return void
