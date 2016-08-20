@@ -552,7 +552,7 @@ class Helper extends Object {
  */
 	protected function _confirm($message, $okCode, $cancelCode = '', $options = array()) {
 		$message = json_encode($message);
-		$confirm = "if (confirm({$message})) { {$okCode} } {$cancelCode}";
+		$confirm = "if (confirm({$message})) { {$okCode} } else { {$cancelCode} }";
 		if (isset($options['escape']) && $options['escape'] === false) {
 			$confirm = h($confirm);
 		}
