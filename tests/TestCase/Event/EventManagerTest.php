@@ -405,10 +405,6 @@ class EventManagerTest extends TestCase
      */
     public function testDispatchReturnValue()
     {
-        $this->skipIf(
-            version_compare(\PHPUnit_Runner_Version::id(), '3.7', '<'),
-            'These tests fail in PHPUnit 3.6'
-        );
         $manager = new EventManager;
         $listener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
             ->getMock();
@@ -436,11 +432,6 @@ class EventManagerTest extends TestCase
      */
     public function testDispatchFalseStopsEvent()
     {
-        $this->skipIf(
-            version_compare(\PHPUnit_Runner_Version::id(), '3.7', '<'),
-            'These tests fail in PHPUnit 3.6'
-        );
-
         $manager = new EventManager();
         $listener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
             ->getMock();
