@@ -366,7 +366,7 @@ class FormHelper extends Helper
             'encoding' => strtolower(Configure::read('App.encoding')),
             'templates' => null,
             'idPrefix' => null,
-            'valuesSources' => 'context',
+            'valuesSources' => $this->getValuesSources(),
         ];
 
         if (isset($options['action'])) {
