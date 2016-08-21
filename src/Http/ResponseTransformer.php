@@ -214,6 +214,7 @@ class ResponseTransformer
             $value = "{$type}; charset={$charset}";
         }
         $headers['Content-Type'] = $value;
+
         return $headers;
     }
 
