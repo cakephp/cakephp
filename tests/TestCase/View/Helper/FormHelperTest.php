@@ -8098,10 +8098,16 @@ class FormHelperTest extends TestCase
         $result = $this->Form->getSourceValue('id');
         $this->assertEquals($expected, $result);
 
+        $expected = ['query', 'data', 'context'];
+        $this->Form->setValuesSources(['query', 'data', 'invalid', 'context', 'foo']);
+        $result = $this->Form->getValuesSources();
+        $this->assertEquals($expected, $result);
+
 
         $this->Form->request->data['id'] = '1';
         $this->Form->request->query['id'] = '2';
 
+        $this->Form->setValuesSources(['context']);
         $expected = '1';
         $result = $this->Form->getSourceValue('id');
         $this->assertEquals($expected, $result);
@@ -8131,7 +8137,7 @@ class FormHelperTest extends TestCase
      *
      * @return void
      */
-    public function testFormValuesSourcesSwitchInputs()
+    public function testFormValuesSourcesSingleSwitchRendering()
     {
         $this->loadFixtures('Articles');
         $articles = TableRegistry::get('Articles');
@@ -8204,9 +8210,21 @@ class FormHelperTest extends TestCase
             ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '9']],
         ];
         $this->assertHtml($expected, $result);
+    }
 
+    /**
+     * Tests the different input rendering values based on sources values switching while supplying
+     * an entity (base context) and multiple sources (durch as data, query)
+     *
+     * @return void
+     */
+    public function testFormValuesSourcesListSwitchRendering()
+    {
+        $this->loadFixtures('Articles');
+        $articles = TableRegistry::get('Articles');
+        $article = new Article();
+        $articles->patchEntity($article, ['id' => '3']);
 
-        unset($this->Form->request->data['id']);
         $this->Form->request->query['id'] = '9';
 
         $this->Form->create($article);
@@ -8261,7 +8279,7 @@ class FormHelperTest extends TestCase
      *
      * @return void
      */
-    public function testFormValuesSourcesSwitchViaOptions()
+    public function testFormValuesSourcesSwitchViaOptionsRendering()
     {
         $this->loadFixtures('Articles');
         $articles = TableRegistry::get('Articles');
@@ -8318,6 +8336,19 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
         $this->assertEquals('8', $result);
+    }
+
+    /**
+     * Test the different form input renderings based on values sources switchings through form options
+     *
+     * @return void
+     */
+    public function testFormValuesSourcesSwitchViaOptionsAndSetterRendering()
+    {
+        $this->loadFixtures('Articles');
+        $articles = TableRegistry::get('Articles');
+        $article = new Article();
+        $articles->patchEntity($article, ['id' => '3']);
 
 
         $this->Form->request->data['id'] = '10';
@@ -8341,5 +8372,32 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
         $this->assertEquals('10', $result);
+    }
+
+    /**
+     * Test the different form input renderings based on values sources switchings through form options
+     *
+     * @return void
+     */
+    public function testFormValuesSourcesResetViaEnd()
+    {
+        $expected = ['context'];
+        $result = $this->Form->getValuesSources();
+        $this->assertEquals($expected, $result);
+        
+        $expected = ['query', 'context', 'data'];
+        $this->Form->setValuesSources(['query', 'context', 'data']);
+
+        $result = $this->Form->getValuesSources();
+        $this->assertEquals($expected, $result);
+        
+        $this->Form->create();
+        $result = $this->Form->getValuesSources();
+        $this->assertEquals($expected, $result);
+
+        $this->Form->end();
+        $expected = ['context'];
+        $result = $this->Form->getValuesSources();
+        $this->assertEquals($expected, $result);
     }
 }

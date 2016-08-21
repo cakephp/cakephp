@@ -534,6 +534,8 @@ class FormHelper extends Helper
      * Closes an HTML form, cleans up values set by FormHelper::create(), and writes hidden
      * input fields where appropriate.
      *
+     * Resets some parts of the stated shared among multiple FormHelper::create() calls to defaults.
+     *
      * @param array $secureAttributes Secure attributes which will be passed as HTML attributes
      *   into the hidden input elements generated for the Security Component.
      * @return string A closing FORM tag.
@@ -555,6 +557,7 @@ class FormHelper extends Helper
         $this->templater()->pop();
         $this->requestType = null;
         $this->_context = null;
+        $this->_valuesSources = ['context'];
         $this->_idPrefix = $this->config('idPrefix');
 
         return $out;
