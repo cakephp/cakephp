@@ -33,7 +33,8 @@ trait EmailAssertTrait
     protected $_email;
 
     /**
-     * @param array|string|null $content
+     * @param array|string|null $content The email's content to send.
+     * @return void
      */
     public function send($content = null)
     {
@@ -41,7 +42,7 @@ trait EmailAssertTrait
     }
 
     /**
-     * @param bool $new
+     * @param bool $new Tells if new instance should forcebly be created.
      * @return \Cake\Mailer\Email
      */
     public function email($new = false)
@@ -55,8 +56,8 @@ trait EmailAssertTrait
     }
 
     /**
-     * @param $className
-     * @param array $methods
+     * @param string $className The mailer's FQCN.
+     * @param array $methods The methods to mock on the mailer.
      * @return \Cake\Mailer\Mailer|\PHPUnit_Framework_MockObject_MockObject
      */
     public function getMockForMailer($className, array $methods = [])
@@ -81,8 +82,9 @@ trait EmailAssertTrait
     }
 
     /**
-     * @param string $needle
-     * @param string $message
+     * @param string $needle Text to look for.
+     * @param string $message The failure message to define.
+     * @return void
      */
     public function assertEmailMessageContains($needle, $message = null)
     {
@@ -91,8 +93,9 @@ trait EmailAssertTrait
     }
 
     /**
-     * @param string $needle
-     * @param string $message
+     * @param string $needle Text to look for.
+     * @param string $message The failure message to define.
+     * @return void
      */
     public function assertEmailHtmlMessageContains($needle, $message = null)
     {
@@ -101,8 +104,9 @@ trait EmailAssertTrait
     }
 
     /**
-     * @param string $needle
-     * @param string $message
+     * @param string $needle Text to look for.
+     * @param string $message The failure message to define.
+     * @return void
      */
     public function assertEmailTextMessageContains($needle, $message = null)
     {
@@ -111,8 +115,9 @@ trait EmailAssertTrait
     }
 
     /**
-     * @param string $expected
-     * @param string $message
+     * @param string $expected Email's subject.
+     * @param string $message The failure message to define.
+     * @return void
      */
     public function assertEmailSubject($expected, $message = null)
     {
@@ -121,9 +126,10 @@ trait EmailAssertTrait
     }
 
     /**
-     * @param string $email
-     * @param string $name
-     * @param string $message
+     * @param string $email Sender's email address.
+     * @param string $name Sender's name.
+     * @param string $message The failure message to define.
+     * @return void
      */
     public function assertEmailFrom($email, $name, $message = null)
     {
@@ -133,9 +139,10 @@ trait EmailAssertTrait
     }
 
     /**
-     * @param string $email
-     * @param string $name
-     * @param string $message
+     * @param string $email Sender's email address.
+     * @param string $name Sender's name.
+     * @param string $message The failure message to define.
+     * @return void
      */
     public function assertEmailTo($email, $name, $message = null)
     {
