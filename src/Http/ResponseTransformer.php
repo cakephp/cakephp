@@ -160,7 +160,7 @@ class ResponseTransformer
         $status = $response->statusCode();
         $headers = $response->header();
         if (!isset($headers['Content-Type'])) {
-            $headers['Content-Type'] = $response->type();
+            $headers = static::setContentType($headers, $response);
         }
         $cookies = $response->cookie();
         if ($cookies) {
@@ -180,6 +180,41 @@ class ResponseTransformer
         $stream = static::getStream($response);
 
         return new DiactorosResponse($stream, $status, $headers);
+    }
+
+    /**
+     * Add in the Content-Type header if necessary.
+     *
+     * @param array $headers The headers to update
+     * @param CakeResponse $response The CakePHP response to convert
+     * @return The updated headers.
+     */
+    protected static function setContentType($headers, $response)
+    {
+        if (isset($headers['Content-Type'])) {
+            return $headers;
+        }
+        if (in_array($response->statusCode(), [204, 304])) {
+            return $headers;
+        }
+        $whitelist = [
+            'application/javascript', 'application/json', 'application/xml', 'application/rss+xml'
+        ];
+
+        $type = $response->type();
+        $charset = $response->charset();
+
+        $hasCharset = false;
+        if ($charset && (strpos($type, 'text/') === 0 || in_array($type, $whitelist))) {
+            $hasCharset = true;
+        }
+
+        $value = $type;
+        if ($hasCharset) {
+            $value = "{$type}; charset={$charset}";
+        }
+        $headers['Content-Type'] = $value;
+        return $headers;
     }
 
     /**
