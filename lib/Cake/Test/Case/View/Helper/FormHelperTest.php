@@ -8095,7 +8095,7 @@ class FormHelperTest extends CakeTestCase {
 			),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/form',
-			'a' => array('href' => '#', 'onclick' => 'preg:/if \(confirm\(&quot;Confirm\?&quot;\)\) \{ document\.post_\w+\.submit\(\); \} else \{  \} event\.returnValue = false; return false;/'),
+			'a' => array('href' => '#', 'onclick' => 'preg:/if \(confirm\(&quot;Confirm\?&quot;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/'),
 			'Delete',
 			'/a'
 		));
@@ -8108,7 +8108,7 @@ class FormHelperTest extends CakeTestCase {
 			),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/form',
-			'a' => array('href' => '#', 'onclick' => 'preg:/if \(confirm\(&quot;&#039;Confirm&#039; this \\\\&quot;deletion\\\\&quot;\?&quot;\)\) \{ document\.post_\w+\.submit\(\); \} else \{  \} event\.returnValue = false; return false;/'),
+			'a' => array('href' => '#', 'onclick' => 'preg:/if \(confirm\(&quot;&#039;Confirm&#039; this \\\\&quot;deletion\\\\&quot;\?&quot;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/'),
 			'Delete',
 			'/a'
 		));
@@ -8142,7 +8142,7 @@ class FormHelperTest extends CakeTestCase {
 			),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/form',
-			'a' => array('class' => 'btn btn-danger', 'href' => '#', 'onclick' => 'preg:/if \(confirm\(\&quot\;Confirm thing\&quot\;\)\) \{ document\.post_\w+\.submit\(\); \} else \{  \} event\.returnValue = false; return false;/'),
+			'a' => array('class' => 'btn btn-danger', 'href' => '#', 'onclick' => 'preg:/if \(confirm\(\&quot\;Confirm thing\&quot\;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/'),
 			'/a'
 		));
 	}
@@ -8454,7 +8454,7 @@ class FormHelperTest extends CakeTestCase {
 			'div' => array('class' => 'submit'),
 			'input' => array(
 				'type' => 'submit', 'value' => 'Test',
-				'onclick' => 'preg:/if \(confirm\(&quot;Confirm\?&quot;\)\) \{  \} else \{ event\.returnValue = false; return false; \}/'
+				'onclick' => 'preg:/if \(confirm\(&quot;Confirm\?&quot;\)\) \{ return true; \} event\.returnValue = false; return false;/'
 			),
 			'/div'
 		);
@@ -8544,7 +8544,7 @@ class FormHelperTest extends CakeTestCase {
 			'div' => array('class' => 'submit'),
 			'input' => array(
 				'type' => 'image', 'src' => 'img/cake.power.gif',
-				'onclick' => 'preg:/if \(confirm\(&quot;Confirm\?&quot;\)\) \{  \} else \{ event\.returnValue = false; return false; \}/'
+				'onclick' => 'preg:/if \(confirm\(&quot;Confirm\?&quot;\)\) \{ return true; \} event\.returnValue = false; return false;/'
 			),
 			'/div'
 		);

@@ -546,13 +546,13 @@ class Helper extends Object {
  *
  * @param string $message Message to be displayed
  * @param string $okCode Code to be executed after user chose 'OK'
- * @param string $cancelCode Code to be executed after user chose 'Cancel'
+ * @param string $cancelCode Code to be executed after user chose 'Cancel', also executed when okCode doesn't return
  * @param array $options Array of options
  * @return string onclick JS code
  */
 	protected function _confirm($message, $okCode, $cancelCode = '', $options = array()) {
 		$message = json_encode($message);
-		$confirm = "if (confirm({$message})) { {$okCode} } else { {$cancelCode} }";
+		$confirm = "if (confirm({$message})) { {$okCode} } {$cancelCode}";
 		if (isset($options['escape']) && $options['escape'] === false) {
 			$confirm = h($confirm);
 		}

@@ -1920,9 +1920,9 @@ class FormHelper extends AppHelper {
 		if ($confirmMessage) {
 			$options['onclick'] = $this->_confirm($confirmMessage, $onClick, '', $options);
 		} else {
-			$options['onclick'] = $onClick;
+			$options['onclick'] = $onClick . ' ';
 		}
-		$options['onclick'] .= ' event.returnValue = false; return false;';
+		$options['onclick'] .= 'event.returnValue = false; return false;';
 
 		$out .= $this->Html->link($title, $url, $options);
 		return $out;
@@ -2012,8 +2012,9 @@ class FormHelper extends AppHelper {
 		}
 
 		if ($confirmMessage) {
+			$okCode = 'return true;';
 			$cancelCode = 'event.returnValue = false; return false;';
-			$options['onclick'] = $this->_confirm($confirmMessage, '', $cancelCode, $options);
+			$options['onclick'] = $this->_confirm($confirmMessage, $okCode, $cancelCode, $options);
 		}
 
 		if ($isUrl) {
