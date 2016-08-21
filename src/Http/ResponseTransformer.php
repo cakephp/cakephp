@@ -163,18 +163,24 @@ class ResponseTransformer
             $headers['Content-Type'] = $response->type();
         }
         $cookies = $response->cookie();
-        if ($cookies) {
+        if ($cookies && (
+            session_status() === \PHP_SESSION_ACTIVE ||
+            PHP_SAPI === 'cli' ||
+            PHP_SAPI === 'phpdbg'
+        )) {
             $sessionCookie = session_get_cookie_params();
             $sessionName = session_name();
             $cookies[$sessionName] = [
                 'name' => $sessionName,
+                'path' => $sessionCookie['path'],
                 'value' => session_id(),
                 'expire' => $sessionCookie['lifetime'],
-                'path' => $sessionCookie['path'],
                 'secure' => $sessionCookie['secure'],
                 'domain' => $sessionCookie['domain'],
                 'httpOnly' => $sessionCookie['httponly'],
             ];
+        }
+        if ($cookies) {
             $headers['Set-Cookie'] = static::buildCookieHeader($cookies);
         }
         $stream = static::getStream($response);
