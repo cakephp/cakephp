@@ -748,7 +748,7 @@ class CakeRequest implements ArrayAccess {
  * @return mixed Either false on no header being set or the value of the header.
  */
 	public static function header($name) {
-		$httpName = 'HTTP_' . strtoupper(str_replace('-', '_', $name)); ;
+		$httpName = 'HTTP_' . strtoupper(str_replace('-', '_', $name));
 		if (isset($_SERVER[$httpName])) {
 			return $_SERVER[$httpName];
 		}
