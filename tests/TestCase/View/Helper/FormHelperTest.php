@@ -8375,7 +8375,7 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Test the different form input renderings based on values sources switchings through form options
+     * Test the different form values sources resetting through From::end();
      *
      * @return void
      */
