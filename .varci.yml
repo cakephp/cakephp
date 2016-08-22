@@ -40,5 +40,5 @@ ruleset:
       - body matches "/\[x\] bug/"
       - not(body matches "/CakePHP Version: (\d+\.)?(\d+\.)?(\*|\d+)/")
       - not(body matches "/CakePHP Version: [0-9a-f]{5,40}/")
-    comment: {{ user.login }}, please include the CakePHP version number you are using in your description. It helps use debug your issue.
+    comment: {{ user.login }}, please include the CakePHP version number you are using in your description. It helps us debug your issue.
 
