@@ -8297,7 +8297,7 @@ class FormHelperTest extends TestCase
 
     /**
      * Tests the different input rendering values based on sources values switching while supplying
-     * an entity (base context) and multiple sources (durch as data, query)
+     * an entity (base context) and multiple sources (such as data, query)
      *
      * @return void
      */
