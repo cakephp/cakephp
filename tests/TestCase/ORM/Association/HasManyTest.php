@@ -651,7 +651,6 @@ class HasManyTest extends TestCase
      */
     public function testUnlinkSuccess()
     {
-
         $assoc = $this->author->hasMany('Articles', [
             'sourceTable' => $this->author,
             'targetTable' => $this->article
