@@ -1198,7 +1198,7 @@ class TranslateBehaviorTest extends TestCase
 
         $marshaller = $table->marshaller();
         $translate = $table->behaviors()->get('Translate');
-        $result = $translate->buildMarhshalMap($marshaller, [], ['translations' => false]);
+        $result = $translate->buildMarshalMap($marshaller, [], ['translations' => false]);
         $this->assertSame([], $result);
     }
 
@@ -1214,11 +1214,11 @@ class TranslateBehaviorTest extends TestCase
         $marshaller = $table->marshaller();
         $translate = $table->behaviors()->get('Translate');
 
-        $result = $translate->buildMarhshalMap($marshaller, [], ['translations' => true]);
+        $result = $translate->buildMarshalMap($marshaller, [], ['translations' => true]);
         $this->assertArrayHasKey('_translations', $result);
         $this->assertInstanceOf('Closure', $result['_translations']);
 
-        $result = $translate->buildMarhshalMap($marshaller, [], []);
+        $result = $translate->buildMarshalMap($marshaller, [], []);
         $this->assertArrayHasKey('_translations', $result);
         $this->assertInstanceOf('Closure', $result['_translations']);
     }
@@ -1234,7 +1234,7 @@ class TranslateBehaviorTest extends TestCase
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $translate = $table->behaviors()->get('Translate');
 
-        $map = $translate->buildMarhshalMap($table->marshaller(), [], []);
+        $map = $translate->buildMarshalMap($table->marshaller(), [], []);
         $entity = $table->newEntity();
         $result = $map['_translations']('garbage', $entity);
         $this->assertNull($result, 'Non-array should not error out.');
@@ -1253,7 +1253,7 @@ class TranslateBehaviorTest extends TestCase
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $translate = $table->behaviors()->get('Translate');
 
-        $map = $translate->buildMarhshalMap($table->marshaller(), [], []);
+        $map = $translate->buildMarshalMap($table->marshaller(), [], []);
         $entity = $table->newEntity();
         $data = [
             'en' => [
@@ -1291,7 +1291,7 @@ class TranslateBehaviorTest extends TestCase
         $translate = $table->behaviors()->get('Translate');
 
         $entity = $table->newEntity();
-        $map = $translate->buildMarhshalMap($table->marshaller(), [], []);
+        $map = $translate->buildMarshalMap($table->marshaller(), [], []);
         $data = [
             'en' => [
                 'title' => 'English Title',
@@ -1335,7 +1335,7 @@ class TranslateBehaviorTest extends TestCase
             'es' => $es,
             'en' => $en,
         ]);
-        $map = $translate->buildMarhshalMap($table->marshaller(), [], []);
+        $map = $translate->buildMarshalMap($table->marshaller(), [], []);
         $data = [
             'en' => [
                 'title' => 'English Title',
@@ -1380,7 +1380,7 @@ class TranslateBehaviorTest extends TestCase
             'es' => $es,
             'en' => $en,
         ]);
-        $map = $translate->buildMarhshalMap($table->marshaller(), [], []);
+        $map = $translate->buildMarshalMap($table->marshaller(), [], []);
         $data = [
             'en' => [
                 'title' => 'English Title',

@@ -335,7 +335,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * {@inheritDoc}
      */
-    public function buildMarhshalMap($marshaller, $map, $options)
+    public function buildMarshalMap($marshaller, $map, $options)
     {
         if (isset($options['translations']) && !$options['translations']) {
             return [];
