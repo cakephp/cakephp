@@ -680,7 +680,7 @@ class HasManyTest extends TestCase
         ]);
 
         $entity = $this->author->get(1);
-        $entities = $this->article->find()->where(['Articles.author_id' => $entity->id])->all();
+        $entities = $this->article->find()->where(['Articles.author_id' => $entity->id]); // Without ->all()
         $this->assertCount(2, $entities);
 
         $assoc->unlink($entity, $entities);
