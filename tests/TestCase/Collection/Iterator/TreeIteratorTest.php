@@ -20,7 +20,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * TreeIterator Test
- *
  */
 class TreeIteratorTest extends TestCase
 {

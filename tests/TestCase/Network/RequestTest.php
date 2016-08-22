@@ -21,8 +21,7 @@ use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class TestRequest
- *
+ * TestRequest
  */
 class RequestTest extends TestCase
 {
@@ -55,6 +54,25 @@ class RequestTest extends TestCase
         if (!empty($this->_case)) {
             $_GET['case'] = $this->_case;
         }
+    }
+
+    /**
+     * Test custom detector with extra arguments.
+     *
+     * @return void
+     */
+    public function testCustomArgsDetector()
+    {
+        $request = new Request();
+        $request->addDetector('controller', function ($request, $name) {
+            return $request->param('controller') === $name;
+        });
+
+        $request->params = ['controller' => 'cake'];
+        $this->assertTrue($request->is('controller', 'cake'));
+        $this->assertFalse($request->is('controller', 'nonExistingController'));
+        $this->assertTrue($request->isController('cake'));
+        $this->assertFalse($request->isController('nonExistingController'));
     }
 
     /**

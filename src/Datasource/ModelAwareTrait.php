@@ -41,7 +41,7 @@ trait ModelAwareTrait
     public $modelClass;
 
     /**
-     * A list of model factory functions.
+     * A list of overridden model factory functions.
      *
      * @var array
      */
@@ -104,13 +104,12 @@ trait ModelAwareTrait
             return $this->{$alias};
         }
 
-        if (!isset($this->_modelFactories[$modelType])) {
-            throw new InvalidArgumentException(sprintf(
-                'Unknown repository type "%s". Make sure you register a type before trying to use it.',
-                $modelType
-            ));
+        if (isset($this->_modelFactories[$modelType])) {
+            $factory = $this->_modelFactories[$modelType];
         }
-        $factory = $this->_modelFactories[$modelType];
+        if (!isset($factory)) {
+            $factory = FactoryLocator::get($modelType);
+        }
         $this->{$alias} = $factory($modelClass);
         if (!$this->{$alias}) {
             throw new MissingModelException([$modelClass, $modelType]);
@@ -120,7 +119,7 @@ trait ModelAwareTrait
     }
 
     /**
-     * Register a callable to generate repositories of a given type.
+     * Override a existing callable to generate repositories of a given type.
      *
      * @param string $type The name of the repository type the factory function is for.
      * @param callable $factory The factory function used to create instances.

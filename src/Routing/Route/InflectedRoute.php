@@ -38,9 +38,10 @@ class InflectedRoute extends Route
      * plugin keys to their camelized form.
      *
      * @param string $url The URL to parse
+     * @param string $method The HTTP method being matched.
      * @return array|false An array of request parameters, or false on failure.
      */
-    public function parse($url)
+    public function parse($url, $method = '')
     {
         $params = parent::parse($url);
         if (!$params) {

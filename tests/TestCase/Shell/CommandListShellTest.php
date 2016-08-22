@@ -21,8 +21,7 @@ use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class CommandListShellTest
- *
+ * CommandListShellTest
  */
 class CommandListShellTest extends TestCase
 {
@@ -80,7 +79,7 @@ class CommandListShellTest extends TestCase
         $expected = "/\[.*TestPluginTwo.*\] example, unique, welcome/";
         $this->assertRegExp($expected, $output);
 
-        $expected = "/\[.*CORE.*\] i18n, orm_cache, plugin, routes, server/";
+        $expected = "/\[.*CORE.*\] cache, i18n, orm_cache, plugin, routes, server/";
         $this->assertRegExp($expected, $output);
 
         $expected = "/\[.*app.*\] i18m, sample/";
@@ -101,7 +100,7 @@ class CommandListShellTest extends TestCase
         $output = implode("\n", $output);
         rename(APP . 'Shell' . DS . 'I18nShell.php', APP . 'Shell' . DS . 'I18mShell.php');
 
-        $expected = "/\[.*CORE.*\] orm_cache, plugin, routes, server/";
+        $expected = "/\[.*CORE.*\] cache, orm_cache, plugin, routes, server/";
         $this->assertRegExp($expected, $output);
 
         $expected = "/\[.*app.*\] i18n, sample/";

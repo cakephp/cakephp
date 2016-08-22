@@ -21,8 +21,7 @@ use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class TestCompletionStringOutput
- *
+ * TestCompletionStringOutput
  */
 class TestCompletionStringOutput extends ConsoleOutput
 {
@@ -36,7 +35,7 @@ class TestCompletionStringOutput extends ConsoleOutput
 }
 
 /**
- * Class CompletionShellTest
+ * CompletionShellTest
  */
 class CompletionShellTest extends TestCase
 {
@@ -118,7 +117,7 @@ class CompletionShellTest extends TestCase
         $output = $this->out->output;
 
         $expected = "TestPlugin.example TestPlugin.sample TestPluginTwo.example unique welcome " .
-            "i18n orm_cache plugin routes server i18m sample testing_dispatch\n";
+            "cache i18n orm_cache plugin routes server i18m sample testing_dispatch\n";
         $this->assertTextEquals($expected, $output);
     }
 

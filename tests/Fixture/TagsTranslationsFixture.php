@@ -17,8 +17,7 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Class TagsTranslationsFixture
- *
+ * TagsTranslationsFixture
  */
 class TagsTranslationsFixture extends TestFixture
 {
@@ -29,7 +28,7 @@ class TagsTranslationsFixture extends TestFixture
      * @var array
      */
     public $fields = [
-        'id' => ['type' => 'integer', 'null' => false, 'autoIncrement' => false],
+        'id' => ['type' => 'integer', 'null' => false, 'autoIncrement' => true],
         'locale' => ['type' => 'string', 'null' => false],
         'name' => ['type' => 'string', 'null' => false],
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]

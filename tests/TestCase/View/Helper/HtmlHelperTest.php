@@ -24,7 +24,6 @@ use Cake\View\Helper\HtmlHelper;
 
 /**
  * HtmlHelperTest class
- *
  */
 class HtmlHelperTest extends TestCase
 {

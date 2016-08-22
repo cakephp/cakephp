@@ -27,7 +27,6 @@ use SplFixedArray;
  * This object is responsible for correctly nesting result keys reported from
  * the query, casting each field to the correct type and executing the extra
  * queries required for eager loading external associations.
- *
  */
 class ResultSet implements ResultSetInterface
 {
@@ -380,12 +379,14 @@ class ResultSet implements ResultSetInterface
         $map = [];
         foreach ($query->clause('select') as $key => $field) {
             $key = trim($key, '"`[]');
-            if (strpos($key, '__') > 0) {
-                $parts = explode('__', $key, 2);
-                $map[$parts[0]][$key] = $parts[1];
-            } else {
+
+            if (strpos($key, '__') <= 0) {
                 $map[$this->_defaultAlias][$key] = $key;
+                continue;
             }
+
+            $parts = explode('__', $key, 2);
+            $map[$parts[0]][$key] = $parts[1];
         }
 
         foreach ($this->_matchingMap as $alias => $assoc) {
@@ -544,7 +545,7 @@ class ResultSet implements ResultSetInterface
                 $results[$alias] = $entity;
             }
 
-            $results = $instance->transformRow($results, $alias, $assoc['canBeJoined']);
+            $results = $instance->transformRow($results, $alias, $assoc['canBeJoined'], $assoc['targetProperty']);
         }
 
         foreach ($presentAliases as $alias => $present) {

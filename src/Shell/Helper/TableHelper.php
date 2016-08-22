@@ -32,7 +32,7 @@ class TableHelper extends Helper
         'rowSeparator' => false,
         'headerStyle' => 'info',
     ];
-    
+
     /**
      * Calculate the column widths
      *
@@ -44,7 +44,7 @@ class TableHelper extends Helper
         $widths = [];
         foreach ($rows as $line) {
             foreach ($line as $k => $v) {
-                $columnLength = mb_strlen($line[$k]);
+                $columnLength = mb_strwidth($line[$k]);
                 if ($columnLength > (isset($widths[$k]) ? $widths[$k] : 0)) {
                     $widths[$k] = $columnLength;
                 }
@@ -86,7 +86,7 @@ class TableHelper extends Helper
 
         $out = '';
         foreach ($row as $i => $column) {
-            $pad = $widths[$i] - mb_strlen($column);
+            $pad = $widths[$i] - mb_strwidth($column);
             if (!empty($options['style'])) {
                 $column = $this->_addStyle($column, $options['style']);
             }

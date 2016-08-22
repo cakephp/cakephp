@@ -14,7 +14,7 @@
  */
 
 /**
- * Class SomethingComponent
+ * SomethingComponent
  */
 namespace Company\TestPluginThree\Controller\Component;
 

@@ -20,7 +20,6 @@ use Cake\View\StringTemplateTrait;
 
 /**
  * TestStringTemplate
- *
  */
 class TestStringTemplate
 {
@@ -38,7 +37,6 @@ class TestStringTemplate
 
 /**
  * StringTemplateTraitTest class
- *
  */
 class StringTemplateTraitTest extends TestCase
 {

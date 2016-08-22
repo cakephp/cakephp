@@ -24,7 +24,6 @@ use Cake\View\View;
 
 /**
  * UrlHelperTest class
- *
  */
 class UrlHelperTest extends TestCase
 {

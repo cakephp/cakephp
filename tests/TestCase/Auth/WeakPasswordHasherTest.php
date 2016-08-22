@@ -21,7 +21,6 @@ use Cake\Utility\Security;
 
 /**
  * Test case for WeakPasswordHasher
- *
  */
 class WeakPasswordHasherTest extends TestCase
 {

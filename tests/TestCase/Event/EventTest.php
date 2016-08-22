@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests the Cake\Event\Event class functionality
- *
  */
 class EventTest extends TestCase
 {

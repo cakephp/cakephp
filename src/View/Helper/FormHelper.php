@@ -1150,7 +1150,7 @@ class FormHelper extends Helper
      */
     protected function _getInput($fieldName, $options)
     {
-        switch ($options['type']) {
+        switch (strtolower($options['type'])) {
             case 'select':
                 $opts = $options['options'];
                 unset($options['options']);
@@ -1166,6 +1166,9 @@ class FormHelper extends Helper
                 unset($options['options']);
 
                 return $this->multiCheckbox($fieldName, $opts, $options);
+            case 'input':
+                throw new RuntimeException("Invalid type 'input' used for field '$fieldName'");
+
             default:
                 return $this->{$options['type']}($fieldName, $options);
         }
@@ -2480,7 +2483,11 @@ class FormHelper extends Helper
             unset($options['value']);
         }
         if (!isset($options['val'])) {
-            $options['val'] = $this->getSourceValue($field);
+            $valOptions = [
+                'default' => isset($options['default']) ? $options['default'] : null,
+                'schemaDefault' => isset($options['schemaDefault']) ? $options['schemaDefault'] : true,
+            ];
+            $options['val'] = $this->getSourceValue($field, $valOptions);
         }
         if (!isset($options['val']) && isset($options['default'])) {
             $options['val'] = $options['default'];
@@ -2719,17 +2726,24 @@ class FormHelper extends Helper
      * Gets a single field value from the sources available.
      *
      * @param string $fieldname The fieldname to fetch the value for.
+     * @param array|null $options The options containing default values.
      * @return string|null Field value derived from sources.
      */
-    public function getSourceValue($fieldname)
+    public function getSourceValue($fieldname, $options = [])
     {
         foreach ($this->getValuesSources() as $valuesSource) {
             if ($valuesSource === 'context') {
-                return $this->_getContext()->val($fieldname);
+                return $this->_getContext()->val($fieldname, $options);
             }
             if ($this->request->{$valuesSource}($fieldname) !== null) {
                 return $this->request->{$valuesSource}($fieldname);
             }
+        }
+        if ($options['default'] !== null && $options['default'] !== false) {
+            return $options['default'];
+        }
+        if ($options['schemaDefault'] !== null && $options['schemaDefault'] !== false) {
+            return $options['schemaDefault'];
         }
     }
 }

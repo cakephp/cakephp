@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * CacheTest class
- *
  */
 class CacheTest extends TestCase
 {

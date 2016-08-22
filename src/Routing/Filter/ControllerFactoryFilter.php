@@ -16,6 +16,7 @@ namespace Cake\Routing\Filter;
 
 use Cake\Core\App;
 use Cake\Event\Event;
+use Cake\Http\ControllerFactory;
 use Cake\Routing\DispatcherFilter;
 use Cake\Utility\Inflector;
 use ReflectionClass;
@@ -56,48 +57,12 @@ class ControllerFactoryFilter extends DispatcherFilter
      *
      * @param \Cake\Network\Request $request Request object
      * @param \Cake\Network\Response $response Response for the controller.
-     * @return \Cake\Controller\Controller|false Object if loaded, boolean false otherwise.
+     * @return \Cake\Controller\Controller
      */
     protected function _getController($request, $response)
     {
-        $pluginPath = $controller = null;
-        $namespace = 'Controller';
-        if (!empty($request->params['plugin'])) {
-            $pluginPath = $request->params['plugin'] . '.';
-        }
-        if (!empty($request->params['controller'])) {
-            $controller = $request->params['controller'];
-        }
-        if (!empty($request->params['prefix'])) {
-            if (strpos($request->params['prefix'], '/') === false) {
-                $namespace .= '/' . Inflector::camelize($request->params['prefix']);
-            } else {
-                $prefixes = array_map(
-                    'Cake\Utility\Inflector::camelize',
-                    explode('/', $request->params['prefix'])
-                );
-                $namespace .= '/' . implode('/', $prefixes);
-            }
-        }
-        $firstChar = substr($controller, 0, 1);
-        if (strpos($controller, '\\') !== false ||
-            strpos($controller, '.') !== false ||
-            $firstChar === strtolower($firstChar)
-        ) {
-            return false;
-        }
-        $className = false;
-        if ($pluginPath . $controller) {
-            $className = App::classname($pluginPath . $controller, $namespace, 'Controller');
-        }
-        if (!$className) {
-            return false;
-        }
-        $reflection = new ReflectionClass($className);
-        if ($reflection->isAbstract() || $reflection->isInterface()) {
-            return false;
-        }
+        $factory = new ControllerFactory();
 
-        return $reflection->newInstance($request, $response, $controller);
+        return $factory->create($request, $response);
     }
 }

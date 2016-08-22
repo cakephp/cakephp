@@ -40,14 +40,28 @@ class ExistsIn
     protected $_repository;
 
     /**
+     * Options for the constructor
+     *
+     * @var array
+     */
+    protected $_options = [];
+
+    /**
      * Constructor.
+     *
+     * Available option for $options is 'allowNullableNulls' flag.
+     * Set to true to accept composite foreign keys where one or more nullable columns are null.
      *
      * @param string|array $fields The field or fields to check existence as primary key.
      * @param object|string $repository The repository where the field will be looked for,
      * or the association name for the repository.
+     * @param array $options The options that modify the rules behavior.
      */
-    public function __construct($fields, $repository)
+    public function __construct($fields, $repository, array $options = [])
     {
+        $options += ['allowNullableNulls' => false];
+        $this->_options = $options;
+
         $this->_fields = (array)$fields;
         $this->_repository = $repository;
     }
@@ -67,30 +81,29 @@ class ExistsIn
             $repository = $options['repository']->association($this->_repository);
             if (!$repository) {
                 throw new RuntimeException(sprintf(
-                    "ExistsIn rule for '%s' is invalid. The '%s' association is not defined.",
+                    "ExistsIn rule for '%s' is invalid. '%s' is not associated with '%s'.",
                     implode(', ', $this->_fields),
-                    $this->_repository
+                    $this->_repository,
+                    get_class($options['repository'])
                 ));
             }
             $this->_repository = $repository;
         }
 
         $source = $target = $this->_repository;
+        $isAssociation = $target instanceof Association;
+        $bindingKey = $isAssociation ? (array)$target->bindingKey() : (array)$target->primaryKey();
+        $realTarget = $isAssociation ? $target->target() : $target;
+
+        if (!empty($options['_sourceTable']) && $realTarget === $options['_sourceTable']) {
+            return true;
+        }
+
         if (!empty($options['repository'])) {
             $source = $options['repository'];
         }
         if ($source instanceof Association) {
             $source = $source->source();
-        }
-        if ($target instanceof Association) {
-            $bindingKey = (array)$target->bindingKey();
-            $target = $target->target();
-        } else {
-            $bindingKey = (array)$target->primaryKey();
-        }
-
-        if (!empty($options['_sourceTable']) && $target === $options['_sourceTable']) {
-            return true;
         }
 
         if (!$entity->extract($this->_fields, true)) {
@@ -99,6 +112,16 @@ class ExistsIn
 
         if ($this->_fieldsAreNull($entity, $source)) {
             return true;
+        }
+
+        if ($this->_options['allowNullableNulls']) {
+            $schema = $source->schema();
+            foreach ($this->_fields as $i => $field) {
+                if ($schema->column($field) && $schema->isNullable($field) && $entity->get($field) === null) {
+                    unset($bindingKey[$i]);
+                    unset($this->_fields[$i]);
+                }
+            }
         }
 
         $primary = array_map(
@@ -114,7 +137,7 @@ class ExistsIn
     }
 
     /**
-     * Check whether or not the entity fields are nullable and null.
+     * Checks whether or not the given entity fields are nullable and null.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to check.
      * @param \Cake\ORM\Table $source The table to use schema from.

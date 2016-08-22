@@ -23,7 +23,6 @@ use SessionHandlerInterface;
 
 /**
  * DatabaseSession provides methods to be used with Session.
- *
  */
 class DatabaseSession implements SessionHandlerInterface
 {

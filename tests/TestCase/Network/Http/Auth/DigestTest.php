@@ -56,12 +56,10 @@ class DigestTest extends TestCase
             ->will($this->returnValue($response));
 
         $auth = ['username' => 'admin', 'password' => '1234'];
-        $request = (new Request())->method(Request::METHOD_GET)
-            ->url('http://example.com/some/path');
+        $request = new Request('http://example.com/some/path', Request::METHOD_GET);
+        $request = $this->auth->authentication($request, $auth);
 
-        $this->auth->authentication($request, $auth);
-
-        $result = $request->header('Authorization');
+        $result = $request->getHeaderLine('Authorization');
         $this->assertContains('Digest', $result);
         $this->assertContains('realm="The batcave"', $result);
         $this->assertContains('nonce="4cded326c6c51"', $result);
@@ -88,11 +86,9 @@ class DigestTest extends TestCase
             ->will($this->returnValue($response));
 
         $auth = ['username' => 'admin', 'password' => '1234'];
-        $request = (new Request())->method(Request::METHOD_GET)
-            ->url('http://example.com/some/path');
-
-        $this->auth->authentication($request, $auth);
-        $result = $request->header('Authorization');
+        $request = new Request('http://example.com/some/path', Request::METHOD_GET);
+        $request = $this->auth->authentication($request, $auth);
+        $result = $request->getHeaderLine('Authorization');
 
         $this->assertContains('qop="auth"', $result);
         $this->assertContains('nc=00000001', $result);
@@ -116,11 +112,9 @@ class DigestTest extends TestCase
             ->will($this->returnValue($response));
 
         $auth = ['username' => 'admin', 'password' => '1234'];
-        $request = (new Request())->method(Request::METHOD_GET)
-            ->url('http://example.com/some/path');
-
-        $this->auth->authentication($request, $auth);
-        $result = $request->header('Authorization');
+        $request = new Request('http://example.com/some/path', Request::METHOD_GET);
+        $request = $this->auth->authentication($request, $auth);
+        $result = $request->getHeaderLine('Authorization');
 
         $this->assertContains('opaque="d8ea7aa61a1693024c4cc3a516f49b3c"', $result);
     }

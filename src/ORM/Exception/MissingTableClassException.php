@@ -18,7 +18,6 @@ use Cake\Core\Exception\Exception;
 
 /**
  * Exception raised when a Table could not be found.
- *
  */
 class MissingTableClassException extends Exception
 {

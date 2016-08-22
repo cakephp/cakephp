@@ -14,11 +14,13 @@
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqlserverSchema;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use PDO;
 
 /**
  * SQL Server schema test case.
@@ -857,6 +859,7 @@ SQL;
                 'null' => false,
             ])
             ->addColumn('body', ['type' => 'text'])
+            ->addColumn('data', ['type' => 'json'])
             ->addColumn('hash', [
                 'type' => 'string',
                 'fixed' => true,
@@ -879,6 +882,7 @@ CREATE TABLE [schema_articles] (
 [id] INTEGER IDENTITY(1, 1),
 [title] NVARCHAR(255) NOT NULL,
 [body] NVARCHAR(MAX),
+[data] NVARCHAR(MAX),
 [hash] NCHAR(40) COLLATE Latin1_General_BIN NOT NULL,
 [created] DATETIME,
 PRIMARY KEY ([id])
@@ -947,9 +951,14 @@ SQL;
      */
     protected function _getMockedDriver()
     {
-        $driver = new \Cake\Database\Driver\Sqlserver();
-        $mock = $this->getMockBuilder('FakePdo')
+        $driver = new Sqlserver();
+        $pdo = PDO::class;
+        if (version_compare(PHP_VERSION, '5.6', '<')) {
+            $pdo = 'FakePdo';
+        }
+        $mock = $this->getMockBuilder($pdo)
             ->setMethods(['quote'])
+            ->disableOriginalConstructor()
             ->getMock();
         $mock->expects($this->any())
             ->method('quote')

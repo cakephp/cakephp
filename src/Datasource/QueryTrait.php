@@ -21,7 +21,6 @@ use Cake\Datasource\Exception\RecordNotFoundException;
 /**
  * Contains the characteristics for an object that is attached to a repository and
  * can retrieve results based on any criteria.
- *
  */
 trait QueryTrait
 {

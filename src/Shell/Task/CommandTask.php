@@ -25,7 +25,6 @@ use ReflectionMethod;
 
 /**
  * Base class for Shell Command reflection.
- *
  */
 class CommandTask extends Shell
 {

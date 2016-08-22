@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests LoggingStatement class
- *
  */
 class LoggingStatementTest extends TestCase
 {

@@ -19,7 +19,6 @@ use Cake\Validation\RulesProvider;
 
 /**
  * Tests RulesProvider class
- *
  */
 class RulesProviderTest extends TestCase
 {

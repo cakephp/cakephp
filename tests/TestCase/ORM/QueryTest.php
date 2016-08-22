@@ -570,13 +570,15 @@ class QueryTest extends TestCase
                         'id' => 1,
                         'name' => 'tag1',
                         '_joinData' => ['article_id' => 1, 'tag_id' => 1],
-                        'description' => 'A big description'
+                        'description' => 'A big description',
+                        'created' => new Time('2016-01-01 00:00'),
                     ],
                     [
                         'id' => 2,
                         'name' => 'tag2',
                         '_joinData' => ['article_id' => 1, 'tag_id' => 2],
-                        'description' => 'Another big description'
+                        'description' => 'Another big description',
+                        'created' => new Time('2016-01-01 00:00'),
                     ]
                 ]
             ],
@@ -591,13 +593,15 @@ class QueryTest extends TestCase
                         'id' => 1,
                         'name' => 'tag1',
                         '_joinData' => ['article_id' => 2, 'tag_id' => 1],
-                        'description' => 'A big description'
+                        'description' => 'A big description',
+                        'created' => new Time('2016-01-01 00:00'),
                     ],
                     [
                         'id' => 3,
                         'name' => 'tag3',
                         '_joinData' => ['article_id' => 2, 'tag_id' => 3],
-                        'description' => 'Yet another one'
+                        'description' => 'Yet another one',
+                        'created' => new Time('2016-01-01 00:00'),
                     ]
                 ]
             ],
@@ -636,7 +640,8 @@ class QueryTest extends TestCase
                         'id' => 3,
                         'name' => 'tag3',
                         '_joinData' => ['article_id' => 2, 'tag_id' => 3],
-                        'description' => 'Yet another one'
+                        'description' => 'Yet another one',
+                        'created' => new Time('2016-01-01 00:00'),
                     ]
                 ]
             ],
@@ -751,6 +756,7 @@ class QueryTest extends TestCase
                         'id' => 3,
                         'name' => 'tag3',
                         'description' => 'Yet another one',
+                        'created' => new Time('2016-01-01 00:00'),
                     ],
                     'ArticlesTags' => ['article_id' => 2, 'tag_id' => 3]
                 ]
@@ -777,6 +783,7 @@ class QueryTest extends TestCase
                         'id' => 2,
                         'name' => 'tag2',
                         'description' => 'Another big description',
+                        'created' => new Time('2016-01-01 00:00'),
                     ],
                     'ArticlesTags' => ['article_id' => 1, 'tag_id' => 2]
                 ]
@@ -814,6 +821,7 @@ class QueryTest extends TestCase
                         'id' => 2,
                         'name' => 'tag2',
                         'description' => 'Another big description',
+                        'created' => new Time('2016-01-01 00:00'),
                     ],
                     'articles' => [
                         'id' => 1,
@@ -1269,16 +1277,20 @@ class QueryTest extends TestCase
             'name' => 'tag1',
             '_joinData' => ['article_id' => 1, 'tag_id' => 1],
             'description' => 'A big description',
+            'created' => new Time('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[0]->toArray());
+        $this->assertInstanceOf(Time::class, $first->tags[0]->created);
 
         $expected = [
             'id' => 2,
             'name' => 'tag2',
             '_joinData' => ['article_id' => 1, 'tag_id' => 2],
-            'description' => 'Another big description'
+            'description' => 'Another big description',
+            'created' => new Time('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[1]->toArray());
+        $this->assertInstanceOf(Time::class, $first->tags[1]->created);
     }
 
     /**
@@ -1303,7 +1315,6 @@ class QueryTest extends TestCase
                 });
             }, 'Model.beforeFind');
 
-
         $query = new Query($this->connection, $table);
 
         $results = $query
@@ -1322,16 +1333,20 @@ class QueryTest extends TestCase
             'name' => 'tag1',
             '_joinData' => ['article_id' => 1, 'tag_id' => 1],
             'description' => 'A big description',
+            'created' => new Time('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[0]->toArray());
+        $this->assertInstanceOf(Time::class, $first->tags[0]->created);
 
         $expected = [
             'id' => 2,
             'name' => 'tag2',
             '_joinData' => ['article_id' => 1, 'tag_id' => 2],
-            'description' => 'Another big description'
+            'description' => 'Another big description',
+            'created' => new Time('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[1]->toArray());
+        $this->assertInstanceOf(Time::class, $first->tags[0]->created);
     }
 
     /**
@@ -3003,22 +3018,22 @@ class QueryTest extends TestCase
 
         $results = $table
             ->find()
-            ->select(['total_articles' => 'count(articles.id)'])
+            ->select([
+                'authors.id',
+                'tagged_articles' => 'count(tags.id)'
+            ])
             ->leftJoinWith('articles.tags', function ($q) {
                 return $q->where(['tags.name' => 'tag3']);
             })
-            ->autoFields(true)
-            ->group(['authors.id', 'authors.name']);
+            ->group(['authors.id']);
 
         $expected = [
-            1 => 2,
+            1 => 0,
             2 => 0,
             3 => 1,
             4 => 0
         ];
-        $this->assertEquals($expected, $results->combine('id', 'total_articles')->toArray());
-        $fields = ['total_articles', 'id', 'name'];
-        $this->assertEquals($fields, array_keys($results->first()->toArray()));
+        $this->assertEquals($expected, $results->combine('id', 'tagged_articles')->toArray());
     }
 
     /**
@@ -3040,7 +3055,6 @@ class QueryTest extends TestCase
             })
             ->autoFields(true)
             ->where(['ArticlesTags.tag_id' => 3])
-            ->distinct(['authors.id'])
             ->all();
 
         $expected = ['id' => 2, 'title' => 'Second Article'];
@@ -3176,8 +3190,9 @@ class QueryTest extends TestCase
             ->hydrate(false)
             ->notMatching('tags', function ($q) {
                 return $q->where(['tags.name' => 'tag2']);
-            })
-            ->toArray();
+            });
+
+        $results = $results->toArray();
 
         $expected = [
             [
@@ -3211,6 +3226,7 @@ class QueryTest extends TestCase
 
         $results = $table->find()
             ->hydrate(false)
+            ->select('authors.id')
             ->notMatching('articles.tags', function ($q) {
                 return $q->where(['tags.name' => 'tag3']);
             })

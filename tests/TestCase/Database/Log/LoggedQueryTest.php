@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests LoggedQuery class
- *
  */
 class LoggedQueryTest extends TestCase
 {

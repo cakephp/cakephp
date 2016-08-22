@@ -20,7 +20,6 @@ use Cake\Controller\Controller;
 
 /**
  * RequestHandlerTestController class
- *
  */
 class RequestHandlerTestController extends Controller
 {

@@ -17,7 +17,6 @@ namespace Cake\Event;
 /**
  * Objects implementing this interface should declare the `implementedEvents` function
  * to notify the event manager what methods should be called when an event is triggered.
- *
  */
 interface EventListenerInterface
 {

@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * ShellDispatcherTest
- *
  */
 class ShellDispatcherTest extends TestCase
 {

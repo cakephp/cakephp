@@ -145,21 +145,21 @@ class InflectedRouteTest extends TestCase
     {
         $route = new InflectedRoute('/:controller/:action/:id', [], ['id' => Router::ID]);
         $route->compile();
-        $result = $route->parse('/my_posts/my_view/1');
+        $result = $route->parse('/my_posts/my_view/1', 'GET');
         $this->assertEquals('MyPosts', $result['controller']);
         $this->assertEquals('my_view', $result['action']);
         $this->assertEquals('1', $result['id']);
 
         $route = new InflectedRoute('/:controller/:action-:id');
         $route->compile();
-        $result = $route->parse('/my_posts/my_view-1');
+        $result = $route->parse('/my_posts/my_view-1', 'GET');
         $this->assertEquals('MyPosts', $result['controller']);
         $this->assertEquals('my_view', $result['action']);
         $this->assertEquals('1', $result['id']);
 
         $route = new InflectedRoute('/:controller/:action/:slug-:id', [], ['id' => Router::ID]);
         $route->compile();
-        $result = $route->parse('/my_posts/my_view/the-slug-1');
+        $result = $route->parse('/my_posts/my_view/the-slug-1', 'GET');
         $this->assertEquals('MyPosts', $result['controller']);
         $this->assertEquals('my_view', $result['action']);
         $this->assertEquals('1', $result['id']);
@@ -170,10 +170,10 @@ class InflectedRouteTest extends TestCase
             ['prefix' => 'admin', 'action' => 'index']
         );
         $route->compile();
-        $result = $route->parse('/admin/');
+        $result = $route->parse('/admin/', 'GET');
         $this->assertFalse($result);
 
-        $result = $route->parse('/admin/my_posts');
+        $result = $route->parse('/admin/my_posts', 'GET');
         $this->assertEquals('MyPosts', $result['controller']);
         $this->assertEquals('index', $result['action']);
 
@@ -181,12 +181,12 @@ class InflectedRouteTest extends TestCase
             '/media/search/*',
             ['controller' => 'Media', 'action' => 'search_it']
         );
-        $result = $route->parse('/media/search');
+        $result = $route->parse('/media/search', 'GET');
         $this->assertEquals('Media', $result['controller']);
         $this->assertEquals('search_it', $result['action']);
         $this->assertEquals([], $result['pass']);
 
-        $result = $route->parse('/media/search/tv_shows');
+        $result = $route->parse('/media/search/tv_shows', 'GET');
         $this->assertEquals('Media', $result['controller']);
         $this->assertEquals('search_it', $result['action']);
         $this->assertEquals(['tv_shows'], $result['pass']);
@@ -207,7 +207,7 @@ class InflectedRouteTest extends TestCase
         ]);
         $expectedUrl = '/plugin/controller_name/action_name';
         $this->assertEquals($expectedUrl, $url);
-        $result = $route->parse($expectedUrl);
+        $result = $route->parse($expectedUrl, 'GET');
         $this->assertEquals('ControllerName', $result['controller']);
         $this->assertEquals('action_name', $result['action']);
         $this->assertEquals('Vendor/PluginName', $result['plugin']);

@@ -289,6 +289,8 @@ class RouteBuilder
      * - 'actions' - Override the method names used for connecting actions.
      * - 'map' - Additional resource routes that should be connected. If you define 'only' and 'map',
      *   make sure that your mapped methods are also in the 'only' list.
+     * - 'prefix' - Define a routing prefix for the resource controller. If the current scope
+     *   defines a prefix, this prefix will be appended to it.
      *
      * @param string $name A controller name to connect resource routes for.
      * @param array|callable $options Options to use when generating REST routes, or a callback.
@@ -309,6 +311,7 @@ class RouteBuilder
             'only' => [],
             'actions' => [],
             'map' => [],
+            'prefix' => null,
         ];
 
         foreach ($options['map'] as $k => $mapped) {
@@ -329,6 +332,14 @@ class RouteBuilder
             $only = array_keys($resourceMap);
         }
 
+        $prefix = '';
+        if ($options['prefix']) {
+            $prefix = $options['prefix'];
+        }
+        if (isset($this->_params['prefix']) && $prefix) {
+            $prefix = $this->_params['prefix'] . '/' . $prefix;
+        }
+
         foreach ($resourceMap as $method => $params) {
             if (!in_array($method, $only, true)) {
                 continue;
@@ -345,6 +356,9 @@ class RouteBuilder
                 'action' => $action,
                 '_method' => $params['method'],
             ];
+            if ($prefix) {
+                $params['prefix'] = $prefix;
+            }
             $routeOptions = $connectOptions + [
                 'id' => $options['id'],
                 'pass' => ['id'],
@@ -484,7 +498,7 @@ class RouteBuilder
             $route = $route === '/' ? $route : rtrim($route, '/');
 
             foreach ($this->_params as $param => $val) {
-                if (isset($defaults[$param]) && $defaults[$param] !== $val) {
+                if (isset($defaults[$param]) && $param !== 'prefix' && $defaults[$param] !== $val) {
                     $msg = 'You cannot define routes that conflict with the scope. ' .
                         'Scope had %s = %s, while route had %s = %s';
                     throw new BadMethodCallException(sprintf(

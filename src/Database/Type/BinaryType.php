@@ -18,6 +18,7 @@ use Cake\Core\Exception\Exception;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Type;
+use Cake\Database\TypeInterface;
 use PDO;
 
 /**
@@ -25,8 +26,25 @@ use PDO;
  *
  * Use to convert binary data between PHP and the database types.
  */
-class BinaryType extends Type
+class BinaryType extends Type implements TypeInterface
 {
+
+    /**
+     * Identifier name for this type
+     *
+     * @var string|null
+     */
+    protected $_name = null;
+
+    /**
+     * Constructor
+     *
+     * @param string|null $name The name identifying this type
+     */
+    public function __construct($name = null)
+    {
+        $this->_name = $name;
+    }
 
     /**
      * Convert binary data into the database format.
@@ -78,5 +96,20 @@ class BinaryType extends Type
     public function toStatement($value, Driver $driver)
     {
         return PDO::PARAM_LOB;
+    }
+
+    /**
+     * Marshalls flat data into PHP objects.
+     *
+     * Most useful for converting request data into PHP objects
+     * that make sense for the rest of the ORM/Database layers.
+     *
+     * @param mixed $value The value to convert.
+     *
+     * @return mixed Converted value.
+     */
+    public function marshal($value)
+    {
+        return $value;
     }
 }

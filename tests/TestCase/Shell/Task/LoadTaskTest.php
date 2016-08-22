@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * LoadTaskTest class.
- *
  */
 class LoadTaskTest extends TestCase
 {

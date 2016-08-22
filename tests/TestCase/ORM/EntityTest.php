@@ -713,6 +713,23 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Tests that jsonSerialize is called recursivily for contained entities
+     *
+     * @return void
+     */
+    public function testJsonSerializeRecursive()
+    {
+        $phone = $this->getMockBuilder(Entity::class)
+            ->setMethods(['jsonSerialize'])
+            ->getMock();
+        $phone->expects($this->once())->method('jsonSerialize')->will($this->returnValue('12345'));
+        $data = ['name' => 'James', 'age' => 20, 'phone' => $phone];
+        $entity = new Entity($data);
+        $expected = ['name' => 'James', 'age' => 20, 'phone' => '12345'];
+        $this->assertEquals(json_encode($expected), json_encode($entity));
+    }
+
+    /**
      * Tests the extract method
      *
      * @return void
@@ -1373,7 +1390,7 @@ class EntityTest extends TestCase
         return [[''], [null], [false]];
     }
     /**
-     * Tests that trying to get an empty propery name throws exception
+     * Tests that trying to get an empty propetry name throws exception
      *
      * @dataProvider emptyNamesProvider
      * @expectedException \InvalidArgumentException
@@ -1386,7 +1403,7 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests that setitng an empty property name does nothing
+     * Tests that setting an empty property name does nothing
      *
      * @expectedException \InvalidArgumentException
      * @dataProvider emptyNamesProvider

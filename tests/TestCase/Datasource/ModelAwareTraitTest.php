@@ -13,6 +13,7 @@
  */
 namespace Cake\Test\TestCase\Datasource;
 
+use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\TestSuite\TestCase;
 
@@ -59,7 +60,6 @@ class ModelAwareTraitTest extends TestCase
     {
         $stub = new Stub();
         $stub->setProps('Articles');
-        $stub->modelFactory('Table', ['\Cake\ORM\TableRegistry', 'get']);
         $stub->modelType('Table');
 
         $result = $stub->loadModel();
@@ -83,7 +83,6 @@ class ModelAwareTraitTest extends TestCase
     {
         $stub = new Stub();
         $stub->setProps('Articles');
-        $stub->modelFactory('Table', ['\Cake\ORM\TableRegistry', 'get']);
         $stub->modelType('Table');
 
         $result = $stub->loadModel('TestPlugin.Comments');
@@ -105,14 +104,14 @@ class ModelAwareTraitTest extends TestCase
         $stub = new Stub();
         $stub->setProps('Articles');
 
-        $stub->modelFactory('Test', function ($name) {
+        $stub->modelFactory('Table', function ($name) {
             $mock = new \StdClass();
             $mock->name = $name;
 
             return $mock;
         });
 
-        $result = $stub->loadModel('Magic', 'Test');
+        $result = $stub->loadModel('Magic', 'Table');
         $this->assertInstanceOf('\StdClass', $result);
         $this->assertInstanceOf('\StdClass', $stub->Magic);
         $this->assertEquals('Magic', $stub->Magic->name);
@@ -128,7 +127,7 @@ class ModelAwareTraitTest extends TestCase
         $stub = new Stub();
         $stub->setProps('Articles');
 
-        $stub->modelFactory('Test', function ($name) {
+        FactoryLocator::add('Test', function ($name) {
             $mock = new \StdClass();
             $mock->name = $name;
 
@@ -153,10 +152,17 @@ class ModelAwareTraitTest extends TestCase
     {
         $stub = new Stub();
 
-        $stub->modelFactory('Test', function ($name) {
+        FactoryLocator::add('Test', function ($name) {
             return false;
         });
 
         $stub->loadModel('Magic', 'Test');
+    }
+
+    public function tearDown()
+    {
+        FactoryLocator::drop('Test');
+
+        parent::tearDown();
     }
 }

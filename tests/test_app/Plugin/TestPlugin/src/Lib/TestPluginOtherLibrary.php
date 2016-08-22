@@ -16,8 +16,7 @@
  */
 
 /**
- * Class TestPluginOtherLibrary
- *
+ * TestPluginOtherLibrary
  */
 namespace TestPlugin\Lib;
 

@@ -66,6 +66,14 @@ class EagerLoadable
      * A dotted separated string representing the path of entity properties
      * in which results for this level should be placed.
      *
+     * For example, in the following nested property:
+     *
+     * ```
+     *  $article->author->company->country
+     * ```
+     *
+     * The property path of `country` will be `author.company`
+     *
      * @var string
      */
     protected $_propertyPath;
@@ -86,6 +94,22 @@ class EagerLoadable
     protected $_forMatching;
 
     /**
+     * The property name where the association result should be nested
+     * in the result.
+     *
+     * For example, in the following nested property:
+     *
+     * ```
+     *  $article->author->company->country
+     * ```
+     *
+     * The target property of `country` will be just `country`
+     *
+     * @var string
+     */
+    protected $_targetProperty;
+
+    /**
      * Constructor. The $config parameter accepts the following array
      * keys:
      *
@@ -96,6 +120,7 @@ class EagerLoadable
      * - aliasPath
      * - propertyPath
      * - forMatching
+     * - targetProperty
      *
      * The keys maps to the settable properties in this class.
      *
@@ -107,7 +132,7 @@ class EagerLoadable
         $this->_name = $name;
         $allowed = [
             'associations', 'instance', 'config', 'canBeJoined',
-            'aliasPath', 'propertyPath', 'forMatching'
+            'aliasPath', 'propertyPath', 'forMatching', 'targetProperty'
         ];
         foreach ($allowed as $property) {
             if (isset($config[$property])) {
@@ -163,6 +188,14 @@ class EagerLoadable
      * Gets a dot separated string representing the path of entity properties
      * in which results for this level should be placed.
      *
+     * For example, in the following nested property:
+     *
+     * ```
+     *  $article->author->company->country
+     * ```
+     *
+     * The property path of `country` will be `author.company`
+     *
      * @return string|null
      */
     public function propertyPath()
@@ -213,6 +246,25 @@ class EagerLoadable
     public function forMatching()
     {
         return $this->_forMatching;
+    }
+
+    /**
+     * The property name where the result of this association
+     * should be nested at the end.
+     *
+     * For example, in the following nested property:
+     *
+     * ```
+     *  $article->author->company->country
+     * ```
+     *
+     * The target property of `country` will be just `country`
+     *
+     * @return string|null
+     */
+    public function targetProperty()
+    {
+        return $this->_targetProperty;
     }
 
     /**

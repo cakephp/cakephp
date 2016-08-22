@@ -32,6 +32,7 @@ use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
+use Cake\ORM\SaveOptionsBuilder;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -47,7 +48,6 @@ class UsersTable extends Table
 
 /**
  * Tests Table class
- *
  */
 class TableTest extends TestCase
 {
@@ -192,6 +192,8 @@ class TableTest extends TestCase
     {
         $table = new Table(['alias' => 'Users']);
         $this->assertEquals('Users.id', $table->aliasField('id'));
+
+        $this->assertEquals('Users.id', $table->aliasField('Users.id'));
     }
 
     /**
@@ -1674,15 +1676,27 @@ class TableTest extends TestCase
     public function testImplementedEvents()
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')
-            ->setMethods(['beforeFind', 'beforeSave', 'afterSave', 'beforeDelete', 'afterDelete'])
+            ->setMethods([
+                'buildValidator',
+                'beforeMarshal',
+                'beforeFind',
+                'beforeSave',
+                'afterSave',
+                'beforeDelete',
+                'afterDelete',
+                'afterRules'
+            ])
             ->getMock();
         $result = $table->implementedEvents();
         $expected = [
+            'Model.beforeMarshal' => 'beforeMarshal',
+            'Model.buildValidator' => 'buildValidator',
             'Model.beforeFind' => 'beforeFind',
             'Model.beforeSave' => 'beforeSave',
             'Model.afterSave' => 'afterSave',
             'Model.beforeDelete' => 'beforeDelete',
             'Model.afterDelete' => 'afterDelete',
+            'Model.afterRules' => 'afterRules',
         ];
         $this->assertEquals($expected, $result, 'Events do not match.');
     }
@@ -2427,7 +2441,7 @@ class TableTest extends TestCase
         $config = ConnectionManager::config('test');
 
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
-            ->setMethods(['begin', 'commit'])
+            ->setMethods(['begin', 'commit', 'inTransaction'])
             ->setConstructorArgs([$config])
             ->getMock();
         $connection->driver($this->connection->driver());
@@ -2441,6 +2455,7 @@ class TableTest extends TestCase
 
         $connection->expects($this->once())->method('begin');
         $connection->expects($this->once())->method('commit');
+        $connection->expects($this->any())->method('inTransaction')->will($this->returnValue(true));
         $data = new \Cake\ORM\Entity([
             'username' => 'superuser',
             'created' => new Time('2013-10-10 00:00'),
@@ -3586,6 +3601,34 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests overwriting hasMany associations in an integration scenario.
+     *
+     * @return void
+     */
+    public function testSaveHasManyOverwrite()
+    {
+        $table = TableRegistry::get('authors');
+        $table->hasMany('articles');
+
+        $entity = $table->get(3, ['contain' => ['articles']]);
+        $data = [
+            'name' => 'big jose',
+            'articles' => [
+                [
+                    'id' => 2,
+                    'title' => 'New title'
+                ]
+            ]
+        ];
+        $entity = $table->patchEntity($entity, $data, ['associated' => 'articles']);
+        $this->assertSame($entity, $table->save($entity));
+
+        $entity = $table->get(3, ['contain' => ['articles']]);
+        $this->assertEquals('big jose', $entity->name, 'Author did not persist');
+        $this->assertEquals('New title', $entity->articles[0]->title, 'Article did not persist');
+    }
+
+    /**
      * Tests saving belongsToMany records
      *
      * @group save
@@ -3814,6 +3857,59 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test that a save call takes a SaveOptionBuilder object as well.
+     *
+     * @group save
+     * @return void
+     */
+    public function testSaveWithOptionBuilder()
+    {
+        $articles = new Table([
+            'table' => 'articles',
+            'connection' => $this->connection,
+        ]);
+        $articles->belongsTo('Authors');
+
+        $optionBuilder = new SaveOptionsBuilder($articles, [
+            'associated' => [
+                'Authors'
+            ]
+        ]);
+
+        $entity = $articles->newEntity([
+            'title' => 'test save options',
+            'author' => [
+                'name' => 'author name'
+            ]
+        ]);
+
+        $articles->save($entity, $optionBuilder);
+        $this->assertFalse($entity->isNew());
+        $this->assertEquals('test save options', $entity->title);
+        $this->assertNotEmpty($entity->id);
+        $this->assertNotEmpty($entity->author->id);
+        $this->assertEquals('author name', $entity->author->name);
+
+        $entity = $articles->newEntity([
+            'title' => 'test save options 2',
+            'author' => [
+                'name' => 'author name'
+            ]
+        ]);
+
+        $optionBuilder = new SaveOptionsBuilder($articles, [
+            'associated' => []
+        ]);
+
+        $articles->save($entity, $optionBuilder);
+        $this->assertFalse($entity->isNew());
+        $this->assertEquals('test save options 2', $entity->title);
+        $this->assertNotEmpty($entity->id);
+        $this->assertEmpty($entity->author->id);
+        $this->assertTrue($entity->author->isNew());
+    }
+
+    /**
      * Tests that saving a persisted and clean entity will is a no-op
      *
      * @group save
@@ -3952,7 +4048,8 @@ class TableTest extends TestCase
 
         $newTag = new \TestApp\Model\Entity\Tag([
             'name' => 'Foo',
-            'description' => 'Foo desc'
+            'description' => 'Foo desc',
+            'created' => null,
         ], $source);
         $tags[] = new \TestApp\Model\Entity\Tag([
             'id' => 3
@@ -6008,6 +6105,18 @@ class TableTest extends TestCase
 
         $expected = $table->find()->contain($contain)->toList();
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test getting the save options builder.
+     *
+     * @return void
+     */
+    public function getSaveOptionsBuilder()
+    {
+        $table = TableRegistry::get('Authors');
+        $result = $table->getSaveOptionsBuilder();
+        $this->assertInstanceOf('Cake\ORM\SaveOptionsBuilder', $result);
     }
 
     /**

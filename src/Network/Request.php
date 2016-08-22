@@ -584,8 +584,10 @@ class Request implements ArrayAccess
     {
         if (strpos($name, 'is') === 0) {
             $type = strtolower(substr($name, 2));
-
-            return $this->is($type);
+            
+            array_unshift($params, $type);
+            
+            return call_user_func_array([$this, 'is'], $params);
         }
         throw new BadMethodCallException(sprintf('Method %s does not exist', $name));
     }
@@ -637,14 +639,21 @@ class Request implements ArrayAccess
 
             return count(array_filter($result)) > 0;
         }
+        
+        $args = func_get_args();
+        array_shift($args);
 
         $type = strtolower($type);
         if (!isset(static::$_detectors[$type])) {
             return false;
         }
 
+        if ($args) {
+            return $this->_is($type, $args);
+        }
+        
         if (!isset($this->_detectorCache[$type])) {
-            $this->_detectorCache[$type] = $this->_is($type);
+            $this->_detectorCache[$type] = $this->_is($type, $args);
         }
 
         return $this->_detectorCache[$type];
@@ -665,13 +674,16 @@ class Request implements ArrayAccess
      *
      * @param string|array $type The type of request you want to check. If an array
      *   this method will return true if the request matches any type.
+     * @param array $args Array of custom detector arguments.
      * @return bool Whether or not the request is the type you are checking.
      */
-    protected function _is($type)
+    protected function _is($type, $args)
     {
         $detect = static::$_detectors[$type];
         if (is_callable($detect)) {
-            return call_user_func($detect, $this);
+            array_unshift($args, $this);
+
+            return call_user_func_array($detect, $args);
         }
         if (isset($detect['env']) && $this->_environmentDetector($detect)) {
             return true;

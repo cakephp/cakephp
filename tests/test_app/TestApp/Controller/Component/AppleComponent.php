@@ -19,7 +19,6 @@ use Cake\Event\Event;
 
 /**
  * AppleComponent class
- *
  */
 class AppleComponent extends Component
 {

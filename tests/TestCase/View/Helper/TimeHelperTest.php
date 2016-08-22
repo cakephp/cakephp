@@ -23,7 +23,6 @@ use Cake\View\View;
 
 /**
  * TimeHelperTest class
- *
  */
 class TimeHelperTest extends TestCase
 {

@@ -30,21 +30,36 @@ class IsUnique
     protected $_fields;
 
     /**
+     * The options to use.
+     *
+     * @var array
+     */
+    protected $_options;
+
+    /**
      * Constructor.
      *
+     * ### Options
+     *
+     * - `allowMultipleNulls` Set to false to disallow multiple null values in
+     *   multi-column unique rules. By default this is `true` to emulate how SQL UNIQUE
+     *   keys work.
+     *
      * @param array $fields The list of fields to check uniqueness for
+     * @param array $options The additional options for this rule.
      */
-    public function __construct(array $fields)
+    public function __construct(array $fields, array $options = [])
     {
         $this->_fields = $fields;
+        $this->_options = $options + ['allowMultipleNulls' => true];
     }
 
     /**
      * Performs the uniqueness check
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
+     *   where the `repository` key is required.
      * @param array $options Options passed to the check,
-     * where the `repository` key is required.
      * @return bool
      */
     public function __invoke(EntityInterface $entity, array $options)
@@ -52,12 +67,13 @@ class IsUnique
         if (!$entity->extract($this->_fields, true)) {
             return true;
         }
+        $allowMultipleNulls = $this->_options['allowMultipleNulls'];
 
         $alias = $options['repository']->alias();
-        $conditions = $this->_alias($alias, $entity->extract($this->_fields));
+        $conditions = $this->_alias($alias, $entity->extract($this->_fields), $allowMultipleNulls);
         if ($entity->isNew() === false) {
             $keys = (array)$options['repository']->primaryKey();
-            $keys = $this->_alias($alias, $entity->extract($keys));
+            $keys = $this->_alias($alias, $entity->extract($keys), $allowMultipleNulls);
             if (array_filter($keys, 'strlen')) {
                 $conditions['NOT'] = $keys;
             }
@@ -74,13 +90,18 @@ class IsUnique
      *
      * @param string $alias The alias to add.
      * @param array $conditions The conditions to alias.
+     * @param bool $multipleNulls Whether or not to allow multiple nulls.
      * @return array
      */
-    protected function _alias($alias, $conditions)
+    protected function _alias($alias, $conditions, $multipleNulls)
     {
         $aliased = [];
         foreach ($conditions as $key => $value) {
-            $aliased["$alias.$key"] = $value;
+            if ($multipleNulls) {
+                $aliased["$alias.$key"] = $value;
+            } else {
+                $aliased["$alias.$key IS"] = $value;
+            }
         }
 
         return $aliased;

@@ -19,7 +19,6 @@ use Cake\Validation\ValidationRule;
 
 /**
  * ValidationRuleTest
- *
  */
 class ValidationRuleTest extends TestCase
 {

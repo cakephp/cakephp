@@ -33,6 +33,7 @@ use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\Exception\MissingEntityException;
+use Cake\ORM\Exception\RolledbackTransactionException;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validation;
@@ -370,11 +371,17 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Alias a field with the table's current alias.
      *
+     * If field is already aliased it will result in no-op.
+     *
      * @param string $field The field to alias.
      * @return string The field prefixed with the table alias.
      */
     public function aliasField($field)
     {
+        if (strpos($field, '.') !== false) {
+            return $field;
+        }
+
         return $this->alias() . '.' . $field;
     }
 
@@ -1085,13 +1092,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * You can customize what fields are used for nesting results, by default the
      * primary key and the `parent_id` fields are used. If you wish to change
-     * these defaults you need to provide the keys `keyField` or `parentField` in
+     * these defaults you need to provide the keys `keyField`, `parentField` or `nestingKey` in
      * `$options`:
      *
      * ```
      * $table->find('threaded', [
      *  'keyField' => 'id',
      *  'parentField' => 'ancestor_id'
+     *  'nestingKey' => 'children'
      * ]);
      * ```
      *
@@ -1104,6 +1112,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $options += [
             'keyField' => $this->primaryKey(),
             'parentField' => 'parent_id',
+            'nestingKey' => 'children'
         ];
 
         if (isset($options['idField'])) {
@@ -1115,7 +1124,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $options = $this->_setFieldMatchers($options, ['keyField', 'parentField']);
 
         return $query->formatResults(function ($results) use ($options) {
-            return $results->nest($options['keyField'], $options['parentField']);
+            return $results->nest($options['keyField'], $options['parentField'], $options['nestingKey']);
         });
     }
 
@@ -1240,8 +1249,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   transaction (default: true)
      * - defaults: Whether to use the search criteria as default values for the new entity (default: true)
      *
-     * @param array|callable|\Cake\ORM\Query $search The criteria to find an existing record by, or a
-     *   callable that will customize the find query.
+     * @param array|\Cake\ORM\Query $search The criteria to find existing
+     *   records by. Note that when you pass a query object you'll have to use
+     *   the 2nd arg of the method to modify the entity data before saving.
      * @param callable|null $callback A callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
      *   is persisted.
@@ -1301,6 +1311,21 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         unset($options['defaults']);
 
         return $this->save($entity, $options) ?: $entity;
+    }
+
+    /**
+     * Gets the query object for findOrCreate().
+     *
+     * @param array|\Cake\ORM\Query|string $search The criteria to find existing records by.
+     * @return \Cake\ORM\Query
+     */
+    protected function _getFindOrCreateQuery($search)
+    {
+        if ($search instanceof Query) {
+            return $search;
+        }
+
+        return $this->find()->where($search);
     }
 
     /**
@@ -1366,13 +1391,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   transaction (default: true)
      * - checkRules: Whether or not to check the rules on entity before saving, if the checking
      *   fails, it will abort the save operation. (default:true)
-     * - associated: If true it will save all associated entities as they are found
+     * - associated: If `true` it will save 1st level associated entities as they are found
      *   in the passed `$entity` whenever the property defined for the association
-     *   is marked as dirty. Associated records are saved recursively unless told
-     *   otherwise. If an array, it will be interpreted as the list of associations
+     *   is marked as dirty. If an array, it will be interpreted as the list of associations
      *   to be saved. It is possible to provide different options for saving on associated
      *   table objects using this key by making the custom options the array value.
-     *   If false no associated records will be saved. (default: true)
+     *   If `false` no associated records will be saved. (default: `true`)
      * - checkExisting: Whether or not to check if the entity already exists, assuming that the
      *   entity is marked as not new, and the primary key has been set.
      *
@@ -1437,9 +1461,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * $articles->save($entity, ['associated' => false]);
      * ```
      *
+     * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction
+     *   is aborted in the afterSave event.
      */
     public function save(EntityInterface $entity, $options = [])
     {
+        if ($options instanceof SaveOptionsBuilder) {
+            $options = $options->toArray();
+        }
+
         $options = new ArrayObject($options + [
             'atomic' => true,
             'associated' => true,
@@ -1487,6 +1517,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \ArrayObject $options the options to use for the save operation
      * @return \Cake\Datasource\EntityInterface|bool
      * @throws \RuntimeException When an entity is missing some of the primary keys.
+     * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction
+     *   is aborted in the afterSave event.
      */
     protected function _processSave($entity, $options)
     {
@@ -1534,32 +1566,53 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         if ($success) {
-            $success = $this->_associations->saveChildren(
-                $this,
-                $entity,
-                $options['associated'],
-                ['_primary' => false] + $options->getArrayCopy()
-            );
-            if ($success || !$options['atomic']) {
-                $this->dispatchEvent('Model.afterSave', compact('entity', 'options'));
-                $entity->clean();
-                if (!$options['atomic'] && !$options['_primary']) {
-                    $entity->isNew(false);
-                    $entity->source($this->registryAlias());
-                }
-                $success = true;
-            }
+            $success = $this->_onSaveSuccess($entity, $options);
         }
 
         if (!$success && $isNew) {
             $entity->unsetProperty($this->primaryKey());
             $entity->isNew(true);
         }
-        if ($success) {
-            return $entity;
+
+        return $success ? $entity : false;
+    }
+
+    /**
+     * Handles the saving of children associations and executing the afterSave logic
+     * once the entity for this table has been saved successfully.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
+     * @param \ArrayObject $options the options to use for the save operation
+     * @return bool True on success
+     * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction
+     *   is aborted in the afterSave event.
+     */
+    protected function _onSaveSuccess($entity, $options)
+    {
+        $success = $this->_associations->saveChildren(
+            $this,
+            $entity,
+            $options['associated'],
+            ['_primary' => false] + $options->getArrayCopy()
+        );
+
+        if (!$success && $options['atomic']) {
+            return false;
         }
 
-        return false;
+        $this->dispatchEvent('Model.afterSave', compact('entity', 'options'));
+
+        if ($options['atomic'] && !$this->connection()->inTransaction()) {
+            throw new RolledbackTransactionException(['table' => get_class($this)]);
+        }
+
+        $entity->clean();
+        if (!$options['atomic'] && !$options['_primary']) {
+            $entity->isNew(false);
+            $entity->source($this->registryAlias());
+        }
+
+        return true;
     }
 
     /**
@@ -2290,6 +2343,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * The conventional method map is:
      *
      * - Model.beforeMarshal => beforeMarshal
+     * - Model.buildValidator => buildValidator
      * - Model.beforeFind => beforeFind
      * - Model.beforeSave => beforeSave
      * - Model.afterSave => afterSave
@@ -2306,6 +2360,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $eventMap = [
             'Model.beforeMarshal' => 'beforeMarshal',
+            'Model.buildValidator' => 'buildValidator',
             'Model.beforeFind' => 'beforeFind',
             'Model.beforeSave' => 'beforeSave',
             'Model.afterSave' => 'afterSave',
@@ -2337,6 +2392,17 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function buildRules(RulesChecker $rules)
     {
         return $rules;
+    }
+
+    /**
+     * Gets a SaveOptionsBuilder instance.
+     *
+     * @param array $options Options to parse by the builder.
+     * @return \Cake\ORM\SaveOptionsBuilder
+     */
+    public function getSaveOptionsBuilder(array $options = [])
+    {
+        return new SaveOptionsBuilder($this, $options);
     }
 
     /**

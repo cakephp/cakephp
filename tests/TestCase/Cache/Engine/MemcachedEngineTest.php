@@ -21,8 +21,7 @@ use Cake\TestSuite\TestCase;
 use \Memcached;
 
 /**
- * Class TestMemcachedEngine
- *
+ * TestMemcachedEngine
  */
 class TestMemcachedEngine extends MemcachedEngine
 {
@@ -51,7 +50,6 @@ class TestMemcachedEngine extends MemcachedEngine
 
 /**
  * MemcachedEngineTest class
- *
  */
 class MemcachedEngineTest extends TestCase
 {

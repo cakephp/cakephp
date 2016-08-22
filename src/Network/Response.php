@@ -16,6 +16,7 @@ namespace Cake\Network;
 
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
+use Cake\Log\Log;
 use Cake\Network\Exception\NotFoundException;
 use DateTime;
 use DateTimeZone;
@@ -26,7 +27,6 @@ use InvalidArgumentException;
  *
  * By default controllers will use this class to render their response. If you are going to use
  * a custom response class it should subclass this object in order to ensure compatibility.
- *
  */
 class Response
 {
@@ -73,6 +73,7 @@ class Response
         417 => 'Expectation Failed',
         422 => 'Unprocessable Entity',
         429 => 'Too Many Requests',
+        451 => 'Unavailable For Legal Reasons',
         500 => 'Internal Server Error',
         501 => 'Not Implemented',
         502 => 'Bad Gateway',
@@ -271,6 +272,7 @@ class Response
         'xbm' => 'image/x-xbitmap',
         'xpm' => 'image/x-xpixmap',
         'xwd' => 'image/x-xwindowdump',
+        'psd' => ['application/photoshop', 'application/psd', 'image/psd', 'image/x-photoshop', 'image/photoshop', 'zz-application/zz-winassoc-psd'],
         'ice' => 'x-conference/x-cooltalk',
         'iges' => 'model/iges',
         'igs' => 'model/iges',
@@ -445,7 +447,10 @@ class Response
      */
     public function sendHeaders()
     {
-        if (headers_sent()) {
+        $file = $line = null;
+        if (headers_sent($file, $line)) {
+            Log::warning("Headers already sent in {$file}:{$line}");
+
             return;
         }
 

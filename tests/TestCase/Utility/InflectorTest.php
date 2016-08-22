@@ -19,7 +19,6 @@ use Cake\Utility\Inflector;
 
 /**
  * Short description for class.
- *
  */
 class InflectorTest extends TestCase
 {
@@ -305,6 +304,7 @@ class InflectorTest extends TestCase
             ['blue_octopuses', 'blue_octopus'],
             ['chefs', 'chef'],
             ['', ''],
+            ['pokemon', 'pokemon']
         ];
     }
 

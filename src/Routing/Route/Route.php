@@ -23,7 +23,6 @@ use Cake\Routing\Router;
  *
  * Not normally created as a standalone. Use Router::connect() to create
  * Routes for your application.
- *
  */
 class Route
 {
@@ -264,9 +263,10 @@ class Route
      * false will be returned. String URLs are parsed if they match a routes regular expression.
      *
      * @param string $url The URL to attempt to parse.
+     * @param string $method The HTTP method of the request being parsed.
      * @return array|false An array of request parameters, or false on failure.
      */
-    public function parse($url)
+    public function parse($url, $method = '')
     {
         if (empty($this->_compiledRoute)) {
             $this->compile();
@@ -278,8 +278,11 @@ class Route
         }
 
         if (isset($this->defaults['_method'])) {
-            $request = Router::getRequest(true) ?: Request::createFromGlobals();
-            $method = $request->env('REQUEST_METHOD');
+            if (empty($method)) {
+                // Deprecated reading the global state is deprecated and will be removed in 4.x
+                $request = Router::getRequest(true) ?: Request::createFromGlobals();
+                $method = $request->env('REQUEST_METHOD');
+            }
             if (!in_array($method, (array)$this->defaults['_method'], true)) {
                 return false;
             }

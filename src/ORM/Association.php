@@ -134,7 +134,7 @@ abstract class Association
     /**
      * Whether or not cascaded deletes should also fire callbacks.
      *
-     * @var string
+     * @var bool
      */
     protected $_cascadeCallbacks = false;
 
@@ -556,13 +556,15 @@ abstract class Association
     {
         $target = $this->target();
         $joinType = empty($options['joinType']) ? $this->joinType() : $options['joinType'];
+        $table = $target->table();
+
         $options += [
             'includeFields' => true,
             'foreignKey' => $this->foreignKey(),
             'conditions' => [],
             'fields' => [],
             'type' => $joinType,
-            'table' => $target->table(),
+            'table' => $table,
             'finder' => $this->finder()
         ];
 
@@ -577,6 +579,7 @@ abstract class Association
         $dummy = $this
             ->find($finder, $opts)
             ->eagerLoaded(true);
+
         if (!empty($options['queryBuilder'])) {
             $dummy = $options['queryBuilder']($dummy);
             if (!($dummy instanceof Query)) {
@@ -630,14 +633,17 @@ abstract class Association
      *   should be found
      * @param bool $joined Whether or not the row is a result of a direct join
      *   with this association
+     * @param string $targetProperty The property name in the source results where the association
+     * data shuld be nested in. Will use the default one if not provided.
      * @return array
      */
-    public function transformRow($row, $nestKey, $joined)
+    public function transformRow($row, $nestKey, $joined, $targetProperty = null)
     {
         $sourceAlias = $this->source()->alias();
         $nestKey = $nestKey ?: $this->_name;
+        $targetProperty = $targetProperty ?: $this->property();
         if (isset($row[$sourceAlias])) {
-            $row[$sourceAlias][$this->property()] = $row[$nestKey];
+            $row[$sourceAlias][$targetProperty] = $row[$nestKey];
             unset($row[$nestKey]);
         }
 
@@ -683,6 +689,26 @@ abstract class Association
         return $this->target()
             ->find($type, $options + $opts)
             ->where($this->conditions());
+    }
+
+    /**
+     * Proxies the operation to the target table's exists method after
+     * appending the default conditions for this association
+     *
+     * @param array|callable|ExpressionInterface $conditions The conditions to use
+     * for checking if any record matches.
+     * @see \Cake\ORM\Table::exists()
+     * @return bool
+     */
+    public function exists($conditions)
+    {
+        if (!empty($this->_conditions)) {
+            $conditions = $this
+                ->find('all', ['conditions' => $conditions])
+                ->clause('where');
+        }
+
+        return $this->target()->exists($conditions);
     }
 
     /**

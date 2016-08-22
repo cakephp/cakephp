@@ -20,7 +20,7 @@ use Cake\Console\Shell;
 use Cake\Core\Configure;
 
 /**
- * Class for testing dispatchShell functionality
+ * for testing dispatchShell functionality
  */
 class TestingDispatchShell extends Shell
 {

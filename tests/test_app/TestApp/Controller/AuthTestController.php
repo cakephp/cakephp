@@ -18,7 +18,6 @@ use Cake\Routing\Router;
 
 /**
  * AuthTestController class
- *
  */
 class AuthTestController extends Controller
 {

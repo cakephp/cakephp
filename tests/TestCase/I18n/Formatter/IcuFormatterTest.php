@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * IcuFormatter tests
- *
  */
 class IcuFormatterTest extends TestCase
 {

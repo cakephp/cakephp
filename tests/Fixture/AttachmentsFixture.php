@@ -18,7 +18,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Short description for class.
- *
  */
 class AttachmentsFixture extends TestFixture
 {

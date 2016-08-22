@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * TestSuiteTest
- *
  */
 class TestSuiteTest extends TestCase
 {

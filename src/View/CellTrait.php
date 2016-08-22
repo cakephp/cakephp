@@ -19,7 +19,6 @@ use Cake\Utility\Inflector;
 
 /**
  * Provides cell() method for usage in Controller and View classes.
- *
  */
 trait CellTrait
 {

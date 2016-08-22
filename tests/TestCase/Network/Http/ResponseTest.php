@@ -21,6 +21,33 @@ use Cake\TestSuite\TestCase;
  */
 class ResponseTest extends TestCase
 {
+    /**
+     * Test parsing headers and reading with PSR7 methods.
+     *
+     * @return void
+     */
+    public function testHeaderParsingPsr7()
+    {
+        $headers = [
+            'HTTP/1.0 200 OK',
+            'Content-Type : text/html;charset="UTF-8"',
+            'date: Tue, 25 Dec 2012 04:43:47 GMT',
+        ];
+        $response = new Response($headers, 'winner!');
+
+        $this->assertEquals('1.0', $response->getProtocolVersion());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('OK', $response->getReasonPhrase());
+        $this->assertEquals(
+            'text/html;charset="UTF-8"',
+            $response->getHeaderLine('content-type')
+        );
+        $this->assertEquals(
+            'Tue, 25 Dec 2012 04:43:47 GMT',
+            $response->getHeaderLine('Date')
+        );
+        $this->assertEquals('winner!', '' . $response->getBody());
+    }
 
     /**
      * Test parsing headers and capturing content
@@ -36,8 +63,8 @@ class ResponseTest extends TestCase
         ];
         $response = new Response($headers, 'ok');
 
-        $this->assertEquals('1.0', $response->version());
         $this->assertEquals(200, $response->statusCode());
+        $this->assertEquals('1.0', $response->version());
         $this->assertEquals(
             'text/html;charset="UTF-8"',
             $response->header('content-type')
@@ -117,6 +144,22 @@ class ResponseTest extends TestCase
         $data = json_encode('');
         $response = new Response([], $data);
         $this->assertSame('', $response->json);
+    }
+
+    /**
+     * Test accessor for json when set with PSR7 methods.
+     *
+     * @return void
+     */
+    public function testBodyJsonPsr7()
+    {
+        $data = [
+            'property' => 'value'
+        ];
+        $encoded = json_encode($data);
+        $response = new Response([], '');
+        $response->getBody()->write($encoded);
+        $this->assertEquals($data, $response->json);
     }
 
     /**
@@ -252,6 +295,42 @@ XML;
     }
 
     /**
+     * Test accessing cookies through the PSR7-like methods
+     *
+     * @return void
+     */
+    public function testGetCookies()
+    {
+        $headers = [
+            'HTTP/1.0 200 Ok',
+            'Set-Cookie: test=value',
+            'Set-Cookie: session=123abc',
+            'Set-Cookie: expiring=soon; Expires=Wed, 09-Jun-2021 10:18:14 GMT; Path=/; HttpOnly; Secure;',
+        ];
+        $response = new Response($headers, '');
+
+        $this->assertNull($response->getCookie('undef'));
+        $this->assertEquals('value', $response->getCookie('test'));
+        $this->assertEquals('soon', $response->getCookie('expiring'));
+
+        $result = $response->getCookieData('expiring');
+        $this->assertEquals('soon', $result['value']);
+        $this->assertTrue($result['httponly']);
+        $this->assertTrue($result['secure']);
+        $this->assertEquals(
+            'Wed, 09-Jun-2021 10:18:14 GMT',
+            $result['expires']
+        );
+        $this->assertEquals('/', $result['path']);
+
+        $result = $response->getCookies();
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('test', $result);
+        $this->assertArrayHasKey('session', $result);
+        $this->assertArrayHasKey('expiring', $result);
+    }
+
+    /**
      * Test statusCode()
      *
      * @return void
@@ -264,6 +343,7 @@ XML;
         ];
         $response = new Response($headers, '');
         $this->assertEquals(404, $response->statusCode());
+        $this->assertEquals(404, $response->getStatusCode());
 
         $this->assertEquals(404, $response->code);
         $this->assertTrue(isset($response->code));
@@ -287,6 +367,7 @@ XML;
             'Content-Type: text/html'
         ];
         $response = new Response($headers, '');
+        $this->assertNull($response->getEncoding());
         $this->assertNull($response->encoding());
 
         $headers = [
@@ -294,6 +375,7 @@ XML;
             'Content-Type: text/html; charset="UTF-8"'
         ];
         $response = new Response($headers, '');
+        $this->assertEquals('UTF-8', $response->getEncoding());
         $this->assertEquals('UTF-8', $response->encoding());
 
         $headers = [
@@ -301,6 +383,7 @@ XML;
             "Content-Type: text/html; charset='ISO-8859-1'"
         ];
         $response = new Response($headers, '');
+        $this->assertEquals('ISO-8859-1', $response->getEncoding());
         $this->assertEquals('ISO-8859-1', $response->encoding());
     }
 

@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Core\Configure;
 use Cake\Database\Connection;
+use Cake\Database\Driver\Mysql;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
@@ -113,7 +114,7 @@ class ConnectionTest extends TestCase
      */
     public function testDisabledDriver()
     {
-        $mock = $this->getMockBuilder('\Cake\Database\Connection\Driver')
+        $mock = $this->getMockBuilder(Mysql::class)
             ->setMethods(['enabled'])
             ->setMockClassName('DriverMock')
             ->getMock();

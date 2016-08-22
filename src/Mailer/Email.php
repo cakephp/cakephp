@@ -718,6 +718,16 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
+     * Get original subject without encoding
+     *
+     * @return string Original subject
+     */
+    public function getOriginalSubject()
+    {
+        return $this->_decode($this->_subject);
+    }
+
+    /**
      * Sets headers for the message
      *
      * @param array $headers Associative array containing headers to be set.
@@ -1376,9 +1386,13 @@ class Email implements JsonSerializable, Serializable
      * @return \Cake\Mailer\Email Instance of Cake\Mailer\Email
      * @throws \InvalidArgumentException
      */
-    public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'fast', $send = true)
+    public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'default', $send = true)
     {
         $class = __CLASS__;
+
+        if (is_array($transportConfig)) {
+            $transportConfig += ['transport' => 'default'];
+        }
         $instance = new $class($transportConfig);
         if ($to !== null) {
             $instance->to($to);
@@ -1511,6 +1525,22 @@ class Email implements JsonSerializable, Serializable
             $this->headerCharset = $this->charset;
         }
         $return = mb_encode_mimeheader($text, $this->headerCharset, 'B');
+        mb_internal_encoding($restore);
+
+        return $return;
+    }
+
+    /**
+     * Decode the specified string
+     *
+     * @param string $text String to decode
+     * @return string Decoded string
+     */
+    protected function _decode($text)
+    {
+        $restore = mb_internal_encoding();
+        mb_internal_encoding($this->_appCharset);
+        $return = mb_decode_mimeheader($text);
         mb_internal_encoding($restore);
 
         return $return;

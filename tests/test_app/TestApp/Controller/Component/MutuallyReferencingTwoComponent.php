@@ -17,7 +17,6 @@ use Cake\Controller\Component;
 
 /**
  * MutuallyReferencingTwoComponent class
- *
  */
 class MutuallyReferencingTwoComponent extends Component
 {

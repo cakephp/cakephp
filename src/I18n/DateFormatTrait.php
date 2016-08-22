@@ -55,7 +55,7 @@ trait DateFormatTrait
      * @var string|array|int
      * @see \Cake\I18n\Time::i18nFormat()
      */
-    protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
+    protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH:mm:ssxxx";
 
     /**
      * Caches whether or not this class is a subclass of a Date or MutableDate

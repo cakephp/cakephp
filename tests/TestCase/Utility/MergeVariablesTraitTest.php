@@ -78,7 +78,6 @@ class Grandchild extends Child
 
 /**
  * MergeVariablesTrait test case
- *
  */
 class MergeVariablesTraitTest extends TestCase
 {

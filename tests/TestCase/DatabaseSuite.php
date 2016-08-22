@@ -21,7 +21,6 @@ use \PHPUnit_Framework_TestResult;
 
 /**
  * All tests related to database
- *
  */
 class DatabaseSuite extends TestSuite
 {
