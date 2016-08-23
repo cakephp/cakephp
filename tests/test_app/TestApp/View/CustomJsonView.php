@@ -17,7 +17,6 @@ use Cake\View\JsonView;
 
 /**
  * CustomJsonView class
- *
  */
 class CustomJsonView extends JsonView
 {

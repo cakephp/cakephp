@@ -18,7 +18,6 @@ namespace Cake\Auth;
  * A password hasher that can use multiple different hashes where only
  * one is the preferred one. This is useful when trying to migrate an
  * existing database of users from one password type to another.
- *
  */
 class FallbackPasswordHasher extends AbstractPasswordHasher
 {
@@ -89,6 +88,7 @@ class FallbackPasswordHasher extends AbstractPasswordHasher
                 return true;
             }
         }
+
         return false;
     }
 

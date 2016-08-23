@@ -23,7 +23,6 @@ use SimpleXmlElement;
 
 /**
  * Shows a list of commands available from the console.
- *
  */
 class CommandListShell extends Shell
 {
@@ -66,6 +65,7 @@ class CommandListShell extends Shell
 
         if ($this->param('version')) {
             $this->out(Configure::version());
+
             return;
         }
 

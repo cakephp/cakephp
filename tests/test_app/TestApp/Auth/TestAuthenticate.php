@@ -20,7 +20,6 @@ use Cake\Network\Response;
 
 /**
  * TestAuthenticate class
- *
  */
 class TestAuthenticate extends BaseAuthenticate
 {

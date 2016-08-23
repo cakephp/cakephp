@@ -20,8 +20,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
 
 /**
- * Class HashTest
- *
+ * HashTest
  */
 class HashTest extends TestCase
 {

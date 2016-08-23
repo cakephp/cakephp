@@ -16,8 +16,7 @@
  */
 
 /**
- * Class TestsAppsController
- *
+ * TestsAppsController
  */
 namespace TestApp\Controller;
 
@@ -37,6 +36,7 @@ class TestsAppsController extends AppController
     public function some_method()
     {
         $this->response->body(5);
+
         return $this->response;
     }
 
@@ -59,6 +59,7 @@ class TestsAppsController extends AppController
     public function set_type()
     {
         $this->response->type('json');
+
         return $this->response;
     }
 

@@ -41,6 +41,7 @@ trait TypeMapTrait
             return $this->_typeMap;
         }
         $this->_typeMap = is_array($typeMap) ? new TypeMap($typeMap) : $typeMap;
+
         return $this;
     }
 
@@ -56,6 +57,7 @@ trait TypeMapTrait
             return $this->typeMap()->defaults();
         }
         $this->typeMap()->defaults($types);
+
         return $this;
     }
 }

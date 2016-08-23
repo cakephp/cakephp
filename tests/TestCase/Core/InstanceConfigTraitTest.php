@@ -81,7 +81,6 @@ class ReadOnlyTestInstanceConfig
 
 /**
  * InstanceConfigTraitTest
- *
  */
 class InstanceConfigTraitTest extends TestCase
 {

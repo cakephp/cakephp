@@ -28,7 +28,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests HasMany class
- *
  */
 class HasManyTest extends TestCase
 {
@@ -50,7 +49,7 @@ class HasManyTest extends TestCase
         $this->author = TableRegistry::get('Authors', [
             'schema' => [
                 'id' => ['type' => 'integer'],
-                'username' => ['type' => 'string'],
+                'name' => ['type' => 'string'],
                 '_constraints' => [
                     'primary' => ['type' => 'primary', 'columns' => ['id']]
                 ]
@@ -267,7 +266,7 @@ class HasManyTest extends TestCase
             'conditions' => ['Articles.id !=' => 3],
             'sort' => ['title' => 'DESC'],
             'fields' => ['title', 'author_id'],
-            'contain' => ['Comments' => ['fields' => ['comment']]],
+            'contain' => ['Comments' => ['fields' => ['comment', 'article_id']]],
             'keys' => $keys,
             'query' => $query
         ]);
@@ -642,5 +641,56 @@ class HasManyTest extends TestCase
             }
         }
         $this->assertEquals($expected, $query->clause('select'));
+    }
+
+    /**
+     * Tests that unlinking calls the right methods
+     *
+     * @return void
+     */
+    public function testUnlinkSuccess()
+    {
+        $articles = TableRegistry::get('Articles');
+        $assoc = $this->author->hasMany('Articles', [
+            'sourceTable' => $this->author,
+            'targetTable' => $articles
+        ]);
+
+        $entity = $this->author->get(1, ['contain' => 'Articles']);
+        $initial = $entity->articles;
+        $this->assertCount(2, $initial);
+
+        $assoc->unlink($entity, $entity->articles);
+        $this->assertEmpty($entity->get('articles'), 'Property should be empty');
+
+        $new = $this->author->get(2, ['contain' => 'Articles']);
+        $this->assertCount(0, $new->articles, 'DB should be clean');
+        $this->assertSame(4, $this->author->find()->count(), 'Authors should still exist');
+        $this->assertSame(3, $articles->find()->count(), 'Articles should still exist');
+    }
+
+    /**
+     * Tests that unlink with an empty array does nothing
+     *
+     * @return void
+     */
+    public function testUnlinkWithEmptyArray()
+    {
+        $articles = TableRegistry::get('Articles');
+        $assoc = $this->author->hasMany('Articles', [
+            'sourceTable' => $this->author,
+            'targetTable' => $articles
+        ]);
+
+        $entity = $this->author->get(1, ['contain' => 'Articles']);
+        $initial = $entity->articles;
+        $this->assertCount(2, $initial);
+
+        $assoc->unlink($entity, []);
+
+        $new = $this->author->get(1, ['contain' => 'Articles']);
+        $this->assertCount(2, $new->articles, 'Articles should remain linked');
+        $this->assertSame(4, $this->author->find()->count(), 'Authors should still exist');
+        $this->assertSame(3, $articles->find()->count(), 'Articles should still exist');
     }
 }

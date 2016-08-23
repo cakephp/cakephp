@@ -24,7 +24,6 @@ use Cake\View\Helper\HtmlHelper;
 
 /**
  * HtmlHelperTest class
- *
  */
 class HtmlHelperTest extends TestCase
 {
@@ -335,6 +334,10 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->image('/test/view/1.gif');
         $expected = ['img' => ['src' => '/test/view/1.gif', 'alt' => '']];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->image('cid:cakephp_logo');
+        $expected = ['img' => ['src' => 'cid:cakephp_logo', 'alt' => '']];
         $this->assertHtml($expected, $result);
     }
 

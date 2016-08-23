@@ -24,7 +24,6 @@ use TestApp\Controller\Component\AppleComponent;
 
 /**
  * ComponentTest class
- *
  */
 class ComponentTest extends TestCase
 {

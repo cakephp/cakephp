@@ -40,7 +40,6 @@ namespace Cake\Console;
  * This would create orange 'Overwrite:' text, while the rest of the text would remain the normal color.
  * See ConsoleOutput::styles() to learn more about defining your own styles. Nested styles are not supported
  * at this time.
- *
  */
 class ConsoleOutput
 {
@@ -183,6 +182,7 @@ class ConsoleOutput
         if (is_array($message)) {
             $message = implode(static::LF, $message);
         }
+
         return $this->_write($this->styleText($message . str_repeat(static::LF, $newlines)));
     }
 
@@ -199,8 +199,10 @@ class ConsoleOutput
         }
         if ($this->_outputAs == static::PLAIN) {
             $tags = implode('|', array_keys(static::$_styles));
+
             return preg_replace('#</?(?:' . $tags . ')>#', '', $text);
         }
+
         return preg_replace_callback(
             '/<(?P<tag>[a-z0-9-_]+)>(?P<text>.*?)<\/(\1)>/ims',
             [$this, '_replaceTags'],
@@ -234,6 +236,7 @@ class ConsoleOutput
                 $styleInfo[] = static::$_options[$option];
             }
         }
+
         return "\033[" . implode($styleInfo, ';') . 'm' . $matches['text'] . "\033[0m";
     }
 
@@ -291,9 +294,11 @@ class ConsoleOutput
         }
         if ($definition === false) {
             unset(static::$_styles[$style]);
+
             return true;
         }
         static::$_styles[$style] = $definition;
+
         return true;
     }
 

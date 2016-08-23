@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * ExtractTaskTest class
- *
  */
 class ExtractTaskTest extends TestCase
 {

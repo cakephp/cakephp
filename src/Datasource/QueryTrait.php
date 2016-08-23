@@ -21,7 +21,6 @@ use Cake\Datasource\Exception\RecordNotFoundException;
 /**
  * Contains the characteristics for an object that is attached to a repository and
  * can retrieve results based on any criteria.
- *
  */
 trait QueryTrait
 {
@@ -97,6 +96,7 @@ trait QueryTrait
             return $this->_repository;
         }
         $this->_repository = $table;
+
         return $this;
     }
 
@@ -115,6 +115,7 @@ trait QueryTrait
     public function setResult($results)
     {
         $this->_results = $results;
+
         return $this;
     }
 
@@ -171,9 +172,11 @@ trait QueryTrait
     {
         if ($key === false) {
             $this->_cache = null;
+
             return $this;
         }
         $this->_cache = new QueryCacher($key, $config);
+
         return $this;
     }
 
@@ -190,6 +193,7 @@ trait QueryTrait
             return $this->_eagerLoaded;
         }
         $this->_eagerLoaded = $value;
+
         return $this;
     }
 
@@ -275,6 +279,7 @@ trait QueryTrait
             }
         }
         $this->_results = $results;
+
         return $this->_results;
     }
 
@@ -316,6 +321,7 @@ trait QueryTrait
             return $this->_mapReduce;
         }
         $this->_mapReduce[] = compact('mapper', 'reducer');
+
         return $this;
     }
 
@@ -368,10 +374,12 @@ trait QueryTrait
 
         if ($mode === self::PREPEND) {
             array_unshift($this->_formatters, $formatter);
+
             return $this;
         }
 
         $this->_formatters[] = $formatter;
+
         return $this;
     }
 
@@ -392,6 +400,7 @@ trait QueryTrait
         if ($this->_dirty) {
             $this->limit(1);
         }
+
         return $this->all()->first();
     }
 
@@ -446,6 +455,7 @@ trait QueryTrait
         $resultSetClass = $this->_decoratorClass();
         if (in_array($method, get_class_methods($resultSetClass))) {
             $results = $this->all();
+
             return call_user_func_array([$results, $method], $arguments);
         }
         throw new BadMethodCallException(

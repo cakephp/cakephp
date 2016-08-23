@@ -19,8 +19,7 @@ use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class ResponseTest
- *
+ * ResponseTest
  */
 class ResponseTest extends TestCase
 {
@@ -460,7 +459,7 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $result = $response->httpCodes();
-        $this->assertEquals(42, count($result));
+        $this->assertEquals(43, count($result));
 
         $result = $response->httpCodes(100);
         $expected = [100 => 'Continue'];
@@ -473,7 +472,7 @@ class ResponseTest extends TestCase
 
         $result = $response->httpCodes($codes);
         $this->assertTrue($result);
-        $this->assertEquals(44, count($response->httpCodes()));
+        $this->assertEquals(45, count($response->httpCodes()));
 
         $result = $response->httpCodes(381);
         $expected = [381 => 'Unicorn Moved'];
@@ -482,7 +481,7 @@ class ResponseTest extends TestCase
         $codes = [404 => 'Sorry Bro'];
         $result = $response->httpCodes($codes);
         $this->assertTrue($result);
-        $this->assertEquals(44, count($response->httpCodes()));
+        $this->assertEquals(45, count($response->httpCodes()));
 
         $result = $response->httpCodes(404);
         $expected = [404 => 'Sorry Bro'];
@@ -1200,6 +1199,7 @@ class ResponseTest extends TestCase
                 ->method('is')
                 ->with('ssl')
                 ->will($this->returnValue(true));
+
             return $secureRequest;
         };
 

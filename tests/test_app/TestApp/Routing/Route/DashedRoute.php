@@ -16,6 +16,7 @@ class DashedRoute extends InflectedRoute
         if (!empty($url['plugin'])) {
             $url['plugin'] = str_replace('_', '-', $url['plugin']);
         }
+
         return $url;
     }
 }

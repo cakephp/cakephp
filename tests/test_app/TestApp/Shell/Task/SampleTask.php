@@ -27,6 +27,7 @@ class SampleTask extends Shell
             'short' => 's',
             'help' => 'This is a sample option for the sample task.',
         ]);
+
         return $parser;
     }
 }

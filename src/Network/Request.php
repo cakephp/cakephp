@@ -184,6 +184,7 @@ class Request implements ArrayAccess
             'session' => Session::create($sessionConfig)
         ];
         $config['url'] = static::_url($config);
+
         return new static($config);
     }
 
@@ -317,6 +318,7 @@ class Request implements ArrayAccess
             parse_str($querystr, $queryArgs);
             $query += $queryArgs;
         }
+
         return $query;
     }
 
@@ -367,6 +369,7 @@ class Request implements ArrayAccess
         ) {
             $uri = '/';
         }
+
         return $uri;
     }
 
@@ -406,6 +409,7 @@ class Request implements ArrayAccess
                 $base = '';
             }
             $base = implode('/', array_map('rawurlencode', explode('/', $base)));
+
             return [$base, $base . '/'];
         }
 
@@ -425,6 +429,7 @@ class Request implements ArrayAccess
                 $webrootDir .= $webroot . '/';
             }
         }
+
         return [$base . $file, $webrootDir];
     }
 
@@ -447,6 +452,7 @@ class Request implements ArrayAccess
                 }
             }
         }
+
         return $post;
     }
 
@@ -479,6 +485,7 @@ class Request implements ArrayAccess
                 $data = Hash::insert($data, $newPath, $fields);
             }
         }
+
         return $data;
     }
 
@@ -493,6 +500,7 @@ class Request implements ArrayAccess
         if ($type) {
             return $type;
         }
+
         return $this->env('HTTP_CONTENT_TYPE');
     }
 
@@ -510,6 +518,7 @@ class Request implements ArrayAccess
         if ($session === null) {
             return $this->_session;
         }
+
         return $this->_session = $session;
     }
 
@@ -552,12 +561,14 @@ class Request implements ArrayAccess
                 if ($ref[0] !== '/') {
                     $ref = '/' . $ref;
                 }
+
                 return $ref;
             }
             if (!$local) {
                 return $ref;
             }
         }
+
         return '/';
     }
 
@@ -573,7 +584,10 @@ class Request implements ArrayAccess
     {
         if (strpos($name, 'is') === 0) {
             $type = strtolower(substr($name, 2));
-            return $this->is($type);
+            
+            array_unshift($params, $type);
+            
+            return call_user_func_array([$this, 'is'], $params);
         }
         throw new BadMethodCallException(sprintf('Method %s does not exist', $name));
     }
@@ -591,6 +605,7 @@ class Request implements ArrayAccess
         if (isset($this->params[$name])) {
             return $this->params[$name];
         }
+
         return null;
     }
 
@@ -621,16 +636,24 @@ class Request implements ArrayAccess
     {
         if (is_array($type)) {
             $result = array_map([$this, 'is'], $type);
+
             return count(array_filter($result)) > 0;
         }
+        
+        $args = func_get_args();
+        array_shift($args);
 
         $type = strtolower($type);
         if (!isset(static::$_detectors[$type])) {
             return false;
         }
 
+        if ($args) {
+            return $this->_is($type, $args);
+        }
+        
         if (!isset($this->_detectorCache[$type])) {
-            $this->_detectorCache[$type] = $this->_is($type);
+            $this->_detectorCache[$type] = $this->_is($type, $args);
         }
 
         return $this->_detectorCache[$type];
@@ -651,13 +674,16 @@ class Request implements ArrayAccess
      *
      * @param string|array $type The type of request you want to check. If an array
      *   this method will return true if the request matches any type.
+     * @param array $args Array of custom detector arguments.
      * @return bool Whether or not the request is the type you are checking.
      */
-    protected function _is($type)
+    protected function _is($type, $args)
     {
         $detect = static::$_detectors[$type];
         if (is_callable($detect)) {
-            return call_user_func($detect, $this);
+            array_unshift($args, $this);
+
+            return call_user_func_array($detect, $args);
         }
         if (isset($detect['env']) && $this->_environmentDetector($detect)) {
             return true;
@@ -671,6 +697,7 @@ class Request implements ArrayAccess
         if (isset($detect['param']) && $this->_paramDetector($detect)) {
             return true;
         }
+
         return false;
     }
 
@@ -688,6 +715,7 @@ class Request implements ArrayAccess
                 return true;
             }
         }
+
         return false;
     }
 
@@ -705,9 +733,11 @@ class Request implements ArrayAccess
                 if (!is_string($value) && !is_bool($value) && is_callable($value)) {
                     return call_user_func($value, $header);
                 }
+
                 return ($header === $value);
             }
         }
+
         return false;
     }
 
@@ -722,11 +752,13 @@ class Request implements ArrayAccess
         $key = $detect['param'];
         if (isset($detect['value'])) {
             $value = $detect['value'];
+
             return isset($this->params[$key]) ? $this->params[$key] == $value : false;
         }
         if (isset($detect['options'])) {
             return isset($this->params[$key]) ? in_array($this->params[$key], $detect['options']) : false;
         }
+
         return false;
     }
 
@@ -747,9 +779,11 @@ class Request implements ArrayAccess
             }
             if (isset($detect['options'])) {
                 $pattern = '/' . implode('|', $detect['options']) . '/i';
+
                 return (bool)preg_match($pattern, $this->env($detect['env']));
             }
         }
+
         return false;
     }
 
@@ -767,6 +801,7 @@ class Request implements ArrayAccess
     public function isAll(array $types)
     {
         $result = array_filter(array_map([$this, 'is'], $types));
+
         return count($result) === count($types);
     }
 
@@ -829,6 +864,7 @@ class Request implements ArrayAccess
         $name = strtolower($name);
         if (is_callable($callable)) {
             static::$_detectors[$name] = $callable;
+
             return;
         }
         if (isset(static::$_detectors[$name], $callable['options'])) {
@@ -847,6 +883,7 @@ class Request implements ArrayAccess
     public function addParams(array $params)
     {
         $this->params = array_merge($this->params, $params);
+
         return $this;
     }
 
@@ -864,6 +901,7 @@ class Request implements ArrayAccess
                 $this->{$element} = $paths[$element];
             }
         }
+
         return $this;
     }
 
@@ -882,6 +920,7 @@ class Request implements ArrayAccess
         if (!$base) {
             $url = preg_replace('/^' . preg_quote($this->base, '/') . '/', '', $url, 1);
         }
+
         return $url;
     }
 
@@ -893,7 +932,11 @@ class Request implements ArrayAccess
      */
     public function header($name)
     {
-        $name = 'HTTP_' . str_replace('-', '_', $name);
+        $name = str_replace('-', '_', $name);
+        if (!in_array(strtoupper($name), ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
+            $name = 'HTTP_' . $name;
+        }
+
         return $this->env($name);
     }
 
@@ -925,6 +968,7 @@ class Request implements ArrayAccess
         if ($this->trustProxy && $this->env('HTTP_X_FORWARDED_HOST')) {
             return $this->env('HTTP_X_FORWARDED_HOST');
         }
+
         return $this->env('HTTP_HOST');
     }
 
@@ -938,6 +982,7 @@ class Request implements ArrayAccess
         if ($this->trustProxy && $this->env('HTTP_X_FORWARDED_PORT')) {
             return $this->env('HTTP_X_FORWARDED_PORT');
         }
+
         return $this->env('SERVER_PORT');
     }
 
@@ -953,6 +998,7 @@ class Request implements ArrayAccess
         if ($this->trustProxy && $this->env('HTTP_X_FORWARDED_PROTO')) {
             return $this->env('HTTP_X_FORWARDED_PROTO');
         }
+
         return $this->env('HTTPS') ? 'https' : 'http';
     }
 
@@ -967,6 +1013,7 @@ class Request implements ArrayAccess
     {
         $segments = explode('.', $this->host());
         $domain = array_slice($segments, -1 * ($tldLength + 1));
+
         return implode('.', $domain);
     }
 
@@ -980,6 +1027,7 @@ class Request implements ArrayAccess
     public function subdomains($tldLength = 1)
     {
         $segments = explode('.', $this->host());
+
         return array_slice($segments, 0, -1 * ($tldLength + 1));
     }
 
@@ -1016,6 +1064,7 @@ class Request implements ArrayAccess
         if ($type === null) {
             return $accept;
         }
+
         return in_array($type, $accept);
     }
 
@@ -1063,6 +1112,7 @@ class Request implements ArrayAccess
         if ($language === null) {
             return $accept;
         }
+
         return in_array(strtolower($language), $accept);
     }
 
@@ -1103,6 +1153,7 @@ class Request implements ArrayAccess
             }
         }
         krsort($accept);
+
         return $accept;
     }
 
@@ -1147,11 +1198,13 @@ class Request implements ArrayAccess
         $args = func_get_args();
         if (count($args) === 2) {
             $this->data = Hash::insert($this->data, $name, $args[1]);
+
             return $this;
         }
         if ($name !== null) {
             return Hash::get($this->data, $name);
         }
+
         return $this->data;
     }
 
@@ -1167,11 +1220,13 @@ class Request implements ArrayAccess
         $args = func_get_args();
         if (count($args) === 2) {
             $this->params = Hash::insert($this->params, $name, $args[1]);
+
             return $this;
         }
         if (!isset($this->params[$name])) {
             return Hash::get($this->params, $name, false);
         }
+
         return $this->params[$name];
     }
 
@@ -1205,8 +1260,10 @@ class Request implements ArrayAccess
         if (!empty($args)) {
             $callback = array_shift($args);
             array_unshift($args, $input);
+
             return call_user_func_array($callback, $args);
         }
+
         return $input;
     }
 
@@ -1221,6 +1278,7 @@ class Request implements ArrayAccess
         if (isset($this->cookies[$key])) {
             return $this->cookies[$key];
         }
+
         return null;
     }
 
@@ -1240,6 +1298,7 @@ class Request implements ArrayAccess
         if ($value !== null) {
             $this->_environment[$key] = $value;
             $this->clearDetectorCache();
+
             return $this;
         }
 
@@ -1247,6 +1306,7 @@ class Request implements ArrayAccess
         if (!array_key_exists($key, $this->_environment)) {
             $this->_environment[$key] = env($key);
         }
+
         return $this->_environment[$key] !== null ? $this->_environment[$key] : $default;
     }
 
@@ -1294,6 +1354,7 @@ class Request implements ArrayAccess
             fclose($fh);
             $this->_input = $content;
         }
+
         return $this->_input;
     }
 
@@ -1326,6 +1387,7 @@ class Request implements ArrayAccess
         if ($name === 'data') {
             return $this->data;
         }
+
         return null;
     }
 
@@ -1352,6 +1414,7 @@ class Request implements ArrayAccess
         if ($name === 'url' || $name === 'data') {
             return true;
         }
+
         return isset($this->params[$name]);
     }
 

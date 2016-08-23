@@ -119,6 +119,7 @@ class ConsoleIo
         if ($level !== null) {
             $this->_level = $level;
         }
+
         return $this->_level;
     }
 
@@ -166,8 +167,10 @@ class ConsoleIo
     {
         if ($level <= $this->_level) {
             $this->_lastWritten = $this->_out->write($message, $newlines);
+
             return $this->_lastWritten;
         }
+
         return true;
     }
 
@@ -311,6 +314,7 @@ class ConsoleIo
         while ($in === '' || !in_array($in, $options)) {
             $in = $this->_getInput($prompt, $printOptions, $default);
         }
+
         return $in;
     }
 
@@ -340,6 +344,7 @@ class ConsoleIo
         if ($default !== null && ($result === '' || $result === null)) {
             return $default;
         }
+
         return $result;
     }
 
@@ -394,6 +399,7 @@ class ConsoleIo
     public function helper($name, array $settings = [])
     {
         $name = ucfirst($name);
+
         return $this->_helpers->load($name, $settings);
     }
 }

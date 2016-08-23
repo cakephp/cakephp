@@ -76,6 +76,7 @@ class ConnectionManager
         if (is_array($config)) {
             $config['name'] = $key;
         }
+
         return static::_config($key, $config);
     }
 
@@ -118,6 +119,7 @@ class ConnectionManager
         }
 
         unset($config['path']);
+
         return $config;
     }
 
@@ -199,6 +201,7 @@ class ConnectionManager
         if (isset(static::$_registry->{$name})) {
             return static::$_registry->{$name};
         }
+
         return static::$_registry->load($name, static::$_config[$name]);
     }
 }

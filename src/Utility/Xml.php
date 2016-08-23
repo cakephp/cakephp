@@ -25,7 +25,6 @@ use SimpleXMLElement;
  * XML handling for CakePHP.
  *
  * The methods in these classes enable the datasources that use XML to work.
- *
  */
 class Xml
 {
@@ -160,6 +159,7 @@ class Xml
         if ($xml === null) {
             throw new XmlException('Xml cannot be read.');
         }
+
         return $xml;
     }
 
@@ -236,6 +236,7 @@ class Xml
         if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
             return new SimpleXMLElement($dom->saveXML());
         }
+
         return $dom;
     }
 
@@ -368,6 +369,7 @@ class Xml
         $result = [];
         $namespaces = array_merge(['' => ''], $obj->getNamespaces(true));
         static::_toArray($obj, $result, '', array_keys($namespaces));
+
         return $result;
     }
 

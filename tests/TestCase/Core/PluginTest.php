@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * PluginTest class
- *
  */
 class PluginTest extends TestCase
 {
@@ -77,12 +76,12 @@ class PluginTest extends TestCase
      */
     public function testLoadSingleWithAutoload()
     {
-        $this->assertFalse(class_exists('Company\TestPluginThree\Utility\Hello'));
-        Plugin::load('Company/TestPluginThree', [
+        $this->assertFalse(class_exists('Company\TestPluginFive\Utility\Hello'));
+        Plugin::load('Company/TestPluginFive', [
             'autoload' => true,
         ]);
         $this->assertTrue(
-            class_exists('Company\TestPluginThree\Utility\Hello'),
+            class_exists('Company\TestPluginFive\Utility\Hello'),
             'Class should be loaded'
         );
     }
@@ -94,7 +93,6 @@ class PluginTest extends TestCase
      */
     public function testLoadSingleWithAutoloadAndBootstrap()
     {
-        $this->assertFalse(class_exists('Company\TestPluginFive\Utility\Hello'));
         Plugin::load(
             'Company/TestPluginFive',
             [

@@ -186,6 +186,7 @@ class Component implements EventListenerInterface
                 $events[$event] = $method;
             }
         }
+
         return $events;
     }
 

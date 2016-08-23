@@ -75,6 +75,7 @@ class StoppableIterator extends Collection
         $current = $this->current();
         $key = $this->key();
         $condition = $this->_condition;
+
         return !$condition($current, $key, $this->_innerIterator);
     }
 }

@@ -19,8 +19,7 @@ use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class JsonConfigTest
- *
+ * JsonConfigTest
  */
 class JsonConfigTest extends TestCase
 {

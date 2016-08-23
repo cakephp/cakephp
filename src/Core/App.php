@@ -70,6 +70,7 @@ class App
         if (static::_classExistsInBase($fullname, 'Cake')) {
             return 'Cake' . $fullname;
         }
+
         return false;
     }
 
@@ -188,6 +189,7 @@ class App
         if (!empty($plugin)) {
             return [Plugin::classPath($plugin) . $type . DIRECTORY_SEPARATOR];
         }
+
         return [APP . $type . DIRECTORY_SEPARATOR];
     }
 

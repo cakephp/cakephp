@@ -25,7 +25,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests EagerLoader
- *
  */
 class EagerLoaderTest extends TestCase
 {
@@ -522,11 +521,13 @@ class EagerLoaderTest extends TestCase
             $quoter = function ($e) {
                 return $this->connection->driver()->quoteIdentifier($e);
             };
+
             return array_combine(
                 array_map($quoter, array_keys($elements)),
                 array_map($quoter, array_values($elements))
             );
         }
+
         return $elements;
     }
 }

@@ -24,7 +24,6 @@ use Cake\View\View;
 
 /**
  * UrlHelperTest class
- *
  */
 class UrlHelperTest extends TestCase
 {
@@ -293,6 +292,12 @@ class UrlHelperTest extends TestCase
 
         $result = $this->Helper->image('dir/big+tall/image.jpg');
         $this->assertEquals('img/dir/big%2Btall/image.jpg', $result);
+
+        $result = $this->Helper->image('cid:foo.jpg');
+        $this->assertEquals('cid:foo.jpg', $result);
+
+        $result = $this->Helper->image('CID:foo.jpg');
+        $this->assertEquals('CID:foo.jpg', $result);
     }
 
     /**

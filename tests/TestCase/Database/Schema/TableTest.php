@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Mock class for testing baseType inheritance
- *
  */
 class FooType extends Type
 {
@@ -217,6 +216,7 @@ class TableTest extends TestCase
             'null' => null,
             'fixed' => null,
             'comment' => null,
+            'collate' => null,
         ];
         $this->assertEquals($expected, $result);
 
@@ -341,7 +341,7 @@ class TableTest extends TestCase
      *
      * @return array
      */
-    public static function addConstaintErrorProvider()
+    public static function addConstraintErrorProvider()
     {
         return [
             // No properties
@@ -360,7 +360,7 @@ class TableTest extends TestCase
      * Test that an exception is raised when constraints
      * are added for fields that do not exist.
      *
-     * @dataProvider addConstaintErrorProvider
+     * @dataProvider addConstraintErrorProvider
      * @expectedException \Cake\Database\Exception
      * @return void
      */

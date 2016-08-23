@@ -21,8 +21,7 @@ use Cake\View\Helper\TextHelper;
 use Cake\View\View;
 
 /**
- * Class TextHelperTestObject
- *
+ * TextHelperTestObject
  */
 class TextHelperTestObject extends TextHelper
 {
@@ -40,7 +39,6 @@ class TextHelperTestObject extends TextHelper
 
 /**
  * StringMock class
- *
  */
 class StringMock
 {
@@ -48,7 +46,6 @@ class StringMock
 
 /**
  * TextHelperTest class
- *
  */
 class TextHelperTest extends TestCase
 {
@@ -298,6 +295,10 @@ class TextHelperTest extends TestCase
             [
                 'This is a test that includes www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment',
                 'This is a test that includes <a href="http://www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment">www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment</a>',
+            ],
+            [
+                'This is a test that includes Http://example.com/test.php?foo=bar text',
+                'This is a test that includes <a href="Http://example.com/test.php?foo=bar">Http://example.com/test.php?foo=bar</a> text',
             ],
             [
                 'This is a test that includes http://example.com/test.php?foo=bar text',

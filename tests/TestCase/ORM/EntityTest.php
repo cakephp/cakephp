@@ -169,6 +169,7 @@ class EntityTest extends TestCase
             ->with('Jones')
             ->will($this->returnCallback(function ($name) {
                 $this->assertEquals('Jones', $name);
+
                 return 'Dr. ' . $name;
             }));
         $entity->set('name', 'Jones');
@@ -190,12 +191,14 @@ class EntityTest extends TestCase
             ->with('Jones')
             ->will($this->returnCallback(function ($name) {
                 $this->assertEquals('Jones', $name);
+
                 return 'Dr. ' . $name;
             }));
         $entity->expects($this->once())->method('_setStuff')
             ->with(['a', 'b'])
             ->will($this->returnCallback(function ($stuff) {
                 $this->assertEquals(['a', 'b'], $stuff);
+
                 return ['c', 'd'];
             }));
         $entity->set(['name' => 'Jones', 'stuff' => ['a', 'b']]);
@@ -394,6 +397,7 @@ class EntityTest extends TestCase
             ->with('Jones')
             ->will($this->returnCallback(function ($name) {
                 $this->assertEquals('Jones', $name);
+
                 return 'Dr. ' . $name;
             }));
         $entity->name = 'Jones';
@@ -436,6 +440,7 @@ class EntityTest extends TestCase
             ->with('Jones')
             ->will($this->returnCallback(function ($name) {
                 $this->assertSame('Jones', $name);
+
                 return 'Dr. ' . $name;
             }));
         $entity->set('name', 'Jones');
@@ -705,6 +710,23 @@ class EntityTest extends TestCase
         $data = ['name' => 'James', 'age' => 20, 'phones' => ['123', '457']];
         $entity = new Entity($data);
         $this->assertEquals(json_encode($data), json_encode($entity));
+    }
+
+    /**
+     * Tests that jsonSerialize is called recursivily for contained entities
+     *
+     * @return void
+     */
+    public function testJsonSerializeRecursive()
+    {
+        $phone = $this->getMockBuilder(Entity::class)
+            ->setMethods(['jsonSerialize'])
+            ->getMock();
+        $phone->expects($this->once())->method('jsonSerialize')->will($this->returnValue('12345'));
+        $data = ['name' => 'James', 'age' => 20, 'phone' => $phone];
+        $entity = new Entity($data);
+        $expected = ['name' => 'James', 'age' => 20, 'phone' => '12345'];
+        $this->assertEquals(json_encode($expected), json_encode($entity));
     }
 
     /**
@@ -1368,7 +1390,7 @@ class EntityTest extends TestCase
         return [[''], [null], [false]];
     }
     /**
-     * Tests that trying to get an empty propery name throws exception
+     * Tests that trying to get an empty propetry name throws exception
      *
      * @dataProvider emptyNamesProvider
      * @expectedException \InvalidArgumentException
@@ -1381,7 +1403,7 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests that setitng an empty property name does nothing
+     * Tests that setting an empty property name does nothing
      *
      * @expectedException \InvalidArgumentException
      * @dataProvider emptyNamesProvider

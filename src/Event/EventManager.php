@@ -88,6 +88,7 @@ class EventManager
         }
 
         static::$_generalManager->_isGlobal = true;
+
         return static::$_generalManager;
     }
 
@@ -115,10 +116,12 @@ class EventManager
     {
         if ($eventKey === null) {
             $this->on($callable);
+
             return;
         }
         if ($options) {
             $this->on($eventKey, $options, $callable);
+
             return;
         }
         $this->on($eventKey, $callable);
@@ -166,6 +169,7 @@ class EventManager
     {
         if ($eventKey instanceof EventListenerInterface) {
             $this->_attachSubscriber($eventKey);
+
             return;
         }
         $argCount = func_num_args();
@@ -173,6 +177,7 @@ class EventManager
             $this->_listeners[$eventKey][static::$defaultPriority][] = [
                 'callable' => $options
             ];
+
             return;
         }
         if ($argCount === 3) {
@@ -180,6 +185,7 @@ class EventManager
             $this->_listeners[$eventKey][$priority][] = [
                 'callable' => $callable
             ];
+
             return;
         }
         throw new InvalidArgumentException('Invalid arguments for EventManager::on().');
@@ -229,6 +235,7 @@ class EventManager
         if (is_string($method)) {
             $method = [$object, $method];
         }
+
         return [$method, $options];
     }
 
@@ -244,6 +251,7 @@ class EventManager
     {
         if ($eventKey === null) {
             $this->off($callable);
+
             return;
         }
         $this->off($eventKey, $callable);
@@ -285,20 +293,24 @@ class EventManager
     {
         if ($eventKey instanceof EventListenerInterface) {
             $this->_detachSubscriber($eventKey);
+
             return;
         }
         if ($callable instanceof EventListenerInterface) {
             $this->_detachSubscriber($callable, $eventKey);
+
             return;
         }
         if ($callable === null && is_string($eventKey)) {
             unset($this->_listeners[$eventKey]);
+
             return;
         }
         if ($callable === null) {
             foreach (array_keys($this->_listeners) as $name) {
                 $this->off($name, $eventKey);
             }
+
             return;
         }
         if (empty($this->_listeners[$eventKey])) {
@@ -416,6 +428,7 @@ class EventManager
                 return $listener($event, $data[0], $data[1], $data[2]);
             default:
                 array_unshift($data, $event);
+
                 return call_user_func_array($listener, $data);
         }
     }
@@ -449,6 +462,7 @@ class EventManager
                 $result = array_merge($result, $localListeners[$priority]);
             }
         }
+
         return $result;
     }
 
@@ -463,6 +477,7 @@ class EventManager
         if (empty($this->_listeners[$eventKey])) {
             return [];
         }
+
         return $this->_listeners[$eventKey];
     }
 
@@ -481,6 +496,7 @@ class EventManager
                 preg_grep($matchPattern, array_keys($this->_listeners), 0)
             )
         );
+
         return $matches;
     }
 
@@ -569,6 +585,7 @@ class EventManager
                 $properties['_dispatchedEvents'][] = $event->name() . ' with subject ' . get_class($event->subject());
             }
         }
+
         return $properties;
     }
 }

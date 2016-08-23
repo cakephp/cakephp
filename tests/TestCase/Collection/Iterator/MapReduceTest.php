@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests MapReduce class
- *
  */
 class MapReduceTest extends TestCase
 {

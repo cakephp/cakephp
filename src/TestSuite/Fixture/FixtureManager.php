@@ -18,13 +18,13 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\TableSchemaInterface;
 use Cake\Utility\Inflector;
 use PDOException;
 use UnexpectedValueException;
 
 /**
  * A factory class to manage the life cycle of test fixtures
- *
  */
 class FixtureManager
 {
@@ -237,7 +237,7 @@ class FixtureManager
         $exists = in_array($table, $sources);
 
         if (($drop && $exists) ||
-            ($exists && !$isFixtureSetup && $fixture->schema() instanceof Table)
+            ($exists && !$isFixtureSetup && $fixture instanceof TableSchemaInterface && $fixture->schema() instanceof Table)
         ) {
             $fixture->drop($db);
             $fixture->create($db);
@@ -385,6 +385,7 @@ class FixtureManager
                 $dbs[$fixture->connection()][$f] = $fixture;
             }
         }
+
         return $dbs;
     }
 

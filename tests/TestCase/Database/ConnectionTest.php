@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Core\Configure;
 use Cake\Database\Connection;
+use Cake\Database\Driver\Mysql;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
@@ -53,6 +54,7 @@ class ConnectionTest extends TestCase
         $driver->expects($this->once())
             ->method('enabled')
             ->will($this->returnValue(true));
+
         return $driver;
     }
 
@@ -112,7 +114,7 @@ class ConnectionTest extends TestCase
      */
     public function testDisabledDriver()
     {
-        $mock = $this->getMockBuilder('\Cake\Database\Connection\Driver')
+        $mock = $this->getMockBuilder(Mysql::class)
             ->setMethods(['enabled'])
             ->setMockClassName('DriverMock')
             ->getMock();
@@ -909,6 +911,7 @@ class ConnectionTest extends TestCase
         $connection->expects($this->at(1))->method('commit');
         $result = $connection->transactional(function ($conn) use ($connection) {
             $this->assertSame($connection, $conn);
+
             return 'thing';
         });
         $this->assertEquals('thing', $result);
@@ -932,6 +935,7 @@ class ConnectionTest extends TestCase
         $connection->expects($this->never())->method('commit');
         $result = $connection->transactional(function ($conn) use ($connection) {
             $this->assertSame($connection, $conn);
+
             return false;
         });
         $this->assertFalse($result);

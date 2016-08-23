@@ -181,6 +181,7 @@ class ErrorHandler extends BaseErrorHandler
     {
         if (is_string($response)) {
             echo $response;
+
             return;
         }
         $response->send();

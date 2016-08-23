@@ -16,6 +16,7 @@ namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
 use Cake\Database\Type;
+use Cake\Database\TypeInterface;
 use Cake\Utility\Text;
 
 /**
@@ -61,6 +62,7 @@ class UuidType extends StringType
         if ($value === null || $value === '' || is_array($value)) {
             return null;
         }
+
         return (string)$value;
     }
 }

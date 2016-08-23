@@ -99,6 +99,19 @@ class FormContextTest extends TestCase
     }
 
     /**
+     * Test getting default value
+     *
+     * @return void
+     */
+    public function testValDefault()
+    {
+        $context = new FormContext($this->request, ['entity' => new Form()]);
+
+        $result = $context->val('title', ['default' => 'default default']);
+        $this->assertEquals('default default', $result);
+    }
+
+    /**
      * Test isRequired
      *
      * @return void

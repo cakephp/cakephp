@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * CacheTest class
- *
  */
 class CacheTest extends TestCase
 {
@@ -351,6 +350,24 @@ class CacheTest extends TestCase
 
         $result = Cache::groupConfigs('archive');
         $this->assertEquals(['archive' => ['archive', 'page']], $result);
+    }
+
+    /**
+     * testGroupConfigsWithCacheInstance method
+     */
+    public function testGroupConfigsWithCacheInstance()
+    {
+        Cache::drop('test');
+        $cache = new FileEngine();
+        $cache->init([
+            'duration' => 300,
+            'engine' => 'File',
+            'groups' => ['users', 'comments'],
+        ]);
+        Cache::config('cached', $cache);
+
+        $result = Cache::groupConfigs('users');
+        $this->assertEquals(['users' => ['cached']], $result);
     }
 
     /**

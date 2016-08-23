@@ -91,7 +91,6 @@ class CustomTestEventListenerInterface extends EventTestListener implements Even
 
 /**
  * Tests the Cake\Event\EventManager class functionality
- *
  */
 class EventManagerTest extends TestCase
 {

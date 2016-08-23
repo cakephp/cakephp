@@ -19,7 +19,6 @@ use Cake\Core\Plugin;
 
 /**
  * Shell for tasks related to plugins.
- *
  */
 class PluginShell extends Shell
 {

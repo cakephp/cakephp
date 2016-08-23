@@ -18,7 +18,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * ViewVarsTrait test case
- *
  */
 class ViewVarsTraitTest extends TestCase
 {

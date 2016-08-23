@@ -41,6 +41,7 @@ class CookieEncryptedUsingControllerTest extends IntegrationTestCase
         DispatcherFactory::clear();
         DispatcherFactory::add('Routing');
         DispatcherFactory::add('ControllerFactory');
+        $this->useHttpServer(false);
     }
 
     /**
@@ -139,5 +140,15 @@ class CookieEncryptedUsingControllerTest extends IntegrationTestCase
         Security::salt($key);
         $this->get('/cookie_component_test/set_cookie');
         $this->assertCookieEncrypted('abc', 'NameOfCookie', 'aes', $key);
+    }
+
+    /**
+     * Can AssertCookie even if encrypted with the aes when using PSR7 server.
+     */
+    public function testCanAssertCookieEncryptedWithAesWhenUsingPsr7()
+    {
+        $this->useHttpServer(true);
+        $this->get('/cookie_component_test/set_cookie');
+        $this->assertCookieEncrypted('abc', 'NameOfCookie', 'aes');
     }
 }

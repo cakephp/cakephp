@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests the features related to proxying methods from the Association
  * class to the Table class
- *
  */
 class AssociationProxyTest extends TestCase
 {

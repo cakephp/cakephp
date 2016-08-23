@@ -77,6 +77,7 @@ class FieldTypeConverter
         foreach ($this->_typeMap as $field => $type) {
             $row[$field] = $type->toPHP($row[$field], $this->_driver);
         }
+
         return $row;
     }
 }

@@ -36,7 +36,6 @@ class Article extends Entity
 
 /**
  * Contact class
- *
  */
 class ContactsTable extends Table
 {
@@ -72,7 +71,6 @@ class ContactsTable extends Table
 
 /**
  * ValidateUser class
- *
  */
 class ValidateUsersTable extends Table
 {
@@ -332,6 +330,7 @@ class FormHelperTest extends TestCase
         $this->Form->addContextProvider('test', function ($request, $data) use ($context, $stub) {
             $this->assertInstanceOf('Cake\Network\Request', $request);
             $this->assertEquals($context, $data['entity']);
+
             return $stub;
         });
         $this->Form->create($context);
@@ -3679,6 +3678,18 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test invalid 'input' type option to input() function.
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Invalid type 'input' used for field 'text'
+     * @return void
+     */
+    public function testInvalidInputTypeOption()
+    {
+        $this->Form->input('text', ['type' => 'input']);
+    }
+
+    /**
      * Test that magic input() selects can easily be converted into radio types without error.
      *
      * @return void
@@ -4108,6 +4119,37 @@ class FormHelperTest extends TestCase
         $result = $this->Form->text('Model.field', ['default' => 'default value']);
         $expected = ['input' => ['type' => 'text', 'name' => 'Model[field]', 'value' => 'default value']];
         $this->assertHtml($expected, $result);
+
+        $Articles = TableRegistry::get('Articles');
+        $title = $Articles->schema()->column('title');
+        $Articles->schema()->addColumn(
+            'title',
+            ['default' => 'default title'] + $title
+        );
+
+        $entity = $Articles->newEntity();
+        $this->Form->create($entity);
+
+        // Get default value from schema
+        $result = $this->Form->text('title');
+        $expected = ['input' => ['type' => 'text', 'name' => 'title', 'value' => 'default title']];
+        $this->assertHtml($expected, $result);
+
+        // Don't get value from schema
+        $result = $this->Form->text('title', ['schemaDefault' => false]);
+        $expected = ['input' => ['type' => 'text', 'name' => 'title']];
+        $this->assertHtml($expected, $result);
+
+        // Custom default value overrides default value from schema
+        $result = $this->Form->text('title', ['default' => 'override default']);
+        $expected = ['input' => ['type' => 'text', 'name' => 'title', 'value' => 'override default']];
+        $this->assertHtml($expected, $result);
+
+        // Default value from schema is used only for new entities.
+        $entity->isNew(false);
+        $result = $this->Form->text('title');
+        $expected = ['input' => ['type' => 'text', 'name' => 'title']];
+        $this->assertHtml($expected, $result);
     }
 
     /**
@@ -4144,6 +4186,56 @@ class FormHelperTest extends TestCase
         $expected = [
             ['div' => ['class' => 'error-message']],
             '<strong', 'Badness!', '/strong',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * test error translation can use rule names for translating.
+     *
+     * @return void
+     */
+    public function testErrorRuleName()
+    {
+        $this->article['errors'] = [
+            'Article' => [
+                'field' => ['email' => 'Your email was not good']
+            ]
+        ];
+        $this->Form->create($this->article);
+
+        $result = $this->Form->error('Article.field');
+        $expected = [
+            ['div' => ['class' => 'error-message']],
+            'Your email was not good',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->error('Article.field', ['email' => 'Email in use']);
+        $expected = [
+            ['div' => ['class' => 'error-message']],
+            'Email in use',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->error('Article.field', ['Your email was not good' => 'Email in use']);
+        $expected = [
+            ['div' => ['class' => 'error-message']],
+            'Email in use',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->error('Article.field', [
+            'email' => 'Key is preferred',
+            'Your email was not good' => 'Email in use'
+        ]);
+        $expected = [
+            ['div' => ['class' => 'error-message']],
+            'Key is preferred',
             '/div',
         ];
         $this->assertHtml($expected, $result);
@@ -4312,6 +4404,37 @@ class FormHelperTest extends TestCase
             ['input' => ['type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'female',
                 'id' => 'employee-gender-female', 'style' => 'width:20px']],
             'Female',
+            '/label',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test default value setting on radio() method
+     *
+     * @return void
+     */
+    public function testRadioDefaultValue()
+    {
+        $Articles = TableRegistry::get('Articles');
+        $title = $Articles->schema()->column('title');
+        $Articles->schema()->addColumn(
+            'title',
+            ['default' => '1'] + $title
+        );
+
+        $this->Form->create($Articles->newEntity());
+
+        $result = $this->Form->radio('title', ['option A', 'option B']);
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'title', 'value' => '']],
+            ['label' => ['for' => 'title-0']],
+            ['input' => ['type' => 'radio', 'name' => 'title', 'value' => '0', 'id' => 'title-0']],
+            'option A',
+            '/label',
+            ['label' => ['for' => 'title-1']],
+            ['input' => ['type' => 'radio', 'name' => 'title', 'value' => '1', 'id' => 'title-1', 'checked' => 'checked']],
+            'option B',
             '/label',
         ];
         $this->assertHtml($expected, $result);
@@ -5385,6 +5508,17 @@ class FormHelperTest extends TestCase
         unset($this->Form->request->data['Model']['field']);
         $result = $this->Form->checkbox('Model.field', ['default' => false, 'hiddenField' => false]);
         $expected = ['input' => ['type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1']];
+        $this->assertHtml($expected, $result);
+
+        $Articles = TableRegistry::get('Articles');
+        $Articles->schema()->addColumn(
+            'published',
+            ['type' => 'boolean', 'null' => false, 'default' => true]
+        );
+
+        $this->Form->create($Articles->newEntity());
+        $result = $this->Form->checkbox('published', ['hiddenField' => false]);
+        $expected = ['input' => ['type' => 'checkbox', 'name' => 'published', 'value' => '1', 'checked' => 'checked']];
         $this->assertHtml($expected, $result);
     }
 

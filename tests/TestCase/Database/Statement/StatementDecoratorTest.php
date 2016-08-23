@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests StatementDecorator class
- *
  */
 class StatemetDecoratorTest extends TestCase
 {

@@ -137,6 +137,10 @@ class Table
     protected static $_columnExtras = [
         'string' => [
             'fixed' => null,
+            'collate' => null,
+        ],
+        'text' => [
+            'collate' => null,
         ],
         'integer' => [
             'unsigned' => null,
@@ -337,6 +341,7 @@ class Table
         $attrs = array_intersect_key($attrs, $valid);
         $this->_columns[$name] = $attrs + $valid;
         $this->_typeMap[$name] = $this->_columns[$name]['type'];
+
         return $this;
     }
 
@@ -363,6 +368,7 @@ class Table
         }
         $column = $this->_columns[$name];
         unset($column['baseType']);
+
         return $column;
     }
 
@@ -383,6 +389,7 @@ class Table
             $this->_columns[$name]['type'] = $type;
             $this->_typeMap[$name] = $type;
         }
+
         return $this->_columns[$name]['type'];
     }
 
@@ -409,6 +416,7 @@ class Table
         if (Type::map($type)) {
             $type = Type::build($type)->getBaseType();
         }
+
         return $this->_columns[$column]['baseType'] = $type;
     }
 
@@ -436,6 +444,7 @@ class Table
         if (!isset($this->_columns[$name])) {
             return true;
         }
+
         return ($this->_columns[$name]['null'] === true);
     }
 
@@ -456,6 +465,7 @@ class Table
             }
             $defaults[$name] = $data['default'];
         }
+
         return $defaults;
     }
 
@@ -504,6 +514,7 @@ class Table
             }
         }
         $this->_indexes[$name] = $attrs;
+
         return $this;
     }
 
@@ -528,6 +539,7 @@ class Table
         if (!isset($this->_indexes[$name])) {
             return null;
         }
+
         return $this->_indexes[$name];
     }
 
@@ -544,6 +556,7 @@ class Table
                 return $data['columns'];
             }
         }
+
         return [];
     }
 
@@ -609,6 +622,7 @@ class Table
                         [$attrs['references'][1]]
                     ));
                 }
+
                 return $this;
             }
         } else {
@@ -616,6 +630,7 @@ class Table
         }
 
         $this->_constraints[$name] = $attrs;
+
         return $this;
     }
 
@@ -644,6 +659,7 @@ class Table
                 return true;
             }
         }
+
         return false;
     }
 
@@ -665,6 +681,7 @@ class Table
         if (!in_array($attrs['delete'], static::$_validForeignKeyActions)) {
             throw new Exception(sprintf('Delete action is invalid. Must be one of %s', implode(',', static::$_validForeignKeyActions)));
         }
+
         return $attrs;
     }
 
@@ -689,6 +706,7 @@ class Table
         if (!isset($this->_constraints[$name])) {
             return null;
         }
+
         return $this->_constraints[$name];
     }
 
@@ -707,6 +725,7 @@ class Table
             return $this->_options;
         }
         $this->_options = array_merge($this->_options, $options);
+
         return $this;
     }
 
@@ -722,6 +741,7 @@ class Table
             return $this->_temporary;
         }
         $this->_temporary = (bool)$set;
+
         return $this;
     }
 
@@ -748,6 +768,7 @@ class Table
         foreach (array_keys($this->_indexes) as $name) {
             $indexes[] = $dialect->indexSql($this, $name);
         }
+
         return $dialect->createTableSql($this, $columns, $constraints, $indexes);
     }
 
@@ -763,6 +784,7 @@ class Table
     public function dropSql(ConnectionInterface $connection)
     {
         $dialect = $connection->driver()->schemaDialect();
+
         return $dialect->dropTableSql($this);
     }
 
@@ -775,6 +797,7 @@ class Table
     public function truncateSql(ConnectionInterface $connection)
     {
         $dialect = $connection->driver()->schemaDialect();
+
         return $dialect->truncateTableSql($this);
     }
 
@@ -787,6 +810,7 @@ class Table
     public function addConstraintSql(ConnectionInterface $connection)
     {
         $dialect = $connection->driver()->schemaDialect();
+
         return $dialect->addConstraintSql($this);
     }
 
@@ -799,6 +823,7 @@ class Table
     public function dropConstraintSql(ConnectionInterface $connection)
     {
         $dialect = $connection->driver()->schemaDialect();
+
         return $dialect->dropConstraintSql($this);
     }
 }

@@ -14,18 +14,19 @@
  */
 namespace Cake\Test\TestCase\Validation;
 
+use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
+use Cake\Validation\Validator;
 use Locale;
 
 require_once __DIR__ . '/stubs.php';
 
 /**
  * Test Case for Validation Class
- *
  */
 class ValidationTest extends TestCase
 {
@@ -2665,6 +2666,21 @@ class ValidationTest extends TestCase
     {
         $this->assertTrue(Validation::longitude('10.451526'));
         $this->assertFalse(Validation::longitude('-190.52236'));
+    }
+
+    /**
+     * Test isArray
+     *
+     * @return void
+     */
+    public function testIsArray()
+    {
+        $this->assertTrue(Validation::isArray([]));
+        $this->assertTrue(Validation::isArray([1, 2, 3]));
+        $this->assertTrue(Validation::isArray(['key' => 'value']));
+        $this->assertFalse(Validation::isArray('[1,2,3]'));
+        $this->assertFalse(Validation::isArray(new Collection([])));
+        $this->assertFalse(Validation::isArray(10));
     }
 
     /**

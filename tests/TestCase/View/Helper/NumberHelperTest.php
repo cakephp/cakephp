@@ -48,7 +48,6 @@ class NumberMock
 
 /**
  * NumberHelperTest class
- *
  */
 class NumberHelperTest extends TestCase
 {

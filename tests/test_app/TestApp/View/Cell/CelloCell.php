@@ -16,7 +16,7 @@ namespace TestApp\View\Cell;
 use Cake\View\Cell;
 
 /**
- * Class naming test stub.
+ * naming test stub.
  */
 class CelloCell extends Cell
 {

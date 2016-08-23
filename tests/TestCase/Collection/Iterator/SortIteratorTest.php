@@ -20,7 +20,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * SortIterator Test
- *
  */
 class SortIteratorTest extends TestCase
 {

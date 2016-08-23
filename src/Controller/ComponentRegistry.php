@@ -120,6 +120,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
         if ($enable) {
             $this->eventManager()->on($instance);
         }
+
         return $instance;
     }
 }

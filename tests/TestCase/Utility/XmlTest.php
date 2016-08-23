@@ -22,7 +22,6 @@ use Cake\Utility\Xml;
 
 /**
  * XmlTest class
- *
  */
 class XmlTest extends TestCase
 {

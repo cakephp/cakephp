@@ -18,8 +18,7 @@ use Cake\Event\Event;
 use Cake\Routing\DispatcherFilter;
 
 /**
- * Class TestDispatcherFilter
- *
+ * TestDispatcherFilter
  */
 class TestDispatcherFilter extends DispatcherFilter
 {

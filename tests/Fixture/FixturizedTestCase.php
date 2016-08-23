@@ -6,7 +6,6 @@ use Exception;
 
 /**
  * This class helps in testing the life-cycle of fixtures inside a CakeTestCase
- *
  */
 class FixturizedTestCase extends TestCase
 {

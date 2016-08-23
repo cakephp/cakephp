@@ -21,8 +21,7 @@ use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class TestRequest
- *
+ * TestRequest
  */
 class RequestTest extends TestCase
 {
@@ -55,6 +54,25 @@ class RequestTest extends TestCase
         if (!empty($this->_case)) {
             $_GET['case'] = $this->_case;
         }
+    }
+
+    /**
+     * Test custom detector with extra arguments.
+     *
+     * @return void
+     */
+    public function testCustomArgsDetector()
+    {
+        $request = new Request();
+        $request->addDetector('controller', function ($request, $name) {
+            return $request->param('controller') === $name;
+        });
+
+        $request->params = ['controller' => 'cake'];
+        $this->assertTrue($request->is('controller', 'cake'));
+        $this->assertFalse($request->is('controller', 'nonExistingController'));
+        $this->assertTrue($request->isController('cake'));
+        $this->assertFalse($request->isController('nonExistingController'));
     }
 
     /**
@@ -1038,11 +1056,17 @@ class RequestTest extends TestCase
     {
         $request = new Request(['environment' => [
             'HTTP_HOST' => 'localhost',
-            'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-ca) AppleWebKit/534.8+ (KHTML, like Gecko) Version/5.0 Safari/533.16'
+            'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-ca) AppleWebKit/534.8+ (KHTML, like Gecko) Version/5.0 Safari/533.16',
+            'CONTENT_TYPE' => 'application/json',
+            'CONTENT_LENGTH' => 1337,
+            'HTTP_CONTENT_MD5' => 'abc123'
         ]]);
 
         $this->assertEquals($request->env('HTTP_HOST'), $request->header('host'));
         $this->assertEquals($request->env('HTTP_USER_AGENT'), $request->header('User-Agent'));
+        $this->assertEquals($request->env('CONTENT_LENGTH'), $request->header('content-length'));
+        $this->assertEquals($request->env('CONTENT_TYPE'), $request->header('content-type'));
+        $this->assertEquals($request->env('HTTP_CONTENT_MD5'), $request->header('content-md5'));
     }
 
     /**

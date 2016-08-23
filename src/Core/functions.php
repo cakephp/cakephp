@@ -43,6 +43,7 @@ if (!function_exists('h')) {
             foreach ($text as $k => $t) {
                 $texts[$k] = h($t, $double, $charset);
             }
+
             return $texts;
         } elseif (is_object($text)) {
             if (method_exists($text, '__toString')) {
@@ -64,6 +65,7 @@ if (!function_exists('h')) {
         if (is_string($double)) {
             $charset = $double;
         }
+
         return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, ($charset) ? $charset : $defaultCharset, $double);
     }
 
@@ -92,8 +94,10 @@ if (!function_exists('pluginSplit')) {
             if ($dotAppend) {
                 $parts[0] .= '.';
             }
+
             return $parts;
         }
+
         return [$plugin, $name];
     }
 
@@ -114,6 +118,7 @@ if (!function_exists('namespaceSplit')) {
         if ($pos === false) {
             return ['', $class];
         }
+
         return [substr($class, 0, $pos), substr($class, $pos + 1)];
     }
 
@@ -126,19 +131,23 @@ if (!function_exists('pr')) {
      * In terminals this will act similar to using print_r() directly, when not run on cli
      * print_r() will also wrap <pre> tags around the output of given variable. Similar to debug().
      *
+     * This function returns the same variable that was passed.
+     *
      * @param mixed $var Variable to print out.
-     * @return void
-     * @see debug()
+     * @return mixed the same $var that was passed to this function
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pr
+     * @see debug()
      */
     function pr($var)
     {
         if (!Configure::read('debug')) {
-            return;
+            return $var;
         }
 
         $template = (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') ? '<pre class="pr">%s</pre>' : "\n%s\n\n";
         printf($template, trim(print_r($var, true)));
+
+        return $var;
     }
 
 }
@@ -150,19 +159,23 @@ if (!function_exists('pj')) {
      * In terminals this will act similar to using json_encode() with JSON_PRETTY_PRINT directly, when not run on cli
      * will also wrap <pre> tags around the output of given variable. Similar to pr().
      *
+     * This function returns the same variable that was passed.
+     *
      * @param mixed $var Variable to print out.
-     * @return void
+     * @return mixed the same $var that was passed to this function
      * @see pr()
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pj
      */
     function pj($var)
     {
         if (!Configure::read('debug')) {
-            return;
+            return $var;
         }
 
         $template = (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') ? '<pre class="pj">%s</pre>' : "\n%s\n\n";
         printf($template, trim(json_encode($var, JSON_PRETTY_PRINT)));
+
+        return $var;
     }
 
 }
@@ -185,6 +198,7 @@ if (!function_exists('env')) {
             if (isset($_SERVER['HTTPS'])) {
                 return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
             }
+
             return (strpos(env('SCRIPT_URI'), 'https://') === 0);
         }
 
@@ -222,12 +236,14 @@ if (!function_exists('env')) {
                 if (!strpos($name, '.php')) {
                     $offset = 4;
                 }
+
                 return substr($filename, 0, -(strlen($name) + $offset));
             case 'PHP_SELF':
                 return str_replace(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
             case 'CGI_MODE':
                 return (PHP_SAPI === 'cgi');
         }
+
         return $default;
     }
 

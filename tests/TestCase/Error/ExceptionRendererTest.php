@@ -45,7 +45,6 @@ use RuntimeException;
 
 /**
  * BlueberryComponent class
- *
  */
 class BlueberryComponent extends Component
 {
@@ -71,7 +70,6 @@ class BlueberryComponent extends Component
 
 /**
  * TestErrorController class
- *
  */
 class TestErrorController extends Controller
 {
@@ -108,13 +106,13 @@ class TestErrorController extends Controller
     public function index()
     {
         $this->autoRender = false;
+
         return 'what up';
     }
 }
 
 /**
  * MyCustomExceptionRenderer class
- *
  */
 class MyCustomExceptionRenderer extends ExceptionRenderer
 {
@@ -132,7 +130,6 @@ class MyCustomExceptionRenderer extends ExceptionRenderer
 
 /**
  * Exception class for testing app error handlers and custom errors.
- *
  */
 class MissingWidgetThingException extends NotFoundException
 {
@@ -140,7 +137,6 @@ class MissingWidgetThingException extends NotFoundException
 
 /**
  * Exception class for testing app error handlers and custom errors.
- *
  */
 class MissingWidgetThing extends \Exception
 {
@@ -148,7 +144,6 @@ class MissingWidgetThing extends \Exception
 
 /**
  * ExceptionRendererTest class
- *
  */
 class ExceptionRendererTest extends TestCase
 {
@@ -198,6 +193,7 @@ class ExceptionRendererTest extends TestCase
         $error->controller->response = $this->getMockBuilder('Cake\Network\Response')
             ->setMethods(['_sendHeader'])
             ->getMock();
+
         return $error;
     }
 

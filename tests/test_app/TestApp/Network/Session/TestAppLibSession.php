@@ -5,7 +5,6 @@ use SessionHandlerInterface;
 
 /**
  * Test suite app/Network/Session session handler
- *
  */
 class TestAppLibSession implements SessionHandlerInterface
 {

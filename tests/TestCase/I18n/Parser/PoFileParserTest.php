@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests the PoFileLoader
- *
  */
 class PoFileParserTest extends TestCase
 {
@@ -111,6 +110,7 @@ class PoFileParserTest extends TestCase
         I18n::translator('default', 'en_US', function () use ($messages) {
             $package = new Package('default');
             $package->setMessages($messages);
+
             return $package;
         });
         $this->assertTextEquals('En cours', $messages['Pending']);

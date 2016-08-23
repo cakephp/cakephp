@@ -30,7 +30,6 @@ use TestApp\View\AppView;
 
 /**
  * ViewPostsController class
- *
  */
 class ViewPostsController extends Controller
 {
@@ -70,7 +69,6 @@ class ViewPostsController extends Controller
 
 /**
  * ThemePostsController class
- *
  */
 class ThemePostsController extends Controller
 {
@@ -91,7 +89,6 @@ class ThemePostsController extends Controller
 
 /**
  * TestView class
- *
  */
 class TestView extends AppView
 {
@@ -149,7 +146,6 @@ class TestView extends AppView
 
 /**
  * TestBeforeAfterHelper class
- *
  */
 class TestBeforeAfterHelper extends Helper
 {
@@ -185,7 +181,7 @@ class TestBeforeAfterHelper extends Helper
 }
 
 /**
- * Class TestObjectWithToString
+ * TestObjectWithToString
  *
  * An object with the magic method __toString() for testing with view blocks.
  */
@@ -204,7 +200,7 @@ class TestObjectWithToString
 }
 
 /**
- * Class TestObjectWithoutToString
+ * TestObjectWithoutToString
  *
  * An object without the magic method __toString() for testing with view blocks.
  */
@@ -213,7 +209,7 @@ class TestObjectWithoutToString
 }
 
 /**
- * Class TestViewEventListenerInterface
+ * TestViewEventListenerInterface
  *
  * An event listener to test cakePHP events
  */
@@ -272,7 +268,6 @@ class TestViewEventListenerInterface implements EventListenerInterface
 
 /**
  * ViewTest class
- *
  */
 class ViewTest extends TestCase
 {

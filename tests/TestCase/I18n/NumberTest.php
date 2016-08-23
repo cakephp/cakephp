@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * NumberTest class
- *
  */
 class NumberTest extends TestCase
 {

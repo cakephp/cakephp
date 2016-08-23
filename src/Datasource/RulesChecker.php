@@ -135,6 +135,7 @@ class RulesChecker
     public function add(callable $rule, $name = null, array $options = [])
     {
         $this->_rules[] = $this->_addError($rule, $name, $options);
+
         return $this;
     }
 
@@ -159,6 +160,7 @@ class RulesChecker
     public function addCreate(callable $rule, $name = null, array $options = [])
     {
         $this->_createRules[] = $this->_addError($rule, $name, $options);
+
         return $this;
     }
 
@@ -183,6 +185,7 @@ class RulesChecker
     public function addUpdate(callable $rule, $name = null, array $options = [])
     {
         $this->_updateRules[] = $this->_addError($rule, $name, $options);
+
         return $this;
     }
 
@@ -207,6 +210,7 @@ class RulesChecker
     public function addDelete(callable $rule, $name = null, array $options = [])
     {
         $this->_deleteRules[] = $this->_addError($rule, $name, $options);
+
         return $this;
     }
 
@@ -293,6 +297,7 @@ class RulesChecker
         foreach ($rules as $rule) {
             $success = $rule($entity, $options) && $success;
         }
+
         return $success;
     }
 
@@ -312,32 +317,12 @@ class RulesChecker
             $name = null;
         }
 
-        return function ($entity, $scope) use ($rule, $name, $options) {
-            $pass = $rule($entity, $options + $scope);
-            if ($pass === true || empty($options['errorField'])) {
-                return $pass === true;
-            }
+        if (!($rule instanceof RuleInvoker)) {
+            $rule = new RuleInvoker($rule, $name, $options);
+        } else {
+            $rule->setOptions($options)->setName($name);
+        }
 
-            $message = 'invalid';
-            if (isset($options['message'])) {
-                $message = $options['message'];
-            }
-            if (is_string($pass)) {
-                $message = $pass;
-            }
-            if ($name) {
-                $message = [$name => $message];
-            } else {
-                $message = [$message];
-            }
-            $entity->errors($options['errorField'], $message);
-
-            if ($entity instanceof InvalidPropertyInterface && isset($entity->{$options['errorField']})) {
-                $invalidValue = $entity->{$options['errorField']};
-                $entity->invalid($options['errorField'], $invalidValue);
-            }
-
-            return $pass === true;
-        };
+        return $rule;
     }
 }

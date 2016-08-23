@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * test case for PluginShortRoute
- *
  */
 class PluginShortRouteTest extends TestCase
 {
@@ -47,12 +46,12 @@ class PluginShortRouteTest extends TestCase
     {
         $route = new PluginShortRoute('/:plugin', ['action' => 'index'], ['plugin' => 'foo|bar']);
 
-        $result = $route->parse('/foo');
+        $result = $route->parse('/foo', 'GET');
         $this->assertEquals('Foo', $result['plugin']);
         $this->assertEquals('Foo', $result['controller']);
         $this->assertEquals('index', $result['action']);
 
-        $result = $route->parse('/wrong');
+        $result = $route->parse('/wrong', 'GET');
         $this->assertFalse($result, 'Wrong plugin name matched %s');
     }
 

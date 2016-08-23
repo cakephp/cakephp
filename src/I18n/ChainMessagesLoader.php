@@ -20,7 +20,6 @@ use RuntimeException;
 /**
  * Wraps multiple message loaders calling them one after another until
  * one of them returns a non-empty package.
- *
  */
 class ChainMessagesLoader
 {
@@ -76,6 +75,7 @@ class ChainMessagesLoader
                 return $package;
             }
         }
+
         return new Package;
     }
 }

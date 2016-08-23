@@ -153,6 +153,10 @@ class Cache
         $config = static::$_config[$name];
         $registry->load($name, $config);
 
+        if ($config['className'] instanceof CacheEngine) {
+            $config = $config['className']->config();
+        }
+
         if (!empty($config['groups'])) {
             foreach ($config['groups'] as $group) {
                 static::$_groups[$group][] = $name;
@@ -184,6 +188,7 @@ class Cache
         }
 
         static::_buildEngine($config);
+
         return $registry->{$config};
     }
 
@@ -243,6 +248,7 @@ class Cache
                 E_USER_WARNING
             );
         }
+
         return $success;
     }
 
@@ -282,6 +288,7 @@ class Cache
                 ));
             }
         }
+
         return $return;
     }
 
@@ -309,6 +316,7 @@ class Cache
     public static function read($key, $config = 'default')
     {
         $engine = static::engine($config);
+
         return $engine->read($key);
     }
 
@@ -337,6 +345,7 @@ class Cache
     public static function readMany($keys, $config = 'default')
     {
         $engine = static::engine($config);
+
         return $engine->readMany($keys);
     }
 
@@ -402,6 +411,7 @@ class Cache
     public static function delete($key, $config = 'default')
     {
         $engine = static::engine($config);
+
         return $engine->delete($key);
     }
 
@@ -430,6 +440,7 @@ class Cache
     public static function deleteMany($keys, $config = 'default')
     {
         $engine = static::engine($config);
+
         return $engine->deleteMany($keys);
     }
 
@@ -443,6 +454,7 @@ class Cache
     public static function clear($check = false, $config = 'default')
     {
         $engine = static::engine($config);
+
         return $engine->clear($check);
     }
     
@@ -473,6 +485,7 @@ class Cache
     public static function clearGroup($group, $config = 'default')
     {
         $engine = static::engine($config);
+
         return $engine->clearGroup($group);
     }
 
@@ -576,6 +589,7 @@ class Cache
         }
         $results = call_user_func($callable);
         self::write($key, $results, $config);
+
         return $results;
     }
 
@@ -608,6 +622,7 @@ class Cache
         if (is_resource($value)) {
             return false;
         }
+
         return $engine->add($key, $value);
     }
 }

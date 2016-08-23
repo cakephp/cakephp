@@ -138,6 +138,7 @@ class MessagesFileLoader
 
         $messages = (new $class)->parse($file);
         $package->setMessages($messages);
+
         return $package;
     }
 
@@ -159,7 +160,7 @@ class MessagesFileLoader
         $searchPaths = [];
 
         $localePaths = App::path('Locale');
-        if (empty($localePaths)) {
+        if (empty($localePaths) && defined('APP')) {
             $localePaths[] = APP . 'Locale' . DIRECTORY_SEPARATOR;
         }
         foreach ($localePaths as $path) {

@@ -45,7 +45,7 @@ class MemoryStorage implements StorageInterface
     /**
      * {@inheritDoc}
      */
-    public function write(array $user)
+    public function write($user)
     {
         $this->_user = $user;
     }
@@ -69,6 +69,7 @@ class MemoryStorage implements StorageInterface
 
         if ($url === false) {
             $this->_redirectUrl = null;
+
             return null;
         }
 

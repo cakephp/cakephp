@@ -16,7 +16,6 @@ use Cake\Core\Exception\Exception;
 
 /**
  * Used when a helper cannot be found.
- *
  */
 class MissingHelperException extends Exception
 {

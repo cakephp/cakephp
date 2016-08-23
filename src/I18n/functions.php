@@ -30,6 +30,7 @@ if (!function_exists('__')) {
         }
 
         $arguments = func_num_args() === 2 ? (array)$args : array_slice(func_get_args(), 1);
+
         return I18n::translator()->translate($singular, $arguments);
     }
 
@@ -54,6 +55,7 @@ if (!function_exists('__n')) {
         }
 
         $arguments = func_num_args() === 4 ? (array)$args : array_slice(func_get_args(), 3);
+
         return I18n::translator()->translate(
             $plural,
             ['_count' => $count, '_singular' => $singular] + $arguments
@@ -78,6 +80,7 @@ if (!function_exists('__d')) {
             return null;
         }
         $arguments = func_num_args() === 3 ? (array)$args : array_slice(func_get_args(), 2);
+
         return I18n::translator($domain)->translate($msg, $arguments);
     }
 
@@ -104,6 +107,7 @@ if (!function_exists('__dn')) {
         }
 
         $arguments = func_num_args() === 5 ? (array)$args : array_slice(func_get_args(), 4);
+
         return I18n::translator($domain)->translate(
             $plural,
             ['_count' => $count, '_singular' => $singular] + $arguments
@@ -131,6 +135,7 @@ if (!function_exists('__x')) {
         }
 
         $arguments = func_num_args() === 3 ? (array)$args : array_slice(func_get_args(), 2);
+
         return I18n::translator()->translate($singular, ['_context' => $context] + $arguments);
     }
 
@@ -158,6 +163,7 @@ if (!function_exists('__xn')) {
         }
 
         $arguments = func_num_args() === 5 ? (array)$args : array_slice(func_get_args(), 2);
+
         return I18n::translator()->translate(
             $plural,
             ['_count' => $count, '_singular' => $singular, '_context' => $context] + $arguments
@@ -186,6 +192,7 @@ if (!function_exists('__dx')) {
         }
 
         $arguments = func_num_args() === 4 ? (array)$args : array_slice(func_get_args(), 2);
+
         return I18n::translator($domain)->translate(
             $msg,
             ['_context' => $context] + $arguments
@@ -217,6 +224,7 @@ if (!function_exists('__dxn')) {
         }
 
         $arguments = func_num_args() === 6 ? (array)$args : array_slice(func_get_args(), 2);
+
         return I18n::translator($domain)->translate(
             $plural,
             ['_count' => $count, '_singular' => $singular, '_context' => $context] + $arguments

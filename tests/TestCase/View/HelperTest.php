@@ -61,7 +61,6 @@ class TestHelper extends Helper
 
 /**
  * HelperTest class
- *
  */
 class HelperTest extends TestCase
 {

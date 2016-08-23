@@ -164,6 +164,7 @@ class DateTimeWidget implements WidgetInterface
         }
         unset($data['name'], $data['empty'], $data['disabled'], $data['val']);
         $templateOptions['attrs'] = $this->_templates->formatAttributes($data);
+
         return $this->_templates->format('dateWidget', $templateOptions);
     }
 
@@ -250,7 +251,7 @@ class DateTimeWidget implements WidgetInterface
                     }
                     if (!empty($dateArray['minute']) && isset($options['minute']['interval'])) {
                         $dateArray['minute'] += $this->_adjustValue($dateArray['minute'], $options['minute']);
-                        $dateArray['minute'] = str_pad(strval($dateArray['minute']), 2, '0', STR_PAD_LEFT);
+                        $dateArray['minute'] = str_pad((string)$dateArray['minute'], 2, '0', STR_PAD_LEFT);
                     }
 
                     return $dateArray;
@@ -301,6 +302,7 @@ class DateTimeWidget implements WidgetInterface
             default:
                 $changeValue = round($changeValue);
         }
+
         return ($changeValue * $options['interval']) - $value;
     }
 
@@ -334,6 +336,7 @@ class DateTimeWidget implements WidgetInterface
             $options['options'] = array_reverse($options['options'], true);
         }
         unset($options['start'], $options['end'], $options['order']);
+
         return $this->_select->render($options, $context);
     }
 
@@ -366,6 +369,7 @@ class DateTimeWidget implements WidgetInterface
         }
 
         unset($options['leadingZeroKey'], $options['leadingZeroValue'], $options['names']);
+
         return $this->_select->render($options, $context);
     }
 
@@ -388,6 +392,7 @@ class DateTimeWidget implements WidgetInterface
         $options['options'] = $this->_generateNumbers(1, 31, $options);
 
         unset($options['names'], $options['leadingZeroKey'], $options['leadingZeroValue']);
+
         return $this->_select->render($options, $context);
     }
 
@@ -443,6 +448,7 @@ class DateTimeWidget implements WidgetInterface
             $options['leadingZeroKey'],
             $options['leadingZeroValue']
         );
+
         return $this->_select->render($options, $context);
     }
 
@@ -475,6 +481,7 @@ class DateTimeWidget implements WidgetInterface
             $options['interval'],
             $options['round']
         );
+
         return $this->_select->render($options, $context);
     }
 
@@ -497,6 +504,7 @@ class DateTimeWidget implements WidgetInterface
         ];
 
         unset($options['leadingZeroKey'], $options['leadingZeroValue']);
+
         return $this->_select->render($options, $context);
     }
 
@@ -515,6 +523,7 @@ class DateTimeWidget implements WidgetInterface
             'options' => ['am' => 'am', 'pm' => 'pm'],
             'templateVars' => [],
         ];
+
         return $this->_select->render($options, $context);
     }
 
@@ -588,6 +597,7 @@ class DateTimeWidget implements WidgetInterface
             $numbers[$key] = $value;
             $i += $options['interval'];
         }
+
         return $numbers;
     }
 
@@ -612,6 +622,7 @@ class DateTimeWidget implements WidgetInterface
 
             $fields[] = $data['name'] . '[' . $select . ']';
         }
+
         return $fields;
     }
 }

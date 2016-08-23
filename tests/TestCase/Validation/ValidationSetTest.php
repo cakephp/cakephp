@@ -22,7 +22,6 @@ use Cake\Validation\ValidationSet;
 
 /**
  * ValidationSetTest
- *
  */
 class ValidationSetTest extends TestCase
 {

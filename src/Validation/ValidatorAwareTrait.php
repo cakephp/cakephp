@@ -15,6 +15,7 @@
 namespace Cake\Validation;
 
 use Cake\Event\EventDispatcherInterface;
+use RuntimeException;
 
 /**
  * A trait that provides methods for building and
@@ -91,6 +92,7 @@ trait ValidatorAwareTrait
      * @param \Cake\Validation\Validator|null $validator The validator instance to store,
      *   use null to get a validator.
      * @return \Cake\Validation\Validator
+     * @throws \RuntimeException
      */
     public function validator($name = null, Validator $validator = null)
     {
@@ -107,9 +109,14 @@ trait ValidatorAwareTrait
             if ($this instanceof EventDispatcherInterface) {
                 $this->dispatchEvent('Model.buildValidator', compact('validator', 'name'));
             }
+
+            if (!$validator instanceof Validator) {
+                throw new RuntimeException(sprintf('The %s::%s() validation method must return an instance of %s.', __CLASS__, 'validation' . ucfirst($name), Validator::class));
+            }
         }
 
         $validator->provider(self::VALIDATOR_PROVIDER_NAME, $this);
+
         return $this->_validators[$name] = $validator;
     }
 

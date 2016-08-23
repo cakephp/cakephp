@@ -56,6 +56,7 @@ class UrlHelper extends Helper
     public function image($path, array $options = [])
     {
         $pathPrefix = Configure::read('App.imageBaseUrl');
+
         return $this->assetUrl($path, $options + compact('pathPrefix'));
     }
 
@@ -77,6 +78,7 @@ class UrlHelper extends Helper
     {
         $pathPrefix = Configure::read('App.cssBaseUrl');
         $ext = '.css';
+
         return $this->assetUrl($path, $options + compact('pathPrefix', 'ext'));
     }
 
@@ -98,6 +100,7 @@ class UrlHelper extends Helper
     {
         $pathPrefix = Configure::read('App.jsBaseUrl');
         $ext = '.js';
+
         return $this->assetUrl($path, $options + compact('pathPrefix', 'ext'));
     }
 
@@ -120,7 +123,7 @@ class UrlHelper extends Helper
         if (is_array($path)) {
             return $this->build($path, !empty($options['fullBase']));
         }
-        if (strpos($path, '://') !== false) {
+        if (strpos($path, '://') !== false || preg_match('/^[a-z]+:/i', $path)) {
             return $path;
         }
         if (!array_key_exists('plugin', $options) || $options['plugin'] !== false) {
@@ -146,6 +149,7 @@ class UrlHelper extends Helper
         if (!empty($options['fullBase'])) {
             $path = rtrim(Router::fullBaseUrl(), '/') . '/' . ltrim($path, '/');
         }
+
         return $path;
     }
 
@@ -161,6 +165,7 @@ class UrlHelper extends Helper
         $parts = array_map('rawurldecode', explode('/', $path));
         $parts = array_map('rawurlencode', $parts);
         $encoded = implode('/', $parts);
+
         return h(str_replace($path, $encoded, $url));
     }
 
@@ -198,6 +203,7 @@ class UrlHelper extends Helper
                 //@codingStandardsIgnoreEnd
             }
         }
+
         return $path;
     }
 
@@ -235,6 +241,7 @@ class UrlHelper extends Helper
         if (strpos($webPath, '//') !== false) {
             return str_replace('//', '/', $webPath . $asset[1]);
         }
+
         return $webPath . $asset[1];
     }
 

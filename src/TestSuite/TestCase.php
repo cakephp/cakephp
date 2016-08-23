@@ -20,13 +20,14 @@ use Cake\Event\EventManager;
 use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
+use Cake\TestSuite\Constraint\EventFired;
+use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\Utility\Inflector;
 use Exception;
 use PHPUnit_Framework_TestCase;
 
 /**
  * Cake TestCase class
- *
  */
 abstract class TestCase extends PHPUnit_Framework_TestCase
 {
@@ -82,6 +83,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         if ($shouldSkip) {
             $this->markTestSkipped($message);
         }
+
         return $shouldSkip;
     }
 
@@ -138,6 +140,42 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         foreach ($args as $class) {
             $this->fixtureManager->loadSingle($class, null, $this->dropTables);
         }
+    }
+
+    /**
+     * Asserts that a global event was fired. You must track events in your event manager for this assertion to work
+     *
+     * @param string $name Event name
+     * @param EventManager $eventManager Event manager to check, defaults to global event manager
+     * @param string $message Assertion failure message
+     * @return void
+     */
+    public function assertEventFired($name, $eventManager = null, $message = '')
+    {
+        if (!$eventManager) {
+            $eventManager = EventManager::instance();
+        }
+        $this->assertThat($name, new EventFired($eventManager), $message);
+    }
+
+    /**
+     * Asserts an event was fired with data
+     *
+     * If a third argument is passed, that value is used to compare with the value in $dataKey
+     *
+     * @param string $name Event name
+     * @param string $dataKey Data key
+     * @param string $dataValue Data value
+     * @param EventManager $eventManager Event manager to check, defaults to global event manager
+     * @param string $message Assertion failure message
+     * @return void
+     */
+    public function assertEventFiredWith($name, $dataKey, $dataValue, $eventManager = null, $message = '')
+    {
+        if (!$eventManager) {
+            $eventManager = EventManager::instance();
+        }
+        $this->assertThat($name, new EventFiredWith($eventManager, $dataKey, $dataValue), $message);
     }
 
     /**
@@ -460,11 +498,13 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
                     debug($regex);
                 }
                 $this->assertRegExp($expression, $string, sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description));
+
                 return false;
             }
         }
 
         $this->assertTrue(true, '%s');
+
         return true;
     }
 
@@ -501,6 +541,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             }
             $len = count($asserts);
         } while ($len > 0);
+
         return $string;
     }
 
@@ -576,6 +617,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         if (!$condition) {
             $this->markTestSkipped($message);
         }
+
         return $condition;
     }
 
@@ -623,6 +665,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         }
 
         TableRegistry::set($baseClass, $mock);
+
         return $mock;
     }
 }

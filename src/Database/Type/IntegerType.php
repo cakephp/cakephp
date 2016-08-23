@@ -16,6 +16,7 @@ namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
 use Cake\Database\Type;
+use Cake\Database\TypeInterface;
 use InvalidArgumentException;
 use PDO;
 
@@ -24,7 +25,7 @@ use PDO;
  *
  * Use to convert integer data between PHP and the database types.
  */
-class IntegerType extends Type
+class IntegerType extends Type implements TypeInterface
 {
 
     /**
@@ -59,6 +60,7 @@ class IntegerType extends Type
         if ($value === null) {
             return null;
         }
+
         return (int)$value;
     }
 
@@ -91,6 +93,7 @@ class IntegerType extends Type
         if (is_array($value)) {
             return 1;
         }
+
         return null;
     }
 }

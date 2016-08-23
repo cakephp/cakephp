@@ -24,7 +24,6 @@ use InvalidArgumentException;
  * CakePHP network socket connection class.
  *
  * Core base class for network communication.
- *
  */
 class Socket
 {
@@ -174,6 +173,7 @@ class Socket
         if ($this->connected) {
             stream_set_timeout($this->connection, $this->_config['timeout']);
         }
+
         return $this->connected;
     }
 
@@ -243,6 +243,7 @@ class Socket
         if (!$this->connection) {
             return null;
         }
+
         return stream_context_get_options($this->connection);
     }
 
@@ -256,6 +257,7 @@ class Socket
         if (Validation::ip($this->_config['host'])) {
             return gethostbyaddr($this->_config['host']);
         }
+
         return gethostbyaddr($this->address());
     }
 
@@ -269,6 +271,7 @@ class Socket
         if (Validation::ip($this->_config['host'])) {
             return $this->_config['host'];
         }
+
         return gethostbyname($this->_config['host']);
     }
 
@@ -282,6 +285,7 @@ class Socket
         if (Validation::ip($this->_config['host'])) {
             return [$this->_config['host']];
         }
+
         return gethostbynamel($this->_config['host']);
     }
 
@@ -295,6 +299,7 @@ class Socket
         if (!empty($this->lastError)) {
             return $this->lastError['num'] . ': ' . $this->lastError['str'];
         }
+
         return null;
     }
 
@@ -330,6 +335,7 @@ class Socket
                 return $written;
             }
         }
+
         return $written;
     }
 
@@ -353,10 +359,13 @@ class Socket
             $info = stream_get_meta_data($this->connection);
             if ($info['timed_out']) {
                 $this->setLastError(E_WARNING, 'Connection timed out');
+
                 return false;
             }
+
             return $buffer;
         }
+
         return false;
     }
 
@@ -369,6 +378,7 @@ class Socket
     {
         if (!is_resource($this->connection)) {
             $this->connected = false;
+
             return true;
         }
         $this->connected = !fclose($this->connection);
@@ -376,6 +386,7 @@ class Socket
         if (!$this->connected) {
             $this->connection = null;
         }
+
         return !$this->connected;
     }
 
@@ -406,6 +417,7 @@ class Socket
         foreach ($state as $property => $value) {
             $this->{$property} = $value;
         }
+
         return true;
     }
 
@@ -433,6 +445,7 @@ class Socket
         }
         if ($enableCryptoResult === true) {
             $this->encrypted = $enable;
+
             return true;
         }
         $errorMessage = 'Unable to perform enableCrypto operation on the current socket';

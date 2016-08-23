@@ -19,7 +19,6 @@ use Cake\Cache\CacheEngine;
 
 /**
  * APC storage engine for cache
- *
  */
 class ApcEngine extends CacheEngine
 {
@@ -47,6 +46,7 @@ class ApcEngine extends CacheEngine
         }
 
         parent::init($config);
+
         return true;
     }
 
@@ -67,6 +67,7 @@ class ApcEngine extends CacheEngine
             $expires = time() + $duration;
         }
         apcu_store($key . '_expires', $expires, $duration);
+
         return apcu_store($key, $value, $duration);
     }
 
@@ -86,6 +87,7 @@ class ApcEngine extends CacheEngine
         if ($cachetime !== 0 && ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime)) {
             return false;
         }
+
         return apcu_fetch($key);
     }
 
@@ -148,6 +150,7 @@ class ApcEngine extends CacheEngine
                 APC_ITER_NONE
             );
             apcu_delete($iterator);
+
             return true;
         }
         $cache = apcu_cache_info();
@@ -156,6 +159,7 @@ class ApcEngine extends CacheEngine
                 apcu_delete($key['info']);
             }
         }
+
         return true;
     }
 
@@ -178,6 +182,7 @@ class ApcEngine extends CacheEngine
             $expires = time() + $duration;
         }
         apcu_add($key . '_expires', $expires, $duration);
+
         return apcu_add($key, $value, $duration);
     }
 
@@ -212,6 +217,7 @@ class ApcEngine extends CacheEngine
         foreach ($this->_config['groups'] as $i => $group) {
             $result[] = $group . $groups[$i];
         }
+
         return $result;
     }
 
@@ -225,6 +231,7 @@ class ApcEngine extends CacheEngine
     public function clearGroup($group)
     {
         apcu_inc($this->_config['prefix'] . $group, 1, $success);
+
         return $success;
     }
 }

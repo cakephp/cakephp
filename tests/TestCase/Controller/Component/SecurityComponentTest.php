@@ -26,7 +26,6 @@ use Cake\Utility\Security;
 
 /**
  * TestSecurityComponent
- *
  */
 class TestSecurityComponent extends SecurityComponent
 {
@@ -56,7 +55,6 @@ class TestSecurityComponent extends SecurityComponent
 
 /**
  * SecurityTestController
- *
  */
 class SecurityTestController extends Controller
 {
@@ -191,6 +189,7 @@ class SecurityComponentTest extends TestCase
         } catch (SecurityException $ex) {
             $this->assertInstanceOf('Cake\\Controller\\Exception\\' . $expectedException, $ex);
             $this->assertEquals($expectedExceptionMessage, $ex->getMessage());
+
             return false;
         }
     }

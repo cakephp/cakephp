@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests BelongsToMany class
- *
  */
 class BelongsToManyTest extends TestCase
 {
@@ -166,6 +165,29 @@ class BelongsToManyTest extends TestCase
 
         $assoc->junction('ArticlesTags');
         $this->assertSame($junction, $assoc->junction());
+    }
+
+    /**
+     * Tests the junction passes the source connection name on.
+     *
+     * @return void
+     */
+    public function testJunctionConnection()
+    {
+        $mock = $this->getMockBuilder('Cake\Database\Connection')
+                ->setMethods(['driver'])
+                ->setConstructorArgs(['name' => 'other_source'])
+                ->getMock();
+        ConnectionManager::config('other_source', $mock);
+        $this->article->connection(ConnectionManager::get('other_source'));
+
+        $assoc = new BelongsToMany('Test', [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag
+        ]);
+        $junction = $assoc->junction();
+        $this->assertSame($mock, $junction->connection());
+        ConnectionManager::drop('other_source');
     }
 
     /**
@@ -415,6 +437,7 @@ class BelongsToManyTest extends TestCase
                 $this->assertEquals($expected, $e->toArray());
                 $this->assertEquals(['foo' => 'bar'], $opts);
                 $this->assertTrue($e->isNew());
+
                 return $entity;
             }));
 
@@ -425,6 +448,7 @@ class BelongsToManyTest extends TestCase
                 $this->assertEquals($expected, $e->toArray());
                 $this->assertEquals(['foo' => 'bar'], $opts);
                 $this->assertTrue($e->isNew());
+
                 return $entity;
             }));
 
@@ -493,7 +517,7 @@ class BelongsToManyTest extends TestCase
         $initial = $entity->tags;
         $this->assertCount(1, $initial);
 
-        $assoc->unlink($entity, $entity->tags);
+        $this->assertTrue($assoc->unlink($entity, $entity->tags));
         $this->assertEmpty($entity->get('tags'), 'Property should be empty');
 
         $new = $articles->get(2, ['contain' => 'Tags']);
@@ -524,7 +548,7 @@ class BelongsToManyTest extends TestCase
         $initial = $entity->tags;
         $this->assertCount(1, $initial);
 
-        $assoc->unlink($entity, $initial, ['cleanProperty' => false]);
+        $this->assertTrue($assoc->unlink($entity, $initial, ['cleanProperty' => false]));
         $this->assertNotEmpty($entity->get('tags'), 'Property should not be empty');
         $this->assertEquals($initial, $entity->get('tags'), 'Property should be untouched');
 
@@ -610,7 +634,8 @@ class BelongsToManyTest extends TestCase
             new Entity(['name' => 'net new']),
         ];
 
-        $assoc->replaceLinks($entity, $tagData, ['associated' => false]);
+        $result = $assoc->replaceLinks($entity, $tagData, ['associated' => false]);
+        $this->assertTrue($result);
         $this->assertSame($tagData, $entity->tags, 'Tags should match replaced objects');
         $this->assertFalse($entity->dirty('tags'), 'Should be clean');
 
@@ -644,7 +669,8 @@ class BelongsToManyTest extends TestCase
         ]);
         $entity = $articles->get(1, ['contain' => 'Tags']);
 
-        $assoc->replaceLinks($entity, [], ['associated' => false]);
+        $result = $assoc->replaceLinks($entity, [], ['associated' => false]);
+        $this->assertTrue($result);
         $this->assertSame([], $entity->tags, 'Tags should match replaced objects');
         $this->assertFalse($entity->dirty('tags'), 'Should be clean');
 
@@ -653,6 +679,42 @@ class BelongsToManyTest extends TestCase
 
         $jointCount = $joint->find()->where(['article_id' => 1])->count();
         $this->assertSame(1, $jointCount, 'Non matching joint record should remain.');
+    }
+
+    /**
+     * Tests replaceLinks with failing domain rules and new link targets.
+     *
+     * @return void
+     */
+    public function testReplaceLinkFailingDomainRules()
+    {
+        $articles = TableRegistry::get('Articles');
+        $tags = TableRegistry::get('Tags');
+        $tags->eventManager()->on('Model.buildRules', function ($event, $rules) {
+            $rules->add(function () {
+                return false;
+            }, 'rule', ['errorField' => 'name', 'message' => 'Bad data']);
+        });
+
+        $assoc = $articles->belongsToMany('Tags', [
+            'sourceTable' => $articles,
+            'targetTable' => $tags,
+            'through' => TableRegistry::get('ArticlesTags'),
+            'joinTable' => 'articles_tags',
+        ]);
+        $entity = $articles->get(1, ['contain' => 'Tags']);
+        $originalCount = count($entity->tags);
+
+        $tags = [
+            new Entity(['name' => 'tag99', 'description' => 'Best tag'])
+        ];
+        $result = $assoc->replaceLinks($entity, $tags);
+        $this->assertFalse($result, 'replace should have failed.');
+        $this->assertNotEmpty($tags[0]->errors(), 'Bad entity should have errors.');
+
+        $entity = $articles->get(1, ['contain' => 'Tags']);
+        $this->assertCount($originalCount, $entity->tags, 'Should not have changed.');
+        $this->assertEquals('tag1', $entity->tags[0]->name);
     }
 
     /**

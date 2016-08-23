@@ -16,8 +16,7 @@
  */
 
 /**
- * Class SampleShell
- *
+ * SampleShell
  */
 namespace TestApp\Shell;
 

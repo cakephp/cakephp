@@ -19,7 +19,6 @@ use TestApp\Controller\AppController;
 
 /**
  * PostsController class
- *
  */
 class PostsController extends AppController
 {
@@ -79,12 +78,14 @@ class PostsController extends AppController
     public function securePost()
     {
         $this->response->body('Request was accepted');
+
         return $this->response;
     }
 
     public function file()
     {
         $this->response->file(__FILE__);
+
         return $this->response;
     }
 }
