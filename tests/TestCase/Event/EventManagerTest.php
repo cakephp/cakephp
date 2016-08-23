@@ -784,4 +784,23 @@ class EventManagerTest extends TestCase
         $this->assertTrue($manager->getEventList()->hasEvent('Event'));
         $this->assertTrue(EventManager::instance()->getEventList()->hasEvent('Event'));
     }
+
+    /**
+     * Test isTrackingEvents
+     *
+     * @return void
+     */
+    public function testIsTrackingEvents()
+    {
+        $this->assertFalse(EventManager::instance()->isTrackingEvents());
+
+        $manager = new EventManager();
+        $manager->setEventList(new EventList());
+
+        $this->assertTrue($manager->isTrackingEvents());
+
+        $manager->trackEvents(false);
+
+        $this->assertFalse($manager->isTrackingEvents());
+    }
 }

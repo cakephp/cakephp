@@ -515,6 +515,16 @@ class EventManager
     }
 
     /**
+     * Returns whether this manager is set up to track events
+     *
+     * @return bool
+     */
+    public function isTrackingEvents()
+    {
+        return $this->_trackEvents && $this->_eventList;
+    }
+
+    /**
      * Enables the listing of dispatched events.
      *
      * @param \Cake\Event\EventList $eventList The event list object to use.
