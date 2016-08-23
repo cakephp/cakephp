@@ -362,6 +362,10 @@ class EventManager
 
         if ($this->_trackEvents) {
             $this->addEventToList($event);
+
+            if (!$this->_isGlobal && static::instance()->isTrackingEvents()) {
+                static::instance()->addEventToList($event);
+            }
         }
 
         if (empty($listeners)) {
