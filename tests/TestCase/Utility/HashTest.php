@@ -1678,6 +1678,39 @@ class HashTest extends TestCase
     }
 
     /**
+     * Test sort() with locale option.
+     *
+     * @return void
+     */
+    public function testSortLocale()
+    {
+	// get the current locale
+	$oldLocale = setlocale(LC_COLLATE, '0');
+
+	// the de_DE.utf8 locale must be installed on the system where the test is performed
+	setlocale(LC_COLLATE, 'de_DE.utf8');
+
+        $items = [
+            ['Item' => ['entry' => 'Übergabe']],
+            ['Item' => ['entry' => 'Ostfriesland']],
+            ['Item' => ['entry' => 'Äpfel']],
+            ['Item' => ['entry' => 'Apfel']],
+        ];
+
+        $result = Hash::sort($items, '{n}.Item.entry', 'asc', 'locale');
+        $expected = [
+            ['Item' => ['entry' => 'Apfel']],
+            ['Item' => ['entry' => 'Äpfel']],
+            ['Item' => ['entry' => 'Ostfriesland']],
+            ['Item' => ['entry' => 'Übergabe']],
+        ];
+        $this->assertEquals($expected, $result);
+
+	// change to the original locale
+	setlocale(LC_COLLATE, $oldLocale);
+    }
+
+    /**
      * Test that sort() with 'natural' type will fallback to 'regular' as SORT_NATURAL is introduced in PHP 5.4
      *
      * @return void
