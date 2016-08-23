@@ -14,7 +14,6 @@
  */
 namespace Cake\Database\Dialect;
 
-use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Schema\SqliteSchema;
 use Cake\Database\SqlDialectTrait;

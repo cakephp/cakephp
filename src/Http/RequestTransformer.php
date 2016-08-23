@@ -14,7 +14,6 @@
  */
 namespace Cake\Http;
 
-use Cake\Core\Configure;
 use Cake\Network\Request as CakeRequest;
 use Cake\Utility\Hash;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
