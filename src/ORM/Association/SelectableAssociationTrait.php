@@ -140,6 +140,7 @@ trait SelectableAssociationTrait
                     return true;
                 }
             }
+
             return false;
         };
 
