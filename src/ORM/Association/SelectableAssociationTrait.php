@@ -134,12 +134,20 @@ trait SelectableAssociationTrait
         if (empty($select)) {
             return;
         }
-        $missingFields = array_diff($key, $select) !== [];
+        $missingKey = function ($fieldList, $key) {
+            foreach ($key as $keyField) {
+                if (!in_array($keyField, $fieldList, true)) {
+                    return true;
+                }
+            }
+            return false;
+        };
 
+        $missingFields = $missingKey($select, $key);
         if ($missingFields) {
             $driver = $fetchQuery->connection()->driver();
             $quoted = array_map([$driver, 'quoteIdentifier'], $key);
-            $missingFields = array_diff($quoted, $select) !== [];
+            $missingFields = $missingKey($select, $quoted);
         }
 
         if ($missingFields) {
