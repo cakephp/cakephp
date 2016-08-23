@@ -1684,11 +1684,11 @@ class HashTest extends TestCase
      */
     public function testSortLocale()
     {
-	// get the current locale
-	$oldLocale = setlocale(LC_COLLATE, '0');
+        // get the current locale
+        $oldLocale = setlocale(LC_COLLATE, '0');
 
-	// the de_DE.utf8 locale must be installed on the system where the test is performed
-	setlocale(LC_COLLATE, 'de_DE.utf8');
+        // the de_DE.utf8 locale must be installed on the system where the test is performed
+        setlocale(LC_COLLATE, 'de_DE.utf8');
 
         $items = [
             ['Item' => ['entry' => 'Übergabe']],
@@ -1706,8 +1706,8 @@ class HashTest extends TestCase
         ];
         $this->assertEquals($expected, $result);
 
-	// change to the original locale
-	setlocale(LC_COLLATE, $oldLocale);
+        // change to the original locale
+        setlocale(LC_COLLATE, $oldLocale);
     }
 
     /**

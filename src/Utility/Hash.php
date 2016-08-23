@@ -999,9 +999,9 @@ class Hash
             $type = SORT_STRING;
         } elseif ($type === 'natural') {
             $type = SORT_NATURAL;
-	} elseif ($type === 'locale') {
-	    $type = SORT_LOCALE_STRING;
-	} else {
+        } elseif ($type === 'locale') {
+            $type = SORT_LOCALE_STRING;
+        } else {
             $type = SORT_REGULAR;
         }
         if ($ignoreCase) {
