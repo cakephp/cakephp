@@ -928,7 +928,8 @@ class Hash
      * - `regular` For regular sorting (don't change types)
      * - `numeric` Compare values numerically
      * - `string` Compare values as strings
-     * - `natural` Compare items as strings using "natural ordering" in a human friendly way.
+     * - `locale` Compare items as strings, based on the current locale
+     * - `natural` Compare items as strings using "natural ordering" in a human friendly way
      *   Will sort foo10 below foo2 as an example.
      *
      * To do case insensitive sorting, pass the type as an array as follows:
@@ -998,7 +999,9 @@ class Hash
             $type = SORT_STRING;
         } elseif ($type === 'natural') {
             $type = SORT_NATURAL;
-        } else {
+	} elseif ($type === 'locale') {
+	    $type = SORT_LOCALE_STRING;
+	} else {
             $type = SORT_REGULAR;
         }
         if ($ignoreCase) {
