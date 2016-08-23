@@ -454,7 +454,7 @@ class FileEngine extends CacheEngine
         $key = Inflector::underscore(str_replace(
             [DIRECTORY_SEPARATOR, '/', '.', '<', '>', '?', ':', '|', '*', '"'],
             '_',
-            strval($key)
+            (string)$key
         ));
 
         return $key;
