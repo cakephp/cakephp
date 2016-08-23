@@ -163,7 +163,7 @@ abstract class Mailer implements EventListenerInterface
             static::$name = str_replace(
                 'Mailer',
                 '',
-                join('', array_slice(explode('\\', get_class($this)), -1))
+                implode('', array_slice(explode('\\', get_class($this)), -1))
             );
         }
 

@@ -278,7 +278,7 @@ class Type implements TypeInterface
             $value = '';
         }
 
-        return strval($value);
+        return (string)$value;
     }
 
     /**

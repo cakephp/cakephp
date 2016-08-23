@@ -76,7 +76,7 @@ class FloatType extends Type implements TypeInterface
             return 1;
         }
 
-        return floatval($value);
+        return (float)$value;
     }
 
     /**
@@ -96,7 +96,7 @@ class FloatType extends Type implements TypeInterface
             return 1;
         }
 
-        return floatval($value);
+        return (float)$value;
     }
 
     /**

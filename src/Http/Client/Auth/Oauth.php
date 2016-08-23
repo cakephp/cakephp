@@ -16,6 +16,7 @@ namespace Cake\Http\Client\Auth;
 use Cake\Core\Exception\Exception;
 use Cake\Http\Client\Request;
 use Cake\Utility\Security;
+use RuntimeException;
 
 /**
  * Oauth 1 authentication strategy for Cake\Network\Http\Client
@@ -168,7 +169,7 @@ class Oauth
     protected function _rsaSha1($request, $credentials)
     {
         if (!function_exists('openssl_pkey_get_private')) {
-            throw new \RuntimeException('RSA-SHA1 signature method requires the OpenSSL extension.');
+            throw new RuntimeException('RSA-SHA1 signature method requires the OpenSSL extension.');
         }
 
         $nonce = isset($credentials['nonce']) ? $credentials['nonce'] : bin2hex(Security::randomBytes(16));
