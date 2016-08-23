@@ -26,6 +26,9 @@ use Cake\Network\Response;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
+use Cake\View\Exception\MissingElementException;
+use Cake\View\Exception\MissingLayoutException;
+use Cake\View\Exception\MissingTemplateException;
 use InvalidArgumentException;
 use LogicException;
 use RuntimeException;
@@ -497,7 +500,7 @@ class View implements EventDispatcherInterface
             list ($plugin, $name) = pluginSplit($name, true);
             $name = str_replace('/', DIRECTORY_SEPARATOR, $name);
             $file = $plugin . 'Element' . DIRECTORY_SEPARATOR . $name . $this->_ext;
-            throw new Exception\MissingElementException($file);
+            throw new MissingElementException($file);
         }
     }
 
@@ -1085,7 +1088,7 @@ class View implements EventDispatcherInterface
                 return $this->_checkFilePath($path . $name . $this->_ext, $path);
             }
         }
-        throw new Exception\MissingTemplateException(['file' => $name . $this->_ext]);
+        throw new MissingTemplateException(['file' => $name . $this->_ext]);
     }
 
     /**
@@ -1179,7 +1182,7 @@ class View implements EventDispatcherInterface
                 }
             }
         }
-        throw new Exception\MissingLayoutException([
+        throw new MissingLayoutException([
             'file' => $layoutPaths[0] . $name . $this->_ext
         ]);
     }

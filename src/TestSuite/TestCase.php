@@ -20,6 +20,8 @@ use Cake\Event\EventManager;
 use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
+use Cake\TestSuite\Constraint\EventFired;
+use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\Utility\Inflector;
 use Exception;
 use PHPUnit_Framework_TestCase;
@@ -153,7 +155,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         if (!$eventManager) {
             $eventManager = EventManager::instance();
         }
-        $this->assertThat($name, new Constraint\EventFired($eventManager), $message);
+        $this->assertThat($name, new EventFired($eventManager), $message);
     }
 
     /**
@@ -173,7 +175,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         if (!$eventManager) {
             $eventManager = EventManager::instance();
         }
-        $this->assertThat($name, new Constraint\EventFiredWith($eventManager, $dataKey, $dataValue), $message);
+        $this->assertThat($name, new EventFiredWith($eventManager, $dataKey, $dataValue), $message);
     }
 
     /**
