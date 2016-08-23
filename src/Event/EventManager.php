@@ -359,10 +359,12 @@ class EventManager
         }
 
         $listeners = $this->listeners($event->name());
+
+        if ($this->_trackEvents) {
+            $this->addEventToList($event);
+        }
+
         if (empty($listeners)) {
-            if ($this->_trackEvents) {
-                $this->addEventToList($event);
-            }
             return $event;
         }
 
@@ -379,9 +381,6 @@ class EventManager
             }
         }
 
-        if ($this->_trackEvents) {
-            $this->addEventToList($event);
-        }
         return $event;
     }
 
