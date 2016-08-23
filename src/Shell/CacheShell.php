@@ -18,7 +18,6 @@ use Cake\Cache\Cache;
 use Cake\Cache\Engine\ApcEngine;
 use Cake\Cache\Engine\WincacheEngine;
 use Cake\Console\Shell;
-use Cake\Core\Configure;
 
 /**
  * Cache Shell.

@@ -13,9 +13,7 @@
  */
 namespace Cake\TestSuite;
 
-use Cake\Core\Configure;
 use Cake\Network\Request;
-use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\TestSuite\Stub\Response;
 

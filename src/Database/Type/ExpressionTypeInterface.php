@@ -14,8 +14,6 @@
  */
 namespace Cake\Database\Type;
 
-use Cake\Database\Driver;
-
 /**
  * An interface used by Type objects to signal whether the value should
  * be converted to an ExpressionInterface instead of a string when sent
