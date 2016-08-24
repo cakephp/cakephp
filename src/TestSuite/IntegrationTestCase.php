@@ -16,11 +16,9 @@ namespace Cake\TestSuite;
 use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
 use Cake\Network\Session;
-use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\LegacyRequestDispatcher;
 use Cake\TestSuite\MiddlewareDispatcher;
-use Cake\TestSuite\Stub\Response;
 use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -29,7 +27,6 @@ use Cake\View\Helper\SecureFieldTokenTrait;
 use Exception;
 use LogicException;
 use PHPUnit_Exception;
-use PHPUnit_Framework_Constraint_IsEqual;
 
 /**
  * A test case class intended to make integration tests of

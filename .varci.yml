@@ -1,0 +1,44 @@
+ruleset:
+  label_defects:
+    name: "Label defects"
+    events: [ issues, pull_request ]
+    label: Defect
+    when:
+      - action = "opened"
+      - body matches "/\[x\] bug/"
+
+  label_enhancements:
+    name: "Label enhancements"
+    events: [ issues, pull_request ]
+    label: Enhancement
+    when:
+      - action = "opened"
+      - body matches "/\[x\] enhancement/"
+
+  label_rfcs:
+    name: "Label RFCs"
+    events: [ issues ]
+    label: RFC
+    when:
+      - action = "opened"
+      - body matches "/\[x\] feature\-discussion/"
+
+  remove_invalid:
+    name: "Remove invalid tag when issue re-opened"
+    events: [ issues, pull_request ]
+    label: -Invalid
+    when:
+      - action = "reopened"
+      - filter(labels, "name") has "Invalid"
+
+  request_missing_version:
+    name: "Request missing version"
+    events: [ issues ]
+    label: "On hold"
+    when:
+      - action = "opened" or action = "re-opened"
+      - body matches "/\[x\] bug/"
+      - 'not(body matches "/CakePHP Version: (\d+\.)?(\d+\.)?(\*|\d+)/")'
+      - 'not(body matches "/CakePHP Version: [0-9a-f]{5,40}/")'
+    comment: '{{ user.login }}, please include the CakePHP version number you are using in your description. It helps us debug your issue.'
+

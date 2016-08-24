@@ -14,7 +14,6 @@
 namespace Cake\Http\Client\Adapter;
 
 use Cake\Core\Exception\Exception;
-use Cake\Http\Client\FormData;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 

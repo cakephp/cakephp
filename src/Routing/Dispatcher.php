@@ -14,13 +14,11 @@
  */
 namespace Cake\Routing;
 
-use Cake\Controller\Controller;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Http\ActionDispatcher;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use LogicException;
 
 /**
  * Dispatcher converts Requests into controller actions. It uses the dispatched Request

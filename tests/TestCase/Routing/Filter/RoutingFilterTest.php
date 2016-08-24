@@ -90,6 +90,7 @@ class RoutingFilterTest extends TestCase
         $this->assertInstanceOf('Cake\Network\Response', $response);
         $this->assertSame('http://localhost/articles', $response->header()['Location']);
         $this->assertSame(301, $response->statusCode());
+        $this->assertTrue($event->isStopped());
     }
 
     /**

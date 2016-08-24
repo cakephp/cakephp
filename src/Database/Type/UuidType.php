@@ -15,8 +15,6 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
-use Cake\Database\Type;
-use Cake\Database\TypeInterface;
 use Cake\Utility\Text;
 
 /**

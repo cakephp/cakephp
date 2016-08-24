@@ -15,7 +15,6 @@
 namespace Cake\Datasource;
 
 use Cake\Datasource\Exception\MissingModelException;
-use InvalidArgumentException;
 use UnexpectedValueException;
 
 /**
