@@ -95,63 +95,62 @@ class FolderTest extends TestCase
      */
     public function testInPath()
     {
-        // "/tests/base/"
-        $basePath = TMP . 'tests' . DS . 'base' . DS;
-        $Base = new Folder($basePath, true);
+        // "/tests/test_app/"
+        $basePath = TEST_APP;
+        $Base = new Folder($basePath);
 
         $result = $Base->pwd();
         $this->assertEquals($basePath, $result);
 
-
-        // is "/" in "/tests/base/"
-        $result = $Base->inPath();
+        // is "/" in "/tests/test_app/"
+        $result = $Base->inPath('', true);
         $this->assertFalse($result, true);
 
-        // is "/tests/base/" in "/tests/base/"
+        // is "/tests/test_app/" in "/tests/test_app/"
         $result = $Base->inPath($basePath, true);
         $this->assertTrue($result);
 
-        // is "/tests/base" in "/tests/base/"
+        // is "/tests/test_app" in "/tests/test_app/"
         $result = $Base->inPath(mb_substr($basePath, 0, -1), true);
         $this->assertTrue($result);
 
-        // is "/tests/base/sub" in "/tests/base/"
+        // is "/tests/test_app/sub" in "/tests/test_app/"
         $result = $Base->inPath($basePath . 'sub', true);
         $this->assertTrue($result);
 
-        // is "/tests" in "/tests/base/"
+        // is "/tests" in "/tests/test_app/"
         $result = $Base->inPath(dirname($basePath), true);
         $this->assertFalse($result);
 
-        // is "/tests/other/(...)tests/base" in "/tests/base/"
+        // is "/tests/other/(...)tests/test_app" in "/tests/test_app/"
         $result = $Base->inPath(TMP . 'tests' . DS . 'other' . DS . $basePath, true);
         $this->assertFalse($result);
 
 
-        // is "/tests/base/" in "/"
+        // is "/tests/test_app/" in "/"
         $result = $Base->inPath();
-        $this->assertFalse($result);
+        $this->assertTrue($result);
 
-        // is "/tests/base/" in "/tests/base/"
+        // is "/tests/test_app/" in "/tests/test_app/"
         $result = $Base->inPath($basePath);
         $this->assertTrue($result);
 
-        // is "/tests/base/" in "/tests/base"
+        // is "/tests/test_app/" in "/tests/test_app"
         $result = $Base->inPath(mb_substr($basePath, 0, -1));
         $this->assertTrue($result);
 
-        // is "/tests/base/" in "/tests"
+        // is "/tests/test_app/" in "/tests"
         $result = $Base->inPath(dirname($basePath));
         $this->assertTrue($result);
 
-        // is "/tests/base/" in "/tests/base/sub"
+        // is "/tests/test_app/" in "/tests/test_app/sub"
         $result = $Base->inPath($basePath . 'sub');
         $this->assertFalse($result);
 
-        // is "/other/tests/base/" in "/tests/base/"
+        // is "/other/tests/test_app/" in "/tests/test_app/"
         $VirtualBase = new Folder();
-        $VirtualBase->path = '/other/tests/base';
-        $result = $VirtualBase->inPath('/tests/base/');
+        $VirtualBase->path = '/other/tests/test_app';
+        $result = $VirtualBase->inPath('/tests/test_app/');
         $this->assertFalse($result);
     }
 

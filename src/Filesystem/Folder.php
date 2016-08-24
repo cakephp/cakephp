@@ -426,7 +426,7 @@ class Folder
     public function inPath($path = '', $reverse = false)
     {
         if (empty($path)) {
-            $path = DS;
+            $path = realpath(DS);
         }
 
         $dir = Folder::slashTerm($path);
