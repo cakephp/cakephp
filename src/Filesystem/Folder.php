@@ -418,12 +418,17 @@ class Folder
     /**
      * Returns true if the Folder is in the given path.
      *
-     * @param string $path The absolute path to check that the current `pwd()` resides within.
+     * @param string $path The absolute path to check that the current `pwd()` resides within. If omitted
+     *  (or empty), the current top level directory is assumed.
      * @param bool $reverse Reverse the search, check if the given `$path` resides within the current `pwd()`.
      * @return bool
      */
     public function inPath($path = '', $reverse = false)
     {
+        if (empty($path)) {
+            $path = DS;
+        }
+
         $dir = Folder::slashTerm($path);
         $current = Folder::slashTerm($this->pwd());
 
