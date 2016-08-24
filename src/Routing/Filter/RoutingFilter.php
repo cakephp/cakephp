@@ -58,6 +58,7 @@ class RoutingFilter extends DispatcherFilter
                 $request->addParams($params);
             }
         } catch (RedirectException $e) {
+            $event->stopPropagation();
             $response = $event->data['response'];
             $response->statusCode($e->getCode());
             $response->header('Location', $e->getMessage());
