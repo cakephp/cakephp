@@ -948,6 +948,32 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
+     * Tests that find() and contained associations using computed fields doesn't error out.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/9326
+     * @return void
+     */
+    public function testContainWithComputedField()
+    {
+        $this->loadFixtures('Comments', 'Users');
+        $table = TableRegistry::get('Users');
+        $table->hasMany('Comments');
+
+        $query = $table->find()->contain([
+            'Comments' => function ($q) {
+                return $q->select([
+                    'concat' => $q->func()->concat(['red', 'blue']),
+                    'user_id'
+                ]);
+            }])
+            ->where(['Users.id' => 2]);
+
+        $results = $query->toArray();
+        $this->assertCount(1, $results);
+        $this->assertEquals('redblue', $results[0]->comments[0]->concat);
+    }
+
+    /**
      * Tests that using matching and selecting no fields for that association
      * will no trigger any errors and fetch the right results
      *
