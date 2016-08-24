@@ -146,7 +146,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
      * Asserts that a global event was fired. You must track events in your event manager for this assertion to work
      *
      * @param string $name Event name
-     * @param EventManager $eventManager Event manager to check, defaults to global event manager
+     * @param EventManager|null $eventManager Event manager to check, defaults to global event manager
      * @param string $message Assertion failure message
      * @return void
      */
@@ -166,7 +166,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
      * @param string $name Event name
      * @param string $dataKey Data key
      * @param string $dataValue Data value
-     * @param EventManager $eventManager Event manager to check, defaults to global event manager
+     * @param EventManager|null $eventManager Event manager to check, defaults to global event manager
      * @param string $message Assertion failure message
      * @return void
      */

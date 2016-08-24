@@ -56,7 +56,7 @@ class SecurityException extends BadRequestException
     /**
      * Set Reason
      *
-     * @param string $reason Reason details
+     * @param string|null $reason Reason details
      * @return void
      */
     public function setReason($reason = null)

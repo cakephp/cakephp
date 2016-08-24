@@ -30,7 +30,7 @@ class ErrorHandlerMiddleware
     /**
      * Constructor
      *
-     * @param string|callable $renderer The renderer or class name
+     * @param string|callable|null $renderer The renderer or class name
      *   to use or a callable factory.
      */
     public function __construct($renderer = null)

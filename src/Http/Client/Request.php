@@ -38,7 +38,7 @@ class Request extends Message implements RequestInterface
      * @param string $url The request URL
      * @param string $method The HTTP method to use.
      * @param array $headers The HTTP headers to set.
-     * @param array|string $data The request body to use.
+     * @param array|string|null $data The request body to use.
      */
     public function __construct($url = '', $method = self::METHOD_GET, array $headers = [], $data = null)
     {
