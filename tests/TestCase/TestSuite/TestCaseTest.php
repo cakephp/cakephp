@@ -539,4 +539,20 @@ class TestCaseTest extends TestCase
         $this->assertTrue($Mock->save($entity));
         $this->assertFalse($Mock->save($entity));
     }
+
+    /**
+     * Test getting a table mock that doesn't have a preset table name sets the proper name
+     *
+     * @return void
+     */
+    public function testGetMockForModelSetTable()
+    {
+        Configure::write('App.namespace', 'TestApp');
+
+        $Tags = $this->getMockForModel('I18n', ['doSomething']);
+        $this->assertEquals('custom_i18n_table', $Tags->table());
+
+        $Tags = $this->getMockForModel('Tags', ['doSomething']);
+        $this->assertEquals('tags', $Tags->table());
+    }
 }
