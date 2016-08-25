@@ -307,5 +307,4 @@ class MysqlTest extends TestCase
             ->order(['created' => 'DESC']);
         $this->assertEquals('UPDATE articles SET title = :c0 WHERE published = :c1 ORDER BY created DESC', $query->sql());
     }
-
 }
