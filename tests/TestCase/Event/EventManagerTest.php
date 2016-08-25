@@ -760,4 +760,52 @@ class EventManagerTest extends TestCase
         $result = $manager->getEventList();
         $this->assertNull($result);
     }
+
+    /**
+     * Test that locally dispatched events are also added to the global manager's event list
+     *
+     * @return void
+     * @triggers Event $this
+     */
+    public function testGetLocallyDispatchedEventsFromGlobal()
+    {
+        $localList = new EventList();
+        $globalList = new EventList();
+
+        $globalManager = EventManager::instance();
+        $globalManager->setEventList($globalList);
+
+        $localManager = new EventManager();
+        $localManager->setEventList($localList);
+
+        $globalEvent = new Event('GlobalEvent', $this);
+        $globalManager->dispatch($globalEvent);
+
+        $localEvent = new Event('LocalEvent', $this);
+        $localManager->dispatch($localEvent);
+
+        $this->assertTrue($globalList->hasEvent('GlobalEvent'));
+        $this->assertFalse($localList->hasEvent('GlobalEvent'));
+        $this->assertTrue($localList->hasEvent('LocalEvent'));
+        $this->assertTrue($globalList->hasEvent('LocalEvent'));
+    }
+
+    /**
+     * Test isTrackingEvents
+     *
+     * @return void
+     */
+    public function testIsTrackingEvents()
+    {
+        $this->assertFalse(EventManager::instance()->isTrackingEvents());
+
+        $manager = new EventManager();
+        $manager->setEventList(new EventList());
+
+        $this->assertTrue($manager->isTrackingEvents());
+
+        $manager->trackEvents(false);
+
+        $this->assertFalse($manager->isTrackingEvents());
+    }
 }
