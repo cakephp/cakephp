@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Database;
 
-use Cake\Core\Configure;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Query;
 use Cake\Database\TypeMap;
@@ -23,6 +22,8 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests Query class
+ *
+ * @group Query
  */
 class QueryTest extends TestCase
 {

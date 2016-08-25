@@ -34,5 +34,5 @@ class MysqlCompiler extends QueryCompiler
      *
      * @var array
      */
-    protected $_deleteParts = ['delete', 'from', 'where', 'order', 'limit', 'epilog'];
+    protected $_deleteParts = ['delete', 'modifier', 'from', 'where', 'order', 'limit', 'epilog'];
 }

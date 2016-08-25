@@ -174,6 +174,34 @@ class MysqlTest extends TestCase
      *
      * @return void
      */
+    public function testDeleteModifier()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([[]])
+            ->getMock();
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
+        $connection
+            ->expects($this->any())
+            ->method('driver')
+            ->will($this->returnValue($driver));
+
+        $query = new \Cake\Database\Query($connection);
+        $query->delete('articles')
+            ->where(['published' => true])
+            ->modifier('LOW_PRIORITY');
+        $this->assertEquals('DELETE LOW_PRIORITY FROM articles WHERE published = :c0', $query->sql());
+    }
+
+    /**
+     * Test update with limit
+     *
+     * @return void
+     */
     public function testDeleteOrder()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
