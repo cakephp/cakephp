@@ -23,10 +23,6 @@ use Cake\Utility\Hash;
 /**
  * A class that helps wrap Request information and particulars about a single request.
  * Provides methods commonly used to introspect on the request headers and request body.
- *
- * Has both an Array and Object interface. You can access framework parameters using indexes:
- *
- * `$request['controller']` or `$request->controller`.
  */
 class Request implements ArrayAccess
 {
@@ -35,6 +31,7 @@ class Request implements ArrayAccess
      * Array of parameters parsed from the URL.
      *
      * @var array
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use param() instead.
      */
     public $params = [
         'plugin' => null,
@@ -50,6 +47,7 @@ class Request implements ArrayAccess
      * data.
      *
      * @var array
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use data() instead.
      */
     public $data = [];
 
@@ -57,6 +55,7 @@ class Request implements ArrayAccess
      * Array of querystring arguments
      *
      * @var array
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use query() instead.
      */
     public $query = [];
 
@@ -64,6 +63,7 @@ class Request implements ArrayAccess
      * Array of cookie data.
      *
      * @var array
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use cookie() instead.
      */
     public $cookies = [];
 
@@ -599,6 +599,8 @@ class Request implements ArrayAccess
      *
      * @param string $name The property being accessed.
      * @return mixed Either the value of the parameter or null.
+     * @deprecated 3.4.0 Accessing routing parameters through __get will removed in 4.0.0.
+     *   Use param() instead.
      */
     public function __get($name)
     {
@@ -615,6 +617,8 @@ class Request implements ArrayAccess
      *
      * @param string $name The property being accessed.
      * @return bool Existence
+     * @deprecated 3.4.0 Accessing routing parameters through __isset will removed in 4.0.0.
+     *   Use param() instead.
      */
     public function __isset($name)
     {
@@ -1375,6 +1379,7 @@ class Request implements ArrayAccess
      *
      * @param string $name Name of the key being accessed.
      * @return mixed
+     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use param(), data() and query() instead.
      */
     public function offsetGet($name)
     {
@@ -1397,6 +1402,7 @@ class Request implements ArrayAccess
      * @param string $name Name of the key being written
      * @param mixed $value The value being written.
      * @return void
+     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use param(), data() and query() instead.
      */
     public function offsetSet($name, $value)
     {
@@ -1408,6 +1414,7 @@ class Request implements ArrayAccess
      *
      * @param string $name thing to check.
      * @return bool
+     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use param(), data() and query() instead.
      */
     public function offsetExists($name)
     {
@@ -1423,6 +1430,7 @@ class Request implements ArrayAccess
      *
      * @param string $name Name to unset.
      * @return void
+     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use param(), data() and query() instead.
      */
     public function offsetUnset($name)
     {
