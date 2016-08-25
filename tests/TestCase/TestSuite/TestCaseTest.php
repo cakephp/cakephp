@@ -549,8 +549,8 @@ class TestCaseTest extends TestCase
     {
         Configure::write('App.namespace', 'TestApp');
 
-        $Tags = $this->getMockForModel('I18n', ['doSomething']);
-        $this->assertEquals('custom_i18n_table', $Tags->table());
+        $I18n = $this->getMockForModel('I18n', ['doSomething']);
+        $this->assertEquals('custom_i18n_table', $I18n->table());
 
         $Tags = $this->getMockForModel('Tags', ['doSomething']);
         $this->assertEquals('tags', $Tags->table());
