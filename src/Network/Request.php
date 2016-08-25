@@ -1369,6 +1369,7 @@ class Request implements ArrayAccess
      *
      * @param string $name Name of the key being accessed.
      * @return mixed
+     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use param(), data() and query() instead.
      */
     public function offsetGet($name)
     {
@@ -1391,6 +1392,7 @@ class Request implements ArrayAccess
      * @param string $name Name of the key being written
      * @param mixed $value The value being written.
      * @return void
+     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use param(), data() and query() instead.
      */
     public function offsetSet($name, $value)
     {
@@ -1402,6 +1404,7 @@ class Request implements ArrayAccess
      *
      * @param string $name thing to check.
      * @return bool
+     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use param(), data() and query() instead.
      */
     public function offsetExists($name)
     {
@@ -1417,6 +1420,7 @@ class Request implements ArrayAccess
      *
      * @param string $name Name to unset.
      * @return void
+     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use param(), data() and query() instead.
      */
     public function offsetUnset($name)
     {
