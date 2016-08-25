@@ -16,6 +16,7 @@ namespace Cake\Database\Driver;
 
 use Cake\Database\Dialect\MysqlDialectTrait;
 use Cake\Database\Driver;
+use Cake\Database\MysqlCompiler;
 use Cake\Database\Query;
 use Cake\Database\Statement\MysqlStatement;
 use PDO;
@@ -156,6 +157,14 @@ class Mysql extends Driver
     public function supportsDynamicConstraints()
     {
         return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function newCompiler()
+    {
+        return new MysqlCompiler();
     }
 
     /**

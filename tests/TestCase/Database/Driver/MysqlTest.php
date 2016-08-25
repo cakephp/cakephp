@@ -16,10 +16,12 @@ namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
-use \PDO;
+use PDO;
 
 /**
  * Tests Mysql driver
+ *
+ * @group Mysql
  */
 class MysqlTest extends TestCase
 {
@@ -36,46 +38,13 @@ class MysqlTest extends TestCase
         $this->skipIf(strpos($config['driver'], 'Mysql') === false, 'Not using Mysql for test config');
     }
 
-    /**
-     * Test connecting to Mysql with default configuration
-     *
-     * @return void
-     */
-    public function testConnectionConfigDefault()
+    public function testCommitTransactionAutoConnect()
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
-            ->setMethods(['_connect', 'connection'])
-            ->getMock();
-        $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8';
-        $expected = [
-            'persistent' => true,
-            'host' => 'localhost',
-            'username' => 'root',
-            'password' => '',
-            'database' => 'cake',
-            'port' => '3306',
-            'flags' => [],
-            'encoding' => 'utf8',
-            'timezone' => null,
-            'init' => ['SET NAMES utf8'],
-        ];
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->driver();
 
-        $expected['flags'] += [
-            PDO::ATTR_PERSISTENT => true,
-            PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        ];
-        $connection = $this->getMockBuilder('StdClass')
-            ->setMethods(['exec'])
-            ->getMock();
-
-        $driver->expects($this->once())->method('_connect')
-            ->with($dsn, $expected);
-
-        $driver->expects($this->any())
-            ->method('connection')
-            ->will($this->returnValue($connection));
-        $driver->connect([]);
+        $this->assertFalse($driver->commitTransaction());
+        $this->assertTrue($driver->isConnected());
     }
 
     /**
@@ -131,6 +100,104 @@ class MysqlTest extends TestCase
     }
 
     /**
+     * Test connecting to Mysql with default configuration
+     *
+     * @return void
+     */
+    public function testConnectionConfigDefault()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+            ->setMethods(['_connect', 'connection'])
+            ->getMock();
+        $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8';
+        $expected = [
+            'persistent' => true,
+            'host' => 'localhost',
+            'username' => 'root',
+            'password' => '',
+            'database' => 'cake',
+            'port' => '3306',
+            'flags' => [],
+            'encoding' => 'utf8',
+            'timezone' => null,
+            'init' => ['SET NAMES utf8'],
+        ];
+
+        $expected['flags'] += [
+            PDO::ATTR_PERSISTENT => true,
+            PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        ];
+        $connection = $this->getMockBuilder('StdClass')
+            ->setMethods(['exec'])
+            ->getMock();
+
+        $driver->expects($this->once())->method('_connect')
+            ->with($dsn, $expected);
+
+        $driver->expects($this->any())
+            ->method('connection')
+            ->will($this->returnValue($connection));
+        $driver->connect([]);
+    }
+
+    /**
+     * Test update with limit
+     *
+     * @return void
+     */
+    public function testDeleteLimit()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([[]])
+            ->getMock();
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
+        $connection
+            ->expects($this->any())
+            ->method('driver')
+            ->will($this->returnValue($driver));
+
+        $query = new \Cake\Database\Query($connection);
+        $query->delete('articles')
+            ->where(['published' => true])
+            ->limit(5);
+        $this->assertEquals('DELETE FROM articles WHERE published = :c0 LIMIT 5', $query->sql());
+    }
+
+    /**
+     * Test update with limit
+     *
+     * @return void
+     */
+    public function testDeleteOrder()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([[]])
+            ->getMock();
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
+        $connection
+            ->expects($this->any())
+            ->method('driver')
+            ->will($this->returnValue($driver));
+
+        $query = new \Cake\Database\Query($connection);
+        $query->delete('articles')
+            ->where(['published' => true])
+            ->order(['created' => 'DESC']);
+        $this->assertEquals('DELETE FROM articles WHERE published = :c0 ORDER BY created DESC', $query->sql());
+    }
+
+    /**
      * Test isConnected
      *
      * @return void
@@ -155,12 +222,62 @@ class MysqlTest extends TestCase
         $this->assertTrue($driver->isConnected());
     }
 
-    public function testCommitTransactionAutoConnect()
+    /**
+     * Test update with limit
+     *
+     * @return void
+     */
+    public function testUpdateLimit()
     {
-        $connection = ConnectionManager::get('test');
-        $driver = $connection->driver();
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([[]])
+            ->getMock();
 
-        $this->assertFalse($driver->commitTransaction());
-        $this->assertTrue($driver->isConnected());
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
+        $connection
+            ->expects($this->any())
+            ->method('driver')
+            ->will($this->returnValue($driver));
+
+        $query = new \Cake\Database\Query($connection);
+        $query->update('articles')
+            ->set(['title' => 'FooBar'])
+            ->where(['published' => true])
+            ->limit(5);
+        $this->assertEquals('UPDATE articles SET title = :c0 WHERE published = :c1 LIMIT 5', $query->sql());
     }
+
+    /**
+     * Test update with limit
+     *
+     * @return void
+     */
+    public function testUpdateOrder()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([[]])
+            ->getMock();
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
+        $connection
+            ->expects($this->any())
+            ->method('driver')
+            ->will($this->returnValue($driver));
+
+        $query = new \Cake\Database\Query($connection);
+        $query->update('articles')
+            ->set(['title' => 'FooBar'])
+            ->where(['published' => true])
+            ->order(['created' => 'DESC']);
+        $this->assertEquals('UPDATE articles SET title = :c0 WHERE published = :c1 ORDER BY created DESC', $query->sql());
+    }
+
 }
