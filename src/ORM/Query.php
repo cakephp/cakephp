@@ -180,6 +180,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param array|\Cake\Database\ExpressionInterface|string|\Cake\ORM\Table|\Cake\ORM\Association $fields fields
      * to be added to the list.
      * @param bool $overwrite whether to reset fields with passed list or not
+     * @return $this
      */
     public function select($fields = [], $overwrite = false)
     {
