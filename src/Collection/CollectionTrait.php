@@ -686,6 +686,47 @@ trait CollectionTrait
      *
      * @return \Cake\Collection\CollectionInterface
      */
+    public function cartesianProduct(callable $operation = null, callable $filter = null)
+    {
+        if ($this->isEmpty()) {
+            return new Collection([]);
+        }
+
+        $result = [];
+        $counts = $this->map(function ($arr) {
+            return count($arr);
+        })->toList();
+        $allArr = $this->toList();
+        $lastIndex = count($allArr) - 1;
+        // holds the indexes of the arrays that generate the current combination
+        $currentIndexes = array_fill(0, $lastIndex + 1, 0);
+        $changeIndex = $lastIndex;
+
+        while (!($changeIndex === 0 AND $currentIndexes[0] === $counts[0])) {
+            $currentCombination = array_map(function ($arr, $index) {
+                return $arr[$index];
+            }, $allArr, $currentIndexes);
+
+            if ($filter === null OR $filter(...$currentCombination)) {
+                $result[] = ($operation === null) ? $currentCombination : $operation(...$currentCombination);
+            }
+
+            $currentIndexes[$lastIndex]++;
+
+            for ($changeIndex = $lastIndex; $currentIndexes[$changeIndex] === $counts[$changeIndex] AND $changeIndex > 0; $changeIndex--) {
+                $currentIndexes[$changeIndex] = 0;
+                $currentIndexes[$changeIndex - 1]++;
+            }
+        }
+
+        return new Collection($result);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return \Cake\Collection\CollectionInterface
+     */
     public function transpose()
     {
         $arrayValue = $this->toList();

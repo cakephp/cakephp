@@ -1770,6 +1770,100 @@ class CollectionTest extends TestCase
         $this->assertEquals($expected, $chunked);
     }
 
+    /**
+     * Tests cartesianProduct
+     *
+     * @return void
+     */
+    public function testCartesianProduct()
+    {
+        $collection = new Collection([['A', 'B', 'C'], [1, 2, 3]]);
+
+        $result = $collection->cartesianProduct();
+
+        $expected = [
+            ['A', 1],
+            ['A', 2],
+            ['A', 3],
+            ['B', 1],
+            ['B', 2],
+            ['B', 3],
+            ['C', 1],
+            ['C', 2],
+            ['C', 3],
+        ];
+
+        $this->assertEquals($expected, $result->toList());
+
+        $collection = new Collection([[1, 2, 3], ['A', 'B', 'C'], ['a', 'b', 'c']]);
+
+        $result = $collection->cartesianProduct(function ($val1, $val2, $val3) {
+            return [strval($val1) . $val2 . $val3];
+        }, function ($val1, $val2, $val3) {
+            return $val1 >= 2;
+        });
+
+        $expected = [
+            ['2Aa'],
+            ['2Ab'],
+            ['2Ac'],
+            ['2Ba'],
+            ['2Bb'],
+            ['2Bc'],
+            ['2Ca'],
+            ['2Cb'],
+            ['2Cc'],
+            ['3Aa'],
+            ['3Ab'],
+            ['3Ac'],
+            ['3Ba'],
+            ['3Bb'],
+            ['3Bc'],
+            ['3Ca'],
+            ['3Cb'],
+            ['3Cc'],
+        ];
+
+        $this->assertEquals($expected, $result->toList());
+
+        $collection = new Collection([['1', '2', '3', '4'], ['A', 'B', 'C'], ['name', 'surname', 'telephone']]);
+
+        $result = $collection->cartesianProduct(function ($val1, $val2, $val3) {
+            return [$val1 => [$val2 => $val3]];
+        }, function ($val1, $val2, $val3) {
+            return $val3 !== 'surname';
+        });
+
+        $expected = [
+            [1 => ['A' => 'name']],
+            [1 => ['A' => 'telephone']],
+            [1 => ['B' => 'name']],
+            [1 => ['B' => 'telephone']],
+            [1 => ['C' => 'name']],
+            [1 => ['C' => 'telephone']],
+            [2 => ['A' => 'name']],
+            [2 => ['A' => 'telephone']],
+            [2 => ['B' => 'name']],
+            [2 => ['B' => 'telephone']],
+            [2 => ['C' => 'name']],
+            [2 => ['C' => 'telephone']],
+            [3 => ['A' => 'name']],
+            [3 => ['A' => 'telephone']],
+            [3 => ['B' => 'name']],
+            [3 => ['B' => 'telephone']],
+            [3 => ['C' => 'name']],
+            [3 => ['C' => 'telephone']],
+            [4 => ['A' => 'name']],
+            [4 => ['A' => 'telephone']],
+            [4 => ['B' => 'name']],
+            [4 => ['B' => 'telephone']],
+            [4 => ['C' => 'name']],
+            [4 => ['C' => 'telephone']]
+        ];
+
+        $this->assertEquals($expected, $result->toList());
+    }
+
     public function testTranspose()
     {
         $collection = new Collection([
