@@ -664,6 +664,10 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             }
         }
 
+        if (stripos($mock->table(), 'mock') === 0) {
+            $mock->table(Inflector::tableize($baseClass));
+        }
+
         TableRegistry::set($baseClass, $mock);
 
         return $mock;
