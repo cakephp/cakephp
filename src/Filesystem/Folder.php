@@ -16,6 +16,7 @@ namespace Cake\Filesystem;
 
 use DirectoryIterator;
 use Exception;
+use InvalidArgumentException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -418,15 +419,15 @@ class Folder
     /**
      * Returns true if the Folder is in the given path.
      *
-     * @param string $path The absolute path to check that the current `pwd()` resides within. If omitted
-     *  (or empty), the current top level directory is assumed.
+     * @param string $path The absolute path to check that the current `pwd()` resides within.
      * @param bool $reverse Reverse the search, check if the given `$path` resides within the current `pwd()`.
      * @return bool
+     * @throws \InvalidArgumentException When the given `$path` argument is not an absolute path.
      */
-    public function inPath($path = '', $reverse = false)
+    public function inPath($path, $reverse = false)
     {
-        if (empty($path)) {
-            $path = realpath(DS);
+        if (!Folder::isAbsolute($path)) {
+            throw new InvalidArgumentException('The $path argument is expected to be an absolute path.');
         }
 
         $dir = Folder::slashTerm($path);

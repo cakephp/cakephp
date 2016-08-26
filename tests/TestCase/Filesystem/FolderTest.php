@@ -102,8 +102,9 @@ class FolderTest extends TestCase
         $result = $Base->pwd();
         $this->assertEquals($basePath, $result);
 
+
         // is "/" in "/tests/test_app/"
-        $result = $Base->inPath('', true);
+        $result = $Base->inPath(realpath(DS), true);
         $this->assertFalse($result, true);
 
         // is "/tests/test_app/" in "/tests/test_app/"
@@ -128,7 +129,7 @@ class FolderTest extends TestCase
 
 
         // is "/tests/test_app/" in "/"
-        $result = $Base->inPath();
+        $result = $Base->inPath(realpath(DS));
         $this->assertTrue($result);
 
         // is "/tests/test_app/" in "/tests/test_app/"
@@ -152,6 +153,32 @@ class FolderTest extends TestCase
         $VirtualBase->path = '/other/tests/test_app';
         $result = $VirtualBase->inPath('/tests/test_app/');
         $this->assertFalse($result);
+    }
+
+    /**
+     * Data provider for the testInPathInvalidPathArgument test
+     *
+     * @return array
+     */
+    public function inPathInvalidPathArgumentDataProvider()
+    {
+        return [
+            [''],
+            ['relative/path/'],
+            ['unknown://stream-wrapper']
+        ];
+    }
+
+    /**
+     * @dataProvider inPathInvalidPathArgumentDataProvider
+     * @param string $path
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The $path argument is expected to be an absolute path.
+     */
+    public function testInPathInvalidPathArgument($path)
+    {
+        $Folder = new Folder();
+        $Folder->inPath($path);
     }
 
     /**
