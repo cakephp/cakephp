@@ -2000,9 +2000,10 @@ class RequestTest extends TestCase
      */
     public function testQuery()
     {
-        $request = new Request([
+        $array = [
             'query' => ['foo' => 'bar', 'zero' => '0']
-        ]);
+        ];
+        $request = new Request($array);
 
         $result = $request->query('foo');
         $this->assertSame('bar', $result);
@@ -2012,6 +2013,9 @@ class RequestTest extends TestCase
 
         $result = $request->query('imaginary');
         $this->assertNull($result);
+
+        $result = $request->query();
+        $this->assertSame($array, $result);
     }
 
     /**
