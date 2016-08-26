@@ -109,28 +109,86 @@ class FolderTest extends CakeTestCase {
  * @return void
  */
 	public function testInPath() {
-		$path = dirname(dirname(__FILE__));
-		$inside = dirname($path) . DS;
+		// "/Test/test_app/"
+		$basePath = CAKE . 'Test' . DS . 'test_app' . DS;
+		$Base = new Folder($basePath);
 
-		$Folder = new Folder($path);
+		$result = $Base->pwd();
+		$this->assertEquals($basePath, $result);
 
-		$result = $Folder->pwd();
-		$this->assertEquals($path, $result);
+		// is "/" in "/Test/test_app/"
+		$result = $Base->inPath(realpath(DS), true);
+		$this->assertFalse($result, true);
 
-		$result = Folder::isSlashTerm($inside);
+		// is "/Test/test_app/" in "/Test/test_app/"
+		$result = $Base->inPath($basePath, true);
 		$this->assertTrue($result);
 
-		$result = $Folder->realpath('Test/');
-		$this->assertEquals($path . DS . 'Test' . DS, $result);
-
-		$result = $Folder->inPath('Test' . DS);
+		// is "/Test/test_app" in "/Test/test_app/"
+		$result = $Base->inPath(mb_substr($basePath, 0, -1), true);
 		$this->assertTrue($result);
 
-		$result = $Folder->inPath(DS . 'non-existing' . $inside);
+		// is "/Test/test_app/sub" in "/Test/test_app/"
+		$result = $Base->inPath($basePath . 'sub', true);
+		$this->assertTrue($result);
+
+		// is "/Test" in "/Test/test_app/"
+		$result = $Base->inPath(dirname($basePath), true);
 		$this->assertFalse($result);
 
-		$result = $Folder->inPath($path . DS . 'Model', true);
+		// is "/Test/other/(...)Test/test_app" in "/Test/test_app/"
+		$result = $Base->inPath(TMP . 'tests' . DS . 'other' . DS . $basePath, true);
+		$this->assertFalse($result);
+
+		// is "/Test/test_app/" in "/"
+		$result = $Base->inPath(realpath(DS));
 		$this->assertTrue($result);
+
+		// is "/Test/test_app/" in "/Test/test_app/"
+		$result = $Base->inPath($basePath);
+		$this->assertTrue($result);
+
+		// is "/Test/test_app/" in "/Test/test_app"
+		$result = $Base->inPath(mb_substr($basePath, 0, -1));
+		$this->assertTrue($result);
+
+		// is "/Test/test_app/" in "/Test"
+		$result = $Base->inPath(dirname($basePath));
+		$this->assertTrue($result);
+
+		// is "/Test/test_app/" in "/Test/test_app/sub"
+		$result = $Base->inPath($basePath . 'sub');
+		$this->assertFalse($result);
+
+		// is "/other/Test/test_app/" in "/Test/test_app/"
+		$VirtualBase = new Folder();
+		$VirtualBase->path = '/other/Test/test_app';
+		$result = $VirtualBase->inPath('/Test/test_app/');
+		$this->assertFalse($result);
+	}
+
+/**
+ * Data provider for the testInPathInvalidPathArgument test
+ *
+ * @return array
+ */
+	public function inPathInvalidPathArgumentDataProvider() {
+		return array(
+			array(''),
+			array('relative/path/'),
+			array('unknown://stream-wrapper')
+		);
+	}
+
+/**
+ * @dataProvider inPathInvalidPathArgumentDataProvider
+ * @param string $path
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage The $path argument is expected to be an absolute path.
+ */
+	public function testInPathInvalidPathArgument($path) {
+		$Folder = new Folder();
+		$Folder->inPath($path);
 	}
 
 /**
