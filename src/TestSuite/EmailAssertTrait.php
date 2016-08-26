@@ -239,7 +239,8 @@ trait EmailAssertTrait
     }
 
     /**
-     * @param string $expected Expected attachment.
+     * @param string $filename Expected attachment's filename.
+     * @param array $file Expected attachment's file info.
      * @param string $message The failure message to define.
      * @return void
      */
