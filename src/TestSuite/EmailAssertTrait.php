@@ -12,7 +12,7 @@
  * @since         3.3.1
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite\Assertion;
+namespace Cake\TestSuite;
 
 use Cake\Mailer\Email;
 
