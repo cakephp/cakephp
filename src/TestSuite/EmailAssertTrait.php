@@ -131,8 +131,12 @@ trait EmailAssertTrait
      * @param string $message The failure message to define.
      * @return void
      */
-    public function assertEmailFrom($email, $name, $message = null)
+    public function assertEmailFrom($email, $name = null, $message = null)
     {
+        if ($name === null) {
+            $name = $email;
+        }
+
         $expected = [$email => $name];
         $result = $this->email()->from();
         $this->assertSame($expected, $result, $message);
@@ -144,10 +148,109 @@ trait EmailAssertTrait
      * @param string $message The failure message to define.
      * @return void
      */
-    public function assertEmailTo($email, $name, $message = null)
+    public function assertEmailCc($email, $name = null, $message = null)
     {
+        if ($name === null) {
+            $name = $email;
+        }
+
+        $expected = [$email => $name];
+        $result = $this->email()->cc();
+        $this->assertSame($expected, $result, $message);
+    }
+
+    /**
+     * @param string $email Sender's email address.
+     * @param string $name Sender's name.
+     * @param string $message The failure message to define.
+     * @return void
+     */
+    public function assertEmailCcContains($email, $name = null, $message = null)
+    {
+        $result = $this->email()->cc();
+        $this->assertNotEmpty($result[$email], $message);
+        if ($name !== null) {
+            $this->assertEquals($result[$email], $name, $message);
+        }
+    }
+
+    /**
+     * @param string $email Sender's email address.
+     * @param string $name Sender's name.
+     * @param string $message The failure message to define.
+     * @return void
+     */
+    public function assertEmailBcc($email, $name = null, $message = null)
+    {
+        if ($name === null) {
+            $name = $email;
+        }
+
+        $expected = [$email => $name];
+        $result = $this->email()->bcc();
+        $this->assertSame($expected, $result, $message);
+    }
+
+    /**
+     * @param string $email Sender's email address.
+     * @param string $name Sender's name.
+     * @param string $message The failure message to define.
+     * @return void
+     */
+    public function assertEmailBccContains($email, $name = null, $message = null)
+    {
+        $result = $this->email()->bcc();
+        $this->assertNotEmpty($result[$email], $message);
+        if ($name !== null) {
+            $this->assertEquals($result[$email], $name, $message);
+        }
+    }
+
+    /**
+     * @param string $email Sender's email address.
+     * @param string $name Sender's name.
+     * @param string $message The failure message to define.
+     * @return void
+     */
+    public function assertEmailTo($email, $name = null, $message = null)
+    {
+        if ($name === null) {
+            $name = $email;
+        }
+
         $expected = [$email => $name];
         $result = $this->email()->to();
         $this->assertSame($expected, $result, $message);
+    }
+
+    /**
+     * @param string $email Sender's email address.
+     * @param string $name Sender's name.
+     * @param string $message The failure message to define.
+     * @return void
+     */
+    public function assertEmailToContains($email, $name = null, $message = null)
+    {
+        $result = $this->email()->to();
+        $this->assertNotEmpty($result[$email], $message);
+        if ($name !== null) {
+            $this->assertEquals($result[$email], $name, $message);
+        }
+    }
+
+    /**
+     * @param string $expected Expected attachment.
+     * @param string $message The failure message to define.
+     * @return void
+     */
+    public function assertEmailAttachmentsContains($filename, array $file = null, $message = null)
+    {
+        $result = $this->email()->attachments();
+        $this->assertNotEmpty($result[$filename], $message);
+        if ($file === null) {
+            return;
+        }
+        $this->assertContains($file, $result, $message);
+        $this->assertEquals($file, $result[$filename], $message);
     }
 }
