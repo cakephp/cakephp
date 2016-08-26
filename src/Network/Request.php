@@ -1162,7 +1162,7 @@ class Request implements ArrayAccess
      * to use a syntax similar to `CakeSession` for reading URL query data.
      *
      * @param string|null $name Query string variable name or null to read all.
-     * @return mixed The value being read
+     * @return string|array|null The value being read
      */
     public function query($name = null)
     {
