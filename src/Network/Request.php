@@ -1191,6 +1191,9 @@ class Request implements ArrayAccess
      * $request->data('Post.title', 'New post!');
      * ```
      *
+     * As of 3.4.0, the setter mode of this method is *deprecated*.
+     * Use `withData` instead.
+     *
      * You can write to any value, even paths/keys that do not exist, and the arrays
      * will be created for you.
      *
@@ -1372,6 +1375,24 @@ class Request implements ArrayAccess
     public function setInput($input)
     {
         $this->_input = $input;
+    }
+
+    /**
+     * Update the request with a new request data element.
+     *
+     * Returns an updated request object. This method returns
+     * a *new* request object and does not mutate the request in-place.
+     *
+     * @param string $name The dot separated path to insert $value at.
+     * @param mixed $value The value to insert into the request data.
+     * @return self
+     */
+    public function withData($name, $value)
+    {
+        $copy = clone $this;
+        $copy->data = Hash::insert($copy->data, $name, $value);
+
+        return $copy;
     }
 
     /**

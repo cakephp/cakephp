@@ -2538,6 +2538,78 @@ XML;
     }
 
     /**
+     * Test updating POST data in a psr7 fashion.
+     *
+     * @return void
+     */
+    public function testWithData()
+    {
+        $request = new Request([
+            'post' => [
+                'Model' => [
+                    'field' => 'value'
+                ]
+            ]
+        ]);
+        $result = $request->withData('Model.new_value', 'new value');
+        $this->assertNull($request->data('Model.new_value'), 'Original request should not change.');
+        $this->assertNotSame($result, $request);
+        $this->assertEquals('new value', $result->data('Model.new_value'));
+        $this->assertEquals('new value', $result->data['Model']['new_value']);
+        $this->assertEquals('value', $result->data('Model.field'));
+    }
+
+    /**
+     * Test updating POST data when keys don't exist
+     *
+     * @return void
+     */
+    public function testWithDataMissingIntermediaryKeys()
+    {
+        $request = new Request([
+            'post' => [
+                'Model' => [
+                    'field' => 'value'
+                ]
+            ]
+        ]);
+        $result = $request->withData('Model.field.new_value', 'new value');
+        $this->assertEquals(
+            'new value',
+            $result->data('Model.field.new_value')
+        );
+        $this->assertEquals(
+            'new value',
+            $result->data['Model']['field']['new_value']
+        );
+    }
+
+    /**
+     * Test updating POST data with falsey values
+     *
+     * @return void
+     */
+    public function testWithDataFalseyValues()
+    {
+        $request = new Request([
+            'post' => []
+        ]);
+        $result = $request->withData('false', false)
+            ->withData('null', null)
+            ->withData('empty_string', '')
+            ->withData('zero', 0)
+            ->withData('zero_string', '0');
+        $expected = [
+            'false' => false,
+            'null' => null,
+            'empty_string' => '',
+            'zero' => 0,
+            'zero_string' => '0'
+        ];
+        $this->assertSame($expected, $result->data());
+    }
+
+    /**
      * loadEnvironment method
      *
      * @param array $env
