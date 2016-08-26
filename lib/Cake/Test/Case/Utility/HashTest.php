@@ -1368,9 +1368,9 @@ class HashTest extends CakeTestCase {
 	public function testSortLocale() {
 		// get the current locale
 		$oldLocale = setlocale(LC_COLLATE, '0');
-
-		// the de_DE.utf8 locale must be installed on the system where the test is performed
-		setlocale(LC_COLLATE, 'de_DE.utf8');
+		
+		$updated = setlocale(LC_COLLATE, 'de_DE.utf8');
+		$this->skipIf($updated === false, 'Could not set locale to de_DE.utf8, skipping test.');
 
 		$items = array(
 			array('Item' => array('entry' => 'Übergabe')),
