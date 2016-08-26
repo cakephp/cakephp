@@ -1388,7 +1388,7 @@ class Request implements ArrayAccess
      *
      * @param string $name The dot separated path to insert $value at.
      * @param mixed $value The value to insert into the request data.
-     * @return self
+     * @return static
      */
     public function withData($name, $value)
     {
@@ -1406,7 +1406,7 @@ class Request implements ArrayAccess
      *
      * @param string $name The dot separated path to insert $value at.
      * @param mixed $value The value to insert into the the request parameters.
-     * @return self
+     * @return static
      */
     public function withParam($name, $value)
     {
