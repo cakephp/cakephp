@@ -1218,6 +1218,9 @@ class Request implements ArrayAccess
     /**
      * Safely access the values in $this->params.
      *
+     * As of 3.4.0, the setter mode of this method is *deprecated*.
+     * Use `withParam` instead.
+     *
      * @param string $name The name of the parameter to get.
      * @return mixed|$this The value of the provided parameter. Will
      *   return false if the parameter doesn't exist or is falsey.
@@ -1391,6 +1394,24 @@ class Request implements ArrayAccess
     {
         $copy = clone $this;
         $copy->data = Hash::insert($copy->data, $name, $value);
+
+        return $copy;
+    }
+
+    /**
+     * Update the request with a new routing parameter
+     *
+     * Returns an updated request object. This method returns
+     * a *new* request object and does not mutate the request in-place.
+     *
+     * @param string $name The dot separated path to insert $value at.
+     * @param mixed $value The value to insert into the the request parameters.
+     * @return self
+     */
+    public function withParam($name, $value)
+    {
+        $copy = clone $this;
+        $copy->params = Hash::insert($copy->params, $name, $value);
 
         return $copy;
     }

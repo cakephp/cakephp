@@ -2538,6 +2538,31 @@ XML;
     }
 
     /**
+     * Test updating params in a psr7 fashion.
+     *
+     * @return void
+     */
+    public function testWithParam()
+    {
+        $request = new Request([
+            'params' => ['controller' => 'Articles']
+        ]);
+        $result = $request->withParam('action', 'view');
+        $this->assertNotSame($result, $request, 'New instance should be made');
+        $this->assertFalse($request->param('action'), 'No side-effect on original');
+        $this->assertSame('view', $result->param('action'));
+
+        $result = $request->withParam('action', 'index')
+            ->withParam('plugin', 'DebugKit')
+            ->withParam('prefix', 'Admin');
+        $this->assertNotSame($result, $request, 'New instance should be made');
+        $this->assertFalse($request->param('action'), 'No side-effect on original');
+        $this->assertSame('index', $result->param('action'));
+        $this->assertSame('DebugKit', $result->param('plugin'));
+        $this->assertSame('Admin', $result->param('prefix'));
+    }
+
+    /**
      * Test updating POST data in a psr7 fashion.
      *
      * @return void
