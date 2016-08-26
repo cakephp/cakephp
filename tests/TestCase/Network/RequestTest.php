@@ -2015,7 +2015,7 @@ class RequestTest extends TestCase
         $this->assertNull($result);
 
         $result = $request->query();
-        $this->assertSame($array, $result);
+        $this->assertSame($array['query'], $result);
     }
 
     /**
