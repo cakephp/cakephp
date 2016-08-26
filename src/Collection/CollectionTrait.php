@@ -702,18 +702,18 @@ trait CollectionTrait
         $currentIndexes = array_fill(0, $lastIndex + 1, 0);
         $changeIndex = $lastIndex;
 
-        while (!($changeIndex === 0 AND $currentIndexes[0] === $counts[0])) {
+        while (!($changeIndex === 0 && $currentIndexes[0] === $counts[0])) {
             $currentCombination = array_map(function ($arr, $index) {
                 return $arr[$index];
             }, $allArr, $currentIndexes);
 
-            if ($filter === null OR $filter(...$currentCombination)) {
+            if ($filter === null || $filter(...$currentCombination)) {
                 $result[] = ($operation === null) ? $currentCombination : $operation(...$currentCombination);
             }
 
             $currentIndexes[$lastIndex]++;
 
-            for ($changeIndex = $lastIndex; $currentIndexes[$changeIndex] === $counts[$changeIndex] AND $changeIndex > 0; $changeIndex--) {
+            for ($changeIndex = $lastIndex; $currentIndexes[$changeIndex] === $counts[$changeIndex] && $changeIndex > 0; $changeIndex--) {
                 $currentIndexes[$changeIndex] = 0;
                 $currentIndexes[$changeIndex - 1]++;
             }
