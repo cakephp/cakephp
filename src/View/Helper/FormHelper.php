@@ -2733,17 +2733,14 @@ class FormHelper extends Helper
     {
         foreach ($this->getValuesSources() as $valuesSource) {
             if ($valuesSource === 'context') {
-                return $this->_getContext()->val($fieldname, $options);
-            }
-            if ($this->request->{$valuesSource}($fieldname) !== null) {
+                $val = $this->_getContext()->val($fieldname, $options);
+                if ($val !== null) {
+                    return $val;
+                }
+            } elseif ($this->request->{$valuesSource}($fieldname) !== null) {
                 return $this->request->{$valuesSource}($fieldname);
             }
         }
-        if (isset($options['default'])) {
-            return $options['default'];
-        }
-        if (isset($options['schemaDefault'])) {
-            return $options['schemaDefault'];
-        }
+        return null;
     }
 }

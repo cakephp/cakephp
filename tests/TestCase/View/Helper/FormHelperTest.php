@@ -8556,4 +8556,29 @@ class FormHelperTest extends TestCase
         $expected = ['input' => ['type' => 'password', 'name' => 'password', 'value' => 'helloworld']];
         $this->assertHtml($expected, $result);
     }
+
+
+    /**
+     * Test sources values schema defaults handling
+     *
+     * @return void
+     */
+    public function testSourcesValueDoesntExistPassThrough()
+    {
+        $this->Form->request->query['category'] = 'sesame-cookies';
+
+        $Articles = TableRegistry::get('Articles');
+        $entity = $Articles->newEntity();
+        $this->Form->create($entity);
+
+        $this->Form->setValuesSources(['query', 'context']);
+        $result = $this->Form->getSourceValue('category');
+        $expected = 'sesame-cookies';
+        $this->assertEquals($expected, $result);
+
+        $this->Form->setValuesSources(['context', 'query']);
+        $result = $this->Form->getSourceValue('category');
+        $expected = 'sesame-cookies';
+        $this->assertEquals($expected, $result);
+    }
 }
