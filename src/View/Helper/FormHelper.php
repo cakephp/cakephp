@@ -2727,7 +2727,7 @@ class FormHelper extends Helper
      *
      * @param string $fieldname The fieldname to fetch the value for.
      * @param array|null $options The options containing default values.
-     * @return string|null Field value derived from sources.
+     * @return string|null Field value derived from sources or defaults.
      */
     public function getSourceValue($fieldname, $options = [])
     {
@@ -2739,10 +2739,10 @@ class FormHelper extends Helper
                 return $this->request->{$valuesSource}($fieldname);
             }
         }
-        if ($options['default'] !== null && $options['default'] !== false) {
+        if (isset($options['default'])) {
             return $options['default'];
         }
-        if ($options['schemaDefault'] !== null && $options['schemaDefault'] !== false) {
+        if (isset($options['schemaDefault'])) {
             return $options['schemaDefault'];
         }
     }
