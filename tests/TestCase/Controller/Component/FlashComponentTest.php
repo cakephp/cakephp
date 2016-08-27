@@ -111,6 +111,38 @@ class FlashComponentTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testSetEscape()
+    {
+        $this->assertNull($this->Session->read('Flash.flash'));
+
+        $this->Flash->set('This is a test message', ['escape' => false, 'params' => ['foo' => 'bar']]);
+        $expected = [
+            [
+                'message' => 'This is a test message',
+                'key' => 'flash',
+                'element' => 'Flash/default',
+                'params' => ['foo' => 'bar', 'escape' => false]
+            ]
+        ];
+        $result = $this->Session->read('Flash.flash');
+        $this->assertEquals($expected, $result);
+
+        $this->Flash->set('This is a test message', ['key' => 'escaped', 'escape' => false, 'params' => ['foo' => 'bar', 'escape' => true]]);
+        $expected = [
+            [
+                'message' => 'This is a test message',
+                'key' => 'escaped',
+                'element' => 'Flash/default',
+                'params' => ['foo' => 'bar', 'escape' => true]
+            ]
+        ];
+        $result = $this->Session->read('Flash.escaped');
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * test setting messages with using the clear option
      *
      * @return void
@@ -223,7 +255,7 @@ class FlashComponentTest extends TestCase
         ];
         $result = $this->Session->read('Flash.flash');
         $this->assertEquals($expected, $result, 'Element is ignored in magic call.');
-        
+
         $this->Flash->success('It worked', ['plugin' => 'MyPlugin']);
 
         $expected[] = [
