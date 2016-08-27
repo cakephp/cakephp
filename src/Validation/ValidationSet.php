@@ -125,6 +125,9 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
         if (!($rule instanceof ValidationRule)) {
             $rule = new ValidationRule($rule);
         }
+        if (isset($this->_rules[$name])) {
+            trigger_error("Remove rule $name before adding", E_USER_WARNING);
+        }
         $this->_rules[$name] = $rule;
 
         return $this;
