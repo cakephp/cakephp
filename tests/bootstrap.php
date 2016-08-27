@@ -19,8 +19,6 @@ use Cake\Chronos\MutableDateTime;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
-use Cake\Mailer\Email;
-use Cake\Mailer\Transport\DebugTransport;
 
 require_once 'vendor/autoload.php';
 
@@ -104,8 +102,6 @@ ConnectionManager::config('test_custom_i18n_datasource', ['url' => getenv('db_ds
 Configure::write('Session', [
     'defaults' => 'php'
 ]);
-
-Email::configTransport('debug', ['className' => DebugTransport::class]);
 
 Log::config([
     // 'queries' => [
