@@ -62,8 +62,8 @@ class Server
      *   from event listeners.
      * - Run the middleware queue including the application.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request  The request to use or null.
-     * @param \Psr\Http\Message\ResponseInterface      $response The response to use or null.
+     * @param \Psr\Http\Message\ServerRequestInterface|null $request The request to use or null.
+     * @param \Psr\Http\Message\ResponseInterface|null $response The response to use or null.
      * @return \Psr\Http\Message\ResponseInterface
      * @throws \RuntimeException When the application does not make a response.
      */
@@ -95,7 +95,7 @@ class Server
      * Emit the response using the PHP SAPI.
      *
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
-     * @param \Zend\Diactoros\Response\EmitterInterface $emitter The emitter to use.
+     * @param \Zend\Diactoros\Response\EmitterInterface|null $emitter The emitter to use.
      *   When null, a SAPI Stream Emitter will be used.
      * @return void
      */

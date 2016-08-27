@@ -18,6 +18,7 @@ use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
+use Cake\View\Exception\MissingHelperException;
 
 /**
  * HelperRegistry is used as a registry for loaded helpers and handles loading
@@ -122,7 +123,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      */
     protected function _throwMissingClassError($class, $plugin)
     {
-        throw new Exception\MissingHelperException([
+        throw new MissingHelperException([
             'class' => $class . 'Helper',
             'plugin' => $plugin
         ]);

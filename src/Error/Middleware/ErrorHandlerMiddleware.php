@@ -17,6 +17,7 @@ namespace Cake\Error\Middleware;
 use Cake\Core\App;
 use Cake\Http\ResponseTransformer;
 use Cake\Log\Log;
+use Exception;
 
 /**
  * Error handling middleware.
@@ -29,7 +30,7 @@ class ErrorHandlerMiddleware
     /**
      * Constructor
      *
-     * @param string|callable $renderer The renderer or class name
+     * @param string|callable|null $renderer The renderer or class name
      *   to use or a callable factory.
      */
     public function __construct($renderer = null)
@@ -99,7 +100,7 @@ class ErrorHandlerMiddleware
         if (is_string($this->renderer)) {
             $class = App::className($this->renderer, 'Error');
             if (!$class) {
-                throw new \Exception("The '{$this->renderer}' renderer class could not be found.");
+                throw new Exception("The '{$this->renderer}' renderer class could not be found.");
             }
 
             return new $class($exception);

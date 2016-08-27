@@ -122,7 +122,7 @@ class Marshaller
         foreach ($behaviors->loaded() as $name) {
             $behavior = $behaviors->get($name);
             if ($behavior instanceof PropertyMarshalInterface) {
-                $map += $behavior->buildMarhshalMap($this, $map, $options);
+                $map += $behavior->buildMarshalMap($this, $map, $options);
             }
         }
 

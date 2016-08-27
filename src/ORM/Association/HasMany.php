@@ -293,6 +293,9 @@ class HasMany extends Association
         } else {
             $options += ['cleanProperty' => true];
         }
+        if (count($targetEntities) === 0) {
+            return;
+        }
 
         $foreignKey = (array)$this->foreignKey();
         $target = $this->target();

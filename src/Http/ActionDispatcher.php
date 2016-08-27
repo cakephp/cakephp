@@ -20,8 +20,6 @@ use Cake\Event\EventListenerInterface;
 use Cake\Http\ControllerFactory;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\Routing\DispatcherFactory;
-use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
 use LogicException;
 

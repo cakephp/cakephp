@@ -14,12 +14,9 @@
  */
 namespace Cake\Routing\Filter;
 
-use Cake\Core\App;
 use Cake\Event\Event;
 use Cake\Http\ControllerFactory;
 use Cake\Routing\DispatcherFilter;
-use Cake\Utility\Inflector;
-use ReflectionClass;
 
 /**
  * A dispatcher filter that builds the controller to dispatch

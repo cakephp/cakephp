@@ -56,7 +56,7 @@ class MiddlewareDispatcher
      * Constructor
      *
      * @param \Cake\TestSuite\IntegrationTestCase $test The test case to run.
-     * @param string $class The application class name. Defaults to App\Application.
+     * @param string|null $class The application class name. Defaults to App\Application.
      * @param array|null $constructorArgs The constructor arguments for your application class.
      *   Defaults to `['./config']`
      */

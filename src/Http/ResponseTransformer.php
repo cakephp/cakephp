@@ -160,26 +160,68 @@ class ResponseTransformer
         $status = $response->statusCode();
         $headers = $response->header();
         if (!isset($headers['Content-Type'])) {
-            $headers['Content-Type'] = $response->type();
+            $headers = static::setContentType($headers, $response);
         }
         $cookies = $response->cookie();
-        if ($cookies) {
+        if ($cookies && (
+            session_status() === \PHP_SESSION_ACTIVE ||
+            PHP_SAPI === 'cli' ||
+            PHP_SAPI === 'phpdbg'
+        )) {
             $sessionCookie = session_get_cookie_params();
             $sessionName = session_name();
             $cookies[$sessionName] = [
                 'name' => $sessionName,
+                'path' => $sessionCookie['path'],
                 'value' => session_id(),
                 'expire' => $sessionCookie['lifetime'],
-                'path' => $sessionCookie['path'],
                 'secure' => $sessionCookie['secure'],
                 'domain' => $sessionCookie['domain'],
                 'httpOnly' => $sessionCookie['httponly'],
             ];
+        }
+        if ($cookies) {
             $headers['Set-Cookie'] = static::buildCookieHeader($cookies);
         }
         $stream = static::getStream($response);
 
         return new DiactorosResponse($stream, $status, $headers);
+    }
+
+    /**
+     * Add in the Content-Type header if necessary.
+     *
+     * @param array $headers The headers to update
+     * @param CakeResponse $response The CakePHP response to convert
+     * @return The updated headers.
+     */
+    protected static function setContentType($headers, $response)
+    {
+        if (isset($headers['Content-Type'])) {
+            return $headers;
+        }
+        if (in_array($response->statusCode(), [204, 304])) {
+            return $headers;
+        }
+        $whitelist = [
+            'application/javascript', 'application/json', 'application/xml', 'application/rss+xml'
+        ];
+
+        $type = $response->type();
+        $charset = $response->charset();
+
+        $hasCharset = false;
+        if ($charset && (strpos($type, 'text/') === 0 || in_array($type, $whitelist))) {
+            $hasCharset = true;
+        }
+
+        $value = $type;
+        if ($hasCharset) {
+            $value = "{$type}; charset={$charset}";
+        }
+        $headers['Content-Type'] = $value;
+
+        return $headers;
     }
 
     /**

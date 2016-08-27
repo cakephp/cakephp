@@ -17,6 +17,7 @@ namespace Cake\Validation;
 use Cake\I18n\Time;
 use Cake\Utility\Text;
 use DateTimeInterface;
+use InvalidArgumentException;
 use LogicException;
 use NumberFormatter;
 use RuntimeException;
@@ -511,7 +512,7 @@ class Validation
             'datetime' => 'parseDateTime',
         ];
         if (empty($methods[$type])) {
-            throw new \InvalidArgumentException('Unsupported parser type given.');
+            throw new InvalidArgumentException('Unsupported parser type given.');
         }
         $method = $methods[$type];
 

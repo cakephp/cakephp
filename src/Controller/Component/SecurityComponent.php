@@ -184,7 +184,7 @@ class SecurityComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @param string $error Error method
-     * @param \Cake\Controller\Exception\SecurityException $exception Additional debug info describing the cause
+     * @param \Cake\Controller\Exception\SecurityException|null $exception Additional debug info describing the cause
      * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
      * @see \Cake\Controller\Component\SecurityComponent::$blackHoleCallback
      * @link http://book.cakephp.org/3.0/en/controllers/components/security.html#handling-blackhole-callbacks
@@ -202,7 +202,7 @@ class SecurityComponent extends Component
     /**
      * Check debug status and throw an Exception based on the existing one
      *
-     * @param \Cake\Controller\Exception\SecurityException $exception Additional debug info describing the cause
+     * @param \Cake\Controller\Exception\SecurityException|null $exception Additional debug info describing the cause
      * @throws \Cake\Network\Exception\BadRequestException
      * @return void
      */

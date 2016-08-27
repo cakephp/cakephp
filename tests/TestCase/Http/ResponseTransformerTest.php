@@ -281,9 +281,51 @@ class ResponseTransformerTest extends TestCase
     public function testToPsrContentType()
     {
         $cake = new CakeResponse();
-        $cake->type('js');
+        $cake->type('html');
+        $cake->charset('utf-8');
         $result = ResponseTransformer::toPsr($cake);
-        $this->assertSame('application/javascript', $result->getHeaderLine('Content-Type'));
+        $this->assertSame('text/html; charset=utf-8', $result->getHeaderLine('Content-Type'));
+    }
+
+    /**
+     * Test conversion omitting content-type on 304 and 204 status codes
+     *
+     * @return void
+     */
+    public function testToPsrContentTypeStatusOmission()
+    {
+        $cake = new CakeResponse();
+        $cake->type('html');
+        $cake->statusCode(304);
+        $result = ResponseTransformer::toPsr($cake);
+        $this->assertSame('', $result->getHeaderLine('Content-Type'));
+
+        $cake->statusCode(204);
+        $result = ResponseTransformer::toPsr($cake);
+        $this->assertSame('', $result->getHeaderLine('Content-Type'));
+    }
+
+    /**
+     * Test conversion omitting content-type on 304 and 204 status codes
+     *
+     * @return void
+     */
+    public function testToPsrContentTypeCharsetIsTypeSpecific()
+    {
+        $cake = new CakeResponse();
+        $cake->charset('utf-8');
+
+        $cake->type('text/html');
+        $result = ResponseTransformer::toPsr($cake);
+        $this->assertSame('text/html; charset=utf-8', $result->getHeaderLine('Content-Type'));
+
+        $cake->type('application/octet-stream');
+        $result = ResponseTransformer::toPsr($cake);
+        $this->assertSame('application/octet-stream', $result->getHeaderLine('Content-Type'));
+
+        $cake->type('application/json');
+        $result = ResponseTransformer::toPsr($cake);
+        $this->assertSame('application/json; charset=utf-8', $result->getHeaderLine('Content-Type'));
     }
 
     /**
@@ -302,7 +344,7 @@ class ResponseTransformerTest extends TestCase
         $expected = [
             'X-testing' => ['one', 'two'],
             'Location' => ['http://example.com/testing'],
-            'Content-Type' => ['text/html'],
+            'Content-Type' => ['text/html; charset=UTF-8'],
         ];
         $this->assertSame($expected, $result->getHeaders());
     }
