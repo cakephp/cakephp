@@ -584,9 +584,9 @@ class Request implements ArrayAccess
     {
         if (strpos($name, 'is') === 0) {
             $type = strtolower(substr($name, 2));
-
+            
             array_unshift($params, $type);
-
+            
             return call_user_func_array([$this, 'is'], $params);
         }
         throw new BadMethodCallException(sprintf('Method %s does not exist', $name));
@@ -643,7 +643,7 @@ class Request implements ArrayAccess
 
             return count(array_filter($result)) > 0;
         }
-
+        
         $args = func_get_args();
         array_shift($args);
 
@@ -655,7 +655,7 @@ class Request implements ArrayAccess
         if ($args) {
             return $this->_is($type, $args);
         }
-
+        
         if (!isset($this->_detectorCache[$type])) {
             $this->_detectorCache[$type] = $this->_is($type, $args);
         }
@@ -1165,15 +1165,11 @@ class Request implements ArrayAccess
      * Provides a read accessor for `$this->query`. Allows you
      * to use a syntax similar to `CakeSession` for reading URL query data.
      *
-     * @param string|null $name Query string variable name or null to read all.
-     * @return string|array|null The value being read
+     * @param string $name Query string variable name
+     * @return mixed The value being read
      */
-    public function query($name = null)
+    public function query($name)
     {
-        if ($name === null) {
-            return $this->query;
-        }
-
         return Hash::get($this->query, $name);
     }
 
