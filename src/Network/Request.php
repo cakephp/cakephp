@@ -1195,6 +1195,9 @@ class Request implements ArrayAccess
      * $request->data('Post.title', 'New post!');
      * ```
      *
+     * As of 3.4.0, the setter mode of this method is *deprecated*.
+     * Use `withData` instead.
+     *
      * You can write to any value, even paths/keys that do not exist, and the arrays
      * will be created for you.
      *
@@ -1218,6 +1221,9 @@ class Request implements ArrayAccess
 
     /**
      * Safely access the values in $this->params.
+     *
+     * As of 3.4.0, the setter mode of this method is *deprecated*.
+     * Use `withParam` instead.
      *
      * @param string $name The name of the parameter to get.
      * @return mixed|$this The value of the provided parameter. Will
@@ -1376,6 +1382,42 @@ class Request implements ArrayAccess
     public function setInput($input)
     {
         $this->_input = $input;
+    }
+
+    /**
+     * Update the request with a new request data element.
+     *
+     * Returns an updated request object. This method returns
+     * a *new* request object and does not mutate the request in-place.
+     *
+     * @param string $name The dot separated path to insert $value at.
+     * @param mixed $value The value to insert into the request data.
+     * @return static
+     */
+    public function withData($name, $value)
+    {
+        $copy = clone $this;
+        $copy->data = Hash::insert($copy->data, $name, $value);
+
+        return $copy;
+    }
+
+    /**
+     * Update the request with a new routing parameter
+     *
+     * Returns an updated request object. This method returns
+     * a *new* request object and does not mutate the request in-place.
+     *
+     * @param string $name The dot separated path to insert $value at.
+     * @param mixed $value The value to insert into the the request parameters.
+     * @return static
+     */
+    public function withParam($name, $value)
+    {
+        $copy = clone $this;
+        $copy->params = Hash::insert($copy->params, $name, $value);
+
+        return $copy;
     }
 
     /**
