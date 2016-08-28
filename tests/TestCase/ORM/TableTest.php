@@ -6043,7 +6043,7 @@ class TableTest extends TestCase
         $entity->clean();
 
         $this->assertEmpty($entity->errors());
-		$this->assertFalse($entity->dirty());
+        $this->assertFalse($entity->dirty());
         $this->assertEquals([], $entity->invalid());
         $this->assertSame($entity->getOriginal('title'), 'alex');
     }
