@@ -1852,6 +1852,32 @@ class HtmlHelperTest extends TestCase
     }
 
     /**
+     * testMagicCall method.
+     *
+     * It tests the `__call()` method.
+     *
+     * @return void
+     */
+    public function testMagicCall()
+    {
+        // `HtmlHelper::h3()` method should not exist, otherwise the `__call()`
+        // method will not be called
+        $this->assertFalse(method_exists($this->Html, 'h3'));
+        
+        $result = $this->Html->h3();
+        $expected = $this->Html->tag('h3');
+        $this->assertEquals($expected, $result);
+        
+        $result = $this->Html->h3('text');
+        $expected = $this->Html->tag('h3', 'text');
+        $this->assertEquals($expected, $result);
+        
+        $result = $this->Html->h3('<text>', ['class' => 'class-name']);
+        $expected = $this->Html->tag('h3', '<text>', ['class' => 'class-name']);
+        $this->assertEquals($expected, $result);
+    }
+    
+    /**
      * testTag method
      *
      * @return void

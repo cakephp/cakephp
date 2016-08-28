@@ -143,6 +143,28 @@ class HtmlHelper extends Helper
         parent::__construct($View, $config);
         $this->response = $this->_View->response ?: new Response();
     }
+    
+    /**
+     * Missing method handler.
+     *
+     * If you pass no more than two parameters, it tries to generate a html
+     *   tag with the name of the method and works as alias of `tag()`.
+     * @param string $method Method to invoke
+     * @param array $params Params for the method
+     * @return string|void
+     */
+    public function __call($method, $params)
+    {
+        if (count($params) <= 2) {
+            return self::tag(
+                $method,
+                empty($params[0]) ? null : $params[0],
+                empty($params[1]) ? [] : $params[1]
+            );
+        }
+
+        parent::__call($method, $params);
+    }
 
     /**
      * Adds a link to the breadcrumbs array.
