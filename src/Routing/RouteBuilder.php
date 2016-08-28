@@ -197,6 +197,17 @@ class RouteBuilder
     }
 
     /**
+     * Checks if there is already a route with a given name.
+     *
+     * @param string $name Name.
+     * @return bool
+     */
+    public function nameExists($name)
+    {
+        return array_key_exists($name, $this->_collection->named());
+    }
+
+    /**
      * Get/set the name prefix for this scope.
      *
      * Modifying the name prefix will only change the prefix
