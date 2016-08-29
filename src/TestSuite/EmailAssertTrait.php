@@ -33,6 +33,8 @@ trait EmailAssertTrait
     protected $_email;
 
     /**
+     * Sends email using the test email instance.
+     *
      * @param array|string|null $content The email's content to send.
      * @return void
      */
@@ -42,6 +44,8 @@ trait EmailAssertTrait
     }
 
     /**
+     * Creates an email instance overriding its transport for testing purposes.
+     *
      * @param bool $new Tells if new instance should forcebly be created.
      * @return \Cake\Mailer\Email
      */
@@ -56,6 +60,8 @@ trait EmailAssertTrait
     }
 
     /**
+     * Generates mock for given mailer class.
+     *
      * @param string $className The mailer's FQCN.
      * @param array $methods The methods to mock on the mailer.
      * @return \Cake\Mailer\Mailer|\PHPUnit_Framework_MockObject_MockObject
@@ -82,8 +88,10 @@ trait EmailAssertTrait
     }
 
     /**
+     * Asserts email content (both text and HTML) contains `$needle`.
+     *
      * @param string $needle Text to look for.
-     * @param string $message The failure message to define.
+     * @param string|null $message The failure message to define.
      * @return void
      */
     public function assertEmailMessageContains($needle, $message = null)
@@ -93,8 +101,10 @@ trait EmailAssertTrait
     }
 
     /**
+     * Asserts HTML email content contains `$needle`.
+     *
      * @param string $needle Text to look for.
-     * @param string $message The failure message to define.
+     * @param string|null $message The failure message to define.
      * @return void
      */
     public function assertEmailHtmlMessageContains($needle, $message = null)
@@ -104,8 +114,10 @@ trait EmailAssertTrait
     }
 
     /**
+     * Asserts text email content contains `$needle`.
+     *
      * @param string $needle Text to look for.
-     * @param string $message The failure message to define.
+     * @param string|null $message The failure message to define.
      * @return void
      */
     public function assertEmailTextMessageContains($needle, $message = null)
@@ -115,8 +127,10 @@ trait EmailAssertTrait
     }
 
     /**
+     * Asserts email's subject contains `$expected`.
+     *
      * @param string $expected Email's subject.
-     * @param string $message The failure message to define.
+     * @param string|null $message The failure message to define.
      * @return void
      */
     public function assertEmailSubject($expected, $message = null)
@@ -126,9 +140,11 @@ trait EmailAssertTrait
     }
 
     /**
+     * Asserts email's sender email address and optionally name.
+     *
      * @param string $email Sender's email address.
-     * @param string $name Sender's name.
-     * @param string $message The failure message to define.
+     * @param string|null $name Sender's name.
+     * @param string|null $message The failure message to define.
      * @return void
      */
     public function assertEmailFrom($email, $name = null, $message = null)
@@ -143,9 +159,11 @@ trait EmailAssertTrait
     }
 
     /**
-     * @param string $email Sender's email address.
-     * @param string $name Sender's name.
-     * @param string $message The failure message to define.
+     * Asserts email is CC'd to only one email address (and optionally name).
+     *
+     * @param string $email CC'd email address.
+     * @param string|null $name CC'd person name.
+     * @param string|null $message The failure message to define.
      * @return void
      */
     public function assertEmailCc($email, $name = null, $message = null)
@@ -160,9 +178,12 @@ trait EmailAssertTrait
     }
 
     /**
-     * @param string $email Sender's email address.
-     * @param string $name Sender's name.
-     * @param string $message The failure message to define.
+     * Asserts email CC'd addresses contain given email address (and
+     * optionally name).
+     *
+     * @param string $email CC'd email address.
+     * @param string|null $name CC'd person name.
+     * @param string|null $message The failure message to define.
      * @return void
      */
     public function assertEmailCcContains($email, $name = null, $message = null)
@@ -175,9 +196,11 @@ trait EmailAssertTrait
     }
 
     /**
-     * @param string $email Sender's email address.
-     * @param string $name Sender's name.
-     * @param string $message The failure message to define.
+     * Asserts email is BCC'd to only one email address (and optionally name).
+     *
+     * @param string $email BCC'd email address.
+     * @param string|null $name BCC'd person name.
+     * @param string|null $message The failure message to define.
      * @return void
      */
     public function assertEmailBcc($email, $name = null, $message = null)
@@ -192,9 +215,12 @@ trait EmailAssertTrait
     }
 
     /**
-     * @param string $email Sender's email address.
-     * @param string $name Sender's name.
-     * @param string $message The failure message to define.
+     * Asserts email BCC'd addresses contain given email address (and
+     * optionally name).
+     *
+     * @param string $email BCC'd email address.
+     * @param string|null $name BCC'd person name.
+     * @param string|null $message The failure message to define.
      * @return void
      */
     public function assertEmailBccContains($email, $name = null, $message = null)
@@ -207,9 +233,12 @@ trait EmailAssertTrait
     }
 
     /**
-     * @param string $email Sender's email address.
-     * @param string $name Sender's name.
-     * @param string $message The failure message to define.
+     * Asserts email is sent to only the given recipient's address (and
+     * optionally name).
+     *
+     * @param string $email Recipient's email address.
+     * @param string|null $name Recipient's name.
+     * @param string|null $message The failure message to define.
      * @return void
      */
     public function assertEmailTo($email, $name = null, $message = null)
@@ -224,9 +253,12 @@ trait EmailAssertTrait
     }
 
     /**
-     * @param string $email Sender's email address.
-     * @param string $name Sender's name.
-     * @param string $message The failure message to define.
+     * Asserts email recipients' list contains given email address (and
+     * optionally name).
+     *
+     * @param string $email Recipient's email address.
+     * @param string|null $name Recipient's name.
+     * @param string|null $message The failure message to define.
      * @return void
      */
     public function assertEmailToContains($email, $name = null, $message = null)
@@ -239,9 +271,12 @@ trait EmailAssertTrait
     }
 
     /**
+     * Asserts the email attachments contain the given filename (and optionally
+     * file info).
+     *
      * @param string $filename Expected attachment's filename.
-     * @param array $file Expected attachment's file info.
-     * @param string $message The failure message to define.
+     * @param array|null $file Expected attachment's file info.
+     * @param string|null $message The failure message to define.
      * @return void
      */
     public function assertEmailAttachmentsContains($filename, array $file = null, $message = null)
