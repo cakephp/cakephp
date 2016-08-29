@@ -98,7 +98,7 @@ class CakeFixtureManager {
 /**
  * Parse the fixture path included in test cases, to get the fixture class name, and the
  * real fixture path including sub-directories
- * 
+ *
  * @param string $fixturePath the fixture path to parse
  * @return array containing fixture class name and optional additional path
  */
@@ -218,7 +218,7 @@ class CakeFixtureManager {
 		if (empty($test->fixtures)) {
 			return;
 		}
-		$fixtures = $test->fixtures;
+		$fixtures = array_unique($test->fixtures);
 		if (empty($fixtures) || !$test->autoFixtures) {
 			return;
 		}
@@ -229,7 +229,9 @@ class CakeFixtureManager {
 				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
 				$db->begin();
 				$this->_setupTable($fixture, $db, $test->dropTables);
-				$fixture->truncate($db);
+				if (!$test->dropTables) {
+					$fixture->truncate($db);
+				}
 				$fixture->insert($db);
 				$db->commit();
 			}
@@ -274,7 +276,9 @@ class CakeFixtureManager {
 				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
 			}
 			$this->_setupTable($fixture, $db, $dropTables);
-			$fixture->truncate($db);
+			if (!$dropTables) {
+				$fixture->truncate($db);
+			}
 			$fixture->insert($db);
 		} else {
 			throw new UnexpectedValueException(__d('cake_dev', 'Referenced fixture class %s not found', $name));
