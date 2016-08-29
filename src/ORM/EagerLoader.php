@@ -200,12 +200,14 @@ class EagerLoader
         if ($assoc === null) {
             return $this->_matching->contain();
         }
+        if (!isset($options['joinType'])) {
+            $options['joinType'] = 'INNER';
+        }
 
         $assocs = explode('.', $assoc);
         $last = array_pop($assocs);
         $containments = [];
         $pointer =& $containments;
-        $options += ['joinType' => 'INNER'];
         $opts = ['matching' => true] + $options;
         unset($opts['negateMatch']);
 

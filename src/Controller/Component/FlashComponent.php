@@ -88,12 +88,14 @@ class FlashComponent extends Component
         $options += $this->config();
 
         if ($message instanceof Exception) {
-            $options['params'] += ['code' => $message->getCode()];
+            if (!isset($options['params']['code'])) {
+                $options['params']['code'] = $message->getCode();
+            }
             $message = $message->getMessage();
         }
 
-        if (isset($options['escape'])) {
-            $options['params'] += ['escape' => $options['escape']];
+        if (isset($options['escape']) && !isset($options['params']['escape'])) {
+            $options['params']['escape'] = $options['escape'];
         }
 
         list($plugin, $element) = pluginSplit($options['element']);

@@ -79,7 +79,9 @@ class Marshaller
         }
 
         // Map associations
-        $options += ['associated' => []];
+        if (!isset($options['associated'])) {
+            $options['associated'] = [];
+        }
         $include = $this->_normalizeAssociations($options['associated']);
         foreach ($include as $key => $nested) {
             if (is_int($key) && is_scalar($nested)) {

@@ -1390,8 +1390,8 @@ class Email implements JsonSerializable, Serializable
     {
         $class = __CLASS__;
 
-        if (is_array($transportConfig)) {
-            $transportConfig += ['transport' => 'default'];
+        if (is_array($transportConfig) && !isset($transportConfig['transport'])) {
+            $transportConfig['transport'] = 'default';
         }
         $instance = new $class($transportConfig);
         if ($to !== null) {
