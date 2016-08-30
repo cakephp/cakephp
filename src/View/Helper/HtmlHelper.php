@@ -348,7 +348,7 @@ class HtmlHelper extends Helper
         /* A "simple phishing" vulnerability
          * Consider adding a configuration option to disable?
          */ https://dev.to/ben/the-targetblank-vulnerability-by-example
-        if (isset($options['target'])){
+        if (isset($options['target'])) {
             $options['rel'] = 'noopener noreferrer';
         }
         
