@@ -47,7 +47,7 @@ class RoutingFilter extends DispatcherFilter
      */
     public function beforeDispatch(Event $event)
     {
-        $request = $event->data['request'];
+        $request = $event->data('request');
         if (Router::getRequest(true) !== $request) {
             Router::setRequestInfo($request);
         }
@@ -57,9 +57,10 @@ class RoutingFilter extends DispatcherFilter
                 $params = Router::parse($request->url, $request->method());
                 $request->addParams($params);
             }
+            return null;
         } catch (RedirectException $e) {
             $event->stopPropagation();
-            $response = $event->data['response'];
+            $response = $event->data('response');
             $response->statusCode($e->getCode());
             $response->header('Location', $e->getMessage());
 

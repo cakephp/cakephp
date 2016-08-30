@@ -24,7 +24,7 @@ namespace Cake\Event;
  * @property mixed $result Property used to retain the result value of the event listeners
  * @property array $data Custom data for the method that receives the event
  */
-class Event implements EventInterface
+class Event
 {
 
     /**

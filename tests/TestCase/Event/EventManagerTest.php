@@ -702,7 +702,7 @@ class EventManagerTest extends TestCase
         $manager = new EventManager();
         $event = new Event('my_event', $manager);
         $manager->dispatch($event);
-        $this->assertEquals('ok', $event->data['callback']);
+        $this->assertEquals('ok', $event->data('callback'));
     }
 
     /**
