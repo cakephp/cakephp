@@ -93,7 +93,7 @@ class EventFiredWith extends PHPUnit_Framework_Constraint
             return false;
         }
 
-        return $event->data[$this->_dataKey] === $this->_dataValue;
+        return $event->data($this->_dataKey) === $this->_dataValue;
     }
 
     /**
