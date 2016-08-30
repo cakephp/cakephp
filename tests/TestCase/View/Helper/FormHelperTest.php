@@ -8227,7 +8227,6 @@ class FormHelperTest extends TestCase
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
 
-
         $this->Form->create($article);
         $this->Form->setValueSources(['context']);
         $result = $this->Form->input('id');
@@ -8236,24 +8235,13 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-
         $this->Form->request->query['id'] = '5';
         $this->Form->setValueSources(['query']);
-        $this->Form->create($article);
         $result = $this->Form->input('id');
         $expected = [
             ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '5']],
         ];
         $this->assertHtml($expected, $result);
-
-        $this->Form->create($article);
-        $this->Form->setValueSources(['query']);
-        $result = $this->Form->input('id');
-        $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '5']],
-        ];
-        $this->assertHtml($expected, $result);
-
 
         $this->Form->request->query['id'] = '5a';
         $this->Form->request->data['id'] = '5b';
@@ -8274,23 +8262,10 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['id'] = '6';
-        $this->Form->request->query['id'] = '7';
-        $this->Form->create($article);
-        $this->Form->setValueSources(['data']);
-        $result = $this->Form->input('id');
-        $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '6']],
-        ];
-        $this->assertHtml($expected, $result);
-
-        $this->Form->request->data['id'] = '8';
-        $this->Form->request->query['id'] = '9';
-        $this->Form->create($article);
         $this->Form->setValueSources(['query']);
         $result = $this->Form->input('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '9']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '5a']],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -8307,24 +8282,9 @@ class FormHelperTest extends TestCase
         $articles = TableRegistry::get('Articles');
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
-
         $this->Form->request->query['id'] = '9';
 
         $this->Form->create($article);
-        $this->Form->setValueSources(['context']);
-        $result = $this->Form->input('id');
-        $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '3']],
-        ];
-        $this->assertHtml($expected, $result);
-
-        $this->Form->setValueSources(['query']);
-        $result = $this->Form->input('id');
-        $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '9']],
-        ];
-        $this->assertHtml($expected, $result);
-
         $this->Form->setValueSources(['context', 'query']);
         $result = $this->Form->input('id');
         $expected = [
@@ -8345,7 +8305,6 @@ class FormHelperTest extends TestCase
             ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '9']],
         ];
         $this->assertHtml($expected, $result);
-
 
         $this->Form->request->data['id'] = '8';
         $this->Form->request->query['id'] = '9';
@@ -8368,8 +8327,6 @@ class FormHelperTest extends TestCase
         $articles = TableRegistry::get('Articles');
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
-
-
         $this->Form->request->data['id'] = '4';
         $this->Form->request->query['id'] = '5';
 
@@ -8382,43 +8339,36 @@ class FormHelperTest extends TestCase
         $result = $this->Form->getSourceValue('id');
         $this->assertEquals('5', $result);
 
-
-        $this->Form->request->data['id'] = '6';
-        $this->Form->request->query['id'] = '7';
-
         $this->Form->setValueSources(['context']);
         $this->Form->create($article, ['valueSources' => 'query']);
         $result = $this->Form->input('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '7']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '5']],
         ];
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals('7', $result);
+        $this->assertEquals('5', $result);
 
         $this->Form->setValueSources(['query']);
         $this->Form->create($article, ['valueSources' => 'data']);
         $result = $this->Form->input('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '6']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '4']],
         ];
         $this->assertHtml($expected, $result);
+
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals('6', $result);
-
-
-        $this->Form->request->data['id'] = '8';
-        $this->Form->request->query['id'] = '9';
+        $this->assertEquals('4', $result);
 
         $this->Form->setValueSources(['query']);
         $this->Form->create($article, ['valueSources' => ['context', 'data']]);
         $result = $this->Form->input('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '8']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '4']],
         ];
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals('8', $result);
+        $this->assertEquals('4', $result);
     }
 
     /**
@@ -8433,11 +8383,11 @@ class FormHelperTest extends TestCase
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
 
-
         $this->Form->request->data['id'] = '10';
         $this->Form->request->query['id'] = '11';
 
-        $this->Form->setValueSources(['context'])->create($article, ['valueSources' => ['query', 'data']]);
+        $this->Form->setValueSources(['context'])
+            ->create($article, ['valueSources' => ['query', 'data']]);
         $result = $this->Form->input('id');
         $expected = [
             ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '11']],
@@ -8447,7 +8397,8 @@ class FormHelperTest extends TestCase
         $this->assertEquals('11', $result);
 
         unset($this->Form->request->query['id']);
-        $this->Form->setValueSources(['context'])->create($article, ['valueSources' => ['query', 'data']]);
+        $this->Form->setValueSources(['context'])
+            ->create($article, ['valueSources' => ['query', 'data']]);
         $result = $this->Form->input('id');
         $expected = [
             ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '10']],
@@ -8467,65 +8418,20 @@ class FormHelperTest extends TestCase
         $expected = ['context'];
         $result = $this->Form->getValueSources();
         $this->assertEquals($expected, $result);
-        
+
         $expected = ['query', 'context', 'data'];
         $this->Form->setValueSources(['query', 'context', 'data']);
 
         $result = $this->Form->getValueSources();
         $this->assertEquals($expected, $result);
-        
+
         $this->Form->create();
         $result = $this->Form->getValueSources();
         $this->assertEquals($expected, $result);
 
         $this->Form->end();
-        $expected = ['context'];
         $result = $this->Form->getValueSources();
-        $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * Test sources values schema defaults handling
-     *
-     * @return void
-     */
-    public function testFormValueSourcesSchemaDefaults()
-    {
-        $Articles = TableRegistry::get('Articles');
-        $entity = $Articles->newEntity();
-        $this->Form->create($entity);
-        $result = $this->Form->getSourceValue('title');
-        $expected = '';
-        $this->assertEquals($expected, $result);
-
-        $Articles = TableRegistry::get('Articles');
-        $title = $Articles->schema()->column('title');
-        $Articles->schema()->addColumn(
-            'title',
-            ['default' => 'default title'] + $title
-        );
-        $entity = $Articles->newEntity();
-        $this->Form->create($entity);
-        $result = $this->Form->getSourceValue('title');
-        $expected = 'default title';
-        $this->assertEquals($expected, $result);
-
-        $Articles = TableRegistry::get('Articles');
-        $title = $Articles->schema()->column('title');
-        $Articles->schema()->addColumn(
-            'title',
-            ['default' => 'default title'] + $title
-        );
-        $entity = $Articles->newEntity();
-        $this->Form->create($entity);
-        $this->Form->setValueSources(['query']);
-        $result = $this->Form->getSourceValue('title');
-        $expected = '';
-        $this->assertEquals($expected, $result);
-        $this->Form->setValueSources(['context']);
-        $result = $this->Form->getSourceValue('title');
-        $expected = 'default title';
-        $this->assertEquals($expected, $result);
+        $this->assertEquals(['context'], $result);
     }
 
     /**
@@ -8557,7 +8463,6 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
     }
 
-
     /**
      * Test sources values schema defaults handling
      *
@@ -8567,18 +8472,16 @@ class FormHelperTest extends TestCase
     {
         $this->Form->request->query['category'] = 'sesame-cookies';
 
-        $Articles = TableRegistry::get('Articles');
-        $entity = $Articles->newEntity();
+        $articles = TableRegistry::get('Articles');
+        $entity = $articles->newEntity();
         $this->Form->create($entity);
 
         $this->Form->setValueSources(['query', 'context']);
         $result = $this->Form->getSourceValue('category');
-        $expected = 'sesame-cookies';
-        $this->assertEquals($expected, $result);
+        $this->assertEquals('sesame-cookies', $result);
 
         $this->Form->setValueSources(['context', 'query']);
         $result = $this->Form->getSourceValue('category');
-        $expected = 'sesame-cookies';
-        $this->assertEquals($expected, $result);
+        $this->assertEquals('sesame-cookies', $result);
     }
 }
