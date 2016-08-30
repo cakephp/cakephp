@@ -160,6 +160,14 @@ class Mysql extends Driver
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function newCompiler()
+    {
+        return new MysqlCompiler();
+    }
+
+    /**
      * Returns true if the server supports native JSON columns
      *
      * @return bool

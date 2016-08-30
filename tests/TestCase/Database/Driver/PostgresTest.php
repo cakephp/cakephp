@@ -19,6 +19,8 @@ use \PDO;
 
 /**
  * Tests Postgres driver
+ *
+ * @group Postgres
  */
 class PostgresTest extends TestCase
 {
@@ -149,6 +151,7 @@ class PostgresTest extends TestCase
             ->setMethods(['_connect', 'connection'])
             ->setConstructorArgs([[]])
             ->getMock();
+
         $connection = $this
             ->getMockBuilder('\Cake\Database\Connection')
             ->setMethods(['connect'])
@@ -170,5 +173,37 @@ class PostgresTest extends TestCase
             ->epilog('FOO');
         $query = $translator($query);
         $this->assertEquals('FOO', $query->clause('epilog'));
+    }
+
+    /**
+     * Test update with limit
+     *
+     * @return void
+     */
+    public function testUpdateLimit()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([[]])
+            ->getMock();
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
+
+        $connection
+            ->expects($this->any())
+            ->method('driver')
+            ->will($this->returnValue($driver));
+
+        $query = new \Cake\Database\Query($connection);
+
+        $query->update('articles')
+            ->set(['title' => 'FooBar'])
+            ->where(['published' => true])
+            ->limit(5);
+
+        $this->assertEquals('UPDATE articles SET title = :c0 FROM (SELECT id FROM articles WHERE published = :c1 LIMIT 5) sub WHERE id = sub.ip', $query->sql());
     }
 }

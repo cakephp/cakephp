@@ -16,6 +16,7 @@ namespace Cake\Database\Driver;
 
 use Cake\Database\Dialect\PostgresDialectTrait;
 use Cake\Database\Driver;
+use Cake\Database\PostgresCompiler;
 use PDO;
 
 class Postgres extends Driver
@@ -119,6 +120,14 @@ class Postgres extends Driver
     {
         $this->connect();
         $this->_connection->exec('SET search_path TO ' . $this->_connection->quote($schema));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function newCompiler()
+    {
+        return new PostgresCompiler();
     }
 
     /**

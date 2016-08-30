@@ -15,6 +15,9 @@
 namespace Cake\Database\Dialect;
 
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\OrderByExpression;
+use Cake\Database\Expression\UnaryExpression;
+use Cake\Database\Query;
 use Cake\Database\Schema\PostgresSchema;
 use Cake\Database\SqlDialectTrait;
 
@@ -59,6 +62,69 @@ trait PostgresDialectTrait
     protected function _transformDistinct($query)
     {
         return $query;
+    }
+
+    /**
+     * Apply translation steps to update queries.
+     *
+     * @param \Cake\Database\Query $query The query to translate
+     * @return \Cake\Database\Query The modified query
+     */
+    protected function _updateQueryTranslator($query)
+    {
+        $limit = $query->clause('limit');
+
+        if ($limit) {
+            $from = (new Query($query->connection()))
+                ->select('*')
+                ->from($query->clause('update'))
+                ->where($query->clause('where'))
+                ->limit($limit)
+                ->epilog('FOR UPDATE');
+
+            $outer = clone $query;
+            $outer
+                ->from(['__cake_paging__' => $from], true)
+                ->limit(null);
+
+            return $outer;
+        }
+
+        return $query;
+    }
+
+    /**
+     * Generate a paging subquery.
+     *
+     * @param \Cake\Database\Query $original The query to wrap in a subquery.
+     * @param int $limit The number of rows to fetch.
+     * @param int $offset The number of rows to offset.
+     * @return \Cake\Database\Query Modified query object.
+     */
+    protected function _limitSubquery($original, $limit, $offset) {
+        $field = '_cake_paging_._cake_page_rownum_';
+        $order = $original->clause('order') ?: new OrderByExpression('(SELECT NULL)');
+
+        $query = clone $original;
+        $query->select([
+            '_cake_page_rownum_' => new UnaryExpression('ROW_NUMBER() OVER', $order)
+        ])->limit(null)
+            ->offset(null)
+            ->order([], true);
+
+        $outer = new Query($query->connection());
+        $outer->select('*')
+            ->from(['_cake_paging_' => $query]);
+
+        if ($offset) {
+            $outer->where(["$field > " . (int)$offset]);
+        }
+        if ($limit) {
+            $value = (int)$offset + (int)$limit;
+            $outer->where(["$field <= $value"]);
+        }
+
+        return $outer;
     }
 
     /**
