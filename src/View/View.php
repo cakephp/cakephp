@@ -967,8 +967,8 @@ class View implements EventDispatcherInterface
         $content = $this->_evaluate($viewFile, $data);
 
         $afterEvent = $this->dispatchEvent('View.afterRenderFile', [$viewFile, $content]);
-        if (isset($afterEvent->result)) {
-            $content = $afterEvent->result;
+        if ($afterEvent->result() !== null) {
+            $content = $afterEvent->result();
         }
 
         if (isset($this->_parents[$viewFile])) {

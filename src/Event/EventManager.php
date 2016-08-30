@@ -393,7 +393,7 @@ class EventManager
                 $event->stopPropagation();
             }
             if ($result !== null) {
-                $event->result = $result;
+                $event->setResult($result);
             }
         }
 

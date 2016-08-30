@@ -90,7 +90,7 @@ class EventTest extends TestCase
     public function testEventDirectPropertyAccess()
     {
         $event = new Event('fake.event', $this);
-        $this->assertEquals($this, $event->subject);
-        $this->assertEquals('fake.event', $event->name);
+        $this->assertEquals($this, $event->subject());
+        $this->assertEquals('fake.event', $event->name());
     }
 }
