@@ -684,10 +684,12 @@ class EventManagerTest extends TestCase
 
     /**
      * test callback
+     *
+     * @param Event $event
      */
-    public function onMyEvent($event)
+    public function onMyEvent(Event $event)
     {
-        $event->data['callback'] = 'ok';
+        $event->setData('callback', 'ok');
     }
 
     /**
@@ -698,7 +700,7 @@ class EventManagerTest extends TestCase
     public function testDispatchLocalHandledByGlobal()
     {
         $callback = [$this, 'onMyEvent'];
-        EventManager::instance()->attach($callback, 'my_event');
+        EventManager::instance()->on('my_event', $callback);
         $manager = new EventManager();
         $event = new Event('my_event', $manager);
         $manager->dispatch($event);
@@ -715,10 +717,10 @@ class EventManagerTest extends TestCase
     public function testDispatchWithGlobalAndLocalEvents()
     {
         $listener = new CustomTestEventListenerInterface();
-        EventManager::instance()->attach($listener);
+        EventManager::instance()->on($listener);
         $listener2 = new EventTestListener();
         $manager = new EventManager();
-        $manager->attach([$listener2, 'listenerFunction'], 'fake.event');
+        $manager->on('fake.event', [$listener2, 'listenerFunction']);
 
         $manager->dispatch(new Event('fake.event', $this));
         $this->assertEquals(['listenerFunction'], $listener->callList);

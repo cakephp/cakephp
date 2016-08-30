@@ -78,6 +78,9 @@ class EventFiredWith extends PHPUnit_Framework_Constraint
             return false;
         }
 
+        /**
+         * @var Event[] $events
+         */
         $events = $eventGroup[$other];
 
         if (count($events) > 1) {
@@ -86,7 +89,7 @@ class EventFiredWith extends PHPUnit_Framework_Constraint
 
         $event = $events[0];
 
-        if (array_key_exists($this->_dataKey, $event->data) === false) {
+        if (array_key_exists($this->_dataKey, $event->data()) === false) {
             return false;
         }
 

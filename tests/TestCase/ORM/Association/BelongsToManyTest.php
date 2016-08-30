@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\ConnectionManager;
+use Cake\Event\Event;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
