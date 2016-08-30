@@ -344,12 +344,14 @@ class HtmlHelper extends Helper
             $title = h(urldecode($title));
             $escapeTitle = false;
         }
+        
         /* A "simple phishing" vulnerability
          * Consider adding a configuration option to disable?
          */ https://dev.to/ben/the-targetblank-vulnerability-by-example
         if (isset($options['target'])){
             $options['rel'] = 'noopener noreferrer';
         }
+        
         if (isset($options['escapeTitle'])) {
             $escapeTitle = $options['escapeTitle'];
             unset($options['escapeTitle']);
