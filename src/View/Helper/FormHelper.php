@@ -206,11 +206,11 @@ class FormHelper extends Helper
     protected $_lastAction = '';
 
     /**
-     * The values sources to be used to retrieve prefilled input values from.
+     * The sources to be used when retrieving prefilled input values.
      *
      * @var array
      */
-    protected $_valuesSources = ['context'];
+    protected $_valueSources = ['context'];
 
     /**
      * Construct the widgets and binds the default context providers
@@ -338,6 +338,7 @@ class FormHelper extends Helper
      * - `context` Additional options for the context class. For example the EntityContext accepts a 'table'
      *   option that allows you to set the specific Table class the form should be based on.
      * - `idPrefix` Prefix for generated ID attributes.
+     * - `valueSources` The sources that values should be read from. See FormHelper::setValueSources()
      *
      * @param mixed $model The context for which the form is being defined. Can
      *   be an ORM entity, ORM resultset, or an array of meta data. You can use false or null
@@ -366,15 +367,17 @@ class FormHelper extends Helper
             'encoding' => strtolower(Configure::read('App.encoding')),
             'templates' => null,
             'idPrefix' => null,
-            'valuesSources' => $this->getValuesSources(),
+            'valueSources' => null,
         ];
 
         if (isset($options['action'])) {
             trigger_error('Using key `action` is deprecated, use `url` directly instead.', E_USER_DEPRECATED);
         }
 
-        $this->setValuesSources($options['valuesSources']);
-        unset($options['valuesSources']);
+        if (isset($options['valueSources'])) {
+            $this->setValueSources($options['valueSources']);
+            unset($options['valueSources']);
+        }
 
         if ($options['idPrefix'] !== null) {
             $this->_idPrefix = $options['idPrefix'];
@@ -557,7 +560,7 @@ class FormHelper extends Helper
         $this->templater()->pop();
         $this->requestType = null;
         $this->_context = null;
-        $this->_valuesSources = ['context'];
+        $this->_valueSources = ['context'];
         $this->_idPrefix = $this->config('idPrefix');
 
         return $out;
@@ -2701,9 +2704,9 @@ class FormHelper extends Helper
      *
      * @return array List of value sources.
      */
-    public function getValuesSources()
+    public function getValueSources()
     {
-        return $this->_valuesSources;
+        return $this->_valueSources;
     }
 
     /**
@@ -2715,9 +2718,9 @@ class FormHelper extends Helper
      * @param string|array $sources A string or a list of strings identifying a source.
      * @return $this
      */
-    public function setValuesSources($sources)
+    public function setValueSources($sources)
     {
-        $this->_valuesSources = array_values(array_intersect((array)$sources, ['context', 'data', 'query']));
+        $this->_valueSources = array_values(array_intersect((array)$sources, ['context', 'data', 'query']));
 
         return $this;
     }
@@ -2731,7 +2734,7 @@ class FormHelper extends Helper
      */
     public function getSourceValue($fieldname, $options = [])
     {
-        foreach ($this->getValuesSources() as $valuesSource) {
+        foreach ($this->getValueSources() as $valuesSource) {
             if ($valuesSource === 'context') {
                 $val = $this->_getContext()->val($fieldname, $options);
                 if ($val !== null) {
