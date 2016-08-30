@@ -432,7 +432,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             return $this->_parts['from'];
         }
 
-        if (is_string($tables)) {
+        if (is_string($tables) || $tables instanceof ExpressionInterface) {
             $tables = [$tables];
         }
 
