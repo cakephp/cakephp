@@ -8165,4 +8165,420 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
     }
+
+    /**
+     * Test the basic setters and getters for value sources
+     *
+     * @return void
+     */
+    public function testFormValuesSourcesSettersGetters()
+    {
+        $expected = ['context'];
+        $result = $this->Form->getValuesSources();
+        $this->assertEquals($expected, $result);
+
+        $expected = null;
+        $result = $this->Form->getSourceValue('id');
+        $this->assertEquals($expected, $result);
+
+        $expected = ['query', 'data', 'context'];
+        $this->Form->setValuesSources(['query', 'data', 'invalid', 'context', 'foo']);
+        $result = $this->Form->getValuesSources();
+        $this->assertEquals($expected, $result);
+
+
+        $this->Form->request->data['id'] = '1';
+        $this->Form->request->query['id'] = '2';
+
+        $this->Form->setValuesSources(['context']);
+        $expected = '1';
+        $result = $this->Form->getSourceValue('id');
+        $this->assertEquals($expected, $result);
+
+        $this->Form->setValuesSources('query');
+        $expected = ['query'];
+        $result = $this->Form->getValuesSources();
+        $this->assertEquals($expected, $result);
+
+        $expected = '2';
+        $result = $this->Form->getSourceValue('id');
+        $this->assertEquals($expected, $result);
+
+        $this->Form->setValuesSources(['data']);
+        $expected = '1';
+        $result = $this->Form->getSourceValue('id');
+        $this->assertEquals($expected, $result);
+
+        $this->Form->setValuesSources(['query', 'data']);
+        $expected = '2';
+        $result = $this->Form->getSourceValue('id');
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests the different input rendering values based on sources values switching
+     *
+     * @return void
+     */
+    public function testFormValuesSourcesSingleSwitchRendering()
+    {
+        $this->loadFixtures('Articles');
+        $articles = TableRegistry::get('Articles');
+        $article = new Article();
+        $articles->patchEntity($article, ['id' => '3']);
+
+
+        $this->Form->create($article);
+        $this->Form->setValuesSources(['context']);
+        $result = $this->Form->input('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '3']],
+        ];
+        $this->assertHtml($expected, $result);
+
+
+        $this->Form->request->query['id'] = '5';
+        $this->Form->setValuesSources(['query']);
+        $this->Form->create($article);
+        $result = $this->Form->input('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '5']],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->Form->create($article);
+        $this->Form->setValuesSources(['query']);
+        $result = $this->Form->input('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '5']],
+        ];
+        $this->assertHtml($expected, $result);
+
+
+        $this->Form->request->query['id'] = '5a';
+        $this->Form->request->data['id'] = '5b';
+
+        $this->Form->setValuesSources(['context']);
+        $this->Form->create($article);
+        $result = $this->Form->input('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '5b']],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->Form->setValuesSources(['data']);
+        $this->Form->create($article);
+        $result = $this->Form->input('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '5b']],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->Form->request->data['id'] = '6';
+        $this->Form->request->query['id'] = '7';
+        $this->Form->create($article);
+        $this->Form->setValuesSources(['data']);
+        $result = $this->Form->input('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '6']],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->Form->request->data['id'] = '8';
+        $this->Form->request->query['id'] = '9';
+        $this->Form->create($article);
+        $this->Form->setValuesSources(['query']);
+        $result = $this->Form->input('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '9']],
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Tests the different input rendering values based on sources values switching while supplying
+     * an entity (base context) and multiple sources (such as data, query)
+     *
+     * @return void
+     */
+    public function testFormValuesSourcesListSwitchRendering()
+    {
+        $this->loadFixtures('Articles');
+        $articles = TableRegistry::get('Articles');
+        $article = new Article();
+        $articles->patchEntity($article, ['id' => '3']);
+
+        $this->Form->request->query['id'] = '9';
+
+        $this->Form->create($article);
+        $this->Form->setValuesSources(['context']);
+        $result = $this->Form->input('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '3']],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->Form->setValuesSources(['query']);
+        $result = $this->Form->input('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '9']],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->Form->setValuesSources(['context', 'query']);
+        $result = $this->Form->input('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '3']],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->Form->setValuesSources(['query', 'context']);
+        $result = $this->Form->input('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '9']],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->Form->setValuesSources(['data', 'query', 'context']);
+        $result = $this->Form->input('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '9']],
+        ];
+        $this->assertHtml($expected, $result);
+
+
+        $this->Form->request->data['id'] = '8';
+        $this->Form->request->query['id'] = '9';
+        $this->Form->setValuesSources(['data', 'query', 'context']);
+        $result = $this->Form->input('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '8']],
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test the different form input renderings based on values sources switchings through form options
+     *
+     * @return void
+     */
+    public function testFormValuesSourcesSwitchViaOptionsRendering()
+    {
+        $this->loadFixtures('Articles');
+        $articles = TableRegistry::get('Articles');
+        $article = new Article();
+        $articles->patchEntity($article, ['id' => '3']);
+
+
+        $this->Form->request->data['id'] = '4';
+        $this->Form->request->query['id'] = '5';
+
+        $this->Form->create($article, ['valuesSources' => 'query']);
+        $result = $this->Form->input('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '5']],
+        ];
+        $this->assertHtml($expected, $result);
+        $result = $this->Form->getSourceValue('id');
+        $this->assertEquals('5', $result);
+
+
+        $this->Form->request->data['id'] = '6';
+        $this->Form->request->query['id'] = '7';
+
+        $this->Form->setValuesSources(['context']);
+        $this->Form->create($article, ['valuesSources' => 'query']);
+        $result = $this->Form->input('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '7']],
+        ];
+        $this->assertHtml($expected, $result);
+        $result = $this->Form->getSourceValue('id');
+        $this->assertEquals('7', $result);
+
+        $this->Form->setValuesSources(['query']);
+        $this->Form->create($article, ['valuesSources' => 'data']);
+        $result = $this->Form->input('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '6']],
+        ];
+        $this->assertHtml($expected, $result);
+        $result = $this->Form->getSourceValue('id');
+        $this->assertEquals('6', $result);
+
+
+        $this->Form->request->data['id'] = '8';
+        $this->Form->request->query['id'] = '9';
+
+        $this->Form->setValuesSources(['query']);
+        $this->Form->create($article, ['valuesSources' => ['context', 'data']]);
+        $result = $this->Form->input('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '8']],
+        ];
+        $this->assertHtml($expected, $result);
+        $result = $this->Form->getSourceValue('id');
+        $this->assertEquals('8', $result);
+    }
+
+    /**
+     * Test the different form input renderings based on values sources switchings through form options
+     *
+     * @return void
+     */
+    public function testFormValuesSourcesSwitchViaOptionsAndSetterRendering()
+    {
+        $this->loadFixtures('Articles');
+        $articles = TableRegistry::get('Articles');
+        $article = new Article();
+        $articles->patchEntity($article, ['id' => '3']);
+
+
+        $this->Form->request->data['id'] = '10';
+        $this->Form->request->query['id'] = '11';
+
+        $this->Form->setValuesSources(['context'])->create($article, ['valuesSources' => ['query', 'data']]);
+        $result = $this->Form->input('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '11']],
+        ];
+        $this->assertHtml($expected, $result);
+        $result = $this->Form->getSourceValue('id');
+        $this->assertEquals('11', $result);
+
+        unset($this->Form->request->query['id']);
+        $this->Form->setValuesSources(['context'])->create($article, ['valuesSources' => ['query', 'data']]);
+        $result = $this->Form->input('id');
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '10']],
+        ];
+        $this->assertHtml($expected, $result);
+        $result = $this->Form->getSourceValue('id');
+        $this->assertEquals('10', $result);
+    }
+
+    /**
+     * Test the different form values sources resetting through From::end();
+     *
+     * @return void
+     */
+    public function testFormValuesSourcesResetViaEnd()
+    {
+        $expected = ['context'];
+        $result = $this->Form->getValuesSources();
+        $this->assertEquals($expected, $result);
+        
+        $expected = ['query', 'context', 'data'];
+        $this->Form->setValuesSources(['query', 'context', 'data']);
+
+        $result = $this->Form->getValuesSources();
+        $this->assertEquals($expected, $result);
+        
+        $this->Form->create();
+        $result = $this->Form->getValuesSources();
+        $this->assertEquals($expected, $result);
+
+        $this->Form->end();
+        $expected = ['context'];
+        $result = $this->Form->getValuesSources();
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test sources values schema defaults handling
+     *
+     * @return void
+     */
+    public function testFormValuesSourcesSchemaDefaults()
+    {
+        $Articles = TableRegistry::get('Articles');
+        $entity = $Articles->newEntity();
+        $this->Form->create($entity);
+        $result = $this->Form->getSourceValue('title');
+        $expected = '';
+        $this->assertEquals($expected, $result);
+
+        $Articles = TableRegistry::get('Articles');
+        $title = $Articles->schema()->column('title');
+        $Articles->schema()->addColumn(
+            'title',
+            ['default' => 'default title'] + $title
+        );
+        $entity = $Articles->newEntity();
+        $this->Form->create($entity);
+        $result = $this->Form->getSourceValue('title');
+        $expected = 'default title';
+        $this->assertEquals($expected, $result);
+
+        $Articles = TableRegistry::get('Articles');
+        $title = $Articles->schema()->column('title');
+        $Articles->schema()->addColumn(
+            'title',
+            ['default' => 'default title'] + $title
+        );
+        $entity = $Articles->newEntity();
+        $this->Form->create($entity);
+        $this->Form->setValuesSources(['query']);
+        $result = $this->Form->getSourceValue('title');
+        $expected = '';
+        $this->assertEquals($expected, $result);
+        $this->Form->setValuesSources(['context']);
+        $result = $this->Form->getSourceValue('title');
+        $expected = 'default title';
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test sources values defaults handling
+     *
+     * @return void
+     */
+    public function testFormValuesSourcesDefaults()
+    {
+        $this->Form->request->query['password'] = 'open Sesame';
+        $this->Form->create();
+
+        $result = $this->Form->password('password');
+        $expected = ['input' => ['type' => 'password', 'name' => 'password']];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->password('password', ['default' => 'helloworld']);
+        $expected = ['input' => ['type' => 'password', 'name' => 'password', 'value' => 'helloworld']];
+        $this->assertHtml($expected, $result);
+
+        $this->Form->setValuesSources('query');
+        $result = $this->Form->password('password', ['default' => 'helloworld']);
+        $expected = ['input' => ['type' => 'password', 'name' => 'password', 'value' => 'open Sesame']];
+        $this->assertHtml($expected, $result);
+
+        $this->Form->setValuesSources('data');
+        $result = $this->Form->password('password', ['default' => 'helloworld']);
+        $expected = ['input' => ['type' => 'password', 'name' => 'password', 'value' => 'helloworld']];
+        $this->assertHtml($expected, $result);
+    }
+
+
+    /**
+     * Test sources values schema defaults handling
+     *
+     * @return void
+     */
+    public function testSourcesValueDoesntExistPassThrough()
+    {
+        $this->Form->request->query['category'] = 'sesame-cookies';
+
+        $Articles = TableRegistry::get('Articles');
+        $entity = $Articles->newEntity();
+        $this->Form->create($entity);
+
+        $this->Form->setValuesSources(['query', 'context']);
+        $result = $this->Form->getSourceValue('category');
+        $expected = 'sesame-cookies';
+        $this->assertEquals($expected, $result);
+
+        $this->Form->setValuesSources(['context', 'query']);
+        $result = $this->Form->getSourceValue('category');
+        $expected = 'sesame-cookies';
+        $this->assertEquals($expected, $result);
+    }
 }

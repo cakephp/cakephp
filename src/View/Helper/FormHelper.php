@@ -206,6 +206,13 @@ class FormHelper extends Helper
     protected $_lastAction = '';
 
     /**
+     * The values sources to be used to retrieve prefilled input values from.
+     *
+     * @var array
+     */
+    protected $_valuesSources = ['context'];
+
+    /**
      * Construct the widgets and binds the default context providers
      *
      * @param \Cake\View\View $View The View this helper is being attached to.
@@ -359,11 +366,15 @@ class FormHelper extends Helper
             'encoding' => strtolower(Configure::read('App.encoding')),
             'templates' => null,
             'idPrefix' => null,
+            'valuesSources' => $this->getValuesSources(),
         ];
 
         if (isset($options['action'])) {
             trigger_error('Using key `action` is deprecated, use `url` directly instead.', E_USER_DEPRECATED);
         }
+
+        $this->setValuesSources($options['valuesSources']);
+        unset($options['valuesSources']);
 
         if ($options['idPrefix'] !== null) {
             $this->_idPrefix = $options['idPrefix'];
@@ -472,7 +483,7 @@ class FormHelper extends Helper
 
         $pk = $context->primaryKey();
         if (count($pk)) {
-            $id = $context->val($pk[0]);
+            $id = $this->getSourceValue($pk[0]);
         }
         if (empty($action[0]) && isset($id)) {
             $action[0] = $id;
@@ -523,6 +534,8 @@ class FormHelper extends Helper
      * Closes an HTML form, cleans up values set by FormHelper::create(), and writes hidden
      * input fields where appropriate.
      *
+     * Resets some parts of the state, shared among multiple FormHelper::create() calls, to defaults.
+     *
      * @param array $secureAttributes Secure attributes which will be passed as HTML attributes
      *   into the hidden input elements generated for the Security Component.
      * @return string A closing FORM tag.
@@ -544,6 +557,7 @@ class FormHelper extends Helper
         $this->templater()->pop();
         $this->requestType = null;
         $this->_context = null;
+        $this->_valuesSources = ['context'];
         $this->_idPrefix = $this->config('idPrefix');
 
         return $out;
@@ -2473,7 +2487,7 @@ class FormHelper extends Helper
                 'default' => isset($options['default']) ? $options['default'] : null,
                 'schemaDefault' => isset($options['schemaDefault']) ? $options['schemaDefault'] : true,
             ];
-            $options['val'] = $context->val($field, $valOptions);
+            $options['val'] = $this->getSourceValue($field, $valOptions);
         }
         if (!isset($options['val']) && isset($options['default'])) {
             $options['val'] = $options['default'];
@@ -2678,5 +2692,56 @@ class FormHelper extends Helper
     public function implementedEvents()
     {
         return [];
+    }
+
+    /**
+     * Gets the value sources.
+     *
+     * Returns a list, but at least one item, of valid sources, such as: `'context'`, `'data'` and `'query'`.
+     *
+     * @return array List of value sources.
+     */
+    public function getValuesSources()
+    {
+        return $this->_valuesSources;
+    }
+
+    /**
+     * Sets the value sources.
+     *
+     * Valid values are `'context'`, `'data'` and `'query'`.
+     * You need to supply one valid context or multiple, as a list of strings. Order sets priority.
+     *
+     * @param string|array $sources A string or a list of strings identifying a source.
+     * @return $this
+     */
+    public function setValuesSources($sources)
+    {
+        $this->_valuesSources = array_values(array_intersect((array)$sources, ['context', 'data', 'query']));
+
+        return $this;
+    }
+
+    /**
+     * Gets a single field value from the sources available.
+     *
+     * @param string $fieldname The fieldname to fetch the value for.
+     * @param array|null $options The options containing default values.
+     * @return string|null Field value derived from sources or defaults.
+     */
+    public function getSourceValue($fieldname, $options = [])
+    {
+        foreach ($this->getValuesSources() as $valuesSource) {
+            if ($valuesSource === 'context') {
+                $val = $this->_getContext()->val($fieldname, $options);
+                if ($val !== null) {
+                    return $val;
+                }
+            } elseif ($this->request->{$valuesSource}($fieldname) !== null) {
+                return $this->request->{$valuesSource}($fieldname);
+            }
+        }
+
+        return null;
     }
 }
