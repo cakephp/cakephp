@@ -3049,7 +3049,7 @@ class TableTest extends TestCase
             ->with($this->logicalAnd(
                 $this->attributeEqualTo('_name', 'Model.beforeDelete'),
                 $this->attributeEqualTo(
-                    'data',
+                    '_data',
                     ['entity' => $entity, 'options' => $options]
                 )
             ));
@@ -3059,7 +3059,7 @@ class TableTest extends TestCase
             ->with($this->logicalAnd(
                 $this->attributeEqualTo('_name', 'Model.afterDelete'),
                 $this->attributeEqualTo(
-                    'data',
+                    '_data',
                     ['entity' => $entity, 'options' => $options]
                 )
             ));
@@ -3069,7 +3069,7 @@ class TableTest extends TestCase
             ->with($this->logicalAnd(
                 $this->attributeEqualTo('_name', 'Model.afterDeleteCommit'),
                 $this->attributeEqualTo(
-                    'data',
+                    '_data',
                     ['entity' => $entity, 'options' => $options]
                 )
             ));
