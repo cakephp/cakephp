@@ -454,7 +454,7 @@ class RouteBuilder
      */
     public function connect($route, array $defaults = [], array $options = [])
     {
-        if (!isset($defaults['action'])) {
+        if (!isset($options['action']) && !isset($defaults['action'])) {
             $defaults['action'] = 'index';
         }
 
