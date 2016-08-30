@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Plugin;
+use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -327,9 +328,9 @@ class QueryRegressionTest extends TestCase
         $articles = TableRegistry::get('Articles');
         $articles->belongsTo('Authors');
 
-        $articles->eventManager()->attach(function ($event, $query) {
+        $articles->eventManager()->on('Model.beforeFind', function (Event $event, $query) {
             return $query->contain('Authors');
-        }, 'Model.beforeFind');
+        });
 
         $article = $articles->newEntity();
         $article->title = 'Foo';

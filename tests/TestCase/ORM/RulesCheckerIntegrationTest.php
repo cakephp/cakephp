@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Event\Event;
 use Cake\ORM\Entity;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\TableRegistry;
@@ -689,8 +690,9 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
 
-        $table->eventManager()->attach(
-            function ($event, Entity $entity, \ArrayObject $options, $operation) {
+        $table->eventManager()->on(
+            'Model.beforeRules',
+            function (Event $event, Entity $entity, \ArrayObject $options, $operation) {
                 $this->assertEquals(
                     [
                         'atomic' => true,
@@ -705,9 +707,7 @@ class RulesCheckerIntegrationTest extends TestCase
                 $event->stopPropagation();
 
                 return true;
-            },
-            'Model.beforeRules'
-        );
+            });
 
         $this->assertSame($entity, $table->save($entity));
     }
@@ -729,8 +729,9 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
 
-        $table->eventManager()->attach(
-            function ($event, Entity $entity, \ArrayObject $options, $result, $operation) {
+        $table->eventManager()->on(
+            'Model.afterRules',
+            function (Event $event, Entity $entity, \ArrayObject $options, $result, $operation) {
                 $this->assertEquals(
                     [
                         'atomic' => true,
@@ -746,9 +747,7 @@ class RulesCheckerIntegrationTest extends TestCase
                 $event->stopPropagation();
 
                 return true;
-            },
-            'Model.afterRules'
-        );
+            });
 
         $this->assertSame($entity, $table->save($entity));
     }
@@ -767,9 +766,9 @@ class RulesCheckerIntegrationTest extends TestCase
         ]);
 
         $table = TableRegistry::get('Articles');
-        $table->eventManager()->attach(function ($event, $rules) {
+        $table->eventManager()->on('Model.buildRules', function (Event $event, RulesChecker $rules) {
             $rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
-        }, 'Model.buildRules');
+        });
 
         $this->assertFalse($table->save($entity));
     }
@@ -812,7 +811,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(['author_id']));
 
-        $table->Authors->eventManager()->on('Model.beforeFind', function ($event, $query) {
+        $table->Authors->eventManager()->on('Model.beforeFind', function (Event $event, $query) {
             $query->leftJoin(['a2' => 'authors']);
         });
 
@@ -858,7 +857,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('author_id', 'Authors'));
 
-        $table->Authors->eventManager()->on('Model.beforeFind', function ($event, $query) {
+        $table->Authors->eventManager()->on('Model.beforeFind', function (Event $event, $query) {
             $query->leftJoin(['a2' => 'authors']);
         });
 
@@ -869,7 +868,7 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests that using an array in existsIn() sets the error message correctly
      *
-     * @return
+     * @return void
      */
     public function testExistsInErrorWithArrayField()
     {

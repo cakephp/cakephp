@@ -690,7 +690,7 @@ class BelongsToManyTest extends TestCase
     {
         $articles = TableRegistry::get('Articles');
         $tags = TableRegistry::get('Tags');
-        $tags->eventManager()->on('Model.buildRules', function ($event, $rules) {
+        $tags->eventManager()->on('Model.buildRules', function (Event $event, $rules) {
             $rules->add(function () {
                 return false;
             }, 'rule', ['errorField' => 'name', 'message' => 'Bad data']);

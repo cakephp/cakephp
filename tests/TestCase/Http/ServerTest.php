@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase;
 
+use Cake\Event\Event;
 use Cake\Http\Server;
 use Cake\TestSuite\TestCase;
 use TestApp\Http\BadResponseApplication;
@@ -183,7 +184,7 @@ class ServerTest extends TestCase
         $server = new Server($app);
         $this->called = false;
 
-        $server->eventManager()->on('Server.buildMiddleware', function ($event, $middleware) {
+        $server->eventManager()->on('Server.buildMiddleware', function (Event $event, $middleware) {
             $this->assertInstanceOf('Cake\Http\MiddlewareQueue', $middleware);
             $middleware->add(function ($req, $res, $next) {
                 $this->called = true;
