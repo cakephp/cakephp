@@ -85,7 +85,9 @@ trait SelectableAssociationTrait
 
         $finder = isset($options['finder']) ? $options['finder'] : $this->finder();
         list($finder, $opts) = $this->_extractFinder($finder);
-        $options += ['fields' => []];
+        if (!isset($options['fields'])) {
+            $options['fields'] = [];
+        }
 
         $fetchQuery = $this
             ->find($finder, $opts)
