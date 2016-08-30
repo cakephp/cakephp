@@ -1166,6 +1166,10 @@ class CakeTimeTest extends CakeTestCase {
  * @return void
  */
 	public function testListTimezones() {
+		$this->skipIf(
+			version_compare(PHP_VERSION, '5.4.0', '<='),
+			'This test requires newer libicu which is in php5.4+'
+		);
 		$return = CakeTime::listTimezones();
 		$this->assertTrue(isset($return['Asia']['Asia/Bangkok']));
 		$this->assertEquals('Bangkok', $return['Asia']['Asia/Bangkok']);
