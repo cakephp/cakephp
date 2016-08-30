@@ -78,9 +78,6 @@ class EventFiredWith extends PHPUnit_Framework_Constraint
             return false;
         }
 
-        /**
-         * @var Event[] $events
-         */
         $events = $eventGroup[$other];
 
         if (count($events) > 1) {
