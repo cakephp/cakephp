@@ -98,13 +98,11 @@ class Event
         if ($attribute === 'name' || $attribute === 'subject') {
             return $this->{$attribute}();
         }
-        if ($attribute === 'data')
-        {
+        if ($attribute === 'data') {
             trigger_error('Public read access to data is deprecated, use data()', E_USER_DEPRECATED);
             return $this->_data;
         }
-        if ($attribute === 'result')
-        {
+        if ($attribute === 'result') {
             trigger_error('Public read access to result is deprecated, use result()', E_USER_DEPRECATED);
             return $this->_result;
         }
@@ -118,13 +116,11 @@ class Event
      */
     public function __set($attribute, $value)
     {
-        if($attribute === 'data')
-        {
+        if ($attribute === 'data') {
             trigger_error('Public write access to data is deprecated, use setData()', E_USER_DEPRECATED);
             $this->_data = (array)$value;
         }
-        if ($attribute === 'result')
-        {
+        if ($attribute === 'result') {
             trigger_error('Public write access to result is deprecated, use setResult()', E_USER_DEPRECATED);
             $this->_result = $value;
         }
@@ -212,7 +208,7 @@ class Event
      */
     public function setData($key, $value = null)
     {
-        if(is_array($key)) {
+        if (is_array($key)) {
             $this->_data = $key;
         } else {
             $this->_data[$key] = $value;

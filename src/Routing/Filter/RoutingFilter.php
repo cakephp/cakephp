@@ -57,6 +57,7 @@ class RoutingFilter extends DispatcherFilter
                 $params = Router::parse($request->url, $request->method());
                 $request->addParams($params);
             }
+
             return null;
         } catch (RedirectException $e) {
             $event->stopPropagation();

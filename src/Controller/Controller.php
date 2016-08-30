@@ -502,6 +502,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($event->result() instanceof Response) {
             return $event->result();
         }
+
         return null;
     }
 
@@ -520,6 +521,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($event->result() instanceof Response) {
             return $event->result();
         }
+
         return null;
     }
 

@@ -707,7 +707,8 @@ class RulesCheckerIntegrationTest extends TestCase
                 $event->stopPropagation();
 
                 return true;
-            });
+            }
+        );
 
         $this->assertSame($entity, $table->save($entity));
     }
@@ -747,7 +748,8 @@ class RulesCheckerIntegrationTest extends TestCase
                 $event->stopPropagation();
 
                 return true;
-            });
+            }
+        );
 
         $this->assertSame($entity, $table->save($entity));
     }
