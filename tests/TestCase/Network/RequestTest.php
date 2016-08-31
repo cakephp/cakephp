@@ -2660,6 +2660,63 @@ XML;
     }
 
     /**
+     * Test that withAttribute() can modify the deprecated public properties.
+     *
+     * @return void
+     */
+    public function testWithAttributesCompatibility()
+    {
+        $request = new Request([
+            'params' => [
+                'controller' => 'Articles',
+                'action' => 'index'
+            ],
+            'base' => '/cakeapp',
+            'webroot' => '/cakeapp/'
+        ]);
+
+        $new = $request->withAttribute('base', '/replace')
+            ->withAttribute('webroot', '/replace/')
+            ->withAttribute('params', ['controller' => 'Tags']);
+
+        // Original request should not change.
+        $this->assertSame('/cakeapp', $request->getAttribute('base'));
+        $this->assertSame('/cakeapp/', $request->getAttribute('webroot'));
+        $this->assertSame(
+            ['controller' => 'Articles', 'action' => 'index'],
+            $request->getAttribute('params')
+        );
+
+        $this->assertSame('/replace', $new->getAttribute('base'));
+        $this->assertSame('/replace', $new->base);
+        $this->assertSame('/replace/', $new->getAttribute('webroot'));
+        $this->assertSame('/replace/', $new->webroot);
+
+        $this->assertSame(['controller' => 'Tags'], $new->getAttribute('params'));
+        $this->assertSame(['controller' => 'Tags'], $new->params);
+    }
+
+    /**
+     * Test that getAttribute() can read deprecated public properties.
+     *
+     * @dataProvider emulatedPropertyProvider
+     * @return void
+     */
+    public function testGetAttributesCompatibility($prop)
+    {
+        $request = new Request([
+            'params' => [
+                'controller' => 'Articles',
+                'action' => 'index'
+            ],
+            'base' => '/cakeapp',
+            'webroot' => '/cakeapp/'
+        ]);
+
+        $this->assertSame($request->{$prop}, $request->getAttribute($prop));
+    }
+
+    /**
      * Test getting all attributes.
      *
      * @return void
@@ -2676,7 +2733,16 @@ XML;
         $expected = [
             'key' => 'value',
             'nully' => null,
-            'falsey' => false
+            'falsey' => false,
+            'params' => [
+                'plugin' => null,
+                'controller' => null,
+                'action' => null,
+                '_ext' => null,
+                'pass' => [],
+            ],
+            'webroot' => '',
+            'base' => ''
         ];
         $this->assertEquals($expected, $new->getAttributes());
     }
@@ -2694,6 +2760,33 @@ XML;
 
         $this->assertNotEquals($update, $new, 'Should be different');
         $this->assertNull($update->getAttribute('key'));
+    }
+
+    /**
+     * Test that withoutAttribute() cannot remove deprecated public properties.
+     *
+     * @dataProvider emulatedPropertyProvider
+     * @expectedException InvalidArgumentException
+     * @return void
+     */
+    public function testWithoutAttributesDenyEmulatedProperties($prop)
+    {
+        $request = new Request([]);
+        $request->withoutAttribute($prop);
+    }
+
+    /**
+     * Data provider for emulated property tests.
+     *
+     * @return array
+     */
+    public function emulatedPropertyProvider()
+    {
+        return [
+            ['params'],
+            ['base'],
+            ['webroot']
+        ];
     }
 
     /**

@@ -19,6 +19,7 @@ use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Utility\Hash;
+use InvalidArgumentException;
 
 /**
  * A class that helps wrap Request information and particulars about a single request.
@@ -1437,7 +1438,12 @@ class Request implements ArrayAccess
     public function withAttribute($name, $value)
     {
         $new = clone $this;
-        $new->attributes[$name] = $value;
+        $emulated = ['webroot', 'base', 'params'];
+        if (in_array($name, $emulated, true)) {
+            $new->{$name} = $value;
+        } else {
+            $new->attributes[$name] = $value;
+        }
         return $new;
     }
 
@@ -1447,10 +1453,17 @@ class Request implements ArrayAccess
      * @param string $name The attribute name.
      * @param mixed $value The value of the attribute.
      * @return static
+     * @throws InvalidArgumentException
      */
     public function withoutAttribute($name)
     {
         $new = clone $this;
+        $emulated = ['webroot', 'base', 'params'];
+        if (in_array($name, $emulated, true)) {
+            throw new InvalidArgumentException(
+                "You cannot unset '$name'. It is a required CakePHP attribute."
+            );
+        }
         unset($new->attributes[$name]);
         return $new;
     }
@@ -1464,6 +1477,10 @@ class Request implements ArrayAccess
      */
     public function getAttribute($name, $default = null)
     {
+        $emulated = ['webroot', 'base', 'params'];
+        if (in_array($name, $emulated, true)) {
+            return $this->{$name};
+        }
         if (array_key_exists($name, $this->attributes)) {
             return $this->attributes[$name];
         }
@@ -1473,11 +1490,19 @@ class Request implements ArrayAccess
     /**
      * Get all the attributes in the request.
      *
+     * This will include the params, webroot, and base attributes that CakePHP
+     * provides.
+     *
      * @return array
      */
     public function getAttributes()
     {
-        return $this->attributes;
+        $emulated = [
+            'params' => $this->params,
+            'webroot' => $this->webroot,
+            'base' => $this->base
+        ];
+        return $this->attributes + $emulated;
     }
 
     /**
