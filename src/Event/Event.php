@@ -19,8 +19,8 @@ namespace Cake\Event;
  * payload. The name can be any string that uniquely identifies the event across the application, while the subject
  * represents the object that the event applies to.
  *
- * @property string $name Name of the event
- * @property object $subject The object this event applies to
+ * @property string $name (deprecated) Name of the event
+ * @property object $subject (deprecated) The object this event applies to
  * @property mixed $result (deprecated) Property used to retain the result value of the event listeners
  * @property array $data (deprecated) Custom data for the method that receives the event
  */
@@ -88,6 +88,7 @@ class Event
      *
      * @param string $attribute Attribute name.
      * @return mixed
+     * @deprecated Public properties will be removed.
      */
     public function __get($attribute)
     {
@@ -108,6 +109,7 @@ class Event
      * @param string $attribute Attribute name.
      * @param mixed $value The value to set.
      * @return void
+     * @deprecated Public properties will be removed.
      */
     public function __set($attribute, $value)
     {
