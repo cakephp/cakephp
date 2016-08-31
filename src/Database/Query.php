@@ -422,7 +422,9 @@ class Query implements ExpressionInterface, IteratorAggregate
      * $query->from(['sub' => $countQuery]); // FROM (SELECT ...) sub
      * ```
      *
-     * @param array|\Cake\Database\ExpressionInterface|string $tables tables to be added to the list
+     * @param array|string $tables tables to be added to the list. This argument, can be
+     *   a string, or an associative array of aliases and strings/expression objects. See
+     *   the examples above for the valid call types.
      * @param bool $overwrite whether to reset tables with passed list or not
      * @return $this
      */
