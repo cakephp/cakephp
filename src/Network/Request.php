@@ -1444,6 +1444,7 @@ class Request implements ArrayAccess
         } else {
             $new->attributes[$name] = $value;
         }
+
         return $new;
     }
 
@@ -1451,7 +1452,6 @@ class Request implements ArrayAccess
      * Return an instance without the specified request attribute.
      *
      * @param string $name The attribute name.
-     * @param mixed $value The value of the attribute.
      * @return static
      * @throws InvalidArgumentException
      */
@@ -1465,6 +1465,7 @@ class Request implements ArrayAccess
             );
         }
         unset($new->attributes[$name]);
+
         return $new;
     }
 
@@ -1484,6 +1485,7 @@ class Request implements ArrayAccess
         if (array_key_exists($name, $this->attributes)) {
             return $this->attributes[$name];
         }
+
         return $default;
     }
 
@@ -1502,6 +1504,7 @@ class Request implements ArrayAccess
             'webroot' => $this->webroot,
             'base' => $this->base
         ];
+
         return $this->attributes + $emulated;
     }
 
