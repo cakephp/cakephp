@@ -2639,6 +2639,64 @@ XML;
     }
 
     /**
+     * Test setting attributes.
+     *
+     * @return void
+     */
+    public function testWithAttribute()
+    {
+        $request = new Request([]);
+        $this->assertNull($request->getAttribute('key'));
+        $this->assertSame('default', $request->getAttribute('key', 'default'));
+
+        $new = $request->withAttribute('key', 'value');
+        $this->assertNotEquals($new, $request, 'Should be different');
+        $this->assertNull($request->getAttribute('key'), 'Old instance not modified');
+        $this->assertSame('value', $new->getAttribute('key'));
+
+        $update = $new->withAttribute('key', ['complex']);
+        $this->assertNotEquals($update, $new, 'Should be different');
+        $this->assertSame(['complex'], $update->getAttribute('key'));
+    }
+
+    /**
+     * Test getting all attributes.
+     *
+     * @return void
+     */
+    public function testGetAttributes()
+    {
+        $request = new Request([]);
+        $new = $request->withAttribute('key', 'value')
+            ->withAttribute('nully', null)
+            ->withAttribute('falsey', false);
+
+        $this->assertFalse($new->getAttribute('falsey'));
+        $this->assertNull($new->getAttribute('nully'));
+        $expected = [
+            'key' => 'value',
+            'nully' => null,
+            'falsey' => false
+        ];
+        $this->assertEquals($expected, $new->getAttributes());
+    }
+
+    /**
+     * Test unsetting attributes.
+     *
+     * @return void
+     */
+    public function testWithoutAttribute()
+    {
+        $request = new Request([]);
+        $new = $request->withAttribute('key', 'value');
+        $update = $request->withoutAttribute('key');
+
+        $this->assertNotEquals($update, $new, 'Should be different');
+        $this->assertNull($update->getAttribute('key'));
+    }
+
+    /**
      * loadEnvironment method
      *
      * @param array $env

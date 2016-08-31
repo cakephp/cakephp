@@ -158,6 +158,13 @@ class Request implements ArrayAccess
     protected $_session;
 
     /**
+     * Store the additional attributes attached to the request.
+     *
+     * @var array
+     */
+    protected $attributes = [];
+
+    /**
      * Wrapper method to create a new request from PHP superglobals.
      *
      * Uses the $_GET, $_POST, $_FILES, $_COOKIE, $_SERVER, $_ENV and php://input data to construct
@@ -1418,6 +1425,59 @@ class Request implements ArrayAccess
         $copy->params = Hash::insert($copy->params, $name, $value);
 
         return $copy;
+    }
+
+    /**
+     * Return an instance with the specified request attribute.
+     *
+     * @param string $name The attribute name.
+     * @param mixed $value The value of the attribute.
+     * @return static
+     */
+    public function withAttribute($name, $value)
+    {
+        $new = clone $this;
+        $new->attributes[$name] = $value;
+        return $new;
+    }
+
+    /**
+     * Return an instance without the specified request attribute.
+     *
+     * @param string $name The attribute name.
+     * @param mixed $value The value of the attribute.
+     * @return static
+     */
+    public function withoutAttribute($name)
+    {
+        $new = clone $this;
+        unset($new->attributes[$name]);
+        return $new;
+    }
+
+    /**
+     * Read an attribute from the request, or get the default
+     *
+     * @param string $name The attribute name.
+     * @param mixed $default The default value if the attribute has not been set.
+     * @return static
+     */
+    public function getAttribute($name, $default = null)
+    {
+        if (array_key_exists($name, $this->attributes)) {
+            return $this->attributes[$name];
+        }
+        return $default;
+    }
+
+    /**
+     * Get all the attributes in the request.
+     *
+     * @return array
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
     }
 
     /**
