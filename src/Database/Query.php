@@ -423,8 +423,8 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ```
      *
      * @param array|string $tables tables to be added to the list. This argument, can be
-     *   a string, or an associative array of aliases and strings/expression objects. See
-     *   the examples above for the valid call types.
+     *  passed as an array of strings, array of expression objects, or a single string. See
+     *  the examples above for the valid call types.
      * @param bool $overwrite whether to reset tables with passed list or not
      * @return $this
      */
