@@ -204,6 +204,6 @@ class PostgresTest extends TestCase
             ->where(['published' => true])
             ->limit(5);
 
-        $this->assertEquals('UPDATE articles SET title = :c0 FROM (SELECT id FROM articles WHERE published = :c1 LIMIT 5) sub WHERE id = sub.ip', $query->sql());
+        $this->assertEquals('UPDATE articles SET title = :c0 FROM (SELECT oid FROM articles WHERE published = :c1 LIMIT 5) __cake_update__ WHERE oid = (__cake_update__.oid)', $query->sql());
     }
 }
