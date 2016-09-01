@@ -86,6 +86,7 @@ class Request implements ArrayAccess
      * Base URL path.
      *
      * @var string
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getAttribute('base') instead.
      */
     public $base;
 
@@ -93,6 +94,7 @@ class Request implements ArrayAccess
      * webroot path segment for the request.
      *
      * @var string
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getAttribute('webroot') instead.
      */
     public $webroot = '/';
 
@@ -100,6 +102,7 @@ class Request implements ArrayAccess
      * The full address to the current request
      *
      * @var string
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use here() instead.
      */
     public $here;
 
@@ -1478,7 +1481,7 @@ class Request implements ArrayAccess
      * Read an attribute from the request, or get the default
      *
      * @param string $name The attribute name.
-     * @param mixed $default The default value if the attribute has not been set.
+     * @param mixed|null $default The default value if the attribute has not been set.
      * @return static
      */
     public function getAttribute($name, $default = null)
