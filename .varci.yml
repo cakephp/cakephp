@@ -5,7 +5,7 @@ ruleset:
     label: Defect
     when:
       - action = "opened"
-      - body matches "/\[x\] bug/"
+      - body matches "/\[\s?x\s?\] bug/"
 
   label_enhancements:
     name: "Label enhancements"
@@ -13,7 +13,7 @@ ruleset:
     label: Enhancement
     when:
       - action = "opened"
-      - body matches "/\[x\] enhancement/"
+      - body matches "/\[\s?x\s?\] enhancement/"
 
   label_rfcs:
     name: "Label RFCs"
@@ -21,7 +21,7 @@ ruleset:
     label: RFC
     when:
       - action = "opened"
-      - body matches "/\[x\] feature\-discussion/"
+      - body matches "/\[\s?x\s?\] feature\-discussion/"
 
   remove_invalid:
     name: "Remove invalid tag when issue re-opened"
