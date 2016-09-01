@@ -166,6 +166,13 @@ class Request implements ArrayAccess
     protected $attributes = [];
 
     /**
+     * A list of propertes that emulated by the PSR7 attribute methods.
+     *
+     * @var array
+     */
+    protected $emulatedAttributes = ['webroot', 'base', 'params'];
+
+    /**
      * Wrapper method to create a new request from PHP superglobals.
      *
      * Uses the $_GET, $_POST, $_FILES, $_COOKIE, $_SERVER, $_ENV and php://input data to construct
@@ -1438,8 +1445,7 @@ class Request implements ArrayAccess
     public function withAttribute($name, $value)
     {
         $new = clone $this;
-        $emulated = ['webroot', 'base', 'params'];
-        if (in_array($name, $emulated, true)) {
+        if (in_array($name, $this->emulatedAttributes, true)) {
             $new->{$name} = $value;
         } else {
             $new->attributes[$name] = $value;
@@ -1458,8 +1464,7 @@ class Request implements ArrayAccess
     public function withoutAttribute($name)
     {
         $new = clone $this;
-        $emulated = ['webroot', 'base', 'params'];
-        if (in_array($name, $emulated, true)) {
+        if (in_array($name, $this->emulatedAttributes, true)) {
             throw new InvalidArgumentException(
                 "You cannot unset '$name'. It is a required CakePHP attribute."
             );
@@ -1478,8 +1483,7 @@ class Request implements ArrayAccess
      */
     public function getAttribute($name, $default = null)
     {
-        $emulated = ['webroot', 'base', 'params'];
-        if (in_array($name, $emulated, true)) {
+        if (in_array($name, $this->emulatedAttributes, true)) {
             return $this->{$name};
         }
         if (array_key_exists($name, $this->attributes)) {
