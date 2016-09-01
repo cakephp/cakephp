@@ -14,6 +14,7 @@
  */
 namespace Cake\Database\Dialect;
 
+use Cake\Database\Exception\MissingPrimaryKeyException;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Query;
 use Cake\Database\Schema\PostgresSchema;
@@ -73,16 +74,27 @@ trait PostgresDialectTrait
         $limit = $query->clause('limit');
 
         if ($limit) {
+
+            $primaryKey = $this->_primaryKey($query);
+            if ($primaryKey === null) {
+                throw new MissingPrimaryKeyException(['driver' => get_class($this)]);
+            }
+
             $from = (new Query($query->connection()))
-                ->select('oid')
+                ->select($primaryKey)
                 ->from($query->clause('update'))
                 ->where($query->clause('where'))
                 ->limit($limit);
 
+            $conditions = [];
+            foreach ($primaryKey as $key) {
+                $conditions[$key] = $query->newExpr(sprintf('__cake_update__.%s', $key));
+            }
+
             $outer = clone $query;
             $outer
                 ->from(['__cake_update__' => $from], true)
-                ->where(['oid' => $query->newExpr('__cake_update__.oid')], [], true)
+                ->where($conditions, [], true)
                 ->limit(null);
 
             return $outer;
