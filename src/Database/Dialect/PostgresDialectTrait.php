@@ -82,7 +82,7 @@ trait PostgresDialectTrait
             $outer = clone $query;
             $outer
                 ->from(['__cake_update__' => $from], true)
-                ->where(['oid'=>$query->newExpr('__cake_update__.oid')], [], true)
+                ->where(['oid' => $query->newExpr('__cake_update__.oid')], [], true)
                 ->limit(null);
 
             return $outer;
