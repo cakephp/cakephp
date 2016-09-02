@@ -2942,7 +2942,7 @@ class QueryTest extends TestCase
         $query->insert([123])
             ->into('articles')
             ->values([
-                123 => 'mark',
+                '123' => 'mark',
             ]);
         $result = $query->sql();
         $this->assertQuotedQuery(
