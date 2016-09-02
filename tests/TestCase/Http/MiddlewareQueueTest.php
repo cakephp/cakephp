@@ -258,7 +258,7 @@ class MiddlewareQueueTest extends TestCase
         $three = function () {
         };
         $four = new DumbMiddleware();
-        
+
         $queue = new MiddlewareQueue();
         $queue->add($one)->add($two)->insertBefore(SampleMiddleware::class, $three)->insertBefore(SampleMiddleware::class, $four);
 
