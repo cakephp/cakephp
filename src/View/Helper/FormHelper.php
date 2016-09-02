@@ -435,7 +435,8 @@ class FormHelper extends Helper
         $actionAttr = $templater->formatAttributes(['action' => $action, 'escape' => false]);
 
         return $this->formatTemplate('formStart', [
-            'attrs' => $templater->formatAttributes($htmlAttributes) . $actionAttr
+            'attrs' => $templater->formatAttributes($htmlAttributes) . $actionAttr,
+            'templateVars' => isset($options['templateVars']) ? $options['templateVars'] : []
         ]) . $append;
     }
 
