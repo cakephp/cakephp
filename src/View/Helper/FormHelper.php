@@ -331,6 +331,7 @@ class FormHelper extends Helper
      * - `context` Additional options for the context class. For example the EntityContext accepts a 'table'
      *   option that allows you to set the specific Table class the form should be based on.
      * - `idPrefix` Prefix for generated ID attributes.
+     * - `templateVars` Provide template variables for the formStart template.
      *
      * @param mixed $model The context for which the form is being defined. Can
      *   be an ORM entity, ORM resultset, or an array of meta data. You can use false or null
