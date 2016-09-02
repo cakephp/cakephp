@@ -112,7 +112,7 @@ class DatabaseSession implements SessionHandlerInterface
         if ($session === false) {
             return '';
         }
-        
+
         return $session;
     }
 
