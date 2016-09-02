@@ -2931,6 +2931,29 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test insert queries quote integer column names
+     *
+     * @return void
+     */
+    public function testInsertQuoteColumns()
+    {
+        $this->loadFixtures('Articles');
+        $query = new Query($this->connection);
+        $query->insert([123])
+            ->into('articles')
+            ->values([
+                123 => 'mark',
+            ]);
+        $result = $query->sql();
+        $this->assertQuotedQuery(
+            'INSERT INTO <articles> \(<123>\) (OUTPUT INSERTED\.\* )?' .
+            'VALUES \(:c0\)',
+            $result,
+            !$this->autoQuote
+        );
+    }
+
+    /**
      * Test an insert when not all the listed fields are provided.
      * Columns should be matched up where possible.
      *

@@ -180,7 +180,7 @@ class IdentifierQuoter
         list($table, $columns) = $query->clause('insert');
         $table = $this->_driver->quoteIdentifier($table);
         foreach ($columns as &$column) {
-            if (is_string($column)) {
+            if (is_scalar($column)) {
                 $column = $this->_driver->quoteIdentifier($column);
             }
         }
