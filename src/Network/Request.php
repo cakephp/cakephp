@@ -19,6 +19,7 @@ use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Utility\Hash;
+use InvalidArgumentException;
 
 /**
  * A class that helps wrap Request information and particulars about a single request.
@@ -85,6 +86,7 @@ class Request implements ArrayAccess
      * Base URL path.
      *
      * @var string
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getAttribute('base') instead.
      */
     public $base;
 
@@ -92,6 +94,7 @@ class Request implements ArrayAccess
      * webroot path segment for the request.
      *
      * @var string
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getAttribute('webroot') instead.
      */
     public $webroot = '/';
 
@@ -99,6 +102,7 @@ class Request implements ArrayAccess
      * The full address to the current request
      *
      * @var string
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use here() instead.
      */
     public $here;
 
@@ -156,6 +160,20 @@ class Request implements ArrayAccess
      * @var \Cake\Network\Session
      */
     protected $_session;
+
+    /**
+     * Store the additional attributes attached to the request.
+     *
+     * @var array
+     */
+    protected $attributes = [];
+
+    /**
+     * A list of propertes that emulated by the PSR7 attribute methods.
+     *
+     * @var array
+     */
+    protected $emulatedAttributes = ['webroot', 'base', 'params'];
 
     /**
      * Wrapper method to create a new request from PHP superglobals.
@@ -1418,6 +1436,83 @@ class Request implements ArrayAccess
         $copy->params = Hash::insert($copy->params, $name, $value);
 
         return $copy;
+    }
+
+    /**
+     * Return an instance with the specified request attribute.
+     *
+     * @param string $name The attribute name.
+     * @param mixed $value The value of the attribute.
+     * @return static
+     */
+    public function withAttribute($name, $value)
+    {
+        $new = clone $this;
+        if (in_array($name, $this->emulatedAttributes, true)) {
+            $new->{$name} = $value;
+        } else {
+            $new->attributes[$name] = $value;
+        }
+
+        return $new;
+    }
+
+    /**
+     * Return an instance without the specified request attribute.
+     *
+     * @param string $name The attribute name.
+     * @return static
+     * @throws InvalidArgumentException
+     */
+    public function withoutAttribute($name)
+    {
+        $new = clone $this;
+        if (in_array($name, $this->emulatedAttributes, true)) {
+            throw new InvalidArgumentException(
+                "You cannot unset '$name'. It is a required CakePHP attribute."
+            );
+        }
+        unset($new->attributes[$name]);
+
+        return $new;
+    }
+
+    /**
+     * Read an attribute from the request, or get the default
+     *
+     * @param string $name The attribute name.
+     * @param mixed|null $default The default value if the attribute has not been set.
+     * @return static
+     */
+    public function getAttribute($name, $default = null)
+    {
+        if (in_array($name, $this->emulatedAttributes, true)) {
+            return $this->{$name};
+        }
+        if (array_key_exists($name, $this->attributes)) {
+            return $this->attributes[$name];
+        }
+
+        return $default;
+    }
+
+    /**
+     * Get all the attributes in the request.
+     *
+     * This will include the params, webroot, and base attributes that CakePHP
+     * provides.
+     *
+     * @return array
+     */
+    public function getAttributes()
+    {
+        $emulated = [
+            'params' => $this->params,
+            'webroot' => $this->webroot,
+            'base' => $this->base
+        ];
+
+        return $this->attributes + $emulated;
     }
 
     /**
