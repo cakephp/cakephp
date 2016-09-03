@@ -728,12 +728,41 @@ class RequestTest extends TestCase
      * Test the method() method.
      *
      * @return void
+     * @deprecated
      */
     public function testMethod()
     {
         $request = new Request(['environment' => ['REQUEST_METHOD' => 'delete']]);
 
         $this->assertEquals('delete', $request->method());
+    }
+
+    /**
+     * Test getMethod()
+     *
+     * @return void
+     */
+    public function testGetMethod()
+    {
+        $request = new Request([
+            'environment' => ['REQUEST_METHOD' => 'delete']
+        ]);
+        $this->assertEquals('delete', $request->getMethod());
+    }
+
+    /**
+     * Test withMethod()
+     *
+     * @return void
+     */
+    public function testWithMethod()
+    {
+        $request = new Request([
+            'environment' => ['REQUEST_METHOD' => 'delete']
+        ]);
+        $new = $request->withMethod('put');
+        $this->assertEquals('delete', $request->getMethod());
+        $this->assertEquals('put', $new->getMethod());
     }
 
     /**
@@ -2039,6 +2068,44 @@ class RequestTest extends TestCase
 
         $result = $request->query('test.2');
         $this->assertNull($result);
+    }
+
+    /**
+     * Test getQueryParams
+     *
+     * @return void
+     */
+    public function testGetQueryParams()
+    {
+        $get = [
+            'test' => ['foo', 'bar'],
+            'key' => 'value'
+        ];
+
+        $request = new Request([
+            'query' => $get
+        ]);
+        $this->assertSame($get, $request->getQueryParams());
+    }
+
+    /**
+     * Test withQueryParams and immutability
+     *
+     * @return void
+     */
+    public function testWithQueryParams()
+    {
+        $get = [
+            'test' => ['foo', 'bar'],
+            'key' => 'value'
+        ];
+
+        $request = new Request([
+            'query' => $get
+        ]);
+        $new = $request->withQueryParams(['new' => 'data']);
+        $this->assertSame($get, $request->getQueryParams());
+        $this->assertSame(['new' => 'data'], $new->getQueryParams());
     }
 
     /**

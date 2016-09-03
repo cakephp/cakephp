@@ -961,6 +961,17 @@ class Request implements ArrayAccess
 
     /**
      * Get the HTTP method used for this request.
+     *
+     * @return string The name of the HTTP method used.
+     * @deprected 3.4.0 This method will be removed in 4.0.0. Use getMethod() instead.
+     */
+    public function method()
+    {
+        return $this->env('REQUEST_METHOD');
+    }
+
+    /**
+     * Get the HTTP method used for this request.
      * There are a few ways to specify a method.
      *
      * - If your client supports it you can use native HTTP methods.
@@ -972,9 +983,45 @@ class Request implements ArrayAccess
      *
      * @return string The name of the HTTP method used.
      */
-    public function method()
+    public function getMethod()
     {
         return $this->env('REQUEST_METHOD');
+    }
+
+    /**
+     * Update the request method and get a new instance.
+     *
+     * @param string $method The HTTP method to use.
+     * @return static A new instance with the updated method.
+     */
+    public function withMethod($method)
+    {
+        $new = clone $this;
+        $new->_environment['REQUEST_METHOD'] = $method;
+        return $new;
+    }
+
+    /**
+     * Get all the query parameters.
+     *
+     * @return array
+     */
+    public function getQueryParams()
+    {
+        return $this->query;
+    }
+
+    /**
+     * Update the query string data and get a new instance.
+     *
+     * @param array $query The query string data to use
+     * @return static A new instance with the updated query string data.
+     */
+    public function withQueryParams(array $query)
+    {
+        $new = clone $this;
+        $new->query = $query;
+        return $new;
     }
 
     /**
