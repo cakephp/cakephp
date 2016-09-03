@@ -79,7 +79,9 @@ class Marshaller
         }
 
         // Map associations
-        $options += ['associated' => []];
+        if (!isset($options['associated'])) {
+            $options['associated'] = [];
+        }
         $include = $this->_normalizeAssociations($options['associated']);
         foreach ($include as $key => $nested) {
             if (is_int($key) && is_scalar($nested)) {
@@ -550,6 +552,7 @@ class Marshaller
                 // the original/updated list could contain references to the
                 // same objects, even though those objects may have changed internally.
                 if ((is_scalar($value) && $original === $value) ||
+                    ($value === null && $original === $value) ||
                     (is_object($value) && !($value instanceof EntityInterface) && $original == $value)
                 ) {
                     continue;

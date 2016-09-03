@@ -1784,7 +1784,6 @@ class TableTest extends TestCase
         $this->assertSame($entity, $table->save($entity));
     }
 
-
     /**
      * Test that save works with replace saveStrategy and are not deleted once they are not null
      *
@@ -2550,6 +2549,7 @@ class TableTest extends TestCase
         ]);
         $table->save($data);
     }
+
 
     /**
      * Tests that only the properties marked as dirty are actually saved
@@ -6017,6 +6017,35 @@ class TableTest extends TestCase
         $table = TableRegistry::get('Users');
         $this->assertSame($entity, $table->save($entity));
         $this->assertSame(self::$nextUserId, $entity->id);
+    }
+
+    /**
+     * Tests entity clean()
+     *
+     * @return void
+     */
+    public function testEntityClean()
+    {
+        $table = TableRegistry::get('Articles');
+        $validator = $table->validator()->requirePresence('body');
+        $entity = $table->newEntity(['title' => 'mark']);
+
+        $entity->dirty('title', true);
+        $entity->invalid('title', 'albert');
+
+        $this->assertNotEmpty($entity->errors());
+        $this->assertTrue($entity->dirty());
+        $this->assertEquals(['title' => 'albert'], $entity->invalid());
+
+        $entity->title = 'alex';
+        $this->assertSame($entity->getOriginal('title'), 'mark');
+
+        $entity->clean();
+
+        $this->assertEmpty($entity->errors());
+        $this->assertFalse($entity->dirty());
+        $this->assertEquals([], $entity->invalid());
+        $this->assertSame($entity->getOriginal('title'), 'alex');
     }
 
     /**

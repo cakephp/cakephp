@@ -655,6 +655,32 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test using template vars in Create (formStart template)
+     *
+     * @return void
+     */
+    public function testCreateTemplateVars()
+    {
+        $result = $this->Form->create($this->article, [
+            'templates' => [
+                'formStart' => '<h4 class="mb">{{header}}</h4><form{{attrs}}>',
+            ],
+            'templateVars' => ['header' => 'headertext']
+        ]);
+        $expected = [
+            'h4' => ['class'],
+            'headertext',
+            '/h4',
+            'form' => [
+                'method' => 'post',
+                'action' => '/articles/add',
+                'accept-charset' => 'utf-8'
+            ]
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test opening a form for an update operation.
      *
      * @return void

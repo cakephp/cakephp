@@ -53,7 +53,7 @@ class ResponseTransformer
         }
         $headers = static::collapseHeaders($response);
         $cake->header($headers);
- 
+
         if (!empty($headers['Content-Type'])) {
             $cake->type($headers['Content-Type']);
         }

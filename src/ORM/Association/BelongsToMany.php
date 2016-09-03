@@ -375,7 +375,9 @@ class BelongsToMany extends Association
         if (empty($options['negateMatch'])) {
             return;
         }
-        $options += ['conditions' => []];
+        if (!isset($options['conditions'])) {
+            $options['conditions'] = [];
+        }
         $junction = $this->junction();
         $belongsTo = $junction->association($this->source()->alias());
         $conds = $belongsTo->_joinCondition(['foreignKey' => $belongsTo->foreignKey()]);
