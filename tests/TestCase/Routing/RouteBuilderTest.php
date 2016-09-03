@@ -170,6 +170,22 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Test if a route name already exist
+     *
+     * @return void
+     */
+    public function testNameExists()
+    {
+        $routes = new RouteBuilder($this->collection, '/l', ['prefix' => 'api']);
+
+        $this->assertFalse($routes->nameExists('myRouteName'));
+
+        $routes->connect('myRouteUrl', ['action' => 'index'], ['_name' => 'myRouteName']);
+
+        $this->assertTrue($routes->nameExists('myRouteName'));
+    }
+
+    /**
      * Test extensions being connected to routes.
      *
      * @return void
