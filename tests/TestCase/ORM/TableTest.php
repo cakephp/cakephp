@@ -475,7 +475,7 @@ class TableTest extends TestCase
         ]);
         $table->eventManager()->on(
             'Model.beforeFind',
-            function ($event, $query, $options) {
+            function (Event $event, $query, $options) {
                 $query->limit(1);
             }
         );
@@ -499,7 +499,7 @@ class TableTest extends TestCase
         $expected = ['One', 'Two', 'Three'];
         $table->eventManager()->on(
             'Model.beforeFind',
-            function ($event, $query, $options) use ($expected) {
+            function (Event $event, $query, $options) use ($expected) {
                 $query->setResult($expected);
                 $event->stopPropagation();
             }
@@ -2661,7 +2661,7 @@ class TableTest extends TestCase
         ]);
         $table = TableRegistry::get('users');
         $called = false;
-        $listener = function ($event, $entity) use (&$called) {
+        $listener = function (Event $event, $entity) use (&$called) {
             $this->assertFalse($entity->isNew());
             $called = true;
         };
@@ -3049,7 +3049,7 @@ class TableTest extends TestCase
             ->with($this->logicalAnd(
                 $this->attributeEqualTo('_name', 'Model.beforeDelete'),
                 $this->attributeEqualTo(
-                    'data',
+                    '_data',
                     ['entity' => $entity, 'options' => $options]
                 )
             ));
@@ -3059,7 +3059,7 @@ class TableTest extends TestCase
             ->with($this->logicalAnd(
                 $this->attributeEqualTo('_name', 'Model.afterDelete'),
                 $this->attributeEqualTo(
-                    'data',
+                    '_data',
                     ['entity' => $entity, 'options' => $options]
                 )
             ));
@@ -3069,7 +3069,7 @@ class TableTest extends TestCase
             ->with($this->logicalAnd(
                 $this->attributeEqualTo('_name', 'Model.afterDeleteCommit'),
                 $this->attributeEqualTo(
-                    'data',
+                    '_data',
                     ['entity' => $entity, 'options' => $options]
                 )
             ));
@@ -3154,7 +3154,7 @@ class TableTest extends TestCase
         $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $mock->expects($this->at(2))
             ->method('dispatch')
-            ->will($this->returnCallback(function ($event) {
+            ->will($this->returnCallback(function (Event $event) {
                 $event->stopPropagation();
             }));
 
@@ -3177,9 +3177,9 @@ class TableTest extends TestCase
         $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $mock->expects($this->at(2))
             ->method('dispatch')
-            ->will($this->returnCallback(function ($event) {
+            ->will($this->returnCallback(function (Event $event) {
                 $event->stopPropagation();
-                $event->result = 'got stopped';
+                $event->setResult('got stopped');
             }));
 
         $table = TableRegistry::get('users', ['eventManager' => $mock]);
@@ -5649,14 +5649,14 @@ class TableTest extends TestCase
     public function testInitializeEvent()
     {
         $count = 0;
-        $cb = function ($event) use (&$count) {
+        $cb = function (Event $event) use (&$count) {
             $count++;
         };
         EventManager::instance()->on('Model.initialize', $cb);
         $articles = TableRegistry::get('Articles');
 
         $this->assertEquals(1, $count, 'Callback should be called');
-        EventManager::instance()->detach($cb, 'Model.initialize');
+        EventManager::instance()->off('Model.initialize', $cb);
     }
 
     /**
@@ -5682,7 +5682,7 @@ class TableTest extends TestCase
     public function testBuildValidatorEvent()
     {
         $count = 0;
-        $cb = function ($event) use (&$count) {
+        $cb = function (Event $event) use (&$count) {
             $count++;
         };
         EventManager::instance()->on('Model.buildValidator', $cb);
@@ -5949,7 +5949,7 @@ class TableTest extends TestCase
         $counter = 0;
         $userTable->Comments
             ->eventManager()
-            ->on('Model.afterSave', function ($event, $entity) use (&$counter) {
+            ->on('Model.afterSave', function (Event $event, $entity) use (&$counter) {
                 if ($entity->dirty()) {
                     $counter++;
                 }
@@ -5986,7 +5986,7 @@ class TableTest extends TestCase
         $counter = 0;
         $table->Tags->junction()
             ->eventManager()
-            ->on('Model.afterSave', function ($event, $entity) use (&$counter) {
+            ->on('Model.afterSave', function (Event $event, $entity) use (&$counter) {
                 if ($entity->dirty()) {
                     $counter++;
                 }
