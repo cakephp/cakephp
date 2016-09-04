@@ -461,12 +461,14 @@ class HasMany extends Association
                 return $ok;
             }
 
+            $conditions = array_merge($conditions, $this->conditions());
             $target->deleteAll($conditions);
 
             return true;
         }
 
         $updateFields = array_fill_keys($foreignKey, null);
+        $conditions = array_merge($conditions, $this->conditions());
         $target->updateAll($updateFields, $conditions);
 
         return true;
