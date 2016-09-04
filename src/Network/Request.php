@@ -1007,6 +1007,7 @@ class Request implements ArrayAccess
             ));
         }
         $new->_environment['REQUEST_METHOD'] = $method;
+
         return $new;
     }
 
@@ -1043,6 +1044,7 @@ class Request implements ArrayAccess
     {
         $new = clone $this;
         $new->query = $query;
+
         return $new;
     }
 
@@ -1400,6 +1402,7 @@ class Request implements ArrayAccess
     {
         $new = clone $this;
         $new->cookies = $cookies;
+
         return $new;
     }
 
@@ -1430,6 +1433,7 @@ class Request implements ArrayAccess
     {
         $new = clone $this;
         $new->data = $data;
+
         return $new;
     }
 
