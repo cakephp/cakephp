@@ -2070,6 +2070,118 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that dependent, non-cascading deletes are using the association
+     * conditions for deleting associated records.
+     *
+     * @return void
+     */
+    public function testHasManyNonCascadingUnlinkDeleteUsesAssociationConditions()
+    {
+        $Articles = TableRegistry::get('Articles');
+        $Comments = $Articles->hasMany('Comments', [
+            'dependent' => true,
+            'cascadeCallbacks' => false,
+            'saveStrategy' => HasMany::SAVE_REPLACE,
+            'conditions' => [
+                'Comments.published' => 'Y'
+            ]
+        ]);
+
+        $article = $Articles->newEntity([
+            'title' => 'Title',
+            'body' => 'Body',
+            'comments' => [
+                [
+                    'user_id' => 1,
+                    'comment' => 'First comment',
+                    'published' => 'Y'
+                ],
+                [
+                    'user_id' => 1,
+                    'comment' => 'Second comment',
+                    'published' => 'Y'
+                ],
+                [
+                    'user_id' => 1,
+                    'comment' => 'Third comment',
+                    'published' => 'N'
+                ]
+            ]
+        ]);
+
+        $article = $Articles->save($article);
+        $this->assertNotEmpty($article);
+
+        $this->assertEquals(3, $Comments->target()->find()->where(['Comments.article_id' => $article->get('id')])->count());
+
+        unset($article->comments[1], $article->comments[2]);
+        $article->dirty('comments', true);
+
+        $article = $Articles->save($article);
+        $this->assertNotEmpty($article);
+
+        $this->assertEquals(2, $Comments->target()->find()->where(['Comments.article_id' => $article->get('id')])->count());
+    }
+
+    /**
+     * Tests that non-dependent, non-cascading deletes are using the association
+     * conditions for updating associated records.
+     *
+     * @return void
+     */
+    public function testHasManyNonDependentNonCascadingUnlinkUpdateUsesAssociationConditions()
+    {
+        $Authors = TableRegistry::get('Authors');
+        $Authors->associations()->removeAll();
+        $Articles = $Authors->hasMany('Articles', [
+            'dependent' => false,
+            'cascadeCallbacks' => false,
+            'saveStrategy' => HasMany::SAVE_REPLACE,
+            'conditions' => [
+                'Articles.published' => 'Y'
+            ]
+        ]);
+
+        $author = $Authors->newEntity([
+            'name' => 'Name',
+            'articles' => [
+                [
+                    'title' => 'First article',
+                    'body' => 'First article',
+                    'published' => 'Y'
+                ],
+                [
+                    'title' => 'Second article',
+                    'body' => 'Second article',
+                    'published' => 'Y'
+                ],
+                [
+                    'title' => 'Third article',
+                    'body' => 'Third article',
+                    'published' => 'N'
+                ]
+            ]
+        ]);
+
+        $author = $Authors->save($author);
+        $this->assertNotEmpty($author);
+
+        $this->assertEquals(3, $Articles->target()->find()->where(['Articles.author_id' => $author->get('id')])->count());
+
+        $article2 = $author->articles[1];
+        $article3 = $author->articles[2];
+        unset($author->articles[1], $author->articles[2]);
+        $author->dirty('articles', true);
+
+        $author = $Authors->save($author);
+        $this->assertNotEmpty($author);
+
+        $this->assertEquals(2, $Articles->target()->find()->where(['Articles.author_id' => $author->get('id')])->count());
+        $this->assertNull($Articles->get($article2->get('id'))->get('author_id'));
+        $this->assertEquals($author->get('id'), $Articles->get($article3->get('id'))->get('author_id'));
+    }
+
+    /**
      * Test that saving a new entity with a Primary Key set does not call exists when checkExisting is false.
      *
      * @group save
