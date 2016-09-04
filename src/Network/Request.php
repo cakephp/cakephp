@@ -1702,6 +1702,43 @@ class Request implements ArrayAccess
     }
 
     /**
+     * Update the request replacing the files, and creating a new instance.
+     *
+     * @param array $files An array of uploaded file objects.
+     * @return static
+     * @throws InvalidArgumentException when $files contains an invalid object.
+     */
+    public function withUploadedFiles(array $files)
+    {
+        $this->validateUploadedFiles($files, '');
+        $new = clone $this;
+        $new->uploadedFiles = $files;
+
+        return $new;
+    }
+
+    /**
+     * Recursively validate uploaded file data.
+     *
+     * @param array $uploadedFiles
+     * @param string $path The path thus far.
+     * @throws InvalidArgumentException If any leaf elements are not valid files.
+     */
+    private function validateUploadedFiles(array $uploadedFiles, $path)
+    {
+        foreach ($uploadedFiles as $key => $file) {
+            if (is_array($file)) {
+                $this->validateUploadedFiles($file, $key . '.');
+                continue;
+            }
+
+            if (!$file instanceof UploadedFileInterface) {
+                throw new InvalidArgumentException("Invalid file at '{$path}{$key}'");
+            }
+        }
+    }
+
+    /**
      * Array access read implementation
      *
      * @param string $name Name of the key being accessed.

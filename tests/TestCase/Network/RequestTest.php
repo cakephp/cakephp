@@ -19,6 +19,7 @@ use Cake\Network\Exception;
 use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
+use Zend\Diactoros\UploadedFile;
 
 /**
  * TestRequest
@@ -467,7 +468,7 @@ class RequestTest extends TestCase
      *
      * @return void
      */
-    public function testProcessFilesFlat()
+    public function testFilesFlat()
     {
         $files = [
             'birth_cert' => [
@@ -525,6 +526,54 @@ class RequestTest extends TestCase
         $uploads = $request->getUploadedFiles();
         $this->assertCount(1, $uploads);
         $this->assertEquals($files[0]['name'], $uploads[0]->getClientFilename());
+    }
+
+    /**
+     * Test replacing files.
+     *
+     * @return void
+     */
+    public function testWithUploadedFiles()
+    {
+        $file = new UploadedFile(
+            __FILE__,
+            123,
+            UPLOAD_ERR_OK,
+            'test.php',
+            'text/plain'
+        );
+        $request = new Request();
+        $new = $request->withUploadedFiles(['picture' => $file]);
+
+        $this->assertSame([], $request->getUploadedFiles());
+        $this->assertNotSame($new, $request);
+        $this->assertSame(['picture' => $file], $new->getUploadedFiles());
+    }
+
+    /**
+     * Test replacing files with an invalid file
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid file at 'avatar'
+     * @return void
+     */
+    public function testWithUploadedFilesInvalidFile()
+    {
+        $request = new Request();
+        $request->withUploadedFiles(['avatar' => 'not a file']);
+    }
+
+    /**
+     * Test replacing files with an invalid file
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid file at 'user.avatar'
+     * @return void
+     */
+    public function testWithUploadedFilesInvalidFileNested()
+    {
+        $request = new Request();
+        $request->withUploadedFiles(['user' => ['avatar' => 'not a file']]);
     }
 
     /**
