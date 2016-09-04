@@ -1404,6 +1404,36 @@ class Request implements ArrayAccess
     }
 
     /**
+     * Get the parsed request body data.
+     *
+     * If the request Content-Type is either application/x-www-form-urlencoded
+     * or multipart/form-data, nd the request method is POST, this will be the
+     * post data. For other content types, it may be the deserialized request
+     * body.
+     *
+     * @return null|array|object The deserialized body parameters, if any.
+     *     These will typically be an array or object.
+     */
+    public function getParsedBody()
+    {
+        return $this->data;
+    }
+
+    /**
+     * Update the parsed body and get a new instance.
+     *
+     * @param null|array|object $data The deserialized body data. This will
+     *     typically be in an array or object.
+     * @return static
+     */
+    public function withParsedBody($data)
+    {
+        $new = clone $this;
+        $new->data = $data;
+        return $new;
+    }
+
+    /**
      * Get/Set value from the request's environment data.
      * Fallback to using env() if key not set in $environment property.
      *

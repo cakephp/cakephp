@@ -2705,6 +2705,37 @@ XML;
     }
 
     /**
+     * Test getting the parsed body parameters.
+     *
+     * @return void
+     */
+    public function testGetParsedBody()
+    {
+        $data = ['title' => 'First', 'body' => 'Best Article!'];
+        $request = new Request(['post' => $data]);
+        $this->assertSame($data, $request->getParsedBody());
+
+        $request = new Request();
+        $this->assertSame([], $request->getParsedBody());
+    }
+
+    /**
+     * Test replacing the parsed body parameters.
+     *
+     * @return void
+     */
+    public function testWithParsedBody()
+    {
+        $data = ['title' => 'First', 'body' => 'Best Article!'];
+        $request = new Request([]);
+        $new = $request->withParsedBody($data);
+
+        $this->assertNotSame($request, $new);
+        $this->assertSame([], $request->getParsedBody());
+        $this->assertSame($data, $new->getParsedBody());
+    }
+
+    /**
      * Test updating POST data in a psr7 fashion.
      *
      * @return void
