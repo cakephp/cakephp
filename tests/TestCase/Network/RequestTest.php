@@ -360,14 +360,14 @@ class RequestTest extends TestCase
             'image_main' => [
                 'name' => ['file' => 'born on.txt'],
                 'type' => ['file' => 'text/plain'],
-                'tmp_name' => ['file' => '/private/var/tmp/php'],
+                'tmp_name' => ['file' => __FILE__],
                 'error' => ['file' => 0],
                 'size' => ['file' => 17178]
             ],
             0 => [
                 'name' => ['image' => 'scratch.text'],
                 'type' => ['image' => 'text/plain'],
-                'tmp_name' => ['image' => '/private/var/tmp/phpChIZPb'],
+                'tmp_name' => ['image' => __FILE__],
                 'error' => ['image' => 0],
                 'size' => ['image' => 1490]
             ],
@@ -381,12 +381,12 @@ class RequestTest extends TestCase
                     1 => ['file' => 'image/jpg']
                 ],
                 'tmp_name' => [
-                    0 => ['file' => '/tmp/file123'],
-                    1 => ['file' => '/tmp/file234']
+                    0 => ['file' => __FILE__],
+                    1 => ['file' => __FILE__]
                 ],
                 'error' => [
-                    0 => ['file' => '0'],
-                    1 => ['file' => '0']
+                    0 => ['file' => 0],
+                    1 => ['file' => 0]
                 ],
                 'size' => [
                     0 => ['file' => 17188],
@@ -409,7 +409,7 @@ class RequestTest extends TestCase
                 'file' => [
                     'name' => 'born on.txt',
                     'type' => 'text/plain',
-                    'tmp_name' => '/private/var/tmp/php',
+                    'tmp_name' => __FILE__,
                     'error' => 0,
                     'size' => 17178,
                 ]
@@ -420,7 +420,7 @@ class RequestTest extends TestCase
                     'file' => [
                         'name' => 'a-file.png',
                         'type' => 'image/png',
-                        'tmp_name' => '/tmp/file123',
+                        'tmp_name' => __FILE__,
                         'error' => '0',
                         'size' => 17188,
                     ]
@@ -430,7 +430,7 @@ class RequestTest extends TestCase
                     'file' => [
                         'name' => 'a-moose.png',
                         'type' => 'image/jpg',
-                        'tmp_name' => '/tmp/file234',
+                        'tmp_name' => __FILE__,
                         'error' => '0',
                         'size' => 2010,
                     ]
@@ -441,7 +441,7 @@ class RequestTest extends TestCase
                 'image' => [
                     'name' => 'scratch.text',
                     'type' => 'text/plain',
-                    'tmp_name' => '/private/var/tmp/phpChIZPb',
+                    'tmp_name' => __FILE__,
                     'error' => 0,
                     'size' => 1490
                 ]
@@ -461,7 +461,7 @@ class RequestTest extends TestCase
             'birth_cert' => [
                 'name' => 'born on.txt',
                 'type' => 'application/octet-stream',
-                'tmp_name' => '/private/var/tmp/phpbsUWfH',
+                'tmp_name' => __FILE__,
                 'error' => 0,
                 'size' => 123,
             ]
@@ -472,7 +472,7 @@ class RequestTest extends TestCase
             'birth_cert' => [
                 'name' => 'born on.txt',
                 'type' => 'application/octet-stream',
-                'tmp_name' => '/private/var/tmp/phpbsUWfH',
+                'tmp_name' => __FILE__,
                 'error' => 0,
                 'size' => 123
             ]
@@ -491,7 +491,7 @@ class RequestTest extends TestCase
             0 => [
                 'name' => 'cake_sqlserver_patch.patch',
                 'type' => 'text/plain',
-                'tmp_name' => '/private/var/tmp/phpy05Ywj',
+                'tmp_name' => __FILE__,
                 'error' => 0,
                 'size' => 6271,
             ],
