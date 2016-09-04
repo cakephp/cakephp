@@ -761,6 +761,7 @@ class RequestTest extends TestCase
             'environment' => ['REQUEST_METHOD' => 'delete']
         ]);
         $new = $request->withMethod('put');
+        $this->assertNotSame($new, $request);
         $this->assertEquals('delete', $request->getMethod());
         $this->assertEquals('put', $new->getMethod());
     }
@@ -2124,6 +2125,30 @@ class RequestTest extends TestCase
     }
 
     /**
+     * Test getServerParams
+     *
+     * @return void
+     */
+    public function testGetServerParams()
+    {
+        $vars = [
+            'REQUEST_METHOD' => 'PUT',
+            'HTTPS' => 'on',
+        ];
+
+        $request = new Request([
+            'environment' => $vars
+        ]);
+        $expected = $vars + [
+            'CONTENT_TYPE' => null,
+            'HTTP_CONTENT_TYPE' => null,
+            'HTTP_X_HTTP_METHOD_OVERRIDE' => null,
+            'ORIGINAL_REQUEST_METHOD' => 'PUT',
+        ];
+        $this->assertSame($expected, $request->getServerParams());
+    }
+
+    /**
      * Test using param()
      *
      * @return void
@@ -2511,7 +2536,7 @@ XML;
      *
      * @return void
      */
-    public function testReadCookie()
+    public function testCookie()
     {
         $request = new Request([
             'cookies' => [
@@ -2523,6 +2548,37 @@ XML;
 
         $result = $request->cookie('not there');
         $this->assertNull($result);
+    }
+
+    /**
+     * Test getCookieParams()
+     *
+     * @return void
+     */
+    public function testGetCookieParams()
+    {
+        $cookies = [
+            'testing' => 'A value in the cookie'
+        ];
+        $request = new Request(['cookies' => $cookies]);
+        $this->assertSame($cookies, $request->getCookieParams());
+    }
+
+    /**
+     * Test withCookieParams()
+     *
+     * @return void
+     */
+    public function testWithCookieParams()
+    {
+        $cookies = [
+            'testing' => 'A value in the cookie'
+        ];
+        $request = new Request(['cookies' => $cookies]);
+        $new = $request->withCookieParams(['remember_me' => 1]);
+        $this->assertNotSame($new, $request);
+        $this->assertSame($cookies, $request->getCookieParams());
+        $this->assertSame(['remember_me' => 1], $new->getCookieParams());
     }
 
     /**

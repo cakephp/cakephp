@@ -1011,6 +1011,19 @@ class Request implements ArrayAccess
     }
 
     /**
+     * Get all the server environment parameters.
+     *
+     * Read all of the 'environment' or 'server' data that was
+     * used to create this request.
+     *
+     * @return array
+     */
+    public function getServerParams()
+    {
+        return $this->_environment;
+    }
+
+    /**
      * Get all the query parameters.
      *
      * @return array
@@ -1365,6 +1378,29 @@ class Request implements ArrayAccess
         }
 
         return null;
+    }
+
+    /**
+     * Get all the cookie data from the request.
+     *
+     * @return array An array of cookie data.
+     */
+    public function getCookieParams()
+    {
+        return $this->cookies;
+    }
+
+    /**
+     * Replace the cookies and get a new request instance.
+     *
+     * @param array $cookies The new cookie data to use.
+     * @return static
+     */
+    public function withCookieParams(array $cookies)
+    {
+        $new = clone $this;
+        $new->cookies = $cookies;
+        return $new;
     }
 
     /**
