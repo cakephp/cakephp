@@ -997,6 +997,15 @@ class Request implements ArrayAccess
     public function withMethod($method)
     {
         $new = clone $this;
+
+        if (!is_string($method) ||
+            !preg_match('/^[!#$%&\'*+.^_`\|~0-9a-z-]+$/i', $method)
+        ) {
+            throw new InvalidArgumentException(sprintf(
+                'Unsupported HTTP method "%s" provided',
+                $method
+            ));
+        }
         $new->_environment['REQUEST_METHOD'] = $method;
         return $new;
     }

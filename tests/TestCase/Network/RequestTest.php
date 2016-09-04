@@ -766,6 +766,21 @@ class RequestTest extends TestCase
     }
 
     /**
+     * Test withMethod() and invalid data
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Unsupported HTTP method "no good" provided
+     * @return void
+     */
+    public function testWithMethodInvalid()
+    {
+        $request = new Request([
+            'environment' => ['REQUEST_METHOD' => 'delete']
+        ]);
+        $request->withMethod('no good');
+    }
+
+    /**
      * Test host retrieval.
      *
      * @return void
