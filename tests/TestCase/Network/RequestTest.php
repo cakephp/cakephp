@@ -728,12 +728,57 @@ class RequestTest extends TestCase
      * Test the method() method.
      *
      * @return void
+     * @deprecated
      */
     public function testMethod()
     {
         $request = new Request(['environment' => ['REQUEST_METHOD' => 'delete']]);
 
         $this->assertEquals('delete', $request->method());
+    }
+
+    /**
+     * Test getMethod()
+     *
+     * @return void
+     */
+    public function testGetMethod()
+    {
+        $request = new Request([
+            'environment' => ['REQUEST_METHOD' => 'delete']
+        ]);
+        $this->assertEquals('delete', $request->getMethod());
+    }
+
+    /**
+     * Test withMethod()
+     *
+     * @return void
+     */
+    public function testWithMethod()
+    {
+        $request = new Request([
+            'environment' => ['REQUEST_METHOD' => 'delete']
+        ]);
+        $new = $request->withMethod('put');
+        $this->assertNotSame($new, $request);
+        $this->assertEquals('delete', $request->getMethod());
+        $this->assertEquals('put', $new->getMethod());
+    }
+
+    /**
+     * Test withMethod() and invalid data
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Unsupported HTTP method "no good" provided
+     * @return void
+     */
+    public function testWithMethodInvalid()
+    {
+        $request = new Request([
+            'environment' => ['REQUEST_METHOD' => 'delete']
+        ]);
+        $request->withMethod('no good');
     }
 
     /**
@@ -2042,6 +2087,68 @@ class RequestTest extends TestCase
     }
 
     /**
+     * Test getQueryParams
+     *
+     * @return void
+     */
+    public function testGetQueryParams()
+    {
+        $get = [
+            'test' => ['foo', 'bar'],
+            'key' => 'value'
+        ];
+
+        $request = new Request([
+            'query' => $get
+        ]);
+        $this->assertSame($get, $request->getQueryParams());
+    }
+
+    /**
+     * Test withQueryParams and immutability
+     *
+     * @return void
+     */
+    public function testWithQueryParams()
+    {
+        $get = [
+            'test' => ['foo', 'bar'],
+            'key' => 'value'
+        ];
+
+        $request = new Request([
+            'query' => $get
+        ]);
+        $new = $request->withQueryParams(['new' => 'data']);
+        $this->assertSame($get, $request->getQueryParams());
+        $this->assertSame(['new' => 'data'], $new->getQueryParams());
+    }
+
+    /**
+     * Test getServerParams
+     *
+     * @return void
+     */
+    public function testGetServerParams()
+    {
+        $vars = [
+            'REQUEST_METHOD' => 'PUT',
+            'HTTPS' => 'on',
+        ];
+
+        $request = new Request([
+            'environment' => $vars
+        ]);
+        $expected = $vars + [
+            'CONTENT_TYPE' => null,
+            'HTTP_CONTENT_TYPE' => null,
+            'HTTP_X_HTTP_METHOD_OVERRIDE' => null,
+            'ORIGINAL_REQUEST_METHOD' => 'PUT',
+        ];
+        $this->assertSame($expected, $request->getServerParams());
+    }
+
+    /**
      * Test using param()
      *
      * @return void
@@ -2429,7 +2536,7 @@ XML;
      *
      * @return void
      */
-    public function testReadCookie()
+    public function testCookie()
     {
         $request = new Request([
             'cookies' => [
@@ -2441,6 +2548,37 @@ XML;
 
         $result = $request->cookie('not there');
         $this->assertNull($result);
+    }
+
+    /**
+     * Test getCookieParams()
+     *
+     * @return void
+     */
+    public function testGetCookieParams()
+    {
+        $cookies = [
+            'testing' => 'A value in the cookie'
+        ];
+        $request = new Request(['cookies' => $cookies]);
+        $this->assertSame($cookies, $request->getCookieParams());
+    }
+
+    /**
+     * Test withCookieParams()
+     *
+     * @return void
+     */
+    public function testWithCookieParams()
+    {
+        $cookies = [
+            'testing' => 'A value in the cookie'
+        ];
+        $request = new Request(['cookies' => $cookies]);
+        $new = $request->withCookieParams(['remember_me' => 1]);
+        $this->assertNotSame($new, $request);
+        $this->assertSame($cookies, $request->getCookieParams());
+        $this->assertSame(['remember_me' => 1], $new->getCookieParams());
     }
 
     /**
@@ -2564,6 +2702,37 @@ XML;
         $this->assertSame('index', $result->param('action'));
         $this->assertSame('DebugKit', $result->param('plugin'));
         $this->assertSame('Admin', $result->param('prefix'));
+    }
+
+    /**
+     * Test getting the parsed body parameters.
+     *
+     * @return void
+     */
+    public function testGetParsedBody()
+    {
+        $data = ['title' => 'First', 'body' => 'Best Article!'];
+        $request = new Request(['post' => $data]);
+        $this->assertSame($data, $request->getParsedBody());
+
+        $request = new Request();
+        $this->assertSame([], $request->getParsedBody());
+    }
+
+    /**
+     * Test replacing the parsed body parameters.
+     *
+     * @return void
+     */
+    public function testWithParsedBody()
+    {
+        $data = ['title' => 'First', 'body' => 'Best Article!'];
+        $request = new Request([]);
+        $new = $request->withParsedBody($data);
+
+        $this->assertNotSame($request, $new);
+        $this->assertSame([], $request->getParsedBody());
+        $this->assertSame($data, $new->getParsedBody());
     }
 
     /**

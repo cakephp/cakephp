@@ -961,6 +961,17 @@ class Request implements ArrayAccess
 
     /**
      * Get the HTTP method used for this request.
+     *
+     * @return string The name of the HTTP method used.
+     * @deprecated 3.4.0 This method will be removed in 4.0.0. Use getMethod() instead.
+     */
+    public function method()
+    {
+        return $this->env('REQUEST_METHOD');
+    }
+
+    /**
+     * Get the HTTP method used for this request.
      * There are a few ways to specify a method.
      *
      * - If your client supports it you can use native HTTP methods.
@@ -972,9 +983,69 @@ class Request implements ArrayAccess
      *
      * @return string The name of the HTTP method used.
      */
-    public function method()
+    public function getMethod()
     {
         return $this->env('REQUEST_METHOD');
+    }
+
+    /**
+     * Update the request method and get a new instance.
+     *
+     * @param string $method The HTTP method to use.
+     * @return static A new instance with the updated method.
+     */
+    public function withMethod($method)
+    {
+        $new = clone $this;
+
+        if (!is_string($method) ||
+            !preg_match('/^[!#$%&\'*+.^_`\|~0-9a-z-]+$/i', $method)
+        ) {
+            throw new InvalidArgumentException(sprintf(
+                'Unsupported HTTP method "%s" provided',
+                $method
+            ));
+        }
+        $new->_environment['REQUEST_METHOD'] = $method;
+
+        return $new;
+    }
+
+    /**
+     * Get all the server environment parameters.
+     *
+     * Read all of the 'environment' or 'server' data that was
+     * used to create this request.
+     *
+     * @return array
+     */
+    public function getServerParams()
+    {
+        return $this->_environment;
+    }
+
+    /**
+     * Get all the query parameters.
+     *
+     * @return array
+     */
+    public function getQueryParams()
+    {
+        return $this->query;
+    }
+
+    /**
+     * Update the query string data and get a new instance.
+     *
+     * @param array $query The query string data to use
+     * @return static A new instance with the updated query string data.
+     */
+    public function withQueryParams(array $query)
+    {
+        $new = clone $this;
+        $new->query = $query;
+
+        return $new;
     }
 
     /**
@@ -1309,6 +1380,61 @@ class Request implements ArrayAccess
         }
 
         return null;
+    }
+
+    /**
+     * Get all the cookie data from the request.
+     *
+     * @return array An array of cookie data.
+     */
+    public function getCookieParams()
+    {
+        return $this->cookies;
+    }
+
+    /**
+     * Replace the cookies and get a new request instance.
+     *
+     * @param array $cookies The new cookie data to use.
+     * @return static
+     */
+    public function withCookieParams(array $cookies)
+    {
+        $new = clone $this;
+        $new->cookies = $cookies;
+
+        return $new;
+    }
+
+    /**
+     * Get the parsed request body data.
+     *
+     * If the request Content-Type is either application/x-www-form-urlencoded
+     * or multipart/form-data, nd the request method is POST, this will be the
+     * post data. For other content types, it may be the deserialized request
+     * body.
+     *
+     * @return null|array|object The deserialized body parameters, if any.
+     *     These will typically be an array or object.
+     */
+    public function getParsedBody()
+    {
+        return $this->data;
+    }
+
+    /**
+     * Update the parsed body and get a new instance.
+     *
+     * @param null|array|object $data The deserialized body data. This will
+     *     typically be in an array or object.
+     * @return static
+     */
+    public function withParsedBody($data)
+    {
+        $new = clone $this;
+        $new->data = $data;
+
+        return $new;
     }
 
     /**
