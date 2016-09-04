@@ -963,7 +963,7 @@ class Request implements ArrayAccess
      * Get the HTTP method used for this request.
      *
      * @return string The name of the HTTP method used.
-     * @deprected 3.4.0 This method will be removed in 4.0.0. Use getMethod() instead.
+     * @deprecated 3.4.0 This method will be removed in 4.0.0. Use getMethod() instead.
      */
     public function method()
     {
