@@ -186,6 +186,14 @@ trait SqliteDialectTrait
 
     /**
      * {@inheritDoc}
+     */
+    public function explainSQL($query)
+    {
+        return "EXPLAIN QUERY PLAN $query";
+    }
+
+    /**
+     * {@inheritDoc}
      *
      * @return \Cake\Database\SqliteCompiler
      */

@@ -81,4 +81,12 @@ trait MysqlDialectTrait
     {
         return 'SET foreign_key_checks = 1';
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function explainSQL($query)
+    {
+        return "EXPLAIN $query";
+    }
 }

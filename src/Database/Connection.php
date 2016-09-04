@@ -25,6 +25,7 @@ use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Datasource\ConnectionInterface;
 use Exception;
+use InvalidArgumentException;
 
 /**
  * Represents a connection with a database server.
@@ -724,6 +725,37 @@ class Connection implements ConnectionInterface
         $log->logger($this->logger());
 
         return $log;
+    }
+
+    /**
+     * Checks if the driver supports EXPLAIN statement for the specified query.
+     *
+     * @param string $query The query to be explained
+     * @return bool
+     */
+    public function canExplain($query)
+    {
+        $query = (string)$query;
+
+        return preg_match('/^\s*(SELECT|INSERT|UPDATE|DELETE)\s/i', $query)
+            && $this->_driver->explainSQL($query) !== false;
+    }
+
+    /**
+     * Executes an EXPLAIN statement for the specified query.
+     *
+     * @param string $query The query to be explained
+     * @return \Cake\Database\StatementInterface
+     */
+    public function explain($query)
+    {
+        $query = (string)$query;
+
+        if (!$this->canExplain($query)) {
+            throw new InvalidArgumentException('Cannot explain query');
+        }
+
+        return $this->execute($this->_driver->explainSQL($query));
     }
 
     /**
