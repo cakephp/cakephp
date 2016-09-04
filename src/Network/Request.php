@@ -178,6 +178,13 @@ class Request implements ArrayAccess
     protected $emulatedAttributes = ['webroot', 'base', 'params'];
 
     /**
+     * Array of Psr\Http\Message\UploadedFileInterface objects.
+     *
+     * @var array
+     */
+    protected $uploadedFiles = [];
+
+    /**
      * Wrapper method to create a new request from PHP superglobals.
      *
      * Uses the $_GET, $_POST, $_FILES, $_COOKIE, $_SERVER, $_ENV and php://input data to construct
@@ -482,6 +489,7 @@ class Request implements ArrayAccess
                 json_encode($value)
             ));
         }
+        $this->uploadedFiles = $fileData;
 
         // Make a flat map that can be inserted into $post for BC.
         $fileMap = Hash::flatten($fileData);
@@ -1681,6 +1689,16 @@ class Request implements ArrayAccess
         ];
 
         return $this->attributes + $emulated;
+    }
+
+    /**
+     * Get the array of uploaded files from the request.
+     *
+     * @return array
+     */
+    public function getUploadedFiles()
+    {
+        return $this->uploadedFiles;
     }
 
     /**

@@ -354,7 +354,7 @@ class RequestTest extends TestCase
      *
      * @return void
      */
-    public function testProcessFilesNested()
+    public function testFilesNested()
     {
         $files = [
             'image_main' => [
@@ -448,6 +448,18 @@ class RequestTest extends TestCase
             ]
         ];
         $this->assertEquals($expected, $request->data);
+
+        $uploads = $request->getUploadedFiles();
+        $this->assertCount(3, $uploads);
+        $this->assertArrayHasKey(0, $uploads);
+        $this->assertEquals('scratch.text', $uploads[0]['image']->getClientFilename());
+
+        $this->assertArrayHasKey('pictures', $uploads);
+        $this->assertEquals('a-file.png', $uploads['pictures'][0]['file']->getClientFilename());
+        $this->assertEquals('a-moose.png', $uploads['pictures'][1]['file']->getClientFilename());
+
+        $this->assertArrayHasKey('image_main', $uploads);
+        $this->assertEquals('born on.txt', $uploads['image_main']['file']->getClientFilename());
     }
 
     /**
@@ -478,6 +490,14 @@ class RequestTest extends TestCase
             ]
         ];
         $this->assertEquals($expected, $request->data);
+
+        $uploads = $request->getUploadedFiles();
+        $this->assertCount(1, $uploads);
+        $this->assertArrayHasKey('birth_cert', $uploads);
+        $this->assertEquals('born on.txt', $uploads['birth_cert']->getClientFilename());
+        $this->assertEquals(0, $uploads['birth_cert']->getError());
+        $this->assertEquals('application/octet-stream', $uploads['birth_cert']->getClientMediaType());
+        $this->assertEquals(123, $uploads['birth_cert']->getSize());
     }
 
     /**
@@ -501,6 +521,10 @@ class RequestTest extends TestCase
             'files' => $files
         ]);
         $this->assertEquals($files, $request->data);
+
+        $uploads = $request->getUploadedFiles();
+        $this->assertCount(1, $uploads);
+        $this->assertEquals($files[0]['name'], $uploads[0]->getClientFilename());
     }
 
     /**
