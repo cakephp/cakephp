@@ -460,15 +460,26 @@ class Request implements ArrayAccess
      */
     protected function _processFiles($post, $files)
     {
-        if (is_array($files)) {
+        if (!is_array($files)) {
+            return $post;
+        }
+
+        $fileData = [];
+        foreach ($files as $key => $data) {
             foreach ($files as $key => $data) {
                 if (isset($data['tmp_name']) && is_string($data['tmp_name'])) {
-                    $post[$key] = $data;
+                    $fileData[$key] = $data;
                 } else {
                     $keyData = isset($post[$key]) ? $post[$key] : [];
-                    $post[$key] = $this->_processFileData($keyData, $data);
+                    $fileData[$key] = $this->_processFileData($keyData, $data);
                 }
             }
+        }
+
+        // Make a flat map that can be inserted into $post for BC.
+        $fileMap = Hash::flatten($fileData);
+        foreach ($fileMap as $key => $file) {
+            $post = Hash::insert($post, $key, $file);
         }
 
         return $post;
