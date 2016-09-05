@@ -24,6 +24,7 @@ use PDO;
  */
 class SqliteTest extends TestCase
 {
+
     public $fixtures = ['core.things'];
 
     public $autoFixtures = false;
@@ -161,7 +162,7 @@ class SqliteTest extends TestCase
         $this->loadFixtures('Things');
 
         $connection = ConnectionManager::get('test');
-        $result = $connection->explain('SELECT * FROM things');
+        $result = $connection->explain('SELECT * FROM things WHERE id = ?', [1]);
 
         $expected = [
             'selectid',

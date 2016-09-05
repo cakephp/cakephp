@@ -23,6 +23,7 @@ use PDO;
  */
 class MysqlTest extends TestCase
 {
+
     /**
      * setup
      *
@@ -171,7 +172,7 @@ class MysqlTest extends TestCase
     public function testExplain()
     {
         $connection = ConnectionManager::get('test');
-        $result = $connection->explain('SELECT 1');
+        $result = $connection->explain('SELECT ?', [1]);
 
         $expected = [
             'id',

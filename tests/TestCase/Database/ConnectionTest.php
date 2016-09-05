@@ -1042,10 +1042,10 @@ class ConnectionTest extends TestCase
             ->getMock();
 
         $connection->expects($this->once())
-            ->method('execute')
+            ->method('execute', ['number' => 100], ['number' => 'integer'])
             ->with('EXPLAIN something');
 
-        $connection->explain('SELECT 1');
+        $connection->explain('SELECT :number', ['number' => 100], ['number' => 'integer']);
     }
 
     /**

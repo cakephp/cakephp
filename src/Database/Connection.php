@@ -745,9 +745,11 @@ class Connection implements ConnectionInterface
      * Executes an EXPLAIN statement for the specified query.
      *
      * @param string $query The query to be explained
+     * @param array $params list or associative array of params to be interpolated in $query as values
+     * @param array $types list or associative array of types to be used for casting values in query
      * @return \Cake\Database\StatementInterface
      */
-    public function explain($query)
+    public function explain($query, array $params = [], array $types = [])
     {
         $query = (string)$query;
 
@@ -755,7 +757,7 @@ class Connection implements ConnectionInterface
             throw new InvalidArgumentException('Cannot explain query');
         }
 
-        return $this->execute($this->_driver->explainSQL($query));
+        return $this->execute($this->_driver->explainSQL($query), $params, $types);
     }
 
     /**

@@ -24,6 +24,10 @@ use \PDO;
 class PostgresTest extends TestCase
 {
 
+    public $fixtures = ['core.things'];
+
+    public $autoFixtures = false;
+
     /**
      * Test connecting to Postgres with default configuration
      *
@@ -183,8 +187,10 @@ class PostgresTest extends TestCase
         $config = ConnectionManager::config('test');
         $this->skipIf(strpos($config['driver'], 'Postgres') === false, 'Not using Postgres for test config');
 
+        $this->loadFixtures('Things');
+
         $connection = ConnectionManager::get('test');
-        $result = $connection->explain('SELECT 1');
+        $result = $connection->explain('SELECT * FROM things WHERE id = ?', [1]);
 
         $expected = [
             'QUERY PLAN',
