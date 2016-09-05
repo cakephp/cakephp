@@ -2948,6 +2948,22 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test that simple aliased field have results typecast.
+     *
+     * @return void
+     */
+    public function testSelectTypeInferSimpleAliases()
+    {
+        $table = TableRegistry::get('comments');
+        $result = $table
+            ->find()
+            ->select(['created', 'updated_time' => 'updated'])
+            ->first();
+        $this->assertInstanceOf(Time::class, $result->created);
+        $this->assertInstanceOf(Time::class, $result->updated_time);
+    }
+
+    /**
      * Tests that isEmpty() can be called on a query
      *
      * @return void

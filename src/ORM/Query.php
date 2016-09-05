@@ -1020,6 +1020,9 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                 $types[$alias] = $typeMap[$alias];
                 continue;
             }
+            if (is_string($value) && isset($typeMap[$value])) {
+                $types[$alias] = $typeMap[$value];
+            }
             if ($value instanceof TypedResultInterface) {
                 $types[$alias] = $value->returnType();
             }
