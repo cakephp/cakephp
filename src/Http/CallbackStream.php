@@ -33,6 +33,8 @@ class CallbackStream extends BaseCallbackStream
 {
     /**
      * {@inheritdoc}
+     *
+     * @return string
      */
     public function getContents()
     {
@@ -41,6 +43,7 @@ class CallbackStream extends BaseCallbackStream
         if (!is_string($result)) {
             return '';
         }
+
         return $result;
     }
 }
