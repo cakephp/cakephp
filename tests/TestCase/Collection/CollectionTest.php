@@ -1916,7 +1916,6 @@ class CollectionTest extends TestCase
         ]);
 
         $result = $collection->cartesianProduct();
-
     }
 
     public function testTranspose()
