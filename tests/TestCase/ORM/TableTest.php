@@ -2100,26 +2100,33 @@ class TableTest extends TestCase
                     'user_id' => 1,
                     'comment' => 'Second comment',
                     'published' => 'Y'
-                ],
-                [
-                    'user_id' => 1,
-                    'comment' => 'Third comment',
-                    'published' => 'N'
                 ]
             ]
         ]);
-
         $article = $Articles->save($article);
         $this->assertNotEmpty($article);
 
+        $comment3 = $Comments->target()->newEntity([
+            'article_id' => $article->get('id'),
+            'user_id' => 1,
+            'comment' => 'Third comment',
+            'published' => 'N'
+        ]);
+        $comment3 = $Comments->target()->save($comment3);
+        $this->assertNotEmpty($comment3);
+
         $this->assertEquals(3, $Comments->target()->find()->where(['Comments.article_id' => $article->get('id')])->count());
 
-        unset($article->comments[1], $article->comments[2]);
+        unset($article->comments[1]);
         $article->dirty('comments', true);
 
         $article = $Articles->save($article);
         $this->assertNotEmpty($article);
 
+        // Given the association condition of `'Comments.published' => 'Y'`,
+        // it is expected that only one the three linked comments are actually
+        // being deleted, as only one of them matches the association
+        // conditions.
         $this->assertEquals(2, $Comments->target()->find()->where(['Comments.article_id' => $article->get('id')])->count());
     }
 
@@ -2154,28 +2161,34 @@ class TableTest extends TestCase
                     'title' => 'Second article',
                     'body' => 'Second article',
                     'published' => 'Y'
-                ],
-                [
-                    'title' => 'Third article',
-                    'body' => 'Third article',
-                    'published' => 'N'
                 ]
             ]
         ]);
-
         $author = $Authors->save($author);
         $this->assertNotEmpty($author);
+
+        $article3 = $Articles->target()->newEntity([
+            'author_id' => $author->get('id'),
+            'title' => 'Third article',
+            'body' => 'Third article',
+            'published' => 'N'
+        ]);
+        $article3 = $Articles->target()->save($article3);
+        $this->assertNotEmpty($article3);
 
         $this->assertEquals(3, $Articles->target()->find()->where(['Articles.author_id' => $author->get('id')])->count());
 
         $article2 = $author->articles[1];
-        $article3 = $author->articles[2];
-        unset($author->articles[1], $author->articles[2]);
+        unset($author->articles[1]);
         $author->dirty('articles', true);
 
         $author = $Authors->save($author);
         $this->assertNotEmpty($author);
 
+        // Given the association condition of `'Articles.published' => 'Y'`,
+        // it is expected that only one the three linked articles are actually
+        // being unlinked (nulled), as only one of them matches the association
+        // conditions.
         $this->assertEquals(2, $Articles->target()->find()->where(['Articles.author_id' => $author->get('id')])->count());
         $this->assertNull($Articles->get($article2->get('id'))->get('author_id'));
         $this->assertEquals($author->get('id'), $Articles->get($article3->get('id'))->get('author_id'));
