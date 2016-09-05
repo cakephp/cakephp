@@ -692,35 +692,31 @@ trait CollectionTrait
             return new Collection([]);
         }
 
-        // contains each array of the collection
-        $values = [];
-        // contains the keys of each array
-        $valuesKeys = [];
-        // contains the number of elements of each array
-        $counts = [];
+        $collectionArrays = [];
+        $collectionArraysKeys = [];
+        $collectionArraysCounts = [];
 
         foreach ($this as $value) {
-            // fail if any of the values is a multidimensional array
             if (count($value) !== count($value, COUNT_RECURSIVE)) {
                 throw new LogicException('Cannot find the cartesian product of a multidimensional array');
             }
 
-            $valuesKeys[] = array_keys($value);
-            $counts[] = count($value);
-            $values[] = $value;
+            $collectionArraysKeys[] = array_keys($value);
+            $collectionArraysCounts[] = count($value);
+            $collectionArrays[] = $value;
         }
 
         $result = [];
-        $lastIndex = count($values) - 1;
+        $lastIndex = count($collectionArrays) - 1;
         // holds the indexes of the arrays that generate the current combination
         $currentIndexes = array_fill(0, $lastIndex + 1, 0);
 
         $changeIndex = $lastIndex;
 
-        while (!($changeIndex === 0 && $currentIndexes[0] === $counts[0])) {
+        while (!($changeIndex === 0 && $currentIndexes[0] === $collectionArraysCounts[0])) {
             $currentCombination = array_map(function ($value, $keys, $index) {
                 return $value[$keys[$index]];
-            }, $values, $valuesKeys, $currentIndexes);
+            }, $collectionArrays, $collectionArraysKeys, $currentIndexes);
 
             if ($filter === null || call_user_func_array($filter, $currentCombination)) {
                 $result[] = ($operation === null) ? $currentCombination : call_user_func_array($operation, $currentCombination);
@@ -728,7 +724,7 @@ trait CollectionTrait
 
             $currentIndexes[$lastIndex]++;
 
-            for ($changeIndex = $lastIndex; $currentIndexes[$changeIndex] === $counts[$changeIndex] && $changeIndex > 0; $changeIndex--) {
+            for ($changeIndex = $lastIndex; $currentIndexes[$changeIndex] === $collectionArraysCounts[$changeIndex] && $changeIndex > 0; $changeIndex--) {
                 $currentIndexes[$changeIndex] = 0;
                 $currentIndexes[$changeIndex - 1]++;
             }
