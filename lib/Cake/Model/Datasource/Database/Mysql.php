@@ -862,8 +862,8 @@ class Mysql extends DboSource {
  */
 	public function insertMulti($table, $fields, $values) {
 		$table = $this->fullTableName($table);
-		$holder = implode(',', array_fill(0, count($fields), '?'));
-		$fields = implode(', ', array_map(array(&$this, 'name'), $fields));
+		$holder = implode(', ', array_fill(0, count($fields), '?'));
+		$fields = implode(', ', array_map(array($this, 'name'), $fields));
 		$pdoMap = array(
 			'integer' => PDO::PARAM_INT,
 			'float' => PDO::PARAM_STR,
