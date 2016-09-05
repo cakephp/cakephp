@@ -928,7 +928,11 @@ abstract class IntegrationTestCase extends TestCase
             $this->fail('There is no stored session data. Perhaps you need to run a request?');
         }
         $result = $this->_requestSession->read($path);
-        $this->assertEquals($expected, $result, 'Session content differs. ' . $message);
+        $this->assertEquals(
+            $expected,
+            $result,
+            'Session content for "' . $path . '" differs. ' . $message
+        );
     }
 
     /**
@@ -945,7 +949,11 @@ abstract class IntegrationTestCase extends TestCase
             $this->fail('Not response set, cannot assert cookies.');
         }
         $result = $this->_response->cookie($name);
-        $this->assertEquals($expected, $result['value'], 'Cookie data differs. ' . $message);
+        $this->assertEquals(
+            $expected,
+            $result['value'],
+            'Cookie "' . $name . '" data differs. ' . $message
+        );
     }
 
     /**
