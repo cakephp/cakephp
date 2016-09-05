@@ -2124,9 +2124,9 @@ class TableTest extends TestCase
         $this->assertNotEmpty($article);
 
         // Given the association condition of `'Comments.published' => 'Y'`,
-        // it is expected that only one the three linked comments are actually
-        // being deleted, as only one of them matches the association
-        // conditions.
+        // it is expected that only one of the three linked comments are
+        // actually being deleted, as only one of them matches the
+        // association condition.
         $this->assertEquals(2, $Comments->target()->find()->where(['Comments.article_id' => $article->get('id')])->count());
     }
 
@@ -2186,9 +2186,9 @@ class TableTest extends TestCase
         $this->assertNotEmpty($author);
 
         // Given the association condition of `'Articles.published' => 'Y'`,
-        // it is expected that only one the three linked articles are actually
-        // being unlinked (nulled), as only one of them matches the association
-        // conditions.
+        // it is expected that only one of the three linked articles are
+        // actually being unlinked (nulled), as only one of them matches the
+        // association condition.
         $this->assertEquals(2, $Articles->target()->find()->where(['Articles.author_id' => $author->get('id')])->count());
         $this->assertNull($Articles->get($article2->get('id'))->get('author_id'));
         $this->assertEquals($author->get('id'), $Articles->get($article3->get('id'))->get('author_id'));
