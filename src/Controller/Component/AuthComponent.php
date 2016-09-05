@@ -364,15 +364,10 @@ class AuthComponent extends Component
             return $result;
         }
 
-        if (!$this->storage()->redirectUrl()) {
-            $this->storage()->redirectUrl($this->request->here(false));
-        }
-
         if (!$controller->request->is('ajax')) {
             $this->flash($this->_config['authError']);
-            $this->storage()->redirectUrl($controller->request->here(false));
 
-            return $controller->redirect($this->_config['loginAction']);
+            return $controller->redirect($this->_loginActionRedirectUrl());
         }
 
         if (!empty($this->_config['ajaxLogin'])) {
@@ -388,6 +383,23 @@ class AuthComponent extends Component
         $this->response->statusCode(403);
 
         return $this->response;
+    }
+
+    /**
+     * @return array|string
+     */
+    protected function _loginActionRedirectUrl()
+    {
+        $currentUrl = $this->request->here(false);
+
+        $loginAction = $this->_config['loginAction'];
+        if (is_array($loginAction)) {
+            $loginAction['?']['redirect'] = $currentUrl;
+        } else {
+            $loginAction .= '?redirect=' . rawurlencode($currentUrl);
+        }
+
+        return $loginAction;
     }
 
     /**
@@ -660,7 +672,6 @@ class AuthComponent extends Component
         }
         $user = (array)$this->user();
         $this->dispatchEvent('Auth.logout', [$user]);
-        $this->storage()->redirectUrl(false);
         $this->storage()->delete();
 
         return Router::normalize($this->_config['logoutRedirect']);
@@ -700,8 +711,6 @@ class AuthComponent extends Component
     {
         $user = $this->user();
         if ($user) {
-            $this->storage()->redirectUrl(false);
-
             return true;
         }
 
@@ -745,25 +754,27 @@ class AuthComponent extends Component
      */
     public function redirectUrl($url = null)
     {
-        if ($url !== null) {
-            $redir = $url;
-            $this->storage()->redirectUrl($redir);
-        } elseif ($redir = $this->storage()->redirectUrl()) {
-            $this->storage()->redirectUrl(false);
+        $redirectUrl = $this->request->query('redirect');
+        if ($redirectUrl && (substr($redirectUrl, 0, 1) !== '/')) {
+            $redirectUrl = null;
+        }
 
-            if (Router::normalize($redir) === Router::normalize($this->_config['loginAction'])) {
-                $redir = $this->_config['loginRedirect'];
+        if ($url !== null) {
+            $redirectUrl = $url;
+        } elseif ($redirectUrl) {
+            if (Router::normalize($redirectUrl) === Router::normalize($this->_config['loginAction'])) {
+                $redirectUrl = $this->_config['loginRedirect'];
             }
         } elseif ($this->_config['loginRedirect']) {
-            $redir = $this->_config['loginRedirect'];
+            $redirectUrl = $this->_config['loginRedirect'];
         } else {
-            $redir = '/';
+            $redirectUrl = '/';
         }
-        if (is_array($redir)) {
-            return Router::url($redir + ['_base' => false]);
+        if (is_array($redirectUrl)) {
+            return Router::url($redirectUrl + ['_base' => false]);
         }
 
-        return $redir;
+        return $redirectUrl;
     }
 
     /**
