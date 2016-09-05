@@ -1777,6 +1777,14 @@ class CollectionTest extends TestCase
      */
     public function testCartesianProduct()
     {
+        $collection = new Collection([]);
+
+        $result = $collection->cartesianProduct();
+
+        $expected = [];
+
+        $this->assertEquals($expected, $result->toList());
+
         $collection = new Collection([['A', 'B', 'C'], [1, 2, 3]]);
 
         $result = $collection->cartesianProduct();
@@ -1858,10 +1866,57 @@ class CollectionTest extends TestCase
             [4 => ['B' => 'name']],
             [4 => ['B' => 'telephone']],
             [4 => ['C' => 'name']],
-            [4 => ['C' => 'telephone']]
+            [4 => ['C' => 'telephone']],
         ];
 
         $this->assertEquals($expected, $result->toList());
+
+        $collection = new Collection([
+            [
+                'name1' => 'alex',
+                'name2' => 'kostas',
+                0 => 'leon',
+            ],
+            [
+                'val1' => 'alex@example.com',
+                24 => 'kostas@example.com',
+                'val2' => 'leon@example.com',
+            ],
+        ]);
+
+        $result = $collection->cartesianProduct();
+
+        $expected = [
+            ['alex', 'alex@example.com'],
+            ['alex', 'kostas@example.com'],
+            ['alex', 'leon@example.com'],
+            ['kostas', 'alex@example.com'],
+            ['kostas', 'kostas@example.com'],
+            ['kostas', 'leon@example.com'],
+            ['leon', 'alex@example.com'],
+            ['leon', 'kostas@example.com'],
+            ['leon', 'leon@example.com'],
+        ];
+
+        $this->assertEquals($expected, $result->toList());
+
+        $this->expectException(\LogicException::class);
+
+        $collection = new Collection([
+            [
+                'names' => [
+                    'alex', 'kostas', 'leon'
+                ]
+            ],
+            [
+                'locations' => [
+                    'crete', 'london', 'paris'
+                ]
+            ],
+        ]);
+
+        $result = $collection->cartesianProduct();
+
     }
 
     public function testTranspose()
