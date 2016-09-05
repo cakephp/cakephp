@@ -529,6 +529,25 @@ class RequestTest extends TestCase
     }
 
     /**
+     * Test that the constructor uses uploaded file objects
+     * if they are present. This could happen in test scenarios.
+     *
+     * @return void
+     */
+    public function testFilesObject()
+    {
+        $file = new UploadedFile(
+            __FILE__,
+            123,
+            UPLOAD_ERR_OK,
+            'test.php',
+            'text/plain'
+        );
+        $request = new Request(['files' => ['avatar' => $file]]);
+        $this->assertSame(['avatar' => $file], $request->getUploadedFiles());
+    }
+
+    /**
      * Test replacing files.
      *
      * @return void
