@@ -60,6 +60,10 @@ class QueryLogger
      */
     protected function _interpolate($query)
     {
+        if ($query->queryString === null) {
+            $query->queryString = $query->query;
+        }
+
         $params = array_map(function ($p) {
             if ($p === null) {
                 return 'NULL';
@@ -77,6 +81,6 @@ class QueryLogger
             $keys[] = is_string($key) ? "/:$key\b/" : '/[?]/';
         }
 
-        return preg_replace($keys, $params, $query->query, $limit);
+        return preg_replace($keys, $params, $query->queryString, $limit);
     }
 }

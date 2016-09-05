@@ -155,4 +155,45 @@ class QueryLoggerTest extends TestCase
         $engine2->expects($this->never())->method('log');
         $logger->log($query);
     }
+
+    /**
+     * Tests that calling log method twice works
+     *
+     * @return void
+     */
+    public function testCallingLogMethodTwice()
+    {
+        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')
+            ->setMethods(['_log'])
+            ->getMock();
+        $query = new LoggedQuery;
+        $query->query = 'SELECT :value';
+        $query->params = ['value' => ':value'];
+
+        $logger->log($query);
+        $this->assertEquals("SELECT ':value'", $query->query);
+
+        $logger->log($query);
+        $this->assertEquals("SELECT ':value'", $query->query);
+    }
+
+    /**
+     * Tests that the queryString property and the params property are not modified.
+     *
+     * @return void
+     */
+    public function testKeepingOriginalQueryAndParams()
+    {
+        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')
+            ->setMethods(['_log'])
+            ->getMock();
+        $query = new LoggedQuery;
+        $query->queryString = 'SELECT :value';
+        $query->params = ['value' => 100];
+
+        $logger->log($query);
+        $this->assertEquals("SELECT 100", $query->query);
+        $this->assertEquals("SELECT :value", $query->queryString);
+        $this->assertEquals(['value' => 100], $query->params);
+    }
 }

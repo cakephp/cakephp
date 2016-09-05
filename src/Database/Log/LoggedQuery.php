@@ -25,6 +25,15 @@ class LoggedQuery
 
     /**
      * Query string that was executed
+     * This value should not be modified once assigned
+     *
+     * @var string
+     */
+    public $queryString;
+
+    /**
+     * Query string that was executed
+     * This value may be modified by QueryLogger
      *
      * @var string
      */
