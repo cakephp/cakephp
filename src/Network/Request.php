@@ -1692,6 +1692,22 @@ class Request implements ArrayAccess
     }
 
     /**
+     * Get the uploaded file from a dotted path.
+     *
+     * @param string $path The dot separated path to the file you want.
+     * @return null|Psr\Http\Message\UploadedFileInterface
+     */
+    public function getUploadedFile($path)
+    {
+        $file = Hash::get($this->uploadedFiles, $path);
+        if (!$file instanceof UploadedFile) {
+            return null;
+        }
+
+        return $file;
+    }
+
+    /**
      * Get the array of uploaded files from the request.
      *
      * @return array

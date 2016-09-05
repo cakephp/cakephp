@@ -551,6 +551,38 @@ class RequestTest extends TestCase
     }
 
     /**
+     * Test getting a single file
+     *
+     * @return void
+     */
+    public function testGetUploadedFile()
+    {
+        $file = new UploadedFile(
+            __FILE__,
+            123,
+            UPLOAD_ERR_OK,
+            'test.php',
+            'text/plain'
+        );
+        $request = new Request();
+        $new = $request->withUploadedFiles(['picture' => $file]);
+        $this->assertNull($new->getUploadedFile(''));
+        $this->assertSame($file, $new->getUploadedFile('picture'));
+
+        $new = $request->withUploadedFiles([
+            'pictures' => [
+                [
+                    'image' => $file
+                ]
+            ]
+        ]);
+        $this->assertNull($new->getUploadedFile('pictures'));
+        $this->assertNull($new->getUploadedFile('pictures.0'));
+        $this->assertNull($new->getUploadedFile('pictures.1'));
+        $this->assertSame($file, $new->getUploadedFile('pictures.0.image'));
+    }
+
+    /**
      * Test replacing files with an invalid file
      *
      * @expectedException InvalidArgumentException
