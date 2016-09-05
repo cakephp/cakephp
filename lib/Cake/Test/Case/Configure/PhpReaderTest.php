@@ -19,7 +19,7 @@
 App::uses('PhpReader', 'Configure');
 
 /**
- * Class PhpReaderTest
+ * PhpReaderTest
  *
  * @package       Cake.Test.Case.Configure
  */

@@ -17,7 +17,7 @@
  */
 
 /**
- * Class GuildFixture
+ * GuildFixture
  *
  * @package       Cake.Test.Fixture
  */

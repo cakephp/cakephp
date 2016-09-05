@@ -20,7 +20,7 @@ App::uses('HttpSocket', 'Network/Http');
 App::uses('BasicAuthentication', 'Network/Http');
 
 /**
- * class TestSslHttpSocket
+ * TestSslHttpSocket
  *
  * @package       Cake.Test.Case.Network.Http
  */

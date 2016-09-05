@@ -1942,6 +1942,7 @@ class FormHelper extends AppHelper {
  * - `before` - Content to include before the input.
  * - `after` - Content to include after the input.
  * - `type` - Set to 'reset' for reset inputs. Defaults to 'submit'
+ * - `confirm` - JavaScript confirmation message.
  * - Other attributes will be assigned to the input element.
  *
  * ### Options
@@ -1959,12 +1960,17 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::submit
  */
 	public function submit($caption = null, $options = array()) {
+		$confirmMessage = false;
 		if (!is_string($caption) && empty($caption)) {
 			$caption = __d('cake', 'Submit');
 		}
 		$out = null;
 		$div = true;
 
+		if (!empty($options['confirm'])) {
+			$confirmMessage = $options['confirm'];
+			unset($options['confirm']);
+		}
 		if (isset($options['div'])) {
 			$div = $options['div'];
 			unset($options['div']);
@@ -2005,6 +2011,12 @@ class FormHelper extends AppHelper {
 			foreach ($unlockFields as $ignore) {
 				$this->unlockField($ignore);
 			}
+		}
+
+		if ($confirmMessage) {
+			$okCode = 'return true;';
+			$cancelCode = 'event.returnValue = false; return false;';
+			$options['onclick'] = $this->_confirm($confirmMessage, $okCode, $cancelCode, $options);
 		}
 
 		if ($isUrl) {

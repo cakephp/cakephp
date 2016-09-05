@@ -27,7 +27,7 @@ class HtmlAliasHelper extends HtmlHelper {
 }
 
 /**
- * Class HelperCollectionTest
+ * HelperCollectionTest
  *
  * @package       Cake.Test.Case.View
  */

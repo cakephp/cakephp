@@ -17,7 +17,7 @@
  */
 
 /**
- * Class OverallFavoriteFixture
+ * OverallFavoriteFixture
  *
  * @package       Cake.Test.Fixture
  */

@@ -17,7 +17,7 @@
  */
 
 /**
- * Class FilmFileFixture
+ * FilmFileFixture
  *
  * @package       Cake.Test.Fixture
  */

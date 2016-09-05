@@ -17,7 +17,7 @@
  */
 
 /**
- * Class CustomLibClass
+ * CustomLibClass
  *
  * @package       Cake.Test.TestApp.Plugin.TestPlugin.Lib.Custom.Package
  */

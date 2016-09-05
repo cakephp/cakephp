@@ -39,7 +39,7 @@ if (!$imported) {
 	define('ARTICLE_MODEL_CREATED', true);
 
 /**
- * Class BakeArticle
+ * BakeArticle
  */
 	class BakeArticle extends Model {
 

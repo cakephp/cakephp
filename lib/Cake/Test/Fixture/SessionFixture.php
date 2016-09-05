@@ -17,7 +17,7 @@
  */
 
 /**
- * Class SessionFixture
+ * SessionFixture
  *
  * @package       Cake.Test.Fixture
  */

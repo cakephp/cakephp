@@ -17,7 +17,7 @@
  */
 
 /**
- * Class SyfileFixture
+ * SyfileFixture
  *
  * @package       Cake.Test.Fixture
  */

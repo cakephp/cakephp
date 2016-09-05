@@ -17,7 +17,7 @@
  */
 
 /**
- * Class UuidnativeitemFixture
+ * UuidnativeitemFixture
  *
  * @package       Cake.Test.Fixture
  */

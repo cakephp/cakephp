@@ -17,7 +17,7 @@
  */
 
 /**
- * Class UuidnativeitemsUuidnativeportfolioNumericidFixture
+ * UuidnativeitemsUuidnativeportfolioNumericidFixture
  *
  * @package       Cake.Test.Fixture
  */

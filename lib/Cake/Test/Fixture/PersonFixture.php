@@ -17,7 +17,7 @@
  */
 
 /**
- * Class PersonFixture
+ * PersonFixture
  *
  * @package       Cake.Test.Fixture
  */

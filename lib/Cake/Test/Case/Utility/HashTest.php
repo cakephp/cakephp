@@ -17,7 +17,7 @@
 App::uses('Hash', 'Utility');
 
 /**
- * Class HashTest
+ * HashTest
  *
  * @package       Cake.Utility
  */
@@ -1358,6 +1358,38 @@ class HashTest extends CakeTestCase {
 		);
 		$sorted = Hash::sort($a, '{n}.Person.name', 'asc', 'natural');
 		$this->assertEquals($sorted, $b);
+	}
+
+/**
+ * Test sort() with locale option.
+ *
+ * @return void
+ */
+	public function testSortLocale() {
+		// get the current locale
+		$oldLocale = setlocale(LC_COLLATE, '0');
+
+		$updated = setlocale(LC_COLLATE, 'de_DE.utf8');
+		$this->skipIf($updated === false, 'Could not set locale to de_DE.utf8, skipping test.');
+
+		$items = array(
+			array('Item' => array('entry' => 'Übergabe')),
+			array('Item' => array('entry' => 'Ostfriesland')),
+			array('Item' => array('entry' => 'Äpfel')),
+			array('Item' => array('entry' => 'Apfel')),
+		);
+
+		$result = Hash::sort($items, '{n}.Item.entry', 'asc', 'locale');
+		$expected = array(
+			array('Item' => array('entry' => 'Apfel')),
+			array('Item' => array('entry' => 'Äpfel')),
+			array('Item' => array('entry' => 'Ostfriesland')),
+			array('Item' => array('entry' => 'Übergabe')),
+		);
+		$this->assertEquals($expected, $result);
+
+		// change to the original locale
+		setlocale(LC_COLLATE, $oldLocale);
 	}
 
 /**

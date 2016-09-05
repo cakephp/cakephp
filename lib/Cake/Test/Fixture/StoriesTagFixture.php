@@ -17,7 +17,7 @@
  */
 
 /**
- * Class StoriesTagFixture
+ * StoriesTagFixture
  *
  * @package       Cake.Test.Fixture
  */

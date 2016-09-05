@@ -8495,6 +8495,17 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->submit('Test', array('confirm' => 'Confirm?'));
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array(
+				'type' => 'submit', 'value' => 'Test',
+				'onclick' => 'preg:/if \(confirm\(&quot;Confirm\?&quot;\)\) \{ return true; \} event\.returnValue = false; return false;/'
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -8571,6 +8582,17 @@ class FormHelperTest extends CakeTestCase {
 			'--before--',
 			'input' => array('type' => 'submit', 'value' => 'Not.an.image'),
 			'--after--',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->submit('cake.power.gif', array('confirm' => 'Confirm?'));
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array(
+				'type' => 'image', 'src' => 'img/cake.power.gif',
+				'onclick' => 'preg:/if \(confirm\(&quot;Confirm\?&quot;\)\) \{ return true; \} event\.returnValue = false; return false;/'
+			),
 			'/div'
 		);
 		$this->assertTags($result, $expected);

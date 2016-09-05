@@ -17,7 +17,7 @@
  */
 
 /**
- * Class MyCategoriesMyUsersFixture
+ * MyCategoriesMyUsersFixture
  *
  * @package       Cake.Test.Fixture
  */

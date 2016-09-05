@@ -21,7 +21,7 @@ App::uses('CacheSession', 'Model/Datasource/Session');
 class_exists('CakeSession');
 
 /**
- * Class CacheSessionTest
+ * CacheSessionTest
  *
  * @package       Cake.Test.Case.Model.Datasource.Session
  */

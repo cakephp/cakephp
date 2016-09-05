@@ -22,7 +22,7 @@ App::uses('CakeRequest', 'Network');
 App::uses('CakeResponse', 'Network');
 
 /**
- * Class ControllerAuthorizeTest
+ * ControllerAuthorizeTest
  *
  * @package       Cake.Test.Case.Controller.Component.Auth
  */

@@ -27,7 +27,7 @@ App::uses('MockDataSource', 'Model/Datasource');
 require_once dirname(dirname(__FILE__)) . DS . 'models.php';
 
 /**
- * Class MockPDO
+ * MockPDO
  *
  * @package       Cake.Test.Case.Model.Datasource
  */
@@ -42,7 +42,7 @@ class MockPDO extends PDO {
 }
 
 /**
- * Class MockDataSource
+ * MockDataSource
  *
  * @package       Cake.Test.Case.Model.Datasource
  */
@@ -50,7 +50,7 @@ class MockDataSource extends DataSource {
 }
 
 /**
- * Class DboTestSource
+ * DboTestSource
  *
  * @package       Cake.Test.Case.Model.Datasource
  */
@@ -81,7 +81,7 @@ class DboTestSource extends DboSource {
 }
 
 /**
- * Class DboSecondTestSource
+ * DboSecondTestSource
  *
  * @package       Cake.Test.Case.Model.Datasource
  */

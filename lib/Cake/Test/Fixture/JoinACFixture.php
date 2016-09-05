@@ -17,7 +17,7 @@
  */
 
 /**
- * Class JoinACFixture
+ * JoinACFixture
  *
  * @package       Cake.Test.Fixture
  */

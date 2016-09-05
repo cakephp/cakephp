@@ -17,7 +17,7 @@
  */
 
 /**
- * Class UuidNativeFixture.
+ * UuidNativeFixture.
  *
  * @package       Cake.Test.Fixture
  */

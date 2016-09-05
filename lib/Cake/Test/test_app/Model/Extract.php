@@ -17,7 +17,7 @@
  */
 
 /**
- * Class Extract
+ * Extract
  *
  * For testing Console i18n validation message extraction with quotes
  *

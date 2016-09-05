@@ -219,7 +219,7 @@ class File {
  *
  * @param string $data Data to write to this File.
  * @param string $mode Mode of writing. {@link http://php.net/fwrite See fwrite()}.
- * @param string $force Force the file to open
+ * @param bool $force Force the file to open
  * @return bool Success
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::write
  */

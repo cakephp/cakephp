@@ -23,6 +23,8 @@
  * (if memcached extension compiled with --enable-igbinary)
  * Compressed keys can also be incremented/decremented
  *
+ * This cache engine requires at least ext/memcached version 2.0
+ *
  * @package       Cake.Cache.Engine
  */
 class MemcachedEngine extends CacheEngine {

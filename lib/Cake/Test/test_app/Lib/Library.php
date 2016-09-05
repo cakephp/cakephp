@@ -17,7 +17,7 @@
  */
 
 /**
- * Class Library
+ * Library
  *
  * @package       Cake.Test.TestApp.Lib
  */

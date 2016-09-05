@@ -17,7 +17,7 @@
  */
 
 /**
- * Class GroupUpdateAllFixture
+ * GroupUpdateAllFixture
  *
  * @package       Cake.Test.Fixture
  */

@@ -17,7 +17,7 @@
  */
 
 /**
- * Class TestPluginOtherLibrary
+ * TestPluginOtherLibrary
  *
  * @package       Cake.Test.TestApp.Plugin.TestPlugin.Lib
  */

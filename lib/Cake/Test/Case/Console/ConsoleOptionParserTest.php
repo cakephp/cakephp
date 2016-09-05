@@ -19,7 +19,7 @@
 App::uses('ConsoleOptionParser', 'Console');
 
 /**
- * Class ConsoleOptionParserTest
+ * ConsoleOptionParserTest
  *
  * @package       Cake.Test.Case.Console
  */
