@@ -19,9 +19,9 @@ use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Utility\Hash;
+use InvalidArgumentException;
 use Psr\Http\Message\UploadedFileInterface;
 use Zend\Diactoros\UploadedFile;
-use InvalidArgumentException;
 
 /**
  * A class that helps wrap Request information and particulars about a single request.
@@ -557,6 +557,7 @@ class Request implements ArrayAccess
             ];
             $normalizedFiles[$key] = $this->_createUploadedFile($spec);
         }
+
         return $normalizedFiles;
     }
 
@@ -1736,11 +1737,12 @@ class Request implements ArrayAccess
     /**
      * Recursively validate uploaded file data.
      *
-     * @param array $uploadedFiles
+     * @param array $uploadedFiles The new files array to validate.
      * @param string $path The path thus far.
+     * @return void
      * @throws InvalidArgumentException If any leaf elements are not valid files.
      */
-    private function validateUploadedFiles(array $uploadedFiles, $path)
+    protected function validateUploadedFiles(array $uploadedFiles, $path)
     {
         foreach ($uploadedFiles as $key => $file) {
             if (is_array($file)) {
