@@ -1888,7 +1888,7 @@ class FormHelper extends AppHelper {
 		}
 
 		$previousLastAction = $this->_lastAction;
-		$this->_lastAction($url);
+		$this->_lastAction($formUrl);
 
 		$out = $this->Html->useTag('form', $formUrl, $formOptions);
 		$out .= $this->Html->useTag('hidden', '_method', array(
