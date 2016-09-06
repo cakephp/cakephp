@@ -849,4 +849,57 @@ class Mysql extends DboSource {
 		return strpos(strtolower($real), 'unsigned') !== false;
 	}
 
+/**
+ * Inserts multiple values into a table. Uses a single query in order to insert
+ * multiple rows.
+ *
+ * @param string $table The table being inserted into.
+ * @param array $fields The array of field/column names being inserted.
+ * @param array $values The array of values to insert. The values should
+ *   be an array of rows. Each row should have values keyed by the column name.
+ *   Each row must have the values in the same order as $fields.
+ * @return bool
+ */
+	public function insertMulti($table, $fields, $values) {
+		$table = $this->fullTableName($table);
+		$holder = implode(', ', array_fill(0, count($fields), '?'));
+		$fields = implode(', ', array_map(array($this, 'name'), $fields));
+		$pdoMap = array(
+			'integer' => PDO::PARAM_INT,
+			'float' => PDO::PARAM_STR,
+			'boolean' => PDO::PARAM_BOOL,
+			'string' => PDO::PARAM_STR,
+			'text' => PDO::PARAM_STR
+		);
+		$columnMap = array();
+		$rowHolder = "({$holder})";
+		$sql = "INSERT INTO {$table} ({$fields}) VALUES ";
+		$countRows = count($values);
+		for ($i = 0; $i < $countRows; $i++) {
+			if ($i !== 0) {
+				$sql .= ',';
+			}
+			$sql .= " $rowHolder";
+		}
+		$statement = $this->_connection->prepare($sql);
+		foreach ($values[key($values)] as $key => $val) {
+			$type = $this->introspectType($val);
+			$columnMap[$key] = $pdoMap[$type];
+		}
+		$valuesList = array();
+		$i = 1;
+		foreach ($values as $value) {
+			foreach ($value as $col => $val) {
+				$valuesList[] = $val;
+				$statement->bindValue($i, $val, $columnMap[$col]);
+				$i++;
+			}
+		}
+		$result = $statement->execute();
+		$statement->closeCursor();
+		if ($this->fullDebug) {
+			$this->logQuery($sql, $valuesList);
+		}
+		return $result;
+	}
 }

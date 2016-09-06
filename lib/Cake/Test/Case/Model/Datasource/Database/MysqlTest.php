@@ -4174,4 +4174,60 @@ SQL;
 		$this->assertTrue($this->Dbo->isConnected(), 'Should be connected.');
 	}
 
+/**
+ * Test insertMulti with id position.
+ *
+ * @return void
+ */
+	public function testInsertMultiId() {
+		$this->loadFixtures('Article');
+		$Article = ClassRegistry::init('Article');
+		$db = $Article->getDatasource();
+		$datetime = date('Y-m-d H:i:s');
+		$data = array(
+			array(
+				'user_id' => 1,
+				'title' => 'test',
+				'body' => 'test',
+				'published' => 'N',
+				'created' => $datetime,
+				'updated' => $datetime,
+				'id' => 100,
+			),
+			array(
+				'user_id' => 1,
+				'title' => 'test 101',
+				'body' => 'test 101',
+				'published' => 'N',
+				'created' => $datetime,
+				'updated' => $datetime,
+				'id' => 101,
+			)
+		);
+		$result = $db->insertMulti('articles', array_keys($data[0]), $data);
+		$this->assertTrue($result, 'Data was saved');
+
+		$data = array(
+			array(
+				'id' => 102,
+				'user_id' => 1,
+				'title' => 'test',
+				'body' => 'test',
+				'published' => 'N',
+				'created' => $datetime,
+				'updated' => $datetime,
+			),
+			array(
+				'id' => 103,
+				'user_id' => 1,
+				'title' => 'test 101',
+				'body' => 'test 101',
+				'published' => 'N',
+				'created' => $datetime,
+				'updated' => $datetime,
+			)
+		);
+		$result = $db->insertMulti('articles', array_keys($data[0]), $data);
+		$this->assertTrue($result, 'Data was saved');
+	}
 }
