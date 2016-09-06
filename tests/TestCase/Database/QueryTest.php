@@ -2834,6 +2834,40 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that aliases are stripped from update query conditions
+     * where possible.
+     *
+     * @return void
+     */
+    public function testUpdateStripAliasesFromConditions()
+    {
+        $this->loadFixtures('Authors');
+        $query = new Query($this->connection);
+
+        $query
+            ->update('authors')
+            ->set(['name' => 'name'])
+            ->where([
+                'OR' => [
+                    'a.id' => 1,
+                    'AND' => [
+                        'b.name NOT IN' => ['foo', 'bar'],
+                        'OR' => [
+                            $query->newExpr()->eq(new IdentifierExpression('c.name'), 'zap'),
+                            'd.name' => 'baz'
+                        ]
+                    ]
+                ],
+            ]);
+
+        $this->assertQuotedQuery(
+            'UPDATE <authors> SET <name> = :c0 WHERE \(<id> = :c1 OR \(<name> not in \(:c2,:c3\) AND \(\(<c>\.<name>\) = :c4 OR <name> = :c5\)\)\)',
+            $query->sql(),
+            !$this->autoQuote
+        );
+    }
+
+    /**
      * You cannot call values() before insert() it causes all sorts of pain.
      *
      * @expectedException \Cake\Database\Exception
