@@ -20,6 +20,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\EmitterInterface;
+use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\Response\SapiStreamEmitter;
 
 /**
@@ -101,6 +102,10 @@ class Server
      */
     public function emit(ResponseInterface $response, EmitterInterface $emitter = null)
     {
+        $stream = $response->getBody();
+        if (!$emitter && !$stream->isSeekable()) {
+            $emitter = new SapiEmitter();
+        }
         if (!$emitter) {
             $emitter = new SapiStreamEmitter();
         }
