@@ -1899,9 +1899,16 @@ class CollectionTest extends TestCase
         ];
 
         $this->assertEquals($expected, $result->toList());
+    }
 
-        $this->expectException(\LogicException::class);
-
+    /**
+     * Tests that an exception is thrown if the cartesian product is called with multidimensional arrays
+     *
+     * @expectedException \LogicException
+     * @return void
+     */
+    public function testCartesianProductMultidimensionalArray()
+    {
         $collection = new Collection([
             [
                 'names' => [
