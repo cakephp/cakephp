@@ -697,12 +697,13 @@ trait CollectionTrait
         $collectionArraysCounts = [];
 
         foreach ($this->toList() as $value) {
-            if (count($value) !== count($value, COUNT_RECURSIVE)) {
+            $valueCount = count($value);
+            if ($valueCount !== count($value, COUNT_RECURSIVE)) {
                 throw new LogicException('Cannot find the cartesian product of a multidimensional array');
             }
 
             $collectionArraysKeys[] = array_keys($value);
-            $collectionArraysCounts[] = count($value);
+            $collectionArraysCounts[] = $valueCount;
             $collectionArrays[] = $value;
         }
 
