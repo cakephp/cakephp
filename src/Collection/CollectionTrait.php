@@ -718,8 +718,8 @@ trait CollectionTrait
                 return $value[$keys[$index]];
             }, $collectionArrays, $collectionArraysKeys, $currentIndexes);
 
-            if ($filter === null || call_user_func_array($filter, $currentCombination)) {
-                $result[] = ($operation === null) ? $currentCombination : call_user_func_array($operation, $currentCombination);
+            if ($filter === null || $filter($currentCombination)) {
+                $result[] = ($operation === null) ? $currentCombination : $operation($currentCombination);
             }
 
             $currentIndexes[$lastIndex]++;

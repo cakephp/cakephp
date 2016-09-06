@@ -1805,10 +1805,10 @@ class CollectionTest extends TestCase
 
         $collection = new Collection([[1, 2, 3], ['A', 'B', 'C'], ['a', 'b', 'c']]);
 
-        $result = $collection->cartesianProduct(function ($val1, $val2, $val3) {
-            return [strval($val1) . $val2 . $val3];
-        }, function ($val1, $val2, $val3) {
-            return $val1 >= 2;
+        $result = $collection->cartesianProduct(function ($value) {
+            return [strval($value[0]) . $value[1] . $value[2]];
+        }, function ($value) {
+            return $value[0] >= 2;
         });
 
         $expected = [
@@ -1836,10 +1836,10 @@ class CollectionTest extends TestCase
 
         $collection = new Collection([['1', '2', '3', '4'], ['A', 'B', 'C'], ['name', 'surname', 'telephone']]);
 
-        $result = $collection->cartesianProduct(function ($val1, $val2, $val3) {
-            return [$val1 => [$val2 => $val3]];
-        }, function ($val1, $val2, $val3) {
-            return $val3 !== 'surname';
+        $result = $collection->cartesianProduct(function ($value) {
+            return [$value[0] => [$value[1] => $value[2]]];
+        }, function ($value) {
+            return $value[2] !== 'surname';
         });
 
         $expected = [
