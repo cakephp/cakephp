@@ -20,6 +20,8 @@ use Cake\Core\Configure;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
+use Psr\Http\Message\UploadedFileInterface;
+use Zend\Diactoros\UploadedFile;
 
 /**
  * A class that helps wrap Request information and particulars about a single request.
@@ -174,6 +176,13 @@ class Request implements ArrayAccess
      * @var array
      */
     protected $emulatedAttributes = ['webroot', 'base', 'params'];
+
+    /**
+     * Array of Psr\Http\Message\UploadedFileInterface objects.
+     *
+     * @var array
+     */
+    protected $uploadedFiles = [];
 
     /**
      * Wrapper method to create a new request from PHP superglobals.
@@ -460,51 +469,96 @@ class Request implements ArrayAccess
      */
     protected function _processFiles($post, $files)
     {
-        if (is_array($files)) {
-            foreach ($files as $key => $data) {
-                if (isset($data['tmp_name']) && is_string($data['tmp_name'])) {
-                    $post[$key] = $data;
-                } else {
-                    $keyData = isset($post[$key]) ? $post[$key] : [];
-                    $post[$key] = $this->_processFileData($keyData, $data);
-                }
+        if (!is_array($files)) {
+            return $post;
+        }
+        $fileData = [];
+        foreach ($files as $key => $value) {
+            if ($value instanceof UploadedFileInterface) {
+                $fileData[$key] = $value;
+                continue;
             }
+
+            if (is_array($value) && isset($value['tmp_name'])) {
+                $fileData[$key] = $this->_createUploadedFile($value);
+                continue;
+            }
+
+            throw new InvalidArgumentException(sprintf(
+                'Invalid value in FILES "%s"',
+                json_encode($value)
+            ));
+        }
+        $this->uploadedFiles = $fileData;
+
+        // Make a flat map that can be inserted into $post for BC.
+        $fileMap = Hash::flatten($fileData);
+        foreach ($fileMap as $key => $file) {
+            $error = $file->getError();
+            $tmpName = '';
+            if ($error === UPLOAD_ERR_OK) {
+                $tmpName = $file->getStream()->getMetadata('uri');
+            }
+            $post = Hash::insert($post, $key, [
+                'tmp_name' => $tmpName,
+                'error' => $error,
+                'name' => $file->getClientFilename(),
+                'type' => $file->getClientMediaType(),
+                'size' => $file->getSize(),
+            ]);
         }
 
         return $post;
     }
 
     /**
-     * Recursively walks the FILES array restructuring the data
-     * into something sane and usable.
+     * Create an UploadedFile instance from a $_FILES array.
      *
-     * @param array $data The data being built
-     * @param array $post The post data being traversed
-     * @param string $path The dot separated path to insert $data into.
-     * @param string $field The terminal field in the path. This is one of the
-     *   $_FILES properties e.g. name, tmp_name, size, error
-     * @return array The restructured FILES data
+     * If the value represents an array of values, this method will
+     * recursively process the data.
+     *
+     * @param array $value $_FILES struct
+     * @return array|UploadedFileInterface
      */
-    protected function _processFileData($data, $post, $path = '', $field = '')
+    protected function _createUploadedFile(array $value)
     {
-        foreach ($post as $key => $fields) {
-            $newField = $field;
-            $newPath = $path;
-            if ($path === '' && $newField === '') {
-                $newField = $key;
-            }
-            if ($field === $newField) {
-                $newPath .= '.' . $key;
-            }
-            if (is_array($fields)) {
-                $data = $this->_processFileData($data, $fields, $newPath, $newField);
-            } else {
-                $newPath = trim($newPath . '.' . $field, '.');
-                $data = Hash::insert($data, $newPath, $fields);
-            }
+        if (is_array($value['tmp_name'])) {
+            return $this->_normalizeNestedFiles($value);
         }
 
-        return $data;
+        return new UploadedFile(
+            $value['tmp_name'],
+            $value['size'],
+            $value['error'],
+            $value['name'],
+            $value['type']
+        );
+    }
+
+    /**
+     * Normalize an array of file specifications.
+     *
+     * Loops through all nested files and returns a normalized array of
+     * UploadedFileInterface instances.
+     *
+     * @param array $files The file data to normalize & convert.
+     * @return array An array of UploadedFileInterface objects.
+     */
+    protected function _normalizeNestedFiles(array $files = [])
+    {
+        $normalizedFiles = [];
+        foreach (array_keys($files['tmp_name']) as $key) {
+            $spec = [
+                'tmp_name' => $files['tmp_name'][$key],
+                'size' => $files['size'][$key],
+                'error' => $files['error'][$key],
+                'name' => $files['name'][$key],
+                'type' => $files['type'][$key],
+            ];
+            $normalizedFiles[$key] = $this->_createUploadedFile($spec);
+        }
+
+        return $normalizedFiles;
     }
 
     /**
@@ -1636,6 +1690,70 @@ class Request implements ArrayAccess
         ];
 
         return $this->attributes + $emulated;
+    }
+
+    /**
+     * Get the uploaded file from a dotted path.
+     *
+     * @param string $path The dot separated path to the file you want.
+     * @return null|Psr\Http\Message\UploadedFileInterface
+     */
+    public function getUploadedFile($path)
+    {
+        $file = Hash::get($this->uploadedFiles, $path);
+        if (!$file instanceof UploadedFile) {
+            return null;
+        }
+
+        return $file;
+    }
+
+    /**
+     * Get the array of uploaded files from the request.
+     *
+     * @return array
+     */
+    public function getUploadedFiles()
+    {
+        return $this->uploadedFiles;
+    }
+
+    /**
+     * Update the request replacing the files, and creating a new instance.
+     *
+     * @param array $files An array of uploaded file objects.
+     * @return static
+     * @throws InvalidArgumentException when $files contains an invalid object.
+     */
+    public function withUploadedFiles(array $files)
+    {
+        $this->validateUploadedFiles($files, '');
+        $new = clone $this;
+        $new->uploadedFiles = $files;
+
+        return $new;
+    }
+
+    /**
+     * Recursively validate uploaded file data.
+     *
+     * @param array $uploadedFiles The new files array to validate.
+     * @param string $path The path thus far.
+     * @return void
+     * @throws InvalidArgumentException If any leaf elements are not valid files.
+     */
+    protected function validateUploadedFiles(array $uploadedFiles, $path)
+    {
+        foreach ($uploadedFiles as $key => $file) {
+            if (is_array($file)) {
+                $this->validateUploadedFiles($file, $key . '.');
+                continue;
+            }
+
+            if (!$file instanceof UploadedFileInterface) {
+                throw new InvalidArgumentException("Invalid file at '{$path}{$key}'");
+            }
+        }
     }
 
     /**

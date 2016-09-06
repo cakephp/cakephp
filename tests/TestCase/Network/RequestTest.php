@@ -19,6 +19,7 @@ use Cake\Network\Exception;
 use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
+use Zend\Diactoros\UploadedFile;
 
 /**
  * TestRequest
@@ -354,20 +355,20 @@ class RequestTest extends TestCase
      *
      * @return void
      */
-    public function testProcessFilesNested()
+    public function testFilesNested()
     {
         $files = [
             'image_main' => [
                 'name' => ['file' => 'born on.txt'],
                 'type' => ['file' => 'text/plain'],
-                'tmp_name' => ['file' => '/private/var/tmp/php'],
+                'tmp_name' => ['file' => __FILE__],
                 'error' => ['file' => 0],
                 'size' => ['file' => 17178]
             ],
             0 => [
                 'name' => ['image' => 'scratch.text'],
                 'type' => ['image' => 'text/plain'],
-                'tmp_name' => ['image' => '/private/var/tmp/phpChIZPb'],
+                'tmp_name' => ['image' => __FILE__],
                 'error' => ['image' => 0],
                 'size' => ['image' => 1490]
             ],
@@ -381,12 +382,12 @@ class RequestTest extends TestCase
                     1 => ['file' => 'image/jpg']
                 ],
                 'tmp_name' => [
-                    0 => ['file' => '/tmp/file123'],
-                    1 => ['file' => '/tmp/file234']
+                    0 => ['file' => __FILE__],
+                    1 => ['file' => __FILE__]
                 ],
                 'error' => [
-                    0 => ['file' => '0'],
-                    1 => ['file' => '0']
+                    0 => ['file' => 0],
+                    1 => ['file' => 0]
                 ],
                 'size' => [
                     0 => ['file' => 17188],
@@ -409,7 +410,7 @@ class RequestTest extends TestCase
                 'file' => [
                     'name' => 'born on.txt',
                     'type' => 'text/plain',
-                    'tmp_name' => '/private/var/tmp/php',
+                    'tmp_name' => __FILE__,
                     'error' => 0,
                     'size' => 17178,
                 ]
@@ -420,7 +421,7 @@ class RequestTest extends TestCase
                     'file' => [
                         'name' => 'a-file.png',
                         'type' => 'image/png',
-                        'tmp_name' => '/tmp/file123',
+                        'tmp_name' => __FILE__,
                         'error' => '0',
                         'size' => 17188,
                     ]
@@ -430,7 +431,7 @@ class RequestTest extends TestCase
                     'file' => [
                         'name' => 'a-moose.png',
                         'type' => 'image/jpg',
-                        'tmp_name' => '/tmp/file234',
+                        'tmp_name' => __FILE__,
                         'error' => '0',
                         'size' => 2010,
                     ]
@@ -441,13 +442,25 @@ class RequestTest extends TestCase
                 'image' => [
                     'name' => 'scratch.text',
                     'type' => 'text/plain',
-                    'tmp_name' => '/private/var/tmp/phpChIZPb',
+                    'tmp_name' => __FILE__,
                     'error' => 0,
                     'size' => 1490
                 ]
             ]
         ];
         $this->assertEquals($expected, $request->data);
+
+        $uploads = $request->getUploadedFiles();
+        $this->assertCount(3, $uploads);
+        $this->assertArrayHasKey(0, $uploads);
+        $this->assertEquals('scratch.text', $uploads[0]['image']->getClientFilename());
+
+        $this->assertArrayHasKey('pictures', $uploads);
+        $this->assertEquals('a-file.png', $uploads['pictures'][0]['file']->getClientFilename());
+        $this->assertEquals('a-moose.png', $uploads['pictures'][1]['file']->getClientFilename());
+
+        $this->assertArrayHasKey('image_main', $uploads);
+        $this->assertEquals('born on.txt', $uploads['image_main']['file']->getClientFilename());
     }
 
     /**
@@ -455,13 +468,13 @@ class RequestTest extends TestCase
      *
      * @return void
      */
-    public function testProcessFilesFlat()
+    public function testFilesFlat()
     {
         $files = [
             'birth_cert' => [
                 'name' => 'born on.txt',
                 'type' => 'application/octet-stream',
-                'tmp_name' => '/private/var/tmp/phpbsUWfH',
+                'tmp_name' => __FILE__,
                 'error' => 0,
                 'size' => 123,
             ]
@@ -472,12 +485,20 @@ class RequestTest extends TestCase
             'birth_cert' => [
                 'name' => 'born on.txt',
                 'type' => 'application/octet-stream',
-                'tmp_name' => '/private/var/tmp/phpbsUWfH',
+                'tmp_name' => __FILE__,
                 'error' => 0,
                 'size' => 123
             ]
         ];
         $this->assertEquals($expected, $request->data);
+
+        $uploads = $request->getUploadedFiles();
+        $this->assertCount(1, $uploads);
+        $this->assertArrayHasKey('birth_cert', $uploads);
+        $this->assertEquals('born on.txt', $uploads['birth_cert']->getClientFilename());
+        $this->assertEquals(0, $uploads['birth_cert']->getError());
+        $this->assertEquals('application/octet-stream', $uploads['birth_cert']->getClientMediaType());
+        $this->assertEquals(123, $uploads['birth_cert']->getSize());
     }
 
     /**
@@ -491,7 +512,7 @@ class RequestTest extends TestCase
             0 => [
                 'name' => 'cake_sqlserver_patch.patch',
                 'type' => 'text/plain',
-                'tmp_name' => '/private/var/tmp/phpy05Ywj',
+                'tmp_name' => __FILE__,
                 'error' => 0,
                 'size' => 6271,
             ],
@@ -501,6 +522,109 @@ class RequestTest extends TestCase
             'files' => $files
         ]);
         $this->assertEquals($files, $request->data);
+
+        $uploads = $request->getUploadedFiles();
+        $this->assertCount(1, $uploads);
+        $this->assertEquals($files[0]['name'], $uploads[0]->getClientFilename());
+    }
+
+    /**
+     * Test that the constructor uses uploaded file objects
+     * if they are present. This could happen in test scenarios.
+     *
+     * @return void
+     */
+    public function testFilesObject()
+    {
+        $file = new UploadedFile(
+            __FILE__,
+            123,
+            UPLOAD_ERR_OK,
+            'test.php',
+            'text/plain'
+        );
+        $request = new Request(['files' => ['avatar' => $file]]);
+        $this->assertSame(['avatar' => $file], $request->getUploadedFiles());
+    }
+
+    /**
+     * Test replacing files.
+     *
+     * @return void
+     */
+    public function testWithUploadedFiles()
+    {
+        $file = new UploadedFile(
+            __FILE__,
+            123,
+            UPLOAD_ERR_OK,
+            'test.php',
+            'text/plain'
+        );
+        $request = new Request();
+        $new = $request->withUploadedFiles(['picture' => $file]);
+
+        $this->assertSame([], $request->getUploadedFiles());
+        $this->assertNotSame($new, $request);
+        $this->assertSame(['picture' => $file], $new->getUploadedFiles());
+    }
+
+    /**
+     * Test getting a single file
+     *
+     * @return void
+     */
+    public function testGetUploadedFile()
+    {
+        $file = new UploadedFile(
+            __FILE__,
+            123,
+            UPLOAD_ERR_OK,
+            'test.php',
+            'text/plain'
+        );
+        $request = new Request();
+        $new = $request->withUploadedFiles(['picture' => $file]);
+        $this->assertNull($new->getUploadedFile(''));
+        $this->assertSame($file, $new->getUploadedFile('picture'));
+
+        $new = $request->withUploadedFiles([
+            'pictures' => [
+                [
+                    'image' => $file
+                ]
+            ]
+        ]);
+        $this->assertNull($new->getUploadedFile('pictures'));
+        $this->assertNull($new->getUploadedFile('pictures.0'));
+        $this->assertNull($new->getUploadedFile('pictures.1'));
+        $this->assertSame($file, $new->getUploadedFile('pictures.0.image'));
+    }
+
+    /**
+     * Test replacing files with an invalid file
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid file at 'avatar'
+     * @return void
+     */
+    public function testWithUploadedFilesInvalidFile()
+    {
+        $request = new Request();
+        $request->withUploadedFiles(['avatar' => 'not a file']);
+    }
+
+    /**
+     * Test replacing files with an invalid file
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid file at 'user.avatar'
+     * @return void
+     */
+    public function testWithUploadedFilesInvalidFileNested()
+    {
+        $request = new Request();
+        $request->withUploadedFiles(['user' => ['avatar' => 'not a file']]);
     }
 
     /**
