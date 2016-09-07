@@ -19,8 +19,8 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\StaticConfigTrait;
 use Cake\Filesystem\File;
+use Cake\Http\Client\FormDataPart;
 use Cake\Log\Log;
-use Cake\Network\Http\FormData\Part;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Cake\Utility\Text;
@@ -1706,7 +1706,7 @@ class Email implements JsonSerializable, Serializable
                 !isset($fileInfo['contentDisposition']) ||
                 $fileInfo['contentDisposition']
             );
-            $part = new Part(false, $data, false);
+            $part = new FormDataPart(false, $data, false);
 
             if ($hasDisposition) {
                 $part->disposition('attachment');
@@ -1756,7 +1756,7 @@ class Email implements JsonSerializable, Serializable
             $data = isset($fileInfo['data']) ? $fileInfo['data'] : $this->_readFile($fileInfo['file']);
 
             $msg[] = '--' . $boundary;
-            $part = new Part(false, $data, 'inline');
+            $part = new FormDataPart(false, $data, 'inline');
             $part->type($fileInfo['mimetype']);
             $part->transferEncoding('base64');
             $part->contentId($fileInfo['contentId']);

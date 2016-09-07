@@ -13,9 +13,10 @@
  */
 namespace Cake\Test\TestCase\Network\Http\Auth;
 
-use Cake\Network\Http\Auth\Digest;
-use Cake\Network\Http\Request;
-use Cake\Network\Http\Response;
+use Cake\Http\Client;
+use Cake\Http\Client\Auth\Digest;
+use Cake\Http\Client\Request;
+use Cake\Http\Client\Response;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -23,6 +24,16 @@ use Cake\TestSuite\TestCase;
  */
 class DigestTest extends TestCase
 {
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Cake\Http\Client
+     */
+    public $client;
+
+    /**
+     * @var \Cake\Http\Client\Auth\Digest
+     */
+    public $auth;
 
     /**
      * Setup
@@ -33,10 +44,18 @@ class DigestTest extends TestCase
     {
         parent::setUp();
 
-        $this->client = $this->getMockBuilder('Cake\Network\Http\Client')
+        $this->client = $this->getClientMock();
+        $this->auth = new Digest($this->client);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|\Cake\Http\Client
+     */
+    protected function getClientMock()
+    {
+        return $this->getMockBuilder(Client::class)
             ->setMethods(['send'])
             ->getMock();
-        $this->auth = new Digest($this->client);
     }
 
     /**
