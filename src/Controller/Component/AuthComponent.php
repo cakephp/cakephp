@@ -168,14 +168,14 @@ class AuthComponent extends Component
     /**
      * Objects that will be used for authentication checks.
      *
-     * @var array
+     * @var \Cake\Auth\BaseAuthenticate[]
      */
     protected $_authenticateObjects = [];
 
     /**
      * Objects that will be used for authorization checks.
      *
-     * @var array
+     * @var \Cake\Auth\BaseAuthorize[]
      */
     protected $_authorizeObjects = [];
 
