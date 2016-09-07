@@ -15,7 +15,6 @@
 namespace Cake\ORM;
 
 use ArrayObject;
-use Cake\Collection\CollectionInterface;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\TypedResultInterface;
@@ -157,7 +156,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * Constructor
      *
-     * @param \Cake\Database\Connection $connection The connection object
+     * @param \Cake\Datasource\ConnectionInterface $connection The connection object
      * @param \Cake\ORM\Table $table The table this query is starting on
      */
     public function __construct($connection, $table)
@@ -203,7 +202,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * This method returns the same query object for chaining.
      *
-     * @param \Cake\ORM\Table $table The table to pull types from
+     * @param \Cake\Datasource\RepositoryInterface $table The table to pull types from
      * @return $this
      */
     public function addDefaultTypes(Table $table)

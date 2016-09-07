@@ -1383,7 +1383,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $message String with message or array with variables to be used in render
      * @param string|array $transportConfig String to use config from EmailConfig or array with configs
      * @param bool $send Send the email or just return the instance pre-configured
-     * @return \Cake\Mailer\Email Instance of Cake\Mailer\Email
+     * @return static Instance of Cake\Mailer\Email
      * @throws \InvalidArgumentException
      */
     public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'default', $send = true)
@@ -1393,6 +1393,7 @@ class Email implements JsonSerializable, Serializable
         if (is_array($transportConfig) && !isset($transportConfig['transport'])) {
             $transportConfig['transport'] = 'default';
         }
+        /* @var \Cake\Mailer\Email $instance */
         $instance = new $class($transportConfig);
         if ($to !== null) {
             $instance->to($to);
@@ -2032,7 +2033,7 @@ class Email implements JsonSerializable, Serializable
      * Configures an email instance object from serialized config.
      *
      * @param array $config Email configuration array.
-     * @return \Cake\Mailer\Email Configured email instance.
+     * @return $this Configured email instance.
      */
     public function createFromArray($config)
     {
@@ -2069,7 +2070,7 @@ class Email implements JsonSerializable, Serializable
      * Unserializes the Email object.
      *
      * @param string $data Serialized string.
-     * @return \Cake\Mailer\Email Configured email instance.
+     * @return static Configured email instance.
      */
     public function unserialize($data)
     {
