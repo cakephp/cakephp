@@ -13,7 +13,7 @@
  */
 namespace Cake\Test\TestCase\Network\Http;
 
-use Cake\Network\Http\FormData;
+use Cake\Http\Client\FormData;
 use Cake\TestSuite\TestCase;
 
 /**

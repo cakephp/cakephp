@@ -16,9 +16,9 @@ namespace Cake\Http\Client\Auth;
 use Cake\Http\Client\Request;
 
 /**
- * Basic authentication adapter for Cake\Network\Http\Client
+ * Basic authentication adapter for Cake\Http\Client
  *
- * Generally not directly constructed, but instead used by Cake\Network\Http\Client
+ * Generally not directly constructed, but instead used by Cake\Http\Client
  * when $options['auth']['type'] is 'basic'
  */
 class Basic
@@ -27,9 +27,9 @@ class Basic
     /**
      * Add Authorization header to the request.
      *
-     * @param \Cake\Network\Http\Request $request Request instance.
+     * @param \Cake\Http\Client\Request $request Request instance.
      * @param array $credentials Credentials.
-     * @return \Cake\Network\Http\Request The updated request.
+     * @return \Cake\Http\Client\Request The updated request.
      * @see http://www.ietf.org/rfc/rfc2617.txt
      */
     public function authentication(Request $request, array $credentials)
@@ -45,9 +45,9 @@ class Basic
     /**
      * Proxy Authentication
      *
-     * @param \Cake\Network\Http\Request $request Request instance.
+     * @param \Cake\Http\Client\Request $request Request instance.
      * @param array $credentials Credentials.
-     * @return \Cake\Network\Http\Request The updated request.
+     * @return \Cake\Http\Client\Request The updated request.
      * @see http://www.ietf.org/rfc/rfc2617.txt
      */
     public function proxyAuthentication(Request $request, array $credentials)

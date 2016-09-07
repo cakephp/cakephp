@@ -17,7 +17,7 @@ namespace Cake\Http\Client;
  * Contains the data and behavior for a single
  * part in a Multipart FormData request body.
  *
- * Added to Cake\Network\Http\FormData when sending
+ * Added to Cake\Http\Client\FormData when sending
  * data to a remote server.
  *
  * @internal

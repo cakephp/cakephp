@@ -18,7 +18,7 @@ use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 
 /**
- * Implements sending Cake\Network\Http\Request
+ * Implements sending Cake\Http\Client\Request
  * via php's stream API.
  *
  * This approach and implementation is partly inspired by Aura.Http
@@ -64,7 +64,7 @@ class Stream
     /**
      * Send a request and get a response back.
      *
-     * @param \Cake\Network\Http\Request $request The request object to send.
+     * @param \Cake\Http\Client\Request $request The request object to send.
      * @param array $options Array of options for the stream.
      * @return array Array of populated Response objects
      */
@@ -113,7 +113,7 @@ class Stream
     /**
      * Build the stream context out of the request object.
      *
-     * @param \Cake\Network\Http\Request $request The request to build context from.
+     * @param \Cake\Http\Client\Request $request The request to build context from.
      * @param array $options Additional request options.
      * @return void
      */
@@ -139,7 +139,7 @@ class Stream
      *
      * Creates cookies & headers.
      *
-     * @param \Cake\Network\Http\Request $request The request being sent.
+     * @param \Cake\Http\Client\Request $request The request being sent.
      * @param array $options Array of options to use.
      * @return void
      */
@@ -164,9 +164,9 @@ class Stream
      * Builds the request content based on the request object.
      *
      * If the $request->body() is a string, it will be used as is.
-     * Array data will be processed with Cake\Network\Http\FormData
+     * Array data will be processed with Cake\Http\Client\FormData
      *
-     * @param \Cake\Network\Http\Request $request The request being sent.
+     * @param \Cake\Http\Client\Request $request The request being sent.
      * @param array $options Array of options to use.
      * @return void
      */
@@ -185,7 +185,7 @@ class Stream
     /**
      * Build miscellaneous options for the request.
      *
-     * @param \Cake\Network\Http\Request $request The request being sent.
+     * @param \Cake\Http\Client\Request $request The request being sent.
      * @param array $options Array of options to use.
      * @return void
      */
@@ -209,7 +209,7 @@ class Stream
     /**
      * Build SSL options for the request.
      *
-     * @param \Cake\Network\Http\Request $request The request being sent.
+     * @param \Cake\Http\Client\Request $request The request being sent.
      * @param array $options Array of options to use.
      * @return void
      */
@@ -243,7 +243,7 @@ class Stream
     /**
      * Open the stream and send the request.
      *
-     * @param \Cake\Network\Http\Request $request The request object.
+     * @param \Cake\Http\Client\Request $request The request object.
      * @return array Array of populated Response objects
      * @throws \Cake\Core\Exception\Exception
      */

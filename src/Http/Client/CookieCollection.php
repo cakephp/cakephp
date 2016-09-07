@@ -35,7 +35,7 @@ class CookieCollection
      * Store the cookies that haven't expired. If a cookie has been expired
      * and is currently stored, it will be removed.
      *
-     * @param \Cake\Network\Http\Response $response The response to read cookies from
+     * @param \Cake\Http\Client\Response $response The response to read cookies from
      * @param string $url The request URL used for default host/path values.
      * @return void
      */

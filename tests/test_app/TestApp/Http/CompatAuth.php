@@ -13,7 +13,7 @@
  */
 namespace TestApp\Http;
 
-use Cake\Network\Http\Request;
+use Cake\Http\Client\Request;
 
 /**
  * Testing stub to ensure that auth providers
@@ -27,9 +27,9 @@ class CompatAuth
     /**
      * Add Authorization header to the request via in-place mutation methods.
      *
-     * @param \Cake\Network\Http\Request $request Request instance.
+     * @param \Cake\Http\Client\Request $request Request instance.
      * @param array $credentials Credentials.
-     * @return \Cake\Network\Http\Request The updated request.
+     * @return \Cake\Http\Client\Request The updated request.
      */
     public function authentication(Request $request, array $credentials)
     {
@@ -39,9 +39,9 @@ class CompatAuth
     /**
      * Proxy Authentication added via in-place mutation methods.
      *
-     * @param \Cake\Network\Http\Request $request Request instance.
+     * @param \Cake\Http\Client\Request $request Request instance.
      * @param array $credentials Credentials.
-     * @return \Cake\Network\Http\Request The updated request.
+     * @return \Cake\Http\Client\Request The updated request.
      */
     public function proxyAuthentication(Request $request, array $credentials)
     {
