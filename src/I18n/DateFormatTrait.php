@@ -389,6 +389,10 @@ trait DateFormatTrait
      */
     public function jsonSerialize()
     {
+        if (static::$_jsonEncodeFormat === Time::UNIX_TIMESTAMP_FORMAT) {
+            return $this->getTimestamp();
+        }
+
         return $this->i18nFormat(static::$_jsonEncodeFormat);
     }
 
