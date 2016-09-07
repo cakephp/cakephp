@@ -270,16 +270,7 @@ class ExceptionRenderer
         $exception = $this->_unwrap($exception);
         $isHttpException = $exception instanceof HttpException;
 
-        if (!Configure::read('debug') && !$isHttpException) {
-            $template = 'error500';
-            if ($code < 500) {
-                $template = 'error400';
-            }
-
-            return $this->template = $template;
-        }
-
-        if ($isHttpException) {
+        if (!Configure::read('debug') && !$isHttpException || $isHttpException) {
             $template = 'error500';
             if ($code < 500) {
                 $template = 'error400';
