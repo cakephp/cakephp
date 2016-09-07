@@ -28,12 +28,12 @@ class DigestTest extends TestCase
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Cake\Http\Client
      */
-    protected  $client;
+    public $client;
 
     /**
      * @var \Cake\Http\Client\Auth\Digest
      */
-    protected $auth;
+    public $auth;
 
     /**
      * Setup
