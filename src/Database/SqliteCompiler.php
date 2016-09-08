@@ -24,6 +24,13 @@ class SqliteCompiler extends QueryCompiler
 {
 
     /**
+     * The list of query clauses to traverse for generating a DELETE statement
+     *
+     * @var array
+     */
+    protected $_deleteParts = ['delete', 'modifier', 'from', 'where', 'epilog'];
+
+    /**
      * SQLite does not support ORDER BY in UNION queries.
      *
      * @var bool
