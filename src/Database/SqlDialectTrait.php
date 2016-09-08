@@ -203,14 +203,15 @@ trait SqlDialectTrait
      *
      * @param \Cake\Database\Query $query The query to process.
      * @return \Cake\Database\Query The modified query.
+     * @throws \RuntimeException In case the processed query contains any joins, as removing
+     *  aliases from the conditions can break references to the joined tables.
      */
     protected function _removeAliasesFromConditions($query)
     {
         if (!empty($query->clause('join'))) {
-            trigger_error(
+            throw new \RuntimeException(
                 'Aliases are being removed from conditions for UPDATE/DELETE queries, ' .
-                'this can break references to joined tables.',
-                E_USER_NOTICE
+                'this can break references to joined tables.'
             );
         }
 

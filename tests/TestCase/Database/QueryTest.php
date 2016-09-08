@@ -2655,19 +2655,13 @@ class QueryTest extends TestCase
      * warning about possible incompatibilities with aliases being removed
      * from the conditions.
      *
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.
      * @return void
      */
     public function testDeleteRemovingAliasesCanBreakJoins()
     {
-        $message = null;
-        $oldHandler = set_error_handler(function ($errno, $errstr) use (&$oldHandler, &$message) {
-            if ($errno === E_USER_NOTICE) {
-                $message = $errstr;
-            } else {
-                call_user_func_array($oldHandler, func_get_args());
-            }
-        });
-
         $query = new Query($this->connection);
 
         $query
@@ -2677,12 +2671,6 @@ class QueryTest extends TestCase
             ->where(['a.id' => 1]);
 
         $query->sql();
-
-        restore_error_handler();
-
-        $expected = 'Aliases are being removed from conditions for UPDATE/DELETE queries, ' .
-            'this can break references to joined tables.';
-        $this->assertEquals($expected, $message);
     }
 
     /**
@@ -2913,19 +2901,12 @@ class QueryTest extends TestCase
      * warning about possible incompatibilities with aliases being removed
      * from the conditions.
      *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.
      * @return void
      */
     public function testUpdateRemovingAliasesCanBreakJoins()
     {
-        $message = null;
-        $oldHandler = set_error_handler(function ($errno, $errstr) use (&$oldHandler, &$message) {
-            if ($errno === E_USER_NOTICE) {
-                $message = $errstr;
-            } else {
-                call_user_func_array($oldHandler, func_get_args());
-            }
-        });
-
         $query = new Query($this->connection);
 
         $query
@@ -2935,12 +2916,6 @@ class QueryTest extends TestCase
             ->where(['a.id' => 1]);
 
         $query->sql();
-
-        restore_error_handler();
-
-        $expected = 'Aliases are being removed from conditions for UPDATE/DELETE queries, ' .
-            'this can break references to joined tables.';
-        $this->assertEquals($expected, $message);
     }
 
     /**
