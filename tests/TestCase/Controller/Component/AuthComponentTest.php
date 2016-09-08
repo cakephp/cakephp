@@ -23,8 +23,8 @@ use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\ORM\TableRegistry;
-use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\Router;
+use Cake\Routing\Route\InflectedRoute;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use TestApp\Controller\AuthTestController;
@@ -1326,10 +1326,10 @@ class AuthComponentTest extends TestCase
     public function testRedirectQueryStringRead()
     {
         $this->Auth->config('loginAction', ['controller' => 'users', 'action' => 'login']);
-        $this->Auth->request->query = ['redirect' => '/users/home'];
+        $this->Auth->request->query = ['redirect' => '/users/custom'];
 
         $result = $this->Auth->redirectUrl();
-        $this->assertEquals('/users/home', $result);
+        $this->assertEquals('/users/custom', $result);
     }
 
     /**
@@ -1363,6 +1363,24 @@ class AuthComponentTest extends TestCase
             'loginRedirect' => ['controller' => 'users', 'action' => 'home']
         ]);
         $this->Auth->request->query = ['redirect' => '/users/login'];
+
+        $result = $this->Auth->redirectUrl();
+        $this->assertEquals('/users/home', $result);
+    }
+
+    /**
+     * Tests that redirect does not return loginAction if that contains a host,
+     * instead loginRedirect should be used.
+     *
+     * @return void
+     */
+    public function testRedirectQueryStringInvalid()
+    {
+        $this->Auth->config([
+            'loginAction' => ['controller' => 'users', 'action' => 'login'],
+            'loginRedirect' => ['controller' => 'users', 'action' => 'home']
+        ]);
+        $this->Auth->request->query = ['redirect' => 'http://some.domain.example/users/login'];
 
         $result = $this->Auth->redirectUrl();
         $this->assertEquals('/users/home', $result);
