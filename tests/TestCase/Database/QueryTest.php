@@ -2651,6 +2651,41 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that delete queries that contain joins do trigger a notice,
+     * warning about possible incompatibilities with aliases being removed
+     * from the conditions.
+     *
+     * @return void
+     */
+    public function testDeleteRemovingAliasesCanBreakJoins()
+    {
+        $message = null;
+        $oldHandler = set_error_handler(function ($errno, $errstr) use (&$oldHandler, &$message) {
+            if ($errno === E_USER_NOTICE) {
+                $message = $errstr;
+            } else {
+                call_user_func_array($oldHandler, func_get_args());
+            }
+        });
+
+        $query = new Query($this->connection);
+
+        $query
+            ->delete('authors')
+            ->from(['a ' => 'authors'])
+            ->innerJoin('articles')
+            ->where(['a.id' => 1]);
+
+        $query->sql();
+
+        restore_error_handler();
+
+        $expected = 'Aliases are being removed from conditions for UPDATE/DELETE queries, ' .
+            'this can break references to joined tables.';
+        $this->assertEquals($expected, $message);
+    }
+
+    /**
      * Test setting select() & delete() modes.
      *
      * @return void
@@ -2871,6 +2906,41 @@ class QueryTest extends TestCase
             $query->sql(),
             !$this->autoQuote
         );
+    }
+
+    /**
+     * Tests that update queries that contain joins do trigger a notice,
+     * warning about possible incompatibilities with aliases being removed
+     * from the conditions.
+     *
+     * @return void
+     */
+    public function testUpdateRemovingAliasesCanBreakJoins()
+    {
+        $message = null;
+        $oldHandler = set_error_handler(function ($errno, $errstr) use (&$oldHandler, &$message) {
+            if ($errno === E_USER_NOTICE) {
+                $message = $errstr;
+            } else {
+                call_user_func_array($oldHandler, func_get_args());
+            }
+        });
+
+        $query = new Query($this->connection);
+
+        $query
+            ->update('authors')
+            ->set(['name' => 'name'])
+            ->innerJoin('articles')
+            ->where(['a.id' => 1]);
+
+        $query->sql();
+
+        restore_error_handler();
+
+        $expected = 'Aliases are being removed from conditions for UPDATE/DELETE queries, ' .
+            'this can break references to joined tables.';
+        $this->assertEquals($expected, $message);
     }
 
     /**
