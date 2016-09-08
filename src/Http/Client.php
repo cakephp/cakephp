@@ -124,7 +124,7 @@ class Client
 
     /**
      * Adapter for sending requests. Defaults to
-     * Cake\Http\Adapter\Stream
+     * Cake\Http\Client\Adapter\Stream
      *
      * @var \Cake\Http\Client\Adapter\Stream
      */

@@ -88,7 +88,7 @@ interface RepositoryInterface
      * This method will *not* trigger beforeSave/afterSave events. If you need those
      * first load a collection of records and update them.
      *
-     * @param array $fields A hash of field => new value.
+     * @param string|array|callable|\Cake\Database\Expression\QueryExpression $fields A hash of field => new value.
      * @param mixed $conditions Conditions to be used, accepts anything Query::where()
      * can take.
      * @return int Count Returns the affected rows.
