@@ -42,6 +42,7 @@ class QueryTest extends TestCase
         'core.articles_tags',
         'core.authors',
         'core.comments',
+        'core.datatypes',
         'core.posts',
         'core.tags'
     ];
@@ -2911,6 +2912,28 @@ class QueryTest extends TestCase
         $this->assertEquals(1, $result->id);
         $this->assertCount(2, $result->tags);
         $this->assertEquals(2, $result->_matchingData['tags']->id);
+    }
+
+
+    /**
+     * Tests that it is possible to find large numeric values.
+     *
+     * @return void
+     */
+    public function testSelectLargeNumbers()
+    {
+        $this->loadFixtures('Datatypes');
+
+        $big = '1234567890123456789';
+        $table = TableRegistry::get('Datatypes');
+        $entity = $table->newEntity([
+            'cost' => $big,
+        ]);
+        $table->save($entity);
+        $out = $table->find()->where([
+            'cost' => $big
+        ])->first();
+        $this->assertSame(sprintf('%F', $big), sprintf('%F', $out->cost));
     }
 
     /**
