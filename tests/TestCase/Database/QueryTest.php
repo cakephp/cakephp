@@ -2841,7 +2841,6 @@ class QueryTest extends TestCase
      */
     public function testUpdateStripAliasesFromConditions()
     {
-        $this->loadFixtures('Authors');
         $query = new Query($this->connection);
 
         $query
@@ -2854,14 +2853,21 @@ class QueryTest extends TestCase
                         'b.name NOT IN' => ['foo', 'bar'],
                         'OR' => [
                             $query->newExpr()->eq(new IdentifierExpression('c.name'), 'zap'),
-                            'd.name' => 'baz'
+                            'd.name' => 'baz',
+                            (new Query($this->connection))->select(['e.name'])->where(['e.name' => 'oof'])
                         ]
                     ]
                 ],
             ]);
 
         $this->assertQuotedQuery(
-            'UPDATE <authors> SET <name> = :c0 WHERE \(<id> = :c1 OR \(<name> not in \(:c2,:c3\) AND \(\(<c>\.<name>\) = :c4 OR <name> = :c5\)\)\)',
+            'UPDATE <authors> SET <name> = :c0 WHERE \(' .
+                '<id> = :c1 OR \(' .
+                    '<name> not in \(:c2,:c3\) AND \(' .
+                        '\(<c>\.<name>\) = :c4 OR <name> = :c5 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c6\)' .
+                    '\)' .
+                '\)' .
+            '\)',
             $query->sql(),
             !$this->autoQuote
         );
