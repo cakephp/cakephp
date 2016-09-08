@@ -202,7 +202,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * This method returns the same query object for chaining.
      *
-     * @param \Cake\Datasource\RepositoryInterface $table The table to pull types from
+     * @param \Cake\ORM\Table $table The table to pull types from
      * @return $this
      */
     public function addDefaultTypes(Table $table)
