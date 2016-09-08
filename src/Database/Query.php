@@ -1007,9 +1007,15 @@ class Query implements ExpressionInterface, IteratorAggregate
             return $this;
         }
 
+        if ($fields instanceof OrderByExpression) {
+            $this->_parts['order'] = $fields;
+            return $this;
+        }
+
         if (!$this->_parts['order']) {
             $this->_parts['order'] = new OrderByExpression();
         }
+
         $this->_conjugate('order', $fields, '', []);
 
         return $this;
