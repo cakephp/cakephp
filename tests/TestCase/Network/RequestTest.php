@@ -2628,6 +2628,29 @@ XML;
      */
     public function testGetBody()
     {
+        $request = new Request([
+            'input' => 'key=val&some=data'
+        ]);
+        $result = $request->getBody();
+        $this->assertInstanceOf('Psr\Http\Message\StreamInterface', $result);
+        $this->assertEquals('key=val&some=data', $result->getContents());
+    }
+
+    /**
+     * Test withBody
+     *
+     * @return void
+     */
+    public function testWithBody()
+    {
+        $request = new Request([
+            'input' => 'key=val&some=data'
+        ]);
+        $body = $this->getMockBuilder('Psr\Http\Message\StreamInterface')->getMock();
+        $new = $request->withBody($body);
+        $this->assertNotSame($new, $request);
+        $this->assertNotSame($body, $request->getBody());
+        $this->assertSame($body, $new->getBody());
     }
 
     /**
