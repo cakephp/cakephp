@@ -1421,6 +1421,7 @@ class Request implements ArrayAccess
         $input = $this->stream->getContents();
         if ($callback) {
             array_unshift($args, $input);
+
             return call_user_func_array($callback, $args);
         }
 
