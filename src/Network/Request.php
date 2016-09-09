@@ -20,7 +20,10 @@ use Cake\Core\Configure;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use Zend\Diactoros\PhpInputStream;
+use Zend\Diactoros\Stream;
 use Zend\Diactoros\UploadedFile;
 
 /**
@@ -149,12 +152,11 @@ class Request implements ArrayAccess
     protected $_detectorCache = [];
 
     /**
-     * Copy of php://input. Since this stream can only be read once in most SAPI's
-     * keep a copy of it so users don't need to know about that detail.
+     * Request body stream. Contains php://input unless `input` constructor option is used.
      *
-     * @var string
+     * @var \Psr\Http\Message\StreamInterface
      */
-    protected $_input = '';
+    protected $stream;
 
     /**
      * Instance of a Session object relative to this request
@@ -280,11 +282,17 @@ class Request implements ArrayAccess
         $this->cookies = $config['cookies'];
         $this->here = $this->base . '/' . $this->url;
         $this->webroot = $config['webroot'];
-
         $this->_environment = $config['environment'];
+
         if (isset($config['input'])) {
-            $this->_input = $config['input'];
+            $stream = new Stream('php://memory', 'rw');
+            $stream->write($config['input']);
+            $stream->rewind();
+        } else {
+            $stream = new PhpInputStream();
         }
+        $this->stream = $stream;
+
         $config['post'] = $this->_processPost($config['post']);
         $this->data = $this->_processFiles($config['post'], $config['files']);
         $this->query = $this->_processGet($config['query']);
@@ -1405,14 +1413,13 @@ class Request implements ArrayAccess
      * @param string|null $callback A decoding callback that will convert the string data to another
      *     representation. Leave empty to access the raw input data. You can also
      *     supply additional parameters for the decoding callback using var args, see above.
+     * @param array ...$args The additional arguments
      * @return string The decoded/processed request data.
      */
-    public function input($callback = null)
+    public function input($callback = null, ...$args)
     {
-        $input = $this->_readInput();
-        $args = func_get_args();
-        if (!empty($args)) {
-            $callback = array_shift($args);
+        $input = $this->stream->getContents();
+        if ($callback) {
             array_unshift($args, $input);
 
             return call_user_func_array($callback, $args);
@@ -1573,10 +1580,14 @@ class Request implements ArrayAccess
      *
      * @param string $input A string to replace original parsed data from input()
      * @return void
+     * @deprecated 3.4.0 This method will be removed in 4.0.0. Use withBody() instead.
      */
     public function setInput($input)
     {
-        $this->_input = $input;
+        $stream = new Stream('php://memory', 'rw');
+        $stream->write($input);
+        $stream->rewind();
+        $this->stream = $stream;
     }
 
     /**
@@ -1754,6 +1765,30 @@ class Request implements ArrayAccess
                 throw new InvalidArgumentException("Invalid file at '{$path}{$key}'");
             }
         }
+    }
+
+    /**
+     * Gets the body of the message.
+     *
+     * @return \Psr\Http\Message\StreamInterface Returns the body as a stream.
+     */
+    public function getBody()
+    {
+        return $this->stream;
+    }
+
+    /**
+     * Return an instance with the specified message body.
+     *
+     * @param \Psr\Http\Message\StreamInterface $body The new request body
+     * @return static
+     */
+    public function withBody(StreamInterface $body)
+    {
+        $new = clone $this;
+        $new->stream = $body;
+
+        return $new;
     }
 
     /**

@@ -2573,12 +2573,9 @@ class RequestTest extends TestCase
      */
     public function testInput()
     {
-        $request = $this->getMockBuilder('Cake\Network\Request')
-            ->setMethods(['_readInput'])
-            ->getMock();
-        $request->expects($this->once())->method('_readInput')
-            ->will($this->returnValue('I came from stdin'));
-
+        $request = new Request([
+            'input' => 'I came from stdin'
+        ]);
         $result = $request->input();
         $this->assertEquals('I came from stdin', $result);
     }
@@ -2590,11 +2587,9 @@ class RequestTest extends TestCase
      */
     public function testInputDecode()
     {
-        $request = $this->getMockBuilder('Cake\Network\Request')
-            ->setMethods(['_readInput'])
-            ->getMock();
-        $request->expects($this->once())->method('_readInput')
-            ->will($this->returnValue('{"name":"value"}'));
+        $request = new Request([
+            'input' => '{"name":"value"}'
+        ]);
 
         $result = $request->input('json_decode');
         $this->assertEquals(['name' => 'value'], (array)$result);
@@ -2614,11 +2609,9 @@ class RequestTest extends TestCase
 </post>
 XML;
 
-        $request = $this->getMockBuilder('Cake\Network\Request')
-            ->setMethods(['_readInput'])
-            ->getMock();
-        $request->expects($this->once())->method('_readInput')
-            ->will($this->returnValue($xml));
+        $request = new Request([
+            'input' => $xml
+        ]);
 
         $result = $request->input('Cake\Utility\Xml::build', ['return' => 'domdocument']);
         $this->assertInstanceOf('DOMDocument', $result);
@@ -2626,6 +2619,38 @@ XML;
             'Test',
             $result->getElementsByTagName('title')->item(0)->childNodes->item(0)->wholeText
         );
+    }
+
+    /**
+     * Test getBody
+     *
+     * @return void
+     */
+    public function testGetBody()
+    {
+        $request = new Request([
+            'input' => 'key=val&some=data'
+        ]);
+        $result = $request->getBody();
+        $this->assertInstanceOf('Psr\Http\Message\StreamInterface', $result);
+        $this->assertEquals('key=val&some=data', $result->getContents());
+    }
+
+    /**
+     * Test withBody
+     *
+     * @return void
+     */
+    public function testWithBody()
+    {
+        $request = new Request([
+            'input' => 'key=val&some=data'
+        ]);
+        $body = $this->getMockBuilder('Psr\Http\Message\StreamInterface')->getMock();
+        $new = $request->withBody($body);
+        $this->assertNotSame($new, $request);
+        $this->assertNotSame($body, $request->getBody());
+        $this->assertSame($body, $new->getBody());
     }
 
     /**
