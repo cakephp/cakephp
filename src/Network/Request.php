@@ -1515,6 +1515,7 @@ class Request implements ArrayAccess
         if ($this->protocol) {
             return $this->protocol;
         }
+
         // Lazily populate this data as it is generally not used.
         preg_match('/^HTTP\/([\d.]+)$/', $this->env('SERVER_PROTOCOL'), $match);
         $protocol = '1.1';
@@ -1522,6 +1523,7 @@ class Request implements ArrayAccess
             $protocol = $match[1];
         }
         $this->protocol = $protocol;
+
         return $this->protocol;
     }
 
@@ -1541,6 +1543,7 @@ class Request implements ArrayAccess
         }
         $new = clone $this;
         $new->protocol = $version;
+
         return $new;
     }
 
