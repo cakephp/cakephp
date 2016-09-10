@@ -187,6 +187,13 @@ class Request implements ArrayAccess
     protected $uploadedFiles = [];
 
     /**
+     * The HTTP protocol version used.
+     *
+     * @var string|null
+     */
+    protected $protocol;
+
+    /**
      * Wrapper method to create a new request from PHP superglobals.
      *
      * Uses the $_GET, $_POST, $_FILES, $_COOKIE, $_SERVER, $_ENV and php://input data to construct
@@ -1495,6 +1502,45 @@ class Request implements ArrayAccess
         $new = clone $this;
         $new->data = $data;
 
+        return $new;
+    }
+
+    /**
+     * Retrieves the HTTP protocol version as a string.
+     *
+     * @return string HTTP protocol version.
+     */
+    public function getProtocolVersion()
+    {
+        if ($this->protocol) {
+            return $this->protocol;
+        }
+        // Lazily populate this data as it is generally not used.
+        preg_match('/^HTTP\/([\d.]+)$/', $this->env('SERVER_PROTOCOL'), $match);
+        $protocol = '1.1';
+        if (isset($match[1])) {
+            $protocol = $match[1];
+        }
+        $this->protocol = $protocol;
+        return $this->protocol;
+    }
+
+    /**
+     * Return an instance with the specified HTTP protocol version.
+     *
+     * The version string MUST contain only the HTTP version number (e.g.,
+     * "1.1", "1.0").
+     *
+     * @param string $version HTTP protocol version
+     * @return static
+     */
+    public function withProtocolVersion($version)
+    {
+        if (!preg_match('/^(1\.[01]|2)$/', $version)) {
+            throw new InvalidArgumentException("Unsupported protocol version '{$version}' provided");
+        }
+        $new = clone $this;
+        $new->protocol = $version;
         return $new;
     }
 
