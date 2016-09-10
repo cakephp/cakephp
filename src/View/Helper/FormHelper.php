@@ -1405,6 +1405,9 @@ class FormHelper extends Helper
         if ($options['nestedInput']) {
             $labelAttributes['input'] = $options['input'];
         }
+        if (isset($options['escape'])) {
+            $labelAttributes['escape'] = $options['escape'];
+        }
 
         return $this->label($fieldName, $labelText, $labelAttributes);
     }
