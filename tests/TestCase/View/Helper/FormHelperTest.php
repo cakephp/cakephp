@@ -3184,6 +3184,27 @@ class FormHelperTest extends TestCase
             '/div'
         ];
         $this->assertHtml($expected, $result);
+
+        $result = $this->Form->input('User.confirm', [
+            'label' => 'Confirm <b>me</b>!',
+            'type' => 'checkbox',
+            'escape' => false
+        ]);
+        $expected = [
+            'div' => ['class' => 'input checkbox'],
+            'input' => ['type' => 'hidden', 'name' => 'User[confirm]', 'value' => '0'],
+            'label' => ['for' => 'user-confirm'],
+            ['input' => [
+                'type' => 'checkbox',
+                'name' => 'User[confirm]',
+                'value' => '1',
+                'id' => 'user-confirm',
+            ]],
+            'Confirm <b>me</b>!',
+            '/label',
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
