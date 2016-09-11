@@ -906,6 +906,50 @@ class RequestTest extends TestCase
     }
 
     /**
+     * Test getProtocolVersion()
+     *
+     * @return void
+     */
+    public function testGetProtocolVersion()
+    {
+        $request = new Request();
+        $this->assertEquals('1.1', $request->getProtocolVersion());
+
+        // SERVER var.
+        $request = new Request([
+            'environment' => ['SERVER_PROTOCOL' => 'HTTP/1.0']
+        ]);
+        $this->assertEquals('1.0', $request->getProtocolVersion());
+    }
+
+    /**
+     * Test withProtocolVersion()
+     *
+     * @return void
+     */
+    public function testWithProtocolVersion()
+    {
+        $request = new Request();
+        $new = $request->withProtocolVersion('1.0');
+        $this->assertNotSame($new, $request);
+        $this->assertEquals('1.1', $request->getProtocolVersion());
+        $this->assertEquals('1.0', $new->getProtocolVersion());
+    }
+
+    /**
+     * Test withProtocolVersion() and invalid data
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Unsupported protocol version 'no good' provided
+     * @return void
+     */
+    public function testWithProtocolVersionInvalid()
+    {
+        $request = new Request();
+        $request->withProtocolVersion('no good');
+    }
+
+    /**
      * Test host retrieval.
      *
      * @return void
