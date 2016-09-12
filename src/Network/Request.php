@@ -161,6 +161,13 @@ class Request implements ArrayAccess
     protected $stream;
 
     /**
+     * Uri instance
+     *
+     * @var \Psr\Http\Message\UriInterface
+     */
+    protected $uri;
+
+    /**
      * Instance of a Session object relative to this request
      *
      * @var \Cake\Network\Session
