@@ -1875,6 +1875,17 @@ class Request implements ArrayAccess
     }
 
     /**
+     * Retrieves the URI instance.
+     *
+     * @return \Psr\Http\Message\UriInterface Returns a UriInterface instance
+     *   representing the URI of the request.
+     */
+    public function getUri()
+    {
+        return $this->uri;
+    }
+
+    /**
      * Array access read implementation
      *
      * @param string $name Name of the key being accessed.
