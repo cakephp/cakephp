@@ -824,7 +824,8 @@ class EventManagerTest extends TestCase
             $eventManager->__debugInfo()
         );
 
-        $func = function () {};
+        $func = function () {
+        };
         $eventManager->on('foo', $func);
 
         $this->assertSame(
@@ -855,10 +856,14 @@ class EventManagerTest extends TestCase
             $eventManager->__debugInfo()
         );
 
-        $eventManager->on('bar', function () {});
-        $eventManager->on('bar', function () {});
-        $eventManager->on('bar', function () {});
-        $eventManager->on('baz', function () {});
+        $eventManager->on('bar', function () {
+        });
+        $eventManager->on('bar', function () {
+        });
+        $eventManager->on('bar', function () {
+        });
+        $eventManager->on('baz', function () {
+        });
 
         $this->assertSame(
             [
