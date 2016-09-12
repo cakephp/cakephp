@@ -39,20 +39,16 @@ abstract class ServerRequestFactory extends BaseFactory
         array $files = null
     ) {
         $request = parent::fromGlobals($server, $query, $body, $cookies, $files);
-        list($base, $webroot) = static::getBase($request->getUri(), $request->getServerParams());
+        $uri = $request->getUri();
 
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
-            'cookiePath' => $webroot
+            'cookiePath' => $uri->webroot
         ];
         $session = Session::create($sessionConfig);
-        $request = $request->withAttribute('base', $base)
-            ->withAttribute('webroot', $webroot)
+        $request = $request->withAttribute('base', $uri->base)
+            ->withAttribute('webroot', $uri->webroot)
             ->withAttribute('session', $session);
-
-        if ($base) {
-            $request = static::updatePath($base, $request->getUri());
-        }
 
         return $request;
     }
@@ -69,8 +65,22 @@ abstract class ServerRequestFactory extends BaseFactory
         $server += $_SERVER;
         $server = static::normalizeServer($server);
         $headers = static::marshalHeaders($server);
+        return static::marshalUriFromServer($server, $headers);
+    }
 
-        $uri = static::marshalUriFromServer($server, $headers);
+    /**
+     * Build a UriInterface object.
+     *
+     * Add in some CakePHP specific logic/properties that help
+     * perserve backwards compatibility.
+     *
+     * @param array $server The server parameters.
+     * @param array $headers The normalized headers
+     * @return \Psr\Http\Message\UriInterface a constructed Uri
+     */
+    public static function marshalUriFromServer(array $server, array $headers)
+    {
+        $uri = parent::marshalUriFromServer($server, $headers);
         list($base, $webroot) = static::getBase($uri, $server);
 
         // Look in PATH_INFO first, as this is the exact value we need prepared
