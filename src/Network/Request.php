@@ -1886,6 +1886,23 @@ class Request implements ArrayAccess
     }
 
     /**
+     * Return an instance with the specified uri
+     *
+     * *Warning* Replacing the Uri will not update the `base`, `webroot`,
+     * and `url` attributes.
+     *
+     * @param \Psr\Http\Message\UriInterface $uri The new request uri
+     * @return static
+     */
+    public function withUri(UriInterface $uri)
+    {
+        $new = clone $this;
+        $new->uri = $uri;
+
+        return $new;
+    }
+
+    /**
      * Array access read implementation
      *
      * @param string $name Name of the key being accessed.

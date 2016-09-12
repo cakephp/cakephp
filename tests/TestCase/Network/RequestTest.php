@@ -2698,6 +2698,40 @@ XML;
     }
 
     /**
+     * Test getUri
+     *
+     * @return void
+     */
+    public function testGetUri()
+    {
+        $request = new Request(['url' => 'articles/view/3']);
+        $this->assertEquals('articles/view/3', $request->url);
+
+        $result = $request->getUri();
+        $this->assertInstanceOf('Psr\Http\Message\UriInterface', $result);
+        $this->assertEquals('/articles/view/3', $result->getPath());
+    }
+
+    /**
+     * Test withUri
+     *
+     * @return void
+     */
+    public function testWithUri()
+    {
+        $request = new Request([
+            'url' => 'articles/view/3'
+        ]);
+        $uri = $this->getMockBuilder('Psr\Http\Message\UriInterface')->getMock();
+        $new = $request->withUri($uri);
+        $this->assertNotSame($new, $request);
+        $this->assertNotSame($uri, $request->getUri());
+        $this->assertSame($uri, $new->getUri());
+        $this->assertSame('articles/view/3', $new->url);
+        $this->assertSame('articles/view/3', $request->url);
+    }
+
+    /**
      * Test is('requested') and isRequested()
      *
      * @return void
