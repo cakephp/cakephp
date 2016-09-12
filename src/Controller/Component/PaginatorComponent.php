@@ -416,7 +416,7 @@ class PaginatorComponent extends Component
     public function checkLimit(array $options)
     {
         $options['limit'] = (int)$options['limit'];
-        if (empty($options['limit']) || $options['limit'] < 1) {
+        if ($options['limit'] < 1) {
             $options['limit'] = 1;
         }
         $options['limit'] = max(min($options['limit'], $options['maxLimit']), 1);
@@ -433,7 +433,7 @@ class PaginatorComponent extends Component
     public function checkPage(array $options)
     {
         $options['page'] = (int)$options['page'];
-        if (empty($options['page']) || $options['page'] < 1) {
+        if ($options['page'] < 1) {
             $options['page'] = 1;
         }
         if ($options['maxPage']) {
