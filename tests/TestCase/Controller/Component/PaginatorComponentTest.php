@@ -42,6 +42,11 @@ class PaginatorComponentTest extends TestCase
 {
 
     /**
+     * @var \Cake\Controller\Component\PaginatorComponent
+     */
+    public $Paginator;
+
+    /**
      * fixtures property
      *
      * @var array
@@ -144,6 +149,7 @@ class PaginatorComponentTest extends TestCase
                 'page' => 1,
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
+                'maxPage' => null,
             ]);
         $this->Paginator->paginate($table, $settings);
     }
@@ -228,6 +234,7 @@ class PaginatorComponentTest extends TestCase
                 'order' => ['PaginatorPosts.id' => 'DESC'],
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
+                'maxPage' => null,
             ]);
 
         $this->Paginator->paginate($table, $settings);
@@ -260,6 +267,7 @@ class PaginatorComponentTest extends TestCase
                 'order' => ['PaginatorPosts.id' => 'DESC'],
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
+                'maxPage' => null,
             ]);
 
         $this->Paginator->paginate($table, $settings);
@@ -284,12 +292,19 @@ class PaginatorComponentTest extends TestCase
                 'maxLimit' => 50,
             ],
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'maxPage' => null,
         ];
         $result = $this->Paginator->mergeOptions('Silly', $settings);
         $this->assertEquals($settings, $result);
 
         $result = $this->Paginator->mergeOptions('Posts', $settings);
-        $expected = ['page' => 1, 'limit' => 10, 'maxLimit' => 50, 'whitelist' => ['limit', 'sort', 'page', 'direction']];
+        $expected = [
+            'page' => 1,
+            'limit' => 10,
+            'maxLimit' => 50,
+            'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'maxPage' => null,
+        ];
         $this->assertEquals($expected, $result);
     }
 
@@ -322,6 +337,7 @@ class PaginatorComponentTest extends TestCase
             'maxLimit' => 100,
             'finder' => 'myCustomFind',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'maxPage' => null,
         ];
         $this->assertEquals($expected, $result);
 
@@ -340,6 +356,7 @@ class PaginatorComponentTest extends TestCase
             'finder' => 'myCustomFind',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'scope' => 'non-existent',
+            'maxPage' => null,
         ];
         $this->assertEquals($expected, $result);
 
@@ -359,6 +376,7 @@ class PaginatorComponentTest extends TestCase
             'finder' => 'myCustomFind',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'scope' => 'scope',
+            'maxPage' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -387,6 +405,7 @@ class PaginatorComponentTest extends TestCase
             'maxLimit' => 100,
             'finder' => 'myCustomFind',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'maxPage' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -408,7 +427,13 @@ class PaginatorComponentTest extends TestCase
             'maxLimit' => 100,
         ];
         $result = $this->Paginator->mergeOptions('Post', $settings);
-        $expected = ['page' => 99, 'limit' => 75, 'maxLimit' => 100, 'whitelist' => ['limit', 'sort', 'page', 'direction']];
+        $expected = [
+            'page' => 99,
+            'limit' => 75,
+            'maxLimit' => 100,
+            'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'maxPage' => null,
+        ];
         $this->assertEquals($expected, $result);
     }
 
@@ -433,7 +458,13 @@ class PaginatorComponentTest extends TestCase
             'maxLimit' => 100,
         ];
         $result = $this->Paginator->mergeOptions('Post', $settings);
-        $expected = ['page' => 10, 'limit' => 10, 'maxLimit' => 100, 'whitelist' => ['limit', 'sort', 'page', 'direction']];
+        $expected = [
+            'page' => 10,
+            'limit' => 10,
+            'maxLimit' => 100,
+            'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'maxPage' => null,
+        ];
         $this->assertEquals($expected, $result);
     }
 
@@ -460,7 +491,12 @@ class PaginatorComponentTest extends TestCase
         $this->Paginator->config('whitelist', ['fields']);
         $result = $this->Paginator->mergeOptions('Post', $settings);
         $expected = [
-            'page' => 10, 'limit' => 10, 'maxLimit' => 100, 'fields' => ['bad.stuff'], 'whitelist' => ['limit', 'sort', 'page', 'direction', 'fields']
+            'page' => 10,
+            'limit' => 10,
+            'maxLimit' => 100,
+            'fields' => ['bad.stuff'],
+            'whitelist' => ['limit', 'sort', 'page', 'direction', 'fields'],
+            'maxPage' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -482,7 +518,8 @@ class PaginatorComponentTest extends TestCase
             'limit' => 200,
             'maxLimit' => 200,
             'paramType' => 'named',
-            'whitelist' => ['limit', 'sort', 'page', 'direction']
+            'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'maxPage' => null,
         ];
         $this->assertEquals($expected, $result);
 
@@ -496,7 +533,32 @@ class PaginatorComponentTest extends TestCase
             'limit' => 20,
             'maxLimit' => 10,
             'paramType' => 'named',
-            'whitelist' => ['limit', 'sort', 'page', 'direction']
+            'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'maxPage' => null,
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * test mergeOptions with page > maxPage in code.
+     *
+     * @return void
+     */
+    public function testMergeOptionsMaxPage()
+    {
+        $settings = [
+            'limit' => 10,
+            'maxPage' => 2,
+            'paramType' => 'named',
+        ];
+        $result = $this->Paginator->mergeOptions('Post', $settings);
+        $expected = [
+            'page' => 1,
+            'limit' => 10,
+            'maxLimit' => 10,
+            'paramType' => 'named',
+            'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'maxPage' => 2,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -522,6 +584,7 @@ class PaginatorComponentTest extends TestCase
                 'order' => ['PaginatorPosts.id' => 'asc'],
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
+                'maxPage' => null
             ]);
 
         $this->request->query = [
@@ -909,6 +972,55 @@ class PaginatorComponentTest extends TestCase
     }
 
     /**
+     * Integration test for checkPage() being applied inside paginate()
+     *
+     * It will only show limit * maxPage records in "count".
+     *
+     * @return void
+     */
+    public function testPaginateMaxPage()
+    {
+        $this->loadFixtures('Posts');
+        $table = TableRegistry::get('PaginatorPosts');
+
+        $settings = [
+            'limit' => 1,
+            'maxPage' => 2,
+        ];
+        $this->request->query = [
+            'page' => '2',
+        ];
+        $this->Paginator->paginate($table, $settings);
+        $this->assertEquals(2, $this->request->params['paging']['PaginatorPosts']['count']);
+        $this->assertEquals(2, $this->request->params['paging']['PaginatorPosts']['pageCount']);
+        $this->assertEquals(1, $this->request->params['paging']['PaginatorPosts']['perPage']);
+    }
+
+    /**
+     * Tests that pages out of bound by using maxPage will throw an exception.
+     *
+     * @expectedException \Cake\Network\Exception\NotFoundException
+     * @return void
+     */
+    public function testPaginateMaxPageOutOfBounds()
+    {
+        $this->loadFixtures('Posts');
+        $table = TableRegistry::get('PaginatorPosts');
+
+        $settings = [
+            'limit' => 1,
+            'maxPage' => 2,
+        ];
+        $this->request->query = [
+            'page' => '3',
+        ];
+        $this->Paginator->paginate($table, $settings);
+        $this->assertEquals(2, $this->request->params['paging']['PaginatorPosts']['count']);
+        $this->assertEquals(2, $this->request->params['paging']['PaginatorPosts']['pageCount']);
+        $this->assertEquals(1, $this->request->params['paging']['PaginatorPosts']['perPage']);
+    }
+
+    /**
      * test paginate() and custom find, to make sure the correct count is returned.
      *
      * @return void
@@ -1032,6 +1144,7 @@ class PaginatorComponentTest extends TestCase
                 'order' => [],
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
+                'maxPage' => null,
             ]);
         $this->Paginator->paginate($table, $settings);
     }
@@ -1066,6 +1179,7 @@ class PaginatorComponentTest extends TestCase
                 'page' => 1,
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
+                'maxPage' => null,
             ]);
         $this->Paginator->paginate($query, $settings);
     }
@@ -1126,6 +1240,7 @@ class PaginatorComponentTest extends TestCase
                 'page' => 1,
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
+                'maxPage' => null,
             ]);
         $this->Paginator->paginate($query, $settings);
     }

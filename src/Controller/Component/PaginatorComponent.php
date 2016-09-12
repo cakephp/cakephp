@@ -39,9 +39,10 @@ class PaginatorComponent extends Component
      * When calling paginate() these settings will be merged with the configuration
      * you provide.
      *
-     * - `maxLimit` - The maximum limit users can choose to view. Defaults to 100
      * - `limit` - The initial number of items per page. Defaults to 20.
+     * - `maxLimit` - The maximum limit users can choose to view. Defaults to 100.
      * - `page` - The starting page, defaults to 1.
+     * - `maxPage` - The maximum limit of pages displayed. Defaults to no limit.
      * - `whitelist` - A list of parameters users are allowed to set using request
      *   parameters. Modifying this list will allow users to have more influence
      *   over pagination, be careful with what you permit.
@@ -50,6 +51,7 @@ class PaginatorComponent extends Component
      */
     protected $_defaultConfig = [
         'page' => 1,
+        'maxPage' => null,
         'limit' => 20,
         'maxLimit' => 100,
         'whitelist' => ['limit', 'sort', 'page', 'direction']
@@ -174,9 +176,9 @@ class PaginatorComponent extends Component
         $options = $this->mergeOptions($alias, $settings);
         $options = $this->validateSort($object, $options);
         $options = $this->checkLimit($options);
+        $options = $this->checkPage($options);
 
-        $options += ['page' => 1, 'scope' => null];
-        $options['page'] = (int)$options['page'] < 1 ? 1 : (int)$options['page'];
+        $options += ['scope' => null];
         list($finder, $options) = $this->_extractFinder($options);
 
         if (empty($query)) {
@@ -188,6 +190,9 @@ class PaginatorComponent extends Component
         $results = $query->all();
         $numResults = count($results);
         $count = $numResults ? $query->count() : 0;
+        if ($options['maxPage'] && $count > $options['maxPage'] * $options['limit']) {
+            $count = $options['maxPage'] * $options['limit'];
+        }
 
         $defaults = $this->getDefaults($alias, $settings);
         unset($defaults[0]);
@@ -415,6 +420,25 @@ class PaginatorComponent extends Component
             $options['limit'] = 1;
         }
         $options['limit'] = max(min($options['limit'], $options['maxLimit']), 1);
+
+        return $options;
+    }
+
+    /**
+     * Check the page parameter and ensure it's within the maxPage bounds.
+     *
+     * @param array $options An array of options with a page key to be checked.
+     * @return array An array of options for pagination
+     */
+    public function checkPage(array $options)
+    {
+        $options['page'] = (int)$options['page'];
+        if (empty($options['page']) || $options['page'] < 1) {
+            $options['page'] = 1;
+        }
+        if ($options['maxPage']) {
+            $options['page'] = max($options['page'], $options['maxPage']);
+        }
 
         return $options;
     }
