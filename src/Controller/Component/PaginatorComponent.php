@@ -190,8 +190,8 @@ class PaginatorComponent extends Component
         $results = $query->all();
         $numResults = count($results);
         $count = $numResults ? $query->count() : 0;
-        if ($options['maxPage'] && $count > $options['maxPage'] * $options['limit']) {
-            $count = $options['maxPage'] * $options['limit'];
+        if ($options['maxPage'] && $count > $options['maxPage'] * $options['maxLimit']) {
+            $count = $options['maxPage'] * $options['maxLimit'];
         }
 
         $defaults = $this->getDefaults($alias, $settings);
