@@ -169,7 +169,7 @@ class RequestTest extends TestCase
         $request = new Request(['url' => 'some/path?one=something&two=else']);
         $expected = ['one' => 'something', 'two' => 'else'];
         $this->assertEquals($expected, $request->query);
-        $this->assertEquals('some/path?one=something&two=else', $request->url);
+        $this->assertEquals('some/path', $request->url);
     }
 
     /**

@@ -17,11 +17,13 @@ namespace Cake\Network;
 use ArrayAccess;
 use BadMethodCallException;
 use Cake\Core\Configure;
+use Cake\Http\ServerRequestFactory;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\UriInterface;
 use Zend\Diactoros\PhpInputStream;
 use Zend\Diactoros\Stream;
 use Zend\Diactoros\UploadedFile;
@@ -203,7 +205,10 @@ class Request implements ArrayAccess
      */
     public static function createFromGlobals()
     {
-        list($base, $webroot) = static::_base();
+        $uri = ServerRequestFactory::createUri($_SERVER);
+        $base = $uri->base;
+        $webroot = $uri->webroot;
+
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
             'cookiePath' => $webroot
@@ -215,11 +220,11 @@ class Request implements ArrayAccess
             'files' => $_FILES,
             'cookies' => $_COOKIE,
             'environment' => $_SERVER + $_ENV,
+            'uri' => $uri,
             'base' => $base,
             'webroot' => $webroot,
             'session' => Session::create($sessionConfig)
         ];
-        $config['url'] = static::_url($config);
 
         return new static($config);
     }
@@ -237,6 +242,7 @@ class Request implements ArrayAccess
      * - `cookies` Cookies for this request.
      * - `environment` $_SERVER and $_ENV data.
      * - `url` The URL without the base path for the request.
+     * - `uri` The PSR7 UriInterface object. If null, one will be created.
      * - `base` The base URL for the request.
      * - `webroot` The webroot directory for the request.
      * - `input` The data that would come from php://input this is useful for simulating
@@ -258,6 +264,7 @@ class Request implements ArrayAccess
             'cookies' => [],
             'environment' => [],
             'url' => '',
+            'uri' => null,
             'base' => '',
             'webroot' => '',
             'input' => null,
@@ -284,12 +291,32 @@ class Request implements ArrayAccess
             ]);
         }
 
-        $this->url = $config['url'];
-        $this->base = $config['base'];
-        $this->cookies = $config['cookies'];
-        $this->here = $this->base . '/' . $this->url;
-        $this->webroot = $config['webroot'];
         $this->_environment = $config['environment'];
+        $this->cookies = $config['cookies'];
+
+        if (isset($config['uri']) && $config['uri'] instanceof UriInterface) {
+            $uri = $config['uri'];
+        } else {
+            $uri = ServerRequestFactory::createUri($config['environment']);
+        }
+
+        // Extract a query string from config[url] if present.
+        // This is required for backwards compatbility and keeping
+        // UriInterface implementations happy.
+        $querystr = '';
+        if (strpos($config['url'], '?') !== false) {
+            list($config['url'], $querystr) = explode('?', $config['url']);
+        }
+        if ($config['url']) {
+            $uri = $uri->withPath('/' . $config['url']);
+        }
+
+        $this->uri = $uri;
+        $this->base = $config['base'];
+        $this->webroot = $config['webroot'];
+
+        $this->url = substr($uri->getPath(), 1);
+        $this->here = $this->base . '/' . $this->url;
 
         if (isset($config['input'])) {
             $stream = new Stream('php://memory', 'rw');
@@ -302,7 +329,7 @@ class Request implements ArrayAccess
 
         $config['post'] = $this->_processPost($config['post']);
         $this->data = $this->_processFiles($config['post'], $config['files']);
-        $this->query = $this->_processGet($config['query']);
+        $this->query = $this->_processGet($config['query'], $querystr);
         $this->params = $config['params'];
         $this->_session = $config['session'];
     }
@@ -347,17 +374,17 @@ class Request implements ArrayAccess
     /**
      * Process the GET parameters and move things into the object.
      *
+     * @param string $queryString A query string from the URL if provided
      * @param array $query The array to which the parsed keys/values are being added.
      * @return array An array containing the parsed querystring keys/values.
      */
-    protected function _processGet($query)
+    protected function _processGet($query, $queryString = '')
     {
         $unsetUrl = '/' . str_replace(['.', ' '], '_', urldecode($this->url));
         unset($query[$unsetUrl]);
         unset($query[$this->base . $unsetUrl]);
-        if (strpos($this->url, '?') !== false) {
-            list(, $querystr) = explode('?', $this->url);
-            parse_str($querystr, $queryArgs);
+        if (strlen($queryString)) {
+            parse_str($queryString, $queryArgs);
             $query += $queryArgs;
         }
 
