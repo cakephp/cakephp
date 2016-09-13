@@ -1394,4 +1394,25 @@ class QueryRegressionTest extends TestCase
         $result = $query->where(['updated >' => $query->func()->now('datetime')])->first();
         $this->assertSame(6, $result->id);
     }
+
+    /**
+     * Tests that `notMatching()` can be used on `belongsToMany`
+     * associations without passing a query builder callback.
+     *
+     * @return void
+     */
+    public function testNotMatchingForBelongsToManyWithoutQueryBuilder()
+    {
+        $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
+
+        $Articles = TableRegistry::get('Articles');
+        $Articles->belongsToMany('Tags');
+
+        $result = $Articles->find('list')->notMatching('Tags')->toArray();
+        $expected = [
+            3 => 'Third Article'
+        ];
+
+        $this->assertEquals($expected, $result);
+    }
 }
