@@ -718,13 +718,13 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @return Model
  */
 	public function getMockForModel($model, $methods = array(), $config = array()) {
-		$config += ClassRegistry::config('Model');
+		$defaults = ClassRegistry::config('Model');
+		unset($defaults['ds']);
 
 		list($plugin, $name) = pluginSplit($model, true);
 		App::uses($name, $plugin . 'Model');
 
-		$config = array_merge((array)$config, array('name' => $name));
-		unset($config['ds']);
+		$config = array_merge($defaults, (array)$config, array('name' => $name));
 
 		if (!class_exists($name)) {
 			throw new MissingModelException(array($model));
