@@ -3109,7 +3109,11 @@ XML;
             'webroot' => '/cakeapp/'
         ]);
 
-        $this->assertSame($request->{$prop}, $request->getAttribute($prop));
+        if ($prop === 'session') {
+            $this->assertSame($request->session(), $request->getAttribute($prop));
+        } else {
+            $this->assertSame($request->{$prop}, $request->getAttribute($prop));
+        }
     }
 
     /**
@@ -3181,7 +3185,8 @@ XML;
         return [
             ['params'],
             ['base'],
-            ['webroot']
+            ['webroot'],
+            ['session']
         ];
     }
 

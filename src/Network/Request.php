@@ -172,7 +172,7 @@ class Request implements ArrayAccess
      *
      * @var \Cake\Network\Session
      */
-    protected $_session;
+    protected $session;
 
     /**
      * Store the additional attributes attached to the request.
@@ -186,7 +186,7 @@ class Request implements ArrayAccess
      *
      * @var array
      */
-    protected $emulatedAttributes = ['webroot', 'base', 'params'];
+    protected $emulatedAttributes = ['session', 'webroot', 'base', 'params'];
 
     /**
      * Array of Psr\Http\Message\UploadedFileInterface objects.
@@ -338,7 +338,7 @@ class Request implements ArrayAccess
         $this->data = $this->_processFiles($config['post'], $config['files']);
         $this->query = $this->_processGet($config['query'], $querystr);
         $this->params = $config['params'];
-        $this->_session = $config['session'];
+        $this->session = $config['session'];
     }
 
     /**
@@ -526,10 +526,10 @@ class Request implements ArrayAccess
     public function session(Session $session = null)
     {
         if ($session === null) {
-            return $this->_session;
+            return $this->session;
         }
 
-        return $this->_session = $session;
+        return $this->session = $session;
     }
 
     /**
