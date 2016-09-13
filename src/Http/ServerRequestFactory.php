@@ -92,7 +92,8 @@ abstract class ServerRequestFactory extends BaseFactory
             $uri = static::updatePath($base, $uri);
         }
 
-        // TODO Find an alternate solution to this.
+        // Splat on some extra attributes to save
+        // some method calls.
         $uri->base = $base;
         $uri->webroot = $webroot;
         return $uri;
