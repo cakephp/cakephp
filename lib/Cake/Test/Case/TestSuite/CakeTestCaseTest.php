@@ -53,6 +53,7 @@ class ConstructorPost extends Model {
 		parent::__construct($id, $table, $ds);
 		$this->getDataSource()->cacheMethods = false;
 	}
+
 }
 
 /**
