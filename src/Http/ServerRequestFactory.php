@@ -65,6 +65,7 @@ abstract class ServerRequestFactory extends BaseFactory
         $server += $_SERVER;
         $server = static::normalizeServer($server);
         $headers = static::marshalHeaders($server);
+
         return static::marshalUriFromServer($server, $headers);
     }
 
@@ -96,6 +97,7 @@ abstract class ServerRequestFactory extends BaseFactory
         // some method calls.
         $uri->base = $base;
         $uri->webroot = $webroot;
+
         return $uri;
     }
 
@@ -125,6 +127,7 @@ abstract class ServerRequestFactory extends BaseFactory
         ) {
             $path = '/';
         }
+
         return $uri->withPath($path);
     }
 

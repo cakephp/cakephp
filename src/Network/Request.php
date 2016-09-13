@@ -381,8 +381,8 @@ class Request implements ArrayAccess
     /**
      * Process the GET parameters and move things into the object.
      *
-     * @param string $queryString A query string from the URL if provided
      * @param array $query The array to which the parsed keys/values are being added.
+     * @param string $queryString A query string from the URL if provided
      * @return array An array containing the parsed querystring keys/values.
      */
     protected function _processGet($query, $queryString = '')
