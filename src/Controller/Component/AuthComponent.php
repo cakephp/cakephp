@@ -40,6 +40,12 @@ class AuthComponent extends Component
     use EventDispatcherTrait;
 
     /**
+     * The query string key used for remembering the referrered page when getting
+     * redirected to login.
+     */
+    const QUERY_STRING_REDIRECT = 'redirect';
+
+    /**
      * Constant for 'all'
      *
      * @var string
@@ -394,9 +400,9 @@ class AuthComponent extends Component
 
         $loginAction = $this->_config['loginAction'];
         if (is_array($loginAction)) {
-            $loginAction['?']['redirect'] = $currentUrl;
+            $loginAction['?'][static::QUERY_STRING_REDIRECT] = $currentUrl;
         } else {
-            $loginAction .= '?redirect=' . rawurlencode($currentUrl);
+            $loginAction .= '?' . static::QUERY_STRING_REDIRECT . '=' . rawurlencode($currentUrl);
         }
 
         return $loginAction;
@@ -754,7 +760,7 @@ class AuthComponent extends Component
      */
     public function redirectUrl($url = null)
     {
-        $redirectUrl = $this->request->query('redirect');
+        $redirectUrl = $this->request->query(self::QUERY_STRING_REDIRECT);
         if ($redirectUrl && (substr($redirectUrl, 0, 1) !== '/')) {
             $redirectUrl = null;
         }
