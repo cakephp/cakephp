@@ -486,7 +486,7 @@ class View implements EventDispatcherInterface
             $options['cache'] = $this->_elementCache($name, $data, $options);
         }
 
-        $file = $this->_getElementFilename($name);
+        $file = $this->_getElementFileName($name);
         if ($file && $options['cache']) {
             return $this->cache(function () use ($file, $data, $options) {
                 echo $this->_renderElement($file, $data, $options);
@@ -547,7 +547,7 @@ class View implements EventDispatcherInterface
      */
     public function elementExists($name)
     {
-        return (bool)$this->_getElementFilename($name);
+        return (bool)$this->_getElementFileName($name);
     }
 
     /**
