@@ -134,9 +134,8 @@ abstract class ServerRequestFactory extends BaseFactory
     /**
      * Calculate the base directory and webroot directory.
      *
-     * This code is a copy/paste from Cake\Network\Request::_base()
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request The request.
+     * @param \Psr\Http\Message\UriInterface $uri The Uri instance.
+     * @param array $server The SERVER data to use.
      * @return array An array containing the [baseDir, webroot]
      */
     protected static function getBase($uri, $server)
