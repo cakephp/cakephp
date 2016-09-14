@@ -98,7 +98,7 @@ class CakeFixtureManager {
 /**
  * Parse the fixture path included in test cases, to get the fixture class name, and the
  * real fixture path including sub-directories
- * 
+ *
  * @param string $fixturePath the fixture path to parse
  * @return array containing fixture class name and optional additional path
  */
