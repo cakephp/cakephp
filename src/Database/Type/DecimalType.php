@@ -21,11 +21,11 @@ use PDO;
 use RuntimeException;
 
 /**
- * Float type converter.
+ * Decimal type converter.
  *
- * Use to convert float/decimal data between PHP and the database types.
+ * Use to convert decimal data between PHP and the database types.
  */
-class FloatType extends Type implements TypeInterface
+class DecimalType extends Type implements TypeInterface
 {
 
     /**
@@ -73,10 +73,13 @@ class FloatType extends Type implements TypeInterface
             return null;
         }
         if (is_array($value)) {
-            return 1;
+            return '1';
+        }
+        if (is_string($value) && is_numeric($value)) {
+            return $value;
         }
 
-        return (float)$value;
+        return sprintf('%F', (float)$value);
     }
 
     /**
