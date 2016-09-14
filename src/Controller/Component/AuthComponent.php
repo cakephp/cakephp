@@ -392,6 +392,10 @@ class AuthComponent extends Component
     }
 
     /**
+     * Returns the URL of the login action to redirect to.
+     *
+     * This includes the redirect query string if applicable.
+     *
      * @return array|string
      */
     protected function _loginActionRedirectUrl()
