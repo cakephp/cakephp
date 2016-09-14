@@ -1888,7 +1888,7 @@ class FormHelper extends AppHelper {
 		}
 
 		$previousLastAction = $this->_lastAction;
-		$this->_lastAction($formUrl);
+		$this->_lastAction($url);
 
 		$out = $this->Html->useTag('form', $formUrl, $formOptions);
 		$out .= $this->Html->useTag('hidden', '_method', array(
@@ -3105,7 +3105,7 @@ class FormHelper extends AppHelper {
  * @return void
  */
 	protected function _lastAction($url) {
-		$action = Router::url($url, true);
+		$action = html_entity_decode($this->url($url), ENT_QUOTES);
 		$query = parse_url($action, PHP_URL_QUERY);
 		$query = $query ? '?' . $query : '';
 		$this->_lastAction = parse_url($action, PHP_URL_PATH) . $query;
