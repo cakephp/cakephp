@@ -169,7 +169,7 @@ class RequestTest extends TestCase
         $request = new Request(['url' => 'some/path?one=something&two=else']);
         $expected = ['one' => 'something', 'two' => 'else'];
         $this->assertEquals($expected, $request->query);
-        $this->assertEquals('some/path?one=something&two=else', $request->url);
+        $this->assertEquals('some/path', $request->url);
     }
 
     /**
@@ -2198,9 +2198,17 @@ class RequestTest extends TestCase
         $this->_loadEnvironment($env);
 
         $request = Request::createFromGlobals();
-        $this->assertEquals($expected['url'], $request->url, "url error");
-        $this->assertEquals($expected['base'], $request->base, "base error");
+        $uri = $request->getUri();
+
+        $this->assertEquals($expected['url'], $request->url, "URL is incorrect");
+        $this->assertEquals('/' . $expected['url'], $uri->getPath(), 'Uri->getPath() is incorrect');
+
+        $this->assertEquals($expected['base'], $request->base, "base is incorrect");
+        $this->assertEquals($expected['base'], $request->getAttribute('base'), "base is incorrect");
+
         $this->assertEquals($expected['webroot'], $request->webroot, "webroot error");
+        $this->assertEquals($expected['webroot'], $request->getAttribute('webroot'), "webroot is incorrect");
+
         if (isset($expected['urlParams'])) {
             $this->assertEquals($expected['urlParams'], $request->query, "GET param mismatch");
         }
@@ -2698,6 +2706,40 @@ XML;
     }
 
     /**
+     * Test getUri
+     *
+     * @return void
+     */
+    public function testGetUri()
+    {
+        $request = new Request(['url' => 'articles/view/3']);
+        $this->assertEquals('articles/view/3', $request->url);
+
+        $result = $request->getUri();
+        $this->assertInstanceOf('Psr\Http\Message\UriInterface', $result);
+        $this->assertEquals('/articles/view/3', $result->getPath());
+    }
+
+    /**
+     * Test withUri
+     *
+     * @return void
+     */
+    public function testWithUri()
+    {
+        $request = new Request([
+            'url' => 'articles/view/3'
+        ]);
+        $uri = $this->getMockBuilder('Psr\Http\Message\UriInterface')->getMock();
+        $new = $request->withUri($uri);
+        $this->assertNotSame($new, $request);
+        $this->assertNotSame($uri, $request->getUri());
+        $this->assertSame($uri, $new->getUri());
+        $this->assertSame('articles/view/3', $new->url);
+        $this->assertSame('articles/view/3', $request->url);
+    }
+
+    /**
      * Test is('requested') and isRequested()
      *
      * @return void
@@ -3075,7 +3117,11 @@ XML;
             'webroot' => '/cakeapp/'
         ]);
 
-        $this->assertSame($request->{$prop}, $request->getAttribute($prop));
+        if ($prop === 'session') {
+            $this->assertSame($request->session(), $request->getAttribute($prop));
+        } else {
+            $this->assertSame($request->{$prop}, $request->getAttribute($prop));
+        }
     }
 
     /**
@@ -3147,7 +3193,8 @@ XML;
         return [
             ['params'],
             ['base'],
-            ['webroot']
+            ['webroot'],
+            ['session']
         ];
     }
 

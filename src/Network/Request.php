@@ -17,11 +17,13 @@ namespace Cake\Network;
 use ArrayAccess;
 use BadMethodCallException;
 use Cake\Core\Configure;
+use Cake\Http\ServerRequestFactory;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\UriInterface;
 use Zend\Diactoros\PhpInputStream;
 use Zend\Diactoros\Stream;
 use Zend\Diactoros\UploadedFile;
@@ -159,11 +161,18 @@ class Request implements ArrayAccess
     protected $stream;
 
     /**
+     * Uri instance
+     *
+     * @var \Psr\Http\Message\UriInterface
+     */
+    protected $uri;
+
+    /**
      * Instance of a Session object relative to this request
      *
      * @var \Cake\Network\Session
      */
-    protected $_session;
+    protected $session;
 
     /**
      * Store the additional attributes attached to the request.
@@ -177,7 +186,7 @@ class Request implements ArrayAccess
      *
      * @var array
      */
-    protected $emulatedAttributes = ['webroot', 'base', 'params'];
+    protected $emulatedAttributes = ['session', 'webroot', 'base', 'params'];
 
     /**
      * Array of Psr\Http\Message\UploadedFileInterface objects.
@@ -203,7 +212,10 @@ class Request implements ArrayAccess
      */
     public static function createFromGlobals()
     {
-        list($base, $webroot) = static::_base();
+        $uri = ServerRequestFactory::createUri($_SERVER);
+        $base = $uri->base;
+        $webroot = $uri->webroot;
+
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
             'cookiePath' => $webroot
@@ -215,11 +227,11 @@ class Request implements ArrayAccess
             'files' => $_FILES,
             'cookies' => $_COOKIE,
             'environment' => $_SERVER + $_ENV,
+            'uri' => $uri,
             'base' => $base,
             'webroot' => $webroot,
             'session' => Session::create($sessionConfig)
         ];
-        $config['url'] = static::_url($config);
 
         return new static($config);
     }
@@ -237,6 +249,7 @@ class Request implements ArrayAccess
      * - `cookies` Cookies for this request.
      * - `environment` $_SERVER and $_ENV data.
      * - `url` The URL without the base path for the request.
+     * - `uri` The PSR7 UriInterface object. If null, one will be created.
      * - `base` The base URL for the request.
      * - `webroot` The webroot directory for the request.
      * - `input` The data that would come from php://input this is useful for simulating
@@ -258,6 +271,7 @@ class Request implements ArrayAccess
             'cookies' => [],
             'environment' => [],
             'url' => '',
+            'uri' => null,
             'base' => '',
             'webroot' => '',
             'input' => null,
@@ -284,12 +298,32 @@ class Request implements ArrayAccess
             ]);
         }
 
-        $this->url = $config['url'];
-        $this->base = $config['base'];
-        $this->cookies = $config['cookies'];
-        $this->here = $this->base . '/' . $this->url;
-        $this->webroot = $config['webroot'];
         $this->_environment = $config['environment'];
+        $this->cookies = $config['cookies'];
+
+        if (isset($config['uri']) && $config['uri'] instanceof UriInterface) {
+            $uri = $config['uri'];
+        } else {
+            $uri = ServerRequestFactory::createUri($config['environment']);
+        }
+
+        // Extract a query string from config[url] if present.
+        // This is required for backwards compatbility and keeping
+        // UriInterface implementations happy.
+        $querystr = '';
+        if (strpos($config['url'], '?') !== false) {
+            list($config['url'], $querystr) = explode('?', $config['url']);
+        }
+        if ($config['url']) {
+            $uri = $uri->withPath('/' . $config['url']);
+        }
+
+        $this->uri = $uri;
+        $this->base = $config['base'];
+        $this->webroot = $config['webroot'];
+
+        $this->url = substr($uri->getPath(), 1);
+        $this->here = $this->base . '/' . $this->url;
 
         if (isset($config['input'])) {
             $stream = new Stream('php://memory', 'rw');
@@ -302,9 +336,9 @@ class Request implements ArrayAccess
 
         $config['post'] = $this->_processPost($config['post']);
         $this->data = $this->_processFiles($config['post'], $config['files']);
-        $this->query = $this->_processGet($config['query']);
+        $this->query = $this->_processGet($config['query'], $querystr);
         $this->params = $config['params'];
-        $this->_session = $config['session'];
+        $this->session = $config['session'];
     }
 
     /**
@@ -348,131 +382,20 @@ class Request implements ArrayAccess
      * Process the GET parameters and move things into the object.
      *
      * @param array $query The array to which the parsed keys/values are being added.
+     * @param string $queryString A query string from the URL if provided
      * @return array An array containing the parsed querystring keys/values.
      */
-    protected function _processGet($query)
+    protected function _processGet($query, $queryString = '')
     {
         $unsetUrl = '/' . str_replace(['.', ' '], '_', urldecode($this->url));
         unset($query[$unsetUrl]);
         unset($query[$this->base . $unsetUrl]);
-        if (strpos($this->url, '?') !== false) {
-            list(, $querystr) = explode('?', $this->url);
-            parse_str($querystr, $queryArgs);
+        if (strlen($queryString)) {
+            parse_str($queryString, $queryArgs);
             $query += $queryArgs;
         }
 
         return $query;
-    }
-
-    /**
-     * Get the request uri. Looks in PATH_INFO first, as this is the exact value we need prepared
-     * by PHP. Following that, REQUEST_URI, PHP_SELF, HTTP_X_REWRITE_URL and argv are checked in that order.
-     * Each of these server variables have the base path, and query strings stripped off
-     *
-     * @param array $config Configuration to set.
-     * @return string URI The CakePHP request path that is being accessed.
-     */
-    protected static function _url($config)
-    {
-        if (!empty($_SERVER['PATH_INFO'])) {
-            return $_SERVER['PATH_INFO'];
-        }
-        if (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '://') === false) {
-            $uri = $_SERVER['REQUEST_URI'];
-        } elseif (isset($_SERVER['REQUEST_URI'])) {
-            $uri = $_SERVER['REQUEST_URI'];
-            $fullBaseUrl = Configure::read('App.fullBaseUrl');
-            if (strpos($uri, $fullBaseUrl) === 0) {
-                $uri = substr($_SERVER['REQUEST_URI'], strlen($fullBaseUrl));
-            }
-        } elseif (isset($_SERVER['PHP_SELF'], $_SERVER['SCRIPT_NAME'])) {
-            $uri = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
-        } elseif (isset($_SERVER['HTTP_X_REWRITE_URL'])) {
-            $uri = $_SERVER['HTTP_X_REWRITE_URL'];
-        } elseif ($var = env('argv')) {
-            $uri = $var[0];
-        }
-
-        $base = $config['base'];
-
-        if (strlen($base) > 0 && strpos($uri, $base) === 0) {
-            $uri = substr($uri, strlen($base));
-        }
-        if (strpos($uri, '?') !== false) {
-            list($uri) = explode('?', $uri, 2);
-        }
-        if (empty($uri) || $uri === '/' || $uri === '//' || $uri === '/index.php') {
-            $uri = '/';
-        }
-        $endsWithIndex = '/webroot/index.php';
-        $endsWithLength = strlen($endsWithIndex);
-        if (strlen($uri) >= $endsWithLength &&
-            substr($uri, -$endsWithLength) === $endsWithIndex
-        ) {
-            $uri = '/';
-        }
-
-        return $uri;
-    }
-
-    /**
-     * Returns a base URL and sets the proper webroot
-     *
-     * If CakePHP is called with index.php in the URL even though
-     * URL Rewriting is activated (and thus not needed) it swallows
-     * the unnecessary part from $base to prevent issue #3318.
-     *
-     * @return array Base URL, webroot dir ending in /
-     */
-    protected static function _base()
-    {
-        $base = $webroot = $baseUrl = null;
-        $config = Configure::read('App');
-        extract($config);
-
-        if ($base !== false && $base !== null) {
-            return [$base, $base . '/'];
-        }
-
-        if (!$baseUrl) {
-            $base = dirname(env('PHP_SELF'));
-            // Clean up additional / which cause following code to fail..
-            $base = preg_replace('#/+#', '/', $base);
-
-            $indexPos = strpos($base, '/' . $webroot . '/index.php');
-            if ($indexPos !== false) {
-                $base = substr($base, 0, $indexPos) . '/' . $webroot;
-            }
-            if ($webroot === basename($base)) {
-                $base = dirname($base);
-            }
-
-            if ($base === DIRECTORY_SEPARATOR || $base === '.') {
-                $base = '';
-            }
-            $base = implode('/', array_map('rawurlencode', explode('/', $base)));
-
-            return [$base, $base . '/'];
-        }
-
-        $file = '/' . basename($baseUrl);
-        $base = dirname($baseUrl);
-
-        if ($base === DIRECTORY_SEPARATOR || $base === '.') {
-            $base = '';
-        }
-        $webrootDir = $base . '/';
-
-        $docRoot = env('DOCUMENT_ROOT');
-        $docRootContainsWebroot = strpos($docRoot, $webroot);
-
-        if (!empty($base) || !$docRootContainsWebroot) {
-            if (strpos($webrootDir, '/' . $webroot . '/') === false) {
-                $webrootDir .= $webroot . '/';
-            }
-        }
-
-        return [$base . $file, $webrootDir];
     }
 
     /**
@@ -603,10 +526,10 @@ class Request implements ArrayAccess
     public function session(Session $session = null)
     {
         if ($session === null) {
-            return $this->_session;
+            return $this->session;
         }
 
-        return $this->_session = $session;
+        return $this->session = $session;
     }
 
     /**
@@ -1836,6 +1759,34 @@ class Request implements ArrayAccess
     {
         $new = clone $this;
         $new->stream = $body;
+
+        return $new;
+    }
+
+    /**
+     * Retrieves the URI instance.
+     *
+     * @return \Psr\Http\Message\UriInterface Returns a UriInterface instance
+     *   representing the URI of the request.
+     */
+    public function getUri()
+    {
+        return $this->uri;
+    }
+
+    /**
+     * Return an instance with the specified uri
+     *
+     * *Warning* Replacing the Uri will not update the `base`, `webroot`,
+     * and `url` attributes.
+     *
+     * @param \Psr\Http\Message\UriInterface $uri The new request uri
+     * @return static
+     */
+    public function withUri(UriInterface $uri)
+    {
+        $new = clone $this;
+        $new->uri = $uri;
 
         return $new;
     }
