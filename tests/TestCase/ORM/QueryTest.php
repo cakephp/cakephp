@@ -2924,15 +2924,15 @@ class QueryTest extends TestCase
     {
         $this->loadFixtures('Datatypes');
 
-        $big = '1234567890123456789';
+        $big = 1234567890123456789.2;
         $table = TableRegistry::get('Datatypes');
-        $entity = $table->newEntity([
-            'cost' => $big,
-        ]);
+        $entity = $table->newEntity([]);
+        $entity->cost = $big;
         $table->save($entity);
         $out = $table->find()->where([
             'cost' => $big
         ])->first();
+        $this->assertNotEmpty($out, 'Should get a record');
         $this->assertSame(sprintf('%F', $big), sprintf('%F', $out->cost));
     }
 
