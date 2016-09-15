@@ -3184,6 +3184,36 @@ XML;
     }
 
     /**
+     * Test the requestTarget methods.
+     *
+     * @return void
+     */
+    public function testWithRequestTarget()
+    {
+        $request = new Request([
+            'environment' => [
+                'REQUEST_URI' => '/articles/view/1',
+                'QUERY_STRING' => 'comments=1&open=0'
+            ],
+            'base' => '/basedir'
+        ]);
+        $this->assertEquals(
+            '/articles/view/1?comments=1&open=0',
+            $request->getRequestTarget(),
+            'Should not include basedir.'
+        );
+
+        $new = $request->withRequestTarget('/articles/view/3');
+        $this->assertNotSame($new, $request);
+        $this->assertEquals(
+            '/articles/view/1?comments=1&open=0',
+            $request->getRequestTarget(),
+            'should be unchanged.'
+        );
+        $this->assertEquals('/articles/view/3', $new->getRequestTarget(), 'reflects method call');
+    }
+
+    /**
      * Data provider for emulated property tests.
      *
      * @return array
