@@ -664,6 +664,30 @@ class AuthComponentTest extends TestCase
     /**
      * @return void
      */
+    public function testLoginRedirectQueryStringWithComplexLoginActionUrl()
+    {
+        $this->Auth->session->delete('Auth');
+        $url = '/posts/view/29';
+        $this->Auth->request->addParams(Router::parse($url));
+        $this->Auth->request->url = $this->Auth->request->here = Router::normalize($url);
+        $this->Auth->request->query = [
+            'print' => 'true',
+            'refer' => 'menu'
+        ];
+
+        $this->Auth->session->delete('Auth');
+        $this->Auth->config('loginAction', '/auth_test/login/passed-param?a=b');
+        $event = new Event('Controller.startup', $this->Controller);
+        $response = $this->Auth->startup($event);
+
+        $redirectHeader = $response->header()['Location'];
+        $expected = Router::url(['controller' => 'AuthTest', 'action' => 'login', 'passed-param', '?' => ['a' => 'b', 'redirect' => '/posts/view/29?print=true&refer=menu']], true);
+        $this->assertEquals($expected, $redirectHeader);
+    }
+
+    /**
+     * @return void
+     */
     public function testLoginRedirectDifferentBaseUrl()
     {
         $appConfig = Configure::read('App');
@@ -1483,7 +1507,7 @@ class AuthComponentTest extends TestCase
      * @return void
      * @triggers Controller.startup $this->Controller
      */
-    public function testStatelessFollowedByStatefulAuth()
+    public function testStatelessAuthRedirectToLogin()
     {
         $this->Auth->response = $this->getMockBuilder('Cake\Network\Response')
             ->setMethods(['stop', 'statusCode', 'send'])

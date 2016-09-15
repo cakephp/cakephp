@@ -406,7 +406,8 @@ class AuthComponent extends Component
         if (is_array($loginAction)) {
             $loginAction['?'][static::QUERY_STRING_REDIRECT] = $currentUrl;
         } else {
-            $loginAction .= '?' . static::QUERY_STRING_REDIRECT . '=' . rawurlencode($currentUrl);
+            $char = strpos($loginAction, '?') === false ? '?' : '&';
+            $loginAction .= $char . static::QUERY_STRING_REDIRECT . '=' . urlencode($currentUrl);
         }
 
         return $loginAction;
