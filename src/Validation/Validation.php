@@ -521,9 +521,11 @@ class Validation
 
     /**
      * Boolean validation, determines if value passed is a boolean integer or true/false.
+     * To check if a value is set specifically to false or True see `inList()`.
      *
      * @param string $check a valid boolean
      * @return bool Success
+     * @see \Cake\Validation\Validation::inList() to mimic isTrue or isFalse checks.
      */
     public static function boolean($check)
     {
