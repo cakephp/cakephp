@@ -2813,7 +2813,8 @@ class ValidationTest extends TestCase
      *
      * @return void
      */
-    public function testImageSize() {
+    public function testImageSize()
+    {
         $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
         $upload = [
             'tmp_name' => $image
