@@ -1082,6 +1082,76 @@ class Validation
     }
 
     /**
+     * Validates the size of an uploaded image.
+     *
+     * @param array $value
+     * @param array $options
+     * @return boolean
+     */
+    public static function imageSize($value, $options)
+    {
+        if (!isset($options['height']) && !isset($options['width'])) {
+            throw new InvalidArgumentException('Invalid image size validation parameters! Missing `width` and / or `height`!');
+        }
+
+        list($width, $height) = getimagesize($value['tmp_name']);
+
+        if (isset($options['height'])) {
+            $validHeight = self::comparison($height, $options['height'][0], $options['height'][1]);
+        }
+        if (isset($options['width'])) {
+            $validWidth = self::comparison($width, $options['width'][0], $options['width'][1]);
+        }
+        if (isset($validHeight) && isset($validWidth)) {
+            return ($validHeight && $validWidth);
+        }
+        if (isset($validHeight)) {
+            return $validHeight;
+        }
+        if (isset($validWidth)) {
+            return $validWidth;
+        }
+
+        throw new InvalidArgumentException('The 2nd argument is missing the `width` and / or `height` options!');
+    }
+
+    /**
+     * Validates the image width.
+     *
+     * @param array $value
+     * @param string $operator
+     * @param integer $width
+     * @return boolean
+     */
+    public static function imageWidth($value, $operator, $width)
+    {
+        return self::imageSize($value, [
+            'width' => [
+                $operator,
+                $width
+            ]
+        ]);
+    }
+
+    /**
+     * Validates the image width.
+     *
+     * @param array $value
+     * @param string $operator
+     * @param integer $height
+     * @return boolean
+     */
+    public static function imageHeight($value, $operator, $height)
+    {
+        return self::imageSize($value, [
+            'height' => [
+                $operator,
+                $height
+            ]
+        ]);
+    }
+
+    /**
      * Validates a geographic coordinate.
      *
      * Supported formats:
