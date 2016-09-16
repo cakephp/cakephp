@@ -1,1 +1,1 @@
-Element in the TestPlugin
+this is the plugin element using params[plugin]
