@@ -849,7 +849,7 @@ class ViewTest extends TestCase
         $this->assertFalse($result);
 
         $this->View->plugin = 'TestPlugin';
-        $result = $this->View->elementExists('test_plugin_element');
+        $result = $this->View->elementExists('plugin_element');
         $this->assertTrue($result);
     }
 
@@ -864,11 +864,14 @@ class ViewTest extends TestCase
         $this->assertEquals('this is the test element', $result);
 
         $result = $this->View->element('TestPlugin.plugin_element');
-        $this->assertEquals('this is the plugin element using params[plugin]', $result);
+        $this->assertEquals("Element in the TestPlugin\n", $result);
 
         $this->View->plugin = 'TestPlugin';
-        $result = $this->View->element('test_plugin_element');
-        $this->assertEquals('this is the test set using View::$plugin plugin element', $result);
+        $result = $this->View->element('plugin_element');
+        $this->assertEquals("Element in the TestPlugin\n", $result);
+
+        $result = $this->View->element('plugin_element', [], ['plugin' => false]);
+        $this->assertEquals("Plugin element overridden in app\n", $result);
     }
 
     /**
