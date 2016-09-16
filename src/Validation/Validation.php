@@ -1084,17 +1084,17 @@ class Validation
     /**
      * Validates the size of an uploaded image.
      *
-     * @param array $value
-     * @param array $options
-     * @return boolean
+     * @param array $file The uploaded file data from PHP.
+     * @param array $options Options to validate width and height.
+     * @return bool
      */
-    public static function imageSize($value, $options)
+    public static function imageSize($file, $options)
     {
         if (!isset($options['height']) && !isset($options['width'])) {
             throw new InvalidArgumentException('Invalid image size validation parameters! Missing `width` and / or `height`!');
         }
 
-        list($width, $height) = getimagesize($value['tmp_name']);
+        list($width, $height) = getimagesize($file['tmp_name']);
 
         if (isset($options['height'])) {
             $validHeight = self::comparison($height, $options['height'][0], $options['height'][1]);
@@ -1118,14 +1118,14 @@ class Validation
     /**
      * Validates the image width.
      *
-     * @param array $value
-     * @param string $operator
-     * @param integer $width
-     * @return boolean
+     * @param array $file The uploaded file data from PHP.
+     * @param string $operator Comparision operator.
+     * @param int $width Min or max width.
+     * @return bool
      */
-    public static function imageWidth($value, $operator, $width)
+    public static function imageWidth($file, $operator, $width)
     {
-        return self::imageSize($value, [
+        return self::imageSize($file, [
             'width' => [
                 $operator,
                 $width
@@ -1136,14 +1136,14 @@ class Validation
     /**
      * Validates the image width.
      *
-     * @param array $value
-     * @param string $operator
-     * @param integer $height
-     * @return boolean
+     * @param array $file The uploaded file data from PHP.
+     * @param string $operator Comparision operator.
+     * @param int $height Min or max width.
+     * @return bool
      */
-    public static function imageHeight($value, $operator, $height)
+    public static function imageHeight($file, $operator, $height)
     {
-        return self::imageSize($value, [
+        return self::imageSize($file, [
             'height' => [
                 $operator,
                 $height
