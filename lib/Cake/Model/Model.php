@@ -477,10 +477,12 @@ class Model extends Object implements CakeEventListener {
  *
  * For example:
  *
+ * ```
  * public $actsAs = array(
  *     'Translate',
  *     'MyBehavior' => array('setting1' => 'value1')
  * );
+ * ```
  *
  * @var array
  * @link http://book.cakephp.org/2.0/en/models/behaviors.html#using-behaviors
