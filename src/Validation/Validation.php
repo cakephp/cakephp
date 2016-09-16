@@ -521,7 +521,7 @@ class Validation
 
     /**
      * Boolean validation, determines if value passed is a boolean integer or true/false.
-     * To check if a value is set specifically to `true` or `false`, see `inList()`.
+     * To check if a value is set specifically to true or false, see `inList()`.
      *
      * @param string $check a valid boolean
      * @return bool Success
