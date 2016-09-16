@@ -992,13 +992,13 @@ class ViewTest extends TestCase
         $expected = 'this is the test element';
         $this->assertEquals($expected, $result);
 
-        $result = Cache::read('element__test_element_cache_callbacks', 'test_view');
+        $result = Cache::read('element__test_element', 'test_view');
         $this->assertEquals($expected, $result);
 
         $result = $View->element('test_element', ['param' => 'one', 'foo' => 'two'], ['cache' => true]);
         $this->assertEquals($expected, $result);
 
-        $result = Cache::read('element__test_element_cache_callbacks_param_foo', 'test_view');
+        $result = Cache::read('element__test_element_param_foo', 'test_view');
         $this->assertEquals($expected, $result);
 
         $View->element('test_element', [
@@ -1017,7 +1017,7 @@ class ViewTest extends TestCase
         ], [
             'cache' => ['config' => 'test_view'],
         ]);
-        $result = Cache::read('element__test_element_cache_callbacks_param_foo', 'test_view');
+        $result = Cache::read('element__test_element_param_foo', 'test_view');
         $this->assertEquals($expected, $result);
 
         Cache::clear(true, 'test_view');
