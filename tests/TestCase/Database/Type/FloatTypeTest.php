@@ -99,7 +99,7 @@ class FloatTypeTest extends TestCase
         $this->assertSame(2.51, $result);
 
         $result = $this->type->toDatabase(['3', '4'], $this->driver);
-        $this->assertSame(1, $result);
+        $this->assertSame(1.0, $result);
     }
 
     /**

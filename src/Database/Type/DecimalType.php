@@ -63,7 +63,7 @@ class DecimalType extends Type implements TypeInterface
     /**
      * Convert integer data into the database format.
      *
-     * @param string|resource $value The value to convert.
+     * @param string|int|float $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
      */
@@ -79,7 +79,7 @@ class DecimalType extends Type implements TypeInterface
             return $value;
         }
 
-        return sprintf('%F', (float)$value);
+        return sprintf('%F', $value);
     }
 
     /**
@@ -94,9 +94,6 @@ class DecimalType extends Type implements TypeInterface
     {
         if ($value === null) {
             return null;
-        }
-        if (is_array($value)) {
-            return 1;
         }
 
         return (float)$value;

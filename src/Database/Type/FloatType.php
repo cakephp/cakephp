@@ -72,9 +72,6 @@ class FloatType extends Type implements TypeInterface
         if ($value === null || $value === '') {
             return null;
         }
-        if (is_array($value)) {
-            return 1;
-        }
 
         return (float)$value;
     }

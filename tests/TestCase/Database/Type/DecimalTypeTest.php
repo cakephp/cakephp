@@ -73,7 +73,7 @@ class DecimalTypeTest extends TestCase
         $this->assertSame(2.0, $result);
 
         $result = $this->type->toPHP(['3', '4'], $this->driver);
-        $this->assertSame(1, $result);
+        $this->assertSame(1.0, $result);
     }
 
     /**
