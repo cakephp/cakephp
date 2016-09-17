@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Error\Middleware;
 use Cake\Core\Configure;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\ServerRequestFactory;
+use Cake\Log\Log;
 use Cake\Network\Response as CakeResponse;
 use Cake\TestSuite\TestCase;
 use LogicException;
@@ -28,6 +29,37 @@ use Zend\Diactoros\Response;
  */
 class ErrorHandlerMiddlewareTest extends TestCase
 {
+    protected $logger;
+
+    /**
+     * setup
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+
+        Configure::write('App.namespace', 'TestApp');
+        $this->logger = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
+
+        Log::reset();
+        Log::config('error_test', [
+            'engine' => $this->logger
+        ]);
+    }
+
+    /**
+     * Teardown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        Log::drop('error_test');
+    }
+
     /**
      * Test returning a response works ok.
      *
@@ -35,6 +67,8 @@ class ErrorHandlerMiddlewareTest extends TestCase
      */
     public function testNoErrorResponse()
     {
+        $this->logger->expects($this->never())->method('log');
+
         $request = ServerRequestFactory::fromGlobals();
         $response = new Response();
 
@@ -100,8 +134,6 @@ class ErrorHandlerMiddlewareTest extends TestCase
      */
     public function testHandleException()
     {
-        Configure::write('App.namespace', 'TestApp');
-
         $request = ServerRequestFactory::fromGlobals();
         $response = new Response();
         $middleware = new ErrorHandlerMiddleware();
@@ -115,14 +147,97 @@ class ErrorHandlerMiddlewareTest extends TestCase
     }
 
     /**
+     * Test rendering an error page logs errors
+     *
+     * @return void
+     */
+    public function testHandleExceptionLogAndTrace()
+    {
+        $this->logger->expects($this->at(0))
+            ->method('log')
+            ->with('error', $this->logicalAnd(
+                $this->stringContains('[Cake\Network\Exception\NotFoundException] Kaboom!'),
+                $this->stringContains('ErrorHandlerMiddlewareTest->testHandleException'),
+                $this->stringContains('Request URL: /target/url'),
+                $this->stringContains('Referer URL: /other/path')
+            ));
+
+        $request = ServerRequestFactory::fromGlobals([
+            'REQUEST_URI' => '/target/url',
+            'HTTP_REFERER' => '/other/path'
+        ]);
+        $response = new Response();
+        $middleware = new ErrorHandlerMiddleware(null, ['log' => true, 'trace' => true]);
+        $next = function ($req, $res) {
+            throw new \Cake\Network\Exception\NotFoundException('Kaboom!');
+        };
+        $result = $middleware($request, $response, $next);
+        $this->assertNotSame($result, $response);
+        $this->assertEquals(404, $result->getStatusCode());
+        $this->assertContains("was not found", '' . $result->getBody());
+    }
+
+    /**
+     * Test rendering an error page skips logging for specific classes
+     *
+     * @return void
+     */
+    public function testHandleExceptionSkipLog()
+    {
+        $this->logger->expects($this->never())->method('log');
+
+        $request = ServerRequestFactory::fromGlobals();
+        $response = new Response();
+        $middleware = new ErrorHandlerMiddleware(null, [
+            'log' => true,
+            'skipLog' => ['Cake\Network\Exception\NotFoundException']
+        ]);
+        $next = function ($req, $res) {
+            throw new \Cake\Network\Exception\NotFoundException('Kaboom!');
+        };
+        $result = $middleware($request, $response, $next);
+        $this->assertNotSame($result, $response);
+        $this->assertEquals(404, $result->getStatusCode());
+        $this->assertContains("was not found", '' . $result->getBody());
+    }
+
+    /**
+     * Test rendering an error page logs exception attributes
+     *
+     * @return void
+     */
+    public function testHandleExceptionLogAttributes()
+    {
+        $this->logger->expects($this->at(0))
+            ->method('log')
+            ->with('error', $this->logicalAnd(
+                $this->stringContains(
+                    '[Cake\Routing\Exception\MissingControllerException] ' .
+                    'Controller class Articles could not be found.'
+                ),
+                $this->stringContains('Exception Attributes:'),
+                $this->stringContains("'class' => 'Articles'"),
+                $this->stringContains('Request URL:')
+            ));
+
+        $request = ServerRequestFactory::fromGlobals();
+        $response = new Response();
+        $middleware = new ErrorHandlerMiddleware(null, ['log' => true]);
+        $next = function ($req, $res) {
+            throw new \Cake\Routing\Exception\MissingControllerException(['class' => 'Articles']);
+        };
+        $result = $middleware($request, $response, $next);
+        $this->assertNotSame($result, $response);
+        $this->assertEquals(404, $result->getStatusCode());
+    }
+
+    /**
      * Test handling an error and having rendering fail.
      *
      * @return void
      */
     public function testHandleExceptionRenderingFails()
     {
-        Configure::write('App.namespace', 'TestApp');
-
         $request = ServerRequestFactory::fromGlobals();
         $response = new Response();
 

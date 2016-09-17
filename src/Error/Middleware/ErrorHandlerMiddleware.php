@@ -15,6 +15,8 @@
 namespace Cake\Error\Middleware;
 
 use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Http\ResponseTransformer;
 use Cake\Log\Log;
 use Exception;
@@ -27,15 +29,42 @@ use Exception;
  */
 class ErrorHandlerMiddleware
 {
+    use InstanceConfigTrait;
+
+    /**
+     * Default configuration values.
+     *
+     * - `log` Enable logging of exceptions.
+     * - `skipLog` List of exceptions to skip logging. Exceptions that
+     *   extend one of the listed exceptions will also not be logged. Example:
+     *
+     *   ```
+     *   'skipLog' => ['Cake\Error\NotFoundException', 'Cake\Error\UnauthorizedException']
+     *   ```
+     *
+     * - `trace` Should error logs include stack traces?
+     *
+     * @var array
+     */
+    protected $_defaultConfig = [
+        'skipLog' => [],
+        'log' => true,
+        'trace' => false,
+    ];
+
     /**
      * Constructor
      *
      * @param string|callable|null $renderer The renderer or class name
      *   to use or a callable factory.
+     * @param array $config Configuration options to use. If empty, `Configure::read('Error')`
+     *   will be used.
      */
-    public function __construct($renderer = null)
+    public function __construct($renderer = null, array $config = [])
     {
         $this->renderer = $renderer ?: 'Cake\Error\ExceptionRenderer';
+        $config = $config ?: Configure::read('Error');
+        $this->config($config);
     }
 
     /**
@@ -67,17 +96,12 @@ class ErrorHandlerMiddleware
     {
         $renderer = $this->getRenderer($exception);
         try {
-            $response = $renderer->render();
+            $res = $renderer->render();
+            $this->logException($request, $exception);
 
-            return ResponseTransformer::toPsr($response);
+            return ResponseTransformer::toPsr($res);
         } catch (\Exception $e) {
-            $message = sprintf(
-                "[%s] %s\n%s", // Keeping same message format
-                get_class($e),
-                $e->getMessage(),
-                $e->getTraceAsString()
-            );
-            Log::error($message);
+            $this->logException($request, $e);
 
             $body = $response->getBody();
             $body->write('An Internal Server Error Occurred');
@@ -108,5 +132,64 @@ class ErrorHandlerMiddleware
         $factory = $this->renderer;
 
         return $factory($exception);
+    }
+
+    /**
+     * Log an error for the exception if applicable.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request The current request.
+     * @param \Exception $exception The exception to log a message for.
+     * @return void
+     */
+    protected function logException($request, $exception)
+    {
+        if (!$this->config('log')) {
+            return false;
+        }
+
+        $skipLog = $this->config('skipLog');
+        if ($skipLog) {
+            foreach ((array)$skipLog as $class) {
+                if ($exception instanceof $class) {
+                    return;
+                }
+            }
+        }
+
+        Log::error($this->getMessage($request, $exception));
+    }
+
+    /**
+     * Generate the error log message.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request The current request.
+     * @param \Exception $exception The exception to log a message for.
+     * @return string Error message
+     */
+    protected function getMessage($request, $exception)
+    {
+        $message = sprintf(
+            "[%s] %s",
+            get_class($exception),
+            $exception->getMessage()
+        );
+        $debug = Configure::read('debug');
+
+        if ($debug && method_exists($exception, 'getAttributes')) {
+            $attributes = $exception->getAttributes();
+            if ($attributes) {
+                $message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
+            }
+        }
+        $message .= "\nRequest URL: " . $request->getRequestTarget();
+        $referer = $request->getHeaderLine('Referer');
+        if ($referer) {
+            $message .= "\nReferer URL: " . $referer;
+        }
+        if ($this->config('trace')) {
+            $message .= "\nStack Trace:\n" . $exception->getTraceAsString() . "\n\n";
+        }
+
+        return $message;
     }
 }
