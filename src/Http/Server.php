@@ -77,6 +77,7 @@ class Server
             $request = $request ?: ServerRequestFactory::fromGlobals();
         } catch (UnexpectedValueException $e) {
             $response->getBody()->write('Bad Request');
+
             return $response
                 ->withHeader('Content-Type', 'text/plain')
                 ->withStatus(400);
