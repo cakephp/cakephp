@@ -74,7 +74,7 @@ class FormData implements Countable
      *
      * @param string $name The name of the part.
      * @param string $value The value to add.
-     * @return \Cake\Network\Http\FormDataPart
+     * @return \Cake\Http\Client\FormDataPart
      */
     public function newPart($name, $value)
     {
@@ -90,7 +90,7 @@ class FormData implements Countable
      * If the $value is an array, multiple parts will be added.
      * Files will be read from their current position and saved in memory.
      *
-     * @param string|\Cake\Network\Http\FormData $name The name of the part to add,
+     * @param string|\Cake\Http\Client\FormData $name The name of the part to add,
      *   or the part data object.
      * @param mixed $value The value for the part.
      * @return $this
@@ -141,7 +141,7 @@ class FormData implements Countable
      *
      * @param string $name The name to use.
      * @param mixed $value Either a string filename, or a filehandle.
-     * @return \Cake\Network\Http\FormDataPart
+     * @return \Cake\Http\Client\FormDataPart
      */
     public function addFile($name, $value)
     {

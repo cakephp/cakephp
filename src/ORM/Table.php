@@ -1502,6 +1502,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
             }
             if ($options['atomic'] || $options['_primary']) {
+                $entity->clean();
                 $entity->isNew(false);
                 $entity->source($this->registryAlias());
             }
@@ -1606,8 +1607,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw new RolledbackTransactionException(['table' => get_class($this)]);
         }
 
-        $entity->clean();
         if (!$options['atomic'] && !$options['_primary']) {
+            $entity->clean();
             $entity->isNew(false);
             $entity->source($this->registryAlias());
         }

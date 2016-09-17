@@ -387,7 +387,9 @@ class BelongsToMany extends Association
             ->where($options['conditions'])
             ->andWhere($this->junctionConditions());
 
-        $subquery = $options['queryBuilder']($subquery);
+        if (!empty($options['queryBuilder'])) {
+            $subquery = $options['queryBuilder']($subquery);
+        }
 
         $assoc = $junction->association($this->target()->alias());
         $conditions = $assoc->_joinCondition([

@@ -13,8 +13,8 @@
  */
 namespace Cake\Test\TestCase\Network\Http\Auth;
 
-use Cake\Network\Http\Auth\Oauth;
-use Cake\Network\Http\Request;
+use Cake\Http\Client\Auth\Oauth;
+use Cake\Http\Client\Request;
 use Cake\TestSuite\TestCase;
 
 /**

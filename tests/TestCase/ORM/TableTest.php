@@ -2209,11 +2209,9 @@ class TableTest extends TestCase
     public function testAfterSave()
     {
         $table = TableRegistry::get('users');
-        $data = new \Cake\ORM\Entity([
-            'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00')
-        ]);
+        $data = $table->get(1);
+
+        $data->username = 'newusername';
 
         $called = false;
         $listener = function ($e, $entity, $options) use ($data, &$called) {
@@ -2226,13 +2224,13 @@ class TableTest extends TestCase
         $calledAfterCommit = false;
         $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
             $this->assertSame($data, $entity);
-            $this->assertFalse($entity->dirty());
+            $this->assertTrue($entity->dirty());
+            $this->assertNotSame($data->get('username'), $data->getOriginal('username'));
             $calledAfterCommit = true;
         };
         $table->eventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
 
         $this->assertSame($data, $table->save($data));
-        $this->assertEquals($data->id, self::$nextUserId);
         $this->assertTrue($called);
         $this->assertTrue($calledAfterCommit);
     }

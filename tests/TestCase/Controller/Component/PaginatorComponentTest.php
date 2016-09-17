@@ -849,7 +849,7 @@ class PaginatorComponentTest extends TestCase
                 ['limit' => 0, 'maxLimit' => 100],
                 1,
             ],
-            'limit = 0' => [
+            'limit = 0 v2' => [
                 ['limit' => 0, 'maxLimit' => 0],
                 1,
             ],
@@ -861,7 +861,7 @@ class PaginatorComponentTest extends TestCase
                 ['limit' => null, 'maxLimit' => null],
                 1,
             ],
-            'bad input, results in 1' => [
+            'bad input, results in 1 v2' => [
                 ['limit' => false, 'maxLimit' => false],
                 1,
             ],

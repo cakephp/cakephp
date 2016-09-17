@@ -39,14 +39,14 @@ class RouteCollection
     /**
      * The routes connected to this collection.
      *
-     * @var array
+     * @var \Cake\Routing\Route\Route[]
      */
     protected $_routes = [];
 
     /**
      * The hash map of named routes that are in this collection.
      *
-     * @var array
+     * @var \Cake\Routing\Route\Route[]
      */
     protected $_named = [];
 
@@ -131,6 +131,7 @@ class RouteCollection
                 list($url, $queryParameters) = explode('?', $url, 2);
                 parse_str($queryParameters, $queryParameters);
             }
+            /* @var \Cake\Routing\Route\Route $route */
             foreach ($this->_paths[$path] as $route) {
                 $r = $route->parse($url, $method);
                 if ($r === false) {
@@ -170,7 +171,7 @@ class RouteCollection
             "${controller}:${action}",
             "${controller}:_action",
             "_controller:${action}",
-            "_controller:_action"
+            "_controller:_action",
         ];
 
         // No prefix, no plugin
@@ -202,7 +203,7 @@ class RouteCollection
                 "_prefix:${controller}:${action}",
                 "_prefix:${controller}:_action",
                 "_prefix:_controller:${action}",
-                "_prefix:_controller:_action"
+                "_prefix:_controller:_action",
             ];
         }
 
@@ -264,6 +265,7 @@ class RouteCollection
             if (empty($this->_routeTable[$name])) {
                 continue;
             }
+            /* @var \Cake\Routing\Route\Route $route */
             foreach ($this->_routeTable[$name] as $route) {
                 $match = $route->match($url, $context);
                 if ($match) {
@@ -277,7 +279,7 @@ class RouteCollection
     /**
      * Get all the connected routes as a flat list.
      *
-     * @return array
+     * @return \Cake\Routing\Route\Route[]
      */
     public function routes()
     {
@@ -287,7 +289,7 @@ class RouteCollection
     /**
      * Get the connected named routes.
      *
-     * @return array
+     * @return \Cake\Routing\Route\Route[]
      */
     public function named()
     {

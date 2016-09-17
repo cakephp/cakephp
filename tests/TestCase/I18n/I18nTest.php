@@ -346,6 +346,29 @@ class I18nTest extends TestCase
     }
 
     /**
+     * Tests the __x() function with no msgstr
+     *
+     * @return void
+     */
+    public function testBasicContextFunctionNoString()
+    {
+        I18n::translator('default', 'en_US', function () {
+            $package = new Package('default');
+            $package->setMessages([
+                'letter' => [
+                    '_context' => [
+                        'character' => '',
+                    ]
+                ]
+            ]);
+
+            return $package;
+        });
+
+        $this->assertEquals('', __x('character', 'letter'));
+    }
+
+    /**
      * Tests the __xn() function
      *
      * @return void

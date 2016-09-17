@@ -577,8 +577,12 @@ class EventManager
         $properties = get_object_vars($this);
         $properties['_generalManager'] = '(object) EventManager';
         $properties['_listeners'] = [];
-        foreach ($this->_listeners as $key => $listeners) {
-            $properties['_listeners'][$key] = count($listeners) . ' listener(s)';
+        foreach ($this->_listeners as $key => $priorities) {
+            $listenerCount = 0;
+            foreach ($priorities as $listeners) {
+                $listenerCount += count($listeners);
+            }
+            $properties['_listeners'][$key] = $listenerCount . ' listener(s)';
         }
         if ($this->_eventList) {
             foreach ($this->_eventList as $event) {

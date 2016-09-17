@@ -56,7 +56,7 @@ class TreeBehavior extends Behavior
         'implementedFinders' => [
             'path' => 'findPath',
             'children' => 'findChildren',
-            'treeList' => 'findTreeList'
+            'treeList' => 'findTreeList',
         ],
         'implementedMethods' => [
             'childCount' => 'childCount',
@@ -65,14 +65,14 @@ class TreeBehavior extends Behavior
             'recover' => 'recover',
             'removeFromTree' => 'removeFromTree',
             'getLevel' => 'getLevel',
-            'formatTreeList' => 'formatTreeList'
+            'formatTreeList' => 'formatTreeList',
         ],
         'parent' => 'parent_id',
         'left' => 'lft',
         'right' => 'rght',
         'scope' => null,
         'level' => null,
-        'recoverOrder' => null
+        'recoverOrder' => null,
     ];
 
     /**
@@ -192,9 +192,10 @@ class TreeBehavior extends Behavior
         $children = $this->_table->find('children', [
             'for' => $primaryKeyValue,
             'fields' => [$this->_getPrimaryKey(), $config['parent'], $config['level']],
-            'order' => $config['left']
+            'order' => $config['left'],
         ]);
 
+        /* @var \Cake\ORM\Entity $node */
         foreach ($children as $node) {
             $parentIdValue = $node->get($config['parent']);
             $depth = $depths[$parentIdValue] + 1;
@@ -384,7 +385,7 @@ class TreeBehavior extends Behavior
         return $this->_scope($query)
             ->where([
                 "$left <=" => $node->get($config['left']),
-                "$right >=" => $node->get($config['right'])
+                "$right >=" => $node->get($config['right']),
             ])
             ->order([$left => 'ASC']);
     }
@@ -459,7 +460,7 @@ class TreeBehavior extends Behavior
         return $this->_scope($query)
             ->where([
                 "{$right} <" => $node->get($config['right']),
-                "{$left} >" => $node->get($config['left'])
+                "{$left} >" => $node->get($config['left']),
             ]);
     }
 
@@ -485,7 +486,7 @@ class TreeBehavior extends Behavior
         $results = $this->_scope($query)
             ->find('threaded', [
                 'parentField' => $this->config('parent'),
-                'order' => [$this->config('left') => 'ASC']
+                'order' => [$this->config('left') => 'ASC'],
             ]);
 
         return $this->formatTreeList($results, $options);
@@ -514,7 +515,7 @@ class TreeBehavior extends Behavior
             $options += [
                 'keyPath' => $this->_getPrimaryKey(),
                 'valuePath' => $this->_table->displayField(),
-                'spacer' => '_'
+                'spacer' => '_',
             ];
 
             return $results
@@ -993,7 +994,7 @@ class TreeBehavior extends Behavior
 
         $query = $this->_table->find('all')->where([
             $config['left'] . ' <' => $entity[$config['left']],
-            $config['right'] . ' >' => $entity[$config['right']]
+            $config['right'] . ' >' => $entity[$config['right']],
         ]);
 
         return $this->_scope($query)->count();

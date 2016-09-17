@@ -22,6 +22,16 @@ use Cake\TestSuite\TestCase;
  */
 class IcuFormatterTest extends TestCase
 {
+    /**
+     * Tests that empty values can be used as formatting strings
+     *
+     * @return void
+     */
+    public function testFormatEmptyValues()
+    {
+        $formatter = new IcuFormatter();
+        $this->assertEquals('', $formatter->format('en_US', '', []));
+    }
 
     /**
      * Tests that variables are interpolated correctly

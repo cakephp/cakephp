@@ -801,4 +801,76 @@ class EventManagerTest extends TestCase
 
         $this->assertFalse($manager->isTrackingEvents());
     }
+
+    public function testDebugInfo()
+    {
+        $eventManager = new EventManager();
+
+        $this->assertSame(
+            [
+                '_listeners' => [],
+                '_isGlobal' => false,
+                '_eventList' => null,
+                '_trackEvents' => false,
+                '_generalManager' => '(object) EventManager',
+            ],
+            $eventManager->__debugInfo()
+        );
+
+        $func = function () {
+        };
+        $eventManager->on('foo', $func);
+
+        $this->assertSame(
+            [
+                '_listeners' => [
+                    'foo' => '1 listener(s)',
+                ],
+                '_isGlobal' => false,
+                '_eventList' => null,
+                '_trackEvents' => false,
+                '_generalManager' => '(object) EventManager',
+            ],
+            $eventManager->__debugInfo()
+        );
+
+        $eventManager->off('foo', $func);
+
+        $this->assertSame(
+            [
+                '_listeners' => [
+                    'foo' => '0 listener(s)',
+                ],
+                '_isGlobal' => false,
+                '_eventList' => null,
+                '_trackEvents' => false,
+                '_generalManager' => '(object) EventManager',
+            ],
+            $eventManager->__debugInfo()
+        );
+
+        $eventManager->on('bar', function () {
+        });
+        $eventManager->on('bar', function () {
+        });
+        $eventManager->on('bar', function () {
+        });
+        $eventManager->on('baz', function () {
+        });
+
+        $this->assertSame(
+            [
+                '_listeners' => [
+                    'foo' => '0 listener(s)',
+                    'bar' => '3 listener(s)',
+                    'baz' => '1 listener(s)',
+                ],
+                '_isGlobal' => false,
+                '_eventList' => null,
+                '_trackEvents' => false,
+                '_generalManager' => '(object) EventManager',
+            ],
+            $eventManager->__debugInfo()
+        );
+    }
 }

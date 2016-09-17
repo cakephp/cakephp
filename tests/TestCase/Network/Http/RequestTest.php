@@ -13,7 +13,7 @@
  */
 namespace Cake\Test\TestCase\Network\Http;
 
-use Cake\Network\Http\Request;
+use Cake\Http\Client\Request;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Uri;
 

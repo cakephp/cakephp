@@ -33,7 +33,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Stored associations
      *
-     * @var array
+     * @var \Cake\ORM\Association[]
      */
     protected $_items = [];
 
@@ -270,6 +270,21 @@ class AssociationCollection implements IteratorAggregate
      */
     public function cascadeDelete(EntityInterface $entity, array $options)
     {
+        $noCascade = $this->_getNoCascadeItems($entity, $options);
+        foreach ($noCascade as $assoc) {
+            $assoc->cascadeDelete($entity, $options);
+        }
+    }
+
+    /**
+     * Returns items that have no cascade callback.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The entity to delete associations for.
+     * @param array $options The options used in the delete operation.
+     * @return \Cake\ORM\Association[]
+     */
+    protected function _getNoCascadeItems($entity, $options)
+    {
         $noCascade = [];
         foreach ($this->_items as $assoc) {
             if (!$assoc->cascadeCallbacks()) {
@@ -278,9 +293,8 @@ class AssociationCollection implements IteratorAggregate
             }
             $assoc->cascadeDelete($entity, $options);
         }
-        foreach ($noCascade as $assoc) {
-            $assoc->cascadeDelete($entity, $options);
-        }
+
+        return $noCascade;
     }
 
     /**
