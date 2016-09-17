@@ -203,6 +203,13 @@ class Request implements ArrayAccess
     protected $protocol;
 
     /**
+     * The request target if overridden
+     *
+     * @var string|null
+     */
+    protected $requestTarget;
+
+    /**
      * Wrapper method to create a new request from PHP superglobals.
      *
      * Uses the $_GET, $_POST, $_FILES, $_COOKIE, $_SERVER, $_ENV and php://input data to construct
@@ -921,6 +928,7 @@ class Request implements ArrayAccess
      *
      * @param bool $base Include the base path, set to false to trim the base path off.
      * @return string The current request URL including query string args.
+     * @deprecated 3.4.0 This method will be removed in 4.0.0. You should use getRequestTarget() instead.
      */
     public function here($base = true)
     {
@@ -1789,6 +1797,54 @@ class Request implements ArrayAccess
         $new->uri = $uri;
 
         return $new;
+    }
+
+    /**
+     * Create a new instance with a specific request-target.
+     *
+     * You can use this method to overwrite the request target that is
+     * inferred from the request's Uri. This also lets you change the request
+     * target's form to an absolute-form, authority-form or asterisk-form
+     *
+     * @link http://tools.ietf.org/html/rfc7230#section-2.7 (for the various
+     *   request-target forms allowed in request messages)
+     * @param string $target The request target.
+     * @return static
+     */
+    public function withRequestTarget($target)
+    {
+        $new = clone $this;
+        $new->requestTarget = $target;
+
+        return $new;
+    }
+
+    /**
+     * Retrieves the request's target.
+     *
+     * Retrieves the message's request-target either as it was requested,
+     * or as set with `withRequestTarget()`. By default this will return the
+     * application relative path without base directory, and the query string
+     * defined in the SERVER environment.
+     *
+     * @return string
+     */
+    public function getRequestTarget()
+    {
+        if ($this->requestTarget !== null) {
+            return $this->requestTarget;
+        }
+
+        $target = $this->uri->getPath();
+        if ($this->uri->getQuery()) {
+            $target .= '?' . $this->uri->getQuery();
+        }
+
+        if (empty($target)) {
+            $target = '/';
+        }
+
+        return $target;
     }
 
     /**
