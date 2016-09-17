@@ -139,12 +139,12 @@ class ErrorHandlerMiddleware
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The current request.
      * @param \Exception $exception The exception to log a message for.
-     * @return void
+     * @return void|null
      */
     protected function logException($request, $exception)
     {
         if (!$this->config('log')) {
-            return false;
+            return;
         }
 
         $skipLog = $this->config('skipLog');
