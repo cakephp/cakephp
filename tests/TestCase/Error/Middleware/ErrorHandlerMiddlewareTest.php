@@ -21,6 +21,7 @@ use Cake\Log\Log;
 use Cake\Network\Response as CakeResponse;
 use Cake\TestSuite\TestCase;
 use LogicException;
+use Psr\Log\LoggerInterface;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 
@@ -41,7 +42,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         parent::setUp();
 
         Configure::write('App.namespace', 'TestApp');
-        $this->logger = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
+        $this->logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
         Log::reset();
         Log::config('error_test', [
