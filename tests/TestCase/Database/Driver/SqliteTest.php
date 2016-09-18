@@ -14,15 +14,32 @@
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlite;
+use Cake\Database\Query;
 use Cake\TestSuite\TestCase;
 use PDO;
 
 /**
  * Tests Sqlite driver
+ *
+ * @group Sqlite
  */
 class SqliteTest extends TestCase
 {
+    use MockDriverTrait;
+
+    /**
+     * @var string
+     */
+    protected $_driver_class = 'Cake\Database\Driver\Sqlite';
+
+    /**
+     * Defines what connection class to mock.
+     *
+     * @var string
+     */
+    protected $_connection_class = '\Cake\Database\Connection';
 
     /**
      * Test connecting to Sqlite with default configuration
@@ -31,28 +48,27 @@ class SqliteTest extends TestCase
      */
     public function testConnectionConfigDefault()
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')
-            ->setMethods(['_connect'])
-            ->getMock();
-        $dsn = 'sqlite::memory:';
-        $expected = [
-            'persistent' => false,
-            'database' => ':memory:',
-            'encoding' => 'utf8',
-            'username' => null,
-            'password' => null,
-            'flags' => [],
-            'init' => [],
-        ];
+        $this->mockDriver(function (Driver $driver) {
+            $dsn = 'sqlite::memory:';
+            $expected = [
+                'persistent' => false,
+                'database' => ':memory:',
+                'encoding' => 'utf8',
+                'username' => null,
+                'password' => null,
+                'flags' => [],
+                'init' => [],
+            ];
 
-        $expected['flags'] += [
-            PDO::ATTR_PERSISTENT => false,
-            PDO::ATTR_EMULATE_PREPARES => false,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-        ];
-        $driver->expects($this->once())->method('_connect')
-            ->with($dsn, $expected);
-        $driver->connect([]);
+            $expected['flags'] += [
+                PDO::ATTR_PERSISTENT => false,
+                PDO::ATTR_EMULATE_PREPARES => false,
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            ];
+            $driver->expects($this->once())->method('_connect')
+                ->with($dsn, $expected);
+            $driver->connect();
+        });
     }
 
     /**
@@ -70,32 +86,31 @@ class SqliteTest extends TestCase
             'encoding' => 'a-language',
             'init' => ['Execute this', 'this too']
         ];
-        $driver = $this->getMockBuilder('Cake\Database\driver\Sqlite')
-            ->setMethods(['_connect', 'connection'])
-            ->setConstructorArgs([$config])
-            ->getMock();
-        $dsn = 'sqlite:bar.db';
 
-        $expected = $config;
-        $expected += ['username' => null, 'password' => null];
-        $expected['flags'] += [
-            PDO::ATTR_PERSISTENT => true,
-            PDO::ATTR_EMULATE_PREPARES => false,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-        ];
+        $this->mockDriver(function (Driver $driver) use ($config) {
+            $dsn = 'sqlite:bar.db';
 
-        $connection = $this->getMockBuilder('StdClass')
-            ->setMethods(['exec'])
-            ->getMock();
-        $connection->expects($this->at(0))->method('exec')->with('Execute this');
-        $connection->expects($this->at(1))->method('exec')->with('this too');
-        $connection->expects($this->exactly(2))->method('exec');
+            $expected = $config;
+            $expected += ['username' => null, 'password' => null];
+            $expected['flags'] += [
+                PDO::ATTR_PERSISTENT => true,
+                PDO::ATTR_EMULATE_PREPARES => false,
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            ];
 
-        $driver->expects($this->once())->method('_connect')
-            ->with($dsn, $expected);
-        $driver->expects($this->any())->method('connection')
-            ->will($this->returnValue($connection));
-        $driver->connect($config);
+            $connection = $this->getMockBuilder('StdClass')
+                ->setMethods(['exec'])
+                ->getMock();
+            $connection->expects($this->at(0))->method('exec')->with('Execute this');
+            $connection->expects($this->at(1))->method('exec')->with('this too');
+            $connection->expects($this->exactly(2))->method('exec');
+
+            $driver->expects($this->once())->method('_connect')
+                ->with($dsn, $expected);
+            $driver->expects($this->any())->method('connection')
+                ->will($this->returnValue($connection));
+            $driver->connect();
+        }, $config);
     }
 
     /**
@@ -114,7 +129,7 @@ class SqliteTest extends TestCase
             [66, 66],
             [0, 0],
             [10e5, '1000000'],
-            ['farts', '"farts"'],
+            ['hearts', '"hearts"'],
         ];
     }
 
@@ -122,7 +137,8 @@ class SqliteTest extends TestCase
      * Test the schemaValue method on Driver.
      *
      * @dataProvider schemaValueProvider
-     * @return void
+     * @param mixed $input
+     * @param string $expected
      */
     public function testSchemaValue($input, $expected)
     {
@@ -143,4 +159,76 @@ class SqliteTest extends TestCase
         $driver->connection($mock);
         $this->assertEquals($expected, $driver->schemaValue($input));
     }
+
+    /**
+     * Test update with limit
+     *
+     * @return void
+     */
+    public function testUpdateLimit()
+    {
+        $this->newQuery(function (Query $query) {
+            $query->update('articles')
+                ->set(['title' => 'FooBar'])
+                ->where(['published' => true])
+                ->limit(5);
+
+            $this->assertEquals('UPDATE articles SET title = :c0 WHERE published = 1 LIMIT 5', $query->sql());
+        });
+    }
+
+    /**
+     * Test update with limit and offset
+     *
+     * @return void
+     */
+    public function testUpdateLimitOffset()
+    {
+        $this->newQuery(function (Query $query) {
+            $query->update('articles')
+                ->set(['title' => 'FooBar'])
+                ->where(['published' => true])
+                ->limit(5)
+                ->offset(3);
+
+            $this->assertEquals('UPDATE articles SET title = :c0 WHERE published = 1 LIMIT 5 OFFSET 3', $query->sql());
+        });
+    }
+
+    /**
+     * Test update with limit
+     *
+     * @return void
+     */
+    public function testUpdateOrderBy()
+    {
+        $this->newQuery(function (Query $query) {
+            $query->update('articles')
+                ->set(['title' => 'FooBar'])
+                ->where(['published' => true])
+                ->order(['created' => 'DESC']);
+
+            $this->assertEquals('UPDATE articles SET title = :c0 WHERE published = 1 ORDER BY created DESC', $query->sql());
+        });
+    }
+
+    /**
+     * Test update with limit and offset
+     *
+     * @return void
+     */
+    public function testUpdateOrderByLimitOffset()
+    {
+        $this->newQuery(function (Query $query) {
+            $query->update('articles')
+                ->set(['title' => 'FooBar'])
+                ->where(['published' => true])
+                ->limit(5)
+                ->offset(3)
+                ->order(['created' => 'DESC']);
+
+            $this->assertEquals('UPDATE articles SET title = :c0 WHERE published = 1 ORDER BY created DESC LIMIT 5 OFFSET 3', $query->sql());
+        });
+    }
+
 }

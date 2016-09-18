@@ -74,7 +74,6 @@ trait PostgresDialectTrait
         $limit = $query->clause('limit');
 
         if ($limit) {
-
             $primaryKey = $this->_primaryKey($query);
             if ($primaryKey === null) {
                 throw new MissingPrimaryKeyException(['driver' => get_class($this)]);
