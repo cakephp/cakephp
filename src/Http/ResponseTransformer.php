@@ -33,8 +33,8 @@ class ResponseTransformer
     /**
      * Convert a PSR7 Response into a CakePHP one.
      *
-     * @param PsrResponse $response The response to convert.
-     * @return CakeResponse The equivalent CakePHP response
+     * @param \Psr\Http\Message\ResponseInterface $response The response to convert.
+     * @return \Cake\Network\Response The equivalent CakePHP response
      */
     public static function toCake(PsrResponse $response)
     {
@@ -64,7 +64,7 @@ class ResponseTransformer
     /**
      * Get the response body from a PSR7 Response.
      *
-     * @param PsrResponse $response The response to convert.
+     * @param \Psr\Http\Message\ResponseInterface $response The response to convert.
      * @return array A hash of 'body' and 'file'
      */
     protected static function getBody(PsrResponse $response)
@@ -132,8 +132,8 @@ class ResponseTransformer
     /**
      * Convert a PSR7 Response headers into a flat array
      *
-     * @param PsrResponse $response The response to convert.
-     * @return CakeResponse The equivalent CakePHP response
+     * @param \Psr\Http\Message\ResponseInterface $response The response to convert.
+     * @return \Cake\Network\Response The equivalent CakePHP response
      */
     protected static function collapseHeaders(PsrResponse $response)
     {
@@ -152,8 +152,8 @@ class ResponseTransformer
     /**
      * Convert a CakePHP response into a PSR7 one.
      *
-     * @param CakeResponse $response The CakePHP response to convert
-     * @return PsrResponse $response The equivalent PSR7 response.
+     * @param \Cake\Network\Response $response The CakePHP response to convert
+     * @return \Psr\Http\Message\ResponseInterface $response The equivalent PSR7 response.
      */
     public static function toPsr(CakeResponse $response)
     {
@@ -192,8 +192,8 @@ class ResponseTransformer
      * Add in the Content-Type header if necessary.
      *
      * @param array $headers The headers to update
-     * @param CakeResponse $response The CakePHP response to convert
-     * @return The updated headers.
+     * @param \Cake\Network\Response $response The CakePHP response to convert
+     * @return array The updated headers.
      */
     protected static function setContentType($headers, $response)
     {
@@ -203,6 +203,7 @@ class ResponseTransformer
         if (in_array($response->statusCode(), [204, 304])) {
             return $headers;
         }
+
         $whitelist = [
             'application/javascript', 'application/json', 'application/xml', 'application/rss+xml'
         ];
@@ -262,7 +263,7 @@ class ResponseTransformer
      * Get the stream for the new response.
      *
      * @param \Cake\Network\Response $response The cake response to extract the body from.
-     * @return Psr\Http\Message\StreamInterface The stream.
+     * @return \Psr\Http\Message\StreamInterface|string The stream.
      */
     protected static function getStream($response)
     {
