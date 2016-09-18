@@ -23,7 +23,7 @@ if (!empty($plugin)) {
 $prefixNs = '';
 if (!empty($prefix)) {
     $prefix = Inflector::camelize($prefix);
-    $prefixNs = '\\' . str_replace('/', '\\', $prefix);
+    $prefixNs = '\\' . $prefix;
     $prefix .= DIRECTORY_SEPARATOR;
 }
 
