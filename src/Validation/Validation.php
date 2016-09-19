@@ -20,6 +20,7 @@ use DateTimeInterface;
 use InvalidArgumentException;
 use LogicException;
 use NumberFormatter;
+use Psr\Http\Message\UploadedFileInterface;
 use RuntimeException;
 
 /**
@@ -1091,10 +1092,16 @@ class Validation
     public static function imageSize($file, $options)
     {
         if (!isset($options['height']) && !isset($options['width'])) {
-            throw new InvalidArgumentException('Invalid image size validation parameters! Missing `width` and / or `height`!');
+            throw new InvalidArgumentException('Invalid image size validation parameters! Missing `width` and / or `height`.');
         }
 
-        list($width, $height) = getimagesize($file['tmp_name']);
+        if ($file instanceof UploadedFileInterface) {
+            $file = $file->getStream()->getContents();
+        } elseif (is_array($file) && isset($file['tmp_name'])) {
+            $file = $file['tmp_name'];
+        }
+
+        list($width, $height) = getimagesize($file);
 
         if (isset($options['height'])) {
             $validHeight = self::comparison($height, $options['height'][0], $options['height'][1]);
@@ -1112,7 +1119,7 @@ class Validation
             return $validWidth;
         }
 
-        throw new InvalidArgumentException('The 2nd argument is missing the `width` and / or `height` options!');
+        throw new InvalidArgumentException('The 2nd argument is missing the `width` and / or `height` options.');
     }
 
     /**
