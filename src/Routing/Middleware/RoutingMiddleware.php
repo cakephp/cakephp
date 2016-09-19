@@ -36,6 +36,7 @@ class RoutingMiddleware
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
         try {
+            Router::setRequestContext($request);
             $params = (array)$request->getAttribute('params', []);
             if (empty($params['controller'])) {
                 $path = $request->getUri()->getPath();

@@ -47,6 +47,8 @@ class RoutingMiddlewareTest extends TestCase
     {
         Router::redirect('/testpath', '/pages');
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
+        $request = $request->withAttribute('base', '/subdir');
+
         $response = new Response();
         $next = function ($req, $res) {
         };
@@ -54,7 +56,7 @@ class RoutingMiddlewareTest extends TestCase
         $response = $middleware($request, $response, $next);
 
         $this->assertEquals(301, $response->getStatusCode());
-        $this->assertEquals('http://localhost/pages', $response->getHeaderLine('Location'));
+        $this->assertEquals('http://localhost/subdir/pages', $response->getHeaderLine('Location'));
     }
 
     /**
