@@ -2809,6 +2809,17 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * Test ImageSize InvalidArgumentException
+     *
+     * @expectedException \InvalidArgumentException
+     * @return void
+     */
+    public function testImageSizeInvalidArgumentException()
+    {
+        $this->assertTrue(Validation::imageSize([], []));
+    }
+
+    /**
      * Test imageSize
      *
      * @return void
