@@ -2834,6 +2834,26 @@ class ValidationTest extends TestCase
             'width' => ['==', 100],
             'height' => ['==', 300],
         ]));
+
+        $this->assertTrue(Validation::imageSize($upload, [
+            'width' => ['>=', 300],
+            'height' => ['>=', 300],
+        ]));
+
+        $this->assertTrue(Validation::imageSize($upload, [
+            'width' => ['<=', 300],
+            'height' => ['<=', 300],
+        ]));
+
+        $this->assertTrue(Validation::imageSize($upload, [
+            'width' => ['<=', 300],
+            'height' => ['>=', 300],
+        ]));
+
+        $this->assertFalse(Validation::imageSize($upload, [
+            'width' => ['<=', 299],
+            'height' => ['>=', 300],
+        ]));
     }
 
     /**
