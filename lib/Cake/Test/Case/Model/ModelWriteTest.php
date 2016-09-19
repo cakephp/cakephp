@@ -41,7 +41,7 @@ class TestAuthor extends Author {
 /**
  * Helper method to set a datasource object
  *
- * @param Object $object The datasource object
+ * @param DataSource $object The datasource object
  * @return void
  */
 	public function setDataSourceObject($object) {
@@ -81,7 +81,7 @@ class TestPost extends Post {
 /**
  * Helper method to set a datasource object
  *
- * @param Object $object The datasource object
+ * @param DataSource $object The datasource object
  * @return void
  */
 	public function setDataSourceObject($object) {

@@ -532,7 +532,7 @@ class UpgradeShell extends AppShell {
 /**
  * Update components.
  *
- * - Make components that extend Object to extend Component.
+ * - Make components that extend CakeObject to extend Component.
  *
  * @return void
  */
@@ -545,6 +545,11 @@ class UpgradeShell extends AppShell {
 			array(
 				'*Component extends Object to *Component extends Component',
 				'/([a-zA-Z]*Component extends) Object/',
+				'\1 Component'
+			),
+			array(
+				'*Component extends CakeObject to *Component extends Component',
+				'/([a-zA-Z]*Component extends) CakeObject/',
 				'\1 Component'
 			),
 		);

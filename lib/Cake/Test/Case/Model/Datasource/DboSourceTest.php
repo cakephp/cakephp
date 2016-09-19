@@ -1810,4 +1810,20 @@ class DboSourceTest extends CakeTestCase {
 		$User->Article = $Article;
 		$User->find('first', array('conditions' => array('User.id' => 1), 'recursive' => 2));
 	}
+
+/**
+ * Test that flushQueryCache works as expected
+ *
+ * @return void
+ */
+	public function testFlushQueryCache() {
+		$this->db->flushQueryCache();
+		$this->db->query('SELECT 1');
+		$this->db->query('SELECT 1');
+		$this->db->query('SELECT 2');
+		$this->assertAttributeCount(2, '_queryCache', $this->db);
+
+		$this->db->flushQueryCache();
+		$this->assertAttributeCount(0, '_queryCache', $this->db);
+	}
 }

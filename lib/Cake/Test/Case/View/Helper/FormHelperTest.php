@@ -66,6 +66,8 @@ class Contact extends CakeTestModel {
 		'email' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'phone' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'password' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+		'lap_time' => array('type' => 'time', 'null' => '', 'default' => '', 'length' => '2'),
+		'last_seen' => array('type' => 'datetime', 'null' => '', 'default' => '', 'length' => '3'),
 		'published' => array('type' => 'date', 'null' => true, 'default' => null, 'length' => null),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null),
@@ -3390,6 +3392,10 @@ class FormHelperTest extends CakeTestCase {
 			'*/div',
 			array('div' => array('class' => 'input password')),
 			'*/div',
+			array('div' => array('class' => 'input time')),
+			'*/div',
+			array('div' => array('class' => 'input datetime')),
+			'*/div',
 			array('div' => array('class' => 'input date')),
 			'*/div',
 			array('div' => array('class' => 'input date')),
@@ -3414,6 +3420,10 @@ class FormHelperTest extends CakeTestCase {
 			array('div' => array('class' => 'input tel')),
 			'*/div',
 			array('div' => array('class' => 'input password')),
+			'*/div',
+			array('div' => array('class' => 'input time')),
+			'*/div',
+			array('div' => array('class' => 'input datetime')),
 			'*/div',
 			array('div' => array('class' => 'input date')),
 			'*/div',
@@ -3445,6 +3455,10 @@ class FormHelperTest extends CakeTestCase {
 			'*/div',
 			array('div' => array('class' => 'input password')),
 			'*/div',
+			array('div' => array('class' => 'input time')),
+			'*/div',
+			array('div' => array('class' => 'input datetime')),
+			'*/div',
 			array('div' => array('class' => 'input date')),
 			'*/div',
 			array('div' => array('class' => 'input date')),
@@ -3470,6 +3484,10 @@ class FormHelperTest extends CakeTestCase {
 			array('div' => array('class' => 'input tel')),
 			'*/div',
 			array('div' => array('class' => 'input password')),
+			'*/div',
+			array('div' => array('class' => 'input time')),
+			'*/div',
+			array('div' => array('class' => 'input datetime')),
 			'*/div',
 			array('div' => array('class' => 'input date')),
 			'*/div',
@@ -3504,6 +3522,10 @@ class FormHelperTest extends CakeTestCase {
 			'*/div',
 			array('div' => array('class' => 'input password')),
 			'*/div',
+			array('div' => array('class' => 'input time')),
+			'*/div',
+			array('div' => array('class' => 'input datetime')),
+			'*/div',
 			array('div' => array('class' => 'input date')),
 			'*/div',
 			array('div' => array('class' => 'input date')),
@@ -3533,6 +3555,10 @@ class FormHelperTest extends CakeTestCase {
 			array('div' => array('class' => 'input tel')),
 			'*/div',
 			array('div' => array('class' => 'input password')),
+			'*/div',
+			array('div' => array('class' => 'input time')),
+			'*/div',
+			array('div' => array('class' => 'input datetime')),
 			'*/div',
 			array('div' => array('class' => 'input date')),
 			'*/div',
@@ -7785,6 +7811,27 @@ class FormHelperTest extends CakeTestCase {
 				)
 		);
 		$this->assertContains('value="2008" selected="selected"', $result);
+	}
+
+/**
+ * testInputTimeWithMicrosecondsAsText method
+ *
+ * since times and datetimes can now have a Length, specifying the microsecond
+ * precision, a text-type input shouldn't have set a maxLength attribute.
+ *
+ * @return void
+ */
+	public function testInputTimeWithMicrosecondsAsText() {
+		$this->Form->request->data = array();
+		$this->Form->create('Contact');
+		$result = $this->Form->input('lap_time', array(
+			'type' => 'text',
+		));
+		$this->assertNotContains('maxlength=', $result);
+		$result = $this->Form->input('last_seen', array(
+			'type' => 'text',
+		));
+		$this->assertNotContains('maxlength=', $result);
 	}
 
 /**

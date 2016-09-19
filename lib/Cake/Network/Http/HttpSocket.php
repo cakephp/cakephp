@@ -1023,7 +1023,7 @@ class HttpSocket extends CakeSocket {
 	}
 
 /**
- * Resets the state of this HttpSocket instance to it's initial state (before Object::__construct got executed) or does
+ * Resets the state of this HttpSocket instance to it's initial state (before CakeObject::__construct got executed) or does
  * the same thing partially for the request and the response property only.
  *
  * @param bool $full If set to false only HttpSocket::response and HttpSocket::request are reset
