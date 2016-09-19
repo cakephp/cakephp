@@ -412,6 +412,7 @@ class Router
                 '_scheme' => $request->scheme(),
                 '_host' => $request->host()
             ];
+
             return;
         }
         if ($request instanceof ServerRequestInterface) {
@@ -422,6 +423,7 @@ class Router
                 '_scheme' => $uri->getScheme(),
                 '_host' => $uri->getHost(),
             ];
+
             return;
         }
         throw new InvalidArgumentException('Unknown request type received.');
