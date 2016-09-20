@@ -10641,4 +10641,42 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * Tests `_lastAction`.
+ *
+ *  With named, numeric value
+ *
+ * @return void
+ */
+	public function testLastActionWithNamedNumeric() {
+		$here = '/users/index/page:1';
+
+		$this->Form->request->here = $here;
+		$this->Form->create('User');
+
+		$expected = $here;
+		$actual = $this->Form->_lastAction;
+
+		$this->assertEquals($expected, $actual);
+	}
+
+/**
+ * Tests `_lastAction`.
+ *
+ *  With named, string value
+ *
+ * @return void
+ */
+	public function testLastActionWithNamedString() {
+		$here = '/users/index/foo:bar';
+
+		$this->Form->request->here = $here;
+		$this->Form->create('User');
+
+		$expected = $here;
+		$actual = $this->Form->_lastAction;
+
+		$this->assertEquals($expected, $actual);
+	}
+
 }
