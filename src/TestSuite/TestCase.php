@@ -120,6 +120,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             Configure::clear();
             Configure::write($this->_configure);
         }
+        TableRegistry::clear();
     }
 
     /**
