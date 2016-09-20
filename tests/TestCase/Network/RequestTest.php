@@ -1283,6 +1283,52 @@ class RequestTest extends TestCase
     }
 
     /**
+     * Test getting headers with psr7 methods
+     *
+     * @return void
+     */
+    public function testGetHeader()
+    {
+        $request = new Request(['environment' => [
+            'HTTP_HOST' => 'localhost',
+            'CONTENT_TYPE' => 'application/json',
+            'CONTENT_LENGTH' => 1337,
+            'HTTP_CONTENT_MD5' => 'abc123',
+            'HTTP_DOUBLE' => ['a', 'b']
+        ]]);
+        $this->assertEquals([], $request->getHeader('Not-there'));
+
+        $expected = [$request->env('HTTP_HOST')];
+        $this->assertEquals($expected, $request->getHeader('Host'));
+        $this->assertEquals($expected, $request->getHeader('host'));
+        $this->assertEquals($expected, $request->getHeader('HOST'));
+        $this->assertEquals(['a', 'b'], $request->getHeader('Double'));
+    }
+
+    /**
+     * Test getting headers with psr7 methods
+     *
+     * @return void
+     */
+    public function testGetHeaderLine()
+    {
+        $request = new Request(['environment' => [
+            'HTTP_HOST' => 'localhost',
+            'CONTENT_TYPE' => 'application/json',
+            'CONTENT_LENGTH' => 1337,
+            'HTTP_CONTENT_MD5' => 'abc123',
+            'HTTP_DOUBLE' => ['a', 'b']
+        ]]);
+        $this->assertEquals('', $request->getHeaderLine('Authorization'));
+
+        $expected = $request->env('CONTENT_LENGTH');
+        $this->assertEquals($expected, $request->getHeaderLine('Content-Length'));
+        $this->assertEquals($expected, $request->getHeaderLine('content-Length'));
+        $this->assertEquals($expected, $request->getHeaderLine('ConTent-LenGth'));
+        $this->assertEquals('a, b', $request->getHeaderLine('Double'));
+    }
+
+    /**
      * Test accepts() with and without parameters
      *
      * @return void

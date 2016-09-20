@@ -960,6 +960,92 @@ class Request implements ArrayAccess
     }
 
     /**
+     * Get all headers in the request.
+     *
+     * Returns an associative array where the header names are
+     * the keys and the values are a list of header values.
+     *
+     * While header names are not case-sensitive, getHeaders() will preserve the
+     * exact case in which headers were originally specified.
+     *
+     * @return array An associative array of headers and their values.
+     */
+    public function getHeaders()
+    {
+    }
+
+    /**
+     * Get a single header from the request.
+     *
+     * Return the header value as an array. If the header
+     * is not present an empty array will be returned.
+     *
+     * @param string $name The header you want to get (case-insensitive)
+     * @return array An associative array of headers and their values.
+     *   If the header doesn't exist, an empty array will be returned.
+     */
+    public function getHeader($name)
+    {
+        $name = str_replace('-', '_', strtoupper($name));
+        if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
+            $name = 'HTTP_' . $name;
+        }
+        if (isset($this->_environment[$name])) {
+            return (array)$this->_environment[$name];
+        }
+        return [];
+    }
+
+    /**
+     * Get a single header as a string from the request.
+     *
+     * Return an array of header values
+     *
+     * @param string $name The header you want to get (case-insensitive)
+     * @return string Header values collapsed into a comma separated string.
+     */
+    public function getHeaderLine($name)
+    {
+        $value = $this->getHeader($name);
+        return implode(', ', $value);
+    }
+
+    /**
+     * Get a modified request with the provided header.
+     *
+     * @param string $name The header name.
+     * @param string|array $value The header value
+     * @return static
+     */
+    public function withHeader($name, $value)
+    {
+    }
+
+    /**
+     * Get a modified request with the provided header.
+     *
+     * Existing header values will be retained. The provided value
+     * will be appended into the existing values.
+     *
+     * @param string $name The header name.
+     * @param string|array $value The header value
+     * @return static
+     */
+    public function withAddedHeader($name, $value)
+    {
+    }
+
+    /**
+     * Get a modified request without a provided header.
+     *
+     * @param string $name The header name.
+     * @return static
+     */
+    public function withoutHeader($name)
+    {
+    }
+
+    /**
      * Get the HTTP method used for this request.
      *
      * @return string The name of the HTTP method used.
