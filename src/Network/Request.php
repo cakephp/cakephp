@@ -1019,6 +1019,14 @@ class Request implements ArrayAccess
      */
     public function withHeader($name, $value)
     {
+        $new = clone $this;
+        $name = strtoupper(str_replace('-', '_', $name));
+        if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
+            $name = 'HTTP_' . $name;
+        }
+        $new->_environment[$name] = $value;
+
+        return $new;
     }
 
     /**

@@ -1329,6 +1329,30 @@ class RequestTest extends TestCase
     }
 
     /**
+     * Test setting a header.
+     *
+     * @return void
+     */
+    public function testWithHeader()
+    {
+        $request = new Request(['environment' => [
+            'HTTP_HOST' => 'localhost',
+            'CONTENT_TYPE' => 'application/json',
+            'CONTENT_LENGTH' => 1337,
+            'HTTP_CONTENT_MD5' => 'abc123',
+            'HTTP_DOUBLE' => ['a', 'b']
+        ]]);
+        $new = $request->withHeader('Content-Length', 999);
+        $this->assertNotSame($new, $request);
+
+        $this->assertEquals(1337, $request->getHeaderLine('Content-length'), 'old request is unchanged');
+        $this->assertEquals(999, $new->getHeaderLine('Content-length'), 'new request is correct');
+
+        $new = $request->withHeader('Double', ['a']);
+        $this->assertEquals(['a'], $new->getHeader('Double'), 'List values are overwritten');
+    }
+
+    /**
      * Test accepts() with and without parameters
      *
      * @return void
