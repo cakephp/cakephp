@@ -20,6 +20,7 @@ use DateTimeInterface;
 use InvalidArgumentException;
 use LogicException;
 use NumberFormatter;
+use Psr\Http\Message\UploadedFileInterface;
 use RuntimeException;
 
 /**
@@ -1079,6 +1080,82 @@ class Validation
         }
 
         return is_uploaded_file($file['tmp_name']);
+    }
+
+    /**
+     * Validates the size of an uploaded image.
+     *
+     * @param array $file The uploaded file data from PHP.
+     * @param array $options Options to validate width and height.
+     * @return bool
+     */
+    public static function imageSize($file, $options)
+    {
+        if (!isset($options['height']) && !isset($options['width'])) {
+            throw new InvalidArgumentException('Invalid image size validation parameters! Missing `width` and / or `height`.');
+        }
+
+        if ($file instanceof UploadedFileInterface) {
+            $file = $file->getStream()->getContents();
+        } elseif (is_array($file) && isset($file['tmp_name'])) {
+            $file = $file['tmp_name'];
+        }
+
+        list($width, $height) = getimagesize($file);
+
+        if (isset($options['height'])) {
+            $validHeight = self::comparison($height, $options['height'][0], $options['height'][1]);
+        }
+        if (isset($options['width'])) {
+            $validWidth = self::comparison($width, $options['width'][0], $options['width'][1]);
+        }
+        if (isset($validHeight) && isset($validWidth)) {
+            return ($validHeight && $validWidth);
+        }
+        if (isset($validHeight)) {
+            return $validHeight;
+        }
+        if (isset($validWidth)) {
+            return $validWidth;
+        }
+
+        throw new InvalidArgumentException('The 2nd argument is missing the `width` and / or `height` options.');
+    }
+
+    /**
+     * Validates the image width.
+     *
+     * @param array $file The uploaded file data from PHP.
+     * @param string $operator Comparision operator.
+     * @param int $width Min or max width.
+     * @return bool
+     */
+    public static function imageWidth($file, $operator, $width)
+    {
+        return self::imageSize($file, [
+            'width' => [
+                $operator,
+                $width
+            ]
+        ]);
+    }
+
+    /**
+     * Validates the image width.
+     *
+     * @param array $file The uploaded file data from PHP.
+     * @param string $operator Comparision operator.
+     * @param int $height Min or max width.
+     * @return bool
+     */
+    public static function imageHeight($file, $operator, $height)
+    {
+        return self::imageSize($file, [
+            'height' => [
+                $operator,
+                $height
+            ]
+        ]);
     }
 
     /**
