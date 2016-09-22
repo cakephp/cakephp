@@ -10661,10 +10661,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->request->here = $here;
 		$this->Form->create('User');
 
-		$expected = $here;
-		$actual = $this->Form->_lastAction;
-
-		$this->assertEquals($expected, $actual);
+		$this->assertAttributeEquals($here, '_lastAction', $this->Form, "_lastAction shouldn't be empty.");
 	}
 
 /**
@@ -10680,10 +10677,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->request->here = $here;
 		$this->Form->create('User');
 
-		$expected = $here;
-		$actual = $this->Form->_lastAction;
-
-		$this->assertEquals($expected, $actual);
+		$this->assertAttributeEquals($here, '_lastAction', $this->Form, "_lastAction shouldn't be empty.");
 	}
 
 }
