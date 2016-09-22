@@ -63,7 +63,7 @@ use Traversable;
  * @method \Cake\Collection\CollectionInterface stopWhen(callable $c) Returns each row until the callable returns true.
  * @method \Cake\Collection\CollectionInterface zip(array|\Traversable $c) Returns the first result of both the query and $c in an array,
  *   then the second results and so on.
- * @method \Cake\Collection\CollectionInterface zipWith(...$collections, callable $c) Returns each of the results out of calling $c
+ * @method \Cake\Collection\CollectionInterface zipWith($collections, callable $callable) Returns each of the results out of calling $c
  *   with the first rows of the query and each of the items, then the second rows and so on.
  * @method \Cake\Collection\CollectionInterface chunk($size) Groups the results in arrays of $size rows each.
  * @method bool isEmpty() Returns true if this query found no results.
