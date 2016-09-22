@@ -915,9 +915,10 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ```
      *
      * @param int $chunkSize The maximum size for each chunk
+     * @param boolean $preserveKeys If the keys of the array should be preserved
      * @return \Cake\Collection\CollectionInterface
      */
-    public function chunk($chunkSize);
+    public function chunk($chunkSize, $preserveKeys = false);
 
     /**
      * Returns whether or not there are elements in this collection
