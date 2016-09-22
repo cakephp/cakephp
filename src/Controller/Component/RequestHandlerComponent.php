@@ -120,7 +120,6 @@ class RequestHandlerComponent extends Component
         return [
             'Controller.startup' => 'startup',
             'Controller.beforeRender' => 'beforeRender',
-            'Controller.beforeRedirect' => 'beforeRedirect',
         ];
     }
 
@@ -243,46 +242,6 @@ class RequestHandlerComponent extends Component
         } catch (XmlException $e) {
             return [];
         }
-    }
-
-    /**
-     * Handles (fakes) redirects for AJAX requests using requestAction()
-     *
-     * @param \Cake\Event\Event $event The Controller.beforeRedirect event.
-     * @param string|array $url A string or array containing the redirect location
-     * @param \Cake\Network\Response $response The response object.
-     * @return \Cake\Network\Response|null The response object if the redirect is caught.
-     */
-    public function beforeRedirect(Event $event, $url, Response $response)
-    {
-        $request = $this->request;
-        if (!$request->is('ajax')) {
-            return null;
-        }
-        if (empty($url)) {
-            return null;
-        }
-        if (is_array($url)) {
-            $url = Router::url($url + ['_base' => false]);
-        }
-        $query = [];
-        if (strpos($url, '?') !== false) {
-            list($url, $querystr) = explode('?', $url, 2);
-            parse_str($querystr, $query);
-        }
-        $controller = $event->subject();
-        $response->body($controller->requestAction($url, [
-            'return',
-            'bare' => false,
-            'environment' => [
-                'REQUEST_METHOD' => 'GET'
-            ],
-            'query' => $query,
-            'cookies' => $request->cookies
-        ]));
-        $response->statusCode(200);
-
-        return $response;
     }
 
     /**
