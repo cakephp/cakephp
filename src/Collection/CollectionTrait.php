@@ -607,16 +607,24 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      */
-    public function chunk($chunkSize)
+    public function chunk($chunkSize, $preserveKeys = false)
     {
-        return $this->map(function ($v, $k, $iterator) use ($chunkSize) {
-            $values = [$v];
+        return $this->map(function ($v, $k, $iterator) use ($chunkSize, $preserveKeys) {
+            $key = 0;
+            if ($preserveKeys) {
+                $key = $k;
+            }
+            $values = [$key => $v];
             for ($i = 1; $i < $chunkSize; $i++) {
                 $iterator->next();
                 if (!$iterator->valid()) {
                     break;
                 }
-                $values[] = $iterator->current();
+                if ($preserveKeys) {
+                    $values[$iterator->key()] = $iterator->current();
+                } else {
+                    $values[] = $iterator->current();
+                }
             }
 
             return $values;

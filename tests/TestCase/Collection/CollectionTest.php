@@ -1573,4 +1573,17 @@ class CollectionTest extends TestCase
         $expected = [[1, 2], [3, [4, 5]], [6, [7, [8, 9], 10]], [11]];
         $this->assertEquals($expected, $chunked);
     }
+
+    /**
+     * Tests the chunk method with preserved keys
+     *
+     * @return void
+     */
+    public function testChunkPreserveKeys()
+    {
+        $collection = new Collection(['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7]);
+        $chunked = $collection->chunk(2, true)->toList();
+        $expected = [['a' => 1, 'b' => 2], ['c' => 3, 'd' => 4], ['e' => 5, 'f' => 6], ['g' => 7]];
+        $this->assertEquals($expected, $chunked);
+    }
 }
