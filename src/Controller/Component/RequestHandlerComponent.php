@@ -120,6 +120,7 @@ class RequestHandlerComponent extends Component
         return [
             'Controller.startup' => 'startup',
             'Controller.beforeRender' => 'beforeRender',
+            'Controller.beforeRedirect' => 'beforeRedirect',
         ];
     }
 
@@ -242,6 +243,18 @@ class RequestHandlerComponent extends Component
         } catch (XmlException $e) {
             return [];
         }
+    }
+
+    /**
+     *
+     * @param \Cake\Event\Event $event The Controller.beforeRedirect event.
+     * @param string|array $url A string or array containing the redirect location
+     * @param \Cake\Network\Response $response The response object.
+     * @return \Cake\Network\Response|null The response object if the redirect is caught.
+     */
+    public function beforeRedirect(Event $event, $url, Response $response)
+    {
+        return null;
     }
 
     /**
