@@ -66,7 +66,7 @@ use Traversable;
  * @method \Cake\Collection\CollectionInterface zipWith(...$collections, callable $c) Returns each of the results out of calling $c
  *   with the first rows of the query and each of the items, then the second rows and so on.
  * @method \Cake\Collection\CollectionInterface chunk($size) Groups the results in arrays of $size rows each.
- * @method bool isEmpty($size) Returns true if this query found no results.
+ * @method bool isEmpty() Returns true if this query found no results.
  */
 class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 {
