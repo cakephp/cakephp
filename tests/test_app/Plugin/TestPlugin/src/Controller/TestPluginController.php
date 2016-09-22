@@ -16,7 +16,7 @@
  */
 
 /**
- * Class TestPluginController
+ * TestPluginController
  */
 namespace TestPlugin\Controller;
 

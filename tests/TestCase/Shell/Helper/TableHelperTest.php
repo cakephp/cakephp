@@ -64,7 +64,7 @@ class TableHelperTest extends TestCase
     }
 
     /**
-     * Test output with multibyte characters
+     * Test output with multi-byte characters
      *
      * @return void
      */
@@ -81,6 +81,30 @@ class TableHelperTest extends TestCase
             '| <info>Header 1</info>     | <info>Head</info>      | <info>Long Header</info>   |',
             '+--------------+-----------+---------------+',
             '| short        | ÄÄÄÜÜÜ    | short         |',
+            '| Longer thing | longerish | Longest Value |',
+            '+--------------+-----------+---------------+',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
+     * Test output with multi-byte characters
+     *
+     * @return void
+     */
+    public function testOutputFullwidth()
+    {
+        $data = [
+            ['Header 1', 'Head', 'Long Header'],
+            ['short', '竜頭蛇尾', 'short'],
+            ['Longer thing', 'longerish', 'Longest Value'],
+        ];
+        $this->helper->output($data);
+        $expected = [
+            '+--------------+-----------+---------------+',
+            '| <info>Header 1</info>     | <info>Head</info>      | <info>Long Header</info>   |',
+            '+--------------+-----------+---------------+',
+            '| short        | 竜頭蛇尾  | short         |',
             '| Longer thing | longerish | Longest Value |',
             '+--------------+-----------+---------------+',
         ];
@@ -208,5 +232,41 @@ class TableHelperTest extends TestCase
             '+--------------+---------------+---------------+',
         ];
         $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
+     * Test output when there is no data.
+     */
+    public function testOutputWithNoData()
+    {
+        $this->helper->output([]);
+        $this->assertEquals([], $this->stub->messages());
+    }
+
+    /**
+     * Test output with a header but no data.
+     */
+    public function testOutputWithHeaderAndNoData()
+    {
+        $data = [
+            ['Header 1', 'Header', 'Long Header']
+        ];
+        $this->helper->output($data);
+        $expected = [
+            '+----------+--------+-------------+',
+            '| <info>Header 1</info> | <info>Header</info> | <info>Long Header</info> |',
+            '+----------+--------+-------------+',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
+     * Test no data when headers are disabled.
+     */
+    public function testOutputHeaderDisabledNoData()
+    {
+        $this->helper->config(['header' => false]);
+        $this->helper->output([]);
+        $this->assertEquals([], $this->stub->messages());
     }
 }

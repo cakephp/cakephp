@@ -21,7 +21,6 @@ use Traversable;
 /**
  * A type of collection that is aware of nested items and exposes methods to
  * check or retrieve them
- *
  */
 class NestIterator extends Collection implements RecursiveIterator
 {
@@ -54,6 +53,7 @@ class NestIterator extends Collection implements RecursiveIterator
     public function getChildren()
     {
         $property = $this->_propertyExtractor($this->_nestKey);
+
         return new self($property($this->current()), $this->_nestKey);
     }
 

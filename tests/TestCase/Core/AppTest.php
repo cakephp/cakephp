@@ -21,7 +21,6 @@ use TestApp\Core\TestApp;
 
 /**
  * AppTest class
- *
  */
 class AppTest extends TestCase
 {
@@ -62,6 +61,7 @@ class AppTest extends TestCase
             if ($checkCake) {
                 return (bool)$expected;
             }
+
             return false;
         };
         $return = TestApp::classname($class, $type, $suffix);

@@ -35,6 +35,7 @@ class TimeType extends DateTimeType
     protected function _parseValue($value)
     {
         $class = $this->_className;
+
         return $class::parseTime($value, $this->_localeFormat);
     }
 }

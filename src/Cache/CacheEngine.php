@@ -19,7 +19,6 @@ use InvalidArgumentException;
 
 /**
  * Storage engine for CakePHP caching
- *
  */
 abstract class CacheEngine
 {
@@ -112,6 +111,7 @@ abstract class CacheEngine
         foreach ($data as $key => $value) {
             $return[$key] = $this->write($key, $value);
         }
+
         return $return;
     }
 
@@ -136,6 +136,7 @@ abstract class CacheEngine
         foreach ($keys as $key) {
             $return[$key] = $this->read($key);
         }
+
         return $return;
     }
 
@@ -187,6 +188,7 @@ abstract class CacheEngine
         foreach ($keys as $key) {
             $return[$key] = $this->delete($key);
         }
+
         return $return;
     }
 
@@ -206,6 +208,7 @@ abstract class CacheEngine
         if ($cachedValue === false) {
             return $this->write($key, $value);
         }
+
         return false;
     }
 
@@ -251,7 +254,8 @@ abstract class CacheEngine
             $prefix = vsprintf($this->_groupPrefix, $this->groups());
         }
 
-        $key = preg_replace('/[\s]+/', '_', strtolower(trim(str_replace([DIRECTORY_SEPARATOR, '/', '.'], '_', strval($key)))));
+        $key = preg_replace('/[\s]+/', '_', strtolower(trim(str_replace([DIRECTORY_SEPARATOR, '/', '.'], '_', (string)$key))));
+
         return $prefix . $key;
     }
 

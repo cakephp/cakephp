@@ -17,6 +17,7 @@ namespace Cake\ORM;
 use Cake\Datasource\RulesChecker as BaseRulesChecker;
 use Cake\ORM\Rule\ExistsIn;
 use Cake\ORM\Rule\IsUnique;
+use Cake\ORM\Rule\ValidCount;
 
 /**
  * ORM flavoured rules checker.
@@ -39,11 +40,18 @@ class RulesChecker extends BaseRulesChecker
      * ```
      *
      * @param array $fields The list of fields to check for uniqueness.
-     * @param string|null $message The error message to show in case the rule does not pass.
+     * @param string|array|null $message The error message to show in case the rule does not pass. Can
+     *   also be an array of options. When an array, the 'message' key can be used to provide a message.
      * @return callable
      */
     public function isUnique(array $fields, $message = null)
     {
+        $options = [];
+        if (is_array($message)) {
+            $options = $message + ['message' => null];
+            $message = $options['message'];
+            unset($options['message']);
+        }
         if (!$message) {
             if ($this->_useI18n) {
                 $message = __d('cake', 'This value is already in use');
@@ -53,7 +61,8 @@ class RulesChecker extends BaseRulesChecker
         }
 
         $errorField = current($fields);
-        return $this->_addError(new IsUnique($fields), '_isUnique', compact('errorField', 'message'));
+
+        return $this->_addError(new IsUnique($fields, $options), '_isUnique', compact('errorField', 'message'));
     }
 
     /**
@@ -70,14 +79,26 @@ class RulesChecker extends BaseRulesChecker
      * $rules->add($rules->existsIn('site_id', new SitesTable(), 'Invalid Site'));
      * ```
      *
+     * Available $options are error 'message' and 'allowNullableNulls' flag.
+     * 'message' sets a custom error message.
+     * Set 'allowNullableNulls' to true to accept composite foreign keys where one or more nullable columns are null.
+     *
      * @param string|array $field The field or list of fields to check for existence by
      * primary key lookup in the other table.
      * @param object|string $table The table name where the fields existence will be checked.
-     * @param string|null $message The error message to show in case the rule does not pass.
+     * @param string|array|null $message The error message to show in case the rule does not pass. Can
+     *   also be an array of options. When an array, the 'message' key can be used to provide a message.
      * @return callable
      */
     public function existsIn($field, $table, $message = null)
     {
+        $options = [];
+        if (is_array($message)) {
+            $options = $message + ['message' => null];
+            $message = $options['message'];
+            unset($options['message']);
+        }
+
         if (!$message) {
             if ($this->_useI18n) {
                 $message = __d('cake', 'This value does not exist');
@@ -87,6 +108,31 @@ class RulesChecker extends BaseRulesChecker
         }
 
         $errorField = is_string($field) ? $field : current($field);
-        return $this->_addError(new ExistsIn($field, $table), '_existsIn', compact('errorField', 'message'));
+
+        return $this->_addError(new ExistsIn($field, $table, $options), '_existsIn', compact('errorField', 'message'));
+    }
+
+    /**
+     * Validates the count of associated records.
+     *
+     * @param string $field The field to check the count on.
+     * @param int $count The expected count.
+     * @param string $operator The operator for the count comparison.
+     * @param string|null $message The error message to show in case the rule does not pass.
+     * @return callable
+     */
+    public function validCount($field, $count = 0, $operator = '>', $message = null)
+    {
+        if (!$message) {
+            if ($this->_useI18n) {
+                $message = __d('cake', 'The count does not match {0}{1}', [$operator, $count]);
+            } else {
+                $message = sprintf('The count does not match %s%d', $operator, $count);
+            }
+        }
+
+        $errorField = $field;
+
+        return $this->_addError(new ValidCount($field, $count, $operator), '_validCount', compact('count', 'operator', 'errorField', 'message'));
     }
 }

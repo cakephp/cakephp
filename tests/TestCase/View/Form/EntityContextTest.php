@@ -631,6 +631,8 @@ class EntityContextTest extends TestCase
      */
     public function testValAssociatedCustomIds()
     {
+        $this->_setupTables();
+
         $row = new Article([
             'title' => 'First post',
             'user' => new Entity([
@@ -652,6 +654,26 @@ class EntityContextTest extends TestCase
 
         $result = $context->val('user.groups._ids');
         $this->assertEquals([1, 4], $result);
+    }
+
+    /**
+     * Test getting default value from table schema.
+     *
+     * @return void
+     */
+    public function testValSchemaDefault()
+    {
+        $table = TableRegistry::get('Articles');
+        $column = $table->schema()->column('title');
+        $table->schema()->addColumn('title', ['default' => 'default title'] + $column);
+        $row = $table->newEntity();
+
+        $context = new EntityContext($this->request, [
+            'entity' => $row,
+            'table' => 'Articles',
+        ]);
+        $result = $context->val('title');
+        $this->assertEquals('default title', $result);
     }
 
     /**

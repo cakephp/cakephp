@@ -151,6 +151,7 @@ class NumberHelper extends Helper
     {
         $formatted = $this->_engine->format($number, $options);
         $options += ['escape' => true];
+
         return $options['escape'] ? h($formatted) : $formatted;
     }
 
@@ -182,6 +183,7 @@ class NumberHelper extends Helper
     {
         $formatted = $this->_engine->currency($number, $currency, $options);
         $options += ['escape' => true];
+
         return $options['escape'] ? h($formatted) : $formatted;
     }
 
@@ -205,6 +207,7 @@ class NumberHelper extends Helper
     {
         $formatted = $this->_engine->formatDelta($value, $options);
         $options += ['escape' => true];
+
         return $options['escape'] ? h($formatted) : $formatted;
     }
 

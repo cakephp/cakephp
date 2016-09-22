@@ -18,7 +18,6 @@ use Cake\Core\InstanceConfigTrait;
 
 /**
  * Abstract password hashing class
- *
  */
 abstract class AbstractPasswordHasher
 {

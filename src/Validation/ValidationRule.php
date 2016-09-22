@@ -143,6 +143,7 @@ class ValidationRule
         if ($result === false) {
             return $this->_message ?: false;
         }
+
         return $result;
     }
 
@@ -162,6 +163,7 @@ class ValidationRule
     {
         if (!is_string($this->_on) && is_callable($this->_on)) {
             $function = $this->_on;
+
             return !$function($context);
         }
 
@@ -171,6 +173,7 @@ class ValidationRule
                 return true;
             }
         }
+
         return false;
     }
 

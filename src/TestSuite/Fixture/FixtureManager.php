@@ -18,13 +18,13 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\TableSchemaInterface;
 use Cake\Utility\Inflector;
 use PDOException;
 use UnexpectedValueException;
 
 /**
  * A factory class to manage the life cycle of test fixtures
- *
  */
 class FixtureManager
 {
@@ -39,14 +39,14 @@ class FixtureManager
     /**
      * Holds the fixture classes that where instantiated
      *
-     * @var array
+     * @var \Cake\Datasource\FixtureInterface[]
      */
     protected $_loaded = [];
 
     /**
      * Holds the fixture classes that where instantiated indexed by class name
      *
-     * @var array
+     * @var \Cake\Datasource\FixtureInterface[]
      */
     protected $_fixtureMap = [];
 
@@ -219,7 +219,7 @@ class FixtureManager
     /**
      * Runs the drop and create commands on the fixtures if necessary.
      *
-     * @param \Cake\TestSuite\Fixture\TestFixture $fixture the fixture object to create
+     * @param \Cake\Datasource\FixtureInterface $fixture the fixture object to create
      * @param \Cake\Database\Connection $db The Connection object instance to use
      * @param array $sources The existing tables in the datasource.
      * @param bool $drop whether drop the fixture if it is already created or not
@@ -237,7 +237,7 @@ class FixtureManager
         $exists = in_array($table, $sources);
 
         if (($drop && $exists) ||
-            ($exists && !$isFixtureSetup && $fixture->schema() instanceof Table)
+            ($exists && !$isFixtureSetup && $fixture instanceof TableSchemaInterface && $fixture->schema() instanceof Table)
         ) {
             $fixture->drop($db);
             $fixture->create($db);
@@ -385,6 +385,7 @@ class FixtureManager
                 $dbs[$fixture->connection()][$f] = $fixture;
             }
         }
+
         return $dbs;
     }
 
@@ -428,27 +429,27 @@ class FixtureManager
      */
     public function loadSingle($name, $db = null, $dropTables = true)
     {
-        if (isset($this->_fixtureMap[$name])) {
-            $fixture = $this->_fixtureMap[$name];
-            if (!$db) {
-                $db = ConnectionManager::get($fixture->connection());
-            }
-
-            if (!$this->isFixtureSetup($db->configName(), $fixture)) {
-                $sources = $db->schemaCollection()->listTables();
-                $this->_setupTable($fixture, $db, $sources, $dropTables);
-            }
-
-            if (!$dropTables) {
-                $fixture->dropConstraints($db);
-                $fixture->truncate($db);
-            }
-
-            $fixture->createConstraints($db);
-            $fixture->insert($db);
-        } else {
+        if (!isset($this->_fixtureMap[$name])) {
             throw new UnexpectedValueException(sprintf('Referenced fixture class %s not found', $name));
         }
+
+        $fixture = $this->_fixtureMap[$name];
+        if (!$db) {
+            $db = ConnectionManager::get($fixture->connection());
+        }
+
+        if (!$this->isFixtureSetup($db->configName(), $fixture)) {
+            $sources = $db->schemaCollection()->listTables();
+            $this->_setupTable($fixture, $db, $sources, $dropTables);
+        }
+
+        if (!$dropTables) {
+            $fixture->dropConstraints($db);
+            $fixture->truncate($db);
+        }
+
+        $fixture->createConstraints($db);
+        $fixture->insert($db);
     }
 
     /**

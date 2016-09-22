@@ -19,7 +19,6 @@ use Cake\Datasource\ConnectionInterface;
 
 /**
  * Extends the schema collection class to provide caching
- *
  */
 class CachedCollection extends Collection
 {
@@ -97,6 +96,7 @@ class CachedCollection extends Collection
         if ($enable === true) {
             $enable = '_cake_model_';
         }
+
         return $this->_cache = $enable;
     }
 }

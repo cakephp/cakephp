@@ -17,15 +17,16 @@ namespace Cake\Validation;
 use Cake\I18n\Time;
 use Cake\Utility\Text;
 use DateTimeInterface;
+use InvalidArgumentException;
 use LogicException;
 use NumberFormatter;
+use Psr\Http\Message\UploadedFileInterface;
 use RuntimeException;
 
 /**
  * Validation Class. Used for validation of model data
  *
  * Offers different validation methods.
- *
  */
 class Validation
 {
@@ -67,6 +68,7 @@ class Validation
     public static function notEmpty($check)
     {
         trigger_error('Validation::notEmpty() is deprecated. Use Validation::notBlank() instead.', E_USER_DEPRECATED);
+
         return static::notBlank($check);
     }
 
@@ -86,6 +88,7 @@ class Validation
         if (empty($check) && $check !== '0' && $check !== 0) {
             return false;
         }
+
         return static::_check($check, '/[^\s]+/m');
     }
 
@@ -105,6 +108,7 @@ class Validation
         if (empty($check) && $check !== '0') {
             return false;
         }
+
         return self::_check($check, '/^[\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]+$/Du');
     }
 
@@ -124,6 +128,7 @@ class Validation
             return false;
         }
         $length = mb_strlen($check);
+
         return ($length >= $min && $length <= $max);
     }
 
@@ -138,6 +143,7 @@ class Validation
     public static function blank($check)
     {
         trigger_error('Validation::blank() is deprecated.', E_USER_DEPRECATED);
+
         return !static::_check($check, '/[^\\s]/');
     }
 
@@ -180,7 +186,7 @@ class Validation
                 'enroute' => '/^2(?:014|149)\\d{11}$/',
                 'jcb' => '/^(3\\d{4}|2100|1800)\\d{11}$/',
                 'maestro' => '/^(?:5020|6\\d{3})\\d{12}$/',
-                'mc' => '/^5[1-5]\\d{14}$/',
+                'mc' => '/^(5[1-5]\\d{14})|(2(?:22[1-9]|2[3-9][0-9]|[3-6][0-9]{2}|7[0-1][0-9]|720)\\d{12})$/',
                 'solo' => '/^(6334[5-9][0-9]|6767[0-9]{2})\\d{10}(\\d{2,3})?$/',
                 'switch' => '/^(?:49(03(0[2-9]|3[5-9])|11(0[1-2]|7[4-9]|8[1-2])|36[0-9]{2})\\d{10}(\\d{2,3})?)|(?:564182\\d{10}(\\d{2,3})?)|(6(3(33[0-4][0-9])|759[0-9]{2})\\d{10}(\\d{2,3})?)$/',
                 'visa' => '/^4\\d{12}(\\d{3})?$/',
@@ -212,7 +218,27 @@ class Validation
                 return static::luhn($check);
             }
         }
+
         return false;
+    }
+
+    /**
+     * Used to check the count of a given value of type array or Countable.
+     *
+     * @param array|\Countable $check The value to check the count on.
+     * @param string $operator Can be either a word or operand
+     *    is greater >, is less <, greater or equal >=
+     *    less or equal <=, is less <, equal to ==, not equal !=
+     * @param int $expectedCount The expected count value.
+     * @return bool Success
+     */
+    public static function numElements($check, $operator, $expectedCount)
+    {
+        if (!is_array($check) && !$check instanceof \Countable) {
+            return false;
+        }
+
+        return self::comparison(count($check), $operator, $expectedCount);
     }
 
     /**
@@ -273,6 +299,7 @@ class Validation
             default:
                 static::$errors[] = 'You must define the $operator parameter for Validation::comparison()';
         }
+
         return false;
     }
 
@@ -291,6 +318,7 @@ class Validation
         if (!isset($context['data'][$field])) {
             return false;
         }
+
         return $context['data'][$field] === $check;
     }
 
@@ -310,6 +338,7 @@ class Validation
         }
 
         $matches = preg_match_all('/[^a-zA-Z0-9]/', $check);
+
         return $matches >= $count;
     }
 
@@ -325,8 +354,10 @@ class Validation
     {
         if ($regex === null) {
             static::$errors[] = 'You must define a regular expression for Validation::custom()';
+
             return false;
         }
+
         return static::_check($check, $regex);
     }
 
@@ -404,6 +435,7 @@ class Validation
                 return true;
             }
         }
+
         return false;
     }
 
@@ -435,6 +467,7 @@ class Validation
             $time = implode(' ', $parts);
             $valid = static::date($date, $dateFormat, $regex) && static::time($time);
         }
+
         return $valid;
     }
 
@@ -454,6 +487,7 @@ class Validation
         if (is_array($check)) {
             $check = static::_getDateString($check);
         }
+
         return static::_check($check, '%^((0?[1-9]|1[012])(:[0-5]\d){0,2} ?([AP]M|[ap]m))$|^([01]\d|2[0-3])(:[0-5]\d){0,2}$%');
     }
 
@@ -479,9 +513,10 @@ class Validation
             'datetime' => 'parseDateTime',
         ];
         if (empty($methods[$type])) {
-            throw new \InvalidArgumentException('Unsupported parser type given.');
+            throw new InvalidArgumentException('Unsupported parser type given.');
         }
         $method = $methods[$type];
+
         return (Time::$method($check, $format) !== null);
     }
 
@@ -494,6 +529,7 @@ class Validation
     public static function boolean($check)
     {
         $booleanList = [0, 1, '0', '1', true, false];
+
         return in_array($check, $booleanList, true);
     }
 
@@ -577,8 +613,10 @@ class Validation
             if (function_exists('checkdnsrr') && checkdnsrr($regs[1], 'MX')) {
                 return true;
             }
+
             return is_array(gethostbynamel($regs[1]));
         }
+
         return false;
     }
 
@@ -612,6 +650,7 @@ class Validation
                 return true;
             }
         }
+
         return false;
     }
 
@@ -632,6 +671,7 @@ class Validation
         if ($type === 'ipv6') {
             $flags = FILTER_FLAG_IPV6;
         }
+
         return (bool)filter_var($check, FILTER_VALIDATE_IP, ['flags' => $flags]);
     }
 
@@ -674,6 +714,7 @@ class Validation
         } else {
             $regex = '/^(?!\x{00a2})\p{Sc}?' . $money . '$/u';
         }
+
         return static::_check($check, $regex);
     }
 
@@ -722,6 +763,7 @@ class Validation
                 }
             }
         }
+
         return true;
     }
 
@@ -747,6 +789,7 @@ class Validation
     public static function naturalNumber($check, $allowZero = false)
     {
         $regex = $allowZero ? '/^(?:0|[1-9][0-9]*)$/' : '/^[1-9][0-9]*$/';
+
         return static::_check($check, $regex);
     }
 
@@ -773,6 +816,7 @@ class Validation
         if (isset($lower, $upper)) {
             return ($check >= $lower && $check <= $upper);
         }
+
         return is_finite($check);
     }
 
@@ -802,6 +846,7 @@ class Validation
             '(?:\/?|\/' . $validChars . '*)?' .
             '(?:\?' . $validChars . '*)?' .
             '(?:#' . $validChars . '*)?$/iu';
+
         return static::_check($check, $regex);
     }
 
@@ -821,6 +866,7 @@ class Validation
         } else {
             $list = array_map('strval', $list);
         }
+
         return in_array((string)$check, $list, true);
     }
 
@@ -840,6 +886,7 @@ class Validation
             'Validation::userDefined() is deprecated. Just set a callable for `rule` key when adding validators instead.',
             E_USER_DEPRECATED
         );
+
         return call_user_func_array([$object, $method], [$check, $args]);
     }
 
@@ -852,6 +899,7 @@ class Validation
     public static function uuid($check)
     {
         $regex = '/^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[0-5][a-fA-F0-9]{3}-[089aAbB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$/';
+
         return self::_check($check, $regex);
     }
 
@@ -933,6 +981,7 @@ class Validation
         foreach ($mimeTypes as $key => $val) {
             $mimeTypes[$key] = strtolower($val);
         }
+
         return in_array($mime, $mimeTypes);
     }
 
@@ -974,6 +1023,7 @@ class Validation
         if ($allowNoFile) {
             return in_array((int)$check, [UPLOAD_ERR_OK, UPLOAD_ERR_NO_FILE], true);
         }
+
         return (int)$check === UPLOAD_ERR_OK;
     }
 
@@ -1028,7 +1078,84 @@ class Validation
         if (isset($options['types']) && !static::mimeType($file, $options['types'])) {
             return false;
         }
+
         return is_uploaded_file($file['tmp_name']);
+    }
+
+    /**
+     * Validates the size of an uploaded image.
+     *
+     * @param array $file The uploaded file data from PHP.
+     * @param array $options Options to validate width and height.
+     * @return bool
+     */
+    public static function imageSize($file, $options)
+    {
+        if (!isset($options['height']) && !isset($options['width'])) {
+            throw new InvalidArgumentException('Invalid image size validation parameters! Missing `width` and / or `height`.');
+        }
+
+        if ($file instanceof UploadedFileInterface) {
+            $file = $file->getStream()->getContents();
+        } elseif (is_array($file) && isset($file['tmp_name'])) {
+            $file = $file['tmp_name'];
+        }
+
+        list($width, $height) = getimagesize($file);
+
+        if (isset($options['height'])) {
+            $validHeight = self::comparison($height, $options['height'][0], $options['height'][1]);
+        }
+        if (isset($options['width'])) {
+            $validWidth = self::comparison($width, $options['width'][0], $options['width'][1]);
+        }
+        if (isset($validHeight) && isset($validWidth)) {
+            return ($validHeight && $validWidth);
+        }
+        if (isset($validHeight)) {
+            return $validHeight;
+        }
+        if (isset($validWidth)) {
+            return $validWidth;
+        }
+
+        throw new InvalidArgumentException('The 2nd argument is missing the `width` and / or `height` options.');
+    }
+
+    /**
+     * Validates the image width.
+     *
+     * @param array $file The uploaded file data from PHP.
+     * @param string $operator Comparision operator.
+     * @param int $width Min or max width.
+     * @return bool
+     */
+    public static function imageWidth($file, $operator, $width)
+    {
+        return self::imageSize($file, [
+            'width' => [
+                $operator,
+                $width
+            ]
+        ]);
+    }
+
+    /**
+     * Validates the image width.
+     *
+     * @param array $file The uploaded file data from PHP.
+     * @param string $operator Comparision operator.
+     * @param int $height Min or max width.
+     * @return bool
+     */
+    public static function imageHeight($file, $operator, $height)
+    {
+        return self::imageSize($file, [
+            'height' => [
+                $operator,
+                $height
+            ]
+        ]);
     }
 
     /**
@@ -1067,6 +1194,7 @@ class Validation
         if ($options['format'] === 'lat') {
             $pattern = '/^' . self::$_pattern['latitude'] . '$/';
         }
+
         return (bool)preg_match($pattern, $value);
     }
 
@@ -1082,6 +1210,7 @@ class Validation
     public static function latitude($value, array $options = [])
     {
         $options['format'] = 'lat';
+
         return self::geoCoordinate($value, $options);
     }
 
@@ -1097,6 +1226,7 @@ class Validation
     public static function longitude($value, array $options = [])
     {
         $options['format'] = 'long';
+
         return self::geoCoordinate($value, $options);
     }
 
@@ -1113,6 +1243,7 @@ class Validation
         if (!is_string($value)) {
             return false;
         }
+
         return strlen($value) <= mb_strlen($value, 'utf-8');
     }
 
@@ -1140,6 +1271,7 @@ class Validation
         if ($options['extended']) {
             return true;
         }
+
         return preg_match('/[\x{10000}-\x{10FFFF}]/u', $value) === 0;
     }
 
@@ -1160,7 +1292,19 @@ class Validation
         if (is_int($value)) {
             return true;
         }
+
         return (bool)preg_match('/^-?[0-9]+$/', $value);
+    }
+
+    /**
+     * Check that the input value is an array.
+     *
+     * @param array $value The value to check
+     * @return bool
+     */
+    public static function isArray($value)
+    {
+        return is_array($value);
     }
 
     /**

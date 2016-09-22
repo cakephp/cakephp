@@ -165,6 +165,7 @@ class Debugger
         if (!$instance) {
             $instance[0] = new Debugger();
         }
+
         return $instance[0];
     }
 
@@ -305,6 +306,7 @@ class Debugger
         if ($options['format'] === 'array' || $options['format'] === 'points') {
             return $back;
         }
+
         return implode("\n", $back);
     }
 
@@ -317,17 +319,13 @@ class Debugger
      */
     public static function trimPath($path)
     {
-        if (!defined('CAKE_CORE_INCLUDE_PATH') || !defined('APP')) {
-            return $path;
-        }
-
-        if (strpos($path, APP) === 0) {
+        if (defined('APP') && strpos($path, APP) === 0) {
             return str_replace(APP, 'APP/', $path);
         }
-        if (strpos($path, CAKE_CORE_INCLUDE_PATH) === 0) {
+        if (defined('CAKE_CORE_INCLUDE_PATH') && strpos($path, CAKE_CORE_INCLUDE_PATH) === 0) {
             return str_replace(CAKE_CORE_INCLUDE_PATH, 'CORE', $path);
         }
-        if (strpos($path, ROOT) === 0) {
+        if (defined('ROOT') && strpos($path, ROOT) === 0) {
             return str_replace(ROOT, 'ROOT', $path);
         }
 
@@ -383,6 +381,7 @@ class Debugger
                 $lines[] = $string;
             }
         }
+
         return $lines;
     }
 
@@ -411,6 +410,7 @@ class Debugger
                 $highlight
             );
         }
+
         return $highlight;
     }
 
@@ -461,6 +461,7 @@ class Debugger
                 if (trim($var) === '') {
                     return "''";
                 }
+
                 return "'" . $var . "'";
             case 'array':
                 return static::_array($var, $depth - 1, $indent + 1);
@@ -518,6 +519,7 @@ class Debugger
         } else {
             $vars[] = $break . '[maximum depth reached]';
         }
+
         return $out . implode(',', $vars) . $end . ']';
     }
 
@@ -547,6 +549,7 @@ class Debugger
                     $end . '}';
             } catch (Exception $e) {
                 $message = $e->getMessage();
+
                 return $out . "\n(unable to export object: $message)\n }";
             }
         }
@@ -579,6 +582,7 @@ class Debugger
             $out .= $break . implode($break, $props) . $end;
         }
         $out .= '}';
+
         return $out;
     }
 
@@ -661,6 +665,7 @@ class Debugger
         } else {
             $self->_templates[$format] = $strings;
         }
+
         return $self->_templates[$format];
     }
 
@@ -708,9 +713,11 @@ class Debugger
         switch ($this->_outputFormat) {
             case false:
                 $this->_data[] = compact('context', 'trace') + $data;
+
                 return;
             case 'log':
                 $this->log(compact('context', 'trace') + $data);
+
                 return;
         }
 
@@ -779,6 +786,7 @@ class Debugger
         if (is_resource($var)) {
             return 'resource';
         }
+
         return 'unknown';
     }
 

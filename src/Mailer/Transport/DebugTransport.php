@@ -20,9 +20,8 @@ use Cake\Mailer\AbstractTransport;
 use Cake\Mailer\Email;
 
 /**
- * Debug Transport class, useful for emulate the email sending process and inspect the resulted
- * email message before actually send it during development
- *
+ * Debug Transport class, useful for emulating the email sending process and inspecting
+ * the resultant email message before actually sending it during development
  */
 class DebugTransport extends AbstractTransport
 {
@@ -38,6 +37,7 @@ class DebugTransport extends AbstractTransport
         $headers = $email->getHeaders(['from', 'sender', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'subject']);
         $headers = $this->_headersToString($headers);
         $message = implode("\r\n", (array)$email->message());
+
         return ['headers' => $headers, 'message' => $message];
     }
 }

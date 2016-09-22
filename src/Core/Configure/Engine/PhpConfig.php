@@ -24,7 +24,6 @@ use Cake\Core\Exception\Exception;
  *
  * Files compatible with PhpConfig should return an array that
  * contains all of the configuration data contained in the file.
- *
  */
 class PhpConfig implements ConfigEngineInterface
 {
@@ -95,6 +94,7 @@ class PhpConfig implements ConfigEngineInterface
         $contents = '<?php' . "\n" . 'return ' . var_export($data, true) . ';';
 
         $filename = $this->_getFilePath($key);
+
         return file_put_contents($filename, $contents) > 0;
     }
 }

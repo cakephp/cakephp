@@ -19,8 +19,7 @@ use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class HelperRegistryTest
- *
+ * HelperRegistryTest
  */
 class HelperRegistryTest extends TestCase
 {
@@ -34,7 +33,9 @@ class HelperRegistryTest extends TestCase
     {
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
-        $io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->helpers = new HelperRegistry();
         $this->helpers->setIo($io);
     }

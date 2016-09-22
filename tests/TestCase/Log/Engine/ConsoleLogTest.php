@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * ConsoleLogTest class
- *
  */
 class ConsoleLogTest extends TestCase
 {
@@ -29,7 +28,7 @@ class ConsoleLogTest extends TestCase
      */
     public function testConsoleOutputlogs()
     {
-        $output = $this->getMock('Cake\Console\ConsoleOutput');
+        $output = $this->getMockBuilder('Cake\Console\ConsoleOutput')->getMock();
 
         $output->expects($this->at(0))
             ->method('outputAs');
@@ -74,7 +73,7 @@ class ConsoleLogTest extends TestCase
         } else {
             $expected = ConsoleOutput::COLOR;
         }
-        $output = $this->getMock('Cake\Console\ConsoleOutput');
+        $output = $this->getMockBuilder('Cake\Console\ConsoleOutput')->getMock();
 
         $output->expects($this->at(0))
             ->method('outputAs')

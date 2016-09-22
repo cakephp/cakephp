@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * ExtractTaskTest class
- *
  */
 class ExtractTaskTest extends TestCase
 {
@@ -34,16 +33,19 @@ class ExtractTaskTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
-        $progress = $this->getMock('Cake\Shell\Helper\ProgressHelper', [], [$this->io]);
+        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $progress = $this->getMockBuilder('Cake\Shell\Helper\ProgressHelper')
+            ->setConstructorArgs([$this->io])
+            ->getMock();
         $this->io->method('helper')
             ->will($this->returnValue($progress));
 
-        $this->Task = $this->getMock(
-            'Cake\Shell\Task\ExtractTask',
-            ['in', 'out', 'err', '_stop'],
-            [$this->io]
-        );
+        $this->Task = $this->getMockBuilder('Cake\Shell\Task\ExtractTask')
+            ->setMethods(['in', 'out', 'err', '_stop'])
+            ->setConstructorArgs([$this->io])
+            ->getMock();
         $this->path = TMP . 'tests/extract_task_test';
         new Folder($this->path . DS . 'locale', true);
     }
@@ -242,11 +244,10 @@ class ExtractTaskTest extends TestCase
     public function testExtractExcludePlugins()
     {
         Configure::write('App.namespace', 'TestApp');
-        $this->Task = $this->getMock(
-            'Cake\Shell\Task\ExtractTask',
-            ['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'],
-            [$this->io]
-        );
+        $this->Task = $this->getMockBuilder('Cake\Shell\Task\ExtractTask')
+            ->setMethods(['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'])
+            ->setConstructorArgs([$this->io])
+            ->getMock();
         $this->Task->expects($this->exactly(1))
             ->method('_isExtractingApp')
             ->will($this->returnValue(true));
@@ -269,11 +270,10 @@ class ExtractTaskTest extends TestCase
     {
         Configure::write('App.namespace', 'TestApp');
 
-        $this->Task = $this->getMock(
-            'Cake\Shell\Task\ExtractTask',
-            ['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'],
-            [$this->io]
-        );
+        $this->Task = $this->getMockBuilder('Cake\Shell\Task\ExtractTask')
+            ->setMethods(['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'])
+            ->setConstructorArgs([$this->io])
+            ->getMock();
 
         $this->Task->params['output'] = $this->path . DS;
         $this->Task->params['plugin'] = 'TestPlugin';
@@ -294,11 +294,10 @@ class ExtractTaskTest extends TestCase
     {
         Configure::write('App.namespace', 'TestApp');
 
-        $this->Task = $this->getMock(
-            'Cake\Shell\Task\ExtractTask',
-            ['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'],
-            [$this->io]
-        );
+        $this->Task = $this->getMockBuilder('Cake\Shell\Task\ExtractTask')
+            ->setMethods(['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'])
+            ->setConstructorArgs([$this->io])
+            ->getMock();
 
         $this->Task->params['output'] = $this->path . DS;
         $this->Task->params['plugin'] = 'Company/TestPluginThree';

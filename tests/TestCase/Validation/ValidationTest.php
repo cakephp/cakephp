@@ -14,18 +14,19 @@
  */
 namespace Cake\Test\TestCase\Validation;
 
+use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
+use Cake\Validation\Validator;
 use Locale;
 
 require_once __DIR__ . '/stubs.php';
 
 /**
  * Test Case for Validation Class
- *
  */
 class ValidationTest extends TestCase
 {
@@ -339,6 +340,12 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('5467639122779531', ['mc']));
         $this->assertTrue(Validation::cc('5297350261550024', ['mc']));
         $this->assertTrue(Validation::cc('5162739131368058', ['mc']));
+        //Mastercard (additional 2016 BIN)
+        $this->assertTrue(Validation::cc('2221000000000009', ['mc']));
+        $this->assertTrue(Validation::cc('2720999999999996', ['mc']));
+        $this->assertTrue(Validation::cc('2223000010005798', ['mc']));
+        $this->assertTrue(Validation::cc('2623430710235708', ['mc']));
+        $this->assertTrue(Validation::cc('2420452519835723', ['mc']));
         //Solo 16
         $this->assertTrue(Validation::cc('6767432107064987', ['solo']));
         $this->assertTrue(Validation::cc('6334667758225411', ['solo']));
@@ -2662,6 +2669,21 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * Test isArray
+     *
+     * @return void
+     */
+    public function testIsArray()
+    {
+        $this->assertTrue(Validation::isArray([]));
+        $this->assertTrue(Validation::isArray([1, 2, 3]));
+        $this->assertTrue(Validation::isArray(['key' => 'value']));
+        $this->assertFalse(Validation::isArray('[1,2,3]'));
+        $this->assertFalse(Validation::isArray(new Collection([])));
+        $this->assertFalse(Validation::isArray(10));
+    }
+
+    /**
      * Test isInteger
      *
      * @return void
@@ -2761,5 +2783,129 @@ class ValidationTest extends TestCase
 
         // Grinning face
         $this->assertTrue(Validation::utf8('some' . "\xf0\x9f\x98\x80" . 'value', ['extended' => true]));
+    }
+
+    /**
+     * Test numElements
+     *
+     * @return void
+     */
+    public function testNumElements()
+    {
+        $array = ['cake', 'php'];
+        $this->assertTrue(Validation::numElements($array, '==', 2));
+        $this->assertFalse(Validation::numElements($array, '>', 3));
+        $this->assertFalse(Validation::numElements($array, '<', 1));
+
+        $callable = function () {
+            return '';
+        };
+
+        $this->assertFalse(Validation::numElements(null, '==', 0));
+        $this->assertFalse(Validation::numElements(new \stdClass(), '==', 0));
+        $this->assertFalse(Validation::numElements($callable, '==', 0));
+        $this->assertFalse(Validation::numElements(false, '==', 0));
+        $this->assertFalse(Validation::numElements(true, '==', 0));
+    }
+
+    /**
+     * Test ImageSize InvalidArgumentException
+     *
+     * @expectedException \InvalidArgumentException
+     * @return void
+     */
+    public function testImageSizeInvalidArgumentException()
+    {
+        $this->assertTrue(Validation::imageSize([], []));
+    }
+
+    /**
+     * Test imageSize
+     *
+     * @return void
+     */
+    public function testImageSize()
+    {
+        $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
+        $upload = [
+            'tmp_name' => $image
+        ];
+
+        $this->assertTrue(Validation::imageSize($upload, [
+            'width' => ['>', 100],
+            'height' => ['>', 100],
+        ]));
+
+        $this->assertFalse(Validation::imageSize($upload, [
+            'width' => ['>', 100],
+            'height' => ['<', 100],
+        ]));
+
+        $this->assertFalse(Validation::imageSize($upload, [
+            'width' => ['==', 100],
+            'height' => ['==', 300],
+        ]));
+
+        $this->assertTrue(Validation::imageSize($upload, [
+            'width' => ['>=', 300],
+            'height' => ['>=', 300],
+        ]));
+
+        $this->assertTrue(Validation::imageSize($upload, [
+            'width' => ['<=', 300],
+            'height' => ['<=', 300],
+        ]));
+
+        $this->assertTrue(Validation::imageSize($upload, [
+            'width' => ['<=', 300],
+            'height' => ['>=', 300],
+        ]));
+
+        $this->assertFalse(Validation::imageSize($upload, [
+            'width' => ['<=', 299],
+            'height' => ['>=', 300],
+        ]));
+    }
+
+    /**
+     * Test imageHeight
+     *
+     * @return void
+     */
+    public function testImageHeight()
+    {
+        $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
+        $upload = [
+            'tmp_name' => $image
+        ];
+
+        $this->assertTrue(Validation::imageHeight($upload, '>', 100));
+        $this->assertTrue(Validation::imageHeight($upload, '<', 2000));
+        $this->assertTrue(Validation::imageHeight($upload, '==', 300));
+
+        $this->assertFalse(Validation::imageHeight($upload, '<', 100));
+        $this->assertFalse(Validation::imageHeight($upload, '>', 2000));
+        $this->assertFalse(Validation::imageHeight($upload, '==', 3000));
+    }
+
+    /**
+     * Test imageWidth
+     *
+     * @return void
+     */
+    public function testImageWidth()
+    {
+        $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
+        $upload = [
+            'tmp_name' => $image
+        ];
+
+        $this->assertTrue(Validation::imageWidth($upload, '>', 100));
+        $this->assertTrue(Validation::imageWidth($upload, '<', 2000));
+        $this->assertTrue(Validation::imageWidth($upload, '==', 300));
+
+        $this->assertFalse(Validation::imageWidth($upload, '<', 100));
+        $this->assertFalse(Validation::imageWidth($upload, '>', 2000));
+        $this->assertFalse(Validation::imageWidth($upload, '==', 3000));
     }
 }

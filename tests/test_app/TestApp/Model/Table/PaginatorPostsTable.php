@@ -19,7 +19,6 @@ use Cake\Utility\Hash;
 
 /**
  * PaginatorPostsTable class
- *
  */
 class PaginatorPostsTable extends Table
 {
@@ -44,6 +43,7 @@ class PaginatorPostsTable extends Table
     {
         $field = $this->alias() . '.' . $this->primaryKey();
         $query->where([$field . ' >' => '1']);
+
         return $query;
     }
 
@@ -53,6 +53,7 @@ class PaginatorPostsTable extends Table
     public function findPublished(Query $query, array $options)
     {
         $query->where(['published' => 'Y']);
+
         return $query;
     }
 
@@ -68,6 +69,7 @@ class PaginatorPostsTable extends Table
         if (isset($options['author_id'])) {
             $query->where(['PaginatorPosts.author_id' => $options['author_id']]);
         }
+
         return $query;
     }
 }

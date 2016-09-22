@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * DebuggerTestCaseDebugger class
- *
  */
 class DebuggerTestCaseDebugger extends Debugger
 {
@@ -42,7 +41,6 @@ class DebuggableThing
  *
  * !!! Be careful with changing code below as it may
  * !!! change line numbers which are used in the tests
- *
  */
 class DebuggerTest extends TestCase
 {
@@ -387,7 +385,9 @@ TEXT;
      */
     public function testLog()
     {
-        $mock = $this->getMock('Cake\Log\Engine\BaseLog', ['log']);
+        $mock = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
+            ->setMethods(['log'])
+            ->getMock();
         Log::config('test', ['engine' => $mock]);
 
         $mock->expects($this->at(0))
@@ -419,7 +419,9 @@ TEXT;
      */
     public function testLogDepth()
     {
-        $mock = $this->getMock('Cake\Log\Engine\BaseLog', ['log']);
+        $mock = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
+            ->setMethods(['log'])
+            ->getMock();
         Log::config('test', ['engine' => $mock]);
 
         $mock->expects($this->at(0))

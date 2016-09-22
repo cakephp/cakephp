@@ -66,6 +66,7 @@ trait TupleComparisonTranslatorTrait
             $value->select($true, true);
             $expression->setField($true);
             $expression->setOperator('=');
+
             return;
         }
 
@@ -82,6 +83,7 @@ trait TupleComparisonTranslatorTrait
                 foreach (array_values($tuple) as $i => $value) {
                     $exp->add([$fields[$i] => $value]);
                 }
+
                 return $exp;
             });
         }

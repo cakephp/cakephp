@@ -21,7 +21,6 @@ use Cake\Core\Exception\Exception;
  * Slots or blocks are combined with extending views and layouts to afford slots
  * of content that are present in a layout or parent view, but are defined by the child
  * view or elements used in the view.
- *
  */
 class ViewBlock
 {
@@ -105,6 +104,7 @@ class ViewBlock
         if ($this->_discardActiveBufferOnEnd) {
             $this->_discardActiveBufferOnEnd = false;
             ob_end_clean();
+
             return;
         }
         if (!empty($this->_active)) {
@@ -129,7 +129,8 @@ class ViewBlock
      * of the new capturing context will be added to the existing block context.
      *
      * @param string $name Name of the block
-     * @param mixed $value The content for the block
+     * @param mixed $value The content for the block. Value will be type cast
+     *   to string.
      * @param string $mode If ViewBlock::APPEND content will be appended to existing content.
      *   If ViewBlock::PREPEND it will be prepended.
      * @return void
@@ -138,6 +139,7 @@ class ViewBlock
     {
         if ($value === null) {
             $this->start($name, $mode);
+
             return;
         }
 
@@ -156,7 +158,8 @@ class ViewBlock
      * existing content.
      *
      * @param string $name Name of the block
-     * @param mixed $value The content for the block.
+     * @param mixed $value The content for the block. Value will be type cast
+     *   to string.
      * @return void
      */
     public function set($name, $value)
@@ -176,6 +179,7 @@ class ViewBlock
         if (!isset($this->_blocks[$name])) {
             return $default;
         }
+
         return $this->_blocks[$name];
     }
 
@@ -208,6 +212,7 @@ class ViewBlock
     public function active()
     {
         end($this->_active);
+
         return key($this->_active);
     }
 

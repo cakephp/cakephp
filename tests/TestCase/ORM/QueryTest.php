@@ -570,13 +570,15 @@ class QueryTest extends TestCase
                         'id' => 1,
                         'name' => 'tag1',
                         '_joinData' => ['article_id' => 1, 'tag_id' => 1],
-                        'description' => 'A big description'
+                        'description' => 'A big description',
+                        'created' => new Time('2016-01-01 00:00'),
                     ],
                     [
                         'id' => 2,
                         'name' => 'tag2',
                         '_joinData' => ['article_id' => 1, 'tag_id' => 2],
-                        'description' => 'Another big description'
+                        'description' => 'Another big description',
+                        'created' => new Time('2016-01-01 00:00'),
                     ]
                 ]
             ],
@@ -591,13 +593,15 @@ class QueryTest extends TestCase
                         'id' => 1,
                         'name' => 'tag1',
                         '_joinData' => ['article_id' => 2, 'tag_id' => 1],
-                        'description' => 'A big description'
+                        'description' => 'A big description',
+                        'created' => new Time('2016-01-01 00:00'),
                     ],
                     [
                         'id' => 3,
                         'name' => 'tag3',
                         '_joinData' => ['article_id' => 2, 'tag_id' => 3],
-                        'description' => 'Yet another one'
+                        'description' => 'Yet another one',
+                        'created' => new Time('2016-01-01 00:00'),
                     ]
                 ]
             ],
@@ -636,7 +640,8 @@ class QueryTest extends TestCase
                         'id' => 3,
                         'name' => 'tag3',
                         '_joinData' => ['article_id' => 2, 'tag_id' => 3],
-                        'description' => 'Yet another one'
+                        'description' => 'Yet another one',
+                        'created' => new Time('2016-01-01 00:00'),
                     ]
                 ]
             ],
@@ -751,6 +756,7 @@ class QueryTest extends TestCase
                         'id' => 3,
                         'name' => 'tag3',
                         'description' => 'Yet another one',
+                        'created' => new Time('2016-01-01 00:00'),
                     ],
                     'ArticlesTags' => ['article_id' => 2, 'tag_id' => 3]
                 ]
@@ -777,6 +783,7 @@ class QueryTest extends TestCase
                         'id' => 2,
                         'name' => 'tag2',
                         'description' => 'Another big description',
+                        'created' => new Time('2016-01-01 00:00'),
                     ],
                     'ArticlesTags' => ['article_id' => 1, 'tag_id' => 2]
                 ]
@@ -814,6 +821,7 @@ class QueryTest extends TestCase
                         'id' => 2,
                         'name' => 'tag2',
                         'description' => 'Another big description',
+                        'created' => new Time('2016-01-01 00:00'),
                     ],
                     'articles' => [
                         'id' => 1,
@@ -841,7 +849,7 @@ class QueryTest extends TestCase
     {
         $query = new Query($this->connection, $this->table);
 
-        $stmt = $this->getMock('Cake\Database\StatementInterface');
+        $stmt = $this->getMockBuilder('Cake\Database\StatementInterface')->getMock();
         $results = new ResultSet($query, $stmt);
         $query->setResult($results);
         $this->assertSame($results, $query->all());
@@ -1269,16 +1277,20 @@ class QueryTest extends TestCase
             'name' => 'tag1',
             '_joinData' => ['article_id' => 1, 'tag_id' => 1],
             'description' => 'A big description',
+            'created' => new Time('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[0]->toArray());
+        $this->assertInstanceOf(Time::class, $first->tags[0]->created);
 
         $expected = [
             'id' => 2,
             'name' => 'tag2',
             '_joinData' => ['article_id' => 1, 'tag_id' => 2],
-            'description' => 'Another big description'
+            'description' => 'Another big description',
+            'created' => new Time('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[1]->toArray());
+        $this->assertInstanceOf(Time::class, $first->tags[1]->created);
     }
 
     /**
@@ -1303,7 +1315,6 @@ class QueryTest extends TestCase
                 });
             }, 'Model.beforeFind');
 
-
         $query = new Query($this->connection, $table);
 
         $results = $query
@@ -1322,16 +1333,20 @@ class QueryTest extends TestCase
             'name' => 'tag1',
             '_joinData' => ['article_id' => 1, 'tag_id' => 1],
             'description' => 'A big description',
+            'created' => new Time('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[0]->toArray());
+        $this->assertInstanceOf(Time::class, $first->tags[0]->created);
 
         $expected = [
             'id' => 2,
             'name' => 'tag2',
             '_joinData' => ['article_id' => 1, 'tag_id' => 2],
-            'description' => 'Another big description'
+            'description' => 'Another big description',
+            'created' => new Time('2016-01-01 00:00'),
         ];
         $this->assertEquals($expected, $first->tags[1]->toArray());
+        $this->assertInstanceOf(Time::class, $first->tags[0]->created);
     }
 
     /**
@@ -1650,6 +1665,7 @@ class QueryTest extends TestCase
             ->group(['author_id'])
             ->counter(function ($q) use ($query) {
                 $this->assertNotSame($q, $query);
+
                 return $q->select([], true)->group([], true)->count();
             });
 
@@ -1751,6 +1767,7 @@ class QueryTest extends TestCase
         $identity = function ($a) {
             return $a;
         };
+
         return [
             ['filter', $identity],
             ['reject', $identity],
@@ -1781,13 +1798,14 @@ class QueryTest extends TestCase
      */
     public function testCollectionProxy($method, $arg)
     {
-        $query = $this->getMock(
-            '\Cake\ORM\Query',
-            ['all'],
-            [$this->connection, $this->table]
-        );
+        $query = $this->getMockBuilder('\Cake\ORM\Query')
+            ->setMethods(['all'])
+            ->setConstructorArgs([$this->connection, $this->table])
+            ->getMock();
         $query->select();
-        $resultSet = $this->getMock('\Cake\ORM\ResultSet', [], [$query, null]);
+        $resultSet = $this->getMockbuilder('\Cake\ORM\ResultSet')
+            ->setConstructorArgs([$query, null])
+            ->getMock();
         $query->expects($this->once())
             ->method('all')
             ->will($this->returnValue($resultSet));
@@ -1835,17 +1853,18 @@ class QueryTest extends TestCase
      */
     public function testCacheReadIntegration()
     {
-        $query = $this->getMock(
-            '\Cake\ORM\Query',
-            ['execute'],
-            [$this->connection, $this->table]
-        );
-        $resultSet = $this->getMock('\Cake\ORM\ResultSet', [], [$query, null]);
+        $query = $this->getMockBuilder('\Cake\ORM\Query')
+            ->setMethods(['execute'])
+            ->setConstructorArgs([$this->connection, $this->table])
+            ->getMock();
+        $resultSet = $this->getMockBuilder('\Cake\ORM\ResultSet')
+            ->setConstructorArgs([$query, null])
+            ->getMock();
 
         $query->expects($this->never())
             ->method('execute');
 
-        $cacher = $this->getMock('Cake\Cache\CacheEngine');
+        $cacher = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $cacher->expects($this->once())
             ->method('read')
             ->with('my_key')
@@ -1870,7 +1889,7 @@ class QueryTest extends TestCase
 
         $query->select(['id', 'title']);
 
-        $cacher = $this->getMock('Cake\Cache\CacheEngine');
+        $cacher = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $cacher->expects($this->once())
             ->method('write')
             ->with(
@@ -2077,6 +2096,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection, $table);
         $query->select()->formatResults(function ($results) {
             $this->assertInstanceOf('Cake\ORM\ResultSet', $results);
+
             return $results->indexBy('id');
         });
         $this->assertEquals([1, 2, 3, 4], array_keys($query->toArray()));
@@ -2093,6 +2113,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection, $table);
         $query->select()->formatResults(function ($results) {
             $this->assertInstanceOf('Cake\ORM\ResultSet', $results);
+
             return $results->indexBy('id');
         });
 
@@ -2204,12 +2225,14 @@ class QueryTest extends TestCase
                     ->formatResults(function ($authors) {
                         return $authors->map(function ($author) {
                             $author->idCopy = $author->id;
+
                             return $author;
                         });
                     })
                     ->formatResults(function ($authors) {
                         return $authors->map(function ($author) {
                             $author->idCopy = $author->idCopy + 2;
+
                             return $author;
                         });
                     });
@@ -2239,12 +2262,14 @@ class QueryTest extends TestCase
                 ->formatResults(function ($results) {
                     return $results->map(function ($result) {
                         $result->idCopy = $result->id;
+
                         return $result;
                     });
                 })
                 ->formatResults(function ($results) {
                     return $results->map(function ($result) {
                         $result->idCopy = $result->idCopy + 2;
+
                         return $result;
                     });
                 });
@@ -2286,6 +2311,7 @@ class QueryTest extends TestCase
             return $q->formatResults(function ($results) {
                 return $results->map(function ($tag) {
                     $tag->name .= ' - visited';
+
                     return $tag;
                 });
             });
@@ -2470,6 +2496,7 @@ class QueryTest extends TestCase
         $table->hasMany('articles');
         $query = $table->find()->contain(['articles' => function ($q) {
             $this->assertTrue($q->eagerLoaded());
+
             return $q;
         }]);
         $this->assertFalse($query->eagerLoaded());
@@ -2991,22 +3018,22 @@ class QueryTest extends TestCase
 
         $results = $table
             ->find()
-            ->select(['total_articles' => 'count(articles.id)'])
+            ->select([
+                'authors.id',
+                'tagged_articles' => 'count(tags.id)'
+            ])
             ->leftJoinWith('articles.tags', function ($q) {
                 return $q->where(['tags.name' => 'tag3']);
             })
-            ->autoFields(true)
-            ->group(['authors.id', 'authors.name']);
+            ->group(['authors.id']);
 
         $expected = [
-            1 => 2,
+            1 => 0,
             2 => 0,
             3 => 1,
             4 => 0
         ];
-        $this->assertEquals($expected, $results->combine('id', 'total_articles')->toArray());
-        $fields = ['total_articles', 'id', 'name'];
-        $this->assertEquals($fields, array_keys($results->first()->toArray()));
+        $this->assertEquals($expected, $results->combine('id', 'tagged_articles')->toArray());
     }
 
     /**
@@ -3028,7 +3055,6 @@ class QueryTest extends TestCase
             })
             ->autoFields(true)
             ->where(['ArticlesTags.tag_id' => 3])
-            ->distinct(['authors.id'])
             ->all();
 
         $expected = ['id' => 2, 'title' => 'Second Article'];
@@ -3164,8 +3190,9 @@ class QueryTest extends TestCase
             ->hydrate(false)
             ->notMatching('tags', function ($q) {
                 return $q->where(['tags.name' => 'tag2']);
-            })
-            ->toArray();
+            });
+
+        $results = $results->toArray();
 
         $expected = [
             [
@@ -3199,6 +3226,7 @@ class QueryTest extends TestCase
 
         $results = $table->find()
             ->hydrate(false)
+            ->select('authors.id')
             ->notMatching('articles.tags', function ($q) {
                 return $q->where(['tags.name' => 'tag3']);
             })

@@ -36,11 +36,10 @@ class CookieComponentTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $controller = $this->getMock(
-            'Cake\Controller\Controller',
-            ['redirect'],
-            [new Request(), new Response()]
-        );
+        $controller = $this->getMockBuilder('Cake\Controller\Controller')
+            ->setMethods(['redirect'])
+            ->setConstructorArgs([new Request(), new Response()])
+            ->getMock();
         $controller->loadComponent('Cookie');
         $this->Controller = $controller;
         $this->Cookie = $controller->Cookie;
@@ -758,6 +757,7 @@ class CookieComponentTest extends TestCase
         foreach ($array as $key => $value) {
             $string .= ',' . $key . '|' . $value;
         }
+
         return substr($string, 1);
     }
 
@@ -783,6 +783,7 @@ class CookieComponentTest extends TestCase
         if (is_array($value)) {
             $value = $this->_implode($value);
         }
+
         return "Q2FrZQ==." . base64_encode(Security::encrypt($value, $this->Cookie->config('key')));
     }
 }

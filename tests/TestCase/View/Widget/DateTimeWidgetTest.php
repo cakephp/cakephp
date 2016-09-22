@@ -40,7 +40,7 @@ class DateTimeWidgetTest extends TestCase
             'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}'
         ];
         $this->templates = new StringTemplate($templates);
-        $this->context = $this->getMock('Cake\View\Form\ContextInterface');
+        $this->context = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
         $this->selectBox = new SelectBoxWidget($this->templates);
         $this->DateTime = new DateTimeWidget($this->templates, $this->selectBox);
     }
@@ -134,6 +134,7 @@ class DateTimeWidgetTest extends TestCase
     public static function selectedValuesProvider()
     {
         $date = new \DateTime('2014-01-20 12:30:45');
+
         return [
             'DateTime' => [$date],
             'string' => [$date->format('Y-m-d H:i:s')],

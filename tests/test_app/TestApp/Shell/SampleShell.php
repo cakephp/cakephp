@@ -16,8 +16,7 @@
  */
 
 /**
- * Class SampleShell
- *
+ * SampleShell
  */
 namespace TestApp\Shell;
 
@@ -26,7 +25,7 @@ use Cake\Console\Shell;
 class SampleShell extends Shell
 {
 
-    public $tasks = ['Sample'];
+    public $tasks = ['Sample', 'Load'];
 
     /**
      * main method

@@ -14,7 +14,6 @@ namespace Cake\Network\Exception;
 
 /**
  * Represents an HTTP 401 error.
- *
  */
 class UnauthorizedException extends HttpException
 {

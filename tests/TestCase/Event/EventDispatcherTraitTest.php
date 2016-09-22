@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * EventDispatcherTrait test case
- *
  */
 class EventDispatcherTraitTest extends TestCase
 {

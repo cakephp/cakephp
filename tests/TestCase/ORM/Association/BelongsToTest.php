@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests BelongsTo class
- *
  */
 class BelongsToTest extends TestCase
 {
@@ -265,7 +264,9 @@ class BelongsToTest extends TestCase
      */
     public function testCascadeDelete()
     {
-        $mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+        $mock = $this->getMockBuilder('Cake\ORM\Table')
+            ->disableOriginalConstructor()
+            ->getMock();
         $config = [
             'sourceTable' => $this->client,
             'targetTable' => $mock,
@@ -287,7 +288,10 @@ class BelongsToTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities()
     {
-        $mock = $this->getMock('Cake\ORM\Table', ['saveAssociated'], [], '', false);
+        $mock = $this->getMockBuilder('Cake\ORM\Table')
+            ->setMethods(['saveAssociated'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $config = [
             'sourceTable' => $this->client,
             'targetTable' => $mock,
@@ -326,7 +330,9 @@ class BelongsToTest extends TestCase
      */
     public function testPropertyNoPlugin()
     {
-        $mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+        $mock = $this->getMockBuilder('Cake\ORM\Table')
+            ->disableOriginalConstructor()
+            ->getMock();
         $config = [
             'sourceTable' => $this->client,
             'targetTable' => $mock,
@@ -348,7 +354,9 @@ class BelongsToTest extends TestCase
             'sourceTable' => $this->client,
             'targetTable' => $this->company
         ];
-        $listener = $this->getMock('stdClass', ['__invoke']);
+        $listener = $this->getMockBuilder('stdClass')
+            ->setMethods(['__invoke'])
+            ->getMock();
         $this->company->eventManager()->attach($listener, 'Model.beforeFind');
         $association = new BelongsTo('Companies', $config);
         $listener->expects($this->once())->method('__invoke')
@@ -374,7 +382,9 @@ class BelongsToTest extends TestCase
             'sourceTable' => $this->client,
             'targetTable' => $this->company
         ];
-        $listener = $this->getMock('stdClass', ['__invoke']);
+        $listener = $this->getMockBuilder('stdClass')
+            ->setMethods(['__invoke'])
+            ->getMock();
         $this->company->eventManager()->attach($listener, 'Model.beforeFind');
         $association = new BelongsTo('Companies', $config);
         $options = new \ArrayObject(['something' => 'more']);

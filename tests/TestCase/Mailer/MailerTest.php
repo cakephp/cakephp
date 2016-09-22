@@ -19,7 +19,10 @@ class MailerTest extends TestCase
 {
     public function getMockForEmail($methods = [], $args = [])
     {
-        return $this->getMock('Cake\Mailer\Email', (array)$methods, (array)$args);
+        return $this->getMockBuilder('Cake\Mailer\Email')
+            ->setMethods((array)$methods)
+            ->setConstructorArgs((array)$args)
+            ->getMock();
     }
 
     public function testConstructor()
@@ -103,7 +106,10 @@ class MailerTest extends TestCase
             ->method('send')
             ->will($this->returnValue([]));
 
-        $mailer = $this->getMock('TestApp\Mailer\TestMailer', ['test'], [$email]);
+        $mailer = $this->getMockBuilder('TestApp\Mailer\TestMailer')
+            ->setMethods(['test'])
+            ->setConstructorArgs([$email])
+            ->getMock();
         $mailer->expects($this->once())
             ->method('test')
             ->with('foo', 'bar');
@@ -120,7 +126,10 @@ class MailerTest extends TestCase
             ->method('send')
             ->will($this->returnValue([]));
 
-        $mailer = $this->getMock('TestApp\Mailer\TestMailer', ['test'], [$email]);
+        $mailer = $this->getMockBuilder('TestApp\Mailer\TestMailer')
+            ->setMethods(['test'])
+            ->setConstructorArgs([$email])
+            ->getMock();
         $mailer->expects($this->once())
             ->method('test')
             ->with('foo', 'bar');
@@ -141,7 +150,10 @@ class MailerTest extends TestCase
             ->method('send')
             ->will($this->returnValue([]));
 
-        $mailer = $this->getMock('TestApp\Mailer\TestMailer', ['test'], [$email]);
+        $mailer = $this->getMockBuilder('TestApp\Mailer\TestMailer')
+            ->setMethods(['test'])
+            ->setConstructorArgs([$email])
+            ->getMock();
         $mailer->expects($this->once())
             ->method('test')
             ->with('foo', 'bar');

@@ -25,7 +25,6 @@ use ReflectionMethod;
 
 /**
  * Base class for Shell Command reflection.
- *
  */
 class CommandTask extends Shell
 {
@@ -74,6 +73,7 @@ class CommandTask extends Shell
         foreach ($shells as $shell) {
             $shellList[$type][] = Inflector::underscore(str_replace('Shell', '', $shell));
         }
+
         return $shellList;
     }
 
@@ -98,6 +98,7 @@ class CommandTask extends Shell
             }
             $shells[] = substr($file, 0, -4);
         }
+
         return $shells;
     }
 
@@ -163,7 +164,7 @@ class CommandTask extends Shell
             }
         }
 
-        $return += array_diff($methodNames, $shellMethodNames);
+        $return = array_merge($return, array_diff($methodNames, $shellMethodNames));
         sort($return);
 
         return $return;
@@ -252,6 +253,7 @@ class CommandTask extends Shell
                 $options[] = "-$short";
             }
         }
+
         return $options;
     }
 }

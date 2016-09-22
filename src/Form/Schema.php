@@ -49,6 +49,7 @@ class Schema
         foreach ($fields as $name => $attrs) {
             $this->addField($name, $attrs);
         }
+
         return $this;
     }
 
@@ -67,6 +68,7 @@ class Schema
         }
         $attrs = array_intersect_key($attrs, $this->_fieldDefaults);
         $this->_fields[$name] = $attrs + $this->_fieldDefaults;
+
         return $this;
     }
 
@@ -79,6 +81,7 @@ class Schema
     public function removeField($name)
     {
         unset($this->_fields[$name]);
+
         return $this;
     }
 
@@ -103,6 +106,7 @@ class Schema
         if (!isset($this->_fields[$name])) {
             return null;
         }
+
         return $this->_fields[$name];
     }
 
@@ -119,6 +123,7 @@ class Schema
         if (!$field) {
             return null;
         }
+
         return $field['type'];
     }
 

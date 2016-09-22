@@ -195,6 +195,7 @@ class Behavior implements EventListenerInterface
         if (isset($config[$key]) && $config[$key] === []) {
             $this->config($key, [], false);
             unset($config[$key]);
+
             return $config;
         }
 
@@ -207,6 +208,7 @@ class Behavior implements EventListenerInterface
         }
         $this->config($key, array_flip($indexedCustom), false);
         unset($config[$key]);
+
         return $config;
     }
 
@@ -278,6 +280,7 @@ class Behavior implements EventListenerInterface
                 ];
             }
         }
+
         return $events;
     }
 
@@ -363,7 +366,9 @@ class Behavior implements EventListenerInterface
         $eventMethods = [];
         foreach ($events as $e => $binding) {
             if (is_array($binding) && isset($binding['callable'])) {
-                $binding = $binding['callable'];
+                /* @var string $callable */
+                $callable = $binding['callable'];
+                $binding = $callable;
             }
             $eventMethods[$binding] = true;
         }

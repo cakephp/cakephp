@@ -292,8 +292,10 @@ trait EntityTrait
 
         if ($method) {
             $result = $this->{$method}($value);
+
             return $result;
         }
+
         return $value;
     }
 
@@ -312,7 +314,26 @@ trait EntityTrait
         if (array_key_exists($property, $this->_original)) {
             return $this->_original[$property];
         }
+
         return $this->get($property);
+    }
+
+    /**
+     * Gets all original values of the entity.
+     *
+     * @return array
+     */
+    public function getOriginalValues()
+    {
+        $originals = $this->_original;
+        $originalKeys = array_keys($originals);
+        foreach ($this->_properties as $key => $value) {
+            if (!in_array($key, $originalKeys)) {
+                $originals[$key] = $value;
+            }
+        }
+
+        return $originals;
     }
 
     /**
@@ -349,6 +370,7 @@ trait EntityTrait
                 return false;
             }
         }
+
         return true;
     }
 
@@ -391,6 +413,7 @@ trait EntityTrait
             return $this->_hidden;
         }
         $this->_hidden = $properties;
+
         return $this;
     }
 
@@ -409,6 +432,7 @@ trait EntityTrait
             return $this->_virtual;
         }
         $this->_virtual = $properties;
+
         return $this;
     }
 
@@ -425,6 +449,7 @@ trait EntityTrait
     {
         $properties = array_keys($this->_properties);
         $properties = array_merge($properties, $this->_virtual);
+
         return array_diff($properties, $this->_hidden);
     }
 
@@ -457,6 +482,7 @@ trait EntityTrait
                 $result[$property] = $value;
             }
         }
+
         return $result;
     }
 
@@ -467,7 +493,7 @@ trait EntityTrait
      */
     public function jsonSerialize()
     {
-        return $this->toArray();
+        return $this->extract($this->visibleProperties());
     }
 
     /**
@@ -575,6 +601,7 @@ trait EntityTrait
                 $result[$property] = $this->get($property);
             }
         }
+
         return $result;
     }
 
@@ -594,6 +621,7 @@ trait EntityTrait
         foreach ($properties as $property) {
             $result[$property] = $this->getOriginal($property);
         }
+
         return $result;
     }
 
@@ -616,6 +644,7 @@ trait EntityTrait
                 $result[$property] = $original;
             }
         }
+
         return $result;
     }
 
@@ -645,11 +674,13 @@ trait EntityTrait
 
         if ($isDirty === false) {
             unset($this->_dirty[$property]);
+
             return false;
         }
 
         $this->_dirty[$property] = true;
         unset($this->_errors[$property], $this->_invalid[$property]);
+
         return true;
     }
 
@@ -665,6 +696,7 @@ trait EntityTrait
         $this->_dirty = [];
         $this->_errors = [];
         $this->_invalid = [];
+        $this->_original = [];
     }
 
     /**
@@ -731,6 +763,7 @@ trait EntityTrait
     {
         if ($field === null) {
             $diff = array_diff_key($this->_properties, $this->_errors);
+
             return $this->_errors + (new Collection($diff))
                 ->filter(function ($value) {
                     return is_array($value) || $value instanceof EntityInterface;
@@ -747,6 +780,7 @@ trait EntityTrait
             if ($errors) {
                 return $errors;
             }
+
             return $this->_nestedErrors($field);
         }
 
@@ -803,6 +837,7 @@ trait EntityTrait
         if (count($path) <= 1) {
             return $this->_readError($entity, array_pop($path));
         }
+
         return [];
     }
 
@@ -824,8 +859,10 @@ trait EntityTrait
                     return $val->errors();
                 }
             }, $object);
+
             return array_filter($array);
         }
+
         return [];
     }
 
@@ -849,6 +886,7 @@ trait EntityTrait
 
         if (is_string($field) && $value === null) {
             $value = isset($this->_invalid[$field]) ? $this->_invalid[$field] : null;
+
             return $value;
         }
 
@@ -915,6 +953,7 @@ trait EntityTrait
                 return (bool)$set;
             }, $this->_accessible);
             $this->_accessible['*'] = (bool)$set;
+
             return $this;
         }
 

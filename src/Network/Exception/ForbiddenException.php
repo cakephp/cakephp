@@ -14,7 +14,6 @@ namespace Cake\Network\Exception;
 
 /**
  * Represents an HTTP 403 error.
- *
  */
 class ForbiddenException extends HttpException
 {

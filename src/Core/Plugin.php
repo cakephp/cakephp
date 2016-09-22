@@ -116,6 +116,7 @@ class Plugin
                 list($name, $conf) = (is_numeric($name)) ? [$conf, $config] : [$name, $conf];
                 static::load($name, $conf);
             }
+
             return;
         }
 
@@ -190,6 +191,7 @@ class Plugin
             $vendorFile = dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
             if (!file_exists($vendorFile)) {
                 Configure::write(['plugins' => []]);
+
                 return;
             }
         }
@@ -263,6 +265,7 @@ class Plugin
         if (empty(static::$_plugins[$plugin])) {
             throw new MissingPluginException(['plugin' => $plugin]);
         }
+
         return static::$_plugins[$plugin]['path'];
     }
 
@@ -278,6 +281,7 @@ class Plugin
         if (empty(static::$_plugins[$plugin])) {
             throw new MissingPluginException(['plugin' => $plugin]);
         }
+
         return static::$_plugins[$plugin]['classPath'];
     }
 
@@ -293,6 +297,7 @@ class Plugin
         if (empty(static::$_plugins[$plugin])) {
             throw new MissingPluginException(['plugin' => $plugin]);
         }
+
         return static::$_plugins[$plugin]['configPath'];
     }
 
@@ -330,12 +335,14 @@ class Plugin
             foreach (static::loaded() as $p) {
                 static::routes($p);
             }
+
             return true;
         }
         $config = static::$_plugins[$plugin];
         if ($config['routes'] === false) {
             return false;
         }
+
         return (bool)static::_includeFile(
             $config['configPath'] . 'routes.php',
             $config['ignoreMissing']
@@ -357,6 +364,7 @@ class Plugin
         }
         $return = array_keys(static::$_plugins);
         sort($return);
+
         return $return;
     }
 
@@ -387,6 +395,7 @@ class Plugin
         if ($ignoreMissing && !is_file($file)) {
             return false;
         }
+
         return include $file;
     }
 }

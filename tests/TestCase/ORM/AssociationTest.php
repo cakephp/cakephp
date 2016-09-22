@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * A Test double used to assert that default tables are created
- *
  */
 class TestTable extends Table
 {
@@ -40,7 +39,6 @@ class TestTable extends Table
 
 /**
  * Tests Association class
- *
  */
 class AssociationTest extends TestCase
 {
@@ -62,14 +60,13 @@ class AssociationTest extends TestCase
             'sourceTable' => $this->source,
             'joinType' => 'INNER'
         ];
-        $this->association = $this->getMock(
-            '\Cake\ORM\Association',
-            [
+        $this->association = $this->getMockBuilder('\Cake\ORM\Association')
+            ->setMethods([
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type'
-            ],
-            ['Foo', $config]
-        );
+            ])
+            ->setConstructorArgs(['Foo', $config])
+            ->getMock();
     }
 
     /**
@@ -128,14 +125,13 @@ class AssociationTest extends TestCase
         $config = [
             'className' => 'Test',
         ];
-        $this->association = $this->getMock(
-            '\Cake\ORM\Association',
-            [
+        $this->association = $this->getMockBuilder('\Cake\ORM\Association')
+            ->setMethods([
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type'
-            ],
-            ['Foo', $config]
-        );
+            ])
+            ->setConstructorArgs(['Foo', $config])
+            ->getMock();
 
         $this->assertEquals('Test', $this->association->className());
     }
@@ -266,11 +262,10 @@ class AssociationTest extends TestCase
             'joinType' => 'INNER'
         ];
 
-        $this->association = $this->getMock(
-            '\Cake\ORM\Association',
-            ['type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated'],
-            ['ThisAssociationName', $config]
-        );
+        $this->association = $this->getMockBuilder('\Cake\ORM\Association')
+            ->setMethods(['type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated'])
+            ->setConstructorArgs(['ThisAssociationName', $config])
+            ->getMock();
 
         $table = $this->association->target();
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $table);
@@ -360,14 +355,13 @@ class AssociationTest extends TestCase
             'joinType' => 'INNER',
             'propertyName' => 'foo'
         ];
-        $association = $this->getMock(
-            '\Cake\ORM\Association',
-            [
+        $association = $this->getMockBuilder('\Cake\ORM\Association')
+            ->setMethods([
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type'
-            ],
-            ['Foo', $config]
-        );
+            ])
+            ->setConstructorArgs(['Foo', $config])
+            ->getMock();
 
         $this->assertEquals('foo', $association->property());
     }
@@ -426,11 +420,10 @@ class AssociationTest extends TestCase
             'joinType' => 'INNER',
             'finder' => 'published'
         ];
-        $assoc = $this->getMock(
-            '\Cake\ORM\Association',
-            ['type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated'],
-            ['Foo', $config]
-        );
+        $assoc = $this->getMockBuilder('\Cake\ORM\Association')
+            ->setMethods(['type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated'])
+            ->setConstructorArgs(['Foo', $config])
+            ->getMock();
         $this->assertEquals('published', $assoc->finder());
     }
 
@@ -456,16 +449,15 @@ class AssociationTest extends TestCase
      */
     public function testLocatorInConstructor()
     {
-        $locator = $this->getMock('Cake\ORM\Locator\LocatorInterface');
+        $locator = $this->getMockBuilder('Cake\ORM\Locator\LocatorInterface')->getMock();
         $config = [
             'className' => '\Cake\Test\TestCase\ORM\TestTable',
             'tableLocator' => $locator
         ];
-        $assoc = $this->getMock(
-            '\Cake\ORM\Association',
-            ['type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated'],
-            ['Foo', $config]
-        );
+        $assoc = $this->getMockBuilder('\Cake\ORM\Association')
+            ->setMethods(['type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated'])
+            ->setConstructorArgs(['Foo', $config])
+            ->getMock();
         $this->assertEquals($locator, $assoc->tableLocator());
     }
 }

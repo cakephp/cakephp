@@ -30,7 +30,6 @@ use TestApp\View\AppView;
 
 /**
  * ViewPostsController class
- *
  */
 class ViewPostsController extends Controller
 {
@@ -70,7 +69,6 @@ class ViewPostsController extends Controller
 
 /**
  * ThemePostsController class
- *
  */
 class ThemePostsController extends Controller
 {
@@ -91,7 +89,6 @@ class ThemePostsController extends Controller
 
 /**
  * TestView class
- *
  */
 class TestView extends AppView
 {
@@ -149,7 +146,6 @@ class TestView extends AppView
 
 /**
  * TestBeforeAfterHelper class
- *
  */
 class TestBeforeAfterHelper extends Helper
 {
@@ -185,7 +181,7 @@ class TestBeforeAfterHelper extends Helper
 }
 
 /**
- * Class TestObjectWithToString
+ * TestObjectWithToString
  *
  * An object with the magic method __toString() for testing with view blocks.
  */
@@ -204,7 +200,7 @@ class TestObjectWithToString
 }
 
 /**
- * Class TestObjectWithoutToString
+ * TestObjectWithoutToString
  *
  * An object without the magic method __toString() for testing with view blocks.
  */
@@ -213,7 +209,7 @@ class TestObjectWithoutToString
 }
 
 /**
- * Class TestViewEventListenerInterface
+ * TestViewEventListenerInterface
  *
  * An event listener to test cakePHP events
  */
@@ -272,7 +268,6 @@ class TestViewEventListenerInterface implements EventListenerInterface
 
 /**
  * ViewTest class
- *
  */
 class ViewTest extends TestCase
 {
@@ -335,8 +330,8 @@ class ViewTest extends TestCase
      */
     public function testGetTemplate()
     {
-        $request = $this->getMock('Cake\Network\Request');
-        $response = $this->getMock('Cake\Network\Response');
+        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $viewOptions = [
             'plugin' => null,
@@ -411,8 +406,8 @@ class ViewTest extends TestCase
      */
     public function testPluginGetTemplateAbsoluteFail()
     {
-        $request = $this->getMock('Cake\Network\Request');
-        $response = $this->getMock('Cake\Network\Response');
+        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $viewOptions = [
             'plugin' => null,
@@ -591,8 +586,8 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages'
         ];
-        $request = $this->getMock('Cake\Network\Request');
-        $response = $this->getMock('Cake\Network\Response');
+        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $View = new TestView(null, null, null, $viewOptions);
 
@@ -637,8 +632,8 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages',
         ];
-        $request = $this->getMock('Cake\Network\Request');
-        $response = $this->getMock('Cake\Network\Response');
+        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $view = new TestView(null, null, null, $viewOptions);
         $view->ext('.php');
@@ -757,8 +752,8 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages',
         ];
-        $request = $this->getMock('Cake\Network\Request');
-        $response = $this->getMock('Cake\Network\Response');
+        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $view = new TestView(null, null, null, $viewOptions);
         $view->ext('.php');
@@ -777,8 +772,8 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages'
         ];
-        $request = $this->getMock('Cake\Network\Request');
-        $response = $this->getMock('Cake\Network\Response');
+        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
 
         $View = new TestView($request, $response, null, $viewOptions);
         $View->getViewFileName('does_not_exist');
@@ -849,7 +844,7 @@ class ViewTest extends TestCase
         $this->assertFalse($result);
 
         $this->View->plugin = 'TestPlugin';
-        $result = $this->View->elementExists('test_plugin_element');
+        $result = $this->View->elementExists('plugin_element');
         $this->assertTrue($result);
     }
 
@@ -864,11 +859,14 @@ class ViewTest extends TestCase
         $this->assertEquals('this is the test element', $result);
 
         $result = $this->View->element('TestPlugin.plugin_element');
-        $this->assertEquals('this is the plugin element using params[plugin]', $result);
+        $this->assertEquals("Element in the TestPlugin\n", $result);
 
         $this->View->plugin = 'TestPlugin';
-        $result = $this->View->element('test_plugin_element');
-        $this->assertEquals('this is the test set using View::$plugin plugin element', $result);
+        $result = $this->View->element('plugin_element');
+        $this->assertEquals("Element in the TestPlugin\n", $result);
+
+        $result = $this->View->element('plugin_element', [], ['plugin' => false]);
+        $this->assertEquals("Plugin element overridden in app\n", $result);
     }
 
     /**
@@ -994,13 +992,13 @@ class ViewTest extends TestCase
         $expected = 'this is the test element';
         $this->assertEquals($expected, $result);
 
-        $result = Cache::read('element__test_element_cache_callbacks', 'test_view');
+        $result = Cache::read('element__test_element', 'test_view');
         $this->assertEquals($expected, $result);
 
         $result = $View->element('test_element', ['param' => 'one', 'foo' => 'two'], ['cache' => true]);
         $this->assertEquals($expected, $result);
 
-        $result = Cache::read('element__test_element_cache_callbacks_param_foo', 'test_view');
+        $result = Cache::read('element__test_element_param_foo', 'test_view');
         $this->assertEquals($expected, $result);
 
         $View->element('test_element', [
@@ -1019,7 +1017,7 @@ class ViewTest extends TestCase
         ], [
             'cache' => ['config' => 'test_view'],
         ]);
-        $result = Cache::read('element__test_element_cache_callbacks_param_foo', 'test_view');
+        $result = Cache::read('element__test_element_param_foo', 'test_view');
         $this->assertEquals($expected, $result);
 
         Cache::clear(true, 'test_view');
@@ -1144,7 +1142,7 @@ class ViewTest extends TestCase
         $View = $this->PostsController->createView();
         $View->templatePath($this->PostsController->name);
 
-        $manager = $this->getMock('Cake\Event\EventManager');
+        $manager = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $View->eventManager($manager);
 
         $manager->expects($this->at(0))->method('dispatch')

@@ -73,6 +73,7 @@ trait PostgresDialectTrait
         if (!$query->clause('epilog')) {
             $query->epilog('RETURNING *');
         }
+
         return $query;
     }
 
@@ -85,6 +86,7 @@ trait PostgresDialectTrait
     protected function _expressionTranslators()
     {
         $namespace = 'Cake\Database\Expression';
+
         return [
             $namespace . '\FunctionExpression' => '_transformFunctionExpression'
         ];
@@ -138,6 +140,7 @@ trait PostgresDialectTrait
                         if ($key === 1) {
                             $p = sprintf("'%s'", $p);
                         }
+
                         return $p;
                     });
                 break;
@@ -164,6 +167,7 @@ trait PostgresDialectTrait
         if (!$this->_schemaDialect) {
             $this->_schemaDialect = new PostgresSchema($this);
         }
+
         return $this->_schemaDialect;
     }
 

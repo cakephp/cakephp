@@ -14,8 +14,7 @@
  */
 
 /**
- * Class SampleShell
- *
+ * SampleShell
  */
 namespace TestPlugin\Shell;
 

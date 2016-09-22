@@ -21,8 +21,7 @@ use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class TestRequest
- *
+ * TestRequest
  */
 class RequestTest extends TestCase
 {
@@ -55,6 +54,25 @@ class RequestTest extends TestCase
         if (!empty($this->_case)) {
             $_GET['case'] = $this->_case;
         }
+    }
+
+    /**
+     * Test custom detector with extra arguments.
+     *
+     * @return void
+     */
+    public function testCustomArgsDetector()
+    {
+        $request = new Request();
+        $request->addDetector('controller', function ($request, $name) {
+            return $request->param('controller') === $name;
+        });
+
+        $request->params = ['controller' => 'cake'];
+        $this->assertTrue($request->is('controller', 'cake'));
+        $this->assertFalse($request->is('controller', 'nonExistingController'));
+        $this->assertTrue($request->isController('cake'));
+        $this->assertFalse($request->isController('nonExistingController'));
     }
 
     /**
@@ -175,6 +193,20 @@ class RequestTest extends TestCase
         $_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/other/path?url=http://cakephp.org';
         $request = Request::createFromGlobals();
         $this->assertEquals('other/path', $request->url);
+    }
+
+    /**
+     * Test that URL in path is handled correctly.
+     */
+    public function testUrlInPath()
+    {
+        $_SERVER['REQUEST_URI'] = '/jump/http://cakephp.org';
+        $request = Request::createFromGlobals();
+        $this->assertEquals('jump/http://cakephp.org', $request->url);
+
+        $_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/jump/http://cakephp.org';
+        $request = Request::createFromGlobals();
+        $this->assertEquals('jump/http://cakephp.org', $request->url);
     }
 
     /**
@@ -573,6 +605,14 @@ class RequestTest extends TestCase
         $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
         $result = $request->referer(true);
         $this->assertSame('/some/path', $result);
+
+        $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/0');
+        $result = $request->referer(true);
+        $this->assertSame('/0', $result);
+
+        $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/');
+        $result = $request->referer(true);
+        $this->assertSame('/', $result);
 
         $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
         $result = $request->referer(false);
@@ -1016,11 +1056,17 @@ class RequestTest extends TestCase
     {
         $request = new Request(['environment' => [
             'HTTP_HOST' => 'localhost',
-            'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-ca) AppleWebKit/534.8+ (KHTML, like Gecko) Version/5.0 Safari/533.16'
+            'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-ca) AppleWebKit/534.8+ (KHTML, like Gecko) Version/5.0 Safari/533.16',
+            'CONTENT_TYPE' => 'application/json',
+            'CONTENT_LENGTH' => 1337,
+            'HTTP_CONTENT_MD5' => 'abc123'
         ]]);
 
         $this->assertEquals($request->env('HTTP_HOST'), $request->header('host'));
         $this->assertEquals($request->env('HTTP_USER_AGENT'), $request->header('User-Agent'));
+        $this->assertEquals($request->env('CONTENT_LENGTH'), $request->header('content-length'));
+        $this->assertEquals($request->env('CONTENT_TYPE'), $request->header('content-type'));
+        $this->assertEquals($request->env('HTTP_CONTENT_MD5'), $request->header('content-md5'));
     }
 
     /**
@@ -2292,7 +2338,9 @@ class RequestTest extends TestCase
      */
     public function testInput()
     {
-        $request = $this->getMock('Cake\Network\Request', ['_readInput']);
+        $request = $this->getMockBuilder('Cake\Network\Request')
+            ->setMethods(['_readInput'])
+            ->getMock();
         $request->expects($this->once())->method('_readInput')
             ->will($this->returnValue('I came from stdin'));
 
@@ -2307,7 +2355,9 @@ class RequestTest extends TestCase
      */
     public function testInputDecode()
     {
-        $request = $this->getMock('Cake\Network\Request', ['_readInput']);
+        $request = $this->getMockBuilder('Cake\Network\Request')
+            ->setMethods(['_readInput'])
+            ->getMock();
         $request->expects($this->once())->method('_readInput')
             ->will($this->returnValue('{"name":"value"}'));
 
@@ -2329,7 +2379,9 @@ class RequestTest extends TestCase
 </post>
 XML;
 
-        $request = $this->getMock('Cake\Network\Request', ['_readInput']);
+        $request = $this->getMockBuilder('Cake\Network\Request')
+            ->setMethods(['_readInput'])
+            ->getMock();
         $request->expects($this->once())->method('_readInput')
             ->will($this->returnValue($xml));
 

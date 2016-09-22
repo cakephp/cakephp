@@ -16,7 +16,6 @@ use Cake\ORM\Table;
 
 /**
  * Tag table class
- *
  */
 class ArticlesTagsTable extends Table
 {

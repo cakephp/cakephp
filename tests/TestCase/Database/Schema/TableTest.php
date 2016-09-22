@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Mock class for testing baseType inheritance
- *
  */
 class FooType extends Type
 {
@@ -217,6 +216,7 @@ class TableTest extends TestCase
             'null' => null,
             'fixed' => null,
             'comment' => null,
+            'collate' => null,
         ];
         $this->assertEquals($expected, $result);
 
@@ -304,11 +304,44 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test adding an constraint with an overlapping unique index
+     * >
+     * @return void
+     */
+    public function testAddConstraintOverwriteUniqueIndex()
+    {
+        $table = new Table('articles');
+        $table->addColumn('project_id', [
+            'type' => 'integer',
+            'default' => null,
+            'limit' => 11,
+            'null' => false,
+        ])->addColumn('id', [
+            'type' => 'integer',
+            'autoIncrement' => true,
+            'limit' => 11
+        ])->addColumn('user_id', [
+            'type' => 'integer',
+            'default' => null,
+            'limit' => 11,
+            'null' => false,
+        ])->addConstraint('users_idx', [
+            'type' => 'unique',
+            'columns' => ['project_id', 'user_id']
+        ])->addConstraint('users_idx', [
+            'type' => 'foreign',
+            'references' => ['users', 'project_id', 'id'],
+            'columns' => ['project_id', 'user_id']
+        ]);
+        $this->assertEquals(['users_idx'], $table->constraints());
+    }
+
+    /**
      * Dataprovider for invalid addConstraint calls.
      *
      * @return array
      */
-    public static function addConstaintErrorProvider()
+    public static function addConstraintErrorProvider()
     {
         return [
             // No properties
@@ -327,7 +360,7 @@ class TableTest extends TestCase
      * Test that an exception is raised when constraints
      * are added for fields that do not exist.
      *
-     * @dataProvider addConstaintErrorProvider
+     * @dataProvider addConstraintErrorProvider
      * @expectedException \Cake\Database\Exception
      * @return void
      */

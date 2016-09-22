@@ -13,9 +13,84 @@
  */
 namespace Cake\Test\TestCase\Network\Http\Adapter;
 
-use Cake\Network\Http\Adapter\Stream;
-use Cake\Network\Http\Request;
+use Cake\Http\Client\Adapter\Stream;
+use Cake\Http\Client\Request;
 use Cake\TestSuite\TestCase;
+
+/**
+ * CakeStreamWrapper class
+ */
+class CakeStreamWrapper implements \ArrayAccess
+{
+
+    private $_stream;
+
+    private $_query = [];
+
+    private $_data = [
+        'headers' => [
+            'HTTP/1.1 200 OK',
+        ],
+    ];
+
+    public function stream_open($path, $mode, $options, &$openedPath)
+    {
+        $query = parse_url($path, PHP_URL_QUERY);
+        if ($query) {
+            parse_str($query, $this->_query);
+        }
+
+        $this->_stream = fopen('php://memory', 'rb+');
+        fwrite($this->_stream, str_repeat('x', 20000));
+        rewind($this->_stream);
+
+        return true;
+    }
+
+    public function stream_close()
+    {
+        return fclose($this->_stream);
+    }
+
+    public function stream_read($count)
+    {
+        if (isset($this->_query['sleep'])) {
+            sleep(1);
+        }
+
+        return fread($this->_stream, $count);
+    }
+
+    public function stream_eof()
+    {
+        return feof($this->_stream);
+    }
+
+    public function stream_set_option($option, $arg1, $arg2)
+    {
+        return false;
+    }
+
+    public function offsetExists($offset)
+    {
+        return isset($this->_data[$offset]);
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->_data[$offset];
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        $this->_data[$offset] = $value;
+    }
+
+    public function offsetUnset($offset)
+    {
+        unset($this->_data[$offset]);
+    }
+}
 
 /**
  * HTTP stream adapter test.
@@ -26,10 +101,17 @@ class StreamTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->stream = $this->getMock(
-            'Cake\Network\Http\Adapter\Stream',
-            ['_send']
-        );
+        $this->stream = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+            ->setMethods(['_send'])
+            ->getMock();
+        stream_wrapper_unregister('http');
+        stream_wrapper_register('http', __NAMESPACE__ . '\CakeStreamWrapper');
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+        stream_wrapper_restore('http');
     }
 
     /**
@@ -50,7 +132,24 @@ class StreamTest extends TestCase
         } catch (\Cake\Core\Exception\Exception $e) {
             $this->markTestSkipped('Could not connect to localhost, skipping');
         }
-        $this->assertInstanceOf('Cake\Network\Http\Response', $responses[0]);
+        $this->assertInstanceOf('Cake\Http\Client\Response', $responses[0]);
+    }
+
+    /**
+     * Test the send method by using cakephp:// protocol.
+     *
+     * @return void
+     */
+    public function testSendByUsingCakephpProtocol()
+    {
+        $stream = new Stream();
+        $request = new Request();
+        $request->url('http://dummy/');
+
+        $responses = $stream->send($request, []);
+        $this->assertInstanceOf('Cake\Http\Client\Response', $responses[0]);
+
+        $this->assertEquals(20000, strlen($responses[0]->body()));
     }
 
     /**
@@ -300,5 +399,43 @@ class StreamTest extends TestCase
         $this->assertEquals(null, $responses[2]->cookie('first'));
         $this->assertEquals(null, $responses[2]->cookie('second'));
         $this->assertEquals('works', $responses[2]->cookie('third'));
+    }
+
+    /**
+     * Test that no exception is radied when not timed out.
+     *
+     * @return void
+     */
+    public function testKeepDeadline()
+    {
+        $request = new Request();
+        $request->url('http://dummy/?sleep');
+        $options = [
+            'timeout' => 5,
+        ];
+
+        $t = microtime(true);
+        $stream = new Stream();
+        $stream->send($request, $options);
+        $this->assertLessThan(5, microtime(true) - $t);
+    }
+
+    /**
+     * Test that an exception is raised when timed out.
+     *
+     * @expectedException \Cake\Core\Exception\Exception
+     * @expectedExceptionMessage Connection timed out http://dummy/?sleep
+     * @return void
+     */
+    public function testMissDeadline()
+    {
+        $request = new Request();
+        $request->url('http://dummy/?sleep');
+        $options = [
+            'timeout' => 2,
+        ];
+
+        $stream = new Stream();
+        $stream->send($request, $options);
     }
 }

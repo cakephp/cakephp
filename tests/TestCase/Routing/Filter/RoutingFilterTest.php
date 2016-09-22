@@ -77,8 +77,10 @@ class RoutingFilterTest extends TestCase
      */
     public function testBeforeDispatchRedirectRoute()
     {
-        Router::redirect('/home', ['controller' => 'articles']);
-        Router::connect('/:controller/:action/*');
+        Router::scope('/', function ($routes) {
+            $routes->redirect('/home', ['controller' => 'articles']);
+            $routes->connect('/:controller/:action/*');
+        });
         $filter = new RoutingFilter();
 
         $request = new Request("/home");
@@ -86,8 +88,9 @@ class RoutingFilterTest extends TestCase
         $event = new Event(__CLASS__, $this, compact('request', 'response'));
         $response = $filter->beforeDispatch($event);
         $this->assertInstanceOf('Cake\Network\Response', $response);
-        $this->assertSame('http://localhost/articles/index', $response->header()['Location']);
+        $this->assertSame('http://localhost/articles', $response->header()['Location']);
         $this->assertSame(301, $response->statusCode());
+        $this->assertTrue($event->isStopped());
     }
 
     /**

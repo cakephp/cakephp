@@ -20,6 +20,7 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\IdentifierQuoter;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
+use Cake\ORM\Association;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
@@ -27,7 +28,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests HasMany class
- *
  */
 class HasManyTest extends TestCase
 {
@@ -49,18 +49,17 @@ class HasManyTest extends TestCase
         $this->author = TableRegistry::get('Authors', [
             'schema' => [
                 'id' => ['type' => 'integer'],
-                'username' => ['type' => 'string'],
+                'name' => ['type' => 'string'],
                 '_constraints' => [
                     'primary' => ['type' => 'primary', 'columns' => ['id']]
                 ]
             ]
         ]);
         $connection = ConnectionManager::get('test');
-        $this->article = $this->getMock(
-            'Cake\ORM\Table',
-            ['find', 'deleteAll', 'delete'],
-            [['alias' => 'Articles', 'table' => 'articles', 'connection' => $connection]]
-        );
+        $this->article = $this->getMockBuilder('Cake\ORM\Table')
+            ->setMethods(['find', 'deleteAll', 'delete'])
+            ->setConstructorArgs([['alias' => 'Articles', 'table' => 'articles', 'connection' => $connection]])
+            ->getMock();
         $this->article->schema([
             'id' => ['type' => 'integer'],
             'title' => ['type' => 'string'],
@@ -267,7 +266,7 @@ class HasManyTest extends TestCase
             'conditions' => ['Articles.id !=' => 3],
             'sort' => ['title' => 'DESC'],
             'fields' => ['title', 'author_id'],
-            'contain' => ['Comments' => ['fields' => ['comment']]],
+            'contain' => ['Comments' => ['fields' => ['comment', 'article_id']]],
             'keys' => $keys,
             'query' => $query
         ]);
@@ -387,7 +386,10 @@ class HasManyTest extends TestCase
         $this->author->primaryKey(['id', 'site_id']);
         $association = new HasMany('Articles', $config);
         $keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
-        $query = $this->getMock('Cake\ORM\Query', ['all', 'andWhere'], [null, null]);
+        $query = $this->getMockBuilder('Cake\ORM\Query')
+            ->setMethods(['all', 'andWhere'])
+            ->setConstructorArgs([null, null])
+            ->getMock();
         $this->article->method('find')
             ->with('all')
             ->will($this->returnValue($query));
@@ -485,7 +487,10 @@ class HasManyTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities()
     {
-        $mock = $this->getMock('Cake\ORM\Table', ['saveAssociated'], [], '', false);
+        $mock = $this->getMockBuilder('Cake\ORM\Table')
+            ->setMethods(['saveAssociated'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $config = [
             'sourceTable' => $this->author,
             'targetTable' => $mock,
@@ -526,13 +531,43 @@ class HasManyTest extends TestCase
      */
     public function testPropertyNoPlugin()
     {
-        $mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+        $mock = $this->getMockBuilder('Cake\ORM\Table')
+            ->disableOriginalConstructor()
+            ->getMock();
         $config = [
             'sourceTable' => $this->author,
             'targetTable' => $mock,
         ];
         $association = new HasMany('Contacts.Addresses', $config);
         $this->assertEquals('addresses', $association->property());
+    }
+
+    /**
+     * Test that the ValueBinder is reset when using strategy = Association::STRATEGY_SUBQUERY
+     *
+     * @return void
+     */
+    public function testValueBinderUpdateOnSubQueryStrategy()
+    {
+        $Authors = TableRegistry::get('Authors');
+        $Authors->hasMany('Articles', [
+            'strategy' => Association::STRATEGY_SUBQUERY
+        ]);
+
+        $query = $Authors->find();
+        $authorsAndArticles = $query
+            ->select([
+                'id',
+                'slug' => $query->func()->concat([
+                    '---',
+                    'name' => 'identifier'
+                ])
+            ])
+            ->contain('Articles')
+            ->where(['name' => 'mariano'])
+            ->first();
+
+        $this->assertCount(2, $authorsAndArticles->get('articles'));
     }
 
     /**
@@ -606,5 +641,56 @@ class HasManyTest extends TestCase
             }
         }
         $this->assertEquals($expected, $query->clause('select'));
+    }
+
+    /**
+     * Tests that unlinking calls the right methods
+     *
+     * @return void
+     */
+    public function testUnlinkSuccess()
+    {
+        $articles = TableRegistry::get('Articles');
+        $assoc = $this->author->hasMany('Articles', [
+            'sourceTable' => $this->author,
+            'targetTable' => $articles
+        ]);
+
+        $entity = $this->author->get(1, ['contain' => 'Articles']);
+        $initial = $entity->articles;
+        $this->assertCount(2, $initial);
+
+        $assoc->unlink($entity, $entity->articles);
+        $this->assertEmpty($entity->get('articles'), 'Property should be empty');
+
+        $new = $this->author->get(2, ['contain' => 'Articles']);
+        $this->assertCount(0, $new->articles, 'DB should be clean');
+        $this->assertSame(4, $this->author->find()->count(), 'Authors should still exist');
+        $this->assertSame(3, $articles->find()->count(), 'Articles should still exist');
+    }
+
+    /**
+     * Tests that unlink with an empty array does nothing
+     *
+     * @return void
+     */
+    public function testUnlinkWithEmptyArray()
+    {
+        $articles = TableRegistry::get('Articles');
+        $assoc = $this->author->hasMany('Articles', [
+            'sourceTable' => $this->author,
+            'targetTable' => $articles
+        ]);
+
+        $entity = $this->author->get(1, ['contain' => 'Articles']);
+        $initial = $entity->articles;
+        $this->assertCount(2, $initial);
+
+        $assoc->unlink($entity, []);
+
+        $new = $this->author->get(1, ['contain' => 'Articles']);
+        $this->assertCount(2, $new->articles, 'Articles should remain linked');
+        $this->assertSame(4, $this->author->find()->count(), 'Authors should still exist');
+        $this->assertSame(3, $articles->find()->count(), 'Articles should still exist');
     }
 }

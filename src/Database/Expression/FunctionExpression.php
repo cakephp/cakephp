@@ -17,6 +17,7 @@ namespace Cake\Database\Expression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\TypedResultInterface;
 use Cake\Database\TypedResultTrait;
+use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\ValueBinder;
 
 /**
@@ -30,6 +31,7 @@ use Cake\Database\ValueBinder;
 class FunctionExpression extends QueryExpression implements TypedResultInterface
 {
 
+    use ExpressionTypeCasterTrait;
     use TypedResultTrait;
 
     /**
@@ -84,6 +86,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
             return $this->_name;
         }
         $this->_name = $name;
+
         return $this;
     }
 
@@ -113,11 +116,18 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
                 continue;
             }
 
+            $type = $typeMap->type($k);
+
+            if ($type !== null && !$p instanceof ExpressionInterface) {
+                $p = $this->_castToExpression($p, $type);
+            }
+
             if ($p instanceof ExpressionInterface) {
                 $put($this->_conditions, $p);
                 continue;
             }
-            $put($this->_conditions, ['value' => $p, 'type' => $typeMap->type($k)]);
+
+            $put($this->_conditions, ['value' => $p, 'type' => $type]);
         }
 
         return $this;
@@ -145,6 +155,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
             }
             $parts[] = $condition;
         }
+
         return $this->_name . sprintf('(%s)', implode(
             $this->_conjunction . ' ',
             $parts

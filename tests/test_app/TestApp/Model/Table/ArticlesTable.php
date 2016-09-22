@@ -16,7 +16,6 @@ use Cake\ORM\Table;
 
 /**
  * Article table class
- *
  */
 class ArticlesTable extends Table
 {

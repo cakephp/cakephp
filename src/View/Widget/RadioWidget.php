@@ -114,6 +114,7 @@ class RadioWidget implements WidgetInterface
         foreach ($options as $val => $text) {
             $opts[] = $this->_renderInput($val, $text, $data, $context);
         }
+
         return implode('', $opts);
     }
 
@@ -133,6 +134,7 @@ class RadioWidget implements WidgetInterface
             return true;
         }
         $isNumeric = is_numeric($radio['value']);
+
         return (!is_array($disabled) || in_array((string)$radio['value'], $disabled, !$isNumeric));
     }
 
@@ -168,7 +170,7 @@ class RadioWidget implements WidgetInterface
         if (isset($data['val']) && is_bool($data['val'])) {
             $data['val'] = $data['val'] ? 1 : 0;
         }
-        if (isset($data['val']) && strval($data['val']) === strval($radio['value'])) {
+        if (isset($data['val']) && (string)$data['val'] === (string)$radio['value']) {
             $radio['checked'] = true;
         }
         if ($this->_isDisabled($radio, $data['disabled'])) {
@@ -235,6 +237,7 @@ class RadioWidget implements WidgetInterface
             'templateVars' => $radio['templateVars'],
             'input' => $input,
         ];
+
         return $this->_label->render($labelAttrs, $context);
     }
 

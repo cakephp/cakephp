@@ -15,7 +15,6 @@ namespace TestApp\View\Cell;
 
 /**
  * TagCloudCell class
- *
  */
 class ArticlesCell extends \Cake\View\Cell
 {

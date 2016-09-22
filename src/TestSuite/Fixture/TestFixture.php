@@ -18,6 +18,7 @@ use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
+use Cake\Datasource\TableSchemaInterface;
 use Cake\Log\Log;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
@@ -27,7 +28,7 @@ use Exception;
  * Cake TestFixture is responsible for building and destroying tables to be used
  * during testing.
  */
-class TestFixture implements FixtureInterface
+class TestFixture implements FixtureInterface, TableSchemaInterface
 {
 
     /**
@@ -268,8 +269,10 @@ class TestFixture implements FixtureInterface
     {
         if ($schema) {
             $this->_schema = $schema;
+
             return null;
         }
+
         return $this->_schema;
     }
 
@@ -301,8 +304,10 @@ class TestFixture implements FixtureInterface
             );
             Log::error($msg);
             trigger_error($msg, E_USER_WARNING);
+
             return false;
         }
+
         return true;
     }
 
@@ -327,6 +332,7 @@ class TestFixture implements FixtureInterface
         } catch (Exception $e) {
             return false;
         }
+
         return true;
     }
 
@@ -346,6 +352,7 @@ class TestFixture implements FixtureInterface
             }
             $statement = $query->execute();
             $statement->closeCursor();
+
             return $statement;
         }
 
@@ -400,6 +407,7 @@ class TestFixture implements FixtureInterface
         foreach ($this->_constraints as $name => $data) {
             $this->_schema->dropConstraint($name);
         }
+
         return true;
     }
 
@@ -423,6 +431,7 @@ class TestFixture implements FixtureInterface
         foreach ($this->records as $record) {
             $values[] = array_merge($default, $record);
         }
+
         return [$fields, $values, $types];
     }
 
@@ -435,6 +444,7 @@ class TestFixture implements FixtureInterface
         foreach ($sql as $stmt) {
             $db->execute($stmt)->closeCursor();
         }
+
         return true;
     }
 }

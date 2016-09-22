@@ -14,8 +14,7 @@
  */
 
 /**
- * Class TestsController
- *
+ * TestsController
  */
 namespace TestPlugin\Controller;
 
@@ -34,6 +33,7 @@ class TestsController extends TestPluginAppController
     public function some_method()
     {
         $this->response->body(25);
+
         return $this->response;
     }
 }

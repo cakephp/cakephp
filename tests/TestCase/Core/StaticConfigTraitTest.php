@@ -46,6 +46,7 @@ class TestConnectionManagerStaticConfig
         }
 
         unset($config['path']);
+
         return $config;
     }
 
@@ -128,7 +129,6 @@ class TestLogStaticConfig
 
 /**
  * StaticConfigTraitTest class
- *
  */
 class StaticConfigTraitTest extends TestCase
 {

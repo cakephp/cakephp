@@ -33,7 +33,7 @@ class BoolTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = Type::build('boolean');
-        $this->driver = $this->getMock('Cake\Database\Driver');
+        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
     }
 
     /**

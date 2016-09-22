@@ -15,13 +15,13 @@
 namespace Cake\Test\TestCase\Shell;
 
 use Cake\Console\ConsoleIo;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class CommandListShellTest
- *
+ * CommandListShellTest
  */
 class CommandListShellTest extends TestCase
 {
@@ -39,17 +39,15 @@ class CommandListShellTest extends TestCase
         $this->out = new ConsoleOutput();
         $io = new ConsoleIo($this->out);
 
-        $this->Shell = $this->getMock(
-            'Cake\Shell\CommandListShell',
-            ['in', 'err', '_stop', 'clear'],
-            [$io]
-        );
+        $this->Shell = $this->getMockBuilder('Cake\Shell\CommandListShell')
+            ->setMethods(['in', 'err', '_stop', 'clear'])
+            ->setConstructorArgs([$io])
+            ->getMock();
 
-        $this->Shell->Command = $this->getMock(
-            'Cake\Shell\Task\CommandTask',
-            ['in', '_stop', 'err', 'clear'],
-            [$io]
-        );
+        $this->Shell->Command = $this->getMockBuilder('Cake\Shell\Task\CommandTask')
+            ->setMethods(['in', '_stop', 'err', 'clear'])
+            ->setConstructorArgs([$io])
+            ->getMock();
     }
 
     /**
@@ -81,7 +79,7 @@ class CommandListShellTest extends TestCase
         $expected = "/\[.*TestPluginTwo.*\] example, unique, welcome/";
         $this->assertRegExp($expected, $output);
 
-        $expected = "/\[.*CORE.*\] i18n, orm_cache, plugin, routes, server/";
+        $expected = "/\[.*CORE.*\] cache, i18n, orm_cache, plugin, routes, server/";
         $this->assertRegExp($expected, $output);
 
         $expected = "/\[.*app.*\] i18m, sample/";
@@ -102,7 +100,7 @@ class CommandListShellTest extends TestCase
         $output = implode("\n", $output);
         rename(APP . 'Shell' . DS . 'I18nShell.php', APP . 'Shell' . DS . 'I18mShell.php');
 
-        $expected = "/\[.*CORE.*\] orm_cache, plugin, routes, server/";
+        $expected = "/\[.*CORE.*\] cache, orm_cache, plugin, routes, server/";
         $this->assertRegExp($expected, $output);
 
         $expected = "/\[.*app.*\] i18n, sample/";
@@ -130,5 +128,21 @@ class CommandListShellTest extends TestCase
 
         $find = '<shell name="welcome" call_as="TestPluginTwo.welcome" provider="TestPluginTwo" help="TestPluginTwo.welcome -h"';
         $this->assertContains($find, $output);
+    }
+
+    /**
+     * test that main prints the cakephp's version.
+     *
+     * @return void
+     */
+    public function testMainVersion()
+    {
+        $this->Shell->params['version'] = true;
+        $this->Shell->main();
+        $output = $this->out->messages();
+        $output = implode("\n", $output);
+
+        $expected = Configure::version();
+        $this->assertEquals($expected, $output);
     }
 }

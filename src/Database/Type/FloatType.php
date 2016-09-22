@@ -16,6 +16,7 @@ namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
 use Cake\Database\Type;
+use Cake\Database\TypeInterface;
 use PDO;
 use RuntimeException;
 
@@ -24,8 +25,25 @@ use RuntimeException;
  *
  * Use to convert float/decimal data between PHP and the database types.
  */
-class FloatType extends Type
+class FloatType extends Type implements TypeInterface
 {
+
+    /**
+     * Identifier name for this type
+     *
+     * @var string|null
+     */
+    protected $_name = null;
+
+    /**
+     * Constructor
+     *
+     * @param string|null $name The name identifying this type
+     */
+    public function __construct($name = null)
+    {
+        $this->_name = $name;
+    }
 
     /**
      * The class to use for representing number objects
@@ -57,7 +75,8 @@ class FloatType extends Type
         if (is_array($value)) {
             return 1;
         }
-        return floatval($value);
+
+        return (float)$value;
     }
 
     /**
@@ -76,7 +95,8 @@ class FloatType extends Type
         if (is_array($value)) {
             return 1;
         }
-        return floatval($value);
+
+        return (float)$value;
     }
 
     /**
@@ -126,12 +146,14 @@ class FloatType extends Type
     {
         if ($enable === false) {
             $this->_useLocaleParser = $enable;
+
             return $this;
         }
         if (static::$numberClass === 'Cake\I18n\Number' ||
             is_subclass_of(static::$numberClass, 'Cake\I18n\Number')
         ) {
             $this->_useLocaleParser = $enable;
+
             return $this;
         }
         throw new RuntimeException(
@@ -149,6 +171,7 @@ class FloatType extends Type
     protected function _parseValue($value)
     {
         $class = static::$numberClass;
+
         return $class::parseFloat($value);
     }
 }

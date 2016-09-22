@@ -126,6 +126,7 @@ class TranslatorRegistry extends TranslatorLocator
         if (!isset($this->_loaders[$name])) {
             $this->registerLoader($name, $this->_partialLoader());
         }
+
         return $this->_getFromLoader($name, $locale);
     }
 
@@ -159,6 +160,7 @@ class TranslatorRegistry extends TranslatorLocator
         if ($name === null) {
             return $this->_defaultFormatter;
         }
+
         return $this->_defaultFormatter = $name;
     }
 
@@ -194,6 +196,7 @@ class TranslatorRegistry extends TranslatorLocator
         $chain = function () use ($formatter, $chain) {
             $package = $chain();
             $package->setFormatter($formatter);
+
             return $package;
         };
 
@@ -234,6 +237,7 @@ class TranslatorRegistry extends TranslatorLocator
         $loader = $this->setLoaderFallback($name, $loader);
 
         $this->packages->set($name, $locale, $loader);
+
         return parent::get($name, $locale);
     }
 
@@ -255,6 +259,7 @@ class TranslatorRegistry extends TranslatorLocator
             if (!$package->getFallback()) {
                 $package->setFallback($fallbackDomain);
             }
+
             return $package;
         };
 

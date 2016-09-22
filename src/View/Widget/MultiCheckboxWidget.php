@@ -19,7 +19,6 @@ use Cake\View\Helper\IdGeneratorTrait;
 
 /**
  * Input widget class for generating multiple checkboxes.
- *
  */
 class MultiCheckboxWidget implements WidgetInterface
 {
@@ -117,6 +116,7 @@ class MultiCheckboxWidget implements WidgetInterface
         ];
         $this->_idPrefix = $data['idPrefix'];
         $this->_clearIds();
+
         return implode('', $this->_renderInputs($data, $context));
     }
 
@@ -169,6 +169,7 @@ class MultiCheckboxWidget implements WidgetInterface
             }
             $out[] = $this->_renderInput($checkbox, $context);
         }
+
         return $out;
     }
 
@@ -227,6 +228,7 @@ class MultiCheckboxWidget implements WidgetInterface
             return (string)$key === (string)$selected;
         }
         $strict = !is_numeric($key);
+
         return in_array((string)$key, $selected, $strict);
     }
 
@@ -246,6 +248,7 @@ class MultiCheckboxWidget implements WidgetInterface
             return true;
         }
         $strict = !is_numeric($key);
+
         return in_array((string)$key, $disabled, $strict);
     }
 

@@ -39,6 +39,7 @@ class ConnectionRegistry extends ObjectRegistry
         if (is_object($class)) {
             return $class;
         }
+
         return App::className($class, 'Datasource');
     }
 
@@ -84,6 +85,7 @@ class ConnectionRegistry extends ObjectRegistry
         }
 
         unset($settings['className']);
+
         return new $class($settings);
     }
 

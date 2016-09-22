@@ -75,6 +75,7 @@ trait RulesAwareTrait
                 return $event->result;
             }
         }
+
         return $result;
     }
 
@@ -96,6 +97,7 @@ trait RulesAwareTrait
         $class = defined('static::RULES_CLASS') ? static::RULES_CLASS : 'Cake\Datasource\RulesChecker';
         $this->_rulesChecker = $this->buildRules(new $class(['repository' => $this]));
         $this->dispatchEvent('Model.buildRules', ['rules' => $this->_rulesChecker]);
+
         return $this->_rulesChecker;
     }
 

@@ -5,7 +5,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * This class helps in indirectly testing the functionalities of TestCase::assertHtml
- *
  */
 class AssertHtmlTestCase extends TestCase
 {

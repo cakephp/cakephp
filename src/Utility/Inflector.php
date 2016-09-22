@@ -157,7 +157,7 @@ class Inflector
         '.*pox', '.*sheep', 'people', 'feedback', 'stadia', '.*?media',
         'chassis', 'clippers', 'debris', 'diabetes', 'equipment', 'gallows',
         'graffiti', 'headquarters', 'information', 'innings', 'news', 'nexus',
-        'proceedings', 'research', 'sea[- ]bass', 'series', 'species', 'weather'
+        'pokemon', 'proceedings', 'research', 'sea[- ]bass', 'series', 'species', 'weather'
     ];
 
     /**
@@ -425,11 +425,13 @@ class Inflector
         $type = '_' . $type;
         if ($value !== false) {
             static::$_cache[$type][$key] = $value;
+
             return $value;
         }
         if (!isset(static::$_cache[$type][$key])) {
             return false;
         }
+
         return static::$_cache[$type][$key];
     }
 
@@ -443,6 +445,7 @@ class Inflector
     {
         if (empty(static::$_initialState)) {
             static::$_initialState = get_class_vars(__CLASS__);
+
             return;
         }
         foreach (static::$_initialState as $key => $val) {
@@ -510,6 +513,7 @@ class Inflector
         if (preg_match('/(.*?(?:\\b|_))(' . static::$_cache['irregular']['pluralize'] . ')$/i', $word, $regs)) {
             static::$_cache['pluralize'][$word] = $regs[1] . substr($regs[2], 0, 1) .
                 substr(static::$_irregular[strtolower($regs[2])], 1);
+
             return static::$_cache['pluralize'][$word];
         }
 
@@ -519,12 +523,14 @@ class Inflector
 
         if (preg_match('/^(' . static::$_cache['uninflected'] . ')$/i', $word, $regs)) {
             static::$_cache['pluralize'][$word] = $word;
+
             return $word;
         }
 
         foreach (static::$_plural as $rule => $replacement) {
             if (preg_match($rule, $word)) {
                 static::$_cache['pluralize'][$word] = preg_replace($rule, $replacement, $word);
+
                 return static::$_cache['pluralize'][$word];
             }
         }
@@ -550,6 +556,7 @@ class Inflector
         if (preg_match('/(.*?(?:\\b|_))(' . static::$_cache['irregular']['singular'] . ')$/i', $word, $regs)) {
             static::$_cache['singularize'][$word] = $regs[1] . substr($regs[2], 0, 1) .
                 substr(array_search(strtolower($regs[2]), static::$_irregular), 1);
+
             return static::$_cache['singularize'][$word];
         }
 
@@ -559,16 +566,19 @@ class Inflector
 
         if (preg_match('/^(' . static::$_cache['uninflected'] . ')$/i', $word, $regs)) {
             static::$_cache['pluralize'][$word] = $word;
+
             return $word;
         }
 
         foreach (static::$_singular as $rule => $replacement) {
             if (preg_match($rule, $word)) {
                 static::$_cache['singularize'][$word] = preg_replace($rule, $replacement, $word);
+
                 return static::$_cache['singularize'][$word];
             }
         }
         static::$_cache['singularize'][$word] = $word;
+
         return $word;
     }
 
@@ -753,6 +763,7 @@ class Inflector
             array_values(static::$_transliteration),
             $string
         );
+
         return preg_replace(array_keys($map), array_values($map), $string);
     }
 }

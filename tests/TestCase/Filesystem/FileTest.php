@@ -20,7 +20,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * FileTest class
- *
  */
 class FileTest extends TestCase
 {
@@ -598,6 +597,7 @@ class FileTest extends TestCase
             $message = sprintf('[FileTest] Skipping %s because "%s" not writeable!', $caller, $shortPath);
             $this->markTestSkipped($message);
         }
+
         return false;
     }
 

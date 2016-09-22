@@ -39,7 +39,7 @@ class DateTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->locale = Date::$defaultLocale;
+        $this->locale = Date::getDefaultLocale();
     }
 
     /**
@@ -50,8 +50,8 @@ class DateTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Date::$defaultLocale = $this->locale;
-        FrozenDate::$defaultLocale = $this->locale;
+        Date::setDefaultLocale($this->locale);
+        FrozenDate::setDefaultLocale($this->locale);
         date_default_timezone_set('UTC');
     }
 
@@ -105,7 +105,7 @@ class DateTest extends TestCase
         $expected = '00:00:00';
         $this->assertEquals($expected, $result);
 
-        $class::$defaultLocale = 'fr-FR';
+        $class::setDefaultLocale('fr-FR');
         $result = $time->i18nFormat(\IntlDateFormatter::FULL);
         $result = str_replace(' à', '', $result);
         $expected = 'jeudi 14 janvier 2010 00:00:00 UTC';
@@ -150,8 +150,12 @@ class DateTest extends TestCase
      */
     public function testJsonSerialize($class)
     {
+        if (version_compare(INTL_ICU_VERSION, '50.0', '<')) {
+            $this->markTestSkipped('ICU 5x is needed');
+        }
+
         $date = new $class('2015-11-06 11:32:45');
-        $this->assertEquals('"2015-11-06T00:00:00+0000"', json_encode($date));
+        $this->assertEquals('"2015-11-06T00:00:00+00:00"', json_encode($date));
     }
 
     /**
@@ -165,7 +169,7 @@ class DateTest extends TestCase
         $date = $class::parseDate('11/6/15');
         $this->assertEquals('2015-11-06 00:00:00', $date->format('Y-m-d H:i:s'));
 
-        $class::$defaultLocale = 'fr-FR';
+        $class::setDefaultLocale('fr-FR');
         $date = $class::parseDate('13 10, 2015');
         $this->assertEquals('2015-10-13 00:00:00', $date->format('Y-m-d H:i:s'));
     }
@@ -181,7 +185,7 @@ class DateTest extends TestCase
         $date = $class::parseDate('11/6/15 12:33:12');
         $this->assertEquals('2015-11-06 00:00:00', $date->format('Y-m-d H:i:s'));
 
-        $class::$defaultLocale = 'fr-FR';
+        $class::setDefaultLocale('fr-FR');
         $date = $class::parseDate('13 10, 2015 12:54:12');
         $this->assertEquals('2015-10-13 00:00:00', $date->format('Y-m-d H:i:s'));
     }
@@ -503,5 +507,38 @@ class DateTest extends TestCase
         date_default_timezone_set('Europe/Paris');
         $result = $class::parseDate('25-02-2016', 'd-M-y');
         $this->assertEquals('25-02-2016', $result->format('d-m-Y'));
+    }
+
+    /**
+     * Tests the default locale setter.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testGetSetDefaultLocale($class)
+    {
+        $class::setDefaultLocale('fr-FR');
+        $this->assertSame('fr-FR', $class::getDefaultLocale());
+    }
+
+    /**
+     * Tests the default locale setter.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testDefaultLocaleEffectsFormatting($class)
+    {
+        $result = $class::parseDate('12/03/2015');
+        $this->assertEquals('Dec 3, 2015', $result->nice());
+
+        $class::setDefaultLocale('fr-FR');
+
+        $result = $class::parseDate('12/03/2015');
+        $this->assertEquals('12 mars 2015', $result->nice());
+
+        $expected = 'Y-m-d';
+        $result = $class::parseDate('12/03/2015');
+        $this->assertEquals('2015-03-12', $result->format($expected));
     }
 }

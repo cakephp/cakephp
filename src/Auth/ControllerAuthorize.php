@@ -77,13 +77,14 @@ class ControllerAuthorize extends BaseAuthorize
             }
             $this->_Controller = $controller;
         }
+
         return $this->_Controller;
     }
 
     /**
      * Checks user authorization using a controller callback.
      *
-     * @param array $user Active user data
+     * @param array|\ArrayAccess $user Active user data
      * @param \Cake\Network\Request $request Request instance.
      * @return bool
      */

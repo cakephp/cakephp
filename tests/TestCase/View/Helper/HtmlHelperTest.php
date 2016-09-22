@@ -24,7 +24,6 @@ use Cake\View\Helper\HtmlHelper;
 
 /**
  * HtmlHelperTest class
- *
  */
 class HtmlHelperTest extends TestCase
 {
@@ -58,7 +57,9 @@ class HtmlHelperTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->View = $this->getMock('Cake\View\View', ['append']);
+        $this->View = $this->getMockBuilder('Cake\View\View')
+            ->setMethods(['append'])
+            ->getMock();
         $this->Html = new HtmlHelper($this->View);
         $this->Html->request = new Request();
         $this->Html->request->webroot = '';
@@ -333,6 +334,10 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->image('/test/view/1.gif');
         $expected = ['img' => ['src' => '/test/view/1.gif', 'alt' => '']];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->image('cid:cakephp_logo');
+        $expected = ['img' => ['src' => 'cid:cakephp_logo', 'alt' => '']];
         $this->assertHtml($expected, $result);
     }
 

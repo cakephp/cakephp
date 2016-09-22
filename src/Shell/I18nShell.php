@@ -21,7 +21,6 @@ use DirectoryIterator;
 
 /**
  * Shell for I18N management.
- *
  */
 class I18nShell extends Shell
 {
@@ -60,6 +59,7 @@ class I18nShell extends Shell
                 break;
             case 'q':
                 $this->_stop();
+
                 return;
             default:
                 $this->out('You have made an invalid selection. Please choose a command to execute by entering E, I, H, or Q.');

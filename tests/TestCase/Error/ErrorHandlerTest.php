@@ -87,7 +87,7 @@ class ErrorHandlerTest extends TestCase
         Router::setRequestInfo($request);
         Configure::write('debug', true);
 
-        $this->_logger = $this->getMock('Psr\Log\LoggerInterface');
+        $this->_logger = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
 
         Log::reset();
         Log::config('error_test', [

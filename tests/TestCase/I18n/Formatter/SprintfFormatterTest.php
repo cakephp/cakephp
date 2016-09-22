@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * SprintfFormatter tests
- *
  */
 class SprintfFormatterTest extends TestCase
 {

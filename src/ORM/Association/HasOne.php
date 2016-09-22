@@ -51,8 +51,10 @@ class HasOne extends Association
             if ($this->_foreignKey === null) {
                 $this->_foreignKey = $this->_modelKey($this->source()->alias());
             }
+
             return $this->_foreignKey;
         }
+
         return parent::foreignKey($key);
     }
 
@@ -64,6 +66,7 @@ class HasOne extends Association
     protected function _propertyName()
     {
         list(, $name) = pluginSplit($this->_name);
+
         return Inflector::underscore(Inflector::singularize($name));
     }
 
@@ -118,6 +121,7 @@ class HasOne extends Association
 
         if (!$this->target()->save($targetEntity, $options)) {
             $targetEntity->unsetProperty(array_keys($properties));
+
             return false;
         }
 
@@ -158,6 +162,7 @@ class HasOne extends Association
             }
             $resultMap[implode(';', $values)] = $result;
         }
+
         return $resultMap;
     }
 }

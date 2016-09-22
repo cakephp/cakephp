@@ -17,13 +17,13 @@
 namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\ControllerAuthorize;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class ControllerAuthorizeTest
- *
+ * ControllerAuthorizeTest
  */
 class ControllerAuthorizeTest extends TestCase
 {
@@ -36,8 +36,11 @@ class ControllerAuthorizeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->controller = $this->getMock('Cake\Controller\Controller', ['isAuthorized'], [], '', false);
-        $this->components = $this->getMock('Cake\Controller\ComponentRegistry');
+        $this->controller = $this->getMockBuilder(Controller::class)
+            ->setMethods(['isAuthorized'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->components = $this->getMockBuilder(ComponentRegistry::class)->getMock();
         $this->components->expects($this->any())
             ->method('getController')
             ->will($this->returnValue($this->controller));

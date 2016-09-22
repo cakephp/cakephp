@@ -88,6 +88,7 @@ class TableLocator implements LocatorInterface
                 $alias
             ));
         }
+
         return $this->_config[$alias] = $options;
     }
 
@@ -136,6 +137,7 @@ class TableLocator implements LocatorInterface
                     $alias
                 ));
             }
+
             return $this->_instances[$alias];
         }
 
@@ -166,7 +168,9 @@ class TableLocator implements LocatorInterface
             if (!empty($options['connectionName'])) {
                 $connectionName = $options['connectionName'];
             } else {
-                $connectionName = $options['className']::defaultConnectionName();
+                /* @var \Cake\ORM\Table $className */
+                $className = $options['className'];
+                $connectionName = $className::defaultConnectionName();
             }
             $options['connection'] = ConnectionManager::get($connectionName);
         }
@@ -193,6 +197,7 @@ class TableLocator implements LocatorInterface
         if (empty($options['className'])) {
             $options['className'] = Inflector::camelize($alias);
         }
+
         return App::className($options['className'], 'Model/Table', 'Table');
     }
 

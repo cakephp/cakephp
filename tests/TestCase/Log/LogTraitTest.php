@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Test case for LogTrait
- *
  */
 class LogTraitTest extends TestCase
 {
@@ -37,7 +36,7 @@ class LogTraitTest extends TestCase
      */
     public function testLog()
     {
-        $mock = $this->getMock('Psr\Log\LoggerInterface');
+        $mock = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
         $mock->expects($this->at(0))
             ->method('log')
             ->with('error', 'Testing');

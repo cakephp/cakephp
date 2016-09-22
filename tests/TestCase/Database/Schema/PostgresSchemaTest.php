@@ -14,13 +14,13 @@
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
-use Cake\Core\Configure;
+use Cake\Database\Driver\Postgres;
 use Cake\Database\Schema\Collection as SchemaCollection;
-use Cake\Database\Schema\MysqlSchema;
 use Cake\Database\Schema\PostgresSchema;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use PDO;
 
 /**
  * Postgres schema test case.
@@ -74,6 +74,7 @@ author_id INTEGER NOT NULL,
 published BOOLEAN DEFAULT false,
 views SMALLINT DEFAULT 0,
 readingtime TIME,
+data JSONB,
 created TIMESTAMP,
 CONSTRAINT "content_idx" UNIQUE ("title", "body"),
 CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
@@ -201,6 +202,14 @@ SQL;
                 'DOUBLE PRECISION',
                 ['type' => 'float', 'length' => null]
             ],
+            [
+                'JSON',
+                ['type' => 'json', 'length' => null]
+            ],
+            [
+                'JSONB',
+                ['type' => 'json', 'length' => null]
+            ],
         ];
     }
 
@@ -219,17 +228,21 @@ SQL;
             'default' => 'Default value',
             'comment' => 'Comment section',
             'char_length' => null,
+            'collation_name' => 'ja_JP.utf8',
         ];
         $expected += [
             'null' => true,
             'default' => 'Default value',
             'comment' => 'Comment section',
+            'collate' => 'ja_JP.utf8',
         ];
 
-        $driver = $this->getMock('Cake\Database\Driver\Postgres');
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')->getMock();
         $dialect = new PostgresSchema($driver);
 
-        $table = $this->getMock('Cake\Database\Schema\Table', [], ['table']);
+        $table = $this->getMockBuilder('Cake\Database\Schema\Table')
+            ->setConstructorArgs(['table'])
+            ->getMock();
         $table->expects($this->at(0))->method('addColumn')->with('field', $expected);
 
         $dialect->convertColumnDescription($table, $field);
@@ -299,6 +312,7 @@ SQL;
                 'precision' => null,
                 'comment' => 'a title',
                 'fixed' => null,
+                'collate' => null,
             ],
             'body' => [
                 'type' => 'text',
@@ -307,6 +321,7 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'collate' => null,
             ],
             'author_id' => [
                 'type' => 'integer',
@@ -338,6 +353,14 @@ SQL;
             ],
             'readingtime' => [
                 'type' => 'time',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+            ],
+            'data' => [
+                'type' => 'json',
                 'null' => true,
                 'default' => null,
                 'length' => null,
@@ -417,6 +440,7 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'fixed' => null,
+                'collate' => null,
             ],
             'bio' => [
                 'type' => 'date',
@@ -623,6 +647,11 @@ SQL;
                 ['type' => 'string'],
                 '"title" VARCHAR'
             ],
+            [
+                'title',
+                ['type' => 'string', 'length' => 255, 'null' => false, 'collate' => 'C'],
+                '"title" VARCHAR(255) COLLATE "C" NOT NULL'
+            ],
             // Text
             [
                 'body',
@@ -643,6 +672,11 @@ SQL;
                 'body',
                 ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
                 '"body" TEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'null' => false, 'collate' => 'C'],
+                '"body" TEXT COLLATE "C" NOT NULL'
             ],
             // Integers
             [
@@ -863,7 +897,9 @@ SQL;
     public function testAddConstraintSql()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
@@ -912,7 +948,9 @@ SQL;
     public function testDropConstraintSql()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
@@ -961,7 +999,9 @@ SQL;
     public function testCreateSql()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
@@ -975,6 +1015,14 @@ SQL;
                 'comment' => 'This is the title',
             ])
             ->addColumn('body', ['type' => 'text'])
+            ->addColumn('data', ['type' => 'json'])
+            ->addColumn('hash', [
+                'type' => 'string',
+                'fixed' => true,
+                'length' => 40,
+                'collate' => 'C',
+                'null' => false,
+            ])
             ->addColumn('created', 'datetime')
             ->addConstraint('primary', [
                 'type' => 'primary',
@@ -990,6 +1038,8 @@ CREATE TABLE "schema_articles" (
 "id" SERIAL,
 "title" VARCHAR NOT NULL,
 "body" TEXT,
+"data" JSONB,
+"hash" CHAR(40) COLLATE "C" NOT NULL,
 "created" TIMESTAMP,
 PRIMARY KEY ("id")
 )
@@ -1016,7 +1066,9 @@ SQL;
     public function testCreateTemporary()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
         $table = (new Table('schema_articles'))->addColumn('id', [
@@ -1036,7 +1088,9 @@ SQL;
     public function testCreateSqlCompositeIntegerKey()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
@@ -1100,7 +1154,9 @@ SQL;
     public function testDropSql()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
@@ -1118,7 +1174,9 @@ SQL;
     public function testTruncateSql()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
@@ -1136,18 +1194,26 @@ SQL;
     /**
      * Get a schema instance with a mocked driver/pdo instances
      *
-     * @return Driver
+     * @return \Cake\Database\Driver
      */
     protected function _getMockedDriver()
     {
-        $driver = new \Cake\Database\Driver\Postgres();
-        $mock = $this->getMock('FakePdo', ['quote']);
+        $driver = new Postgres();
+        $pdo = PDO::class;
+        if (version_compare(PHP_VERSION, '5.6', '<')) {
+            $pdo = 'FakePdo';
+        }
+        $mock = $this->getMockBuilder($pdo)
+            ->setMethods(['quote'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $mock->expects($this->any())
             ->method('quote')
             ->will($this->returnCallback(function ($value) {
                 return "'$value'";
             }));
         $driver->connection($mock);
+
         return $driver;
     }
 }

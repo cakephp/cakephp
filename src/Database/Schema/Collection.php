@@ -66,6 +66,7 @@ class Collection
             $result[] = $row[0];
         }
         $statement->closeCursor();
+
         return $result;
     }
 

@@ -33,7 +33,7 @@ class UuidTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = Type::build('uuid');
-        $this->driver = $this->getMock('Cake\Database\Driver');
+        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
     }
 
     /**

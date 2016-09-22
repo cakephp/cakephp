@@ -17,8 +17,7 @@ namespace Company\TestPluginThree\Model\Table;
 use Cake\ORM\Table;
 
 /**
- * Class TestPluginThreeCommentsTable
- *
+ * TestPluginThreeCommentsTable
  */
 class TestPluginThreeCommentsTable extends Table
 {

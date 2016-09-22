@@ -60,6 +60,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
         if ($validatePresent === null) {
             return $this->_validatePresent;
         }
+
         return $this->_validatePresent = $validatePresent;
     }
 
@@ -77,6 +78,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
         if ($allowEmpty === null) {
             return $this->_allowEmpty;
         }
+
         return $this->_allowEmpty = $allowEmpty;
     }
 
@@ -124,6 +126,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
             $rule = new ValidationRule($rule);
         }
         $this->_rules[$name] = $rule;
+
         return $this;
     }
 
@@ -144,6 +147,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     public function remove($name)
     {
         unset($this->_rules[$name]);
+
         return $this;
     }
 

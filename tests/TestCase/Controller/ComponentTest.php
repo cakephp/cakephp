@@ -24,7 +24,6 @@ use TestApp\Controller\Component\AppleComponent;
 
 /**
  * ComponentTest class
- *
  */
 class ComponentTest extends TestCase
 {
@@ -78,7 +77,7 @@ class ComponentTest extends TestCase
      */
     public function testInnerComponentsAreNotEnabled()
     {
-        $mock = $this->getMock('Cake\Event\EventManager');
+        $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $controller = new Controller();
         $controller->eventManager($mock);
 

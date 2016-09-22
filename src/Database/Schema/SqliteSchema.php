@@ -116,6 +116,7 @@ class SqliteSchema extends BaseSchema
             'PRAGMA table_info(%s)',
             $this->_driver->quoteIdentifier($tableName)
         );
+
         return [$sql, []];
     }
 
@@ -127,7 +128,7 @@ class SqliteSchema extends BaseSchema
         $field = $this->_convertColumn($row['type']);
         $field += [
             'null' => !$row['notnull'],
-            'default' => $row['dflt_value'] === null ? null : trim($row['dflt_value'], "'"),
+            'default' => $this->_defaultValue($row['dflt_value']),
         ];
         $primary = $table->constraint('primary');
 
@@ -154,6 +155,29 @@ class SqliteSchema extends BaseSchema
     }
 
     /**
+     * Manipulate the default value.
+     *
+     * Sqlite includes quotes and bared NULLs in default values.
+     * We need to remove those.
+     *
+     * @param string|null $default The default value.
+     * @return string|null
+     */
+    protected function _defaultValue($default)
+    {
+        if ($default === 'NULL') {
+            return null;
+        }
+
+        // Remove quotes
+        if (preg_match("/^'(.*)'$/", $default, $matches)) {
+            return str_replace("''", "'", $matches[1]);
+        }
+
+        return $default;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function describeIndexSql($tableName, $config)
@@ -162,6 +186,7 @@ class SqliteSchema extends BaseSchema
             'PRAGMA index_list(%s)',
             $this->_driver->quoteIdentifier($tableName)
         );
+
         return [$sql, []];
     }
 
@@ -206,6 +231,7 @@ class SqliteSchema extends BaseSchema
     public function describeForeignKeySql($tableName, $config)
     {
         $sql = sprintf('PRAGMA foreign_key_list(%s)', $this->_driver->quoteIdentifier($tableName));
+
         return [$sql, []];
     }
 
@@ -254,6 +280,7 @@ class SqliteSchema extends BaseSchema
             'time' => ' TIME',
             'datetime' => ' DATETIME',
             'timestamp' => ' TIMESTAMP',
+            'json' => ' TEXT'
         ];
 
         $out = $this->_driver->quoteIdentifier($name);
@@ -312,6 +339,7 @@ class SqliteSchema extends BaseSchema
         if (isset($data['default'])) {
             $out .= ' DEFAULT ' . $this->_driver->schemaValue($data['default']);
         }
+
         return $out;
     }
 
@@ -353,6 +381,7 @@ class SqliteSchema extends BaseSchema
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
         );
+
         return sprintf(
             'CONSTRAINT %s %s (%s)%s',
             $this->_driver->quoteIdentifier($name),
@@ -394,6 +423,7 @@ class SqliteSchema extends BaseSchema
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
         );
+
         return sprintf(
             'CREATE INDEX %s ON %s (%s)',
             $this->_driver->quoteIdentifier($name),
@@ -415,6 +445,7 @@ class SqliteSchema extends BaseSchema
         foreach ($indexes as $index) {
             $out[] = $index;
         }
+
         return $out;
     }
 
@@ -430,6 +461,7 @@ class SqliteSchema extends BaseSchema
         }
 
         $sql[] = sprintf('DELETE FROM "%s"', $name);
+
         return $sql;
     }
 
@@ -446,6 +478,7 @@ class SqliteSchema extends BaseSchema
         $result->execute();
         $this->_hasSequences = (bool)$result->rowCount();
         $result->closeCursor();
+
         return $this->_hasSequences;
     }
 }

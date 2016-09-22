@@ -17,15 +17,16 @@
 namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\DigestAuthenticate;
+use Cake\Controller\ComponentRegistry;
 use Cake\I18n\Time;
 use Cake\Network\Exception\UnauthorizedException;
 use Cake\Network\Request;
+use Cake\Network\Response;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
  * Test case for DigestAuthentication
- *
  */
 class DigestAuthenticateTest extends TestCase
 {
@@ -46,7 +47,7 @@ class DigestAuthenticateTest extends TestCase
     {
         parent::setUp();
 
-        $this->Collection = $this->getMock('Cake\Controller\ComponentRegistry');
+        $this->Collection = $this->getMockBuilder(ComponentRegistry::class)->getMock();
         $this->auth = new DigestAuthenticate($this->Collection, [
             'realm' => 'localhost',
             'nonce' => 123,
@@ -57,7 +58,7 @@ class DigestAuthenticateTest extends TestCase
         $User = TableRegistry::get('Users');
         $User->updateAll(['password' => $password], []);
 
-        $this->response = $this->getMock('Cake\Network\Response');
+        $this->response = $this->getMockBuilder(Response::class)->getMock();
     }
 
     /**

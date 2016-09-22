@@ -17,6 +17,9 @@ namespace Cake\Test\TestCase\TestSuite;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
+use Cake\Event\Event;
+use Cake\Event\EventList;
+use Cake\Event\EventManager;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -40,10 +43,83 @@ class SecondaryPostsTable extends Table
 
 /**
  * TestCaseTest
- *
  */
 class TestCaseTest extends TestCase
 {
+
+    /**
+     * tests trying to assertEventFired without configuring an event list
+     *
+     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     */
+    public function testEventFiredMisconfiguredEventList()
+    {
+        $manager = EventManager::instance();
+        $this->assertEventFired('my.event', $manager);
+    }
+
+    /**
+     * tests trying to assertEventFired without configuring an event list
+     *
+     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     */
+    public function testEventFiredWithMisconfiguredEventList()
+    {
+        $manager = EventManager::instance();
+        $this->assertEventFiredWith('my.event', 'some', 'data', $manager);
+    }
+
+    /**
+     * tests assertEventFiredWith
+     *
+     * @return void
+     */
+    public function testEventFiredWith()
+    {
+        $manager = EventManager::instance();
+        $manager->setEventList(new EventList());
+        $manager->trackEvents(true);
+
+        $event = new Event('my.event', $this, [
+            'some' => 'data'
+        ]);
+        $manager->dispatch($event);
+        $this->assertEventFiredWith('my.event', 'some', 'data');
+
+        $manager = new EventManager();
+        $manager->setEventList(new EventList());
+        $manager->trackEvents(true);
+
+        $event = new Event('my.event', $this, [
+            'other' => 'data'
+        ]);
+        $manager->dispatch($event);
+        $this->assertEventFiredWith('my.event', 'other', 'data', $manager);
+    }
+
+    /**
+     * tests assertEventFired
+     *
+     * @return void
+     */
+    public function testEventFired()
+    {
+        $manager = EventManager::instance();
+        $manager->setEventList(new EventList());
+        $manager->trackEvents(true);
+
+        $event = new Event('my.event');
+        $manager->dispatch($event);
+        $this->assertEventFired('my.event');
+
+        $manager = new EventManager();
+        $manager->setEventList(new EventList());
+        $manager->trackEvents(true);
+
+        $event = new Event('my.event');
+        $manager->dispatch($event);
+        $this->assertEventFired('my.event', $manager);
+    }
 
     /**
      * testAssertHtml
@@ -186,7 +262,7 @@ class TestCaseTest extends TestCase
     {
         $test = new FixturizedTestCase('testFixtureLoadOnDemand');
         $test->autoFixtures = false;
-        $manager = $this->getMock('Cake\TestSuite\Fixture\FixtureManager');
+        $manager = $this->getMockBuilder('Cake\TestSuite\Fixture\FixtureManager')->getMock();
         $manager->fixturize($test);
         $test->fixtureManager = $manager;
         $manager->expects($this->once())->method('loadSingle');
@@ -462,5 +538,21 @@ class TestCaseTest extends TestCase
         $entity = new \Cake\ORM\Entity([]);
         $this->assertTrue($Mock->save($entity));
         $this->assertFalse($Mock->save($entity));
+    }
+
+    /**
+     * Test getting a table mock that doesn't have a preset table name sets the proper name
+     *
+     * @return void
+     */
+    public function testGetMockForModelSetTable()
+    {
+        Configure::write('App.namespace', 'TestApp');
+
+        $I18n = $this->getMockForModel('I18n', ['doSomething']);
+        $this->assertEquals('custom_i18n_table', $I18n->table());
+
+        $Tags = $this->getMockForModel('Tags', ['doSomething']);
+        $this->assertEquals('tags', $Tags->table());
     }
 }

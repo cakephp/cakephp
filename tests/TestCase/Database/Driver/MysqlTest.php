@@ -14,14 +14,12 @@
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
-use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use \PDO;
 
 /**
  * Tests Mysql driver
- *
  */
 class MysqlTest extends TestCase
 {
@@ -45,7 +43,9 @@ class MysqlTest extends TestCase
      */
     public function testConnectionConfigDefault()
     {
-        $driver = $this->getMock('Cake\Database\Driver\Mysql', ['_connect', 'connection']);
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+            ->setMethods(['_connect', 'connection'])
+            ->getMock();
         $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8';
         $expected = [
             'persistent' => true,
@@ -65,7 +65,9 @@ class MysqlTest extends TestCase
             PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
-        $connection = $this->getMock('StdClass', ['exec']);
+        $connection = $this->getMockBuilder('StdClass')
+            ->setMethods(['exec'])
+            ->getMock();
 
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);
@@ -98,11 +100,10 @@ class MysqlTest extends TestCase
                 'this too',
             ]
         ];
-        $driver = $this->getMock(
-            'Cake\Database\Driver\Mysql',
-            ['_connect', 'connection'],
-            [$config]
-        );
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([$config])
+            ->getMock();
         $dsn = 'mysql:host=foo;port=3440;dbname=bar;charset=a-language';
         $expected = $config;
         $expected['init'][] = "SET time_zone = 'Antartica'";
@@ -113,7 +114,9 @@ class MysqlTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
-        $connection = $this->getMock('StdClass', ['exec']);
+        $connection = $this->getMockBuilder('StdClass')
+            ->setMethods(['exec'])
+            ->getMock();
         $connection->expects($this->at(0))->method('exec')->with('Execute this');
         $connection->expects($this->at(1))->method('exec')->with('this too');
         $connection->expects($this->at(2))->method('exec')->with("SET time_zone = 'Antartica'");

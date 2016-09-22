@@ -16,6 +16,7 @@ namespace Cake\Console;
 
 use Cake\Error\BaseErrorHandler;
 use Cake\Error\FatalErrorException;
+use Cake\Error\PHP7ErrorException;
 use Exception;
 
 /**
@@ -83,6 +84,11 @@ class ConsoleErrorHandler extends BaseErrorHandler
         if ($exception instanceof FatalErrorException) {
             $errorName = 'Fatal Error:';
         }
+
+        if ($exception instanceof PHP7ErrorException) {
+            $exception = $exception->getError();
+        }
+
         $message = sprintf(
             "<error>%s</error> %s in [%s, line %s]",
             $errorName,

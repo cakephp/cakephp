@@ -31,7 +31,7 @@ class I18nShellTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->io = $this->getMock('Cake\Console\ConsoleIo');
+        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
         $this->shell = new I18nShell($this->io);
 
         $this->localeDir = TMP . 'Locale' . DS;

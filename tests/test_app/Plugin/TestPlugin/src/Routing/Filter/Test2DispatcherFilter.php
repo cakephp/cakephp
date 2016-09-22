@@ -18,8 +18,7 @@ use Cake\Event\Event;
 use Cake\Routing\DispatcherFilter;
 
 /**
- * Class Test2DispatcherFilter
- *
+ * Test2DispatcherFilter
  */
 class Test2DispatcherFilter extends DispatcherFilter
 {
@@ -28,6 +27,7 @@ class Test2DispatcherFilter extends DispatcherFilter
     {
         $event->data['response']->statusCode(500);
         $event->stopPropagation();
+
         return $event->data['response'];
     }
 

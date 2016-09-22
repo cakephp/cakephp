@@ -17,7 +17,6 @@ use Cake\Core\Exception\Exception;
 /**
  * Missing Controller exception - used when a controller
  * cannot be found.
- *
  */
 class MissingControllerException extends Exception
 {

@@ -13,9 +13,10 @@
  */
 namespace Cake\Test\TestCase\Network\Http\Auth;
 
-use Cake\Network\Http\Auth\Digest;
-use Cake\Network\Http\Request;
-use Cake\Network\Http\Response;
+use Cake\Http\Client;
+use Cake\Http\Client\Auth\Digest;
+use Cake\Http\Client\Request;
+use Cake\Http\Client\Response;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -23,6 +24,16 @@ use Cake\TestSuite\TestCase;
  */
 class DigestTest extends TestCase
 {
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Cake\Http\Client
+     */
+    public $client;
+
+    /**
+     * @var \Cake\Http\Client\Auth\Digest
+     */
+    public $auth;
 
     /**
      * Setup
@@ -33,11 +44,18 @@ class DigestTest extends TestCase
     {
         parent::setUp();
 
-        $this->client = $this->getMock(
-            'Cake\Network\Http\Client',
-            ['send']
-        );
+        $this->client = $this->getClientMock();
         $this->auth = new Digest($this->client);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|\Cake\Http\Client
+     */
+    protected function getClientMock()
+    {
+        return $this->getMockBuilder(Client::class)
+            ->setMethods(['send'])
+            ->getMock();
     }
 
     /**
@@ -57,12 +75,10 @@ class DigestTest extends TestCase
             ->will($this->returnValue($response));
 
         $auth = ['username' => 'admin', 'password' => '1234'];
-        $request = (new Request())->method(Request::METHOD_GET)
-            ->url('http://example.com/some/path');
+        $request = new Request('http://example.com/some/path', Request::METHOD_GET);
+        $request = $this->auth->authentication($request, $auth);
 
-        $this->auth->authentication($request, $auth);
-
-        $result = $request->header('Authorization');
+        $result = $request->getHeaderLine('Authorization');
         $this->assertContains('Digest', $result);
         $this->assertContains('realm="The batcave"', $result);
         $this->assertContains('nonce="4cded326c6c51"', $result);
@@ -89,11 +105,9 @@ class DigestTest extends TestCase
             ->will($this->returnValue($response));
 
         $auth = ['username' => 'admin', 'password' => '1234'];
-        $request = (new Request())->method(Request::METHOD_GET)
-            ->url('http://example.com/some/path');
-
-        $this->auth->authentication($request, $auth);
-        $result = $request->header('Authorization');
+        $request = new Request('http://example.com/some/path', Request::METHOD_GET);
+        $request = $this->auth->authentication($request, $auth);
+        $result = $request->getHeaderLine('Authorization');
 
         $this->assertContains('qop="auth"', $result);
         $this->assertContains('nc=00000001', $result);
@@ -117,11 +131,9 @@ class DigestTest extends TestCase
             ->will($this->returnValue($response));
 
         $auth = ['username' => 'admin', 'password' => '1234'];
-        $request = (new Request())->method(Request::METHOD_GET)
-            ->url('http://example.com/some/path');
-
-        $this->auth->authentication($request, $auth);
-        $result = $request->header('Authorization');
+        $request = new Request('http://example.com/some/path', Request::METHOD_GET);
+        $request = $this->auth->authentication($request, $auth);
+        $result = $request->getHeaderLine('Authorization');
 
         $this->assertContains('opaque="d8ea7aa61a1693024c4cc3a516f49b3c"', $result);
     }

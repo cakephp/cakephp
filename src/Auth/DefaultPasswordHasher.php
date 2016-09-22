@@ -16,7 +16,6 @@ namespace Cake\Auth;
 
 /**
  * Default password hashing class.
- *
  */
 class DefaultPasswordHasher extends AbstractPasswordHasher
 {

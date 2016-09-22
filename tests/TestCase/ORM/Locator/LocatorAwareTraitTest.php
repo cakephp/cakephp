@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * LocatorAwareTrait test case
- *
  */
 class LocatorAwareTraitTest extends TestCase
 {
@@ -46,7 +45,7 @@ class LocatorAwareTraitTest extends TestCase
         $tableLocator = $this->subject->tableLocator();
         $this->assertSame(TableRegistry::locator(), $tableLocator);
 
-        $newLocator = $this->getMock('Cake\ORM\Locator\LocatorInterface');
+        $newLocator = $this->getMockBuilder('Cake\ORM\Locator\LocatorInterface')->getMock();
         $subjectLocator = $this->subject->tableLocator($newLocator);
         $this->assertSame($newLocator, $subjectLocator);
     }

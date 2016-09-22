@@ -20,7 +20,6 @@ use Cake\Log\Engine\BaseLog;
 
 /**
  * Test Suite Test App Logging stream class.
- *
  */
 class TestAppLog extends BaseLog
 {

@@ -50,6 +50,7 @@ class ButtonWidget extends BasicWidget
             'escape' => false,
             'templateVars' => []
         ];
+
         return $this->_templates->format('button', [
             'text' => $data['escape'] ? h($data['text']) : $data['text'],
             'templateVars' => $data['templateVars'],

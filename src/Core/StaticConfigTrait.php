@@ -89,6 +89,7 @@ trait StaticConfigTrait
                 foreach ($key as $name => $settings) {
                     static::config($name, $settings);
                 }
+
                 return;
             }
         }
@@ -135,6 +136,7 @@ trait StaticConfigTrait
             static::$_registry->unload($config);
         }
         unset(static::$_config[$config]);
+
         return true;
     }
 
@@ -255,6 +257,7 @@ trait StaticConfigTrait
         if ($map !== null) {
             static::$_dsnClassMap = $map + static::$_dsnClassMap;
         }
+
         return static::$_dsnClassMap;
     }
 }

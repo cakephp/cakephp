@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * LogTest class
- *
  */
 class LogTest extends TestCase
 {
@@ -619,6 +618,7 @@ class LogTest extends TestCase
         $instance = new FileLog;
         Log::config('default', function ($alias) use ($instance) {
             $this->assertEquals('default', $alias);
+
             return $instance;
         });
         $this->assertSame($instance, Log::engine('default'));

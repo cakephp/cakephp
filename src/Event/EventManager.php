@@ -54,6 +54,20 @@ class EventManager
     protected $_isGlobal = false;
 
     /**
+     * The event list object.
+     *
+     * @var \Cake\Event\EventList|null
+     */
+    protected $_eventList;
+
+    /**
+     * Enables automatic adding of events to the event list object if it is present.
+     *
+     * @param bool
+     */
+    protected $_trackEvents = false;
+
+    /**
      * Returns the globally available instance of a Cake\Event\EventManager
      * this is used for dispatching events attached from outside the scope
      * other managers were created. Usually for creating hook systems or inter-class
@@ -74,6 +88,7 @@ class EventManager
         }
 
         static::$_generalManager->_isGlobal = true;
+
         return static::$_generalManager;
     }
 
@@ -101,10 +116,12 @@ class EventManager
     {
         if ($eventKey === null) {
             $this->on($callable);
+
             return;
         }
         if ($options) {
             $this->on($eventKey, $options, $callable);
+
             return;
         }
         $this->on($eventKey, $callable);
@@ -152,6 +169,7 @@ class EventManager
     {
         if ($eventKey instanceof EventListenerInterface) {
             $this->_attachSubscriber($eventKey);
+
             return;
         }
         $argCount = func_num_args();
@@ -159,6 +177,7 @@ class EventManager
             $this->_listeners[$eventKey][static::$defaultPriority][] = [
                 'callable' => $options
             ];
+
             return;
         }
         if ($argCount === 3) {
@@ -166,6 +185,7 @@ class EventManager
             $this->_listeners[$eventKey][$priority][] = [
                 'callable' => $callable
             ];
+
             return;
         }
         throw new InvalidArgumentException('Invalid arguments for EventManager::on().');
@@ -215,6 +235,7 @@ class EventManager
         if (is_string($method)) {
             $method = [$object, $method];
         }
+
         return [$method, $options];
     }
 
@@ -230,6 +251,7 @@ class EventManager
     {
         if ($eventKey === null) {
             $this->off($callable);
+
             return;
         }
         $this->off($eventKey, $callable);
@@ -271,20 +293,24 @@ class EventManager
     {
         if ($eventKey instanceof EventListenerInterface) {
             $this->_detachSubscriber($eventKey);
+
             return;
         }
         if ($callable instanceof EventListenerInterface) {
             $this->_detachSubscriber($callable, $eventKey);
+
             return;
         }
         if ($callable === null && is_string($eventKey)) {
             unset($this->_listeners[$eventKey]);
+
             return;
         }
         if ($callable === null) {
             foreach (array_keys($this->_listeners) as $name) {
                 $this->off($name, $eventKey);
             }
+
             return;
         }
         if (empty($this->_listeners[$eventKey])) {
@@ -345,6 +371,15 @@ class EventManager
         }
 
         $listeners = $this->listeners($event->name());
+
+        if ($this->_trackEvents) {
+            $this->addEventToList($event);
+        }
+
+        if (!$this->_isGlobal && static::instance()->isTrackingEvents()) {
+            static::instance()->addEventToList($event);
+        }
+
         if (empty($listeners)) {
             return $event;
         }
@@ -361,6 +396,7 @@ class EventManager
                 $event->result = $result;
             }
         }
+
         return $event;
     }
 
@@ -392,6 +428,7 @@ class EventManager
                 return $listener($event, $data[0], $data[1], $data[2]);
             default:
                 array_unshift($data, $event);
+
                 return call_user_func_array($listener, $data);
         }
     }
@@ -425,6 +462,7 @@ class EventManager
                 $result = array_merge($result, $localListeners[$priority]);
             }
         }
+
         return $result;
     }
 
@@ -439,6 +477,7 @@ class EventManager
         if (empty($this->_listeners[$eventKey])) {
             return [];
         }
+
         return $this->_listeners[$eventKey];
     }
 
@@ -457,7 +496,75 @@ class EventManager
                 preg_grep($matchPattern, array_keys($this->_listeners), 0)
             )
         );
+
         return $matches;
+    }
+
+    /**
+     * Returns the event list.
+     *
+     * @return \Cake\Event\EventList
+     */
+    public function getEventList()
+    {
+        return $this->_eventList;
+    }
+
+    /**
+     * Adds an event to the list if the event list object is present.
+     *
+     * @param \Cake\Event\Event $event An event to add to the list.
+     * @return void
+     */
+    public function addEventToList(Event $event)
+    {
+        if ($this->_eventList) {
+            $this->_eventList->add($event);
+        }
+    }
+
+    /**
+     * Enables / disables event tracking at runtime.
+     *
+     * @param bool $enabled True or false to enable / disable it.
+     * @return void
+     */
+    public function trackEvents($enabled)
+    {
+        $this->_trackEvents = (bool)$enabled;
+    }
+
+    /**
+     * Returns whether this manager is set up to track events
+     *
+     * @return bool
+     */
+    public function isTrackingEvents()
+    {
+        return $this->_trackEvents && $this->_eventList;
+    }
+
+    /**
+     * Enables the listing of dispatched events.
+     *
+     * @param \Cake\Event\EventList $eventList The event list object to use.
+     * @return void
+     */
+    public function setEventList(EventList $eventList)
+    {
+        $this->_eventList = $eventList;
+        $this->_trackEvents = true;
+    }
+
+    /**
+     * Disables the listing of dispatched events.
+     *
+     * @return void
+     */
+    public function unsetEventList()
+    {
+        $this->_eventList = null;
+        $this->_trackEvents = false;
     }
 
     /**
@@ -470,9 +577,19 @@ class EventManager
         $properties = get_object_vars($this);
         $properties['_generalManager'] = '(object) EventManager';
         $properties['_listeners'] = [];
-        foreach ($this->_listeners as $key => $listeners) {
-            $properties['_listeners'][$key] = count($listeners) . ' listener(s)';
+        foreach ($this->_listeners as $key => $priorities) {
+            $listenerCount = 0;
+            foreach ($priorities as $listeners) {
+                $listenerCount += count($listeners);
+            }
+            $properties['_listeners'][$key] = $listenerCount . ' listener(s)';
         }
+        if ($this->_eventList) {
+            foreach ($this->_eventList as $event) {
+                $properties['_dispatchedEvents'][] = $event->name() . ' with subject ' . get_class($event->subject());
+            }
+        }
+
         return $properties;
     }
 }

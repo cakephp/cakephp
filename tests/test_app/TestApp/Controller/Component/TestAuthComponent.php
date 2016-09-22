@@ -18,7 +18,6 @@ use Cake\Event\Event;
 
 /**
  * TestAuthComponent class
- *
  */
 class TestAuthComponent extends AuthComponent
 {
@@ -30,6 +29,7 @@ class TestAuthComponent extends AuthComponent
                 return;
             }
             $this->authCheckCalledFrom = $event->name();
+
             return;
         }
 

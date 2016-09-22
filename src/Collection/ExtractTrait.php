@@ -78,6 +78,7 @@ trait ExtractTrait
 
             if ($collectionTransform) {
                 $rest = implode('.', array_slice($path, $i));
+
                 return (new Collection($data))->extract($rest);
             }
 
@@ -88,6 +89,7 @@ trait ExtractTrait
             $value = $data[$column];
             $data = $value;
         }
+
         return $value;
     }
 
@@ -109,6 +111,7 @@ trait ExtractTrait
             $value = $data[$column];
             $data = $value;
         }
+
         return $value;
     }
 
@@ -137,6 +140,7 @@ trait ExtractTrait
                     return false;
                 }
             }
+
             return true;
         };
     }

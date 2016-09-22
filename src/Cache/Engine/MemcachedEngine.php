@@ -27,7 +27,6 @@ use Memcached;
  * support of binary protocol, and igbinary serialization
  * (if memcached extension compiled with --enable-igbinary)
  * Compressed keys can also be incremented/decremented
- *
  */
 class MemcachedEngine extends CacheEngine
 {
@@ -259,6 +258,7 @@ class MemcachedEngine extends CacheEngine
             $host = substr($server, 0, $position);
             $port = substr($server, $position + 1);
         }
+
         return [$host, (int)$port];
     }
 
@@ -305,6 +305,7 @@ class MemcachedEngine extends CacheEngine
         foreach (array_keys($data) as $key) {
             $return[$key] = $success;
         }
+
         return $return;
     }
 
@@ -342,6 +343,7 @@ class MemcachedEngine extends CacheEngine
             $return[$key] = array_key_exists($this->_key($key), $values) ?
                 $values[$this->_key($key)] : false;
         }
+
         return $return;
     }
 
@@ -407,6 +409,7 @@ class MemcachedEngine extends CacheEngine
         foreach ($keys as $key) {
             $return[$key] = $success;
         }
+
         return $return;
     }
 
@@ -451,6 +454,7 @@ class MemcachedEngine extends CacheEngine
         }
 
         $key = $this->_key($key);
+
         return $this->_Memcached->add($key, $value, $duration);
     }
 

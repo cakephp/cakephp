@@ -20,7 +20,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * SocketTest class
- *
  */
 class SocketTest extends TestCase
 {
@@ -349,12 +348,6 @@ class SocketTest extends TestCase
     public function testEnableCrypto()
     {
         $this->skipIf(!function_exists('stream_socket_enable_crypto'), 'Broken on HHVM');
-        // testing on ssl server
-        $this->_connectSocketToSslTls();
-        $this->assertTrue($this->Socket->enableCrypto('sslv3', 'client'));
-        $this->Socket->disconnect();
-
-        // testing on tls server
         $this->_connectSocketToSslTls();
         $this->assertTrue($this->Socket->enableCrypto('tls', 'client'));
         $this->Socket->disconnect();

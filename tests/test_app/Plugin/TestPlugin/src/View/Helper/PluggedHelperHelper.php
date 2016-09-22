@@ -14,8 +14,7 @@
  */
 
 /**
- * Class PluggedHelperHelper
- *
+ * PluggedHelperHelper
  */
 namespace TestPlugin\View\Helper;
 

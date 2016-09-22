@@ -19,7 +19,6 @@ use Cake\Event\Event;
 
 /**
  * OrangeComponent class
- *
  */
 class OrangeComponent extends Component
 {

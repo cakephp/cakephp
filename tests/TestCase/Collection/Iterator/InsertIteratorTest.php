@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * InsertIterator Test
- *
  */
 class InsertIteratorTest extends TestCase
 {

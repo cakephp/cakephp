@@ -38,9 +38,10 @@ class InflectedRoute extends Route
      * plugin keys to their camelized form.
      *
      * @param string $url The URL to parse
+     * @param string $method The HTTP method being matched.
      * @return array|false An array of request parameters, or false on failure.
      */
-    public function parse($url)
+    public function parse($url, $method = '')
     {
         $params = parent::parse($url);
         if (!$params) {
@@ -57,6 +58,7 @@ class InflectedRoute extends Route
                 $params['plugin'] = Inflector::camelize($vendor) . '/' . Inflector::camelize($plugin);
             }
         }
+
         return $params;
     }
 
@@ -77,6 +79,7 @@ class InflectedRoute extends Route
             $this->_inflectedDefaults = true;
             $this->defaults = $this->_underscore($this->defaults);
         }
+
         return parent::match($url, $context);
     }
 
@@ -94,6 +97,7 @@ class InflectedRoute extends Route
         if (!empty($url['plugin'])) {
             $url['plugin'] = Inflector::underscore($url['plugin']);
         }
+
         return $url;
     }
 }

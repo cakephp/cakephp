@@ -13,7 +13,6 @@
  */
 namespace Cake\Test\TestCase\Routing\Filter;
 
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Network\Request;
@@ -62,7 +61,9 @@ class AssetFilterTest extends TestCase
         $time = filemtime(Plugin::path('TestTheme') . 'webroot/img/cake.power.gif');
         $time = new \DateTime('@' . $time);
 
-        $response = $this->getMock('Cake\Network\Response', ['send', 'checkNotModified']);
+        $response = $this->getMockBuilder('Cake\Network\Response')
+            ->setMethods(['send', 'checkNotModified'])
+            ->getMock();
         $request = new Request('test_theme/img/cake.power.gif');
 
         $response->expects($this->once())->method('checkNotModified')
@@ -76,7 +77,9 @@ class AssetFilterTest extends TestCase
         $this->assertEquals(200, $response->statusCode());
         $this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
 
-        $response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'checkNotModified', 'send']);
+        $response = $this->getMockBuilder('Cake\Network\Response')
+            ->setMethods(['_sendHeader', 'checkNotModified', 'send'])
+            ->getMock();
         $request = new Request('test_theme/img/cake.power.gif');
 
         $response->expects($this->once())->method('checkNotModified')
@@ -99,7 +102,9 @@ class AssetFilterTest extends TestCase
     {
         $filter = new AssetFilter();
 
-        $response = $this->getMock('Response', ['_sendHeader']);
+        $response = $this->getMockBuilder('Cake\Network\Response')
+            ->setMethods(['_sendHeader'])
+            ->getMock();
         $request = new Request('//index.php');
         $event = new Event('Dispatcher.beforeRequest', $this, compact('request', 'response'));
 
@@ -110,7 +115,7 @@ class AssetFilterTest extends TestCase
     /**
      * Test that 404's are returned when .. is in the URL
      *
-     * @return voi
+     * @return void
      * @triggers Dispatcher.beforeRequest $this, compact('request', 'response')
      * @triggers Dispatcher.beforeRequest $this, compact('request', 'response')
      */
@@ -118,7 +123,9 @@ class AssetFilterTest extends TestCase
     {
         $filter = new AssetFilter();
 
-        $response = $this->getMock('Response', ['_sendHeader']);
+        $response = $this->getMockBuilder('Cake\Network\Response')
+            ->setMethods(['_sendHeader'])
+            ->getMock();
         $request = new Request('test_theme/../webroot/css/test_asset.css');
         $event = new Event('Dispatcher.beforeRequest', $this, compact('request', 'response'));
 
@@ -232,18 +239,18 @@ class AssetFilterTest extends TestCase
         Plugin::load(['Company/TestPluginThree', 'TestPlugin', 'PluginJs']);
 
         $filter = new AssetFilter();
-        $response = $this->getMock('Cake\Network\Response', ['_sendHeader']);
+        $response = $this->getMockBuilder('Cake\Network\Response')
+            ->setMethods(['_sendHeader'])
+            ->getMock();
         $request = new Request($url);
         $event = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response'));
 
-        ob_start();
-        $filter->beforeDispatch($event);
-        $result = ob_get_contents();
-        ob_end_clean();
+        $response = $filter->beforeDispatch($event);
+        $result = $response->getFile();
 
         $path = TEST_APP . str_replace('/', DS, $file);
         $file = file_get_contents($path);
-        $this->assertEquals($file, $result);
+        $this->assertEquals($file, $result->read());
 
         $expected = filesize($path);
         $headers = $response->header();

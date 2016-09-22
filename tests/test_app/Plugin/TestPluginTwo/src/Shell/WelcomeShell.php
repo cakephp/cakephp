@@ -14,8 +14,7 @@
  */
 
 /**
- * Class WelcomeShell
- *
+ * WelcomeShell
  */
 namespace TestPluginTwo\Shell;
 

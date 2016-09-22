@@ -95,9 +95,6 @@ class StringTemplateTest extends TestCase
         ];
         $this->template->add($templates);
 
-        $result = $this->template->format('not there', []);
-        $this->assertNull($result);
-
         $result = $this->template->format('text', ['text' => '']);
         $this->assertSame('', $result);
 
@@ -140,6 +137,22 @@ class StringTemplateTest extends TestCase
             'text' => ['key' => 'example', 'text']
         ]);
         $this->assertEquals('<a href="/">exampletext</a>', $result);
+    }
+
+    /**
+     * Test formatting a missing template.
+     *
+     * @expectedException RuntimeException
+     * @expectedExceptionMessage Cannot find template named 'missing'
+     * @return void
+     */
+    public function testFormatMissingTemplate()
+    {
+        $templates = [
+            'text' => '{{text}}',
+        ];
+        $this->template->add($templates);
+        $this->template->format('missing', ['text' => 'missing']);
     }
 
     /**

@@ -19,7 +19,6 @@ use Cake\Event\Event;
 
 /**
  * BananaComponent class
- *
  */
 class BananaComponent extends Component
 {
