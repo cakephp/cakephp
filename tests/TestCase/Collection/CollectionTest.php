@@ -1771,14 +1771,53 @@ class CollectionTest extends TestCase
     }
 
     /**
-     * Tests the chunk method with preserved keys
+     * Tests the chunks method with exact chunks
      *
      * @return void
      */
-    public function testChunkPreserveKeys()
+    public function testChunks()
+    {
+        $collection = new Collection(range(1, 10));
+        $chunked = $collection->chunks(2)->toList();
+        $expected = [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]];
+        $this->assertEquals($expected, $chunked);
+    }
+
+    /**
+     * Tests the chunks method with overflowing chunk size
+     *
+     * @return void
+     */
+    public function testChunksOverflow()
+    {
+        $collection = new Collection(range(1, 11));
+        $chunked = $collection->chunks(2)->toList();
+        $expected = [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11]];
+        $this->assertEquals($expected, $chunked);
+    }
+
+    /**
+     * Tests the chunks method with non-scalar items
+     *
+     * @return void
+     */
+    public function testChunksNested()
+    {
+        $collection = new Collection([1, 2, 3, [4, 5], 6, [7, [8, 9], 10], 11]);
+        $chunked = $collection->chunks(2)->toList();
+        $expected = [[1, 2], [3, [4, 5]], [6, [7, [8, 9], 10]], [11]];
+        $this->assertEquals($expected, $chunked);
+    }
+
+    /**
+     * Tests the chunks method with preserved keys
+     *
+     * @return void
+     */
+    public function testChunksPreserveKeys()
     {
         $collection = new Collection(['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7]);
-        $chunked = $collection->chunk(2, true)->toList();
+        $chunked = $collection->chunks(2, true)->toList();
         $expected = [['a' => 1, 'b' => 2], ['c' => 3, 'd' => 4], ['e' => 5, 'f' => 6], ['g' => 7]];
         $this->assertEquals($expected, $chunked);
     }
