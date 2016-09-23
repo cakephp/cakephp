@@ -100,9 +100,17 @@ class DecimalTypeTest extends TestCase
 
         $result = $this->type->toDatabase('2.51', $this->driver);
         $this->assertSame('2.51', $result);
+    }
 
-        $result = $this->type->toDatabase(['3', '4'], $this->driver);
-        $this->assertSame('1', $result);
+    /**
+     * Arrays are invalid.
+     *
+     * @expectedException InvalidArgumentException
+     * @return void
+     */
+    public function testToDatabaseInvalid()
+    {
+        $this->type->toDatabase(['3', '4'], $this->driver);
     }
 
     /**

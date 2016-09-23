@@ -17,6 +17,7 @@ namespace Cake\Database\Type;
 use Cake\Database\Driver;
 use Cake\Database\Type;
 use Cake\Database\TypeInterface;
+use InvalidArgumentException;
 use PDO;
 use RuntimeException;
 
@@ -66,14 +67,15 @@ class DecimalType extends Type implements TypeInterface
      * @param string|int|float $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
+     * @throws \InvalidArgumentException
      */
     public function toDatabase($value, Driver $driver)
     {
         if ($value === null || $value === '') {
             return null;
         }
-        if (is_array($value)) {
-            return '1';
+        if (!is_scalar($value)) {
+            throw new InvalidArgumentException('Cannot convert value to a decimal.');
         }
         if (is_string($value) && is_numeric($value)) {
             return $value;
