@@ -284,7 +284,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      * and all ExpressionInterface objects that could be found in the second
      * position.
      *
-     * @param array|Traversable $values The rows to insert
+     * @param array|\Traversable $values The rows to insert
      * @return array
      */
     protected function _collectExpressions($values)

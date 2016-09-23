@@ -631,6 +631,8 @@ class EntityContextTest extends TestCase
      */
     public function testValAssociatedCustomIds()
     {
+        $this->_setupTables();
+
         $row = new Article([
             'title' => 'First post',
             'user' => new Entity([

@@ -826,6 +826,9 @@ class PaginatorComponentTest extends TestCase
         $this->assertEquals([], $result['order']);
     }
 
+    /**
+     * @return array
+     */
     public function checkLimitProvider()
     {
         return [

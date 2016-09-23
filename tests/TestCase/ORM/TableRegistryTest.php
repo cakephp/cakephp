@@ -26,7 +26,7 @@ class TableRegistryTest extends TestCase
     /**
      * Original TableLocator.
      *
-     * @var Cake\ORM\Locator\LocatorInterface
+     * @var \Cake\ORM\Locator\LocatorInterface
      */
     protected $_originalLocator;
 
@@ -56,7 +56,7 @@ class TableRegistryTest extends TestCase
     /**
      * Sets and returns mock LocatorInterface instance.
      *
-     * @return Cake\ORM\Locator\LocatorInterface
+     * @return \Cake\ORM\Locator\LocatorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function _setMockLocator()
     {
