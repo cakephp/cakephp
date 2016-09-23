@@ -52,7 +52,7 @@ use Traversable;
  * @method \Cake\Collection\CollectionInterface take($size = 1, $from = 0) In-memory limit and offset for the query results.
  * @method \Cake\Collection\CollectionInterface skip(int $howMany) Skips some rows from the start of the query result.
  * @method mixed last() Return the last row of the query result
- * @method \Cake\Collection\CollectionInterface append(array|Traversable $items) Appends more rows to the result of the query.
+ * @method \Cake\Collection\CollectionInterface append(array|\Traversable $items) Appends more rows to the result of the query.
  * @method \Cake\Collection\CollectionInterface combine($k, $v, $g = null) Returns the values of the column $v index by column $k,
  *   and grouped by $g.
  * @method \Cake\Collection\CollectionInterface nest($k, $p, $n = 'children') Creates a tree structure by nesting the values of column $p into that
