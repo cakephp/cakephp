@@ -1046,6 +1046,16 @@ class Request implements ArrayAccess
      */
     public function withAddedHeader($name, $value)
     {
+        $new = clone $this;
+        $name = $this->normalizeHeaderName($name);
+        $existing = [];
+        if (isset($new->_environment[$name])) {
+            $existing = (array)$new->_environment[$name];
+        }
+        $existing = array_merge($existing, (array)$value);
+        $new->_environment[$name] = $existing;
+
+        return $new;
     }
 
     /**

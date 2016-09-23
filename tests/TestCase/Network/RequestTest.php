@@ -1355,6 +1355,34 @@ class RequestTest extends TestCase
     }
 
     /**
+     * Test adding a header.
+     *
+     * @return void
+     */
+    public function testWithAddedHeader()
+    {
+        $request = new Request(['environment' => [
+            'HTTP_HOST' => 'localhost',
+            'CONTENT_TYPE' => 'application/json',
+            'CONTENT_LENGTH' => 1337,
+            'HTTP_CONTENT_MD5' => 'abc123',
+            'HTTP_DOUBLE' => ['a', 'b']
+        ]]);
+        $new = $request->withAddedHeader('Double', 'c');
+        $this->assertNotSame($new, $request);
+
+        $this->assertEquals('a, b', $request->getHeaderLine('Double'), 'old request is unchanged');
+        $this->assertEquals('a, b, c', $new->getHeaderLine('Double'), 'new request is correct');
+        $this->assertEquals(['a', 'b', 'c'], $new->header('Double'));
+
+        $new = $request->withAddedHeader('Content-Length', 777);
+        $this->assertEquals([1337, 777], $new->getHeader('Content-Length'), 'scalar values are appended');
+
+        $new = $request->withAddedHeader('Content-Length', [123, 456]);
+        $this->assertEquals([1337, 123, 456], $new->getHeader('Content-Length'), 'List values are merged');
+    }
+
+    /**
      * Test removing a header.
      *
      * @return void
