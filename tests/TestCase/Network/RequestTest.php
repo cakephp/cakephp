@@ -1347,9 +1347,11 @@ class RequestTest extends TestCase
 
         $this->assertEquals(1337, $request->getHeaderLine('Content-length'), 'old request is unchanged');
         $this->assertEquals(999, $new->getHeaderLine('Content-length'), 'new request is correct');
+        $this->assertEquals(999, $new->header('Content-Length'));
 
         $new = $request->withHeader('Double', ['a']);
         $this->assertEquals(['a'], $new->getHeader('Double'), 'List values are overwritten');
+        $this->assertEquals(['a'], $new->header('Double'), 'headers written in bc way.');
     }
 
     /**

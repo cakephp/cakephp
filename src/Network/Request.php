@@ -944,6 +944,21 @@ class Request implements ArrayAccess
     }
 
     /**
+     * Normalize a header name into the SERVER version.
+     *
+     * @param string $name The header name.
+     * @return string The normalized header name.
+     */
+    protected function normalizeHeaderName($name)
+    {
+        $name = str_replace('-', '_', strtoupper($name));
+        if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
+            $name = 'HTTP_' . $name;
+        }
+        return $name;
+    }
+
+    /**
      * Read an HTTP header from the Request information.
      *
      * @param string $name Name of the header you want.
@@ -951,11 +966,7 @@ class Request implements ArrayAccess
      */
     public function header($name)
     {
-        $name = str_replace('-', '_', $name);
-        if (!in_array(strtoupper($name), ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
-            $name = 'HTTP_' . $name;
-        }
-
+        $name = $this->normalizeHeaderName($name);
         return $this->env($name);
     }
 
@@ -986,10 +997,7 @@ class Request implements ArrayAccess
      */
     public function getHeader($name)
     {
-        $name = str_replace('-', '_', strtoupper($name));
-        if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
-            $name = 'HTTP_' . $name;
-        }
+        $name = $this->normalizeHeaderName($name);
         if (isset($this->_environment[$name])) {
             return (array)$this->_environment[$name];
         }
@@ -1020,10 +1028,7 @@ class Request implements ArrayAccess
     public function withHeader($name, $value)
     {
         $new = clone $this;
-        $name = strtoupper(str_replace('-', '_', $name));
-        if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
-            $name = 'HTTP_' . $name;
-        }
+        $name = $this->normalizeHeaderName($name);
         $new->_environment[$name] = $value;
 
         return $new;
@@ -1051,6 +1056,11 @@ class Request implements ArrayAccess
      */
     public function withoutHeader($name)
     {
+        $new = clone $this;
+        $name = $this->normalizeHeaderName($name);
+        $new->_environment[$name] = $value;
+
+        return $new;
     }
 
     /**
