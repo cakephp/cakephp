@@ -1355,6 +1355,28 @@ class RequestTest extends TestCase
     }
 
     /**
+     * Test removing a header.
+     *
+     * @return void
+     */
+    public function testWithoutHeader()
+    {
+        $request = new Request(['environment' => [
+            'HTTP_HOST' => 'localhost',
+            'CONTENT_TYPE' => 'application/json',
+            'CONTENT_LENGTH' => 1337,
+            'HTTP_CONTENT_MD5' => 'abc123',
+            'HTTP_DOUBLE' => ['a', 'b']
+        ]]);
+        $new = $request->withoutHeader('Content-Length', 999);
+        $this->assertNotSame($new, $request);
+
+        $this->assertEquals(1337, $request->getHeaderLine('Content-length'), 'old request is unchanged');
+        $this->assertEquals('', $new->getHeaderLine('Content-length'), 'new request is correct');
+        $this->assertNull($new->header('Content-Length'));
+    }
+
+    /**
      * Test accepts() with and without parameters
      *
      * @return void

@@ -1051,14 +1051,14 @@ class Request implements ArrayAccess
     /**
      * Get a modified request without a provided header.
      *
-     * @param string $name The header name.
+     * @param string $name The header name to remove.
      * @return static
      */
     public function withoutHeader($name)
     {
         $new = clone $this;
         $name = $this->normalizeHeaderName($name);
-        $new->_environment[$name] = $value;
+        unset($new->_environment[$name]);
 
         return $new;
     }
