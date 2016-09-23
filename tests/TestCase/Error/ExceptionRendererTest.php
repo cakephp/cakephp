@@ -34,6 +34,7 @@ use Cake\Network\Exception\NotFoundException;
 use Cake\Network\Exception\SocketException;
 use Cake\Network\Request;
 use Cake\ORM\Exception\MissingBehaviorException;
+use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -872,6 +873,28 @@ class ExceptionRendererTest extends TestCase
 
         $expected = ['Controller.shutdown', 'Dispatcher.afterDispatch'];
         $this->assertEquals($expected, $fired);
+    }
+
+    /**
+     * Test that rendering exceptions triggers events
+     * on filters attached to dispatcherfactory
+     *
+     * @return void
+     */
+    public function testRenderShutdownEventsOnDispatcherFacotry()
+    {
+        $filter = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
+            ->setMethods(['afterDispatch'])
+            ->getMock();
+
+        $filter->expects($this->at(0))
+            ->method('afterDispatch');
+
+        DispatcherFactory::add($filter);
+
+        $exception = new Exception('Terrible');
+        $renderer = new ExceptionRenderer($exception);
+        $renderer->render();
     }
 
     /**
