@@ -368,7 +368,7 @@ class Request implements ArrayAccess
             parse_str($data, $data);
         }
         if ($this->hasHeader('X-Http-Method-Override')) {
-            $data['_method'] = $this->getHeaderLine('X-Http-Method_Override');
+            $data['_method'] = $this->getHeaderLine('X-Http-Method-Override');
             $override = true;
         }
         $this->_environment['ORIGINAL_REQUEST_METHOD'] = $method;
@@ -1010,7 +1010,7 @@ class Request implements ArrayAccess
     }
 
     /**
-     * Check if a header exists in the request.
+     * Check if a header is set in the request.
      *
      * @param string $name The header you want to get (case-insensitive)
      * @return bool Whether or not the header is defined.
@@ -1019,7 +1019,7 @@ class Request implements ArrayAccess
     {
         $name = $this->normalizeHeaderName($name);
 
-        return array_key_exists($name, $this->_environment);
+        return isset($this->_environment[$name]);
     }
 
     /**
