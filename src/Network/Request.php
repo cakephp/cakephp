@@ -981,8 +981,8 @@ class Request implements ArrayAccess
      * Returns an associative array where the header names are
      * the keys and the values are a list of header values.
      *
-     * While header names are not case-sensitive, getHeaders() will preserve the
-     * exact case in which headers were originally specified.
+     * While header names are not case-sensitive, getHeaders() will normalize
+     * the headers.
      *
      * @return array An associative array of headers and their values.
      */
