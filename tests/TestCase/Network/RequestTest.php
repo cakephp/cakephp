@@ -1287,6 +1287,52 @@ class RequestTest extends TestCase
      *
      * @return void
      */
+    public function testGetHeaders()
+    {
+        $request = new Request(['environment' => [
+            'HTTP_HOST' => 'localhost',
+            'CONTENT_TYPE' => 'application/json',
+            'CONTENT_LENGTH' => 1337,
+            'HTTP_CONTENT_MD5' => 'abc123',
+            'HTTP_DOUBLE' => ['a', 'b']
+        ]]);
+        $headers = $request->getHeaders();
+        $expected = [
+            'Host' => ['localhost'],
+            'Content-Type' => ['application/json'],
+            'Content-Length' => [1337],
+            'Content-Md5' => ['abc123'],
+            'Double' => ['a', 'b'],
+        ];
+        $this->assertEquals($expected, $headers);
+    }
+
+    /**
+     * Test hasHeader
+     *
+     * @return void
+     */
+    public function testHasHeader()
+    {
+        $request = new Request(['environment' => [
+            'HTTP_HOST' => 'localhost',
+            'CONTENT_TYPE' => 'application/json',
+            'CONTENT_LENGTH' => 1337,
+            'HTTP_CONTENT_MD5' => 'abc123',
+            'HTTP_DOUBLE' => ['a', 'b']
+        ]]);
+        $this->assertTrue($request->hasHeader('Host'));
+        $this->assertTrue($request->hasHeader('Content-Type'));
+        $this->assertTrue($request->hasHeader('Content-MD5'));
+        $this->assertTrue($request->hasHeader('Double'));
+        $this->assertFalse($request->hasHeader('Authorization'));
+    }
+
+    /**
+     * Test getting headers with psr7 methods
+     *
+     * @return void
+     */
     public function testGetHeader()
     {
         $request = new Request(['environment' => [
@@ -2440,7 +2486,6 @@ class RequestTest extends TestCase
         $expected = $vars + [
             'CONTENT_TYPE' => null,
             'HTTP_CONTENT_TYPE' => null,
-            'HTTP_X_HTTP_METHOD_OVERRIDE' => null,
             'ORIGINAL_REQUEST_METHOD' => 'PUT',
         ];
         $this->assertSame($expected, $request->getServerParams());

@@ -367,8 +367,8 @@ class Request implements ArrayAccess
             $data = $this->input();
             parse_str($data, $data);
         }
-        if ($this->env('HTTP_X_HTTP_METHOD_OVERRIDE')) {
-            $data['_method'] = $this->env('HTTP_X_HTTP_METHOD_OVERRIDE');
+        if ($this->hasHeader('X-Http-Method-Override')) {
+            $data['_method'] = $this->getHeaderLine('X-Http-Method_Override');
             $override = true;
         }
         $this->_environment['ORIGINAL_REQUEST_METHOD'] = $method;
@@ -983,6 +983,34 @@ class Request implements ArrayAccess
      */
     public function getHeaders()
     {
+        $headers = [];
+        foreach ($this->_environment as $key => $value) {
+            $name = null;
+            if (strpos($key, 'HTTP_') === 0) {
+                $name = substr($key, 5);
+            }
+            if (strpos($key, 'CONTENT_') === 0) {
+                $name = $key;
+            }
+            if ($name !== null) {
+                $name = strtr(strtolower($name), '_', ' ');
+                $name = strtr(ucwords($name), ' ', '-');
+                $headers[$name] = (array)$value;
+            }
+        }
+        return $headers;
+    }
+
+    /**
+     * Check if a header exists in the request.
+     *
+     * @param string $name The header you want to get (case-insensitive)
+     * @return bool Whether or not the header is defined.
+     */
+    public function hasHeader($name)
+    {
+        $name = $this->normalizeHeaderName($name);
+        return array_key_exists($name, $this->_environment);
     }
 
     /**
