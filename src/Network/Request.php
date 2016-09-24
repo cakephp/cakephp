@@ -955,6 +955,7 @@ class Request implements ArrayAccess
         if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
             $name = 'HTTP_' . $name;
         }
+
         return $name;
     }
 
@@ -972,6 +973,7 @@ class Request implements ArrayAccess
     public function header($name)
     {
         $name = $this->normalizeHeaderName($name);
+
         return $this->env($name);
     }
 
@@ -1003,6 +1005,7 @@ class Request implements ArrayAccess
                 $headers[$name] = (array)$value;
             }
         }
+
         return $headers;
     }
 
@@ -1015,6 +1018,7 @@ class Request implements ArrayAccess
     public function hasHeader($name)
     {
         $name = $this->normalizeHeaderName($name);
+
         return array_key_exists($name, $this->_environment);
     }
 
@@ -1034,6 +1038,7 @@ class Request implements ArrayAccess
         if (isset($this->_environment[$name])) {
             return (array)$this->_environment[$name];
         }
+
         return [];
     }
 
@@ -1048,6 +1053,7 @@ class Request implements ArrayAccess
     public function getHeaderLine($name)
     {
         $value = $this->getHeader($name);
+
         return implode(', ', $value);
     }
 
