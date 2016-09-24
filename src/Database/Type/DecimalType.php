@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.3.4
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database\Type;
@@ -17,15 +17,16 @@ namespace Cake\Database\Type;
 use Cake\Database\Driver;
 use Cake\Database\Type;
 use Cake\Database\TypeInterface;
+use InvalidArgumentException;
 use PDO;
 use RuntimeException;
 
 /**
- * Float type converter.
+ * Decimal type converter.
  *
- * Use to convert float/decimal data between PHP and the database types.
+ * Use to convert decimal data between PHP and the database types.
  */
-class FloatType extends Type implements TypeInterface
+class DecimalType extends Type implements TypeInterface
 {
 
     /**
@@ -63,17 +64,24 @@ class FloatType extends Type implements TypeInterface
     /**
      * Convert integer data into the database format.
      *
-     * @param string|resource $value The value to convert.
+     * @param string|int|float $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
+     * @throws \InvalidArgumentException
      */
     public function toDatabase($value, Driver $driver)
     {
         if ($value === null || $value === '') {
             return null;
         }
+        if (!is_scalar($value)) {
+            throw new InvalidArgumentException('Cannot convert value to a decimal.');
+        }
+        if (is_string($value) && is_numeric($value)) {
+            return $value;
+        }
 
-        return (float)$value;
+        return sprintf('%F', $value);
     }
 
     /**
@@ -88,9 +96,6 @@ class FloatType extends Type implements TypeInterface
     {
         if ($value === null) {
             return null;
-        }
-        if (is_array($value)) {
-            return 1;
         }
 
         return (float)$value;
