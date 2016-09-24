@@ -56,14 +56,11 @@ class ResponseEmitter implements EmitterInterface
         $this->flush();
 
         $range = $this->parseContentRange($response->getHeaderLine('Content-Range'));
-
         if (is_array($range)) {
             $this->emitBodyRange($range, $response, $maxBufferLength);
-
-            return;
+        } else {
+            $this->emitBody($response, $maxBufferLength);
         }
-
-        $this->emitBody($response, $maxBufferLength);
 
         if (function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
