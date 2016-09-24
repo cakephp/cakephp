@@ -961,8 +961,13 @@ class Request implements ArrayAccess
     /**
      * Read an HTTP header from the Request information.
      *
+     * If the header is not defined in the request, this method
+     * will fallback to reading data from $_SERVER and $_ENV.
+     * This fallback behavior is deprecated, and will be removed in 4.0.0
+     *
      * @param string $name Name of the header you want.
      * @return string|null Either null on no header being set or the value of the header.
+     * @deprecated 4.0.0 The automatic fallback to env() will be removed in 4.0.0
      */
     public function header($name)
     {
@@ -1311,7 +1316,7 @@ class Request implements ArrayAccess
      */
     public function parseAccept()
     {
-        return $this->_parseAcceptWithQualifier($this->header('accept'));
+        return $this->_parseAcceptWithQualifier($this->getHeaderLine('Accept'));
     }
 
     /**
@@ -1330,7 +1335,7 @@ class Request implements ArrayAccess
      */
     public function acceptLanguage($language = null)
     {
-        $raw = $this->_parseAcceptWithQualifier($this->header('Accept-Language'));
+        $raw = $this->_parseAcceptWithQualifier($this->getHeaderLine('Accept-Language'));
         $accept = [];
         foreach ($raw as $languages) {
             foreach ($languages as &$lang) {
