@@ -367,8 +367,8 @@ class Request implements ArrayAccess
             $data = $this->input();
             parse_str($data, $data);
         }
-        if ($this->env('HTTP_X_HTTP_METHOD_OVERRIDE')) {
-            $data['_method'] = $this->env('HTTP_X_HTTP_METHOD_OVERRIDE');
+        if ($this->hasHeader('X-Http-Method-Override')) {
+            $data['_method'] = $this->getHeaderLine('X-Http-Method-Override');
             $override = true;
         }
         $this->_environment['ORIGINAL_REQUEST_METHOD'] = $method;
@@ -944,19 +944,172 @@ class Request implements ArrayAccess
     }
 
     /**
-     * Read an HTTP header from the Request information.
+     * Normalize a header name into the SERVER version.
      *
-     * @param string $name Name of the header you want.
-     * @return string|null Either null on no header being set or the value of the header.
+     * @param string $name The header name.
+     * @return string The normalized header name.
      */
-    public function header($name)
+    protected function normalizeHeaderName($name)
     {
-        $name = str_replace('-', '_', $name);
-        if (!in_array(strtoupper($name), ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
+        $name = str_replace('-', '_', strtoupper($name));
+        if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
             $name = 'HTTP_' . $name;
         }
 
+        return $name;
+    }
+
+    /**
+     * Read an HTTP header from the Request information.
+     *
+     * If the header is not defined in the request, this method
+     * will fallback to reading data from $_SERVER and $_ENV.
+     * This fallback behavior is deprecated, and will be removed in 4.0.0
+     *
+     * @param string $name Name of the header you want.
+     * @return string|null Either null on no header being set or the value of the header.
+     * @deprecated 4.0.0 The automatic fallback to env() will be removed in 4.0.0
+     */
+    public function header($name)
+    {
+        $name = $this->normalizeHeaderName($name);
+
         return $this->env($name);
+    }
+
+    /**
+     * Get all headers in the request.
+     *
+     * Returns an associative array where the header names are
+     * the keys and the values are a list of header values.
+     *
+     * While header names are not case-sensitive, getHeaders() will normalize
+     * the headers.
+     *
+     * @return array An associative array of headers and their values.
+     */
+    public function getHeaders()
+    {
+        $headers = [];
+        foreach ($this->_environment as $key => $value) {
+            $name = null;
+            if (strpos($key, 'HTTP_') === 0) {
+                $name = substr($key, 5);
+            }
+            if (strpos($key, 'CONTENT_') === 0) {
+                $name = $key;
+            }
+            if ($name !== null) {
+                $name = strtr(strtolower($name), '_', ' ');
+                $name = strtr(ucwords($name), ' ', '-');
+                $headers[$name] = (array)$value;
+            }
+        }
+
+        return $headers;
+    }
+
+    /**
+     * Check if a header is set in the request.
+     *
+     * @param string $name The header you want to get (case-insensitive)
+     * @return bool Whether or not the header is defined.
+     */
+    public function hasHeader($name)
+    {
+        $name = $this->normalizeHeaderName($name);
+
+        return isset($this->_environment[$name]);
+    }
+
+    /**
+     * Get a single header from the request.
+     *
+     * Return the header value as an array. If the header
+     * is not present an empty array will be returned.
+     *
+     * @param string $name The header you want to get (case-insensitive)
+     * @return array An associative array of headers and their values.
+     *   If the header doesn't exist, an empty array will be returned.
+     */
+    public function getHeader($name)
+    {
+        $name = $this->normalizeHeaderName($name);
+        if (isset($this->_environment[$name])) {
+            return (array)$this->_environment[$name];
+        }
+
+        return [];
+    }
+
+    /**
+     * Get a single header as a string from the request.
+     *
+     * Return an array of header values
+     *
+     * @param string $name The header you want to get (case-insensitive)
+     * @return string Header values collapsed into a comma separated string.
+     */
+    public function getHeaderLine($name)
+    {
+        $value = $this->getHeader($name);
+
+        return implode(', ', $value);
+    }
+
+    /**
+     * Get a modified request with the provided header.
+     *
+     * @param string $name The header name.
+     * @param string|array $value The header value
+     * @return static
+     */
+    public function withHeader($name, $value)
+    {
+        $new = clone $this;
+        $name = $this->normalizeHeaderName($name);
+        $new->_environment[$name] = $value;
+
+        return $new;
+    }
+
+    /**
+     * Get a modified request with the provided header.
+     *
+     * Existing header values will be retained. The provided value
+     * will be appended into the existing values.
+     *
+     * @param string $name The header name.
+     * @param string|array $value The header value
+     * @return static
+     */
+    public function withAddedHeader($name, $value)
+    {
+        $new = clone $this;
+        $name = $this->normalizeHeaderName($name);
+        $existing = [];
+        if (isset($new->_environment[$name])) {
+            $existing = (array)$new->_environment[$name];
+        }
+        $existing = array_merge($existing, (array)$value);
+        $new->_environment[$name] = $existing;
+
+        return $new;
+    }
+
+    /**
+     * Get a modified request without a provided header.
+     *
+     * @param string $name The header name to remove.
+     * @return static
+     */
+    public function withoutHeader($name)
+    {
+        $new = clone $this;
+        $name = $this->normalizeHeaderName($name);
+        unset($new->_environment[$name]);
+
+        return $new;
     }
 
     /**
@@ -1169,7 +1322,7 @@ class Request implements ArrayAccess
      */
     public function parseAccept()
     {
-        return $this->_parseAcceptWithQualifier($this->header('accept'));
+        return $this->_parseAcceptWithQualifier($this->getHeaderLine('Accept'));
     }
 
     /**
@@ -1188,7 +1341,7 @@ class Request implements ArrayAccess
      */
     public function acceptLanguage($language = null)
     {
-        $raw = $this->_parseAcceptWithQualifier($this->header('Accept-Language'));
+        $raw = $this->_parseAcceptWithQualifier($this->getHeaderLine('Accept-Language'));
         $accept = [];
         foreach ($raw as $languages) {
             foreach ($languages as &$lang) {

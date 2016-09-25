@@ -1283,6 +1283,174 @@ class RequestTest extends TestCase
     }
 
     /**
+     * Test getting headers with psr7 methods
+     *
+     * @return void
+     */
+    public function testGetHeaders()
+    {
+        $request = new Request(['environment' => [
+            'HTTP_HOST' => 'localhost',
+            'CONTENT_TYPE' => 'application/json',
+            'CONTENT_LENGTH' => 1337,
+            'HTTP_CONTENT_MD5' => 'abc123',
+            'HTTP_DOUBLE' => ['a', 'b']
+        ]]);
+        $headers = $request->getHeaders();
+        $expected = [
+            'Host' => ['localhost'],
+            'Content-Type' => ['application/json'],
+            'Content-Length' => [1337],
+            'Content-Md5' => ['abc123'],
+            'Double' => ['a', 'b'],
+        ];
+        $this->assertEquals($expected, $headers);
+    }
+
+    /**
+     * Test hasHeader
+     *
+     * @return void
+     */
+    public function testHasHeader()
+    {
+        $request = new Request(['environment' => [
+            'HTTP_HOST' => 'localhost',
+            'CONTENT_TYPE' => 'application/json',
+            'CONTENT_LENGTH' => 1337,
+            'HTTP_CONTENT_MD5' => 'abc123',
+            'HTTP_DOUBLE' => ['a', 'b']
+        ]]);
+        $this->assertTrue($request->hasHeader('Host'));
+        $this->assertTrue($request->hasHeader('Content-Type'));
+        $this->assertTrue($request->hasHeader('Content-MD5'));
+        $this->assertTrue($request->hasHeader('Double'));
+        $this->assertFalse($request->hasHeader('Authorization'));
+    }
+
+    /**
+     * Test getting headers with psr7 methods
+     *
+     * @return void
+     */
+    public function testGetHeader()
+    {
+        $request = new Request(['environment' => [
+            'HTTP_HOST' => 'localhost',
+            'CONTENT_TYPE' => 'application/json',
+            'CONTENT_LENGTH' => 1337,
+            'HTTP_CONTENT_MD5' => 'abc123',
+            'HTTP_DOUBLE' => ['a', 'b']
+        ]]);
+        $this->assertEquals([], $request->getHeader('Not-there'));
+
+        $expected = [$request->env('HTTP_HOST')];
+        $this->assertEquals($expected, $request->getHeader('Host'));
+        $this->assertEquals($expected, $request->getHeader('host'));
+        $this->assertEquals($expected, $request->getHeader('HOST'));
+        $this->assertEquals(['a', 'b'], $request->getHeader('Double'));
+    }
+
+    /**
+     * Test getting headers with psr7 methods
+     *
+     * @return void
+     */
+    public function testGetHeaderLine()
+    {
+        $request = new Request(['environment' => [
+            'HTTP_HOST' => 'localhost',
+            'CONTENT_TYPE' => 'application/json',
+            'CONTENT_LENGTH' => 1337,
+            'HTTP_CONTENT_MD5' => 'abc123',
+            'HTTP_DOUBLE' => ['a', 'b']
+        ]]);
+        $this->assertEquals('', $request->getHeaderLine('Authorization'));
+
+        $expected = $request->env('CONTENT_LENGTH');
+        $this->assertEquals($expected, $request->getHeaderLine('Content-Length'));
+        $this->assertEquals($expected, $request->getHeaderLine('content-Length'));
+        $this->assertEquals($expected, $request->getHeaderLine('ConTent-LenGth'));
+        $this->assertEquals('a, b', $request->getHeaderLine('Double'));
+    }
+
+    /**
+     * Test setting a header.
+     *
+     * @return void
+     */
+    public function testWithHeader()
+    {
+        $request = new Request(['environment' => [
+            'HTTP_HOST' => 'localhost',
+            'CONTENT_TYPE' => 'application/json',
+            'CONTENT_LENGTH' => 1337,
+            'HTTP_CONTENT_MD5' => 'abc123',
+            'HTTP_DOUBLE' => ['a', 'b']
+        ]]);
+        $new = $request->withHeader('Content-Length', 999);
+        $this->assertNotSame($new, $request);
+
+        $this->assertEquals(1337, $request->getHeaderLine('Content-length'), 'old request is unchanged');
+        $this->assertEquals(999, $new->getHeaderLine('Content-length'), 'new request is correct');
+        $this->assertEquals(999, $new->header('Content-Length'));
+
+        $new = $request->withHeader('Double', ['a']);
+        $this->assertEquals(['a'], $new->getHeader('Double'), 'List values are overwritten');
+        $this->assertEquals(['a'], $new->header('Double'), 'headers written in bc way.');
+    }
+
+    /**
+     * Test adding a header.
+     *
+     * @return void
+     */
+    public function testWithAddedHeader()
+    {
+        $request = new Request(['environment' => [
+            'HTTP_HOST' => 'localhost',
+            'CONTENT_TYPE' => 'application/json',
+            'CONTENT_LENGTH' => 1337,
+            'HTTP_CONTENT_MD5' => 'abc123',
+            'HTTP_DOUBLE' => ['a', 'b']
+        ]]);
+        $new = $request->withAddedHeader('Double', 'c');
+        $this->assertNotSame($new, $request);
+
+        $this->assertEquals('a, b', $request->getHeaderLine('Double'), 'old request is unchanged');
+        $this->assertEquals('a, b, c', $new->getHeaderLine('Double'), 'new request is correct');
+        $this->assertEquals(['a', 'b', 'c'], $new->header('Double'));
+
+        $new = $request->withAddedHeader('Content-Length', 777);
+        $this->assertEquals([1337, 777], $new->getHeader('Content-Length'), 'scalar values are appended');
+
+        $new = $request->withAddedHeader('Content-Length', [123, 456]);
+        $this->assertEquals([1337, 123, 456], $new->getHeader('Content-Length'), 'List values are merged');
+    }
+
+    /**
+     * Test removing a header.
+     *
+     * @return void
+     */
+    public function testWithoutHeader()
+    {
+        $request = new Request(['environment' => [
+            'HTTP_HOST' => 'localhost',
+            'CONTENT_TYPE' => 'application/json',
+            'CONTENT_LENGTH' => 1337,
+            'HTTP_CONTENT_MD5' => 'abc123',
+            'HTTP_DOUBLE' => ['a', 'b']
+        ]]);
+        $new = $request->withoutHeader('Content-Length', 999);
+        $this->assertNotSame($new, $request);
+
+        $this->assertEquals(1337, $request->getHeaderLine('Content-length'), 'old request is unchanged');
+        $this->assertEquals('', $new->getHeaderLine('Content-length'), 'new request is correct');
+        $this->assertNull($new->header('Content-Length'));
+    }
+
+    /**
      * Test accepts() with and without parameters
      *
      * @return void
@@ -2318,7 +2486,6 @@ class RequestTest extends TestCase
         $expected = $vars + [
             'CONTENT_TYPE' => null,
             'HTTP_CONTENT_TYPE' => null,
-            'HTTP_X_HTTP_METHOD_OVERRIDE' => null,
             'ORIGINAL_REQUEST_METHOD' => 'PUT',
         ];
         $this->assertSame($expected, $request->getServerParams());
