@@ -450,7 +450,8 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function matching($assoc, callable $builder = null)
     {
-        $this->eagerLoader()->matching($assoc, $builder);
+        $result = $this->eagerLoader()->matching($assoc, $builder);
+        $this->_addAssociationsToTypeMap($this->repository(), $this->typeMap(), $result);
         $this->_dirty();
 
         return $this;
@@ -521,10 +522,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function leftJoinWith($assoc, callable $builder = null)
     {
-        $this->eagerLoader()->matching($assoc, $builder, [
+        $result = $this->eagerLoader()->matching($assoc, $builder, [
             'joinType' => 'LEFT',
             'fields' => false
         ]);
+        $this->_addAssociationsToTypeMap($this->repository(), $this->typeMap(), $result);
         $this->_dirty();
 
         return $this;
@@ -567,10 +569,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function innerJoinWith($assoc, callable $builder = null)
     {
-        $this->eagerLoader()->matching($assoc, $builder, [
+        $result = $this->eagerLoader()->matching($assoc, $builder, [
             'joinType' => 'INNER',
             'fields' => false
         ]);
+        $this->_addAssociationsToTypeMap($this->repository(), $this->typeMap(), $result);
         $this->_dirty();
 
         return $this;
@@ -628,11 +631,12 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function notMatching($assoc, callable $builder = null)
     {
-        $this->eagerLoader()->matching($assoc, $builder, [
+        $result = $this->eagerLoader()->matching($assoc, $builder, [
             'joinType' => 'LEFT',
             'fields' => false,
             'negateMatch' => true
         ]);
+        $this->_addAssociationsToTypeMap($this->repository(), $this->typeMap(), $result);
         $this->_dirty();
 
         return $this;
