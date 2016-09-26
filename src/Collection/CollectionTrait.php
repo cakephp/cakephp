@@ -647,7 +647,7 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      */
-    public function chunks($chunkSize, $preserveKeys = false)
+    public function chunkWithKeys($chunkSize, $preserveKeys = true)
     {
         return $this->map(function ($v, $k, $iterator) use ($chunkSize, $preserveKeys) {
             $key = 0;
