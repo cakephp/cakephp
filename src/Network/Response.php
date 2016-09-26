@@ -88,7 +88,7 @@ class Response
         431 => 'Request Header Fields Too Large',
         444 => 'Connection Closed Without Response',
         451 => 'Unavailable For Legal Reasons',
-        499 => 'Client Closed Requet',
+        499 => 'Client Closed Request',
         500 => 'Internal Server Error',
         501 => 'Not Implemented',
         502 => 'Bad Gateway',
