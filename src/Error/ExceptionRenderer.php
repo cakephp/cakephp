@@ -371,6 +371,10 @@ class ExceptionRenderer
     {
         $this->controller->dispatchEvent('Controller.shutdown');
         $dispatcher = DispatcherFactory::create();
+        $eventManager = $dispatcher->eventManager();
+        foreach ($dispatcher->filters() as $filter) {
+            $eventManager->attach($filter);
+        }
         $args = [
             'request' => $this->controller->request,
             'response' => $this->controller->response

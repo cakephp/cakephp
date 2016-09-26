@@ -37,7 +37,7 @@ class Type implements TypeInterface
         'boolean' => 'Cake\Database\Type\BoolType',
         'date' => 'Cake\Database\Type\DateType',
         'datetime' => 'Cake\Database\Type\DateTimeType',
-        'decimal' => 'Cake\Database\Type\FloatType',
+        'decimal' => 'Cake\Database\Type\DecimalType',
         'float' => 'Cake\Database\Type\FloatType',
         'integer' => 'Cake\Database\Type\IntegerType',
         'json' => 'Cake\Database\Type\JsonType',
