@@ -926,16 +926,16 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ### Example:
      *
      * ```
-     * $items [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-     * $chunked = (new Collection($items))->chunks(3)->toList();
-     * // Returns [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11]]
+     * $items ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6];
+     * $chunked = (new Collection($items))->chunkWithKeys(3)->toList();
+     * // Returns [['a' => 1, 'b' => 2, 'c' => 3], ['d' => 4, 'e' => 5, 'f' => 6]]
      * ```
      *
      * @param int $chunkSize The maximum size for each chunk
      * @param bool $preserveKeys If the keys of the array should be preserved
      * @return \Cake\Collection\CollectionInterface
      */
-    public function chunks($chunkSize, $preserveKeys = false);
+    public function chunkWithKeys($chunkSize, $preserveKeys = true);
 
     /**
      * Returns whether or not there are elements in this collection
