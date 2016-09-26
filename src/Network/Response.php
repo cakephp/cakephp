@@ -100,7 +100,7 @@ class Response
         508 => 'Loop Detected',
         510 => 'Not Extended',
         511 => 'Network Authentication Required',
-        511 => 'Network Connect Timeout Error',
+        599 => 'Network Connect Timeout Error',
     ];
 
     /**
