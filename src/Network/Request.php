@@ -21,6 +21,7 @@ use Cake\Http\ServerRequestFactory;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
@@ -32,7 +33,7 @@ use Zend\Diactoros\UploadedFile;
  * A class that helps wrap Request information and particulars about a single request.
  * Provides methods commonly used to introspect on the request headers and request body.
  */
-class Request implements ArrayAccess
+class Request implements ArrayAccess, ServerRequestInterface
 {
 
     /**
@@ -1942,12 +1943,26 @@ class Request implements ArrayAccess
      * and `url` attributes.
      *
      * @param \Psr\Http\Message\UriInterface $uri The new request uri
+     * @param bool $preserveHost Whether or not the host should be retained.
      * @return static
      */
-    public function withUri(UriInterface $uri)
+    public function withUri(UriInterface $uri, $preserveHost = false)
     {
         $new = clone $this;
         $new->uri = $uri;
+
+        if ($preserveHost && $this->hasHeader('Host')) {
+            return $new;
+        }
+
+        $host = $uri->getHost();
+        if (!$host) {
+            return $new;
+        }
+        if ($uri->getPort()) {
+            $host .= ':' . $uri->getPort();
+        }
+        $new->_environment['HTTP_HOST'] = $host;
 
         return $new;
     }

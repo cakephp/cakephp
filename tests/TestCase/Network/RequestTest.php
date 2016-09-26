@@ -20,6 +20,7 @@ use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\UploadedFile;
+use Zend\Diactoros\Uri;
 
 /**
  * TestRequest
@@ -2895,6 +2896,9 @@ XML;
     public function testWithUri()
     {
         $request = new Request([
+            'environment' => [
+                'HTTP_HOST' => 'example.com',
+            ],
             'url' => 'articles/view/3'
         ]);
         $uri = $this->getMockBuilder('Psr\Http\Message\UriInterface')->getMock();
@@ -2904,6 +2908,49 @@ XML;
         $this->assertSame($uri, $new->getUri());
         $this->assertSame('articles/view/3', $new->url);
         $this->assertSame('articles/view/3', $request->url);
+        $this->assertSame('example.com', $new->getHeaderLine('Host'));
+    }
+
+    /**
+     * Test withUri() and preserveHost
+     *
+     * @return void
+     */
+    public function testWithUriPreserveHost()
+    {
+        $request = new Request([
+            'environment' => [
+                'HTTP_HOST' => 'localhost'
+            ],
+            'url' => 'articles/view/3'
+        ]);
+        $uri = new Uri();
+        $uri = $uri->withHost('example.com')
+            ->withPort(123)
+            ->withPath('articles/view/3');
+        $new = $request->withUri($uri, false);
+
+        $this->assertNotSame($new, $request);
+        $this->assertSame('example.com:123', $new->getHeaderLine('Host'));
+    }
+
+    /**
+     * Test withUri() and preserveHost missing the host header
+     *
+     * @return void
+     */
+    public function testWithUriPreserveHostNoHostHeader()
+    {
+        $request = new Request([
+            'url' => 'articles/view/3'
+        ]);
+        $uri = new Uri();
+        $uri = $uri->withHost('example.com')
+            ->withPort(123)
+            ->withPath('articles/view/3');
+        $new = $request->withUri($uri, false);
+
+        $this->assertSame('example.com:123', $new->getHeaderLine('Host'));
     }
 
     /**
