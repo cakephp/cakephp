@@ -466,4 +466,25 @@ class CellTest extends TestCase
         Cache::delete('celltest');
         Cache::drop('default');
     }
+
+    /**
+     * Test that when the cell cache is enabled, the cell action is only invoke the first
+     * time the cell is rendered
+     *
+     * @return void
+     */
+    public function testACachedViewCellReRendersWhenGivenADifferentTemplate()
+    {
+        Cache::config('default', [
+            'className' => 'File',
+            'path' => CACHE,
+        ]);
+        $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => ['key' => 'celltest']]);
+        $result = $cell->render("alternate_teaser_list");
+        $result2 = $cell->render("not_the_alternate_teaser_list");
+        $this->assertContains('This is the alternate template', $result);
+        $this->assertContains('This is NOT the alternate template', $result2);
+        Cache::delete('celltest');
+        Cache::drop('default');
+    }
 }
