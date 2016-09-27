@@ -246,7 +246,6 @@ class RequestHandlerComponent extends Component
     }
 
     /**
-     * Handles (fakes) redirects for AJAX requests using requestAction()
      *
      * @param \Cake\Event\Event $event The Controller.beforeRedirect event.
      * @param string|array $url A string or array containing the redirect location
@@ -255,34 +254,7 @@ class RequestHandlerComponent extends Component
      */
     public function beforeRedirect(Event $event, $url, Response $response)
     {
-        $request = $this->request;
-        if (!$request->is('ajax')) {
-            return null;
-        }
-        if (empty($url)) {
-            return null;
-        }
-        if (is_array($url)) {
-            $url = Router::url($url + ['_base' => false]);
-        }
-        $query = [];
-        if (strpos($url, '?') !== false) {
-            list($url, $querystr) = explode('?', $url, 2);
-            parse_str($querystr, $query);
-        }
-        $controller = $event->subject();
-        $response->body($controller->requestAction($url, [
-            'return',
-            'bare' => false,
-            'environment' => [
-                'REQUEST_METHOD' => 'GET'
-            ],
-            'query' => $query,
-            'cookies' => $request->cookies
-        ]));
-        $response->statusCode(200);
-
-        return $response;
+        return null;
     }
 
     /**
