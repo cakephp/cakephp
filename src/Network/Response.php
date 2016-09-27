@@ -89,7 +89,7 @@ class Response
         415 => 'Unsupported Media Type', // RFC7231, Section 6.5.13[RFC7694, Section 3
         416 => 'Range Not Satisfiable', // RFC7233, Section 4.4
         417 => 'Expectation Failed', // RFC7231, Section 6.5.14
-        418 => 'I\'m a Teapot', // RFC2324, Section 2.3.2
+        418 => 'I\'m a teapot', // RFC2324, Section 2.3.2
         // 419-420 Unassigned
         421 => 'Misdirected Request', // RFC7540, Section 9.1.2
         422 => 'Unprocessable Entity', // RFC4918
