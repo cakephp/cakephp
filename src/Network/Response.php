@@ -65,7 +65,7 @@ class Response
         303 => 'See Other', // RFC7231, Section 6.4.4
         304 => 'Not Modified', // RFC7232, Section 4.1
         305 => 'Use Proxy', // RFC7231, Section 6.4.5
-        306 => '(Unused)', // RFC7231, Section 6.4.6
+        306 => '(Unused)', // RFC7231, Section 6.4.6 and RFC2616, Section 10.3.7
         307 => 'Temporary Redirect', // RFC7231, Section 6.4.7
         308 => 'Permanent Redirect', // RFC7538
         // 309-399 Unassigned
@@ -107,7 +107,7 @@ class Response
         // 445-450 Unassigned
         451 => 'Unavailable For Legal Reasons', // RFC7725
         // 452-498 Unassigned
-        499 => 'Client Closed Request',
+        499 => 'Client Closed Request', // Non-standard, when a client closes the connection while nginx is processing the request
         
         // 5×× Server Error - The server failed to fulfill an apparently valid request
         500 => 'Internal Server Error', // RFC7231, Section 6.6.1
@@ -123,7 +123,7 @@ class Response
         510 => 'Not Extended', // RFC2774
         511 => 'Network Authentication Required', // RFC6585
         // 512-598 Unassigned
-        599 => 'Network Connect Timeout Error',
+        599 => 'Network Connect Timeout Error', // Non-Standard, used by some HTTP proxies to signal a network connect timeout behind the proxy to a client in front of the proxy
     ];
 
     /**
