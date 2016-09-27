@@ -31,14 +31,13 @@ use InvalidArgumentException;
 class Response
 {
 
-
     /**
      * Holds HTTP response statuses
-     * Sources: http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
-     * Sources: https://httpstatuses.com
+     * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+     * @link https://httpstatuses.com
      * @var array
      */
-    protected $statusCodes = [
+    protected $_statusCodes = [
         // 1×× 1xx: Informational - Request received, continuing process
         100 => 'Continue', // RFC7231, Section 6.2.1
         101 => 'Switching Protocols', // RFC7231, Section 6.2.2
