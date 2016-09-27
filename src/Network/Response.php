@@ -86,7 +86,7 @@ class Response
         412 => 'Precondition Failed', // RFC7232, Section 4.2
         413 => 'Payload Too Large', // RFC7231, Section 6.5.11
         414 => 'URI Too Long', // RFC7231, Section 6.5.12
-        415 => 'Unsupported Media Type', // RFC7231, Section 6.5.13[RFC7694, Section 3
+        415 => 'Unsupported Media Type', // RFC7231, Section 6.5.13 and RFC7694, Section 3
         416 => 'Range Not Satisfiable', // RFC7233, Section 4.4
         417 => 'Expectation Failed', // RFC7231, Section 6.5.14
         418 => 'I\'m a teapot', // RFC2324, Section 2.3.2
