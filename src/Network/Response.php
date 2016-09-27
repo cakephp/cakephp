@@ -39,13 +39,13 @@ class Response
      * @var array
      */
     protected $statusCodes = [
-        // 1×× Informational
+        // 1×× 1xx: Informational - Request received, continuing process
         100 => 'Continue', // RFC7231, Section 6.2.1
         101 => 'Switching Protocols', // RFC7231, Section 6.2.2
         102 => 'Processing', // RFC2518
         // 103-199 Unassigned
-        
-        // 2×× Success
+
+        // 2×× Success - The action was successfully received, understood, and accepted
         200 => 'OK', // RFC7231, Section 6.3.1
         201 => 'Created', // RFC7231, Section 6.3.2
         202 => 'Accepted', // RFC7231, Section 6.3.3
@@ -59,7 +59,7 @@ class Response
         226 => 'IM Used', // RFC3229
         // 227-299 Unassigned
         
-        // 3×× Redirection
+        // 3×× Redirection - Further action must be taken in order to complete the request
         300 => 'Multiple Choices', // RFC7231, Section 6.4.1
         301 => 'Moved Permanently', // RFC7231, Section 6.4.2
         302 => 'Found', // RFC7231, Section 6.4.3
@@ -71,7 +71,7 @@ class Response
         308 => 'Permanent Redirect', // RFC7538
         // 309-399 Unassigned
         
-        // 4×× Client Error
+        // 4×× Client Error - The request contains bad syntax or cannot be fulfilled
         400 => 'Bad Request', // RFC7231, Section 6.5.1
         401 => 'Unauthorized', // RFC7235, Section 3.1
         402 => 'Payment Required', // RFC7231, Section 6.5.2
@@ -110,7 +110,7 @@ class Response
         // 452-498 Unassigned
         499 => 'Client Closed Request',
         
-        // 5×× Server Error
+        // 5×× Server Error - The server failed to fulfill an apparently valid request
         500 => 'Internal Server Error', // RFC7231, Section 6.6.1
         501 => 'Not Implemented', // RFC7231, Section 6.6.2
         502 => 'Bad Gateway', // RFC7231, Section 6.6.3
