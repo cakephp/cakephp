@@ -33,6 +33,23 @@ class Response
 
     /**
      * Holds HTTP response statuses
+     * @link https://tools.ietf.org/html/rfc2295
+     * @link https://tools.ietf.org/html/rfc2324
+     * @link https://tools.ietf.org/html/rfc2518
+     * @link https://tools.ietf.org/html/rfc2616
+     * @link https://tools.ietf.org/html/rfc2774
+     * @link https://tools.ietf.org/html/rfc3229
+     * @link https://tools.ietf.org/html/rfc4918
+     * @link https://tools.ietf.org/html/rfc5842
+     * @link https://tools.ietf.org/html/rfc6585
+     * @link https://tools.ietf.org/html/rfc7231
+     * @link https://tools.ietf.org/html/rfc7232
+     * @link https://tools.ietf.org/html/rfc7233
+     * @link https://tools.ietf.org/html/rfc7235
+     * @link https://tools.ietf.org/html/rfc7538
+     * @link https://tools.ietf.org/html/rfc7540
+     * @link https://tools.ietf.org/html/rfc7694
+     * @link https://tools.ietf.org/html/rfc7725
      * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
      * @link https://httpstatuses.com
      * @var array
