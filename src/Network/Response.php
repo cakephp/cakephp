@@ -31,55 +31,100 @@ use InvalidArgumentException;
 class Response
 {
 
+
     /**
      * Holds HTTP response statuses
-     *
+     * Sources: http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+     * Sources: https://httpstatuses.com
      * @var array
      */
-    protected $_statusCodes = [
-        100 => 'Continue',
-        101 => 'Switching Protocols',
-        200 => 'OK',
-        201 => 'Created',
-        202 => 'Accepted',
-        203 => 'Non-Authoritative Information',
-        204 => 'No Content',
-        205 => 'Reset Content',
-        206 => 'Partial Content',
-        300 => 'Multiple Choices',
-        301 => 'Moved Permanently',
-        302 => 'Found',
-        303 => 'See Other',
-        304 => 'Not Modified',
-        305 => 'Use Proxy',
-        307 => 'Temporary Redirect',
-        400 => 'Bad Request',
-        401 => 'Unauthorized',
-        402 => 'Payment Required',
-        403 => 'Forbidden',
-        404 => 'Not Found',
-        405 => 'Method Not Allowed',
-        406 => 'Not Acceptable',
-        407 => 'Proxy Authentication Required',
-        408 => 'Request Time-out',
-        409 => 'Conflict',
-        410 => 'Gone',
-        411 => 'Length Required',
-        412 => 'Precondition Failed',
-        413 => 'Request Entity Too Large',
-        414 => 'Request-URI Too Large',
-        415 => 'Unsupported Media Type',
-        416 => 'Requested range not satisfiable',
-        417 => 'Expectation Failed',
-        422 => 'Unprocessable Entity',
-        429 => 'Too Many Requests',
-        451 => 'Unavailable For Legal Reasons',
-        500 => 'Internal Server Error',
-        501 => 'Not Implemented',
-        502 => 'Bad Gateway',
-        503 => 'Service Unavailable',
-        504 => 'Gateway Time-out',
-        505 => 'Unsupported Version'
+    protected $statusCodes = [
+        // 1×× Informational
+        100 => 'Continue', // RFC7231, Section 6.2.1
+        101 => 'Switching Protocols', // RFC7231, Section 6.2.2
+        102 => 'Processing', // RFC2518
+        // 103-199 Unassigned
+        
+        // 2×× Success
+        200 => 'OK', // RFC7231, Section 6.3.1
+        201 => 'Created', // RFC7231, Section 6.3.2
+        202 => 'Accepted', // RFC7231, Section 6.3.3
+        203 => 'Non-Authoritative Information', // RFC7231, Section 6.3.4
+        204 => 'No Content', // RFC7231, Section 6.3.5
+        205 => 'Reset Content', // RFC7231, Section 6.3.6
+        206 => 'Partial Content', // RFC7233, Section 4.1
+        207 => 'Multi-Status', // RFC4918
+        208 => 'Already Reported', // RFC5842
+        // 209-225 Unassigned
+        226 => 'IM Used', // RFC3229
+        // 227-299 Unassigned
+        
+        // 3×× Redirection
+        300 => 'Multiple Choices', // RFC7231, Section 6.4.1
+        301 => 'Moved Permanently', // RFC7231, Section 6.4.2
+        302 => 'Found', // RFC7231, Section 6.4.3
+        303 => 'See Other', // RFC7231, Section 6.4.4
+        304 => 'Not Modified', // RFC7232, Section 4.1
+        305 => 'Use Proxy', // RFC7231, Section 6.4.5
+        306 => '(Unused)', // RFC7231, Section 6.4.6
+        307 => 'Temporary Redirect', // RFC7231, Section 6.4.7
+        308 => 'Permanent Redirect', // RFC7538
+        // 309-399 Unassigned
+        
+        // 4×× Client Error
+        400 => 'Bad Request', // RFC7231, Section 6.5.1
+        401 => 'Unauthorized', // RFC7235, Section 3.1
+        402 => 'Payment Required', // RFC7231, Section 6.5.2
+        403 => 'Forbidden', // RFC7231, Section 6.5.3
+        404 => 'Not Found', // RFC7231, Section 6.5.4
+        405 => 'Method Not Allowed', // RFC7231, Section 6.5.5
+        406 => 'Not Acceptable', // RFC7231, Section 6.5.6
+        407 => 'Proxy Authentication Required', // RFC7235, Section 3.2
+        408 => 'Request Timeout', // RFC7231, Section 6.5.7
+        409 => 'Conflict', // RFC7231, Section 6.5.8
+        410 => 'Gone', // RFC7231, Section 6.5.9
+        411 => 'Length Required', // RFC7231, Section 6.5.10
+        412 => 'Precondition Failed', // RFC7232, Section 4.2
+        413 => 'Payload Too Large', // RFC7231, Section 6.5.11
+        414 => 'URI Too Long', // RFC7231, Section 6.5.12
+        415 => 'Unsupported Media Type', // RFC7231, Section 6.5.13[RFC7694, Section 3
+        416 => 'Range Not Satisfiable', // RFC7233, Section 4.4
+        417 => 'Expectation Failed', // RFC7231, Section 6.5.14
+        418 => 'I\'m a Teapot',
+        // 419-420 Unassigned
+        421 => 'Misdirected Request', // RFC7540, Section 9.1.2
+        422 => 'Unprocessable Entity', // RFC4918
+        423 => 'Locked', // RFC4918
+        424 => 'Failed Dependency', // RFC4918
+        425 => 'Unordered Collection',
+        426 => 'Upgrade Required', // RFC7231, Section 6.5.15
+        // 427 Unassigned
+        428 => 'Precondition Required', // RFC6585
+        429 => 'Too Many Requests', // RFC6585
+        // 430 Unassigned
+        431 => 'Request Header Fields Too Large', // RFC6585
+        // 432-443 Unassigned
+        444 => 'Connection Closed Without Response',
+        // 445-450 Unassigned
+        451 => 'Unavailable For Legal Reasons', // RFC7725
+        // 452-498 Unassigned
+        499 => 'Client Closed Request',
+        
+        // 5×× Server Error
+        500 => 'Internal Server Error', // RFC7231, Section 6.6.1
+        501 => 'Not Implemented', // RFC7231, Section 6.6.2
+        502 => 'Bad Gateway', // RFC7231, Section 6.6.3
+        503 => 'Service Unavailable', // RFC7231, Section 6.6.4
+        504 => 'Gateway Timeout', // RFC7231, Section 6.6.5
+        505 => 'HTTP Version Not Supported', // RFC7231, Section 6.6.6
+        506 => 'Variant Also Negotiates', // RFC2295
+        507 => 'Insufficient Storage', // RFC4918
+        508 => 'Loop Detected', // RFC5842
+        // 509 Unassigned
+        510 => 'Not Extended', // RFC2774
+        511 => 'Network Authentication Required', // RFC6585
+        // 512-598 Unassigned
+        599 => 'Network Connect Timeout Error',
     ];
 
     /**
