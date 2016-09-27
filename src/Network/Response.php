@@ -38,7 +38,7 @@ class Response
      * @var array
      */
     protected $_statusCodes = [
-        // 1×× 1xx: Informational - Request received, continuing process
+        // 1×× Informational - Request received, continuing process
         100 => 'Continue', // RFC7231, Section 6.2.1
         101 => 'Switching Protocols', // RFC7231, Section 6.2.2
         102 => 'Processing', // RFC2518
