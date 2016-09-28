@@ -260,7 +260,7 @@ class RequestHandlerComponent extends Component
      */
     public function beforeRedirect(Event $event, $url, Response $response)
     {
-        if ($this->config('enableBeforeRedirect') == false) {
+        if (!$this->config('enableBeforeRedirect')) {
             return null;
         }
         $request = $this->request;
