@@ -33,7 +33,7 @@ class UrlHelper extends Helper
      *
      * - `escape`: If false, the URL will be returned unescaped, do only use if it is manually
      *    escaped afterwards before being displayed.
-     * - `full`: If true, the full base URL will be prepended to the result
+     * - `fullBase`: If true, the full base URL will be prepended to the result
      *
      * @param string|array|null $url Either a relative string url like `/products/view/23` or
      *    an array of URL parameters. Using an array for URLs will allow you to leverage
@@ -44,15 +44,15 @@ class UrlHelper extends Helper
     public function build($url = null, $options = false)
     {
         $defaults = [
-            'full' => false,
+            'fullBase' => false,
             'escape' => true,
         ];
         if (!is_array($options)) {
-            $options = ['full' => $options];
+            $options = ['fullBase' => $options];
         }
         $options += $defaults;
 
-        $url = Router::url($url, $options['full']);
+        $url = Router::url($url, $options['fullBase']);
         if ($options['escape']) {
             $url = h($url);
         }
