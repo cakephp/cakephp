@@ -142,8 +142,8 @@ class FunctionsBuilder
     /**
      * Returns a FunctionExpression representing a group concatenation.
      *
-     * @param string $expression the function argument
-     * @param string|null $separator Separator to use
+     * @param mixed $expression the function argument
+     * @param string $separator Separator to use
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
