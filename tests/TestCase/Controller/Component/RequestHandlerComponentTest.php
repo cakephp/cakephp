@@ -591,6 +591,25 @@ class RequestHandlerComponentTest extends TestCase
     }
 
     /**
+     * test beforeRedirect when disabled.
+     *
+     * @return void
+     * @triggers Controller.startup $this->Controller
+     */
+    public function testBeforeRedirectDisabled()
+    {
+        Configure::write('App.namespace', 'TestApp');
+        Router::connect('/:controller/:action');
+        $this->Controller->request->env('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
+
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->RequestHandler->initialize([]);
+        $this->RequestHandler->config('enableBeforeRedirect', false);
+        $this->RequestHandler->startup($event);
+        $this->assertNull($this->RequestHandler->beforeRedirect($event, '/posts/index', $this->Controller->response));
+    }
+
+    /**
      * testNonAjaxRedirect method
      *
      * @return void

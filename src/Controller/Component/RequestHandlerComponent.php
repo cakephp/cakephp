@@ -79,13 +79,16 @@ class RequestHandlerComponent extends Component
      *   json, xml, and ajax will be mapped. Defining any types will omit the defaults.
      * - `inputTypeMap` - A mapping between types and deserializers for request bodies.
      *   If undefined json & xml will be mapped. Defining any types will omit the defaults.
+     * - `enableBeforeRedirect` - Set to false to disable the `beforeRedirect` callback. The
+     *   `beforeRedirect` functionality has been deprecated.
      *
      * @var array
      */
     protected $_defaultConfig = [
         'checkHttpCache' => true,
         'viewClassMap' => [],
-        'inputTypeMap' => []
+        'inputTypeMap' => [],
+        'enableBeforeRedirect' => true
     ];
 
     /**
@@ -252,9 +255,14 @@ class RequestHandlerComponent extends Component
      * @param string|array $url A string or array containing the redirect location
      * @param \Cake\Network\Response $response The response object.
      * @return \Cake\Network\Response|null The response object if the redirect is caught.
+     * @deprecated 3.3.5 This functionality will be removed in 4.0.0. You can disable this function
+     *   now by setting the `enableBeforeRedirect` config option to false.
      */
     public function beforeRedirect(Event $event, $url, Response $response)
     {
+        if ($this->config('enableBeforeRedirect') == false) {
+            return null;
+        }
         $request = $this->request;
         if (!$request->is('ajax')) {
             return null;
