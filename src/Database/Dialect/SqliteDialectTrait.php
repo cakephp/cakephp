@@ -97,6 +97,9 @@ trait SqliteDialectTrait
                 // CONCAT function is expressed as exp1 || exp2
                 $expression->name('')->tieWith(' ||');
                 break;
+            case 'GROUP_CONCAT':
+                $expression->tieWith(',');
+                break;
             case 'DATEDIFF':
                 $expression
                     ->name('ROUND')

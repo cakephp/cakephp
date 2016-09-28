@@ -218,6 +218,9 @@ trait SqlserverDialectTrait
                 // CONCAT function is expressed as exp1 + exp2
                 $expression->name('')->tieWith(' +');
                 break;
+            case 'GROUP_CONCAT':
+                throw new \LogicException('GROUP_CONCAT() is not supported for SQLServer');
+                break;
             case 'DATEDIFF':
                 $hasDay = false;
                 $visitor = function ($value) use (&$hasDay) {

@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Datasource\ConnectionManager;
+use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use \PDO;
 
@@ -162,5 +163,38 @@ class MysqlTest extends TestCase
 
         $this->assertFalse($driver->commitTransaction());
         $this->assertTrue($driver->isConnected());
+    }
+    
+    /**
+     * Tests that GROUP_CONCAT is transformed correctly
+     *
+     * @return void
+     */
+    public function testGroupConcatTransform()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+            ->setMethods(['_connect'])
+            ->getMock();
+        $connection = $this
+            ->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $query = new \Cake\Database\Query($connection);
+        $query->select([$query->func()->groupConcat('title')])
+            ->from('articles')
+            ->group('id');
+        $translator = $driver->queryTranslator('select');
+        $query = $translator($query);
+        $this->assertEquals('GROUP_CONCAT(title SEPARATOR \',\')', $query->clause('select')[0]->sql(new ValueBinder));
+        
+        $query = new \Cake\Database\Query($connection);
+        $query->select([$query->func()->groupConcat('title', '!')])
+            ->from('articles')
+            ->group('id');
+        $translator = $driver->queryTranslator('select');
+        $query = $translator($query);
+        $this->assertEquals('GROUP_CONCAT(title SEPARATOR \'!\')', $query->clause('select')[0]->sql(new ValueBinder));
     }
 }

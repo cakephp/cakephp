@@ -14,6 +14,8 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\ExpressionInterface;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\FunctionExpression;
 
 /**
@@ -135,6 +137,22 @@ class FunctionsBuilder
     public function concat($args, $types = [])
     {
         return $this->_build('CONCAT', $args, $types, 'string');
+    }
+    
+    /**
+     * Returns a FunctionExpression representing a group concatenation.
+     *
+     * @param mixed $expression the function argument
+     * @param string|null $separator Separator to use
+     * @param array $types list of types to bind to the arguments
+     * @return \Cake\Database\Expression\FunctionExpression
+     */
+    public function groupConcat($expression, $separator = ',', $types = [])
+    {
+        $expression = $this->_literalArgumentFunction('GROUP_CONCAT', $expression, $types, 'string');
+        $expression->tieWith(' SEPARATOR')->add(["'$separator'" => 'literal'], []);
+        
+        return $expression;
     }
 
     /**

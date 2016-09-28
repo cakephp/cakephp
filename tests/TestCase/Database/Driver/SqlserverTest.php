@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Core\Configure;
+use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use \PDO;
 
@@ -236,5 +237,30 @@ class SqlserverTest extends TestCase
             ->values(['title' => 'A new article']);
         $expected = 'INSERT INTO articles (title) OUTPUT INSERTED.* VALUES (:c0)';
         $this->assertEquals($expected, $query->sql());
+    }
+    
+    /**
+     * Tests that GROUP_CONCAT is transformed correctly
+     *
+     * @return void
+     */
+    public function testGroupConcatTransform()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+            ->setMethods(['_connect'])
+            ->getMock();
+        $connection = $this
+            ->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $query = new \Cake\Database\Query($connection);
+        $query->select([$query->func()->groupConcat('title')])
+            ->from('articles')
+            ->group('id');
+        $translator = $driver->queryTranslator('select');
+        $this->expectException(\LogicException::class);
+        $query = $translator($query);
     }
 }
