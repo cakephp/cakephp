@@ -25,7 +25,6 @@ use Cake\Utility\Security;
  */
 class RequestActionTraitTest extends TestCase
 {
-
     /**
      * fixtures
      *
@@ -420,5 +419,20 @@ class RequestActionTraitTest extends TestCase
             ['session' => $session]
         );
         $this->assertEquals('bar', $result);
+    }
+
+    /**
+     * requestAction relies on both the RoutingFilter and ControllerFactory
+     * filters being connected. Ensure it can correct the missing state.
+     *
+     * @return void
+     */
+    public function testRequestActionAddsRequiredFilters()
+    {
+        DispatcherFactory::clear();
+
+        $result = $this->object->requestAction('/request_action/test_request_action');
+        $expected = 'This is a test';
+        $this->assertEquals($expected, $result);
     }
 }
