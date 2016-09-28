@@ -114,6 +114,7 @@ trait PostgresDialectTrait
                         if ($key === 0) {
                             return new FunctionExpression('array_agg', [$p => 'literal'], [], 'string');
                         }
+
                         return $p;
                     })
                     ->tieWith(',');
