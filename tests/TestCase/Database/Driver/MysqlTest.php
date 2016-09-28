@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
-use Cake\Datasource\ConnectionManager;
 use Cake\Database\ValueBinder;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use \PDO;
 

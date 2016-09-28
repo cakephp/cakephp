@@ -220,7 +220,6 @@ trait SqlserverDialectTrait
                 break;
             case 'GROUP_CONCAT':
                 throw new \LogicException('GROUP_CONCAT() is not supported for SQLServer');
-                break;
             case 'DATEDIFF':
                 $hasDay = false;
                 $visitor = function ($value) use (&$hasDay) {

@@ -15,8 +15,8 @@
 namespace Cake\Database;
 
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\IdentifierExpression;
 
 /**
  * Contains methods related to generating FunctionExpression objects

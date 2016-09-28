@@ -243,6 +243,7 @@ class SqlserverTest extends TestCase
      * Tests that GROUP_CONCAT is transformed correctly
      *
      * @return void
+     * @expectedException LogicException
      */
     public function testGroupConcatTransform()
     {
@@ -260,7 +261,6 @@ class SqlserverTest extends TestCase
             ->from('articles')
             ->group('id');
         $translator = $driver->queryTranslator('select');
-        $this->expectException(\LogicException::class);
         $query = $translator($query);
     }
 }
