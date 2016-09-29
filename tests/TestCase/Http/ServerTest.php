@@ -23,7 +23,7 @@ use TestApp\Http\MiddlewareApplication;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
-require __DIR__ . '/server_mocks.php';
+require_once __DIR__ . '/server_mocks.php';
 
 
 /**
