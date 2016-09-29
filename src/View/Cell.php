@@ -172,7 +172,7 @@ abstract class Cell
     {
         $cache = [];
         if ($this->_cache) {
-            $cache = $this->_cacheConfig($this->action);
+            $cache = $this->_cacheConfig($this->action, $template);
         }
 
         $render = function () use ($template) {
@@ -232,12 +232,13 @@ abstract class Cell
      * @param string $action The action invoked.
      * @return array The cache configuration.
      */
-    protected function _cacheConfig($action)
+    protected function _cacheConfig($action, $template = null)
     {
         if (empty($this->_cache)) {
             return [];
         }
-        $key = 'cell_' . Inflector::underscore(get_class($this)) . '_' . $action;
+        $template = $template ?: "default";
+        $key = 'cell_' . Inflector::underscore(get_class($this)) . '_' . $action . '_' . $template;
         $key = str_replace('\\', '_', $key);
         $default = [
             'config' => 'default',

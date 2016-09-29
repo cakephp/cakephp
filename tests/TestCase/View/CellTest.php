@@ -479,7 +479,7 @@ class CellTest extends TestCase
             'className' => 'File',
             'path' => CACHE,
         ]);
-        $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => ['key' => 'celltest']]);
+        $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => true]);
         $result = $cell->render("alternate_teaser_list");
         $result2 = $cell->render("not_the_alternate_teaser_list");
         $this->assertContains('This is the alternate template', $result);
