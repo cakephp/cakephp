@@ -766,7 +766,7 @@ class AuthComponent extends Component
     public function redirectUrl($url = null)
     {
         $redirectUrl = $this->request->query(static::QUERY_STRING_REDIRECT);
-        if ($redirectUrl && (substr($redirectUrl, 0, 1) !== '/')) {
+        if ($redirectUrl && (substr($redirectUrl, 0, 1) !== '/' || substr($redirectUrl, 0, 2) === '//')) {
             $redirectUrl = null;
         }
 

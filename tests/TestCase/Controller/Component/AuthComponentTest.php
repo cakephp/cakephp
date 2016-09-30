@@ -1408,6 +1408,11 @@ class AuthComponentTest extends TestCase
 
         $result = $this->Auth->redirectUrl();
         $this->assertEquals('/users/home', $result);
+
+        $this->Auth->request->query = ['redirect' => '//some.domain.example/users/login'];
+
+        $result = $this->Auth->redirectUrl();
+        $this->assertEquals('/users/home', $result);
     }
 
     /**
