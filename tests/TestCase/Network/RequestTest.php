@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Network;
 
 use Cake\Core\Configure;
+use Cake\Http\ServerRequestFactory;
 use Cake\Network\Exception;
 use Cake\Network\Request;
 use Cake\Network\Session;
@@ -2366,7 +2367,7 @@ class RequestTest extends TestCase
         $_GET = [];
         $this->_loadEnvironment($env);
 
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $uri = $request->getUri();
 
         $this->assertEquals($expected['url'], $request->url, "URL is incorrect");
