@@ -217,31 +217,11 @@ class Request implements ArrayAccess, ServerRequestInterface
      * the request.
      *
      * @return \Cake\Network\Request
+     * @deprecated 3.4.0 Use `Cake\Http\ServerRequestFactory` instead.
      */
     public static function createFromGlobals()
     {
-        $uri = ServerRequestFactory::createUri($_SERVER);
-        $base = $uri->base;
-        $webroot = $uri->webroot;
-
-        $sessionConfig = (array)Configure::read('Session') + [
-            'defaults' => 'php',
-            'cookiePath' => $webroot
-        ];
-
-        $config = [
-            'query' => $_GET,
-            'post' => $_POST,
-            'files' => $_FILES,
-            'cookies' => $_COOKIE,
-            'environment' => $_SERVER + $_ENV,
-            'uri' => $uri,
-            'base' => $base,
-            'webroot' => $webroot,
-            'session' => Session::create($sessionConfig)
-        ];
-
-        return new static($config);
+        return ServerRequestFactory::fromGlobals();
     }
 
     /**
@@ -256,15 +236,16 @@ class Request implements ArrayAccess, ServerRequestInterface
      * - `files` Uploaded file data formatted like $_FILES.
      * - `cookies` Cookies for this request.
      * - `environment` $_SERVER and $_ENV data.
-     * - `url` The URL without the base path for the request.
+     * - ~~`url`~~ The URL without the base path for the request. This option is deprecated and will be removed in 4.0.0
      * - `uri` The PSR7 UriInterface object. If null, one will be created.
      * - `base` The base URL for the request.
      * - `webroot` The webroot directory for the request.
      * - `input` The data that would come from php://input this is useful for simulating
-     * - `session` An instance of a Session object
      *   requests with put, patch or delete data.
+     * - `session` An instance of a Session object
      *
      * @param string|array $config An array of request data to create a request with.
+     *   The string version of this argument is *deprecated* and will be removed in 4.0.0
      */
     public function __construct($config = [])
     {
