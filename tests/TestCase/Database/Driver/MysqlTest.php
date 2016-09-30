@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Database\Query;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -181,7 +182,7 @@ class MysqlTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $query = new \Cake\Database\Query($connection);
+        $query = new Query($connection);
         $query->select([$query->func()->groupConcat('title')])
             ->from('articles')
             ->group('id');
@@ -189,7 +190,7 @@ class MysqlTest extends TestCase
         $query = $translator($query);
         $this->assertEquals('GROUP_CONCAT(title SEPARATOR \',\')', $query->clause('select')[0]->sql(new ValueBinder));
         
-        $query = new \Cake\Database\Query($connection);
+        $query = new Query($connection);
         $query->select([$query->func()->groupConcat('title', '!')])
             ->from('articles')
             ->group('id');

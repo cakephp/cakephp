@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Core\Configure;
+use Cake\Database\Query;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use \PDO;
@@ -247,6 +248,7 @@ class SqlserverTest extends TestCase
      */
     public function testGroupConcatTransform()
     {
+        $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
             ->setMethods(['_connect'])
             ->getMock();
@@ -256,7 +258,7 @@ class SqlserverTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $query = new \Cake\Database\Query($connection);
+        $query = new Query($connection);
         $query->select([$query->func()->groupConcat('title')])
             ->from('articles')
             ->group('id');
