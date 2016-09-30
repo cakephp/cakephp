@@ -138,7 +138,7 @@ class FunctionsBuilder
     {
         return $this->_build('CONCAT', $args, $types, 'string');
     }
-    
+
     /**
      * Returns a FunctionExpression representing a group concatenation.
      *
@@ -151,7 +151,7 @@ class FunctionsBuilder
     {
         $expression = $this->_literalArgumentFunction('GROUP_CONCAT', $expression, $types, 'string');
         $expression->tieWith(' SEPARATOR')->add(["'$separator'" => 'literal'], []);
-        
+
         return $expression;
     }
 

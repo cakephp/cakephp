@@ -239,7 +239,7 @@ class SqlserverTest extends TestCase
         $expected = 'INSERT INTO articles (title) OUTPUT INSERTED.* VALUES (:c0)';
         $this->assertEquals($expected, $query->sql());
     }
-    
+
     /**
      * Tests that GROUP_CONCAT is transformed correctly
      *
@@ -250,7 +250,7 @@ class SqlserverTest extends TestCase
     {
         $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['_connect'])
+            ->setMethods(['_connect', '_version'])
             ->getMock();
         $connection = $this
             ->getMockBuilder('\Cake\Database\Connection')

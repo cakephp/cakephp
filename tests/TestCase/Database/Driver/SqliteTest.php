@@ -145,7 +145,7 @@ class SqliteTest extends TestCase
         $driver->connection($mock);
         $this->assertEquals($expected, $driver->schemaValue($input));
     }
-    
+
     /**
      * Tests that GROUP_CONCAT is transformed correctly
      *
@@ -169,7 +169,7 @@ class SqliteTest extends TestCase
         $translator = $driver->queryTranslator('select');
         $query = $translator($query);
         $this->assertEquals('GROUP_CONCAT(title, \',\')', $query->clause('select')[0]->sql(new ValueBinder));
-        
+
         $query = new Query($connection);
         $query->select([$query->func()->groupConcat('title', '!')])
             ->from('articles')

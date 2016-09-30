@@ -165,7 +165,7 @@ class MysqlTest extends TestCase
         $this->assertFalse($driver->commitTransaction());
         $this->assertTrue($driver->isConnected());
     }
-    
+
     /**
      * Tests that GROUP_CONCAT is transformed correctly
      *
@@ -189,7 +189,7 @@ class MysqlTest extends TestCase
         $translator = $driver->queryTranslator('select');
         $query = $translator($query);
         $this->assertEquals('GROUP_CONCAT(title SEPARATOR \',\')', $query->clause('select')[0]->sql(new ValueBinder));
-        
+
         $query = new Query($connection);
         $query->select([$query->func()->groupConcat('title', '!')])
             ->from('articles')

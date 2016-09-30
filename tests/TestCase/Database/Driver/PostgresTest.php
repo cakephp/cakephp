@@ -173,7 +173,7 @@ class PostgresTest extends TestCase
         $query = $translator($query);
         $this->assertEquals('FOO', $query->clause('epilog'));
     }
-    
+
     /**
      * Tests that GROUP_CONCAT is transformed correctly
      *
@@ -197,7 +197,7 @@ class PostgresTest extends TestCase
         $translator = $driver->queryTranslator('select');
         $query = $translator($query);
         $this->assertEquals('array_to_string((array_agg(title)), \',\')', $query->clause('select')[0]->sql(new ValueBinder));
-        
+
         $query = new Query($connection);
         $query->select([$query->func()->groupConcat('title', '!')])
             ->from('articles')

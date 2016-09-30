@@ -132,7 +132,7 @@ class FunctionsBuilderTest extends TestCase
         $this->assertEquals("CONCAT(title, :c0)", $function->sql(new ValueBinder));
         $this->assertEquals('string', $function->returnType());
     }
-    
+
     /**
      * Tests generating a GROUP_CONCAT() function
      *
