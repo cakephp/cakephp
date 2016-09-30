@@ -137,7 +137,8 @@ class BelongsToManyTest extends TestCase
     {
         $assoc = new BelongsToMany('Test', [
             'sourceTable' => $this->article,
-            'targetTable' => $this->tag
+            'targetTable' => $this->tag,
+            'strategy' => 'subquery'
         ]);
         $junction = $assoc->junction();
         $this->assertInstanceOf('Cake\ORM\Table', $junction);
@@ -165,6 +166,10 @@ class BelongsToManyTest extends TestCase
 
         $assoc->junction('ArticlesTags');
         $this->assertSame($junction, $assoc->junction());
+
+        $this->assertSame($assoc->strategy(), $this->tag->association('Articles')->strategy());
+        $this->assertSame($assoc->strategy(), $this->tag->association('ArticlesTags')->strategy());
+        $this->assertSame($assoc->strategy(), $this->article->association('ArticlesTags')->strategy());
     }
 
     /**
