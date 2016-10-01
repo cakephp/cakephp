@@ -365,7 +365,7 @@ class CellTest extends TestCase
             ->will($this->returnValue(false));
         $mock->expects($this->once())
             ->method('write')
-            ->with('cell_test_app_view_cell_articles_cell_display', "dummy\n");
+            ->with('cell_test_app_view_cell_articles_cell_display_default', "dummy\n");
         Cache::config('default', $mock);
 
         $cell = $this->View->cell('Articles', [], ['cache' => true]);
@@ -435,7 +435,7 @@ class CellTest extends TestCase
             ->will($this->returnValue(false));
         $mock->expects($this->once())
             ->method('write')
-            ->with('cell_test_app_view_cell_articles_cell_customTemplate', "<h1>This is the alternate template</h1>\n");
+            ->with('cell_test_app_view_cell_articles_cell_customTemplate_default', "<h1>This is the alternate template</h1>\n");
         Cache::config('default', $mock);
 
         $cell = $this->View->cell('Articles::customTemplate', [], ['cache' => true]);
