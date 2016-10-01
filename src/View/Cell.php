@@ -230,6 +230,7 @@ abstract class Cell
      * If the key is undefined, the cell class and action name will be used.
      *
      * @param string $action The action invoked.
+     * @param string|null $template The name of the template to be rendered.
      * @return array The cache configuration.
      */
     protected function _cacheConfig($action, $template = null)
