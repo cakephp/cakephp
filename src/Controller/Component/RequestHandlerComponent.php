@@ -196,8 +196,8 @@ class RequestHandlerComponent extends Component
         $controller = $event->subject();
         $request = $controller->request;
 
-        if (isset($request->params['_ext'])) {
-            $this->ext = $request->params['_ext'];
+        if ($request->param('_ext')) {
+            $this->ext = $request->param('_ext');
         }
         if (empty($this->ext) || in_array($this->ext, ['html', 'htm'])) {
             $this->_setExtension($request, $this->response);
@@ -205,7 +205,7 @@ class RequestHandlerComponent extends Component
 
         $request->params['isAjax'] = $request->is('ajax');
 
-        if (empty($this->ext) && $request->params['isAjax']) {
+        if (empty($this->ext) && $request->is('ajax')) {
             $this->ext = 'ajax';
         }
 
@@ -640,7 +640,7 @@ class RequestHandlerComponent extends Component
         if (!$type) {
             return false;
         }
-        if (empty($this->request->params['requested'])) {
+        if (!$this->request->param('requested')) {
             $response->type($cType);
         }
         if (!empty($options['charset'])) {
