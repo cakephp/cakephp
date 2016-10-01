@@ -58,6 +58,7 @@ abstract class ServerRequestFactory extends BaseFactory
             'base' => $uri->base,
             'session' => $session,
         ]);
+
         return $request;
     }
 
