@@ -3124,7 +3124,7 @@ class DboSource extends DataSource {
 			return (int)$length;
 		}
 		if (in_array($type, array('enum', 'set'))) {
-			$values = array_map(function($value) {
+			$values = array_map(function ($value) {
 				return trim(trim($value), '\'"');
 			}, explode(',', $length));
 
