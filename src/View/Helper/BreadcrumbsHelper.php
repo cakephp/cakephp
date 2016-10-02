@@ -15,13 +15,40 @@
 namespace Cake\View\Helper;
 
 use Cake\View\Helper;
+use Cake\View\StringTemplateTrait;
 use LogicException;
 
 /**
  * BreadcrumbsHelper to register and display a breadcrumb trail for your views
+ *
+ * @property \Cake\View\Helper\UrlHelper $Url
  */
 class BreadcrumbsHelper extends Helper
 {
+
+    use StringTemplateTrait;
+
+    /**
+     * Other helpers used by BreadcrumbsHelper
+     *
+     * @var array
+     */
+    public $helpers = ['Url'];
+
+    /**
+     * Default config for the helper.
+     *
+     * @var array
+     */
+    protected $_defaultConfig = [
+        'templates' => [
+            'wrapper' => '<ul{{attrs}}>{{content}}</ul>',
+            'item' => '<li{{attrs}}><a href="{{link}}"{{innerAttrs}}>{{title}}</a></li>',
+            'itemWithoutLink' => '<li{{attrs}}><span{{innerAttrs}}>{{title}}</span></li>',
+            'separator' => '<li{{attrs}}><span{{innerAttrs}}>{{separator}}</span></li>'
+        ]
+    ];
+
     /**
      * The crumbs list.
      *
@@ -147,5 +174,94 @@ class BreadcrumbsHelper extends Helper
     public function getCrumbs()
     {
        return $this->crumbs;
+    }
+
+    /**
+     * Renders the breadcrumbs trail
+     *
+     * @param array $attributes Array of attributes applied to the wrapper element
+     * @param array $separator Array of attributes for the `separator` template
+     * @return string The breadcrumbs trail
+     */
+    public function render(array $attributes = [], array $separator = [])
+    {
+        $crumbs = $this->crumbs;
+        $crumbsCount = count($crumbs);
+        $templater = $this->templater();
+
+        if (!empty($separator)) {
+            $separatorParams = [];
+            if (isset($separator['innerAttrs'])) {
+                $separatorParams['innerAttrs'] = $templater->formatAttributes($separator['innerAttrs']);
+                unset($separator['innerAttrs']);
+            }
+
+            if (isset($separator['separator'])) {
+                $separatorParams['separator'] = $separator['separator'];
+                unset($separator['separator']);
+            }
+
+            $separatorParams['attrs'] = $templater->formatAttributes($separator);
+        }
+
+        $crumbTrail = '';
+        foreach ($crumbs as $key => $crumb) {
+            $link = $this->prepareLink($crumb['link']);
+            $title = $crumb['title'];
+            $options = $crumb['options'];
+
+            $optionsLink = [];
+            if (isset($options['innerAttrs'])) {
+                $optionsLink = $options['innerAttrs'];
+                unset($options['innerAttrs']);
+            }
+
+            $template = 'item';
+            $templateParams = [
+                'attrs' => $templater->formatAttributes($options),
+                'innerAttrs' => $templater->formatAttributes($optionsLink),
+                'title' => $title,
+                'link' => $link,
+            ];
+
+            if (empty($link)) {
+                $template = 'itemWithoutLink';
+            }
+
+            $crumbTrail .= $this->formatTemplate($template, $templateParams);
+
+            if (isset($separatorParams) && $key !== ($crumbsCount-1)) {
+                $crumbTrail .= $this->formatTemplate('separator', $separatorParams);
+            }
+        }
+
+        $crumbTrail = $this->formatTemplate('wrapper', [
+            'content' => $crumbTrail,
+            'attrs' => $templater->formatAttributes($attributes)
+        ]);
+
+        return $crumbTrail;
+    }
+
+    /**
+     * Prepare the URL for a specific `link` param of a crumb
+     *
+     * @param array|string|null $link If array, an array of Router url params
+     * If string, will be used as is
+     * If empty, will consider that there is no link
+     *
+     * @return null|string The URL of a crumb
+     */
+    protected function prepareLink($link)
+    {
+        if (is_string($link)) {
+            return $link;
+        }
+
+        if (is_array($link)) {
+            return $this->Url->build($link);
+        }
+
+        return null;
     }
 }
