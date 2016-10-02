@@ -687,6 +687,22 @@ class CakeSchemaTest extends CakeTestCase {
 	}
 
 /**
+ * test that tables with unsupported name are not getting through
+ *
+ * @return void
+ */
+	public function testGenerateInvalidTable() {
+		$invalidTableName = 'invalid name !@#$%^&*()';
+		$expectedException = "Invalid table name '{$invalidTableName}'";
+		try{
+			$this->Schema->generateTable($invalidTableName, array());
+			$this->fail("Expected exception \"{$expectedException}\" not thrown");
+		} catch (Exception $e) {
+			$this->assertEquals($expectedException, $e->getMessage());
+		}
+	}
+
+/**
  * testSchemaWrite method
  *
  * @return void
