@@ -267,6 +267,10 @@ class FileEngine extends CacheEngine {
 		}
 
 		$dir = dir($path);
+		if ($dir === false) {
+			return;
+		}
+
 		while (($entry = $dir->read()) !== false) {
 			if (substr($entry, 0, $prefixLength) !== $this->settings['prefix']) {
 				continue;
