@@ -2253,7 +2253,7 @@ class PaginatorHelperTest extends TestCase
         $expected = '1 - 3 of 13';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Paginator->counter('Showing {{page}} of {{pages}} {{model}}');
+        $result = $this->Paginator->counter('Showing {{page}} of {{pages}} {{scope}}');
         $this->assertEquals('Showing 1 of 5 clients', $result);
     }
 
@@ -2368,6 +2368,7 @@ class PaginatorHelperTest extends TestCase
     /**
      * test the defaultModel() method
      *
+     * @deprecated `'model'` and `defaultModel()` are deprecated, use 'scope' and 'defaultScope' instead.
      * @return void
      */
     public function testNoDefaultModel()
@@ -2380,6 +2381,23 @@ class PaginatorHelperTest extends TestCase
 
         $this->Paginator->options(['model' => 'Client']);
         $this->assertEquals('Client', $this->Paginator->defaultModel());
+    }
+
+    /**
+     * test the defaultScope() method
+     *
+     * @return void
+     */
+    public function testNoDefaultScope()
+    {
+        $this->Paginator->request = new Request();
+        $this->assertNull($this->Paginator->defaultScope());
+
+        $this->Paginator->defaultScope('Article');
+        $this->assertEquals('Article', $this->Paginator->defaultScope());
+
+        $this->Paginator->options(['scope' => 'Client']);
+        $this->assertEquals('Client', $this->Paginator->defaultScope());
     }
 
     /**

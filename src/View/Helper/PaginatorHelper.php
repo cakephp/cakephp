@@ -53,7 +53,8 @@ class PaginatorHelper extends Helper
      * - `url['sort']`  the key that the recordset is sorted.
      * - `url['direction']` Direction of the sorting (default: 'asc').
      * - `url['page']` Page number to use in links.
-     * - `model` The name of the model.
+     * - `scope` The scope to use, defaults to PaginatorHelper::defaultScope()
+     * - `model` Deprecated, use 'scope instead'. The model to use, defaults to PaginatorHelper::defaultModel()
      * - `escape` Defines if the title field for the link should be escaped (default: true).
      *
      * Templates: the templates used by this class
@@ -83,11 +84,11 @@ class PaginatorHelper extends Helper
     ];
 
     /**
-     * Default model of the paged sets
+     * Default scope of the paged sets
      *
      * @var string
      */
-    protected $_defaultModel;
+    protected $_defaultScope;
 
     /**
      * Constructor. Overridden to merge passed args with URL options.
@@ -108,33 +109,33 @@ class PaginatorHelper extends Helper
     }
 
     /**
-     * Gets the current paging parameters from the resultset for the given model
+     * Gets the current paging parameters from the resultset for the given scope
      *
-     * @param string|null $model Optional model name. Uses the default if none is specified.
+     * @param string|null $scope Optional scope name. Uses the default if none is specified.
      * @return array The array of paging parameters for the paginated resultset.
      */
-    public function params($model = null)
+    public function params($scope = null)
     {
-        if (empty($model)) {
-            $model = $this->defaultModel();
+        if (empty($scope)) {
+            $scope = $this->defaultScope();
         }
-        if (!isset($this->request->params['paging']) || empty($this->request->params['paging'][$model])) {
+        if (!isset($this->request->params['paging']) || empty($this->request->params['paging'][$scope])) {
             return [];
         }
 
-        return $this->request->params['paging'][$model];
+        return $this->request->params['paging'][$scope];
     }
 
     /**
      * Convenience access to any of the paginator params.
      *
      * @param string $key Key of the paginator params array to retrieve.
-     * @param string|null $model Optional model name. Uses the default if none is specified.
+     * @param string|null $scope Optional scope name. Uses the default if none is specified.
      * @return mixed Content of the requested param.
      */
-    public function param($key, $model = null)
+    public function param($key, $scope = null)
     {
-        $params = $this->params($model);
+        $params = $this->params($scope);
         if (!isset($params[$key])) {
             return null;
         }
@@ -158,34 +159,38 @@ class PaginatorHelper extends Helper
             $this->request->params['paging'] = $options['paging'] + $this->request->params['paging'];
             unset($options['paging']);
         }
-        $model = $this->defaultModel();
+        $scope = $this->defaultScope();
 
-        if (!empty($options[$model])) {
-            if (!isset($this->request->params['paging'][$model])) {
-                $this->request->params['paging'][$model] = [];
+        if (!empty($options[$scope])) {
+            if (!isset($this->request->params['paging'][$scope])) {
+                $this->request->params['paging'][$scope] = [];
             }
-            $this->request->params['paging'][$model] = $options[$model] + $this->request->params['paging'][$model];
-            unset($options[$model]);
+            $this->request->params['paging'][$scope] = $options[$scope] + $this->request->params['paging'][$scope];
+            unset($options[$scope]);
         }
         $this->_config['options'] = array_filter($options + $this->_config['options']);
         if (empty($this->_config['options']['url'])) {
             $this->_config['options']['url'] = [];
         }
-        if (!empty($this->_config['options']['model'])) {
+        if (!empty($this->_config['options']['scope'])) {
+            $this->defaultModel($this->_config['options']['scope']);
+        } elseif (!empty($this->_config['options']['model'])) {
+            $this->_config['options']['scope'] = $this->_config['options']['model'];
             $this->defaultModel($this->_config['options']['model']);
         }
+
     }
 
     /**
-     * Gets the current page of the recordset for the given model
+     * Gets the current page of the recordset for the given scope.
      *
-     * @param string|null $model Optional model name. Uses the default if none is specified.
+     * @param string|null $scope Optional scope name. Uses the default if none is specified.
      * @return int The current page number of the recordset.
      * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html#checking-the-pagination-state
      */
-    public function current($model = null)
+    public function current($scope = null)
     {
-        $params = $this->params($model);
+        $params = $this->params($scope);
 
         if (isset($params['page'])) {
             return $params['page'];
@@ -197,16 +202,16 @@ class PaginatorHelper extends Helper
     /**
      * Gets the current key by which the recordset is sorted
      *
-     * @param string|null $model Optional model name. Uses the default if none is specified.
+     * @param string|null $scope Optional scope name. Uses the default if none is specified.
      * @param array $options Options for pagination links. See #options for list of keys.
      * @return string|null The name of the key by which the recordset is being sorted, or
      *  null if the results are not currently sorted.
      * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html#creating-sort-links
      */
-    public function sortKey($model = null, array $options = [])
+    public function sortKey($scope = null, array $options = [])
     {
         if (empty($options)) {
-            $options = $this->params($model);
+            $options = $this->params($scope);
         }
         if (!empty($options['sort'])) {
             return $options['sort'];
@@ -218,18 +223,18 @@ class PaginatorHelper extends Helper
     /**
      * Gets the current direction the recordset is sorted
      *
-     * @param string|null $model Optional model name. Uses the default if none is specified.
+     * @param string|null $scope Optional scope name. Uses the default if none is specified.
      * @param array $options Options for pagination links. See #options for list of keys.
      * @return string The direction by which the recordset is being sorted, or
      *  null if the results are not currently sorted.
      * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html#creating-sort-links
      */
-    public function sortDir($model = null, array $options = [])
+    public function sortDir($scope = null, array $options = [])
     {
         $dir = null;
 
         if (empty($options)) {
-            $options = $this->params($model);
+            $options = $this->params($scope);
         }
 
         if (isset($options['direction'])) {
@@ -284,13 +289,13 @@ class PaginatorHelper extends Helper
 
             return $out;
         }
-        $paging = $this->params($options['model']);
+        $paging = $this->params($options['scope']);
 
         $url = array_merge(
             $options['url'],
             ['page' => $paging['page'] + $options['step']]
         );
-        $url = $this->generateUrl($url, $options['model']);
+        $url = $this->generateUrl($url, $options['scope']);
 
         $out = $templater->format($template, [
             'url' => $url,
@@ -313,7 +318,8 @@ class PaginatorHelper extends Helper
      *   defaults to the same text at the active link. Setting to false will cause
      *   this method to return ''.
      * - `escape` Whether you want the contents html entity encoded, defaults to true
-     * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
+     * - `scope` The scope to use, defaults to PaginatorHelper::defaultScope()
+     * - `model` Deprecated, use 'scope instead'. The model to use, defaults to PaginatorHelper::defaultModel()
      * - `url` An array of additional URL options to use for link generation.
      * - `templates` An array of templates, or template file name containing the
      *   templates you'd like to use when generating the link for previous page.
@@ -326,16 +332,18 @@ class PaginatorHelper extends Helper
      */
     public function prev($title = '<< Previous', array $options = [])
     {
+        $options = $this->_deprecateModelOption($options);
+
         $defaults = [
             'url' => [],
-            'model' => $this->defaultModel(),
+            'scope' => $this->defaultScope(),
             'disabledTitle' => $title,
             'escape' => true,
         ];
         $options += $defaults;
         $options['step'] = -1;
 
-        $enabled = $this->hasPrev($options['model']);
+        $enabled = $this->hasPrev($options['scope']);
         $templates = [
             'active' => 'prevActive',
             'disabled' => 'prevDisabled'
@@ -353,7 +361,8 @@ class PaginatorHelper extends Helper
      *   defaults to the same text at the active link. Setting to false will cause
      *   this method to return ''.
      * - `escape` Whether you want the contents html entity encoded, defaults to true
-     * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
+     * - `scope` The scope to use, defaults to PaginatorHelper::defaultScope()
+     * - `model` Deprecated, use 'scope instead'. The model to use, defaults to PaginatorHelper::defaultModel()
      * - `url` An array of additional URL options to use for link generation.
      * - `templates` An array of templates, or template file name containing the
      *   templates you'd like to use when generating the link for next page.
@@ -366,16 +375,18 @@ class PaginatorHelper extends Helper
      */
     public function next($title = 'Next >>', array $options = [])
     {
+        $options = $this->_deprecateModelOption($options);
+
         $defaults = [
             'url' => [],
-            'model' => $this->defaultModel(),
+            'scope' => $this->defaultScope(),
             'disabledTitle' => $title,
             'escape' => true,
         ];
         $options += $defaults;
         $options['step'] = 1;
 
-        $enabled = $this->hasNext($options['model']);
+        $enabled = $this->hasNext($options['scope']);
         $templates = [
             'active' => 'nextActive',
             'disabled' => 'nextDisabled'
@@ -391,7 +402,8 @@ class PaginatorHelper extends Helper
      * ### Options:
      *
      * - `escape` Whether you want the contents html entity encoded, defaults to true.
-     * - `model` The model to use, defaults to PaginatorHelper::defaultModel().
+     * - `scope` The scope to use, defaults to PaginatorHelper::defaultScope()
+     * - `model` Deprecated, use 'scope instead'. The model to use, defaults to PaginatorHelper::defaultModel()
      * - `direction` The default direction to use when this link isn't active.
      * - `lock` Lock direction. Will only use the default direction then, defaults to false.
      *
@@ -405,7 +417,9 @@ class PaginatorHelper extends Helper
      */
     public function sort($key, $title = null, array $options = [])
     {
-        $options += ['url' => [], 'model' => null, 'escape' => true];
+        $options = $this->_deprecateModelOption($options);
+
+        $options += ['url' => [], 'scope' => null, 'escape' => true];
         $url = $options['url'];
         unset($options['url']);
 
@@ -424,13 +438,13 @@ class PaginatorHelper extends Helper
         $locked = isset($options['lock']) ? $options['lock'] : false;
         unset($options['lock']);
 
-        $sortKey = $this->sortKey($options['model']);
-        $defaultModel = $this->defaultModel();
-        $model = $options['model'] ?: $defaultModel;
+        $sortKey = $this->sortKey($options['scope']);
+        $defaultModel = $this->defaultScope();
+        $scope = $options['scope'] ?: $defaultModel;
         list($table, $field) = explode('.', $key . '.');
         if (!$field) {
             $field = $table;
-            $table = $model;
+            $table = $scope;
         }
         $isSorted = (
             $sortKey === $table . '.' . $field ||
@@ -444,7 +458,7 @@ class PaginatorHelper extends Helper
             if ($locked) {
                 $template = $dir === 'asc' ? 'sortDescLocked' : 'sortAscLocked';
             } else {
-                $dir = $this->sortDir($options['model']) === 'asc' ? 'desc' : 'asc';
+                $dir = $this->sortDir($options['scope']) === 'asc' ? 'desc' : 'asc';
                 $template = $dir === 'asc' ? 'sortDesc' : 'sortAsc';
             }
         }
@@ -459,7 +473,7 @@ class PaginatorHelper extends Helper
         );
         $vars = [
             'text' => $options['escape'] ? h($title) : $title,
-            'url' => $this->generateUrl($url, $options['model']),
+            'url' => $this->generateUrl($url, $options['scope']),
         ];
 
         return $this->templater()->format($template, $vars);
@@ -469,14 +483,14 @@ class PaginatorHelper extends Helper
      * Merges passed URL options with current pagination state to generate a pagination URL.
      *
      * @param array $options Pagination/URL options array
-     * @param string|null $model Which model to paginate on
+     * @param string|null $scope Which scope to paginate on
      * @param bool $full If true, the full base URL will be prepended to the result
      * @return string By default, returns a full pagination URL string for use in non-standard contexts (i.e. JavaScript)
      * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html#generating-pagination-urls
      */
-    public function generateUrl(array $options = [], $model = null, $full = false)
+    public function generateUrl(array $options = [], $scope = null, $full = false)
     {
-        $paging = $this->params($model);
+        $paging = $this->params($scope);
         $paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
         $url = [
             'page' => $paging['page'],
@@ -524,42 +538,42 @@ class PaginatorHelper extends Helper
     /**
      * Returns true if the given result set is not at the first page
      *
-     * @param string|null $model Optional model name. Uses the default if none is specified.
+     * @param string|null $scope Optional scope name. Uses the default if none is specified.
      * @return bool True if the result set is not at the first page.
      * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html#checking-the-pagination-state
      */
-    public function hasPrev($model = null)
+    public function hasPrev($scope = null)
     {
-        return $this->_hasPage($model, 'prev');
+        return $this->_hasPage($scope, 'prev');
     }
 
     /**
      * Returns true if the given result set is not at the last page
      *
-     * @param string|null $model Optional model name. Uses the default if none is specified.
+     * @param string|null $scope Optional scope name. Uses the default if none is specified.
      * @return bool True if the result set is not at the last page.
      * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html#checking-the-pagination-state
      */
-    public function hasNext($model = null)
+    public function hasNext($scope = null)
     {
-        return $this->_hasPage($model, 'next');
+        return $this->_hasPage($scope, 'next');
     }
 
     /**
      * Returns true if the given result set has the page number given by $page
      *
-     * @param string|null $model Optional model name. Uses the default if none is specified.
+     * @param string|null $scope Optional scope name. Uses the default if none is specified.
      * @param int $page The page number - if not set defaults to 1.
      * @return bool True if the given result set has the specified page number.
      * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html#checking-the-pagination-state
      */
-    public function hasPage($model = null, $page = 1)
+    public function hasPage($scope = null, $page = 1)
     {
-        if (is_numeric($model)) {
-            $page = $model;
-            $model = null;
+        if (is_numeric($scope)) {
+            $page = $scope;
+            $scope = null;
         }
-        $paging = $this->params($model);
+        $paging = $this->params($scope);
         if ($paging === []) {
             return false;
         }
@@ -568,39 +582,51 @@ class PaginatorHelper extends Helper
     }
 
     /**
-     * Does $model have $page in its range?
+     * Does $scope have $page in its range?
      *
-     * @param string $model Model name to get parameters for.
+     * @param string $scope Model name to get parameters for.
      * @param int $page Page number you are checking.
-     * @return bool Whether model has $page
+     * @return bool Whether scope has $page
      */
-    protected function _hasPage($model, $page)
+    protected function _hasPage($scope, $page)
     {
-        $params = $this->params($model);
+        $params = $this->params($scope);
 
         return !empty($params) && $params[$page . 'Page'];
     }
 
     /**
-     * Gets or sets the default model of the paged sets
+     * Gets or sets the default scope of the paged sets
      *
-     * @param string|null $model Model name to set
+     * @deprecated use defaultScope() instead.
+     * @param string|null $scope Model name to set
      * @return string|null Model name or null if the pagination isn't initialized.
      */
-    public function defaultModel($model = null)
+    public function defaultModel($scope = null)
     {
-        if ($model !== null) {
-            $this->_defaultModel = $model;
+        return $this->defaultScope($scope);
+    }
+
+    /**
+     * Gets or sets the default scope of the paged sets
+     *
+     * @param string|null $scope Scope name to set
+     * @return string|null Scope name or null if the pagination isn't initialized.
+     */
+    public function defaultScope($scope = null)
+    {
+        if ($scope !== null) {
+            $this->_defaultScope = $scope;
         }
-        if ($this->_defaultModel) {
-            return $this->_defaultModel;
+        if ($this->_defaultScope) {
+            return $this->_defaultScope;
         }
         if (empty($this->request->params['paging'])) {
             return null;
         }
-        list($this->_defaultModel) = array_keys($this->request->params['paging']);
+        list($this->_defaultScope) = array_keys($this->request->params['paging']);
 
-        return $this->_defaultModel;
+        return $this->_defaultScope;
     }
 
     /**
@@ -608,7 +634,8 @@ class PaginatorHelper extends Helper
      *
      * ### Options
      *
-     * - `model` The model to use, defaults to PaginatorHelper::defaultModel();
+     * - `scope` The scope to use, defaults to PaginatorHelper::defaultScope()
+     * - `model` Deprecated, use 'scope instead'. The model to use, defaults to PaginatorHelper::defaultModel()
      * - `format` The format string you want to use, defaults to 'pages' Which generates output like '1 of 5'
      *    set to 'range' to generate output like '1 - 3 of 13'. Can also be set to a custom string, containing
      *    the following placeholders `{{page}}`, `{{pages}}`, `{{current}}`, `{{count}}`, `{{model}}`, `{{start}}`, `{{end}}` and any
@@ -625,12 +652,14 @@ class PaginatorHelper extends Helper
             $options = ['format' => $options];
         }
 
+        $options = $this->_deprecateModelOption($options);
+
         $options += [
-            'model' => $this->defaultModel(),
+            'scope' => $this->defaultScope(),
             'format' => 'pages',
         ];
 
-        $paging = $this->params($options['model']);
+        $paging = $this->params($options['scope']);
         if (!$paging['pageCount']) {
             $paging['pageCount'] = 1;
         }
@@ -662,7 +691,7 @@ class PaginatorHelper extends Helper
         ]);
 
         $map += [
-            'model' => strtolower(Inflector::humanize(Inflector::tableize($options['model'])))
+            'scope' => strtolower(Inflector::humanize(Inflector::tableize($options['scope'])))
         ];
 
         return $this->templater()->format($template, $map);
@@ -682,7 +711,8 @@ class PaginatorHelper extends Helper
      *
      * - `before` Content to be inserted before the numbers, but after the first links.
      * - `after` Content to be inserted after the numbers, but before the last links.
-     * - `model` Model to create numbers for, defaults to PaginatorHelper::defaultModel()
+     * - `scope` The scope to use, defaults to PaginatorHelper::defaultScope()
+     * - `model` Deprecated, use 'scope instead'. The model to use, defaults to PaginatorHelper::defaultModel()
      * - `modulus` How many numbers to include on either side of the current page, defaults to 8.
      *    Set to `false` to disable and to show all numbers.
      * - `first` Whether you want first links generated, set to an integer to define the number of 'first'
@@ -706,13 +736,15 @@ class PaginatorHelper extends Helper
      */
     public function numbers(array $options = [])
     {
+        $options = $this->_deprecateModelOption($options);
+
         $defaults = [
-            'before' => null, 'after' => null, 'model' => $this->defaultModel(),
+            'before' => null, 'after' => null, 'scope' => $this->defaultScope(),
             'modulus' => 8, 'first' => null, 'last' => null, 'url' => []
         ];
         $options += $defaults;
 
-        $params = (array)$this->params($options['model']) + ['page' => 1];
+        $params = (array)$this->params($options['scope']) + ['page' => 1];
         if ($params['pageCount'] <= 1) {
             return false;
         }
@@ -770,10 +802,12 @@ class PaginatorHelper extends Helper
      */
     protected function _formatNumber($templater, $options)
     {
+        $options = $this->_deprecateModelOption($options);
+
         $url = array_merge($options['url'], ['page' => $options['page']]);
         $vars = [
             'text' => $options['text'],
-            'url' => $this->generateUrl($url, $options['model']),
+            'url' => $this->generateUrl($url, $options['scope']),
         ];
 
         return $templater->format('number', $vars);
@@ -789,6 +823,8 @@ class PaginatorHelper extends Helper
      */
     protected function _modulusNumbers($templater, $params, $options)
     {
+        $options = $this->_deprecateModelOption($options);
+
         $out = '';
         $ellipsis = $templater->format('ellipsis', []);
 
@@ -801,7 +837,7 @@ class PaginatorHelper extends Helper
             $out .= $this->_formatNumber($templater, [
                 'text' => $i,
                 'page' => $i,
-                'model' => $options['model'],
+                'scope' => $options['scope'],
                 'url' => $options['url'],
             ]);
         }
@@ -809,7 +845,7 @@ class PaginatorHelper extends Helper
         $url = array_merge($options['url'], ['page' => $params['page']]);
         $out .= $templater->format('current', [
             'text' => $params['page'],
-            'url' => $this->generateUrl($url, $options['model']),
+            'url' => $this->generateUrl($url, $options['scope']),
         ]);
 
         $start = $params['page'] + 1;
@@ -817,7 +853,7 @@ class PaginatorHelper extends Helper
             $out .= $this->_formatNumber($templater, [
                 'text' => $i,
                 'page' => $i,
-                'model' => $options['model'],
+                'scope' => $options['scope'],
                 'url' => $options['url'],
             ]);
         }
@@ -826,7 +862,7 @@ class PaginatorHelper extends Helper
             $out .= $this->_formatNumber($templater, [
                 'text' => $i,
                 'page' => $end,
-                'model' => $options['model'],
+                'scope' => $options['scope'],
                 'url' => $options['url'],
             ]);
         }
@@ -895,6 +931,8 @@ class PaginatorHelper extends Helper
      */
     protected function _numbers($templater, $params, $options)
     {
+        $options = $this->_deprecateModelOption($options);
+
         $out = '';
         $out .= $options['before'];
         for ($i = 1; $i <= $params['pageCount']; $i++) {
@@ -902,12 +940,12 @@ class PaginatorHelper extends Helper
             if ($i == $params['page']) {
                 $out .= $templater->format('current', [
                     'text' => $params['page'],
-                    'url' => $this->generateUrl($url, $options['model']),
+                    'url' => $this->generateUrl($url, $options['scope']),
                 ]);
             } else {
                 $vars = [
                     'text' => $i,
-                    'url' => $this->generateUrl($url, $options['model']),
+                    'url' => $this->generateUrl($url, $options['scope']),
                 ];
                 $out .= $templater->format('number', $vars);
             }
@@ -935,7 +973,8 @@ class PaginatorHelper extends Helper
      *
      * ### Options:
      *
-     * - `model` The model to use defaults to PaginatorHelper::defaultModel()
+     * - `scope` The scope to use, defaults to PaginatorHelper::defaultScope()
+     * - `model` Deprecated, use 'scope instead'. The model to use, defaults to PaginatorHelper::defaultModel()
      * - `escape` Whether or not to HTML escape the text.
      * - `url` An array of additional URL options to use for link generation.
      *
@@ -947,13 +986,15 @@ class PaginatorHelper extends Helper
      */
     public function first($first = '<< first', array $options = [])
     {
+        $options = $this->_deprecateModelOption($options);
+
         $options += [
             'url' => [],
-            'model' => $this->defaultModel(),
+            'scope' => $this->defaultScope(),
             'escape' => true
         ];
 
-        $params = $this->params($options['model']);
+        $params = $this->params($options['scope']);
 
         if ($params['pageCount'] <= 1) {
             return false;
@@ -965,14 +1006,14 @@ class PaginatorHelper extends Helper
             for ($i = 1; $i <= $first; $i++) {
                 $url = array_merge($options['url'], ['page' => $i]);
                 $out .= $this->templater()->format('number', [
-                    'url' => $this->generateUrl($url, $options['model']),
+                    'url' => $this->generateUrl($url, $options['scope']),
                     'text' => $i
                 ]);
             }
         } elseif ($params['page'] > 1 && is_string($first)) {
             $first = $options['escape'] ? h($first) : $first;
             $out .= $this->templater()->format('first', [
-                'url' => $this->generateUrl(['page' => 1], $options['model']),
+                'url' => $this->generateUrl(['page' => 1], $options['scope']),
                 'text' => $first
             ]);
         }
@@ -997,7 +1038,8 @@ class PaginatorHelper extends Helper
      *
      * ### Options:
      *
-     * - `model` The model to use defaults to PaginatorHelper::defaultModel()
+     * - `scope` The scope to use, defaults to PaginatorHelper::defaultScope()
+     * - `model` Deprecated, use 'scope instead'. The model to use, defaults to PaginatorHelper::defaultModel()
      * - `escape` Whether or not to HTML escape the text.
      * - `url` An array of additional URL options to use for link generation.
      *
@@ -1008,12 +1050,14 @@ class PaginatorHelper extends Helper
      */
     public function last($last = 'last >>', array $options = [])
     {
+        $options = $this->_deprecateModelOption($options);
+
         $options += [
-            'model' => $this->defaultModel(),
+            'scope' => $this->defaultScope(),
             'escape' => true,
             'url' => []
         ];
-        $params = $this->params($options['model']);
+        $params = $this->params($options['scope']);
 
         if ($params['pageCount'] <= 1) {
             return false;
@@ -1026,14 +1070,14 @@ class PaginatorHelper extends Helper
             for ($i = $lower; $i <= $params['pageCount']; $i++) {
                 $url = array_merge($options['url'], ['page' => $i]);
                 $out .= $this->templater()->format('number', [
-                    'url' => $this->generateUrl($url, $options['model']),
+                    'url' => $this->generateUrl($url, $options['scope']),
                     'text' => $i
                 ]);
             }
         } elseif ($params['page'] < $params['pageCount'] && is_string($last)) {
             $last = $options['escape'] ? h($last) : $last;
             $out .= $this->templater()->format('last', [
-                'url' => $this->generateUrl(['page' => $params['pageCount']], $options['model']),
+                'url' => $this->generateUrl(['page' => $params['pageCount']], $options['scope']),
                 'text' => $last
             ]);
         }
@@ -1059,7 +1103,8 @@ class PaginatorHelper extends Helper
      *
      * ### Options:
      *
-     * - `model` The model to use defaults to PaginatorHelper::defaultModel()
+     * - `scope` The scope to use, defaults to PaginatorHelper::defaultScope()
+     * - `model` Deprecated, use 'scope instead'. The model to use, defaults to PaginatorHelper::defaultModel()
      * - `block` The block name to append the output to, or false/absenst to return as a string
      *
      * @param array $options Array of options
@@ -1067,8 +1112,10 @@ class PaginatorHelper extends Helper
      */
     public function meta(array $options = [])
     {
-        $model = isset($options['model']) ? $options['model'] : null;
-        $params = $this->params($model);
+        $options = $this->_deprecateModelOption($options);
+
+        $scope = isset($options['scope']) ? $options['scope'] : null;
+        $params = $this->params($scope);
         $links = [];
 
         if ($this->hasPrev()) {
@@ -1105,5 +1152,21 @@ class PaginatorHelper extends Helper
     public function implementedEvents()
     {
         return [];
+    }
+
+    /**
+     * Helper method to deprecate the 'model' option throughout PaginationHelper.
+     *
+     * @param array $options Array of options
+     * @return array Array of options
+     */
+    private function _deprecateModelOption(array $options) 
+    {
+        if (isset($options['model'])) {
+            $options['scope'] = $options['model'];
+            unset($options['model']);
+        }
+
+        return $options;
     }
 }
