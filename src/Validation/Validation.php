@@ -322,6 +322,44 @@ class Validation
         return $context['data'][$field] === $check;
     }
 
+
+    /**
+     * Matches two fields with each other.
+     *
+     * If both fields have exactly the same value this method will return true.
+     *
+     * @param string $fieldOne The field one to match field two against.
+     * @param string $fieldTwo The field two to match field one against.
+     * @param array $context The validation context.
+     * @return bool
+     */
+    public static function fieldsMatching($fieldOne, $fieldTwo, $context)
+    {
+        if (!isset($context['data'][$fieldOne])) {
+            return false;
+        }
+        if (!isset($context['data'][$fieldTwo])) {
+            return false;
+        }
+
+        return $context['data'][$fieldOne] === $context['data'][$fieldTwo];
+    }
+
+    /**
+     * Validates if two fields do not match each other.
+     *
+     * If both fields have exactly the same value this method will return false.
+     *
+     * @param string $fieldOne The field one to match field two against.
+     * @param string $fieldTwo The field two to match field one against.
+     * @param array $context The validation context.
+     * @return bool
+     */
+    public static function fieldsNotMatching($fieldOne, $fieldTwo, $context)
+    {
+        return !self::fieldsMatching($fieldOne, $fieldTwo, $context);
+    }
+
     /**
      * Checks if a string contains one or more non-alphanumeric characters.
      *
