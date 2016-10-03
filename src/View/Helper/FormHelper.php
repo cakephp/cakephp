@@ -415,6 +415,13 @@ class FormHelper extends Helper
             default:
                 $htmlAttributes['method'] = 'post';
         }
+        if (isset($options['method'])) {
+            $htmlAttributes['method'] = strtolower($options['method']);
+        }
+        if (isset($options['enctype'])) {
+            $htmlAttributes['enctype'] = strtolower($options['enctype']);
+        }
+
         $this->requestType = strtolower($options['type']);
 
         if (!empty($options['encoding'])) {
