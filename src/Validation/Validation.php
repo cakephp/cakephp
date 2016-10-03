@@ -522,15 +522,47 @@ class Validation
 
     /**
      * Boolean validation, determines if value passed is a boolean integer or true/false.
+     * The list of what is considered to be boolish values, may be set via $booleanValues.
      *
      * @param string $check a valid boolean
+     * @param string $booleanValues list of valid boolish values, defaults to `[true, false, 0, 1, '0', '1']`.
      * @return bool Success
      */
-    public static function boolean($check)
+    public static function boolean($check, array $booleanValues = [])
     {
-        $booleanList = [0, 1, '0', '1', true, false];
+        $booleanValues = array_merge([true, false, 0, 1, '0', '1'], $booleanValues);
 
-        return in_array($check, $booleanList, true);
+        return in_array($check, $booleanValues, true);
+    }
+
+    /**
+     * Truthy validation, determines if value passed is truthy.
+     * The list of what is considered to be truthy values, may be set via $truthyValues.
+     *
+     * @param string $check a valid boolean
+     * @param array $truthyValues list of valid truthy values, defaults to `[true, 1, '1']`.
+     * @return bool Success
+     */
+    public static function truthy($check, array $truthyValues = [])
+    {
+        $truthyValues = array_merge([true, 1, '1'], $truthyValues);
+
+        return in_array($check, $truthyValues, true);
+    }
+
+    /**
+     * Truthy validation, determines if value passed is falsey.
+     * The list of what is considered to be truthy values, may be set via $falseyValues.
+     *
+     * @param string $check a valid boolean
+     * @param array $falseyValues list of valid falsey values, defaults to `[false, 0, '0']`.
+     * @return bool Success
+     */
+    public static function falsey($check, array $falseyValues = [])
+    {
+        $falseyValues = array_merge([false, 0, '0'], $falseyValues);
+
+        return in_array($check, $falseyValues, true);
     }
 
     /**
