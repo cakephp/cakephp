@@ -43,8 +43,8 @@ class BreadcrumbsHelper extends Helper
     protected $_defaultConfig = [
         'templates' => [
             'wrapper' => '<ul{{attrs}}>{{content}}</ul>',
-            'item' => '<li{{attrs}}><a href="{{link}}"{{innerAttrs}}>{{title}}</a></li>',
-            'itemWithoutLink' => '<li{{attrs}}><span{{innerAttrs}}>{{title}}</span></li>',
+            'item' => '<li{{attrs}}><a href="{{link}}"{{innerAttrs}}>{{title}}</a></li>{{separator}}',
+            'itemWithoutLink' => '<li{{attrs}}><span{{innerAttrs}}>{{title}}</span></li>{{separator}}',
             'separator' => '<li{{attrs}}><span{{innerAttrs}}>{{separator}}</span></li>'
         ]
     ];
@@ -222,17 +222,18 @@ class BreadcrumbsHelper extends Helper
                 'innerAttrs' => $templater->formatAttributes($optionsLink),
                 'title' => $title,
                 'link' => $link,
+                'separator' => '',
             ];
 
             if (empty($link)) {
                 $template = 'itemWithoutLink';
             }
 
-            $crumbTrail .= $this->formatTemplate($template, $templateParams);
-
             if (isset($separatorParams) && $key !== ($crumbsCount-1)) {
-                $crumbTrail .= $this->formatTemplate('separator', $separatorParams);
+                $templateParams['separator'] = $this->formatTemplate('separator', $separatorParams);
             }
+
+            $crumbTrail .= $this->formatTemplate($template, $templateParams);
         }
 
         $crumbTrail = $this->formatTemplate('wrapper', [

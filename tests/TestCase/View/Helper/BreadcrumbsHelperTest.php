@@ -301,7 +301,6 @@ class BreadcrumbsHelperTest extends TestCase
                 'wrapper' => '<ol itemtype="http://schema.org/BreadcrumbList"{{attrs}}>{{content}}</ol>',
                 'item' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><a itemtype="http://schema.org/Thing" itemprop="item" href="{{link}}"{{innerAttrs}}><span itemprop="name">{{title}}</span></a></li>',
                 'itemWithoutLink' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><span itemprop="name"{{innerAttrs}}>{{title}}</span></li>',
-                'separator' => ''
             ]
         ]);
         $this->breadcrumbs
