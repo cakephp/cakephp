@@ -75,6 +75,7 @@ class ResponseEmitterTest extends TestCase
             ->withAddedHeader('Set-Cookie', 'people=jim,jack,jonny";";Path=/accounts')
             ->withAddedHeader('Set-Cookie', 'google=not=nice;Path=/accounts; HttpOnly')
             ->withAddedHeader('Set-Cookie', 'a=b;  Expires=Wed, 13 Jan 2021 22:23:01 GMT; Domain=www.example.com;')
+            ->withAddedHeader('Set-Cookie', 'list%5B%5D=a%20b%20c')
             ->withHeader('Content-Type', 'text/plain');
         $response->getBody()->write('ok');
 
@@ -122,6 +123,15 @@ class ResponseEmitterTest extends TestCase
                 'path' => '',
                 'expire' => 1610576581,
                 'domain' => 'www.example.com',
+                'secure' => false,
+                'httponly' => false
+            ],
+            [
+                'name' => 'list[]',
+                'value' => 'a b c',
+                'path' => '',
+                'expire' => 0,
+                'domain' => '',
                 'secure' => false,
                 'httponly' => false
             ],
