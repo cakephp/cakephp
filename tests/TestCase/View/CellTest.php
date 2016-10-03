@@ -365,7 +365,7 @@ class CellTest extends TestCase
             ->will($this->returnValue(false));
         $mock->expects($this->once())
             ->method('write')
-            ->with('cell_test_app_view_cell_articles_cell_display', "dummy\n");
+            ->with('cell_test_app_view_cell_articles_cell_display_default', "dummy\n");
         Cache::config('default', $mock);
 
         $cell = $this->View->cell('Articles', [], ['cache' => true]);
@@ -435,7 +435,7 @@ class CellTest extends TestCase
             ->will($this->returnValue(false));
         $mock->expects($this->once())
             ->method('write')
-            ->with('cell_test_app_view_cell_articles_cell_customTemplate', "<h1>This is the alternate template</h1>\n");
+            ->with('cell_test_app_view_cell_articles_cell_customTemplate_default', "<h1>This is the alternate template</h1>\n");
         Cache::config('default', $mock);
 
         $cell = $this->View->cell('Articles::customTemplate', [], ['cache' => true]);
@@ -463,6 +463,27 @@ class CellTest extends TestCase
         $cell->render();
         $this->assertEquals(1, $cell->counter);
         $this->assertContains('This is the alternate template', $result);
+        Cache::delete('celltest');
+        Cache::drop('default');
+    }
+
+    /**
+     * Test that when the cell cache is enabled, the cell action is only invoke the first
+     * time the cell is rendered
+     *
+     * @return void
+     */
+    public function testACachedViewCellReRendersWhenGivenADifferentTemplate()
+    {
+        Cache::config('default', [
+            'className' => 'File',
+            'path' => CACHE,
+        ]);
+        $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => true]);
+        $result = $cell->render("alternate_teaser_list");
+        $result2 = $cell->render("not_the_alternate_teaser_list");
+        $this->assertContains('This is the alternate template', $result);
+        $this->assertContains('This is NOT the alternate template', $result2);
         Cache::delete('celltest');
         Cache::drop('default');
     }

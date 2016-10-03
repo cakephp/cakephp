@@ -174,32 +174,38 @@ class FixtureManager
                 continue;
             }
 
-            list($type, $pathName) = explode('.', $fixture, 2);
-            $path = explode('/', $pathName);
-            $name = array_pop($path);
-            $additionalPath = implode('\\', $path);
+            if (strpos($fixture, '.')) {
+                list($type, $pathName) = explode('.', $fixture, 2);
+                $path = explode('/', $pathName);
+                $name = array_pop($path);
+                $additionalPath = implode('\\', $path);
 
-            if ($type === 'core') {
-                $baseNamespace = 'Cake';
-            } elseif ($type === 'app') {
-                $baseNamespace = Configure::read('App.namespace');
-            } elseif ($type === 'plugin') {
-                list($plugin, $name) = explode('.', $pathName);
-                $path = implode('\\', explode('/', $plugin));
-                $baseNamespace = Inflector::camelize(str_replace('\\', '\ ', $path));
-                $additionalPath = null;
+                if ($type === 'core') {
+                    $baseNamespace = 'Cake';
+                } elseif ($type === 'app') {
+                    $baseNamespace = Configure::read('App.namespace');
+                } elseif ($type === 'plugin') {
+                    list($plugin, $name) = explode('.', $pathName);
+                    $path = implode('\\', explode('/', $plugin));
+                    $baseNamespace = Inflector::camelize(str_replace('\\', '\ ', $path));
+                    $additionalPath = null;
+                } else {
+                    $baseNamespace = '';
+                    $name = $fixture;
+                }
+
+                $name = Inflector::camelize($name);
+                $nameSegments = [
+                    $baseNamespace,
+                    'Test\Fixture',
+                    $additionalPath,
+                    $name . 'Fixture'
+                ];
+                $className = implode('\\', array_filter($nameSegments));
             } else {
-                $baseNamespace = '';
-                $name = $fixture;
+                $className = $fixture;
+                $name = preg_replace('/Fixture\z/', '', substr(strrchr($fixture, '\\'), 1));
             }
-            $name = Inflector::camelize($name);
-            $nameSegments = [
-                $baseNamespace,
-                'Test\Fixture',
-                $additionalPath,
-                $name . 'Fixture'
-            ];
-            $className = implode('\\', array_filter($nameSegments));
 
             if (class_exists($className)) {
                 $this->_loaded[$fixture] = new $className();

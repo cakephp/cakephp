@@ -223,6 +223,25 @@ class FixtureManagerTest extends TestCase
     }
 
     /**
+     * Test loading app fixtures.
+     *
+     * @return void
+     */
+    public function testFixturizeClassName()
+    {
+        $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
+        $test->fixtures = ['Company\TestPluginThree\Test\Fixture\ArticlesFixture'];
+        $this->manager->fixturize($test);
+        $fixtures = $this->manager->loaded();
+        $this->assertCount(1, $fixtures);
+        $this->assertArrayHasKey('Company\TestPluginThree\Test\Fixture\ArticlesFixture', $fixtures);
+        $this->assertInstanceOf(
+            'Company\TestPluginThree\Test\Fixture\ArticlesFixture',
+            $fixtures['Company\TestPluginThree\Test\Fixture\ArticlesFixture']
+        );
+    }
+
+    /**
      * Test that unknown types are handled gracefully.
      *
      * @expectedException \UnexpectedValueException

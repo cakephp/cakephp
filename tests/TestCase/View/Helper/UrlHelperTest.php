@@ -100,6 +100,26 @@ class UrlHelperTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testUrlConversionUnescaped()
+    {
+        $result = $this->Helper->build('/controller/action/1?one=1&two=2', ['escape' => false]);
+        $this->assertEquals('/controller/action/1?one=1&two=2', $result);
+
+        $result = $this->Helper->build([
+            'controller' => 'posts',
+            'action' => 'view',
+            'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24',
+            '?' => [
+                'k' => 'v',
+                '1' => '2'
+            ]
+        ], ['escape' => false]);
+        $this->assertEquals("/posts/view?k=v&1=2&param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524", $result);
+    }
+
+    /**
      * test assetTimestamp application
      *
      * @return void

@@ -122,6 +122,13 @@ class ResultSet implements ResultSetInterface
     protected $_hydrate = true;
 
     /**
+     * Tracks value of $_autoFields property of $query passed to constructor.
+     *
+     * @var bool
+     */
+    protected $_autoFields;
+
+    /**
      * The fully namespaced name of the class to use for hydrating results
      *
      * @var string
@@ -179,6 +186,7 @@ class ResultSet implements ResultSetInterface
         $this->_defaultAlias = $this->_defaultTable->alias();
         $this->_calculateColumnMap($query);
         $this->_calculateTypeMap();
+        $this->_autoFields = $query->autoFields();
 
         if ($this->_useBuffering) {
             $count = $this->count();
@@ -525,7 +533,7 @@ class ResultSet implements ResultSetInterface
             $options['source'] = $target->registryAlias();
             unset($presentAliases[$alias]);
 
-            if ($assoc['canBeJoined']) {
+            if ($assoc['canBeJoined'] && $this->_autoFields !== false) {
                 $hasData = false;
                 foreach ($results[$alias] as $v) {
                     if ($v !== null && $v !== []) {
