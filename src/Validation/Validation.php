@@ -357,7 +357,7 @@ class Validation
      */
     public static function fieldsNotMatching($fieldOne, $fieldTwo, $context)
     {
-        return !self::fieldsMatching($fieldOne, $fieldTwo, $context);
+        return !static::fieldsMatching($fieldOne, $fieldTwo, $context);
     }
 
     /**
