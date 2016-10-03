@@ -1157,10 +1157,11 @@ class PaginatorHelper extends Helper
     /**
      * Helper method to deprecate the 'model' option throughout PaginationHelper.
      *
+     * @deprecated
      * @param array $options Array of options
      * @return array Array of options
      */
-    private function _deprecateModelOption(array $options) 
+    protected function _deprecateModelOption(array $options)
     {
         if (isset($options['model'])) {
             $options['scope'] = $options['model'];
