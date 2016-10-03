@@ -173,7 +173,7 @@ class BreadcrumbsHelper extends Helper
      */
     public function getCrumbs()
     {
-       return $this->crumbs;
+        return $this->crumbs;
     }
 
     /**
@@ -229,7 +229,7 @@ class BreadcrumbsHelper extends Helper
                 $template = 'itemWithoutLink';
             }
 
-            if (isset($separatorParams) && $key !== ($crumbsCount-1)) {
+            if (isset($separatorParams) && $key !== ($crumbsCount - 1)) {
                 $templateParams['separator'] = $this->formatTemplate('separator', $separatorParams);
             }
 
