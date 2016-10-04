@@ -71,6 +71,55 @@ class BreadcrumbsHelperTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+
+    /**
+     * Test adding multiple crumbs at once to the trail using add()
+     * @return void
+     */
+    public function testAddMultiple()
+    {
+        $this->breadcrumbs
+            ->add([
+                [
+                    'title' => 'Home',
+                    'link' => '/',
+                    'options' => ['class' => 'first']
+                ],
+                [
+                    'title' => 'Some text',
+                    'link' => ['controller' => 'Some', 'action' => 'text']
+                ],
+                [
+                    'title' => 'Final',
+                ],
+            ]);
+
+        $result = $this->breadcrumbs->getCrumbs();
+        $expected = [
+            [
+                'title' => 'Home',
+                'link' => '/',
+                'options' => [
+                    'class' => 'first'
+                ]
+            ],
+            [
+                'title' => 'Some text',
+                'link' => [
+                    'controller' => 'Some',
+                    'action' => 'text'
+                ],
+                'options' => []
+            ],
+            [
+                'title' => 'Final',
+                'link' => null,
+                'options' => []
+            ]
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
     /**
      * Test adding crumbs to the trail using prepend()
      * @return void
@@ -256,7 +305,7 @@ class BreadcrumbsHelperTest extends TestCase
 
         $result = $this->breadcrumbs->render(
             ['data-stuff' => 'foo and bar'],
-            ['separator' => ' > ', 'class' => 'separator', 'templateVars' => ['custom' => 'custom']]
+            ['separator' => '<i class="fa fa-angle-right"></i>', 'class' => 'separator', 'templateVars' => ['custom' => 'custom']]
         );
         $expected = [
             ['ul' => ['data-stuff' => 'foo and bar']],
@@ -267,7 +316,7 @@ class BreadcrumbsHelperTest extends TestCase
             '/li',
             ['li' => ['class' => 'separator']],
             ['span' => []],
-            'custom > ',
+            'custom<i class="fa fa-angle-right"></i>',
             '/span',
             '/li',
             ['li' => []],
@@ -277,7 +326,7 @@ class BreadcrumbsHelperTest extends TestCase
             '/li',
             ['li' => ['class' => 'separator']],
             ['span' => []],
-            'custom > ',
+            'custom<i class="fa fa-angle-right"></i>',
             '/span',
             '/li',
             ['li' => ['class' => 'final']],

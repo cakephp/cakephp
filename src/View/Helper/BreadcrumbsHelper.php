@@ -59,14 +59,32 @@ class BreadcrumbsHelper extends Helper
     /**
      * Add a crumb to the trail.
      *
-     * @param string $title Title of the crumb
+     * @param string|array $title Title of the crumb. If provided as an array, it will add each values of the array
+     * as a single crumb. This allows you to add multiple crumbs in the trail at once. Arrays are expected to be of this
+     * form:
+     * - *title* The title of the crumb
+     * - *link* The link of the crumb. If not provided, no link will be made
+     * - *options* Options of the crumb. See description of params option of this method.
      * @param string|array|null $link Link of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link
-     * @param array $options Array of options
+     * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
+     * be rendered in (a <li> tag by default). It accepts two special keys:
+     * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
+     * the link)
+     * - *templateVars*: Specific template vars in case you override the templates provided
      * @return $this
      */
     public function add($title, $link = null, array $options = [])
     {
+        if (is_array($title)) {
+            foreach ($title as $crumb) {
+                $crumb = array_merge(['title' => '', 'link' => null, 'options' => []], $crumb);
+                $this->crumbs[] = $crumb;
+            }
+
+            return $this;
+        }
+
         $this->crumbs[] = ['title' => $title, 'link' => $link, 'options' => $options];
 
         return $this;
@@ -78,7 +96,11 @@ class BreadcrumbsHelper extends Helper
      * @param string $title Title of the crumb
      * @param string|array|null $link Link of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link
-     * @param array $options Array of options
+     * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
+     * be rendered in (a <li> tag by default). It accepts two special keys:
+     * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
+     * the link)
+     * - *templateVars*: Specific template vars in case you override the templates provided
      * @return $this
      */
     public function prepend($title, $link = null, array $options = [])
@@ -98,7 +120,11 @@ class BreadcrumbsHelper extends Helper
      * @param string $title Title of the crumb
      * @param string|array|null $link Link of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link
-     * @param array $options Array of options
+     * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
+     * be rendered in (a <li> tag by default). It accepts two special keys:
+     * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
+     * the link)
+     * - *templateVars*: Specific template vars in case you override the templates provided
      * @return $this
      */
     public function insertAt($index, $title, $link = null, array $options = [])
@@ -118,7 +144,11 @@ class BreadcrumbsHelper extends Helper
      * @param string $title Title of the crumb
      * @param string|array|null $link Link of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link
-     * @param array $options Array of options
+     * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
+     * be rendered in (a <li> tag by default). It accepts two special keys:
+     * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
+     * the link)
+     * - *templateVars*: Specific template vars in case you override the templates provided
      * @return $this
      */
     public function insertBefore($matchingTitle, $title, $link = null, array $options = [])
@@ -141,7 +171,11 @@ class BreadcrumbsHelper extends Helper
      * @param string $title Title of the crumb
      * @param string|array|null $link Link of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link
-     * @param array $options Array of options
+     * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
+     * be rendered in (a <li> tag by default). It accepts two special keys:
+     * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
+     * the link)
+     * - *templateVars*: Specific template vars in case you override the templates provided
      * @return $this
      */
     public function insertAfter($matchingTitle, $title, $link = null, array $options = [])
@@ -167,8 +201,15 @@ class BreadcrumbsHelper extends Helper
     /**
      * Renders the breadcrumbs trail
      *
-     * @param array $attributes Array of attributes applied to the wrapper element
-     * @param array $separator Array of attributes for the `separator` template
+     * @param array $attributes Array of attributes applied to the `wrapper` template. Accepts the `templateVars` key to
+     * allow the insertion of custom template variable in the template.
+     * @param array $separator Array of attributes for the `separator` template.
+     * Possible properties are :
+     * - *separator* The string to be displayed as a separator
+     * - *templateVars* Allows the insertion of custom template variable in the template
+     * - *innerAttrs* To provide attributes in case your separator is divided in two elements
+     * All other properties will be converted as HTML attributes and will replace the *attrs* key in the template
+     * If you use the default for this option (empty), it will not render a separator.
      * @return string The breadcrumbs trail
      */
     public function render(array $attributes = [], array $separator = [])
