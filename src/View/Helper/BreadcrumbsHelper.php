@@ -178,7 +178,7 @@ class BreadcrumbsHelper extends Helper
         $templater = $this->templater();
 
         $separatorParams = [];
-        if (!empty($separator)) {
+        if ($separator) {
             if (isset($separator['innerAttrs'])) {
                 $separatorParams['innerAttrs'] = $templater->formatAttributes($separator['innerAttrs']);
                 unset($separator['innerAttrs']);
@@ -219,7 +219,7 @@ class BreadcrumbsHelper extends Helper
                 'templateVars' => isset($options['templateVars']) ? $options['templateVars'] : []
             ];
 
-            if (empty($link)) {
+            if (!($link)) {
                 $template = 'itemWithoutLink';
             }
 
@@ -268,10 +268,10 @@ class BreadcrumbsHelper extends Helper
      */
     protected function prepareLink($link = null)
     {
-        if (!empty($link)) {
-            return $this->Url->build($link);
+        if (!$link) {
+            return null;
         }
 
-        return null;
+        return $this->Url->build($link);
     }
 }
