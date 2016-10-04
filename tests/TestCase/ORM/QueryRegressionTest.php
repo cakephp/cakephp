@@ -1157,14 +1157,13 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
-     * Test that contain/matching/innerJoinWith/leftJoinWith/notMatching
-     * queries map types correctly.
+     * Test that contain queries map types correctly.
      *
      * @return void
      */
     public function testComplexTypesInJoinedWhere()
     {
-        $this->loadFixtures('Comments', 'Users', 'Articles', 'Tags', 'ArticlesTags');
+        $this->loadFixtures('Comments', 'Users');
         $table = TableRegistry::get('Users');
         $table->hasOne('Comments', [
             'foreignKey' => 'user_id',
@@ -1178,56 +1177,10 @@ class QueryRegressionTest extends TestCase
         $result = $query->first();
         $this->assertNotEmpty($result);
         $this->assertInstanceOf('Cake\I18n\Time', $result->comment->updated);
-
-        $query = $table->find()
-            ->matching('Comments')
-            ->where([
-                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00')
-            ]);
-
-        $result = $query->first();
-        $this->assertNotEmpty($result);
-        $this->assertInstanceOf('Cake\I18n\Time', $result->_matchingData['Comments']->updated);
-
-        $query = $table->find()
-            ->innerJoinWith('Comments')
-            ->where([
-                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00')
-            ]);
-
-        $result = $query->first();
-        $this->assertNotEmpty($result);
-        $this->assertInstanceOf('Cake\I18n\Time', $result->updated);
-
-        $query = $table->find()
-            ->leftJoinWith('Comments')
-            ->where([
-                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00')
-            ]);
-
-        $result = $query->first();
-        $this->assertNotEmpty($result);
-        $this->assertInstanceOf('Cake\I18n\Time', $result->updated);
-
-        $Tags = TableRegistry::get('Tags');
-        $Tags->belongsToMany('Articles');
-        $query = $Tags->find()
-            ->notMatching('Articles', function ($q) {
-                return $q ->where(['ArticlesTags.tag_id !=' => 3 ]);
-            })
-            ->where([
-                'Tags.created <' => new \DateTime('2016-01-02 00:00:00')
-            ]);
-
-        $result = $query->first();
-        $this->assertNotEmpty($result);
-        $this->assertEquals(3, $result->id);
-        $this->assertInstanceOf('Cake\I18n\Time', $result->created);
     }
 
     /**
-     * Test that nested contain/matching/innerJoinWith/leftJoinWith
-     * queries map types correctly.
+     * Test that nested contain queries map types correctly.
      *
      * @return void
      */
@@ -1253,6 +1206,36 @@ class QueryRegressionTest extends TestCase
         $result = $query->first();
         $this->assertNotEmpty($result);
         $this->assertInstanceOf('Cake\I18n\Time', $result->comment->article->author->updated);
+    }
+
+    /**
+     * Test that matching queries map types correctly.
+     *
+     * @return void
+     */
+    public function testComplexTypesInJoinedWhereWithMatching()
+    {
+        $this->loadFixtures('Comments', 'Users', 'Articles');
+        $table = TableRegistry::get('Users');
+        $table->hasOne('Comments', [
+            'foreignKey' => 'user_id',
+        ]);
+        $table->Comments->belongsTo('Articles');
+        $table->Comments->Articles->belongsTo('Authors', [
+            'className' => 'Users',
+            'foreignKey' => 'author_id'
+        ]);
+
+        $query = $table->find()
+            ->matching('Comments')
+            ->where([
+                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00')
+            ]);
+
+        $result = $query->first();
+        $this->assertNotEmpty($result);
+        $this->assertInstanceOf('Cake\I18n\Time', $result->_matchingData['Comments']->updated);
+
 
         $query = $table->find()
             ->matching('Comments.Articles.Authors')
@@ -1263,11 +1246,94 @@ class QueryRegressionTest extends TestCase
         $result = $query->first();
         $this->assertNotEmpty($result);
         $this->assertInstanceOf('Cake\I18n\Time', $result->_matchingData['Authors']->updated);
+    }
+
+    /**
+     * Test that notMatching queries map types correctly.
+     *
+     * @return void
+     */
+    public function testComplexTypesInJoinedWhereWithNotMatching()
+    {
+        $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
+        $Tags = TableRegistry::get('Tags');
+        $Tags->belongsToMany('Articles');
+
+        $query = $Tags->find()
+            ->notMatching('Articles', function ($q) {
+                return $q ->where(['ArticlesTags.tag_id !=' => 3 ]);
+            })
+            ->where([
+                'Tags.created <' => new \DateTime('2016-01-02 00:00:00')
+            ]);
+
+        $result = $query->first();
+        $this->assertNotEmpty($result);
+        $this->assertEquals(3, $result->id);
+        $this->assertInstanceOf('Cake\I18n\Time', $result->created);
+    }
+
+    /**
+     * Test that innerJoinWith queries map types correctly.
+     *
+     * @return void
+     */
+    public function testComplexTypesInJoinedWhereWithInnerJoinWith()
+    {
+        $this->loadFixtures('Comments', 'Users', 'Articles');
+        $table = TableRegistry::get('Users');
+        $table->hasOne('Comments', [
+            'foreignKey' => 'user_id',
+        ]);
+        $table->Comments->belongsTo('Articles');
+        $table->Comments->Articles->belongsTo('Authors', [
+            'className' => 'Users',
+            'foreignKey' => 'author_id'
+        ]);
+
+        $query = $table->find()
+            ->innerJoinWith('Comments')
+            ->where([
+                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00')
+            ]);
+
+        $result = $query->first();
+        $this->assertNotEmpty($result);
+        $this->assertInstanceOf('Cake\I18n\Time', $result->updated);
 
         $query = $table->find()
             ->innerJoinWith('Comments.Articles.Authors')
             ->where([
                 'Authors.created >' => new \DateTime('2007-03-17 01:16:00')
+            ]);
+
+        $result = $query->first();
+        $this->assertNotEmpty($result);
+        $this->assertInstanceOf('Cake\I18n\Time', $result->updated);
+    }
+
+    /**
+     * Test that leftJoinWith queries map types correctly.
+     *
+     * @return void
+     */
+    public function testComplexTypesInJoinedWhereWithLeftJoinWith()
+    {
+        $this->loadFixtures('Comments', 'Users', 'Articles');
+        $table = TableRegistry::get('Users');
+        $table->hasOne('Comments', [
+            'foreignKey' => 'user_id',
+        ]);
+        $table->Comments->belongsTo('Articles');
+        $table->Comments->Articles->belongsTo('Authors', [
+            'className' => 'Users',
+            'foreignKey' => 'author_id'
+        ]);
+
+        $query = $table->find()
+            ->leftJoinWith('Comments')
+            ->where([
+                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00')
             ]);
 
         $result = $query->first();
