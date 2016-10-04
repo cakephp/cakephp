@@ -2255,6 +2255,10 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->counter('Showing {{page}} of {{pages}} {{scope}}');
         $this->assertEquals('Showing 1 of 5 clients', $result);
+
+        // Deprecated 3.4.0:
+        $result = $this->Paginator->counter('Showing {{page}} of {{pages}} {{model}}');
+        $this->assertEquals('Showing 1 of 5 clients', $result);
     }
 
     /**
@@ -2368,7 +2372,7 @@ class PaginatorHelperTest extends TestCase
     /**
      * test the defaultModel() method
      *
-     * @deprecated `'model'` and `defaultModel()` are deprecated, use 'scope' and 'defaultScope' instead.
+     * @deprecated 3.4.0 `'model'` and `defaultModel()` are deprecated, use 'scope' and 'defaultScope' instead.
      * @return void
      */
     public function testNoDefaultModel()

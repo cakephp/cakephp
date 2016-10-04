@@ -259,6 +259,8 @@ class PaginatorHelper extends Helper
      */
     protected function _toggledLink($text, $enabled, $options, $templates)
     {
+        $options = $this->_deprecateModelOption($options);
+
         $template = $templates['active'];
         if (!$enabled) {
             $text = $options['disabledTitle'];
@@ -598,7 +600,7 @@ class PaginatorHelper extends Helper
     /**
      * Gets or sets the default scope of the paged sets
      *
-     * @deprecated use defaultScope() instead.
+     * @deprecated 3.4.0 use defaultScope() instead.
      * @param string|null $scope Model name to set
      * @return string|null Model name or null if the pagination isn't initialized.
      */
@@ -690,8 +692,10 @@ class PaginatorHelper extends Helper
             'end' => $end
         ]);
 
+        $scope = strtolower(Inflector::humanize(Inflector::tableize($options['scope'])));
         $map += [
-            'scope' => strtolower(Inflector::humanize(Inflector::tableize($options['scope'])))
+            'scope' => $scope,
+            'model' => $scope,
         ];
 
         return $this->templater()->format($template, $map);
@@ -1157,7 +1161,7 @@ class PaginatorHelper extends Helper
     /**
      * Helper method to deprecate the 'model' option throughout PaginationHelper.
      *
-     * @deprecated
+     * @deprecated 3.4.0
      * @param array $options Array of options
      * @return array Array of options
      */
