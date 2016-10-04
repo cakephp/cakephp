@@ -256,7 +256,7 @@ class BreadcrumbsHelperTest extends TestCase
 
         $result = $this->breadcrumbs->render(
             ['data-stuff' => 'foo and bar'],
-            ['separator' => ' > ', 'class' => 'separator']
+            ['separator' => ' > ', 'class' => 'separator', 'templateVars' => ['custom' => 'custom']]
         );
         $expected = [
             ['ul' => ['data-stuff' => 'foo and bar']],
@@ -267,7 +267,7 @@ class BreadcrumbsHelperTest extends TestCase
             '/li',
             ['li' => ['class' => 'separator']],
             ['span' => []],
-            ' > ',
+            'custom > ',
             '/span',
             '/li',
             ['li' => []],
@@ -277,7 +277,7 @@ class BreadcrumbsHelperTest extends TestCase
             '/li',
             ['li' => ['class' => 'separator']],
             ['span' => []],
-            ' > ',
+            'custom > ',
             '/span',
             '/li',
             ['li' => ['class' => 'final']],
@@ -324,6 +324,49 @@ class BreadcrumbsHelperTest extends TestCase
             ['span' => ['itemprop' => 'name', 'class' => 'final-link']],
             'Final crumb',
             '/span',
+            '/li',
+            '/ol'
+        ];
+        $this->assertHtml($expected, $result, true);
+    }
+
+    /**
+     * Tests the render method with template vars
+     * @return void
+     */
+    public function testRenderCustomTemplateTemplateVars()
+    {
+        $this->breadcrumbs = new BreadcrumbsHelper(new View(), [
+            'templates' => [
+                'wrapper' => '{{thing}}<ol itemtype="http://schema.org/BreadcrumbList"{{attrs}}>{{content}}</ol>',
+                'item' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><a itemtype="http://schema.org/Thing" itemprop="item" href="{{link}}"{{innerAttrs}}><span itemprop="name">{{title}}</span></a>{{foo}}</li>',
+                'itemWithoutLink' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><span itemprop="name"{{innerAttrs}}>{{title}}</span>{{barbaz}}</li>',
+            ]
+        ]);
+        $this->breadcrumbs
+            ->add('Home', '/', ['class' => 'first', 'innerAttrs' => ['data-foo' => 'bar'], 'templateVars' => ['foo' => 'barbaz']])
+            ->add('Final crumb', null, ['class' => 'final', 'innerAttrs' => ['class' => 'final-link'], 'templateVars' => ['barbaz' => 'foo']]);
+
+        $result = $this->breadcrumbs->render(
+            ['data-stuff' => 'foo and bar', 'templateVars' => ['thing' => 'somestuff']],
+            ['separator' => ' > ', 'class' => 'separator']
+        );
+        $expected = [
+            'somestuff',
+            ['ol' => ['itemtype' => 'http://schema.org/BreadcrumbList', 'data-stuff' => 'foo and bar']],
+            ['li' => ['itemprop' => 'itemListElement', 'itemtype' => 'http://schema.org/ListItem', 'class' => 'first']],
+            ['a' => ['itemtype' => 'http://schema.org/Thing', 'itemprop' => 'item', 'href' => '/', 'data-foo' => 'bar']],
+            ['span' => ['itemprop' => 'name']],
+            'Home',
+            '/span',
+            '/a',
+            'barbaz',
+            '/li',
+            ['li' => ['itemprop' => 'itemListElement', 'itemtype' => 'http://schema.org/ListItem', 'class' => 'final']],
+            ['span' => ['itemprop' => 'name', 'class' => 'final-link']],
+            'Final crumb',
+            '/span',
+            'foo',
             '/li',
             '/ol'
         ];

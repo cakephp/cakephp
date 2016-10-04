@@ -45,7 +45,7 @@ class BreadcrumbsHelper extends Helper
             'wrapper' => '<ul{{attrs}}>{{content}}</ul>',
             'item' => '<li{{attrs}}><a href="{{link}}"{{innerAttrs}}>{{title}}</a></li>{{separator}}',
             'itemWithoutLink' => '<li{{attrs}}><span{{innerAttrs}}>{{title}}</span></li>{{separator}}',
-            'separator' => '<li{{attrs}}><span{{innerAttrs}}>{{separator}}</span></li>'
+            'separator' => '<li{{attrs}}><span{{innerAttrs}}>{{custom}}{{separator}}</span></li>'
         ]
     ];
 
@@ -123,15 +123,9 @@ class BreadcrumbsHelper extends Helper
      */
     public function insertBefore($matchingTitle, $title, $link = null, array $options = [])
     {
-        $found = false;
-        foreach ($this->crumbs as $key => $crumb) {
-            if ($crumb['title'] === $matchingTitle) {
-                $found = true;
-                break;
-            }
-        }
+        $key = $this->findCrumb($matchingTitle);
 
-        if ($found) {
+        if ($key !== null) {
             return $this->insertAt($key, $title, $link, $options);
         }
         throw new LogicException(sprintf("No crumb matching '%s' could be found.", $matchingTitle));
@@ -152,15 +146,9 @@ class BreadcrumbsHelper extends Helper
      */
     public function insertAfter($matchingTitle, $title, $link = null, array $options = [])
     {
-        $found = false;
-        foreach ($this->crumbs as $key => $crumb) {
-            if ($crumb['title'] === $matchingTitle) {
-                $found = true;
-                break;
-            }
-        }
+        $key = $this->findCrumb($matchingTitle);
 
-        if ($found) {
+        if ($key !== null) {
             return $this->insertAt($key + 1, $title, $link, $options);
         }
         throw new LogicException(sprintf("No crumb matching '%s' could be found.", $matchingTitle));
@@ -189,8 +177,8 @@ class BreadcrumbsHelper extends Helper
         $crumbsCount = count($crumbs);
         $templater = $this->templater();
 
+        $separatorParams = [];
         if (!empty($separator)) {
-            $separatorParams = [];
             if (isset($separator['innerAttrs'])) {
                 $separatorParams['innerAttrs'] = $templater->formatAttributes($separator['innerAttrs']);
                 unset($separator['innerAttrs']);
@@ -199,6 +187,11 @@ class BreadcrumbsHelper extends Helper
             if (isset($separator['separator'])) {
                 $separatorParams['separator'] = $separator['separator'];
                 unset($separator['separator']);
+            }
+
+            if (isset($separator['templateVars'])) {
+                $separatorParams['templateVars'] = $separator['templateVars'];
+                unset($separator['templateVars']);
             }
 
             $separatorParams['attrs'] = $templater->formatAttributes($separator);
@@ -218,18 +211,19 @@ class BreadcrumbsHelper extends Helper
 
             $template = 'item';
             $templateParams = [
-                'attrs' => $templater->formatAttributes($options),
+                'attrs' => $templater->formatAttributes($options, ['templateVars']),
                 'innerAttrs' => $templater->formatAttributes($optionsLink),
                 'title' => $title,
                 'link' => $link,
                 'separator' => '',
+                'templateVars' => isset($options['templateVars']) ? $options['templateVars'] : []
             ];
 
             if (empty($link)) {
                 $template = 'itemWithoutLink';
             }
 
-            if (isset($separatorParams) && $key !== ($crumbsCount - 1)) {
+            if ($separatorParams && $key !== ($crumbsCount - 1)) {
                 $templateParams['separator'] = $this->formatTemplate('separator', $separatorParams);
             }
 
@@ -238,10 +232,29 @@ class BreadcrumbsHelper extends Helper
 
         $crumbTrail = $this->formatTemplate('wrapper', [
             'content' => $crumbTrail,
-            'attrs' => $templater->formatAttributes($attributes)
+            'attrs' => $templater->formatAttributes($attributes, ['templateVars']),
+            'templateVars' => isset($attributes['templateVars']) ? $attributes['templateVars'] : []
         ]);
 
         return $crumbTrail;
+    }
+
+    /**
+     * Search a crumb in the current stack which title matches the one provided as argument.
+     * If found, the index of the matching crumb will be returned.
+     *
+     * @param string $title Title to find
+     * @return int|null Index of the crumb found, or null if it can not be found
+     */
+    protected function findCrumb($title)
+    {
+        foreach ($this->crumbs as $key => $crumb) {
+            if ($crumb['title'] === $title) {
+                return $key;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -253,13 +266,9 @@ class BreadcrumbsHelper extends Helper
      *
      * @return null|string The URL of a crumb
      */
-    protected function prepareLink($link)
+    protected function prepareLink($link = null)
     {
-        if (is_string($link)) {
-            return $link;
-        }
-
-        if (is_array($link)) {
+        if (!empty($link)) {
             return $this->Url->build($link);
         }
 
