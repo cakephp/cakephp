@@ -20,6 +20,7 @@
 
 App::uses('AppHelper', 'View/Helper');
 App::uses('CakeResponse', 'Network');
+App::uses('File', 'Utility');
 
 /**
  * Html Helper class for easy use of HTML widgets.
@@ -809,10 +810,13 @@ class HtmlHelper extends AppHelper {
  *   `$options['url']`.
  * - `fullBase` If true the src attribute will get a full address for the image file.
  * - `plugin` False value will prevent parsing path as a plugin
+ * - `base64` If true the src attribute will instead be a base64 data URI of the image file.
+ *    Can not be used with external links.
  *
  * @param string $path Path to the image file, relative to the app/webroot/img/ directory.
  * @param array $options Array of HTML attributes. See above for special options.
  * @return string completed img tag
+ * @throws InvalidArgumentException - if the image isn't on disk and you have requested the base64 output
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::image
  */
 	public function image($path, $options = array()) {
@@ -827,6 +831,19 @@ class HtmlHelper extends AppHelper {
 		if (!empty($options['url'])) {
 			$url = $options['url'];
 			unset($options['url']);
+		}
+
+		if (!empty($options['base64']) && !$url) {
+			$fullPath = WWW_ROOT . $path;
+			$file = new File($fullPath, false);
+			if (!$file->exists() || !$file->readable()) {
+				throw new InvalidArgumentException(__d('cake', 'Unable to find the requested image to output as base64!'));
+			}
+
+			$base64 = base64_encode($file->read());
+			$type = $file->mime();
+			unset($options['base64']);
+			$path = sprintf('data:%s;base64,%s', $type, $base64);
 		}
 
 		$image = sprintf($this->_tags['image'], $path, $this->_parseAttributes($options));
