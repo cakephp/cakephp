@@ -530,7 +530,9 @@ class Validation
      */
     public static function boolean($check, array $booleanValues = [])
     {
-        $booleanValues = array_merge([true, false, 0, 1, '0', '1'], $booleanValues);
+        if (!$booleanValues) {
+            $booleanValues = [true, false, 0, 1, '0', '1'];
+        }
 
         return in_array($check, $booleanValues, true);
     }
@@ -545,7 +547,9 @@ class Validation
      */
     public static function truthy($check, array $truthyValues = [])
     {
-        $truthyValues = array_merge([true, 1, '1'], $truthyValues);
+        if (!$truthyValues) {
+            $truthyValues = [true, 1, '1'];
+        }
 
         return in_array($check, $truthyValues, true);
     }
@@ -560,7 +564,9 @@ class Validation
      */
     public static function falsey($check, array $falseyValues = [])
     {
-        $falseyValues = array_merge([false, 0, '0'], $falseyValues);
+        if (!$falseyValues) {
+            $falseyValues = [false, 0, '0'];
+        }
 
         return in_array($check, $falseyValues, true);
     }
