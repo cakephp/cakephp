@@ -525,7 +525,7 @@ class Validation
      *
      * The list of what is considered to be boolish values, may be set via $booleanValues.
      *
-     * @param boolean|integer|string $check Value to check.
+     * @param bool|int|string $check Value to check.
      * @param string $booleanValues List of valid boolish values, defaults to `[true, false, 0, 1, '0', '1']`.
      * @return bool Success
      */
@@ -543,7 +543,7 @@ class Validation
      *
      * The list of what is considered to be truthy values, may be set via $truthyValues.
      *
-     * @param boolean|integer|string $check Value to check.
+     * @param bool|int|string $check Value to check.
      * @param array $truthyValues List of valid truthy values, defaults to `[true, 1, '1']`.
      * @return bool Success
      */
@@ -561,7 +561,7 @@ class Validation
      *
      * The list of what is considered to be falsey values, may be set via $falseyValues.
      *
-     * @param boolean|integer|string $check Value to check.
+     * @param bool|int|string $check Value to check.
      * @param array $falseyValues List of valid falsey values, defaults to `[false, 0, '0']`.
      * @return bool Success
      */
