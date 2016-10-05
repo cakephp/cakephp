@@ -218,24 +218,15 @@ class BreadcrumbsHelper extends Helper
         $crumbsCount = count($crumbs);
         $templater = $this->templater();
 
-        $separatorParams = [];
         if ($separator) {
             if (isset($separator['innerAttrs'])) {
-                $separatorParams['innerAttrs'] = $templater->formatAttributes($separator['innerAttrs']);
-                unset($separator['innerAttrs']);
+                $separator['innerAttrs'] = $templater->formatAttributes($separator['innerAttrs']);
             }
 
-            if (isset($separator['separator'])) {
-                $separatorParams['separator'] = $separator['separator'];
-                unset($separator['separator']);
-            }
-
-            if (isset($separator['templateVars'])) {
-                $separatorParams['templateVars'] = $separator['templateVars'];
-                unset($separator['templateVars']);
-            }
-
-            $separatorParams['attrs'] = $templater->formatAttributes($separator);
+            $separator['attrs'] = $templater->formatAttributes(
+                $separator,
+                ['innerAttrs', 'separator']
+            );
         }
 
         $crumbTrail = '';
@@ -264,8 +255,8 @@ class BreadcrumbsHelper extends Helper
                 $template = 'itemWithoutLink';
             }
 
-            if ($separatorParams && $key !== ($crumbsCount - 1)) {
-                $templateParams['separator'] = $this->formatTemplate('separator', $separatorParams);
+            if ($separator && $key !== ($crumbsCount - 1)) {
+                $templateParams['separator'] = $this->formatTemplate('separator', $separator);
             }
 
             $crumbTrail .= $this->formatTemplate($template, $templateParams);
