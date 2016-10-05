@@ -335,10 +335,7 @@ class Validation
      */
     public static function fieldsMatching($fieldOne, $fieldTwo, $context)
     {
-        if (!isset($context['data'][$fieldOne])) {
-            return false;
-        }
-        if (!isset($context['data'][$fieldTwo])) {
+        if (!isset($context['data'][$fieldOne]) || !isset($context['data'][$fieldTwo])) {
             return false;
         }
 
