@@ -521,12 +521,12 @@ class Validation
     }
 
     /**
-     * Validates if passed value is boolish.
+     * Validates if passed value is boolean.
      *
-     * The list of what is considered to be boolish values, may be set via $booleanValues.
+     * The list of what is considered to be boolean values, may be set via $booleanValues.
      *
      * @param bool|int|string $check Value to check.
-     * @param string $booleanValues List of valid boolish values, defaults to `[true, false, 0, 1, '0', '1']`.
+     * @param string $booleanValues List of valid boolean values, defaults to `[true, false, 0, 1, '0', '1']`.
      * @return bool Success
      */
     public static function boolean($check, array $booleanValues = [])
