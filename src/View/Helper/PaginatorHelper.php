@@ -1173,6 +1173,7 @@ class PaginatorHelper extends Helper
             $options['scope'] = $options['model'];
             unset($options['model']);
         }
+
         return $options;
     }
 }
