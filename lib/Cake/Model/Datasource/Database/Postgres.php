@@ -727,10 +727,10 @@ class Postgres extends DboSource {
  * @return int An integer representing the length of the column
  */
 	public function length($real) {
-		if (strpos($col, '(') !== false) {
-			list($col, $limit) = explode('(', $col);
+		if (strpos($real, '(') !== false) {
+			list($real, $limit) = explode('(', $real);
 		}
-		if ($col === 'uuid') {
+		if ($real === 'uuid') {
 			return 36;
 		}
 		return parent::length($real);
