@@ -559,7 +559,7 @@ class Validation
     /**
      * Validates if passed value is falsey.
      *
-     * The list of what is considered to be truthy values, may be set via $falseyValues.
+     * The list of what is considered to be falsey values, may be set via $falseyValues.
      *
      * @param boolean|integer|string $check Value to check.
      * @param array $falseyValues List of valid falsey values, defaults to `[false, 0, '0']`.
