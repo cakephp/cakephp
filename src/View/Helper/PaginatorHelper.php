@@ -492,6 +492,8 @@ class PaginatorHelper extends Helper
      */
     public function generateUrl(array $options = [], $scope = null, $full = false)
     {
+        $options = $this->_deprecateModelOption($options);
+
         $paging = $this->params($scope);
         $paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
         $url = [
