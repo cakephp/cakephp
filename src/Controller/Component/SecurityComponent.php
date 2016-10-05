@@ -109,7 +109,7 @@ class SecurityComponent extends Component
         $controller = $event->subject();
         $this->session = $this->request->session();
         $this->_action = $this->request->param('action');
-        $hasData = !empty($this->request->data());
+        $hasData = (bool)$this->request->data();
         try {
             $this->_secureRequired($controller);
             $this->_authRequired($controller);
@@ -266,7 +266,7 @@ class SecurityComponent extends Component
     {
         if (is_array($this->_config['requireAuth']) &&
             !empty($this->_config['requireAuth']) &&
-            !empty($this->request->data())
+            $this->request->data()
         ) {
             $requireAuth = $this->_config['requireAuth'];
 
@@ -318,7 +318,7 @@ class SecurityComponent extends Component
      */
     protected function _validatePost(Controller $controller)
     {
-        if (empty($controller->request->data())) {
+        if (!$controller->request->data()) {
             return true;
         }
         $token = $this->_validToken($controller);
