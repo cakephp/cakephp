@@ -521,11 +521,12 @@ class Validation
     }
 
     /**
-     * Boolean validation, determines if value passed is a boolean integer or true/false.
+     * Validates if passed value is boolish.
+     *
      * The list of what is considered to be boolish values, may be set via $booleanValues.
      *
-     * @param string $check a valid boolean
-     * @param string $booleanValues list of valid boolish values, defaults to `[true, false, 0, 1, '0', '1']`.
+     * @param boolean|integer|string $check Value to check.
+     * @param string $booleanValues List of valid boolish values, defaults to `[true, false, 0, 1, '0', '1']`.
      * @return bool Success
      */
     public static function boolean($check, array $booleanValues = [])
@@ -538,11 +539,12 @@ class Validation
     }
 
     /**
-     * Truthy validation, determines if value passed is truthy.
+     * Validates if passed value is truthy.
+     *
      * The list of what is considered to be truthy values, may be set via $truthyValues.
      *
-     * @param string $check a valid boolean
-     * @param array $truthyValues list of valid truthy values, defaults to `[true, 1, '1']`.
+     * @param boolean|integer|string $check Value to check.
+     * @param array $truthyValues List of valid truthy values, defaults to `[true, 1, '1']`.
      * @return bool Success
      */
     public static function truthy($check, array $truthyValues = [])
@@ -555,11 +557,12 @@ class Validation
     }
 
     /**
-     * Truthy validation, determines if value passed is falsey.
+     * Validates if passed value is falsey.
+     *
      * The list of what is considered to be truthy values, may be set via $falseyValues.
      *
-     * @param string $check a valid boolean
-     * @param array $falseyValues list of valid falsey values, defaults to `[false, 0, '0']`.
+     * @param boolean|integer|string $check Value to check.
+     * @param array $falseyValues List of valid falsey values, defaults to `[false, 0, '0']`.
      * @return bool Success
      */
     public static function falsey($check, array $falseyValues = [])
