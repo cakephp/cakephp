@@ -1167,11 +1167,10 @@ class PaginatorHelper extends Helper
      */
     protected function _deprecateModelOption(array $options)
     {
-        if (isset($options['model'])) {
+        if (!isset($options['scope']) && isset($options['model'])) {
             $options['scope'] = $options['model'];
             unset($options['model']);
         }
-
         return $options;
     }
 }
