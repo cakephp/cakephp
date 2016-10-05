@@ -302,7 +302,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *      ]);
      * ```
      *
-     * @param string $field The name of the field from which the rule will be removed
+     * @param string $field The name of the field from which the rule will be added
      * @param array|string $name The alias for a single rule or multiple rules array
      * @param array|\Cake\Validation\ValidationRule $rule the rule to add
      * @return $this
