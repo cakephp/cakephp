@@ -109,7 +109,7 @@ class View implements EventDispatcherInterface
      * Current passed params. Passed to View from the creating Controller for convenience.
      *
      * @var array
-     * @deprecated 3.1.0 Use `$this->request->params['pass']` instead.
+     * @deprecated 3.1.0 Use `$this->request->param('pass')` instead.
      */
     public $passedArgs = [];
 
@@ -330,18 +330,14 @@ class View implements EventDispatcherInterface
             }
         }
         $this->eventManager($eventManager);
-        $this->request = $request;
-        $this->response = $response;
+        $this->request = $request ?: Router::getRequest(true);
+        $this->response = $response ?: new Response();
         if (empty($this->request)) {
-            $this->request = Router::getRequest(true);
-        }
-        if (empty($this->request)) {
-            $this->request = new Request();
-            $this->request->base = '';
-            $this->request->here = $this->request->webroot = '/';
-        }
-        if (empty($this->response)) {
-            $this->response = new Response();
+            $this->request = new Request([
+                'base' => '',
+                'url' => '',
+                'webroot' => '/'
+            ]);
         }
         $this->Blocks = new ViewBlock();
         $this->initialize();
@@ -1230,8 +1226,8 @@ class View implements EventDispatcherInterface
     protected function _getSubPaths($basePath)
     {
         $paths = [$basePath];
-        if (!empty($this->request->params['prefix'])) {
-            $prefixPath = explode('/', $this->request->params['prefix']);
+        if ($this->request->param('prefix')) {
+            $prefixPath = explode('/', $this->request->param('prefix'));
             $path = '';
             foreach ($prefixPath as $prefixPart) {
                 $path .= Inflector::camelize($prefixPart) . DIRECTORY_SEPARATOR;

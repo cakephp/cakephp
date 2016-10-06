@@ -139,16 +139,18 @@ class FormHelperTest extends TestCase
         Configure::write('Config.language', 'eng');
         Configure::write('App.base', '');
         Configure::write('App.namespace', 'Cake\Test\TestCase\View\Helper');
-        Configure::delete('Asset');
         $this->View = new View();
 
         $this->Form = new FormHelper($this->View);
-        $request = new Request('articles/add');
-        $request->here = '/articles/add';
-        $request['controller'] = 'articles';
-        $request['action'] = 'add';
-        $request->webroot = '';
-        $request->base = '';
+        $request = new Request([
+            'webroot' => '',
+            'base' => '',
+            'url' => '/articles/add',
+            'params' => [
+                'controller' => 'articles',
+                'action' => 'add',
+            ]
+        ]);
         $this->Form->Url->request = $this->Form->request = $request;
 
         $this->dateRegex = [
@@ -690,14 +692,15 @@ class FormHelperTest extends TestCase
         $encoding = strtolower(Configure::read('App.encoding'));
 
         $this->Form->request->here = '/articles/edit/1';
-        $this->Form->request['action'] = 'edit';
+        $this->Form->request->params['action'] = 'edit';
 
         $this->article['defaults']['id'] = 1;
 
         $result = $this->Form->create($this->article);
         $expected = [
             'form' => [
-                'method' => 'post', 'action' => '/articles/edit/1',
+                'method' => 'post',
+                'action' => '/articles/edit/1',
                 'accept-charset' => $encoding
             ],
             'div' => ['style' => 'display:none;'],
@@ -716,7 +719,7 @@ class FormHelperTest extends TestCase
     {
         $encoding = strtolower(Configure::read('App.encoding'));
 
-        $this->Form->request['action'] = 'delete';
+        $this->Form->request->params['action'] = 'delete';
         $this->Form->request->here = '/articles/delete/10';
         $this->Form->request->base = '';
         $result = $this->Form->create($this->article);
@@ -733,7 +736,7 @@ class FormHelperTest extends TestCase
 
         $this->article['defaults'] = ['id' => 1];
         $this->Form->request->here = '/articles/edit/1';
-        $this->Form->request['action'] = 'delete';
+        $this->Form->request->params['action'] = 'delete';
         $result = $this->Form->create($this->article, ['url' => ['action' => 'edit']]);
         $expected = [
             'form' => [
@@ -747,7 +750,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request['action'] = 'add';
+        $this->Form->request->params['action'] = 'add';
         $result = $this->Form->create($this->article, ['url' => ['action' => 'publish']]);
         $expected = [
             'form' => [
@@ -770,7 +773,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request['controller'] = 'Pages';
+        $this->Form->request->params['controller'] = 'Pages';
         $result = $this->Form->create($this->article, ['url' => ['action' => 'signup']]);
         $expected = [
             'form' => [
@@ -814,7 +817,7 @@ class FormHelperTest extends TestCase
         Router::connect('/login', ['controller' => 'users', 'action' => 'login']);
         $encoding = strtolower(Configure::read('App.encoding'));
 
-        $this->Form->request['controller'] = 'users';
+        $this->Form->request->params['controller'] = 'users';
 
         $result = $this->Form->create(false, ['url' => ['action' => 'login']]);
         $expected = [
@@ -1008,7 +1011,7 @@ class FormHelperTest extends TestCase
     public function testGetFormWithFalseModel()
     {
         $encoding = strtolower(Configure::read('App.encoding'));
-        $this->Form->request['controller'] = 'contact_test';
+        $this->Form->request->params['controller'] = 'contact_test';
         $result = $this->Form->create(false, [
             'type' => 'get', 'url' => ['controller' => 'contact_test']
         ]);
@@ -1656,11 +1659,11 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityInputUnlockedFields()
     {
-        $this->Form->request['_Token'] = [
+        $this->Form->request->params['_Token'] = [
             'unlockedFields' => ['first_name', 'address']
         ];
         $this->Form->create();
-        $this->assertEquals($this->Form->request['_Token']['unlockedFields'], $this->Form->unlockField());
+        $this->assertEquals($this->Form->request->params['_Token']['unlockedFields'], $this->Form->unlockField());
 
         $this->Form->hidden('Addresses.id', ['value' => '123456']);
         $this->Form->text('Addresses.title');
@@ -1728,11 +1731,11 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityInputUnlockedFieldsDebugSecurityTrue()
     {
-        $this->Form->request['_Token'] = [
+        $this->Form->request->params['_Token'] = [
             'unlockedFields' => ['first_name', 'address']
         ];
         $this->Form->create();
-        $this->assertEquals($this->Form->request['_Token']['unlockedFields'], $this->Form->unlockField());
+        $this->assertEquals($this->Form->request->params['_Token']['unlockedFields'], $this->Form->unlockField());
 
         $this->Form->hidden('Addresses.id', ['value' => '123456']);
         $this->Form->text('Addresses.title');
@@ -1799,11 +1802,11 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityInputUnlockedFieldsDebugSecurityDebugFalse()
     {
-        $this->Form->request['_Token'] = [
+        $this->Form->request->params['_Token'] = [
             'unlockedFields' => ['first_name', 'address']
         ];
         $this->Form->create();
-        $this->assertEquals($this->Form->request['_Token']['unlockedFields'], $this->Form->unlockField());
+        $this->assertEquals($this->Form->request->params['_Token']['unlockedFields'], $this->Form->unlockField());
 
         $this->Form->hidden('Addresses.id', ['value' => '123456']);
         $this->Form->text('Addresses.title');
@@ -1851,11 +1854,11 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityInputUnlockedFieldsDebugSecurityFalse()
     {
-        $this->Form->request['_Token'] = [
+        $this->Form->request->params['_Token'] = [
             'unlockedFields' => ['first_name', 'address']
         ];
         $this->Form->create();
-        $this->assertEquals($this->Form->request['_Token']['unlockedFields'], $this->Form->unlockField());
+        $this->assertEquals($this->Form->request->params['_Token']['unlockedFields'], $this->Form->unlockField());
 
         $this->Form->hidden('Addresses.id', ['value' => '123456']);
         $this->Form->text('Addresses.title');
@@ -2251,7 +2254,7 @@ class FormHelperTest extends TestCase
      */
     public function testDisableSecurityUsingForm()
     {
-        $this->Form->request['_Token'] = [
+        $this->Form->request->params['_Token'] = [
             'disabledFields' => []
         ];
         $this->Form->create();
@@ -2276,7 +2279,7 @@ class FormHelperTest extends TestCase
      */
     public function testUnlockFieldAddsToList()
     {
-        $this->Form->request['_Token'] = [
+        $this->Form->request->params['_Token'] = [
             'unlockedFields' => []
         ];
         $this->Form->unlockField('Contact.name');
@@ -2293,7 +2296,7 @@ class FormHelperTest extends TestCase
      */
     public function testUnlockFieldRemovingFromFields()
     {
-        $this->Form->request['_Token'] = [
+        $this->Form->request->params['_Token'] = [
             'unlockedFields' => []
         ];
         $this->Form->create($this->article);
@@ -2315,7 +2318,7 @@ class FormHelperTest extends TestCase
      */
     public function testResetUnlockFields()
     {
-        $this->Form->request['_Token'] = [
+        $this->Form->request->params['_Token'] = [
             'key' => 'testKey',
             'unlockedFields' => []
         ];
@@ -2338,7 +2341,7 @@ class FormHelperTest extends TestCase
      */
     public function testSecuredFormUrlIgnoresHost()
     {
-        $this->Form->request['_Token'] = ['key' => 'testKey'];
+        $this->Form->request->params['_Token'] = ['key' => 'testKey'];
 
         $expected = '0ff0c85cd70584d8fd18fa136846d22c66c21e2d%3A';
         $this->Form->create($this->article, [
@@ -2367,7 +2370,7 @@ class FormHelperTest extends TestCase
      */
     public function testSecuredFormUrlHasHtmlAndIdentifer()
     {
-        $this->Form->request['_Token'] = ['key' => 'testKey'];
+        $this->Form->request->params['_Token'] = ['key' => 'testKey'];
 
         $expected = 'ece0693fb1b19ca116133db1832ac29baaf41ce5%3A';
         $res = $this->Form->create($this->article, [

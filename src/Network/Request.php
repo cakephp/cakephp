@@ -1423,13 +1423,13 @@ class Request implements ArrayAccess, ServerRequestInterface
      * will be created for you.
      *
      * @param string|null $name Dot separated name of the value to read/write
+     * @param mixed ...$args The data to set (deprecated)
      * @return mixed|$this Either the value being read, or this so you can chain consecutive writes.
      */
-    public function data($name = null)
+    public function data($name = null, ...$args)
     {
-        $args = func_get_args();
-        if (count($args) === 2) {
-            $this->data = Hash::insert($this->data, $name, $args[1]);
+        if (count($args) === 1) {
+            $this->data = Hash::insert($this->data, $name, $args[0]);
 
             return $this;
         }
@@ -1447,14 +1447,14 @@ class Request implements ArrayAccess, ServerRequestInterface
      * Use `withParam` instead.
      *
      * @param string $name The name of the parameter to get.
+     * @param mixed ...$args Value to set (deprecated).
      * @return mixed|$this The value of the provided parameter. Will
      *   return false if the parameter doesn't exist or is falsey.
      */
-    public function param($name)
+    public function param($name, ...$args)
     {
-        $args = func_get_args();
-        if (count($args) === 2) {
-            $this->params = Hash::insert($this->params, $name, $args[1]);
+        if (count($args) === 1) {
+            $this->params = Hash::insert($this->params, $name, $args[0]);
 
             return $this;
         }
