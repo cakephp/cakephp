@@ -104,7 +104,7 @@ class BreadcrumbsHelper extends Helper
      */
     public function prepend($title, $url = null, array $options = [])
     {
-        array_unshift($this->crumbs, ['title' => $title, 'url' => $url, 'options' => $options]);
+        array_unshift($this->crumbs, compact('title', 'url', 'options'));
 
         return $this;
     }
@@ -128,7 +128,7 @@ class BreadcrumbsHelper extends Helper
      */
     public function insertAt($index, $title, $url = null, array $options = [])
     {
-        array_splice($this->crumbs, $index, 0, [['title' => $title, 'url' => $url, 'options' => $options]]);
+        array_splice($this->crumbs, $index, 0, [compact('title', 'url', 'options')]);
 
         return $this;
     }
