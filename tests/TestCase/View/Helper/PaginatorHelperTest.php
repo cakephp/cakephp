@@ -59,7 +59,6 @@ class PaginatorHelperTest extends TestCase
             ]
         ]);
 
-        Configure::write('Routing.prefixes', []);
         Router::reload();
         Router::connect('/:controller/:action/*');
         Router::connect('/:plugin/:controller/:action/*');
@@ -142,7 +141,7 @@ class PaginatorHelperTest extends TestCase
         ]);
 
         $this->Paginator->options(['url' => ['param']]);
-        $this->Paginator->request['paging'] = [
+        $this->Paginator->request->params['paging'] = [
             'Article' => [
                 'current' => 9,
                 'count' => 62,
@@ -2389,7 +2388,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testWithOnePage()
     {
-        $this->Paginator->request['paging'] = [
+        $this->Paginator->request->params['paging'] = [
             'Article' => [
                 'page' => 1,
                 'current' => 2,
@@ -2411,7 +2410,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testWithZeroPages()
     {
-        $this->Paginator->request['paging'] = [
+        $this->Paginator->request->params['paging'] = [
             'Article' => [
                 'page' => 0,
                 'current' => 0,
@@ -2436,7 +2435,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testMetaPage0()
     {
-        $this->Paginator->request['paging'] = [
+        $this->Paginator->request->params['paging'] = [
             'Article' => [
                 'page' => 1,
                 'prevPage' => false,
@@ -2457,7 +2456,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testMetaPage1()
     {
-        $this->Paginator->request['paging'] = [
+        $this->Paginator->request->params['paging'] = [
             'Article' => [
                 'page' => 1,
                 'prevPage' => false,
@@ -2478,7 +2477,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testMetaPage1InlineFalse()
     {
-        $this->Paginator->request['paging'] = [
+        $this->Paginator->request->params['paging'] = [
             'Article' => [
                 'page' => 1,
                 'prevPage' => false,
@@ -2500,7 +2499,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testMetaPage1Last()
     {
-        $this->Paginator->request['paging'] = [
+        $this->Paginator->request->params['paging'] = [
             'Article' => [
                 'page' => 2,
                 'prevPage' => true,
@@ -2522,7 +2521,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testMetaPage10Last()
     {
-        $this->Paginator->request['paging'] = [
+        $this->Paginator->request->params['paging'] = [
             'Article' => [
                 'page' => 5,
                 'prevPage' => true,
