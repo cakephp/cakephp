@@ -43,7 +43,7 @@ class BreadcrumbsHelper extends Helper
     protected $_defaultConfig = [
         'templates' => [
             'wrapper' => '<ul{{attrs}}>{{content}}</ul>',
-            'item' => '<li{{attrs}}><a href="{{link}}"{{innerAttrs}}>{{title}}</a></li>{{separator}}',
+            'item' => '<li{{attrs}}><a href="{{url}}"{{innerAttrs}}>{{title}}</a></li>{{separator}}',
             'itemWithoutLink' => '<li{{attrs}}><span{{innerAttrs}}>{{title}}</span></li>{{separator}}',
             'separator' => '<li{{attrs}}><span{{innerAttrs}}>{{custom}}{{separator}}</span></li>'
         ]
@@ -65,7 +65,7 @@ class BreadcrumbsHelper extends Helper
      * - *title* The title of the crumb
      * - *link* The link of the crumb. If not provided, no link will be made
      * - *options* Options of the crumb. See description of params option of this method.
-     * @param string|array|null $link Link of the crumb. Either a string, an array of route params to pass to
+     * @param string|array|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link
      * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
@@ -74,18 +74,17 @@ class BreadcrumbsHelper extends Helper
      * - *templateVars*: Specific template vars in case you override the templates provided
      * @return $this
      */
-    public function add($title, $link = null, array $options = [])
+    public function add($title, $url = null, array $options = [])
     {
         if (is_array($title)) {
             foreach ($title as $crumb) {
-                $crumb = array_merge(['title' => '', 'link' => null, 'options' => []], $crumb);
-                $this->crumbs[] = $crumb;
+                $this->crumbs[] = $crumb + ['title' => '', 'url' => null, 'options' => []];
             }
 
             return $this;
         }
 
-        $this->crumbs[] = ['title' => $title, 'link' => $link, 'options' => $options];
+        $this->crumbs[] = compact('title', 'url', 'options');
 
         return $this;
     }
@@ -94,7 +93,7 @@ class BreadcrumbsHelper extends Helper
      * Prepend a crumb to the start of the queue.
      *
      * @param string $title Title of the crumb
-     * @param string|array|null $link Link of the crumb. Either a string, an array of route params to pass to
+     * @param string|array|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link
      * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
@@ -103,9 +102,9 @@ class BreadcrumbsHelper extends Helper
      * - *templateVars*: Specific template vars in case you override the templates provided
      * @return $this
      */
-    public function prepend($title, $link = null, array $options = [])
+    public function prepend($title, $url = null, array $options = [])
     {
-        array_unshift($this->crumbs, ['title' => $title, 'link' => $link, 'options' => $options]);
+        array_unshift($this->crumbs, ['title' => $title, 'url' => $url, 'options' => $options]);
 
         return $this;
     }
@@ -118,7 +117,7 @@ class BreadcrumbsHelper extends Helper
      *
      * @param int $index The index to insert at.
      * @param string $title Title of the crumb
-     * @param string|array|null $link Link of the crumb. Either a string, an array of route params to pass to
+     * @param string|array|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link
      * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
@@ -127,9 +126,9 @@ class BreadcrumbsHelper extends Helper
      * - *templateVars*: Specific template vars in case you override the templates provided
      * @return $this
      */
-    public function insertAt($index, $title, $link = null, array $options = [])
+    public function insertAt($index, $title, $url = null, array $options = [])
     {
-        array_splice($this->crumbs, $index, 0, [['title' => $title, 'link' => $link, 'options' => $options]]);
+        array_splice($this->crumbs, $index, 0, [['title' => $title, 'url' => $url, 'options' => $options]]);
 
         return $this;
     }
@@ -142,7 +141,7 @@ class BreadcrumbsHelper extends Helper
      *
      * @param string $matchingTitle The title of the crumb you want to insert this one before
      * @param string $title Title of the crumb
-     * @param string|array|null $link Link of the crumb. Either a string, an array of route params to pass to
+     * @param string|array|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link
      * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
@@ -150,13 +149,14 @@ class BreadcrumbsHelper extends Helper
      * the link)
      * - *templateVars*: Specific template vars in case you override the templates provided
      * @return $this
+     * @throws LogicException In case the matching crumb can not be found
      */
-    public function insertBefore($matchingTitle, $title, $link = null, array $options = [])
+    public function insertBefore($matchingTitle, $title, $url = null, array $options = [])
     {
         $key = $this->findCrumb($matchingTitle);
 
         if ($key !== null) {
-            return $this->insertAt($key, $title, $link, $options);
+            return $this->insertAt($key, $title, $url, $options);
         }
         throw new LogicException(sprintf("No crumb matching '%s' could be found.", $matchingTitle));
     }
@@ -169,7 +169,7 @@ class BreadcrumbsHelper extends Helper
      *
      * @param string $matchingTitle The title of the crumb you want to insert this one after
      * @param string $title Title of the crumb
-     * @param string|array|null $link Link of the crumb. Either a string, an array of route params to pass to
+     * @param string|array|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link
      * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
@@ -177,13 +177,14 @@ class BreadcrumbsHelper extends Helper
      * the link)
      * - *templateVars*: Specific template vars in case you override the templates provided
      * @return $this
+     * @throws LogicException In case the matching crumb can not be found
      */
-    public function insertAfter($matchingTitle, $title, $link = null, array $options = [])
+    public function insertAfter($matchingTitle, $title, $url = null, array $options = [])
     {
         $key = $this->findCrumb($matchingTitle);
 
         if ($key !== null) {
-            return $this->insertAt($key + 1, $title, $link, $options);
+            return $this->insertAt($key + 1, $title, $url, $options);
         }
         throw new LogicException(sprintf("No crumb matching '%s' could be found.", $matchingTitle));
     }
@@ -234,7 +235,7 @@ class BreadcrumbsHelper extends Helper
 
         $crumbTrail = '';
         foreach ($crumbs as $key => $crumb) {
-            $link = $this->prepareLink($crumb['link']);
+            $url = $crumb['url'] ? $this->Url->build($crumb['url']) : null;
             $title = $crumb['title'];
             $options = $crumb['options'];
 
@@ -249,12 +250,12 @@ class BreadcrumbsHelper extends Helper
                 'attrs' => $templater->formatAttributes($options, ['templateVars']),
                 'innerAttrs' => $templater->formatAttributes($optionsLink),
                 'title' => $title,
-                'link' => $link,
+                'url' => $url,
                 'separator' => '',
                 'templateVars' => isset($options['templateVars']) ? $options['templateVars'] : []
             ];
 
-            if (!($link)) {
+            if (!$url) {
                 $template = 'itemWithoutLink';
             }
 
@@ -290,23 +291,5 @@ class BreadcrumbsHelper extends Helper
         }
 
         return null;
-    }
-
-    /**
-     * Prepare the URL for a specific `link` param of a crumb
-     *
-     * @param array|string|null $link If array, an array of Router url params
-     * If string, will be used as is
-     * If empty, will consider that there is no link
-     *
-     * @return null|string The URL of a crumb
-     */
-    protected function prepareLink($link = null)
-    {
-        if (!$link) {
-            return null;
-        }
-
-        return $this->Url->build($link);
     }
 }

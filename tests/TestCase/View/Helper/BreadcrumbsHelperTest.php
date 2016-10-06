@@ -54,14 +54,14 @@ class BreadcrumbsHelperTest extends TestCase
         $expected = [
             [
                 'title' => 'Home',
-                'link' => '/',
+                'url' => '/',
                 'options' => [
                     'class' => 'first'
                 ]
             ],
             [
                 'title' => 'Some text',
-                'link' => [
+                'url' => [
                     'controller' => 'Some',
                     'action' => 'text'
                 ],
@@ -82,12 +82,12 @@ class BreadcrumbsHelperTest extends TestCase
             ->add([
                 [
                     'title' => 'Home',
-                    'link' => '/',
+                    'url' => '/',
                     'options' => ['class' => 'first']
                 ],
                 [
                     'title' => 'Some text',
-                    'link' => ['controller' => 'Some', 'action' => 'text']
+                    'url' => ['controller' => 'Some', 'action' => 'text']
                 ],
                 [
                     'title' => 'Final',
@@ -98,14 +98,14 @@ class BreadcrumbsHelperTest extends TestCase
         $expected = [
             [
                 'title' => 'Home',
-                'link' => '/',
+                'url' => '/',
                 'options' => [
                     'class' => 'first'
                 ]
             ],
             [
                 'title' => 'Some text',
-                'link' => [
+                'url' => [
                     'controller' => 'Some',
                     'action' => 'text'
                 ],
@@ -113,7 +113,7 @@ class BreadcrumbsHelperTest extends TestCase
             ],
             [
                 'title' => 'Final',
-                'link' => null,
+                'url' => null,
                 'options' => []
             ]
         ];
@@ -135,12 +135,12 @@ class BreadcrumbsHelperTest extends TestCase
         $expected = [
             [
                 'title' => 'The root',
-                'link' => '/root',
+                'url' => '/root',
                 'options' => ['data-name' => 'some-name']
             ],
             [
                 'title' => 'Some text',
-                'link' => [
+                'url' => [
                     'controller' => 'Some',
                     'action' => 'text'
                 ],
@@ -148,7 +148,7 @@ class BreadcrumbsHelperTest extends TestCase
             ],
             [
                 'title' => 'Home',
-                'link' => '/',
+                'url' => '/',
                 'options' => [
                     'class' => 'first'
                 ]
@@ -173,7 +173,7 @@ class BreadcrumbsHelperTest extends TestCase
         $expected = [
             [
                 'title' => 'Some text',
-                'link' => [
+                'url' => [
                     'controller' => 'Some',
                     'action' => 'text'
                 ],
@@ -181,7 +181,7 @@ class BreadcrumbsHelperTest extends TestCase
             ],
             [
                 'title' => 'Insert At Again',
-                'link' => [
+                'url' => [
                     'controller' => 'Insert',
                     'action' => 'at_again'
                 ],
@@ -189,7 +189,7 @@ class BreadcrumbsHelperTest extends TestCase
             ],
             [
                 'title' => 'Insert At',
-                'link' => [
+                'url' => [
                     'controller' => 'Insert',
                     'action' => 'at'
                 ],
@@ -197,7 +197,7 @@ class BreadcrumbsHelperTest extends TestCase
             ],
             [
                 'title' => 'Home',
-                'link' => '/',
+                'url' => '/',
                 'options' => [
                     'class' => 'first'
                 ]
@@ -222,17 +222,17 @@ class BreadcrumbsHelperTest extends TestCase
         $expected = [
             [
                 'title' => 'The super root',
-                'link' => null,
+                'url' => null,
                 'options' => []
             ],
             [
                 'title' => 'The root',
-                'link' => '/root',
+                'url' => '/root',
                 'options' => ['data-name' => 'some-name']
             ],
             [
                 'title' => 'Some text',
-                'link' => [
+                'url' => [
                     'controller' => 'Some',
                     'action' => 'text'
                 ],
@@ -240,7 +240,7 @@ class BreadcrumbsHelperTest extends TestCase
             ],
             [
                 'title' => 'Home',
-                'link' => '/',
+                'url' => '/',
                 'options' => [
                     'class' => 'first'
                 ]
@@ -265,17 +265,17 @@ class BreadcrumbsHelperTest extends TestCase
         $expected = [
             [
                 'title' => 'The root',
-                'link' => '/root',
+                'url' => '/root',
                 'options' => ['data-name' => 'some-name']
             ],
             [
                 'title' => 'The less super root',
-                'link' => null,
+                'url' => null,
                 'options' => []
             ],
             [
                 'title' => 'Some text',
-                'link' => [
+                'url' => [
                     'controller' => 'Some',
                     'action' => 'text'
                 ],
@@ -283,7 +283,7 @@ class BreadcrumbsHelperTest extends TestCase
             ],
             [
                 'title' => 'Home',
-                'link' => '/',
+                'url' => '/',
                 'options' => [
                     'class' => 'first'
                 ]
@@ -348,7 +348,7 @@ class BreadcrumbsHelperTest extends TestCase
         $this->breadcrumbs = new BreadcrumbsHelper(new View(), [
             'templates' => [
                 'wrapper' => '<ol itemtype="http://schema.org/BreadcrumbList"{{attrs}}>{{content}}</ol>',
-                'item' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><a itemtype="http://schema.org/Thing" itemprop="item" href="{{link}}"{{innerAttrs}}><span itemprop="name">{{title}}</span></a></li>',
+                'item' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><a itemtype="http://schema.org/Thing" itemprop="item" href="{{url}}"{{innerAttrs}}><span itemprop="name">{{title}}</span></a></li>',
                 'itemWithoutLink' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><span itemprop="name"{{innerAttrs}}>{{title}}</span></li>',
             ]
         ]);
@@ -388,7 +388,7 @@ class BreadcrumbsHelperTest extends TestCase
         $this->breadcrumbs = new BreadcrumbsHelper(new View(), [
             'templates' => [
                 'wrapper' => '{{thing}}<ol itemtype="http://schema.org/BreadcrumbList"{{attrs}}>{{content}}</ol>',
-                'item' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><a itemtype="http://schema.org/Thing" itemprop="item" href="{{link}}"{{innerAttrs}}><span itemprop="name">{{title}}</span></a>{{foo}}</li>',
+                'item' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><a itemtype="http://schema.org/Thing" itemprop="item" href="{{url}}"{{innerAttrs}}><span itemprop="name">{{title}}</span></a>{{foo}}</li>',
                 'itemWithoutLink' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><span itemprop="name"{{innerAttrs}}>{{title}}</span>{{barbaz}}</li>',
             ]
         ]);
