@@ -480,8 +480,8 @@ class FormHelper extends Helper
 
         $actionDefaults = [
             'plugin' => $this->plugin,
-            'controller' => $this->request->params['controller'],
-            'action' => $this->request->params['action'],
+            'controller' => $this->request->param('controller'),
+            'action' => $this->request->param('action'),
         ];
 
         $action = (array)$options['url'] + $actionDefaults;
@@ -520,17 +520,17 @@ class FormHelper extends Helper
      */
     protected function _csrfField()
     {
-        if (!empty($this->request['_Token']['unlockedFields'])) {
-            foreach ((array)$this->request['_Token']['unlockedFields'] as $unlocked) {
+        if ($this->request->param('_Token.unlockedFields')) {
+            foreach ((array)$this->request->param('_Token.unlockedFields') as $unlocked) {
                 $this->_unlockedFields[] = $unlocked;
             }
         }
-        if (empty($this->request->params['_csrfToken'])) {
+        if (!$this->request->param('_csrfToken')) {
             return '';
         }
 
         return $this->hidden('_csrfToken', [
-            'value' => $this->request->params['_csrfToken'],
+            'value' => $this->request->param('_csrfToken'),
             'secure' => static::SECURE_SKIP
         ]);
     }
@@ -550,9 +550,7 @@ class FormHelper extends Helper
     {
         $out = '';
 
-        if ($this->requestType !== 'get' &&
-            !empty($this->request['_Token'])
-        ) {
+        if ($this->requestType !== 'get' && $this->request->param('_Token')) {
             $out .= $this->secure($this->fields, $secureAttributes);
             $this->fields = [];
             $this->_unlockedFields = [];
@@ -585,7 +583,7 @@ class FormHelper extends Helper
      */
     public function secure(array $fields = [], array $secureAttributes = [])
     {
-        if (empty($this->request['_Token'])) {
+        if (!$this->request->param('_Token')) {
             return '';
         }
         $debugSecurity = Configure::read('debug');
@@ -982,7 +980,7 @@ class FormHelper extends Helper
             if (!$isCreate) {
                 $actionName = __d('cake', 'Edit %s');
             }
-            $modelName = Inflector::humanize(Inflector::singularize($this->request->params['controller']));
+            $modelName = Inflector::humanize(Inflector::singularize($this->request->param('controller')));
             $legend = sprintf($actionName, $modelName);
         }
 
@@ -2461,7 +2459,7 @@ class FormHelper extends Helper
     protected function _initInputField($field, $options = [])
     {
         if (!isset($options['secure'])) {
-            $options['secure'] = !empty($this->request->params['_Token']);
+            $options['secure'] = (bool)$this->request->param('_Token');
         }
         $context = $this->_getContext();
 
