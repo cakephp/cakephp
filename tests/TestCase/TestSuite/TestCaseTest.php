@@ -490,6 +490,7 @@ class TestCaseTest extends TestCase
 
         $result = TableRegistry::get('TestPlugin.TestPluginComments');
         $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $result);
+        $this->assertSame($TestPluginComment, $result);
 
         $TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments', ['save']);
 
