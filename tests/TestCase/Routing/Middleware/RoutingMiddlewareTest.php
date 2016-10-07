@@ -146,7 +146,14 @@ class RoutingMiddlewareTest extends TestCase
             'action' => 'index',
             '_method' => 'PATCH'
         ]);
-        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles-patch'], null, ['_method' => 'PATCH']);
+        $request = ServerRequestFactory::fromGlobals(
+            [
+                'REQUEST_METHOD' => 'POST',
+                'REQUEST_URI' => '/articles-patch'
+            ],
+            null,
+            ['_method' => 'PATCH']
+        );
         $response = new Response();
         $next = function ($req, $res) {
             $expected = [
