@@ -21,6 +21,10 @@ use Cake\Network\Exception\NotFoundException;
 use DateTime;
 use DateTimeZone;
 use InvalidArgumentException;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
+use Zend\Diactoros\PhpInputStream;
+use Zend\Diactoros\Stream;
 
 /**
  * Cake Response is responsible for managing the response text, status and headers of a HTTP response.
@@ -28,7 +32,7 @@ use InvalidArgumentException;
  * By default controllers will use this class to render their response. If you are going to use
  * a custom response class it should subclass this object in order to ensure compatibility.
  */
-class Response
+class Response implements ResponseInterface
 {
 
     /**
@@ -337,7 +341,7 @@ class Response
      *
      * @var string
      */
-    protected $_protocol = 'HTTP/1.1';
+    protected $_protocol = '1.1';
 
     /**
      * Status code to send to the client
@@ -345,6 +349,12 @@ class Response
      * @var int
      */
     protected $_status = 200;
+
+    /**
+     * Reason phrase for the status code.
+     * @var string|null
+     */
+    protected $_reasonPhrase = null;
 
     /**
      * Content type to send. This can be an 'extension' that will be transformed using the $_mimetypes array
@@ -405,6 +415,13 @@ class Response
     protected $_cookies = [];
 
     /**
+     * Response body stream.
+     *
+     * @var \Psr\Http\Message\StreamInterface
+     */
+    protected $_stream;
+
+    /**
      * Constructor
      *
      * @param array $options list of parameters to setup the response. Possible values are:
@@ -419,6 +436,16 @@ class Response
         if (isset($options['body'])) {
             $this->body($options['body']);
         }
+
+        if (isset($options['input'])) {
+            $stream = new Stream('php://memory', 'rw');
+            $stream->write($options['input']);
+            $stream->rewind();
+        } else {
+            $stream = new PhpInputStream();
+        }
+        $this->_stream = $stream;
+
         if (isset($options['statusCodes'])) {
             $this->httpCodes($options['statusCodes']);
         }
@@ -442,7 +469,7 @@ class Response
      */
     public function send()
     {
-        if (isset($this->_headers['Location']) && $this->_status === 200) {
+        if (isset($this->_headers['location']) && $this->_status === 200) {
             $this->statusCode(302);
         }
 
@@ -477,7 +504,7 @@ class Response
 
         $codeMessage = $this->_statusCodes[$this->_status];
         $this->_setCookies();
-        $this->_sendHeader("{$this->_protocol} {$this->_status} {$codeMessage}");
+        $this->_sendHeader("{$this->protocol()} {$this->_status} {$codeMessage}");
         $this->_setContentType();
 
         foreach ($this->_headers as $header => $values) {
@@ -639,10 +666,11 @@ class Response
             if ($value === null) {
                 list($header, $value) = explode(':', $header, 2);
             }
-            $this->_headers[$header] = is_array($value) ? array_map('trim', $value) : trim($value);
+            $header = strtolower($header);
+            $this->_headers[strtolower($header)] = is_array($value) ? array_map('trim', $value) : trim($value);
         }
 
-        return $this->_headers;
+        return $headers;
     }
 
     /**
@@ -659,9 +687,9 @@ class Response
         if ($url === null) {
             $headers = $this->header();
 
-            return isset($headers['Location']) ? $headers['Location'] : null;
+            return isset($headers['location']) ? $headers['location'] : null;
         }
-        $this->header('Location', $url);
+        $this->header('location', $url);
 
         return null;
     }
@@ -875,8 +903,8 @@ class Response
     public function disableCache()
     {
         $this->header([
-            'Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
-            'Last-Modified' => gmdate("D, d M Y H:i:s") . " GMT",
+            'expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
+            'last-modified' => gmdate("D, d M Y H:i:s") . " GMT",
             'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
         ]);
     }
@@ -894,7 +922,7 @@ class Response
             $time = strtotime($time);
         }
         $this->header([
-            'Date' => gmdate("D, j M Y G:i:s ", time()) . 'GMT'
+            'date' => gmdate("D, j M Y G:i:s ", time()) . 'GMT'
         ]);
         $this->modified($since);
         $this->expires($time);
@@ -1045,10 +1073,10 @@ class Response
     {
         if ($time !== null) {
             $date = $this->_getUTCDate($time);
-            $this->_headers['Expires'] = $date->format('D, j M Y H:i:s') . ' GMT';
+            $this->_headers['expires'] = $date->format('D, j M Y H:i:s') . ' GMT';
         }
-        if (isset($this->_headers['Expires'])) {
-            return $this->_headers['Expires'];
+        if (isset($this->_headers['expires'])) {
+            return $this->_headers['expires'];
         }
 
         return null;
@@ -1071,10 +1099,10 @@ class Response
     {
         if ($time !== null) {
             $date = $this->_getUTCDate($time);
-            $this->_headers['Last-Modified'] = $date->format('D, j M Y H:i:s') . ' GMT';
+            $this->_headers['last-modified'] = $date->format('D, j M Y H:i:s') . ' GMT';
         }
-        if (isset($this->_headers['Last-Modified'])) {
-            return $this->_headers['Last-Modified'];
+        if (isset($this->_headers['last-modified'])) {
+            return $this->_headers['last-modified'];
         }
 
         return null;
@@ -1092,13 +1120,13 @@ class Response
         $this->statusCode(304);
         $this->body('');
         $remove = [
-            'Allow',
-            'Content-Encoding',
-            'Content-Language',
-            'Content-Length',
-            'Content-MD5',
-            'Content-Type',
-            'Last-Modified'
+            'allow',
+            'content-encoding',
+            'content-language',
+            'content-length',
+            'content-md5',
+            'content-type',
+            'last-modified'
         ];
         foreach ($remove as $header) {
             unset($this->_headers[$header]);
@@ -1119,10 +1147,10 @@ class Response
     {
         if ($cacheVariances !== null) {
             $cacheVariances = (array)$cacheVariances;
-            $this->_headers['Vary'] = implode(', ', $cacheVariances);
+            $this->_headers['vary'] = implode(', ', $cacheVariances);
         }
-        if (isset($this->_headers['Vary'])) {
-            return explode(', ', $this->_headers['Vary']);
+        if (isset($this->_headers['vary'])) {
+            return explode(', ', $this->_headers['vary']);
         }
 
         return null;
@@ -1216,7 +1244,7 @@ class Response
      */
     public function download($filename)
     {
-        $this->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+        $this->header('content-disposition', 'attachment; filename="' . $filename . '"');
     }
 
     /**
@@ -1229,10 +1257,24 @@ class Response
     public function protocol($protocol = null)
     {
         if ($protocol !== null) {
-            $this->_protocol = $protocol;
+            $this->_setProtocolVersion(preg_replace('/[^0-9.]/', '', $protocol));
         }
 
-        return $this->_protocol;
+        return 'HTTP/' . $this->_protocol;
+    }
+
+    /**
+     * Sets the protocol to be used when sending the response. Defaults to HTTP/1.1
+     * If called with no arguments, it will return the current configured protocol
+     *
+     * @param string|null $protocol Protocol to be used for sending response.
+     */
+    protected function _setProtocolVersion($protocol = null) {
+        if (!in_array($protocol, ['1.0', '1.1', '2.0'])) {
+            throw new InvalidArgumentException(sprintf('Invalid HTTP protocol version: %s', $protocol));
+        }
+
+        $this->_protocol = $protocol;
     }
 
     /**
@@ -1245,10 +1287,10 @@ class Response
     public function length($bytes = null)
     {
         if ($bytes !== null) {
-            $this->_headers['Content-Length'] = $bytes;
+            $this->_headers['content-length'] = $bytes;
         }
-        if (isset($this->_headers['Content-Length'])) {
-            return $this->_headers['Content-Length'];
+        if (isset($this->_headers['content-length'])) {
+            return $this->_headers['content-length'];
         }
 
         return null;
@@ -1497,15 +1539,15 @@ class Response
                 $name = $options['name'];
             }
             $this->download($name);
-            $this->header('Content-Transfer-Encoding', 'binary');
+            $this->header('content-transfer-encoding', 'binary');
         }
 
-        $this->header('Accept-Ranges', 'bytes');
+        $this->header('accept-ranges', 'bytes');
         $httpRange = env('HTTP_RANGE');
         if (isset($httpRange)) {
             $this->_fileRange($file, $httpRange);
         } else {
-            $this->header('Content-Length', $fileSize);
+            $this->header('content-length', $fileSize);
         }
 
         $this->_file = $file;
@@ -1555,15 +1597,15 @@ class Response
         if ($start > $end || $end > $lastByte || $start > $lastByte) {
             $this->statusCode(416);
             $this->header([
-                'Content-Range' => 'bytes 0-' . $lastByte . '/' . $fileSize
+                'content-range' => 'bytes 0-' . $lastByte . '/' . $fileSize
             ]);
 
             return;
         }
 
         $this->header([
-            'Content-Length' => $end - $start + 1,
-            'Content-Range' => 'bytes ' . $start . '-' . $end . '/' . $fileSize
+            'content-length' => $end - $start + 1,
+            'content-range' => 'bytes ' . $start . '-' . $end . '/' . $fileSize
         ]);
 
         $this->statusCode(206);
@@ -1664,5 +1706,308 @@ class Response
     public function stop($status = 0)
     {
         exit($status);
+    }
+
+    /**
+     * Retrieves the HTTP protocol version as a string.
+     * The string MUST contain only the HTTP version number (e.g., "1.1", "1.0").
+     *
+     * @return string HTTP protocol version.
+     */
+    public function getProtocolVersion()
+    {
+        return preg_replace('/[^0-9.]/', '', $this->_protocol);
+    }
+
+    /**
+     * Return an instance with the specified HTTP protocol version.
+     *
+     * The version string MUST contain only the HTTP version number (e.g.,
+     * "1.1", "1.0").
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * new protocol version.
+     *
+     * @param string $version HTTP protocol version
+     * @return static
+     */
+    public function withProtocolVersion($version)
+    {
+        if (!in_array($version, ['1.0', '1.1', '2.0'])) {
+            throw new InvalidArgumentException(sprintf('Invalid HTTP protocol version: %s', $version));
+        }
+
+        $tmp = $this->_protocol;
+        $this->_protocol = $version;
+        $clone = clone $this;
+        $this->_protocol = $tmp;
+
+        return $clone;
+    }
+
+    /**
+     * Retrieves all message header values.
+     *
+     * The keys represent the header name as it will be sent over the wire, and
+     * each value is an array of strings associated with the header.
+     *
+     *     // Represent the headers as a string
+     *     foreach ($message->getHeaders() as $name => $values) {
+     *         echo $name . ": " . implode(", ", $values);
+     *     }
+     *     // Emit headers iteratively:
+     *     foreach ($message->getHeaders() as $name => $values) {
+     *         foreach ($values as $value) {
+     *             header(sprintf('%s: %s', $name, $value), false);
+     *         }
+     *     }
+     *
+     * While header names are not case-sensitive, getHeaders() will preserve the
+     * exact case in which headers were originally specified.
+     *
+     * @return string[][] Returns an associative array of the message's headers. Each
+     *     key MUST be a header name, and each value MUST be an array of strings
+     *     for that header.
+     */
+    public function getHeaders()
+    {
+        return $this->_headers;
+    }
+
+    /**
+     * Checks if a header exists by the given case-insensitive name.
+     *
+     * @param string $name Case-insensitive header field name.
+     * @return bool Returns true if any header names match the given header
+     *     name using a case-insensitive string comparison. Returns false if
+     *     no matching header name is found in the message.
+     */
+    public function hasHeader($name)
+    {
+        return isset($this->_headers[$name]);
+    }
+
+    /**
+     * Retrieves a message header value by the given case-insensitive name.
+     *
+     * This method returns an array of all the header values of the given
+     * case-insensitive header name.
+     *
+     * If the header does not appear in the message, this method MUST return an
+     * empty array.
+     *
+     * @param string $name Case-insensitive header field name.
+     * @return string[] An array of string values as provided for the given
+     *    header. If the header does not appear in the message, this method MUST
+     *    return an empty array.
+     */
+    public function getHeader($name)
+    {
+        if (!isset($this->_headers[$name])) {
+            return [];
+        }
+
+        return $this->_headers[$name];
+    }
+
+    /**
+     * Retrieves a comma-separated string of the values for a single header.
+     *
+     * This method returns all of the header values of the given
+     * case-insensitive header name as a string concatenated together using
+     * a comma.
+     *
+     * NOTE: Not all header values may be appropriately represented using
+     * comma concatenation. For such headers, use getHeader() instead
+     * and supply your own delimiter when concatenating.
+     *
+     * If the header does not appear in the message, this method MUST return
+     * an empty string.
+     *
+     * @param string $name Case-insensitive header field name.
+     * @return string A string of values as provided for the given header
+     *    concatenated together using a comma. If the header does not appear in
+     *    the message, this method MUST return an empty string.
+     */
+    public function getHeaderLine($name)
+    {
+        $name = strtolower($name);
+        if (!isset($this->_headers[$name])) {
+            return '';
+        }
+
+        return implode(',', $this->_headers[$name]);
+    }
+
+    /**
+     * Return an instance with the provided value replacing the specified header.
+     *
+     * While header names are case-insensitive, the casing of the header will
+     * be preserved by this function, and returned from getHeaders().
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * new and/or updated header and value.
+     *
+     * @param string $name Case-insensitive header field name.
+     * @param string|string[] $value Header value(s).
+     * @return static
+     * @throws \InvalidArgumentException for invalid header names or values.
+     */
+    public function withHeader($name, $value)
+    {
+        $new = clone $this;
+        $new->header($name, null);
+        $new->header($name, $value);
+
+        return $new;
+    }
+
+    /**
+     * Return an instance with the specified header appended with the given value.
+     *
+     * Existing values for the specified header will be maintained. The new
+     * value(s) will be appended to the existing list. If the header did not
+     * exist previously, it will be added.
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * new header and/or value.
+     *
+     * @param string $name Case-insensitive header field name to add.
+     * @param string|string[] $value Header value(s).
+     * @return static
+     * @throws \InvalidArgumentException for invalid header names or values.
+     */
+    public function withAddedHeader($name, $value)
+    {
+        $new = clone $this;
+        $new->header($name, $value);
+
+        return $new;
+    }
+
+    /**
+     * Return an instance without the specified header.
+     *
+     * Header resolution MUST be done without case-sensitivity.
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that removes
+     * the named header.
+     *
+     * @param string $name Case-insensitive header field name to remove.
+     * @return static
+     */
+    public function withoutHeader($name)
+    {
+        $headers = $this->_headers;
+        unset($this->_headers[strtolower($name)]);
+
+        $new = clone $this;
+        $this->_headers = $headers;
+
+        return $new;
+    }
+
+    /**
+     * Gets the body of the message.
+     *
+     * @return StreamInterface Returns the body as a stream.
+     */
+    public function getBody()
+    {
+        return $this->_stream;
+    }
+
+    /**
+     * Return an instance with the specified message body.
+     *
+     * The body MUST be a StreamInterface object.
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return a new instance that has the
+     * new body stream.
+     *
+     * @param StreamInterface $body Body.
+     * @return static
+     * @throws \InvalidArgumentException When the body is not valid.
+     */
+    public function withBody(StreamInterface $body)
+    {
+        $new = clone $this;
+        $new->_stream = $body;
+
+        return $new;
+    }
+
+    /**
+     * Gets the response status code.
+     *
+     * The status code is a 3-digit integer result code of the server's attempt
+     * to understand and satisfy the request.
+     *
+     * @return int Status code.
+     */
+    public function getStatusCode()
+    {
+        return $this->_status;
+    }
+
+    /**
+     * Return an instance with the specified status code and, optionally, reason phrase.
+     *
+     * If no reason phrase is specified, implementations MAY choose to default
+     * to the RFC 7231 or IANA recommended reason phrase for the response's
+     * status code.
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * updated status and reason phrase.
+     *
+     * @link http://tools.ietf.org/html/rfc7231#section-6
+     * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+     * @param int $code The 3-digit integer result code to set.
+     * @param string $reasonPhrase The reason phrase to use with the
+     *     provided status code; if none is provided, implementations MAY
+     *     use the defaults as suggested in the HTTP specification.
+     * @return static
+     * @throws \InvalidArgumentException For invalid status code arguments.
+     */
+    public function withStatus($code, $reasonPhrase = '')
+    {
+        $tmpReason = $this->_reasonPhrase;
+        $tmpStatus = $this->_status;
+
+        $this->_status = $code;
+
+        if (empty($reasonPhrase) && isset($this->_statusCodes[$code])) {
+            $reasonPhrase = $this->_statusCodes[$code];
+        }
+        $this->_reasonPhrase = $reasonPhrase;
+
+        $new = clone $this;
+
+        $this->_status = $tmpStatus;
+        $this->_reasonPhrase = $tmpReason;
+
+        return $new;
+    }
+
+    /**
+     * Gets the response reason phrase associated with the status code.
+     *
+     * Because a reason phrase is not a required element in a response
+     * status line, the reason phrase value MAY be null. Implementations MAY
+     * choose to return the default RFC 7231 recommended reason phrase (or those
+     * listed in the IANA HTTP Status Code Registry) for the response's
+     * status code.
+     *
+     * @link http://tools.ietf.org/html/rfc7231#section-6
+     * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+     * @return string Reason phrase; must return an empty string if none present.
+     */
+    public function getReasonPhrase()
+    {
+        return $this->_reasonPhrase;
     }
 }
