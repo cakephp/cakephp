@@ -305,7 +305,7 @@ class BreadcrumbsHelperTest extends TestCase
 
         $result = $this->breadcrumbs->render(
             ['data-stuff' => 'foo and bar'],
-            ['separator' => '<i class="fa fa-angle-right"></i>', 'class' => 'separator', 'templateVars' => ['custom' => 'custom']]
+            ['separator' => '<i class="fa fa-angle-right"></i>', 'class' => 'separator']
         );
         $expected = [
             ['ul' => ['data-stuff' => 'foo and bar']],
@@ -316,7 +316,8 @@ class BreadcrumbsHelperTest extends TestCase
             '/li',
             ['li' => ['class' => 'separator']],
             ['span' => []],
-            'custom<i class="fa fa-angle-right"></i>',
+            ['i' => ['class' => 'fa fa-angle-right']],
+            '/i',
             '/span',
             '/li',
             ['li' => []],
@@ -326,7 +327,8 @@ class BreadcrumbsHelperTest extends TestCase
             '/li',
             ['li' => ['class' => 'separator']],
             ['span' => []],
-            'custom<i class="fa fa-angle-right"></i>',
+            ['i' => ['class' => 'fa fa-angle-right']],
+            '/i',
             '/span',
             '/li',
             ['li' => ['class' => 'final']],
