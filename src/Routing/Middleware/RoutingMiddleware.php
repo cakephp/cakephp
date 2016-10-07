@@ -39,10 +39,17 @@ class RoutingMiddleware
             Router::setRequestContext($request);
             $params = (array)$request->getAttribute('params', []);
             if (empty($params['controller'])) {
-                $path = $request->getUri()->getPath();
                 $parsedBody = $request->getParsedBody();
-                $method = is_array($parsedBody) && isset($parsedBody['_method']) ? $parsedBody['_method'] : $request->getMethod();
-                $request = $request->withAttribute('params', Router::parse($path, $method));
+                if (is_array($parsedBody) && isset($parsedBody['_method'])) {
+                    $request = $request->withMethod($parsedBody['_method']);
+                }
+                $request = $request->withAttribute(
+                    'params',
+                    Router::parse(
+                        $request->getUri()->getPath(),
+                        $request->getMethod()
+                    )
+                );
             }
         } catch (RedirectException $e) {
             return new RedirectResponse(
