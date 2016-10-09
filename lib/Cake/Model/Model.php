@@ -3453,12 +3453,18 @@ class Model extends CakeObject implements CakeEventListener {
  * - 3rd param: If 2nd argument is provided, a boolean flag for enabling/disabled
  *   query caching.
  *
+ * If the query cache param as 2nd or 3rd argument is not given then the model's default $cacheQueries value is used.
+ *
  * @param string $sql SQL statement
  * @return mixed Resultset array or boolean indicating success / failure depending on the query executed
  * @link http://book.cakephp.org/2.0/en/models/retrieving-your-data.html#model-query
  */
 	public function query($sql) {
 		$params = func_get_args();
+		// use $this->cacheQueries as default when argument not explicitly given already
+		if (count($params) === 1 || count($params) === 2 && !is_bool($params[1])) {
+			$params[] = $this->cacheQueries;
+		}
 		$db = $this->getDataSource();
 		return call_user_func_array(array(&$db, 'query'), $params);
 	}
