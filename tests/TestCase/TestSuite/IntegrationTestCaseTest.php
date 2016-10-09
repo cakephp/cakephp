@@ -649,7 +649,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     {
         $test = new AssertIntegrationTestCase('testBadAssertNoRedirect');
         $result = $test->run();
-        ob_start();
+
         $this->assertFalse($result->wasSuccessful());
         $this->assertEquals(1, $result->failureCount());
     }

@@ -130,7 +130,7 @@ class TestCaseTest extends TestCase
     {
         $test = new AssertHtmlTestCase('testAssertHtmlQuotes');
         $result = $test->run();
-        ob_start();
+
         $this->assertEquals(0, $result->errorCount());
         $this->assertTrue($result->wasSuccessful());
         $this->assertEquals(0, $result->failureCount());
@@ -225,7 +225,6 @@ class TestCaseTest extends TestCase
     {
         $test = new AssertHtmlTestCase('testNumericValuesInExpectationForAssertHtml');
         $result = $test->run();
-        ob_start();
         $this->assertEquals(0, $result->errorCount());
         $this->assertTrue($result->wasSuccessful());
         $this->assertEquals(0, $result->failureCount());
@@ -240,14 +239,12 @@ class TestCaseTest extends TestCase
     {
         $test = new AssertHtmlTestCase('testBadAssertHtml');
         $result = $test->run();
-        ob_start();
         $this->assertEquals(0, $result->errorCount());
         $this->assertFalse($result->wasSuccessful());
         $this->assertEquals(1, $result->failureCount());
 
         $test = new AssertHtmlTestCase('testBadAssertHtml2');
         $result = $test->run();
-        ob_start();
         $this->assertEquals(0, $result->errorCount());
         $this->assertFalse($result->wasSuccessful());
         $this->assertEquals(1, $result->failureCount());
@@ -267,7 +264,6 @@ class TestCaseTest extends TestCase
         $test->fixtureManager = $manager;
         $manager->expects($this->once())->method('loadSingle');
         $result = $test->run();
-        ob_start();
 
         $this->assertEquals(0, $result->errorCount());
     }
@@ -281,12 +277,10 @@ class TestCaseTest extends TestCase
     {
         $test = new FixturizedTestCase('testSkipIfTrue');
         $result = $test->run();
-        ob_start();
         $this->assertEquals(1, $result->skippedCount());
 
         $test = new FixturizedTestCase('testSkipIfFalse');
         $result = $test->run();
-        ob_start();
         $this->assertEquals(0, $result->skippedCount());
     }
 
