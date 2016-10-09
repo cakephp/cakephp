@@ -3453,7 +3453,8 @@ class Model extends CakeObject implements CakeEventListener {
  * - 3rd param: If 2nd argument is provided, a boolean flag for enabling/disabled
  *   query caching.
  *
- * If the query cache param as 2nd or 3rd argument is not given then the model's default $cacheQueries value is used.
+ * If the query cache param as 2nd or 3rd argument is not given then the model's
+ * default `$cacheQueries` value is used.
  *
  * @param string $sql SQL statement
  * @return mixed Resultset array or boolean indicating success / failure depending on the query executed

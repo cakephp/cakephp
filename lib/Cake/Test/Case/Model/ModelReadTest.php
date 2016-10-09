@@ -8532,10 +8532,21 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals($expected, $results, 'Model related with belongsTo afterFind callback fails');
 	}
 
+/**
+ * Pull out the username from a result set.
+ *
+ * @param array $result The results.
+ * @return string The username.
+ */
 	public static function extractUserNameFromQueryResult(array $result) {
 		return isset($result[0][0]) ? $result[0][0]['user'] : $result[0]['u']['user'];
 	}
 
+/**
+ * Test that query() doesn't override the 2nd argument with a default.
+ *
+ * @return void
+ */
 	public function testQueryRespectsCacheQueriesAsSecondArgument() {
 		$model = new User();
 		$model->save(array('user' => 'Chuck'));
@@ -8552,12 +8563,17 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertSame('Chuck', $getUserNameFromDb(false));
 
 		$model->updateAll(array('User.user' => "'Sylvester'"), array('User.id' => $model->id));
-
 		$model->cacheQueries = false;
 		$this->assertSame('Chuck', $getUserNameFromDb(true));
 		$this->assertSame('Sylvester', $getUserNameFromDb(false));
 	}
 
+/**
+ * Test that query() doesn't override the cache param in the 3nd argument
+ * with a default.
+ *
+ * @return void
+ */
 	public function testQueryRespectsCacheQueriesAsThirdArgument() {
 		$model = new User();
 		$model->save(array('user' => 'Chuck'));
@@ -8572,12 +8588,18 @@ class ModelReadTest extends BaseModelTest {
 		$model->cacheQueries = true;
 		$this->assertSame('Chuck', $getUserNameFromDb(true));
 		$this->assertSame('Chuck', $getUserNameFromDb(false));
+
 		$model->updateAll(array('User.user' => "'Sylvester'"), array('User.id' => $model->id));
 		$model->cacheQueries = false;
 		$this->assertSame('Chuck', $getUserNameFromDb(true));
 		$this->assertSame('Sylvester', $getUserNameFromDb(false));
 	}
 
+/**
+ * Test that query() uses the cacheQueries property when there is one argument.
+ *
+ * @return void
+ */
 	public function testQueryTakesModelCacheQueriesValueAsDefaultForOneArgument() {
 		$model = new User();
 		$model->save(array('user' => 'Chuck'));
@@ -8592,11 +8614,17 @@ class ModelReadTest extends BaseModelTest {
 		$model->cacheQueries = true;
 		$this->assertSame('Chuck', $getUserNameFromDb());
 		$model->updateAll(array('User.user' => "'Sylvester'"), array('User.id' => $model->id));
+
 		$this->assertSame('Chuck', $getUserNameFromDb());
 		$model->cacheQueries = false;
 		$this->assertSame('Sylvester', $getUserNameFromDb());
 	}
 
+/**
+ * Test that query() uses the cacheQueries property when there are two arguments.
+ *
+ * @return void
+ */
 	public function testQueryTakesModelCacheQueriesValueAsDefaultForTwoArguments() {
 		$model = new User();
 		$model->save(array('user' => 'Chuck'));
@@ -8610,8 +8638,10 @@ class ModelReadTest extends BaseModelTest {
 
 		$model->cacheQueries = true;
 		$this->assertSame('Chuck', $getUserNameFromDb());
+
 		$model->updateAll(array('User.user' => "'Sylvester'"), array('User.id' => $model->id));
 		$this->assertSame('Chuck', $getUserNameFromDb());
+
 		$model->cacheQueries = false;
 		$this->assertSame('Sylvester', $getUserNameFromDb());
 	}
