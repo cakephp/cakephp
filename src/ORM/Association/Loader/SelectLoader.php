@@ -265,8 +265,11 @@ class SelectLoader
     {
         $links = [];
         $name = $this->alias;
+        $keys = $this->associationType === Association::ONE_TO_ONE ?
+            $this->foreignKey :
+            $this->bindingKey;
 
-        foreach ((array)$options['foreignKey'] as $key) {
+        foreach ((array)$keys as $key) {
             $links[] = sprintf('%s.%s', $name, $key);
         }
 
@@ -351,7 +354,10 @@ class SelectLoader
     protected function _buildResultMap($fetchQuery, $options)
     {
         $resultMap = [];
-        $key = (array)$options['foreignKey'];
+        $keys = $this->associationType === Association::ONE_TO_ONE ?
+            $this->foreignKey :
+            $this->bindingKey;
+        $key = (array)$keys;
 
         foreach ($fetchQuery->all() as $result) {
             $values = [];

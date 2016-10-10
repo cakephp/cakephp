@@ -128,6 +128,11 @@ class HasOne extends Association
         return $entity;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return callable
+     */
     public function eagerLoader(array $options) {
         $loader = new SelectLoader([
             'alias' => $this->alias(),
@@ -139,15 +144,14 @@ class HasOne extends Association
             'associationType' => $this->type(),
             'finder' => [$this, 'find']
         ]);
+
         return $loader->buildLoadingQuery($options);
     }
 
     /**
-     * Returns true if the eager loading process will require a set of the owning table's
-     * binding keys in order to use them as a filter in the finder query.
+     * {@inheritDoc}
      *
-     * @param array $options The options containing the strategy to be used.
-     * @return bool true if a list of keys will be required
+     * @return bool
      */
     public function requiresKeys(array $options = [])
     {

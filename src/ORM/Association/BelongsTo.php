@@ -17,6 +17,7 @@ namespace Cake\ORM\Association;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
+use Cake\ORM\Association\Loader\SelectLoader;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use RuntimeException;
@@ -29,8 +30,6 @@ use RuntimeException;
  */
 class BelongsTo extends Association
 {
-
-    use SelectableAssociationTrait;
 
     /**
      * Valid strategies for this type of association
@@ -182,6 +181,38 @@ class BelongsTo extends Association
         }
 
         return $conditions;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return callable
+     */
+    public function eagerLoader(array $options) {
+        $loader = new SelectLoader([
+            'alias' => $this->alias(),
+            'sourceAlias' => $this->source()->alias(),
+            'targetAlias' => $this->target()->alias(),
+            'foreignKey' => $this->foreignKey(),
+            'bindingKey' => $this->bindingKey(),
+            'strategy' => $this->strategy(),
+            'associationType' => $this->type(),
+            'finder' => [$this, 'find']
+        ]);
+
+        return $loader->buildLoadingQuery($options);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return bool
+     */
+    public function requiresKeys(array $options = [])
+    {
+        $strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
+
+        return $strategy === $this::STRATEGY_SELECT;
     }
 
     /**
