@@ -15,7 +15,7 @@
 namespace Cake\Http;
 
 use Cake\Core\Configure;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Network\Session;
 use Cake\Utility\Hash;
 use Zend\Diactoros\ServerRequestFactory as BaseFactory;
@@ -46,7 +46,7 @@ abstract class ServerRequestFactory extends BaseFactory
             'cookiePath' => $uri->webroot
         ];
         $session = Session::create($sessionConfig);
-        $request = new Request([
+        $request = new ServerRequest([
             'environment' => $server,
             'uri' => $uri,
             'files' => $files,
