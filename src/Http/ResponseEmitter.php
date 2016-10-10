@@ -194,8 +194,8 @@ class ResponseEmitter implements EmitterInterface
 
             list($name, $value) = explode('=', array_shift($parts), 2);
             $data = [
-                'name' => $name,
-                'value' => $value,
+                'name' => urldecode($name),
+                'value' => urldecode($value),
                 'expires' => 0,
                 'path' => '',
                 'domain' => '',
