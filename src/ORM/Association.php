@@ -751,6 +751,20 @@ abstract class Association
     }
 
     /**
+     * Returns true if the eager loading process will require a set of the owning table's
+     * binding keys in order to use them as a filter in the finder query.
+     *
+     * @param array $options The options containing the strategy to be used.
+     * @return bool true if a list of keys will be required
+     */
+    public function requiresKeys(array $options = [])
+    {
+        $strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
+
+        return $strategy === $this::STRATEGY_SELECT;
+    }
+
+    /**
      * Triggers beforeFind on the target table for the query this association is
      * attaching to
      *
@@ -1025,15 +1039,6 @@ abstract class Association
      * @return \Closure
      */
     abstract public function eagerLoader(array $options);
-
-    /**
-     * Returns true if the eager loading process will require a set of the owning table's
-     * binding keys in order to use them as a filter in the finder query.
-     *
-     * @param array $options The options containing the strategy to be used.
-     * @return bool true if a list of keys will be required
-     */
-    abstract function requiresKeys(array $options = []);
 
     /**
      * Handles cascading a delete from an associated model.

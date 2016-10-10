@@ -147,16 +147,4 @@ class HasOne extends Association
 
         return $loader->buildLoadingQuery($options);
     }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return bool
-     */
-    public function requiresKeys(array $options = [])
-    {
-        $strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
-
-        return $strategy === $this::STRATEGY_SELECT;
-    }
 }

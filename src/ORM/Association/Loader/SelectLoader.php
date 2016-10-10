@@ -19,6 +19,7 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\ValueBinder;
 use InvalidArgumentException;
 use Cake\ORM\Association;
+use RuntimeException;
 
 /**
  * Implements the logic for loading an association using a SELECT query
@@ -42,6 +43,8 @@ class SelectLoader
 
     protected $associationType;
 
+    protected $sort;
+
     public function __construct(array $options)
     {
         $this->alias = $options['alias'];
@@ -52,6 +55,7 @@ class SelectLoader
         $this->bindingKey = $options['bindingKey'];
         $this->finder = $options['finder'];
         $this->associationType = $options['associationType'];
+        $this->sort = isset($options['sort']) ? $options['sort'] : null;
     }
 
 
@@ -75,7 +79,8 @@ class SelectLoader
             'foreignKey' => $this->foreignKey,
             'conditions' => [],
             'strategy' => $this->strategy,
-            'nestKey' => $this->alias
+            'nestKey' => $this->alias,
+            'sort' => $this->sort
         ];
     }
 
@@ -265,7 +270,14 @@ class SelectLoader
     {
         $links = [];
         $name = $this->alias;
-        $keys = $this->associationType === Association::ONE_TO_ONE ?
+
+        if ($options['foreignKey'] === false && $this->associationType === Association::ONE_TO_MANY) {
+            $msg = 'Cannot have foreignKey = false for hasMany associations. ' .
+                   'You must provide a foreignKey column.';
+            throw new RuntimeException($msg);
+        }
+
+        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY]) ?
             $this->foreignKey :
             $this->bindingKey;
 
@@ -354,7 +366,8 @@ class SelectLoader
     protected function _buildResultMap($fetchQuery, $options)
     {
         $resultMap = [];
-        $keys = $this->associationType === Association::ONE_TO_ONE ?
+        $singleResult = in_array($this->associationType, [Association::MANY_TO_ONE, Association::ONE_TO_ONE]);
+        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY]) ?
             $this->foreignKey :
             $this->bindingKey;
         $key = (array)$keys;
@@ -364,7 +377,11 @@ class SelectLoader
             foreach ($key as $k) {
                 $values[] = $result[$k];
             }
-            $resultMap[implode(';', $values)] = $result;
+            if ($singleResult) {
+                $resultMap[implode(';', $values)] = $result;
+            } else {
+                $resultMap[implode(';', $values)][] = $result;
+            }
         }
 
         return $resultMap;
