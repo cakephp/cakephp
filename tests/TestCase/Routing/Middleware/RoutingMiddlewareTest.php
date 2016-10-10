@@ -165,6 +165,7 @@ class RoutingMiddlewareTest extends TestCase
                 '_matchedRoute' => '/articles-patch'
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
+            $this->assertEquals('PATCH', $req->getMethod());
         };
         $middleware = new RoutingMiddleware();
         $middleware($request, $response, $next);
