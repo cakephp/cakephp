@@ -686,6 +686,7 @@ class Response
      *
      * @param string $header Header key.
      * @param string $value Header value.
+     * @return void
      */
     protected function _setHeader($header, $value)
     {
@@ -771,6 +772,7 @@ class Response
             $reasonPhrase = $new->_statusCodes[$code];
         }
         $new->_reasonPhrase = $reasonPhrase;
+
         return $new;
     }
 
