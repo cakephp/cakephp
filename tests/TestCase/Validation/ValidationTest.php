@@ -21,6 +21,7 @@ use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
 use Cake\Validation\Validator;
+use Zend\Diactoros\UploadedFile;
 use Locale;
 
 require_once __DIR__ . '/stubs.php';
@@ -2362,7 +2363,7 @@ class ValidationTest extends TestCase
      */
     public function testMimeType()
     {
-        $image = CORE_TESTS . 'test_app/webroot/img/cake.power.gif';
+        $image = TEST_APP . 'webroot/img/cake.power.gif';
         $File = new File($image, false);
 
         $this->skipIf(!$File->mime(), 'Cannot determine mimeType');
@@ -2377,6 +2378,23 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * Test mimetype with a PSR7 object
+     *
+     * @return void
+     */
+    public function testMimeTypePsr7()
+    {
+        $image = TEST_APP . 'webroot/img/cake.power.gif';
+        $file = new UploadedFile($image, 1000, UPLOAD_ERR_OK, 'cake.power.gif', 'image/lies');
+        $this->assertTrue(Validation::mimeType($file, ['image/gif']));
+        $this->assertFalse(Validation::mimeType($file, ['image/png']));
+
+        $image = CORE_TESTS . 'test_app/webroot/img/cake.power.gif';
+        $file = new UploadedFile($image, 1000, UPLOAD_ERR_INI_SIZE, 'cake.power.gif', 'image/lies');
+        $this->assertFalse(Validation::mimeType($file, ['image/gif']), 'Fails on upload error');
+    }
+
+    /**
      * testMimeTypeFalse method
      *
      * @expectedException \RuntimeException
@@ -2384,7 +2402,7 @@ class ValidationTest extends TestCase
      */
     public function testMimeTypeFalse()
     {
-        $image = CORE_PATH . 'Cake/Test/TestApp/webroot/img/cake.power.gif';
+        $image = CORE_TESTS . 'invalid-file.png';
         $File = new File($image, false);
         $this->skipIf($File->mime(), 'mimeType can be determined, no Exception will be thrown');
         Validation::mimeType($image, ['image/gif']);
@@ -2413,6 +2431,22 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * testUploadError method with an UploadedFile
+     *
+     * @return void
+     */
+    public function testUploadErrorPsr7()
+    {
+        $image = TEST_APP . 'webroot/img/cake.power.gif';
+        $file = new UploadedFile($image, 1000, UPLOAD_ERR_OK, 'cake.power.gif', 'image/gif');
+        $this->assertTrue(Validation::uploadError($file));
+
+        $file = new UploadedFile($image, 1000, UPLOAD_ERR_NO_FILE, 'cake.power.gif', 'image/gif');
+        $this->assertFalse(Validation::uploadError($file));
+        $this->assertTrue(Validation::uploadError($file, true));
+    }
+
+    /**
      * testFileSize method
      *
      * @return void
@@ -2429,6 +2463,22 @@ class ValidationTest extends TestCase
 
         $this->assertFalse(Validation::fileSize($image, 'isgreater', 1024));
         $this->assertFalse(Validation::fileSize(['tmp_name' => $image], '>', '1KB'));
+    }
+
+    /**
+     * Test fileSize() with a PSR7 object.
+     *
+     * @return void
+     */
+    public function testFileSizePsr7()
+    {
+        $image = TEST_APP . 'webroot/img/cake.power.gif';
+        $file = new UploadedFile($image, 1000, UPLOAD_ERR_OK, 'cake.power.gif', 'image/gif');
+
+        $this->assertTrue(Validation::fileSize($file, '==', 201));
+        $this->assertTrue(Validation::fileSize($file, '<', 1024));
+        $this->assertFalse(Validation::fileSize($file, '>', 202));
+        $this->assertFalse(Validation::fileSize($file, '>', 1000));
     }
 
     /**
@@ -2550,6 +2600,35 @@ class ValidationTest extends TestCase
         ];
         $options = [];
         $this->assertTrue(Validation::uploadedFile($file, $options), 'Wrong order');
+    }
+
+    /**
+     * Test uploadedFile with a PSR7 object.
+     *
+     * @return void
+     */
+    public function testUploadedFilePsr7()
+    {
+        $image = TEST_APP . 'webroot/img/cake.power.gif';
+        $file = new UploadedFile($image, 1000, UPLOAD_ERR_OK, 'cake.power.gif', 'image/gif');
+
+        $options = ['minSize' => 500];
+        $this->assertFalse(Validation::uploadedFile($file, $options));
+
+        $options = ['minSize' => 190];
+        $this->assertTrue(Validation::uploadedFile($file, $options));
+
+        $options = ['maxSize' => 10];
+        $this->assertFalse(Validation::uploadedFile($file, $options));
+
+        $options = ['maxSize' => 1000];
+        $this->assertTrue(Validation::uploadedFile($file, $options));
+
+        $options = ['types' => ['image/gif', 'image/png']];
+        $this->assertTrue(Validation::uploadedFile($file, $options));
+
+        $options = ['types' => ['text/plain']];
+        $this->assertFalse(Validation::uploadedFile($file, $options));
     }
 
     /**
