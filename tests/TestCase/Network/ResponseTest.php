@@ -2120,9 +2120,9 @@ class ResponseTest extends TestCase
         $version = $response->getProtocolVersion();
         $this->assertEquals('1.1', $version);
 
-        $response2 = $response->withProtocolVersion('2.0');
+        $response2 = $response->withProtocolVersion('1.0');
         $version = $response2->getProtocolVersion();
-        $this->assertEquals('2.0', $version);
+        $this->assertEquals('1.0', $version);
 
         $version = $response->getProtocolVersion();
         $this->assertEquals('1.1', $version);
