@@ -2510,9 +2510,10 @@ class ValidationTest extends TestCase
     /**
      * Test uploaded file validation.
      *
+     * @dataProvider uploadedFileProvider
      * @return void
      */
-    public function testUploadedFileMimeType()
+    public function testUploadedFileArray($expected, $options)
     {
         $file = [
             'name' => 'cake.power.gif',
@@ -2521,40 +2522,7 @@ class ValidationTest extends TestCase
             'type' => 'text/plain',
             'size' => 201
         ];
-        $options = [
-            'types' => ['text/plain']
-        ];
-        $this->assertFalse(Validation::uploadedFile($file, $options), 'Incorrect mimetype.');
-
-        $options = [
-            'types' => ['image/gif', 'image/png']
-        ];
-        $this->assertTrue(Validation::uploadedFile($file, $options));
-    }
-
-    /**
-     * Test uploaded file validation.
-     *
-     * @return void
-     */
-    public function testUploadedFileSize()
-    {
-        $file = [
-            'name' => 'cake.power.gif',
-            'tmp_name' => TEST_APP . 'webroot/img/cake.power.gif',
-            'error' => UPLOAD_ERR_OK,
-            'type' => 'text/plain',
-            'size' => 201
-        ];
-        $options = [
-            'minSize' => 500
-        ];
-        $this->assertFalse(Validation::uploadedFile($file, $options), 'Too small');
-
-        $options = [
-            'maxSize' => 100
-        ];
-        $this->assertFalse(Validation::uploadedFile($file, $options), 'Too big');
+        $this->assertSame($expected, Validation::uploadedFile($file, $options));
     }
 
     /**
@@ -2603,32 +2571,35 @@ class ValidationTest extends TestCase
     }
 
     /**
-     * Test uploadedFile with a PSR7 object.
+     * Provider for uploaded file tests.
      *
      * @return void
      */
-    public function testUploadedFilePsr7()
+    public function uploadedFileProvider()
+    {
+        return [
+            'minSize fail' => [false, ['minSize' => 500]],
+            'minSize pass' => [true, ['minSize' => 190]],
+            'maxSize fail' => [false, ['maxSize' => 100]],
+            'maxSize pass' => [true, ['maxSize' => 202]],
+            'types fail' => [false, ['types' => ['text/plain']]],
+            'types fail - string' => [false, ['types' => '/^text.*$/']],
+            'types pass - string' => [true, ['types' => '/^image.*$/']],
+            'types pass' => [true, ['types' => ['image/gif', 'image/png']]],
+        ];
+    }
+
+    /**
+     * Test uploadedFile with a PSR7 object.
+     *
+     * @dataProvider uploadedFileProvider
+     * @return void
+     */
+    public function testUploadedFilePsr7($expected, $options)
     {
         $image = TEST_APP . 'webroot/img/cake.power.gif';
         $file = new UploadedFile($image, 1000, UPLOAD_ERR_OK, 'cake.power.gif', 'image/gif');
-
-        $options = ['minSize' => 500];
-        $this->assertFalse(Validation::uploadedFile($file, $options));
-
-        $options = ['minSize' => 190];
-        $this->assertTrue(Validation::uploadedFile($file, $options));
-
-        $options = ['maxSize' => 10];
-        $this->assertFalse(Validation::uploadedFile($file, $options));
-
-        $options = ['maxSize' => 1000];
-        $this->assertTrue(Validation::uploadedFile($file, $options));
-
-        $options = ['types' => ['image/gif', 'image/png']];
-        $this->assertTrue(Validation::uploadedFile($file, $options));
-
-        $options = ['types' => ['text/plain']];
-        $this->assertFalse(Validation::uploadedFile($file, $options));
+        $this->assertSame($expected, Validation::uploadedFile($file, $options));
     }
 
     /**
