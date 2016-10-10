@@ -21,6 +21,7 @@ use Cake\Network\Exception\NotFoundException;
 use DateTime;
 use DateTimeZone;
 use InvalidArgumentException;
+use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\MessageTrait;
 
 /**
@@ -29,7 +30,7 @@ use Zend\Diactoros\MessageTrait;
  * By default controllers will use this class to render their response. If you are going to use
  * a custom response class it should subclass this object in order to ensure compatibility.
  */
-class Response
+class Response implements ResponseInterface
 {
 
     use MessageTrait;
