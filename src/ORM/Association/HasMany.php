@@ -588,7 +588,8 @@ class HasMany extends Association
      *
      * @return callable
      */
-    public function eagerLoader(array $options) {
+    public function eagerLoader(array $options)
+    {
         $loader = new SelectLoader([
             'alias' => $this->alias(),
             'sourceAlias' => $this->source()->alias(),

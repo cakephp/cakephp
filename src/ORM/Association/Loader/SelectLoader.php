@@ -17,8 +17,8 @@ namespace Cake\ORM\Association\Loader;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\ValueBinder;
-use InvalidArgumentException;
 use Cake\ORM\Association;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -94,6 +94,7 @@ class SelectLoader
      * Copies the options array to properties in this class. The keys in the array correspond
      * to properties in this class.
      *
+     * @param array $options Properties to be copied to this class
      */
     public function __construct(array $options)
     {
@@ -245,7 +246,7 @@ class SelectLoader
      * @param \Cake\ORM\Query $subquery The Subquery to use for filtering
      * @return \Cake\ORM\Query
      */
-    public function _addFilteringJoin($query, $key, $subquery)
+    protected function _addFilteringJoin($query, $key, $subquery)
     {
         $filter = [];
         $aliasedTable = $this->sourceAlias;

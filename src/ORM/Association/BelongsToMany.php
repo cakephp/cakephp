@@ -506,7 +506,8 @@ class BelongsToMany extends Association
      *
      * @return callable
      */
-    public function eagerLoader(array $options) {
+    public function eagerLoader(array $options)
+    {
         $name = $this->_junctionAssociationName();
         $loader = new SelectWithPivotLoader([
             'alias' => $this->alias(),
@@ -519,11 +520,10 @@ class BelongsToMany extends Association
             'sort' => $this->sort(),
             'junctionAssociationName' => $name,
             'junctionProperty' => $this->_junctionProperty,
-            'junctionAssoc' =>  $this->target()->association($name),
+            'junctionAssoc' => $this->target()->association($name),
             'junctionConditions' => $this->junctionConditions(),
             'finder' => function () {
-                $query = $this->find();
-                return $this->_appendJunctionJoin($query, []);
+                return $this->_appendJunctionJoin($this->find(), []);
             }
         ]);
 
