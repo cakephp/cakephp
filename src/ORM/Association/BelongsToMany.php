@@ -37,7 +37,6 @@ class BelongsToMany extends Association
 {
 
     use ExternalAssociationTrait {
-        _options as _externalOptions;
         _buildQuery as _buildBaseQuery;
     }
 
@@ -1365,7 +1364,6 @@ class BelongsToMany extends Association
      */
     protected function _options(array $opts)
     {
-        $this->_externalOptions($opts);
         if (!empty($opts['targetForeignKey'])) {
             $this->targetForeignKey($opts['targetForeignKey']);
         }
@@ -1377,6 +1375,9 @@ class BelongsToMany extends Association
         }
         if (!empty($opts['saveStrategy'])) {
             $this->saveStrategy($opts['saveStrategy']);
+        }
+        if (isset($opts['sort'])) {
+            $this->sort($opts['sort']);
         }
     }
 }

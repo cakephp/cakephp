@@ -35,9 +35,7 @@ class HasMany extends Association
 {
 
     use DependentDeleteTrait;
-    use ExternalAssociationTrait {
-        _options as _externalOptions;
-    }
+    use ExternalAssociationTrait;
 
     /**
      * The type of join to be used when adding the association to a query
@@ -534,9 +532,11 @@ class HasMany extends Association
      */
     protected function _options(array $opts)
     {
-        $this->_externalOptions($opts);
         if (!empty($opts['saveStrategy'])) {
             $this->saveStrategy($opts['saveStrategy']);
+        }
+        if (isset($opts['sort'])) {
+            $this->sort($opts['sort']);
         }
     }
 }

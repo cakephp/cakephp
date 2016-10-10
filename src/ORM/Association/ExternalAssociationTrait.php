@@ -123,17 +123,4 @@ trait ExternalAssociationTrait
 
         return $resultMap;
     }
-
-    /**
-     * Parse extra options passed in the constructor.
-     *
-     * @param array $opts original list of options passed in constructor
-     * @return void
-     */
-    protected function _options(array $opts)
-    {
-        if (isset($opts['sort'])) {
-            $this->sort($opts['sort']);
-        }
-    }
 }
