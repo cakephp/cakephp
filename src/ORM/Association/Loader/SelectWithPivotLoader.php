@@ -23,12 +23,32 @@ use RuntimeException;
 class SelectWithPivotLoader extends SelectLoader
 {
 
+    /**
+     * The name of the junction association
+     *
+     * @var string
+     */
     protected $junctionAssociationName;
 
+    /**
+     * The property name for the junction association, where its results should be nested at.
+     *
+     * @var string
+     */
     protected $junctionProperty;
 
+    /**
+     * The junction association instance
+     *
+     * @var \Cake\ORM\Association\HasMany
+     */
     protected $junctionAssoc;
 
+    /**
+     * Custom conditions for the junction association
+     *
+     * @var mixed
+     */
     protected $junctionConditions;
 
     /**

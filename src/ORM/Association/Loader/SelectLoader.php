@@ -27,24 +27,74 @@ use RuntimeException;
 class SelectLoader
 {
 
+    /**
+     * The alias of the association loading the results
+     *
+     * @var string
+     */
     protected $alias;
 
+    /**
+     * The alias of the source association
+     *
+     * @var string
+     */
     protected $sourceAlias;
 
+    /**
+     * The alias of the target association
+     *
+     * @var string
+     */
     protected $targetAlias;
 
+    /**
+     * The foreignKey to the target association
+     *
+     * @var string|array
+     */
     protected $foreignKey;
 
+    /**
+     * The strategy to use for loading, either select or subquery
+     *
+     * @var string
+     */
     protected $strategy = 'select';
 
+    /**
+     * The binding key for the source association.
+     *
+     * @var string
+     */
     protected $bindingKey;
 
+    /**
+     * A callable that will return a query object used for loading the association results
+     *
+     * @var callable
+     */
     protected $finder;
 
+    /**
+     * The type of the association triggering the load
+     *
+     * @var string
+     */
     protected $associationType;
 
+    /**
+     * The sorting options for loading the association
+     *
+     * @var string
+     */
     protected $sort;
 
+    /**
+     * Copies the options array to properties in this class. The keys in the array correspond
+     * to properties in this class.
+     *
+     */
     public function __construct(array $options)
     {
         $this->alias = $options['alias'];
@@ -59,6 +109,13 @@ class SelectLoader
     }
 
 
+    /**
+     * Returns a callable that can be used for injecting association results into a given
+     * iterator. The options accepted by this method are the same as `Association::eagerLoader()`
+     *
+     * @param array $options Same options as `Association::eagerLoader()`
+     * @return callable
+     */
     public function buildLoadingQuery(array $options)
     {
         $options += $this->_defaultOptions();
