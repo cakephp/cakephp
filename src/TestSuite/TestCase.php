@@ -670,7 +670,6 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         }
 
         TableRegistry::set($baseClass, $mock);
-        TableRegistry::set($alias, $mock);
 
         return $mock;
     }
