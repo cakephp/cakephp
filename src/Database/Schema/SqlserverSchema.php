@@ -186,7 +186,7 @@ class SqlserverSchema extends BaseSchema
         }
 
         // Remove quotes
-        if (preg_match("/^'(.*)'$/", $default, $matches)) {
+        if (preg_match("/^N?'(.*)'/", $default, $matches)) {
             return str_replace("''", "'", $matches[1]);
         }
 

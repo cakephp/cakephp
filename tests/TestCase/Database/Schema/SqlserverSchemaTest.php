@@ -63,8 +63,8 @@ SQL;
         $table = <<<SQL
 CREATE TABLE schema_articles (
 id BIGINT PRIMARY KEY,
-title VARCHAR(20) COLLATE Japanese_Unicode_CI_AI,
-body VARCHAR(1000),
+title NVARCHAR(20) COLLATE Japanese_Unicode_CI_AI DEFAULT N'無題' COLLATE Japanese_Unicode_CI_AI,
+body NVARCHAR(1000) DEFAULT N'本文なし',
 author_id INTEGER NOT NULL,
 published BIT DEFAULT 0,
 views SMALLINT DEFAULT 0,
@@ -302,8 +302,8 @@ SQL;
             'title' => [
                 'type' => 'string',
                 'null' => true,
-                'default' => null,
-                'length' => 20,
+                'default' => '無題',
+                'length' => 40,
                 'precision' => null,
                 'comment' => null,
                 'fixed' => null,
@@ -312,8 +312,8 @@ SQL;
             'body' => [
                 'type' => 'string',
                 'null' => true,
-                'default' => null,
-                'length' => 1000,
+                'default' => '本文なし',
+                'length' => 2000,
                 'precision' => null,
                 'fixed' => null,
                 'comment' => null,
