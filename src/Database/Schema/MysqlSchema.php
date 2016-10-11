@@ -148,7 +148,7 @@ class MysqlSchema extends BaseSchema
             return ['type' => 'json', 'length' => null];
         }
 
-        return ['type' => 'text', 'length' => null];
+        return ['type' => 'string', 'length' => null];
     }
 
     /**
