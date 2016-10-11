@@ -957,17 +957,9 @@ class Validation
      */
     public static function mimeType($check, $mimeTypes = [])
     {
-        if ($check instanceof UploadedFileInterface) {
-            try {
-                // Uploaded files throw exceptions on upload errors.
-                $file = $check->getStream()->getMetadata('uri');
-            } catch (RuntimeException $e) {
-                return false;
-            }
-        } elseif (is_array($check) && isset($check['tmp_name'])) {
-            $file = $check['tmp_name'];
-        } else {
-            $file = $check;
+        $file = static::getFilename($check);
+        if ($file === false) {
+            return false;
         }
 
         if (!function_exists('finfo_open')) {
@@ -999,6 +991,29 @@ class Validation
     }
 
     /**
+     * Helper for reading the file out of the various file implementations
+     * we accept.
+     *
+     * @param string|array|\Psr\Http\Message\UploadedFileInterface $check The data to read a filename out of.
+     * @return string|bool Either the filename or false on failure.
+     */
+    protected static function getFilename($check)
+    {
+        if ($check instanceof UploadedFileInterface) {
+            try {
+                // Uploaded files throw exceptions on upload errors.
+                return $check->getStream()->getMetadata('uri');
+            } catch (RuntimeException $e) {
+                return false;
+            }
+        }
+        if (is_array($check) && isset($check['tmp_name'])) {
+            return $check['tmp_name'];
+        }
+        return $check;
+    }
+
+    /**
      * Checks the filesize
      *
      * Will check the filesize of files/UploadedFileInterface instances
@@ -1012,12 +1027,9 @@ class Validation
      */
     public static function fileSize($check, $operator = null, $size = null)
     {
-        if ($check instanceof UploadedFileInterface) {
-            $file = $check->getStream()->getMetadata('uri');
-        } elseif (is_array($check) && isset($check['tmp_name'])) {
-            $file = $check['tmp_name'];
-        } else {
-            $file = $check;
+        $file = static::getFilename($check);
+        if ($file === false) {
+            return false;
         }
 
         if (is_string($size)) {

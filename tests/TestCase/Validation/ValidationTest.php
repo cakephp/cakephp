@@ -21,8 +21,8 @@ use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
 use Cake\Validation\Validator;
-use Zend\Diactoros\UploadedFile;
 use Locale;
+use Zend\Diactoros\UploadedFile;
 
 require_once __DIR__ . '/stubs.php';
 
