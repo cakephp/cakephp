@@ -1010,6 +1010,7 @@ class Validation
         if (is_array($check) && isset($check['tmp_name'])) {
             return $check['tmp_name'];
         }
+
         return $check;
     }
 
