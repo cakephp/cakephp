@@ -946,7 +946,7 @@ class PaginatorHelper extends AppHelper {
 		unset($options['tag'], $options['before'], $options['model'], $options['separator'], $options['ellipsis'], $options['class']);
 
 		$out = '';
-		$lower = $params['pageCount'] - $last + 1;
+		$lower = $params['pageCount'] - (int)$last + 1;
 
 		if ((is_int($last) || ctype_digit($last)) && $params['page'] <= $lower) {
 			if ($before === null) {
