@@ -19,6 +19,8 @@ use RuntimeException;
 
 /**
  * Implements the logic for loading an association using a SELECT query and a pivot table
+ *
+ * @internal
  */
 class SelectWithPivotLoader extends SelectLoader
 {

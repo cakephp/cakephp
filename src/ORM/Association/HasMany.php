@@ -602,6 +602,6 @@ class HasMany extends Association
             'finder' => [$this, 'find']
         ]);
 
-        return $loader->buildLoadingQuery($options);
+        return $loader->buildEagerLoader($options);
     }
 }

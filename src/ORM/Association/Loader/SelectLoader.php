@@ -23,6 +23,8 @@ use RuntimeException;
 
 /**
  * Implements the logic for loading an association using a SELECT query
+ *
+ * @internal
  */
 class SelectLoader
 {
@@ -60,7 +62,7 @@ class SelectLoader
      *
      * @var string
      */
-    protected $strategy = 'select';
+    protected $strategy;
 
     /**
      * The binding key for the source association.
@@ -117,7 +119,7 @@ class SelectLoader
      * @param array $options Same options as `Association::eagerLoader()`
      * @return callable
      */
-    public function buildLoadingQuery(array $options)
+    public function buildEagerLoader(array $options)
     {
         $options += $this->_defaultOptions();
         $fetchQuery = $this->_buildQuery($options);

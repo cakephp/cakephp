@@ -527,7 +527,7 @@ class BelongsToMany extends Association
             }
         ]);
 
-        return $loader->buildLoadingQuery($options);
+        return $loader->buildEagerLoader($options);
     }
 
     /**

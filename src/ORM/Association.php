@@ -761,7 +761,7 @@ abstract class Association
     {
         $strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
 
-        return $strategy === $this::STRATEGY_SELECT;
+        return $strategy === static::STRATEGY_SELECT;
     }
 
     /**
