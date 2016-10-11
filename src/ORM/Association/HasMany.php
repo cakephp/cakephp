@@ -20,9 +20,9 @@ use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
+use Cake\ORM\Association\Loader\SelectLoader;
 use Cake\ORM\Table;
 use InvalidArgumentException;
-use RuntimeException;
 use Traversable;
 
 /**
@@ -35,9 +35,13 @@ class HasMany extends Association
 {
 
     use DependentDeleteTrait;
-    use ExternalAssociationTrait {
-        _options as _externalOptions;
-    }
+
+    /**
+     * Order in which target records should be returned
+     *
+     * @var mixed
+     */
+    protected $_sort;
 
     /**
      * The type of join to be used when adding the association to a query
@@ -493,30 +497,6 @@ class HasMany extends Association
     }
 
     /**
-     * {@inheritDoc}
-     */
-    protected function _linkField($options)
-    {
-        $links = [];
-        $name = $this->alias();
-        if ($options['foreignKey'] === false) {
-            $msg = 'Cannot have foreignKey = false for hasMany associations. ' .
-                   'You must provide a foreignKey column.';
-            throw new RuntimeException($msg);
-        }
-
-        foreach ((array)$options['foreignKey'] as $key) {
-            $links[] = sprintf('%s.%s', $name, $key);
-        }
-
-        if (count($links) === 1) {
-            return $links[0];
-        }
-
-        return $links;
-    }
-
-    /**
      * Get the relationship type.
      *
      * @return string
@@ -527,6 +507,67 @@ class HasMany extends Association
     }
 
     /**
+     * Whether this association can be expressed directly in a query join
+     *
+     * @param array $options custom options key that could alter the return value
+     * @return bool if the 'matching' key in $option is true then this function
+     * will return true, false otherwise
+     */
+    public function canBeJoined(array $options = [])
+    {
+        return !empty($options['matching']);
+    }
+
+    /**
+     * Sets the name of the field representing the foreign key to the source table.
+     * If no parameters are passed current field is returned
+     *
+     * @param string|null $key the key to be used to link both tables together
+     * @return string
+     */
+    public function foreignKey($key = null)
+    {
+        if ($key === null) {
+            if ($this->_foreignKey === null) {
+                $this->_foreignKey = $this->_modelKey($this->source()->table());
+            }
+
+            return $this->_foreignKey;
+        }
+
+        return parent::foreignKey($key);
+    }
+
+    /**
+     * Sets the sort order in which target records should be returned.
+     * If no arguments are passed the currently configured value is returned
+     *
+     * @param mixed $sort A find() compatible order clause
+     * @return mixed
+     */
+    public function sort($sort = null)
+    {
+        if ($sort !== null) {
+            $this->_sort = $sort;
+        }
+
+        return $this->_sort;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function defaultRowValue($row, $joined)
+    {
+        $sourceAlias = $this->source()->alias();
+        if (isset($row[$sourceAlias])) {
+            $row[$sourceAlias][$this->property()] = $joined ? null : [];
+        }
+
+        return $row;
+    }
+
+    /**
      * Parse extra options passed in the constructor.
      *
      * @param array $opts original list of options passed in constructor
@@ -534,9 +575,33 @@ class HasMany extends Association
      */
     protected function _options(array $opts)
     {
-        $this->_externalOptions($opts);
         if (!empty($opts['saveStrategy'])) {
             $this->saveStrategy($opts['saveStrategy']);
         }
+        if (isset($opts['sort'])) {
+            $this->sort($opts['sort']);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return callable
+     */
+    public function eagerLoader(array $options)
+    {
+        $loader = new SelectLoader([
+            'alias' => $this->alias(),
+            'sourceAlias' => $this->source()->alias(),
+            'targetAlias' => $this->target()->alias(),
+            'foreignKey' => $this->foreignKey(),
+            'bindingKey' => $this->bindingKey(),
+            'strategy' => $this->strategy(),
+            'associationType' => $this->type(),
+            'sort' => $this->sort(),
+            'finder' => [$this, 'find']
+        ]);
+
+        return $loader->buildEagerLoader($options);
     }
 }

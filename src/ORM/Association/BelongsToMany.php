@@ -19,11 +19,11 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
+use Cake\ORM\Association\Loader\SelectWithPivotLoader;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
-use RuntimeException;
 use SplObjectStorage;
 use Traversable;
 
@@ -35,11 +35,6 @@ use Traversable;
  */
 class BelongsToMany extends Association
 {
-
-    use ExternalAssociationTrait {
-        _options as _externalOptions;
-        _buildQuery as _buildBaseQuery;
-    }
 
     /**
      * Saving strategy that will only append to the links set
@@ -152,6 +147,13 @@ class BelongsToMany extends Association
     protected $_junctionConditions;
 
     /**
+     * Order in which target records should be returned
+     *
+     * @var mixed
+     */
+    protected $_sort;
+
+    /**
      * Sets the name of the field representing the foreign key to the target table.
      * If no parameters are passed current field is returned
      *
@@ -169,6 +171,67 @@ class BelongsToMany extends Association
         }
 
         return $this->_targetForeignKey = $key;
+    }
+
+    /**
+     * Whether this association can be expressed directly in a query join
+     *
+     * @param array $options custom options key that could alter the return value
+     * @return bool if the 'matching' key in $option is true then this function
+     * will return true, false otherwise
+     */
+    public function canBeJoined(array $options = [])
+    {
+        return !empty($options['matching']);
+    }
+
+    /**
+     * Sets the name of the field representing the foreign key to the source table.
+     * If no parameters are passed current field is returned
+     *
+     * @param string|null $key the key to be used to link both tables together
+     * @return string
+     */
+    public function foreignKey($key = null)
+    {
+        if ($key === null) {
+            if ($this->_foreignKey === null) {
+                $this->_foreignKey = $this->_modelKey($this->source()->table());
+            }
+
+            return $this->_foreignKey;
+        }
+
+        return parent::foreignKey($key);
+    }
+
+    /**
+     * Sets the sort order in which target records should be returned.
+     * If no arguments are passed the currently configured value is returned
+     *
+     * @param mixed $sort A find() compatible order clause
+     * @return mixed
+     */
+    public function sort($sort = null)
+    {
+        if ($sort !== null) {
+            $this->_sort = $sort;
+        }
+
+        return $this->_sort;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function defaultRowValue($row, $joined)
+    {
+        $sourceAlias = $this->source()->alias();
+        if (isset($row[$sourceAlias])) {
+            $row[$sourceAlias][$this->property()] = $joined ? null : [];
+        }
+
+        return $row;
     }
 
     /**
@@ -439,36 +502,32 @@ class BelongsToMany extends Association
     }
 
     /**
-     * Builds an array containing the results from fetchQuery indexed by
-     * the foreignKey value corresponding to this association.
+     * {@inheritDoc}
      *
-     * @param \Cake\ORM\Query $fetchQuery The query to get results from
-     * @param array $options The options passed to the eager loader
-     * @return array
-     * @throws \RuntimeException when the association property is not part of the results set.
+     * @return callable
      */
-    protected function _buildResultMap($fetchQuery, $options)
+    public function eagerLoader(array $options)
     {
-        $resultMap = [];
-        $key = (array)$options['foreignKey'];
-        $hydrated = $fetchQuery->hydrate();
-
-        foreach ($fetchQuery->all() as $result) {
-            if (!isset($result[$this->_junctionProperty])) {
-                throw new RuntimeException(sprintf(
-                    '"%s" is missing from the belongsToMany results. Results cannot be created.',
-                    $this->_junctionProperty
-                ));
+        $name = $this->_junctionAssociationName();
+        $loader = new SelectWithPivotLoader([
+            'alias' => $this->alias(),
+            'sourceAlias' => $this->source()->alias(),
+            'targetAlias' => $this->target()->alias(),
+            'foreignKey' => $this->foreignKey(),
+            'bindingKey' => $this->bindingKey(),
+            'strategy' => $this->strategy(),
+            'associationType' => $this->type(),
+            'sort' => $this->sort(),
+            'junctionAssociationName' => $name,
+            'junctionProperty' => $this->_junctionProperty,
+            'junctionAssoc' => $this->target()->association($name),
+            'junctionConditions' => $this->junctionConditions(),
+            'finder' => function () {
+                return $this->_appendJunctionJoin($this->find(), []);
             }
+        ]);
 
-            $values = [];
-            foreach ($key as $k) {
-                $values[] = $result[$this->_junctionProperty][$k];
-            }
-            $resultMap[implode(';', $values)][] = $result;
-        }
-
-        return $resultMap;
+        return $loader->buildEagerLoader($options);
     }
 
     /**
@@ -932,7 +991,8 @@ class BelongsToMany extends Association
         list($type, $opts) = $this->_extractFinder($type);
         $query = $this->target()
             ->find($type, $options + $opts)
-            ->where($this->targetConditions());
+            ->where($this->targetConditions())
+            ->addDefaultTypes($this->target());
 
         if (!$this->junctionConditions()) {
             return $query;
@@ -1229,91 +1289,6 @@ class BelongsToMany extends Association
     }
 
     /**
-     * Auxiliary function to construct a new Query object to return all the records
-     * in the target table that are associated to those specified in $options from
-     * the source table.
-     *
-     * This is used for eager loading records on the target table based on conditions.
-     *
-     * @param array $options options accepted by eagerLoader()
-     * @return \Cake\ORM\Query
-     * @throws \InvalidArgumentException When a key is required for associations but not selected.
-     */
-    protected function _buildQuery($options)
-    {
-        $name = $this->_junctionAssociationName();
-        $assoc = $this->target()->association($name);
-        $queryBuilder = false;
-
-        if (!empty($options['queryBuilder'])) {
-            $queryBuilder = $options['queryBuilder'];
-            unset($options['queryBuilder']);
-        }
-
-        $query = $this->_buildBaseQuery($options);
-        $query->addDefaultTypes($assoc->target());
-
-        if ($queryBuilder) {
-            $query = $queryBuilder($query);
-        }
-
-        $query = $this->_appendJunctionJoin($query, []);
-
-        if ($query->autoFields() === null) {
-            $query->autoFields($query->clause('select') === []);
-        }
-
-        // Ensure that association conditions are applied
-        // and that the required keys are in the selected columns.
-
-        $tempName = $this->_name . '_CJoin';
-        $schema = $assoc->schema();
-        $joinFields = $types = [];
-
-        foreach ($schema->typeMap() as $f => $type) {
-            $key = $tempName . '__' . $f;
-            $joinFields[$key] = "$name.$f";
-            $types[$key] = $type;
-        }
-
-        $query
-            ->where($this->junctionConditions())
-            ->select($joinFields)
-            ->defaultTypes($types)
-            ->addDefaultTypes($this->target());
-
-        $query
-            ->eagerLoader()
-            ->addToJoinsMap($tempName, $assoc, false, $this->_junctionProperty);
-        $assoc->attachTo($query, ['aliasPath' => $assoc->alias(), 'includeFields' => false]);
-
-        return $query;
-    }
-
-    /**
-     * Generates a string used as a table field that contains the values upon
-     * which the filter should be applied
-     *
-     * @param array $options the options to use for getting the link field.
-     * @return string
-     */
-    protected function _linkField($options)
-    {
-        $links = [];
-        $name = $this->_junctionAssociationName();
-
-        foreach ((array)$options['foreignKey'] as $key) {
-            $links[] = sprintf('%s.%s', $name, $key);
-        }
-
-        if (count($links) === 1) {
-            return $links[0];
-        }
-
-        return $links;
-    }
-
-    /**
      * Returns the name of the association from the target table to the junction table,
      * this name is used to generate alias in the query and to later on retrieve the
      * results.
@@ -1365,7 +1340,6 @@ class BelongsToMany extends Association
      */
     protected function _options(array $opts)
     {
-        $this->_externalOptions($opts);
         if (!empty($opts['targetForeignKey'])) {
             $this->targetForeignKey($opts['targetForeignKey']);
         }
@@ -1377,6 +1351,9 @@ class BelongsToMany extends Association
         }
         if (!empty($opts['saveStrategy'])) {
             $this->saveStrategy($opts['saveStrategy']);
+        }
+        if (isset($opts['sort'])) {
+            $this->sort($opts['sort']);
         }
     }
 }

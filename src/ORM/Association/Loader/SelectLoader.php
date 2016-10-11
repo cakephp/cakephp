@@ -9,40 +9,117 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.4.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\ORM\Association;
+namespace Cake\ORM\Association\Loader;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\ValueBinder;
+use Cake\ORM\Association;
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
- * Represents a type of association that that can be fetched using another query
+ * Implements the logic for loading an association using a SELECT query
+ *
+ * @internal
  */
-trait SelectableAssociationTrait
+class SelectLoader
 {
 
     /**
-     * Returns true if the eager loading process will require a set of the owning table's
-     * binding keys in order to use them as a filter in the finder query.
+     * The alias of the association loading the results
      *
-     * @param array $options The options containing the strategy to be used.
-     * @return bool true if a list of keys will be required
+     * @var string
      */
-    public function requiresKeys(array $options = [])
-    {
-        $strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
-
-        return $strategy === $this::STRATEGY_SELECT;
-    }
+    protected $alias;
 
     /**
-     * {@inheritDoc}
+     * The alias of the source association
+     *
+     * @var string
      */
-    public function eagerLoader(array $options)
+    protected $sourceAlias;
+
+    /**
+     * The alias of the target association
+     *
+     * @var string
+     */
+    protected $targetAlias;
+
+    /**
+     * The foreignKey to the target association
+     *
+     * @var string|array
+     */
+    protected $foreignKey;
+
+    /**
+     * The strategy to use for loading, either select or subquery
+     *
+     * @var string
+     */
+    protected $strategy;
+
+    /**
+     * The binding key for the source association.
+     *
+     * @var string
+     */
+    protected $bindingKey;
+
+    /**
+     * A callable that will return a query object used for loading the association results
+     *
+     * @var callable
+     */
+    protected $finder;
+
+    /**
+     * The type of the association triggering the load
+     *
+     * @var string
+     */
+    protected $associationType;
+
+    /**
+     * The sorting options for loading the association
+     *
+     * @var string
+     */
+    protected $sort;
+
+    /**
+     * Copies the options array to properties in this class. The keys in the array correspond
+     * to properties in this class.
+     *
+     * @param array $options Properties to be copied to this class
+     */
+    public function __construct(array $options)
+    {
+        $this->alias = $options['alias'];
+        $this->sourceAlias = $options['sourceAlias'];
+        $this->targetAlias = $options['targetAlias'];
+        $this->foreignKey = $options['foreignKey'];
+        $this->strategy = $options['strategy'];
+        $this->bindingKey = $options['bindingKey'];
+        $this->finder = $options['finder'];
+        $this->associationType = $options['associationType'];
+        $this->sort = isset($options['sort']) ? $options['sort'] : null;
+    }
+
+
+    /**
+     * Returns a callable that can be used for injecting association results into a given
+     * iterator. The options accepted by this method are the same as `Association::eagerLoader()`
+     *
+     * @param array $options Same options as `Association::eagerLoader()`
+     * @return callable
+     */
+    public function buildEagerLoader(array $options)
     {
         $options += $this->_defaultOptions();
         $fetchQuery = $this->_buildQuery($options);
@@ -59,10 +136,11 @@ trait SelectableAssociationTrait
     protected function _defaultOptions()
     {
         return [
-            'foreignKey' => $this->foreignKey(),
+            'foreignKey' => $this->foreignKey,
             'conditions' => [],
-            'strategy' => $this->strategy(),
-            'nestKey' => $this->_name
+            'strategy' => $this->strategy,
+            'nestKey' => $this->alias,
+            'sort' => $this->sort
         ];
     }
 
@@ -77,20 +155,17 @@ trait SelectableAssociationTrait
      */
     protected function _buildQuery($options)
     {
-        $target = $this->target();
-        $alias = $target->alias();
+        $alias = $this->targetAlias;
         $key = $this->_linkField($options);
         $filter = $options['keys'];
-        $useSubquery = $options['strategy'] === $this::STRATEGY_SUBQUERY;
+        $useSubquery = $options['strategy'] === Association::STRATEGY_SUBQUERY;
+        $finder = $this->finder;
 
-        $finder = isset($options['finder']) ? $options['finder'] : $this->finder();
-        list($finder, $opts) = $this->_extractFinder($finder);
         if (!isset($options['fields'])) {
             $options['fields'] = [];
         }
 
-        $fetchQuery = $this
-            ->find($finder, $opts)
+        $fetchQuery = $finder()
             ->select($options['fields'])
             ->where($options['conditions'])
             ->eagerLoaded(true)
@@ -173,10 +248,10 @@ trait SelectableAssociationTrait
      * @param \Cake\ORM\Query $subquery The Subquery to use for filtering
      * @return \Cake\ORM\Query
      */
-    public function _addFilteringJoin($query, $key, $subquery)
+    protected function _addFilteringJoin($query, $key, $subquery)
     {
         $filter = [];
-        $aliasedTable = $this->source()->alias();
+        $aliasedTable = $this->sourceAlias;
 
         foreach ($subquery->clause('select') as $aliasedField => $field) {
             if (is_int($aliasedField)) {
@@ -251,7 +326,31 @@ trait SelectableAssociationTrait
      * @param array $options The options for getting the link field.
      * @return string|array
      */
-    protected abstract function _linkField($options);
+    protected function _linkField($options)
+    {
+        $links = [];
+        $name = $this->alias;
+
+        if ($options['foreignKey'] === false && $this->associationType === Association::ONE_TO_MANY) {
+            $msg = 'Cannot have foreignKey = false for hasMany associations. ' .
+                   'You must provide a foreignKey column.';
+            throw new RuntimeException($msg);
+        }
+
+        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY]) ?
+            $this->foreignKey :
+            $this->bindingKey;
+
+        foreach ((array)$keys as $key) {
+            $links[] = sprintf('%s.%s', $name, $key);
+        }
+
+        if (count($links) === 1) {
+            return $links[0];
+        }
+
+        return $links;
+    }
 
     /**
      * Builds a query to be used as a condition for filtering records in the
@@ -294,11 +393,13 @@ trait SelectableAssociationTrait
      */
     protected function _subqueryFields($query)
     {
-        $keys = (array)$this->bindingKey();
-        if ($this->type() === $this::MANY_TO_ONE) {
-            $keys = (array)$this->foreignKey();
+        $keys = (array)$this->bindingKey;
+
+        if ($this->associationType === Association::MANY_TO_ONE) {
+            $keys = (array)$this->foreignKey;
         }
-        $fields = $query->aliasFields($keys, $this->source()->alias());
+
+        $fields = $query->aliasFields($keys, $this->sourceAlias);
         $group = $fields = array_values($fields);
 
         $order = $query->clause('order');
@@ -322,7 +423,29 @@ trait SelectableAssociationTrait
      * @param array $options The options passed to the eager loader
      * @return array
      */
-    protected abstract function _buildResultMap($fetchQuery, $options);
+    protected function _buildResultMap($fetchQuery, $options)
+    {
+        $resultMap = [];
+        $singleResult = in_array($this->associationType, [Association::MANY_TO_ONE, Association::ONE_TO_ONE]);
+        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY]) ?
+            $this->foreignKey :
+            $this->bindingKey;
+        $key = (array)$keys;
+
+        foreach ($fetchQuery->all() as $result) {
+            $values = [];
+            foreach ($key as $k) {
+                $values[] = $result[$k];
+            }
+            if ($singleResult) {
+                $resultMap[implode(';', $values)] = $result;
+            } else {
+                $resultMap[implode(';', $values)][] = $result;
+            }
+        }
+
+        return $resultMap;
+    }
 
     /**
      * Returns a callable to be used for each row in a query result set
@@ -336,15 +459,13 @@ trait SelectableAssociationTrait
      */
     protected function _resultInjector($fetchQuery, $resultMap, $options)
     {
-        $source = $this->source();
-        $sAlias = $source->alias();
-        $keys = $this->type() === $this::MANY_TO_ONE ?
-            $this->foreignKey() :
-            $this->bindingKey();
+        $keys = $this->associationType === Association::MANY_TO_ONE ?
+            $this->foreignKey :
+            $this->bindingKey;
 
         $sourceKeys = [];
         foreach ((array)$keys as $key) {
-            $f = $fetchQuery->aliasField($key, $sAlias);
+            $f = $fetchQuery->aliasField($key, $this->sourceAlias);
             $sourceKeys[] = key($f);
         }
 
