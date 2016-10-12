@@ -442,7 +442,7 @@ class Response implements ResponseInterface
             }
             $this->stream = $options['stream'];
         } else {
-            $this->createStream();
+            $this->_createStream();
         }
         if (isset($options['body'])) {
             $this->body($options['body']);
@@ -467,7 +467,7 @@ class Response implements ResponseInterface
      *
      * @return void
      */
-    public function createStream()
+    protected function _createStream()
     {
         $this->stream = new Stream($this->_streamTarget, $this->_streamMode);
     }
@@ -753,7 +753,7 @@ class Response implements ResponseInterface
             $content = $this->_handleCallableBody($content);
         }
 
-        $this->stream = $this->createStream();
+        $this->_createStream();
         $this->stream->write($content);
         $this->stream->rewind();
         $result = $this->stream->getContents();
