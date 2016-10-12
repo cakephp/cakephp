@@ -205,7 +205,7 @@ class AuthComponent extends Component
     /**
      * Request object
      *
-     * @var \Cake\Network\Request
+     * @var \Cake\Http\ServerRequest
      */
     public $request;
 
@@ -402,14 +402,21 @@ class AuthComponent extends Component
      */
     protected function _loginActionRedirectUrl()
     {
-        $currentUrl = $this->request->here(false);
+        $urlToRedirectBackTo = $this->request->here(false);
+        if (!$this->request->is('get')) {
+            $urlToRedirectBackTo = $this->request->referer(true);
+        }
 
         $loginAction = $this->_config['loginAction'];
+        if ($urlToRedirectBackTo === '/') {
+            return $loginAction;
+        }
+
         if (is_array($loginAction)) {
-            $loginAction['?'][static::QUERY_STRING_REDIRECT] = $currentUrl;
+            $loginAction['?'][static::QUERY_STRING_REDIRECT] = $urlToRedirectBackTo;
         } else {
             $char = strpos($loginAction, '?') === false ? '?' : '&';
-            $loginAction .= $char . static::QUERY_STRING_REDIRECT . '=' . urlencode($currentUrl);
+            $loginAction .= $char . static::QUERY_STRING_REDIRECT . '=' . urlencode($urlToRedirectBackTo);
         }
 
         return $loginAction;
@@ -504,7 +511,7 @@ class AuthComponent extends Component
      *
      * @param array|\ArrayAccess|null $user The user to check the authorization of.
      *   If empty the user fetched from storage will be used.
-     * @param \Cake\Network\Request|null $request The request to authenticate for.
+     * @param \Cake\Http\ServerRequest|null $request The request to authenticate for.
      *   If empty, the current request will be used.
      * @return bool True if $user is authorized, otherwise false
      */
