@@ -405,6 +405,20 @@ class Response implements ResponseInterface
     protected $_reasonPhrase = null;
 
     /**
+     * Stream mode options.
+     *
+     * @var string
+     */
+    protected $_streamMode = 'wb+';
+
+    /**
+     * Stream target or resource object.
+     *
+     * @var string|resource
+     */
+    protected $_streamTarget = 'php://memory';
+
+    /**
      * Constructor
      *
      * @param array $options list of parameters to setup the response. Possible values are:
@@ -416,13 +430,19 @@ class Response implements ResponseInterface
      */
     public function __construct(array $options = [])
     {
+        if (isset($options['streamTarget'])) {
+            $this->_streamTarget = $options['streamTarget'];
+        }
+        if (isset($options['streamMode'])) {
+            $this->_streamMode = $options['streamMode'];
+        }
         if (isset($options['stream'])) {
             if (!$options['stream'] instanceof StreamInterface) {
                 throw new InvalidArgumentException('Stream option must be an object implement StreamInterface');
             }
             $this->stream = $options['stream'];
         } else {
-            $this->stream = new Stream('php://memory', 'wb+');
+            $this->createStream();
         }
         if (isset($options['body'])) {
             $this->body($options['body']);
@@ -440,6 +460,16 @@ class Response implements ResponseInterface
             $options['charset'] = Configure::read('App.encoding');
         }
         $this->charset($options['charset']);
+    }
+
+    /**
+     * Creates the stream object.
+     *
+     * @return void
+     */
+    public function createStream()
+    {
+        $this->stream = new Stream($this->_streamTarget, $this->_streamMode);
     }
 
     /**
@@ -720,19 +750,10 @@ class Response implements ResponseInterface
 
         // BC compatibility
         if (is_callable($content)) {
-            ob_start();
-            $result1 = $content();
-            $result2 = ob_get_contents();
-            ob_get_clean();
-
-            if ($result1) {
-                $content = $result1;
-            } else {
-                $content = $result2;
-            }
+            $content = $this->_handleCallableBody($content);
         }
 
-        $this->stream = new Stream('php://memory', 'wb+');
+        $this->stream = $this->createStream();
         $this->stream->write($content);
         $this->stream->rewind();
         $result = $this->stream->getContents();
@@ -742,6 +763,26 @@ class Response implements ResponseInterface
         }
 
         return $result;
+    }
+
+    /**
+     * Handles the callable body for backward compatibility reasons.
+     *
+     * @param callable $content Callable content.
+     * @return string
+     */
+    protected function _handleCallableBody(callable $content)
+    {
+        ob_start();
+        $result1 = $content();
+        $result2 = ob_get_contents();
+        ob_get_clean();
+
+        if ($result1) {
+            return $result1;
+        }
+
+        return $result2;
     }
 
     /**
