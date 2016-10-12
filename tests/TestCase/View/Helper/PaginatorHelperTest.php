@@ -1615,10 +1615,10 @@ class PaginatorHelperTest extends TestCase
             ['li' => []], ['a' => ['href' => '/index']], '1', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/index?page=2']], '2', '/a', '/li',
             ['li' => ['class' => 'ellipsis']], '&hellip;', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4894']], '4894', '/a', '/li',
-            ['li' => ['class' => 'active']], '<a href=""', '4895', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4896', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4897', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4894']], '4,894', '/a', '/li',
+            ['li' => ['class' => 'active']], '<a href=""', '4,895', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4,896', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4,897', '/a', '/li',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1631,8 +1631,8 @@ class PaginatorHelperTest extends TestCase
             ['li' => ['class' => 'active']], '<a href=""', '3', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/index?page=4']], '4', '/a', '/li',
             ['li' => ['class' => 'ellipsis']], '&hellip;', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4896', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4897', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4,896', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4,897', '/a', '/li',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1643,8 +1643,8 @@ class PaginatorHelperTest extends TestCase
             ['li' => ['class' => 'active']], '<a href=""', '3', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/index?page=4']], '4', '/a', '/li',
             ['li' => ['class' => 'ellipsis']], '&hellip;', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4896', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4897', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4,896', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4,897', '/a', '/li',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1657,11 +1657,11 @@ class PaginatorHelperTest extends TestCase
             ['li' => []], ['a' => ['href' => '/index?page=5']], '5', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/index?page=6']], '6', '/a', '/li',
             ['li' => ['class' => 'ellipsis']], '&hellip;', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4893']], '4893', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4894']], '4894', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4895']], '4895', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4896', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4897', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4893']], '4,893', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4894']], '4,894', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4895']], '4,895', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4,896', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4,897', '/a', '/li',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1674,13 +1674,13 @@ class PaginatorHelperTest extends TestCase
             ['li' => []], ['a' => ['href' => '/index?page=4']], '4', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/index?page=5']], '5', '/a', '/li',
             ['li' => ['class' => 'ellipsis']], '&hellip;', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4891']], '4891', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4892']], '4892', '/a', '/li',
-            ['li' => ['class' => 'active']], '<a href=""', '4893', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4894']], '4894', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4895']], '4895', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4896', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4897', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4891']], '4,891', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4892']], '4,892', '/a', '/li',
+            ['li' => ['class' => 'active']], '<a href=""', '4,893', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4894']], '4,894', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4895']], '4,895', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4,896', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4,897', '/a', '/li',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1699,11 +1699,11 @@ class PaginatorHelperTest extends TestCase
             ['li' => []], ['a' => ['href' => '/index?page=59']], '59', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/index?page=60']], '60', '/a', '/li',
             ['li' => ['class' => 'ellipsis']], '&hellip;', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4893']], '4893', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4894']], '4894', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4895']], '4895', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4896', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4897', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4893']], '4,893', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4894']], '4,894', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4895']], '4,895', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4,896', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4,897', '/a', '/li',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1718,11 +1718,11 @@ class PaginatorHelperTest extends TestCase
             ['li' => []], ['a' => ['href' => '/index?page=6']], '6', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/index?page=7']], '7', '/a', '/li',
             ['li' => ['class' => 'ellipsis']], '&hellip;', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4893']], '4893', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4894']], '4894', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4895']], '4895', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4896', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4897', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4893']], '4,893', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4894']], '4,894', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4895']], '4,895', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4,896', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4,897', '/a', '/li',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1734,8 +1734,8 @@ class PaginatorHelperTest extends TestCase
             ['li' => ['class' => 'active']], '<a href=""', '3', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/index?page=4']], '4', '/a', '/li',
             ['li' => ['class' => 'ellipsis']], '&hellip;', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4896', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4897', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4,896', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4,897', '/a', '/li',
         ];
         $this->assertHtml($expected, $result);
 
@@ -1746,8 +1746,8 @@ class PaginatorHelperTest extends TestCase
             ['li' => []], ['a' => ['href' => '/index?page=2']], '2', '/a', '/li',
             ['li' => ['class' => 'active']], '<a href=""', '3', '/a', '/li',
             ['li' => ['class' => 'ellipsis']], '&hellip;', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4896', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4897', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4,896', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4,897', '/a', '/li',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -1834,8 +1834,8 @@ class PaginatorHelperTest extends TestCase
             ['li' => ['class' => 'active']], '<a href=""', '3', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/index?page=4&amp;foo=bar']], '4', '/a', '/li',
             ['li' => ['class' => 'ellipsis']], '&hellip;', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4896&amp;foo=bar']], '4896', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4897&amp;foo=bar']], '4897', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4896&amp;foo=bar']], '4,896', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4897&amp;foo=bar']], '4,897', '/a', '/li',
         ];
         $this->assertHtml($expected, $result);
     }
