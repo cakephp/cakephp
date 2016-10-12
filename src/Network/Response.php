@@ -1428,6 +1428,7 @@ class Response implements ResponseInterface
     public function __toString()
     {
         $this->stream->rewind();
+
         return (string)$this->stream->getContents();
     }
 
