@@ -523,6 +523,7 @@ class Router {
  * - 'id' - The regular expression fragment to use when matching IDs. By default, matches
  *    integer values and UUIDs.
  * - 'prefix' - URL prefix to use for the generated routes. Defaults to '/'.
+ * - 'connectOptions' – Custom options for connecting the routes.
  *
  * @param string|array $controller A controller name or array of controller names (i.e. "Posts" or "ListItems")
  * @param array $options Options to use when generating REST routes
