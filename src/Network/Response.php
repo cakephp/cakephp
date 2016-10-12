@@ -22,7 +22,9 @@ use DateTime;
 use DateTimeZone;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 use Zend\Diactoros\MessageTrait;
+use Zend\Diactoros\Stream;
 
 /**
  * Cake Response is responsible for managing the response text, status and headers of a HTTP response.
@@ -360,13 +362,6 @@ class Response implements ResponseInterface
     protected $_contentType = 'text/html';
 
     /**
-     * Buffer string or callable for response message
-     *
-     * @var string|callable
-     */
-    protected $_body = null;
-
-    /**
      * File object for file to be read out as response
      *
      * @var \Cake\Filesystem\File
@@ -421,6 +416,14 @@ class Response implements ResponseInterface
      */
     public function __construct(array $options = [])
     {
+        if (isset($options['stream'])) {
+            if (!$options['stream'] instanceof StreamInterface) {
+                throw new InvalidArgumentException('Stream option must be an object implement StreamInterface');
+            }
+            $this->stream = $options['stream'];
+        } else {
+            $this->stream = new Stream('php://memory', 'wb+');
+        }
         if (isset($options['body'])) {
             $this->body($options['body']);
         }
@@ -447,7 +450,7 @@ class Response implements ResponseInterface
      */
     public function send()
     {
-        if (isset($this->headers['Location']) && $this->_status === 200) {
+        if ($this->hasHeader('Location') && $this->_status === 200) {
             $this->statusCode(302);
         }
 
@@ -458,7 +461,7 @@ class Response implements ResponseInterface
             $this->_sendFile($this->_file, $this->_fileRange);
             $this->_file = $this->_fileRange = null;
         } else {
-            $this->_sendContent($this->_body);
+            $this->_sendContent($this->body());
         }
 
         if (function_exists('fastcgi_finish_request')) {
@@ -671,7 +674,7 @@ class Response implements ResponseInterface
     {
         if ($url === null) {
             $result = $this->getHeaderLine('Location');
-            if (empty($result)) {
+            if (!$result) {
                 return null;
             }
 
@@ -706,10 +709,39 @@ class Response implements ResponseInterface
     public function body($content = null)
     {
         if ($content === null) {
-            return $this->_body;
+            $this->stream->rewind();
+            $result = $this->stream->getContents();
+            if (empty($result)) {
+                return null;
+            }
+
+            return $result;
         }
 
-        return $this->_body = $content;
+        // BC compatibility
+        if (is_callable($content)) {
+            ob_start();
+            $result1 = $content();
+            $result2 = ob_get_contents();
+            ob_get_clean();
+
+            if ($result1) {
+                $content = $result1;
+            } else {
+                $content = $result2;
+            }
+        }
+
+        $this->stream = new Stream('php://memory', 'wb+');
+        $this->stream->write($content);
+        $this->stream->rewind();
+        $result = $this->stream->getContents();
+
+        if (empty($result)) {
+            return null;
+        }
+
+        return $result;
     }
 
     /**
@@ -1163,10 +1195,11 @@ class Response implements ResponseInterface
     {
         if ($time !== null) {
             $date = $this->_getUTCDate($time);
-            $this->headers['Last-Modified'] = $date->format('D, j M Y H:i:s') . ' GMT';
+            $this->_setHeader('Last-Modified', $date->format('D, j M Y H:i:s') . ' GMT');
         }
-        if (isset($this->headers['Last-Modified'])) {
-            return $this->headers['Last-Modified'];
+
+        if ($this->hasHeader('Last-Modified')) {
+            return $this->getHeaderLine('Last-Modified');
         }
 
         return null;
@@ -1183,6 +1216,7 @@ class Response implements ResponseInterface
     {
         $this->statusCode(304);
         $this->body('');
+
         $remove = [
             'Allow',
             'Content-Encoding',
@@ -1393,11 +1427,8 @@ class Response implements ResponseInterface
      */
     public function __toString()
     {
-        if (!is_string($this->_body) && is_callable($this->_body)) {
-            return '';
-        }
-
-        return (string)$this->_body;
+        $this->stream->rewind();
+        return (string)$this->stream->getContents();
     }
 
     /**
