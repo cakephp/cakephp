@@ -539,7 +539,7 @@ class Validation
     }
 
     /**
-     * Validates if passed value is truthy.
+     * Validates if given value is truthy.
      *
      * The list of what is considered to be truthy values, may be set via $truthyValues.
      *
@@ -557,7 +557,7 @@ class Validation
     }
 
     /**
-     * Validates if passed value is falsey.
+     * Validates if given value is falsey.
      *
      * The list of what is considered to be falsey values, may be set via $falseyValues.
      *
