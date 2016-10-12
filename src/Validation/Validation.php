@@ -325,7 +325,7 @@ class Validation
     /**
      * Validates if two fields match with each other.
      *
-     * If both fields have exactly the same value this method will return true.
+     * If both fields have exactly the same value, this method will return `true`.
      *
      * You may set option `'fieldsExpected'` to `false` to pass the rule if either of
      * the given fields miss in the context. Defaults to `true`.
@@ -349,6 +349,7 @@ class Validation
             if ($options['fieldsExpected']) {
                 return false;
             }
+
             return true;
         }
 
@@ -362,7 +363,7 @@ class Validation
     /**
      * Validates if two fields do not match each other.
      *
-     * If both fields have exactly the same value this method will return false.
+     * If both fields have exactly the same value, this method will return `false`.
      *
      * You may set option `'fieldsExpected'` to `false` to pass the rule if either of
      * the given fields miss in the context. Defaults to `true`.
@@ -386,6 +387,7 @@ class Validation
             if ($options['fieldsExpected']) {
                 return false;
             }
+
             return true;
         }
 
