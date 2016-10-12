@@ -916,7 +916,7 @@ class PaginatorHelper extends Helper
             $url = array_merge($options['url'], ['page' => $i]);
             if ($i == $params['page']) {
                 $out .= $templater->format('current', [
-                    'text' => $params['page'],
+                    'text' => $this->Number->format($params['page']),
                     'url' => $this->generateUrl($url, $options['model']),
                 ]);
             } else {
