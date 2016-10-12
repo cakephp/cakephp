@@ -322,24 +322,41 @@ class Validation
         return $context['data'][$field] === $check;
     }
 
-
     /**
-     * Matches two fields with each other.
+     * Validates if two fields match with each other.
      *
      * If both fields have exactly the same value this method will return true.
      *
-     * @param string $fieldOne The field one to match field two against.
-     * @param string $fieldTwo The field two to match field one against.
+     * You may set option `'fieldsExpected'` to `false` to pass the rule if either of
+     * the given fields miss in the context. Defaults to `true`.
+     *
+     * You may set option `'typeSafe'` to `false`, to omit type checking when matching. Defaults to `true`.
+     *
+     * @param string $fieldOne The first field to compare against the second field.
+     * @param string $fieldTwo The second field to compare against the first field.
      * @param array $context The validation context.
+     * @param array $options Optional options for the check. Default to ['fieldsExpected' => true, 'typeSafe' => true].
      * @return bool
      */
-    public static function fieldsMatching($fieldOne, $fieldTwo, $context)
+    public static function fieldsMatching($fieldOne, $fieldTwo, $context, array $options = [])
     {
+        $options += [
+            'fieldsExpected' => true,
+            'typeSafe' => true,
+        ];
+
         if (!isset($context['data'][$fieldOne]) || !isset($context['data'][$fieldTwo])) {
-            return false;
+            if ($options['fieldsExpected']) {
+                return false;
+            }
+            return true;
         }
 
-        return $context['data'][$fieldOne] === $context['data'][$fieldTwo];
+        if ($options['typeSafe']) {
+            return $context['data'][$fieldOne] === $context['data'][$fieldTwo];
+        }
+
+        return $context['data'][$fieldOne] == $context['data'][$fieldTwo];
     }
 
     /**
@@ -347,14 +364,36 @@ class Validation
      *
      * If both fields have exactly the same value this method will return false.
      *
-     * @param string $fieldOne The field one to match field two against.
-     * @param string $fieldTwo The field two to match field one against.
+     * You may set option `'fieldsExpected'` to `false` to pass the rule if either of
+     * the given fields miss in the context. Defaults to `true`.
+     *
+     * You may set option `'typeSafe'` to `false`, to omit type checking when matching. Defaults to `false`.
+     *
+     * @param string $fieldOne The first field to compare against the second field.
+     * @param string $fieldTwo The second field to compare against the first field.
      * @param array $context The validation context.
+     * @param array $options Optional options for the check. Default to ['fieldsExpected' => true, 'typeSafe' => false].
      * @return bool
      */
-    public static function fieldsNotMatching($fieldOne, $fieldTwo, $context)
+    public static function fieldsNotMatching($fieldOne, $fieldTwo, $context, array $options = [])
     {
-        return !static::fieldsMatching($fieldOne, $fieldTwo, $context);
+        $options += [
+            'fieldsExpected' => true,
+            'typeSafe' => false,
+        ];
+
+        if (!isset($context['data'][$fieldOne]) || !isset($context['data'][$fieldTwo])) {
+            if ($options['fieldsExpected']) {
+                return false;
+            }
+            return true;
+        }
+
+        if ($options['typeSafe']) {
+            return $context['data'][$fieldOne] !== $context['data'][$fieldTwo];
+        }
+
+        return $context['data'][$fieldOne] != $context['data'][$fieldTwo];
     }
 
     /**
