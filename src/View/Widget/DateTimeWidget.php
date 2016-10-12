@@ -219,7 +219,7 @@ class DateTimeWidget implements WidgetInterface
             ];
         }
         try {
-            if (is_string($value) && strlen($value) === 4) {
+            if (is_string($value) && is_numeric($value) && strlen($value) === 4) {
                 $value .= '-01-01';
             }
             if (is_string($value) && !is_numeric($value)) {
