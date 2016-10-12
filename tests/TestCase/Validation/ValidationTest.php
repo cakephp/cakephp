@@ -1634,6 +1634,119 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * testBooleanWithOptions method
+     *
+     * @return void
+     */
+    public function testBooleanWithOptions()
+    {
+        $this->assertTrue(Validation::boolean('0', ['0', '1']));
+        $this->assertTrue(Validation::boolean('1', ['0', '1']));
+        $this->assertFalse(Validation::boolean(0, ['0', '1']));
+        $this->assertFalse(Validation::boolean(1, ['0', '1']));
+        $this->assertFalse(Validation::boolean(false, ['0', '1']));
+        $this->assertFalse(Validation::boolean(true, ['0', '1']));
+        $this->assertFalse(Validation::boolean('false', ['0', '1']));
+        $this->assertFalse(Validation::boolean('true', ['0', '1']));
+        $this->assertTrue(Validation::boolean(0, [0, 1]));
+        $this->assertTrue(Validation::boolean(1, [0, 1]));
+    }
+
+    /**
+     * testTruthy method
+     *
+     * @return void
+     */
+    public function testTruthy()
+    {
+        $this->assertTrue(Validation::truthy(1));
+        $this->assertTrue(Validation::truthy(true));
+        $this->assertTrue(Validation::truthy('1'));
+
+        $this->assertFalse(Validation::truthy('true'));
+        $this->assertFalse(Validation::truthy('on'));
+        $this->assertFalse(Validation::truthy('yes'));
+
+        $this->assertFalse(Validation::truthy(0));
+        $this->assertFalse(Validation::truthy(false));
+        $this->assertFalse(Validation::truthy('0'));
+        $this->assertFalse(Validation::truthy('false'));
+
+        $this->assertTrue(Validation::truthy(1));
+        $this->assertTrue(Validation::truthy(true));
+        $this->assertTrue(Validation::truthy('1'));
+
+        $this->assertFalse(Validation::truthy('true'));
+        $this->assertFalse(Validation::truthy('on'));
+        $this->assertFalse(Validation::truthy('yes'));
+
+        $this->assertFalse(Validation::truthy(0));
+        $this->assertFalse(Validation::truthy(false));
+        $this->assertFalse(Validation::truthy('0'));
+        $this->assertFalse(Validation::truthy('false'));
+
+        $this->assertFalse(Validation::truthy('on'));
+        $this->assertFalse(Validation::truthy('yes'));
+
+        $this->assertTrue(Validation::truthy('on', ['on', 'yes', 'true']));
+        $this->assertTrue(Validation::truthy('yes', ['on', 'yes', 'true']));
+        $this->assertTrue(Validation::truthy('true', ['on', 'yes', 'true']));
+
+        $this->assertFalse(Validation::truthy(1, ['on', 'yes', 'true']));
+        $this->assertFalse(Validation::truthy(true, ['on', 'yes', 'true']));
+        $this->assertFalse(Validation::truthy('1', ['on', 'yes', 'true']));
+
+        $this->assertTrue(Validation::truthy('true', ['on', 'yes', 'true']));
+    }
+
+    /**
+     * testTruthy method
+     *
+     * @return void
+     */
+    public function testFalsey()
+    {
+        $this->assertTrue(Validation::falsey(0));
+        $this->assertTrue(Validation::falsey(false));
+        $this->assertTrue(Validation::falsey('0'));
+
+        $this->assertFalse(Validation::falsey('false'));
+        $this->assertFalse(Validation::falsey('off'));
+        $this->assertFalse(Validation::falsey('no'));
+
+        $this->assertFalse(Validation::falsey(1));
+        $this->assertFalse(Validation::falsey(true));
+        $this->assertFalse(Validation::falsey('1'));
+        $this->assertFalse(Validation::falsey('true'));
+
+        $this->assertTrue(Validation::falsey(0));
+        $this->assertTrue(Validation::falsey(false));
+        $this->assertTrue(Validation::falsey('0'));
+
+        $this->assertFalse(Validation::falsey('false'));
+        $this->assertFalse(Validation::falsey('off'));
+        $this->assertFalse(Validation::falsey('no'));
+
+        $this->assertFalse(Validation::falsey(1));
+        $this->assertFalse(Validation::falsey(true));
+        $this->assertFalse(Validation::falsey('1'));
+        $this->assertFalse(Validation::falsey('true'));
+
+        $this->assertFalse(Validation::falsey('off'));
+        $this->assertFalse(Validation::falsey('no'));
+
+        $this->assertTrue(Validation::falsey('off', ['off', 'no', 'false']));
+        $this->assertTrue(Validation::falsey('no', ['off', 'no', 'false']));
+        $this->assertTrue(Validation::falsey('false', ['off', 'no', 'false']));
+
+        $this->assertFalse(Validation::falsey(0, ['off', 'no', 'false']));
+        $this->assertFalse(Validation::falsey(false, ['off', 'no', 'false']));
+        $this->assertFalse(Validation::falsey('0', ['off', 'yes', 'false']));
+
+        $this->assertTrue(Validation::falsey('false', ['off', 'no', 'false']));
+    }
+
+    /**
      * testDateCustomRegx method
      *
      * @return void

@@ -521,13 +521,13 @@ class Validation
     }
 
     /**
-     * Validates if passed value is boolean.
+     * Validates if passed value is boolean-like.
      *
      * The list of what is considered to be boolean values, may be set via $booleanValues.
      *
      * @param bool|int|string $check Value to check.
      * @param string $booleanValues List of valid boolean values, defaults to `[true, false, 0, 1, '0', '1']`.
-     * @return bool Success
+     * @return bool Success.
      */
     public static function boolean($check, array $booleanValues = [])
     {
@@ -545,7 +545,7 @@ class Validation
      *
      * @param bool|int|string $check Value to check.
      * @param array $truthyValues List of valid truthy values, defaults to `[true, 1, '1']`.
-     * @return bool Success
+     * @return bool Success.
      */
     public static function truthy($check, array $truthyValues = [])
     {
@@ -563,7 +563,7 @@ class Validation
      *
      * @param bool|int|string $check Value to check.
      * @param array $falseyValues List of valid falsey values, defaults to `[false, 0, '0']`.
-     * @return bool Success
+     * @return bool Success.
      */
     public static function falsey($check, array $falseyValues = [])
     {
