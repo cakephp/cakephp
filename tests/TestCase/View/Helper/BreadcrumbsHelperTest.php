@@ -42,6 +42,7 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * Test adding crumbs to the trail using add()
+     *
      * @return void
      */
     public function testAdd()
@@ -74,6 +75,7 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * Test adding multiple crumbs at once to the trail using add()
+     *
      * @return void
      */
     public function testAddMultiple()
@@ -122,6 +124,7 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * Test adding crumbs to the trail using prepend()
+     *
      * @return void
      */
     public function testPrepend()
@@ -159,6 +162,7 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * Test adding crumbs to a specific index
+     *
      * @return void
      */
     public function testInsertAt()
@@ -207,7 +211,20 @@ class BreadcrumbsHelperTest extends TestCase
     }
 
     /**
+     * Test adding crumbs to a specific index
+     *
+     * @expectedException \LogicException
+     */
+    public function testInsertAtIndexOutOfBounds()
+    {
+        $this->breadcrumbs
+            ->add('Home', '/', ['class' => 'first'])
+            ->insertAt(2, 'Insert At Again', ['controller' => 'Insert', 'action' => 'at_again']);
+    }
+
+    /**
      * Test adding crumbs before a specific one
+     *
      * @return void
      */
     public function testInsertBefore()
@@ -251,6 +268,7 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * Test adding crumbs after a specific one
+     *
      * @return void
      */
     public function testInsertAfter()
@@ -294,6 +312,7 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * Tests the render method
+     *
      * @return void
      */
     public function testRender()
@@ -343,6 +362,7 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * Tests the render method with custom templates
+     *
      * @return void
      */
     public function testRenderCustomTemplate()
@@ -383,6 +403,7 @@ class BreadcrumbsHelperTest extends TestCase
 
     /**
      * Tests the render method with template vars
+     *
      * @return void
      */
     public function testRenderCustomTemplateTemplateVars()

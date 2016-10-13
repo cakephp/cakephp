@@ -194,7 +194,7 @@ class BreadcrumbsHelper extends Helper
             throw new LogicException(sprintf("No crumb matching '%s' could be found.", $matchingTitle));
         }
 
-        return $this->insertAt($key, $title, $url, $options);
+        return $this->insertAt($key + 1, $title, $url, $options);
     }
 
     /**
