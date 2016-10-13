@@ -45,6 +45,7 @@ class TranslateBehaviorTest extends TestCase
     public $fixtures = [
         'core.articles',
         'core.authors',
+        'core.groups',
         'core.special_tags',
         'core.tags',
         'core.comments',
@@ -1124,6 +1125,52 @@ class TranslateBehaviorTest extends TestCase
 
         $article = $table->patchEntity($table->newEntity(), $data);
         $result = $table->save($article);
+
+        $this->assertNotFalse($result);
+
+        $expected = [
+            [
+                'en' => [
+                    'title' => 'Title EN',
+                    'locale' => 'en'
+                ],
+                'es' => [
+                    'title' => 'Title ES',
+                    'locale' => 'es'
+                ]
+            ]
+        ];
+        $result = $table->find('translations')->where(['id' => $result->id]);
+        $this->assertEquals($expected, $this->_extractTranslations($result)->toArray());
+    }
+
+    /**
+     * Tests adding new translation to a record where the only field is the translated one
+     *
+     * @return void
+     */
+    public function testSaveNewRecordWithOnlyTranslatesField()
+    {
+        $table = TableRegistry::get('Groups');
+        $table->addBehavior('Translate', [
+            'fields' => ['title'],
+            'validator' => (new \Cake\Validation\Validator)->add('title', 'notBlank', ['rule' => 'notBlank'])
+        ]);
+        $table->entityClass(__NAMESPACE__ . '\Group');
+
+        $data = [
+            '_translations' => [
+                'en' => [
+                    'title' => 'Title EN',
+                ],
+                'es' => [
+                    'title' => 'Title ES'
+                ]
+            ]
+        ];
+
+        $group = $table->patchEntity($table->newEntity(), $data);
+        $result = $table->save($group);
 
         $this->assertNotFalse($result);
 
