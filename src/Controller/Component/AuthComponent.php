@@ -402,10 +402,7 @@ class AuthComponent extends Component
      */
     protected function _loginActionRedirectUrl()
     {
-        $urlToRedirectBackTo = $this->request->here(false);
-        if (!$this->request->is('get')) {
-            $urlToRedirectBackTo = $this->request->referer(true);
-        }
+        $urlToRedirectBackTo = $this->_getUrlToRedirectBackTo();
 
         $loginAction = $this->_config['loginAction'];
         if ($urlToRedirectBackTo === '/') {
@@ -998,5 +995,23 @@ class AuthComponent extends Component
     public function authorizationProvider()
     {
         return $this->_authorizationProvider;
+    }
+
+    /**
+     * Returns the URL to redirect back to or / if not possible.
+     *
+     * This method takes the referrer into account as long as the
+     * request is of type GET.
+     *
+     * @return string
+     */
+    protected function _getUrlToRedirectBackTo()
+    {
+        $urlToRedirectBackTo = $this->request->here(false);
+        if (!$this->request->is('get')) {
+            $urlToRedirectBackTo = $this->request->referer(true);
+        }
+
+        return $urlToRedirectBackTo;
     }
 }
