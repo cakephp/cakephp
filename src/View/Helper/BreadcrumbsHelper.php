@@ -50,14 +50,14 @@ class BreadcrumbsHelper extends Helper
     ];
 
     /**
-     * The crumbs list.
+     * The crumb list.
      *
      * @var array
      */
     protected $crumbs = [];
 
     /**
-     * Add a crumb to the trail.
+     * Add a crumb to the end of the trail.
      *
      * @param string|array $title If provided as a string, it represents the title of the crumb.
      * Alternatively, if you want to add multiple crumbs at once, you can provide an array, with each values being a
