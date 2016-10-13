@@ -1000,8 +1000,8 @@ class AuthComponent extends Component
     /**
      * Returns the URL to redirect back to or / if not possible.
      *
-     * This method takes the referrer into account as long as the
-     * request is of type GET.
+     * This method takes the referrer into account if the
+     * request is not of type GET.
      *
      * @return string
      */
