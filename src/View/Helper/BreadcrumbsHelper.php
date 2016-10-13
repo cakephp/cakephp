@@ -92,7 +92,12 @@ class BreadcrumbsHelper extends Helper
     /**
      * Prepend a crumb to the start of the queue.
      *
-     * @param string $title Title of the crumb.
+     * @param string $title If provided as a string, it represents the title of the crumb.
+     * Alternatively, if you want to add multiple crumbs at once, you can provide an array, with each values being a
+     * single crumb. Arrays are expected to be of this form:
+     * - *title* The title of the crumb
+     * - *link* The link of the crumb. If not provided, no link will be made
+     * - *options* Options of the crumb. See description of params option of this method.
      * @param string|array|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
      * @param array $options Array of options. These options will be used as attributes HTML attribute the crumb will
@@ -104,6 +109,17 @@ class BreadcrumbsHelper extends Helper
      */
     public function prepend($title, $url = null, array $options = [])
     {
+        if (is_array($title)) {
+            $crumbs = [];
+            foreach ($title as $crumb) {
+                $crumbs[] = $crumb + ['title' => '', 'url' => null, 'options' => []];
+            }
+
+            array_splice($this->crumbs, 0, 0, $crumbs);
+
+            return $this;
+        }
+
         array_unshift($this->crumbs, compact('title', 'url', 'options'));
 
         return $this;

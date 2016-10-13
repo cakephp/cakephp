@@ -161,6 +161,46 @@ class BreadcrumbsHelperTest extends TestCase
     }
 
     /**
+     * Test adding crumbs to the trail using prepend()
+     *
+     * @return void
+     */
+    public function testPrependMultiple()
+    {
+        $this->breadcrumbs
+            ->add('Home', '/', ['class' => 'first'])
+            ->prepend([
+                ['title' => 'Some text', 'url' => ['controller' => 'Some', 'action' => 'text']],
+                ['title' => 'The root', 'url' => '/root', 'options' => ['data-name' => 'some-name']]
+            ]);
+
+        $result = $this->breadcrumbs->getCrumbs();
+        $expected = [
+            [
+                'title' => 'Some text',
+                'url' => [
+                    'controller' => 'Some',
+                    'action' => 'text'
+                ],
+                'options' => []
+            ],
+            [
+                'title' => 'The root',
+                'url' => '/root',
+                'options' => ['data-name' => 'some-name']
+            ],
+            [
+                'title' => 'Home',
+                'url' => '/',
+                'options' => [
+                    'class' => 'first'
+                ]
+            ]
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Test adding crumbs to a specific index
      *
      * @return void
