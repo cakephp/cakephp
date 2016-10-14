@@ -17,25 +17,25 @@ use Cake\Http\Client;
 use Cake\Http\Client\Request;
 
 /**
- * Digest authentication adapter for Cake\Network\Http\Client
+ * Digest authentication adapter for Cake\Http\Client
  *
- * Generally not directly constructed, but instead used by Cake\Network\Http\Client
+ * Generally not directly constructed, but instead used by Cake\Http\Client
  * when $options['auth']['type'] is 'digest'
  */
 class Digest
 {
 
     /**
-     * Instance of Cake\Network\Http\Client
+     * Instance of Cake\Http\Client
      *
-     * @var \Cake\Network\Http\Client
+     * @var \Cake\Http\Client
      */
     protected $_client;
 
     /**
      * Constructor
      *
-     * @param \Cake\Network\Http\Client $client Http client object.
+     * @param \Cake\Http\Client $client Http client object.
      * @param array|null $options Options list.
      */
     public function __construct(Client $client, $options = null)
@@ -46,9 +46,9 @@ class Digest
     /**
      * Add Authorization header to the request.
      *
-     * @param \Cake\Network\Http\Request $request The request object.
+     * @param \Cake\Http\Client\Request $request The request object.
      * @param array $credentials Authentication credentials.
-     * @return \Cake\Network\Http\Request The updated request.
+     * @return \Cake\Http\Client\Request The updated request.
      * @see http://www.ietf.org/rfc/rfc2617.txt
      */
     public function authentication(Request $request, array $credentials)
@@ -74,7 +74,7 @@ class Digest
      * another request without authentication to get authentication
      * challenge.
      *
-     * @param \Cake\Network\Http\Request $request The request object.
+     * @param \Cake\Http\Client\Request $request The request object.
      * @param array $credentials Authentication credentials.
      * @return array modified credentials.
      */
@@ -108,7 +108,7 @@ class Digest
     /**
      * Generate the header Authorization
      *
-     * @param \Cake\Network\Http\Request $request The request object.
+     * @param \Cake\Http\Client\Request $request The request object.
      * @param array $credentials Authentication credentials.
      * @return string
      */

@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase;
 
+use Cake\Http\CallbackStream;
 use Cake\Http\Server;
 use Cake\TestSuite\TestCase;
 use TestApp\Http\BadResponseApplication;
@@ -21,6 +22,9 @@ use TestApp\Http\InvalidMiddlewareApplication;
 use TestApp\Http\MiddlewareApplication;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
+
+require __DIR__ . '/server_mocks.php';
+
 
 /**
  * Server test case
@@ -37,6 +41,7 @@ class ServerTest extends TestCase
         parent::setUp();
         $this->server = $_SERVER;
         $this->config = dirname(dirname(__DIR__));
+        $GLOBALS['mockedHeaders'] = [];
     }
 
     /**
@@ -111,6 +116,24 @@ class ServerTest extends TestCase
     }
 
     /**
+     * test run where the protocol is invalid
+     *
+     * @return void
+     */
+    public function testRunInvalidProtocol()
+    {
+        $_SERVER['SERVER_PROTOCOL'] = 'HTTP/onclick 1=1';
+
+        $app = new MiddlewareApplication($this->config);
+        $server = new Server($app);
+
+        $res = $server->run();
+        $this->assertEquals(400, $res->getStatusCode());
+        $this->assertEquals('text/plain', $res->getHeaderLine('content-type'));
+        $this->assertEquals('Bad Request', '' . $res->getBody());
+    }
+
+    /**
      * Test an application failing to build middleware properly
      *
      * @expectedException RuntimeException
@@ -170,6 +193,26 @@ class ServerTest extends TestCase
         $app = new MiddlewareApplication($this->config);
         $server = new Server($app);
         $server->emit($server->run(null, $response), $emitter);
+    }
+
+    /**
+     * Test that emit invokes the appropriate methods on the emitter.
+     *
+     * @return void
+     */
+    public function testEmitCallbackStream()
+    {
+        $response = new Response('php://memory', 200, ['x-testing' => 'source header']);
+        $response = $response->withBody(new CallbackStream(function () {
+            echo 'body content';
+        }));
+
+        $app = new MiddlewareApplication($this->config);
+        $server = new Server($app);
+        ob_start();
+        $server->emit($response);
+        $result = ob_get_clean();
+        $this->assertEquals('body content', $result);
     }
 
     /**

@@ -55,7 +55,7 @@ class Xml
      * Building XML from a remote URL:
      *
      * ```
-     * use Cake\Network\Http\Client;
+     * use Cake\Http\Client;
      *
      * $http = new Client();
      * $response = $http->get('http://example.com/example.xml');

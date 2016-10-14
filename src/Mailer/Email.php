@@ -19,8 +19,8 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\StaticConfigTrait;
 use Cake\Filesystem\File;
+use Cake\Http\Client\FormDataPart;
 use Cake\Log\Log;
-use Cake\Network\Http\FormData\Part;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Cake\Utility\Text;
@@ -1383,16 +1383,17 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $message String with message or array with variables to be used in render
      * @param string|array $transportConfig String to use config from EmailConfig or array with configs
      * @param bool $send Send the email or just return the instance pre-configured
-     * @return \Cake\Mailer\Email Instance of Cake\Mailer\Email
+     * @return static Instance of Cake\Mailer\Email
      * @throws \InvalidArgumentException
      */
     public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'default', $send = true)
     {
         $class = __CLASS__;
 
-        if (is_array($transportConfig)) {
-            $transportConfig += ['transport' => 'default'];
+        if (is_array($transportConfig) && !isset($transportConfig['transport'])) {
+            $transportConfig['transport'] = 'default';
         }
+        /* @var \Cake\Mailer\Email $instance */
         $instance = new $class($transportConfig);
         if ($to !== null) {
             $instance->to($to);
@@ -1706,7 +1707,7 @@ class Email implements JsonSerializable, Serializable
                 !isset($fileInfo['contentDisposition']) ||
                 $fileInfo['contentDisposition']
             );
-            $part = new Part(false, $data, false);
+            $part = new FormDataPart(false, $data, false);
 
             if ($hasDisposition) {
                 $part->disposition('attachment');
@@ -1756,7 +1757,7 @@ class Email implements JsonSerializable, Serializable
             $data = isset($fileInfo['data']) ? $fileInfo['data'] : $this->_readFile($fileInfo['file']);
 
             $msg[] = '--' . $boundary;
-            $part = new Part(false, $data, 'inline');
+            $part = new FormDataPart(false, $data, 'inline');
             $part->type($fileInfo['mimetype']);
             $part->transferEncoding('base64');
             $part->contentId($fileInfo['contentId']);
@@ -2032,7 +2033,7 @@ class Email implements JsonSerializable, Serializable
      * Configures an email instance object from serialized config.
      *
      * @param array $config Email configuration array.
-     * @return \Cake\Mailer\Email Configured email instance.
+     * @return $this Configured email instance.
      */
     public function createFromArray($config)
     {
@@ -2069,7 +2070,7 @@ class Email implements JsonSerializable, Serializable
      * Unserializes the Email object.
      *
      * @param string $data Serialized string.
-     * @return \Cake\Mailer\Email Configured email instance.
+     * @return static Configured email instance.
      */
     public function unserialize($data)
     {

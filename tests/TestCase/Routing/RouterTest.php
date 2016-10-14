@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Routing;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Http\ServerRequestFactory;
 use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
@@ -3151,6 +3152,70 @@ class RouterTest extends TestCase
         $query = ['_host' => 'foo.bar', '_ssl' => 0, '_scheme' => 'ftp://', '_base' => 'baz', '_port' => '15'];
         $result = Router::url(['controller' => 'posts', 'action' => 'view', 'id' => 1, '?' => $query]);
         $this->assertEquals('/posts/view/1?_host=foo.bar&_ssl=0&_scheme=ftp%3A%2F%2F&_base=baz&_port=15', $result);
+    }
+
+    /**
+     * Test setting the request context.
+     *
+     * @return void
+     */
+    public function testSetRequestContextCakePHP()
+    {
+        Router::connect('/:controller/:action/*');
+        $request = new Request([
+            'base' => '/subdir',
+            'url' => 'articles/view/1'
+        ]);
+        Router::setRequestContext($request);
+        $result = Router::url(['controller' => 'things', 'action' => 'add']);
+        $this->assertEquals('/subdir/things/add', $result);
+
+        $result = Router::url(['controller' => 'things', 'action' => 'add'], true);
+        $this->assertEquals('http://localhost/subdir/things/add', $result);
+
+        $result = Router::url('/pages/home');
+        $this->assertEquals('/subdir/pages/home', $result);
+    }
+
+    /**
+     * Test setting the request context.
+     *
+     * @return void
+     */
+    public function testSetRequestContextPsr()
+    {
+        $server = [
+            'DOCUMENT_ROOT' => '/Users/markstory/Sites',
+            'SCRIPT_FILENAME' => '/Users/markstory/Sites/subdir/webroot/index.php',
+            'PHP_SELF' => '/subdir/webroot/index.php/articles/view/1',
+            'REQUEST_URI' => '/subdir/articles/view/1',
+            'QUERY_STRING' => '',
+            'SERVER_PORT' => 80,
+        ];
+
+        Router::connect('/:controller/:action/*');
+        $request = ServerRequestFactory::fromGlobals($server);
+        Router::setRequestContext($request);
+
+        $result = Router::url(['controller' => 'things', 'action' => 'add']);
+        $this->assertEquals('/subdir/things/add', $result);
+
+        $result = Router::url(['controller' => 'things', 'action' => 'add'], true);
+        $this->assertEquals('http://localhost/subdir/things/add', $result);
+
+        $result = Router::url('/pages/home');
+        $this->assertEquals('/subdir/pages/home', $result);
+    }
+
+    /**
+     * Test setting the request context.
+     *
+     * @expectedException InvalidArgumentException
+     * @return void
+     */
+    public function testSetRequestContextInvalid()
+    {
+        Router::setRequestContext(new \stdClass);
     }
 
     /**

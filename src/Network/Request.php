@@ -584,9 +584,9 @@ class Request implements ArrayAccess
     {
         if (strpos($name, 'is') === 0) {
             $type = strtolower(substr($name, 2));
-            
+
             array_unshift($params, $type);
-            
+
             return call_user_func_array([$this, 'is'], $params);
         }
         throw new BadMethodCallException(sprintf('Method %s does not exist', $name));
@@ -639,7 +639,6 @@ class Request implements ArrayAccess
 
             return count(array_filter($result)) > 0;
         }
-        
         $args = func_get_args();
         array_shift($args);
 
@@ -647,11 +646,9 @@ class Request implements ArrayAccess
         if (!isset(static::$_detectors[$type])) {
             return false;
         }
-
         if ($args) {
             return $this->_is($type, $args);
         }
-        
         if (!isset($this->_detectorCache[$type])) {
             $this->_detectorCache[$type] = $this->_is($type, $args);
         }

@@ -43,7 +43,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
      * By default, all fixtures attached to this class will be truncated and reloaded after each test.
      * Set this to false to handle manually
      *
-     * @var array
+     * @var bool
      */
     public $autoFixtures = true;
 
@@ -120,6 +120,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             Configure::clear();
             Configure::write($this->_configure);
         }
+        TableRegistry::clear();
     }
 
     /**
@@ -662,6 +663,10 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             if (class_exists($entityClass)) {
                 $mock->entityClass($entityClass);
             }
+        }
+
+        if (stripos($mock->table(), 'mock') === 0) {
+            $mock->table(Inflector::tableize($baseClass));
         }
 
         TableRegistry::set($baseClass, $mock);

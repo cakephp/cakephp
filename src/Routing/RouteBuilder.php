@@ -197,6 +197,17 @@ class RouteBuilder
     }
 
     /**
+     * Checks if there is already a route with a given name.
+     *
+     * @param string $name Name.
+     * @return bool
+     */
+    public function nameExists($name)
+    {
+        return array_key_exists($name, $this->_collection->named());
+    }
+
+    /**
      * Get/set the name prefix for this scope.
      *
      * Modifying the name prefix will only change the prefix
@@ -324,7 +335,8 @@ class RouteBuilder
         }
 
         $connectOptions = $options['connectOptions'];
-        $urlName = Inflector::{$options['inflect']}($name);
+        $method = $options['inflect'];
+        $urlName = Inflector::$method($name);
         $resourceMap = array_merge(static::$_resourceMap, $options['map']);
 
         $only = (array)$options['only'];
@@ -454,8 +466,8 @@ class RouteBuilder
      */
     public function connect($route, array $defaults = [], array $options = [])
     {
-        if (empty($options['action'])) {
-            $defaults += ['action' => 'index'];
+        if (!isset($options['action']) && !isset($defaults['action'])) {
+            $defaults['action'] = 'index';
         }
 
         if (empty($options['_ext'])) {

@@ -1335,6 +1335,31 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test merge() doesn't dirty values that were null and are null again.
+     *
+     * @return void
+     */
+    public function testMergeUnchangedNullValue()
+    {
+        $data = [
+            'title' => 'My title',
+            'author_id' => 1,
+            'body' => null,
+        ];
+        $marshall = new Marshaller($this->articles);
+        $entity = new Entity([
+            'title' => 'Foo',
+            'body' => null
+        ]);
+        $entity->accessible('*', true);
+        $entity->isNew(false);
+        $entity->clean();
+        $result = $marshall->merge($entity, $data, []);
+
+        $this->assertFalse($entity->dirty('body'), 'unchanged null should not be dirty');
+    }
+
+    /**
      * Tests that merge respects the entity accessible methods
      *
      * @return void

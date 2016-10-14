@@ -50,7 +50,7 @@ use Cake\Utility\Hash;
  *
  * You can use the 'cookieJar' constructor option to provide a custom
  * cookie jar instance you've restored from cache/disk. By default
- * an empty instance of Cake\Network\Http\CookieCollection will be created.
+ * an empty instance of Cake\Http\Client\CookieCollection will be created.
  *
  * ### Sending request bodies
  *
@@ -124,7 +124,7 @@ class Client
 
     /**
      * Adapter for sending requests. Defaults to
-     * Cake\Network\Http\Adapter\Stream
+     * Cake\Http\Client\Adapter\Stream
      *
      * @var \Cake\Http\Client\Adapter\Stream
      */

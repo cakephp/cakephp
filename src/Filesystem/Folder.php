@@ -16,6 +16,7 @@ namespace Cake\Filesystem;
 
 use DirectoryIterator;
 use Exception;
+use InvalidArgumentException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -401,7 +402,7 @@ class Folder
     }
 
     /**
-     * Returns true if the File is in a given CakePath.
+     * Returns true if the Folder is in the given Cake path.
      *
      * @param string $path The path to check.
      * @return bool
@@ -416,21 +417,26 @@ class Folder
     }
 
     /**
-     * Returns true if the File is in given path.
+     * Returns true if the Folder is in the given path.
      *
-     * @param string $path The path to check that the current pwd() resides with in.
-     * @param bool $reverse Reverse the search, check that pwd() resides within $path.
+     * @param string $path The absolute path to check that the current `pwd()` resides within.
+     * @param bool $reverse Reverse the search, check if the given `$path` resides within the current `pwd()`.
      * @return bool
+     * @throws \InvalidArgumentException When the given `$path` argument is not an absolute path.
      */
-    public function inPath($path = '', $reverse = false)
+    public function inPath($path, $reverse = false)
     {
+        if (!Folder::isAbsolute($path)) {
+            throw new InvalidArgumentException('The $path argument is expected to be an absolute path.');
+        }
+
         $dir = Folder::slashTerm($path);
         $current = Folder::slashTerm($this->pwd());
 
         if (!$reverse) {
-            $return = preg_match('/^(.*)' . preg_quote($dir, '/') . '(.*)/', $current);
+            $return = preg_match('/^' . preg_quote($dir, '/') . '(.*)/', $current);
         } else {
-            $return = preg_match('/^(.*)' . preg_quote($current, '/') . '(.*)/', $dir);
+            $return = preg_match('/^' . preg_quote($current, '/') . '(.*)/', $dir);
         }
 
         return (bool)$return;

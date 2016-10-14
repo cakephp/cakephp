@@ -305,17 +305,67 @@ class I18nTest extends TestCase
                         'character' => 'The letter {0}',
                         'communication' => 'She wrote a letter to {0}'
                     ]
+                ],
+                'letters' => [
+                    '_context' => [
+                        'character' => [
+                            'The letter {0}',
+                            'The letters {0} and {1}'
+                        ],
+                        'communication' => [
+                            'She wrote a letter to {0}',
+                            'She wrote a letter to {0} and {1}'
+                        ]
+                    ]
                 ]
             ]);
 
             return $package;
         });
 
+        $this->assertEquals('The letters A and B', __x('character', 'letters', ['A', 'B']));
         $this->assertEquals('The letter A', __x('character', 'letter', ['A']));
+
+        $this->assertEquals(
+            'She wrote a letter to Thomas and Sara',
+            __x('communication', 'letters', ['Thomas', 'Sara'])
+        );
         $this->assertEquals(
             'She wrote a letter to Thomas',
             __x('communication', 'letter', ['Thomas'])
         );
+
+        $this->assertEquals(
+            'She wrote a letter to Thomas and Sara',
+            __x('communication', 'letters', 'Thomas', 'Sara')
+        );
+        $this->assertEquals(
+            'She wrote a letter to Thomas',
+            __x('communication', 'letter', 'Thomas')
+        );
+    }
+
+    /**
+     * Tests the __x() function with no msgstr
+     *
+     * @return void
+     */
+    public function testBasicContextFunctionNoString()
+    {
+        I18n::translator('default', 'en_US', function () {
+            $package = new Package('default');
+            $package->setMessages([
+                'letter' => [
+                    '_context' => [
+                        'character' => '',
+                    ]
+                ]
+            ]);
+
+            return $package;
+        });
+
+        $this->assertEquals('', __x('character', 'letter'));
     }
 
     /**
@@ -361,6 +411,15 @@ class I18nTest extends TestCase
             'She wrote a letter to Thomas',
             __xn('communication', 'letter', 'letters', 1, ['Thomas'])
         );
+
+        $this->assertEquals(
+            'She wrote a letter to Thomas and Sara',
+            __xn('communication', 'letter', 'letters', 2, 'Thomas', 'Sara')
+        );
+        $this->assertEquals(
+            'She wrote a letter to Thomas',
+            __xn('communication', 'letter', 'letters', 1, 'Thomas')
+        );
     }
 
     /**
@@ -378,16 +437,43 @@ class I18nTest extends TestCase
                         'character' => 'The letter {0}',
                         'communication' => 'She wrote a letter to {0}'
                     ]
+                ],
+                'letters' => [
+                    '_context' => [
+                        'character' => [
+                            'The letter {0}',
+                            'The letters {0} and {1}'
+                        ],
+                        'communication' => [
+                            'She wrote a letter to {0}',
+                            'She wrote a letter to {0} and {1}'
+                        ]
+                    ]
                 ]
             ]);
 
             return $package;
         });
 
+        $this->assertEquals('The letters A and B', __dx('custom', 'character', 'letters', ['A', 'B']));
         $this->assertEquals('The letter A', __dx('custom', 'character', 'letter', ['A']));
+
+        $this->assertEquals(
+            'She wrote a letter to Thomas and Sara',
+            __dx('custom', 'communication', 'letters', ['Thomas', 'Sara'])
+        );
         $this->assertEquals(
             'She wrote a letter to Thomas',
             __dx('custom', 'communication', 'letter', ['Thomas'])
+        );
+
+        $this->assertEquals(
+            'She wrote a letter to Thomas and Sara',
+            __dx('custom', 'communication', 'letters', 'Thomas', 'Sara')
+        );
+        $this->assertEquals(
+            'She wrote a letter to Thomas',
+            __dx('custom', 'communication', 'letter', 'Thomas')
         );
     }
 
@@ -439,6 +525,15 @@ class I18nTest extends TestCase
         $this->assertEquals(
             'She wrote a letter to Thomas',
             __dxn('custom', 'communication', 'letter', 'letters', 1, ['Thomas'])
+        );
+
+        $this->assertEquals(
+            'She wrote a letter to Thomas and Sara',
+            __dxn('custom', 'communication', 'letter', 'letters', 2, 'Thomas', 'Sara')
+        );
+        $this->assertEquals(
+            'She wrote a letter to Thomas',
+            __dxn('custom', 'communication', 'letter', 'letters', 1, 'Thomas')
         );
     }
 

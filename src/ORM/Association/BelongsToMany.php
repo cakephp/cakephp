@@ -375,7 +375,9 @@ class BelongsToMany extends Association
         if (empty($options['negateMatch'])) {
             return;
         }
-        $options += ['conditions' => []];
+        if (!isset($options['conditions'])) {
+            $options['conditions'] = [];
+        }
         $junction = $this->junction();
         $belongsTo = $junction->association($this->source()->alias());
         $conds = $belongsTo->_joinCondition(['foreignKey' => $belongsTo->foreignKey()]);
@@ -385,7 +387,9 @@ class BelongsToMany extends Association
             ->where($options['conditions'])
             ->andWhere($this->junctionConditions());
 
-        $subquery = $options['queryBuilder']($subquery);
+        if (!empty($options['queryBuilder'])) {
+            $subquery = $options['queryBuilder']($subquery);
+        }
 
         $assoc = $junction->association($this->target()->alias());
         $conditions = $assoc->_joinCondition([

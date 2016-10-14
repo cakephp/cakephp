@@ -67,7 +67,7 @@ class CacheShell extends Shell
      * Clear metadata.
      *
      * @param string|null $prefix The cache prefix to be cleared.
-     * @throws Cake\Console\Exception\StopException
+     * @throws \Cake\Console\Exception\StopException
      * @return void
      */
     public function clear($prefix = null)

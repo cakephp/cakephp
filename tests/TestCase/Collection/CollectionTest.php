@@ -1770,6 +1770,161 @@ class CollectionTest extends TestCase
         $this->assertEquals($expected, $chunked);
     }
 
+    /**
+     * Tests cartesianProduct
+     *
+     * @return void
+     */
+    public function testCartesianProduct()
+    {
+        $collection = new Collection([]);
+
+        $result = $collection->cartesianProduct();
+
+        $expected = [];
+
+        $this->assertEquals($expected, $result->toList());
+
+        $collection = new Collection([['A', 'B', 'C'], [1, 2, 3]]);
+
+        $result = $collection->cartesianProduct();
+
+        $expected = [
+            ['A', 1],
+            ['A', 2],
+            ['A', 3],
+            ['B', 1],
+            ['B', 2],
+            ['B', 3],
+            ['C', 1],
+            ['C', 2],
+            ['C', 3],
+        ];
+
+        $this->assertEquals($expected, $result->toList());
+
+        $collection = new Collection([[1, 2, 3], ['A', 'B', 'C'], ['a', 'b', 'c']]);
+
+        $result = $collection->cartesianProduct(function ($value) {
+            return [strval($value[0]) . $value[1] . $value[2]];
+        }, function ($value) {
+            return $value[0] >= 2;
+        });
+
+        $expected = [
+            ['2Aa'],
+            ['2Ab'],
+            ['2Ac'],
+            ['2Ba'],
+            ['2Bb'],
+            ['2Bc'],
+            ['2Ca'],
+            ['2Cb'],
+            ['2Cc'],
+            ['3Aa'],
+            ['3Ab'],
+            ['3Ac'],
+            ['3Ba'],
+            ['3Bb'],
+            ['3Bc'],
+            ['3Ca'],
+            ['3Cb'],
+            ['3Cc'],
+        ];
+
+        $this->assertEquals($expected, $result->toList());
+
+        $collection = new Collection([['1', '2', '3', '4'], ['A', 'B', 'C'], ['name', 'surname', 'telephone']]);
+
+        $result = $collection->cartesianProduct(function ($value) {
+            return [$value[0] => [$value[1] => $value[2]]];
+        }, function ($value) {
+            return $value[2] !== 'surname';
+        });
+
+        $expected = [
+            [1 => ['A' => 'name']],
+            [1 => ['A' => 'telephone']],
+            [1 => ['B' => 'name']],
+            [1 => ['B' => 'telephone']],
+            [1 => ['C' => 'name']],
+            [1 => ['C' => 'telephone']],
+            [2 => ['A' => 'name']],
+            [2 => ['A' => 'telephone']],
+            [2 => ['B' => 'name']],
+            [2 => ['B' => 'telephone']],
+            [2 => ['C' => 'name']],
+            [2 => ['C' => 'telephone']],
+            [3 => ['A' => 'name']],
+            [3 => ['A' => 'telephone']],
+            [3 => ['B' => 'name']],
+            [3 => ['B' => 'telephone']],
+            [3 => ['C' => 'name']],
+            [3 => ['C' => 'telephone']],
+            [4 => ['A' => 'name']],
+            [4 => ['A' => 'telephone']],
+            [4 => ['B' => 'name']],
+            [4 => ['B' => 'telephone']],
+            [4 => ['C' => 'name']],
+            [4 => ['C' => 'telephone']],
+        ];
+
+        $this->assertEquals($expected, $result->toList());
+
+        $collection = new Collection([
+            [
+                'name1' => 'alex',
+                'name2' => 'kostas',
+                0 => 'leon',
+            ],
+            [
+                'val1' => 'alex@example.com',
+                24 => 'kostas@example.com',
+                'val2' => 'leon@example.com',
+            ],
+        ]);
+
+        $result = $collection->cartesianProduct();
+
+        $expected = [
+            ['alex', 'alex@example.com'],
+            ['alex', 'kostas@example.com'],
+            ['alex', 'leon@example.com'],
+            ['kostas', 'alex@example.com'],
+            ['kostas', 'kostas@example.com'],
+            ['kostas', 'leon@example.com'],
+            ['leon', 'alex@example.com'],
+            ['leon', 'kostas@example.com'],
+            ['leon', 'leon@example.com'],
+        ];
+
+        $this->assertEquals($expected, $result->toList());
+    }
+
+    /**
+     * Tests that an exception is thrown if the cartesian product is called with multidimensional arrays
+     *
+     * @expectedException \LogicException
+     * @return void
+     */
+    public function testCartesianProductMultidimensionalArray()
+    {
+        $collection = new Collection([
+            [
+                'names' => [
+                    'alex', 'kostas', 'leon'
+                ]
+            ],
+            [
+                'locations' => [
+                    'crete', 'london', 'paris'
+                ]
+            ],
+        ]);
+
+        $result = $collection->cartesianProduct();
+    }
+
     public function testTranspose()
     {
         $collection = new Collection([

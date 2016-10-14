@@ -655,6 +655,32 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test using template vars in Create (formStart template)
+     *
+     * @return void
+     */
+    public function testCreateTemplateVars()
+    {
+        $result = $this->Form->create($this->article, [
+            'templates' => [
+                'formStart' => '<h4 class="mb">{{header}}</h4><form{{attrs}}>',
+            ],
+            'templateVars' => ['header' => 'headertext']
+        ]);
+        $expected = [
+            'h4' => ['class'],
+            'headertext',
+            '/h4',
+            'form' => [
+                'method' => 'post',
+                'action' => '/articles/add',
+                'accept-charset' => 'utf-8'
+            ]
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test opening a form for an update operation.
      *
      * @return void
@@ -3154,6 +3180,27 @@ class FormHelperTest extends TestCase
                 'data-foo' => 'disabled'
             ]],
             'Disabled',
+            '/label',
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->input('User.confirm', [
+            'label' => 'Confirm <b>me</b>!',
+            'type' => 'checkbox',
+            'escape' => false
+        ]);
+        $expected = [
+            'div' => ['class' => 'input checkbox'],
+            'input' => ['type' => 'hidden', 'name' => 'User[confirm]', 'value' => '0'],
+            'label' => ['for' => 'user-confirm'],
+            ['input' => [
+                'type' => 'checkbox',
+                'name' => 'User[confirm]',
+                'value' => '1',
+                'id' => 'user-confirm',
+            ]],
+            'Confirm <b>me</b>!',
             '/label',
             '/div'
         ];

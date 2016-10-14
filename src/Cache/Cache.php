@@ -457,7 +457,7 @@ class Cache
 
         return $engine->clear($check);
     }
-    
+
     /**
      * Delete all keys from the cache from all configurations.
      *
@@ -467,11 +467,11 @@ class Cache
     public static function clearAll($check = false)
     {
         $status = [];
-        
+
         foreach (self::configured() as $config) {
             $status[$config] = self::clear($check, $config);
         }
-        
+
         return $status;
     }
 

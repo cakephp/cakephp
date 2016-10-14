@@ -142,6 +142,7 @@ class DatabaseSessionTest extends TestCase
 
         $this->assertTrue($this->storage->destroy('foo'), 'Destroy failed');
         $this->assertSame('', $this->storage->read('foo'), 'Value still present.');
+        $this->assertTrue($this->storage->destroy('foo'), 'Destroy should always return true');
     }
 
     /**

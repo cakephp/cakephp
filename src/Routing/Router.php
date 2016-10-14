@@ -17,6 +17,8 @@ namespace Cake\Routing;
 use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Utility\Inflector;
+use InvalidArgumentException;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Parses the request URL into controller, action, and parameters. Uses the connected routes
@@ -223,9 +225,11 @@ class Router
      */
     public static function redirect($route, $url, $options = [])
     {
-        $options += ['routeClass' => 'Cake\Routing\Route\RedirectRoute'];
         if (is_string($url)) {
             $url = ['redirect' => $url];
+        }
+        if (!isset($options['routeClass'])) {
+            $options['routeClass'] = 'Cake\Routing\Route\RedirectRoute';
         }
         static::connect($route, $url, $options);
     }
@@ -389,24 +393,42 @@ class Router
     public static function pushRequest(Request $request)
     {
         static::$_requests[] = $request;
-        static::_setContext($request);
+        static::setRequestContext($request);
     }
 
     /**
      * Store the request context for a given request.
      *
-     * @param \Cake\Network\Request $request The request instance.
+     * @param \Cake\Network\Request|\Psr\Http\Message\ServerRequestInterface $request The request instance.
      * @return void
+     * @throws InvalidArgumentException When parameter is an incorrect type.
      */
-    protected static function _setContext($request)
+    public static function setRequestContext($request)
     {
-        static::$_requestContext = [
-            '_base' => $request->base,
-            '_port' => $request->port(),
-            '_scheme' => $request->scheme(),
-            '_host' => $request->host()
-        ];
+        if ($request instanceof Request) {
+            static::$_requestContext = [
+                '_base' => $request->base,
+                '_port' => $request->port(),
+                '_scheme' => $request->scheme(),
+                '_host' => $request->host()
+            ];
+
+            return;
+        }
+        if ($request instanceof ServerRequestInterface) {
+            $uri = $request->getUri();
+            static::$_requestContext = [
+                '_base' => $request->getAttribute('base'),
+                '_port' => $uri->getPort(),
+                '_scheme' => $uri->getScheme(),
+                '_host' => $uri->getHost(),
+            ];
+
+            return;
+        }
+        throw new InvalidArgumentException('Unknown request type received.');
     }
+
 
     /**
      * Pops a request off of the request stack.  Used when doing requestAction
@@ -420,7 +442,7 @@ class Router
         $removed = array_pop(static::$_requests);
         $last = end(static::$_requests);
         if ($last) {
-            static::_setContext($last);
+            static::setRequestContext($last);
             reset(static::$_requests);
         }
 
@@ -568,14 +590,17 @@ class Router
         ];
         $here = $base = $output = $frag = null;
 
+        // In 4.x this should be replaced with state injected via setRequestContext
         $request = static::getRequest(true);
         if ($request) {
             $params = $request->params;
             $here = $request->here;
             $base = $request->base;
-        }
-        if (!isset($base)) {
+        } else {
             $base = Configure::read('App.base');
+            if (isset(static::$_requestContext['_base'])) {
+                $base = static::$_requestContext['_base'];
+            }
         }
 
         if (empty($url)) {

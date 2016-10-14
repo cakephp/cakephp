@@ -259,6 +259,7 @@ class DateTimeWidget implements WidgetInterface
 
                 $date = new DateTime();
             } else {
+                /* @var \DateTime $value */
                 $date = clone $value;
             }
         } catch (Exception $e) {

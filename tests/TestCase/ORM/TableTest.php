@@ -1784,7 +1784,6 @@ class TableTest extends TestCase
         $this->assertSame($entity, $table->save($entity));
     }
 
-
     /**
      * Test that save works with replace saveStrategy and are not deleted once they are not null
      *
@@ -2210,11 +2209,9 @@ class TableTest extends TestCase
     public function testAfterSave()
     {
         $table = TableRegistry::get('users');
-        $data = new \Cake\ORM\Entity([
-            'username' => 'superuser',
-            'created' => new Time('2013-10-10 00:00'),
-            'updated' => new Time('2013-10-10 00:00')
-        ]);
+        $data = $table->get(1);
+
+        $data->username = 'newusername';
 
         $called = false;
         $listener = function ($e, $entity, $options) use ($data, &$called) {
@@ -2227,13 +2224,13 @@ class TableTest extends TestCase
         $calledAfterCommit = false;
         $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
             $this->assertSame($data, $entity);
-            $this->assertFalse($entity->dirty());
+            $this->assertTrue($entity->dirty());
+            $this->assertNotSame($data->get('username'), $data->getOriginal('username'));
             $calledAfterCommit = true;
         };
         $table->eventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
 
         $this->assertSame($data, $table->save($data));
-        $this->assertEquals($data->id, self::$nextUserId);
         $this->assertTrue($called);
         $this->assertTrue($calledAfterCommit);
     }
@@ -2550,6 +2547,7 @@ class TableTest extends TestCase
         ]);
         $table->save($data);
     }
+
 
     /**
      * Tests that only the properties marked as dirty are actually saved
@@ -6017,6 +6015,35 @@ class TableTest extends TestCase
         $table = TableRegistry::get('Users');
         $this->assertSame($entity, $table->save($entity));
         $this->assertSame(self::$nextUserId, $entity->id);
+    }
+
+    /**
+     * Tests entity clean()
+     *
+     * @return void
+     */
+    public function testEntityClean()
+    {
+        $table = TableRegistry::get('Articles');
+        $validator = $table->validator()->requirePresence('body');
+        $entity = $table->newEntity(['title' => 'mark']);
+
+        $entity->dirty('title', true);
+        $entity->invalid('title', 'albert');
+
+        $this->assertNotEmpty($entity->errors());
+        $this->assertTrue($entity->dirty());
+        $this->assertEquals(['title' => 'albert'], $entity->invalid());
+
+        $entity->title = 'alex';
+        $this->assertSame($entity->getOriginal('title'), 'mark');
+
+        $entity->clean();
+
+        $this->assertEmpty($entity->errors());
+        $this->assertFalse($entity->dirty());
+        $this->assertEquals([], $entity->invalid());
+        $this->assertSame($entity->getOriginal('title'), 'alex');
     }
 
     /**

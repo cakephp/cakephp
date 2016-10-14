@@ -475,18 +475,21 @@ class View implements EventDispatcherInterface
      * - `callbacks` - Set to true to fire beforeRender and afterRender helper callbacks for this element.
      *   Defaults to false.
      * - `ignoreMissing` - Used to allow missing elements. Set to true to not throw exceptions.
+     * - `plugin` - setting to false will force to use the application's element from plugin templates, when the
+     *   plugin has element with same name. Defaults to true
      * @return string Rendered Element
      * @throws \Cake\View\Exception\MissingElementException When an element is missing and `ignoreMissing`
      *   is false.
      */
     public function element($name, array $data = [], array $options = [])
     {
-        $options += ['callbacks' => false, 'cache' => null];
+        $options += ['callbacks' => false, 'cache' => null, 'plugin' => null];
         if (isset($options['cache'])) {
             $options['cache'] = $this->_elementCache($name, $data, $options);
         }
 
-        $file = $this->_getElementFilename($name);
+        $pluginCheck = $options['plugin'] === false ? false : true;
+        $file = $this->_getElementFilename($name, $pluginCheck);
         if ($file && $options['cache']) {
             return $this->cache(function () use ($file, $data, $options) {
                 echo $this->_renderElement($file, $data, $options);
@@ -547,7 +550,7 @@ class View implements EventDispatcherInterface
      */
     public function elementExists($name)
     {
-        return (bool)$this->_getElementFilename($name);
+        return (bool)$this->_getElementFileName($name);
     }
 
     /**
@@ -585,7 +588,8 @@ class View implements EventDispatcherInterface
             $this->layout = $layout;
         }
 
-        if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
+        $viewFileName = $view !== false ? $this->_getViewFileName($view) : null;
+        if ($viewFileName) {
             $this->_currentType = static::TYPE_TEMPLATE;
             $this->dispatchEvent('View.beforeRender', [$viewFileName]);
             $this->Blocks->set('content', $this->_render($viewFileName));
@@ -1191,11 +1195,12 @@ class View implements EventDispatcherInterface
      * Finds an element filename, returns false on failure.
      *
      * @param string $name The name of the element to find.
+     * @param bool $pluginCheck - if false will ignore the request's plugin if parsed plugin is not loaded
      * @return string|false Either a string to the element filename or false when one can't be found.
      */
-    protected function _getElementFileName($name)
+    protected function _getElementFileName($name, $pluginCheck = true)
     {
-        list($plugin, $name) = $this->pluginSplit($name);
+        list($plugin, $name) = $this->pluginSplit($name, $pluginCheck);
 
         $paths = $this->_paths($plugin);
         $elementPaths = $this->_getSubPaths('Element');
@@ -1308,6 +1313,9 @@ class View implements EventDispatcherInterface
         if ($plugin) {
             $underscored = Inflector::underscore($plugin);
         }
+
+        $cache = $options['cache'];
+        unset($options['cache'], $options['callbacks'], $options['plugin']);
         $keys = array_merge(
             [$underscored, $name],
             array_keys($options),
@@ -1317,12 +1325,12 @@ class View implements EventDispatcherInterface
             'config' => $this->elementCache,
             'key' => implode('_', $keys)
         ];
-        if (is_array($options['cache'])) {
+        if (is_array($cache)) {
             $defaults = [
                 'config' => $this->elementCache,
                 'key' => $config['key']
             ];
-            $config = $options['cache'] + $defaults;
+            $config = $cache + $defaults;
         }
         $config['key'] = 'element_' . $config['key'];
 
