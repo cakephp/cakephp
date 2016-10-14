@@ -186,4 +186,12 @@ trait PostgresDialectTrait
     {
         return 'SET CONSTRAINTS ALL IMMEDIATE';
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function explainSQL($query)
+    {
+        return "EXPLAIN $query";
+    }
 }

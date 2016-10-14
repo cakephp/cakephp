@@ -16,7 +16,7 @@ namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
-use \PDO;
+use PDO;
 
 /**
  * Tests Mysql driver
@@ -162,5 +162,31 @@ class MysqlTest extends TestCase
 
         $this->assertFalse($driver->commitTransaction());
         $this->assertTrue($driver->isConnected());
+    }
+
+    /**
+     * Test EXPLAIN
+     *
+     * @return void
+     */
+    public function testExplain()
+    {
+        $connection = ConnectionManager::get('test');
+        $result = $connection->explain('SELECT ?', [1]);
+
+        $expected = [
+            'id',
+            'select_type',
+            'table',
+            'type',
+            'possible_keys',
+            'key',
+            'key_len',
+            'ref',
+            'rows',
+            'Extra',
+        ];
+
+        $this->assertEquals($expected, array_keys($result->fetch('assoc')));
     }
 }

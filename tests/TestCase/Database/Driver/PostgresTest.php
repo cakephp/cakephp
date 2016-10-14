@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use \PDO;
 
@@ -22,6 +23,10 @@ use \PDO;
  */
 class PostgresTest extends TestCase
 {
+
+    public $fixtures = ['core.things'];
+
+    public $autoFixtures = false;
 
     /**
      * Test connecting to Postgres with default configuration
@@ -170,5 +175,27 @@ class PostgresTest extends TestCase
             ->epilog('FOO');
         $query = $translator($query);
         $this->assertEquals('FOO', $query->clause('epilog'));
+    }
+
+    /**
+     * Test EXPLAIN
+     *
+     * @return void
+     */
+    public function testExplain()
+    {
+        $config = ConnectionManager::config('test');
+        $this->skipIf(strpos($config['driver'], 'Postgres') === false, 'Not using Postgres for test config');
+
+        $this->loadFixtures('Things');
+
+        $connection = ConnectionManager::get('test');
+        $result = $connection->explain('SELECT * FROM things WHERE id = ?', [1]);
+
+        $expected = [
+            'QUERY PLAN',
+        ];
+
+        $this->assertEquals($expected, array_keys($result->fetch('assoc')));
     }
 }

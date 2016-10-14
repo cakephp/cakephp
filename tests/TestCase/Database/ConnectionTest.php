@@ -987,4 +987,91 @@ class ConnectionTest extends TestCase
         $connection->schemaCollection($schema);
         $this->assertSame($schema, $connection->schemaCollection());
     }
+
+    /**
+     * Test canExplain
+     *
+     * @return void
+     */
+    public function testCanExplain()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver')
+            ->getMock();
+
+        $driver->expects($this->once())
+            ->method('enabled')
+            ->will($this->returnValue(true));
+
+        $driver->expects($this->any())
+            ->method('explainSQL')
+            ->will($this->returnValue('EXPLAIN something'));
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect'])
+            ->setConstructorArgs([['driver' => $driver]])
+            ->getMock();
+
+        $this->assertTrue($connection->canExplain("INSERT INTO things (title, body) VALUES ('foo', 'bar')"));
+        $this->assertTrue($connection->canExplain("UPDATE things SET title = 'bar'"));
+        $this->assertTrue($connection->canExplain("SELECT * FROM things"));
+        $this->assertTrue($connection->canExplain("DELETE FROM things WHERE id = 1"));
+        $this->assertFalse($connection->canExplain("TRUNCATE things"));
+    }
+
+    /**
+     * Test explain
+     *
+     * @return void
+     */
+    public function testExplain()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver')
+            ->getMock();
+
+        $driver->expects($this->once())
+            ->method('enabled')
+            ->will($this->returnValue(true));
+
+        $driver->expects($this->any())
+            ->method('explainSQL')
+            ->will($this->returnValue('EXPLAIN something'));
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'execute'])
+            ->setConstructorArgs([['driver' => $driver]])
+            ->getMock();
+
+        $connection->expects($this->once())
+            ->method('execute', ['number' => 100], ['number' => 'integer'])
+            ->with('EXPLAIN something');
+
+        $connection->explain('SELECT :number', ['number' => 100], ['number' => 'integer']);
+    }
+
+    /**
+     * Test explain throws an exception if not supported.
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Cannot explain query
+     */
+    public function testExplainNotSupported()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver')
+            ->getMock();
+
+        $driver->expects($this->once())
+            ->method('enabled')
+            ->will($this->returnValue(true));
+
+        $driver->expects($this->any())
+            ->method('explainSQL')
+            ->will($this->returnValue(false));
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'execute'])
+            ->setConstructorArgs([['driver' => $driver]])
+            ->getMock();
+
+        $connection->explain('SELECT 1');
+    }
 }

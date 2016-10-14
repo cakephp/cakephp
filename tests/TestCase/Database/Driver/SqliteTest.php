@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Database\Driver\Sqlite;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
 
@@ -23,6 +24,10 @@ use PDO;
  */
 class SqliteTest extends TestCase
 {
+
+    public $fixtures = ['core.things'];
+
+    public $autoFixtures = false;
 
     /**
      * Test connecting to Sqlite with default configuration
@@ -142,5 +147,30 @@ class SqliteTest extends TestCase
             }));
         $driver->connection($mock);
         $this->assertEquals($expected, $driver->schemaValue($input));
+    }
+
+    /**
+     * Test EXPLAIN
+     *
+     * @return void
+     */
+    public function testExplain()
+    {
+        $config = ConnectionManager::config('test');
+        $this->skipIf(strpos($config['driver'], 'Sqlite') === false, 'Not using Sqlite for test config');
+
+        $this->loadFixtures('Things');
+
+        $connection = ConnectionManager::get('test');
+        $result = $connection->explain('SELECT * FROM things WHERE id = ?', [1]);
+
+        $expected = [
+            'selectid',
+            'order',
+            'from',
+            'detail',
+        ];
+
+        $this->assertEquals($expected, array_keys($result->fetch('assoc')));
     }
 }

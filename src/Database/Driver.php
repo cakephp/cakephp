@@ -235,6 +235,17 @@ abstract class Driver
     abstract public function quoteIdentifier($identifier);
 
     /**
+     * Get the SQL for explaining the query.
+     *
+     * @param string $query The query to be explained
+     * @return string|bool
+     */
+    public function explainSQL($query)
+    {
+        return false;
+    }
+
+    /**
      * Escapes values for use in schema definitions.
      *
      * @param mixed $value The value to escape.

@@ -15,8 +15,9 @@
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Core\Configure;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
-use \PDO;
+use PDO;
 
 /**
  * Tests Sqlserver driver
@@ -236,5 +237,20 @@ class SqlserverTest extends TestCase
             ->values(['title' => 'A new article']);
         $expected = 'INSERT INTO articles (title) OUTPUT INSERTED.* VALUES (:c0)';
         $this->assertEquals($expected, $query->sql());
+    }
+
+    /**
+     * Test EXPLAIN
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Cannot explain query
+     */
+    public function testExplain()
+    {
+        $config = ConnectionManager::config('test');
+        $this->skipIf(strpos($config['driver'], 'Sqlserver') === false, 'Not using Sqlserver for test config');
+
+        $connection = ConnectionManager::get('test');
+        $connection->explain('SELECT 1');
     }
 }

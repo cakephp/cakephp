@@ -92,6 +92,17 @@ class DriverTest extends TestCase
     }
 
     /**
+     * Test explainSQL().
+     *
+     * @return void
+     */
+    public function testExplainSQL()
+    {
+        $result = $this->driver->explainSQL('SELECT 1');
+        $this->assertFalse($result);
+    }
+
+    /**
      * Test schemaValue().
      * Uses a provider for all the different values we can pass to the method.
      *
