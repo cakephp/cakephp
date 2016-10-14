@@ -14,7 +14,6 @@
  */
 namespace Cake\Database\Dialect;
 
-use Cake\Database\Exception\MissingPrimaryKeyException;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Query;
 use Cake\Database\Schema\PostgresSchema;
