@@ -43,11 +43,18 @@ class HtmlHelperTest extends TestCase
     public $cDataEnd = 'preg:/[^\]]*\]\]\>[\s\r\n]*/';
 
     /**
-     * html property
+     * Helper to be tested
      *
-     * @var object
+     * @var \Cake\View\Helper\HtmlHelper
      */
-    public $Html = null;
+    public $Html;
+
+    /**
+     * Mocked view
+     *
+     * @var \Cake\View\View|\PHPUnit_Framework_MockObject_MockObject
+     */
+    public $View;
 
     /**
      * setUp method
@@ -489,7 +496,6 @@ class HtmlHelperTest extends TestCase
      */
     public function testThemeAssetsInMainWebrootPath()
     {
-        $webRoot = Configure::read('App.wwwRoot');
         Configure::write('App.wwwRoot', TEST_APP . 'webroot/');
 
         $this->Html->Url->theme = 'TestTheme';
@@ -515,13 +521,10 @@ class HtmlHelperTest extends TestCase
     public function testStyle()
     {
         $result = $this->Html->style(['display' => 'none', 'margin' => '10px']);
-        $expected = 'display:none; margin:10px;';
-        $this->assertRegExp('/^display\s*:\s*none\s*;\s*margin\s*:\s*10px\s*;?$/', $expected);
+        $this->assertEquals('display:none; margin:10px;', $result);
 
         $result = $this->Html->style(['display' => 'none', 'margin' => '10px'], false);
-        $lines = explode("\n", $result);
-        $this->assertRegExp('/^\s*display\s*:\s*none\s*;\s*$/', $lines[0]);
-        $this->assertRegExp('/^\s*margin\s*:\s*10px\s*;?$/', $lines[1]);
+        $this->assertEquals("display:none;\nmargin:10px;", $result);
     }
 
     /**
@@ -1633,6 +1636,35 @@ class HtmlHelperTest extends TestCase
         $expected = [
             'link' => ['href' => 'http://example.com/manifest', 'rel' => 'manifest']
         ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function dataMetaLinksProvider()
+    {
+        return [
+            ['canonical', ['controller' => 'posts', 'action' => 'show'], '/posts/show'],
+            ['first', ['controller' => 'posts', 'action' => 'index'], '/posts'],
+            ['last', ['controller' => 'posts', 'action' => 'index', '?' => ['page' => 10]], '/posts?page=10'],
+            ['prev', ['controller' => 'posts', 'action' => 'index', '?' => ['page' => 4]], '/posts?page=4'],
+            ['next', ['controller' => 'posts', 'action' => 'index', '?' => ['page' => 6]], '/posts?page=6']
+        ];
+    }
+
+    /**
+     * test canonical and pagination meta links
+     *
+     * @param string $type
+     * @param array $url
+     * @param string $expected_url
+     * @dataProvider dataMetaLinksProvider
+     */
+    public function testMetaLinks($type, array $url, $expected_url)
+    {
+        $result = $this->Html->meta($type, $url);
+        $expected = ['link' => ['href' => $expected_url, 'rel' => $type]];
         $this->assertHtml($expected, $result);
     }
 
