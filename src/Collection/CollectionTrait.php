@@ -686,6 +686,59 @@ trait CollectionTrait
      *
      * @return \Cake\Collection\CollectionInterface
      */
+    public function cartesianProduct(callable $operation = null, callable $filter = null)
+    {
+        if ($this->isEmpty()) {
+            return new Collection([]);
+        }
+
+        $collectionArrays = [];
+        $collectionArraysKeys = [];
+        $collectionArraysCounts = [];
+
+        foreach ($this->toList() as $value) {
+            $valueCount = count($value);
+            if ($valueCount !== count($value, COUNT_RECURSIVE)) {
+                throw new LogicException('Cannot find the cartesian product of a multidimensional array');
+            }
+
+            $collectionArraysKeys[] = array_keys($value);
+            $collectionArraysCounts[] = $valueCount;
+            $collectionArrays[] = $value;
+        }
+
+        $result = [];
+        $lastIndex = count($collectionArrays) - 1;
+        // holds the indexes of the arrays that generate the current combination
+        $currentIndexes = array_fill(0, $lastIndex + 1, 0);
+
+        $changeIndex = $lastIndex;
+
+        while (!($changeIndex === 0 && $currentIndexes[0] === $collectionArraysCounts[0])) {
+            $currentCombination = array_map(function ($value, $keys, $index) {
+                return $value[$keys[$index]];
+            }, $collectionArrays, $collectionArraysKeys, $currentIndexes);
+
+            if ($filter === null || $filter($currentCombination)) {
+                $result[] = ($operation === null) ? $currentCombination : $operation($currentCombination);
+            }
+
+            $currentIndexes[$lastIndex]++;
+
+            for ($changeIndex = $lastIndex; $currentIndexes[$changeIndex] === $collectionArraysCounts[$changeIndex] && $changeIndex > 0; $changeIndex--) {
+                $currentIndexes[$changeIndex] = 0;
+                $currentIndexes[$changeIndex - 1]++;
+            }
+        }
+
+        return new Collection($result);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return \Cake\Collection\CollectionInterface
+     */
     public function transpose()
     {
         $arrayValue = $this->toList();

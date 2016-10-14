@@ -2807,4 +2807,105 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::numElements(false, '==', 0));
         $this->assertFalse(Validation::numElements(true, '==', 0));
     }
+
+    /**
+     * Test ImageSize InvalidArgumentException
+     *
+     * @expectedException \InvalidArgumentException
+     * @return void
+     */
+    public function testImageSizeInvalidArgumentException()
+    {
+        $this->assertTrue(Validation::imageSize([], []));
+    }
+
+    /**
+     * Test imageSize
+     *
+     * @return void
+     */
+    public function testImageSize()
+    {
+        $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
+        $upload = [
+            'tmp_name' => $image
+        ];
+
+        $this->assertTrue(Validation::imageSize($upload, [
+            'width' => ['>', 100],
+            'height' => ['>', 100],
+        ]));
+
+        $this->assertFalse(Validation::imageSize($upload, [
+            'width' => ['>', 100],
+            'height' => ['<', 100],
+        ]));
+
+        $this->assertFalse(Validation::imageSize($upload, [
+            'width' => ['==', 100],
+            'height' => ['==', 300],
+        ]));
+
+        $this->assertTrue(Validation::imageSize($upload, [
+            'width' => ['>=', 300],
+            'height' => ['>=', 300],
+        ]));
+
+        $this->assertTrue(Validation::imageSize($upload, [
+            'width' => ['<=', 300],
+            'height' => ['<=', 300],
+        ]));
+
+        $this->assertTrue(Validation::imageSize($upload, [
+            'width' => ['<=', 300],
+            'height' => ['>=', 300],
+        ]));
+
+        $this->assertFalse(Validation::imageSize($upload, [
+            'width' => ['<=', 299],
+            'height' => ['>=', 300],
+        ]));
+    }
+
+    /**
+     * Test imageHeight
+     *
+     * @return void
+     */
+    public function testImageHeight()
+    {
+        $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
+        $upload = [
+            'tmp_name' => $image
+        ];
+
+        $this->assertTrue(Validation::imageHeight($upload, '>', 100));
+        $this->assertTrue(Validation::imageHeight($upload, '<', 2000));
+        $this->assertTrue(Validation::imageHeight($upload, '==', 300));
+
+        $this->assertFalse(Validation::imageHeight($upload, '<', 100));
+        $this->assertFalse(Validation::imageHeight($upload, '>', 2000));
+        $this->assertFalse(Validation::imageHeight($upload, '==', 3000));
+    }
+
+    /**
+     * Test imageWidth
+     *
+     * @return void
+     */
+    public function testImageWidth()
+    {
+        $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
+        $upload = [
+            'tmp_name' => $image
+        ];
+
+        $this->assertTrue(Validation::imageWidth($upload, '>', 100));
+        $this->assertTrue(Validation::imageWidth($upload, '<', 2000));
+        $this->assertTrue(Validation::imageWidth($upload, '==', 300));
+
+        $this->assertFalse(Validation::imageWidth($upload, '<', 100));
+        $this->assertFalse(Validation::imageWidth($upload, '>', 2000));
+        $this->assertFalse(Validation::imageWidth($upload, '==', 3000));
+    }
 }

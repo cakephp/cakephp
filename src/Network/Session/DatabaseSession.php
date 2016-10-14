@@ -144,10 +144,12 @@ class DatabaseSession implements SessionHandlerInterface
      */
     public function destroy($id)
     {
-        return (bool)$this->_table->delete(new Entity(
+        $this->_table->delete(new Entity(
             [$this->_table->primaryKey() => $id],
             ['markNew' => false]
         ));
+
+        return true;
     }
 
     /**
