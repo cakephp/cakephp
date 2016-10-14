@@ -94,7 +94,7 @@ trait PostgresDialectTrait
         if ($limit) {
             $primaryKey = $this->_primaryKey($query);
             if ($primaryKey === null) {
-                throw new MissingPrimaryKeyException(['driver' => get_class($this)]);
+                throw new \Cake\Core\Exception\Exception(['driver' => get_class($this)]);
             }
 
             $from = (new Query($query->connection()))
