@@ -1658,13 +1658,13 @@ class HtmlHelperTest extends TestCase
      *
      * @param string $type
      * @param array $url
-     * @param string $expected_url
+     * @param string $expectedUrl
      * @dataProvider dataMetaLinksProvider
      */
-    public function testMetaLinks($type, array $url, $expected_url)
+    public function testMetaLinks($type, array $url, $expectedUrl)
     {
         $result = $this->Html->meta($type, $url);
-        $expected = ['link' => ['href' => $expected_url, 'rel' => $type]];
+        $expected = ['link' => ['href' => $expectedUrl, 'rel' => $type]];
         $this->assertHtml($expected, $result);
     }
 
