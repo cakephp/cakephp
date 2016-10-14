@@ -38,13 +38,46 @@ class MysqlTest extends TestCase
         $this->skipIf(strpos($config['driver'], 'Mysql') === false, 'Not using Mysql for test config');
     }
 
-    public function testCommitTransactionAutoConnect()
+    /**
+     * Test connecting to Mysql with default configuration
+     *
+     * @return void
+     */
+    public function testConnectionConfigDefault()
     {
-        $connection = ConnectionManager::get('test');
-        $driver = $connection->driver();
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+            ->setMethods(['_connect', 'connection'])
+            ->getMock();
+        $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8';
+        $expected = [
+            'persistent' => true,
+            'host' => 'localhost',
+            'username' => 'root',
+            'password' => '',
+            'database' => 'cake',
+            'port' => '3306',
+            'flags' => [],
+            'encoding' => 'utf8',
+            'timezone' => null,
+            'init' => ['SET NAMES utf8'],
+        ];
 
-        $this->assertFalse($driver->commitTransaction());
-        $this->assertTrue($driver->isConnected());
+        $expected['flags'] += [
+            PDO::ATTR_PERSISTENT => true,
+            PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        ];
+        $connection = $this->getMockBuilder('StdClass')
+            ->setMethods(['exec'])
+            ->getMock();
+
+        $driver->expects($this->once())->method('_connect')
+            ->with($dsn, $expected);
+
+        $driver->expects($this->any())
+            ->method('connection')
+            ->will($this->returnValue($connection));
+        $driver->connect([]);
     }
 
     /**
@@ -97,48 +130,6 @@ class MysqlTest extends TestCase
         $driver->expects($this->any())->method('connection')
             ->will($this->returnValue($connection));
         $driver->connect($config);
-    }
-
-    /**
-     * Test connecting to Mysql with default configuration
-     *
-     * @return void
-     */
-    public function testConnectionConfigDefault()
-    {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
-            ->setMethods(['_connect', 'connection'])
-            ->getMock();
-        $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8';
-        $expected = [
-            'persistent' => true,
-            'host' => 'localhost',
-            'username' => 'root',
-            'password' => '',
-            'database' => 'cake',
-            'port' => '3306',
-            'flags' => [],
-            'encoding' => 'utf8',
-            'timezone' => null,
-            'init' => ['SET NAMES utf8'],
-        ];
-
-        $expected['flags'] += [
-            PDO::ATTR_PERSISTENT => true,
-            PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        ];
-        $connection = $this->getMockBuilder('StdClass')
-            ->setMethods(['exec'])
-            ->getMock();
-
-        $driver->expects($this->once())->method('_connect')
-            ->with($dsn, $expected);
-
-        $driver->expects($this->any())
-            ->method('connection')
-            ->will($this->returnValue($connection));
-        $driver->connect([]);
     }
 
     /**
@@ -306,5 +297,14 @@ class MysqlTest extends TestCase
             ->where(['published' => true])
             ->order(['created' => 'DESC']);
         $this->assertEquals('UPDATE articles SET title = :c0 WHERE published = :c1 ORDER BY created DESC', $query->sql());
+    }
+
+    public function testCommitTransactionAutoConnect()
+    {
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->driver();
+
+        $this->assertFalse($driver->commitTransaction());
+        $this->assertTrue($driver->isConnected());
     }
 }
