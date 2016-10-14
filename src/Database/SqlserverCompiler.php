@@ -42,6 +42,11 @@ class SqlserverCompiler extends QueryCompiler
         'offset' => ' OFFSET %s ROWS',
         'epilog' => ' %s'
     ];
+    
+    protected $_groupConcatTemplate = ";with cte(expr, rank) as (%s)
+select stuff((select ',' + expr from cte
+    where rank = [outer].rank for xml path(''), type).value('.[1]', 'varchar(max)'), 1, 1, '')
+from cte [outer] group by rank";
 
     /**
      * {@inheritDoc}
@@ -50,6 +55,40 @@ class SqlserverCompiler extends QueryCompiler
         'select', 'from', 'join', 'where', 'group', 'having', 'order', 'offset',
         'limit', 'union', 'epilog'
     ];
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function compile(Query $query, ValueBinder $generator)
+    {
+        $isGroupConcatQuery = $this->_checkAndRemoveModfier($query, '_cake_groupconcat_query')
+            && !$this->_checkAndRemoveModfier($query, '_cake_native_groupconcat');
+        
+        $sql = parent::compile($query, $generator);
+        
+        if ($isGroupConcatQuery) {
+            $sql = sprintf($this->_groupConcatTemplate, $sql);
+        }
+        return $sql;
+    }
+    
+    /**
+     * Check if the given modifier is present in the given query and removes it.
+     * 
+     * @param \Cake\Database\Query $query The query to check
+     * @param string $modifierName The modifier to check for
+     * @return bool True if the modifier is present, false otherwise
+     */
+    protected function _checkAndRemoveModfier($query, $modifierName)
+    {
+        if (in_array($modifierName, $query->clause('modifier'))) {
+            $modifier = $query->clause('modifier');
+            unset($modifier[array_search($modifierName, $modifier)]);
+            $query->modifier($modifier, true);
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Generates the INSERT part of a SQL query
