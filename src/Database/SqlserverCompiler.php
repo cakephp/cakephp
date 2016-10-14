@@ -69,12 +69,13 @@ from cte [outer] group by rank";
         if ($isGroupConcatQuery) {
             $sql = sprintf($this->_groupConcatTemplate, $sql);
         }
+        
         return $sql;
     }
     
     /**
      * Check if the given modifier is present in the given query and removes it.
-     * 
+     *
      * @param \Cake\Database\Query $query The query to check
      * @param string $modifierName The modifier to check for
      * @return bool True if the modifier is present, false otherwise
@@ -85,8 +86,10 @@ from cte [outer] group by rank";
             $modifier = $query->clause('modifier');
             unset($modifier[array_search($modifierName, $modifier)]);
             $query->modifier($modifier, true);
+            
             return true;
         }
+        
         return false;
     }
 
