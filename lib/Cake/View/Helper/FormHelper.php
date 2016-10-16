@@ -585,6 +585,12 @@ class FormHelper extends AppHelper {
 		if (!isset($this->request['_Token']) || empty($this->request['_Token'])) {
 			return null;
 		}
+		$debugSecurity = Configure::read('debug');
+		if (isset($secureAttributes['debugSecurity'])) {
+			$debugSecurity = $debugSecurity && $secureAttributes['debugSecurity'];
+			unset($secureAttributes['debugSecurity']);
+		}
+
 		$locked = array();
 		$unlockedFields = $this->_unlockedFields;
 
@@ -622,6 +628,17 @@ class FormHelper extends AppHelper {
 			'secure' => static::SECURE_SKIP,
 		));
 		$out .= $this->hidden('_Token.unlocked', $tokenUnlocked);
+		if ($debugSecurity) {
+			$tokenDebug = array_merge($secureAttributes, array(
+				'value' => urlencode(json_encode(array(
+					$this->_lastAction,
+					$fields,
+					$this->_unlockedFields
+				))),
+			));
+			$out .= $this->hidden('_Token.debug', $tokenDebug);
+		}
+
 		return $this->Html->useTag('hiddenblock', $out);
 	}
 
