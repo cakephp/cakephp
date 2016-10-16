@@ -56,7 +56,7 @@ class CakeBaseException extends RuntimeException {
 if (!class_exists('HttpException', false)) {
 /**
  * Parent class for all of the HTTP related exceptions in CakePHP.
- * 
+ *
  * All HTTP status/error related exceptions should extend this class so
  * catch blocks can be specifically typed.
  *
@@ -625,5 +625,80 @@ class NotImplementedException extends CakeException {
 		parent::__construct($message, $code);
 	}
 //@codingStandardsIgnoreEnd
+
+}
+
+/**
+ * Security exception - used when SecurityComponent detects any issue with the current request
+ *
+ * @package       Cake.Error
+ */
+class SecurityException extends BadRequestException {
+
+/**
+ * Security Exception type
+ * @var string
+ */
+	protected $_type = 'secure';
+
+/**
+ * Reason for request blackhole
+ *
+ * @var string
+ */
+	protected $_reason = null;
+
+/**
+ * Getter for type
+ *
+ * @return string
+ */
+	public function getType() {
+		return $this->_type;
+	}
+
+/**
+ * Set Message
+ *
+ * @param string $message Exception message
+ * @return void
+ */
+	public function setMessage($message) {
+		$this->message = $message;
+	}
+
+/**
+ * Set Reason
+ *
+ * @param string|null $reason Reason details
+ * @return void
+ */
+	public function setReason($reason = null) {
+		$this->_reason = $reason;
+	}
+
+/**
+ * Get Reason
+ *
+ * @return string
+ */
+	public function getReason() {
+		return $this->_reason;
+	}
+
+}
+
+/**
+ * Auth Security exception - used when SecurityComponent detects any issue with the current request
+ *
+ * @package       Cake.Error
+ */
+class AuthSecurityException extends SecurityException {
+
+/**
+ * Security Exception type
+ * @var string
+ */
+	protected $_type = 'auth';
 
 }
