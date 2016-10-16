@@ -473,8 +473,8 @@ class AuthComponent extends Component
         $defaults = [
             'authenticate' => ['Form'],
             'flash' => [
-                'element' => 'default',
-                'key' => 'auth',
+                'element' => 'error',
+                'key' => 'flash',
                 'params' => ['class' => 'error']
             ],
             'loginAction' => [
