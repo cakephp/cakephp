@@ -1854,7 +1854,7 @@ class SecurityComponentTest extends CakeTestCase {
 	public function testAuthRequiredThrowsExceptionTokenNotFoundPost() {
 		$this->Controller->Security->requireAuth = array('protected');
 		$this->Controller->request->params['action'] = 'protected';
-		$this->Controller->request->data = 'notEmpty';
+		$this->Controller->request->data = array('some-key' => 'some-value');
 		$this->Controller->Security->authRequired($this->Controller);
 	}
 
