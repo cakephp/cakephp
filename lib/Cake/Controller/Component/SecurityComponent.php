@@ -226,8 +226,8 @@ class SecurityComponent extends Component {
  */
 	public function startup(Controller $controller) {
 		$this->request = $controller->request;
-		$this->_action = $this->request->params['action'];
-		$hasData = !empty($this->request->data);
+		$this->_action = $controller->request->params['action'];
+		$hasData = !empty($controller->request->data);
 		try {
 			$this->_methodsRequired($controller);
 			$this->_secureRequired($controller);
@@ -396,7 +396,7 @@ class SecurityComponent extends Component {
 			if (is_array($this->$property) && !empty($this->$property)) {
 				$require = $this->$property;
 				if (in_array($this->_action, $require) || $this->$property === array('*')) {
-					if (!$this->request->is($method)) {
+					if (!$controller->request->is($method)) {
 						throw new SecurityException(
 							sprintf('The request method must be %s', strtoupper($method))
 						);
@@ -419,7 +419,7 @@ class SecurityComponent extends Component {
 			$requireSecure = $this->requireSecure;
 
 			if (in_array($this->_action, $requireSecure) || $this->requireSecure === array('*')) {
-				if (!$this->request->is('ssl')) {
+				if (!$controller->request->is('ssl')) {
 					throw new SecurityException(
 						'Request is not SSL and the action is required to be secure'
 					);
@@ -438,10 +438,10 @@ class SecurityComponent extends Component {
  * @deprecated 2.8.1 This feature is confusing and not useful.
  */
 	protected function _authRequired(Controller $controller) {
-		if (is_array($this->requireAuth) && !empty($this->requireAuth) && !empty($this->request->data)) {
+		if (is_array($this->requireAuth) && !empty($this->requireAuth) && !empty($controller->request->data)) {
 			$requireAuth = $this->requireAuth;
 
-			if (in_array($this->request->params['action'], $requireAuth) || $this->requireAuth === array('*')) {
+			if (in_array($controller->request->params['action'], $requireAuth) || $this->requireAuth === array('*')) {
 				if (!isset($controller->request->data['_Token'])) {
 					throw new AuthSecurityException('\'_Token\' was not found in request data.');
 				}
@@ -450,23 +450,23 @@ class SecurityComponent extends Component {
 					$tData = $this->Session->read('_Token');
 
 					if (!empty($tData['allowedControllers']) &&
-						!in_array($this->request->params['controller'], $tData['allowedControllers'])) {
+						!in_array($controller->request->params['controller'], $tData['allowedControllers'])) {
 						throw new AuthSecurityException(
 							sprintf(
 								'Controller \'%s\' was not found in allowed controllers: \'%s\'.',
-								$this->request->params['controller'],
+								$controller->request->params['controller'],
 								implode(', ', (array)$tData['allowedControllers'])
 							)
 						);
 					}
 					if (!empty($tData['allowedActions']) &&
-						!in_array($this->request->params['action'], $tData['allowedActions'])
+						!in_array($controller->request->params['action'], $tData['allowedActions'])
 					) {
 						throw new AuthSecurityException(
 							sprintf(
 								'Action \'%s::%s\' was not found in allowed actions: \'%s\'.',
-								$this->request->params['controller'],
-								$this->request->params['action'],
+								$controller->request->params['controller'],
+								$controller->request->params['action'],
 								implode(', ', (array)$tData['allowedActions'])
 							)
 						);
@@ -839,7 +839,7 @@ class SecurityComponent extends Component {
  * will be unset
  *
  * @param array $dataFields Fields array, containing the POST data fields
- * @param array $expectedFields Fields array, containing the expected fields we should have in POST
+ * @param array &$expectedFields Fields array, containing the expected fields we should have in POST
  * @param string $intKeyMessage Message string if unexpected found in data fields indexed by int (not protected)
  * @param string $stringKeyMessage Message string if tampered found in data fields indexed by string (protected)
  * @return array Error messages

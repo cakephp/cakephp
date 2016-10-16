@@ -591,6 +591,8 @@ class FormHelper extends AppHelper {
 			unset($secureAttributes['debugSecurity']);
 		}
 
+		$originalFields = $fields;
+
 		$locked = array();
 		$unlockedFields = $this->_unlockedFields;
 
@@ -632,9 +634,11 @@ class FormHelper extends AppHelper {
 			$tokenDebug = array_merge($secureAttributes, array(
 				'value' => urlencode(json_encode(array(
 					$this->_lastAction,
-					$fields,
+					$originalFields,
 					$this->_unlockedFields
 				))),
+				'id' => 'TokenDebug' . mt_rand(),
+				'secure' => static::SECURE_SKIP,
 			));
 			$out .= $this->hidden('_Token.debug', $tokenDebug);
 		}
