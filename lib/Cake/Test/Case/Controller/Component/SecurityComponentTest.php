@@ -46,6 +46,16 @@ class TestSecurityComponent extends SecurityComponent {
 		return $this->_authRequired($controller);
 	}
 
+/**
+ * methodRequired method
+ *
+ * @param Controller $controller
+ * @return bool
+ */
+	public function methodsRequired(Controller $controller) {
+		return $this->_methodsRequired($controller);
+	}
+
 }
 
 /**
@@ -1453,7 +1463,28 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 
 /**
- * test that when the key is missing the request is blackHoled
+ * test that blackhole throws an exception when the key is missing and balckHoleCallback is not set.
+ *
+ * @return void
+ * @expectedException SecurityException
+ * @expectedExceptionMessage Missing CSRF token
+ */
+	public function testCsrfExceptionOnMissingKey() {
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = true;
+		$this->Security->blackHoleCallback = '';
+
+		$this->Controller->request->params['action'] = 'index';
+		$this->Controller->request->data = array(
+			'Post' => array(
+				'title' => 'Woot'
+			)
+		);
+		$this->Security->startup($this->Controller);
+	}
+
+/**
+ * test that when the keys are mismatched the request is blackHoled
  *
  * @return void
  */
@@ -1478,7 +1509,34 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 
 /**
- * test that when the key is missing the request is blackHoled
+ * test that blackhole throws an exception when the keys are mismatched and balckHoleCallback is not set.
+ *
+ * @return void
+ * @expectedException SecurityException
+ * @expectedExceptionMessage CSRF token mismatch
+ */
+	public function testCsrfExceptionOnKeyMismatch() {
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = true;
+		$this->Security->csrfExpires = '+10 minutes';
+		$this->Security->blackHoleCallback = '';
+
+		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('+10 minutes')));
+
+		$this->Controller->request->params['action'] = 'index';
+		$this->Controller->request->data = array(
+			'_Token' => array(
+				'key' => 'not the right value'
+			),
+			'Post' => array(
+				'title' => 'Woot'
+			)
+		);
+		$this->Security->startup($this->Controller);
+	}
+
+/**
+ * test that when the key is expried the request is blackHoled
  *
  * @return void
  */
@@ -1500,6 +1558,33 @@ class SecurityComponentTest extends CakeTestCase {
 		);
 		$this->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed, 'fail() was not called.');
+	}
+
+/**
+ * test that blackhole throws an exception when the key is expired and balckHoleCallback is not set
+ *
+ * @return void
+ * @expectedException SecurityException
+ * @expectedExceptionMessage CSRF token expired
+ */
+	public function testCsrfExceptionOnExpiredKey() {
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = true;
+		$this->Security->csrfExpires = '+10 minutes';
+		$this->Security->blackHoleCallback = '';
+
+		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('-5 minutes')));
+
+		$this->Controller->request->params['action'] = 'index';
+		$this->Controller->request->data = array(
+			'_Token' => array(
+				'key' => 'nonce1'
+			),
+			'Post' => array(
+				'title' => 'Woot'
+			)
+		);
+		$this->Security->startup($this->Controller);
 	}
 
 /**
@@ -1838,6 +1923,36 @@ class SecurityComponentTest extends CakeTestCase {
 			'allowedControllers' => array('Allowed'),
 		));
 		$this->assertTrue($this->Controller->Security->authRequired($this->Controller));
+	}
+
+/**
+ * Auth required throws exception controller not allowed
+ *
+ * @return void
+ * @expectedException SecurityException
+ * @expectedExceptionMessage The request method must be POST
+ */
+	public function testMethodsRequiredThrowsExceptionMethodNotAllowed() {
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$this->Controller->Security->requirePost = array('delete');
+		$this->Controller->request->params['controller'] = 'Test';
+		$this->Controller->request->params['action'] = 'delete';
+		$this->Controller->Security->startup($this->Controller);
+		$this->Controller->Security->methodsRequired($this->Controller);
+	}
+
+/**
+ * Auth required throws exception controller not allowed
+ *
+ * @return void
+ */
+	public function testMethodsRequired() {
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$this->Controller->Security->requirePost = array('delete');
+		$this->Controller->request->params['controller'] = 'Test';
+		$this->Controller->request->params['action'] = 'delete';
+		$this->Controller->Security->startup($this->Controller);
+		$this->assertTrue($this->Controller->Security->methodsRequired($this->Controller));
 	}
 
 }
