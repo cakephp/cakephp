@@ -1145,24 +1145,20 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
-     * Tests adding new translation to a record where the only field is the translated one
+     * Tests adding new translation to a record where the only field is the translated one and it's not the default locale
      *
      * @return void
      */
-    public function testSaveNewRecordWithOnlyTranslatesField()
+    public function testSaveNewRecordWithOnlyFieldAndNotDefaultLocale()
     {
         $table = TableRegistry::get('Groups');
         $table->addBehavior('Translate', [
             'fields' => ['title'],
             'validator' => (new \Cake\Validation\Validator)->add('title', 'notBlank', ['rule' => 'notBlank'])
         ]);
-        $table->entityClass(__NAMESPACE__ . '\Group');
 
         $data = [
             '_translations' => [
-                'en' => [
-                    'title' => 'Title EN',
-                ],
                 'es' => [
                     'title' => 'Title ES'
                 ]
@@ -1176,10 +1172,6 @@ class TranslateBehaviorTest extends TestCase
 
         $expected = [
             [
-                'en' => [
-                    'title' => 'Title EN',
-                    'locale' => 'en'
-                ],
                 'es' => [
                     'title' => 'Title ES',
                     'locale' => 'es'
