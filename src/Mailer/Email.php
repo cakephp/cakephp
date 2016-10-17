@@ -1178,7 +1178,11 @@ class Email implements JsonSerializable, Serializable
                 }
             }
             if (!isset($fileInfo['mimetype'])) {
-                $fileInfo['mimetype'] = 'application/octet-stream';
+                if (function_exists('mime_content_type')) {
+                    $fileInfo['mimetype'] = mime_content_type($fileInfo['file']);
+                } else {
+                    $fileInfo['mimetype'] = 'application/octet-stream';
+                }
             }
             $attach[$name] = $fileInfo;
         }
@@ -1923,6 +1927,22 @@ class Email implements JsonSerializable, Serializable
             $rendered[$type] = $this->_wrap($content);
             $rendered[$type] = implode("\n", $rendered[$type]);
             $rendered[$type] = rtrim($rendered[$type], "\n");
+        }
+
+        /* Embed images inline in html templates */
+        if (!empty($rendered['html'])) {
+            $rendered['html'] = str_replace(array('file:', 'file://', 'cid://'), 'cid:', $rendered['html']);
+            if (preg_match_all('~(["\'])cid:([^\1]+)\1~iU', $rendered['html'], $img)) {
+                $img = array_unique($img[2]);
+                foreach ($img as $file) if (is_file($file)) {
+                    $cid = sha1($file);
+                    $images['cid:' . $cid] = array('file' => $file, 'contentId' => $cid);
+                    $files['cid:' . $cid] = $file;
+                    $cids['cid:' . $cid] = $cid;
+                }
+                $this->addAttachments($images);
+                $rendered['html'] = str_replace($files, $cids, $rendered['html']);
+            }
         }
 
         return $rendered;
