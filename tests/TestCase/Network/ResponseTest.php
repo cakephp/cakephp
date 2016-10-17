@@ -2162,7 +2162,7 @@ class ResponseTest extends TestCase
     }
 
     /**
-     * Test with protocol.
+     * Test with body.
      *
      * @return void
      */
@@ -2202,6 +2202,30 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test with header.
+     *
+     * @return void
+     */
+    public function testWithHeader()
+    {
+        $response = new Response();
+        $result = $response->getHeaders();
+        $this->assertEquals([], $result);
+
+        $response2 = $response->withHeader('Accept', 'application/json');
+        $result = $response2->getHeaders();
+        $expected = [
+            'Accept' => [
+                0 => 'application/json'
+            ]
+        ];
+        $this->assertEquals($expected, $result);
+
+        $result = $response->getHeaders();
+        $this->assertEquals([], $result);
+    }
+
+    /**
      * Test get headers.
      *
      * @return void
@@ -2220,6 +2244,29 @@ class ResponseTest extends TestCase
             'Location' => [
                 0 => 'localhost'
             ],
+            'Accept' => [
+                0 => 'application/json'
+            ]
+        ];
+
+        $this->assertEquals($expected, $headers);
+    }
+
+    /**
+     * Test without header.
+     *
+     * @return void
+     */
+    public function testWithoutHeader()
+    {
+        $response = new Response();
+        $response = $response->withAddedHeader('Location', 'localhost');
+        $response = $response->withAddedHeader('Accept', 'application/json');
+
+        $response2 = $response->withoutHeader('Location');
+        $headers = $response2->getHeaders();
+
+        $expected = [
             'Accept' => [
                 0 => 'application/json'
             ]
@@ -2252,7 +2299,7 @@ class ResponseTest extends TestCase
     }
 
     /**
-     * Test get header.
+     * Test get header line.
      *
      * @return void
      */
@@ -2291,4 +2338,5 @@ class ResponseTest extends TestCase
         $this->assertFalse($response->hasHeader('Accept'));
         $this->assertFalse($response->hasHeader('accept'));
     }
+
 }
