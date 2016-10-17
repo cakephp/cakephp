@@ -1727,11 +1727,13 @@ class CakeEmail {
 			$rendered['html'] = str_replace(array('file:', 'file://', 'cid://'), 'cid:', $rendered['html']);
 			if (preg_match_all('~(["\'])cid:([^\1]+)\1~iU', $rendered['html'], $img)) {
 				$img = array_unique($img[2]);
-				foreach ($img as $file) if (is_file($file)) {
-					$cid = sha1($file);
-					$images['cid:' . $cid] = array('file' => $file, 'contentId' => $cid);
-					$files['cid:' . $cid] = $file;
-					$cids['cid:' . $cid] = $cid;
+				foreach ($img as $file) {
+					if (is_file($file)) {
+						$cid = sha1($file);
+						$images['cid:' . $cid] = array('file' => $file, 'contentId' => $cid);
+						$files['cid:' . $cid] = $file;
+						$cids['cid:' . $cid] = $cid;
+					}
 				}
 				$this->addAttachments($images);
 				$rendered['html'] = str_replace($files, $cids, $rendered['html']);
