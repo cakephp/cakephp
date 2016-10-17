@@ -1935,11 +1935,13 @@ class Email implements JsonSerializable, Serializable
             $hasEmbedImages = preg_match_all('~(["\'])cid:([^\1]+)\1~iU', $rendered['html'], $embedImages);
             if ($hasEmbedImages > 0) {
                 $embedImages = array_unique($embedImages[2]);
-                foreach ($embedImages as $file) if (is_file($file)) {
-                    $cid = sha1($file);
-                    $images['cid:' . $cid] = ['file' => $file, 'contentId' => $cid];
-                    $files['cid:' . $cid] = $file;
-                    $cids['cid:' . $cid] = $cid;
+                foreach ($embedImages as $file) {
+                    if (is_file($file)) {
+                        $cid = sha1($file);
+                        $images['cid:' . $cid] = ['file' => $file, 'contentId' => $cid];
+                        $files['cid:' . $cid] = $file;
+                        $cids['cid:' . $cid] = $cid;
+                    }
                 }
                 $this->addAttachments($images);
                 $rendered['html'] = str_replace($files, $cids, $rendered['html']);
