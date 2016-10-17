@@ -1931,20 +1931,18 @@ class Email implements JsonSerializable, Serializable
 
         /* Embed images inline in html templates */
         if (!empty($rendered['html'])) {
-            $rendered['html'] = str_replace(['file:', 'file://', 'cid://'], 'cid:', $rendered['html']);
-            $hasEmbedImages = preg_match_all('~(["\'])cid:([^\1]+)\1~iU', $rendered['html'], $embedImages);
-            if ($hasEmbedImages > 0) {
-                $embedImages = array_unique($embedImages[2]);
-                foreach ($embedImages as $file) {
-                    if (is_file($file)) {
-                        $cid = sha1($file);
-                        $images['cid:' . $cid] = ['file' => $file, 'contentId' => $cid];
-                        $files['cid:' . $cid] = $file;
-                        $cids['cid:' . $cid] = $cid;
-                    }
+            preg_match_all('~<img[^>]*src\s*=\s*(["\'])(cid://|file://|cid:|file:)([^\1]+)\1~iU', $rendered['html'], $embebFiles);
+            $embebFiles = array_unique($embebFiles[3]);
+            foreach ($embebFiles as $file) {
+                if (is_file($file)) {
+                    $cid = sha1($file);
+                    $images['cid:' . $cid] = ['file' => $file, 'contentId' => $cid];
+                    $files['cid:' . $cid] = '~(<img[^>]*src\s*=\s*)(["\'])(cid://|file://|cid:|file:)' . $file . '\2~iU';
+                    $cids['cid:' . $cid] = '\1\2cid:' . $cid . '\2';
                 }
-                $this->addAttachments($images);
-                $rendered['html'] = str_replace($files, $cids, $rendered['html']);
+            }
+            if (!empty($images)) {
+                $rendered['html'] = preg_replace($files, $cids, $rendered['html']);
             }
         }
 
