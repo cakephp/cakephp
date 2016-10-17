@@ -1942,6 +1942,7 @@ class Email implements JsonSerializable, Serializable
                 }
             }
             if (!empty($images)) {
+                $this->addAttachments($images);
                 $rendered['html'] = preg_replace($files, $cids, $rendered['html']);
             }
         }
