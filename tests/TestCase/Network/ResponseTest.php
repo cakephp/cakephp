@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Network;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
+use Zend\Diactoros\Stream;
 
 /**
  * ResponseTest
@@ -2108,6 +2109,7 @@ class ResponseTest extends TestCase
         $version = $response->getProtocolVersion();
         $this->assertEquals('1.1', $version);
     }
+
     /**
      * Test with protocol.
      *
@@ -2125,6 +2127,7 @@ class ResponseTest extends TestCase
         $this->assertEquals('1.1', $version);
         $this->assertNotEquals($response, $response2);
     }
+
     /**
      * Test with protocol.
      *
@@ -2156,5 +2159,136 @@ class ResponseTest extends TestCase
         $response = $response->withStatus(404);
         $reasonPhrase = $response->getReasonPhrase();
         $this->assertEquals('Not Found', $reasonPhrase);
+    }
+
+    /**
+     * Test with protocol.
+     *
+     * @return void
+     */
+    public function testWithBody()
+    {
+        $response = new Response();
+        $body = $response->getBody();
+        $body->rewind();
+        $result = $body->getContents();
+        $this->assertEquals('', $result);
+
+        $stream = new Stream('php://memory', 'wb+');
+        $stream->write('test1');
+
+        $response2 = $response->withBody($stream);
+        $body = $response2->getBody();
+        $body->rewind();
+        $result = $body->getContents();
+        $this->assertEquals('test1', $result);
+
+        $body = $response->getBody();
+        $body->rewind();
+        $result = $body->getContents();
+        $this->assertEquals('', $result);
+    }
+
+    /**
+     * Test get Body.
+     *
+     * @return void
+     */
+    public function testGetBody()
+    {
+        $response = new Response();
+        $stream = $response->getBody();
+        $this->assertInstanceOf('Psr\Http\Message\StreamInterface', $stream);
+    }
+
+    /**
+     * Test get headers.
+     *
+     * @return void
+     */
+    public function testGetHeaders()
+    {
+        $response = new Response();
+        $headers = $response->getHeaders();
+        $this->assertEquals([], $headers);
+
+        $response = $response->withAddedHeader('Location', 'localhost');
+        $response = $response->withAddedHeader('Accept', 'application/json');
+        $headers = $response->getHeaders();
+
+        $expected = [
+            'Location' => [
+                0 => 'localhost'
+            ],
+            'Accept' => [
+                0 => 'application/json'
+            ]
+        ];
+
+        $this->assertEquals($expected, $headers);
+    }
+
+    /**
+     * Test get header.
+     *
+     * @return void
+     */
+    public function testGetHeader()
+    {
+        $response = new Response();
+        $headers = $response->getHeaders();
+        $this->assertEquals([], $headers);
+
+        $response = $response->withAddedHeader('Location', 'localhost');
+
+        $result = $response->getHeader('Location');
+        $this->assertEquals(['localhost'], $result);
+
+        $result = $response->getHeader('location');
+        $this->assertEquals(['localhost'], $result);
+
+        $result = $response->getHeader('does-not-exist');
+        $this->assertEquals([], $result);
+    }
+
+    /**
+     * Test get header.
+     *
+     * @return void
+     */
+    public function testGetHeaderLine()
+    {
+        $response = new Response();
+        $headers = $response->getHeaderLine('Accept');
+        $this->assertEquals('', $headers);
+
+        $response = $response->withAddedHeader('Accept', 'application/json');
+        $response = $response->withAddedHeader('Accept', 'application/xml');
+
+        $result = $response->getHeaderLine('Accept');
+        $expected = 'application/json,application/xml';
+        $this->assertEquals($expected, $result);
+        $result = $response->getHeaderLine('accept');
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test has header.
+     *
+     * @return void
+     */
+    public function testHasHeader()
+    {
+        $response = new Response();
+        $headers = $response->getHeaders();
+        $this->assertEquals([], $headers);
+
+        $response = $response->withAddedHeader('Location', 'localhost');
+
+        $this->assertTrue($response->hasHeader('Location'));
+        $this->assertTrue($response->hasHeader('location'));
+
+        $this->assertFalse($response->hasHeader('Accept'));
+        $this->assertFalse($response->hasHeader('accept'));
     }
 }
