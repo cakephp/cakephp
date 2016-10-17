@@ -1931,12 +1931,13 @@ class Email implements JsonSerializable, Serializable
 
         /* Embed images inline in html templates */
         if (!empty($rendered['html'])) {
-            $rendered['html'] = str_replace(array('file:', 'file://', 'cid://'), 'cid:', $rendered['html']);
-            if (preg_match_all('~(["\'])cid:([^\1]+)\1~iU', $rendered['html'], $img)) {
+            $rendered['html'] = str_replace(['file:', 'file://', 'cid://'], 'cid:', $rendered['html']);
+            $embed_images = preg_match_all('~(["\'])cid:([^\1]+)\1~iU', $rendered['html'], $img);
+            if ($embed_images) {
                 $img = array_unique($img[2]);
                 foreach ($img as $file) if (is_file($file)) {
                     $cid = sha1($file);
-                    $images['cid:' . $cid] = array('file' => $file, 'contentId' => $cid);
+                    $images['cid:' . $cid] = ['file' => $file, 'contentId' => $cid];
                     $files['cid:' . $cid] = $file;
                     $cids['cid:' . $cid] = $cid;
                 }
