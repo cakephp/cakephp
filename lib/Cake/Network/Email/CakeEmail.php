@@ -1724,19 +1724,22 @@ class CakeEmail {
 
 		/* Embed images inline in html templates */
 		if (!empty($rendered['html'])) {
-			$rendered['html'] = str_replace(array('file:', 'file://', 'cid://'), 'cid:', $rendered['html']);
-			if (preg_match_all('~(["\'])cid:([^\1]+)\1~iU', $rendered['html'], $img)) {
-				$img = array_unique($img[2]);
-				foreach ($img as $file) {
-					if (is_file($file)) {
-						$cid = sha1($file);
-						$images['cid:' . $cid] = array('file' => $file, 'contentId' => $cid);
-						$files['cid:' . $cid] = $file;
-						$cids['cid:' . $cid] = $cid;
-					}
+			preg_match_all('~<img[^>]*src\s*=\s*(["\'])(cid://|file://|cid:|file:)([^\1]+)\1~iU', print_r($this->viewVars, true), $userFiles);
+			$userFiles = array_unique($userFiles[3]);
+			preg_match_all('~<img[^>]*src\s*=\s*(["\'])(cid://|file://|cid:|file:)([^\1]+)\1~iU', $rendered['html'], $embebFiles);
+			$embebFiles = array_unique($embebFiles[3]);
+			$embebFiles = array_diff($embebFiles, $userFiles);
+			foreach ($embebFiles as $file) {
+				if (is_file($file)) {
+					$cid = sha1($file);
+					$images['cid:' . $cid] = array('file' => $file, 'contentId' => $cid);
+					$files['cid:' . $cid] = '~(<img[^>]*src\s*=\s*)(["\'])(cid://|file://|cid:|file:)' . str_replace('\\', '\\\\', $file) . '\2~iU';
+					$cids['cid:' . $cid] = '\1\2cid:' . $cid . '\2';
 				}
+			}
+			if (!empty($images)) {
 				$this->addAttachments($images);
-				$rendered['html'] = str_replace($files, $cids, $rendered['html']);
+				$rendered['html'] = preg_replace($files, $cids, $rendered['html']);
 			}
 		}
 		return $rendered;
