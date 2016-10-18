@@ -34,6 +34,16 @@ class PaginatorHelperTest extends TestCase
     protected $locale;
 
     /**
+     * @var \Cake\View\View
+     */
+    protected $View;
+
+    /**
+     * @var PaginatorHelper
+     */
+    protected $Paginator;
+
+    /**
      * setUp method
      *
      * @return void
@@ -44,9 +54,6 @@ class PaginatorHelperTest extends TestCase
         Configure::write('Config.language', 'eng');
         $this->View = new View();
         $this->Paginator = new PaginatorHelper($this->View);
-        $this->Paginator->Js = $this->getMockBuilder('Cake\View\Helper\PaginatorHelper')
-            ->setConstructorArgs([$this->View])
-            ->getMock();
         $this->Paginator->request = new Request();
         $this->Paginator->request->addParams([
             'paging' => [
@@ -2487,7 +2494,7 @@ class PaginatorHelperTest extends TestCase
             ]
         ];
 
-        $expected = '<link rel="next" href="http://localhost/index?page=2"/>';
+        $expected = '<link href="http://localhost/index?page=2" rel="next"/>';
         $result = $this->Paginator->meta();
         $this->assertSame($expected, $result);
     }
@@ -2508,7 +2515,7 @@ class PaginatorHelperTest extends TestCase
             ]
         ];
 
-        $expected = '<link rel="next" href="http://localhost/index?page=2"/>';
+        $expected = '<link href="http://localhost/index?page=2" rel="next"/>';
         $this->Paginator->meta(['block' => true]);
         $result = $this->View->fetch('meta');
         $this->assertSame($expected, $result);
@@ -2530,7 +2537,7 @@ class PaginatorHelperTest extends TestCase
             ]
         ];
 
-        $expected = '<link rel="prev" href="http://localhost/index"/>';
+        $expected = '<link href="http://localhost/index" rel="prev"/>';
         $result = $this->Paginator->meta();
 
         $this->assertSame($expected, $result);
@@ -2552,8 +2559,8 @@ class PaginatorHelperTest extends TestCase
             ]
         ];
 
-        $expected = '<link rel="prev" href="http://localhost/index?page=4"/>';
-        $expected .= '<link rel="next" href="http://localhost/index?page=6"/>';
+        $expected = '<link href="http://localhost/index?page=4" rel="prev"/>';
+        $expected .= '<link href="http://localhost/index?page=6" rel="next"/>';
         $result = $this->Paginator->meta();
         $this->assertSame($expected, $result);
     }
