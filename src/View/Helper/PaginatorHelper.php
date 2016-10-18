@@ -1153,7 +1153,7 @@ class PaginatorHelper extends Helper
 
         if (!empty($options['block'])) {
             $this->_View->append($options['block'], $out);
-            
+
             return null;
         }
 

@@ -2401,10 +2401,10 @@ class PaginatorHelperTest extends TestCase
     public function testTotal()
     {
         $result = $this->Paginator->total();
-        $this->assertEquals($this->Paginator->request->params['paging']['Article']['pageCount'], $result);
+        $this->assertSame($this->Paginator->request->params['paging']['Article']['pageCount'], $result);
 
         $result = $this->Paginator->total('Incorrect');
-        $this->assertEquals(0, $result);
+        $this->assertSame(0, $result);
     }
 
     /**
