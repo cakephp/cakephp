@@ -29,6 +29,11 @@ class PaginatorHelperTest extends TestCase
 {
 
     /**
+     * @var string
+     */
+    protected $locale;
+
+    /**
      * setUp method
      *
      * @return void
@@ -705,6 +710,22 @@ class PaginatorHelperTest extends TestCase
         $options = ['sort' => 'Article.name', 'direction' => 'desc'];
         $result = $this->Paginator->generateUrl($options);
         $this->assertEquals('/index?page=3&amp;sort=Article.name&amp;direction=desc', $result);
+
+        $this->Paginator->request->params['paging']['Article']['page'] = 3;
+        $options = ['sort' => 'Article.name', 'direction' => 'desc'];
+        $result = $this->Paginator->generateUrl($options, null, ['escape' => false]);
+        $this->assertEquals('/index?page=3&sort=Article.name&direction=desc', $result);
+
+        $this->Paginator->request->params['paging']['Article']['page'] = 3;
+        $options = ['sort' => 'Article.name', 'direction' => 'desc'];
+        $result = $this->Paginator->generateUrl($options, null, ['fullBase' => true]);
+        $this->assertEquals('http://localhost/index?page=3&amp;sort=Article.name&amp;direction=desc', $result);
+
+        // @deprecated 3.3.5 Use fullBase array option instead.
+        $this->Paginator->request->params['paging']['Article']['page'] = 3;
+        $options = ['sort' => 'Article.name', 'direction' => 'desc'];
+        $result = $this->Paginator->generateUrl($options, null, true);
+        $this->assertEquals('http://localhost/index?page=3&amp;sort=Article.name&amp;direction=desc', $result);
     }
 
     /**

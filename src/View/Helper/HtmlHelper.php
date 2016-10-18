@@ -238,6 +238,11 @@ class HtmlHelper extends Helper
                 'description' => ['name' => 'description', 'content' => $content],
                 'robots' => ['name' => 'robots', 'content' => $content],
                 'viewport' => ['name' => 'viewport', 'content' => $content],
+                'canonical' => ['rel' => 'canonical', 'link' => $content],
+                'next' => ['rel' => 'next', 'link' => $content],
+                'prev' => ['rel' => 'prev', 'link' => $content],
+                'first' => ['rel' => 'first', 'link' => $content],
+                'last' => ['rel' => 'last', 'link' => $content]
             ];
 
             if ($type === 'icon' && $content === null) {
