@@ -15,6 +15,7 @@
 namespace Cake\Database\Dialect;
 
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Query;
 use Cake\Database\Schema\SqliteSchema;
 use Cake\Database\SqlDialectTrait;
 use Cake\Database\SqliteCompiler;
@@ -65,6 +66,34 @@ trait SqliteDialectTrait
         'week' => 'W',
         'year' => 'Y'
     ];
+
+    /**
+     * Modifies the original delete query to support ORDER BY and LIMIT
+     * clauses.
+     *
+     * @param \Cake\Database\Query $query The query to translate.
+     * @return \Cake\Database\Query
+     */
+    protected function _deleteQueryTranslator($query)
+    {
+        if ($query->clause('limit') === null) {
+            return $query;
+        }
+
+        $filter = new Query($query->connection());
+        $filter->select('rowid')
+            ->from($query->clause('from'))
+            ->where($query->clause('where'))
+            ->order($query->clause('order'))
+            ->limit($query->clause('limit'));
+
+        $outer = new Query($query->connection());
+        $outer
+            ->delete($query->clause('from'))
+            ->where(['rowid IN' => $filter]);
+
+        return $outer;
+    }
 
     /**
      * Returns a dictionary of expressions to be transformed when compiling a Query
