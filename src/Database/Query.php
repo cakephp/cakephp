@@ -1009,6 +1009,7 @@ class Query implements ExpressionInterface, IteratorAggregate
 
         if ($fields instanceof OrderByExpression) {
             $this->_parts['order'] = $fields;
+
             return $this;
         }
 

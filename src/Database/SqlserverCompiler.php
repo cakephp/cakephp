@@ -89,10 +89,11 @@ class SqlserverCompiler extends QueryCompiler
         $parts = $this->_stringifyExpressions((array)$parts, $generator);
 
         if ($query->clause('limit') === null) {
-         return sprintf('DELETE %s', implode(', ', $parts));
+            return sprintf('DELETE %s', implode(', ', $parts));
         }
 
         $template = "WITH CTE AS (SELECT TOP %d * %s %s %s) DELETE %s FROM CTE %s";
+
         return sprintf($template,
             $parts[5],
             $parts[2],
