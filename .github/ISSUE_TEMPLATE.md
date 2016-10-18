@@ -9,11 +9,11 @@ This is a (multiple allowed):
 ### What you did
 EXPLAIN WHAT YOU DID, PREFERABLY WITH CODE EXAMPLES, HERE.
 
+### What happened
+EXPLAIN WHAT IS ACTUALLY HAPPENING, HERE.
+
 ### Expected Behavior
 EXPLAIN WHAT IS TO BE EXPECTED, HERE.
-
-### Actual Behavior
-EXPLAIN WHAT IS ACTUALLY HAPPENING, HERE.
 
 P.S. Remember, an issue is not the place to ask questions. You can use [Stack Overflow](http://stackoverflow.com/questions/tagged/cakephp)
 for that or join the #cakephp channel on irc.freenode.net, where we will be more

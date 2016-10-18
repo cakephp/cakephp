@@ -133,4 +133,41 @@ class RoutingMiddlewareTest extends TestCase
         $middleware = new RoutingMiddleware();
         $middleware($request, $response, $next);
     }
+
+    /**
+     * Test route with _method being parsed correctly.
+     *
+     * @return void
+     */
+    public function testFakedRequestMethodParsed()
+    {
+        Router::connect('/articles-patch', [
+            'controller' => 'Articles',
+            'action' => 'index',
+            '_method' => 'PATCH'
+        ]);
+        $request = ServerRequestFactory::fromGlobals(
+            [
+                'REQUEST_METHOD' => 'POST',
+                'REQUEST_URI' => '/articles-patch'
+            ],
+            null,
+            ['_method' => 'PATCH']
+        );
+        $response = new Response();
+        $next = function ($req, $res) {
+            $expected = [
+                'controller' => 'Articles',
+                'action' => 'index',
+                '_method' => 'PATCH',
+                'plugin' => null,
+                'pass' => [],
+                '_matchedRoute' => '/articles-patch'
+            ];
+            $this->assertEquals($expected, $req->getAttribute('params'));
+            $this->assertEquals('PATCH', $req->getMethod());
+        };
+        $middleware = new RoutingMiddleware();
+        $middleware($request, $response, $next);
+    }
 }

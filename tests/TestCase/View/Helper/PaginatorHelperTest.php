@@ -34,6 +34,16 @@ class PaginatorHelperTest extends TestCase
     protected $locale;
 
     /**
+     * @var \Cake\View\View
+     */
+    protected $View;
+
+    /**
+     * @var \Cake\View\Helper\PaginatorHelper
+     */
+    protected $Paginator;
+
+    /**
      * setUp method
      *
      * @return void
@@ -44,9 +54,6 @@ class PaginatorHelperTest extends TestCase
         Configure::write('Config.language', 'eng');
         $this->View = new View();
         $this->Paginator = new PaginatorHelper($this->View);
-        $this->Paginator->Js = $this->getMockBuilder('Cake\View\Helper\PaginatorHelper')
-            ->setConstructorArgs([$this->View])
-            ->getMock();
         $this->Paginator->request = new Request();
         $this->Paginator->request->addParams([
             'paging' => [
@@ -2180,7 +2187,7 @@ class PaginatorHelperTest extends TestCase
             'a' => [
                 'href' => '/index?page=15&amp;sort=Client.name&amp;direction=DESC',
             ],
-                'last &gt;&gt;', '/a',
+            'last &gt;&gt;', '/a',
             '/li',
         ];
         $this->assertHtml($expected, $result);
@@ -2386,6 +2393,20 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
+     * test the total() method
+     *
+     * @return void
+     */
+    public function testTotal()
+    {
+        $result = $this->Paginator->total();
+        $this->assertSame($this->Paginator->request->params['paging']['Article']['pageCount'], $result);
+
+        $result = $this->Paginator->total('Incorrect');
+        $this->assertSame(0, $result);
+    }
+
+    /**
      * test the defaultModel() method
      *
      * @return void
@@ -2450,110 +2471,79 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
-     * Verifies that no next and prev links are created for single page results.
+     * Test data for meta()
      *
-     * @return void
+     * @return array
      */
-    public function testMetaPage0()
+    public function dataMetaProvider()
     {
-        $this->Paginator->request->params['paging'] = [
-            'Article' => [
-                'page' => 1,
-                'prevPage' => false,
-                'nextPage' => false,
-                'pageCount' => 1,
-            ]
+        return [
+            // Verifies that no next and prev links are created for single page results.
+            [1, false, false, 1, [], ''],
+            // Verifies that first and last pages are created for single page results.
+            [1, false, false, 1, ['first' => true, 'last' => true], '<link href="http://localhost/index" rel="first"/>' .
+                '<link href="http://localhost/index" rel="last"/>'],
+            // Verifies that first page is created for single page results.
+            [1, false, false, 1, ['first' => true], '<link href="http://localhost/index" rel="first"/>'],
+            // Verifies that last page is created for single page results.
+            [1, false, false, 1, ['last' => true], '<link href="http://localhost/index" rel="last"/>'],
+            // Verifies that page 1 only has a next link.
+            [1, false, true, 2, [], '<link href="http://localhost/index?page=2" rel="next"/>'],
+            // Verifies that page 1 only has next, first and last link.
+            [1, false, true, 2, ['first' => true, 'last' => true], '<link href="http://localhost/index?page=2" rel="next"/>' .
+                '<link href="http://localhost/index" rel="first"/>' .
+                '<link href="http://localhost/index?page=2" rel="last"/>'],
+            // Verifies that page 1 only has next and first link.
+            [1, false, true, 2, ['first' => true], '<link href="http://localhost/index?page=2" rel="next"/>' .
+                '<link href="http://localhost/index" rel="first"/>'],
+            // Verifies that page 1 only has next and last link.
+            [1, false, true, 2, ['last' => true], '<link href="http://localhost/index?page=2" rel="next"/>' .
+                '<link href="http://localhost/index?page=2" rel="last"/>'],
+            // Verifies that the last page only has a prev link.
+            [2, true, false, 2, [], '<link href="http://localhost/index" rel="prev"/>'],
+            // Verifies that the last page only has a prev, first and last link.
+            [2, true, false, 2, ['first' => true, 'last' => true], '<link href="http://localhost/index" rel="prev"/>' .
+                '<link href="http://localhost/index" rel="first"/>' .
+                '<link href="http://localhost/index?page=2" rel="last"/>'],
+            // Verifies that a page in the middle has both links.
+            [5, true, true, 10, [], '<link href="http://localhost/index?page=4" rel="prev"/>' .
+                '<link href="http://localhost/index?page=6" rel="next"/>'],
+            // Verifies that a page in the middle has both links.
+            [5, true, true, 10, ['first' => true, 'last' => true], '<link href="http://localhost/index?page=4" rel="prev"/>' .
+                '<link href="http://localhost/index?page=6" rel="next"/>' .
+                '<link href="http://localhost/index" rel="first"/>' .
+                '<link href="http://localhost/index?page=10" rel="last"/>']
         ];
-
-        $expected = '';
-        $result = $this->Paginator->meta();
-        $this->assertSame($expected, $result);
     }
 
     /**
-     * Verifies that page 1 only has a next link.
-     *
-     * @return void
+     * @param int $page
+     * @param int $prevPage
+     * @param int $nextPage
+     * @param int $pageCount
+     * @param array $options
+     * @param string $expected
+     * @dataProvider dataMetaProvider
      */
-    public function testMetaPage1()
+    public function testMeta($page, $prevPage, $nextPage, $pageCount, $options, $expected)
     {
         $this->Paginator->request->params['paging'] = [
             'Article' => [
-                'page' => 1,
-                'prevPage' => false,
-                'nextPage' => true,
-                'pageCount' => 2,
+                'page' => $page,
+                'prevPage' => $prevPage,
+                'nextPage' => $nextPage,
+                'pageCount' => $pageCount,
             ]
         ];
 
-        $expected = '<link rel="next" href="http://localhost/index?page=2"/>';
-        $result = $this->Paginator->meta();
+        $result = $this->Paginator->meta($options);
         $this->assertSame($expected, $result);
-    }
 
-    /**
-     * Verifies that the method will append to a block.
-     *
-     * @return void
-     */
-    public function testMetaPage1InlineFalse()
-    {
-        $this->Paginator->request->params['paging'] = [
-            'Article' => [
-                'page' => 1,
-                'prevPage' => false,
-                'nextPage' => true,
-                'pageCount' => 2,
-            ]
-        ];
+        $this->assertEquals('', $this->View->fetch('meta'));
 
-        $expected = '<link rel="next" href="http://localhost/index?page=2"/>';
-        $this->Paginator->meta(['block' => true]);
-        $result = $this->View->fetch('meta');
-        $this->assertSame($expected, $result);
-    }
+        $result = $this->Paginator->meta($options + ['block' => true]);
+        $this->assertNull($result);
 
-    /**
-     * Verifies that the last page only has a prev link.
-     *
-     * @return void
-     */
-    public function testMetaPage1Last()
-    {
-        $this->Paginator->request->params['paging'] = [
-            'Article' => [
-                'page' => 2,
-                'prevPage' => true,
-                'nextPage' => false,
-                'pageCount' => 2,
-            ]
-        ];
-
-        $expected = '<link rel="prev" href="http://localhost/index"/>';
-        $result = $this->Paginator->meta();
-
-        $this->assertSame($expected, $result);
-    }
-
-    /**
-     * Verifies that a page in the middle has both links.
-     *
-     * @return void
-     */
-    public function testMetaPage10Last()
-    {
-        $this->Paginator->request->params['paging'] = [
-            'Article' => [
-                'page' => 5,
-                'prevPage' => true,
-                'nextPage' => true,
-                'pageCount' => 10,
-            ]
-        ];
-
-        $expected = '<link rel="prev" href="http://localhost/index?page=4"/>';
-        $expected .= '<link rel="next" href="http://localhost/index?page=6"/>';
-        $result = $this->Paginator->meta();
-        $this->assertSame($expected, $result);
+        $this->assertSame($expected, $this->View->fetch('meta'));
     }
 }
