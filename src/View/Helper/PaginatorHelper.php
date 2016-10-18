@@ -476,6 +476,16 @@ class PaginatorHelper extends Helper
      */
     public function generateUrl(array $options = [], $model = null, $full = false)
     {
+        return $this->Url->build($this->buildUrl($options, $model), $full);
+    }
+
+    /**
+     * @param array $options Pagination/URL options array
+     * @param string|null $model Which model to paginate on
+     * @return array
+     */
+    public function buildUrl(array $options = [], $model = null)
+    {
         $paging = $this->params($model);
         $paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
         $url = [
@@ -504,6 +514,7 @@ class PaginatorHelper extends Helper
         ) {
             $url['sort'] = $url['direction'] = null;
         }
+
         if (!empty($paging['scope'])) {
             $scope = $paging['scope'];
             $currentParams = $this->_config['options']['url'];
@@ -518,7 +529,32 @@ class PaginatorHelper extends Helper
             }
         }
 
-        return $this->Url->build($url, $full);
+        return $url;
+    }
+
+    /**
+     * Generates a link with pagination parameters.
+     *
+     * @param string $title Title for the link
+     * @param array $url URL for the action.
+     * @param array $options Options for the link.
+     * @param string|null $model Which model to paginate on
+     * @return string A link with pagination parameters.
+     */
+    public function link($title, array $url, array $options = [], $model = null)
+    {
+        return $this->Html->link($title, $this->buildUrl($url, $model), $options);
+    }
+
+    /**
+     * Generates the meta-links for a paginated result set.
+     *
+     * @param array $options
+     * @param string|null $model Which model to paginate on
+     */
+    public function meta(array $options = [], $model = null)
+    {
+
     }
 
     /**
