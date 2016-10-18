@@ -723,7 +723,7 @@ class QueryTest extends TestCase
                     'id' => '1something-crazy',
                     'created <' => new \DateTime('2013-01-01 12:00')
                 ],
-                ['created' => 'datetime', 'id' => 'float']
+                ['created' => 'datetime', 'id' => 'integer']
             )
             ->execute();
         $this->assertCount(1, $result);

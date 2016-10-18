@@ -78,7 +78,7 @@ class ValueBinder
      * Creates unique named placeholders for each of the passed values
      * and binds them with the specified type.
      *
-     * @param array|Traversable $values The list of values to be bound
+     * @param array|\Traversable $values The list of values to be bound
      * @param string $type The type with which all values will be bound
      * @return array with the placeholders to insert in the query
      */

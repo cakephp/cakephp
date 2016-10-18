@@ -23,6 +23,6 @@
         "cakephp/validation": "~3.0"
     },
     "suggest": {
-        "cakephp/i18n": "~3.0"
+        "cakephp/i18n": "If you are using Translate / Timestamp Behavior."
     }
 }

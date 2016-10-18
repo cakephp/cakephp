@@ -17,6 +17,8 @@ use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Network\Session;
+use Cake\Routing\Filter\ControllerFactoryFilter;
+use Cake\Routing\Filter\RoutingFilter;
 
 /**
  * Provides the requestAction() method for doing sub-requests
@@ -154,6 +156,24 @@ trait RequestActionTrait
         $request = new Request($params);
         $request->addParams($extra);
         $dispatcher = DispatcherFactory::create();
+
+        // If an application is using PSR7 middleware,
+        // we need to 'fix' their missing dispatcher filters.
+        $needed = [
+            'routing' => RoutingFilter::class,
+            'controller' => ControllerFactoryFilter::class
+        ];
+        foreach ($dispatcher->filters() as $filter) {
+            if ($filter instanceof RoutingFilter) {
+                unset($needed['routing']);
+            }
+            if ($filter instanceof ControllerFactoryFilter) {
+                unset($needed['controller']);
+            }
+        }
+        foreach ($needed as $class) {
+            $dispatcher->addFilter(new $class);
+        }
         $result = $dispatcher->dispatch($request, new Response());
         Router::popRequest();
 

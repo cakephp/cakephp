@@ -206,28 +206,6 @@ class ResponseTransformerTest extends TestCase
     }
 
     /**
-     * Test conversion setting cookies including the session cookie
-     *
-     * @return void
-     */
-    public function testToPsrCookieWithSession()
-    {
-        $session = new Session();
-        $session->write('things', 'things');
-        $cake = new CakeResponse(['status' => 200]);
-        $cake->cookie([
-            'name' => 'remember_me',
-            'value' => 1
-        ]);
-        $result = ResponseTransformer::toPsr($cake);
-        $this->assertEquals(
-            'remember_me=1; Path=/,CAKEPHP=; Path=/; HttpOnly',
-            $result->getHeaderLine('Set-Cookie'),
-            'Session cookie data was not retained.'
-        );
-    }
-
-    /**
      * Test conversion setting multiple cookies
      *
      * @return void

@@ -102,8 +102,10 @@ class AuthComponent extends Component
      *   ]);
      *   ```
      *
-     * - `ajaxLogin` - The name of an optional view element to render when an Ajax
+     * - ~~`ajaxLogin`~~ - The name of an optional view element to render when an Ajax
      *   request is made with an invalid or expired session.
+     *   **This option is deprecated since 3.3.6.** Your client side code should
+     *   instead check for 403 status code and show appropriate login form.
      *
      * - `flash` - Settings to use when Auth needs to do a flash message with
      *   FlashComponent::set(). Available keys are:

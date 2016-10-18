@@ -15,15 +15,15 @@
 namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\Type;
-use Cake\Database\Type\FloatType;
+use Cake\Database\Type\DecimalType;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use \PDO;
 
 /**
- * Test for the Float type.
+ * Test for the Decimal type.
  */
-class FloatTypeTest extends TestCase
+class DecimalTypeTest extends TestCase
 {
 
     /**
@@ -34,10 +34,10 @@ class FloatTypeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->type = Type::build('float');
+        $this->type = Type::build('decimal');
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $this->locale = I18n::locale();
-        $this->numberClass = FloatType::$numberClass;
+        $this->numberClass = DecimalType::$numberClass;
 
         I18n::locale($this->locale);
     }
@@ -51,7 +51,7 @@ class FloatTypeTest extends TestCase
     {
         parent::tearDown();
         I18n::locale($this->locale);
-        FloatType::$numberClass = $this->numberClass;
+        DecimalType::$numberClass = $this->numberClass;
     }
 
     /**
@@ -73,7 +73,7 @@ class FloatTypeTest extends TestCase
         $this->assertSame(2.0, $result);
 
         $result = $this->type->toPHP(['3', '4'], $this->driver);
-        $this->assertSame(1, $result);
+        $this->assertSame(1.0, $result);
     }
 
     /**
@@ -90,16 +90,27 @@ class FloatTypeTest extends TestCase
         $this->assertNull($result);
 
         $result = $this->type->toDatabase('some data', $this->driver);
-        $this->assertSame(0.0, $result);
+        $this->assertSame('0.000000', $result);
 
         $result = $this->type->toDatabase(2, $this->driver);
-        $this->assertSame(2.0, $result);
+        $this->assertSame('2.000000', $result);
+
+        $result = $this->type->toDatabase(2.99, $this->driver);
+        $this->assertSame('2.990000', $result);
 
         $result = $this->type->toDatabase('2.51', $this->driver);
-        $this->assertSame(2.51, $result);
+        $this->assertSame('2.51', $result);
+    }
 
-        $result = $this->type->toDatabase(['3', '4'], $this->driver);
-        $this->assertSame(1.0, $result);
+    /**
+     * Arrays are invalid.
+     *
+     * @expectedException InvalidArgumentException
+     * @return void
+     */
+    public function testToDatabaseInvalid()
+    {
+        $this->type->toDatabase(['3', '4'], $this->driver);
     }
 
     /**
@@ -159,7 +170,7 @@ class FloatTypeTest extends TestCase
      */
     public function testUseLocaleParsingInvalid()
     {
-        FloatType::$numberClass = 'stdClass';
+        DecimalType::$numberClass = 'stdClass';
         $this->type->useLocaleParser();
     }
 
