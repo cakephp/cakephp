@@ -57,7 +57,7 @@ class QueryCompiler
      *
      * @var array
      */
-    protected $_updateParts = ['update', 'set', 'where', 'epilog'];
+    protected $_updateParts = ['update', 'set', 'where', 'order', 'limit', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating a DELETE statement

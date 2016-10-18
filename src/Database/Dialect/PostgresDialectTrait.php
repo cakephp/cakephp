@@ -63,6 +63,63 @@ trait PostgresDialectTrait
     }
 
     /**
+     * Returns the primary key associated with the repository that created the query.
+     *
+     * @param \Cake\Database\Query $query The query to read the primary key from.
+     * @return array|null The primary key or null if not found.
+     */
+    protected function _primaryKey($query)
+    {
+        if ($query instanceof \Cake\ORM\Query) {
+            $table = $query->repository();
+            if ($table instanceof \Cake\ORM\Table) {
+                return (array)$table->primaryKey();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Adds support for LIMIT clause, but requires that the Postgres table was created with object IDs enabled.
+     *
+     * @param \Cake\Database\Query $query The query to translate
+     * @return \Cake\Database\Query The modified query
+     */
+    protected function _updateQueryTranslator($query)
+    {
+        $limit = $query->clause('limit');
+
+        if ($limit) {
+            $primaryKey = $this->_primaryKey($query);
+            if ($primaryKey === null) {
+                throw new \Cake\Core\Exception\Exception(['driver' => get_class($this)]);
+            }
+
+            $from = (new Query($query->connection()))
+                ->select($primaryKey)
+                ->from($query->clause('update'))
+                ->where($query->clause('where'))
+                ->limit($limit);
+
+            $conditions = [];
+            foreach ($primaryKey as $key) {
+                $conditions[$key] = $query->newExpr(sprintf('__cake_update__.%s', $key));
+            }
+
+            $outer = clone $query;
+            $outer
+                ->from(['__cake_update__' => $from], true)
+                ->where($conditions, [], true)
+                ->limit(null);
+
+            return $outer;
+        }
+
+        return $query;
+    }
+
+    /**
      * Modifies the original insert query to append a "RETURNING *" epilogue
      * so that the latest insert id can be retrieved
      *
