@@ -438,7 +438,7 @@ class Response implements ResponseInterface
         }
         if (isset($options['stream'])) {
             if (!$options['stream'] instanceof StreamInterface) {
-                throw new InvalidArgumentException('Stream option must be an object implement StreamInterface');
+                throw new InvalidArgumentException('Stream option must be an object that implements StreamInterface');
             }
             $this->stream = $options['stream'];
         } else {
@@ -741,7 +741,7 @@ class Response implements ResponseInterface
         if ($content === null) {
             $this->stream->rewind();
             $result = $this->stream->getContents();
-            if (empty($result)) {
+            if (empty($result) && strlen($result) === 0) {
                 return null;
             }
 
@@ -758,7 +758,7 @@ class Response implements ResponseInterface
         $this->stream->rewind();
         $result = $this->stream->getContents();
 
-        if (empty($result)) {
+        if (empty($result) && strlen($result) === 0) {
             return null;
         }
 
@@ -1108,6 +1108,7 @@ class Response implements ResponseInterface
 
     /**
      * Sets the Cache-Control s-maxage directive.
+     *
      * The max-age is the number of seconds after which the response should no longer be considered
      * a good candidate to be fetched from a shared cache (like in a proxy server).
      * If called with no parameters, this function will return the current max-age value if any

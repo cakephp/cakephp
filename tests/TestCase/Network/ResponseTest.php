@@ -99,6 +99,18 @@ class ResponseTest extends TestCase
         $response->body('Response body');
         $this->assertEquals('Response body', $response->body());
         $this->assertEquals('Changed Body', $response->body('Changed Body'));
+
+        $response = new Response();
+        $response->body(0);
+        $this->assertEquals(0, $response->body());
+
+        $response = new Response();
+        $response->body('0');
+        $this->assertEquals('0', $response->body());
+
+        $response = new Response();
+        $response->body(null);
+        $this->assertEquals(null, $response->body());
     }
 
     /**
