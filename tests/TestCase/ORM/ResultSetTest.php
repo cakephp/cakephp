@@ -292,6 +292,39 @@ class ResultSetTest extends TestCase
     }
 
     /**
+     * Test showing associated record is preserved when selecting only field with
+     * null value if auto fields is disabled.
+     *
+     * @return void
+     */
+    public function testBelongsToEagerLoaderWithAutoFieldsFalse()
+    {
+        $authors = TableRegistry::get('Authors');
+
+        $author = $authors->newEntity(['name' => null]);
+        $authors->save($author);
+
+        $articles = TableRegistry::get('Articles');
+        $articles->belongsTo('Authors');
+
+        $article = $articles->newEntity([
+            'author_id' => $author->id,
+            'title' => 'article with author with null name'
+        ]);
+        $articles->save($article);
+
+        $result = $articles->find()
+            ->select(['Articles.id', 'Articles.title', 'Authors.name'])
+            ->contain(['Authors'])
+            ->where(['Articles.id' => $article->id])
+            ->autoFields(false)
+            ->hydrate(false)
+            ->first();
+
+        $this->assertNotNull($result['author']);
+    }
+
+    /**
      * Test that eagerLoader leaves empty associations unpopulated.
      *
      * @return void

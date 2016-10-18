@@ -210,7 +210,7 @@ class TypeTest extends TestCase
         $this->assertSame(3.14159, $type->toPHP('3.14159', $driver));
         $this->assertSame(3.14159, $type->toPHP(3.14159, $driver));
         $this->assertSame(3.0, $type->toPHP(3, $driver));
-        $this->assertSame(1, $type->toPHP(['3', '4'], $driver));
+        $this->assertSame(1.0, $type->toPHP(['3', '4'], $driver));
     }
 
     /**

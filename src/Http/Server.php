@@ -112,11 +112,8 @@ class Server
     public function emit(ResponseInterface $response, EmitterInterface $emitter = null)
     {
         $stream = $response->getBody();
-        if (!$emitter && !$stream->isSeekable()) {
-            $emitter = new SapiEmitter();
-        }
         if (!$emitter) {
-            $emitter = new SapiStreamEmitter();
+            $emitter = new ResponseEmitter();
         }
         $emitter->emit($response);
     }

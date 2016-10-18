@@ -347,13 +347,13 @@ class InflectorTest extends TestCase
             'rules' => [],
         ]);
 
-        $this->assertEquals(Inflector::singularize('wisdom teeth'), 'wisdom tooth');
-        $this->assertEquals(Inflector::singularize('wisdom-teeth'), 'wisdom-tooth');
-        $this->assertEquals(Inflector::singularize('wisdom_teeth'), 'wisdom_tooth');
+        $this->assertEquals('wisdom tooth', Inflector::singularize('wisdom teeth'));
+        $this->assertEquals('wisdom-tooth', Inflector::singularize('wisdom-teeth'));
+        $this->assertEquals('wisdom_tooth', Inflector::singularize('wisdom_teeth'));
 
-        $this->assertEquals(Inflector::pluralize('sweet potato'), 'sweet potatoes');
-        $this->assertEquals(Inflector::pluralize('sweet-potato'), 'sweet-potatoes');
-        $this->assertEquals(Inflector::pluralize('sweet_potato'), 'sweet_potatoes');
+        $this->assertEquals('sweet potatoes', Inflector::pluralize('sweet potato'));
+        $this->assertEquals('sweet-potatoes', Inflector::pluralize('sweet-potato'));
+        $this->assertEquals('sweet_potatoes', Inflector::pluralize('sweet_potato'));
     }
 
     /**
@@ -484,14 +484,14 @@ class InflectorTest extends TestCase
         $this->assertSame('test_thing_extra', Inflector::underscore('TestThingExtra'));
         $this->assertSame('test_thing_extra', Inflector::underscore('testThingExtra'));
         $this->assertSame('test_this_thing', Inflector::underscore('test-this-thing'));
-        $this->assertSame(Inflector::underscore('testThingExtrå'), 'test_thing_extrå');
+        $this->assertSame('test_thing_extrå', Inflector::underscore('testThingExtrå'));
 
         // Identical checks test the cache code path.
         $this->assertSame('test_thing', Inflector::underscore('TestThing'));
         $this->assertSame('test_thing', Inflector::underscore('testThing'));
         $this->assertSame('test_thing_extra', Inflector::underscore('TestThingExtra'));
         $this->assertSame('test_thing_extra', Inflector::underscore('testThingExtra'));
-        $this->assertSame(Inflector::underscore('testThingExtrå'), 'test_thing_extrå');
+        $this->assertSame('test_thing_extrå', Inflector::underscore('testThingExtrå'));
 
         // Test stupid values
         $this->assertSame('', Inflector::underscore(''));
@@ -592,8 +592,8 @@ class InflectorTest extends TestCase
         $this->assertEquals('File Systems', Inflector::humanize('file_systems'));
         $this->assertSame('', Inflector::humanize(null));
         $this->assertSame('', Inflector::humanize(false));
-        $this->assertSame(Inflector::humanize('hello_wörld'), 'Hello Wörld');
-        $this->assertSame(Inflector::humanize('福岡_city'), '福岡 City');
+        $this->assertSame('Hello Wörld', Inflector::humanize('hello_wörld'));
+        $this->assertSame('福岡 City', Inflector::humanize('福岡_city'));
     }
 
     /**

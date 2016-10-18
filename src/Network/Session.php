@@ -422,7 +422,7 @@ class Session
      * Writes value to given session variable name.
      *
      * @param string|array $name Name of variable
-     * @param string|null $value Value to write
+     * @param mixed $value Value to write
      * @return void
      */
     public function write($name, $value = null)

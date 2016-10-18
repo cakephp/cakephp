@@ -468,13 +468,19 @@ class PaginatorHelper extends Helper
     /**
      * Merges passed URL options with current pagination state to generate a pagination URL.
      *
+     * ### Url options:
+     *
+     * - `escape`: If false, the URL will be returned unescaped, do only use if it is manually
+     *    escaped afterwards before being displayed.
+     * - `fullBase`: If true, the full base URL will be prepended to the result
+     *
      * @param array $options Pagination/URL options array
      * @param string|null $model Which model to paginate on
-     * @param bool $full If true, the full base URL will be prepended to the result
+     * @param array|bool $urlOptions Array of options or bool `fullBase` for BC reasons.
      * @return string By default, returns a full pagination URL string for use in non-standard contexts (i.e. JavaScript)
      * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html#generating-pagination-urls
      */
-    public function generateUrl(array $options = [], $model = null, $full = false)
+    public function generateUrl(array $options = [], $model = null, $urlOptions = false)
     {
         return $this->Url->build($this->buildUrl($options, $model), $full);
     }
@@ -488,6 +494,15 @@ class PaginatorHelper extends Helper
     {
         $paging = $this->params($model);
         $paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
+
+        if (!is_array($urlOptions)) {
+            $urlOptions = ['fullBase' => $urlOptions];
+        }
+        $urlOptions += [
+            'escape' => true,
+            'fullBase' => false
+        ];
+
         $url = [
             'page' => $paging['page'],
             'limit' => $paging['limit'],
@@ -544,17 +559,6 @@ class PaginatorHelper extends Helper
     public function link($title, array $url, array $options = [], $model = null)
     {
         return $this->Html->link($title, $this->buildUrl($url, $model), $options);
-    }
-
-    /**
-     * Generates the meta-links for a paginated result set.
-     *
-     * @param array $options
-     * @param string|null $model Which model to paginate on
-     */
-    public function meta(array $options = [], $model = null)
-    {
-
     }
 
     /**
