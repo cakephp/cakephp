@@ -94,7 +94,8 @@ class SqlserverCompiler extends QueryCompiler
 
         $template = "WITH CTE AS (SELECT TOP %d * %s %s %s) DELETE %s FROM CTE %s";
 
-        return sprintf($template,
+        return sprintf(
+            $template,
             $parts[5],
             $parts[2],
             $parts[3],
