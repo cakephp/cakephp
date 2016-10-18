@@ -88,35 +88,25 @@ trait PostgresDialectTrait
      */
     protected function _updateQueryTranslator($query)
     {
-        $limit = $query->clause('limit');
-
-        if ($limit) {
-            $primaryKey = $this->_primaryKey($query);
-            if ($primaryKey === null) {
-                throw new \Cake\Core\Exception\Exception(['driver' => get_class($this)]);
-            }
-
-            $from = (new Query($query->connection()))
-                ->select($primaryKey)
-                ->from($query->clause('update'))
-                ->where($query->clause('where'))
-                ->limit($limit);
-
-            $conditions = [];
-            foreach ($primaryKey as $key) {
-                $conditions[$key] = $query->newExpr(sprintf('__cake_update__.%s', $key));
-            }
-
-            $outer = clone $query;
-            $outer
-                ->from(['__cake_update__' => $from], true)
-                ->where($conditions, [], true)
-                ->limit(null);
-
-            return $outer;
+        if ($query->clause('limit') === null) {
+            return $query;
         }
 
-        return $query;
+        $inner = new Query($query->connection());
+        $inner->select('ctid')
+            ->from($query->clause('from'))
+            ->where($query->clause('where'))
+            ->order($query->clause('order'))
+            ->limit($query->clause('limit'))
+            ->offset(0);
+
+        $outer = new Query($query->connection());
+        $outer
+            ->update($query->clause('from'))
+            ->set($query->clause('set'))
+            ->where(['ctid IN' => $inner]);
+
+        return $outer;
     }
 
     /**
@@ -148,8 +138,8 @@ trait PostgresDialectTrait
             return $query;
         }
 
-        $filter = new Query($query->connection());
-        $filter->select('ctid')
+        $inner = new Query($query->connection());
+        $inner->select('ctid')
             ->from($query->clause('from'))
             ->where($query->clause('where'))
             ->order($query->clause('order'))
@@ -159,7 +149,7 @@ trait PostgresDialectTrait
         $outer = new Query($query->connection());
         $outer
             ->delete($query->clause('from'))
-            ->where(['ctid IN' => $filter]);
+            ->where(['ctid IN' => $inner]);
 
         return $outer;
     }
