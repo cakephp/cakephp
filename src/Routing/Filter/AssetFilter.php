@@ -66,7 +66,7 @@ class AssetFilter extends DispatcherFilter
      */
     public function beforeDispatch(Event $event)
     {
-        $request = $event->data['request'];
+        $request = $event->data('request');
 
         $url = urldecode($request->url);
         if (strpos($url, '..') !== false || strpos($url, '.') === false) {
@@ -77,7 +77,7 @@ class AssetFilter extends DispatcherFilter
         if ($assetFile === null || !file_exists($assetFile)) {
             return null;
         }
-        $response = $event->data['response'];
+        $response = $event->data('response');
         $event->stopPropagation();
 
         $response->modified(filemtime($assetFile));

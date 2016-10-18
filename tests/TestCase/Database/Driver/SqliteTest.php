@@ -127,11 +127,7 @@ class SqliteTest extends TestCase
     public function testSchemaValue($input, $expected)
     {
         $driver = new Sqlite();
-        $pdo = PDO::class;
-        if (version_compare(PHP_VERSION, '5.6', '<')) {
-            $pdo = 'FakePdo';
-        }
-        $mock = $this->getMockBuilder($pdo)
+        $mock = $this->getMockBuilder(PDO::class)
             ->setMethods(['quote', 'quoteIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();

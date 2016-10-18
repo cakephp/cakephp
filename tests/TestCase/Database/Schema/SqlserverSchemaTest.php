@@ -952,11 +952,7 @@ SQL;
     protected function _getMockedDriver()
     {
         $driver = new Sqlserver();
-        $pdo = PDO::class;
-        if (version_compare(PHP_VERSION, '5.6', '<')) {
-            $pdo = 'FakePdo';
-        }
-        $mock = $this->getMockBuilder($pdo)
+        $mock = $this->getMockBuilder(PDO::class)
             ->setMethods(['quote'])
             ->disableOriginalConstructor()
             ->getMock();

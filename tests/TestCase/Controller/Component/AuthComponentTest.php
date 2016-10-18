@@ -24,6 +24,7 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
+use Cake\Routing\Route\InflectedRoute;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use TestApp\Controller\AuthTestController;
@@ -62,7 +63,7 @@ class AuthComponentTest extends TestCase
         Configure::write('App.namespace', 'TestApp');
 
         Router::scope('/', function ($routes) {
-            $routes->fallbacks('InflectedRoute');
+            $routes->fallbacks(InflectedRoute::class);
         });
 
         $request = new Request();
@@ -198,29 +199,6 @@ class AuthComponentTest extends TestCase
         $result = $this->Auth->identify();
         $this->assertEquals($user, $result);
         $this->assertSame($AuthLoginFormAuthenticate, $this->Auth->authenticationProvider());
-    }
-
-    /**
-     * testRedirectVarClearing method
-     *
-     * @return void
-     * @triggers Controller.startup $this->Controller
-     */
-    public function testRedirectVarClearing()
-    {
-        $this->Controller->request['controller'] = 'auth_test';
-        $this->Controller->request['action'] = 'add';
-        $this->Controller->request->here = '/auth_test/add';
-        $this->assertNull($this->Auth->session->read('Auth.redirect'));
-
-        $this->Auth->config('authenticate', ['Form']);
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Auth->startup($event);
-        $this->assertEquals('/auth_test/add', $this->Auth->session->read('Auth.redirect'));
-
-        $this->Auth->storage()->write(['username' => 'admad']);
-        $this->Auth->startup($event, $this->Controller);
-        $this->assertNull($this->Auth->session->read('Auth.redirect'));
     }
 
     /**
@@ -602,8 +580,6 @@ class AuthComponentTest extends TestCase
      */
     public function testLoginRedirect()
     {
-        $url = '/auth_test/camelCase';
-
         $this->Auth->session->write('Auth', [
             'AuthUsers' => ['id' => '1', 'username' => 'nate']
         ]);
@@ -630,9 +606,8 @@ class AuthComponentTest extends TestCase
             'Auth',
             ['AuthUsers' => ['id' => '1', 'username' => 'nate']]
         );
-        $this->Controller->testUrl = null;
         $this->Auth->request->addParams(Router::parse($url));
-        $this->Auth->request->env('HTTP_REFERER', false);
+        $this->Auth->request->here = $url;
 
         $this->Auth->config('authorize', 'controller');
 
@@ -640,9 +615,12 @@ class AuthComponentTest extends TestCase
             'controller' => 'AuthTest', 'action' => 'login'
         ]);
         $event = new Event('Controller.startup', $this->Controller);
-        $this->Auth->startup($event);
-        $expected = Router::normalize('/auth_test/login');
-        $this->assertEquals($expected, $this->Controller->testUrl);
+        $response = $this->Auth->startup($event);
+        $expected = Router::url([
+            'controller' => 'AuthTest', 'action' => 'login', '?' => ['redirect' => $url]
+        ], true);
+        $redirectHeader = $response->header()['Location'];
+        $this->assertEquals($expected, $redirectHeader);
 
         // Auth.redirect gets set when accessing a protected action without being authenticated
         $this->Auth->session->delete('Auth');
@@ -651,11 +629,20 @@ class AuthComponentTest extends TestCase
         $this->Auth->request->url = $this->Auth->request->here = Router::normalize($url);
         $this->Auth->config('loginAction', ['controller' => 'AuthTest', 'action' => 'login']);
         $event = new Event('Controller.startup', $this->Controller);
-        $this->Auth->startup($event);
-        $expected = Router::normalize('posts/view/1');
-        $this->assertEquals($expected, $this->Auth->session->read('Auth.redirect'));
+        $response = $this->Auth->startup($event);
 
-        // QueryString parameters are preserved when setting Auth.redirect
+        $this->assertInstanceOf('Cake\Network\Response', $response);
+        $expected = Router::url(['controller' => 'AuthTest', 'action' => 'login', '?' => ['redirect' => '/posts/view/1']], true);
+        $redirectHeader = $response->header()['Location'];
+        $this->assertEquals($expected, $redirectHeader);
+    }
+
+    /**
+     * @return void
+     */
+    public function testLoginRedirectQueryString()
+    {
+        // QueryString parameters are preserved when redirecting with redirect key
         $this->Auth->session->delete('Auth');
         $url = '/posts/view/29';
         $this->Auth->request->addParams(Router::parse($url));
@@ -667,11 +654,42 @@ class AuthComponentTest extends TestCase
 
         $this->Auth->config('loginAction', ['controller' => 'AuthTest', 'action' => 'login']);
         $event = new Event('Controller.startup', $this->Controller);
-        $this->Auth->startup($event);
-        $expected = Router::normalize('posts/view/29?print=true&refer=menu');
-        $this->assertEquals($expected, $this->Auth->session->read('Auth.redirect'));
+        $response = $this->Auth->startup($event);
 
-        // Different base urls.
+        $expected = Router::url(['controller' => 'AuthTest', 'action' => 'login', '?' => ['redirect' => '/posts/view/29?print=true&refer=menu']], true);
+        $redirectHeader = $response->header()['Location'];
+        $this->assertEquals($expected, $redirectHeader);
+    }
+
+    /**
+     * @return void
+     */
+    public function testLoginRedirectQueryStringWithComplexLoginActionUrl()
+    {
+        $this->Auth->session->delete('Auth');
+        $url = '/posts/view/29';
+        $this->Auth->request->addParams(Router::parse($url));
+        $this->Auth->request->url = $this->Auth->request->here = Router::normalize($url);
+        $this->Auth->request->query = [
+            'print' => 'true',
+            'refer' => 'menu'
+        ];
+
+        $this->Auth->session->delete('Auth');
+        $this->Auth->config('loginAction', '/auth_test/login/passed-param?a=b');
+        $event = new Event('Controller.startup', $this->Controller);
+        $response = $this->Auth->startup($event);
+
+        $redirectHeader = $response->header()['Location'];
+        $expected = Router::url(['controller' => 'AuthTest', 'action' => 'login', 'passed-param', '?' => ['a' => 'b', 'redirect' => '/posts/view/29?print=true&refer=menu']], true);
+        $this->assertEquals($expected, $redirectHeader);
+    }
+
+    /**
+     * @return void
+     */
+    public function testLoginRedirectDifferentBaseUrl()
+    {
         $appConfig = Configure::read('App');
 
         Configure::write('App', [
@@ -688,31 +706,16 @@ class AuthComponentTest extends TestCase
         $this->Auth->request->addParams(Router::parse($url));
         $this->Auth->request->url = Router::normalize($url);
 
-        $this->Auth->config('loginAction', ['controller' => 'users', 'action' => 'login']);
+        $this->Auth->config('loginAction', ['controller' => 'Users', 'action' => 'login']);
         $event = new Event('Controller.startup', $this->Controller);
-        $this->Auth->startup($event);
-        $expected = Router::normalize('/posts/add');
-        $this->assertEquals($expected, $this->Auth->session->read('Auth.redirect'));
+        $response = $this->Auth->startup($event);
+
+        $expected = Router::url(['controller' => 'Users', 'action' => 'login', '?' => ['redirect' => '/posts/add']], true);
+        $redirectHeader = $response->header()['Location'];
+        $this->assertEquals($expected, $redirectHeader);
 
         $this->Auth->session->delete('Auth');
         Configure::write('App', $appConfig);
-
-        // External Authed Action
-        $this->Auth->session->delete('Auth');
-        $url = '/posts/view/1';
-        $request = new Request($url);
-        $request->env('HTTP_REFERER', 'http://webmail.example.com/view/message');
-        $request->query = [];
-        $this->Auth->request = $this->Controller->request = $request;
-        $this->Auth->request->addParams(Router::parse($url));
-        $this->Auth->request->url = $this->Auth->request->here = Router::normalize($url);
-        $this->Auth->config('loginAction', ['controller' => 'AuthTest', 'action' => 'login']);
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Auth->startup($event);
-        $expected = Router::normalize('/posts/view/1');
-        $this->assertEquals($expected, $this->Auth->session->read('Auth.redirect'));
-
-        $this->Auth->session->delete('Auth');
     }
 
     /**
@@ -984,16 +987,16 @@ class AuthComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         Router::reload();
         Router::prefix('admin', function ($routes) {
-            $routes->fallbacks('InflectedRoute');
+            $routes->fallbacks(InflectedRoute::class);
         });
         Router::scope('/', function ($routes) {
-            $routes->fallbacks('InflectedRoute');
+            $routes->fallbacks(InflectedRoute::class);
         });
 
         $url = '/admin/auth_test/add';
         $this->Auth->request->addParams(Router::parse($url));
-        $this->Auth->request->query['url'] = ltrim($url, '/');
         $this->Auth->request->base = '';
+        $this->Auth->request->here = $url;
 
         Router::setRequestInfo($this->Auth->request);
 
@@ -1003,8 +1006,15 @@ class AuthComponentTest extends TestCase
             'action' => 'login'
         ]);
 
-        $this->Auth->startup($event);
-        $this->assertEquals('/admin/auth_test/login', $this->Controller->testUrl);
+        $response = $this->Auth->startup($event);
+        $redirectHeader = $response->header()['Location'];
+        $expected = Router::url([
+            'prefix' => 'admin',
+            'controller' => 'auth_test',
+            'action' => 'login',
+            '?' => ['redirect' => '/admin/auth_test/add']
+        ], true);
+        $this->assertEquals($expected, $redirectHeader);
     }
 
     /**
@@ -1068,10 +1078,10 @@ class AuthComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         Router::reload();
         Router::prefix('admin', function ($routes) {
-            $routes->fallbacks('InflectedRoute');
+            $routes->fallbacks(InflectedRoute::class);
         });
         Router::scope('/', function ($routes) {
-            $routes->fallbacks('InflectedRoute');
+            $routes->fallbacks(InflectedRoute::class);
         });
 
         $url = '/admin/auth_test/login';
@@ -1168,13 +1178,11 @@ class AuthComponentTest extends TestCase
     public function testLogout()
     {
         $this->Auth->session->write('Auth.User.id', '1');
-        $this->Auth->session->write('Auth.redirect', '/Users/login');
         $this->Auth->config('logoutRedirect', '/');
         $result = $this->Auth->logout();
 
         $this->assertEquals('/', $result);
         $this->assertNull($this->Auth->session->read('Auth.AuthUsers'));
-        $this->assertNull($this->Auth->session->read('Auth.redirect'));
     }
 
     /**
@@ -1227,8 +1235,8 @@ class AuthComponentTest extends TestCase
         ]);
         $this->Auth->config('storage', 'Memory');
 
-        EventManager::instance()->on('Auth.afterIdentify', function ($event) {
-            $user = $event->data[0];
+        EventManager::instance()->on('Auth.afterIdentify', function (Event $event) {
+            $user = $event->data(0);
             $user['from_callback'] = true;
 
             return $user;
@@ -1332,66 +1340,79 @@ class AuthComponentTest extends TestCase
         $value = ['controller' => 'users', 'action' => 'home'];
         $result = $this->Auth->redirectUrl($value);
         $this->assertEquals('/users/home', $result);
-        $this->assertEquals($value, $this->Auth->session->read('Auth.redirect'));
-
-        $request = new Request();
-        $request->base = '/base';
-        Router::setRequestInfo($request);
-
-        $result = $this->Auth->redirectUrl($value);
-        $this->assertEquals('/users/home', $result);
     }
 
     /**
-     * test redirect using Auth.redirect from the session.
+     * Tests redirect using redirect key from the query string.
      *
      * @return void
      */
-    public function testRedirectSessionRead()
+    public function testRedirectQueryStringRead()
     {
         $this->Auth->config('loginAction', ['controller' => 'users', 'action' => 'login']);
-        $this->Auth->session->write('Auth.redirect', '/users/home');
+        $this->Auth->request->query = ['redirect' => '/users/custom'];
 
         $result = $this->Auth->redirectUrl();
-        $this->assertEquals('/users/home', $result);
-        $this->assertFalse($this->Auth->session->check('Auth.redirect'));
+        $this->assertEquals('/users/custom', $result);
     }
 
     /**
-     * test redirectUrl with duplicate base.
+     * Tests redirectUrl with duplicate base.
      *
      * @return void
      */
-    public function testRedirectSessionReadDuplicateBase()
+    public function testRedirectQueryStringReadDuplicateBase()
     {
         $this->Auth->request->webroot = '/waves/';
         $this->Auth->request->base = '/waves';
 
-        Router::setRequestInfo($this->Auth->request);
+        $this->Auth->request->query = ['redirect' => '/waves/add'];
 
-        $this->Auth->session->write('Auth.redirect', '/waves/add');
+        Router::setRequestInfo($this->Auth->request);
 
         $result = $this->Auth->redirectUrl();
         $this->assertEquals('/waves/add', $result);
     }
 
     /**
-     * test that redirect does not return loginAction if that is what's stored in Auth.redirect.
+     * test that redirect does not return loginAction if that is what's passed as redirect.
      * instead loginRedirect should be used.
      *
      * @return void
      */
-    public function testRedirectSessionReadEqualToLoginAction()
+    public function testRedirectQueryStringReadEqualToLoginAction()
     {
         $this->Auth->config([
             'loginAction' => ['controller' => 'users', 'action' => 'login'],
             'loginRedirect' => ['controller' => 'users', 'action' => 'home']
         ]);
-        $this->Auth->session->write('Auth.redirect', ['controller' => 'users', 'action' => 'login']);
+        $this->Auth->request->query = ['redirect' => '/users/login'];
 
         $result = $this->Auth->redirectUrl();
         $this->assertEquals('/users/home', $result);
-        $this->assertFalse($this->Auth->session->check('Auth.redirect'));
+    }
+
+    /**
+     * Tests that redirect does not return loginAction if that contains a host,
+     * instead loginRedirect should be used.
+     *
+     * @return void
+     */
+    public function testRedirectQueryStringInvalid()
+    {
+        $this->Auth->config([
+            'loginAction' => ['controller' => 'users', 'action' => 'login'],
+            'loginRedirect' => ['controller' => 'users', 'action' => 'home']
+        ]);
+        $this->Auth->request->query = ['redirect' => 'http://some.domain.example/users/login'];
+
+        $result = $this->Auth->redirectUrl();
+        $this->assertEquals('/users/home', $result);
+
+        $this->Auth->request->query = ['redirect' => '//some.domain.example/users/login'];
+
+        $result = $this->Auth->redirectUrl();
+        $this->assertEquals('/users/home', $result);
     }
 
     /**
@@ -1422,7 +1443,6 @@ class AuthComponentTest extends TestCase
 
         $result = $this->Auth->redirectUrl();
         $this->assertEquals('/users/home', $result);
-        $this->assertFalse($this->Auth->session->check('Auth.redirect'));
 
         Configure::write('App', $App);
         Router::reload();
@@ -1492,7 +1512,7 @@ class AuthComponentTest extends TestCase
      * @return void
      * @triggers Controller.startup $this->Controller
      */
-    public function testStatelessFollowedByStatefulAuth()
+    public function testStatelessAuthRedirectToLogin()
     {
         $this->Auth->response = $this->getMockBuilder('Cake\Network\Response')
             ->setMethods(['stop', 'statusCode', 'send'])
@@ -1506,7 +1526,7 @@ class AuthComponentTest extends TestCase
 
         $this->assertInstanceOf('Cake\Network\Response', $this->Auth->startup($event));
 
-        $this->assertEquals('/users/login', $this->Controller->testUrl);
+        $this->assertEquals('/users/login?redirect=%2Fauth_test', $this->Controller->testUrl);
     }
 
     /**

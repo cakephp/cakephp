@@ -138,7 +138,7 @@ class SqlserverSchema extends BaseSchema
             return ['type' => 'uuid'];
         }
 
-        return ['type' => 'text', 'length' => null];
+        return ['type' => 'string', 'length' => null];
     }
 
     /**

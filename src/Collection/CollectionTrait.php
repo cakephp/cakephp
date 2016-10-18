@@ -647,6 +647,34 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      */
+    public function chunkWithKeys($chunkSize, $preserveKeys = true)
+    {
+        return $this->map(function ($v, $k, $iterator) use ($chunkSize, $preserveKeys) {
+            $key = 0;
+            if ($preserveKeys) {
+                $key = $k;
+            }
+            $values = [$key => $v];
+            for ($i = 1; $i < $chunkSize; $i++) {
+                $iterator->next();
+                if (!$iterator->valid()) {
+                    break;
+                }
+                if ($preserveKeys) {
+                    $values[$iterator->key()] = $iterator->current();
+                } else {
+                    $values[] = $iterator->current();
+                }
+            }
+
+            return $values;
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
     public function isEmpty()
     {
         foreach ($this->unwrap() as $el) {

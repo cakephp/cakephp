@@ -20,6 +20,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
+use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
@@ -1310,11 +1311,11 @@ class QueryTest extends TestCase
 
         $articlesTags
             ->eventManager()
-            ->attach(function ($event, $query) {
+            ->on('Model.beforeFind', function (Event $event, $query) {
                 $query->formatResults(function ($results) {
                     return $results;
                 });
-            }, 'Model.beforeFind');
+            });
 
         $query = new Query($this->connection, $table);
 
@@ -1602,11 +1603,11 @@ class QueryTest extends TestCase
         $table = TableRegistry::get('Articles');
         $table->hasMany('Comments');
         $table->eventManager()
-            ->attach(function ($event, $query) {
+            ->on('Model.beforeFind', function (Event $event, $query) {
                 $query
                     ->limit(1)
                     ->order(['Articles.title' => 'DESC']);
-            }, 'Model.beforeFind');
+            });
 
         $query = $table->find();
         $result = $query->count();
@@ -1623,11 +1624,11 @@ class QueryTest extends TestCase
         $callCount = 0;
         $table = TableRegistry::get('Articles');
         $table->eventManager()
-            ->attach(function ($event, $query) use (&$callCount) {
+            ->on('Model.beforeFind', function (Event $event, $query) use (&$callCount) {
                 $valueBinder = new ValueBinder();
                 $query->sql($valueBinder);
                 $callCount++;
-            }, 'Model.beforeFind');
+            });
 
         $query = $table->find();
         $valueBinder = new ValueBinder();
@@ -2742,11 +2743,11 @@ class QueryTest extends TestCase
         $table = TableRegistry::get('Articles');
         $table->hasMany('Comments');
         $table->eventManager()
-            ->attach(function ($event, $query) {
+            ->on('Model.beforeFind', function (Event $event, $query) {
                 $query
                     ->limit(5)
                     ->order(['Articles.title' => 'DESC']);
-            }, 'Model.beforeFind');
+            });
 
         $query = $table->find();
         $query->offset(10)
@@ -2967,6 +2968,22 @@ class QueryTest extends TestCase
 
         $this->assertNotEmpty($result);
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test that simple aliased field have results typecast.
+     *
+     * @return void
+     */
+    public function testSelectTypeInferSimpleAliases()
+    {
+        $table = TableRegistry::get('comments');
+        $result = $table
+            ->find()
+            ->select(['created', 'updated_time' => 'updated'])
+            ->first();
+        $this->assertInstanceOf(Time::class, $result->created);
+        $this->assertInstanceOf(Time::class, $result->updated_time);
     }
 
     /**

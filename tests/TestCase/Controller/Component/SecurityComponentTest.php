@@ -213,7 +213,7 @@ class SecurityComponentTest extends TestCase
             'action' => 'index'
         ]);
         $Controller = new \TestApp\Controller\SomePagesController($request);
-        $event = new Event('Controller.startup', $Controller, $this->Controller);
+        $event = new Event('Controller.startup', $Controller);
         $Security = new SecurityComponent($Controller->components());
         $Security->config('blackHoleCallback', '_fail');
         $Security->startup($event);

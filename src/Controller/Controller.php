@@ -235,8 +235,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $this->name = $name;
         }
 
-        if ($this->name === null && isset($request->params['controller'])) {
-            $this->name = $request->params['controller'];
+        if ($this->name === null && $request && $request->param('controller')) {
+            $this->name = $request->param('controller');
         }
 
         if ($this->name === null) {
@@ -401,10 +401,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function setRequest(Request $request)
     {
         $this->request = $request;
-        $this->plugin = isset($request->params['plugin']) ? $request->params['plugin'] : null;
+        $this->plugin = $request->param('plugin') ?: null;
 
-        if (isset($request->params['pass'])) {
-            $this->passedArgs = $request->params['pass'];
+        if ($request->param('pass')) {
+            $this->passedArgs = $request->param('pass');
         }
     }
 
@@ -422,17 +422,17 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if (!isset($request)) {
             throw new LogicException('No Request object configured. Cannot invoke action');
         }
-        if (!$this->isAction($request->params['action'])) {
+        if (!$this->isAction($request->param('action'))) {
             throw new MissingActionException([
                 'controller' => $this->name . "Controller",
-                'action' => $request->params['action'],
-                'prefix' => isset($request->params['prefix']) ? $request->params['prefix'] : '',
-                'plugin' => $request->params['plugin'],
+                'action' => $request->param('action'),
+                'prefix' => $request->param('prefix') ?: '',
+                'plugin' => $request->param('plugin'),
             ]);
         }
-        $callable = [$this, $request->params['action']];
+        $callable = [$this, $request->param('action')];
 
-        return call_user_func_array($callable, $request->params['pass']);
+        return call_user_func_array($callable, $request->param('pass'));
     }
 
     /**
@@ -495,13 +495,15 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function startupProcess()
     {
         $event = $this->dispatchEvent('Controller.initialize');
-        if ($event->result instanceof Response) {
-            return $event->result;
+        if ($event->result() instanceof Response) {
+            return $event->result();
         }
         $event = $this->dispatchEvent('Controller.startup');
-        if ($event->result instanceof Response) {
-            return $event->result;
+        if ($event->result() instanceof Response) {
+            return $event->result();
         }
+
+        return null;
     }
 
     /**
@@ -516,9 +518,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function shutdownProcess()
     {
         $event = $this->dispatchEvent('Controller.shutdown');
-        if ($event->result instanceof Response) {
-            return $event->result;
+        if ($event->result() instanceof Response) {
+            return $event->result();
         }
+
+        return null;
     }
 
     /**
@@ -540,8 +544,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         $event = $this->dispatchEvent('Controller.beforeRedirect', [$url, $response]);
-        if ($event->result instanceof Response) {
-            return $event->result;
+        if ($event->result() instanceof Response) {
+            return $event->result();
         }
         if ($event->isStopped()) {
             return null;
@@ -570,7 +574,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function setAction($action)
     {
-        $this->request->params['action'] = $action;
+        $this->request = $this->request->withParam('action', $action);
         $args = func_get_args();
         unset($args[0]);
 
@@ -600,17 +604,15 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $this->autoRender = false;
 
         $event = $this->dispatchEvent('Controller.beforeRender');
-        if ($event->result instanceof Response) {
-            return $event->result;
+        if ($event->result() instanceof Response) {
+            return $event->result();
         }
         if ($event->isStopped()) {
             return $this->response;
         }
 
-        if ($builder->template() === null &&
-            isset($this->request->params['action'])
-        ) {
-            $builder->template($this->request->params['action']);
+        if ($builder->template() === null && $this->request->param('action')) {
+            $builder->template($this->request->param('action'));
         }
 
         $this->View = $this->createView();
@@ -627,10 +629,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     protected function _viewPath()
     {
         $viewPath = $this->name;
-        if (!empty($this->request->params['prefix'])) {
+        if ($this->request->param('prefix')) {
             $prefixes = array_map(
                 'Cake\Utility\Inflector::camelize',
-                explode('/', $this->request->params['prefix'])
+                explode('/', $this->request->param('prefix'))
             );
             $viewPath = implode(DIRECTORY_SEPARATOR, $prefixes) . DIRECTORY_SEPARATOR . $viewPath;
         }
@@ -654,11 +656,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $referer = $this->request->referer($local);
         if ($referer === '/' && $default && $default !== $referer) {
             $url = Router::url($default, !$local);
-            if ($local
-                && $this->request->base
-                && strpos($url, $this->request->base) === 0
-            ) {
-                $url = substr($url, strlen($this->request->base));
+            $base = $this->request->getAttribute('base');
+            if ($local && $base && strpos($url, $base) === 0) {
+                $url = substr($url, strlen($base));
                 if ($url[0] !== '/') {
                     $url = '/' . $url;
                 }

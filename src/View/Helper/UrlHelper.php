@@ -203,7 +203,7 @@ class UrlHelper extends Helper
         $timestampEnabled = $stamp === 'force' || ($stamp === true && Configure::read('debug'));
         if ($timestampEnabled && strpos($path, '?') === false) {
             $filepath = preg_replace(
-                '/^' . preg_quote($this->request->webroot, '/') . '/',
+                '/^' . preg_quote($this->request->getAttribute('webroot'), '/') . '/',
                 '',
                 urldecode($path)
             );
@@ -237,7 +237,7 @@ class UrlHelper extends Helper
     {
         $asset = explode('?', $file);
         $asset[1] = isset($asset[1]) ? '?' . $asset[1] : null;
-        $webPath = $this->request->webroot . $asset[0];
+        $webPath = $this->request->getAttribute('webroot') . $asset[0];
         $file = $asset[0];
 
         if (!empty($this->theme)) {
@@ -249,12 +249,12 @@ class UrlHelper extends Helper
             }
 
             if (file_exists(Configure::read('App.wwwRoot') . $theme . $file)) {
-                $webPath = $this->request->webroot . $theme . $asset[0];
+                $webPath = $this->request->getAttribute('webroot') . $theme . $asset[0];
             } else {
                 $themePath = Plugin::path($this->theme);
                 $path = $themePath . 'webroot/' . $file;
                 if (file_exists($path)) {
-                    $webPath = $this->request->webroot . $theme . $asset[0];
+                    $webPath = $this->request->getAttribute('webroot') . $theme . $asset[0];
                 }
             }
         }

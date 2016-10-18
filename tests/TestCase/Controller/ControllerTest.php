@@ -412,7 +412,7 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new Request, new Response());
 
-        $Controller->eventManager()->on('Controller.beforeRender', function ($event) {
+        $Controller->eventManager()->on('Controller.beforeRender', function (Event $event) {
             $controller = $event->subject();
             $controller->viewClass = 'Json';
         });
@@ -437,9 +437,9 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new Request, new Response());
 
-        $Controller->eventManager()->attach(function ($event) {
+        $Controller->eventManager()->on('Controller.beforeRender', function (Event $event) {
             return false;
-        }, 'Controller.beforeRender');
+        });
 
         $result = $Controller->render('index');
         $this->assertInstanceOf('Cake\Network\Response', $result);
@@ -489,9 +489,9 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(null, new Response());
 
-        $Controller->eventManager()->attach(function ($event, $url, $response) {
+        $Controller->eventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) {
             $response->location('http://book.cakephp.org');
-        }, 'Controller.beforeRedirect');
+        });
 
         $response = $Controller->redirect('http://cakephp.org', 301);
         $this->assertEquals('http://book.cakephp.org', $response->header()['Location']);
@@ -510,9 +510,9 @@ class ControllerTest extends TestCase
             ->getMock();
         $Controller = new Controller(null, $Response);
 
-        $Controller->eventManager()->attach(function ($event, $url, $response) {
+        $Controller->eventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) {
             $response->statusCode(302);
-        }, 'Controller.beforeRedirect');
+        });
 
         $response = $Controller->redirect('http://cakephp.org', 301);
 
@@ -528,7 +528,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller(null, $Response);
 
         $newResponse = new Response;
-        $Controller->eventManager()->on('Controller.beforeRedirect', function ($event, $url, $response) use ($newResponse) {
+        $Controller->eventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) use ($newResponse) {
             return $newResponse;
         });
 

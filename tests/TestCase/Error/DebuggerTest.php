@@ -272,7 +272,7 @@ object(Cake\View\View) {
 	theme => null
 	hasRendered => false
 	uuids => []
-	request => object(Cake\Network\Request) {}
+	request => object(Cake\Http\ServerRequest) {}
 	response => object(Cake\Network\Response) {}
 	elementCache => 'default'
 	viewClass => null
