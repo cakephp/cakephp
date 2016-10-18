@@ -195,7 +195,7 @@ class PaginatorHelper extends Helper
     }
 
     /**
-     * Gets the total number of pages in the recardset for the given model.
+     * Gets the total number of pages in the recordset for the given model.
      *
      * @param string|null $model Optional model name. Uses the default if none is specified.
      * @return int The total pages for the recordset.
@@ -208,7 +208,7 @@ class PaginatorHelper extends Helper
             return $params['pageCount'];
         }
 
-        return 1;
+        return 0;
     }
 
     /**
@@ -507,7 +507,7 @@ class PaginatorHelper extends Helper
             'fullBase' => false
         ];
 
-        return $this->Url->build($this->buildUrl($options, $model), $urlOptions);
+        return $this->Url->build($this->generateUrlParams($options, $model), $urlOptions);
     }
 
     /**
@@ -517,7 +517,7 @@ class PaginatorHelper extends Helper
      * @param string|null $model Which model to paginate on
      * @return array An array of URL parameters
      */
-    public function buildUrl(array $options = [], $model = null)
+    public function generateUrlParams(array $options = [], $model = null)
     {
         $paging = $this->params($model);
         $paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
@@ -1147,16 +1147,17 @@ class PaginatorHelper extends Helper
 
         $out = implode($links);
 
-        if (empty($options['block'])) {
-            return $out;
-        }
-
         if ($options['block'] === true) {
             $options['block'] = __FUNCTION__;
         }
-        $this->_View->append($options['block'], $out);
 
-        return null;
+        if (!empty($options['block'])) {
+            $this->_View->append($options['block'], $out);
+            
+            return null;
+        }
+
+        return $out;
     }
 
     /**
