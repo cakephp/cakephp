@@ -1,11 +1,18 @@
 <?php
+// @codingStandardsIgnoreFile
 namespace Cake\Network;
 
-if (false) {
-    /**
-     * @deprecated Use Cake\Http\ServerRequest instead
-     */
-    class Request extends \Cake\Http\ServerRequest
-    {
-    }
+use Cake\Http\ServerRequest;
+
+class_alias(ServerRequest::class, Request::class);
+
+if (class_exists(Request::class)) {
+    return;
+}
+
+/**
+ * @deprecated Use Cake\Http\ServerRequest instead
+ */
+class Request extends ServerRequest
+{
 }
