@@ -1,3 +1,11 @@
 <?php
-// @deprecated Backwards compatibility with earler 3.x versions.
-class_alias('Cake\Http\ServerRequest', 'Cake\Network\Request');
+namespace Cake\Network;
+
+if (false) {
+    /**
+     * @deprecated Use Cake\Http\ServerRequest instead
+     */
+    class Request extends \Cake\Http\ServerRequest
+    {
+    }
+}

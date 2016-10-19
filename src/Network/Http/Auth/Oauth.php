@@ -1,3 +1,11 @@
 <?php
-// @deprecated Backwards compatibility with earler 3.x versions.
-class_alias('Cake\Http\Client\Auth\Oauth', 'Cake\Network\Http\Auth\Oauth');
+namespace Cake\Network\Http\Auth;
+
+if (false) {
+    /**
+     * @deprecated Use Cake\Http\Client\Auth\Oauth instead.
+     */
+    class Oauth extends \Cake\Http\Client\Auth\Oauth
+    {
+    }
+}

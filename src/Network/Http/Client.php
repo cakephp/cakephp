@@ -1,3 +1,12 @@
 <?php
-// @deprecated Backwards compatibility with earler 3.x versions.
-class_alias('Cake\Http\Client', 'Cake\Network\Http\Client');
+namespace Cake\Network\Http;
+
+if (false) {
+    /**
+     * @deprecated Use \Cake\Http\Client instead.
+     */
+    class Client extends \Cake\Http\Client
+    {
+
+    }
+}

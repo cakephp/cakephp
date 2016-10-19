@@ -1,3 +1,12 @@
 <?php
-// @deprecated Backward compatibility with 2.x, 3.0.x
-class_alias('Cake\Mailer\Transport\SmtpTransport', 'Cake\Network\Email\SmtpTransport');
+namespace Cake\Network\Email;
+
+if (false) {
+    /**
+     * @deprecated Use Cake\Mailer\Transport\SmtpTransport instead.
+     */
+    class SmtpTransport extends \Cake\Mailer\Transport\SmtpTransport
+    {
+
+    }
+}

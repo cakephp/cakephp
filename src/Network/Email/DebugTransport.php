@@ -1,3 +1,12 @@
 <?php
-// @deprecated Backward compatibility with 2.x, 3.0.x
-class_alias('Cake\Mailer\Transport\DebugTransport', 'Cake\Network\Email\DebugTransport');
+namespace Cake\Network\Email;
+
+if (false) {
+    /**
+     * @deprecated Use Cake\Mailer\Transport\DebugTransport instead.
+     */
+    class DebugTransport extends \Cake\Mailer\Transport\DebugTransport
+    {
+
+    }
+}

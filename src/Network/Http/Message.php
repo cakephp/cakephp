@@ -1,3 +1,11 @@
 <?php
-// @deprecated Backwards compatibility with earler 3.x versions.
-class_alias('Cake\Http\Client\Message', 'Cake\Network\Http\Message');
+namespace Cake\Network\Http;
+
+if (false) {
+    /**
+     * @deprecated Use Cake\Http\Client\Message instead.
+     */
+    class Message extends \Cake\Http\Client\Message
+    {
+    }
+}

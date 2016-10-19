@@ -1,3 +1,12 @@
 <?php
-// @deprecated Backward compatibility with 2.x, 3.0.x
-class_alias('Cake\Mailer\Email', 'Cake\Network\Email\Email');
+namespace Cake\Network\Email;
+
+if (false) {
+    /**
+     * @deprecated Use Cake\Mailer\Email instead
+     */
+    class Email extends \Cake\Mailer\Email
+    {
+
+    }
+}
