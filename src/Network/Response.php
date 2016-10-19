@@ -16,6 +16,7 @@ namespace Cake\Network;
 
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
+use Cake\Http\CallbackStream;
 use Cake\Log\Log;
 use Cake\Network\Exception\NotFoundException;
 use DateTime;
@@ -739,30 +740,26 @@ class Response implements ResponseInterface
     public function body($content = null)
     {
         if ($content === null) {
-            $this->stream->rewind();
+            if ($this->stream->isSeekable()) {
+                $this->stream->rewind();
+            }
             $result = $this->stream->getContents();
-            if (empty($result) && strlen($result) === 0) {
+            if (strlen($result) === 0) {
                 return null;
             }
 
             return $result;
         }
 
-        // BC compatibility
+        // Compatibility with closure/streaming responses
         if (is_callable($content)) {
-            $content = $this->_handleCallableBody($content);
+            $this->stream = new CallbackStream($content);
+        } else {
+            $this->_createStream();
+            $this->stream->write($content);
         }
 
-        $this->_createStream();
-        $this->stream->write($content);
-        $this->stream->rewind();
-        $result = $this->stream->getContents();
-
-        if (empty($result) && strlen($result) === 0) {
-            return null;
-        }
-
-        return $result;
+        return $content;
     }
 
     /**

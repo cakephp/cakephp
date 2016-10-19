@@ -2350,5 +2350,4 @@ class ResponseTest extends TestCase
         $this->assertFalse($response->hasHeader('Accept'));
         $this->assertFalse($response->hasHeader('accept'));
     }
-
 }
