@@ -1116,7 +1116,7 @@ class PaginatorHelper extends Helper
      */
     public function meta(array $options = [])
     {
-        $options = $options + [
+        $options += [
                 'model' => null,
                 'block' => false,
                 'prev' => true,
@@ -1151,7 +1151,7 @@ class PaginatorHelper extends Helper
             $options['block'] = __FUNCTION__;
         }
 
-        if (!empty($options['block'])) {
+        if ($options['block']) {
             $this->_View->append($options['block'], $out);
 
             return null;
