@@ -108,7 +108,7 @@ class FlashComponent extends Component
 
         $messages = [];
         if ($options['clear'] === false) {
-            $messages = $this->_session->read('Flash.' . $options['key']);
+            $messages = (array)$this->_session->read('Flash.' . $options['key']);
         }
 
         $messages[] = [

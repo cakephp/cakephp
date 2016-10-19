@@ -117,6 +117,24 @@ class I18nTest extends TestCase
     }
 
     /**
+     * Test plural rules are used for non-english languages
+     *
+     * @return void
+     */
+    public function testPluralSelectionRussian()
+    {
+        $translator = I18n::translator('default', 'ru');
+        $result = $translator->translate('{0} months', ['_count' => 1, 1]);
+        $this->assertEquals('1 months ends in 1, not 11', $result);
+
+        $result = $translator->translate('{0} months', ['_count' => 2, 2]);
+        $this->assertEquals('2 months ends in 2-4, not 12-14', $result);
+
+        $result = $translator->translate('{0} months', ['_count' => 7, 7]);
+        $this->assertEquals('7 months everything else', $result);
+    }
+
+    /**
      * Tests that custom translation packages can be created on the fly and used later on
      *
      * @return void

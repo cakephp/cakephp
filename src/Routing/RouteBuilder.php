@@ -302,6 +302,7 @@ class RouteBuilder
      *   make sure that your mapped methods are also in the 'only' list.
      * - 'prefix' - Define a routing prefix for the resource controller. If the current scope
      *   defines a prefix, this prefix will be appended to it.
+     * - 'connectOptions' – Custom options for connecting the routes.
      *
      * @param string $name A controller name to connect resource routes for.
      * @param array|callable $options Options to use when generating REST routes, or a callback.
