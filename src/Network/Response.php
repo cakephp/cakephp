@@ -21,6 +21,9 @@ use Cake\Network\Exception\NotFoundException;
 use DateTime;
 use DateTimeZone;
 use InvalidArgumentException;
+use Psr\Http\Message\ResponseInterface;
+use Zend\Diactoros\MessageTrait;
+use Zend\Diactoros\Stream;
 
 /**
  * Cake Response is responsible for managing the response text, status and headers of a HTTP response.
@@ -28,8 +31,10 @@ use InvalidArgumentException;
  * By default controllers will use this class to render their response. If you are going to use
  * a custom response class it should subclass this object in order to ensure compatibility.
  */
-class Response
+class Response implements ResponseInterface
 {
+
+    use MessageTrait;
 
     /**
      * Holds HTTP response statuses
@@ -334,18 +339,18 @@ class Response
     ];
 
     /**
-     * Protocol header to send to the client
-     *
-     * @var string
-     */
-    protected $_protocol = 'HTTP/1.1';
-
-    /**
      * Status code to send to the client
      *
      * @var int
      */
     protected $_status = 200;
+
+    /**
+     * Reason phrase for the status code.
+     *
+     * @var string|null
+     */
+    protected $_reasonPhrase = null;
 
     /**
      * Content type to send. This can be an 'extension' that will be transformed using the $_mimetypes array
@@ -354,13 +359,6 @@ class Response
      * @var string
      */
     protected $_contentType = 'text/html';
-
-    /**
-     * Buffer list of headers
-     *
-     * @var array
-     */
-    protected $_headers = [];
 
     /**
      * Buffer string or callable for response message
@@ -417,9 +415,22 @@ class Response
      */
     public function __construct(array $options = [])
     {
+        if (isset($options['stream'])) {
+            if (!$options['stream'] instanceof Stream) {
+                throw new \InvalidArgumentException('The stream option must contain a stream object');
+            }
+            $this->stream = $options['stream'];
+        } else {
+            $this->stream = new Stream('php://memory', 'rw');
+        }
+
         if (isset($options['body'])) {
+            $this->stream->write($options['body']);
+            $this->stream->rewind();
+
             $this->body($options['body']);
         }
+
         if (isset($options['statusCodes'])) {
             $this->httpCodes($options['statusCodes']);
         }
@@ -443,7 +454,7 @@ class Response
      */
     public function send()
     {
-        if (isset($this->_headers['Location']) && $this->_status === 200) {
+        if (isset($this->headers['location']) && $this->_status === 200) {
             $this->statusCode(302);
         }
 
@@ -478,10 +489,10 @@ class Response
 
         $codeMessage = $this->_statusCodes[$this->_status];
         $this->_setCookies();
-        $this->_sendHeader("{$this->_protocol} {$this->_status} {$codeMessage}");
+        $this->_sendHeader("HTTP/{$this->getProtocolVersion()} {$this->_status} {$codeMessage}");
         $this->_setContentType();
 
-        foreach ($this->_headers as $header => $values) {
+        foreach ($this->headers as $header => $values) {
             foreach ((array)$values as $value) {
                 $this->_sendHeader($header, $value);
             }
@@ -630,7 +641,7 @@ class Response
     public function header($header = null, $value = null)
     {
         if ($header === null) {
-            return $this->_headers;
+            return $this->headers;
         }
         $headers = is_array($header) ? $header : [$header => $value];
         foreach ($headers as $header => $value) {
@@ -640,10 +651,11 @@ class Response
             if ($value === null) {
                 list($header, $value) = explode(':', $header, 2);
             }
-            $this->_headers[$header] = is_array($value) ? array_map('trim', $value) : trim($value);
+            $header = strtolower($header);
+            $this->headers[strtolower($header)] = is_array($value) ? array_map('trim', $value) : trim($value);
         }
 
-        return $this->_headers;
+        return $headers;
     }
 
     /**
@@ -660,9 +672,9 @@ class Response
         if ($url === null) {
             $headers = $this->header();
 
-            return isset($headers['Location']) ? $headers['Location'] : null;
+            return isset($headers['location']) ? $headers['location'] : null;
         }
-        $this->header('Location', $url);
+        $this->header('location', $url);
 
         return null;
     }
@@ -680,6 +692,20 @@ class Response
             return $this->_body;
         }
 
+        // BC compatibility
+        if (is_callable($content)) {
+            ob_start();
+            $result = $content();
+
+            if (empty($result)) {
+                $content = ob_get_clean();
+            } else {
+                $content = $result;
+            }
+            ob_end_clean();
+        }
+
+        $this->stream->write($content);
         return $this->_body = $content;
     }
 
@@ -876,8 +902,8 @@ class Response
     public function disableCache()
     {
         $this->header([
-            'Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
-            'Last-Modified' => gmdate("D, d M Y H:i:s") . " GMT",
+            'expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
+            'last-modified' => gmdate("D, d M Y H:i:s") . " GMT",
             'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
         ]);
     }
@@ -895,7 +921,7 @@ class Response
             $time = strtotime($time);
         }
         $this->header([
-            'Date' => gmdate("D, j M Y G:i:s ", time()) . 'GMT'
+            'date' => gmdate("D, j M Y G:i:s ", time()) . 'GMT'
         ]);
         $this->modified($since);
         $this->expires($time);
@@ -1046,10 +1072,10 @@ class Response
     {
         if ($time !== null) {
             $date = $this->_getUTCDate($time);
-            $this->_headers['Expires'] = $date->format('D, j M Y H:i:s') . ' GMT';
+            $this->headers['expires'] = $date->format('D, j M Y H:i:s') . ' GMT';
         }
-        if (isset($this->_headers['Expires'])) {
-            return $this->_headers['Expires'];
+        if (isset($this->headers['expires'])) {
+            return $this->headers['expires'];
         }
 
         return null;
@@ -1072,10 +1098,10 @@ class Response
     {
         if ($time !== null) {
             $date = $this->_getUTCDate($time);
-            $this->_headers['Last-Modified'] = $date->format('D, j M Y H:i:s') . ' GMT';
+            $this->headers['last-modified'] = $date->format('D, j M Y H:i:s') . ' GMT';
         }
-        if (isset($this->_headers['Last-Modified'])) {
-            return $this->_headers['Last-Modified'];
+        if (isset($this->headers['last-modified'])) {
+            return $this->headers['last-modified'];
         }
 
         return null;
@@ -1093,16 +1119,16 @@ class Response
         $this->statusCode(304);
         $this->body('');
         $remove = [
-            'Allow',
-            'Content-Encoding',
-            'Content-Language',
-            'Content-Length',
-            'Content-MD5',
-            'Content-Type',
-            'Last-Modified'
+            'allow',
+            'content-encoding',
+            'content-language',
+            'content-length',
+            'content-md5',
+            'content-type',
+            'last-modified'
         ];
         foreach ($remove as $header) {
-            unset($this->_headers[$header]);
+            unset($this->headers[$header]);
         }
     }
 
@@ -1120,10 +1146,10 @@ class Response
     {
         if ($cacheVariances !== null) {
             $cacheVariances = (array)$cacheVariances;
-            $this->_headers['Vary'] = implode(', ', $cacheVariances);
+            $this->headers['vary'] = implode(', ', $cacheVariances);
         }
-        if (isset($this->_headers['Vary'])) {
-            return explode(', ', $this->_headers['Vary']);
+        if (isset($this->headers['vary'])) {
+            return explode(', ', $this->headers['vary']);
         }
 
         return null;
@@ -1153,10 +1179,10 @@ class Response
     public function etag($hash = null, $weak = false)
     {
         if ($hash !== null) {
-            $this->_headers['Etag'] = sprintf('%s"%s"', ($weak) ? 'W/' : null, $hash);
+            $this->headers['Etag'] = sprintf('%s"%s"', ($weak) ? 'W/' : null, $hash);
         }
-        if (isset($this->_headers['Etag'])) {
-            return $this->_headers['Etag'];
+        if (isset($this->headers['Etag'])) {
+            return $this->headers['Etag'];
         }
 
         return null;
@@ -1217,7 +1243,7 @@ class Response
      */
     public function download($filename)
     {
-        $this->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+        $this->header('content-disposition', 'attachment; filename="' . $filename . '"');
     }
 
     /**
@@ -1230,10 +1256,26 @@ class Response
     public function protocol($protocol = null)
     {
         if ($protocol !== null) {
-            $this->_protocol = $protocol;
+            $this->_setProtocolVersion(preg_replace('/[^0-9.]/', '', $protocol));
         }
 
-        return $this->_protocol;
+        return 'HTTP/' . $this->protocol;
+    }
+
+    /**
+     * Sets the protocol to be used when sending the response. Defaults to HTTP/1.1
+     * If called with no arguments, it will return the current configured protocol
+     *
+     * @param string|null $protocol Protocol to be used for sending response.
+     * @return string|null
+     */
+    protected function _setProtocolVersion($protocol = null)
+    {
+        if (!in_array($protocol, ['1.0', '1.1', '2.0'])) {
+            throw new InvalidArgumentException(sprintf('Invalid HTTP protocol version: %s', $protocol));
+        }
+
+        $this->protocol = $protocol;
     }
 
     /**
@@ -1246,10 +1288,10 @@ class Response
     public function length($bytes = null)
     {
         if ($bytes !== null) {
-            $this->_headers['Content-Length'] = $bytes;
+            $this->headers['content-length'] = $bytes;
         }
-        if (isset($this->_headers['Content-Length'])) {
-            return $this->_headers['Content-Length'];
+        if (isset($this->headers['content-length'])) {
+            return $this->headers['content-length'];
         }
 
         return null;
@@ -1498,15 +1540,15 @@ class Response
                 $name = $options['name'];
             }
             $this->download($name);
-            $this->header('Content-Transfer-Encoding', 'binary');
+            $this->header('content-transfer-encoding', 'binary');
         }
 
-        $this->header('Accept-Ranges', 'bytes');
+        $this->header('accept-ranges', 'bytes');
         $httpRange = env('HTTP_RANGE');
         if (isset($httpRange)) {
             $this->_fileRange($file, $httpRange);
         } else {
-            $this->header('Content-Length', $fileSize);
+            $this->header('content-length', $fileSize);
         }
 
         $this->_file = $file;
@@ -1556,15 +1598,15 @@ class Response
         if ($start > $end || $end > $lastByte || $start > $lastByte) {
             $this->statusCode(416);
             $this->header([
-                'Content-Range' => 'bytes 0-' . $lastByte . '/' . $fileSize
+                'content-range' => 'bytes 0-' . $lastByte . '/' . $fileSize
             ]);
 
             return;
         }
 
         $this->header([
-            'Content-Length' => $end - $start + 1,
-            'Content-Range' => 'bytes ' . $start . '-' . $end . '/' . $fileSize
+            'content-length' => $end - $start + 1,
+            'content-range' => 'bytes ' . $start . '-' . $end . '/' . $fileSize
         ]);
 
         $this->statusCode(206);
@@ -1665,5 +1707,69 @@ class Response
     public function stop($status = 0)
     {
         exit($status);
+    }
+
+    /**
+     * Gets the response status code.
+     *
+     * The status code is a 3-digit integer result code of the server's attempt
+     * to understand and satisfy the request.
+     *
+     * @return int Status code.
+     */
+    public function getStatusCode()
+    {
+        return $this->_status;
+    }
+
+    /**
+     * Return an instance with the specified status code and, optionally, reason phrase.
+     *
+     * If no reason phrase is specified, implementations MAY choose to default
+     * to the RFC 7231 or IANA recommended reason phrase for the response's
+     * status code.
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * updated status and reason phrase.
+     *
+     * @link http://tools.ietf.org/html/rfc7231#section-6
+     * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+     * @param int $code The 3-digit integer result code to set.
+     * @param string $reasonPhrase The reason phrase to use with the
+     *     provided status code; if none is provided, implementations MAY
+     *     use the defaults as suggested in the HTTP specification.
+     * @return static
+     * @throws \InvalidArgumentException For invalid status code arguments.
+     */
+    public function withStatus($code, $reasonPhrase = '')
+    {
+        $new = clone $this;
+        $new->_status = $code;
+
+        if (empty($reasonPhrase) && isset($new->_statusCodes[$code])) {
+            $reasonPhrase = $new->_statusCodes[$code];
+        }
+        $new->_reasonPhrase = $reasonPhrase;
+
+        return $new;
+    }
+
+    /**
+     * Gets the response reason phrase associated with the status code.
+     *
+     * Because a reason phrase is not a required element in a response
+     * status line, the reason phrase value MAY be null. Implementations MAY
+     * choose to return the default RFC 7231 recommended reason phrase (or those
+     * listed in the IANA HTTP Status Code Registry) for the response's
+     * status code.
+     *
+     * @link http://tools.ietf.org/html/rfc7231#section-6
+     * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+     * @return string Reason phrase; must return an empty string if none present.
+     */
+    public function getReasonPhrase()
+    {
+        return $this->_reasonPhrase;
     }
 }
