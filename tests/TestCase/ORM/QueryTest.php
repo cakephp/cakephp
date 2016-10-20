@@ -1312,6 +1312,7 @@ class QueryTest extends TestCase
             ->eventManager()
             ->attach(function ($event, $query) {
                 $query->formatResults(function ($results) {
+                    $results->beforeFind = true;
                     return $results;
                 });
             }, 'Model.beforeFind');
@@ -1335,6 +1336,7 @@ class QueryTest extends TestCase
             '_joinData' => ['article_id' => 1, 'tag_id' => 1],
             'description' => 'A big description',
             'created' => new Time('2016-01-01 00:00'),
+            'beforeFind' => true,
         ];
         $this->assertEquals($expected, $first->tags[0]->toArray());
         $this->assertInstanceOf(Time::class, $first->tags[0]->created);
@@ -1345,6 +1347,7 @@ class QueryTest extends TestCase
             '_joinData' => ['article_id' => 1, 'tag_id' => 2],
             'description' => 'Another big description',
             'created' => new Time('2016-01-01 00:00'),
+            'beforeFind' => true,
         ];
         $this->assertEquals($expected, $first->tags[1]->toArray());
         $this->assertInstanceOf(Time::class, $first->tags[0]->created);
