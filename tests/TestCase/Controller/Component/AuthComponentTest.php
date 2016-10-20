@@ -37,11 +37,11 @@ class AuthComponentTest extends TestCase
 {
 
     /**
-     * name property
+     * AuthComponent property
      *
-     * @var string
+     * @var \TestApp\Controller\Component\TestAuthComponent
      */
-    public $name = 'Auth';
+    public $Auth;
 
     /**
      * fixtures property
@@ -223,7 +223,7 @@ class AuthComponentTest extends TestCase
         $result = $this->Controller->Auth->startup($event);
         $this->assertTrue($event->isStopped());
         $this->assertInstanceOf('Cake\Network\Response', $result);
-        $this->assertTrue($this->Auth->session->check('Flash.auth'));
+        $this->assertTrue($this->Auth->session->check('Flash.flash'));
 
         $this->Controller->request->addParams(Router::parse('auth_test/camelCase'));
         $result = $this->Controller->Auth->startup($event);
@@ -1309,7 +1309,7 @@ class AuthComponentTest extends TestCase
                 'Auth failure',
                 [
                     'key' => 'auth-key',
-                    'element' => 'default',
+                    'element' => 'error',
                     'params' => ['class' => 'error']
                 ]
             );
