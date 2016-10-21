@@ -67,6 +67,8 @@ class AuthComponentTest extends TestCase
         });
 
         $request = new Request();
+        $request->env('REQUEST_METHOD', 'GET');
+
         $response = $this->getMockBuilder('Cake\Network\Response')
             ->setMethods(['stop'])
             ->getMock();
@@ -638,6 +640,53 @@ class AuthComponentTest extends TestCase
     }
 
     /**
+     * testLoginRedirect method with non GET
+     *
+     * @return void
+     */
+    public function testLoginRedirectPost()
+    {
+        $this->Auth->session->delete('Auth');
+
+        $url = '/posts/view/1';
+        $this->Auth->request->addParams(Router::parse($url));
+        $this->Auth->request->env('HTTP_REFERER', Router::url('/foo/bar', true));
+        $this->Auth->request->env('REQUEST_METHOD', 'POST');
+        $this->Auth->request->url = $this->Auth->request->here = Router::normalize($url);
+        $this->Auth->config('loginAction', ['controller' => 'AuthTest', 'action' => 'login']);
+        $event = new Event('Controller.startup', $this->Controller);
+        $response = $this->Auth->startup($event);
+
+        $this->assertInstanceOf('Cake\Network\Response', $response);
+        $expected = Router::url(['controller' => 'AuthTest', 'action' => 'login', '?' => ['redirect' => '/foo/bar']], true);
+        $redirectHeader = $response->header()['Location'];
+        $this->assertEquals($expected, $redirectHeader);
+    }
+
+    /**
+     * testLoginRedirect method with non GET and no referrer
+     *
+     * @return void
+     */
+    public function testLoginRedirectPostNoReferer()
+    {
+        $this->Auth->session->delete('Auth');
+
+        $url = '/posts/view/1';
+        $this->Auth->request->addParams(Router::parse($url));
+        $this->Auth->request->env('REQUEST_METHOD', 'POST');
+        $this->Auth->request->url = $this->Auth->request->here = Router::normalize($url);
+        $this->Auth->config('loginAction', ['controller' => 'AuthTest', 'action' => 'login']);
+        $event = new Event('Controller.startup', $this->Controller);
+        $response = $this->Auth->startup($event);
+
+        $this->assertInstanceOf('Cake\Network\Response', $response);
+        $expected = Router::url(['controller' => 'AuthTest', 'action' => 'login'], true);
+        $redirectHeader = $response->header()['Location'];
+        $this->assertEquals($expected, $redirectHeader);
+    }
+
+    /**
      * @return void
      */
     public function testLoginRedirectQueryString()
@@ -703,6 +752,7 @@ class AuthComponentTest extends TestCase
 
         $url = '/posts/add';
         $this->Auth->request = $this->Controller->request = new Request($url);
+        $this->Auth->request->env('REQUEST_METHOD', 'GET');
         $this->Auth->request->addParams(Router::parse($url));
         $this->Auth->request->url = Router::normalize($url);
 

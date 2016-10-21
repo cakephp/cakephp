@@ -205,7 +205,7 @@ class AuthComponent extends Component
     /**
      * Request object
      *
-     * @var \Cake\Network\Request
+     * @var \Cake\Http\ServerRequest
      */
     public $request;
 
@@ -402,14 +402,18 @@ class AuthComponent extends Component
      */
     protected function _loginActionRedirectUrl()
     {
-        $currentUrl = $this->request->here(false);
+        $urlToRedirectBackTo = $this->_getUrlToRedirectBackTo();
 
         $loginAction = $this->_config['loginAction'];
+        if ($urlToRedirectBackTo === '/') {
+            return $loginAction;
+        }
+
         if (is_array($loginAction)) {
-            $loginAction['?'][static::QUERY_STRING_REDIRECT] = $currentUrl;
+            $loginAction['?'][static::QUERY_STRING_REDIRECT] = $urlToRedirectBackTo;
         } else {
             $char = strpos($loginAction, '?') === false ? '?' : '&';
-            $loginAction .= $char . static::QUERY_STRING_REDIRECT . '=' . urlencode($currentUrl);
+            $loginAction .= $char . static::QUERY_STRING_REDIRECT . '=' . urlencode($urlToRedirectBackTo);
         }
 
         return $loginAction;
@@ -504,7 +508,7 @@ class AuthComponent extends Component
      *
      * @param array|\ArrayAccess|null $user The user to check the authorization of.
      *   If empty the user fetched from storage will be used.
-     * @param \Cake\Network\Request|null $request The request to authenticate for.
+     * @param \Cake\Http\ServerRequest|null $request The request to authenticate for.
      *   If empty, the current request will be used.
      * @return bool True if $user is authorized, otherwise false
      */
@@ -991,5 +995,23 @@ class AuthComponent extends Component
     public function authorizationProvider()
     {
         return $this->_authorizationProvider;
+    }
+
+    /**
+     * Returns the URL to redirect back to or / if not possible.
+     *
+     * This method takes the referrer into account if the
+     * request is not of type GET.
+     *
+     * @return string
+     */
+    protected function _getUrlToRedirectBackTo()
+    {
+        $urlToRedirectBackTo = $this->request->here(false);
+        if (!$this->request->is('get')) {
+            $urlToRedirectBackTo = $this->request->referer(true);
+        }
+
+        return $urlToRedirectBackTo;
     }
 }
