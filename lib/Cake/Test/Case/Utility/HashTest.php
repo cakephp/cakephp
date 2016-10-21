@@ -234,8 +234,7 @@ class HashTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testGetEmptyKey()
-	{
+	public function testGetEmptyKey() {
 		$data = array(
 			'' => 'some value'
 		);
