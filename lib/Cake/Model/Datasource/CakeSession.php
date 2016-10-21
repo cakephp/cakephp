@@ -230,8 +230,11 @@ class CakeSession {
  * @return bool True if variable is there
  */
 	public static function check($name) {
-		if (empty($name) || !static::_hasSession() || !static::start()) {
+		if (!static::_hasSession() || !static::start()) {
 			return false;
+		}
+		if (isset($_SESSION[$name])) {
+			return true;
 		}
 
 		return Hash::get($_SESSION, $name) !== null;
@@ -380,9 +383,6 @@ class CakeSession {
  *   session not started, or provided name not found in the session, false on failure.
  */
 	public static function read($name = null) {
-		if (empty($name) && $name !== null) {
-			return null;
-		}
 		if (!static::_hasSession() || !static::start()) {
 			return null;
 		}
@@ -418,7 +418,7 @@ class CakeSession {
  * @return bool True if the write was successful, false if the write failed
  */
 	public static function write($name, $value = null) {
-		if (empty($name) || !static::start()) {
+		if (!static::start()) {
 			return false;
 		}
 
