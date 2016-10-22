@@ -1672,22 +1672,6 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::truthy('0'));
         $this->assertFalse(Validation::truthy('false'));
 
-        $this->assertTrue(Validation::truthy(1));
-        $this->assertTrue(Validation::truthy(true));
-        $this->assertTrue(Validation::truthy('1'));
-
-        $this->assertFalse(Validation::truthy('true'));
-        $this->assertFalse(Validation::truthy('on'));
-        $this->assertFalse(Validation::truthy('yes'));
-
-        $this->assertFalse(Validation::truthy(0));
-        $this->assertFalse(Validation::truthy(false));
-        $this->assertFalse(Validation::truthy('0'));
-        $this->assertFalse(Validation::truthy('false'));
-
-        $this->assertFalse(Validation::truthy('on'));
-        $this->assertFalse(Validation::truthy('yes'));
-
         $this->assertTrue(Validation::truthy('on', ['on', 'yes', 'true']));
         $this->assertTrue(Validation::truthy('yes', ['on', 'yes', 'true']));
         $this->assertTrue(Validation::truthy('true', ['on', 'yes', 'true']));
@@ -1718,22 +1702,6 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::falsey(true));
         $this->assertFalse(Validation::falsey('1'));
         $this->assertFalse(Validation::falsey('true'));
-
-        $this->assertTrue(Validation::falsey(0));
-        $this->assertTrue(Validation::falsey(false));
-        $this->assertTrue(Validation::falsey('0'));
-
-        $this->assertFalse(Validation::falsey('false'));
-        $this->assertFalse(Validation::falsey('off'));
-        $this->assertFalse(Validation::falsey('no'));
-
-        $this->assertFalse(Validation::falsey(1));
-        $this->assertFalse(Validation::falsey(true));
-        $this->assertFalse(Validation::falsey('1'));
-        $this->assertFalse(Validation::falsey('true'));
-
-        $this->assertFalse(Validation::falsey('off'));
-        $this->assertFalse(Validation::falsey('no'));
 
         $this->assertTrue(Validation::falsey('off', ['off', 'no', 'false']));
         $this->assertTrue(Validation::falsey('no', ['off', 'no', 'false']));
