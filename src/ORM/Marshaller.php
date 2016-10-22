@@ -20,7 +20,6 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
-use Cake\ORM\PropertyMarshalInterface;
 use RuntimeException;
 
 /**
@@ -139,7 +138,8 @@ class Marshaller
      * - validate: Set to false to disable validation. Can also be a string of the validator ruleset to be applied.
      *   Defaults to true/default.
      * - associated: Associations listed here will be marshalled as well. Defaults to null.
-     * - fieldList: A whitelist of fields to be assigned to the entity. If not present,
+     * - fieldList: (deprecated) use fields instead.
+     * - fields: A whitelist of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used. Defaults to null.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields. Defaults to null
      * - forceNew: When enabled, belongsToMany associations will have 'new' entities created
@@ -167,6 +167,7 @@ class Marshaller
 
         $primaryKey = (array)$this->_table->primaryKey();
         $entityClass = $this->_table->entityClass();
+        /* @var Entity $entity */
         $entity = new $entityClass();
         $entity->source($this->_table->registryAlias());
 
@@ -198,17 +199,18 @@ class Marshaller
             }
         }
 
-        if (!isset($options['fieldList'])) {
-            $entity->set($properties);
-            $entity->errors($errors);
-
-            return $entity;
+        if (isset($options['fieldList'])) {
+            $options['fields'] = $options['fieldList'];
         }
 
-        foreach ((array)$options['fieldList'] as $field) {
-            if (array_key_exists($field, $properties)) {
-                $entity->set($field, $properties[$field]);
+        if (isset($options['fields'])) {
+            foreach ((array)$options['fields'] as $field) {
+                if (array_key_exists($field, $properties)) {
+                    $entity->set($field, $properties[$field]);
+                }
             }
+        } else {
+            $entity->set($properties);
         }
 
         $entity->errors($errors);
@@ -314,7 +316,8 @@ class Marshaller
      * - validate: Set to false to disable validation. Can also be a string of the validator ruleset to be applied.
      *   Defaults to true/default.
      * - associated: Associations listed here will be marshalled as well. Defaults to null.
-     * - fieldList: A whitelist of fields to be assigned to the entity. If not present,
+     * - fieldList: (deprecated) use fields instead
+     * - fields: A whitelist of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used. Defaults to null.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields. Defaults to null
      * - forceNew: When enabled, belongsToMany associations will have 'new' entities created
@@ -493,7 +496,8 @@ class Marshaller
      * - associated: Associations listed here will be marshalled as well.
      * - validate: Whether or not to validate data before hydrating the entities. Can
      *   also be set to a string to use a specific validator. Defaults to true/default.
-     * - fieldList: A whitelist of fields to be assigned to the entity. If not present
+     * - fieldList: (deprecated) use fields instead
+     * - fields: A whitelist of fields to be assigned to the entity. If not present
      *   the accessible fields list in the entity will be used.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields.
      *
@@ -561,8 +565,12 @@ class Marshaller
             $properties[$key] = $value;
         }
 
+        if (isset($options['fieldList'])) {
+            $options['fields'] = $options['fieldList'];
+        }
+
         $entity->errors($errors);
-        if (!isset($options['fieldList'])) {
+        if (!isset($options['fields'])) {
             $entity->set($properties);
 
             foreach ($properties as $field => $value) {
@@ -574,7 +582,7 @@ class Marshaller
             return $entity;
         }
 
-        foreach ((array)$options['fieldList'] as $field) {
+        foreach ((array)$options['fields'] as $field) {
             if (array_key_exists($field, $properties)) {
                 $entity->set($field, $properties[$field]);
                 if ($properties[$field] instanceof EntityInterface) {
@@ -606,7 +614,8 @@ class Marshaller
      * - validate: Whether or not to validate data before hydrating the entities. Can
      *   also be set to a string to use a specific validator. Defaults to true/default.
      * - associated: Associations listed here will be marshalled as well.
-     * - fieldList: A whitelist of fields to be assigned to the entity. If not present,
+     * - fieldList: (deprecated) use fields instead
+     * - fields: A whitelist of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields.
      *
