@@ -1149,7 +1149,7 @@ class TranslateBehaviorTest extends TestCase
      *
      * @return void
      */
-    public function testSaveNewRecordWithOnlyFieldAndNotDefaultLocale()
+    public function testSaveNewRecordWithOnlyTranslationsNotDefaultLocale()
     {
         $table = TableRegistry::get('Groups');
         $table->addBehavior('Translate', [
@@ -1179,6 +1179,40 @@ class TranslateBehaviorTest extends TestCase
         ];
         $result = $table->find('translations')->where(['id' => $result->id]);
         $this->assertEquals($expected, $this->_extractTranslations($result)->toArray());
+    }
+
+    /**
+     * Test that existing records can be updated when only translations
+     * are modified/dirty.
+     *
+     * @return void
+     */
+    public function testSaveExistingRecordOnlyTranslations()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $table->entityClass(__NAMESPACE__ . '\Article');
+
+        $data = [
+            '_translations' => [
+                'es' => [
+                    'title' => 'Spanish Translation',
+                ],
+            ]
+        ];
+
+        $article = $table->find()->first();
+        $article = $table->patchEntity($article, $data);
+
+        $this->assertNotFalse($table->save($article));
+
+        $results = $this->_extractTranslations(
+            $table->find('translations')->where(['id' => 1])
+        )->first();
+
+        $this->assertArrayHasKey('es', $results, 'New translation added');
+        $this->assertArrayHasKey('eng', $results, 'Old translations present');
+        $this->assertEquals('Spanish Translation', $results['es']['title']);
     }
 
     /**
