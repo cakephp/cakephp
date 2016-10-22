@@ -36,6 +36,11 @@ class DebuggableThing
     }
 }
 
+class SecurityThing
+{
+    public $password = 'pass1234';
+}
+
 /**
  * DebuggerTest class
  *
@@ -560,5 +565,32 @@ object(Cake\Test\TestCase\Error\DebuggableThing) {
 }
 eos;
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests the masking of an array key.
+     *
+     * @return void
+     */
+    public function testMaskArray()
+    {
+        Debugger::configInstance('mask', ['password' => '[**********]']);
+        $result = Debugger::exportVar(['password' => 'pass1234']);
+        $expected = "['password'=>[**********]]";
+        $this->assertEquals($expected, preg_replace('/\s+/', '', $result));
+    }
+
+    /**
+     * Tests the masking of an array key.
+     *
+     * @return void
+     */
+    public function testMaskObject()
+    {
+        Debugger::configInstance('mask', ['password' => '[**********]']);
+        $object = new SecurityThing();
+        $result = Debugger::exportVar($object);
+        $expected = "object(Cake\\Test\\TestCase\\Error\\SecurityThing){password=>[**********]}";
+        $this->assertEquals($expected, preg_replace('/\s+/', '', $result));
     }
 }
