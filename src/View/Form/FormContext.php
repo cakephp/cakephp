@@ -29,7 +29,7 @@ class FormContext implements ContextInterface
     /**
      * The request object.
      *
-     * @var \Cake\Network\Request
+     * @var \Cake\Http\ServerRequest
      */
     protected $_request;
 
