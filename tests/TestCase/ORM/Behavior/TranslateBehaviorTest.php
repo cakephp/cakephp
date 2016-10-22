@@ -1165,10 +1165,9 @@ class TranslateBehaviorTest extends TestCase
             ]
         ];
 
-        $group = $table->patchEntity($table->newEntity(), $data);
+        $group = $table->newEntity($data);
         $result = $table->save($group);
-
-        $this->assertNotFalse($result);
+        $this->assertNotFalse($result, 'Record should save.');
 
         $expected = [
             [

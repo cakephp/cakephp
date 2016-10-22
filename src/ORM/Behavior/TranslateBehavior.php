@@ -271,22 +271,35 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
         $this->_bundleTranslatedFields($entity);
         $bundled = $entity->get('_i18n') ?: [];
+        $noBundled = count($bundled) === 0;
 
-        if ($locale === $this->config('defaultLocale')) {
+        // No additional translation records need to be saved,
+        // as the entity is in the default locale.
+        if ($noBundled && $locale === $this->config('defaultLocale')) {
             return;
         }
 
         $values = $entity->extract($this->_config['fields'], true);
         $fields = array_keys($values);
-
-        if (empty($fields)) {
-            return;
-        }
+        $noFields = empty($fields);
 
         $primaryKey = (array)$this->_table->primaryKey();
         $key = $entity->get(current($primaryKey));
-        $model = $this->_config['referenceName'];
 
+        if ($noFields && $noBundled) {
+            return;
+        }
+
+        // If there no fields, and bundled translations,
+        // we need to mark fields as dirty so the entity persists.
+        if ($noFields && $bundled) {
+            foreach ($this->_config['fields'] as $field) {
+                $entity->dirty($field, true);
+            }
+            return;
+        }
+
+        $model = $this->_config['referenceName'];
         $preexistent = $this->_translationTable->find()
             ->select(['id', 'field'])
             ->where(['field IN' => $fields, 'locale' => $locale, 'foreign_key' => $key, 'model' => $model])
