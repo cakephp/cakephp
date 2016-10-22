@@ -1105,7 +1105,7 @@ class PaginatorHelper extends Helper
      * ### Options:
      *
      * - `model` The model to use defaults to PaginatorHelper::defaultModel()
-     * - `block` The block name to append the output to, or false/absenst to return as a string
+     * - `block` The block name to append the output to, or false/absent to return as a string
      * - `prev` (default True) True to generate meta for previous page
      * - `next` (default True) True to generate meta for next page
      * - `first` (default False) True to generate meta for first page
