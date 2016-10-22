@@ -521,16 +521,57 @@ class Validation
     }
 
     /**
-     * Boolean validation, determines if value passed is a boolean integer or true/false.
+     * Validates if passed value is boolean-like.
      *
-     * @param string $check a valid boolean
-     * @return bool Success
+     * The list of what is considered to be boolean values, may be set via $booleanValues.
+     *
+     * @param bool|int|string $check Value to check.
+     * @param string $booleanValues List of valid boolean values, defaults to `[true, false, 0, 1, '0', '1']`.
+     * @return bool Success.
      */
-    public static function boolean($check)
+    public static function boolean($check, array $booleanValues = [])
     {
-        $booleanList = [0, 1, '0', '1', true, false];
+        if (!$booleanValues) {
+            $booleanValues = [true, false, 0, 1, '0', '1'];
+        }
 
-        return in_array($check, $booleanList, true);
+        return in_array($check, $booleanValues, true);
+    }
+
+    /**
+     * Validates if given value is truthy.
+     *
+     * The list of what is considered to be truthy values, may be set via $truthyValues.
+     *
+     * @param bool|int|string $check Value to check.
+     * @param array $truthyValues List of valid truthy values, defaults to `[true, 1, '1']`.
+     * @return bool Success.
+     */
+    public static function truthy($check, array $truthyValues = [])
+    {
+        if (!$truthyValues) {
+            $truthyValues = [true, 1, '1'];
+        }
+
+        return in_array($check, $truthyValues, true);
+    }
+
+    /**
+     * Validates if given value is falsey.
+     *
+     * The list of what is considered to be falsey values, may be set via $falseyValues.
+     *
+     * @param bool|int|string $check Value to check.
+     * @param array $falseyValues List of valid falsey values, defaults to `[false, 0, '0']`.
+     * @return bool Success.
+     */
+    public static function falsey($check, array $falseyValues = [])
+    {
+        if (!$falseyValues) {
+            $falseyValues = [false, 0, '0'];
+        }
+
+        return in_array($check, $falseyValues, true);
     }
 
     /**
