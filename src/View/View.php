@@ -200,7 +200,7 @@ class View implements EventDispatcherInterface
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
      *
-     * @var \Cake\Network\Request
+     * @var \Cake\Http\ServerRequest
      */
     public $request;
 

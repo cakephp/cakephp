@@ -122,7 +122,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
      *
-     * @var \Cake\Network\Request
+     * @var \Cake\Http\ServerRequest
      * @link http://book.cakephp.org/3.0/en/controllers/request-response.html#request
      */
     public $request;

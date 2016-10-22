@@ -87,7 +87,7 @@ class SecurityComponent extends Component
     /**
      * Request object
      *
-     * @var \Cake\Network\Request
+     * @var \Cake\Http\ServerRequest
      */
     public $request;
 
