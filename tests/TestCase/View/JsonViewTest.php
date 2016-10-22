@@ -230,6 +230,7 @@ class JsonViewTest extends TestCase
      * @param int|bool|null $jsonOptions
      * @param string $expected
      * @dataProvider renderWithoutViewProvider
+     * @return void
      */
     public function testRenderWithoutView($data, $serialize, $jsonOptions, $expected)
     {
