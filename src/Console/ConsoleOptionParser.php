@@ -16,6 +16,7 @@ namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
 use Cake\Utility\Inflector;
+use LogicException;
 
 /**
  * Handles parsing the ARGV in the command line and provides support
@@ -92,7 +93,7 @@ class ConsoleOptionParser
      * Option definitions.
      *
      * @see \Cake\Console\ConsoleOptionParser::addOption()
-     * @var array
+     * @var \Cake\Console\ConsoleInputOption[]
      */
     protected $_options = [];
 
@@ -107,7 +108,7 @@ class ConsoleOptionParser
      * Positional argument definitions.
      *
      * @see \Cake\Console\ConsoleOptionParser::addArgument()
-     * @var array
+     * @var \Cake\Console\ConsoleInputArgument[]
      */
     protected $_args = [];
 
@@ -115,7 +116,7 @@ class ConsoleOptionParser
      * Subcommands for this Shell.
      *
      * @see \Cake\Console\ConsoleOptionParser::addSubcommand()
-     * @var array
+     * @var \Cake\Console\ConsoleInputSubcommand[]
      */
     protected $_subcommands = [];
 
@@ -431,6 +432,9 @@ class ConsoleOptionParser
             if ($a->isEqualTo($arg)) {
                 return $this;
             }
+            if ($options['required'] && !$a->isRequired()) {
+            	throw new LogicException('A required argument cannot follow an optional one');
+			}
         }
         $this->_args[$index] = $arg;
         ksort($this->_args);

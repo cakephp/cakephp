@@ -277,14 +277,14 @@ xml;
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser
-            ->addArgument('test', ['help' => 'A test option.'])
-            ->addArgument('test2', ['help' => 'A test option.'])
+            ->addArgument('test', ['help' => 'A test option.', 'required' => true])
+            ->addArgument('test2', ['help' => 'A test option.', 'required' => true])
             ->addArgument('test3', ['help' => 'A test option.'])
             ->addArgument('test4', ['help' => 'A test option.'])
             ->addArgument('test5', ['help' => 'A test option.'])
             ->addArgument('test6', ['help' => 'A test option.'])
             ->addArgument('test7', ['help' => 'A test option.'])
-            ->addArgument('model', ['help' => 'The model to make.', 'required' => true])
+            ->addArgument('model', ['help' => 'The model to make.'])
             ->addArgument('other_longer', ['help' => 'Another argument.']);
 
         $formatter = new HelpFormatter($parser);

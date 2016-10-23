@@ -457,6 +457,19 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * test that when there are required arguments after optional ones an exception is raised
+     *
+     * @expectedException \LogicException
+     * @return void
+     */
+    public function testPositionalArgRequiredAfterOptional()
+    {
+        $parser = new ConsoleOptionParser('test');
+        $parser->addArgument('name', ['required' => false])
+            ->addArgument('other', ['required' => true]);
+    }
+
+    /**
      * test that arguments with choices enforce them.
      *
      * @expectedException \Cake\Console\Exception\ConsoleException
