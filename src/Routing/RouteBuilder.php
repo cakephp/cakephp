@@ -20,6 +20,7 @@ use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 
+
 /**
  * Provides features for building routes inside scopes.
  *
@@ -600,6 +601,7 @@ class RouteBuilder
      *   If you have no parameters, this argument can be a callable.
      * @param callable|null $callback The callback to invoke that builds the prefixed routes.
      * @return void
+     * @throws \InvalidArgumentException If a valid callback is not passed
      */
     public function prefix($name, $params = [], callable $callback = null)
     {
