@@ -920,6 +920,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::fieldsMatching()
+     * @return $this
      */
     public function fieldsMatching($field, $fieldTwo, array $options = [], $message = null, $when = null)
     {
@@ -942,6 +943,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::fieldsNotMatching()
+     * @return $this
      */
     public function fieldsNotMatching($field, $fieldTwo, array $options = [], $message = null, $when = null)
     {
