@@ -1420,7 +1420,8 @@ class ValidatorTest extends TestCase
             'fieldsMatching',
             'password',
             ['password', ['fieldsExpected' => true]],
-            'fieldsMatching');
+            'fieldsMatching'
+        );
         $this->assertNotEmpty($validator->errors(['username' => 'foo']));
     }
 
@@ -1436,9 +1437,10 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod(
             $validator,
             'fieldsNotMatching',
-            'password_confirm',
+            'password_confirm', 'fieldsExpected' => false,
             ['password_confirm', ['fieldsExpected' => false]],
-            'fieldsNotMatching');
+            'fieldsNotMatching'
+        );
         $this->assertNotEmpty($validator->errors(['password' => 'bar']));
     }
 
