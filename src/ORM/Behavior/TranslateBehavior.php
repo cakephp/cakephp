@@ -296,6 +296,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             foreach ($this->_config['fields'] as $field) {
                 $entity->dirty($field, true);
             }
+
             return;
         }
 
