@@ -2590,7 +2590,7 @@ class ValidationTest extends TestCase
                 'email_repeat' => 'mail@example.com',
             ],
         ];
-        $this->assertTrue(Validation::fieldsMatching('email', 'email_repeat', $context));
+        $this->assertTrue(Validation::fieldsMatching('email', 'email_repeat', [], $context));
 
         $context = [
             'data' => [
@@ -2598,10 +2598,10 @@ class ValidationTest extends TestCase
                 'email_repeat' => 'other@example.com',
             ],
         ];
-        $this->assertFalse(Validation::fieldsMatching('email', 'email_repeat', $context));
+        $this->assertFalse(Validation::fieldsMatching('email', 'email_repeat', [], $context));
 
         $context = [];
-        $this->assertFalse(Validation::fieldsMatching('email', 'email_repeat', $context));
+        $this->assertFalse(Validation::fieldsMatching('email', 'email_repeat', [], $context));
     }
 
 
@@ -2614,44 +2614,44 @@ class ValidationTest extends TestCase
     {
         $context = [
             'data' => [
-                'flagA' => 1,
-                'flagB' => '1',
+                'fieldA' => 1,
+                'fieldB' => '1',
             ],
         ];
-        $this->assertFalse(Validation::fieldsMatching('flagA', 'flagB', $context));
-        $this->assertFalse(Validation::fieldsMatching('flagA', 'flagB', $context, ['typeSafe' => true]));
-        $this->assertTrue(Validation::fieldsMatching('flagA', 'flagB', $context, ['typeSafe' => false]));
+        $this->assertFalse(Validation::fieldsMatching('fieldA', 'fieldB', [], $context));
+        $this->assertFalse(Validation::fieldsMatching('fieldA', 'fieldB', ['typeSafe' => true], $context));
+        $this->assertTrue(Validation::fieldsMatching('fieldA', 'fieldB', ['typeSafe' => false], $context));
 
         $context = [
             'data' => [
-                'flagA' => 1,
-                'flagB' => '0',
+                'fieldA' => 1,
+                'fieldB' => '0',
             ],
         ];
-        $this->assertFalse(Validation::fieldsMatching('flagA', 'flagB', $context));
-        $this->assertFalse(Validation::fieldsMatching('flagA', 'flagB', $context, ['typeSafe' => true]));
-        $this->assertFalse(Validation::fieldsMatching('flagA', 'flagB', $context, ['typeSafe' => false]));
+        $this->assertFalse(Validation::fieldsMatching('fieldA', 'fieldB', [], $context));
+        $this->assertFalse(Validation::fieldsMatching('fieldA', 'fieldB', ['typeSafe' => true], $context));
+        $this->assertFalse(Validation::fieldsMatching('fieldA', 'fieldB', ['typeSafe' => false], $context));
 
         $context = [
             'data' => [
-                'flagA' => 'foo',
+                'fieldA' => 'foo',
             ],
         ];
-        $this->assertFalse(Validation::fieldsMatching('flagA', 'flagB', $context));
-        $this->assertFalse(Validation::fieldsMatching('flagA', 'flagB', $context, ['fieldsExpected' => true]));
-        $this->assertTrue(Validation::fieldsMatching('flagA', 'flagB', $context, ['fieldsExpected' => false]));
+        $this->assertFalse(Validation::fieldsMatching('fieldA', 'fieldB', [], $context));
+        $this->assertFalse(Validation::fieldsMatching('fieldA', 'fieldB', ['fieldsExpected' => true], $context));
+        $this->assertTrue(Validation::fieldsMatching('fieldA', 'fieldB', ['fieldsExpected' => false], $context));
         $context = [
             'data' => [
-                'flagB' => 'foo',
+                'fieldB' => 'foo',
             ],
         ];
-        $this->assertFalse(Validation::fieldsMatching('flagA', 'flagB', $context));
-        $this->assertFalse(Validation::fieldsMatching('flagA', 'flagB', $context, ['fieldsExpected' => true]));
-        $this->assertTrue(Validation::fieldsMatching('flagA', 'flagB', $context, ['fieldsExpected' => false]));
+        $this->assertFalse(Validation::fieldsMatching('fieldA', 'fieldB', [], $context));
+        $this->assertFalse(Validation::fieldsMatching('fieldA', 'fieldB', ['fieldsExpected' => true], $context));
+        $this->assertTrue(Validation::fieldsMatching('fieldA', 'fieldB', ['fieldsExpected' => false], $context));
         $context = [];
-        $this->assertFalse(Validation::fieldsMatching('flagA', 'flagB', $context));
-        $this->assertFalse(Validation::fieldsMatching('flagA', 'flagB', $context, ['fieldsExpected' => true]));
-        $this->assertTrue(Validation::fieldsMatching('flagA', 'flagB', $context, ['fieldsExpected' => false]));
+        $this->assertFalse(Validation::fieldsMatching('fieldA', 'fieldB', [], $context));
+        $this->assertFalse(Validation::fieldsMatching('fieldA', 'fieldB', ['fieldsExpected' => true], $context));
+        $this->assertTrue(Validation::fieldsMatching('fieldA', 'fieldB', ['fieldsExpected' => false], $context));
     }
 
     /**
@@ -2667,7 +2667,7 @@ class ValidationTest extends TestCase
                 'password' => 'aGoodPasswordTells1AwkwardStoryAnAIwouldNeverThinkOff',
             ],
         ];
-        $this->assertTrue(Validation::fieldsNotMatching('username', 'password', $context));
+        $this->assertTrue(Validation::fieldsNotMatching('username', 'password', [], $context));
 
         $context = [
             'data' => [
@@ -2675,10 +2675,10 @@ class ValidationTest extends TestCase
                 'password' => 'foobar',
             ],
         ];
-        $this->assertFalse(Validation::fieldsNotMatching('username', 'password', $context));
+        $this->assertFalse(Validation::fieldsNotMatching('username', 'password', [], $context));
 
         $context = [];
-        $this->assertFalse(Validation::fieldsNotMatching('username', 'password', $context));
+        $this->assertFalse(Validation::fieldsNotMatching('username', 'password', [], $context));
     }
 
     /**
@@ -2690,44 +2690,44 @@ class ValidationTest extends TestCase
     {
         $context = [
             'data' => [
-                'flagA' => 1,
-                'flagB' => '1',
+                'fieldA' => 1,
+                'fieldB' => '1',
             ],
         ];
-        $this->assertFalse(Validation::fieldsNotMatching('flagA', 'flagB', $context));
-        $this->assertFalse(Validation::fieldsNotMatching('flagA', 'flagB', $context, ['typeSafe' => false]));
-        $this->assertTrue(Validation::fieldsNotMatching('flagA', 'flagB', $context, ['typeSafe' => true]));
+        $this->assertFalse(Validation::fieldsNotMatching('fieldA', 'fieldB', [], $context));
+        $this->assertFalse(Validation::fieldsNotMatching('fieldA', 'fieldB', ['typeSafe' => false] , $context));
+        $this->assertTrue(Validation::fieldsNotMatching('fieldA', 'fieldB', ['typeSafe' => true], $context));
 
         $context = [
             'data' => [
-                'flagA' => 1,
-                'flagB' => '0',
+                'fieldA' => 1,
+                'fieldB' => '0',
             ],
         ];
-        $this->assertTrue(Validation::fieldsNotMatching('flagA', 'flagB', $context));
-        $this->assertTrue(Validation::fieldsNotMatching('flagA', 'flagB', $context, ['typeSafe' => false]));
-        $this->assertTrue(Validation::fieldsNotMatching('flagA', 'flagB', $context, ['typeSafe' => true]));
+        $this->assertTrue(Validation::fieldsNotMatching('fieldA', 'fieldB', [], $context));
+        $this->assertTrue(Validation::fieldsNotMatching('fieldA', 'fieldB', ['typeSafe' => false] , $context));
+        $this->assertTrue(Validation::fieldsNotMatching('fieldA', 'fieldB', ['typeSafe' => true], $context));
 
         $context = [
             'data' => [
-                'flagA' => 'foo',
+                'fieldA' => 'foo',
             ],
         ];
-        $this->assertFalse(Validation::fieldsNotMatching('flagA', 'flagB', $context));
-        $this->assertFalse(Validation::fieldsNotMatching('flagA', 'flagB', $context, ['fieldsExpected' => true]));
-        $this->assertTrue(Validation::fieldsNotMatching('flagA', 'flagB', $context, ['fieldsExpected' => false]));
+        $this->assertFalse(Validation::fieldsNotMatching('fieldA', 'fieldB', [], $context));
+        $this->assertFalse(Validation::fieldsNotMatching('fieldA', 'fieldB', ['fieldsExpected' => true], $context));
+        $this->assertTrue(Validation::fieldsNotMatching('fieldA', 'fieldB', ['fieldsExpected' => false], $context));
         $context = [
             'data' => [
-                'flagB' => 'foo',
+                'fieldB' => 'foo',
             ],
         ];
-        $this->assertFalse(Validation::fieldsNotMatching('flagA', 'flagB', $context));
-        $this->assertFalse(Validation::fieldsNotMatching('flagA', 'flagB', $context, ['fieldsExpected' => true]));
-        $this->assertTrue(Validation::fieldsNotMatching('flagA', 'flagB', $context, ['fieldsExpected' => false]));
+        $this->assertFalse(Validation::fieldsNotMatching('fieldA', 'fieldB', [], $context));
+        $this->assertFalse(Validation::fieldsNotMatching('fieldA', 'fieldB', ['fieldsExpected' => true], $context));
+        $this->assertTrue(Validation::fieldsNotMatching('fieldA', 'fieldB', ['fieldsExpected' => false], $context));
         $context = [];
-        $this->assertFalse(Validation::fieldsNotMatching('flagA', 'flagB', $context));
-        $this->assertFalse(Validation::fieldsNotMatching('flagA', 'flagB', $context, ['fieldsExpected' => true]));
-        $this->assertTrue(Validation::fieldsNotMatching('flagA', 'flagB', $context, ['fieldsExpected' => false]));
+        $this->assertFalse(Validation::fieldsNotMatching('fieldA', 'fieldB', [], $context));
+        $this->assertFalse(Validation::fieldsNotMatching('fieldA', 'fieldB', ['fieldsExpected' => true], $context));
+        $this->assertTrue(Validation::fieldsNotMatching('fieldA', 'fieldB', ['fieldsExpected' => false], $context));
     }
 
     /**

@@ -1408,6 +1408,41 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the fieldsMatching proxy method
+     *
+     * @return void
+     */
+    public function testFieldsMatching()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod(
+            $validator,
+            'fieldsMatching',
+            'password',
+            ['password', ['fieldsExpected' => true]],
+            'fieldsMatching');
+        $this->assertNotEmpty($validator->errors(['username' => 'foo']));
+    }
+
+
+    /**
+     * Tests the fieldsNotMatching proxy method
+     *
+     * @return void
+     */
+    public function testFieldsNotMatching()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod(
+            $validator,
+            'fieldsNotMatching',
+            'password_confirm',
+            ['password_confirm', ['fieldsExpected' => false]],
+            'fieldsNotMatching');
+        $this->assertNotEmpty($validator->errors(['password' => 'bar']));
+    }
+
+    /**
      * Tests the containsNonAlphaNumeric proxy method
      *
      * @return void

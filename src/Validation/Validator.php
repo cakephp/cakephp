@@ -909,6 +909,50 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Add a validation rule to ensure two given fields are matching.
+     *
+     * For options see Cake\Validation\Validation::fieldsMatching().
+     *
+     * @param string $field The field to match the second field against.
+     * @param string $fieldTwo The second field to match the first field against.
+     * @param array $options An array of options.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::fieldsMatching()
+     */
+    public function fieldsMatching($field, $fieldTwo, array $options = [], $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'fieldsMatching', $extra + [
+            'rule' => ['fieldsMatching', $fieldTwo, $options]
+        ]);
+    }
+
+    /**
+     * Add a validation rule to ensure two given fields are not matching.
+     *
+     * For options see Cake\Validation\Validation::fieldsNotMatching().
+     *
+     * @param string $field The field to match the second field against.
+     * @param string $fieldTwo The second field to match the first field against.
+     * @param array $options An array of options.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::fieldsNotMatching()
+     */
+    public function fieldsNotMatching($field, $fieldTwo, array $options = [], $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'fieldsNotMatching', $extra + [
+            'rule' => ['fieldsNotMatching', $fieldTwo, $options]
+        ]);
+    }
+
+    /**
      * Add a rule to check if a field contains non alpha numeric characters.
      *
      * @param string $field The field you want to apply the rule to.

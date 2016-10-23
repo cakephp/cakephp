@@ -334,11 +334,11 @@ class Validation
      *
      * @param string $fieldOne The first field to compare against the second field.
      * @param string $fieldTwo The second field to compare against the first field.
-     * @param array $context The validation context.
      * @param array $options Optional options for the check. Default to ['fieldsExpected' => true, 'typeSafe' => true].
+     * @param array $context The validation context.
      * @return bool Success.
      */
-    public static function fieldsMatching($fieldOne, $fieldTwo, $context, array $options = [])
+    public static function fieldsMatching($fieldOne, $fieldTwo, array $options = [], $context)
     {
         $options += [
             'fieldsExpected' => true,
@@ -372,11 +372,11 @@ class Validation
      *
      * @param string $fieldOne The first field to compare against the second field.
      * @param string $fieldTwo The second field to compare against the first field.
-     * @param array $context The validation context.
      * @param array $options Optional options for the check. Default to ['fieldsExpected' => true, 'typeSafe' => false].
+     * @param array $context The validation context.
      * @return bool Success.
      */
-    public static function fieldsNotMatching($fieldOne, $fieldTwo, $context, array $options = [])
+    public static function fieldsNotMatching($fieldOne, $fieldTwo, array $options = [], $context)
     {
         $options += [
             'fieldsExpected' => true,
