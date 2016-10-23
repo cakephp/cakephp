@@ -433,8 +433,8 @@ class ConsoleOptionParser
                 return $this;
             }
             if ($options['required'] && !$a->isRequired()) {
-            	throw new LogicException('A required argument cannot follow an optional one');
-			}
+                throw new LogicException('A required argument cannot follow an optional one');
+            }
         }
         $this->_args[$index] = $arg;
         ksort($this->_args);
