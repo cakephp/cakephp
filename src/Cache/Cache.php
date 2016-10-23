@@ -102,7 +102,8 @@ class Cache
     /**
      * Whether to reset the settings with the next call to Cache::set();
      *
-     * @var array
+     * @deprecated Not used anymore
+     * @var bool
      */
     protected static $_reset = false;
 

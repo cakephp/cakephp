@@ -187,7 +187,11 @@ abstract class Association
      *
      * @var array
      */
-    protected $_validStrategies = [self::STRATEGY_JOIN, self::STRATEGY_SELECT, self::STRATEGY_SUBQUERY];
+    protected $_validStrategies = [
+        self::STRATEGY_JOIN,
+        self::STRATEGY_SELECT,
+        self::STRATEGY_SUBQUERY
+    ];
 
     /**
      * Constructor. Subclasses can override _options function to get the original
@@ -702,7 +706,7 @@ abstract class Association
      */
     public function exists($conditions)
     {
-        if (!empty($this->_conditions)) {
+        if ($this->_conditions) {
             $conditions = $this
                 ->find('all', ['conditions' => $conditions])
                 ->clause('where');
@@ -805,7 +809,7 @@ abstract class Association
             $fields = array_merge((array)$fields, $target->schema()->columns());
         }
 
-        if (!empty($fields)) {
+        if ($fields) {
             $query->select($query->aliasFields($fields, $target->alias()));
         }
         $query->addDefaultTypes($target);

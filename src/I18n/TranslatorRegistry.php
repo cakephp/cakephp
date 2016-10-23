@@ -34,9 +34,9 @@ class TranslatorRegistry extends TranslatorLocator
      * packages where none can be found for the combination of translator
      * name and locale.
      *
-     * @var array
+     * @var callable[]
      */
-    protected $_loaders;
+    protected $_loaders = [];
 
     /**
      * Fallback loader name
