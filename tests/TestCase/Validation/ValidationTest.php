@@ -2695,7 +2695,7 @@ class ValidationTest extends TestCase
             ],
         ];
         $this->assertFalse(Validation::fieldsNotMatching('fieldA', 'fieldB', [], $context));
-        $this->assertFalse(Validation::fieldsNotMatching('fieldA', 'fieldB', ['typeSafe' => false] , $context));
+        $this->assertFalse(Validation::fieldsNotMatching('fieldA', 'fieldB', ['typeSafe' => false], $context));
         $this->assertTrue(Validation::fieldsNotMatching('fieldA', 'fieldB', ['typeSafe' => true], $context));
 
         $context = [
@@ -2705,7 +2705,7 @@ class ValidationTest extends TestCase
             ],
         ];
         $this->assertTrue(Validation::fieldsNotMatching('fieldA', 'fieldB', [], $context));
-        $this->assertTrue(Validation::fieldsNotMatching('fieldA', 'fieldB', ['typeSafe' => false] , $context));
+        $this->assertTrue(Validation::fieldsNotMatching('fieldA', 'fieldB', ['typeSafe' => false], $context));
         $this->assertTrue(Validation::fieldsNotMatching('fieldA', 'fieldB', ['typeSafe' => true], $context));
 
         $context = [
