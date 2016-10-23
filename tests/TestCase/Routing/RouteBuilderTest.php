@@ -306,7 +306,7 @@ class RouteBuilderTest extends TestCase
     public function testPrefix()
     {
         $routes = new RouteBuilder($this->collection, '/path', ['key' => 'value']);
-        $res = $routes->prefix('admin', function ($r) {
+        $res = $routes->prefix('admin', ['key' => 'value'], function ($r) {
             $this->assertInstanceOf('Cake\Routing\RouteBuilder', $r);
             $this->assertCount(0, $this->collection->routes());
             $this->assertEquals('/path/admin', $r->path());
@@ -323,9 +323,10 @@ class RouteBuilderTest extends TestCase
     public function testNestedPrefix()
     {
         $routes = new RouteBuilder($this->collection, '/admin', ['prefix' => 'admin']);
-        $res = $routes->prefix('api', function ($r) {
+        $res = $routes->prefix('api', ['_namePrefix' => 'api:'], function ($r) {
             $this->assertEquals('/admin/api', $r->path());
             $this->assertEquals(['prefix' => 'admin/api'], $r->params());
+            $this->assertEquals('api:', $r->namePrefix());
         });
         $this->assertNull($res);
     }
