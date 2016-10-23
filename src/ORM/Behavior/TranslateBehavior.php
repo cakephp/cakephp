@@ -283,9 +283,6 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         $fields = array_keys($values);
         $noFields = empty($fields);
 
-        $primaryKey = (array)$this->_table->primaryKey();
-        $key = $entity->get(current($primaryKey));
-
         if ($noFields && $noBundled) {
             return;
         }
@@ -299,6 +296,8 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
             return;
         }
+        $primaryKey = (array)$this->_table->primaryKey();
+        $key = $entity->get(current($primaryKey));
 
         $model = $this->_config['referenceName'];
         $preexistent = $this->_translationTable->find()
