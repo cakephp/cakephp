@@ -606,6 +606,9 @@ class RouteBuilder
     public function prefix($name, $params = [], callable $callback = null)
     {
         if ($callback === null) {
+            if (!is_callable($params)) {
+                throw new InvalidArgumentException('A valid callback is expected');
+            }
             $callback = $params;
             $params = [];
         }
