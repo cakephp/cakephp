@@ -20,7 +20,6 @@ use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 
-
 /**
  * Provides features for building routes inside scopes.
  *
