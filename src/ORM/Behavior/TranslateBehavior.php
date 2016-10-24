@@ -287,22 +287,33 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             return;
         }
 
-        // If there no fields, and bundled translations,
-        // we need to mark fields as dirty so the entity persists.
-        if ($noFields && $bundled) {
+        $primaryKey = (array)$this->_table->primaryKey();
+        $key = $entity->get(current($primaryKey));
+
+        // When we have no key and bundled translations, we
+        // need to mark the entity dirty so the root
+        // entity persists.
+        if ($noFields && $bundled && !$key) {
             foreach ($this->_config['fields'] as $field) {
                 $entity->dirty($field, true);
             }
 
             return;
         }
-        $primaryKey = (array)$this->_table->primaryKey();
-        $key = $entity->get(current($primaryKey));
+
+        if ($noFields) {
+            return;
+        }
 
         $model = $this->_config['referenceName'];
         $preexistent = $this->_translationTable->find()
             ->select(['id', 'field'])
-            ->where(['field IN' => $fields, 'locale' => $locale, 'foreign_key' => $key, 'model' => $model])
+            ->where([
+                'field IN' => $fields,
+                'locale' => $locale,
+                'foreign_key' => $key,
+                'model' => $model
+            ])
             ->bufferResults(false)
             ->indexBy('field');
 
