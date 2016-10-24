@@ -123,7 +123,7 @@ class Component implements EventListenerInterface
 
         $this->config($config);
 
-        if (!empty($this->components)) {
+        if ($this->components) {
             $this->_componentMap = $registry->normalizeArray($this->components);
         }
         $this->initialize($config);
