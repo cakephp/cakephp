@@ -33,7 +33,7 @@ class Dispatcher
     /**
      * Connected filter objects
      *
-     * @var array
+     * @var \Cake\Event\EventListenerInterface[]
      */
     protected $_filters = [];
 
@@ -83,7 +83,7 @@ class Dispatcher
     /**
      * Get the list of connected filters.
      *
-     * @return array
+     * @return \Cake\Event\EventListenerInterface[]
      */
     public function filters()
     {

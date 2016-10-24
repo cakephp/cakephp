@@ -54,7 +54,7 @@ trait QueryTrait
      * List of formatter classes or callbacks that will post-process the
      * results when fetched
      *
-     * @var array
+     * @var callable[]
      */
     protected $_formatters = [];
 

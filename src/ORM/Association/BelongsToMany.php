@@ -120,7 +120,10 @@ class BelongsToMany extends Association
      *
      * @var array
      */
-    protected $_validStrategies = [self::STRATEGY_SELECT, self::STRATEGY_SUBQUERY];
+    protected $_validStrategies = [
+        self::STRATEGY_SELECT,
+        self::STRATEGY_SUBQUERY
+    ];
 
     /**
      * Whether the records on the joint table should be removed when a record

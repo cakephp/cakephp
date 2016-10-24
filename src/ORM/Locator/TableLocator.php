@@ -36,7 +36,7 @@ class TableLocator implements LocatorInterface
     /**
      * Instances that belong to the registry.
      *
-     * @var array
+     * @var \Cake\ORM\Table[]
      */
     protected $_instances = [];
 
@@ -44,7 +44,7 @@ class TableLocator implements LocatorInterface
      * Contains a list of Table objects that were created out of the
      * built-in Table class. The list is indexed by table alias
      *
-     * @var array
+     * @var \Cake\ORM\Table[]
      */
     protected $_fallbacked = [];
 
@@ -244,7 +244,7 @@ class TableLocator implements LocatorInterface
      * debugging common mistakes when setting up associations or created new table
      * classes.
      *
-     * @return array
+     * @return \Cake\ORM\Table[]
      */
     public function genericInstances()
     {

@@ -50,7 +50,7 @@ class FormData implements Countable
     /**
      * The parts in the form data.
      *
-     * @var array
+     * @var \Cake\Http\Client\FormDataPart[]
      */
     protected $_parts = [];
 

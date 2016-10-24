@@ -64,7 +64,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      * A cached list of ExpressionInterface objects that were
      * found in the value for this expression.
      *
-     * @var array
+     * @var \Cake\Database\ExpressionInterface[]
      */
     protected $_valueExpressions = [];
 

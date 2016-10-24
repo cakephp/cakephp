@@ -62,7 +62,10 @@ class HasMany extends Association
      *
      * @var array
      */
-    protected $_validStrategies = [self::STRATEGY_SELECT, self::STRATEGY_SUBQUERY];
+    protected $_validStrategies = [
+        self::STRATEGY_SELECT,
+        self::STRATEGY_SUBQUERY
+    ];
 
     /**
      * Saving strategy that will only append to the links set

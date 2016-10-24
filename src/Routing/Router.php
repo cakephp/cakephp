@@ -148,7 +148,7 @@ class Router
      * The stack of URL filters to apply against routing URLs before passing the
      * parameters to the route collection.
      *
-     * @var array
+     * @var callable[]
      */
     protected static $_urlFilters = [];
 

@@ -47,7 +47,7 @@ trait ValidatorAwareTrait
     /**
      * A list of validation objects indexed by name
      *
-     * @var array
+     * @var \Cake\Validation\Validator[]
      */
     protected $_validators = [];
 

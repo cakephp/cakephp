@@ -37,7 +37,7 @@ class ActionDispatcher
     /**
      * Attached routing filters
      *
-     * @var array
+     * @var \Cake\Event\EventListenerInterface[]
      */
     protected $filters = [];
 
@@ -53,7 +53,7 @@ class ActionDispatcher
      *
      * @param \Cake\Http\ControllerFactory|null $factory A controller factory instance.
      * @param \Cake\Event\EventManager|null $eventManager An event manager if you want to inject one.
-     * @param array $filters The list of filters to include.
+     * @param \Cake\Event\EventListenerInterface[] $filters The list of filters to include.
      */
     public function __construct($factory = null, $eventManager = null, array $filters = [])
     {
@@ -71,7 +71,7 @@ class ActionDispatcher
      *
      * @param \Cake\Network\Request $request The request to dispatch.
      * @param \Cake\Network\Response $response The response to dispatch.
-     * @return \Cake\Network\Response a modified/replaced response.
+     * @return \Cake\Network\Response A modified/replaced response.
      */
     public function dispatch(Request $request, Response $response)
     {
