@@ -109,7 +109,7 @@ class RouteTest extends TestCase
         $result = $route->parse('/posts/index.pdf', 'GET');
         $this->assertFalse(isset($result['_ext']));
 
-        $route->extensions(['pdf', 'json', 'xml']);
+        $route->extensions(['pdf', 'json', 'xml', 'xml.gz']);
         $result = $route->parse('/posts/index.pdf', 'GET');
         $this->assertEquals('pdf', $result['_ext']);
 
@@ -118,6 +118,9 @@ class RouteTest extends TestCase
 
         $result = $route->parse('/posts/index.xml', 'GET');
         $this->assertEquals('xml', $result['_ext']);
+
+        $result = $route->parse('/posts/index.xml.gz', 'GET');
+        $this->assertEquals('xml.gz', $result['_ext']);
     }
 
     /**
@@ -619,6 +622,13 @@ class RouteTest extends TestCase
             'c' => 'd'
         ]);
         $this->assertEquals('/posts/view/1.json?id=b&c=d', $result);
+
+        $result = $route->match([
+            'controller' => 'posts',
+            'action' => 'index',
+            '_ext' => 'json.gz',
+        ]);
+        $this->assertEquals('/posts/index.json.gz', $result);
     }
 
     /**
