@@ -100,14 +100,6 @@ class Cache
     protected static $_groups = [];
 
     /**
-     * Whether to reset the settings with the next call to Cache::set();
-     *
-     * @deprecated Not used anymore
-     * @var bool
-     */
-    protected static $_reset = false;
-
-    /**
      * Cache Registry used for creating and using cache adapters.
      *
      * @var \Cake\Cache\CacheRegistry
@@ -127,7 +119,7 @@ class Cache
             static::$_registry = $registry;
         }
 
-        if (empty(static::$_registry)) {
+        if (!static::$_registry) {
             static::$_registry = new CacheRegistry();
         }
 

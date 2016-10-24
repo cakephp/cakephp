@@ -592,6 +592,7 @@ class ConsoleOptionParserTest extends TestCase
     {
         $subParser = new ConsoleOptionParser('method', false);
         $subParser->addOption('connection', ['help' => 'Db connection.']);
+        $subParser->addOption('zero', ['short' => '0', 'help' => 'Zero.']);
 
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addSubcommand('method', [
@@ -603,12 +604,13 @@ class ConsoleOptionParserTest extends TestCase
         $result = $parser->help('method');
         $expected = <<<TEXT
 <info>Usage:</info>
-cake mycommand method [--connection] [-h]
+cake mycommand method [--connection] [-h] [-0]
 
 <info>Options:</info>
 
 --connection      Db connection.
 --help, -h        Display this help.
+--zero, -0        Zero.
 
 TEXT;
         $this->assertTextEquals($expected, $result, 'Help is not correct.');

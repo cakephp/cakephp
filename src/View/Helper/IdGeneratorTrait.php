@@ -26,7 +26,7 @@ trait IdGeneratorTrait
     /**
      * Prefix for id attribute.
      *
-     * @var string
+     * @var string|null
      */
     protected $_idPrefix = null;
 
@@ -80,7 +80,7 @@ trait IdGeneratorTrait
     protected function _domId($value)
     {
         $domId = mb_strtolower(Inflector::slug($value, '-'));
-        if (!empty($this->_idPrefix)) {
+        if ($this->_idPrefix) {
             $domId = $this->_idPrefix . '-' . $domId;
         }
 

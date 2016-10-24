@@ -57,7 +57,7 @@ class RequestHandlerComponent extends Component
     /**
      * Contains the file extension parsed out by the Router
      *
-     * @var string
+     * @var string|null
      * @see \Cake\Routing\Router::extensions()
      */
     public $ext = null;
@@ -65,7 +65,7 @@ class RequestHandlerComponent extends Component
     /**
      * The template to use when rendering the given content type.
      *
-     * @var string
+     * @var string|null
      */
     protected $_renderType = null;
 
@@ -177,7 +177,7 @@ class RequestHandlerComponent extends Component
         );
         foreach ($accepts as $types) {
             $ext = array_intersect($extensions, $types);
-            if (!empty($ext)) {
+            if ($ext) {
                 $this->ext = current($ext);
                 break;
             }
@@ -202,13 +202,13 @@ class RequestHandlerComponent extends Component
         if ($request->param('_ext')) {
             $this->ext = $request->param('_ext');
         }
-        if (empty($this->ext) || in_array($this->ext, ['html', 'htm'])) {
+        if (!$this->ext || in_array($this->ext, ['html', 'htm'])) {
             $this->_setExtension($request, $this->response);
         }
 
         $request->params['isAjax'] = $request->is('ajax');
 
-        if (empty($this->ext) && $request->is('ajax')) {
+        if (!$this->ext && $request->is('ajax')) {
             $this->ext = 'ajax';
         }
 
@@ -323,7 +323,7 @@ class RequestHandlerComponent extends Component
             $this->response->getMimeType($this->ext)
         );
 
-        if (!empty($this->ext) && $isRecognized) {
+        if ($this->ext && $isRecognized) {
             $this->renderAs($event->subject(), $this->ext);
         } else {
             $this->response->charset(Configure::read('App.encoding'));
@@ -517,7 +517,7 @@ class RequestHandlerComponent extends Component
         $types = (array)$type;
 
         if (count($types) === 1) {
-            if (!empty($this->ext)) {
+            if ($this->ext) {
                 return in_array($this->ext, $types);
             }
 
@@ -525,7 +525,7 @@ class RequestHandlerComponent extends Component
         }
 
         $intersect = array_values(array_intersect($accepts, $types));
-        if (empty($intersect)) {
+        if (!$intersect) {
             return false;
         }
 
@@ -582,7 +582,7 @@ class RequestHandlerComponent extends Component
             $controller->viewClass = $viewClass;
             $builder->className($viewClass);
         } else {
-            if (empty($this->_renderType)) {
+            if (!$this->_renderType) {
                 $builder->templatePath($builder->templatePath() . DIRECTORY_SEPARATOR . $type);
             } else {
                 $builder->templatePath(preg_replace(
