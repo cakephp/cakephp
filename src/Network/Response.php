@@ -478,6 +478,7 @@ class Response implements ResponseInterface
      * Will echo out the content in the response body.
      *
      * @return void
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     public function send()
     {
@@ -504,6 +505,7 @@ class Response implements ResponseInterface
      * Sends the HTTP headers and cookies.
      *
      * @return void
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     public function sendHeaders()
     {
@@ -532,6 +534,7 @@ class Response implements ResponseInterface
      * have been set.
      *
      * @return void
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     protected function _setCookies()
     {
@@ -581,6 +584,7 @@ class Response implements ResponseInterface
      * Sets the response body to an empty text if the status code is 204 or 304
      *
      * @return void
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     protected function _setContent()
     {
@@ -595,6 +599,7 @@ class Response implements ResponseInterface
      * @param string $name the header name
      * @param string|null $value the header value
      * @return void
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     protected function _sendHeader($name, $value = null)
     {
@@ -614,6 +619,7 @@ class Response implements ResponseInterface
      * @param string|callable $content String to send as response body or callable
      *  which returns/outputs content.
      * @return void
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     protected function _sendContent($content)
     {
@@ -789,6 +795,7 @@ class Response implements ResponseInterface
      * @param int|null $code the HTTP status code
      * @return int Current status code
      * @throws \InvalidArgumentException When an unknown status code is reached.
+     * @deprecated 3.4.0 Use getStatusCode() to read the status code instead.
      */
     public function statusCode($code = null)
     {
@@ -895,6 +902,7 @@ class Response implements ResponseInterface
      * @return mixed Associative array of the HTTP codes as keys, and the message
      *    strings as values, or null of the given $code does not exist.
      * @throws \InvalidArgumentException If an attempt is made to add an invalid status code
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     public function httpCodes($code = null)
     {
@@ -1392,6 +1400,7 @@ class Response implements ResponseInterface
      *
      * @param string|null $protocol Protocol to be used for sending response.
      * @return string Protocol currently set
+     * @deprecated 3.4.0 Use getProtocolVersion() instead.
      */
     public function protocol($protocol = null)
     {
@@ -1742,6 +1751,7 @@ class Response implements ResponseInterface
      * @param \Cake\Filesystem\File $file File object
      * @param array $range The range to read out of the file.
      * @return bool True is whole file is echoed successfully or false if client connection is lost in between
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     protected function _sendFile($file, $range)
     {
@@ -1785,6 +1795,7 @@ class Response implements ResponseInterface
      * Returns true if connection is still active
      *
      * @return bool
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     protected function _isActive()
     {
@@ -1826,6 +1837,7 @@ class Response implements ResponseInterface
      *
      * @param int|string $status See http://php.net/exit for values
      * @return void
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     public function stop($status = 0)
     {
