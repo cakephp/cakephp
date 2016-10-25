@@ -45,6 +45,7 @@ class TranslateBehaviorTest extends TestCase
     public $fixtures = [
         'core.articles',
         'core.authors',
+        'core.groups',
         'core.special_tags',
         'core.tags',
         'core.comments',
@@ -1141,6 +1142,77 @@ class TranslateBehaviorTest extends TestCase
         ];
         $result = $table->find('translations')->where(['id' => $result->id]);
         $this->assertEquals($expected, $this->_extractTranslations($result)->toArray());
+    }
+
+    /**
+     * Tests adding new translation to a record where the only field is the translated one and it's not the default locale
+     *
+     * @return void
+     */
+    public function testSaveNewRecordWithOnlyTranslationsNotDefaultLocale()
+    {
+        $table = TableRegistry::get('Groups');
+        $table->addBehavior('Translate', [
+            'fields' => ['title'],
+            'validator' => (new \Cake\Validation\Validator)->add('title', 'notBlank', ['rule' => 'notBlank'])
+        ]);
+
+        $data = [
+            '_translations' => [
+                'es' => [
+                    'title' => 'Title ES'
+                ]
+            ]
+        ];
+
+        $group = $table->newEntity($data);
+        $result = $table->save($group);
+        $this->assertNotFalse($result, 'Record should save.');
+
+        $expected = [
+            [
+                'es' => [
+                    'title' => 'Title ES',
+                    'locale' => 'es'
+                ]
+            ]
+        ];
+        $result = $table->find('translations')->where(['id' => $result->id]);
+        $this->assertEquals($expected, $this->_extractTranslations($result)->toArray());
+    }
+
+    /**
+     * Test that existing records can be updated when only translations
+     * are modified/dirty.
+     *
+     * @return void
+     */
+    public function testSaveExistingRecordOnlyTranslations()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $table->entityClass(__NAMESPACE__ . '\Article');
+
+        $data = [
+            '_translations' => [
+                'es' => [
+                    'title' => 'Spanish Translation',
+                ],
+            ]
+        ];
+
+        $article = $table->find()->first();
+        $article = $table->patchEntity($article, $data);
+
+        $this->assertNotFalse($table->save($article));
+
+        $results = $this->_extractTranslations(
+            $table->find('translations')->where(['id' => 1])
+        )->first();
+
+        $this->assertArrayHasKey('es', $results, 'New translation added');
+        $this->assertArrayHasKey('eng', $results, 'Old translations present');
+        $this->assertEquals('Spanish Translation', $results['es']['title']);
     }
 
     /**

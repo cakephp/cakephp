@@ -135,7 +135,9 @@ class JsonView extends SerializedView
     {
         $data = $this->_dataToSerialize($serialize);
 
-        $jsonOptions = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT;
+        $jsonOptions = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT |
+            JSON_ERROR_INF_OR_NAN | JSON_PARTIAL_OUTPUT_ON_ERROR;
+
         if (isset($this->viewVars['_jsonOptions'])) {
             if ($this->viewVars['_jsonOptions'] === false) {
                 $jsonOptions = 0;
