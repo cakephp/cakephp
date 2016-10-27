@@ -366,8 +366,9 @@ class AuthComponent extends Component
         if (empty($this->_authenticateObjects)) {
             $this->constructAuthenticate();
         }
+        $response = $this->response;
         $auth = end($this->_authenticateObjects);
-        $result = $auth->unauthenticated($this->request, $this->response);
+        $result = $auth->unauthenticated($this->request, $response);
         if ($result !== null) {
             return $result;
         }
@@ -384,13 +385,10 @@ class AuthComponent extends Component
                 $this->_config['ajaxLogin'],
                 $this->RequestHandler->ajaxLayout
             );
-            $response->statusCode(403);
-
-            return $response;
+            return $response->withStatus(403);
         }
-        $this->response->statusCode(403);
 
-        return $this->response;
+        return $response->withStatus(403);
     }
 
     /**
