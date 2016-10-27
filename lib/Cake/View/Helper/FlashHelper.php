@@ -82,10 +82,15 @@ class FlashHelper extends AppHelper {
 			));
 		}
 
-		$flash = $options + $flash;
 		CakeSession::delete("Message.$key");
-		$flash['key'] = $key;
 
-		return $this->_View->element($flash['element'], $flash);
+		$out = '';
+		foreach ($flash as $message) {
+			$message['key'] = $key;
+			$message = $options + $message;
+			$out .= $this->_View->element($message['element'], $message);
+		}
+
+		return $out;
 	}
 }
