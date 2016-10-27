@@ -394,6 +394,20 @@ class HashTest extends TestCase
     }
 
     /**
+     * Test that get() can extract '' key data.
+     *
+     * @return void
+     */
+    public function testGetEmptyKey()
+    {
+        $data = [
+            '' => 'some value'
+        ];
+        $result = Hash::get($data, '');
+        $this->assertSame($data[''], $result);
+    }
+
+    /**
      * Test get() for invalid $data type
      *
      * @expectedException \InvalidArgumentException
