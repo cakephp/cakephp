@@ -51,8 +51,6 @@ class LegacyRequestDispatcher
             ['priority' => 999],
             [$this->_test, 'controllerSpy']
         );
-        $dispatcher->dispatch($request, $response);
-
-        return $response;
+        return $dispatcher->dispatch($request, $response);
     }
 }

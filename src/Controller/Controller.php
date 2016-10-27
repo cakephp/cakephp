@@ -540,7 +540,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $response = $this->response;
         if ($status) {
-            $response->statusCode($status);
+            $response = $response->withStatus($status);
         }
 
         $event = $this->dispatchEvent('Controller.beforeRedirect', [$url, $response]);
