@@ -57,25 +57,37 @@ class FlashHelperTest extends CakeTestCase {
 		CakeSession::write(array(
 			'Message' => array(
 				'flash' => array(
-					'key' => 'flash',
-					'message' => 'This is a calling',
-					'element' => 'Flash/default',
-					'params' => array()
+					array(
+						'key' => 'flash',
+						'message' => 'This is the first Message',
+						'element' => 'Flash/default',
+						'params' => array()
+					),
+					array(
+						'key' => 'flash',
+						'message' => 'This is the second Message',
+						'element' => 'Flash/default',
+						'params' => array()
+					)
 				),
 				'notification' => array(
-					'key' => 'notification',
-					'message' => 'Broadcast message testing',
-					'element' => 'flash_helper',
-					'params' => array(
-						'title' => 'Notice!',
-						'name' => 'Alert!'
+					array(
+						'key' => 'notification',
+						'message' => 'Broadcast message testing',
+						'element' => 'flash_helper',
+						'params' => array(
+							'title' => 'Notice!',
+							'name' => 'Alert!'
+						)
 					)
 				),
 				'classy' => array(
-					'key' => 'classy',
-					'message' => 'Recorded',
-					'element' => 'flash_classy',
-					'params' => array()
+					array(
+						'key' => 'classy',
+						'message' => 'Recorded',
+						'element' => 'flash_classy',
+						'params' => array()
+					)
 				)
 			)
 		));
@@ -99,7 +111,7 @@ class FlashHelperTest extends CakeTestCase {
  */
 	public function testFlash() {
 		$result = $this->Flash->render();
-		$expected = '<div class="message">This is a calling</div>';
+		$expected = '<div class="message">This is the first Message</div><div class="message">This is the second Message</div>';
 		$this->assertContains($expected, $result);
 
 		$expected = '<div id="classy-message">Recorded</div>';
