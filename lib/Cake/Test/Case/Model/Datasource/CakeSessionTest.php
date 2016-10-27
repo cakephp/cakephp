@@ -307,9 +307,9 @@ class CakeSessionTest extends CakeTestCase {
  * @return void
  */
 	public function testWriteEmptyKey() {
-		$this->assertFalse(TestCakeSession::write('', 'graham'));
-		$this->assertFalse(TestCakeSession::write('', ''));
-		$this->assertFalse(TestCakeSession::write(''));
+		$this->assertTrue(TestCakeSession::write('', 'graham'));
+		$this->assertTrue(TestCakeSession::write('', ''));
+		$this->assertTrue(TestCakeSession::write(''));
 	}
 
 /**
@@ -401,6 +401,17 @@ class CakeSessionTest extends CakeTestCase {
 		$this->assertTrue(TestCakeSession::delete('Clearing'));
 		$this->assertFalse(TestCakeSession::check('Clearing.sale'));
 		$this->assertFalse(TestCakeSession::check('Clearing'));
+	}
+
+/**
+ * test delete
+ *
+ * @return void
+ */
+	public function testDeleteEmptyString() {
+		TestCakeSession::write('', 'empty string');
+		$this->assertTrue(TestCakeSession::delete(''));
+		$this->assertFalse(TestCakeSession::check(''));
 	}
 
 /**
@@ -500,6 +511,10 @@ class CakeSessionTest extends CakeTestCase {
  * @return void
  */
 	public function testReadingSavedEmpty() {
+		TestCakeSession::write('', 'empty string');
+		$this->assertTrue(TestCakeSession::check(''));
+		$this->assertEquals('empty string', TestCakeSession::read(''));
+
 		TestCakeSession::write('SessionTestCase', 0);
 		$this->assertEquals(0, TestCakeSession::read('SessionTestCase'));
 
@@ -511,7 +526,7 @@ class CakeSessionTest extends CakeTestCase {
 		$this->assertFalse(TestCakeSession::read('SessionTestCase'));
 
 		TestCakeSession::write('SessionTestCase', null);
-		$this->assertEquals(null, TestCakeSession::read('SessionTestCase'));
+		$this->assertNull(TestCakeSession::read('SessionTestCase'));
 	}
 
 /**

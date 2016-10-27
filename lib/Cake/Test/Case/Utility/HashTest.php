@@ -230,6 +230,19 @@ class HashTest extends CakeTestCase {
 	}
 
 /**
+ * Test that get() can extract '' key data.
+ *
+ * @return void
+ */
+	public function testGetEmptyKey() {
+		$data = array(
+			'' => 'some value'
+		);
+		$result = Hash::get($data, '');
+		$this->assertSame($data[''], $result);
+	}
+
+/**
  * Test get() with an invalid path
  *
  * @expectedException InvalidArgumentException
