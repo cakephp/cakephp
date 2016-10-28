@@ -157,6 +157,7 @@ class Component implements EventListenerInterface
         if (isset($this->{$name})) {
             return $this->{$name};
         }
+
         return null;
     }
 
