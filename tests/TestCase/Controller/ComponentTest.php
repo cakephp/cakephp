@@ -13,18 +13,18 @@
  */
 namespace Cake\Test\TestCase\Controller;
 
-use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\CookieComponent;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
-use TestApp\Controller\ComponentTestController;
 use TestApp\Controller\Component\AppleComponent;
 use TestApp\Controller\Component\BananaComponent;
 use TestApp\Controller\Component\ConfiguredComponent;
 use TestApp\Controller\Component\OrangeComponent;
 use TestApp\Controller\Component\SomethingWithCookieComponent;
+use TestApp\Controller\ComponentTestController;
 
 /**
  * ComponentTest class

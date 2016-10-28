@@ -146,7 +146,7 @@ class Component implements EventListenerInterface
      * Magic method for lazy loading $components.
      *
      * @param string $name Name of component to get.
-     * @return Component|null A Component object or null.
+     * @return mixed A Component object or null.
      */
     public function __get($name)
     {
