@@ -385,6 +385,7 @@ class AuthComponent extends Component
                 $this->_config['ajaxLogin'],
                 $this->RequestHandler->ajaxLayout
             );
+
             return $response->withStatus(403);
         }
 

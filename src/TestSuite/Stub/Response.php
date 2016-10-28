@@ -32,6 +32,7 @@ class Response extends Base
             $this->statusCode(302);
         }
         $this->_setContentType();
+
         return $this;
     }
 }
