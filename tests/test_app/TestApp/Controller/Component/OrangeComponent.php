@@ -19,6 +19,8 @@ use Cake\Event\Event;
 
 /**
  * OrangeComponent class
+ *
+ * @property BananaComponent $Banana
  */
 class OrangeComponent extends Component
 {
@@ -29,6 +31,13 @@ class OrangeComponent extends Component
      * @var array
      */
     public $components = ['Banana'];
+
+    /**
+     * controller property
+     *
+     * @var Controller
+     */
+    public $Controller;
 
     /**
      * initialize method
@@ -46,7 +55,7 @@ class OrangeComponent extends Component
      * startup method
      *
      * @param Event $event
-     * @return string
+     * @return void
      */
     public function startup(Event $event)
     {
