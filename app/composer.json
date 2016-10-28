@@ -23,7 +23,7 @@
 	},
 	"require-dev": {
 		"phpunit/phpunit": "3.7.*",
-		"cakephp/cakephp": "~2.8"
+		"cakephp/cakephp": "~2.9"
 	},
 	"suggest": {
 		"cakephp/cakephp-codesniffer": "Easily check code formatting against the CakePHP coding standards."

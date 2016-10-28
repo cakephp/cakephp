@@ -40,6 +40,23 @@ class SecondaryPost extends Model {
 }
 
 /**
+ * ConstructorPost test stub.
+ */
+class ConstructorPost extends Model {
+
+/**
+ * @var string
+ */
+	public $useTable = 'posts';
+
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
+		$this->getDataSource()->cacheMethods = false;
+	}
+
+}
+
+/**
  * CakeTestCaseTest
  *
  * @package       Cake.Test.Case.TestSuite
@@ -433,6 +450,16 @@ class CakeTestCaseTest extends CakeTestCase {
 		$post = $this->getMockForModel('SecondaryPost', array('save'));
 		$this->assertEquals('test_secondary', $post->useDbConfig);
 		ConnectionManager::drop('test_secondary');
+	}
+
+/**
+ * Test getMockForModel when the model accesses the datasource in the constructor.
+ *
+ * @return void
+ */
+	public function testGetMockForModelConstructorDatasource() {
+		$post = $this->getMockForModel('ConstructorPost', array('save'), array('ds' => 'test'));
+		$this->assertEquals('test', $post->useDbConfig);
 	}
 
 /**

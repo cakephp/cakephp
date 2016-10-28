@@ -541,6 +541,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->request['action'] = 'add';
 		$this->Form->request->webroot = '';
 		$this->Form->request->base = '';
+		Router::setRequestInfo($this->Form->request);
 
 		ClassRegistry::addObject('Contact', new Contact());
 		ClassRegistry::addObject('ContactNonStandardPk', new ContactNonStandardPk());
@@ -8569,12 +8570,14 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testPostLinkSecurityHashInline() {
 		$hash = Security::hash(
-			'/posts/delete/1' .
+			'/basedir/posts/delete/1' .
 			serialize(array()) .
 			'' .
 			Configure::read('Security.salt')
 		);
 		$hash .= '%3A';
+		$this->Form->request->base = '/basedir';
+		$this->Form->request->webroot = '/basedir/';
 		$this->Form->request->params['_Token']['key'] = 'test';
 
 		$this->Form->create('Post', array('url' => array('action' => 'add')));
@@ -8584,7 +8587,11 @@ class FormHelperTest extends CakeTestCase {
 
 		$this->assertEquals(array('Post.title'), $this->Form->fields);
 		$this->assertContains($hash, $result, 'Should contain the correct hash.');
-		$this->assertAttributeEquals('/posts/add', '_lastAction', $this->Form, 'lastAction was should be restored.');
+		$this->assertAttributeEquals(
+			'/basedir/posts/add',
+			'_lastAction',
+			$this->Form,
+			'lastAction was should be restored.');
 	}
 
 /**
@@ -10988,6 +10995,38 @@ class FormHelperTest extends CakeTestCase {
 			'label' => false,
 		);
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Tests `_lastAction`.
+ *
+ *  With named, numeric value
+ *
+ * @return void
+ */
+	public function testLastActionWithNamedNumeric() {
+		$here = '/users/index/page:1';
+
+		$this->Form->request->here = $here;
+		$this->Form->create('User');
+
+		$this->assertAttributeEquals($here, '_lastAction', $this->Form, "_lastAction shouldn't be empty.");
+	}
+
+/**
+ * Tests `_lastAction`.
+ *
+ *  With named, string value
+ *
+ * @return void
+ */
+	public function testLastActionWithNamedString() {
+		$here = '/users/index/foo:bar';
+
+		$this->Form->request->here = $here;
+		$this->Form->create('User');
+
+		$this->assertAttributeEquals($here, '_lastAction', $this->Form, "_lastAction shouldn't be empty.");
 	}
 
 }

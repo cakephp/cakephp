@@ -403,7 +403,7 @@ class ModelReadTest extends BaseModelTest {
 		$query .= '.id = ? AND ' . $this->db->fullTableName('articles') . '.published = ?';
 
 		$params = array(1, 'Y');
-		$result = $Article->query($query, $params);
+		$result = $Article->query($query, $params, true);
 		$expected = array(
 			'0' => array(
 				$this->db->fullTableName('articles', false, false) => array(
@@ -438,7 +438,7 @@ class ModelReadTest extends BaseModelTest {
 		$query .= ' WHERE ' . $this->db->fullTableName('articles') . '.title LIKE ?';
 
 		$params = array('%First%');
-		$result = $Article->query($query, $params);
+		$result = $Article->query($query, $params, true);
 		$this->assertTrue(is_array($result));
 		$this->assertTrue(
 			isset($result[0][$this->db->fullTableName('articles', false, false)]['title']) ||
@@ -449,7 +449,7 @@ class ModelReadTest extends BaseModelTest {
 		$query = 'SELECT title FROM ';
 		$query .= $this->db->fullTableName('articles') . ' WHERE title = ? AND published = ?';
 		$params = array('First? Article', 'Y');
-		$Article->query($query, $params);
+		$Article->query($query, $params, true);
 
 		$result = $this->db->getQueryCache($query, $params);
 		$this->assertFalse($result === false);
@@ -8530,5 +8530,119 @@ class ModelReadTest extends BaseModelTest {
 			)
 		);
 		$this->assertEquals($expected, $results, 'Model related with belongsTo afterFind callback fails');
+	}
+
+/**
+ * Pull out the username from a result set.
+ *
+ * @param array $result The results.
+ * @return string The username.
+ */
+	public static function extractUserNameFromQueryResult(array $result) {
+		return isset($result[0][0]) ? $result[0][0]['user'] : $result[0]['u']['user'];
+	}
+
+/**
+ * Test that query() doesn't override the 2nd argument with a default.
+ *
+ * @return void
+ */
+	public function testQueryRespectsCacheQueriesAsSecondArgument() {
+		$model = new User();
+		$model->save(array('user' => 'Chuck'));
+		$userTableName = $this->db->fullTableName('users');
+
+		$getUserNameFromDb = function ($cacheArgument) use ($model, $userTableName) {
+			$query = sprintf('SELECT u.user FROM %s u WHERE id=%d', $userTableName, $model->id);
+			$users = $model->query($query, $cacheArgument);
+			return ModelReadTest::extractUserNameFromQueryResult($users);
+		};
+
+		$model->cacheQueries = true;
+		$this->assertSame('Chuck', $getUserNameFromDb(true));
+		$this->assertSame('Chuck', $getUserNameFromDb(false));
+
+		$model->updateAll(array('User.user' => "'Sylvester'"), array('User.id' => $model->id));
+		$model->cacheQueries = false;
+		$this->assertSame('Chuck', $getUserNameFromDb(true));
+		$this->assertSame('Sylvester', $getUserNameFromDb(false));
+	}
+
+/**
+ * Test that query() doesn't override the cache param in the 3nd argument
+ * with a default.
+ *
+ * @return void
+ */
+	public function testQueryRespectsCacheQueriesAsThirdArgument() {
+		$model = new User();
+		$model->save(array('user' => 'Chuck'));
+		$userTableName = $this->db->fullTableName('users');
+
+		$getUserNameFromDb = function ($cacheArgument) use ($model, $userTableName) {
+			$query = sprintf('SELECT u.user FROM %s u WHERE id=?', $userTableName);
+			$users = $model->query($query, array($model->id), $cacheArgument);
+			return ModelReadTest::extractUserNameFromQueryResult($users);
+		};
+
+		$model->cacheQueries = true;
+		$this->assertSame('Chuck', $getUserNameFromDb(true));
+		$this->assertSame('Chuck', $getUserNameFromDb(false));
+
+		$model->updateAll(array('User.user' => "'Sylvester'"), array('User.id' => $model->id));
+		$model->cacheQueries = false;
+		$this->assertSame('Chuck', $getUserNameFromDb(true));
+		$this->assertSame('Sylvester', $getUserNameFromDb(false));
+	}
+
+/**
+ * Test that query() uses the cacheQueries property when there is one argument.
+ *
+ * @return void
+ */
+	public function testQueryTakesModelCacheQueriesValueAsDefaultForOneArgument() {
+		$model = new User();
+		$model->save(array('user' => 'Chuck'));
+		$userTableName = $this->db->fullTableName('users');
+
+		$getUserNameFromDb = function () use ($model, $userTableName) {
+			$query = sprintf('SELECT u.user FROM %s u WHERE id=%d', $userTableName, $model->id);
+			$users = $model->query($query);
+			return ModelReadTest::extractUserNameFromQueryResult($users);
+		};
+
+		$model->cacheQueries = true;
+		$this->assertSame('Chuck', $getUserNameFromDb());
+		$model->updateAll(array('User.user' => "'Sylvester'"), array('User.id' => $model->id));
+
+		$this->assertSame('Chuck', $getUserNameFromDb());
+		$model->cacheQueries = false;
+		$this->assertSame('Sylvester', $getUserNameFromDb());
+	}
+
+/**
+ * Test that query() uses the cacheQueries property when there are two arguments.
+ *
+ * @return void
+ */
+	public function testQueryTakesModelCacheQueriesValueAsDefaultForTwoArguments() {
+		$model = new User();
+		$model->save(array('user' => 'Chuck'));
+		$userTableName = $this->db->fullTableName('users');
+
+		$getUserNameFromDb = function () use ($model, $userTableName) {
+			$query = sprintf('SELECT u.user FROM %s u WHERE id=?', $userTableName);
+			$users = $model->query($query, array($model->id));
+			return ModelReadTest::extractUserNameFromQueryResult($users);
+		};
+
+		$model->cacheQueries = true;
+		$this->assertSame('Chuck', $getUserNameFromDb());
+
+		$model->updateAll(array('User.user' => "'Sylvester'"), array('User.id' => $model->id));
+		$this->assertSame('Chuck', $getUserNameFromDb());
+
+		$model->cacheQueries = false;
+		$this->assertSame('Sylvester', $getUserNameFromDb());
 	}
 }

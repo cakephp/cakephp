@@ -3097,54 +3097,45 @@ class DboSource extends DataSource {
  * @return mixed An integer or string representing the length of the column, or null for unknown length.
  */
 	public function length($real) {
-		if (!preg_match_all('/([\w\s]+)(?:\((\d+)(?:,(\d+))?\))?(\sunsigned)?(\szerofill)?/', $real, $result)) {
-			$col = str_replace(array(')', 'unsigned'), '', $real);
-			$limit = null;
-
-			if (strpos($col, '(') !== false) {
-				list($col, $limit) = explode('(', $col);
-			}
-			if ($limit !== null) {
-				return (int)$limit;
-			}
-			return null;
-		}
-
+		preg_match('/([\w\s]+)(?:\((.+?)\))?(\sunsigned)?/i', $real, $result);
 		$types = array(
 			'int' => 1, 'tinyint' => 1, 'smallint' => 1, 'mediumint' => 1, 'integer' => 1, 'bigint' => 1
 		);
 
-		list($real, $type, $length, $offset, $sign) = $result;
-		$typeArr = $type;
-		$type = $type[0];
-		$length = $length[0];
-		$offset = $offset[0];
+		$type = $length = null;
+		if (isset($result[1])) {
+			$type = $result[1];
+		}
+		if (isset($result[2])) {
+			$length = $result[2];
+		}
+		$sign = isset($result[3]);
 
 		$isFloat = in_array($type, array('dec', 'decimal', 'float', 'numeric', 'double'));
-		if ($isFloat && $offset) {
-			return $length . ',' . $offset;
+		if ($isFloat && strpos($length, ',') !== false) {
+			return $length;
 		}
 
-		if (($real[0] == $type) && (count($real) === 1)) {
+		if ($length === null) {
 			return null;
 		}
 
 		if (isset($types[$type])) {
-			$length += $types[$type];
-			if (!empty($sign)) {
-				$length--;
-			}
-		} elseif (in_array($type, array('enum', 'set'))) {
-			$length = 0;
-			foreach ($typeArr as $key => $enumValue) {
-				if ($key === 0) {
-					continue;
-				}
+			return (int)$length;
+		}
+		if (in_array($type, array('enum', 'set'))) {
+			$values = array_map(function ($value) {
+				return trim(trim($value), '\'"');
+			}, explode(',', $length));
+
+			$maxLength = 0;
+			foreach ($values as $key => $enumValue) {
 				$tmpLength = strlen($enumValue);
-				if ($tmpLength > $length) {
-					$length = $tmpLength;
+				if ($tmpLength > $maxLength) {
+					$maxLength = $tmpLength;
 				}
 			}
+			return $maxLength;
 		}
 		return (int)$length;
 	}
