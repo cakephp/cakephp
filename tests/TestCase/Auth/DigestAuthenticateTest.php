@@ -278,15 +278,15 @@ DIGEST;
     public function testParseAuthData()
     {
         $digest = <<<DIGEST
-			Digest username="Mufasa",
-			realm="testrealm@host.com",
-			nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
-			uri="/dir/index.html?query=string&value=some%20value",
-			qop=auth,
-			nc=00000001,
-			cnonce="0a4f113b",
-			response="6629fae49393a05397450978507c4ef1",
-			opaque="5ccc069c403ebaf9f0171e9517f40e41"
+            Digest username="Mufasa",
+            realm="testrealm@host.com",
+            nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
+            uri="/dir/index.html?query=string&value=some%20value",
+            qop=auth,
+            nc=00000001,
+            cnonce="0a4f113b",
+            response="6629fae49393a05397450978507c4ef1",
+            opaque="5ccc069c403ebaf9f0171e9517f40e41"
 DIGEST;
         $expected = [
             'username' => 'Mufasa',
@@ -314,15 +314,15 @@ DIGEST;
     public function testParseAuthDataFullUri()
     {
         $digest = <<<DIGEST
-			Digest username="admin",
-			realm="192.168.0.2",
-			nonce="53a7f9b83f61b",
-			uri="http://192.168.0.2/pvcollection/sites/pull/HFD%200001.json#fragment",
-			qop=auth,
-			nc=00000001,
-			cnonce="b85ff144e496e6e18d1c73020566ea3b",
-			response="5894f5d9cd41d012bac09eeb89d2ddf2",
-			opaque="6f65e91667cf98dd13464deaf2739fde"
+            Digest username="admin",
+            realm="192.168.0.2",
+            nonce="53a7f9b83f61b",
+            uri="http://192.168.0.2/pvcollection/sites/pull/HFD%200001.json#fragment",
+            qop=auth,
+            nc=00000001,
+            cnonce="b85ff144e496e6e18d1c73020566ea3b",
+            response="5894f5d9cd41d012bac09eeb89d2ddf2",
+            opaque="6f65e91667cf98dd13464deaf2739fde"
 DIGEST;
 
         $expected = 'http://192.168.0.2/pvcollection/sites/pull/HFD%200001.json#fragment';
@@ -338,15 +338,15 @@ DIGEST;
     public function testParseAuthEmailAddress()
     {
         $digest = <<<DIGEST
-			Digest username="mark@example.com",
-			realm="testrealm@host.com",
-			nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
-			uri="/dir/index.html",
-			qop=auth,
-			nc=00000001,
-			cnonce="0a4f113b",
-			response="6629fae49393a05397450978507c4ef1",
-			opaque="5ccc069c403ebaf9f0171e9517f40e41"
+            Digest username="mark@example.com",
+            realm="testrealm@host.com",
+            nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
+            uri="/dir/index.html",
+            qop=auth,
+            nc=00000001,
+            cnonce="0a4f113b",
+            response="6629fae49393a05397450978507c4ef1",
+            opaque="5ccc069c403ebaf9f0171e9517f40e41"
 DIGEST;
         $expected = [
             'username' => 'mark@example.com',
