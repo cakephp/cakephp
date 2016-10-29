@@ -5328,7 +5328,7 @@ class TableTest extends TestCase
     /**
      * Test that an exception is raised when there are not enough keys.
      *
-     * @expectedException Cake\Datasource\Exception\InvalidPrimaryKeyException
+     * @expectedException \Cake\Datasource\Exception\InvalidPrimaryKeyException
      * @expectedExceptionMessage Record not found in table "articles" with primary key [NULL]
      * @return void
      */
@@ -5345,7 +5345,7 @@ class TableTest extends TestCase
     /**
      * Test that an exception is raised when there are too many keys.
      *
-     * @expectedException Cake\Datasource\Exception\InvalidPrimaryKeyException
+     * @expectedException \Cake\Datasource\Exception\InvalidPrimaryKeyException
      * @expectedExceptionMessage Record not found in table "articles" with primary key [1, 'two']
      * @return void
      */
