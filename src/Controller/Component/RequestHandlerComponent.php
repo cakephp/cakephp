@@ -288,9 +288,8 @@ class RequestHandlerComponent extends Component
             'query' => $query,
             'cookies' => $request->cookies
         ]));
-        $response->statusCode(200);
 
-        return $response;
+        return $response->withStatus(200);
     }
 
     /**
