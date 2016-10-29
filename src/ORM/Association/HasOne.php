@@ -42,23 +42,34 @@ class HasOne extends Association
     ];
 
     /**
+     * Gets the name of the field representing the foreign key to the target table.
+     *
+     * @return string
+     */
+    public function getForeignKey()
+    {
+        if ($this->_foreignKey === null) {
+            $this->_foreignKey = $this->_modelKey($this->source()->alias());
+        }
+
+        return $this->_foreignKey;
+    }
+
+    /**
      * Sets the name of the field representing the foreign key to the target table.
      * If no parameters are passed current field is returned
      *
+     * @deprecated Use setForeignKey()/getForeignKey() instead.
      * @param string|null $key the key to be used to link both tables together
      * @return string
      */
     public function foreignKey($key = null)
     {
-        if ($key === null) {
-            if ($this->_foreignKey === null) {
-                $this->_foreignKey = $this->_modelKey($this->source()->alias());
-            }
-
-            return $this->_foreignKey;
+        if ($key !== null) {
+            return $this->setForeignKey($key);
         }
 
-        return parent::foreignKey($key);
+        return $this->getForeignKey();
     }
 
     /**
