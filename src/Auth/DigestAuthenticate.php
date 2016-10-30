@@ -76,7 +76,7 @@ class DigestAuthenticate extends BasicAuthenticate
      * - `qop` Defaults to 'auth', no other values are supported at this time.
      * - `opaque` A string that must be returned unchanged by clients.
      *    Defaults to `md5($config['realm'])`
-     * - `nonceExpires` The number of seconds that nonces are valid for. Defaults to 300.
+     * - `nonceLifetime` The number of seconds that nonces are valid for. Defaults to 300.
      *
      * @param \Cake\Controller\ComponentRegistry $registry The Component registry
      *   used on this request.
@@ -87,7 +87,7 @@ class DigestAuthenticate extends BasicAuthenticate
         $this->_registry = $registry;
 
         $this->config([
-            'nonceExpires' => 300,
+            'nonceLifetime' => 300,
             'secret' => Configure::read('Security.salt'),
             'realm' => null,
             'qop' => 'auth',
@@ -254,7 +254,7 @@ class DigestAuthenticate extends BasicAuthenticate
      */
     protected function generateNonce()
     {
-        $expiryTime = microtime(true) + $this->config('nonceExpires');
+        $expiryTime = microtime(true) + $this->config('nonceLifetime');
         $signatureValue = md5($expiryTime . ':' . $this->config('secret'));
         $nonceValue = $expiryTime . ':' . $signatureValue;
 

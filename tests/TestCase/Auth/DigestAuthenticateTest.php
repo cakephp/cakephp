@@ -472,6 +472,7 @@ DIGEST;
         $expiryTime = $time + $expires;
         $signatureValue = md5($expiryTime . ':' . $secret);
         $nonceValue = $expiryTime . ':' . $signatureValue;
+
         return base64_encode($nonceValue);
     }
 
@@ -499,6 +500,7 @@ cnonce="{$data['cnonce']}",
 response="{$data['response']}",
 opaque="{$data['opaque']}"
 DIGEST;
+
         return $digest;
     }
 }
