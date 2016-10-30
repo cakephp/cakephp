@@ -982,7 +982,9 @@ class BelongsToMany extends Association
     }
 
     /**
-     * @param string|\Cake\ORM\Table $through
+     * Sets the current join table, either the name of the Table instance or the instance itself.
+     *
+     * @param string|\Cake\ORM\Table $through Name of the Table instance or the instance itself
      * @return $this
      */
     public function setThrough($through)
@@ -993,6 +995,8 @@ class BelongsToMany extends Association
     }
 
     /**
+     * Gets the current join table, either the name of the Table instance or the instance itself.
+     *
      * @return string|\Cake\ORM\Table
      */
     public function getThrough()
