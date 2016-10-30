@@ -1724,7 +1724,7 @@ class CakeEmail {
 
 		/* Embed images inline in html templates */
 		if (!empty($rendered['html'])) {
-			preg_match_all('~<img[^>]*src\s*=\s*(["\'])(cid://|file://|cid:|file:)([^\1]+)\1~iU', print_r($this->viewVars, true), $userFiles);
+			preg_match_all('~<img[^>]*src\s*=\s*(["\'])(cid://|file://|cid:|file:)([^\1]+)\1~iU', serialize($this->viewVars), $userFiles);
 			$userFiles = array_unique($userFiles[3]);
 			preg_match_all('~<img[^>]*src\s*=\s*(["\'])(cid://|file://|cid:|file:)([^\1]+)\1~iU', $rendered['html'], $embebFiles);
 			$embebFiles = array_unique($embebFiles[3]);
@@ -1732,7 +1732,7 @@ class CakeEmail {
 			foreach ($embebFiles as $file) {
 				if (is_file($file)) {
 					$cid = sha1($file);
-					$images['cid:' . $cid] = array('file' => $file, 'contentId' => $cid);
+					$images['cid:' . $cid] = ['file' => $file, 'contentId' => $cid];
 					$files['cid:' . $cid] = '~(<img[^>]*src\s*=\s*)(["\'])(cid://|file://|cid:|file:)' . preg_quote($file) . '\2~iU';
 					$cids['cid:' . $cid] = '\1\2cid:' . $cid . '\2';
 				}
