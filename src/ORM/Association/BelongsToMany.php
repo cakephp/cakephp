@@ -960,14 +960,44 @@ class BelongsToMany extends Association
     /**
      * {@inheritDoc}
      */
+    public function setConditions($conditions)
+    {
+        parent::setConditions($conditions);
+        $this->_targetConditions = $this->_junctionConditions = null;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @deprecated Use setConditions()/getConditions() instead.
+     */
     public function conditions($conditions = null)
     {
         if ($conditions !== null) {
-            $this->_conditions = $conditions;
-            $this->_targetConditions = $this->_junctionConditions = null;
+            $this->setConditions($conditions);
         }
 
-        return $this->_conditions;
+        return $this->getConditions();
+    }
+
+    /**
+     * @param string|\Cake\ORM\Table $through
+     * @return $this
+     */
+    public function setThrough($through)
+    {
+        $this->_through = $through;
+
+        return $this;
+    }
+
+    /**
+     * @return string|\Cake\ORM\Table
+     */
+    public function getThrough()
+    {
+        return $this->_through;
     }
 
     /**
@@ -1410,7 +1440,7 @@ class BelongsToMany extends Association
             $this->_junctionTableName($opts['joinTable']);
         }
         if (!empty($opts['through'])) {
-            $this->_through = $opts['through'];
+            $this->setThrough($opts['through']);
         }
         if (!empty($opts['saveStrategy'])) {
             $this->saveStrategy($opts['saveStrategy']);

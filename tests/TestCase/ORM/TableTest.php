@@ -4126,6 +4126,7 @@ class TableTest extends TestCase
             ->setSource($authors)
             ->setStrategy('select')
             ->setSaveStrategy('append')
+            ->setThrough('author_articles')
             ->setJoinType('inner');
     }
 
