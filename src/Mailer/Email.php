@@ -1940,7 +1940,7 @@ class Email implements JsonSerializable, Serializable
                 if (is_file($file)) {
                     $cid = sha1($file);
                     $images['cid:' . $cid] = ['file' => $file, 'contentId' => $cid];
-                    $files['cid:' . $cid] = '~(<img[^>]*src\s*=\s*)(["\'])(cid://|file://|cid:|file:)' . $file . '\2~iU';
+                    $files['cid:' . $cid] = '~(<img[^>]*src\s*=\s*)(["\'])(cid://|file://|cid:|file:)' . preg_quote($file) . '\2~iU';
                     $cids['cid:' . $cid] = '\1\2cid:' . $cid . '\2';
                 }
             }
