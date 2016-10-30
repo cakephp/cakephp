@@ -1733,7 +1733,7 @@ class CakeEmail {
 				if (is_file($file)) {
 					$cid = sha1($file);
 					$images['cid:' . $cid] = array('file' => $file, 'contentId' => $cid);
-					$files['cid:' . $cid] = '~(<img[^>]*src\s*=\s*)(["\'])(cid://|file://|cid:|file:)' . str_replace('\\', '\\\\', $file) . '\2~iU';
+					$files['cid:' . $cid] = '~(<img[^>]*src\s*=\s*)(["\'])(cid://|file://|cid:|file:)' . preg_quote($file) . '\2~iU';
 					$cids['cid:' . $cid] = '\1\2cid:' . $cid . '\2';
 				}
 			}
