@@ -15,6 +15,8 @@
 namespace Cake\Auth;
 
 use Cake\Controller\ComponentRegistry;
+use Cake\Core\Configure;
+use Cake\Network\Exception\UnauthorizedException;
 use Cake\Network\Request;
 
 /**
@@ -69,11 +71,12 @@ class DigestAuthenticate extends BasicAuthenticate
      * Besides the keys specified in BaseAuthenticate::$_defaultConfig,
      * DigestAuthenticate uses the following extra keys:
      *
+     * - `secret` The secret to use for nonce validation. Defaults to Security.salt.
      * - `realm` The realm authentication is for, Defaults to the servername.
-     * - `nonce` A nonce used for authentication. Defaults to `uniqid()`.
      * - `qop` Defaults to 'auth', no other values are supported at this time.
      * - `opaque` A string that must be returned unchanged by clients.
      *    Defaults to `md5($config['realm'])`
+     * - `nonceLifetime` The number of seconds that nonces are valid for. Defaults to 300.
      *
      * @param \Cake\Controller\ComponentRegistry $registry The Component registry
      *   used on this request.
@@ -84,9 +87,10 @@ class DigestAuthenticate extends BasicAuthenticate
         $this->_registry = $registry;
 
         $this->config([
+            'nonceLifetime' => 300,
+            'secret' => Configure::read('Security.salt'),
             'realm' => null,
             'qop' => 'auth',
-            'nonce' => uniqid(''),
             'opaque' => null,
         ]);
 
@@ -108,6 +112,10 @@ class DigestAuthenticate extends BasicAuthenticate
 
         $user = $this->_findUser($digest['username']);
         if (empty($user)) {
+            return false;
+        }
+
+        if (!$this->validNonce($digest['nonce'])) {
             return false;
         }
 
@@ -215,15 +223,65 @@ class DigestAuthenticate extends BasicAuthenticate
         $options = [
             'realm' => $realm,
             'qop' => $this->_config['qop'],
-            'nonce' => $this->_config['nonce'],
+            'nonce' => $this->generateNonce(),
             'opaque' => $this->_config['opaque'] ?: md5($realm)
         ];
 
+        $digest = $this->_getDigest($request);
+        if ($digest && isset($digest['nonce'])) {
+            if (!$this->validNonce($digest['nonce'])) {
+                $options['stale'] = true;
+            }
+        }
+
         $opts = [];
         foreach ($options as $k => $v) {
-            $opts[] = sprintf('%s="%s"', $k, $v);
+            if (is_bool($v)) {
+                $v = $v ? 'true' : 'false';
+                $opts[] = sprintf('%s=%s', $k, $v);
+            } else {
+                $opts[] = sprintf('%s="%s"', $k, $v);
+            }
         }
 
         return 'WWW-Authenticate: Digest ' . implode(',', $opts);
+    }
+
+    /**
+     * Generate a nonce value that is validated in future requests.
+     *
+     * @return string
+     */
+    protected function generateNonce()
+    {
+        $expiryTime = microtime(true) + $this->config('nonceLifetime');
+        $signatureValue = md5($expiryTime . ':' . $this->config('secret'));
+        $nonceValue = $expiryTime . ':' . $signatureValue;
+
+        return base64_encode($nonceValue);
+    }
+
+    /**
+     * Check the nonce to ensure it is valid and not expired.
+     *
+     * @param string $nonce The nonce value to check.
+     * @return bool
+     */
+    protected function validNonce($nonce)
+    {
+        $value = base64_decode($nonce);
+        if ($value === false) {
+            return false;
+        }
+        $parts = explode(':', $value);
+        if (count($parts) !== 2) {
+            return false;
+        }
+        list($expires, $checksum) = $parts;
+        if ($expires < microtime(true)) {
+            return false;
+        }
+
+        return md5($expires . ':' . $this->config('secret')) === $checksum;
     }
 }
