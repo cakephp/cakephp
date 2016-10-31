@@ -55,7 +55,7 @@ class BoolTypeTest extends TestCase
     /**
      * Test converting an array to boolean results in an exception
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testToDatabaseInvalid()
@@ -67,7 +67,7 @@ class BoolTypeTest extends TestCase
     /**
      * Tests that passing an invalid value will throw an exception
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testToDatabaseInvalidArray()

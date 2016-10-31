@@ -917,7 +917,7 @@ class HashTest extends TestCase
     /**
      * Test passing invalid argument type
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Invalid data type, must be an array or \ArrayAccess instance.
      * @return void
      */

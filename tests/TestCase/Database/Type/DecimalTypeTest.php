@@ -105,7 +105,7 @@ class DecimalTypeTest extends TestCase
     /**
      * Arrays are invalid.
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testToDatabaseInvalid()
@@ -165,7 +165,7 @@ class DecimalTypeTest extends TestCase
     /**
      * Test that exceptions are raised on invalid parsers.
      *
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @return void
      */
     public function testUseLocaleParsingInvalid()
