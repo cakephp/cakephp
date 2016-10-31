@@ -23,6 +23,15 @@ use \PDO;
  */
 class IntegerTypeTest extends TestCase
 {
+    /**
+     * @var \Cake\Database\Type\IntegerType
+     */
+    public $type;
+
+    /**
+     * @var \Cake\Database\Driver
+     */
+    public $driver;
 
     /**
      * Setup
@@ -98,34 +107,34 @@ class IntegerTypeTest extends TestCase
      */
     public function testMarshal()
     {
-        $result = $this->type->marshal('some data', $this->driver);
+        $result = $this->type->marshal('some data');
         $this->assertNull($result);
 
-        $result = $this->type->marshal('', $this->driver);
+        $result = $this->type->marshal('');
         $this->assertNull($result);
 
-        $result = $this->type->marshal('0', $this->driver);
+        $result = $this->type->marshal('0');
         $this->assertSame(0, $result);
 
-        $result = $this->type->marshal('105', $this->driver);
+        $result = $this->type->marshal('105');
         $this->assertSame(105, $result);
 
-        $result = $this->type->marshal(105, $this->driver);
+        $result = $this->type->marshal(105);
         $this->assertSame(105, $result);
 
-        $result = $this->type->marshal('-105', $this->driver);
+        $result = $this->type->marshal('-105');
         $this->assertSame(-105, $result);
 
-        $result = $this->type->marshal(-105, $this->driver);
+        $result = $this->type->marshal(-105);
         $this->assertSame(-105, $result);
 
-        $result = $this->type->marshal('1.25', $this->driver);
+        $result = $this->type->marshal('1.25');
         $this->assertSame(1, $result);
 
-        $result = $this->type->marshal('2 monkeys', $this->driver);
+        $result = $this->type->marshal('2 monkeys');
         $this->assertNull($result);
 
-        $result = $this->type->marshal(['3', '4'], $this->driver);
+        $result = $this->type->marshal(['3', '4']);
         $this->assertSame(1, $result);
     }
 

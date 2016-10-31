@@ -23,6 +23,15 @@ use \PDO;
  */
 class UuidTypeTest extends TestCase
 {
+    /**
+     * @var \Cake\Database\Type\UuidType
+     */
+    public $type;
+
+    /**
+     * @var \Cake\Database\Driver
+     */
+    public $driver;
 
     /**
      * Setup

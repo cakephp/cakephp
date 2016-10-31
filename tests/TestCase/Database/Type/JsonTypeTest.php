@@ -23,6 +23,15 @@ use PDO;
  */
 class JsonTypeTest extends TestCase
 {
+    /**
+     * @var \Cake\Database\Type\JsonType
+     */
+    public $type;
+
+    /**
+     * @var \Cake\Database\Driver
+     */
+    public $driver;
 
     /**
      * Setup

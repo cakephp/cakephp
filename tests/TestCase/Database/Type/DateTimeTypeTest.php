@@ -23,6 +23,15 @@ use Cake\TestSuite\TestCase;
  */
 class DateTimeTypeTest extends TestCase
 {
+    /**
+     * @var \Cake\Database\Type\DateTimeType
+     */
+    public $type;
+
+    /**
+     * @var \Cake\Database\Driver
+     */
+    public $driver;
 
     /**
      * Original type map

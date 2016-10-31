@@ -25,6 +25,25 @@ use \PDO;
  */
 class DecimalTypeTest extends TestCase
 {
+    /**
+     * @var \Cake\Database\Type\DecimalType
+     */
+    public $type;
+
+    /**
+     * @var \Cake\Database\Driver
+     */
+    public $driver;
+
+    /**
+     * @var string
+     */
+    public $numberClass;
+
+    /**
+     * @var string
+     */
+    public $localeString;
 
     /**
      * Setup
@@ -36,10 +55,10 @@ class DecimalTypeTest extends TestCase
         parent::setUp();
         $this->type = Type::build('decimal');
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
-        $this->locale = I18n::locale();
+        $this->localeString = I18n::locale();
         $this->numberClass = DecimalType::$numberClass;
 
-        I18n::locale($this->locale);
+        I18n::locale($this->localeString);
     }
 
     /**
@@ -50,7 +69,7 @@ class DecimalTypeTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        I18n::locale($this->locale);
+        I18n::locale($this->localeString);
         DecimalType::$numberClass = $this->numberClass;
     }
 
@@ -120,19 +139,19 @@ class DecimalTypeTest extends TestCase
      */
     public function testMarshal()
     {
-        $result = $this->type->marshal('some data', $this->driver);
+        $result = $this->type->marshal('some data');
         $this->assertSame('some data', $result);
 
-        $result = $this->type->marshal('', $this->driver);
+        $result = $this->type->marshal('');
         $this->assertNull($result);
 
-        $result = $this->type->marshal('2.51', $this->driver);
+        $result = $this->type->marshal('2.51');
         $this->assertSame(2.51, $result);
 
-        $result = $this->type->marshal('3.5 bears', $this->driver);
+        $result = $this->type->marshal('3.5 bears');
         $this->assertSame('3.5 bears', $result);
 
-        $result = $this->type->marshal(['3', '4'], $this->driver);
+        $result = $this->type->marshal(['3', '4']);
         $this->assertSame(1, $result);
     }
 
