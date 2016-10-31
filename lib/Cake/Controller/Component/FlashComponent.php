@@ -38,6 +38,7 @@ class FlashComponent extends Component {
 		'key' => 'flash',
 		'element' => 'default',
 		'params' => array(),
+		'clear' => false
 	);
 
 /**
@@ -82,7 +83,10 @@ class FlashComponent extends Component {
 		}
 		$options['element'] = $plugin . 'Flash/' . $element;
 
-		$messages = CakeSession::read('Message.' . $options['key']);
+		$messages = array();
+		if ($options['clear'] === false) {
+			$messages = (array)CakeSession::read('Message.' . $options['key']);
+		}
 
 		$newMessage = array(
 			'message' => $message,

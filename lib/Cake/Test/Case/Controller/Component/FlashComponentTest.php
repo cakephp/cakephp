@@ -131,6 +131,20 @@ class FlashComponentTest extends CakeTestCase {
 		$result = CakeSession::read('Message.foobar');
 		$this->assertEquals($expected, $result);
 		CakeSession::delete('Message.foobar');
+
+		$this->Flash->set('This is the first message');
+		$this->Flash->set('This is the second message', array('clear' => true));
+		$expected = array(
+			array(
+				'message' => 'This is the second message',
+				'key' => 'flash',
+				'element' => 'Flash/default',
+				'params' => array()
+			)
+		);
+		$result = CakeSession::read('Message.flash');
+		$this->assertEquals($expected, $result);
+		CakeSession::delete('Message.flash');
 	}
 
 /**
