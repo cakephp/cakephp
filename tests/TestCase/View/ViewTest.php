@@ -401,7 +401,7 @@ class ViewTest extends TestCase
      * Test that plugin files with absolute file paths are scoped
      * to the plugin and do now allow any file path.
      *
-     * @expectedException Cake\View\Exception\MissingTemplateException
+     * @expectedException \Cake\View\Exception\MissingTemplateException
      * @return void
      */
     public function testPluginGetTemplateAbsoluteFail()

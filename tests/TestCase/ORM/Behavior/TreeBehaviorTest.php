@@ -889,7 +889,7 @@ class TreeBehaviorTest extends TestCase
     /**
      * Tests making a node its own parent as an existing entity
      *
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @expectedExceptionMessage Cannot set a node's parent as itself
      * @return void
      */
@@ -903,7 +903,7 @@ class TreeBehaviorTest extends TestCase
     /**
      * Tests making a node its own parent as a new entity.
      *
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @expectedExceptionMessage Cannot set a node's parent as itself
      * @return void
      */

@@ -326,7 +326,7 @@ class MarshallerTest extends TestCase
     /**
      * Test one() with an invalid association
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Cannot marshal data for "Derp" association. It is not associated with "Articles".
      * @return void
      */
@@ -1394,7 +1394,7 @@ class MarshallerTest extends TestCase
     /**
      * Test merge() with an invalid association
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Cannot marshal data for "Derp" association. It is not associated with "Articles".
      * @return void
      */

@@ -861,7 +861,7 @@ class QueryRegressionTest extends TestCase
      * Tests that trying to contain an inexistent association
      * throws an exception and not a fatal error.
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testQueryNotFatalError()
