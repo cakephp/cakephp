@@ -17,7 +17,7 @@ namespace Cake\ORM;
 use ArrayObject;
 use BadMethodCallException;
 use Cake\Core\App;
-use Cake\Database\Schema\Table as Schema;
+use Cake\Database\Schema\Schema;
 use Cake\Database\Type;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\EntityInterface;
@@ -176,7 +176,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * The schema object containing a description of this table fields
      *
-     * @var \Cake\Database\Schema\Table
+     * @var \Cake\Database\Schema\Schema
      */
     protected $_schema;
 
@@ -427,8 +427,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * If an array is passed, a new \Cake\Database\Schema\Table will be constructed
      * out of it and used as the schema for this table.
      *
-     * @param array|\Cake\Database\Schema\Table|null $schema New schema to be used for this table
-     * @return \Cake\Database\Schema\Table
+     * @param array|\Cake\Database\Schema\Schema|null $schema New schema to be used for this table
+     * @return \Cake\Database\Schema\Schema
      */
     public function schema($schema = null)
     {
@@ -472,19 +472,19 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ### Example:
      *
      * ```
-     * protected function _initializeSchema(\Cake\Database\Schema\Table $table) {
+     * protected function _initializeSchema(\Cake\Database\Schema\Schema $schema) {
      *  $table->columnType('preferences', 'json');
      *  return $table;
      * }
      * ```
      *
-     * @param \Cake\Database\Schema\Table $table The table definition fetched from database.
-     * @return \Cake\Database\Schema\Table the altered schema
+     * @param \Cake\Database\Schema\Schema $schema The table definition fetched from database.
+     * @return \Cake\Database\Schema\Schema the altered schema
      * @api
      */
-    protected function _initializeSchema(Schema $table)
+    protected function _initializeSchema(Schema $schema)
     {
-        return $table;
+        return $schema;
     }
 
     /**
