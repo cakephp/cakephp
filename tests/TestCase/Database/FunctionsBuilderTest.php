@@ -134,6 +134,19 @@ class FunctionsBuilderTest extends TestCase
     }
 
     /**
+     * Tests generating a GROUP_CONCAT() function
+     *
+     * @return void
+     */
+    public function testGroupConcat()
+    {
+        $function = $this->functions->groupConcat('title', ';');
+        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertEquals("GROUP_CONCAT(title SEPARATOR ';')", $function->sql(new ValueBinder));
+        $this->assertEquals('string', $function->returnType());
+    }
+
+    /**
      * Tests generating a COALESCE() function
      *
      * @return void

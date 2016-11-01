@@ -107,6 +107,18 @@ trait PostgresDialectTrait
                 // CONCAT function is expressed as exp1 || exp2
                 $expression->name('')->tieWith(' ||');
                 break;
+            case 'GROUP_CONCAT':
+                $expression
+                    ->name('array_to_string')
+                    ->iterateParts(function ($p, $key) use ($expression) {
+                        if ($key === 0) {
+                            return new FunctionExpression('array_agg', [$p => 'literal'], [], 'string');
+                        }
+
+                        return $p;
+                    })
+                    ->tieWith(',');
+                break;
             case 'DATEDIFF':
                 $expression
                     ->name('')

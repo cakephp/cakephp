@@ -211,12 +211,31 @@ trait SqlserverDialectTrait
      * @param \Cake\Database\Expression\FunctionExpression $expression The function expression to convert to TSQL.
      * @return void
      */
-    protected function _transformFunctionExpression(FunctionExpression $expression)
+    protected function _transformFunctionExpression(FunctionExpression $expression, Query $query)
     {
         switch ($expression->name()) {
             case 'CONCAT':
                 // CONCAT function is expressed as exp1 + exp2
                 $expression->name('')->tieWith(' +');
+                break;
+            case 'GROUP_CONCAT':
+                $expression
+                    ->name('')
+                    ->iterateParts(function ($p, $key) {
+                        return $key === 0 ? $p : null;
+                    });
+                $query->modifier(['_cake_groupconcat_query']);
+                $groupBy = $query->clause('group');
+                if (count($groupBy) === 0) {
+                    $groupBy = [$query->newExpr('(SELECT NULL)')];
+                }
+                $selectRank = $query->newExpr('DENSE_RANK() OVER')
+                    ->add('(ORDER BY')
+                    ->add($groupBy)
+                    ->add(')')
+                    ->tieWith('');
+                $query->select($selectRank)
+                    ->group([], true);
                 break;
             case 'DATEDIFF':
                 $hasDay = false;

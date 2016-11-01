@@ -15,6 +15,8 @@
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Core\Configure;
+use Cake\Database\Query;
+use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use \PDO;
 
@@ -236,5 +238,48 @@ class SqlserverTest extends TestCase
             ->values(['title' => 'A new article']);
         $expected = 'INSERT INTO articles (title) OUTPUT INSERTED.* VALUES (:c0)';
         $this->assertEquals($expected, $query->sql());
+    }
+
+    /**
+     * Tests that GROUP_CONCAT is transformed correctly
+     *
+     * @return void
+     */
+    public function testGroupConcatTransform()
+    {
+        $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+            ->setMethods(['_connect', '_version'])
+            ->getMock();
+        $connection = $this
+            ->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection
+            ->expects($this->any())
+            ->method('driver')
+            ->will($this->returnValue($driver));
+
+        $query = new Query($connection);
+        $query->select([$query->func()->groupConcat('title')])
+            ->from('articles')
+            ->group('id');
+        $translator = $driver->queryTranslator('select');
+        $query = $translator($query);
+        $this->assertEquals(";with cte(expr, rank) as (SELECT ((title)), ((DENSE_RANK() OVER  (ORDER BY  id  ))) FROM articles)
+select stuff((select ',' + expr from cte
+    where rank = [outer].rank for xml path(''), type).value('.[1]', 'varchar(max)'), 1, 1, '')
+from cte [outer] group by rank", $query->sql());
+        
+        $query = new Query($connection);
+        $query->select([$query->func()->groupConcat('title')])
+            ->from('articles');
+        $translator = $driver->queryTranslator('select');
+        $query = $translator($query);
+        $this->assertEquals(";with cte(expr, rank) as (SELECT ((title)), ((DENSE_RANK() OVER  (ORDER BY  (SELECT NULL)  ))) FROM articles)
+select stuff((select ',' + expr from cte
+    where rank = [outer].rank for xml path(''), type).value('.[1]', 'varchar(max)'), 1, 1, '')
+from cte [outer] group by rank", $query->sql());
     }
 }

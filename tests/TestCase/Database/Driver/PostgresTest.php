@@ -14,6 +14,8 @@
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Database\Query;
+use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use \PDO;
 
@@ -170,5 +172,38 @@ class PostgresTest extends TestCase
             ->epilog('FOO');
         $query = $translator($query);
         $this->assertEquals('FOO', $query->clause('epilog'));
+    }
+
+    /**
+     * Tests that GROUP_CONCAT is transformed correctly
+     *
+     * @return void
+     */
+    public function testGroupConcatTransform()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
+            ->setMethods(['_connect'])
+            ->getMock();
+        $connection = $this
+            ->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $query = new Query($connection);
+        $query->select([$query->func()->groupConcat('title')])
+            ->from('articles')
+            ->group('id');
+        $translator = $driver->queryTranslator('select');
+        $query = $translator($query);
+        $this->assertEquals('array_to_string((array_agg(title)), \',\')', $query->clause('select')[0]->sql(new ValueBinder));
+
+        $query = new Query($connection);
+        $query->select([$query->func()->groupConcat('title', '!')])
+            ->from('articles')
+            ->group('id');
+        $translator = $driver->queryTranslator('select');
+        $query = $translator($query);
+        $this->assertEquals('array_to_string((array_agg(title)), \'!\')', $query->clause('select')[0]->sql(new ValueBinder));
     }
 }
