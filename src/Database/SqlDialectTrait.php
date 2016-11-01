@@ -208,7 +208,7 @@ trait SqlDialectTrait
      */
     protected function _removeAliasesFromConditions($query)
     {
-        if (!empty($query->clause('join'))) {
+        if ($query->clause('join')) {
             throw new \RuntimeException(
                 'Aliases are being removed from conditions for UPDATE/DELETE queries, ' .
                 'this can break references to joined tables.'
