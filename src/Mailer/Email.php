@@ -1177,6 +1177,9 @@ class Email implements JsonSerializable, Serializable
                     $name = basename($fileInfo['file']);
                 }
             }
+            if (!isset($fileInfo['mimetype']) && function_exists('mime_content_type')) {
+                $fileInfo['mimetype'] = mime_content_type($fileInfo['file']);
+            }
             if (!isset($fileInfo['mimetype'])) {
                 $fileInfo['mimetype'] = 'application/octet-stream';
             }
