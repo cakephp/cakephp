@@ -245,7 +245,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         $this->setRequest($request !== null ? $request : new Request);
-        $this->response = $response !== null ? $response : new Response;
+        $this->response = $response !== null ? $response : new Response();
 
         if ($eventManager !== null) {
             $this->eventManager($eventManager);

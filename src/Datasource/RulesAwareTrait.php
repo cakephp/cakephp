@@ -49,7 +49,7 @@ trait RulesAwareTrait
     public function checkRules(EntityInterface $entity, $operation = RulesChecker::CREATE, $options = null)
     {
         $rules = $this->rulesChecker();
-        $options = $options ?: new ArrayObject;
+        $options = $options ?: new ArrayObject();
         $options = is_array($options) ? new ArrayObject($options) : $options;
         $hasEvents = ($this instanceof EventDispatcherInterface);
 

@@ -2684,8 +2684,8 @@ class FormHelperTest extends TestCase
      */
     public function testFormValidationMultiRecord()
     {
-        $one = new Entity;
-        $two = new Entity;
+        $one = new Entity();
+        $two = new Entity();
         TableRegistry::get('Contacts', [
             'className' => __NAMESPACE__ . '\ContactsTable'
         ]);
