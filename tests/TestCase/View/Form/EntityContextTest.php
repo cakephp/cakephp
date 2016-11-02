@@ -171,7 +171,7 @@ class EntityContextTest extends TestCase
     public function testDefaultEntityError()
     {
         $context = new EntityContext($this->request, [
-            'entity' => new \Cake\ORM\Entity,
+            'entity' => new Entity,
         ]);
     }
 

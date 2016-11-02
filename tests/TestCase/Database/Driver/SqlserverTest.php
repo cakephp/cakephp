@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
-use Cake\Core\Configure;
+use Cake\Database\Query;
 use Cake\TestSuite\TestCase;
 use \PDO;
 
@@ -119,14 +119,14 @@ class SqlserverTest extends TestCase
             ->method('driver')
             ->will($this->returnValue($driver));
 
-        $query = new \Cake\Database\Query($connection);
+        $query = new Query($connection);
         $query->select(['id', 'title'])
             ->from('articles')
             ->order(['id'])
             ->offset(10);
         $this->assertEquals('SELECT id, title FROM articles ORDER BY id OFFSET 10 ROWS', $query->sql());
 
-        $query = new \Cake\Database\Query($connection);
+        $query = new Query($connection);
         $query->select(['id', 'title'])
             ->from('articles')
             ->order(['id'])
@@ -134,13 +134,13 @@ class SqlserverTest extends TestCase
             ->offset(50);
         $this->assertEquals('SELECT id, title FROM articles ORDER BY id OFFSET 50 ROWS FETCH FIRST 10 ROWS ONLY', $query->sql());
 
-        $query = new \Cake\Database\Query($connection);
+        $query = new Query($connection);
         $query->select(['id', 'title'])
             ->from('articles')
             ->offset(10);
         $this->assertEquals('SELECT id, title FROM articles ORDER BY (SELECT NULL) OFFSET 10 ROWS', $query->sql());
 
-        $query = new \Cake\Database\Query($connection);
+        $query = new Query($connection);
         $query->select(['id', 'title'])
             ->from('articles')
             ->limit(10);
@@ -172,14 +172,14 @@ class SqlserverTest extends TestCase
             ->method('driver')
             ->will($this->returnValue($driver));
 
-        $query = new \Cake\Database\Query($connection);
+        $query = new Query($connection);
         $query->select(['id', 'title'])
             ->from('articles')
             ->limit(10);
         $expected = 'SELECT TOP 10 id, title FROM articles';
         $this->assertEquals($expected, $query->sql());
 
-        $query = new \Cake\Database\Query($connection);
+        $query = new Query($connection);
         $query->select(['id', 'title'])
             ->from('articles')
             ->offset(10);
@@ -188,7 +188,7 @@ class SqlserverTest extends TestCase
             'WHERE _cake_paging_._cake_page_rownum_ > 10';
         $this->assertEquals($expected, $query->sql());
 
-        $query = new \Cake\Database\Query($connection);
+        $query = new Query($connection);
         $query->select(['id', 'title'])
             ->from('articles')
             ->order(['id'])
@@ -198,7 +198,7 @@ class SqlserverTest extends TestCase
             'WHERE _cake_paging_._cake_page_rownum_ > 10';
         $this->assertEquals($expected, $query->sql());
 
-        $query = new \Cake\Database\Query($connection);
+        $query = new Query($connection);
         $query->select(['id', 'title'])
             ->from('articles')
             ->order(['id'])
@@ -230,7 +230,7 @@ class SqlserverTest extends TestCase
             ->expects($this->any())
             ->method('driver')
             ->will($this->returnValue($driver));
-        $query = new \Cake\Database\Query($connection);
+        $query = new Query($connection);
         $query->insert(['title'])
             ->into('articles')
             ->values(['title' => 'A new article']);
