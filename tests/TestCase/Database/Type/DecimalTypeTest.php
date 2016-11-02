@@ -18,7 +18,7 @@ use Cake\Database\Type;
 use Cake\Database\Type\DecimalType;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
-use \PDO;
+use PDO;
 
 /**
  * Test for the Decimal type.
