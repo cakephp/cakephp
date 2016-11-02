@@ -283,7 +283,10 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         $fields = array_keys($values);
         $noFields = empty($fields);
 
-        if ($noFields && $noBundled) {
+        // If there are no fields and no bundled translations, or both fields
+        // in the default locale and bundled translations we can
+        // skip the remaining logic as its not necessary.
+        if ($noFields && $noBundled || ($fields && $bundled)) {
             return;
         }
 
