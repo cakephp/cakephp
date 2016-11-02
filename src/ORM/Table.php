@@ -17,7 +17,7 @@ namespace Cake\ORM;
 use ArrayObject;
 use BadMethodCallException;
 use Cake\Core\App;
-use Cake\Database\Schema\Schema;
+use Cake\Database\Schema\TableSchema;
 use Cake\Database\Type;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\EntityInterface;
@@ -176,7 +176,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * The schema object containing a description of this table fields
      *
-     * @var \Cake\Database\Schema\Schema
+     * @var \Cake\Database\Schema\TableSchema
      */
     protected $_schema;
 
@@ -232,7 +232,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * - connection: The connection instance to use
      * - entityClass: The fully namespaced class name of the entity class that will
      *   represent rows in this table.
-     * - schema: A \Cake\Database\Schema\Table object or an array that can be
+     * - schema: A \Cake\Database\Schema\TableSchema object or an array that can be
      *   passed to it.
      * - eventManager: An instance of an event manager to use for internal events
      * - behaviors: A BehaviorRegistry. Generally not used outside of tests.
@@ -421,14 +421,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the schema table object describing this table's properties.
      *
-     * If an \Cake\Database\Schema\Table is passed, it will be used for this table
+     * If a TableSchema is passed, it will be used for this table
      * instead of the default one.
      *
-     * If an array is passed, a new \Cake\Database\Schema\Table will be constructed
+     * If an array is passed, a new TableSchema will be constructed
      * out of it and used as the schema for this table.
      *
-     * @param array|\Cake\Database\Schema\Schema|null $schema New schema to be used for this table
-     * @return \Cake\Database\Schema\Schema
+     * @param array|\Cake\Database\Schema\TableSchema|null $schema New schema to be used for this table
+     * @return \Cake\Database\Schema\TableSchema
      */
     public function schema($schema = null)
     {
@@ -452,7 +452,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 unset($schema['_constraints']);
             }
 
-            $schema = new Schema($this->table(), $schema);
+            $schema = new TableSchema($this->table(), $schema);
 
             foreach ($constraints as $name => $value) {
                 $schema->addConstraint($name, $value);
@@ -478,11 +478,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * }
      * ```
      *
-     * @param \Cake\Database\Schema\Schema $schema The table definition fetched from database.
-     * @return \Cake\Database\Schema\Schema the altered schema
+     * @param \Cake\Database\Schema\TableSchema $schema The table definition fetched from database.
+     * @return \Cake\Database\Schema\TableSchema the altered schema
      * @api
      */
-    protected function _initializeSchema(Schema $schema)
+    protected function _initializeSchema(TableSchema $schema)
     {
         return $schema;
     }

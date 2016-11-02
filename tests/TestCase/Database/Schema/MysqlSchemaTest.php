@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\Database\Schema;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\MysqlSchema;
-use Cake\Database\Schema\Table;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -105,19 +105,19 @@ class MysqlSchemaTest extends TestCase
             ],
             [
                 'TINYTEXT',
-                ['type' => 'text', 'length' => Table::LENGTH_TINY]
+                ['type' => 'text', 'length' => TableSchema::LENGTH_TINY]
             ],
             [
                 'MEDIUMTEXT',
-                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM]
+                ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM]
             ],
             [
                 'LONGTEXT',
-                ['type' => 'text', 'length' => Table::LENGTH_LONG]
+                ['type' => 'text', 'length' => TableSchema::LENGTH_LONG]
             ],
             [
                 'TINYBLOB',
-                ['type' => 'binary', 'length' => Table::LENGTH_TINY]
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_TINY]
             ],
             [
                 'BLOB',
@@ -125,11 +125,11 @@ class MysqlSchemaTest extends TestCase
             ],
             [
                 'MEDIUMBLOB',
-                ['type' => 'binary', 'length' => Table::LENGTH_MEDIUM]
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_MEDIUM]
             ],
             [
                 'LONGBLOB',
-                ['type' => 'binary', 'length' => Table::LENGTH_LONG]
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG]
             ],
             [
                 'FLOAT',
@@ -200,7 +200,7 @@ class MysqlSchemaTest extends TestCase
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')->getMock();
         $dialect = new MysqlSchema($driver);
 
-        $table = $this->getMockBuilder('Cake\Database\Schema\Table')
+        $table = $this->getMockBuilder(TableSchema::class)
             ->setConstructorArgs(['table'])
             ->getMock();
         $table->expects($this->at(0))->method('addColumn')->with('field', $expected);
@@ -513,17 +513,17 @@ SQL;
             ],
             [
                 'body',
-                ['type' => 'text', 'length' => Table::LENGTH_TINY, 'null' => false],
+                ['type' => 'text', 'length' => TableSchema::LENGTH_TINY, 'null' => false],
                 '`body` TINYTEXT NOT NULL'
             ],
             [
                 'body',
-                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM, 'null' => false],
+                ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM, 'null' => false],
                 '`body` MEDIUMTEXT NOT NULL'
             ],
             [
                 'body',
-                ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
+                ['type' => 'text', 'length' => TableSchema::LENGTH_LONG, 'null' => false],
                 '`body` LONGTEXT NOT NULL'
             ],
             [
@@ -539,17 +539,17 @@ SQL;
             ],
             [
                 'body',
-                ['type' => 'binary', 'length' => Table::LENGTH_TINY, 'null' => false],
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_TINY, 'null' => false],
                 '`body` TINYBLOB NOT NULL'
             ],
             [
                 'body',
-                ['type' => 'binary', 'length' => Table::LENGTH_MEDIUM, 'null' => false],
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_MEDIUM, 'null' => false],
                 '`body` MEDIUMBLOB NOT NULL'
             ],
             [
                 'body',
-                ['type' => 'binary', 'length' => Table::LENGTH_LONG, 'null' => false],
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG, 'null' => false],
                 '`body` LONGBLOB NOT NULL'
             ],
             // Integers
@@ -673,7 +673,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new MysqlSchema($driver);
 
-        $table = (new Table('articles'))->addColumn($name, $data);
+        $table = (new TableSchema('articles'))->addColumn($name, $data);
         $this->assertEquals($expected, $schema->columnSql($table, $name));
     }
 
@@ -747,7 +747,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new MysqlSchema($driver);
 
-        $table = (new Table('articles'))->addColumn('title', [
+        $table = (new TableSchema('articles'))->addColumn('title', [
             'type' => 'string',
             'length' => 255
         ])->addColumn('author_id', [
@@ -788,7 +788,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new MysqlSchema($driver);
 
-        $table = (new Table('articles'))->addColumn('title', [
+        $table = (new TableSchema('articles'))->addColumn('title', [
             'type' => 'string',
             'length' => 255
         ])->addColumn('author_id', [
@@ -812,7 +812,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('posts'))
+        $table = (new TableSchema('posts'))
             ->addColumn('author_id', [
                 'type' => 'integer',
                 'null' => false
@@ -863,7 +863,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('posts'))
+        $table = (new TableSchema('posts'))
             ->addColumn('author_id', [
                 'type' => 'integer',
                 'null' => false
@@ -910,7 +910,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new MysqlSchema($driver);
 
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('id', [
                 'type' => 'integer',
                 'null' => false,
@@ -922,7 +922,7 @@ SQL;
         $result = $schema->columnSql($table, 'id');
         $this->assertEquals($result, '`id` INTEGER NOT NULL AUTO_INCREMENT');
 
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('id', [
                 'type' => 'biginteger',
                 'null' => false
@@ -954,7 +954,7 @@ SQL;
             ->method('getAttribute')
             ->will($this->returnValue('5.6.0'));
 
-        $table = (new Table('posts'))->addColumn('id', [
+        $table = (new TableSchema('posts'))->addColumn('id', [
                 'type' => 'integer',
                 'null' => false
             ])
@@ -1024,7 +1024,7 @@ SQL;
             ->method('getAttribute')
             ->will($this->returnValue('5.7.0'));
 
-        $table = (new Table('posts'))->addColumn('id', [
+        $table = (new TableSchema('posts'))->addColumn('id', [
                 'type' => 'integer',
                 'null' => false
             ])
@@ -1066,7 +1066,7 @@ SQL;
             ->getMock();
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
-        $table = (new Table('schema_articles'))->addColumn('id', [
+        $table = (new TableSchema('schema_articles'))->addColumn('id', [
             'type' => 'integer',
             'null' => false
         ]);
@@ -1089,7 +1089,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('articles_tags'))
+        $table = (new TableSchema('articles_tags'))
             ->addColumn('article_id', [
                 'type' => 'integer',
                 'null' => false
@@ -1114,7 +1114,7 @@ SQL;
         $this->assertCount(1, $result);
         $this->assertTextEquals($expected, $result[0]);
 
-        $table = (new Table('composite_key'))
+        $table = (new TableSchema('composite_key'))
             ->addColumn('id', [
                 'type' => 'integer',
                 'null' => false,
@@ -1155,7 +1155,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $result = $table->dropSql($connection);
         $this->assertCount(1, $result);
         $this->assertEquals('DROP TABLE `articles`', $result[0]);
@@ -1175,7 +1175,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $result = $table->truncateSql($connection);
         $this->assertCount(1, $result);
         $this->assertEquals('TRUNCATE TABLE `articles`', $result[0]);

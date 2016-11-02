@@ -31,7 +31,7 @@ use Cake\Utility\Hash;
  * - `required` A nested array of fields, relationships and boolean
  *   flags to indicate a field is required.
  * - `schema` An array of data that emulate the column structures that
- *   Cake\Database\Schema\Table uses. This array allows you to control
+ *   Cake\Database\Schema\Schema uses. This array allows you to control
  *   the inferred type for fields and allows auto generation of attributes
  *   like maxlength, step and other HTML attributes. If you want
  *   primary key/id detection to work. Make sure you have provided a `_constraints`
