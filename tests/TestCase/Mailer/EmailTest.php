@@ -763,7 +763,7 @@ class EmailTest extends TestCase
         $expected = [
             'basics.php' => [
                 'file' => CAKE . 'basics.php',
-                'mimetype' => 'application/octet-stream'
+                'mimetype' => 'text/x-php'
             ]
         ];
         $this->assertSame($expected, $this->CakeEmail->attachments());
@@ -782,9 +782,9 @@ class EmailTest extends TestCase
         ]);
         $expected = [
             'basics.php' => ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain'],
-            'bootstrap.php' => ['file' => CORE_PATH . 'config' . DS . 'bootstrap.php', 'mimetype' => 'application/octet-stream'],
-            'other.txt' => ['file' => CORE_PATH . 'config' . DS . 'bootstrap.php', 'mimetype' => 'application/octet-stream'],
-            'license' => ['file' => CORE_PATH . 'LICENSE.txt', 'mimetype' => 'application/octet-stream']
+            'bootstrap.php' => ['file' => CORE_PATH . 'config' . DS . 'bootstrap.php', 'mimetype' => 'text/x-php'],
+            'other.txt' => ['file' => CORE_PATH . 'config' . DS . 'bootstrap.php', 'mimetype' => 'text/x-php'],
+            'license' => ['file' => CORE_PATH . 'LICENSE.txt', 'mimetype' => 'text/plain']
         ];
         $this->assertSame($expected, $this->CakeEmail->attachments());
 
@@ -1207,7 +1207,7 @@ class EmailTest extends TestCase
             "\r\n" .
             "--$boundary\r\n" .
             "Content-Disposition: attachment; filename=\"basics.php\"\r\n" .
-            "Content-Type: application/octet-stream\r\n" .
+            "Content-Type: text/x-php\r\n" .
             "Content-Transfer-Encoding: base64\r\n" .
             "\r\n";
         $this->assertContains($expected, $result['message']);
@@ -1291,7 +1291,7 @@ class EmailTest extends TestCase
             "\r\n" .
             "--$boundary\r\n" .
             "Content-Disposition: attachment; filename=\"VERSION.txt\"\r\n" .
-            "Content-Type: application/octet-stream\r\n" .
+            "Content-Type: text/plain\r\n" .
             "Content-Transfer-Encoding: base64\r\n" .
             "\r\n";
         $this->assertContains($expected, $result['message']);
@@ -1345,7 +1345,7 @@ class EmailTest extends TestCase
             "\r\n" .
             "--rel-$boundary\r\n" .
             "Content-Disposition: inline; filename=\"cake.png\"\r\n" .
-            "Content-Type: application/octet-stream\r\n" .
+            "Content-Type: text/plain\r\n" .
             "Content-Transfer-Encoding: base64\r\n" .
             "Content-ID: <abc123>\r\n" .
             "\r\n";
@@ -1389,7 +1389,7 @@ class EmailTest extends TestCase
             "\r\n" .
             "--rel-$boundary\r\n" .
             "Content-Disposition: inline; filename=\"cake.png\"\r\n" .
-            "Content-Type: application/octet-stream\r\n" .
+            "Content-Type: text/plain\r\n" .
             "Content-Transfer-Encoding: base64\r\n" .
             "Content-ID: <abc123>\r\n" .
             "\r\n";
@@ -1429,7 +1429,7 @@ class EmailTest extends TestCase
             "\r\n" .
             "\r\n" .
             "--{$boundary}\r\n" .
-            "Content-Type: application/octet-stream\r\n" .
+            "Content-Type: text/plain\r\n" .
             "Content-Transfer-Encoding: base64\r\n" .
             "\r\n";
 
@@ -1872,14 +1872,14 @@ class EmailTest extends TestCase
         $this->CakeEmail->attachments([CAKE . 'basics.php']);
         $result = $this->CakeEmail->send('body');
         $expected = "Content-Disposition: attachment; filename=\"basics.php\"\r\n" .
-            "Content-Type: application/octet-stream\r\n" .
+            "Content-Type: text/x-php\r\n" .
             "Content-Transfer-Encoding: base64\r\n";
         $this->assertContains($expected, $result['message']);
 
         $this->CakeEmail->attachments(['my.file.txt' => CAKE . 'basics.php']);
         $result = $this->CakeEmail->send('body');
         $expected = "Content-Disposition: attachment; filename=\"my.file.txt\"\r\n" .
-            "Content-Type: application/octet-stream\r\n" .
+            "Content-Type: text/x-php\r\n" .
             "Content-Transfer-Encoding: base64\r\n";
         $this->assertContains($expected, $result['message']);
 
@@ -2785,7 +2785,7 @@ XML;
             '_attachments' => [
                 'test.txt' => [
                     'data' => $encode(TEST_APP . 'config' . DS . 'empty.ini'),
-                    'mimetype' => 'application/octet-stream'
+                    'mimetype' => 'text/plain'
                 ],
                 'image' => [
                     'data' => $encode(TEST_APP . 'webroot' . DS . 'img' . DS . 'cake.icon.png'),
