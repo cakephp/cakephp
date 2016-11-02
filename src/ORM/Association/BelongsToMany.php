@@ -818,7 +818,7 @@ class BelongsToMany extends Association
             return true;
         }
 
-        $storage = new SplObjectStorage;
+        $storage = new SplObjectStorage();
         foreach ($targetEntities as $e) {
             $storage->attach($e);
         }
