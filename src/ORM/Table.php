@@ -473,8 +473,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * ```
      * protected function _initializeSchema(\Cake\Database\Schema\Schema $schema) {
-     *  $table->columnType('preferences', 'json');
-     *  return $table;
+     *  $schema->columnType('preferences', 'json');
+     *  return $schema;
      * }
      * ```
      *
