@@ -326,9 +326,9 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function columnSql(Table $table, $name)
+    public function columnSql(Table $schema, $name)
     {
-        $data = $table->column($name);
+        $data = $schema->column($name);
         $out = $this->_driver->quoteIdentifier($name);
         $typeMap = [
             'integer' => ' INTEGER',
@@ -349,7 +349,7 @@ class SqlserverSchema extends BaseSchema
         }
 
         if ($data['type'] === 'integer' || $data['type'] === 'biginteger') {
-            if ([$name] === $table->primaryKey() || $data['autoIncrement'] === true) {
+            if ([$name] === $schema->primaryKey() || $data['autoIncrement'] === true) {
                 unset($data['null'], $data['default']);
                 $out .= ' IDENTITY(1, 1)';
             }
@@ -418,16 +418,16 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function addConstraintSql(Table $table)
+    public function addConstraintSql(Table $schema)
     {
         $sqlPattern = 'ALTER TABLE %s ADD %s;';
         $sql = [];
 
-        foreach ($table->constraints() as $name) {
-            $constraint = $table->constraint($name);
+        foreach ($schema->constraints() as $name) {
+            $constraint = $schema->constraint($name);
             if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
-                $tableName = $this->_driver->quoteIdentifier($table->name());
-                $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($table, $name));
+                $tableName = $this->_driver->quoteIdentifier($schema->name());
+                $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($schema, $name));
             }
         }
 
@@ -476,9 +476,9 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function constraintSql(Table $table, $name)
+    public function constraintSql(Table $schema, $name)
     {
-        $data = $table->constraint($name);
+        $data = $schema->constraint($name);
         $out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
         if ($data['type'] === Table::CONSTRAINT_PRIMARY) {
             $out = 'PRIMARY KEY';
@@ -520,11 +520,11 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function createTableSql(Table $table, $columns, $constraints, $indexes)
+    public function createTableSql(Table $schema, $columns, $constraints, $indexes)
     {
         $content = array_merge($columns, $constraints);
         $content = implode(",\n", array_filter($content));
-        $tableName = $this->_driver->quoteIdentifier($table->name());
+        $tableName = $this->_driver->quoteIdentifier($schema->name());
         $out = [];
         $out[] = sprintf("CREATE TABLE %s (\n%s\n)", $tableName, $content);
         foreach ($indexes as $index) {

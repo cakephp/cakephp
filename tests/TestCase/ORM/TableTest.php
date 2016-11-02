@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Database\Exception;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Schema\TableSchema;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
@@ -325,7 +326,7 @@ class TableTest extends TestCase
         $schema = ['id' => ['type' => 'integer']];
         $table->schema($schema);
         $this->assertEquals(
-            new \Cake\Database\Schema\Table('another', $schema),
+            new TableSchema('another', $schema),
             $table->schema()
         );
     }
