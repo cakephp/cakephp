@@ -262,7 +262,7 @@ abstract class Association
     /**
      * Sets the name for this association.
      *
-     * @deprecated Use setName()/getName() instead.
+     * @deprecated 3.4.0 Use setName()/getName() instead.
      * @param string|null $name Name to be assigned
      * @return string
      */
@@ -302,7 +302,7 @@ abstract class Association
      * Sets whether or not cascaded deletes should also fire callbacks. If no
      * arguments are passed, the current configured value is returned
      *
-     * @deprecated Use setCascadeCallbacks()/getCascadeCallbacks() instead.
+     * @deprecated 3.4.0 Use setCascadeCallbacks()/getCascadeCallbacks() instead.
      * @param bool|null $cascadeCallbacks cascade callbacks switch value
      * @return bool
      */
@@ -352,7 +352,7 @@ abstract class Association
      * Sets the table instance for the source side of the association. If no arguments
      * are passed, the current configured table instance is returned
      *
-     * @deprecated Use setSource()/getSource() instead.
+     * @deprecated 3.4.0 Use setSource()/getSource() instead.
      * @param \Cake\ORM\Table|null $table the instance to be assigned as source side
      * @return \Cake\ORM\Table
      */
@@ -409,7 +409,7 @@ abstract class Association
      * Sets the table instance for the target side of the association. If no arguments
      * are passed, the current configured table instance is returned
      *
-     * @deprecated Use setTable()/getTable() instead.
+     * @deprecated 3.4.0 Use setTable()/getTable() instead.
      * @param \Cake\ORM\Table|null $table the instance to be assigned as target side
      * @return \Cake\ORM\Table
      */
@@ -453,7 +453,7 @@ abstract class Association
      * Sets a list of conditions to be always included when fetching records from
      * the target association. If no parameters are passed the current list is returned
      *
-     * @deprecated Use setConditions()/getConditions() instead.
+     * @deprecated 3.4.0 Use setConditions()/getConditions() instead.
      * @param array|null $conditions list of conditions to be used
      * @see \Cake\Database\Query::where() for examples on the format of the array
      * @return array
@@ -504,7 +504,7 @@ abstract class Association
      *
      * If no parameters are passed the current field is returned
      *
-     * @deprecated Use setBindingKey()/getBindingKey() instead.
+     * @deprecated 3.4.0 Use setBindingKey()/getBindingKey() instead.
      * @param string|null $key the table field to be used to link both tables together
      * @return string|array
      */
@@ -544,7 +544,7 @@ abstract class Association
      * Sets the name of the field representing the foreign key to the target table.
      * If no parameters are passed the current field is returned
      *
-     * @deprecated Use setForeignKey()/getForeignKey() instead.
+     * @deprecated 3.4.0 Use setForeignKey()/getForeignKey() instead.
      * @param string|null $key the key to be used to link both tables together
      * @return string|array
      */
@@ -596,7 +596,7 @@ abstract class Association
      *
      * If no parameters are passed the current setting is returned.
      *
-     * @deprecated Use setDependent()/getDependent() instead.
+     * @deprecated 3.4.0 Use setDependent()/getDependent() instead.
      * @param bool|null $dependent Set the dependent mode. Use null to read the current state.
      * @return bool
      */
@@ -649,7 +649,7 @@ abstract class Association
      * Sets the type of join to be used when adding the association to a query.
      * If no arguments are passed, the currently configured type is returned.
      *
-     * @deprecated Use setJoinType()/getJoinType() instead.
+     * @deprecated 3.4.0 Use setJoinType()/getJoinType() instead.
      * @param string|null $type the join type to be used (e.g. INNER)
      * @return string
      */
@@ -704,7 +704,7 @@ abstract class Association
      * in the source table record.
      * If no arguments are passed, the currently configured type is returned.
      *
-     * @deprecated Use setProperty()/getProperty() instead.
+     * @deprecated 3.4.0 Use setProperty()/getProperty() instead.
      * @param string|null $name The name of the association property. Use null to read the current value.
      * @return string
      */
@@ -768,7 +768,7 @@ abstract class Association
      * rendering any changes to this setting void.
      * If no arguments are passed, the currently configured strategy is returned.
      *
-     * @deprecated Use setStrategy()/getStrategy() instead.
+     * @deprecated 3.4.0 Use setStrategy()/getStrategy() instead.
      * @param string|null $name The strategy type. Use null to read the current value.
      * @return string
      * @throws \InvalidArgumentException When an invalid strategy is provided.
@@ -810,7 +810,7 @@ abstract class Association
      * If no parameters are passed, it will return the currently configured
      * finder name.
      *
-     * @deprecated Use setFinder()/getFinder() instead.
+     * @deprecated 3.4.0 Use setFinder()/getFinder() instead.
      * @param string|null $finder the finder name to use
      * @return string
      */

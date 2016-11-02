@@ -59,7 +59,7 @@ class HasOne extends Association
      * Sets the name of the field representing the foreign key to the target table.
      * If no parameters are passed current field is returned
      *
-     * @deprecated Use setForeignKey()/getForeignKey() instead.
+     * @deprecated 3.4.0 Use setForeignKey()/getForeignKey() instead.
      * @param string|null $key the key to be used to link both tables together
      * @return string
      */

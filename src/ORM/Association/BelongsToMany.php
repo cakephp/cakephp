@@ -187,7 +187,7 @@ class BelongsToMany extends Association
      * Sets the name of the field representing the foreign key to the target table.
      * If no parameters are passed current field is returned
      *
-     * @deprecated Use setTargetForeignKey()/getTargetForeignKey() instead.
+     * @deprecated 3.4.0 Use setTargetForeignKey()/getTargetForeignKey() instead.
      * @param string|null $key the key to be used to link both tables together
      * @return string
      */
@@ -647,7 +647,7 @@ class BelongsToMany extends Association
      * Sets the strategy that should be used for saving. If called with no
      * arguments, it will return the currently configured strategy
      *
-     * @deprecated Use setSaveStrategy()/getSaveStrategy() instead.
+     * @deprecated 3.4.0 Use setSaveStrategy()/getSaveStrategy() instead.
      * @param string|null $strategy the strategy name to be used
      * @throws \InvalidArgumentException if an invalid strategy name is passed
      * @return string the strategy to be used for saving
@@ -970,7 +970,7 @@ class BelongsToMany extends Association
 
     /**
      * {@inheritDoc}
-     * @deprecated Use setConditions()/getConditions() instead.
+     * @deprecated 3.4.0 Use setConditions()/getConditions() instead.
      */
     public function conditions($conditions = null)
     {

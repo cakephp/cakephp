@@ -134,7 +134,7 @@ class HasMany extends Association
      * Sets the strategy that should be used for saving. If called with no
      * arguments, it will return the currently configured strategy
      *
-     * @deprecated Use setSaveStrategy()/getSaveStrategy() instead.
+     * @deprecated 3.4.0 Use setSaveStrategy()/getSaveStrategy() instead.
      * @param string|null $strategy the strategy name to be used
      * @throws \InvalidArgumentException if an invalid strategy name is passed
      * @return string the strategy to be used for saving
@@ -565,7 +565,7 @@ class HasMany extends Association
      * Sets the name of the field representing the foreign key to the source table.
      * If no parameters are passed current field is returned
      *
-     * @deprecated Use setForeignKey()/getForeignKey() instead.
+     * @deprecated 3.4.0 Use setForeignKey()/getForeignKey() instead.
      * @param string|null $key the key to be used to link both tables together
      * @return string
      */
@@ -605,7 +605,7 @@ class HasMany extends Association
      * Sets the sort order in which target records should be returned.
      * If no arguments are passed the currently configured value is returned
      *
-     * @deprecated Use setSort()/getSort() instead.
+     * @deprecated 3.4.0 Use setSort()/getSort() instead.
      * @param mixed $sort A find() compatible order clause
      * @return mixed
      */
