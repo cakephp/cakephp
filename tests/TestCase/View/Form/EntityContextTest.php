@@ -182,7 +182,7 @@ class EntityContextTest extends TestCase
      */
     public function testTableFromEntitySource()
     {
-        $entity = new Entity;
+        $entity = new Entity();
         $entity->source('Articles');
         $context = new EntityContext($this->request, [
             'entity' => $entity,

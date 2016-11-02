@@ -5179,7 +5179,7 @@ class TableTest extends TestCase
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();
 
-        $entity = new Entity;
+        $entity = new Entity();
         $table->expects($this->once())->method('query')
             ->will($this->returnValue($query));
         $table->expects($this->once())->method('callFinder')
@@ -5229,7 +5229,7 @@ class TableTest extends TestCase
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();
 
-        $entity = new Entity;
+        $entity = new Entity();
         $table->expects($this->once())->method('query')
             ->will($this->returnValue($query));
         $table->expects($this->once())->method('callFinder')
@@ -5289,7 +5289,7 @@ class TableTest extends TestCase
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();
 
-        $entity = new Entity;
+        $entity = new Entity();
         $table->expects($this->once())->method('query')
             ->will($this->returnValue($query));
         $table->expects($this->once())->method('callFinder')
@@ -5378,7 +5378,7 @@ class TableTest extends TestCase
         $table->expects($this->once())->method('marshaller')
             ->will($this->returnValue($marshaller));
 
-        $entity = new Entity;
+        $entity = new Entity();
         $data = ['foo' => 'bar'];
         $marshaller->expects($this->once())
             ->method('merge')
