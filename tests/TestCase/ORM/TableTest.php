@@ -4029,6 +4029,109 @@ class TableTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testBelongsToFluentInterface()
+    {
+        /* @var \TestApp\Model\Table\ArticlesTable $articles */
+        $articles = $this->getMockBuilder(Table::class)
+            ->setMethods(['_insert'])
+            ->setConstructorArgs([['table' => 'articles', 'connection' => $this->connection]])
+            ->getMock();
+        $authors = $this->getMockBuilder(Table::class)
+            ->setMethods(['_insert'])
+            ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
+            ->getMock();
+
+        $articles->belongsTo('authors')
+            ->setForeignKey('author_id')
+            ->setName('Authors')
+            ->setTarget($authors)
+            ->setBindingKey('id')
+            ->setConditions([])
+            ->setFinder('list')
+            ->setProperty('authors')
+            ->setJoinType('inner');
+    }
+
+    /**
+     * @return void
+     */
+    public function testHasOneFluentInterface()
+    {
+        /* @var \TestApp\Model\Table\AuthorsTable $authors */
+        $authors = $this->getMockBuilder(Table::class)
+            ->setMethods(['_insert'])
+            ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
+            ->getMock();
+
+        $authors->hasOne('articles')
+            ->setForeignKey('author_id')
+            ->setName('Articles')
+            ->setDependent(true)
+            ->setBindingKey('id')
+            ->setConditions([])
+            ->setCascadeCallbacks(true)
+            ->setFinder('list')
+            ->setStrategy('select')
+            ->setProperty('authors')
+            ->setJoinType('inner');
+    }
+
+    /**
+     * @return void
+     */
+    public function testHasManyFluentInterface()
+    {
+        /* @var \TestApp\Model\Table\AuthorsTable $authors */
+        $authors = $this->getMockBuilder(Table::class)
+            ->setMethods(['_insert'])
+            ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
+            ->getMock();
+
+        $authors->hasMany('articles')
+            ->setForeignKey('author_id')
+            ->setName('Articles')
+            ->setDependent(true)
+            ->setSort(['created' => 'DESC'])
+            ->setBindingKey('id')
+            ->setConditions([])
+            ->setCascadeCallbacks(true)
+            ->setFinder('list')
+            ->setStrategy('select')
+            ->setSaveStrategy('replace')
+            ->setProperty('authors')
+            ->setJoinType('inner');
+    }
+
+    /**
+     * @return void
+     */
+    public function testBelongsToManyFluentInterface()
+    {
+        /* @var \TestApp\Model\Table\AuthorsTable $authors */
+        $authors = $this->getMockBuilder(Table::class)
+            ->setMethods(['_insert'])
+            ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
+            ->getMock();
+
+        $authors->belongsToMany('articles')
+            ->setForeignKey('author_id')
+            ->setName('Articles')
+            ->setDependent(true)
+            ->setTargetForeignKey('article_id')
+            ->setBindingKey('id')
+            ->setConditions([])
+            ->setFinder('list')
+            ->setProperty('authors')
+            ->setSource($authors)
+            ->setStrategy('select')
+            ->setSaveStrategy('append')
+            ->setThrough('author_articles')
+            ->setJoinType('inner');
+    }
+
+    /**
      * Integration test for linking entities with belongsToMany
      *
      * @return void
@@ -6097,7 +6200,7 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    public function testLoadBelognsTo()
+    public function testLoadBelongsTo()
     {
         $table = TableRegistry::get('Articles');
         $table->belongsTo('Authors');

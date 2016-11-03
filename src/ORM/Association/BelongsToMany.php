@@ -158,22 +158,46 @@ class BelongsToMany extends Association
 
     /**
      * Sets the name of the field representing the foreign key to the target table.
+     *
+     * @param string $key the key to be used to link both tables together
+     * @return $this
+     */
+    public function setTargetForeignKey($key)
+    {
+        $this->_targetForeignKey = $key;
+
+        return $this;
+    }
+
+    /**
+     * Gets the name of the field representing the foreign key to the target table.
+     *
+     * @return string
+     */
+    public function getTargetForeignKey()
+    {
+        if ($this->_targetForeignKey === null) {
+            $this->_targetForeignKey = $this->_modelKey($this->target()->alias());
+        }
+
+        return $this->_targetForeignKey;
+    }
+
+    /**
+     * Sets the name of the field representing the foreign key to the target table.
      * If no parameters are passed current field is returned
      *
+     * @deprecated 3.4.0 Use setTargetForeignKey()/getTargetForeignKey() instead.
      * @param string|null $key the key to be used to link both tables together
      * @return string
      */
     public function targetForeignKey($key = null)
     {
-        if ($key === null) {
-            if ($this->_targetForeignKey === null) {
-                $this->_targetForeignKey = $this->_modelKey($this->target()->alias());
-            }
-
-            return $this->_targetForeignKey;
+        if ($key !== null) {
+            return $this->setTargetForeignKey($key);
         }
 
-        return $this->_targetForeignKey = $key;
+        return $this->getTargetForeignKey();
     }
 
     /**
@@ -189,6 +213,20 @@ class BelongsToMany extends Association
     }
 
     /**
+     * Gets the name of the field representing the foreign key to the source table.
+     *
+     * @return string
+     */
+    public function getForeignKey()
+    {
+        if ($this->_foreignKey === null) {
+            $this->_foreignKey = $this->_modelKey($this->source()->table());
+        }
+
+        return $this->_foreignKey;
+    }
+
+    /**
      * Sets the name of the field representing the foreign key to the source table.
      * If no parameters are passed current field is returned
      *
@@ -197,15 +235,11 @@ class BelongsToMany extends Association
      */
     public function foreignKey($key = null)
     {
-        if ($key === null) {
-            if ($this->_foreignKey === null) {
-                $this->_foreignKey = $this->_modelKey($this->source()->table());
-            }
-
-            return $this->_foreignKey;
+        if ($key !== null) {
+            $this->setForeignKey($key);
         }
 
-        return parent::foreignKey($key);
+        return $this->getForeignKey();
     }
 
     /**
@@ -581,24 +615,50 @@ class BelongsToMany extends Association
     }
 
     /**
+     * Sets the strategy that should be used for saving.
+     *
+     * @param string $strategy the strategy name to be used
+     * @throws \InvalidArgumentException if an invalid strategy name is passed
+     * @return $this
+     */
+    public function setSaveStrategy($strategy)
+    {
+        if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE])) {
+            $msg = sprintf('Invalid save strategy "%s"', $strategy);
+            throw new InvalidArgumentException($msg);
+        }
+
+        $this->_saveStrategy = $strategy;
+
+        return $this;
+    }
+
+    /**
+     * Gets the strategy that should be used for saving.
+     *
+     * @return string the strategy to be used for saving
+     */
+    public function getSaveStrategy()
+    {
+        return $this->_saveStrategy;
+    }
+
+    /**
      * Sets the strategy that should be used for saving. If called with no
      * arguments, it will return the currently configured strategy
      *
+     * @deprecated 3.4.0 Use setSaveStrategy()/getSaveStrategy() instead.
      * @param string|null $strategy the strategy name to be used
      * @throws \InvalidArgumentException if an invalid strategy name is passed
      * @return string the strategy to be used for saving
      */
     public function saveStrategy($strategy = null)
     {
-        if ($strategy === null) {
-            return $this->_saveStrategy;
-        }
-        if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE])) {
-            $msg = sprintf('Invalid save strategy "%s"', $strategy);
-            throw new InvalidArgumentException($msg);
+        if ($strategy !== null) {
+            $this->setSaveStrategy($strategy);
         }
 
-        return $this->_saveStrategy = $strategy;
+        return $this->getSaveStrategy();
     }
 
     /**
@@ -900,14 +960,48 @@ class BelongsToMany extends Association
     /**
      * {@inheritDoc}
      */
+    public function setConditions($conditions)
+    {
+        parent::setConditions($conditions);
+        $this->_targetConditions = $this->_junctionConditions = null;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @deprecated 3.4.0 Use setConditions()/getConditions() instead.
+     */
     public function conditions($conditions = null)
     {
         if ($conditions !== null) {
-            $this->_conditions = $conditions;
-            $this->_targetConditions = $this->_junctionConditions = null;
+            $this->setConditions($conditions);
         }
 
-        return $this->_conditions;
+        return $this->getConditions();
+    }
+
+    /**
+     * Sets the current join table, either the name of the Table instance or the instance itself.
+     *
+     * @param string|\Cake\ORM\Table $through Name of the Table instance or the instance itself
+     * @return $this
+     */
+    public function setThrough($through)
+    {
+        $this->_through = $through;
+
+        return $this;
+    }
+
+    /**
+     * Gets the current join table, either the name of the Table instance or the instance itself.
+     *
+     * @return string|\Cake\ORM\Table
+     */
+    public function getThrough()
+    {
+        return $this->_through;
     }
 
     /**
@@ -1350,7 +1444,7 @@ class BelongsToMany extends Association
             $this->_junctionTableName($opts['joinTable']);
         }
         if (!empty($opts['through'])) {
-            $this->_through = $opts['through'];
+            $this->setThrough($opts['through']);
         }
         if (!empty($opts['saveStrategy'])) {
             $this->saveStrategy($opts['saveStrategy']);

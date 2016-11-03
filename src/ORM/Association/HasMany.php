@@ -102,24 +102,50 @@ class HasMany extends Association
     }
 
     /**
+     * Sets the strategy that should be used for saving.
+     *
+     * @param string $strategy the strategy name to be used
+     * @throws \InvalidArgumentException if an invalid strategy name is passed
+     * @return $this
+     */
+    public function setSaveStrategy($strategy)
+    {
+        if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE])) {
+            $msg = sprintf('Invalid save strategy "%s"', $strategy);
+            throw new InvalidArgumentException($msg);
+        }
+
+        $this->_saveStrategy = $strategy;
+
+        return $this;
+    }
+
+    /**
+     * Gets the strategy that should be used for saving.
+     *
+     * @return string the strategy to be used for saving
+     */
+    public function getSaveStrategy()
+    {
+        return $this->_saveStrategy;
+    }
+
+    /**
      * Sets the strategy that should be used for saving. If called with no
      * arguments, it will return the currently configured strategy
      *
+     * @deprecated 3.4.0 Use setSaveStrategy()/getSaveStrategy() instead.
      * @param string|null $strategy the strategy name to be used
      * @throws \InvalidArgumentException if an invalid strategy name is passed
      * @return string the strategy to be used for saving
      */
     public function saveStrategy($strategy = null)
     {
-        if ($strategy === null) {
-            return $this->_saveStrategy;
-        }
-        if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE])) {
-            $msg = sprintf('Invalid save strategy "%s"', $strategy);
-            throw new InvalidArgumentException($msg);
+        if ($strategy !== null) {
+            $this->setSaveStrategy($strategy);
         }
 
-        return $this->_saveStrategy = $strategy;
+        return $this->getSaveStrategy();
     }
 
     /**
@@ -522,39 +548,74 @@ class HasMany extends Association
     }
 
     /**
+     * Gets the name of the field representing the foreign key to the source table.
+     *
+     * @return string
+     */
+    public function getForeignKey()
+    {
+        if ($this->_foreignKey === null) {
+            $this->_foreignKey = $this->_modelKey($this->source()->table());
+        }
+
+        return $this->_foreignKey;
+    }
+
+    /**
      * Sets the name of the field representing the foreign key to the source table.
      * If no parameters are passed current field is returned
      *
+     * @deprecated 3.4.0 Use setForeignKey()/getForeignKey() instead.
      * @param string|null $key the key to be used to link both tables together
      * @return string
      */
     public function foreignKey($key = null)
     {
-        if ($key === null) {
-            if ($this->_foreignKey === null) {
-                $this->_foreignKey = $this->_modelKey($this->source()->table());
-            }
-
-            return $this->_foreignKey;
+        if ($key !== null) {
+            return $this->setForeignKey($key);
         }
 
-        return parent::foreignKey($key);
+        return $this->getForeignKey();
+    }
+
+    /**
+     * Sets the sort order in which target records should be returned.
+     *
+     * @param mixed $sort A find() compatible order clause
+     * @return $this
+     */
+    public function setSort($sort)
+    {
+        $this->_sort = $sort;
+
+        return $this;
+    }
+
+    /**
+     * Gets the sort order in which target records should be returned.
+     *
+     * @return mixed
+     */
+    public function getSort()
+    {
+        return $this->_sort;
     }
 
     /**
      * Sets the sort order in which target records should be returned.
      * If no arguments are passed the currently configured value is returned
      *
+     * @deprecated 3.4.0 Use setSort()/getSort() instead.
      * @param mixed $sort A find() compatible order clause
      * @return mixed
      */
     public function sort($sort = null)
     {
         if ($sort !== null) {
-            $this->_sort = $sort;
+            $this->setSort($sort);
         }
 
-        return $this->_sort;
+        return $this->getSort();
     }
 
     /**
