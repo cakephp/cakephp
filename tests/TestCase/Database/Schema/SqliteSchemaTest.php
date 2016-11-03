@@ -552,7 +552,7 @@ SQL;
             // Boolean
             [
                 'checked',
-                ['type' => 'boolean', 'default' => false],
+                ['type' => 'boolean', 'null' => true, 'default' => false],
                 '"checked" BOOLEAN DEFAULT FALSE'
             ],
             [

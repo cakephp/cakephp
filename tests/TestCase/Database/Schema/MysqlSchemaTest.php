@@ -633,8 +633,18 @@ SQL;
             ],
             [
                 'checked',
+                ['type' => 'boolean', 'default' => false, 'null' => false],
+                '`checked` BOOLEAN NOT NULL DEFAULT FALSE'
+            ],
+            [
+                'checked',
                 ['type' => 'boolean', 'default' => true, 'null' => false],
                 '`checked` BOOLEAN NOT NULL DEFAULT TRUE'
+            ],
+            [
+                'checked',
+                ['type' => 'boolean', 'default' => false, 'null' => true],
+                '`checked` BOOLEAN DEFAULT FALSE'
             ],
             // datetimes
             [
