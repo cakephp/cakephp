@@ -1332,10 +1332,15 @@ class ControllerTest extends CakeTestCase {
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
 		$Controller->passedArgs[] = '1';
 		$Controller->params['url'] = array();
+		$Controller->params['named'] = array(
+			'posts' => array(
+				'page' => 2,
+				'limit' => 2,
+			),
+		);
 		$Controller->constructClasses();
-		$expected = array('page' => 1, 'limit' => 20, 'maxLimit' => 100, 'paramType' => 'named');
+		$expected = array('page' => 1, 'limit' => 20, 'maxLimit' => 100, 'paramType' => 'named', 'queryScope' => null);
 		$this->assertEquals($expected, $Controller->paginate);
-
 		$results = Hash::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
 		$this->assertEquals(array(1, 2, 3), $results);
 
@@ -1347,6 +1352,13 @@ class ControllerTest extends CakeTestCase {
 		$this->assertSame($Controller->params['paging']['ControllerPost']['pageCount'], 3);
 		$this->assertFalse($Controller->params['paging']['ControllerPost']['prevPage']);
 		$this->assertTrue($Controller->params['paging']['ControllerPost']['nextPage']);
+		$this->assertNull($Controller->params['paging']['ControllerPost']['queryScope']);
+
+		$Controller->paginate = array('queryScope' => 'posts');
+		$Controller->paginate('ControllerPost');
+		$this->assertSame($Controller->params['paging']['ControllerPost']['page'], 2);
+		$this->assertSame($Controller->params['paging']['ControllerPost']['pageCount'], 2);
+		$this->assertSame($Controller->params['paging']['ControllerPost']['queryScope'], 'posts');
 	}
 
 /**

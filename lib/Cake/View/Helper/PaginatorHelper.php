@@ -191,6 +191,9 @@ class PaginatorHelper extends AppHelper {
 			$options['convertKeys'] = array_merge($this->options['convertKeys'], $options['convertKeys']);
 		}
 		$this->options = array_filter(array_merge($this->options, $options));
+		if (!empty($this->options['model'])) {
+			$this->defaultModel($this->options['model']);
+		}
 	}
 
 /**
@@ -359,10 +362,16 @@ class PaginatorHelper extends AppHelper {
 
 		$sortKey = $this->sortKey($options['model']);
 		$defaultModel = $this->defaultModel();
+		$model = $options['model'] ?: $defaultModel;
+		list($table, $field) = explode('.', $key . '.');
+		if (!$field) {
+			$field = $table;
+			$table = $model;
+		}
 		$isSorted = (
-			$sortKey === $key ||
+			$sortKey === $table . '.' . $field ||
 			$sortKey === $defaultModel . '.' . $key ||
-			$key === $defaultModel . '.' . $sortKey
+			$table . '.' . $field === $defaultModel . '.' . $sortKey
 		);
 
 		$dir = $defaultDir;
@@ -451,6 +460,13 @@ class PaginatorHelper extends AppHelper {
 		if (!empty($url['?']['page']) && $url['?']['page'] == 1) {
 			unset($url['?']['page']);
 		}
+		if (!empty($paging['queryScope'])) {
+			$url = [$paging['queryScope'] => $url];
+			if (empty($url[$paging['queryScope']]['page'])) {
+				unset($url[$paging['queryScope']]['page']);
+			}
+		}
+
 		if ($asArray) {
 			return $url;
 		}
@@ -599,12 +615,16 @@ class PaginatorHelper extends AppHelper {
 	}
 
 /**
- * Gets the default model of the paged sets
+ * Gets or sets the default model of the paged sets
  *
+ * @param string|null $model Model name to set
  * @return string|null Model name or null if the pagination isn't initialized.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::defaultModel
  */
-	public function defaultModel() {
+	public function defaultModel($model = null) {
+		if ($model !== null) {
+			$this->_defaultModel = $model;
+		}
 		if ($this->_defaultModel) {
 			return $this->_defaultModel;
 		}
