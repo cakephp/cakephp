@@ -568,13 +568,26 @@ eos;
     }
 
     /**
+     * Tests reading the output mask settings.
+     */
+    public function testSetOutputMask()
+    {
+        Debugger::setOutputMask(['password' => '[**********]']);
+        $this->assertEquals(['password' => '[**********]'], Debugger::outputMask());
+        Debugger::setOutputMask(['serial' => 'XXXXXX']);
+        $this->assertEquals(['password' => '[**********]', 'serial' => 'XXXXXX'], Debugger::outputMask());
+        Debugger::setOutputMask([], false);
+        $this->assertEquals([], Debugger::outputMask());
+    }
+
+    /**
      * Tests the masking of an array key.
      *
      * @return void
      */
     public function testMaskArray()
     {
-        Debugger::configInstance('mask', ['password' => '[**********]']);
+        Debugger::setOutputMask(['password' => '[**********]']);
         $result = Debugger::exportVar(['password' => 'pass1234']);
         $expected = "['password'=>[**********]]";
         $this->assertEquals($expected, preg_replace('/\s+/', '', $result));
@@ -587,7 +600,7 @@ eos;
      */
     public function testMaskObject()
     {
-        Debugger::configInstance('mask', ['password' => '[**********]']);
+        Debugger::setOutputMask(['password' => '[**********]']);
         $object = new SecurityThing();
         $result = Debugger::exportVar($object);
         $expected = "object(Cake\\Test\\TestCase\\Error\\SecurityThing){password=>[**********]}";
