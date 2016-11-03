@@ -206,17 +206,67 @@ class EagerLoadable
     /**
      * Sets whether or not this level can be fetched using a join.
      *
+     * @param bool $possible The value to set.
+     * @return $this
+     */
+    public function setCanBeJoined($possible)
+    {
+        $this->_canBeJoined = $possible;
+
+        return $this;
+    }
+
+    /**
+     * Gets whether or not this level can be fetched using a join.
+     *
+     * @return bool
+     */
+    public function getCanBeJoined()
+    {
+        return $this->_canBeJoined;
+    }
+
+    /**
+     * Sets whether or not this level can be fetched using a join.
+     *
      * If called with no arguments it returns the current value.
      *
+     * @deprecated 3.4.0 Use setCanBeJoined()/getCanBeJoined() instead.
      * @param bool|null $possible The value to set.
      * @return bool
      */
     public function canBeJoined($possible = null)
     {
-        if ($possible === null) {
-            return $this->_canBeJoined;
+        if ($possible !== null) {
+            $this->setCanBeJoined($possible);
         }
-        $this->_canBeJoined = $possible;
+
+        return $this->getCanBeJoined();
+    }
+
+    /**
+     * Sets the list of options to pass to the association object for loading
+     * the records.
+     *
+     * @param array $config The value to set.
+     * @return $this
+     */
+    public function setConfig(array $config)
+    {
+        $this->_config = $config;
+
+        return $this;
+    }
+
+    /**
+     * Gets the list of options to pass to the association object for loading
+     * the records.
+     *
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->_config;
     }
 
     /**
@@ -226,15 +276,17 @@ class EagerLoadable
      * If called with no arguments it returns the current
      * value.
      *
+     * @deprecated 3.4.0 Use setConfig()/getConfig() instead.
      * @param array|null $config The value to set.
      * @return array
      */
     public function config(array $config = null)
     {
-        if ($config === null) {
-            return $this->_config;
+        if ($config !== null) {
+            $this->setConfig($config);
         }
-        $this->_config = $config;
+
+        return $this->getConfig();
     }
 
     /**

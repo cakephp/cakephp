@@ -147,21 +147,44 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
-     * Sets the connection instance to be used for executing and transforming this query
-     * When called with a null argument, it will return the current connection instance.
+     * Sets the connection instance to be used for executing and transforming this query.
      *
-     * @param \Cake\Datasource\ConnectionInterface|null $connection instance
-     * @return $this|\Cake\Datasource\ConnectionInterface
+     * @param \Cake\Datasource\ConnectionInterface $connection Connection instance
+     * @return $this
      */
-    public function connection($connection = null)
+    public function setConnection($connection)
     {
-        if ($connection === null) {
-            return $this->_connection;
-        }
         $this->_dirty();
         $this->_connection = $connection;
 
         return $this;
+    }
+
+    /**
+     * Gets the connection instance to be used for executing and transforming this query.
+     *
+     * @return \Cake\Datasource\ConnectionInterface
+     */
+    public function getConnection()
+    {
+        return $this->_connection;
+    }
+
+    /**
+     * Sets the connection instance to be used for executing and transforming this query
+     * When called with a null argument, it will return the current connection instance.
+     *
+     * @deprecated 3.4.0 Use setConnection()/getConnection() instead.
+     * @param \Cake\Datasource\ConnectionInterface|null $connection Connection instance
+     * @return $this|\Cake\Datasource\ConnectionInterface
+     */
+    public function connection($connection = null)
+    {
+        if ($connection !== null) {
+            return $this->setConnection($connection);
+        }
+
+        return $this->getConnection();
     }
 
     /**
@@ -1774,6 +1797,45 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
+     * Enables/Disables buffered results.
+     *
+     * When enabled the results returned by this Query will be
+     * buffered. This enables you to iterate a result set multiple times, or
+     * both cache and iterate it.
+     *
+     * When disabled it will consume less memory as fetched results are not
+     * remembered for future iterations.
+     *
+     * @param bool $enable Whether or not to enable buffering
+     * @return $this
+     */
+    public function enableBufferedResults($enable)
+    {
+        $this->_dirty();
+        $this->_useBufferedResults = (bool)$enable;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether buffered results are enabled/disabled.
+     *
+     * When enabled the results returned by this Query will be
+     * buffered. This enables you to iterate a result set multiple times, or
+     * both cache and iterate it.
+     *
+     * When disabled it will consume less memory as fetched results are not
+     * remembered for future iterations.
+     *
+     * @return bool
+     */
+    public function isEnabledBufferedResults()
+    {
+        return $this->_useBufferedResults;
+    }
+
+
+    /**
      * Enable/Disable buffered results.
      *
      * When enabled the results returned by this Query will be
@@ -1786,19 +1848,45 @@ class Query implements ExpressionInterface, IteratorAggregate
      * If called with no arguments, it will return whether or not buffering is
      * enabled.
      *
-     * @param bool|null $enable whether or not to enable buffering
+     * @deprecated 3.4.0 Use enableBufferedResults()/isEnabledBufferedResults() instead.
+     * @param bool|null $enable Whether or not to enable buffering
      * @return bool|$this
      */
     public function bufferResults($enable = null)
     {
-        if ($enable === null) {
-            return $this->_useBufferedResults;
+        if ($enable !== null) {
+            return $this->enableBufferedResults($enable);
         }
 
-        $this->_dirty();
-        $this->_useBufferedResults = (bool)$enable;
+        return $this->isEnabledBufferedResults();
+    }
+
+    /**
+     * Sets the TypeMap class where the types for each of the fields in the
+     * select clause are stored.
+     *
+     * @param \Cake\Database\TypeMap $typeMap The map object to use
+     * @return $this
+     */
+    public function setSelectTypeMap(TypeMap $typeMap)
+    {
+        $this->_selectTypeMap = $typeMap;
 
         return $this;
+    }
+    /**
+     * Gets the TypeMap class where the types for each of the fields in the
+     * select clause are stored.
+     *
+     * @return \Cake\Database\TypeMap
+     */
+    public function getSelectTypeMap()
+    {
+        if ($this->_selectTypeMap === null) {
+            $this->_selectTypeMap = new TypeMap();
+        }
+
+        return $this->_selectTypeMap;
     }
 
     /**
@@ -1807,22 +1895,17 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * When called with no arguments, the current TypeMap object is returned.
      *
+     * @deprecated 3.4.0 Use setSelectTypeMap()/getSelectTypeMap() instead.
      * @param \Cake\Database\TypeMap|null $typeMap The map object to use
      * @return $this|\Cake\Database\TypeMap
      */
     public function selectTypeMap(TypeMap $typeMap = null)
     {
-        if ($typeMap === null && $this->_selectTypeMap === null) {
-            $this->_selectTypeMap = new TypeMap();
+        if ($typeMap !== null) {
+            return $this->setSelectTypeMap($typeMap);
         }
 
-        if ($typeMap === null) {
-            return $this->_selectTypeMap;
-        }
-
-        $this->_selectTypeMap = $typeMap;
-
-        return $this;
+        return $this->getSelectTypeMap();
     }
 
     /**
@@ -1835,7 +1918,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     protected function _decorateStatement($statement)
     {
         foreach ($this->_resultDecorators as $f) {
-            $statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
+            $statement = new CallbackStatement($statement, $this->getConnection()->driver(), $f);
         }
 
         return $statement;

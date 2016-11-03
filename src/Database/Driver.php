@@ -297,22 +297,48 @@ abstract class Driver
     }
 
     /**
+     * Sets whether or not this driver should automatically quote identifiers
+     * in queries.
+     *
+     * @param bool $enable Whether to enable auto quoting
+     * @return $this
+     */
+    public function enableAutoQuoting($enable)
+    {
+        $this->_autoQuoting = (bool)$enable;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether or not this driver should automatically quote identifiers
+     * in queries
+     *
+     * @return bool
+     */
+    public function isEnabledAutoQuoting()
+    {
+        return $this->_autoQuoting;
+    }
+
+    /**
      * Returns whether or not this driver should automatically quote identifiers
      * in queries
      *
      * If called with a boolean argument, it will toggle the auto quoting setting
      * to the passed value
      *
-     * @param bool|null $enable whether to enable auto quoting
+     * @deprecated 3.4.0 use enableAutoQuoting()/isEnabledAutoQuoting() instead.
+     * @param bool|null $enable Whether to enable auto quoting
      * @return bool
      */
     public function autoQuoting($enable = null)
     {
-        if ($enable === null) {
-            return $this->_autoQuoting;
+        if ($enable !== null) {
+            $this->enableAutoQuoting($enable);
         }
 
-        return $this->_autoQuoting = (bool)$enable;
+        return $this->isEnabledAutoQuoting();
     }
 
     /**

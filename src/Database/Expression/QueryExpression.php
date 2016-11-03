@@ -75,19 +75,43 @@ class QueryExpression implements ExpressionInterface, Countable
      * Changes the conjunction for the conditions at this level of the expression tree.
      * If called with no arguments it will return the currently configured value.
      *
+     * @param string $conjunction Value to be used for joining conditions. If null it
+     * will not set any value, but return the currently stored one
+     * @return $this
+     */
+    public function setConjunction($conjunction)
+    {
+        $this->_conjunction = strtoupper($conjunction);
+
+        return $this;
+    }
+
+    /**
+     * Gets the currently configured conjunction for the conditions at this level of the expression tree.
+     *
+     * @return string
+     */
+    public function getConjunction()
+    {
+        return $this->_conjunction;
+    }
+
+    /**
+     * Changes the conjunction for the conditions at this level of the expression tree.
+     * If called with no arguments it will return the currently configured value.
+     *
+     * @deprecated 3.4.0 Use setConjunction()/getConjunction() instead.
      * @param string|null $conjunction value to be used for joining conditions. If null it
      * will not set any value, but return the currently stored one
      * @return string|$this
      */
     public function tieWith($conjunction = null)
     {
-        if ($conjunction === null) {
-            return $this->_conjunction;
+        if ($conjunction !== null) {
+            return $this->setConjunction($conjunction);
         }
 
-        $this->_conjunction = strtoupper($conjunction);
-
-        return $this;
+        return $this->getConjunction();
     }
 
     /**

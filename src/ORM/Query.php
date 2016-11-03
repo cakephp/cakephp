@@ -220,25 +220,49 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
     /**
      * Sets the instance of the eager loader class to use for loading associations
+     * and storing containments.
+     *
+     * @param \Cake\ORM\EagerLoader $instance The eager loader to use.
+     * @return $this
+     */
+    public function setEagerLoader(EagerLoader $instance)
+    {
+        $this->_eagerLoader = $instance;
+
+        return $this;
+    }
+
+    /**
+     * Returns the currently configured instance.
+     *
+     * @return \Cake\ORM\EagerLoader
+     */
+    public function getEagerLoader()
+    {
+        if ($this->_eagerLoader === null) {
+            $this->_eagerLoader = new EagerLoader();
+        }
+
+        return $this->_eagerLoader;
+    }
+
+    /**
+     * Sets the instance of the eager loader class to use for loading associations
      * and storing containments. If called with no arguments, it will return the
      * currently configured instance.
      *
+     * @deprecated 3.4.0 Use setEagerLoader()/getEagerLoader() instead.
      * @param \Cake\ORM\EagerLoader|null $instance The eager loader to use. Pass null
      *   to get the current eagerloader.
      * @return \Cake\ORM\EagerLoader|$this
      */
     public function eagerLoader(EagerLoader $instance = null)
     {
-        if ($instance === null) {
-            if ($this->_eagerLoader === null) {
-                $this->_eagerLoader = new EagerLoader();
-            }
-
-            return $this->_eagerLoader;
+        if ($instance !== null) {
+            return $this->setEagerLoader($instance);
         }
-        $this->_eagerLoader = $instance;
 
-        return $this;
+        return $this->getEagerLoader();
     }
 
     /**
