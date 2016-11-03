@@ -19,6 +19,7 @@
     },
     "require": {
         "php": ">=5.6.0",
+        "lib-ICU": ">=4.8",
         "ext-intl": "*",
         "ext-mbstring": "*",
         "cakephp/chronos": "~1.0",
