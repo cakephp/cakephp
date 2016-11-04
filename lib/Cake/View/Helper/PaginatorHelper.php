@@ -461,7 +461,7 @@ class PaginatorHelper extends AppHelper {
 			unset($url['?']['page']);
 		}
 		if (!empty($paging['queryScope'])) {
-			$url = [$paging['queryScope'] => $url];
+			$url = array($paging['queryScope'] => $url);
 			if (empty($url[$paging['queryScope']]['page'])) {
 				unset($url[$paging['queryScope']]['page']);
 			}
