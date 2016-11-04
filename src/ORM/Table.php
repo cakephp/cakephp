@@ -2327,7 +2327,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 return false;
             }
         }
-        $rule = new IsUnique($fields);
+        $rule = new IsUnique($fields, $options);
 
         return $rule($entity, ['repository' => $this]);
     }
