@@ -2206,7 +2206,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * ```
      * $article = $this->Articles->patchEntity($article, $this->request->data(), [
-     *  'fieldList' => ['title', 'body', 'tags', 'comments],
+     *  'fieldList' => ['title', 'body', 'tags', 'comments'],
      *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
      *  ]
      * );
