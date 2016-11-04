@@ -499,7 +499,7 @@ class HttpResponseTest extends CakeTestCase {
 			'google' => array(
 				'value' => 'not=nice',
 			),
-			''  => array(
+			'' => array(
 				'value' => '1271',
 				'domain' => '.example.com',
 				'expires' => 'Fri, 04-Nov-2016 12:50:26 GMT',
