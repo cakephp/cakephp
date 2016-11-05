@@ -743,7 +743,7 @@ class QueryTest extends TestCase
             ->matching('SpecialTags.Tags', function ($q) {
                 return $q->where(['Tags.id IN ' => [1, 3]]);
             });
-        $this->assertEquals([1, 2], $result->extract('id')->toList());
+        $this->assertEquals([1, 2, 3], $result->extract('id')->toList());
     }
     /**
      * Tests that BelongsToMany associations are correctly eager loaded.
