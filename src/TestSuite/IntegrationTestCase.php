@@ -700,16 +700,16 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert location header. ' . $message);
         }
-        $result = $this->_response->header();
+        $result = $this->_response->getHeaderLine('Location');
         if ($url === null) {
-            $this->assertTrue(!empty($result['Location']), $message);
+            $this->assertTrue(!empty($result), $message);
 
             return;
         }
-        if (empty($result['Location'])) {
+        if (empty($result)) {
             $this->fail('No location header set. ' . $message);
         }
-        $this->assertEquals(Router::url($url, ['_full' => true]), $result['Location'], $message);
+        $this->assertEquals(Router::url($url, ['_full' => true]), $result, $message);
     }
 
     /**
@@ -724,11 +724,11 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert location header. ' . $message);
         }
-        $result = $this->_response->header();
-        if (empty($result['Location'])) {
+        $result = $this->_response->getHeaderLine('Location');
+        if (empty($result)) {
             $this->fail('No location header set. ' . $message);
         }
-        $this->assertContains($url, $result['Location'], $message);
+        $this->assertContains($url, $result, $message);
     }
 
     /**
@@ -742,14 +742,14 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert location header. ' . $message);
         }
-        $result = $this->_response->header();
+        $result = $this->_response->getHeaderLine('Location');
         if (!$message) {
             $message = 'Redirect header set';
         }
-        if (!empty($result['Location'])) {
-            $message .= ': ' . $result['Location'];
+        if (!empty($result)) {
+            $message .= ': ' . $result;
         }
-        $this->assertTrue(empty($result['Location']), $message);
+        $this->assertTrue(empty($result), $message);
     }
 
     /**
@@ -765,11 +765,11 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert headers. ' . $message);
         }
-        $headers = $this->_response->header();
-        if (!isset($headers[$header])) {
+        if (!$this->_response->hasHeader($header)) {
             $this->fail("The '$header' header is not set. " . $message);
         }
-        $this->assertEquals($headers[$header], $content, $message);
+        $actual = $this->_response->getHeaderLine($header);
+        $this->assertEquals($content, $actual, $message);
     }
 
     /**
@@ -785,11 +785,11 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert headers. ' . $message);
         }
-        $headers = $this->_response->header();
-        if (!isset($headers[$header])) {
+        if (!$this->_response->hasHeader($header)) {
             $this->fail("The '$header' header is not set. " . $message);
         }
-        $this->assertContains($content, $headers[$header], $message);
+        $actual = $this->_response->getHeaderLine($header);
+        $this->assertContains($content, $actual, $message);
     }
 
     /**

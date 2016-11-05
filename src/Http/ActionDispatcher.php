@@ -64,16 +64,19 @@ class ActionDispatcher
             $this->addFilter($filter);
         }
         $this->factory = $factory ?: new ControllerFactory();
+
+        // Force aliases to be autoloaded.
+        class_exists('Cake\Network\Request');
     }
 
     /**
      * Dispatches a Request & Response
      *
-     * @param \Cake\Network\Request $request The request to dispatch.
+     * @param \Cake\Http\ServerRequest $request The request to dispatch.
      * @param \Cake\Network\Response $response The response to dispatch.
      * @return \Cake\Network\Response A modified/replaced response.
      */
-    public function dispatch(Request $request, Response $response)
+    public function dispatch(ServerRequest $request, Response $response)
     {
         if (Router::getRequest(true) !== $request) {
             Router::pushRequest($request);

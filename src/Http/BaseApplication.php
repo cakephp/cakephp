@@ -75,13 +75,7 @@ abstract class BaseApplication
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
-        $cakeResponse = ResponseTransformer::toCake($response);
-
-        // Dispatch the request/response to CakePHP
-        $cakeResponse = $this->getDispatcher()->dispatch($request, $cakeResponse);
-
-        // Convert the response back into a PSR7 object.
-        return ResponseTransformer::toPsr($cakeResponse);
+        return $this->getDispatcher()->dispatch($request, $response);
     }
 
     /**
