@@ -44,7 +44,9 @@ class QueryTest extends TestCase
         'core.comments',
         'core.datatypes',
         'core.posts',
-        'core.tags'
+        'core.tags',
+        'core.special_tags',
+        'core.authors_tags'
     ];
 
     /**
@@ -722,6 +724,27 @@ class QueryTest extends TestCase
         $this->assertInstanceOf('Cake\I18n\Time', $result->_matchingData['Comments']->created);
     }
 
+    public function testFilteringMultipleMatchingForSameModelByHasManyHydration()
+    {
+        $authorsTable = TableRegistry::get('Authors');
+        $specialtagsTable = TableRegistry::get('SpecialTags');
+        $authorsTable->hasMany('SpecialTags');
+        $authorsTable->belongsToMany('Tags');
+        $specialtagsTable->belongsTo('Tags');
+
+        $query = new Query($this->connection, $authorsTable);
+
+        $result = $query->repository($authorsTable)
+            ->matching('Tags', function ($q) {
+                return $q->where(['Tags.id IN ' => [2]]);
+            });
+        $this->assertEquals([3], $result->extract('id')->toList());
+        $result = $query->repository($authorsTable)
+            ->matching('SpecialTags.Tags', function ($q) {
+                return $q->where(['Tags.id IN ' => [1, 3]]);
+            });
+        $this->assertEquals([1, 2], $result->extract('id')->toList());
+    }
     /**
      * Tests that BelongsToMany associations are correctly eager loaded.
      * Also that the query object passes the correct parent model keys to the
