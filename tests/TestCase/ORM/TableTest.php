@@ -5754,6 +5754,42 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests the validateUnique method with options
+     *
+     * @return void
+     */
+    public function testValidateUniqueMultipleNulls()
+    {
+        $entity = new Entity([
+            'id' => 9,
+            'site_id' => 1,
+            'author_id' => null,
+            'title' => 'Null title'
+        ]);
+
+        $table = TableRegistry::get('SiteArticles');
+        $table->save($entity);
+
+        $validator = new Validator;
+        $validator->add('site_id', 'unique', [
+            'rule' => [
+                'validateUnique',
+                [
+                    'allowMultipleNulls' => false,
+                    'scope' => ['author_id'],
+                ]
+            ],
+            'provider' => 'table',
+            'message' => 'Must be unique.',
+        ]);
+        $validator->provider('table', $table);
+
+        $data = ['site_id' => 1, 'author_id' => null, 'title' => 'Null dupe'];
+        $expected = ['site_id' => ['unique' => 'Must be unique.']];
+        $this->assertEquals($expected, $validator->errors($data));
+    }
+
+    /**
      * Tests that the callbacks receive the expected types of arguments.
      *
      * @return void
