@@ -28,6 +28,7 @@ use Psr\Http\Message\ServerRequestInterface as PsrRequest;
  * request object.
  *
  * @internal
+ * @deprecated 3.4.0 No longer used. Will be removed in 4.0.0
  */
 class RequestTransformer
 {
