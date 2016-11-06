@@ -94,6 +94,7 @@ class MiddlewareDispatcher
 
         $server = new Server($app);
         $psrRequest = $this->_createRequest($request);
+
         return $server->run($psrRequest);
     }
 
