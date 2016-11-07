@@ -821,7 +821,7 @@ class CakeEmailTest extends CakeTestCase {
 		$expected = array(
 			'basics.php' => array(
 				'file' => CAKE . 'basics.php',
-				'mimetype' => 'application/octet-stream'
+				'mimetype' => 'text/x-php'
 			)
 		);
 		$this->assertSame($expected, $this->CakeEmail->attachments());
@@ -837,9 +837,9 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->addAttachments(array('other.txt' => CAKE . 'bootstrap.php', 'license' => CAKE . 'LICENSE.txt'));
 		$expected = array(
 			'basics.php' => array('file' => CAKE . 'basics.php', 'mimetype' => 'text/plain'),
-			'bootstrap.php' => array('file' => CAKE . 'bootstrap.php', 'mimetype' => 'application/octet-stream'),
-			'other.txt' => array('file' => CAKE . 'bootstrap.php', 'mimetype' => 'application/octet-stream'),
-			'license' => array('file' => CAKE . 'LICENSE.txt', 'mimetype' => 'application/octet-stream')
+			'bootstrap.php' => array('file' => CAKE . 'bootstrap.php', 'mimetype' => 'text/x-php'),
+			'other.txt' => array('file' => CAKE . 'bootstrap.php', 'mimetype' => 'text/x-php'),
+			'license' => array('file' => CAKE . 'LICENSE.txt', 'mimetype' => 'text/plain')
 		);
 		$this->assertSame($expected, $this->CakeEmail->attachments());
 
@@ -1075,7 +1075,7 @@ class CakeEmailTest extends CakeTestCase {
 			"\r\n" .
 			"\r\n" .
 			"--$boundary\r\n" .
-			"Content-Type: application/octet-stream\r\n" .
+			"Content-Type: text/x-php\r\n" .
 			"Content-Transfer-Encoding: base64\r\n" .
 			"Content-Disposition: attachment; filename=\"basics.php\"\r\n\r\n";
 		$this->assertContains($expected, $result['message']);
@@ -1156,7 +1156,7 @@ class CakeEmailTest extends CakeTestCase {
 			"--alt-{$boundary}--\r\n" .
 			"\r\n" .
 			"--$boundary\r\n" .
-			"Content-Type: application/octet-stream\r\n" .
+			"Content-Type: text/plain\r\n" .
 			"Content-Transfer-Encoding: base64\r\n" .
 			"Content-Disposition: attachment; filename=\"VERSION.txt\"\r\n\r\n";
 		$this->assertContains($expected, $result['message']);
@@ -1208,7 +1208,7 @@ class CakeEmailTest extends CakeTestCase {
 			"--alt-{$boundary}--\r\n" .
 			"\r\n" .
 			"--rel-$boundary\r\n" .
-			"Content-Type: application/octet-stream\r\n" .
+			"Content-Type: text/plain\r\n" .
 			"Content-Transfer-Encoding: base64\r\n" .
 			"Content-ID: <abc123>\r\n" .
 			"Content-Disposition: inline; filename=\"cake.png\"\r\n\r\n";
@@ -1250,7 +1250,7 @@ class CakeEmailTest extends CakeTestCase {
 			"\r\n" .
 			"\r\n" .
 			"--rel-$boundary\r\n" .
-			"Content-Type: application/octet-stream\r\n" .
+			"Content-Type: text/plain\r\n" .
 			"Content-Transfer-Encoding: base64\r\n" .
 			"Content-ID: <abc123>\r\n" .
 			"Content-Disposition: inline; filename=\"cake.png\"\r\n\r\n";
@@ -1289,7 +1289,7 @@ class CakeEmailTest extends CakeTestCase {
 			"\r\n" .
 			"\r\n" .
 			"--{$boundary}\r\n" .
-			"Content-Type: application/octet-stream\r\n" .
+			"Content-Type: text/plain\r\n" .
 			"Content-Transfer-Encoding: base64\r\n" .
 			"\r\n";
 
@@ -1707,11 +1707,11 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->config(array());
 		$this->CakeEmail->attachments(array(CAKE . 'basics.php'));
 		$result = $this->CakeEmail->send('body');
-		$this->assertContains("Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"basics.php\"", $result['message']);
+		$this->assertContains("Content-Type: text/x-php\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"basics.php\"", $result['message']);
 
 		$this->CakeEmail->attachments(array('my.file.txt' => CAKE . 'basics.php'));
 		$result = $this->CakeEmail->send('body');
-		$this->assertContains("Content-Type: application/octet-stream\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"my.file.txt\"", $result['message']);
+		$this->assertContains("Content-Type: text/x-php\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"my.file.txt\"", $result['message']);
 
 		$this->CakeEmail->attachments(array('file.txt' => array('file' => CAKE . 'basics.php', 'mimetype' => 'text/plain')));
 		$result = $this->CakeEmail->send('body');
