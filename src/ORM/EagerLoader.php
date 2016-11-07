@@ -177,7 +177,7 @@ class EagerLoader
      *
      * @return bool The current value.
      */
-    public function isEnabledAutoFields()
+    public function isAutoFieldsEnabled()
     {
         return $this->_autoFields;
     }
@@ -185,7 +185,7 @@ class EagerLoader
     /**
      * Sets/Gets whether or not contained associations will load fields automatically.
      *
-     * @deprecated 3.4.0 Use enableAutoFields()/isEnabledAutoFields() instead.
+     * @deprecated 3.4.0 Use enableAutoFields()/isAutoFieldsEnabled() instead.
      * @param bool|null $enable The value to set.
      * @return bool The current value.
      */
@@ -195,7 +195,7 @@ class EagerLoader
             $this->enableAutoFields($enable);
         }
 
-        return $this->isEnabledAutoFields();
+        return $this->isAutoFieldsEnabled();
     }
 
     /**

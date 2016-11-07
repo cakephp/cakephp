@@ -1829,11 +1829,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @return bool
      */
-    public function isEnabledBufferedResults()
+    public function isBufferedResultsEnabled()
     {
         return $this->_useBufferedResults;
     }
-
 
     /**
      * Enable/Disable buffered results.
@@ -1848,7 +1847,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * If called with no arguments, it will return whether or not buffering is
      * enabled.
      *
-     * @deprecated 3.4.0 Use enableBufferedResults()/isEnabledBufferedResults() instead.
+     * @deprecated 3.4.0 Use enableBufferedResults()/isBufferedResultsEnabled() instead.
      * @param bool|null $enable Whether or not to enable buffering
      * @return bool|$this
      */
@@ -1858,7 +1857,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             return $this->enableBufferedResults($enable);
         }
 
-        return $this->isEnabledBufferedResults();
+        return $this->isBufferedResultsEnabled();
     }
 
     /**

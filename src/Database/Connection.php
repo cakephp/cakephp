@@ -447,7 +447,7 @@ class Connection implements ConnectionInterface
         }
 
         $this->_transactionLevel++;
-        if ($this->isEnabledSavePoints()) {
+        if ($this->isSavePointsEnabled()) {
             $this->createSavePoint($this->_transactionLevel);
         }
     }
@@ -471,7 +471,7 @@ class Connection implements ConnectionInterface
 
             return $this->_driver->commitTransaction();
         }
-        if ($this->isEnabledSavePoints()) {
+        if ($this->isSavePointsEnabled()) {
             $this->releaseSavePoint($this->_transactionLevel);
         }
 
@@ -491,7 +491,7 @@ class Connection implements ConnectionInterface
             return false;
         }
 
-        $useSavePoint = $this->isEnabledSavePoints();
+        $useSavePoint = $this->isSavePointsEnabled();
         if ($this->_transactionLevel === 0 || !$useSavePoint) {
             $this->_transactionLevel = 0;
             $this->_transactionStarted = false;
@@ -540,7 +540,7 @@ class Connection implements ConnectionInterface
      *
      * @return bool true if enabled, false otherwise
      */
-    public function isEnabledSavePoints()
+    public function isSavePointsEnabled()
     {
         return $this->_useSavePoints;
     }
@@ -559,7 +559,7 @@ class Connection implements ConnectionInterface
      * `$connection->useSavePoints(false)` Disables usage of savepoints and returns false
      * `$connection->useSavePoints()` Returns current status
      *
-     * @deprecated 3.4.0 Use enableSavePoints()/isEnabledSavePoints() instead.
+     * @deprecated 3.4.0 Use enableSavePoints()/isSavePointsEnabled() instead.
      * @param bool|null $enable Whether or not save points should be used.
      * @return bool true if enabled, false otherwise
      */
@@ -569,7 +569,7 @@ class Connection implements ConnectionInterface
             $this->enableSavePoints($enable);
         }
 
-        return $this->isEnabledSavePoints();
+        return $this->isSavePointsEnabled();
     }
 
     /**

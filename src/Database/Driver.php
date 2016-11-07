@@ -316,7 +316,7 @@ abstract class Driver
      *
      * @return bool
      */
-    public function isEnabledAutoQuoting()
+    public function isAutoQuotingEnabled()
     {
         return $this->_autoQuoting;
     }
@@ -328,7 +328,7 @@ abstract class Driver
      * If called with a boolean argument, it will toggle the auto quoting setting
      * to the passed value
      *
-     * @deprecated 3.4.0 use enableAutoQuoting()/isEnabledAutoQuoting() instead.
+     * @deprecated 3.4.0 use enableAutoQuoting()/isAutoQuotingEnabled() instead.
      * @param bool|null $enable Whether to enable auto quoting
      * @return bool
      */
@@ -338,7 +338,7 @@ abstract class Driver
             $this->enableAutoQuoting($enable);
         }
 
-        return $this->isEnabledAutoQuoting();
+        return $this->isAutoQuotingEnabled();
     }
 
     /**
