@@ -129,7 +129,7 @@ class ShellDispatcher {
 			define('APP', $this->params['working'] . DS);
 		}
 		if (!defined('WWW_ROOT')) {
-			define('WWW_ROOT', APP . $this->params['webroot'] . DS);
+			define('WWW_ROOT', $this->params['webroot'] . DS);
 		}
 		if (!defined('TMP') && !is_dir(APP . 'tmp')) {
 			define('TMP', CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'Console' . DS . 'Templates' . DS . 'skel' . DS . 'tmp' . DS);
@@ -305,7 +305,7 @@ class ShellDispatcher {
 			}
 		}
 
-		if ($params['app'][0] === '/' || preg_match('/([a-z])(:)/i', $params['app'], $matches)) {
+		if ($this->_isAbsolutePath($params['app'])) {
 			$params['root'] = dirname($params['app']);
 		} elseif (strpos($params['app'], '/')) {
 			$params['root'] .= '/' . dirname($params['app']);
@@ -316,12 +316,25 @@ class ShellDispatcher {
 		if (!$isWin || !preg_match('/^[A-Z]:$/i', $params['app'])) {
 			$params['working'] .= '/' . $params['app'];
 		}
+		if (!$this->_isAbsolutePath($params['webroot'])) {
+			$params['webroot'] = realpath($params['working'] . DS . $params['webroot']);
+		}
 
-		if (!empty($matches[0]) || !empty($isWin)) {
+		if (DS == '\\' || !empty($isWin)) {
 			$params = str_replace('/', '\\', $params);
 		}
 
 		$this->params = $params + $this->params;
+	}
+
+/**
+ * Checks whether the given path is absolute or relative.
+ *
+ * @param string $path absolute or relative path.
+ * @return boolean
+ */
+	protected function _isAbsolutePath($path) {
+		return $path[0] === '/' || preg_match('/([a-z])(:)/i', $path);
 	}
 
 /**
@@ -332,7 +345,7 @@ class ShellDispatcher {
  */
 	protected function _parsePaths($args) {
 		$parsed = array();
-		$keys = array('-working', '--working', '-app', '--app', '-root', '--root');
+		$keys = array('-working', '--working', '-app', '--app', '-root', '--root', '-webroot', '--webroot');
 		$args = (array)$args;
 		foreach ($keys as $key) {
 			while (($index = array_search($key, $args)) !== false) {
