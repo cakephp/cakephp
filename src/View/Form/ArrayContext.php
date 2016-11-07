@@ -14,7 +14,7 @@
  */
 namespace Cake\View\Form;
 
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Utility\Hash;
 
 /**
@@ -77,10 +77,10 @@ class ArrayContext implements ContextInterface
     /**
      * Constructor.
      *
-     * @param \Cake\Network\Request $request The request object.
+     * @param \Cake\Http\ServerRequest $request The request object.
      * @param array $context Context info.
      */
-    public function __construct(Request $request, array $context)
+    public function __construct(ServerRequest $request, array $context)
     {
         $this->_request = $request;
         $context += [

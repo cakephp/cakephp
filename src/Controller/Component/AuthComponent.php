@@ -21,8 +21,8 @@ use Cake\Core\App;
 use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Http\ServerRequest;
 use Cake\Network\Exception\ForbiddenException;
-use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
@@ -511,7 +511,7 @@ class AuthComponent extends Component
      *   If empty, the current request will be used.
      * @return bool True if $user is authorized, otherwise false
      */
-    public function isAuthorized($user = null, Request $request = null)
+    public function isAuthorized($user = null, ServerRequest $request = null)
     {
         if (empty($user) && !$this->user()) {
             return false;

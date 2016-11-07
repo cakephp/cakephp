@@ -20,8 +20,8 @@ use Cake\Event\Event;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
+use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
-use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\RequestActionTrait;
@@ -222,14 +222,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Sets a number of properties based on conventions if they are empty. To override the
      * conventions CakePHP uses you can define properties in your class declaration.
      *
-     * @param \Cake\Network\Request|null $request Request object for this controller. Can be null for testing,
+     * @param \Cake\Http\ServerRequest|null $request Request object for this controller. Can be null for testing,
      *   but expect that features that use the request parameters will not work.
      * @param \Cake\Network\Response|null $response Response object for this controller.
      * @param string|null $name Override the name useful in testing when using mocks.
      * @param \Cake\Event\EventManager|null $eventManager The event manager. Defaults to a new instance.
      * @param \Cake\Controller\ComponentRegistry|null $components The component registry. Defaults to a new instance.
      */
-    public function __construct(Request $request = null, Response $response = null, $name = null, $eventManager = null, $components = null)
+    public function __construct(ServerRequest $request = null, Response $response = null, $name = null, $eventManager = null, $components = null)
     {
         if ($name !== null) {
             $this->name = $name;
@@ -244,8 +244,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $this->name = substr($name, 0, -10);
         }
 
-        $this->setRequest($request !== null ? $request : new Request);
-        $this->response = $response !== null ? $response : new Response;
+        $this->setRequest($request !== null ? $request : new ServerRequest());
+        $this->response = $response !== null ? $response : new Response();
 
         if ($eventManager !== null) {
             $this->eventManager($eventManager);
@@ -395,10 +395,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * - $this->passedArgs - Same as $request->params['pass]
      * - View::$plugin - $this->plugin
      *
-     * @param \Cake\Network\Request $request Request instance.
+     * @param \Cake\Http\ServerRequest $request Request instance.
      * @return void
      */
-    public function setRequest(Request $request)
+    public function setRequest(ServerRequest $request)
     {
         $this->request = $request;
         $this->plugin = $request->param('plugin') ?: null;

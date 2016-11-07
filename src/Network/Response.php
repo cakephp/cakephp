@@ -1441,7 +1441,7 @@ class Response implements ResponseInterface
      * the Last-Modified etag response header before calling this method. Otherwise
      * a comparison will not be possible.
      *
-     * @param \Cake\Network\Request $request Request object
+     * @param \Cake\Http\ServerRequest $request Request object
      * @return bool Whether the response was marked as not modified or not.
      */
     public function checkNotModified(Request $request)
@@ -1580,7 +1580,7 @@ class Response implements ResponseInterface
      * *Note* The `$allowedDomains`, `$allowedMethods`, `$allowedHeaders` parameters are deprecated.
      * Instead the builder object should be used.
      *
-     * @param \Cake\Network\Request $request Request object
+     * @param \Cake\Http\ServerRequest $request Request object
      * @param string|array $allowedDomains List of allowed domains, see method description for more details
      * @param string|array $allowedMethods List of HTTP verbs allowed
      * @param string|array $allowedHeaders List of HTTP headers allowed

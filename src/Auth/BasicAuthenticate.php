@@ -14,8 +14,8 @@
  */
 namespace Cake\Auth;
 
+use Cake\Http\ServerRequest;
 use Cake\Network\Exception\UnauthorizedException;
-use Cake\Network\Request;
 use Cake\Network\Response;
 
 /**
@@ -56,11 +56,11 @@ class BasicAuthenticate extends BaseAuthenticate
      * Authenticate a user using HTTP auth. Will use the configured User model and attempt a
      * login using HTTP auth.
      *
-     * @param \Cake\Network\Request $request The request to authenticate with.
+     * @param \Cake\Http\ServerRequest $request The request to authenticate with.
      * @param \Cake\Network\Response $response The response to add headers to.
      * @return mixed Either false on failure, or an array of user data on success.
      */
-    public function authenticate(Request $request, Response $response)
+    public function authenticate(ServerRequest $request, Response $response)
     {
         return $this->getUser($request);
     }
@@ -68,10 +68,10 @@ class BasicAuthenticate extends BaseAuthenticate
     /**
      * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
      *
-     * @param \Cake\Network\Request $request Request object.
+     * @param \Cake\Http\ServerRequest $request Request object.
      * @return mixed Either false or an array of user information
      */
-    public function getUser(Request $request)
+    public function getUser(ServerRequest $request)
     {
         $username = $request->env('PHP_AUTH_USER');
         $pass = $request->env('PHP_AUTH_PW');
@@ -86,12 +86,12 @@ class BasicAuthenticate extends BaseAuthenticate
     /**
      * Handles an unauthenticated access attempt by sending appropriate login headers
      *
-     * @param \Cake\Network\Request $request A request object.
+     * @param \Cake\Http\ServerRequest $request A request object.
      * @param \Cake\Network\Response $response A response object.
      * @return void
      * @throws \Cake\Network\Exception\UnauthorizedException
      */
-    public function unauthenticated(Request $request, Response $response)
+    public function unauthenticated(ServerRequest $request, Response $response)
     {
         $Exception = new UnauthorizedException();
         $Exception->responseHeader([$this->loginHeaders($request)]);
@@ -101,10 +101,10 @@ class BasicAuthenticate extends BaseAuthenticate
     /**
      * Generate the login headers
      *
-     * @param \Cake\Network\Request $request Request object.
+     * @param \Cake\Http\ServerRequest $request Request object.
      * @return string Headers for logging in.
      */
-    public function loginHeaders(Request $request)
+    public function loginHeaders(ServerRequest $request)
     {
         $realm = $this->config('realm') ?: $request->env('SERVER_NAME');
 

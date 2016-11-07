@@ -16,7 +16,7 @@ namespace Cake\Routing\Filter;
 
 use Cake\Core\Plugin;
 use Cake\Event\Event;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Network\Response;
 use Cake\Routing\DispatcherFilter;
 use Cake\Utility\Inflector;
@@ -120,13 +120,13 @@ class AssetFilter extends DispatcherFilter
     /**
      * Sends an asset file to the client
      *
-     * @param \Cake\Network\Request $request The request object to use.
+     * @param \Cake\Http\ServerRequest $request The request object to use.
      * @param \Cake\Network\Response $response The response object to use.
      * @param string $assetFile Path to the asset file in the file system
      * @param string $ext The extension of the file to determine its mime type
      * @return \Cake\Network\Response The updated response.
      */
-    protected function _deliverAsset(Request $request, Response $response, $assetFile, $ext)
+    protected function _deliverAsset(ServerRequest $request, Response $response, $assetFile, $ext)
     {
         $compressionEnabled = $response->compress();
         if ($response->type($ext) === $ext) {

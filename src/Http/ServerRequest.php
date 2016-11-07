@@ -127,7 +127,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * The built in detectors used with `is()` can be modified with `addDetector()`.
      *
-     * There are several ways to specify a detector, see Cake\Network\Request::addDetector() for the
+     * There are several ways to specify a detector, see \Cake\Http\ServerRequest::addDetector() for the
      * various formats and ways to define detectors.
      *
      * @var array
@@ -217,7 +217,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Uses the $_GET, $_POST, $_FILES, $_COOKIE, $_SERVER, $_ENV and php://input data to construct
      * the request.
      *
-     * @return \Cake\Network\Request
+     * @return \Cake\Http\ServerRequest
      * @deprecated 3.4.0 Use `Cake\Http\ServerRequestFactory` instead.
      */
     public static function createFromGlobals()

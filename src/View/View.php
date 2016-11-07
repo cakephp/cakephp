@@ -20,8 +20,8 @@ use Cake\Core\Plugin;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
+use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
-use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
@@ -198,7 +198,7 @@ class View implements EventDispatcherInterface
     public $uuids = [];
 
     /**
-     * An instance of a Cake\Network\Request object that contains information about the current request.
+     * An instance of a \Cake\Http\ServerRequest object that contains information about the current request.
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
      *
@@ -308,14 +308,14 @@ class View implements EventDispatcherInterface
     /**
      * Constructor
      *
-     * @param \Cake\Network\Request|null $request Request instance.
+     * @param \Cake\Http\ServerRequest|null $request Request instance.
      * @param \Cake\Network\Response|null $response Response instance.
      * @param \Cake\Event\EventManager|null $eventManager Event manager instance.
      * @param array $viewOptions View options. See View::$_passedVars for list of
      *   options which get set as class properties.
      */
     public function __construct(
-        Request $request = null,
+        ServerRequest $request = null,
         Response $response = null,
         EventManager $eventManager = null,
         array $viewOptions = []
@@ -335,7 +335,7 @@ class View implements EventDispatcherInterface
         $this->request = $request ?: Router::getRequest(true);
         $this->response = $response ?: new Response();
         if (empty($this->request)) {
-            $this->request = new Request([
+            $this->request = new ServerRequest([
                 'base' => '',
                 'url' => '',
                 'webroot' => '/'
@@ -487,7 +487,7 @@ class View implements EventDispatcherInterface
         }
 
         $pluginCheck = $options['plugin'] === false ? false : true;
-        $file = $this->_getElementFilename($name, $pluginCheck);
+        $file = $this->_getElementFileName($name, $pluginCheck);
         if ($file && $options['cache']) {
             return $this->cache(function () use ($file, $data, $options) {
                 echo $this->_renderElement($file, $data, $options);
