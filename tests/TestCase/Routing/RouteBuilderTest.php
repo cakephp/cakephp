@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\Routing;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
-use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\Route\RedirectRoute;
 use Cake\Routing\Route\Route;
