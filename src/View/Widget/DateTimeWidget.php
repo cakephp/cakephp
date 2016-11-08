@@ -218,10 +218,12 @@ class DateTimeWidget implements WidgetInterface
                 'meridian' => '',
             ];
         }
+
+        if (is_string($value) && is_numeric($value) && strlen($value) === 4) {
+            $value .= '-01-01';
+        }
+
         try {
-            if (is_string($value) && is_numeric($value) && strlen($value) === 4) {
-                $value .= '-01-01';
-            }
             if (is_string($value) && !is_numeric($value)) {
                 $date = new DateTime($value);
             } elseif (is_bool($value)) {
