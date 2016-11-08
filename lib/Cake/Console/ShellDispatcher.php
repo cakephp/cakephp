@@ -129,7 +129,12 @@ class ShellDispatcher {
 			define('APP', $this->params['working'] . DS);
 		}
 		if (!defined('WWW_ROOT')) {
-			define('WWW_ROOT', $this->params['webroot'] . DS);
+			if (!$this->_isAbsolutePath($this->params['webroot'])) {
+				$webroot = realpath(APP . $this->params['webroot']);
+			} else {
+				$webroot = $this->params['webroot'];
+			}
+			define('WWW_ROOT', $webroot . DS);
 		}
 		if (!defined('TMP') && !is_dir(APP . 'tmp')) {
 			define('TMP', CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'Console' . DS . 'Templates' . DS . 'skel' . DS . 'tmp' . DS);
@@ -315,9 +320,6 @@ class ShellDispatcher {
 		$params['working'] = rtrim($params['root'], '/');
 		if (!$isWin || !preg_match('/^[A-Z]:$/i', $params['app'])) {
 			$params['working'] .= '/' . $params['app'];
-		}
-		if (!$this->_isAbsolutePath($params['webroot'])) {
-			$params['webroot'] = realpath($params['working'] . DS . $params['webroot']);
 		}
 
 		if (DS == '\\' || !empty($isWin)) {
