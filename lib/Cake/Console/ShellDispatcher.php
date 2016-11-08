@@ -333,7 +333,7 @@ class ShellDispatcher {
  * Checks whether the given path is absolute or relative.
  *
  * @param string $path absolute or relative path.
- * @return boolean
+ * @return bool
  */
 	protected function _isAbsolutePath($path) {
 		return $path[0] === '/' || $this->_isWindowsPath($path);
@@ -343,7 +343,7 @@ class ShellDispatcher {
  * Checks whether the given path is Window OS path.
  *
  * @param string $path absolute path.
- * @return boolean
+ * @return bool
  */
 	protected function _isWindowsPath($path) {
 		return preg_match('/([a-z])(:)/i', $path) == 1;
