@@ -20,8 +20,8 @@ use Cake\Controller\Exception\AuthSecurityException;
 use Cake\Controller\Exception\SecurityException;
 use Cake\Core\Configure;
 use Cake\Event\Event;
+use Cake\Http\ServerRequest;
 use Cake\Network\Exception\BadRequestException;
-use Cake\Network\Request;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 
@@ -562,10 +562,10 @@ class SecurityComponent extends Component
      * Manually add form tampering prevention token information into the provided
      * request object.
      *
-     * @param \Cake\Network\Request $request The request object to add into.
+     * @param \Cake\Http\ServerRequest $request The request object to add into.
      * @return bool
      */
-    public function generateToken(Request $request)
+    public function generateToken(ServerRequest $request)
     {
         if ($request->is('requested')) {
             if ($this->session->check('_Token')) {

@@ -52,7 +52,7 @@ class ControllerFactoryFilter extends DispatcherFilter
     /**
      * Gets controller to use, either plugin or application controller.
      *
-     * @param \Cake\Network\Request $request Request object
+     * @param \Cake\Http\ServerRequest $request Request object
      * @param \Cake\Network\Response $response Response for the controller.
      * @return \Cake\Controller\Controller
      */

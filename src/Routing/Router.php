@@ -15,7 +15,7 @@
 namespace Cake\Routing;
 
 use Cake\Core\Configure;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -362,12 +362,12 @@ class Router
      * Will accept either a Cake\Network\Request object or an array of arrays. Support for
      * accepting arrays may be removed in the future.
      *
-     * @param \Cake\Network\Request|array $request Parameters and path information or a Cake\Network\Request object.
+     * @param \Cake\Http\ServerRequest|array $request Parameters and path information or a Cake\Network\Request object.
      * @return void
      */
     public static function setRequestInfo($request)
     {
-        if ($request instanceof Request) {
+        if ($request instanceof ServerRequest) {
             static::pushRequest($request);
         } else {
             $requestData = $request;
@@ -377,7 +377,7 @@ class Router
                 'action' => false,
                 'plugin' => null
             ];
-            $request = new Request();
+            $request = new ServerRequest();
             $request->addParams($requestData[0])->addPaths($requestData[1]);
             static::pushRequest($request);
         }
@@ -387,10 +387,10 @@ class Router
      * Push a request onto the request stack. Pushing a request
      * sets the request context used when generating URLs.
      *
-     * @param \Cake\Network\Request $request Request instance.
+     * @param \Cake\Http\ServerRequest $request Request instance.
      * @return void
      */
-    public static function pushRequest(Request $request)
+    public static function pushRequest(ServerRequest $request)
     {
         static::$_requests[] = $request;
         static::setRequestContext($request);
@@ -399,13 +399,13 @@ class Router
     /**
      * Store the request context for a given request.
      *
-     * @param \Cake\Network\Request|\Psr\Http\Message\ServerRequestInterface $request The request instance.
+     * @param \Cake\Http\ServerRequest|\Psr\Http\Message\ServerRequestInterface $request The request instance.
      * @return void
      * @throws InvalidArgumentException When parameter is an incorrect type.
      */
     public static function setRequestContext($request)
     {
-        if ($request instanceof Request) {
+        if ($request instanceof ServerRequest) {
             static::$_requestContext = [
                 '_base' => $request->base,
                 '_port' => $request->port(),
@@ -433,7 +433,7 @@ class Router
     /**
      * Pops a request off of the request stack.  Used when doing requestAction
      *
-     * @return \Cake\Network\Request The request removed from the stack.
+     * @return \Cake\Http\ServerRequest The request removed from the stack.
      * @see \Cake\Routing\Router::pushRequest()
      * @see \Cake\Routing\RequestActionTrait::requestAction()
      */
@@ -453,7 +453,7 @@ class Router
      * Get the current request object, or the first one.
      *
      * @param bool $current True to get the current request, or false to get the first one.
-     * @return \Cake\Network\Request|null
+     * @return \Cake\Http\ServerRequest|null
      */
     public static function getRequest($current = false)
     {
@@ -715,7 +715,7 @@ class Router
      * This will strip out 'autoRender', 'bare', 'requested', and 'return' param names as those
      * are used for CakePHP internals and should not normally be part of an output URL.
      *
-     * @param \Cake\Network\Request|array $params The params array or
+     * @param \Cake\Http\ServerRequest|array $params The params array or
      *     Cake\Network\Request object that needs to be reversed.
      * @param bool $full Set to true to include the full URL including the
      *     protocol when reversing the URL.
@@ -724,7 +724,7 @@ class Router
     public static function reverse($params, $full = false)
     {
         $url = [];
-        if ($params instanceof Request) {
+        if ($params instanceof ServerRequest) {
             $url = $params->query;
             $params = $params->params;
         } elseif (isset($params['url'])) {
@@ -839,12 +839,12 @@ class Router
      *
      * - `separator` The string to use as a separator.  Defaults to `:`.
      *
-     * @param \Cake\Network\Request $request The request object to modify.
+     * @param \Cake\Http\ServerRequest $request The request object to modify.
      * @param array $options The array of options.
-     * @return \Cake\Network\Request The modified request
+     * @return \Cake\Http\ServerRequest The modified request
      * @deprecated 3.3.0 Named parameter backwards compatibility will be removed in 4.0.
      */
-    public static function parseNamedParams(Request $request, array $options = [])
+    public static function parseNamedParams(ServerRequest $request, array $options = [])
     {
         $options += ['separator' => ':'];
         if (empty($request->params['pass'])) {

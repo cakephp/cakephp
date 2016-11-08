@@ -14,7 +14,7 @@
  */
 namespace Cake\Routing\Route;
 
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 
 /**
@@ -280,7 +280,7 @@ class Route
         if (isset($this->defaults['_method'])) {
             if (empty($method)) {
                 // Deprecated reading the global state is deprecated and will be removed in 4.x
-                $request = Router::getRequest(true) ?: Request::createFromGlobals();
+                $request = Router::getRequest(true) ?: ServerRequest::createFromGlobals();
                 $method = $request->env('REQUEST_METHOD');
             }
             if (!in_array($method, (array)$this->defaults['_method'], true)) {

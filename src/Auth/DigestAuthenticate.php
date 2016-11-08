@@ -16,8 +16,7 @@ namespace Cake\Auth;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
-use Cake\Network\Exception\UnauthorizedException;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 
 /**
  * Digest Authentication adapter for AuthComponent.
@@ -100,10 +99,10 @@ class DigestAuthenticate extends BasicAuthenticate
     /**
      * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
      *
-     * @param \Cake\Network\Request $request Request object.
+     * @param \Cake\Http\ServerRequest $request Request object.
      * @return mixed Either false or an array of user information
      */
-    public function getUser(Request $request)
+    public function getUser(ServerRequest $request)
     {
         $digest = $this->_getDigest($request);
         if (empty($digest)) {
@@ -134,10 +133,10 @@ class DigestAuthenticate extends BasicAuthenticate
     /**
      * Gets the digest headers from the request/environment.
      *
-     * @param \Cake\Network\Request $request Request object.
+     * @param \Cake\Http\ServerRequest $request Request object.
      * @return array Array of digest information.
      */
-    protected function _getDigest(Request $request)
+    protected function _getDigest(ServerRequest $request)
     {
         $digest = $request->env('PHP_AUTH_DIGEST');
         if (empty($digest) && function_exists('apache_request_headers')) {
@@ -213,10 +212,10 @@ class DigestAuthenticate extends BasicAuthenticate
     /**
      * Generate the login headers
      *
-     * @param \Cake\Network\Request $request Request object.
+     * @param \Cake\Http\ServerRequest $request Request object.
      * @return string Headers for logging in.
      */
-    public function loginHeaders(Request $request)
+    public function loginHeaders(ServerRequest $request)
     {
         $realm = $this->_config['realm'] ?: $request->env('SERVER_NAME');
 

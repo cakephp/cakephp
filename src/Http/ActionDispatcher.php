@@ -17,8 +17,6 @@ namespace Cake\Http;
 use Cake\Controller\Controller;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
-use Cake\Http\ControllerFactory;
-use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
 use LogicException;
@@ -69,11 +67,11 @@ class ActionDispatcher
     /**
      * Dispatches a Request & Response
      *
-     * @param \Cake\Network\Request $request The request to dispatch.
+     * @param \Cake\Http\ServerRequest $request The request to dispatch.
      * @param \Cake\Network\Response $response The response to dispatch.
      * @return \Cake\Network\Response A modified/replaced response.
      */
-    public function dispatch(Request $request, Response $response)
+    public function dispatch(ServerRequest $request, Response $response)
     {
         if (Router::getRequest(true) !== $request) {
             Router::pushRequest($request);
