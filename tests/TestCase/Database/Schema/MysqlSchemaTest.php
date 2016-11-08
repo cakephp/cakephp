@@ -171,6 +171,10 @@ class MysqlSchemaTest extends TestCase
                 'JSON',
                 ['type' => 'json', 'length' => null]
             ],
+            [
+                'YEAR',
+                ['type' => 'year', 'length' => null]
+            ],
         ];
     }
 
