@@ -119,7 +119,7 @@ class ServerTest extends TestCase
     /**
      * Test an application failing to build middleware properly
      *
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @expectedExceptionMessage The application `middleware` method
      */
     public function testRunWithApplicationNotMakingMiddleware()
@@ -146,7 +146,7 @@ class ServerTest extends TestCase
     /**
      * Test middleware not creating a response.
      *
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @expectedExceptionMessage Application did not create a response. Got "Not a response" instead.
      */
     public function testRunMiddlewareNoResponse()

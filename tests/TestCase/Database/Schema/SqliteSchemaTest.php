@@ -453,7 +453,7 @@ SQL;
             [
                 'title',
                 ['type' => 'string', 'length' => 25, 'null' => true, 'default' => 'ignored'],
-                '"title" VARCHAR(25) DEFAULT NULL'
+                '"title" VARCHAR(25) DEFAULT "ignored"',
             ],
             [
                 'id',
@@ -552,7 +552,7 @@ SQL;
             // Boolean
             [
                 'checked',
-                ['type' => 'boolean', 'default' => false],
+                ['type' => 'boolean', 'null' => true, 'default' => false],
                 '"checked" BOOLEAN DEFAULT FALSE'
             ],
             [

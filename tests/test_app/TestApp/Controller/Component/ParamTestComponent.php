@@ -17,6 +17,8 @@ use Cake\Controller\Component;
 
 /**
  * ParamTestComponent
+ *
+ * @property BananaComponent $Banana
  */
 class ParamTestComponent extends Component
 {

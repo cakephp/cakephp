@@ -53,7 +53,7 @@ class Hash
             );
         }
 
-        if (empty($data) || $path === null || $path === '') {
+        if (empty($data) || $path === null) {
             return $default;
         }
 

@@ -231,7 +231,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         if ($instance === null) {
             if ($this->_eagerLoader === null) {
-                $this->_eagerLoader = new EagerLoader;
+                $this->_eagerLoader = new EagerLoader();
             }
 
             return $this->_eagerLoader;

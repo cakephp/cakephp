@@ -2105,7 +2105,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * ```
      * $article = $this->Articles->newEntity($this->request->data(), [
-     *  'fieldList' => ['title', 'body'],
+     *  'fieldList' => ['title', 'body', 'tags', 'comments'],
      *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
      * ]
      * );
@@ -2175,7 +2175,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * ```
      * $articles = $this->Articles->newEntities($this->request->data(), [
-     *  'fieldList' => ['title', 'body'],
+     *  'fieldList' => ['title', 'body', 'tags', 'comments'],
      *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
      *  ]
      * );
@@ -2206,7 +2206,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * ```
      * $article = $this->Articles->patchEntity($article, $this->request->data(), [
-     *  'fieldList' => ['title', 'body'],
+     *  'fieldList' => ['title', 'body', 'tags', 'comments'],
      *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
      *  ]
      * );
@@ -2251,7 +2251,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * ```
      * $articles = $this->Articles->patchEntities($articles, $this->request->data(), [
-     *  'fieldList' => ['title', 'body'],
+     *  'fieldList' => ['title', 'body', 'tags', 'comments'],
      *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
      *  ]
      * );
@@ -2327,7 +2327,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 return false;
             }
         }
-        $rule = new IsUnique($fields);
+        $rule = new IsUnique($fields, $options);
 
         return $rule($entity, ['repository' => $this]);
     }

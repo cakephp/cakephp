@@ -2784,6 +2784,8 @@ class ValidationTest extends TestCase
      */
     public function testLatitude()
     {
+        $this->assertTrue(Validation::latitude('0'));
+        $this->assertTrue(Validation::latitude('0.000000'));
         $this->assertTrue(Validation::latitude('51.165691'));
         $this->assertFalse(Validation::latitude('200.23552'));
     }
@@ -2795,6 +2797,9 @@ class ValidationTest extends TestCase
      */
     public function testLongitude()
     {
+        $this->assertTrue(Validation::longitude('0'));
+        $this->assertTrue(Validation::longitude('0.000000'));
+        $this->assertTrue(Validation::longitude('0.123456'));
         $this->assertTrue(Validation::longitude('10.451526'));
         $this->assertFalse(Validation::longitude('-190.52236'));
     }

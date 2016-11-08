@@ -151,12 +151,14 @@ class Component implements EventListenerInterface
     public function __get($name)
     {
         if (isset($this->_componentMap[$name]) && !isset($this->{$name})) {
-            $config = ['enabled' => false] + (array)$this->_componentMap[$name]['config'];
+            $config = (array)$this->_componentMap[$name]['config'] + ['enabled' => false];
             $this->{$name} = $this->_registry->load($this->_componentMap[$name]['class'], $config);
         }
-        if (isset($this->{$name})) {
-            return $this->{$name};
+        if (!isset($this->{$name})) {
+            return null;
         }
+
+        return $this->{$name};
     }
 
     /**

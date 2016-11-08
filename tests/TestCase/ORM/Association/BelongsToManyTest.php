@@ -741,7 +741,7 @@ class BelongsToManyTest extends TestCase
     /**
      * Test that saveAssociated() fails on non-empty, non-iterable value
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Could not save tags, it cannot be traversed
      * @return void
      */

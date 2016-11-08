@@ -327,11 +327,14 @@ class FormHelper extends Helper
      *
      * - `type` Form method defaults to autodetecting based on the form context. If
      *   the form context's isCreate() method returns false, a PUT request will be done.
+     * - `method` Set the form's method attribute explicitly.
      * - `action` The controller action the form submits to, (optional). Use this option if you
      *   don't need to change the controller from the current request's controller. Deprecated since 3.2, use `url`.
      * - `url` The URL the form submits to. Can be a string or a URL array. If you use 'url'
      *    you should leave 'action' undefined.
      * - `encoding` Set the accept-charset encoding for the form. Defaults to `Configure::read('App.encoding')`
+     * - `enctype` Set the form encoding explicitly. By default `type => file` will set `enctype`
+     *   to `multipart/form-data`.
      * - `templates` The templates you want to use for this form. Any templates will be merged on top of
      *   the already loaded templates. This option can either be a filename in /config that contains
      *   the templates you want to load, or an array of templates to use.
@@ -429,6 +432,13 @@ class FormHelper extends Helper
             default:
                 $htmlAttributes['method'] = 'post';
         }
+        if (isset($options['method'])) {
+            $htmlAttributes['method'] = strtolower($options['method']);
+        }
+        if (isset($options['enctype'])) {
+            $htmlAttributes['enctype'] = strtolower($options['enctype']);
+        }
+
         $this->requestType = strtolower($options['type']);
 
         if (!empty($options['encoding'])) {

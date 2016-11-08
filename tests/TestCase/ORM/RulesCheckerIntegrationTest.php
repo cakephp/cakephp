@@ -94,10 +94,10 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public function testSaveHasOneWithValidationError()
     {
-        $entity = new \Cake\ORM\Entity([
+        $entity = new Entity([
             'name' => 'Jose'
         ]);
-        $entity->article = new \Cake\ORM\Entity([
+        $entity->article = new Entity([
             'title' => 'A Title',
             'body' => 'A body'
         ]);
@@ -133,15 +133,15 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public function testSaveHasManyWithErrorsAtomic()
     {
-        $entity = new \Cake\ORM\Entity([
+        $entity = new Entity([
             'name' => 'Jose'
         ]);
         $entity->articles = [
-            new \Cake\ORM\Entity([
+            new Entity([
                 'title' => '1',
                 'body' => 'A body'
             ]),
-            new \Cake\ORM\Entity([
+            new Entity([
                 'title' => 'Another Title',
                 'body' => 'Another body'
             ])
@@ -182,15 +182,15 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public function testSaveHasManyWithErrorsNonAtomic()
     {
-        $entity = new \Cake\ORM\Entity([
+        $entity = new Entity([
             'name' => 'Jose'
         ]);
         $entity->articles = [
-            new \Cake\ORM\Entity([
+            new Entity([
                 'title' => 'A title',
                 'body' => 'A body'
             ]),
-            new \Cake\ORM\Entity([
+            new Entity([
                 'title' => '1',
                 'body' => 'Another body'
             ])
@@ -226,15 +226,15 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public function testSaveBelongsToManyWithValidationErrorInJointEntity()
     {
-        $entity = new \Cake\ORM\Entity([
+        $entity = new Entity([
             'title' => 'A Title',
             'body' => 'A body'
         ]);
         $entity->tags = [
-            new \Cake\ORM\Entity([
+            new Entity([
                 'name' => 'Something New'
             ]),
-            new \Cake\ORM\Entity([
+            new Entity([
                 'name' => '100'
             ])
         ];
@@ -266,15 +266,15 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public function testSaveBelongsToManyWithValidationErrorInJointEntityNonAtomic()
     {
-        $entity = new \Cake\ORM\Entity([
+        $entity = new Entity([
             'title' => 'A Title',
             'body' => 'A body'
         ]);
         $entity->tags = [
-            new \Cake\ORM\Entity([
+            new Entity([
                 'name' => 'Something New'
             ]),
-            new \Cake\ORM\Entity([
+            new Entity([
                 'name' => 'New one'
             ])
         ];
@@ -634,7 +634,7 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests existsIn with invalid associations
      *
      * @group save
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @expectedExceptionMessage ExistsIn rule for 'author_id' is invalid. 'NotValid' is not associated with 'Cake\ORM\Table'.
      * @return void
      */
@@ -1303,15 +1303,15 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public function testAvoidExistsInOnAutomaticSaving()
     {
-        $entity = new \Cake\ORM\Entity([
+        $entity = new Entity([
             'name' => 'Jose'
         ]);
         $entity->articles = [
-            new \Cake\ORM\Entity([
+            new Entity([
                 'title' => '1',
                 'body' => 'A body'
             ]),
-            new \Cake\ORM\Entity([
+            new Entity([
                 'title' => 'Another Title',
                 'body' => 'Another body'
             ])
@@ -1366,15 +1366,15 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public function testCountOfAssociatedItems()
     {
-        $entity = new \Cake\ORM\Entity([
+        $entity = new Entity([
             'title' => 'A Title',
             'body' => 'A body'
         ]);
         $entity->tags = [
-            new \Cake\ORM\Entity([
+            new Entity([
                 'name' => 'Something New'
             ]),
-            new \Cake\ORM\Entity([
+            new Entity([
                 'name' => '100'
             ])
         ];

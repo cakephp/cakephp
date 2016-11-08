@@ -16,6 +16,8 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Plugin;
 use Cake\Event\Event;
+use Cake\Database\Expression\Comparison;
+use Cake\Database\Expression\QueryExpression;
 use Cake\I18n\Time;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -349,7 +351,7 @@ class QueryRegressionTest extends TestCase
         $this->loadFixtures('Articles');
         $articles = TableRegistry::get('Articles');
         $article = $articles->newEntity();
-        $article->title = new \Cake\Database\Expression\QueryExpression("SELECT 'jose'");
+        $article->title = new QueryExpression("SELECT 'jose'");
         $this->assertSame($article, $articles->save($article));
     }
 
@@ -702,8 +704,8 @@ class QueryRegressionTest extends TestCase
         $query = $table->find();
         $query->where([
             'OR' => [
-                new \Cake\Database\Expression\Comparison('id', 1, 'integer', '>'),
-                new \Cake\Database\Expression\Comparison('id', 3, 'integer', '<')
+                new Comparison('id', 1, 'integer', '>'),
+                new Comparison('id', 3, 'integer', '<')
             ]
         ]);
 
@@ -862,7 +864,7 @@ class QueryRegressionTest extends TestCase
      * Tests that trying to contain an inexistent association
      * throws an exception and not a fatal error.
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testQueryNotFatalError()

@@ -1313,6 +1313,10 @@ class QueryTest extends TestCase
             ->eventManager()
             ->on('Model.beforeFind', function (Event $event, $query) {
                 $query->formatResults(function ($results) {
+                    foreach ($results as $result) {
+                        $result->beforeFind = true;
+                    }
+
                     return $results;
                 });
             });
@@ -1333,7 +1337,11 @@ class QueryTest extends TestCase
         $expected = [
             'id' => 1,
             'name' => 'tag1',
-            '_joinData' => ['article_id' => 1, 'tag_id' => 1],
+            '_joinData' => [
+                'article_id' => 1,
+                'tag_id' => 1,
+                'beforeFind' => true,
+            ],
             'description' => 'A big description',
             'created' => new Time('2016-01-01 00:00'),
         ];
@@ -1343,7 +1351,11 @@ class QueryTest extends TestCase
         $expected = [
             'id' => 2,
             'name' => 'tag2',
-            '_joinData' => ['article_id' => 1, 'tag_id' => 2],
+            '_joinData' => [
+                'article_id' => 1,
+                'tag_id' => 2,
+                'beforeFind' => true,
+            ],
             'description' => 'Another big description',
             'created' => new Time('2016-01-01 00:00'),
         ];

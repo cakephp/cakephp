@@ -690,7 +690,7 @@ class Connection implements ConnectionInterface
     {
         if ($instance === null) {
             if ($this->_logger === null) {
-                $this->_logger = new QueryLogger;
+                $this->_logger = new QueryLogger();
             }
 
             return $this->_logger;
@@ -706,7 +706,7 @@ class Connection implements ConnectionInterface
      */
     public function log($sql)
     {
-        $query = new LoggedQuery;
+        $query = new LoggedQuery();
         $query->query = $sql;
         $this->logger()->log($query);
     }

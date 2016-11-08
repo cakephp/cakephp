@@ -119,7 +119,11 @@ class SelectWithPivotLoader extends SelectLoader
             ->eagerLoader()
             ->addToJoinsMap($tempName, $assoc, false, $this->junctionProperty);
 
-        $assoc->attachTo($query, ['aliasPath' => $assoc->alias(), 'includeFields' => false]);
+        $assoc->attachTo($query, [
+            'aliasPath' => $assoc->alias(),
+            'includeFields' => false,
+            'propertyPath' => $this->junctionProperty,
+        ]);
         $query->typeMap()->addDefaults($types);
 
         return $query;

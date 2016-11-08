@@ -389,8 +389,8 @@ class MysqlSchema extends BaseSchema
         ) {
             $out .= ' AUTO_INCREMENT';
         }
-        if (isset($data['null']) && $data['null'] === true) {
-            $out .= $data['type'] === 'timestamp' ? ' NULL' : ' DEFAULT NULL';
+        if (isset($data['null']) && $data['null'] === true && $data['type'] === 'timestamp') {
+            $out .= ' NULL';
             unset($data['default']);
         }
         if (isset($data['default']) && !in_array($data['type'], ['timestamp', 'datetime'])) {

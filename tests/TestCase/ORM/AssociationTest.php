@@ -44,6 +44,11 @@ class AssociationTest extends TestCase
 {
 
     /**
+     * @var \Cake\ORM\Association|\PHPUnit_Framework_MockObject_MockObject
+     */
+    public $association;
+
+    /**
      * Set up
      *
      * @return void
@@ -331,7 +336,7 @@ class AssociationTest extends TestCase
      * Test that warning is shown if property name clashes with table field.
      *
      * @return void
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException \PHPUnit_Framework_Error_Warning
      * @expectedExceptionMessageRegExp /^Association property name "foo" clashes with field of same name of table "test"/
      */
     public function testPropertyNameClash()

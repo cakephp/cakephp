@@ -402,7 +402,7 @@ class PostgresSchema extends BaseSchema
         if (isset($data['null']) && $data['null'] === false) {
             $out .= ' NOT NULL';
         }
-        if (isset($data['null']) && $data['null'] === true) {
+        if (isset($data['null']) && $data['null'] === true && $data['type'] === 'timestamp') {
             $out .= ' DEFAULT NULL';
             unset($data['default']);
         }

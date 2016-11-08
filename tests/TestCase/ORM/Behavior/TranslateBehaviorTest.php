@@ -1258,6 +1258,66 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
+     * Tests that default locale saves ok.
+     *
+     * @return void
+     */
+    public function testSaveDefaultLocale()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->hasMany('Comments');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+
+        $article = $table->get(1);
+        $data = [
+            'title' => 'New title',
+            'body' => 'New body',
+        ];
+        $article = $table->patchEntity($article, $data);
+        $table->save($article);
+        $this->assertNull($article->get('_i18n'));
+
+        $article = $table->get(1);
+        $this->assertEquals('New title', $article->get('title'));
+        $this->assertEquals('New body', $article->get('body'));
+    }
+
+    /**
+     * Tests that translations are added to the whitelist of associations to be
+     * saved
+     *
+     * @return void
+     */
+    public function testSaveTranslationDefaultLocale()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->hasMany('Comments');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+
+        $article = $table->get(1);
+        $data = [
+            'title' => 'New title',
+            'body' => 'New body',
+            '_translations' => [
+                'es' => [
+                    'title' => 'ES title',
+                    'body' => 'ES body'
+                ]
+            ]
+        ];
+        $article = $table->patchEntity($article, $data);
+        $table->save($article);
+        $this->assertNull($article->get('_i18n'));
+
+        $article = $table->find('translations')->where(['id' => 1])->first();
+        $this->assertEquals('New title', $article->get('title'));
+        $this->assertEquals('New body', $article->get('body'));
+
+        $this->assertEquals('ES title', $article->_translations['es']->title);
+        $this->assertEquals('ES body', $article->_translations['es']->body);
+    }
+
+    /**
      * Test that no properties are enabled when the translations
      * option is off.
      *
