@@ -322,7 +322,7 @@ class ShellDispatcher {
 			$params['working'] .= '/' . $params['app'];
 		}
 
-		if (DS == '\\' || !empty($isWin)) {
+		if ($this->_isWindowsPath($params['app']) || !empty($isWin)) {
 			$params = str_replace('/', '\\', $params);
 		}
 
@@ -336,7 +336,17 @@ class ShellDispatcher {
  * @return boolean
  */
 	protected function _isAbsolutePath($path) {
-		return $path[0] === '/' || preg_match('/([a-z])(:)/i', $path);
+		return $path[0] === '/' || $this->_isWindowsPath($path);
+	}
+
+/**
+ * Checks whether the given path is Window OS path.
+ *
+ * @param string $path absolute path.
+ * @return boolean
+ */
+	protected function _isWindowsPath($path) {
+		return preg_match('/([a-z])(:)/i', $path) == 1;
 	}
 
 /**
