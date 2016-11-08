@@ -315,14 +315,14 @@ class ShellDispatcher {
 		} elseif (strpos($params['app'], '/')) {
 			$params['root'] .= '/' . dirname($params['app']);
 		}
-
+		$isWindowsAppPath = $this->_isWindowsPath($params['app']);
 		$params['app'] = basename($params['app']);
 		$params['working'] = rtrim($params['root'], '/');
 		if (!$isWin || !preg_match('/^[A-Z]:$/i', $params['app'])) {
 			$params['working'] .= '/' . $params['app'];
 		}
 
-		if ($this->_isWindowsPath($params['app']) || !empty($isWin)) {
+		if ($isWindowsAppPath || !empty($isWin)) {
 			$params = str_replace('/', '\\', $params);
 		}
 
