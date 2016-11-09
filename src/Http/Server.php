@@ -15,11 +15,11 @@
 namespace Cake\Http;
 
 use Cake\Event\EventDispatcherTrait;
+use Cake\Network\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use UnexpectedValueException;
-use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\EmitterInterface;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\Response\SapiStreamEmitter;

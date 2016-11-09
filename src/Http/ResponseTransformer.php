@@ -27,6 +27,7 @@ use Zend\Diactoros\Stream;
  * can be embedded as PSR7 middleware in a fully compatible way.
  *
  * @internal
+ * @deprecated 3.4.0 No longer used. Will be removed in 4.0.0
  */
 class ResponseTransformer
 {
