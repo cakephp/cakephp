@@ -15,9 +15,9 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Plugin;
-use Cake\Event\Event;
 use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
