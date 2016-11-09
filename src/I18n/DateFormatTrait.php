@@ -17,6 +17,9 @@ namespace Cake\I18n;
 use Cake\Chronos\Date as ChronosDate;
 use Cake\Chronos\MutableDate;
 use IntlDateFormatter;
+use \DateTimeZone;
+use \InvalidArgumentException;
+use \RuntimeException;
 
 /**
  * Trait for date formatting methods shared by both Time & Date.
@@ -33,6 +36,14 @@ trait DateFormatTrait
      * @deprecated 3.2.9 Use static::setDefaultLocale() and static::getDefaultLocale() instead.
      */
     public static $defaultLocale;
+
+    /**
+     * The \DateTimeZone default output timezone used by Time and FrozenTime.
+     *
+     * @var \DateTimeZone|null
+     * @see http://php.net/manual/en/timezones.php
+     */
+    protected static $_defaultOutputTimezone;
 
     /**
      * In-memory cache of date formatters
@@ -63,6 +74,43 @@ trait DateFormatTrait
      * @var bool
      */
     protected static $_isDateInstance;
+
+    /**
+     * Gets the default output timezone used by Time and FrozenTime.
+     *
+     * @return \DateTimeZone|null DateTimeZone object in which the date will be displayed or null.
+     * @throws \RuntimeException When being executed on Date/FrozenDate.
+     */
+    public static function getDefaultOutputTimezone()
+    {
+        if (is_subclass_of(static::class, ChronosDate::class) || is_subclass_of(static::class, MutableDate::class)) {
+            throw new \RuntimeException('Timezone conversion is not supported by Date/FrozenDate.');
+        }
+        return static::$_defaultOutputTimezone;
+    }
+
+    /**
+     * Sets the default output timezone used by Time and FrozenTime.
+     *
+     * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
+     * in which the date will be displayed.
+     * @return void
+     * @throws \RuntimeException When being executed on Date/FrozenDate.
+     * @throws \InvalidArgumentException When $timezone is neither a valid DateTimeZone string nor a \DateTimeZone object.
+     */
+    public static function setDefaultOutputTimezone($timezone)
+    {
+        if (is_subclass_of(static::class, ChronosDate::class) || is_subclass_of(static::class, MutableDate::class)) {
+            throw new \RuntimeException('Timezone conversion is not supported by Date/FrozenDate.');
+        }
+        if (is_string($timezone)) {
+            static::$_defaultOutputTimezone = new \DateTimeZone($timezone);
+        } elseif ($timezone instanceof \DateTimeZone) {
+            static::$_defaultOutputTimezone = $timezone;
+        } else {
+            throw new \InvalidArgumentException('Expected valid DateTimeZone string or \DateTimeZone object.');
+        }
+    }
 
     /**
      * Gets the default locale.
@@ -165,9 +213,22 @@ trait DateFormatTrait
 
         $time = $this;
 
+        if ($time instanceof Time || $time instanceof FrozenTime) {
+            // Remove before merge:
+            // if ((is_string($time->timezone) && $time->timezone === 'UTC')
+            //     || ($time->timezone instanceof \DateTimeZone && $time->timezone->getName() === '+0:00')
+            // ) {
+            // }
+            // if ($time->getOffset() !== 0) {
+            //     $time = clone $time;
+            //     $time->add(new \DateInterval('PT' . $time->getOffset() / 60 . 'M'));
+            // }
+            $timezone = $timezone ?: static::getDefaultOutputTimezone();
+        }
+
         if ($timezone) {
             // Handle the immutable and mutable object cases.
-            $time = clone $this;
+            $time = clone $time;
             $time = $time->timezone($timezone);
         }
 
