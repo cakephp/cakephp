@@ -74,9 +74,11 @@ trait PostgresDialectTrait
             return $query;
         }
 
+        $table = $query->clause('update')[0];
+
         $inner = new Query($query->connection());
         $inner->select('ctid')
-            ->from($query->clause('update'))
+            ->from($table)
             ->where($query->clause('where'))
             ->order($query->clause('order'))
             ->limit($query->clause('limit'))
@@ -84,7 +86,7 @@ trait PostgresDialectTrait
 
         $outer = new Query($query->connection());
         $outer
-            ->update($query->clause('update'))
+            ->update($table)
             ->set($query->clause('set'))
             ->where(['ctid IN' => $inner]);
 

@@ -80,16 +80,18 @@ trait SqliteDialectTrait
             return $query;
         }
 
+        $table = $query->clause('update')[0];
+
         $inner = new Query($query->connection());
         $inner->select('rowid')
-            ->from($query->clause('update'))
+            ->from($table)
             ->where($query->clause('where'))
             ->order($query->clause('order'))
             ->limit($query->clause('limit'));
 
         $outer = new Query($query->connection());
         $outer
-            ->update($query->clause('update'))
+            ->update($table)
             ->set($query->clause('set'))
             ->where(['rowid IN' => $inner]);
 

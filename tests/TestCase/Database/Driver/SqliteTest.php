@@ -171,7 +171,7 @@ class SqliteTest extends TestCase
             ->where(['published' => true])
             ->limit(5);
 
-        $this->assertEquals('UPDATE articles SET title = :c0 WHERE published = :c1 LIMIT :c2', $query->sql());
+        $this->assertEquals('UPDATE articles SET title = :c0 WHERE rowid in (SELECT rowid FROM articles WHERE published = :c1 LIMIT 5)', $query->sql());
     }
 
     /**
@@ -203,7 +203,7 @@ class SqliteTest extends TestCase
             ->limit(5)
             ->offset(3);
 
-        $this->assertEquals('UPDATE articles SET title = :c0 WHERE published = :c1 LIMIT :c2 OFFSET :c3', $query->sql());
+        $this->assertEquals('UPDATE articles SET title = :c0 WHERE rowid in (SELECT rowid FROM articles WHERE published = :c1 LIMIT 5)', $query->sql());
     }
 
     /**
@@ -267,7 +267,6 @@ class SqliteTest extends TestCase
             ->offset(3)
             ->order(['created' => 'DESC']);
 
-        $this->assertEquals('UPDATE articles SET title = :c0 WHERE published = :c1 ORDER BY created DESC LIMIT :c2 OFFSET :c3', $query->sql());
+        $this->assertEquals('UPDATE articles SET title = :c0 WHERE rowid in (SELECT rowid FROM articles WHERE published = :c1 ORDER BY created DESC LIMIT 5)', $query->sql());
     }
-
 }

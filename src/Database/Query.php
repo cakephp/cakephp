@@ -1370,6 +1370,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function into($table)
     {
+        if (!is_string($table) || $table === '') {
+            throw new \InvalidArgumentException('Invalidate table argument used for into.');
+        }
+
         $this->_dirty();
         $this->_type = 'insert';
         $this->_parts['insert'][0] = $table;
@@ -1424,6 +1428,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function update($table)
     {
+        if (!is_string($table) || $table === '') {
+            throw new \InvalidArgumentException('Invalidate table argument used for update.');
+        }
+
         $this->_dirty();
         $this->_type = 'update';
         $this->_parts['update'][0] = $table;
@@ -1507,6 +1515,10 @@ class Query implements ExpressionInterface, IteratorAggregate
         $this->_dirty();
         $this->_type = 'delete';
         if ($table !== null) {
+            if (!is_string($table) || $table === '') {
+                throw new \InvalidArgumentException('Invalidate table argument used for delete.');
+            }
+
             $this->from($table);
         }
 
@@ -1530,6 +1542,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function epilog($expression = null)
     {
+        if (is_array($expression)) {
+            throw new \InvalidArgumentException('Invalidate expression argument used for epilog.');
+        }
+
         $this->_dirty();
         $this->_parts['epilog'] = $expression;
 
@@ -1602,7 +1618,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * iterated without having to call execute() manually, thus making it look like
      * a result set instead of the query itself.
      *
-     * @return \Iterator
+     * @return \Iterator|StatementInterface
      */
     public function getIterator()
     {
