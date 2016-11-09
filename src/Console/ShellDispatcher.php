@@ -284,6 +284,7 @@ class ShellDispatcher
                 continue;
             }
             
+
             if (isset($others[$shell])) {
                 $conflicts = array_diff($others[$shell], [$plugin]);
                 if (count($conflicts) > 0) {
