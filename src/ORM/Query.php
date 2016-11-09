@@ -231,7 +231,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         if ($instance === null) {
             if ($this->_eagerLoader === null) {
-                $this->_eagerLoader = new EagerLoader();
+                $this->_eagerLoader = new EagerLoader;
             }
 
             return $this->_eagerLoader;
@@ -1022,9 +1022,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             if (isset($typeMap[$alias])) {
                 $types[$alias] = $typeMap[$alias];
                 continue;
-            }
-            if (is_string($value) && isset($typeMap[$value])) {
-                $types[$alias] = $typeMap[$value];
             }
             if ($value instanceof TypedResultInterface) {
                 $types[$alias] = $value->returnType();

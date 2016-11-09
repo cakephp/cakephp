@@ -221,7 +221,7 @@ class ValidatorTest extends TestCase
     /**
      * Tests the requirePresence failure case
      *
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @return void
      */
     public function testRequirePresenceAsArrayFailure()
@@ -599,7 +599,7 @@ class ValidatorTest extends TestCase
     /**
      * Tests the allowEmpty failure case
      *
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @return void
      */
     public function testAllowEmptyAsArrayFailure()
@@ -678,7 +678,7 @@ class ValidatorTest extends TestCase
     /**
      * Tests the notEmpty failure case
      *
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @return void
      */
     public function testNotEmptyAsArrayFailure()
@@ -1301,7 +1301,7 @@ class ValidatorTest extends TestCase
     /**
      * Tests the lengthBetween proxy method
      *
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @return void
      */
     public function testLengthBetweenFailure()
@@ -1587,7 +1587,7 @@ class ValidatorTest extends TestCase
     /**
      * Tests the range failure case
      *
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @return void
      */
     public function testRangeFailure()

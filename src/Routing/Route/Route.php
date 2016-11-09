@@ -14,7 +14,7 @@
  */
 namespace Cake\Routing\Route;
 
-use Cake\Http\ServerRequest;
+use Cake\Network\Request;
 use Cake\Routing\Router;
 
 /**
@@ -280,7 +280,7 @@ class Route
         if (isset($this->defaults['_method'])) {
             if (empty($method)) {
                 // Deprecated reading the global state is deprecated and will be removed in 4.x
-                $request = Router::getRequest(true) ?: ServerRequest::createFromGlobals();
+                $request = Router::getRequest(true) ?: Request::createFromGlobals();
                 $method = $request->env('REQUEST_METHOD');
             }
             if (!in_array($method, (array)$this->defaults['_method'], true)) {
@@ -349,7 +349,7 @@ class Route
         if (empty($this->_extensions)) {
             return [$url, null];
         }
-        preg_match('/\.([0-9a-z\.]*)$/', $url, $match);
+        preg_match('/\.([0-9a-z]*)$/', $url, $match);
         if (empty($match[1])) {
             return [$url, null];
         }

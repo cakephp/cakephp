@@ -14,7 +14,7 @@
 namespace Cake\Routing;
 
 use Cake\Core\Configure;
-use Cake\Http\ServerRequest;
+use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Network\Session;
 use Cake\Routing\Filter\ControllerFactoryFilter;
@@ -153,7 +153,7 @@ trait RequestActionTrait
 
         $params['session'] = isset($extra['session']) ? $extra['session'] : new Session();
 
-        $request = new ServerRequest($params);
+        $request = new Request($params);
         $request->addParams($extra);
         $dispatcher = DispatcherFactory::create();
 

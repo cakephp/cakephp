@@ -9,117 +9,40 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.4.0
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\ORM\Association\Loader;
+namespace Cake\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\ValueBinder;
-use Cake\ORM\Association;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
- * Implements the logic for loading an association using a SELECT query
- *
- * @internal
+ * Represents a type of association that that can be fetched using another query
  */
-class SelectLoader
+trait SelectableAssociationTrait
 {
 
     /**
-     * The alias of the association loading the results
+     * Returns true if the eager loading process will require a set of the owning table's
+     * binding keys in order to use them as a filter in the finder query.
      *
-     * @var string
+     * @param array $options The options containing the strategy to be used.
+     * @return bool true if a list of keys will be required
      */
-    protected $alias;
-
-    /**
-     * The alias of the source association
-     *
-     * @var string
-     */
-    protected $sourceAlias;
-
-    /**
-     * The alias of the target association
-     *
-     * @var string
-     */
-    protected $targetAlias;
-
-    /**
-     * The foreignKey to the target association
-     *
-     * @var string|array
-     */
-    protected $foreignKey;
-
-    /**
-     * The strategy to use for loading, either select or subquery
-     *
-     * @var string
-     */
-    protected $strategy;
-
-    /**
-     * The binding key for the source association.
-     *
-     * @var string
-     */
-    protected $bindingKey;
-
-    /**
-     * A callable that will return a query object used for loading the association results
-     *
-     * @var callable
-     */
-    protected $finder;
-
-    /**
-     * The type of the association triggering the load
-     *
-     * @var string
-     */
-    protected $associationType;
-
-    /**
-     * The sorting options for loading the association
-     *
-     * @var string
-     */
-    protected $sort;
-
-    /**
-     * Copies the options array to properties in this class. The keys in the array correspond
-     * to properties in this class.
-     *
-     * @param array $options Properties to be copied to this class
-     */
-    public function __construct(array $options)
+    public function requiresKeys(array $options = [])
     {
-        $this->alias = $options['alias'];
-        $this->sourceAlias = $options['sourceAlias'];
-        $this->targetAlias = $options['targetAlias'];
-        $this->foreignKey = $options['foreignKey'];
-        $this->strategy = $options['strategy'];
-        $this->bindingKey = $options['bindingKey'];
-        $this->finder = $options['finder'];
-        $this->associationType = $options['associationType'];
-        $this->sort = isset($options['sort']) ? $options['sort'] : null;
+        $strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
+
+        return $strategy === $this::STRATEGY_SELECT;
     }
 
-
     /**
-     * Returns a callable that can be used for injecting association results into a given
-     * iterator. The options accepted by this method are the same as `Association::eagerLoader()`
-     *
-     * @param array $options Same options as `Association::eagerLoader()`
-     * @return callable
+     * {@inheritDoc}
      */
-    public function buildEagerLoader(array $options)
+    public function eagerLoader(array $options)
     {
         $options += $this->_defaultOptions();
         $fetchQuery = $this->_buildQuery($options);
@@ -136,11 +59,10 @@ class SelectLoader
     protected function _defaultOptions()
     {
         return [
-            'foreignKey' => $this->foreignKey,
+            'foreignKey' => $this->foreignKey(),
             'conditions' => [],
-            'strategy' => $this->strategy,
-            'nestKey' => $this->alias,
-            'sort' => $this->sort
+            'strategy' => $this->strategy(),
+            'nestKey' => $this->_name
         ];
     }
 
@@ -155,17 +77,20 @@ class SelectLoader
      */
     protected function _buildQuery($options)
     {
-        $alias = $this->targetAlias;
+        $target = $this->target();
+        $alias = $target->alias();
         $key = $this->_linkField($options);
         $filter = $options['keys'];
-        $useSubquery = $options['strategy'] === Association::STRATEGY_SUBQUERY;
-        $finder = $this->finder;
+        $useSubquery = $options['strategy'] === $this::STRATEGY_SUBQUERY;
 
+        $finder = isset($options['finder']) ? $options['finder'] : $this->finder();
+        list($finder, $opts) = $this->_extractFinder($finder);
         if (!isset($options['fields'])) {
             $options['fields'] = [];
         }
 
-        $fetchQuery = $finder()
+        $fetchQuery = $this
+            ->find($finder, $opts)
             ->select($options['fields'])
             ->where($options['conditions'])
             ->eagerLoaded(true)
@@ -248,10 +173,10 @@ class SelectLoader
      * @param \Cake\ORM\Query $subquery The Subquery to use for filtering
      * @return \Cake\ORM\Query
      */
-    protected function _addFilteringJoin($query, $key, $subquery)
+    public function _addFilteringJoin($query, $key, $subquery)
     {
         $filter = [];
-        $aliasedTable = $this->sourceAlias;
+        $aliasedTable = $this->source()->alias();
 
         foreach ($subquery->clause('select') as $aliasedField => $field) {
             if (is_int($aliasedField)) {
@@ -326,31 +251,7 @@ class SelectLoader
      * @param array $options The options for getting the link field.
      * @return string|array
      */
-    protected function _linkField($options)
-    {
-        $links = [];
-        $name = $this->alias;
-
-        if ($options['foreignKey'] === false && $this->associationType === Association::ONE_TO_MANY) {
-            $msg = 'Cannot have foreignKey = false for hasMany associations. ' .
-                   'You must provide a foreignKey column.';
-            throw new RuntimeException($msg);
-        }
-
-        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY]) ?
-            $this->foreignKey :
-            $this->bindingKey;
-
-        foreach ((array)$keys as $key) {
-            $links[] = sprintf('%s.%s', $name, $key);
-        }
-
-        if (count($links) === 1) {
-            return $links[0];
-        }
-
-        return $links;
-    }
+    protected abstract function _linkField($options);
 
     /**
      * Builds a query to be used as a condition for filtering records in the
@@ -393,13 +294,11 @@ class SelectLoader
      */
     protected function _subqueryFields($query)
     {
-        $keys = (array)$this->bindingKey;
-
-        if ($this->associationType === Association::MANY_TO_ONE) {
-            $keys = (array)$this->foreignKey;
+        $keys = (array)$this->bindingKey();
+        if ($this->type() === $this::MANY_TO_ONE) {
+            $keys = (array)$this->foreignKey();
         }
-
-        $fields = $query->aliasFields($keys, $this->sourceAlias);
+        $fields = $query->aliasFields($keys, $this->source()->alias());
         $group = $fields = array_values($fields);
 
         $order = $query->clause('order');
@@ -423,29 +322,7 @@ class SelectLoader
      * @param array $options The options passed to the eager loader
      * @return array
      */
-    protected function _buildResultMap($fetchQuery, $options)
-    {
-        $resultMap = [];
-        $singleResult = in_array($this->associationType, [Association::MANY_TO_ONE, Association::ONE_TO_ONE]);
-        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY]) ?
-            $this->foreignKey :
-            $this->bindingKey;
-        $key = (array)$keys;
-
-        foreach ($fetchQuery->all() as $result) {
-            $values = [];
-            foreach ($key as $k) {
-                $values[] = $result[$k];
-            }
-            if ($singleResult) {
-                $resultMap[implode(';', $values)] = $result;
-            } else {
-                $resultMap[implode(';', $values)][] = $result;
-            }
-        }
-
-        return $resultMap;
-    }
+    protected abstract function _buildResultMap($fetchQuery, $options);
 
     /**
      * Returns a callable to be used for each row in a query result set
@@ -459,13 +336,15 @@ class SelectLoader
      */
     protected function _resultInjector($fetchQuery, $resultMap, $options)
     {
-        $keys = $this->associationType === Association::MANY_TO_ONE ?
-            $this->foreignKey :
-            $this->bindingKey;
+        $source = $this->source();
+        $sAlias = $source->alias();
+        $keys = $this->type() === $this::MANY_TO_ONE ?
+            $this->foreignKey() :
+            $this->bindingKey();
 
         $sourceKeys = [];
         foreach ((array)$keys as $key) {
-            $f = $fetchQuery->aliasField($key, $this->sourceAlias);
+            $f = $fetchQuery->aliasField($key, $sAlias);
             $sourceKeys[] = key($f);
         }
 

@@ -15,7 +15,6 @@
 namespace Cake\Http;
 
 use Cake\Core\Configure;
-use Cake\Http\ServerRequest;
 use Cake\Network\Session;
 use Cake\Utility\Hash;
 use Zend\Diactoros\ServerRequestFactory as BaseFactory;
@@ -39,92 +38,38 @@ abstract class ServerRequestFactory extends BaseFactory
         array $cookies = null,
         array $files = null
     ) {
-        $server = static::normalizeServer($server ?: $_SERVER);
-        $uri = static::createUri($server);
+        $request = parent::fromGlobals($server, $query, $body, $cookies, $files);
+        list($base, $webroot) = static::getBase($request);
+
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
-            'cookiePath' => $uri->webroot
+            'cookiePath' => $webroot
         ];
         $session = Session::create($sessionConfig);
-        $request = new ServerRequest([
-            'environment' => $server,
-            'uri' => $uri,
-            'files' => $files,
-            'input' => 'php://input',
-            'cookies' => $cookies ?: $_COOKIE,
-            'query' => $query ?: $_GET,
-            'post' => $body ?: $_POST,
-            'webroot' => $uri->webroot,
-            'base' => $uri->base,
-            'session' => $session,
-        ]);
+        $request = $request->withAttribute('base', $base)
+            ->withAttribute('webroot', $webroot)
+            ->withAttribute('session', $session);
 
-        return $request;
-    }
-
-    /**
-     * Create a new Uri instance from the provided server data.
-     *
-     * @param array $server Array of server data to build the Uri from.
-     *   $_SERVER will be added into the $server parameter.
-     * @return \Psr\Http\Message\UriInterface New instance.
-     */
-    public static function createUri(array $server = [])
-    {
-        $server += $_SERVER;
-        $server = static::normalizeServer($server);
-        $headers = static::marshalHeaders($server);
-
-        return static::marshalUriFromServer($server, $headers);
-    }
-
-    /**
-     * Build a UriInterface object.
-     *
-     * Add in some CakePHP specific logic/properties that help
-     * perserve backwards compatibility.
-     *
-     * @param array $server The server parameters.
-     * @param array $headers The normalized headers
-     * @return \Psr\Http\Message\UriInterface a constructed Uri
-     */
-    public static function marshalUriFromServer(array $server, array $headers)
-    {
-        $uri = parent::marshalUriFromServer($server, $headers);
-        list($base, $webroot) = static::getBase($uri, $server);
-
-        // Look in PATH_INFO first, as this is the exact value we need prepared
-        // by PHP.
-        $pathInfo = Hash::get($server, 'PATH_INFO');
-        if ($pathInfo) {
-            $uri = $uri->withPath($pathInfo);
-        } else {
-            $uri = static::updatePath($base, $uri);
+        if ($base) {
+            $request = static::updatePath($base, $request);
         }
 
-        // Splat on some extra attributes to save
-        // some method calls.
-        $uri->base = $base;
-        $uri->webroot = $webroot;
-
-        return $uri;
+        return $request;
     }
 
     /**
      * Updates the request URI to remove the base directory.
      *
      * @param string $base The base path to remove.
-     * @param \Psr\Http\Message\UriInterface $uri The uri to update.
-     * @return \Psr\Http\Message\ServerRequestInterface The modified Uri instance.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request to modify.
+     * @return \Psr\Http\Message\ServerRequestInterface The modified request.
      */
-    protected static function updatePath($base, $uri)
+    protected static function updatePath($base, $request)
     {
+        $uri = $request->getUri();
         $path = $uri->getPath();
         if (strlen($base) > 0 && strpos($path, $base) === 0) {
             $path = substr($path, strlen($base));
-        }
-        if ($path === '/index.php' && $uri->getQuery()) {
-            $path = $uri->getQuery();
         }
         if (empty($path) || $path === '/' || $path === '//' || $path === '/index.php') {
             $path = '/';
@@ -137,19 +82,21 @@ abstract class ServerRequestFactory extends BaseFactory
             $path = '/';
         }
 
-        return $uri->withPath($path);
+        return $request->withUri($uri->withPath($path));
     }
 
     /**
      * Calculate the base directory and webroot directory.
      *
-     * @param \Psr\Http\Message\UriInterface $uri The Uri instance.
-     * @param array $server The SERVER data to use.
+     * This code is a copy/paste from Cake\Network\Request::_base()
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @return array An array containing the [baseDir, webroot]
      */
-    protected static function getBase($uri, $server)
+    protected static function getBase($request)
     {
-        $path = $uri->getPath();
+        $path = $request->getUri()->getPath();
+        $server = $request->getServerParams();
 
         $base = $webroot = $baseUrl = null;
         $config = Configure::read('App');

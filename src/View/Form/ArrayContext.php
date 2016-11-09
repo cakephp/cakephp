@@ -14,7 +14,7 @@
  */
 namespace Cake\View\Form;
 
-use Cake\Http\ServerRequest;
+use Cake\Network\Request;
 use Cake\Utility\Hash;
 
 /**
@@ -31,7 +31,7 @@ use Cake\Utility\Hash;
  * - `required` A nested array of fields, relationships and boolean
  *   flags to indicate a field is required.
  * - `schema` An array of data that emulate the column structures that
- *   Cake\Database\Schema\Schema uses. This array allows you to control
+ *   Cake\Database\Schema\Table uses. This array allows you to control
  *   the inferred type for fields and allows auto generation of attributes
  *   like maxlength, step and other HTML attributes. If you want
  *   primary key/id detection to work. Make sure you have provided a `_constraints`
@@ -63,7 +63,7 @@ class ArrayContext implements ContextInterface
     /**
      * The request object.
      *
-     * @var \Cake\Http\ServerRequest
+     * @var \Cake\Network\Request
      */
     protected $_request;
 
@@ -77,10 +77,10 @@ class ArrayContext implements ContextInterface
     /**
      * Constructor.
      *
-     * @param \Cake\Http\ServerRequest $request The request object.
+     * @param \Cake\Network\Request $request The request object.
      * @param array $context Context info.
      */
-    public function __construct(ServerRequest $request, array $context)
+    public function __construct(Request $request, array $context)
     {
         $this->_request = $request;
         $context += [

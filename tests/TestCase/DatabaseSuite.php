@@ -15,8 +15,9 @@
 namespace Cake\Test\TestCase;
 
 use Cake\Datasource\ConnectionManager;
+use Cake\TestSuite\TestPermutationDecorator;
 use Cake\TestSuite\TestSuite;
-use PHPUnit_Framework_TestResult;
+use \PHPUnit_Framework_TestResult;
 
 /**
  * All tests related to database

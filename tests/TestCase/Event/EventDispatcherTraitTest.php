@@ -14,7 +14,6 @@
 
 namespace Cake\Test\TestCase\Event;
 
-use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
 
@@ -23,10 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class EventDispatcherTraitTest extends TestCase
 {
-    /**
-     * @var EventDispatcherTrait
-     */
-    public $subject;
 
     /**
      * setup
@@ -75,8 +70,8 @@ class EventDispatcherTraitTest extends TestCase
         $event = $this->subject->dispatchEvent('some.event', ['foo' => 'bar']);
 
         $this->assertInstanceOf('Cake\Event\Event', $event);
-        $this->assertSame($this->subject, $event->subject());
-        $this->assertEquals('some.event', $event->name());
-        $this->assertEquals(['foo' => 'bar'], $event->data());
+        $this->assertSame($this->subject, $event->subject);
+        $this->assertEquals('some.event', $event->name);
+        $this->assertEquals(['foo' => 'bar'], $event->data);
     }
 }

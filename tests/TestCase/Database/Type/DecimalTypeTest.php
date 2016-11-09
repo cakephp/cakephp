@@ -18,32 +18,13 @@ use Cake\Database\Type;
 use Cake\Database\Type\DecimalType;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
-use PDO;
+use \PDO;
 
 /**
  * Test for the Decimal type.
  */
 class DecimalTypeTest extends TestCase
 {
-    /**
-     * @var \Cake\Database\Type\DecimalType
-     */
-    public $type;
-
-    /**
-     * @var \Cake\Database\Driver
-     */
-    public $driver;
-
-    /**
-     * @var string
-     */
-    public $numberClass;
-
-    /**
-     * @var string
-     */
-    public $localeString;
 
     /**
      * Setup
@@ -55,10 +36,10 @@ class DecimalTypeTest extends TestCase
         parent::setUp();
         $this->type = Type::build('decimal');
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
-        $this->localeString = I18n::locale();
+        $this->locale = I18n::locale();
         $this->numberClass = DecimalType::$numberClass;
 
-        I18n::locale($this->localeString);
+        I18n::locale($this->locale);
     }
 
     /**
@@ -69,7 +50,7 @@ class DecimalTypeTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        I18n::locale($this->localeString);
+        I18n::locale($this->locale);
         DecimalType::$numberClass = $this->numberClass;
     }
 
@@ -124,7 +105,7 @@ class DecimalTypeTest extends TestCase
     /**
      * Arrays are invalid.
      *
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @return void
      */
     public function testToDatabaseInvalid()
@@ -139,19 +120,19 @@ class DecimalTypeTest extends TestCase
      */
     public function testMarshal()
     {
-        $result = $this->type->marshal('some data');
+        $result = $this->type->marshal('some data', $this->driver);
         $this->assertSame('some data', $result);
 
-        $result = $this->type->marshal('');
+        $result = $this->type->marshal('', $this->driver);
         $this->assertNull($result);
 
-        $result = $this->type->marshal('2.51');
+        $result = $this->type->marshal('2.51', $this->driver);
         $this->assertSame(2.51, $result);
 
-        $result = $this->type->marshal('3.5 bears');
+        $result = $this->type->marshal('3.5 bears', $this->driver);
         $this->assertSame('3.5 bears', $result);
 
-        $result = $this->type->marshal(['3', '4']);
+        $result = $this->type->marshal(['3', '4'], $this->driver);
         $this->assertSame(1, $result);
     }
 
@@ -184,7 +165,7 @@ class DecimalTypeTest extends TestCase
     /**
      * Test that exceptions are raised on invalid parsers.
      *
-     * @expectedException \RuntimeException
+     * @expectedException RuntimeException
      * @return void
      */
     public function testUseLocaleParsingInvalid()

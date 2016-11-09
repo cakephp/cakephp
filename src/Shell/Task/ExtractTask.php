@@ -51,7 +51,7 @@ class ExtractTask extends Shell
     /**
      * Current file being processed
      *
-     * @var string|null
+     * @var string
      */
     protected $_file = null;
 
@@ -79,7 +79,7 @@ class ExtractTask extends Shell
     /**
      * Destination path
      *
-     * @var string|null
+     * @var string
      */
     protected $_output = null;
 

@@ -32,7 +32,7 @@ class EntityTest extends TestCase
      */
     public function testSetOneParamNoSetters()
     {
-        $entity = new Entity();
+        $entity = new Entity;
         $this->assertNull($entity->getOriginal('foo'));
         $entity->set('foo', 'bar');
         $this->assertEquals('bar', $entity->foo);
@@ -55,7 +55,7 @@ class EntityTest extends TestCase
      */
     public function testSetMultiplePropertiesNoSetters()
     {
-        $entity = new Entity();
+        $entity = new Entity;
         $entity->accessible('*', true);
 
         $entity->set(['foo' => 'bar', 'id' => 1]);
@@ -376,7 +376,7 @@ class EntityTest extends TestCase
      */
     public function testMagicSet()
     {
-        $entity = new Entity();
+        $entity = new Entity;
         $entity->name = 'Jones';
         $this->assertEquals('Jones', $entity->name);
         $entity->name = 'George';
@@ -476,7 +476,7 @@ class EntityTest extends TestCase
      */
     public function testIndirectModification()
     {
-        $entity = new Entity();
+        $entity = new Entity;
         $entity->things = ['a', 'b'];
         $entity->things[] = 'c';
         $this->assertEquals(['a', 'b', 'c'], $entity->things);
@@ -1052,7 +1052,7 @@ class EntityTest extends TestCase
      */
     public function testErrors()
     {
-        $entity = new Entity();
+        $entity = new Entity;
         $this->assertEmpty($entity->errors());
         $this->assertSame($entity, $entity->errors('foo', 'bar'));
         $this->assertEquals(['bar'], $entity->errors('foo'));
@@ -1189,7 +1189,7 @@ class EntityTest extends TestCase
      */
     public function testAccessible()
     {
-        $entity = new Entity();
+        $entity = new Entity;
         $entity->accessible('*', false);
         $this->assertFalse($entity->accessible('foo'));
         $this->assertFalse($entity->accessible('bar'));
@@ -1218,7 +1218,7 @@ class EntityTest extends TestCase
      */
     public function testAccessibleAsArray()
     {
-        $entity = new Entity();
+        $entity = new Entity;
         $entity->accessible(['foo', 'bar', 'baz'], true);
         $this->assertTrue($entity->accessible('foo'));
         $this->assertTrue($entity->accessible('bar'));
@@ -1242,7 +1242,7 @@ class EntityTest extends TestCase
      */
     public function testAccessibleWildcard()
     {
-        $entity = new Entity();
+        $entity = new Entity;
         $entity->accessible(['foo', 'bar', 'baz'], true);
         $this->assertTrue($entity->accessible('foo'));
         $this->assertTrue($entity->accessible('bar'));
@@ -1374,7 +1374,7 @@ class EntityTest extends TestCase
      */
     public function testSource()
     {
-        $entity = new Entity();
+        $entity = new Entity;
         $this->assertNull($entity->source());
         $entity->source('foos');
         $this->assertEquals('foos', $entity->source());

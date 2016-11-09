@@ -401,7 +401,7 @@ class ViewTest extends TestCase
      * Test that plugin files with absolute file paths are scoped
      * to the plugin and do now allow any file path.
      *
-     * @expectedException \Cake\View\Exception\MissingTemplateException
+     * @expectedException Cake\View\Exception\MissingTemplateException
      * @return void
      */
     public function testPluginGetTemplateAbsoluteFail()
@@ -926,7 +926,7 @@ class ViewTest extends TestCase
     public function testElementCallbacks()
     {
         $count = 0;
-        $callback = function (Event $event, $file) use (&$count) {
+        $callback = function ($event, $file) use (&$count) {
             $count++;
         };
         $events = $this->View->eventManager();

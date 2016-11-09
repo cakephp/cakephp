@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Database\Expression\IdentifierExpression;
-use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\ORM\Exception\MissingAssociationException;
@@ -327,7 +326,7 @@ class MarshallerTest extends TestCase
     /**
      * Test one() with an invalid association
      *
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Cannot marshal data for "Derp" association. It is not associated with "Articles".
      * @return void
      */
@@ -1395,7 +1394,7 @@ class MarshallerTest extends TestCase
     /**
      * Test merge() with an invalid association
      *
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Cannot marshal data for "Derp" association. It is not associated with "Articles".
      * @return void
      */
@@ -1755,7 +1754,7 @@ class MarshallerTest extends TestCase
         ]);
 
         $this->articles->Tags->eventManager()
-            ->on('Model.beforeFind', function (Event $event, $query) use (&$called) {
+            ->on('Model.beforeFind', function ($event, $query) use (&$called) {
                 $called = true;
 
                 return $query->where(['Tags.id >=' => 1]);
@@ -2354,7 +2353,7 @@ class MarshallerTest extends TestCase
             ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 1],
             ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
         ];
-        $this->comments->eventManager()->on('Model.beforeFind', function (Event $event, $query) {
+        $this->comments->eventManager()->on('Model.beforeFind', function ($event, $query) {
             return $query->contain(['Articles']);
         });
         $marshall = new Marshaller($this->comments);

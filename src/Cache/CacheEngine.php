@@ -245,12 +245,12 @@ abstract class CacheEngine
      */
     public function key($key)
     {
-        if (!$key) {
+        if (empty($key)) {
             return false;
         }
 
         $prefix = '';
-        if ($this->_groupPrefix) {
+        if (!empty($this->_groupPrefix)) {
             $prefix = vsprintf($this->_groupPrefix, $this->groups());
         }
 

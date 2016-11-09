@@ -125,7 +125,7 @@ class RunnerTest extends TestCase
     /**
      * Test that exceptions bubble up.
      *
-     * @expectedException \RuntimeException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage A bad thing
      */
     public function testRunExceptionInMiddleware()

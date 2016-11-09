@@ -83,7 +83,7 @@ class Collection
      *
      * @param string $name The name of the table to describe.
      * @param array $options The options to use, see above.
-     * @return \Cake\Database\Schema\TableSchema Object with column metadata.
+     * @return \Cake\Database\Schema\Table Object with column metadata.
      * @throws \Cake\Database\Exception when table cannot be described.
      */
     public function describe($name, array $options = [])
@@ -92,7 +92,7 @@ class Collection
         if (strpos($name, '.')) {
             list($config['schema'], $name) = explode('.', $name);
         }
-        $table = new TableSchema($name);
+        $table = new Table($name);
 
         $this->_reflect('Column', $name, $config, $table);
         if (count($table->columns()) === 0) {
@@ -112,11 +112,11 @@ class Collection
      * @param string $stage The stage name.
      * @param string $name The table name.
      * @param array $config The config data.
-     * @param \Cake\Database\Schema\TableSchema $schema The table instance
+     * @param \Cake\Database\Schema\Table $table The table instance
      * @return void
      * @throws \Cake\Database\Exception on query failure.
      */
-    protected function _reflect($stage, $name, $config, $schema)
+    protected function _reflect($stage, $name, $config, $table)
     {
         $describeMethod = "describe{$stage}Sql";
         $convertMethod = "convert{$stage}Description";
@@ -131,7 +131,7 @@ class Collection
             throw new Exception($e->getMessage(), 500, $e);
         }
         foreach ($statement->fetchAll('assoc') as $row) {
-            $this->_dialect->{$convertMethod}($schema, $row);
+            $this->_dialect->{$convertMethod}($table, $row);
         }
         $statement->closeCursor();
     }

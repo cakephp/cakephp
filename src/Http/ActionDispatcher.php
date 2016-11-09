@@ -17,6 +17,8 @@ namespace Cake\Http;
 use Cake\Controller\Controller;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
+use Cake\Http\ControllerFactory;
+use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
 use LogicException;
@@ -35,7 +37,7 @@ class ActionDispatcher
     /**
      * Attached routing filters
      *
-     * @var \Cake\Event\EventListenerInterface[]
+     * @var array
      */
     protected $filters = [];
 
@@ -51,7 +53,7 @@ class ActionDispatcher
      *
      * @param \Cake\Http\ControllerFactory|null $factory A controller factory instance.
      * @param \Cake\Event\EventManager|null $eventManager An event manager if you want to inject one.
-     * @param \Cake\Event\EventListenerInterface[] $filters The list of filters to include.
+     * @param array $filters The list of filters to include.
      */
     public function __construct($factory = null, $eventManager = null, array $filters = [])
     {
@@ -67,26 +69,26 @@ class ActionDispatcher
     /**
      * Dispatches a Request & Response
      *
-     * @param \Cake\Http\ServerRequest $request The request to dispatch.
+     * @param \Cake\Network\Request $request The request to dispatch.
      * @param \Cake\Network\Response $response The response to dispatch.
-     * @return \Cake\Network\Response A modified/replaced response.
+     * @return \Cake\Network\Response a modified/replaced response.
      */
-    public function dispatch(ServerRequest $request, Response $response)
+    public function dispatch(Request $request, Response $response)
     {
         if (Router::getRequest(true) !== $request) {
             Router::pushRequest($request);
         }
         $beforeEvent = $this->dispatchEvent('Dispatcher.beforeDispatch', compact('request', 'response'));
 
-        $request = $beforeEvent->data('request');
-        if ($beforeEvent->result() instanceof Response) {
-            return $beforeEvent->result();
+        $request = $beforeEvent->data['request'];
+        if ($beforeEvent->result instanceof Response) {
+            return $beforeEvent->result;
         }
 
         // Use the controller built by an beforeDispatch
         // event handler if there is one.
-        if ($beforeEvent->data('controller') instanceof Controller) {
-            $controller = $beforeEvent->data('controller');
+        if (isset($beforeEvent->data['controller'])) {
+            $controller = $beforeEvent->data['controller'];
         } else {
             $controller = $this->factory->create($request, $response);
         }
@@ -98,7 +100,7 @@ class ActionDispatcher
 
         $afterEvent = $this->dispatchEvent('Dispatcher.afterDispatch', compact('request', 'response'));
 
-        return $afterEvent->data('response');
+        return $afterEvent->data['response'];
     }
 
     /**

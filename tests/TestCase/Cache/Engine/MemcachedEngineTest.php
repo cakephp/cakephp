@@ -16,8 +16,9 @@ namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\MemcachedEngine;
+use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
-use Memcached;
+use \Memcached;
 
 /**
  * TestMemcachedEngine

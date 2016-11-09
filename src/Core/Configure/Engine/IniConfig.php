@@ -66,7 +66,7 @@ class IniConfig implements ConfigEngineInterface
     /**
      * The section to read, if null all sections will be read.
      *
-     * @var string|null
+     * @var string
      */
     protected $_section;
 
@@ -101,7 +101,7 @@ class IniConfig implements ConfigEngineInterface
         $file = $this->_getFilePath($key, true);
 
         $contents = parse_ini_file($file, true);
-        if ($this->_section && isset($contents[$this->_section])) {
+        if (!empty($this->_section) && isset($contents[$this->_section])) {
             $values = $this->_parseNestedValues($contents[$this->_section]);
         } else {
             $values = [];

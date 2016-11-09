@@ -206,13 +206,6 @@ class FormHelper extends Helper
     protected $_lastAction = '';
 
     /**
-     * The sources to be used when retrieving prefilled input values.
-     *
-     * @var array
-     */
-    protected $_valueSources = ['context'];
-
-    /**
      * Construct the widgets and binds the default context providers
      *
      * @param \Cake\View\View $View The View this helper is being attached to.
@@ -327,21 +320,17 @@ class FormHelper extends Helper
      *
      * - `type` Form method defaults to autodetecting based on the form context. If
      *   the form context's isCreate() method returns false, a PUT request will be done.
-     * - `method` Set the form's method attribute explicitly.
      * - `action` The controller action the form submits to, (optional). Use this option if you
      *   don't need to change the controller from the current request's controller. Deprecated since 3.2, use `url`.
      * - `url` The URL the form submits to. Can be a string or a URL array. If you use 'url'
      *    you should leave 'action' undefined.
      * - `encoding` Set the accept-charset encoding for the form. Defaults to `Configure::read('App.encoding')`
-     * - `enctype` Set the form encoding explicitly. By default `type => file` will set `enctype`
-     *   to `multipart/form-data`.
      * - `templates` The templates you want to use for this form. Any templates will be merged on top of
      *   the already loaded templates. This option can either be a filename in /config that contains
      *   the templates you want to load, or an array of templates to use.
      * - `context` Additional options for the context class. For example the EntityContext accepts a 'table'
      *   option that allows you to set the specific Table class the form should be based on.
      * - `idPrefix` Prefix for generated ID attributes.
-     * - `valueSources` The sources that values should be read from. See FormHelper::setValueSources()
      * - `templateVars` Provide template variables for the formStart template.
      *
      * @param mixed $model The context for which the form is being defined. Can
@@ -371,16 +360,10 @@ class FormHelper extends Helper
             'encoding' => strtolower(Configure::read('App.encoding')),
             'templates' => null,
             'idPrefix' => null,
-            'valueSources' => null,
         ];
 
         if (isset($options['action'])) {
             trigger_error('Using key `action` is deprecated, use `url` directly instead.', E_USER_DEPRECATED);
-        }
-
-        if (isset($options['valueSources'])) {
-            $this->setValueSources($options['valueSources']);
-            unset($options['valueSources']);
         }
 
         if ($options['idPrefix'] !== null) {
@@ -432,13 +415,6 @@ class FormHelper extends Helper
             default:
                 $htmlAttributes['method'] = 'post';
         }
-        if (isset($options['method'])) {
-            $htmlAttributes['method'] = strtolower($options['method']);
-        }
-        if (isset($options['enctype'])) {
-            $htmlAttributes['enctype'] = strtolower($options['enctype']);
-        }
-
         $this->requestType = strtolower($options['type']);
 
         if (!empty($options['encoding'])) {
@@ -490,15 +466,15 @@ class FormHelper extends Helper
 
         $actionDefaults = [
             'plugin' => $this->plugin,
-            'controller' => $this->request->param('controller'),
-            'action' => $this->request->param('action'),
+            'controller' => $this->request->params['controller'],
+            'action' => $this->request->params['action'],
         ];
 
         $action = (array)$options['url'] + $actionDefaults;
 
         $pk = $context->primaryKey();
         if (count($pk)) {
-            $id = $this->getSourceValue($pk[0]);
+            $id = $context->val($pk[0]);
         }
         if (empty($action[0]) && isset($id)) {
             $action[0] = $id;
@@ -530,17 +506,17 @@ class FormHelper extends Helper
      */
     protected function _csrfField()
     {
-        if ($this->request->param('_Token.unlockedFields')) {
-            foreach ((array)$this->request->param('_Token.unlockedFields') as $unlocked) {
+        if (!empty($this->request['_Token']['unlockedFields'])) {
+            foreach ((array)$this->request['_Token']['unlockedFields'] as $unlocked) {
                 $this->_unlockedFields[] = $unlocked;
             }
         }
-        if (!$this->request->param('_csrfToken')) {
+        if (empty($this->request->params['_csrfToken'])) {
             return '';
         }
 
         return $this->hidden('_csrfToken', [
-            'value' => $this->request->param('_csrfToken'),
+            'value' => $this->request->params['_csrfToken'],
             'secure' => static::SECURE_SKIP
         ]);
     }
@@ -548,8 +524,6 @@ class FormHelper extends Helper
     /**
      * Closes an HTML form, cleans up values set by FormHelper::create(), and writes hidden
      * input fields where appropriate.
-     *
-     * Resets some parts of the state, shared among multiple FormHelper::create() calls, to defaults.
      *
      * @param array $secureAttributes Secure attributes which will be passed as HTML attributes
      *   into the hidden input elements generated for the Security Component.
@@ -560,7 +534,9 @@ class FormHelper extends Helper
     {
         $out = '';
 
-        if ($this->requestType !== 'get' && $this->request->param('_Token')) {
+        if ($this->requestType !== 'get' &&
+            !empty($this->request['_Token'])
+        ) {
             $out .= $this->secure($this->fields, $secureAttributes);
             $this->fields = [];
             $this->_unlockedFields = [];
@@ -570,7 +546,6 @@ class FormHelper extends Helper
         $this->templater()->pop();
         $this->requestType = null;
         $this->_context = null;
-        $this->_valueSources = ['context'];
         $this->_idPrefix = $this->config('idPrefix');
 
         return $out;
@@ -593,7 +568,7 @@ class FormHelper extends Helper
      */
     public function secure(array $fields = [], array $secureAttributes = [])
     {
-        if (!$this->request->param('_Token')) {
+        if (empty($this->request['_Token'])) {
             return '';
         }
         $debugSecurity = Configure::read('debug');
@@ -990,7 +965,7 @@ class FormHelper extends Helper
             if (!$isCreate) {
                 $actionName = __d('cake', 'Edit %s');
             }
-            $modelName = Inflector::humanize(Inflector::singularize($this->request->param('controller')));
+            $modelName = Inflector::humanize(Inflector::singularize($this->request->params['controller']));
             $legend = sprintf($actionName, $modelName);
         }
 
@@ -2469,7 +2444,7 @@ class FormHelper extends Helper
     protected function _initInputField($field, $options = [])
     {
         if (!isset($options['secure'])) {
-            $options['secure'] = (bool)$this->request->param('_Token');
+            $options['secure'] = !empty($this->request->params['_Token']);
         }
         $context = $this->_getContext();
 
@@ -2503,7 +2478,7 @@ class FormHelper extends Helper
                 'default' => isset($options['default']) ? $options['default'] : null,
                 'schemaDefault' => isset($options['schemaDefault']) ? $options['schemaDefault'] : true,
             ];
-            $options['val'] = $this->getSourceValue($field, $valOptions);
+            $options['val'] = $context->val($field, $valOptions);
         }
         if (!isset($options['val']) && isset($options['default'])) {
             $options['val'] = $options['default'];
@@ -2708,56 +2683,5 @@ class FormHelper extends Helper
     public function implementedEvents()
     {
         return [];
-    }
-
-    /**
-     * Gets the value sources.
-     *
-     * Returns a list, but at least one item, of valid sources, such as: `'context'`, `'data'` and `'query'`.
-     *
-     * @return array List of value sources.
-     */
-    public function getValueSources()
-    {
-        return $this->_valueSources;
-    }
-
-    /**
-     * Sets the value sources.
-     *
-     * Valid values are `'context'`, `'data'` and `'query'`.
-     * You need to supply one valid context or multiple, as a list of strings. Order sets priority.
-     *
-     * @param string|array $sources A string or a list of strings identifying a source.
-     * @return $this
-     */
-    public function setValueSources($sources)
-    {
-        $this->_valueSources = array_values(array_intersect((array)$sources, ['context', 'data', 'query']));
-
-        return $this;
-    }
-
-    /**
-     * Gets a single field value from the sources available.
-     *
-     * @param string $fieldname The fieldname to fetch the value for.
-     * @param array|null $options The options containing default values.
-     * @return string|null Field value derived from sources or defaults.
-     */
-    public function getSourceValue($fieldname, $options = [])
-    {
-        foreach ($this->getValueSources() as $valuesSource) {
-            if ($valuesSource === 'context') {
-                $val = $this->_getContext()->val($fieldname, $options);
-                if ($val !== null) {
-                    return $val;
-                }
-            } elseif ($this->request->{$valuesSource}($fieldname) !== null) {
-                return $this->request->{$valuesSource}($fieldname);
-            }
-        }
-
-        return null;
     }
 }

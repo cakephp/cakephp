@@ -16,22 +16,13 @@ namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\Type;
 use Cake\TestSuite\TestCase;
-use PDO;
+use \PDO;
 
 /**
  * Test for the Uuid type.
  */
 class UuidTypeTest extends TestCase
 {
-    /**
-     * @var \Cake\Database\Type\UuidType
-     */
-    public $type;
-
-    /**
-     * @var \Cake\Database\Driver
-     */
-    public $driver;
 
     /**
      * Setup

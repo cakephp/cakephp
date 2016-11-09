@@ -73,7 +73,15 @@ class Server
     {
         $this->app->bootstrap();
         $response = $response ?: new Response();
-        $request = $request ?: ServerRequestFactory::fromGlobals();
+        try {
+            $request = $request ?: ServerRequestFactory::fromGlobals();
+        } catch (UnexpectedValueException $e) {
+            $response->getBody()->write('Bad Request');
+
+            return $response
+                ->withHeader('Content-Type', 'text/plain')
+                ->withStatus(400);
+        }
 
         $middleware = $this->app->middleware(new MiddlewareQueue());
         if (!($middleware instanceof MiddlewareQueue)) {

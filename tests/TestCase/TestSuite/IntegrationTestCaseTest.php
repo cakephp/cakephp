@@ -185,7 +185,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Test customizing the app class.
      *
-     * @expectedException \LogicException
+     * @expectedException LogicException
      * @expectedExceptionMessage Cannot load "TestApp\MissingApp" for use in integration
      * @return void
      */
@@ -390,7 +390,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Tests the failure message for assertCookieNotSet
      *
-     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedException PHPUnit_Framework_AssertionFailedError
      * @expectedExceptionMessage Cookie 'remember_me' has been set
      * @return void
      */
@@ -404,7 +404,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      * Tests the failure message for assertCookieNotSet when no
      * response whas generated
      *
-     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedException PHPUnit_Framework_AssertionFailedError
      * @expectedExceptionMessage No response set, cannot assert cookies.
      * @return void
      */
@@ -523,7 +523,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Test that exceptions being thrown are handled correctly.
      *
-     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedException PHPUnit_Framework_AssertionFailedError
      * @return void
      */
     public function testWithUnexpectedException()
@@ -799,7 +799,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Test that assertFile requires a response
      *
-     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedException PHPUnit_Framework_AssertionFailedError
      * @expectedExceptionMessage No response set, cannot assert file
      * @return void
      */
@@ -811,7 +811,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Test that assertFile requires a file
      *
-     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedException PHPUnit_Framework_AssertionFailedError
      * @expectedExceptionMessage No file was sent in this response
      * @return void
      */

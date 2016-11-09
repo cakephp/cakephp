@@ -14,6 +14,7 @@
  */
 namespace Cake\Http;
 
+use Cake\Network\Request as CakeRequest;
 use Cake\Utility\Hash;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 
@@ -34,7 +35,7 @@ class RequestTransformer
      * Transform a PSR7 request into a CakePHP one.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The PSR7 request.
-     * @return \Cake\Http\ServerRequest The transformed request.
+     * @return \Cake\Network\Request The transformed request.
      */
     public static function toCake(PsrRequest $request)
     {
@@ -49,7 +50,7 @@ class RequestTransformer
         $input = $request->getBody()->getContents();
         $input = $input === '' ? null : $input;
 
-        return new ServerRequest([
+        return new CakeRequest([
             'query' => $request->getQueryParams(),
             'post' => $post,
             'cookies' => $request->getCookieParams(),

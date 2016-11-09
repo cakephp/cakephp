@@ -16,11 +16,8 @@ namespace Cake\Test\TestCase\Routing;
 
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
-use Cake\Routing\Route\DashedRoute;
-use Cake\Routing\Route\InflectedRoute;
-use Cake\Routing\Route\RedirectRoute;
-use Cake\Routing\Route\Route;
 use Cake\Routing\Router;
+use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -84,8 +81,8 @@ class RouteBuilderTest extends TestCase
 
         $all = $this->collection->routes();
         $this->assertCount(2, $all);
-        $this->assertInstanceOf(Route::class, $all[0]);
-        $this->assertInstanceOf(Route::class, $all[1]);
+        $this->assertInstanceOf('Cake\Routing\Route\Route', $all[0]);
+        $this->assertInstanceOf('Cake\Routing\Route\Route', $all[1]);
     }
 
     /**
@@ -105,8 +102,8 @@ class RouteBuilderTest extends TestCase
         $routes->connect('/:controller/:action/*');
 
         $all = $this->collection->routes();
-        $this->assertInstanceOf(InflectedRoute::class, $all[0]);
-        $this->assertInstanceOf(InflectedRoute::class, $all[1]);
+        $this->assertInstanceOf('Cake\Routing\Route\InflectedRoute', $all[0]);
+        $this->assertInstanceOf('Cake\Routing\Route\InflectedRoute', $all[1]);
 
         $this->collection = new RouteCollection();
         $routes = new RouteBuilder($this->collection, '/l');
@@ -145,7 +142,7 @@ class RouteBuilderTest extends TestCase
         $this->assertNull($routes->connect('/:controller'));
         $route = $this->collection->routes()[0];
 
-        $this->assertInstanceOf(Route::class, $route);
+        $this->assertInstanceOf('Cake\Routing\Route\Route', $route);
         $this->assertEquals('/l/:controller', $route->template);
         $expected = ['prefix' => 'api', 'action' => 'index', 'plugin' => null];
         $this->assertEquals($expected, $route->defaults);
@@ -292,12 +289,12 @@ class RouteBuilderTest extends TestCase
         $routes->redirect('/p/:id', ['controller' => 'posts', 'action' => 'view'], ['status' => 301]);
         $route = $this->collection->routes()[0];
 
-        $this->assertInstanceOf(RedirectRoute::class, $route);
+        $this->assertInstanceOf('Cake\Routing\Route\RedirectRoute', $route);
 
         $routes->redirect('/old', '/forums', ['status' => 301]);
         $route = $this->collection->routes()[1];
 
-        $this->assertInstanceOf(RedirectRoute::class, $route);
+        $this->assertInstanceOf('Cake\Routing\Route\RedirectRoute', $route);
         $this->assertEquals('/forums', $route->redirect[0]);
     }
 
@@ -309,25 +306,8 @@ class RouteBuilderTest extends TestCase
     public function testPrefix()
     {
         $routes = new RouteBuilder($this->collection, '/path', ['key' => 'value']);
-        $res = $routes->prefix('admin', ['param' => 'value'], function ($r) {
-            $this->assertInstanceOf(RouteBuilder::class, $r);
-            $this->assertCount(0, $this->collection->routes());
-            $this->assertEquals('/path/admin', $r->path());
-            $this->assertEquals(['prefix' => 'admin', 'key' => 'value', 'param' => 'value'], $r->params());
-        });
-        $this->assertNull($res);
-    }
-
-    /**
-     * Test creating sub-scopes with prefix()
-     *
-     * @return void
-     */
-    public function testPrefixWithNoParams()
-    {
-        $routes = new RouteBuilder($this->collection, '/path', ['key' => 'value']);
         $res = $routes->prefix('admin', function ($r) {
-            $this->assertInstanceOf(RouteBuilder::class, $r);
+            $this->assertInstanceOf('Cake\Routing\RouteBuilder', $r);
             $this->assertCount(0, $this->collection->routes());
             $this->assertEquals('/path/admin', $r->path());
             $this->assertEquals(['prefix' => 'admin', 'key' => 'value'], $r->params());
@@ -343,10 +323,9 @@ class RouteBuilderTest extends TestCase
     public function testNestedPrefix()
     {
         $routes = new RouteBuilder($this->collection, '/admin', ['prefix' => 'admin']);
-        $res = $routes->prefix('api', ['_namePrefix' => 'api:'], function ($r) {
+        $res = $routes->prefix('api', function ($r) {
             $this->assertEquals('/admin/api', $r->path());
             $this->assertEquals(['prefix' => 'admin/api'], $r->params());
-            $this->assertEquals('api:', $r->namePrefix());
         });
         $this->assertNull($res);
     }
@@ -683,7 +662,7 @@ class RouteBuilderTest extends TestCase
         $all = $this->collection->routes();
         $this->assertEquals('/api/:controller', $all[0]->template);
         $this->assertEquals('/api/:controller/:action/*', $all[1]->template);
-        $this->assertInstanceOf(Route::class, $all[0]);
+        $this->assertInstanceOf('Cake\Routing\Route\Route', $all[0]);
     }
 
     /**
@@ -699,7 +678,7 @@ class RouteBuilderTest extends TestCase
         $all = $this->collection->routes();
         $this->assertEquals('/api/:controller', $all[0]->template);
         $this->assertEquals('/api/:controller/:action/*', $all[1]->template);
-        $this->assertInstanceOf(InflectedRoute::class, $all[0]);
+        $this->assertInstanceOf('Cake\Routing\Route\InflectedRoute', $all[0]);
     }
 
     /**

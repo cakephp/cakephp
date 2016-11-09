@@ -63,28 +63,28 @@ class RulesChecker
     /**
      * The list of rules to be checked on both create and update operations
      *
-     * @var callable[]
+     * @var array
      */
     protected $_rules = [];
 
     /**
      * The list of rules to check during create operations
      *
-     * @var callable[]
+     * @var array
      */
     protected $_createRules = [];
 
     /**
      * The list of rules to check during update operations
      *
-     * @var callable[]
+     * @var array
      */
     protected $_updateRules = [];
 
     /**
      * The list of rules to check during delete operations
      *
-     * @var callable[]
+     * @var array
      */
     protected $_deleteRules = [];
 

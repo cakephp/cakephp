@@ -20,8 +20,8 @@ use Cake\Event\Event;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
-use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
+use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\RequestActionTrait;
@@ -122,7 +122,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
      *
-     * @var \Cake\Http\ServerRequest
+     * @var \Cake\Network\Request
      * @link http://book.cakephp.org/3.0/en/controllers/request-response.html#request
      */
     public $request;
@@ -222,21 +222,21 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Sets a number of properties based on conventions if they are empty. To override the
      * conventions CakePHP uses you can define properties in your class declaration.
      *
-     * @param \Cake\Http\ServerRequest|null $request Request object for this controller. Can be null for testing,
+     * @param \Cake\Network\Request|null $request Request object for this controller. Can be null for testing,
      *   but expect that features that use the request parameters will not work.
      * @param \Cake\Network\Response|null $response Response object for this controller.
      * @param string|null $name Override the name useful in testing when using mocks.
      * @param \Cake\Event\EventManager|null $eventManager The event manager. Defaults to a new instance.
      * @param \Cake\Controller\ComponentRegistry|null $components The component registry. Defaults to a new instance.
      */
-    public function __construct(ServerRequest $request = null, Response $response = null, $name = null, $eventManager = null, $components = null)
+    public function __construct(Request $request = null, Response $response = null, $name = null, $eventManager = null, $components = null)
     {
         if ($name !== null) {
             $this->name = $name;
         }
 
-        if ($this->name === null && $request && $request->param('controller')) {
-            $this->name = $request->param('controller');
+        if ($this->name === null && isset($request->params['controller'])) {
+            $this->name = $request->params['controller'];
         }
 
         if ($this->name === null) {
@@ -244,8 +244,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $this->name = substr($name, 0, -10);
         }
 
-        $this->setRequest($request !== null ? $request : new ServerRequest());
-        $this->response = $response !== null ? $response : new Response();
+        $this->setRequest($request !== null ? $request : new Request);
+        $this->response = $response !== null ? $response : new Response;
 
         if ($eventManager !== null) {
             $this->eventManager($eventManager);
@@ -395,16 +395,16 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * - $this->passedArgs - Same as $request->params['pass]
      * - View::$plugin - $this->plugin
      *
-     * @param \Cake\Http\ServerRequest $request Request instance.
+     * @param \Cake\Network\Request $request Request instance.
      * @return void
      */
-    public function setRequest(ServerRequest $request)
+    public function setRequest(Request $request)
     {
         $this->request = $request;
-        $this->plugin = $request->param('plugin') ?: null;
+        $this->plugin = isset($request->params['plugin']) ? $request->params['plugin'] : null;
 
-        if ($request->param('pass')) {
-            $this->passedArgs = $request->param('pass');
+        if (isset($request->params['pass'])) {
+            $this->passedArgs = $request->params['pass'];
         }
     }
 
@@ -422,17 +422,17 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if (!isset($request)) {
             throw new LogicException('No Request object configured. Cannot invoke action');
         }
-        if (!$this->isAction($request->param('action'))) {
+        if (!$this->isAction($request->params['action'])) {
             throw new MissingActionException([
                 'controller' => $this->name . "Controller",
-                'action' => $request->param('action'),
-                'prefix' => $request->param('prefix') ?: '',
-                'plugin' => $request->param('plugin'),
+                'action' => $request->params['action'],
+                'prefix' => isset($request->params['prefix']) ? $request->params['prefix'] : '',
+                'plugin' => $request->params['plugin'],
             ]);
         }
-        $callable = [$this, $request->param('action')];
+        $callable = [$this, $request->params['action']];
 
-        return call_user_func_array($callable, $request->param('pass'));
+        return call_user_func_array($callable, $request->params['pass']);
     }
 
     /**
@@ -495,15 +495,13 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function startupProcess()
     {
         $event = $this->dispatchEvent('Controller.initialize');
-        if ($event->result() instanceof Response) {
-            return $event->result();
+        if ($event->result instanceof Response) {
+            return $event->result;
         }
         $event = $this->dispatchEvent('Controller.startup');
-        if ($event->result() instanceof Response) {
-            return $event->result();
+        if ($event->result instanceof Response) {
+            return $event->result;
         }
-
-        return null;
     }
 
     /**
@@ -518,11 +516,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function shutdownProcess()
     {
         $event = $this->dispatchEvent('Controller.shutdown');
-        if ($event->result() instanceof Response) {
-            return $event->result();
+        if ($event->result instanceof Response) {
+            return $event->result;
         }
-
-        return null;
     }
 
     /**
@@ -540,12 +536,12 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $response = $this->response;
         if ($status) {
-            $response = $response->withStatus($status);
+            $response->statusCode($status);
         }
 
         $event = $this->dispatchEvent('Controller.beforeRedirect', [$url, $response]);
-        if ($event->result() instanceof Response) {
-            return $event->result();
+        if ($event->result instanceof Response) {
+            return $event->result;
         }
         if ($event->isStopped()) {
             return null;
@@ -574,7 +570,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function setAction($action)
     {
-        $this->request = $this->request->withParam('action', $action);
+        $this->request->params['action'] = $action;
         $args = func_get_args();
         unset($args[0]);
 
@@ -604,15 +600,17 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $this->autoRender = false;
 
         $event = $this->dispatchEvent('Controller.beforeRender');
-        if ($event->result() instanceof Response) {
-            return $event->result();
+        if ($event->result instanceof Response) {
+            return $event->result;
         }
         if ($event->isStopped()) {
             return $this->response;
         }
 
-        if ($builder->template() === null && $this->request->param('action')) {
-            $builder->template($this->request->param('action'));
+        if ($builder->template() === null &&
+            isset($this->request->params['action'])
+        ) {
+            $builder->template($this->request->params['action']);
         }
 
         $this->View = $this->createView();
@@ -629,10 +627,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     protected function _viewPath()
     {
         $viewPath = $this->name;
-        if ($this->request->param('prefix')) {
+        if (!empty($this->request->params['prefix'])) {
             $prefixes = array_map(
                 'Cake\Utility\Inflector::camelize',
-                explode('/', $this->request->param('prefix'))
+                explode('/', $this->request->params['prefix'])
             );
             $viewPath = implode(DIRECTORY_SEPARATOR, $prefixes) . DIRECTORY_SEPARATOR . $viewPath;
         }
@@ -656,9 +654,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $referer = $this->request->referer($local);
         if ($referer === '/' && $default && $default !== $referer) {
             $url = Router::url($default, !$local);
-            $base = $this->request->getAttribute('base');
-            if ($local && $base && strpos($url, $base) === 0) {
-                $url = substr($url, strlen($base));
+            if ($local
+                && $this->request->base
+                && strpos($url, $this->request->base) === 0
+            ) {
+                $url = substr($url, strlen($this->request->base));
                 if ($url[0] !== '/') {
                     $url = '/' . $url;
                 }

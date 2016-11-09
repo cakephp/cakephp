@@ -36,35 +36,21 @@ class TestAuthenticate extends BaseAuthenticate
         ];
     }
 
-    /**
-     * @param \Cake\Http\ServerRequest $request
-     * @param \Cake\Network\Response $response
-     * @return array
-     */
     public function authenticate(Request $request, Response $response)
     {
         return ['id' => 1, 'username' => 'admad'];
     }
 
-    /**
-     * @param \Cake\Event\Event $event
-     * @param array $user
-     * @return array
-     */
     public function afterIdentify(Event $event, array $user)
     {
         $this->callStack[] = __FUNCTION__;
-        $this->authenticationProvider = $event->data(1);
+        $this->authenticationProvider = $event->data[1];
 
         if (!empty($this->modifiedUser)) {
             return $user + ['extra' => 'foo'];
         }
     }
 
-    /**
-     * @param \Cake\Event\Event $event
-     * @param array $user
-     */
     public function logout(Event $event, array $user)
     {
         $this->callStack[] = __FUNCTION__;

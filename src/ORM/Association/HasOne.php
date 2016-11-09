@@ -16,7 +16,6 @@ namespace Cake\ORM\Association;
 
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
-use Cake\ORM\Association\Loader\SelectLoader;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
@@ -30,46 +29,33 @@ class HasOne extends Association
 {
 
     use DependentDeleteTrait;
+    use SelectableAssociationTrait;
 
     /**
      * Valid strategies for this type of association
      *
      * @var array
      */
-    protected $_validStrategies = [
-        self::STRATEGY_JOIN,
-        self::STRATEGY_SELECT
-    ];
-
-    /**
-     * Gets the name of the field representing the foreign key to the target table.
-     *
-     * @return string
-     */
-    public function getForeignKey()
-    {
-        if ($this->_foreignKey === null) {
-            $this->_foreignKey = $this->_modelKey($this->source()->alias());
-        }
-
-        return $this->_foreignKey;
-    }
+    protected $_validStrategies = [self::STRATEGY_JOIN, self::STRATEGY_SELECT];
 
     /**
      * Sets the name of the field representing the foreign key to the target table.
      * If no parameters are passed current field is returned
      *
-     * @deprecated 3.4.0 Use setForeignKey()/getForeignKey() instead.
      * @param string|null $key the key to be used to link both tables together
      * @return string
      */
     public function foreignKey($key = null)
     {
-        if ($key !== null) {
-            return $this->setForeignKey($key);
+        if ($key === null) {
+            if ($this->_foreignKey === null) {
+                $this->_foreignKey = $this->_modelKey($this->source()->alias());
+            }
+
+            return $this->_foreignKey;
         }
 
-        return $this->getForeignKey();
+        return parent::foreignKey($key);
     }
 
     /**
@@ -144,22 +130,39 @@ class HasOne extends Association
 
     /**
      * {@inheritDoc}
-     *
-     * @return callable
      */
-    public function eagerLoader(array $options)
+    protected function _linkField($options)
     {
-        $loader = new SelectLoader([
-            'alias' => $this->alias(),
-            'sourceAlias' => $this->source()->alias(),
-            'targetAlias' => $this->target()->alias(),
-            'foreignKey' => $this->foreignKey(),
-            'bindingKey' => $this->bindingKey(),
-            'strategy' => $this->strategy(),
-            'associationType' => $this->type(),
-            'finder' => [$this, 'find']
-        ]);
+        $links = [];
+        $name = $this->alias();
 
-        return $loader->buildEagerLoader($options);
+        foreach ((array)$options['foreignKey'] as $key) {
+            $links[] = sprintf('%s.%s', $name, $key);
+        }
+
+        if (count($links) === 1) {
+            return $links[0];
+        }
+
+        return $links;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function _buildResultMap($fetchQuery, $options)
+    {
+        $resultMap = [];
+        $key = (array)$options['foreignKey'];
+
+        foreach ($fetchQuery->all() as $result) {
+            $values = [];
+            foreach ($key as $k) {
+                $values[] = $result[$k];
+            }
+            $resultMap[implode(';', $values)] = $result;
+        }
+
+        return $resultMap;
     }
 }

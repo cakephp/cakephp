@@ -916,26 +916,8 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *
      * @param int $chunkSize The maximum size for each chunk
      * @return \Cake\Collection\CollectionInterface
-     * @deprecated 4.0.0 Deprecated in favor of chunks
      */
     public function chunk($chunkSize);
-
-    /**
-     * Breaks the collection into smaller arrays of the given size.
-     *
-     * ### Example:
-     *
-     * ```
-     * $items ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6];
-     * $chunked = (new Collection($items))->chunkWithKeys(3)->toList();
-     * // Returns [['a' => 1, 'b' => 2, 'c' => 3], ['d' => 4, 'e' => 5, 'f' => 6]]
-     * ```
-     *
-     * @param int $chunkSize The maximum size for each chunk
-     * @param bool $preserveKeys If the keys of the array should be preserved
-     * @return \Cake\Collection\CollectionInterface
-     */
-    public function chunkWithKeys($chunkSize, $preserveKeys = true);
 
     /**
      * Returns whether or not there are elements in this collection

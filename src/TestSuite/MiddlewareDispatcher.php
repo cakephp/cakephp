@@ -70,7 +70,7 @@ class MiddlewareDispatcher
     /**
      * Run a request and get the response.
      *
-     * @param \Cake\Http\ServerRequest $request The request to execute.
+     * @param \Cake\Network\Request $request The request to execute.
      * @return \Cake\Network\Response The generated response.
      */
     public function execute($request)

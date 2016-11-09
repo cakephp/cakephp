@@ -98,7 +98,7 @@ class FileEngine extends CacheEngine
         if (substr($this->_config['path'], -1) !== DIRECTORY_SEPARATOR) {
             $this->_config['path'] .= DIRECTORY_SEPARATOR;
         }
-        if ($this->_groupPrefix) {
+        if (!empty($this->_groupPrefix)) {
             $this->_groupPrefix = str_replace('_', DIRECTORY_SEPARATOR, $this->_groupPrefix);
         }
 
@@ -377,7 +377,7 @@ class FileEngine extends CacheEngine
     protected function _setKey($key, $createKey = false)
     {
         $groups = null;
-        if ($this->_groupPrefix) {
+        if (!empty($this->_groupPrefix)) {
             $groups = vsprintf($this->_groupPrefix, $this->groups());
         }
         $dir = $this->_config['path'] . $groups;

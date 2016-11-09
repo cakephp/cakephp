@@ -21,7 +21,6 @@ use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Network\Exception\NotFoundException;
 use Cake\Network\Request;
-use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -931,7 +930,7 @@ class PaginatorComponentTest extends TestCase
 
         $table = TableRegistry::get('PaginatorPosts');
         $data = ['author_id' => 3, 'title' => 'Fourth Post', 'body' => 'Article Body, unpublished', 'published' => 'N'];
-        $result = $table->save(new Entity($data));
+        $result = $table->save(new \Cake\ORM\Entity($data));
         $this->assertNotEmpty($result);
 
         $result = $this->Paginator->paginate($table);
@@ -986,7 +985,7 @@ class PaginatorComponentTest extends TestCase
         $this->loadFixtures('Posts');
         $table = TableRegistry::get('PaginatorPosts');
         $data = ['author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N'];
-        $table->save(new Entity($data));
+        $table->save(new \Cake\ORM\Entity($data));
 
         $settings = [
             'finder' => 'list',

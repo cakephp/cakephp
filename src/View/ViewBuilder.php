@@ -16,7 +16,7 @@ namespace Cake\View;
 
 use Cake\Core\App;
 use Cake\Event\EventManager;
-use Cake\Http\ServerRequest;
+use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\View\Exception\MissingViewException;
 use JsonSerializable;
@@ -325,13 +325,13 @@ class ViewBuilder implements JsonSerializable, Serializable
      * If that class does not exist, then Cake\View\View will be used.
      *
      * @param array $vars The view variables/context to use.
-     * @param \Cake\Http\ServerRequest|null $request The request to use.
+     * @param \Cake\Network\Request|null $request The request to use.
      * @param \Cake\Network\Response|null $response The response to use.
      * @param \Cake\Event\EventManager|null $events The event manager to use.
      * @return \Cake\View\View
      * @throws \Cake\View\Exception\MissingViewException
      */
-    public function build($vars = [], ServerRequest $request = null, Response $response = null, EventManager $events = null)
+    public function build($vars = [], Request $request = null, Response $response = null, EventManager $events = null)
     {
         $className = $this->_className;
         if ($className === null) {

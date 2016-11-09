@@ -478,7 +478,9 @@ class RequestHandlerComponentTest extends TestCase
         $event = new Event('Controller.beforeRender', $this->Controller);
         $_SERVER['REQUEST_METHOD'] = 'PUT';
         $_SERVER['CONTENT_TYPE'] = 'application/xml';
-        $this->Controller->request = new Request();
+        $this->Controller->request = $this->getMockBuilder('Cake\Network\Request')
+            ->setMethods(['_readInput'])
+            ->getMock();
         $this->RequestHandler->beforeRender($event);
         $this->assertTrue(is_array($this->Controller->request->data));
         $this->assertFalse(is_object($this->Controller->request->data));
@@ -495,7 +497,9 @@ class RequestHandlerComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $_SERVER['REQUEST_METHOD'] = 'PUT';
         $_SERVER['CONTENT_TYPE'] = 'application/xml; charset=UTF-8';
-        $this->Controller->request = new Request();
+        $this->Controller->request = $this->getMockBuilder('Cake\Network\Request')
+            ->setMethods(['_readInput'])
+            ->getMock();
         $this->RequestHandler->startup($event);
         $this->assertTrue(is_array($this->Controller->request->data));
         $this->assertFalse(is_object($this->Controller->request->data));
@@ -509,7 +513,19 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testStartupProcessData()
     {
-        $this->Controller->request = new Request();
+        $this->Controller->request = $this->getMockBuilder('Cake\Network\Request')
+            ->setMethods(['_readInput'])
+            ->getMock();
+        $this->Controller->request->expects($this->at(0))
+            ->method('_readInput')
+            ->will($this->returnValue(''));
+        $this->Controller->request->expects($this->at(1))
+            ->method('_readInput')
+            ->will($this->returnValue('"invalid"'));
+        $this->Controller->request->expects($this->at(2))
+            ->method('_readInput')
+            ->will($this->returnValue('{"valid":true}'));
+
         $this->Controller->request->env('REQUEST_METHOD', 'POST');
         $this->Controller->request->env('CONTENT_TYPE', 'application/json');
 
@@ -517,11 +533,9 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->startup($event);
         $this->assertEquals([], $this->Controller->request->data);
 
-        $this->Controller->request->setInput('"invalid"');
         $this->RequestHandler->startup($event);
         $this->assertEquals(['invalid'], $this->Controller->request->data);
 
-        $this->Controller->request->setInput('{"valid":true}');
         $this->RequestHandler->startup($event);
         $this->assertEquals(['valid' => true], $this->Controller->request->data);
     }
@@ -534,7 +548,13 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testStartupIgnoreFileAsXml()
     {
-        $this->Controller->request = new Request(['input' => '/dev/random']);
+        $this->Controller->request = $this->getMockBuilder('Cake\Network\Request')
+            ->setMethods(['_readInput'])
+            ->getMock();
+        $this->Controller->request->expects($this->any())
+            ->method('_readInput')
+            ->will($this->returnValue('/dev/random'));
+
         $this->Controller->request->env('REQUEST_METHOD', 'POST');
         $this->Controller->request->env('CONTENT_TYPE', 'application/xml');
 
@@ -552,9 +572,12 @@ class RequestHandlerComponentTest extends TestCase
     public function testStartupCustomTypeProcess()
     {
         $restore = error_reporting(E_ALL & ~E_USER_DEPRECATED);
-        $this->Controller->request = new Request([
-            'input' => '"A","csv","string"'
-        ]);
+        $this->Controller->request = $this->getMockBuilder('Cake\Network\Request')
+            ->setMethods(['_readInput'])
+            ->getMock();
+        $this->Controller->request->expects($this->once())
+            ->method('_readInput')
+            ->will($this->returnValue('"A","csv","string"'));
         $this->RequestHandler->addInputType('csv', ['str_getcsv']);
         $this->Controller->request->env('REQUEST_METHOD', 'POST');
         $this->Controller->request->env('CONTENT_TYPE', 'text/csv');

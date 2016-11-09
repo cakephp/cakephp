@@ -756,7 +756,7 @@ class QueryTest extends TestCase
      * Tests that passing an empty array type to any where condition will not
      * result in a SQL error, but an internal exception
      *
-     * @expectedException \Cake\Database\Exception
+     * @expectedException Cake\Database\Exception
      * @expectedExceptionMessage Impossible to generate condition with empty list of values for field
      * @return void
      */
@@ -773,7 +773,7 @@ class QueryTest extends TestCase
 
     /**
      * Tests exception message for impossible condition when using an expression
-     * @expectedException \Cake\Database\Exception
+     * @expectedException Cake\Database\Exception
      * @expectedExceptionMessage with empty list of values for field (SELECT 1)
      * @return void
      */

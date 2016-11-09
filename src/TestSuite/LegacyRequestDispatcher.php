@@ -13,7 +13,7 @@
  */
 namespace Cake\TestSuite;
 
-use Cake\Http\ServerRequest;
+use Cake\Network\Request;
 use Cake\Routing\DispatcherFactory;
 use Cake\TestSuite\Stub\Response;
 
@@ -39,11 +39,11 @@ class LegacyRequestDispatcher
      * Run a request and get the response.
      *
      * @param array $request The request context to execute.
-     * @return string|null The generated response.
+     * @return \Cake\Network\Response The generated response.
      */
     public function execute($request)
     {
-        $request = new ServerRequest($request);
+        $request = new Request($request);
         $response = new Response();
         $dispatcher = DispatcherFactory::create();
         $dispatcher->eventManager()->on(
@@ -51,7 +51,8 @@ class LegacyRequestDispatcher
             ['priority' => 999],
             [$this->_test, 'controllerSpy']
         );
+        $dispatcher->dispatch($request, $response);
 
-        return $dispatcher->dispatch($request, $response);
+        return $response;
     }
 }

@@ -74,7 +74,7 @@ class Helper implements EventListenerInterface
     /**
      * Request object
      *
-     * @var \Cake\Http\ServerRequest
+     * @var \Cake\Network\Request
      */
     public $request = null;
 

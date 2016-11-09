@@ -409,7 +409,7 @@ class CompositeKeyTest extends TestCase
      */
     public function testSaveNewEntity()
     {
-        $entity = new Entity([
+        $entity = new \Cake\ORM\Entity([
             'id' => 5,
             'site_id' => 1,
             'title' => 'Fifth Article',
@@ -435,7 +435,7 @@ class CompositeKeyTest extends TestCase
      */
     public function testSaveNewEntityMissingKey()
     {
-        $entity = new Entity([
+        $entity = new \Cake\ORM\Entity([
             'id' => 5,
             'title' => 'Fifth Article',
             'body' => 'Fifth Article Body',
@@ -453,7 +453,7 @@ class CompositeKeyTest extends TestCase
     public function testDelete()
     {
         $table = TableRegistry::get('SiteAuthors');
-        $table->save(new Entity(['id' => 1, 'site_id' => 2]));
+        $table->save(new \Cake\ORM\Entity(['id' => 1, 'site_id' => 2]));
         $entity = $table->get([1, 1]);
         $result = $table->delete($entity);
         $this->assertTrue($result);

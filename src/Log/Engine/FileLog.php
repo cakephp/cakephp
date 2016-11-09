@@ -56,21 +56,21 @@ class FileLog extends BaseLog
     /**
      * Path to save log files on.
      *
-     * @var string|null
+     * @var string
      */
     protected $_path = null;
 
     /**
      * The name of the file to save logs into.
      *
-     * @var string|null
+     * @var string
      */
     protected $_file = null;
 
     /**
      * Max file size, used for log file rotation.
      *
-     * @var int|null
+     * @var int
      */
     protected $_size = null;
 
@@ -123,13 +123,13 @@ class FileLog extends BaseLog
         $message = $this->_format($message, $context);
         $output = date('Y-m-d H:i:s') . ' ' . ucfirst($level) . ': ' . $message . "\n";
         $filename = $this->_getFilename($level);
-        if ($this->_size) {
+        if (!empty($this->_size)) {
             $this->_rotateFile($filename);
         }
 
         $pathname = $this->_path . $filename;
         $mask = $this->_config['mask'];
-        if (!$mask) {
+        if (empty($mask)) {
             return file_put_contents($pathname, $output, FILE_APPEND);
         }
 
@@ -159,7 +159,7 @@ class FileLog extends BaseLog
     {
         $debugTypes = ['notice', 'info', 'debug'];
 
-        if ($this->_file) {
+        if (!empty($this->_file)) {
             $filename = $this->_file;
         } elseif ($level === 'error' || $level === 'warning') {
             $filename = 'error.log';

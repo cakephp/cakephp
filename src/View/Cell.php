@@ -19,7 +19,7 @@ use Cake\Cache\Cache;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
-use Cake\Http\ServerRequest;
+use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
@@ -70,7 +70,7 @@ abstract class Cell
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
      *
-     * @var \Cake\Http\ServerRequest
+     * @var \Cake\Network\Request
      */
     public $request;
 
@@ -133,13 +133,13 @@ abstract class Cell
     /**
      * Constructor.
      *
-     * @param \Cake\Http\ServerRequest|null $request The request to use in the cell.
+     * @param \Cake\Network\Request|null $request The request to use in the cell.
      * @param \Cake\Network\Response|null $response The response to use in the cell.
      * @param \Cake\Event\EventManager|null $eventManager The eventManager to bind events to.
      * @param array $cellOptions Cell options to apply.
      */
     public function __construct(
-        ServerRequest $request = null,
+        Request $request = null,
         Response $response = null,
         EventManager $eventManager = null,
         array $cellOptions = []

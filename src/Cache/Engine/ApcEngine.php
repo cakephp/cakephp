@@ -27,7 +27,7 @@ class ApcEngine extends CacheEngine
      * Contains the compiled group names
      * (prefixed with the global configuration prefix)
      *
-     * @var string[]
+     * @var array
      */
     protected $_compiledGroupNames = [];
 

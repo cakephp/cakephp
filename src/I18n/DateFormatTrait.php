@@ -110,9 +110,6 @@ trait DateFormatTrait
      * function, or pass a full ICU date formatting string as specified in the following
      * resource: http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details.
      *
-     * Additional to `IntlDateFormatter` constants and date formatting string you can use
-     * Time::UNIX_TIMESTAMP_FORMAT to get a unix timestamp
-     *
      * ### Examples
      *
      * ```
@@ -121,7 +118,6 @@ trait DateFormatTrait
      * $time->i18nFormat(\IntlDateFormatter::FULL); // Use the full date and time format
      * $time->i18nFormat([\IntlDateFormatter::FULL, \IntlDateFormatter::SHORT]); // Use full date but short time format
      * $time->i18nFormat('yyyy-MM-dd HH:mm:ss'); // outputs '2014-04-20 22:10'
-     * $time->i18nFormat(Time::UNIX_TIMESTAMP_FORMAT); // outputs '1398031800'
      * ```
      *
      * If you wish to control the default format to be used for this method, you can alter
@@ -159,10 +155,6 @@ trait DateFormatTrait
      */
     public function i18nFormat($format = null, $timezone = null, $locale = null)
     {
-        if ($format === Time::UNIX_TIMESTAMP_FORMAT) {
-            return $this->getTimestamp();
-        }
-
         $time = $this;
 
         if ($timezone) {

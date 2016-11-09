@@ -139,7 +139,7 @@ class ResultSetTest extends TestCase
 
         // Use a loop to test Iterator implementation
         foreach ($results as $i => $row) {
-            $expected = new Entity($this->fixtureData[$i]);
+            $expected = new \Cake\ORM\Entity($this->fixtureData[$i]);
             $expected->isNew(false);
             $expected->source($this->table->alias());
             $expected->clean();

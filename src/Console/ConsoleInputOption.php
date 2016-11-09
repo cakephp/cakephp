@@ -129,13 +129,13 @@ class ConsoleInputOption
     public function help($width = 0)
     {
         $default = $short = '';
-        if ($this->_default && $this->_default !== true) {
+        if (!empty($this->_default) && $this->_default !== true) {
             $default = sprintf(' <comment>(default: %s)</comment>', $this->_default);
         }
-        if ($this->_choices) {
+        if (!empty($this->_choices)) {
             $default .= sprintf(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
         }
-        if (strlen($this->_short) > 0) {
+        if (!empty($this->_short)) {
             $short = ', -' . $this->_short;
         }
         $name = sprintf('--%s%s', $this->_name, $short);
@@ -158,7 +158,7 @@ class ConsoleInputOption
         if (strlen($this->_default) > 0 && $this->_default !== true) {
             $default = ' ' . $this->_default;
         }
-        if ($this->_choices) {
+        if (!empty($this->_choices)) {
             $default = ' ' . implode('|', $this->_choices);
         }
 

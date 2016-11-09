@@ -18,7 +18,6 @@ use Cake\Database\Driver\Postgres;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\PostgresSchema;
 use Cake\Database\Schema\Table;
-use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -241,7 +240,7 @@ SQL;
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')->getMock();
         $dialect = new PostgresSchema($driver);
 
-        $table = $this->getMockBuilder(TableSchema::class)
+        $table = $this->getMockBuilder('Cake\Database\Schema\Table')
             ->setConstructorArgs(['table'])
             ->getMock();
         $table->expects($this->at(0))->method('addColumn')->with('field', $expected);
@@ -626,7 +625,7 @@ SQL;
             [
                 'title',
                 ['type' => 'string', 'length' => 25, 'null' => true, 'default' => 'ignored'],
-                '"title" VARCHAR(25) DEFAULT \'ignored\'',
+                '"title" VARCHAR(25) DEFAULT NULL'
             ],
             [
                 'id',
@@ -661,17 +660,17 @@ SQL;
             ],
             [
                 'body',
-                ['type' => 'text', 'length' => TableSchema::LENGTH_TINY, 'null' => false],
-                sprintf('"body" VARCHAR(%s) NOT NULL', TableSchema::LENGTH_TINY)
+                ['type' => 'text', 'length' => Table::LENGTH_TINY, 'null' => false],
+                sprintf('"body" VARCHAR(%s) NOT NULL', Table::LENGTH_TINY)
             ],
             [
                 'body',
-                ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM, 'null' => false],
+                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM, 'null' => false],
                 '"body" TEXT NOT NULL'
             ],
             [
                 'body',
-                ['type' => 'text', 'length' => TableSchema::LENGTH_LONG, 'null' => false],
+                ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
                 '"body" TEXT NOT NULL'
             ],
             [
@@ -792,7 +791,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new PostgresSchema($driver);
 
-        $table = (new TableSchema('schema_articles'))->addColumn($name, $data);
+        $table = (new Table('schema_articles'))->addColumn($name, $data);
         $this->assertEquals($expected, $schema->columnSql($table, $name));
     }
 
@@ -806,7 +805,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new PostgresSchema($driver);
 
-        $table = new TableSchema('schema_articles');
+        $table = new Table('schema_articles');
         $table->addColumn('id', [
                 'type' => 'integer',
                 'null' => false
@@ -880,7 +879,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new PostgresSchema($driver);
 
-        $table = (new TableSchema('schema_articles'))->addColumn('title', [
+        $table = (new Table('schema_articles'))->addColumn('title', [
             'type' => 'string',
             'length' => 255
         ])->addColumn('author_id', [
@@ -904,7 +903,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = (new TableSchema('posts'))
+        $table = (new Table('posts'))
             ->addColumn('author_id', [
                 'type' => 'integer',
                 'null' => false
@@ -955,7 +954,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = (new TableSchema('posts'))
+        $table = (new Table('posts'))
             ->addColumn('author_id', [
                 'type' => 'integer',
                 'null' => false
@@ -1006,7 +1005,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = (new TableSchema('schema_articles'))->addColumn('id', [
+        $table = (new Table('schema_articles'))->addColumn('id', [
                 'type' => 'integer',
                 'null' => false
             ])
@@ -1072,7 +1071,7 @@ SQL;
             ->getMock();
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
-        $table = (new TableSchema('schema_articles'))->addColumn('id', [
+        $table = (new Table('schema_articles'))->addColumn('id', [
             'type' => 'integer',
             'null' => false
         ]);
@@ -1095,7 +1094,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = (new TableSchema('articles_tags'))
+        $table = (new Table('articles_tags'))
             ->addColumn('article_id', [
                 'type' => 'integer',
                 'null' => false
@@ -1120,7 +1119,7 @@ SQL;
         $this->assertCount(1, $result);
         $this->assertTextEquals($expected, $result[0]);
 
-        $table = (new TableSchema('composite_key'))
+        $table = (new Table('composite_key'))
             ->addColumn('id', [
                 'type' => 'integer',
                 'null' => false,
@@ -1161,7 +1160,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = new TableSchema('schema_articles');
+        $table = new Table('schema_articles');
         $result = $table->dropSql($connection);
         $this->assertCount(1, $result);
         $this->assertEquals('DROP TABLE "schema_articles" CASCADE', $result[0]);
@@ -1181,7 +1180,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = new TableSchema('schema_articles');
+        $table = new Table('schema_articles');
         $table->addColumn('id', 'integer')
             ->addConstraint('primary', [
                 'type' => 'primary',
@@ -1200,7 +1199,11 @@ SQL;
     protected function _getMockedDriver()
     {
         $driver = new Postgres();
-        $mock = $this->getMockBuilder(PDO::class)
+        $pdo = PDO::class;
+        if (version_compare(PHP_VERSION, '5.6', '<')) {
+            $pdo = 'FakePdo';
+        }
+        $mock = $this->getMockBuilder($pdo)
             ->setMethods(['quote'])
             ->disableOriginalConstructor()
             ->getMock();

@@ -20,8 +20,8 @@ use Cake\Controller\Exception\AuthSecurityException;
 use Cake\Controller\Exception\SecurityException;
 use Cake\Core\Configure;
 use Cake\Event\Event;
-use Cake\Http\ServerRequest;
 use Cake\Network\Exception\BadRequestException;
+use Cake\Network\Request;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 
@@ -87,7 +87,7 @@ class SecurityComponent extends Component
     /**
      * Request object
      *
-     * @var \Cake\Http\ServerRequest
+     * @var \Cake\Network\Request
      */
     public $request;
 
@@ -108,13 +108,16 @@ class SecurityComponent extends Component
     {
         $controller = $event->subject();
         $this->session = $this->request->session();
-        $this->_action = $this->request->param('action');
-        $hasData = (bool)$this->request->data();
+        $this->_action = $this->request->params['action'];
+        $hasData = !empty($this->request->data);
         try {
             $this->_secureRequired($controller);
             $this->_authRequired($controller);
 
-            $isNotRequestAction = !$controller->request->param('requested');
+            $isNotRequestAction = (
+                !isset($controller->request->params['requested']) ||
+                $controller->request->params['requested'] != 1
+            );
 
             if ($this->_action === $this->_config['blackHoleCallback']) {
                 throw new AuthSecurityException(sprintf('Action %s is defined as the blackhole callback.', $this->_action));
@@ -131,7 +134,7 @@ class SecurityComponent extends Component
         }
 
         $this->generateToken($controller->request);
-        if ($hasData && is_array($controller->request->data())) {
+        if ($hasData && is_array($controller->request->data)) {
             unset($controller->request->data['_Token']);
         }
     }
@@ -266,12 +269,12 @@ class SecurityComponent extends Component
     {
         if (is_array($this->_config['requireAuth']) &&
             !empty($this->_config['requireAuth']) &&
-            $this->request->data()
+            !empty($this->request->data)
         ) {
             $requireAuth = $this->_config['requireAuth'];
 
-            if (in_array($this->request->param('action'), $requireAuth) || $requireAuth == ['*']) {
-                if (!isset($this->request->data['_Token'])) {
+            if (in_array($this->request->params['action'], $requireAuth) || $requireAuth == ['*']) {
+                if (!isset($controller->request->data['_Token'])) {
                     throw new AuthSecurityException('\'_Token\' was not found in request data.');
                 }
 
@@ -279,23 +282,23 @@ class SecurityComponent extends Component
                     $tData = $this->session->read('_Token');
 
                     if (!empty($tData['allowedControllers']) &&
-                        !in_array($this->request->param('controller'), $tData['allowedControllers'])) {
+                        !in_array($this->request->params['controller'], $tData['allowedControllers'])) {
                         throw new AuthSecurityException(
                             sprintf(
                                 'Controller \'%s\' was not found in allowed controllers: \'%s\'.',
-                                $this->request->param('controller'),
+                                $this->request->params['controller'],
                                 implode(', ', (array)$tData['allowedControllers'])
                             )
                         );
                     }
                     if (!empty($tData['allowedActions']) &&
-                        !in_array($this->request->param('action'), $tData['allowedActions'])
+                        !in_array($this->request->params['action'], $tData['allowedActions'])
                     ) {
                         throw new AuthSecurityException(
                             sprintf(
                                 'Action \'%s::%s\' was not found in allowed actions: \'%s\'.',
-                                $this->request->param('controller'),
-                                $this->request->param('action'),
+                                $this->request->params['controller'],
+                                $this->request->params['action'],
                                 implode(', ', (array)$tData['allowedActions'])
                             )
                         );
@@ -318,7 +321,7 @@ class SecurityComponent extends Component
      */
     protected function _validatePost(Controller $controller)
     {
-        if (!$controller->request->data()) {
+        if (empty($controller->request->data)) {
             return true;
         }
         $token = $this->_validToken($controller);
@@ -381,8 +384,8 @@ class SecurityComponent extends Component
      */
     protected function _hashParts(Controller $controller)
     {
-        $fieldList = $this->_fieldsList($controller->request->data());
-        $unlocked = $this->_sortedUnlocked($controller->request->data());
+        $fieldList = $this->_fieldsList($controller->request->data);
+        $unlocked = $this->_sortedUnlocked($controller->request->data);
 
         return [
             $controller->request->here(),
@@ -562,12 +565,12 @@ class SecurityComponent extends Component
      * Manually add form tampering prevention token information into the provided
      * request object.
      *
-     * @param \Cake\Http\ServerRequest $request The request object to add into.
+     * @param \Cake\Network\Request $request The request object to add into.
      * @return bool
      */
-    public function generateToken(ServerRequest $request)
+    public function generateToken(Request $request)
     {
-        if ($request->is('requested')) {
+        if (isset($request->params['requested']) && $request->params['requested'] === 1) {
             if ($this->session->check('_Token')) {
                 $request->params['_Token'] = $this->session->read('_Token');
             }

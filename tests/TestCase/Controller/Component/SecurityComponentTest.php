@@ -213,7 +213,7 @@ class SecurityComponentTest extends TestCase
             'action' => 'index'
         ]);
         $Controller = new \TestApp\Controller\SomePagesController($request);
-        $event = new Event('Controller.startup', $Controller);
+        $event = new Event('Controller.startup', $Controller, $this->Controller);
         $Security = new SecurityComponent($Controller->components());
         $Security->config('blackHoleCallback', '_fail');
         $Security->startup($event);
@@ -1407,7 +1407,7 @@ class SecurityComponentTest extends TestCase
     /**
      * test blackhole will now throw passed exception if debug enabled
      *
-     * @expectedException \Cake\Controller\Exception\SecurityException
+     * @expectedException Cake\Controller\Exception\SecurityException
      * @expectedExceptionMessage error description
      * @return void
      */
@@ -1535,7 +1535,7 @@ class SecurityComponentTest extends TestCase
      * Auth required throws exception token not found
      *
      * @return void
-     * @expectedException \Cake\Controller\Exception\AuthSecurityException
+     * @expectedException Cake\Controller\Exception\AuthSecurityException
      * @expectedExceptionMessage '_Token' was not found in request data.
      * @triggers Controller.startup $this->Controller
      */
@@ -1551,7 +1551,7 @@ class SecurityComponentTest extends TestCase
      * Auth required throws exception token not found in Session
      *
      * @return void
-     * @expectedException \Cake\Controller\Exception\AuthSecurityException
+     * @expectedException Cake\Controller\Exception\AuthSecurityException
      * @expectedExceptionMessage '_Token' was not found in session.
      * @triggers Controller.startup $this->Controller
      */
@@ -1567,7 +1567,7 @@ class SecurityComponentTest extends TestCase
      * Auth required throws exception controller not allowed
      *
      * @return void
-     * @expectedException \Cake\Controller\Exception\AuthSecurityException
+     * @expectedException Cake\Controller\Exception\AuthSecurityException
      * @expectedExceptionMessage Controller 'NotAllowed' was not found in allowed controllers: 'Allowed, AnotherAllowed'.
      * @triggers Controller.startup $this->Controller
      */
@@ -1587,7 +1587,7 @@ class SecurityComponentTest extends TestCase
      * Auth required throws exception controller not allowed
      *
      * @return void
-     * @expectedException \Cake\Controller\Exception\AuthSecurityException
+     * @expectedException Cake\Controller\Exception\AuthSecurityException
      * @expectedExceptionMessage Action 'NotAllowed::protected' was not found in allowed actions: 'index, view'.
      * @triggers Controller.startup $this->Controller
      */

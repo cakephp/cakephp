@@ -117,24 +117,6 @@ class I18nTest extends TestCase
     }
 
     /**
-     * Test plural rules are used for non-english languages
-     *
-     * @return void
-     */
-    public function testPluralSelectionRussian()
-    {
-        $translator = I18n::translator('default', 'ru');
-        $result = $translator->translate('{0} months', ['_count' => 1, 1]);
-        $this->assertEquals('1 months ends in 1, not 11', $result);
-
-        $result = $translator->translate('{0} months', ['_count' => 2, 2]);
-        $this->assertEquals('2 months ends in 2-4, not 12-14', $result);
-
-        $result = $translator->translate('{0} months', ['_count' => 7, 7]);
-        $this->assertEquals('7 months everything else', $result);
-    }
-
-    /**
      * Tests that custom translation packages can be created on the fly and used later on
      *
      * @return void
@@ -582,7 +564,7 @@ class I18nTest extends TestCase
      *
      * @return void
      */
-    public function testLoaderFactory()
+    public function testloaderFactory()
     {
         I18n::config('custom', function ($name, $locale) {
             $this->assertEquals('custom', $name);
@@ -621,36 +603,6 @@ class I18nTest extends TestCase
 
         $translator = I18n::translator();
         $this->assertEquals('%d is 1 (po translated)', $translator->translate('%d = 1'));
-    }
-
-    /**
-     * Tests that it is possible to register a fallback translators factory
-     *
-     * @return void
-     */
-    public function testFallbackLoaderFactory()
-    {
-        I18n::config('_fallback', function ($name) {
-            $package = new Package('default');
-
-            if ($name == 'custom') {
-                $package->setMessages([
-                    'Cow' => 'Le Moo custom',
-                ]);
-            } else {
-                $package->setMessages([
-                    'Cow' => 'Le Moo default',
-                ]);
-            }
-
-            return $package;
-        });
-
-        $translator = I18n::translator('custom');
-        $this->assertEquals('Le Moo custom', $translator->translate('Cow'));
-
-        $translator = I18n::translator();
-        $this->assertEquals('Le Moo default', $translator->translate('Cow'));
     }
 
     /**

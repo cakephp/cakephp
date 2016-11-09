@@ -86,11 +86,11 @@ class EventFiredWith extends PHPUnit_Framework_Constraint
 
         $event = $events[0];
 
-        if (array_key_exists($this->_dataKey, $event->data()) === false) {
+        if (array_key_exists($this->_dataKey, $event->data) === false) {
             return false;
         }
 
-        return $event->data($this->_dataKey) === $this->_dataValue;
+        return $event->data[$this->_dataKey] === $this->_dataValue;
     }
 
     /**

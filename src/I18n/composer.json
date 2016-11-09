@@ -16,7 +16,6 @@
     },
     "require": {
         "cakephp/core": "~3.0",
-        "lib-ICU": ">=4.8",
         "ext-intl": "*",
         "cakephp/chronos": "*",
         "aura/intl": "1.1.*"

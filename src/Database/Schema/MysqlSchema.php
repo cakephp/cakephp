@@ -148,7 +148,7 @@ class MysqlSchema extends BaseSchema
             return ['type' => 'json', 'length' => null];
         }
 
-        return ['type' => 'string', 'length' => null];
+        return ['type' => 'text', 'length' => null];
     }
 
     /**
@@ -268,12 +268,12 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function createTableSql(Table $schema, $columns, $constraints, $indexes)
+    public function createTableSql(Table $table, $columns, $constraints, $indexes)
     {
         $content = implode(",\n", array_merge($columns, $constraints, $indexes));
-        $temporary = $schema->temporary() ? ' TEMPORARY ' : ' ';
-        $content = sprintf("CREATE%sTABLE `%s` (\n%s\n)", $temporary, $schema->name(), $content);
-        $options = $schema->options();
+        $temporary = $table->temporary() ? ' TEMPORARY ' : ' ';
+        $content = sprintf("CREATE%sTABLE `%s` (\n%s\n)", $temporary, $table->name(), $content);
+        $options = $table->options();
         if (isset($options['engine'])) {
             $content .= sprintf(' ENGINE=%s', $options['engine']);
         }
@@ -290,9 +290,9 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function columnSql(Table $schema, $name)
+    public function columnSql(Table $table, $name)
     {
-        $data = $schema->column($name);
+        $data = $table->column($name);
         $out = $this->_driver->quoteIdentifier($name);
         $nativeJson = $this->_driver->supportsNativeJson();
 
@@ -381,16 +381,16 @@ class MysqlSchema extends BaseSchema
             $out .= ' NOT NULL';
         }
         $addAutoIncrement = (
-            [$name] == (array)$schema->primaryKey() &&
-            !$schema->hasAutoIncrement()
+            [$name] == (array)$table->primaryKey() &&
+            !$table->hasAutoIncrement()
         );
         if (in_array($data['type'], ['integer', 'biginteger']) &&
             ($data['autoIncrement'] === true || $addAutoIncrement)
         ) {
             $out .= ' AUTO_INCREMENT';
         }
-        if (isset($data['null']) && $data['null'] === true && $data['type'] === 'timestamp') {
-            $out .= ' NULL';
+        if (isset($data['null']) && $data['null'] === true) {
+            $out .= $data['type'] === 'timestamp' ? ' NULL' : ' DEFAULT NULL';
             unset($data['default']);
         }
         if (isset($data['default']) && !in_array($data['type'], ['timestamp', 'datetime'])) {
@@ -414,9 +414,9 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function constraintSql(Table $schema, $name)
+    public function constraintSql(Table $table, $name)
     {
-        $data = $schema->constraint($name);
+        $data = $table->constraint($name);
         if ($data['type'] === Table::CONSTRAINT_PRIMARY) {
             $columns = array_map(
                 [$this->_driver, 'quoteIdentifier'],
@@ -441,16 +441,16 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function addConstraintSql(Table $schema)
+    public function addConstraintSql(Table $table)
     {
         $sqlPattern = 'ALTER TABLE %s ADD %s;';
         $sql = [];
 
-        foreach ($schema->constraints() as $name) {
-            $constraint = $schema->constraint($name);
+        foreach ($table->constraints() as $name) {
+            $constraint = $table->constraint($name);
             if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
-                $tableName = $this->_driver->quoteIdentifier($schema->name());
-                $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($schema, $name));
+                $tableName = $this->_driver->quoteIdentifier($table->name());
+                $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($table, $name));
             }
         }
 

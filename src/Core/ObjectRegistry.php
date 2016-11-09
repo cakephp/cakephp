@@ -40,7 +40,7 @@ abstract class ObjectRegistry
     /**
      * Map of loaded objects.
      *
-     * @var object[]
+     * @var array
      */
     protected $_loaded = [];
 

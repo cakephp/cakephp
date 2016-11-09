@@ -15,6 +15,7 @@
 namespace Cake\Http;
 
 use Cake\Core\App;
+use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Exception\MissingControllerException;
 use Cake\Utility\Inflector;
@@ -28,11 +29,11 @@ class ControllerFactory
     /**
      * Create a controller for a given request/response
      *
-     * @param \Cake\Http\ServerRequest $request The request to build a controller for.
+     * @param \Cake\Network\Request $request The request to build a controller for.
      * @param \Cake\Network\Response $response The response to use.
      * @return \Cake\Controller\Controller
      */
-    public function create(ServerRequest $request, Response $response)
+    public function create(Request $request, Response $response)
     {
         $pluginPath = $controller = null;
         $namespace = 'Controller';
@@ -81,7 +82,7 @@ class ControllerFactory
     /**
      * Throws an exception when a controller is missing.
      *
-     * @param \Cake\Http\ServerRequest $request The request.
+     * @param \Cake\Network\Request $request The request.
      * @throws \Cake\Routing\Exception\MissingControllerException
      * @return void
      */

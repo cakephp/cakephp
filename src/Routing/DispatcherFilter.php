@@ -156,7 +156,7 @@ class DispatcherFilter implements EventListenerInterface
      */
     public function matches(Event $event)
     {
-        $request = $event->data('request');
+        $request = $event->data['request'];
         $pass = true;
         if (!empty($this->_config['for'])) {
             $len = strlen('preg:');
@@ -169,7 +169,7 @@ class DispatcherFilter implements EventListenerInterface
             }
         }
         if ($pass && !empty($this->_config['when'])) {
-            $response = $event->data('response');
+            $response = $event->data['response'];
             $pass = $this->_config['when']($request, $response);
         }
 

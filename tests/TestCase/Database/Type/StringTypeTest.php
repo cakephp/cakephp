@@ -16,7 +16,7 @@ namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\Type;
 use Cake\TestSuite\TestCase;
-use PDO;
+use \PDO;
 
 /**
  * Test for the String type.
@@ -69,7 +69,7 @@ class StringTypeTest extends TestCase
     /**
      * Tests that passing an invalid value will throw an exception
      *
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @return void
      */
     public function testToDatabaseInvalidArray()

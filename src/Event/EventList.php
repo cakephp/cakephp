@@ -56,7 +56,7 @@ class EventList implements ArrayAccess, Countable
      *
      * @link http://php.net/manual/en/arrayaccess.offsetexists.php
      * @param mixed $offset An offset to check for.
-     * @return bool True on success or false on failure.
+     * @return boole True on success or false on failure.
      */
     public function offsetExists($offset)
     {

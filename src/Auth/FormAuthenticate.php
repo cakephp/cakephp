@@ -15,7 +15,7 @@
  */
 namespace Cake\Auth;
 
-use Cake\Http\ServerRequest;
+use Cake\Network\Request;
 use Cake\Network\Response;
 
 /**
@@ -41,11 +41,11 @@ class FormAuthenticate extends BaseAuthenticate
     /**
      * Checks the fields to ensure they are supplied.
      *
-     * @param \Cake\Http\ServerRequest $request The request that contains login information.
+     * @param \Cake\Network\Request $request The request that contains login information.
      * @param array $fields The fields to be checked.
      * @return bool False if the fields have not been supplied. True if they exist.
      */
-    protected function _checkFields(ServerRequest $request, array $fields)
+    protected function _checkFields(Request $request, array $fields)
     {
         foreach ([$fields['username'], $fields['password']] as $field) {
             $value = $request->data($field);
@@ -62,11 +62,11 @@ class FormAuthenticate extends BaseAuthenticate
      * to find POST data that is used to find a matching record in the `config.userModel`. Will return false if
      * there is no post data, either username or password is missing, or if the scope conditions have not been met.
      *
-     * @param \Cake\Http\ServerRequest $request The request that contains login information.
+     * @param \Cake\Network\Request $request The request that contains login information.
      * @param \Cake\Network\Response $response Unused response object.
      * @return mixed False on login failure.  An array of User data on success.
      */
-    public function authenticate(ServerRequest $request, Response $response)
+    public function authenticate(Request $request, Response $response)
     {
         $fields = $this->_config['fields'];
         if (!$this->_checkFields($request, $fields)) {

@@ -49,7 +49,7 @@ trait RulesAwareTrait
     public function checkRules(EntityInterface $entity, $operation = RulesChecker::CREATE, $options = null)
     {
         $rules = $this->rulesChecker();
-        $options = $options ?: new ArrayObject();
+        $options = $options ?: new ArrayObject;
         $options = is_array($options) ? new ArrayObject($options) : $options;
         $hasEvents = ($this instanceof EventDispatcherInterface);
 
@@ -59,7 +59,7 @@ trait RulesAwareTrait
                 compact('entity', 'options', 'operation')
             );
             if ($event->isStopped()) {
-                return $event->result();
+                return $event->result;
             }
         }
 
@@ -72,7 +72,7 @@ trait RulesAwareTrait
             );
 
             if ($event->isStopped()) {
-                return $event->result();
+                return $event->result;
             }
         }
 

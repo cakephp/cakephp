@@ -596,27 +596,17 @@ class RouteBuilder
      * to the `Controller\Admin\Api\` namespace.
      *
      * @param string $name The prefix name to use.
-     * @param array|callable $params An array of routing defaults to add to each connected route.
-     *   If you have no parameters, this argument can be a callable.
-     * @param callable|null $callback The callback to invoke that builds the prefixed routes.
+     * @param callable $callback The callback to invoke that builds the prefixed routes.
      * @return void
-     * @throws \InvalidArgumentException If a valid callback is not passed
      */
-    public function prefix($name, $params = [], callable $callback = null)
+    public function prefix($name, callable $callback)
     {
-        if ($callback === null) {
-            if (!is_callable($params)) {
-                throw new InvalidArgumentException('A valid callback is expected');
-            }
-            $callback = $params;
-            $params = [];
-        }
         $name = Inflector::underscore($name);
         $path = '/' . $name;
         if (isset($this->_params['prefix'])) {
             $name = $this->_params['prefix'] . '/' . $name;
         }
-        $params = array_merge($params, ['prefix' => $name]);
+        $params = ['prefix' => $name];
         $this->scope($path, $params, $callback);
     }
 

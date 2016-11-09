@@ -88,11 +88,10 @@ trait CellTrait
      * @param string $action The action name.
      * @param string $plugin The plugin name.
      * @param array $options The constructor options for the cell.
-     * @return \Cake\View\Cell
+     * @return \Cake\View\Cell;
      */
     protected function _createCell($className, $action, $plugin, $options)
     {
-        /* @var \Cake\View\Cell $instance */
         $instance = new $className($this->request, $this->response, $this->eventManager(), $options);
         $instance->template = Inflector::underscore($action);
 

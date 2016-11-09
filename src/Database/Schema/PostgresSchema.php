@@ -137,13 +137,13 @@ class PostgresSchema extends BaseSchema
             return ['type' => 'json', 'length' => null];
         }
 
-        return ['type' => 'string', 'length' => null];
+        return ['type' => 'text', 'length' => null];
     }
 
     /**
      * {@inheritDoc}
      */
-    public function convertColumnDescription(TableSchema $schema, $row)
+    public function convertColumnDescription(Table $table, $row)
     {
         $field = $this->_convertColumn($row['type']);
 
@@ -165,7 +165,7 @@ class PostgresSchema extends BaseSchema
             'comment' => $row['comment']
         ];
         $field['length'] = $row['char_length'] ?: $field['length'];
-        $schema->addColumn($row['name'], $field);
+        $table->addColumn($row['name'], $field);
     }
 
     /**
@@ -226,22 +226,22 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function convertIndexDescription(TableSchema $schema, $row)
+    public function convertIndexDescription(Table $table, $row)
     {
-        $type = TableSchema::INDEX_INDEX;
+        $type = Table::INDEX_INDEX;
         $name = $row['relname'];
         if ($row['indisprimary']) {
-            $name = $type = TableSchema::CONSTRAINT_PRIMARY;
+            $name = $type = Table::CONSTRAINT_PRIMARY;
         }
-        if ($row['indisunique'] && $type === TableSchema::INDEX_INDEX) {
-            $type = TableSchema::CONSTRAINT_UNIQUE;
+        if ($row['indisunique'] && $type === Table::INDEX_INDEX) {
+            $type = Table::CONSTRAINT_UNIQUE;
         }
-        if ($type === TableSchema::CONSTRAINT_PRIMARY || $type === TableSchema::CONSTRAINT_UNIQUE) {
-            $this->_convertConstraint($schema, $name, $type, $row);
+        if ($type === Table::CONSTRAINT_PRIMARY || $type === Table::CONSTRAINT_UNIQUE) {
+            $this->_convertConstraint($table, $name, $type, $row);
 
             return;
         }
-        $index = $schema->index($name);
+        $index = $table->index($name);
         if (!$index) {
             $index = [
                 'type' => $type,
@@ -249,21 +249,21 @@ class PostgresSchema extends BaseSchema
             ];
         }
         $index['columns'][] = $row['attname'];
-        $schema->addIndex($name, $index);
+        $table->addIndex($name, $index);
     }
 
     /**
      * Add/update a constraint into the schema object.
      *
-     * @param \Cake\Database\Schema\TableSchema $schema The table to update.
+     * @param \Cake\Database\Schema\Table $table The table to update.
      * @param string $name The index name.
      * @param string $type The index type.
      * @param array $row The metadata record to update with.
      * @return void
      */
-    protected function _convertConstraint($schema, $name, $type, $row)
+    protected function _convertConstraint($table, $name, $type, $row)
     {
-        $constraint = $schema->constraint($name);
+        $constraint = $table->constraint($name);
         if (!$constraint) {
             $constraint = [
                 'type' => $type,
@@ -271,7 +271,7 @@ class PostgresSchema extends BaseSchema
             ];
         }
         $constraint['columns'][] = $row['attname'];
-        $schema->addConstraint($name, $constraint);
+        $table->addConstraint($name, $constraint);
     }
 
     /**
@@ -305,16 +305,16 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function convertForeignKeyDescription(TableSchema $schema, $row)
+    public function convertForeignKeyDescription(Table $table, $row)
     {
         $data = [
-            'type' => TableSchema::CONSTRAINT_FOREIGN,
+            'type' => Table::CONSTRAINT_FOREIGN,
             'columns' => $row['column_name'],
             'references' => [$row['references_table'], $row['references_field']],
             'update' => $this->_convertOnClause($row['on_update']),
             'delete' => $this->_convertOnClause($row['on_delete']),
         ];
-        $schema->addConstraint($row['name'], $data);
+        $table->addConstraint($row['name'], $data);
     }
 
     /**
@@ -323,24 +323,24 @@ class PostgresSchema extends BaseSchema
     protected function _convertOnClause($clause)
     {
         if ($clause === 'r') {
-            return TableSchema::ACTION_RESTRICT;
+            return Table::ACTION_RESTRICT;
         }
         if ($clause === 'a') {
-            return TableSchema::ACTION_NO_ACTION;
+            return Table::ACTION_NO_ACTION;
         }
         if ($clause === 'c') {
-            return TableSchema::ACTION_CASCADE;
+            return Table::ACTION_CASCADE;
         }
 
-        return TableSchema::ACTION_SET_NULL;
+        return Table::ACTION_SET_NULL;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function columnSql(Table $schema, $name)
+    public function columnSql(Table $table, $name)
     {
-        $data = $schema->column($name);
+        $data = $table->column($name);
         $out = $this->_driver->quoteIdentifier($name);
         $typeMap = [
             'boolean' => ' BOOLEAN',
@@ -361,18 +361,18 @@ class PostgresSchema extends BaseSchema
 
         if ($data['type'] === 'integer' || $data['type'] === 'biginteger') {
             $type = $data['type'] === 'integer' ? ' INTEGER' : ' BIGINT';
-            if ([$name] === $schema->primaryKey() || $data['autoIncrement'] === true) {
+            if ([$name] === $table->primaryKey() || $data['autoIncrement'] === true) {
                 $type = $data['type'] === 'integer' ? ' SERIAL' : ' BIGSERIAL';
                 unset($data['null'], $data['default']);
             }
             $out .= $type;
         }
 
-        if ($data['type'] === 'text' && $data['length'] !== TableSchema::LENGTH_TINY) {
+        if ($data['type'] === 'text' && $data['length'] !== Table::LENGTH_TINY) {
             $out .= ' TEXT';
         }
 
-        if ($data['type'] === 'string' || ($data['type'] === 'text' && $data['length'] === TableSchema::LENGTH_TINY)) {
+        if ($data['type'] === 'string' || ($data['type'] === 'text' && $data['length'] === Table::LENGTH_TINY)) {
             $isFixed = !empty($data['fixed']);
             $type = ' VARCHAR';
             if ($isFixed) {
@@ -402,7 +402,7 @@ class PostgresSchema extends BaseSchema
         if (isset($data['null']) && $data['null'] === false) {
             $out .= ' NOT NULL';
         }
-        if (isset($data['null']) && $data['null'] === true && $data['type'] === 'timestamp') {
+        if (isset($data['null']) && $data['null'] === true) {
             $out .= ' DEFAULT NULL';
             unset($data['default']);
         }
@@ -420,16 +420,16 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function addConstraintSql(Table $schema)
+    public function addConstraintSql(Table $table)
     {
         $sqlPattern = 'ALTER TABLE %s ADD %s;';
         $sql = [];
 
-        foreach ($schema->constraints() as $name) {
-            $constraint = $schema->constraint($name);
-            if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
-                $tableName = $this->_driver->quoteIdentifier($schema->name());
-                $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($schema, $name));
+        foreach ($table->constraints() as $name) {
+            $constraint = $table->constraint($name);
+            if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
+                $tableName = $this->_driver->quoteIdentifier($table->name());
+                $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($table, $name));
             }
         }
 
@@ -439,15 +439,15 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function dropConstraintSql(TableSchema $schema)
+    public function dropConstraintSql(Table $table)
     {
         $sqlPattern = 'ALTER TABLE %s DROP CONSTRAINT %s;';
         $sql = [];
 
-        foreach ($schema->constraints() as $name) {
-            $constraint = $schema->constraint($name);
-            if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
-                $tableName = $this->_driver->quoteIdentifier($schema->name());
+        foreach ($table->constraints() as $name) {
+            $constraint = $table->constraint($name);
+            if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
+                $tableName = $this->_driver->quoteIdentifier($table->name());
                 $constraintName = $this->_driver->quoteIdentifier($name);
                 $sql[] = sprintf($sqlPattern, $tableName, $constraintName);
             }
@@ -459,9 +459,9 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function indexSql(TableSchema $schema, $name)
+    public function indexSql(Table $table, $name)
     {
-        $data = $schema->index($name);
+        $data = $table->index($name);
         $columns = array_map(
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
@@ -470,7 +470,7 @@ class PostgresSchema extends BaseSchema
         return sprintf(
             'CREATE INDEX %s ON %s (%s)',
             $this->_driver->quoteIdentifier($name),
-            $this->_driver->quoteIdentifier($schema->name()),
+            $this->_driver->quoteIdentifier($table->name()),
             implode(', ', $columns)
         );
     }
@@ -478,14 +478,14 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function constraintSql(Table $schema, $name)
+    public function constraintSql(Table $table, $name)
     {
-        $data = $schema->constraint($name);
+        $data = $table->constraint($name);
         $out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
-        if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
+        if ($data['type'] === Table::CONSTRAINT_PRIMARY) {
             $out = 'PRIMARY KEY';
         }
-        if ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
+        if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
             $out .= ' UNIQUE';
         }
 
@@ -505,7 +505,7 @@ class PostgresSchema extends BaseSchema
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
         );
-        if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
+        if ($data['type'] === Table::CONSTRAINT_FOREIGN) {
             return $prefix . sprintf(
                 ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s DEFERRABLE INITIALLY IMMEDIATE',
                 implode(', ', $columns),
@@ -522,19 +522,19 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function createTableSql(TableSchema $schema, $columns, $constraints, $indexes)
+    public function createTableSql(Table $table, $columns, $constraints, $indexes)
     {
         $content = array_merge($columns, $constraints);
         $content = implode(",\n", array_filter($content));
-        $tableName = $this->_driver->quoteIdentifier($schema->name());
-        $temporary = $schema->temporary() ? ' TEMPORARY ' : ' ';
+        $tableName = $this->_driver->quoteIdentifier($table->name());
+        $temporary = $table->temporary() ? ' TEMPORARY ' : ' ';
         $out = [];
         $out[] = sprintf("CREATE%sTABLE %s (\n%s\n)", $temporary, $tableName, $content);
         foreach ($indexes as $index) {
             $out[] = $index;
         }
-        foreach ($schema->columns() as $column) {
-            $columnData = $schema->column($column);
+        foreach ($table->columns() as $column) {
+            $columnData = $table->column($column);
             if (isset($columnData['comment'])) {
                 $out[] = sprintf(
                     'COMMENT ON COLUMN %s.%s IS %s',
@@ -551,9 +551,9 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function truncateTableSql(TableSchema $schema)
+    public function truncateTableSql(Table $table)
     {
-        $name = $this->_driver->quoteIdentifier($schema->name());
+        $name = $this->_driver->quoteIdentifier($table->name());
 
         return [
             sprintf('TRUNCATE %s RESTART IDENTITY CASCADE', $name)
@@ -563,14 +563,14 @@ class PostgresSchema extends BaseSchema
     /**
      * Generate the SQL to drop a table.
      *
-     * @param \Cake\Database\Schema\TableSchema $schema Table instance
+     * @param \Cake\Database\Schema\Table $table Table instance
      * @return array SQL statements to drop a table.
      */
-    public function dropTableSql(TableSchema $schema)
+    public function dropTableSql(Table $table)
     {
         $sql = sprintf(
             'DROP TABLE %s CASCADE',
-            $this->_driver->quoteIdentifier($schema->name())
+            $this->_driver->quoteIdentifier($table->name())
         );
 
         return [$sql];

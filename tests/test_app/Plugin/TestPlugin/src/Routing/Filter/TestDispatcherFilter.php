@@ -25,11 +25,11 @@ class TestDispatcherFilter extends DispatcherFilter
 
     public function beforeDispatch(Event $event)
     {
-        $event->data('request')->params['altered'] = true;
+        $event->data['request']->params['altered'] = true;
     }
 
     public function afterDispatch(Event $event)
     {
-        $event->data('response')->statusCode(304);
+        $event->data['response']->statusCode(304);
     }
 }

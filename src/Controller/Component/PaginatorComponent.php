@@ -223,10 +223,10 @@ class PaginatorComponent extends Component
             'scope' => $options['scope'],
         ];
 
-        if (!$request->param('paging')) {
-            $request->params['paging'] = [];
+        if (!isset($request['paging'])) {
+            $request['paging'] = [];
         }
-        $request->params['paging'] = [$alias => $paging] + (array)$request->param('paging');
+        $request['paging'] = [$alias => $paging] + (array)$request['paging'];
 
         if ($requestedPage > $page) {
             throw new NotFoundException();
@@ -276,9 +276,9 @@ class PaginatorComponent extends Component
         $defaults = $this->getDefaults($alias, $settings);
         $request = $this->_registry->getController()->request;
         $scope = Hash::get($settings, 'scope', null);
-        $query = $request->getQueryParams();
+        $query = $request->query;
         if ($scope) {
-            $query = Hash::get($request->getQueryParams(), $scope, []);
+            $query = Hash::get($request->query, $scope, []);
         }
         $request = array_intersect_key($query, array_flip($this->_config['whitelist']));
 

@@ -20,8 +20,8 @@ use Cake\Core\Plugin;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
-use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
+use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
@@ -67,8 +67,6 @@ use RuntimeException;
  * @property \Cake\View\Helper\TimeHelper $Time
  * @property \Cake\View\Helper\UrlHelper $Url
  * @property \Cake\View\ViewBlock $Blocks
- * @property string $view
- * @property string $viewPath
  */
 class View implements EventDispatcherInterface
 {
@@ -111,7 +109,7 @@ class View implements EventDispatcherInterface
      * Current passed params. Passed to View from the creating Controller for convenience.
      *
      * @var array
-     * @deprecated 3.1.0 Use `$this->request->param('pass')` instead.
+     * @deprecated 3.1.0 Use `$this->request->params['pass']` instead.
      */
     public $passedArgs = [];
 
@@ -198,11 +196,11 @@ class View implements EventDispatcherInterface
     public $uuids = [];
 
     /**
-     * An instance of a \Cake\Http\ServerRequest object that contains information about the current request.
+     * An instance of a Cake\Network\Request object that contains information about the current request.
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
      *
-     * @var \Cake\Http\ServerRequest
+     * @var \Cake\Network\Request
      */
     public $request;
 
@@ -308,14 +306,14 @@ class View implements EventDispatcherInterface
     /**
      * Constructor
      *
-     * @param \Cake\Http\ServerRequest|null $request Request instance.
+     * @param \Cake\Network\Request|null $request Request instance.
      * @param \Cake\Network\Response|null $response Response instance.
      * @param \Cake\Event\EventManager|null $eventManager Event manager instance.
      * @param array $viewOptions View options. See View::$_passedVars for list of
      *   options which get set as class properties.
      */
     public function __construct(
-        ServerRequest $request = null,
+        Request $request = null,
         Response $response = null,
         EventManager $eventManager = null,
         array $viewOptions = []
@@ -332,14 +330,18 @@ class View implements EventDispatcherInterface
             }
         }
         $this->eventManager($eventManager);
-        $this->request = $request ?: Router::getRequest(true);
-        $this->response = $response ?: new Response();
+        $this->request = $request;
+        $this->response = $response;
         if (empty($this->request)) {
-            $this->request = new ServerRequest([
-                'base' => '',
-                'url' => '',
-                'webroot' => '/'
-            ]);
+            $this->request = Router::getRequest(true);
+        }
+        if (empty($this->request)) {
+            $this->request = new Request();
+            $this->request->base = '';
+            $this->request->here = $this->request->webroot = '/';
+        }
+        if (empty($this->response)) {
+            $this->response = new Response();
         }
         $this->Blocks = new ViewBlock();
         $this->initialize();
@@ -487,7 +489,7 @@ class View implements EventDispatcherInterface
         }
 
         $pluginCheck = $options['plugin'] === false ? false : true;
-        $file = $this->_getElementFileName($name, $pluginCheck);
+        $file = $this->_getElementFilename($name, $pluginCheck);
         if ($file && $options['cache']) {
             return $this->cache(function () use ($file, $data, $options) {
                 echo $this->_renderElement($file, $data, $options);
@@ -969,8 +971,8 @@ class View implements EventDispatcherInterface
         $content = $this->_evaluate($viewFile, $data);
 
         $afterEvent = $this->dispatchEvent('View.afterRenderFile', [$viewFile, $content]);
-        if ($afterEvent->result() !== null) {
-            $content = $afterEvent->result();
+        if (isset($afterEvent->result)) {
+            $content = $afterEvent->result;
         }
 
         if (isset($this->_parents[$viewFile])) {
@@ -1228,8 +1230,8 @@ class View implements EventDispatcherInterface
     protected function _getSubPaths($basePath)
     {
         $paths = [$basePath];
-        if ($this->request->param('prefix')) {
-            $prefixPath = explode('/', $this->request->param('prefix'));
+        if (!empty($this->request->params['prefix'])) {
+            $prefixPath = explode('/', $this->request->params['prefix']);
             $path = '';
             foreach ($prefixPath as $prefixPart) {
                 $path .= Inflector::camelize($prefixPart) . DIRECTORY_SEPARATOR;

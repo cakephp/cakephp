@@ -23,15 +23,6 @@ use PDO;
  */
 class JsonTypeTest extends TestCase
 {
-    /**
-     * @var \Cake\Database\Type\JsonType
-     */
-    public $type;
-
-    /**
-     * @var \Cake\Database\Driver
-     */
-    public $driver;
 
     /**
      * Setup
@@ -73,7 +64,7 @@ class JsonTypeTest extends TestCase
     /**
      * Tests that passing an invalid value will throw an exception
      *
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @return void
      */
     public function testToDatabaseInvalid()

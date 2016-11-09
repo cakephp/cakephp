@@ -505,7 +505,7 @@ class Response extends Message implements ResponseInterface
      */
     protected function _getJson()
     {
-        if ($this->_json) {
+        if (!empty($this->_json)) {
             return $this->_json;
         }
 
@@ -519,7 +519,7 @@ class Response extends Message implements ResponseInterface
      */
     protected function _getXml()
     {
-        if ($this->_xml) {
+        if (!empty($this->_xml)) {
             return $this->_xml;
         }
         libxml_use_internal_errors();

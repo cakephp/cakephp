@@ -66,10 +66,10 @@ class I18n
             new PackageLocator,
             new FormatterLocator([
                 'sprintf' => function () {
-                    return new SprintfFormatter();
+                    return new SprintfFormatter;
                 },
                 'default' => function () {
-                    return new IcuFormatter();
+                    return new IcuFormatter;
                 },
             ]),
             new TranslatorFactory,

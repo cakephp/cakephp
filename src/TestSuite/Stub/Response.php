@@ -24,7 +24,7 @@ class Response extends Base
     /**
      * Stub the send() method so headers and output are not sent.
      *
-     * @return $this
+     * @return void
      */
     public function send()
     {
@@ -32,7 +32,5 @@ class Response extends Base
             $this->statusCode(302);
         }
         $this->_setContentType();
-
-        return $this;
     }
 }

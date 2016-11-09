@@ -77,7 +77,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
      */
     public function __construct($items)
     {
-        $this->_buffer = new SplDoublyLinkedList();
+        $this->_buffer = new SplDoublyLinkedList;
         parent::__construct($items);
     }
 

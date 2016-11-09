@@ -29,7 +29,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Holds the ValidationRule objects
      *
-     * @var \Cake\Validation\ValidationRule[]
+     * @var array
      */
     protected $_rules = [];
 
@@ -98,7 +98,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Returns all rules for this validation set
      *
-     * @return \Cake\Validation\ValidationRule[]
+     * @return array
      */
     public function rules()
     {

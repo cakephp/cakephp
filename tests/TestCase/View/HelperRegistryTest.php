@@ -39,11 +39,6 @@ class HelperRegistryTest extends TestCase
 {
 
     /**
-     * @var \Cake\View\HelperRegistry
-     */
-    public $Helpers;
-
-    /**
      * setUp
      *
      * @return void
@@ -313,7 +308,7 @@ class HelperRegistryTest extends TestCase
     /**
      * Loading a helper with different config, should throw an exception
      *
-     * @expectedException \RuntimeException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The "Html" alias has already been loaded with the following
      * @return void
      */
@@ -326,7 +321,7 @@ class HelperRegistryTest extends TestCase
     /**
      * Loading a helper with different config, should throw an exception
      *
-     * @expectedException \RuntimeException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The "Html" alias has already been loaded with the following
      * @return void
      */

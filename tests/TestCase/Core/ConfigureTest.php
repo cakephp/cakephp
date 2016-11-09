@@ -82,7 +82,7 @@ class ConfigureTest extends TestCase
     /**
      * testReadOrFail method
      *
-     * @expectedException \RuntimeException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage Expected configuration key "This.Key.Does.Not.exist" not found
      * @return void
      */

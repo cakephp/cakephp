@@ -142,7 +142,7 @@ class StringTemplateTest extends TestCase
     /**
      * Test formatting a missing template.
      *
-     * @expectedException \RuntimeException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage Cannot find template named 'missing'
      * @return void
      */

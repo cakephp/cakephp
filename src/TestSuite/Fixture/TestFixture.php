@@ -14,7 +14,7 @@
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Exception\Exception as CakeException;
-use Cake\Database\Schema\TableSchema;
+use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
@@ -48,7 +48,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
     /**
      * Fields / Schema for the fixture.
      *
-     * This array should be compatible with Cake\Database\Schema\Schema.
+     * This array should be compatible with Cake\Database\Schema\Table.
      * The `_constraints`, `_options` and `_indexes` keys are reserved for defining
      * constraints, options and indexes respectively.
      *
@@ -75,9 +75,9 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
     public $records = [];
 
     /**
-     * The schema for this fixture.
+     * The Cake\Database\Schema\Table for this fixture.
      *
-     * @var \Cake\Database\Schema\TableSchema
+     * @var \Cake\Database\Schema\Table
      */
     protected $_schema;
 
@@ -176,7 +176,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
     protected function _schemaFromFields()
     {
         $connection = ConnectionManager::get($this->connection());
-        $this->_schema = new TableSchema($this->table);
+        $this->_schema = new Table($this->table);
         foreach ($this->fields as $field => $data) {
             if ($field === '_constraints' || $field === '_indexes' || $field === '_options') {
                 continue;
@@ -185,7 +185,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
         }
         if (!empty($this->fields['_constraints'])) {
             foreach ($this->fields['_constraints'] as $name => $data) {
-                if (!$connection->supportsDynamicConstraints() || $data['type'] !== TableSchema::CONSTRAINT_FOREIGN) {
+                if (!$connection->supportsDynamicConstraints() || $data['type'] !== Table::CONSTRAINT_FOREIGN) {
                     $this->_schema->addConstraint($name, $data);
                 } else {
                     $this->_constraints[$name] = $data;
@@ -260,12 +260,12 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
     }
 
     /**
-     * Gets/Sets the TableSchema instance used by this fixture.
+     * Get/Set the Cake\Database\Schema\Table instance used by this fixture.
      *
-     * @param \Cake\Database\Schema\TableSchema|null $schema The table to set.
-     * @return \Cake\Database\Schema\TableSchema|null
+     * @param \Cake\Database\Schema\Table|null $schema The table to set.
+     * @return \Cake\Database\Schema\Table|null
      */
-    public function schema(TableSchema $schema = null)
+    public function schema(Table $schema = null)
     {
         if ($schema) {
             $this->_schema = $schema;

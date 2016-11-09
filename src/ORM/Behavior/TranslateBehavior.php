@@ -271,52 +271,25 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
         $this->_bundleTranslatedFields($entity);
         $bundled = $entity->get('_i18n') ?: [];
-        $noBundled = count($bundled) === 0;
 
-        // No additional translation records need to be saved,
-        // as the entity is in the default locale.
-        if ($noBundled && $locale === $this->config('defaultLocale')) {
+        if ($locale === $this->config('defaultLocale')) {
             return;
         }
 
         $values = $entity->extract($this->_config['fields'], true);
         $fields = array_keys($values);
-        $noFields = empty($fields);
 
-        // If there are no fields and no bundled translations, or both fields
-        // in the default locale and bundled translations we can
-        // skip the remaining logic as its not necessary.
-        if ($noFields && $noBundled || ($fields && $bundled)) {
+        if (empty($fields)) {
             return;
         }
 
         $primaryKey = (array)$this->_table->primaryKey();
         $key = $entity->get(current($primaryKey));
-
-        // When we have no key and bundled translations, we
-        // need to mark the entity dirty so the root
-        // entity persists.
-        if ($noFields && $bundled && !$key) {
-            foreach ($this->_config['fields'] as $field) {
-                $entity->dirty($field, true);
-            }
-
-            return;
-        }
-
-        if ($noFields) {
-            return;
-        }
-
         $model = $this->_config['referenceName'];
+
         $preexistent = $this->_translationTable->find()
             ->select(['id', 'field'])
-            ->where([
-                'field IN' => $fields,
-                'locale' => $locale,
-                'foreign_key' => $key,
-                'model' => $model
-            ])
+            ->where(['field IN' => $fields, 'locale' => $locale, 'foreign_key' => $key, 'model' => $model])
             ->bufferResults(false)
             ->indexBy('field');
 

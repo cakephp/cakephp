@@ -11,7 +11,7 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Http\Client\Auth;
+namespace Cake\Test\TestCase\Network\Http\Auth;
 
 use Cake\Http\Client\Auth\Oauth;
 use Cake\Http\Client\Request;

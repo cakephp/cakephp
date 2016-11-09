@@ -57,7 +57,7 @@ class EmailAssertTraitTest extends TestCase
         $this->assertEmailAttachmentsContains('TestUserMailer.php');
         $this->assertEmailAttachmentsContains('TestMailer.php', [
             'file' => dirname(dirname(__DIR__)) . DS . 'test_app' . DS . 'TestApp' . DS . 'Mailer' . DS . 'TestMailer.php',
-            'mimetype' => 'text/x-php',
+            'mimetype' => 'application/octet-stream',
         ]);
     }
 }

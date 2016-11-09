@@ -200,7 +200,7 @@ class Client
     public function get($url, $data = [], array $options = [])
     {
         $options = $this->_mergeOptions($options);
-        $body = null;
+        $body = [];
         if (isset($data['_content'])) {
             $body = $data['_content'];
             unset($data['_content']);
