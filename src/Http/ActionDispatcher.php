@@ -64,9 +64,6 @@ class ActionDispatcher
             $this->addFilter($filter);
         }
         $this->factory = $factory ?: new ControllerFactory();
-
-        // Force aliases to be autoloaded.
-        class_exists('Cake\Network\Request');
     }
 
     /**
