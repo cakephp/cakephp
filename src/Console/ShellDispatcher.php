@@ -274,7 +274,7 @@ class ShellDispatcher
             $other = static::alias($shell);
             if ($other) {
                 $other = $aliases[$shell];
-                if ($other != $plugin) {
+                if ($other !== $plugin) {
                     Log::write(
                         'debug',
                         "command '$shell' in plugin '$plugin' was not aliased, conflicts with '$other'",
