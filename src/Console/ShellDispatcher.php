@@ -280,8 +280,8 @@ class ShellDispatcher
                         "command '$shell' in plugin '$plugin' was not aliased, conflicts with '$other'",
                         ['shell-dispatcher']
                     );
-                    continue;
                 }
+                continue;
             }
             
             if (isset($others[$shell])) {
