@@ -16,13 +16,22 @@ namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\Type;
 use Cake\TestSuite\TestCase;
-use \PDO;
+use PDO;
 
 /**
  * Test for the Boolean type.
  */
 class BoolTypeTest extends TestCase
 {
+    /**
+     * @var \Cake\Database\Type\BoolType
+     */
+    public $type;
+
+    /**
+     * @var \Cake\Database\Driver
+     */
+    public $driver;
 
     /**
      * Setup
@@ -55,7 +64,7 @@ class BoolTypeTest extends TestCase
     /**
      * Test converting an array to boolean results in an exception
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testToDatabaseInvalid()
@@ -67,7 +76,7 @@ class BoolTypeTest extends TestCase
     /**
      * Tests that passing an invalid value will throw an exception
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testToDatabaseInvalidArray()

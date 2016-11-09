@@ -35,7 +35,7 @@ class MiddlewareQueue implements Countable
     /**
      * The queue of middleware callables.
      *
-     * @var array
+     * @var callable[]
      */
     protected $callables = [];
 

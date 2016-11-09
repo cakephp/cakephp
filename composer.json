@@ -18,7 +18,8 @@
         "source": "https://github.com/cakephp/cakephp"
     },
     "require": {
-        "php": ">=5.5.9",
+        "php": ">=5.6.0",
+        "lib-ICU": ">=4.8",
         "ext-intl": "*",
         "ext-mbstring": "*",
         "cakephp/chronos": "~1.0",
@@ -69,5 +70,14 @@
         "cakephp/orm": "self.version",
         "cakephp/utility": "self.version",
         "cakephp/validation": "self.version"
+    },
+    "scripts": {
+        "check": [
+            "@cs-check",
+            "@test"
+        ],
+        "cs-check": "vendor/bin/phpcs --colors -p --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests",
+        "cs-fix": "vendor/bin/phpcbf --colors --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests",
+        "test": "vendor/bin/phpunit --colors=always"
     }
 }

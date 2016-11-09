@@ -15,7 +15,8 @@
 namespace Cake\Auth;
 
 use Cake\Controller\ComponentRegistry;
-use Cake\Network\Request;
+use Cake\Core\Configure;
+use Cake\Http\ServerRequest;
 
 /**
  * Digest Authentication adapter for AuthComponent.
@@ -69,11 +70,12 @@ class DigestAuthenticate extends BasicAuthenticate
      * Besides the keys specified in BaseAuthenticate::$_defaultConfig,
      * DigestAuthenticate uses the following extra keys:
      *
+     * - `secret` The secret to use for nonce validation. Defaults to Security.salt.
      * - `realm` The realm authentication is for, Defaults to the servername.
-     * - `nonce` A nonce used for authentication. Defaults to `uniqid()`.
      * - `qop` Defaults to 'auth', no other values are supported at this time.
      * - `opaque` A string that must be returned unchanged by clients.
      *    Defaults to `md5($config['realm'])`
+     * - `nonceLifetime` The number of seconds that nonces are valid for. Defaults to 300.
      *
      * @param \Cake\Controller\ComponentRegistry $registry The Component registry
      *   used on this request.
@@ -84,9 +86,10 @@ class DigestAuthenticate extends BasicAuthenticate
         $this->_registry = $registry;
 
         $this->config([
+            'nonceLifetime' => 300,
+            'secret' => Configure::read('Security.salt'),
             'realm' => null,
             'qop' => 'auth',
-            'nonce' => uniqid(''),
             'opaque' => null,
         ]);
 
@@ -96,10 +99,10 @@ class DigestAuthenticate extends BasicAuthenticate
     /**
      * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
      *
-     * @param \Cake\Network\Request $request Request object.
+     * @param \Cake\Http\ServerRequest $request Request object.
      * @return mixed Either false or an array of user information
      */
-    public function getUser(Request $request)
+    public function getUser(ServerRequest $request)
     {
         $digest = $this->_getDigest($request);
         if (empty($digest)) {
@@ -108,6 +111,10 @@ class DigestAuthenticate extends BasicAuthenticate
 
         $user = $this->_findUser($digest['username']);
         if (empty($user)) {
+            return false;
+        }
+
+        if (!$this->validNonce($digest['nonce'])) {
             return false;
         }
 
@@ -126,10 +133,10 @@ class DigestAuthenticate extends BasicAuthenticate
     /**
      * Gets the digest headers from the request/environment.
      *
-     * @param \Cake\Network\Request $request Request object.
+     * @param \Cake\Http\ServerRequest $request Request object.
      * @return array Array of digest information.
      */
-    protected function _getDigest(Request $request)
+    protected function _getDigest(ServerRequest $request)
     {
         $digest = $request->env('PHP_AUTH_DIGEST');
         if (empty($digest) && function_exists('apache_request_headers')) {
@@ -205,25 +212,75 @@ class DigestAuthenticate extends BasicAuthenticate
     /**
      * Generate the login headers
      *
-     * @param \Cake\Network\Request $request Request object.
+     * @param \Cake\Http\ServerRequest $request Request object.
      * @return string Headers for logging in.
      */
-    public function loginHeaders(Request $request)
+    public function loginHeaders(ServerRequest $request)
     {
         $realm = $this->_config['realm'] ?: $request->env('SERVER_NAME');
 
         $options = [
             'realm' => $realm,
             'qop' => $this->_config['qop'],
-            'nonce' => $this->_config['nonce'],
+            'nonce' => $this->generateNonce(),
             'opaque' => $this->_config['opaque'] ?: md5($realm)
         ];
 
+        $digest = $this->_getDigest($request);
+        if ($digest && isset($digest['nonce'])) {
+            if (!$this->validNonce($digest['nonce'])) {
+                $options['stale'] = true;
+            }
+        }
+
         $opts = [];
         foreach ($options as $k => $v) {
-            $opts[] = sprintf('%s="%s"', $k, $v);
+            if (is_bool($v)) {
+                $v = $v ? 'true' : 'false';
+                $opts[] = sprintf('%s=%s', $k, $v);
+            } else {
+                $opts[] = sprintf('%s="%s"', $k, $v);
+            }
         }
 
         return 'WWW-Authenticate: Digest ' . implode(',', $opts);
+    }
+
+    /**
+     * Generate a nonce value that is validated in future requests.
+     *
+     * @return string
+     */
+    protected function generateNonce()
+    {
+        $expiryTime = microtime(true) + $this->config('nonceLifetime');
+        $signatureValue = md5($expiryTime . ':' . $this->config('secret'));
+        $nonceValue = $expiryTime . ':' . $signatureValue;
+
+        return base64_encode($nonceValue);
+    }
+
+    /**
+     * Check the nonce to ensure it is valid and not expired.
+     *
+     * @param string $nonce The nonce value to check.
+     * @return bool
+     */
+    protected function validNonce($nonce)
+    {
+        $value = base64_decode($nonce);
+        if ($value === false) {
+            return false;
+        }
+        $parts = explode(':', $value);
+        if (count($parts) !== 2) {
+            return false;
+        }
+        list($expires, $checksum) = $parts;
+        if ($expires < microtime(true)) {
+            return false;
+        }
+
+        return md5($expires . ':' . $this->config('secret')) === $checksum;
     }
 }

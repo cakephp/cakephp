@@ -457,6 +457,19 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * test that when there are required arguments after optional ones an exception is raised
+     *
+     * @expectedException \LogicException
+     * @return void
+     */
+    public function testPositionalArgRequiredAfterOptional()
+    {
+        $parser = new ConsoleOptionParser('test');
+        $parser->addArgument('name', ['required' => false])
+            ->addArgument('other', ['required' => true]);
+    }
+
+    /**
      * test that arguments with choices enforce them.
      *
      * @expectedException \Cake\Console\Exception\ConsoleException
@@ -579,6 +592,7 @@ class ConsoleOptionParserTest extends TestCase
     {
         $subParser = new ConsoleOptionParser('method', false);
         $subParser->addOption('connection', ['help' => 'Db connection.']);
+        $subParser->addOption('zero', ['short' => '0', 'help' => 'Zero.']);
 
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addSubcommand('method', [
@@ -590,12 +604,13 @@ class ConsoleOptionParserTest extends TestCase
         $result = $parser->help('method');
         $expected = <<<TEXT
 <info>Usage:</info>
-cake mycommand method [--connection] [-h]
+cake mycommand method [--connection] [-h] [-0]
 
 <info>Options:</info>
 
 --connection      Db connection.
 --help, -h        Display this help.
+--zero, -0        Zero.
 
 TEXT;
         $this->assertTextEquals($expected, $result, 'Help is not correct.');

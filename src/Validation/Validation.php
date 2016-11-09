@@ -521,16 +521,57 @@ class Validation
     }
 
     /**
-     * Boolean validation, determines if value passed is a boolean integer or true/false.
+     * Validates if passed value is boolean-like.
      *
-     * @param string $check a valid boolean
-     * @return bool Success
+     * The list of what is considered to be boolean values, may be set via $booleanValues.
+     *
+     * @param bool|int|string $check Value to check.
+     * @param string $booleanValues List of valid boolean values, defaults to `[true, false, 0, 1, '0', '1']`.
+     * @return bool Success.
      */
-    public static function boolean($check)
+    public static function boolean($check, array $booleanValues = [])
     {
-        $booleanList = [0, 1, '0', '1', true, false];
+        if (!$booleanValues) {
+            $booleanValues = [true, false, 0, 1, '0', '1'];
+        }
 
-        return in_array($check, $booleanList, true);
+        return in_array($check, $booleanValues, true);
+    }
+
+    /**
+     * Validates if given value is truthy.
+     *
+     * The list of what is considered to be truthy values, may be set via $truthyValues.
+     *
+     * @param bool|int|string $check Value to check.
+     * @param array $truthyValues List of valid truthy values, defaults to `[true, 1, '1']`.
+     * @return bool Success.
+     */
+    public static function truthy($check, array $truthyValues = [])
+    {
+        if (!$truthyValues) {
+            $truthyValues = [true, 1, '1'];
+        }
+
+        return in_array($check, $truthyValues, true);
+    }
+
+    /**
+     * Validates if given value is falsey.
+     *
+     * The list of what is considered to be falsey values, may be set via $falseyValues.
+     *
+     * @param bool|int|string $check Value to check.
+     * @param array $falseyValues List of valid falsey values, defaults to `[false, 0, '0']`.
+     * @return bool Success.
+     */
+    public static function falsey($check, array $falseyValues = [])
+    {
+        if (!$falseyValues) {
+            $falseyValues = [false, 0, '0'];
+        }
+
+        return in_array($check, $falseyValues, true);
     }
 
     /**
@@ -945,7 +986,11 @@ class Validation
     /**
      * Checks the mime type of a file.
      *
-     * @param string|array $check Value to check.
+     * Will check the mimetype of files/UploadedFileInterface instances
+     * by checking the using finfo on the file, not relying on the content-type
+     * sent by the client.
+     *
+     * @param string|array|\Psr\Http\Message\UploadedFileInterface $check Value to check.
      * @param array|string $mimeTypes Array of mime types or regex pattern to check.
      * @return bool Success
      * @throws \RuntimeException when mime type can not be determined.
@@ -953,20 +998,21 @@ class Validation
      */
     public static function mimeType($check, $mimeTypes = [])
     {
-        if (is_array($check) && isset($check['tmp_name'])) {
-            $check = $check['tmp_name'];
+        $file = static::getFilename($check);
+        if ($file === false) {
+            return false;
         }
 
         if (!function_exists('finfo_open')) {
             throw new LogicException('ext/fileinfo is required for validating file mime types');
         }
 
-        if (!is_file($check)) {
+        if (!is_file($file)) {
             throw new RuntimeException('Cannot validate mimetype for a missing file');
         }
 
         $finfo = finfo_open(FILEINFO_MIME);
-        $finfo = finfo_file($finfo, $check);
+        $finfo = finfo_file($finfo, $file);
 
         if (!$finfo) {
             throw new RuntimeException('Can not determine the mimetype.');
@@ -986,23 +1032,52 @@ class Validation
     }
 
     /**
+     * Helper for reading the file out of the various file implementations
+     * we accept.
+     *
+     * @param string|array|\Psr\Http\Message\UploadedFileInterface $check The data to read a filename out of.
+     * @return string|bool Either the filename or false on failure.
+     */
+    protected static function getFilename($check)
+    {
+        if ($check instanceof UploadedFileInterface) {
+            try {
+                // Uploaded files throw exceptions on upload errors.
+                return $check->getStream()->getMetadata('uri');
+            } catch (RuntimeException $e) {
+                return false;
+            }
+        }
+        if (is_array($check) && isset($check['tmp_name'])) {
+            return $check['tmp_name'];
+        }
+
+        return $check;
+    }
+
+    /**
      * Checks the filesize
      *
-     * @param string|array $check Value to check.
+     * Will check the filesize of files/UploadedFileInterface instances
+     * by checking the filesize() on disk and not relying on the length
+     * reported by the client.
+     *
+     * @param string|array|\Psr\Http\Message\UploadedFileInterface $check Value to check.
      * @param string|null $operator See `Validation::comparison()`.
      * @param int|string|null $size Size in bytes or human readable string like '5MB'.
      * @return bool Success
      */
     public static function fileSize($check, $operator = null, $size = null)
     {
-        if (is_array($check) && isset($check['tmp_name'])) {
-            $check = $check['tmp_name'];
+        $file = static::getFilename($check);
+        if ($file === false) {
+            return false;
         }
 
         if (is_string($size)) {
             $size = Text::parseFileSize($size);
         }
-        $filesize = filesize($check);
+        $filesize = filesize($file);
 
         return static::comparison($filesize, $operator, $size);
     }
@@ -1010,21 +1085,25 @@ class Validation
     /**
      * Checking for upload errors
      *
-     * @param string|array $check Value to check.
+     * @param string|array|\Psr\Http\Message\UploadedFileInterface $check Value to check.
      * @param bool $allowNoFile Set to true to allow UPLOAD_ERR_NO_FILE as a pass.
      * @return bool
      * @see http://www.php.net/manual/en/features.file-upload.errors.php
      */
     public static function uploadError($check, $allowNoFile = false)
     {
-        if (is_array($check) && isset($check['error'])) {
-            $check = $check['error'];
+        if ($check instanceof UploadedFileInterface) {
+            $code = $check->getError();
+        } elseif (is_array($check) && isset($check['error'])) {
+            $code = $check['error'];
+        } else {
+            $code = $check;
         }
         if ($allowNoFile) {
-            return in_array((int)$check, [UPLOAD_ERR_OK, UPLOAD_ERR_NO_FILE], true);
+            return in_array((int)$code, [UPLOAD_ERR_OK, UPLOAD_ERR_NO_FILE], true);
         }
 
-        return (int)$check === UPLOAD_ERR_OK;
+        return (int)$code === UPLOAD_ERR_OK;
     }
 
     /**
@@ -1055,18 +1134,28 @@ class Validation
             'types' => null,
             'optional' => false,
         ];
-        if (!is_array($file)) {
+        if (!is_array($file) && !($file instanceof UploadedFileInterface)) {
             return false;
         }
-        $keys = ['error', 'name', 'size', 'tmp_name', 'type'];
-        ksort($file);
-        if (array_keys($file) != $keys) {
-            return false;
+        $error = $isUploaded = false;
+        if ($file instanceof UploadedFileInterface) {
+            $error = $file->getError();
+            $isUploaded = true;
         }
+        if (is_array($file)) {
+            $keys = ['error', 'name', 'size', 'tmp_name', 'type'];
+            ksort($file);
+            if (array_keys($file) != $keys) {
+                return false;
+            }
+            $error = (int)$file['error'];
+            $isUploaded = is_uploaded_file($file['tmp_name']);
+        }
+
         if (!static::uploadError($file, $options['optional'])) {
             return false;
         }
-        if ($options['optional'] && (int)$file['error'] === UPLOAD_ERR_NO_FILE) {
+        if ($options['optional'] && $error === UPLOAD_ERR_NO_FILE) {
             return true;
         }
         if (isset($options['minSize']) && !static::fileSize($file, '>=', $options['minSize'])) {
@@ -1079,7 +1168,7 @@ class Validation
             return false;
         }
 
-        return is_uploaded_file($file['tmp_name']);
+        return $isUploaded;
     }
 
     /**

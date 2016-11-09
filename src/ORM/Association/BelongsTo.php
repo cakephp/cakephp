@@ -17,6 +17,7 @@ namespace Cake\ORM\Association;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
+use Cake\ORM\Association\Loader\SelectLoader;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use RuntimeException;
@@ -30,33 +31,45 @@ use RuntimeException;
 class BelongsTo extends Association
 {
 
-    use SelectableAssociationTrait;
-
     /**
      * Valid strategies for this type of association
      *
      * @var array
      */
-    protected $_validStrategies = [self::STRATEGY_JOIN, self::STRATEGY_SELECT];
+    protected $_validStrategies = [
+        self::STRATEGY_JOIN,
+        self::STRATEGY_SELECT
+    ];
+
+    /**
+     * Gets the name of the field representing the foreign key to the target table.
+     *
+     * @return string
+     */
+    public function getForeignKey()
+    {
+        if ($this->_foreignKey === null) {
+            $this->_foreignKey = $this->_modelKey($this->target()->alias());
+        }
+
+        return $this->_foreignKey;
+    }
 
     /**
      * Sets the name of the field representing the foreign key to the target table.
      * If no parameters are passed current field is returned
      *
+     * @deprecated 3.4.0 Use setForeignKey()/getForeignKey() instead.
      * @param string|null $key the key to be used to link both tables together
      * @return string
      */
     public function foreignKey($key = null)
     {
-        if ($key === null) {
-            if ($this->_foreignKey === null) {
-                $this->_foreignKey = $this->_modelKey($this->target()->alias());
-            }
-
-            return $this->_foreignKey;
+        if ($key !== null) {
+            $this->setForeignKey($key);
         }
 
-        return parent::foreignKey($key);
+        return $this->getForeignKey();
     }
 
     /**
@@ -186,39 +199,22 @@ class BelongsTo extends Association
 
     /**
      * {@inheritDoc}
+     *
+     * @return callable
      */
-    protected function _linkField($options)
+    public function eagerLoader(array $options)
     {
-        $links = [];
-        $name = $this->alias();
+        $loader = new SelectLoader([
+            'alias' => $this->alias(),
+            'sourceAlias' => $this->source()->alias(),
+            'targetAlias' => $this->target()->alias(),
+            'foreignKey' => $this->foreignKey(),
+            'bindingKey' => $this->bindingKey(),
+            'strategy' => $this->strategy(),
+            'associationType' => $this->type(),
+            'finder' => [$this, 'find']
+        ]);
 
-        foreach ((array)$this->bindingKey() as $key) {
-            $links[] = sprintf('%s.%s', $name, $key);
-        }
-
-        if (count($links) === 1) {
-            return $links[0];
-        }
-
-        return $links;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function _buildResultMap($fetchQuery, $options)
-    {
-        $resultMap = [];
-        $key = (array)$this->bindingKey();
-
-        foreach ($fetchQuery->all() as $result) {
-            $values = [];
-            foreach ($key as $k) {
-                $values[] = $result[$k];
-            }
-            $resultMap[implode(';', $values)] = $result;
-        }
-
-        return $resultMap;
+        return $loader->buildEagerLoader($options);
     }
 }

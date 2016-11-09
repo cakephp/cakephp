@@ -1771,6 +1771,58 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests the chunkWithKeys method with exact chunks
+     *
+     * @return void
+     */
+    public function testChunkWithKeys()
+    {
+        $collection = new Collection(['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6]);
+        $chunked = $collection->chunkWithKeys(2)->toList();
+        $expected = [['a' => 1, 'b' => 2], ['c' => 3, 'd' => 4], ['e' => 5, 'f' => 6]];
+        $this->assertEquals($expected, $chunked);
+    }
+
+    /**
+     * Tests the chunkWithKeys method with overflowing chunk size
+     *
+     * @return void
+     */
+    public function testChunkWithKeysOverflow()
+    {
+        $collection = new Collection(['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7]);
+        $chunked = $collection->chunkWithKeys(2)->toList();
+        $expected = [['a' => 1, 'b' => 2], ['c' => 3, 'd' => 4], ['e' => 5, 'f' => 6], ['g' => 7]];
+        $this->assertEquals($expected, $chunked);
+    }
+
+    /**
+     * Tests the chunkWithKeys method with non-scalar items
+     *
+     * @return void
+     */
+    public function testChunkWithKeysNested()
+    {
+        $collection = new Collection(['a' => 1, 'b' => 2, 'c' => 3, 'd' => [4, 5], 'e' => 6, 'f' => [7, [8, 9], 10], 'g' => 11]);
+        $chunked = $collection->chunkWithKeys(2)->toList();
+        $expected = [['a' => 1, 'b' => 2], ['c' => 3, 'd' => [4, 5]], ['e' => 6, 'f' => [7, [8, 9], 10]], ['g' => 11]];
+        $this->assertEquals($expected, $chunked);
+    }
+
+    /**
+     * Tests the chunkWithKeys method without preserving keys
+     *
+     * @return void
+     */
+    public function testChunkWithKeysNoPreserveKeys()
+    {
+        $collection = new Collection(['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7]);
+        $chunked = $collection->chunkWithKeys(2, false)->toList();
+        $expected = [[0 => 1, 1 => 2], [0 => 3, 1 => 4], [0 => 5, 1 => 6], [0 => 7]];
+        $this->assertEquals($expected, $chunked);
+    }
+
+    /**
      * Tests cartesianProduct
      *
      * @return void

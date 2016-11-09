@@ -1,4 +1,5 @@
 This is a (multiple allowed):
+
 * [x] bug
 * [ ] enhancement
 * [ ] feature-discussion (RFC)
@@ -12,7 +13,7 @@ EXPLAIN WHAT YOU DID, PREFERABLY WITH CODE EXAMPLES, HERE.
 ### What happened
 EXPLAIN WHAT IS ACTUALLY HAPPENING, HERE.
 
-### Expected Behavior
+### What you expected to happen
 EXPLAIN WHAT IS TO BE EXPECTED, HERE.
 
 P.S. Remember, an issue is not the place to ask questions. You can use [Stack Overflow](http://stackoverflow.com/questions/tagged/cakephp)

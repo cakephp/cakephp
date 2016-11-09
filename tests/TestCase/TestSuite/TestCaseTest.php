@@ -20,6 +20,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;
 use Cake\Event\EventList;
 use Cake\Event\EventManager;
+use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -437,7 +438,7 @@ class TestCaseTest extends TestCase
     {
         Configure::write('App.namespace', 'TestApp');
         $Posts = $this->getMockForModel('Posts');
-        $entity = new \Cake\ORM\Entity([]);
+        $entity = new Entity([]);
 
         $this->assertInstanceOf('TestApp\Model\Table\PostsTable', $Posts);
         $this->assertNull($Posts->save($entity));
@@ -497,7 +498,7 @@ class TestCaseTest extends TestCase
             ->method('save')
             ->will($this->returnValue(false));
 
-        $entity = new \Cake\ORM\Entity([]);
+        $entity = new Entity([]);
         $this->assertTrue($TestPluginComment->save($entity));
         $this->assertFalse($TestPluginComment->save($entity));
 
@@ -530,7 +531,7 @@ class TestCaseTest extends TestCase
             ->method('save')
             ->will($this->returnValue(false));
 
-        $entity = new \Cake\ORM\Entity([]);
+        $entity = new Entity([]);
         $this->assertTrue($Mock->save($entity));
         $this->assertFalse($Mock->save($entity));
     }

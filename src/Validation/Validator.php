@@ -155,7 +155,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function field($name, ValidationSet $set = null)
     {
         if (empty($this->_fields[$name])) {
-            $set = $set ?: new ValidationSet;
+            $set = $set ?: new ValidationSet();
             $this->_fields[$name] = $set;
         }
 
@@ -193,7 +193,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 return $this->_providers[$name];
             }
             if ($name === 'default') {
-                return $this->_providers[$name] = new RulesProvider;
+                return $this->_providers[$name] = new RulesProvider();
             }
 
             return null;
@@ -245,7 +245,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function offsetSet($field, $rules)
     {
         if (!$rules instanceof ValidationSet) {
-            $set = new ValidationSet;
+            $set = new ValidationSet();
             foreach ((array)$rules as $name => $rule) {
                 $set->add($name, $rule);
             }

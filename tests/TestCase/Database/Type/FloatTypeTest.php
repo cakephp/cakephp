@@ -18,13 +18,32 @@ use Cake\Database\Type;
 use Cake\Database\Type\FloatType;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
-use \PDO;
+use PDO;
 
 /**
  * Test for the Float type.
  */
 class FloatTypeTest extends TestCase
 {
+    /**
+     * @var \Cake\Database\Type\FloatType
+     */
+    public $type;
+
+    /**
+     * @var \Cake\Database\Driver
+     */
+    public $driver;
+
+    /**
+     * @var string
+     */
+    public $numberClass;
+
+    /**
+     * @var string
+     */
+    public $localeString;
 
     /**
      * Setup
@@ -36,10 +55,10 @@ class FloatTypeTest extends TestCase
         parent::setUp();
         $this->type = Type::build('float');
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
-        $this->locale = I18n::locale();
+        $this->localeString = I18n::locale();
         $this->numberClass = FloatType::$numberClass;
 
-        I18n::locale($this->locale);
+        I18n::locale($this->localeString);
     }
 
     /**
@@ -50,7 +69,7 @@ class FloatTypeTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        I18n::locale($this->locale);
+        I18n::locale($this->localeString);
         FloatType::$numberClass = $this->numberClass;
     }
 
@@ -109,19 +128,19 @@ class FloatTypeTest extends TestCase
      */
     public function testMarshal()
     {
-        $result = $this->type->marshal('some data', $this->driver);
+        $result = $this->type->marshal('some data');
         $this->assertSame('some data', $result);
 
-        $result = $this->type->marshal('', $this->driver);
+        $result = $this->type->marshal('');
         $this->assertNull($result);
 
-        $result = $this->type->marshal('2.51', $this->driver);
+        $result = $this->type->marshal('2.51');
         $this->assertSame(2.51, $result);
 
-        $result = $this->type->marshal('3.5 bears', $this->driver);
+        $result = $this->type->marshal('3.5 bears');
         $this->assertSame('3.5 bears', $result);
 
-        $result = $this->type->marshal(['3', '4'], $this->driver);
+        $result = $this->type->marshal(['3', '4']);
         $this->assertSame(1, $result);
     }
 
@@ -154,7 +173,7 @@ class FloatTypeTest extends TestCase
     /**
      * Test that exceptions are raised on invalid parsers.
      *
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @return void
      */
     public function testUseLocaleParsingInvalid()

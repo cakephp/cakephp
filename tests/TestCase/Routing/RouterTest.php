@@ -37,7 +37,7 @@ class RouterTest extends TestCase
     {
         parent::setUp();
         Configure::write('Routing', ['admin' => null, 'prefixes' => []]);
-        Router::fullbaseUrl('');
+        Router::fullBaseUrl('');
         Configure::write('App.fullBaseUrl', 'http://localhost');
     }
 
@@ -73,7 +73,7 @@ class RouterTest extends TestCase
      */
     public function testfullBaseURL()
     {
-        Router::fullbaseUrl('http://example.com');
+        Router::fullBaseUrl('http://example.com');
         $this->assertEquals('http://example.com/', Router::url('/', true));
         $this->assertEquals('http://example.com', Configure::read('App.fullBaseUrl'));
         Router::fullBaseUrl('https://example.com');
@@ -3210,7 +3210,7 @@ class RouterTest extends TestCase
     /**
      * Test setting the request context.
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testSetRequestContextInvalid()

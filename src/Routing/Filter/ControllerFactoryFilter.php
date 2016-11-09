@@ -44,15 +44,15 @@ class ControllerFactoryFilter extends DispatcherFilter
      */
     public function beforeDispatch(Event $event)
     {
-        $request = $event->data['request'];
-        $response = $event->data['response'];
-        $event->data['controller'] = $this->_getController($request, $response);
+        $request = $event->data('request');
+        $response = $event->data('response');
+        $event->setData('controller', $this->_getController($request, $response));
     }
 
     /**
      * Gets controller to use, either plugin or application controller.
      *
-     * @param \Cake\Network\Request $request Request object
+     * @param \Cake\Http\ServerRequest $request Request object
      * @param \Cake\Network\Response $response Response for the controller.
      * @return \Cake\Controller\Controller
      */

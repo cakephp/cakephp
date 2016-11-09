@@ -16,9 +16,9 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Event\Event;
+use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\Network\Exception\InvalidCsrfTokenException;
-use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Security;
 
@@ -93,7 +93,7 @@ class CsrfComponent extends Component
         if ($request->is('get') && $cookieData === null) {
             $this->_setCookie($request, $response);
         }
-        if ($request->is(['put', 'post', 'delete', 'patch']) || !empty($request->data)) {
+        if ($request->is(['put', 'post', 'delete', 'patch']) || $request->data()) {
             $this->_validateToken($request);
             unset($request->data[$this->_config['field']]);
         }
@@ -117,11 +117,11 @@ class CsrfComponent extends Component
      * Also sets the request->params['_csrfToken'] so the newly minted
      * token is available in the request data.
      *
-     * @param \Cake\Network\Request $request The request object.
+     * @param \Cake\Http\ServerRequest $request The request object.
      * @param \Cake\Network\Response $response The response object.
      * @return void
      */
-    protected function _setCookie(Request $request, Response $response)
+    protected function _setCookie(ServerRequest $request, Response $response)
     {
         $expiry = new Time($this->_config['expiry']);
         $value = hash('sha512', Security::randomBytes(16), false);
@@ -140,11 +140,11 @@ class CsrfComponent extends Component
     /**
      * Validate the request data against the cookie token.
      *
-     * @param \Cake\Network\Request $request The request to validate against.
+     * @param \Cake\Http\ServerRequest $request The request to validate against.
      * @throws \Cake\Network\Exception\InvalidCsrfTokenException when the CSRF token is invalid or missing.
      * @return void
      */
-    protected function _validateToken(Request $request)
+    protected function _validateToken(ServerRequest $request)
     {
         $cookie = $request->cookie($this->_config['cookieName']);
         $post = $request->data($this->_config['field']);

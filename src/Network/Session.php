@@ -355,10 +355,6 @@ class Session
      */
     public function check($name = null)
     {
-        if (empty($name)) {
-            return false;
-        }
-
         if ($this->_hasSession() && !$this->started()) {
             $this->start();
         }
@@ -379,10 +375,6 @@ class Session
      */
     public function read($name = null)
     {
-        if (empty($name) && $name !== null) {
-            return null;
-        }
-
         if ($this->_hasSession() && !$this->started()) {
             $this->start();
         }
@@ -427,10 +419,6 @@ class Session
      */
     public function write($name, $value = null)
     {
-        if (empty($name)) {
-            return;
-        }
-
         if (!$this->started()) {
             $this->start();
         }

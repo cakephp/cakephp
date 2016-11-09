@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\DigestAuthenticate;
 use Cake\Controller\ComponentRegistry;
+use Cake\Core\Configure;
 use Cake\I18n\Time;
 use Cake\Network\Exception\UnauthorizedException;
 use Cake\Network\Request;
@@ -106,18 +107,17 @@ class DigestAuthenticateTest extends TestCase
         $request = new Request('posts/index');
         $request->addParams(['pass' => []]);
 
-        $digest = <<<DIGEST
-Digest username="incorrect_user",
-realm="localhost",
-nonce="123456",
-uri="/dir/index.html",
-qop=auth,
-nc=00000001,
-cnonce="0a4f113b",
-response="6629fae49393a05397450978507c4ef1",
-opaque="123abc"
-DIGEST;
-        $request->env('PHP_AUTH_DIGEST', $digest);
+        $data = [
+            'username' => 'incorrect_user',
+            'realm' => 'localhost',
+            'nonce' => $this->generateNonce(),
+            'uri' => '/dir/index.html',
+            'qop' => 'auth',
+            'nc' => 0000001,
+            'cnonce' => '0a4f113b'
+        ];
+        $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
+        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
         $this->auth->unauthenticated($request, $this->response);
     }
@@ -142,8 +142,97 @@ DIGEST;
 
         $this->assertNotEmpty($e);
 
-        $expected = ['WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="123abc"'];
-        $this->assertEquals($expected, $e->responseHeader());
+        $header = $e->responseHeader()[0];
+        $this->assertRegexp(
+            '/^WWW\-Authenticate: Digest realm="localhost",qop="auth",nonce="[a-zA-Z0-9=]+",opaque="123abc"$/',
+            $e->responseHeader()[0]
+        );
+    }
+
+    /**
+     * test that challenge headers include stale when the nonce is stale
+     *
+     * @return void
+     */
+    public function testAuthenticateChallengeIncludesStaleAttributeOnStaleNonce()
+    {
+        $request = new Request([
+            'url' => 'posts/index',
+            'environment' => ['REQUEST_METHOD' => 'GET']
+        ]);
+        $request->addParams(['pass' => []]);
+        $data = [
+            'uri' => '/dir/index.html',
+            'nonce' => $this->generateNonce(null, 5, strtotime('-10 minutes')),
+            'nc' => 1,
+            'cnonce' => '123',
+            'qop' => 'auth',
+        ];
+        $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
+        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+
+        try {
+            $this->auth->unauthenticated($request, $this->response);
+        } catch (UnauthorizedException $e) {
+        }
+        $this->assertNotEmpty($e);
+
+        $header = $e->responseHeader()[0];
+        $this->assertContains('stale=true', $header);
+    }
+
+    /**
+     * Test that authentication fails when a nonce is stale
+     *
+     * @return void
+     */
+    public function testAuthenticateFailsOnStaleNonce()
+    {
+        $request = new Request([
+            'url' => 'posts/index',
+            'environment' => ['REQUEST_METHOD' => 'GET']
+        ]);
+        $request->addParams(['pass' => []]);
+
+        $data = [
+            'uri' => '/dir/index.html',
+            'nonce' => $this->generateNonce(null, 5, strtotime('-10 minutes')),
+            'nc' => 1,
+            'cnonce' => '123',
+            'qop' => 'auth',
+        ];
+        $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
+        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+        $result = $this->auth->authenticate($request, $this->response);
+        $this->assertFalse($result, 'Stale nonce should fail');
+    }
+
+    /**
+     * Test that nonces are required.
+     *
+     * @return void
+     */
+    public function testAuthenticateValidUsernamePasswordNoNonce()
+    {
+        $request = new Request([
+            'url' => 'posts/index',
+            'environment' => ['REQUEST_METHOD' => 'GET']
+        ]);
+        $request->addParams(['pass' => []]);
+
+        $data = [
+            'username' => 'mariano',
+            'realm' => 'localhos',
+            'uri' => '/dir/index.html',
+            'nonce' => '',
+            'nc' => 1,
+            'cnonce' => '123',
+            'qop' => 'auth',
+        ];
+        $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
+        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+        $result = $this->auth->authenticate($request, $this->response);
+        $this->assertFalse($result, 'Empty nonce should fail');
     }
 
     /**
@@ -159,18 +248,15 @@ DIGEST;
         ]);
         $request->addParams(['pass' => []]);
 
-        $digest = <<<DIGEST
-Digest username="mariano",
-realm="localhost",
-nonce="123",
-uri="/dir/index.html",
-qop=auth,
-nc=1,
-cnonce="123",
-response="06b257a54befa2ddfb9bfa134224aa29",
-opaque="123abc"
-DIGEST;
-        $request->env('PHP_AUTH_DIGEST', $digest);
+        $data = [
+            'uri' => '/dir/index.html',
+            'nonce' => $this->generateNonce(),
+            'nc' => 1,
+            'cnonce' => '123',
+            'qop' => 'auth',
+        ];
+        $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
+        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
@@ -196,18 +282,16 @@ DIGEST;
         ]);
         $request->addParams(['pass' => []]);
 
-        $digest = <<<DIGEST
-Digest username="mariano",
-realm="localhost",
-nonce="123",
-uri="/dir/index.html",
-qop=auth,
-nc=1,
-cnonce="123",
-response="06b257a54befa2ddfb9bfa134224aa29",
-opaque="123abc"
-DIGEST;
-        $request->env('PHP_AUTH_DIGEST', $digest);
+        $data = [
+            'username' => 'mariano',
+            'uri' => '/dir/index.html',
+            'nonce' => $this->generateNonce(),
+            'nc' => 1,
+            'cnonce' => '123',
+            'qop' => 'auth',
+        ];
+        $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
+        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
@@ -235,19 +319,16 @@ DIGEST;
         ]);
         $request->addParams(['pass' => []]);
 
-        $digest = <<<DIGEST
-Digest username="mariano",
-realm="localhost",
-nonce="123",
-uri="/dir/index.html",
-qop=auth,
-nc=1,
-cnonce="123",
-response="6629fae49393a05397450978507c4ef1",
-opaque="123abc"
-DIGEST;
-        $request->env('PHP_AUTH_DIGEST', $digest);
-
+        $data = [
+            'username' => 'invalid',
+            'uri' => '/dir/index.html',
+            'nonce' => $this->generateNonce(),
+            'nc' => 1,
+            'cnonce' => '123',
+            'qop' => 'auth',
+        ];
+        $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
+        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
         $this->auth->unauthenticated($request, $this->response);
     }
 
@@ -263,11 +344,13 @@ DIGEST;
         ]);
         $this->auth = new DigestAuthenticate($this->Collection, [
             'realm' => 'localhost',
-            'nonce' => '123'
         ]);
-        $expected = 'WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="421aa90e079fa326b6494f812ad13e79"';
         $result = $this->auth->loginHeaders($request);
-        $this->assertEquals($expected, $result);
+
+        $this->assertRegexp(
+            '/^WWW\-Authenticate: Digest realm="localhost",qop="auth",nonce="[a-zA-Z0-9=]+",opaque="[a-f0-9]+"$/',
+            $result
+        );
     }
 
     /**
@@ -278,15 +361,15 @@ DIGEST;
     public function testParseAuthData()
     {
         $digest = <<<DIGEST
-			Digest username="Mufasa",
-			realm="testrealm@host.com",
-			nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
-			uri="/dir/index.html?query=string&value=some%20value",
-			qop=auth,
-			nc=00000001,
-			cnonce="0a4f113b",
-			response="6629fae49393a05397450978507c4ef1",
-			opaque="5ccc069c403ebaf9f0171e9517f40e41"
+            Digest username="Mufasa",
+            realm="testrealm@host.com",
+            nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
+            uri="/dir/index.html?query=string&value=some%20value",
+            qop=auth,
+            nc=00000001,
+            cnonce="0a4f113b",
+            response="6629fae49393a05397450978507c4ef1",
+            opaque="5ccc069c403ebaf9f0171e9517f40e41"
 DIGEST;
         $expected = [
             'username' => 'Mufasa',
@@ -314,15 +397,15 @@ DIGEST;
     public function testParseAuthDataFullUri()
     {
         $digest = <<<DIGEST
-			Digest username="admin",
-			realm="192.168.0.2",
-			nonce="53a7f9b83f61b",
-			uri="http://192.168.0.2/pvcollection/sites/pull/HFD%200001.json#fragment",
-			qop=auth,
-			nc=00000001,
-			cnonce="b85ff144e496e6e18d1c73020566ea3b",
-			response="5894f5d9cd41d012bac09eeb89d2ddf2",
-			opaque="6f65e91667cf98dd13464deaf2739fde"
+            Digest username="admin",
+            realm="192.168.0.2",
+            nonce="53a7f9b83f61b",
+            uri="http://192.168.0.2/pvcollection/sites/pull/HFD%200001.json#fragment",
+            qop=auth,
+            nc=00000001,
+            cnonce="b85ff144e496e6e18d1c73020566ea3b",
+            response="5894f5d9cd41d012bac09eeb89d2ddf2",
+            opaque="6f65e91667cf98dd13464deaf2739fde"
 DIGEST;
 
         $expected = 'http://192.168.0.2/pvcollection/sites/pull/HFD%200001.json#fragment';
@@ -338,15 +421,15 @@ DIGEST;
     public function testParseAuthEmailAddress()
     {
         $digest = <<<DIGEST
-			Digest username="mark@example.com",
-			realm="testrealm@host.com",
-			nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
-			uri="/dir/index.html",
-			qop=auth,
-			nc=00000001,
-			cnonce="0a4f113b",
-			response="6629fae49393a05397450978507c4ef1",
-			opaque="5ccc069c403ebaf9f0171e9517f40e41"
+            Digest username="mark@example.com",
+            realm="testrealm@host.com",
+            nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
+            uri="/dir/index.html",
+            qop=auth,
+            nc=00000001,
+            cnonce="0a4f113b",
+            response="6629fae49393a05397450978507c4ef1",
+            opaque="5ccc069c403ebaf9f0171e9517f40e41"
 DIGEST;
         $expected = [
             'username' => 'mark@example.com',
@@ -373,5 +456,51 @@ DIGEST;
         $result = DigestAuthenticate::password('mark', 'password', 'localhost');
         $expected = md5('mark:localhost:password');
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Generate a nonce for testing.
+     *
+     * @param string $secret The secret to use.
+     * @param int $expires Time to live
+     * @return string
+     */
+    protected function generateNonce($secret = null, $expires = 300, $time = null)
+    {
+        $secret = $secret ?: Configure::read('Security.salt');
+        $time = $time ?: microtime(true);
+        $expiryTime = $time + $expires;
+        $signatureValue = md5($expiryTime . ':' . $secret);
+        $nonceValue = $expiryTime . ':' . $signatureValue;
+
+        return base64_encode($nonceValue);
+    }
+
+    /**
+     * Create a digest header string from an array of data.
+     *
+     * @param array $data the data to convert into a header.
+     * @return string
+     */
+    protected function digestHeader($data)
+    {
+        $data += [
+            'username' => 'mariano',
+            'realm' => 'localhost',
+            'opaque' => '123abc'
+        ];
+        $digest = <<<DIGEST
+Digest username="mariano",
+realm="{$data['realm']}",
+nonce="{$data['nonce']}",
+uri="{$data['uri']}",
+qop={$data['qop']},
+nc={$data['nc']},
+cnonce="{$data['cnonce']}",
+response="{$data['response']}",
+opaque="{$data['opaque']}"
+DIGEST;
+
+        return $digest;
     }
 }

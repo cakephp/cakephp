@@ -284,7 +284,7 @@ class MiddlewareQueueTest extends TestCase
     /**
      * Test insertBefore an invalid classname
      *
-     * @expectedException LogicException
+     * @expectedException \LogicException
      * @expectedExceptionMessage No middleware matching 'InvalidClassName' could be found.
      * @return void
      */

@@ -371,7 +371,7 @@ trait CollectionTrait
      */
     public function append($items)
     {
-        $list = new AppendIterator;
+        $list = new AppendIterator();
         $list->append($this->unwrap());
         $list->append((new Collection($items))->unwrap());
 
@@ -637,6 +637,34 @@ trait CollectionTrait
                     break;
                 }
                 $values[] = $iterator->current();
+            }
+
+            return $values;
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    public function chunkWithKeys($chunkSize, $preserveKeys = true)
+    {
+        return $this->map(function ($v, $k, $iterator) use ($chunkSize, $preserveKeys) {
+            $key = 0;
+            if ($preserveKeys) {
+                $key = $k;
+            }
+            $values = [$key => $v];
+            for ($i = 1; $i < $chunkSize; $i++) {
+                $iterator->next();
+                if (!$iterator->valid()) {
+                    break;
+                }
+                if ($preserveKeys) {
+                    $values[$iterator->key()] = $iterator->current();
+                } else {
+                    $values[] = $iterator->current();
+                }
             }
 
             return $values;

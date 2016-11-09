@@ -16,7 +16,7 @@ namespace Cake\View\Form;
 
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use RuntimeException;
@@ -48,7 +48,7 @@ class EntityContext implements ContextInterface
     /**
      * The request object.
      *
-     * @var \Cake\Network\Request
+     * @var \Cake\Http\ServerRequest
      */
     protected $_request;
 
@@ -84,10 +84,10 @@ class EntityContext implements ContextInterface
     /**
      * Constructor.
      *
-     * @param \Cake\Network\Request $request The request object.
+     * @param \Cake\Http\ServerRequest $request The request object.
      * @param array $context Context info.
      */
-    public function __construct(Request $request, array $context)
+    public function __construct(ServerRequest $request, array $context)
     {
         $this->_request = $request;
         $context += [

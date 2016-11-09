@@ -16,11 +16,16 @@ namespace Cake\Network;
 
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
+use Cake\Http\CallbackStream;
 use Cake\Log\Log;
 use Cake\Network\Exception\NotFoundException;
 use DateTime;
 use DateTimeZone;
 use InvalidArgumentException;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
+use Zend\Diactoros\MessageTrait;
+use Zend\Diactoros\Stream;
 
 /**
  * Cake Response is responsible for managing the response text, status and headers of a HTTP response.
@@ -28,8 +33,10 @@ use InvalidArgumentException;
  * By default controllers will use this class to render their response. If you are going to use
  * a custom response class it should subclass this object in order to ensure compatibility.
  */
-class Response
+class Response implements ResponseInterface
 {
+
+    use MessageTrait;
 
     /**
      * Holds HTTP response statuses
@@ -56,7 +63,7 @@ class Response
         303 => 'See Other',
         304 => 'Not Modified',
         305 => 'Use Proxy',
-        306 => 'Switch Proxy',
+        306 => '(Unused)',
         307 => 'Temporary Redirect',
         308 => 'Permanent Redirect',
         400 => 'Bad Request',
@@ -356,20 +363,6 @@ class Response
     protected $_contentType = 'text/html';
 
     /**
-     * Buffer list of headers
-     *
-     * @var array
-     */
-    protected $_headers = [];
-
-    /**
-     * Buffer string or callable for response message
-     *
-     * @var string|callable
-     */
-    protected $_body = null;
-
-    /**
      * File object for file to be read out as response
      *
      * @var \Cake\Filesystem\File
@@ -406,6 +399,27 @@ class Response
     protected $_cookies = [];
 
     /**
+     * Reason Phrase
+     *
+     * @var string|null
+     */
+    protected $_reasonPhrase = null;
+
+    /**
+     * Stream mode options.
+     *
+     * @var string
+     */
+    protected $_streamMode = 'wb+';
+
+    /**
+     * Stream target or resource object.
+     *
+     * @var string|resource
+     */
+    protected $_streamTarget = 'php://memory';
+
+    /**
      * Constructor
      *
      * @param array $options list of parameters to setup the response. Possible values are:
@@ -417,6 +431,20 @@ class Response
      */
     public function __construct(array $options = [])
     {
+        if (isset($options['streamTarget'])) {
+            $this->_streamTarget = $options['streamTarget'];
+        }
+        if (isset($options['streamMode'])) {
+            $this->_streamMode = $options['streamMode'];
+        }
+        if (isset($options['stream'])) {
+            if (!$options['stream'] instanceof StreamInterface) {
+                throw new InvalidArgumentException('Stream option must be an object that implements StreamInterface');
+            }
+            $this->stream = $options['stream'];
+        } else {
+            $this->_createStream();
+        }
         if (isset($options['body'])) {
             $this->body($options['body']);
         }
@@ -436,14 +464,25 @@ class Response
     }
 
     /**
+     * Creates the stream object.
+     *
+     * @return void
+     */
+    protected function _createStream()
+    {
+        $this->stream = new Stream($this->_streamTarget, $this->_streamMode);
+    }
+
+    /**
      * Sends the complete response to the client including headers and message body.
      * Will echo out the content in the response body.
      *
      * @return void
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     public function send()
     {
-        if (isset($this->_headers['Location']) && $this->_status === 200) {
+        if ($this->hasHeader('Location') && $this->_status === 200) {
             $this->statusCode(302);
         }
 
@@ -454,7 +493,7 @@ class Response
             $this->_sendFile($this->_file, $this->_fileRange);
             $this->_file = $this->_fileRange = null;
         } else {
-            $this->_sendContent($this->_body);
+            $this->_sendContent($this->body());
         }
 
         if (function_exists('fastcgi_finish_request')) {
@@ -466,6 +505,7 @@ class Response
      * Sends the HTTP headers and cookies.
      *
      * @return void
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     public function sendHeaders()
     {
@@ -481,7 +521,7 @@ class Response
         $this->_sendHeader("{$this->_protocol} {$this->_status} {$codeMessage}");
         $this->_setContentType();
 
-        foreach ($this->_headers as $header => $values) {
+        foreach ($this->headers as $header => $values) {
             foreach ((array)$values as $value) {
                 $this->_sendHeader($header, $value);
             }
@@ -494,6 +534,7 @@ class Response
      * have been set.
      *
      * @return void
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     protected function _setCookies()
     {
@@ -533,9 +574,9 @@ class Response
         }
 
         if ($charset) {
-            $this->header('Content-Type', "{$this->_contentType}; charset={$this->_charset}");
+            $this->_setHeader('Content-Type', "{$this->_contentType}; charset={$this->_charset}");
         } else {
-            $this->header('Content-Type', "{$this->_contentType}");
+            $this->_setHeader('Content-Type', "{$this->_contentType}");
         }
     }
 
@@ -543,6 +584,7 @@ class Response
      * Sets the response body to an empty text if the status code is 204 or 304
      *
      * @return void
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     protected function _setContent()
     {
@@ -557,6 +599,7 @@ class Response
      * @param string $name the header name
      * @param string|null $value the header value
      * @return void
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     protected function _sendHeader($name, $value = null)
     {
@@ -576,6 +619,7 @@ class Response
      * @param string|callable $content String to send as response body or callable
      *  which returns/outputs content.
      * @return void
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     protected function _sendContent($content)
     {
@@ -630,8 +674,9 @@ class Response
     public function header($header = null, $value = null)
     {
         if ($header === null) {
-            return $this->_headers;
+            return $this->headers;
         }
+
         $headers = is_array($header) ? $header : [$header => $value];
         foreach ($headers as $header => $value) {
             if (is_numeric($header)) {
@@ -640,10 +685,17 @@ class Response
             if ($value === null) {
                 list($header, $value) = explode(':', $header, 2);
             }
-            $this->_headers[$header] = is_array($value) ? array_map('trim', $value) : trim($value);
+
+            if ($this->hasHeader($header)) {
+                $header = $this->headerNames[strtolower($header)];
+            } else {
+                $this->headerNames[strtolower($header)] = $header;
+            }
+
+            $this->headers[$header] = is_array($value) ? array_map('trim', $value) : trim($value);
         }
 
-        return $this->_headers;
+        return $this->headers;
     }
 
     /**
@@ -658,13 +710,30 @@ class Response
     public function location($url = null)
     {
         if ($url === null) {
-            $headers = $this->header();
+            $result = $this->getHeaderLine('Location');
+            if (!$result) {
+                return null;
+            }
 
-            return isset($headers['Location']) ? $headers['Location'] : null;
+            return $result;
         }
-        $this->header('Location', $url);
+        $this->_setHeader('Location', $url);
 
         return null;
+    }
+
+    /**
+     * Sets a header.
+     *
+     * @param string $header Header key.
+     * @param string $value Header value.
+     * @return void
+     */
+    protected function _setHeader($header, $value)
+    {
+        $normalized = strtolower($header);
+        $this->headerNames[$normalized] = $header;
+        $this->headers[$header] = $value;
     }
 
     /**
@@ -677,10 +746,46 @@ class Response
     public function body($content = null)
     {
         if ($content === null) {
-            return $this->_body;
+            if ($this->stream->isSeekable()) {
+                $this->stream->rewind();
+            }
+            $result = $this->stream->getContents();
+            if (strlen($result) === 0) {
+                return null;
+            }
+
+            return $result;
         }
 
-        return $this->_body = $content;
+        // Compatibility with closure/streaming responses
+        if (is_callable($content)) {
+            $this->stream = new CallbackStream($content);
+        } else {
+            $this->_createStream();
+            $this->stream->write($content);
+        }
+
+        return $content;
+    }
+
+    /**
+     * Handles the callable body for backward compatibility reasons.
+     *
+     * @param callable $content Callable content.
+     * @return string
+     */
+    protected function _handleCallableBody(callable $content)
+    {
+        ob_start();
+        $result1 = $content();
+        $result2 = ob_get_contents();
+        ob_get_clean();
+
+        if ($result1) {
+            return $result1;
+        }
+
+        return $result2;
     }
 
     /**
@@ -690,6 +795,7 @@ class Response
      * @param int|null $code the HTTP status code
      * @return int Current status code
      * @throws \InvalidArgumentException When an unknown status code is reached.
+     * @deprecated 3.4.0 Use getStatusCode() to read the status code instead.
      */
     public function statusCode($code = null)
     {
@@ -701,6 +807,69 @@ class Response
         }
 
         return $this->_status = $code;
+    }
+
+    /**
+     * Gets the response status code.
+     *
+     * The status code is a 3-digit integer result code of the server's attempt
+     * to understand and satisfy the request.
+     *
+     * @return int Status code.
+     */
+    public function getStatusCode()
+    {
+        return $this->_status;
+    }
+
+    /**
+     * Return an instance with the specified status code and, optionally, reason phrase.
+     *
+     * If no reason phrase is specified, implementations MAY choose to default
+     * to the RFC 7231 or IANA recommended reason phrase for the response's
+     * status code.
+     *
+     * This method MUST be implemented in such a way as to retain the
+     * immutability of the message, and MUST return an instance that has the
+     * updated status and reason phrase.
+     *
+     * @link http://tools.ietf.org/html/rfc7231#section-6
+     * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+     * @param int $code The 3-digit integer result code to set.
+     * @param string $reasonPhrase The reason phrase to use with the
+     *     provided status code; if none is provided, implementations MAY
+     *     use the defaults as suggested in the HTTP specification.
+     * @return static
+     * @throws \InvalidArgumentException For invalid status code arguments.
+     */
+    public function withStatus($code, $reasonPhrase = '')
+    {
+        $new = clone $this;
+        $new->_status = $code;
+        if (empty($reasonPhrase) && isset($new->_statusCodes[$code])) {
+            $reasonPhrase = $new->_statusCodes[$code];
+        }
+        $new->_reasonPhrase = $reasonPhrase;
+
+        return $new;
+    }
+
+    /**
+     * Gets the response reason phrase associated with the status code.
+     *
+     * Because a reason phrase is not a required element in a response
+     * status line, the reason phrase value MAY be null. Implementations MAY
+     * choose to return the default RFC 7231 recommended reason phrase (or those
+     * listed in the IANA HTTP Status Code Registry) for the response's
+     * status code.
+     *
+     * @link http://tools.ietf.org/html/rfc7231#section-6
+     * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+     * @return string Reason phrase; must return an empty string if none present.
+     */
+    public function getReasonPhrase()
+    {
+        return $this->_reasonPhrase;
     }
 
     /**
@@ -733,6 +902,7 @@ class Response
      * @return mixed Associative array of the HTTP codes as keys, and the message
      *    strings as values, or null of the given $code does not exist.
      * @throws \InvalidArgumentException If an attempt is made to add an invalid status code
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     public function httpCodes($code = null)
     {
@@ -875,11 +1045,9 @@ class Response
      */
     public function disableCache()
     {
-        $this->header([
-            'Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
-            'Last-Modified' => gmdate("D, d M Y H:i:s") . " GMT",
-            'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
-        ]);
+        $this->_setHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
+        $this->_setHeader('Last-Modified', gmdate("D, d M Y H:i:s") . " GMT");
+        $this->_setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
     }
 
     /**
@@ -894,9 +1062,9 @@ class Response
         if (!is_int($time)) {
             $time = strtotime($time);
         }
-        $this->header([
-            'Date' => gmdate("D, j M Y G:i:s ", time()) . 'GMT'
-        ]);
+
+        $this->_setHeader('Date', gmdate("D, j M Y G:i:s ", time()) . 'GMT');
+
         $this->modified($since);
         $this->expires($time);
         $this->sharable(true);
@@ -945,6 +1113,7 @@ class Response
 
     /**
      * Sets the Cache-Control s-maxage directive.
+     *
      * The max-age is the number of seconds after which the response should no longer be considered
      * a good candidate to be fetched from a shared cache (like in a proxy server).
      * If called with no parameters, this function will return the current max-age value if any
@@ -1026,7 +1195,7 @@ class Response
             $control .= ', ';
         }
         $control = rtrim($control, ', ');
-        $this->header('Cache-Control', $control);
+        $this->_setHeader('Cache-Control', $control);
     }
 
     /**
@@ -1046,10 +1215,11 @@ class Response
     {
         if ($time !== null) {
             $date = $this->_getUTCDate($time);
-            $this->_headers['Expires'] = $date->format('D, j M Y H:i:s') . ' GMT';
+            $this->_setHeader('Expires', $date->format('D, j M Y H:i:s') . ' GMT');
         }
-        if (isset($this->_headers['Expires'])) {
-            return $this->_headers['Expires'];
+
+        if ($this->hasHeader('Expires')) {
+            return $this->getHeaderLine('Expires');
         }
 
         return null;
@@ -1072,10 +1242,11 @@ class Response
     {
         if ($time !== null) {
             $date = $this->_getUTCDate($time);
-            $this->_headers['Last-Modified'] = $date->format('D, j M Y H:i:s') . ' GMT';
+            $this->_setHeader('Last-Modified', $date->format('D, j M Y H:i:s') . ' GMT');
         }
-        if (isset($this->_headers['Last-Modified'])) {
-            return $this->_headers['Last-Modified'];
+
+        if ($this->hasHeader('Last-Modified')) {
+            return $this->getHeaderLine('Last-Modified');
         }
 
         return null;
@@ -1092,6 +1263,7 @@ class Response
     {
         $this->statusCode(304);
         $this->body('');
+
         $remove = [
             'Allow',
             'Content-Encoding',
@@ -1102,7 +1274,7 @@ class Response
             'Last-Modified'
         ];
         foreach ($remove as $header) {
-            unset($this->_headers[$header]);
+            unset($this->headers[$header]);
         }
     }
 
@@ -1120,10 +1292,11 @@ class Response
     {
         if ($cacheVariances !== null) {
             $cacheVariances = (array)$cacheVariances;
-            $this->_headers['Vary'] = implode(', ', $cacheVariances);
+            $this->_setHeader('Vary', implode(', ', $cacheVariances));
         }
-        if (isset($this->_headers['Vary'])) {
-            return explode(', ', $this->_headers['Vary']);
+
+        if ($this->hasHeader('Vary')) {
+            return explode(', ', $this->getHeaderLine('Vary'));
         }
 
         return null;
@@ -1153,10 +1326,11 @@ class Response
     public function etag($hash = null, $weak = false)
     {
         if ($hash !== null) {
-            $this->_headers['Etag'] = sprintf('%s"%s"', ($weak) ? 'W/' : null, $hash);
+            $this->_setHeader('Etag', sprintf('%s"%s"', ($weak) ? 'W/' : null, $hash));
         }
-        if (isset($this->_headers['Etag'])) {
-            return $this->_headers['Etag'];
+
+        if ($this->hasHeader('Etag')) {
+            return $this->getHeaderLine('Etag');
         }
 
         return null;
@@ -1226,6 +1400,7 @@ class Response
      *
      * @param string|null $protocol Protocol to be used for sending response.
      * @return string Protocol currently set
+     * @deprecated 3.4.0 Use getProtocolVersion() instead.
      */
     public function protocol($protocol = null)
     {
@@ -1246,10 +1421,11 @@ class Response
     public function length($bytes = null)
     {
         if ($bytes !== null) {
-            $this->_headers['Content-Length'] = $bytes;
+            $this->_setHeader('Content-Length', $bytes);
         }
-        if (isset($this->_headers['Content-Length'])) {
-            return $this->_headers['Content-Length'];
+
+        if ($this->hasHeader('Content-Length')) {
+            return $this->getHeaderLine('Content-Length');
         }
 
         return null;
@@ -1265,7 +1441,7 @@ class Response
      * the Last-Modified etag response header before calling this method. Otherwise
      * a comparison will not be possible.
      *
-     * @param \Cake\Network\Request $request Request object
+     * @param \Cake\Http\ServerRequest $request Request object
      * @return bool Whether the response was marked as not modified or not.
      */
     public function checkNotModified(Request $request)
@@ -1299,11 +1475,9 @@ class Response
      */
     public function __toString()
     {
-        if (!is_string($this->_body) && is_callable($this->_body)) {
-            return '';
-        }
+        $this->stream->rewind();
 
-        return (string)$this->_body;
+        return (string)$this->stream->getContents();
     }
 
     /**
@@ -1406,7 +1580,7 @@ class Response
      * *Note* The `$allowedDomains`, `$allowedMethods`, `$allowedHeaders` parameters are deprecated.
      * Instead the builder object should be used.
      *
-     * @param \Cake\Network\Request $request Request object
+     * @param \Cake\Http\ServerRequest $request Request object
      * @param string|array $allowedDomains List of allowed domains, see method description for more details
      * @param string|array $allowedMethods List of HTTP verbs allowed
      * @param string|array $allowedHeaders List of HTTP headers allowed
@@ -1577,6 +1751,7 @@ class Response
      * @param \Cake\Filesystem\File $file File object
      * @param array $range The range to read out of the file.
      * @return bool True is whole file is echoed successfully or false if client connection is lost in between
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     protected function _sendFile($file, $range)
     {
@@ -1620,6 +1795,7 @@ class Response
      * Returns true if connection is still active
      *
      * @return bool
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     protected function _isActive()
     {
@@ -1661,6 +1837,7 @@ class Response
      *
      * @param int|string $status See http://php.net/exit for values
      * @return void
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     public function stop($status = 0)
     {

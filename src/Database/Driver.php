@@ -340,7 +340,7 @@ abstract class Driver
      */
     public function newCompiler()
     {
-        return new QueryCompiler;
+        return new QueryCompiler();
     }
 
     /**

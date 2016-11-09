@@ -162,11 +162,11 @@ class SessionTest extends TestCase
     }
 
     /**
-     * testSimpleRead method
+     * test read with simple values
      *
      * @return void
      */
-    public function testSimpleRead()
+    public function testReadSimple()
     {
         $session = new Session();
         $session->write('testing', '1,2,3');
@@ -181,7 +181,7 @@ class SessionTest extends TestCase
         $this->assertEquals(['1' => 'one', '2' => 'two', '3' => 'three'], $result);
 
         $result = $session->read();
-        $this->assertTrue(isset($result['testing']));
+        $this->assertArrayHasKey('testing', $result);
 
         $session->write('This.is.a.deep.array.my.friend', 'value');
         $result = $session->read('This.is.a.deep.array');
@@ -200,7 +200,22 @@ class SessionTest extends TestCase
     }
 
     /**
-     * test writing a hash of values/
+     * Test writing simple keys
+     *
+     * @return void
+     */
+    public function testWriteSimple()
+    {
+        $session = new Session();
+        $session->write('', 'empty');
+        $this->assertEquals('empty', $session->read(''));
+
+        $session->write('Simple', ['values']);
+        $this->assertEquals(['values'], $session->read('Simple'));
+    }
+
+    /**
+     * test writing a hash of values
      *
      * @return void
      */
@@ -335,6 +350,19 @@ class SessionTest extends TestCase
     }
 
     /**
+     * test delete
+     *
+     * @return void
+     */
+    public function testDeleteEmptyString()
+    {
+        $session = new Session();
+        $session->write('', 'empty string');
+        $session->delete('');
+        $this->assertFalse($session->check(''));
+    }
+
+    /**
      * testDestroy method
      *
      * @return void
@@ -421,6 +449,10 @@ class SessionTest extends TestCase
     public function testReadingSavedEmpty()
     {
         $session = new Session();
+        $session->write('', 'empty string');
+        $this->assertTrue($session->check(''));
+        $this->assertEquals('empty string', $session->read(''));
+
         $session->write('SessionTestCase', 0);
         $this->assertEquals(0, $session->read('SessionTestCase'));
 

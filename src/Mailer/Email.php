@@ -828,7 +828,7 @@ class Email implements JsonSerializable, Serializable
         }
 
         $headers['MIME-Version'] = '1.0';
-        if (!empty($this->_attachments)) {
+        if ($this->_attachments) {
             $headers['Content-Type'] = 'multipart/mixed; boundary="' . $this->_boundary . '"';
         } elseif ($this->_emailFormat === 'both') {
             $headers['Content-Type'] = 'multipart/alternative; boundary="' . $this->_boundary . '"';
@@ -1176,6 +1176,9 @@ class Email implements JsonSerializable, Serializable
                 if (is_int($name)) {
                     $name = basename($fileInfo['file']);
                 }
+            }
+            if (!isset($fileInfo['mimetype']) && function_exists('mime_content_type')) {
+                $fileInfo['mimetype'] = mime_content_type($fileInfo['file']);
             }
             if (!isset($fileInfo['mimetype'])) {
                 $fileInfo['mimetype'] = 'application/octet-stream';
@@ -1680,7 +1683,7 @@ class Email implements JsonSerializable, Serializable
      */
     protected function _createBoundary()
     {
-        if (!empty($this->_attachments) || $this->_emailFormat === 'both') {
+        if ($this->_attachments || $this->_emailFormat === 'both') {
             $this->_boundary = md5(Security::randomBytes(16));
         }
     }

@@ -315,7 +315,7 @@ abstract class BaseErrorHandler
     /**
      * Get the request context for an error/exception trace.
      *
-     * @param \Cake\Network\Request $request The request to read from.
+     * @param \Cake\Http\ServerRequest $request The request to read from.
      * @return string
      */
     protected function _requestContext($request)

@@ -57,7 +57,7 @@ class RequestHandlerComponent extends Component
     /**
      * Contains the file extension parsed out by the Router
      *
-     * @var string
+     * @var string|null
      * @see \Cake\Routing\Router::extensions()
      */
     public $ext = null;
@@ -65,7 +65,7 @@ class RequestHandlerComponent extends Component
     /**
      * The template to use when rendering the given content type.
      *
-     * @var string
+     * @var string|null
      */
     protected $_renderType = null;
 
@@ -155,7 +155,7 @@ class RequestHandlerComponent extends Component
      * If html is one of the preferred types, no content type will be set, this
      * is to avoid issues with browsers that prefer HTML and several other content types.
      *
-     * @param \Cake\Network\Request $request The request instance.
+     * @param \Cake\Http\ServerRequest $request The request instance.
      * @param \Cake\Network\Response $response The response instance.
      * @return void
      */
@@ -177,7 +177,7 @@ class RequestHandlerComponent extends Component
         );
         foreach ($accepts as $types) {
             $ext = array_intersect($extensions, $types);
-            if (!empty($ext)) {
+            if ($ext) {
                 $this->ext = current($ext);
                 break;
             }
@@ -199,16 +199,16 @@ class RequestHandlerComponent extends Component
         $controller = $event->subject();
         $request = $controller->request;
 
-        if (isset($request->params['_ext'])) {
-            $this->ext = $request->params['_ext'];
+        if ($request->param('_ext')) {
+            $this->ext = $request->param('_ext');
         }
-        if (empty($this->ext) || in_array($this->ext, ['html', 'htm'])) {
+        if (!$this->ext || in_array($this->ext, ['html', 'htm'])) {
             $this->_setExtension($request, $this->response);
         }
 
         $request->params['isAjax'] = $request->is('ajax');
 
-        if (empty($this->ext) && $request->params['isAjax']) {
+        if (!$this->ext && $request->is('ajax')) {
             $this->ext = 'ajax';
         }
 
@@ -288,9 +288,8 @@ class RequestHandlerComponent extends Component
             'query' => $query,
             'cookies' => $request->cookies
         ]));
-        $response->statusCode(200);
 
-        return $response;
+        return $response->withStatus(200);
     }
 
     /**
@@ -323,8 +322,10 @@ class RequestHandlerComponent extends Component
             $this->response->getMimeType($this->ext)
         );
 
-        if (!empty($this->ext) && $isRecognized) {
-            $this->renderAs($event->subject(), $this->ext);
+        if ($this->ext && $isRecognized) {
+            /* @var \Cake\Controller\Controller $controller */
+            $controller = $event->subject();
+            $this->renderAs($controller, $this->ext);
         } else {
             $this->response->charset(Configure::read('App.encoding'));
         }
@@ -517,7 +518,7 @@ class RequestHandlerComponent extends Component
         $types = (array)$type;
 
         if (count($types) === 1) {
-            if (!empty($this->ext)) {
+            if ($this->ext) {
                 return in_array($this->ext, $types);
             }
 
@@ -525,7 +526,7 @@ class RequestHandlerComponent extends Component
         }
 
         $intersect = array_values(array_intersect($accepts, $types));
-        if (empty($intersect)) {
+        if (!$intersect) {
             return false;
         }
 
@@ -582,7 +583,7 @@ class RequestHandlerComponent extends Component
             $controller->viewClass = $viewClass;
             $builder->className($viewClass);
         } else {
-            if (empty($this->_renderType)) {
+            if (!$this->_renderType) {
                 $builder->templatePath($builder->templatePath() . DIRECTORY_SEPARATOR . $type);
             } else {
                 $builder->templatePath(preg_replace(
@@ -648,7 +649,7 @@ class RequestHandlerComponent extends Component
         if (!$type) {
             return false;
         }
-        if (empty($this->request->params['requested'])) {
+        if (!$this->request->param('requested')) {
             $response->type($cType);
         }
         if (!empty($options['charset'])) {

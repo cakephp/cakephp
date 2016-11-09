@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase;
 
+use Cake\Event\Event;
 use Cake\Http\CallbackStream;
 use Cake\Http\Server;
 use Cake\TestSuite\TestCase;
@@ -116,27 +117,9 @@ class ServerTest extends TestCase
     }
 
     /**
-     * test run where the protocol is invalid
-     *
-     * @return void
-     */
-    public function testRunInvalidProtocol()
-    {
-        $_SERVER['SERVER_PROTOCOL'] = 'HTTP/onclick 1=1';
-
-        $app = new MiddlewareApplication($this->config);
-        $server = new Server($app);
-
-        $res = $server->run();
-        $this->assertEquals(400, $res->getStatusCode());
-        $this->assertEquals('text/plain', $res->getHeaderLine('content-type'));
-        $this->assertEquals('Bad Request', '' . $res->getBody());
-    }
-
-    /**
      * Test an application failing to build middleware properly
      *
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @expectedExceptionMessage The application `middleware` method
      */
     public function testRunWithApplicationNotMakingMiddleware()
@@ -163,7 +146,7 @@ class ServerTest extends TestCase
     /**
      * Test middleware not creating a response.
      *
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @expectedExceptionMessage Application did not create a response. Got "Not a response" instead.
      */
     public function testRunMiddlewareNoResponse()
@@ -226,7 +209,7 @@ class ServerTest extends TestCase
         $server = new Server($app);
         $this->called = false;
 
-        $server->eventManager()->on('Server.buildMiddleware', function ($event, $middleware) {
+        $server->eventManager()->on('Server.buildMiddleware', function (Event $event, $middleware) {
             $this->assertInstanceOf('Cake\Http\MiddlewareQueue', $middleware);
             $middleware->add(function ($req, $res, $next) {
                 $this->called = true;

@@ -65,7 +65,7 @@ class Component implements EventListenerInterface
     /**
      * Request object
      *
-     * @var \Cake\Network\Request
+     * @var \Cake\Http\ServerRequest
      */
     public $request;
 
@@ -123,7 +123,7 @@ class Component implements EventListenerInterface
 
         $this->config($config);
 
-        if (!empty($this->components)) {
+        if ($this->components) {
             $this->_componentMap = $registry->normalizeArray($this->components);
         }
         $this->initialize($config);
@@ -151,12 +151,14 @@ class Component implements EventListenerInterface
     public function __get($name)
     {
         if (isset($this->_componentMap[$name]) && !isset($this->{$name})) {
-            $config = ['enabled' => false] + (array)$this->_componentMap[$name]['config'];
+            $config = (array)$this->_componentMap[$name]['config'] + ['enabled' => false];
             $this->{$name} = $this->_registry->load($this->_componentMap[$name]['class'], $config);
         }
-        if (isset($this->{$name})) {
-            return $this->{$name};
+        if (!isset($this->{$name})) {
+            return null;
         }
+
+        return $this->{$name};
     }
 
     /**

@@ -98,7 +98,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        if (empty($this->_configure)) {
+        if (!$this->_configure) {
             $this->_configure = Configure::read();
         }
         if (class_exists('Cake\Routing\Router', false)) {
@@ -116,7 +116,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     public function tearDown()
     {
         parent::tearDown();
-        if (!empty($this->_configure)) {
+        if ($this->_configure) {
             Configure::clear();
             Configure::write($this->_configure);
         }

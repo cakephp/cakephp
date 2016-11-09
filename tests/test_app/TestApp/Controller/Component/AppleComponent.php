@@ -14,11 +14,12 @@
 namespace TestApp\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\Controller;
 use Cake\Event\Event;
 
 /**
  * AppleComponent class
+ *
+ * @property OrangeComponent $Orange
  */
 class AppleComponent extends Component
 {
@@ -34,7 +35,6 @@ class AppleComponent extends Component
      * startup method
      *
      * @param Event $event
-     * @param mixed $controller
      * @return void
      */
     public function startup(Event $event)
