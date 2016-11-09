@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Database;
 
-use Cake\Core\Configure;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Query;
 use Cake\Database\TypeMap;
@@ -27,14 +26,35 @@ use Cake\TestSuite\TestCase;
 class QueryTest extends TestCase
 {
 
+    /**
+     * @var array Fixture used by this test.
+     */
     public $fixtures = ['core.articles', 'core.authors', 'core.comments'];
 
+    /**
+     * @var bool Disable to resolve issues on Travis with older versions of PHP.
+     */
     public $autoFixtures = false;
 
     const ARTICLE_COUNT = 3;
     const AUTHOR_COUNT = 4;
     const COMMENT_COUNT = 6;
 
+    /**
+     * @var \Cake\Datasource\ConnectionInterface|\Cake\Database\Connection
+     */
+    public $connection;
+
+    /**
+     * @var bool True if auto quoting is enabled by the driver.
+     */
+    public $autoQuote;
+
+    /**
+     *  Setup the connection and database driver.
+     *
+     * @return void
+     */
     public function setUp()
     {
         parent::setUp();
@@ -42,6 +62,11 @@ class QueryTest extends TestCase
         $this->autoQuote = $this->connection->driver()->autoQuoting();
     }
 
+    /**
+     * Restore driver settings and free memory.
+     *
+     * @return void
+     */
     public function tearDown()
     {
         parent::tearDown();
@@ -2650,28 +2675,82 @@ class QueryTest extends TestCase
         $result->closeCursor();
     }
 
-    public function testDeleteWithLimit()
+    /**
+     * Test a delete query on a fixture that has a limit applied.
+     *
+     * @return void
+     */
+    public function testDeleteWithOrderByLimit()
     {
         $this->loadFixtures('Authors');
 
-        $query = new Query($this->connection);
-
-        $query->delete('authors')
-            ->where('1 = 1')
-            ->limit(1)
-            ->order(['id' => 'desc']);
-
-        $result = $query->execute();
-        $result->closeCursor();
-
-        $total = (new Query($this->connection))->select('*')
+        // verify fixture data
+        $result = (new Query($this->connection))
+            ->select(['id'])
             ->from('authors')
-            ->order(['id' => 'desc'])
-            ->execute();
+            ->order(['id' => 'asc'])
+            ->execute()
+            ->fetchAll('assoc');
+        $this->assertEquals([1, 2, 3, 4], array_column($result, 'id'));
 
-        $result = $total->fetchAll('assoc');
-        $this->assertCount(self::AUTHOR_COUNT - 1, $result);
-        $this->assertEquals([3, 2, 1], array_column($result, 'id'));
+        // delete with limit of 2
+        $result = (new Query($this->connection))
+            ->delete('authors')
+            ->where('1 = 1')
+            ->limit(2)
+            ->order(['id' => 'desc'])
+            ->execute()
+            ->rowCount();
+        $this->assertEquals(2, $result);
+
+        // verify fixture state afterwards
+        $result = (new Query($this->connection))
+            ->select(['id'])
+            ->from('authors')
+            ->order(['id' => 'asc'])
+            ->execute()
+            ->fetchAll('assoc');
+        $this->assertEquals([1, 2], array_column($result, 'id'));
+    }
+
+    /**
+     * Test an update query on a fixture that has a limit applied.
+     *
+     * @return void
+     */
+    public function testUpdateWithOrderByLimit()
+    {
+        $this->loadFixtures('Authors');
+
+        // verify fixture data
+        $result = (new Query($this->connection))
+            ->select(['name'])
+            ->from('authors')
+            ->order(['id' => 'asc'])
+            ->execute()
+            ->fetchAll('assoc');
+        $this->assertEquals(['mariano', 'nate', 'larry', 'garrett'], array_column($result, 'name'));
+
+        // update with limit of 2
+        $result = (new Query($this->connection))
+            ->update('authors')
+            ->set('name', 'smith')
+            ->where('1 = 1')
+            ->limit(2)
+            ->order(['id' => 'desc'])
+            ->execute()
+            ->rowCount();
+        $this->assertEquals(2, $result);
+
+        // verify fixture state afterwards
+        $result = (new Query($this->connection))
+            ->select(['id', 'name'])
+            ->from('authors')
+            ->order(['id' => 'asc'])
+            ->execute()
+            ->fetchAll('assoc');
+        $this->assertEquals([1, 2, 3, 4], array_column($result, 'id'));
+        $this->assertEquals(['mariano', 'nate', 'smith', 'smith'], array_column($result, 'name'));
     }
 
     /**
