@@ -125,14 +125,6 @@ class Postgres extends Driver
     /**
      * {@inheritDoc}
      */
-    public function newCompiler()
-    {
-        return new PostgresCompiler();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function supportsDynamicConstraints()
     {
         return true;

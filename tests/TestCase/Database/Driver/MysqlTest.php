@@ -137,7 +137,7 @@ class MysqlTest extends TestCase
      *
      * @return void
      */
-    public function testDeleteLimit()
+    public function testDeleteLimitSql()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
             ->setMethods(['_connect', 'connection'])
@@ -165,7 +165,7 @@ class MysqlTest extends TestCase
      *
      * @return void
      */
-    public function testDeleteModifier()
+    public function testDeleteModifierSql()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
             ->setMethods(['_connect', 'connection'])
@@ -193,7 +193,7 @@ class MysqlTest extends TestCase
      *
      * @return void
      */
-    public function testDeleteOrder()
+    public function testDeleteOrderSql()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
             ->setMethods(['_connect', 'connection'])
@@ -246,7 +246,7 @@ class MysqlTest extends TestCase
      *
      * @return void
      */
-    public function testUpdateLimit()
+    public function testUpdateLimitSql()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
             ->setMethods(['_connect', 'connection'])
@@ -275,7 +275,7 @@ class MysqlTest extends TestCase
      *
      * @return void
      */
-    public function testUpdateOrder()
+    public function testUpdateOrderSql()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
             ->setMethods(['_connect', 'connection'])

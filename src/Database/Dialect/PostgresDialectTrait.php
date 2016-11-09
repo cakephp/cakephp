@@ -63,24 +63,6 @@ trait PostgresDialectTrait
     }
 
     /**
-     * Returns the primary key associated with the repository that created the query.
-     *
-     * @param \Cake\Database\Query $query The query to read the primary key from.
-     * @return array|null The primary key or null if not found.
-     */
-    protected function _primaryKey($query)
-    {
-        if ($query instanceof \Cake\ORM\Query) {
-            $table = $query->repository();
-            if ($table instanceof \Cake\ORM\Table) {
-                return (array)$table->primaryKey();
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Adds support for LIMIT clause, but requires that the Postgres table was created with object IDs enabled.
      *
      * @param \Cake\Database\Query $query The query to translate
@@ -94,7 +76,7 @@ trait PostgresDialectTrait
 
         $inner = new Query($query->connection());
         $inner->select('ctid')
-            ->from($query->clause('from'))
+            ->from($query->clause('update'))
             ->where($query->clause('where'))
             ->order($query->clause('order'))
             ->limit($query->clause('limit'))
@@ -102,7 +84,7 @@ trait PostgresDialectTrait
 
         $outer = new Query($query->connection());
         $outer
-            ->update($query->clause('from'))
+            ->update($query->clause('update'))
             ->set($query->clause('set'))
             ->where(['ctid IN' => $inner]);
 
