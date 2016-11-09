@@ -20,6 +20,8 @@ use PDO;
 
 /**
  * Tests Sqlite driver
+ *
+ * @group Sqlite
  */
 class SqliteTest extends TestCase
 {
@@ -114,7 +116,7 @@ class SqliteTest extends TestCase
             [66, 66],
             [0, 0],
             [10e5, '1000000'],
-            ['farts', '"farts"'],
+            ['hearts', '"hearts"'],
         ];
     }
 
@@ -122,7 +124,8 @@ class SqliteTest extends TestCase
      * Test the schemaValue method on Driver.
      *
      * @dataProvider schemaValueProvider
-     * @return void
+     * @param mixed $input
+     * @param string $expected
      */
     public function testSchemaValue($input, $expected)
     {
@@ -139,4 +142,132 @@ class SqliteTest extends TestCase
         $driver->connection($mock);
         $this->assertEquals($expected, $driver->schemaValue($input));
     }
+
+    /**
+     * Test update with limit
+     *
+     * @return void
+     */
+    public function testUpdateLimit()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\driver\Sqlite')
+            ->setMethods(['_connect', 'connection'])
+            ->getMock();
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
+
+        $connection
+            ->expects($this->any())
+            ->method('driver')
+            ->will($this->returnValue($driver));
+
+        $query = new \Cake\Database\Query($connection);
+
+        $query->update('articles')
+            ->set(['title' => 'FooBar'])
+            ->where(['published' => true])
+            ->limit(5);
+
+        $this->assertEquals('UPDATE articles SET title = :c0 WHERE published = :c1 LIMIT :c2', $query->sql());
+    }
+
+    /**
+     * Test update with limit and offset
+     *
+     * @return void
+     */
+    public function testUpdateLimitOffset()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\driver\Sqlite')
+            ->setMethods(['_connect', 'connection'])
+            ->getMock();
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
+
+        $connection
+            ->expects($this->any())
+            ->method('driver')
+            ->will($this->returnValue($driver));
+
+        $query = new \Cake\Database\Query($connection);
+
+        $query->update('articles')
+            ->set(['title' => 'FooBar'])
+            ->where(['published' => true])
+            ->limit(5)
+            ->offset(3);
+
+        $this->assertEquals('UPDATE articles SET title = :c0 WHERE published = :c1 LIMIT :c2 OFFSET :c3', $query->sql());
+    }
+
+    /**
+     * Test update with limit
+     *
+     * @return void
+     */
+    public function testUpdateOrderBy()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\driver\Sqlite')
+            ->setMethods(['_connect', 'connection'])
+            ->getMock();
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
+
+        $connection
+            ->expects($this->any())
+            ->method('driver')
+            ->will($this->returnValue($driver));
+
+        $query = new \Cake\Database\Query($connection);
+
+        $query->update('articles')
+            ->set(['title' => 'FooBar'])
+            ->where(['published' => true])
+            ->order(['created' => 'DESC']);
+
+        $this->assertEquals('UPDATE articles SET title = :c0 WHERE published = :c1 ORDER BY created DESC', $query->sql());
+    }
+
+    /**
+     * Test update with limit and offset
+     *
+     * @return void
+     */
+    public function testUpdateOrderByLimitOffset()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\driver\Sqlite')
+            ->setMethods(['_connect', 'connection'])
+            ->getMock();
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
+
+        $connection
+            ->expects($this->any())
+            ->method('driver')
+            ->will($this->returnValue($driver));
+
+        $query = new \Cake\Database\Query($connection);
+
+        $query->update('articles')
+            ->set(['title' => 'FooBar'])
+            ->where(['published' => true])
+            ->limit(5)
+            ->offset(3)
+            ->order(['created' => 'DESC']);
+
+        $this->assertEquals('UPDATE articles SET title = :c0 WHERE published = :c1 ORDER BY created DESC LIMIT :c2 OFFSET :c3', $query->sql());
+    }
+
 }
