@@ -115,6 +115,23 @@ interface RepositoryInterface
     public function deleteAll($conditions);
 
     /**
+     * Delete each record individually that matches the conditions. For each
+     * matched record Table::delete() is executed providing support for behaviors
+     * and events.
+     *
+     * This method will continue execution until all records are deleted. You should
+     * be aware of possible long execution times, and side effects of processing
+     * events on a large collection of records.
+     *
+     * @param mixed $conditions Conditions to be used, accepts anything Query::where()
+     * can take.
+     * @param array|\ArrayAccess $options The options for the updates.
+     * @return int Count Returns the affected rows.
+     * @see \Cake\Datasource\RepositoryInterface::deleteAll()
+     */
+    public function deleteEach($conditions, $options = []);
+
+    /**
      * Returns true if there is any record in this repository matching the specified
      * conditions.
      *
