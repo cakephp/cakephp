@@ -1426,7 +1426,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     {
         $this->_dirty();
         $this->_type = 'update';
-        $this->_parts['update'][0] = $table;
+        $this->_parts['update'] = (array)$table;
 
         return $this;
     }

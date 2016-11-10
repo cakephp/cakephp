@@ -79,7 +79,7 @@ trait PostgresDialectTrait
             return $query;
         }
 
-        $table = $query->clause('update')[0];
+        $table = $query->clause('update');
 
         $inner = new Query($query->connection());
         $inner->select('ctid')
