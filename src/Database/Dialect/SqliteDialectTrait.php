@@ -79,8 +79,10 @@ trait SqliteDialectTrait
      */
     protected function _updateQueryTranslator($query)
     {
+        $query = $this->_sqlUpdateQueryTranslator($query);
+
         if ($query->clause('limit') === null) {
-            return $this->_sqlUpdateQueryTranslator($query);
+            return $query;
         }
 
         $table = $query->clause('update')[0];
@@ -110,8 +112,10 @@ trait SqliteDialectTrait
      */
     protected function _deleteQueryTranslator($query)
     {
+        $query = $this->_sqlDeleteQueryTranslator($query);
+
         if ($query->clause('limit') === null) {
-            return $this->_sqlDeleteQueryTranslator($query);
+            return $query;
         }
 
         $inner = new Query($query->connection());
