@@ -1728,7 +1728,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         if (!$entity->has($primaryColumns)) {
-            $message = 'All primary key value(s) are needed for updating';
+            $message = 'All primary key value(s) are needed for updating, ';
+            $message .= get_class($entity) . ' is missing ' . implode(', ', $primaryColumns);
             throw new InvalidArgumentException($message);
         }
 
