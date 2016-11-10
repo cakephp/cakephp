@@ -28,7 +28,10 @@ use Cake\Database\SqliteCompiler;
 trait SqliteDialectTrait
 {
 
-    use SqlDialectTrait;
+    use SqlDialectTrait {
+        _updateQueryTranslator as _sqlUpdateQueryTranslator;
+        _deleteQueryTranslator as _sqlDeleteQueryTranslator;
+    }
     use TupleComparisonTranslatorTrait;
 
     /**
@@ -77,7 +80,7 @@ trait SqliteDialectTrait
     protected function _updateQueryTranslator($query)
     {
         if ($query->clause('limit') === null) {
-            return $query;
+            return $this->_sqlUpdateQueryTranslator($query);
         }
 
         $table = $query->clause('update')[0];
@@ -108,7 +111,7 @@ trait SqliteDialectTrait
     protected function _deleteQueryTranslator($query)
     {
         if ($query->clause('limit') === null) {
-            return $query;
+            return $this->_sqlDeleteQueryTranslator($query);
         }
 
         $inner = new Query($query->connection());
