@@ -2479,6 +2479,7 @@ class QueryTest extends TestCase
                 'published' => 'string',
             ],
             'decorators' => 0,
+            'connection' => 'test',
             'executed' => false,
             'hydrate' => false,
             'buffered' => false,

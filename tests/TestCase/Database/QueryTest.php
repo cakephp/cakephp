@@ -3726,7 +3726,8 @@ class QueryTest extends TestCase
             ],
             'defaultTypes' => ['id' => 'integer'],
             'decorators' => 0,
-            'executed' => false
+            'executed' => false,
+            'connection' => 'test'
         ];
         $result = $query->__debugInfo();
         $this->assertEquals($expected, $result);
@@ -3740,7 +3741,8 @@ class QueryTest extends TestCase
             ],
             'defaultTypes' => ['id' => 'integer'],
             'decorators' => 0,
-            'executed' => true
+            'executed' => true,
+            'connection' => 'test'
         ];
         $result = $query->__debugInfo();
         $this->assertEquals($expected, $result);

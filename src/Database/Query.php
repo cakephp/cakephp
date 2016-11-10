@@ -1419,14 +1419,19 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * Can be combined with set() and where() methods to create update queries.
      *
-     * @param string $table The table you want to update.
+     * @param string|array $table The table you want to update.
      * @return $this
      */
     public function update($table)
     {
         $this->_dirty();
         $this->_type = 'update';
-        $this->_parts['update'] = (array)$table;
+
+        if (is_array($table)) {
+            $this->_parts['update'] = $table;
+        } else {
+            $this->_parts['update'][0] = $table;
+        }
 
         return $this;
     }
@@ -1949,15 +1954,19 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function __debugInfo()
     {
+        $conName = null;
+        $sql = null;
+        $params = [];
+
         try {
             $restore = set_error_handler(function ($errno, $errstr) {
                 throw new RuntimeException($errstr, $errno);
             }, E_ALL);
-            $sql = $this->sql();
+            $conName = $this->connection() ? $this->connection()->configName() : null;
+            $sql = $conName ? $this->sql() : null;
             $params = $this->valueBinder()->bindings();
         } catch (RuntimeException $e) {
             $sql = 'SQL could not be generated for this query as it is incomplete.';
-            $params = [];
         } finally {
             restore_error_handler();
         }
@@ -1968,7 +1977,8 @@ class Query implements ExpressionInterface, IteratorAggregate
             'params' => $params,
             'defaultTypes' => $this->defaultTypes(),
             'decorators' => count($this->_resultDecorators),
-            'executed' => $this->_iterator ? true : false
+            'executed' => $this->_iterator ? true : false,
+            'connection' => $conName
         ];
     }
 }
