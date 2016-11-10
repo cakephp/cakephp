@@ -28,7 +28,10 @@ use Cake\Database\SqlDialectTrait;
 trait PostgresDialectTrait
 {
 
-    use SqlDialectTrait;
+    use SqlDialectTrait {
+        _updateQueryTranslator as _sqlUpdateQueryTranslator;
+        _deleteQueryTranslator as _sqlDeleteQueryTranslator;
+    }
 
     /**
      *  String used to start a database identifier quoting to make it safe
@@ -71,7 +74,7 @@ trait PostgresDialectTrait
     protected function _updateQueryTranslator($query)
     {
         if ($query->clause('limit') === null) {
-            return $query;
+            return $this->_sqlUpdateQueryTranslator($query);
         }
 
         $table = $query->clause('update')[0];
@@ -119,7 +122,7 @@ trait PostgresDialectTrait
     protected function _deleteQueryTranslator($query)
     {
         if ($query->clause('limit') === null) {
-            return $query;
+            return $this->_sqlDeleteQueryTranslator($query);
         }
 
         $inner = new Query($query->connection());
