@@ -1402,7 +1402,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Read a specific query value or dotted path.
      *
-     * @param string $name The name of the query arg or a dotted path.
+     * @param string $name The name or dotted path to the query param.
      * @param mixed $default The default value if the named parameter is not set.
      * @return mixed Query data.
      */
@@ -1556,7 +1556,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Read cookie data from the request's cookie data.
      *
-     * @param string $key The key you want to read.
+     * @param string $key The key or dotted path you want to read.
      * @param string $default The default value if the cookie is not set.
      * @return null|string Either the cookie value, or null if the value doesn't exist.
      */
@@ -1793,17 +1793,13 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Safely access the values in $this->params.
      *
-     * @param string $name The name of the parameter to get.
+     * @param string $name The name or dotted path to parameter.
      * @param mixed $default The default value if $name is not set.
      * @return mixed
      */
     public function getParam($name, $default = false)
     {
-        if (!isset($this->params[$name])) {
-            return Hash::get($this->params, $name, $default);
-        }
-
-        return $this->params[$name];
+        return Hash::get($this->params, $name, $default);
     }
 
     /**
