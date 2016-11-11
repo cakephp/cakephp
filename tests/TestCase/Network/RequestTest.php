@@ -2396,40 +2396,40 @@ class RequestTest extends TestCase
         ];
         $request = new Request($array);
 
-        $result = $request->query('foo');
-        $this->assertSame('bar', $result);
-
-        $result = $request->query('zero');
-        $this->assertSame('0', $result);
-
-        $result = $request->query('imaginary');
-        $this->assertNull($result);
-
-        $result = $request->query();
-        $this->assertSame($array['query'], $result);
+        $this->assertSame('bar', $request->query('foo'));
+        $this->assertSame('0', $request->query('zero'));
+        $this->assertNull($request->query('imaginary'));
+        $this->assertSame($array['query'], $request->query());
     }
 
     /**
-     * Test the query() method with arrays passed via $_GET
+     * Test the getQuery() method
      *
      * @return void
      */
-    public function testQueryWithArray()
+    public function testGetQuery()
     {
-        $get['test'] = ['foo', 'bar'];
+        $array = [
+            'query' => [
+                'foo' => 'bar',
+                'zero' => '0',
+                'test' => [
+                    'foo', 'bar'
+                ]
+            ]
+        ];
+        $request = new Request($array);
 
-        $request = new Request([
-            'query' => $get
-        ]);
+        $this->assertSame('bar', $request->getQuery('foo'));
+        $this->assertSame('0', $request->getQuery('zero'));
+        $this->assertNull($request->getQuery('imaginary'));
+        $this->assertSame('default', $request->getQuery('imaginary', 'default'));
+        $this->assertFalse($request->getQuery('imaginary', false));
 
-        $result = $request->query('test');
-        $this->assertEquals(['foo', 'bar'], $result);
-
-        $result = $request->query('test.1');
-        $this->assertEquals('bar', $result);
-
-        $result = $request->query('test.2');
-        $this->assertNull($result);
+        $this->assertSame(['foo', 'bar'], $request->getQuery('test'));
+        $this->assertSame('bar', $request->getQuery('test.1'));
+        $this->assertNull($request->getQuery('test.2'));
+        $this->assertSame('default', $request->getQuery('test.2', 'default'));
     }
 
     /**

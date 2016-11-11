@@ -1389,14 +1389,26 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|null $name Query string variable name or null to read all.
      * @return string|array|null The value being read
+     * @deprecated 3.4.0 Use getQuery() instead.
      */
     public function query($name = null)
     {
         if ($name === null) {
             return $this->query;
         }
+        return $this->getQuery($name);
+    }
 
-        return Hash::get($this->query, $name);
+    /**
+     * Read a specific query value or dotted path.
+     *
+     * @param string $name The name of the query arg or a dotted path.
+     * @param mixed $default The default value if the named parameter is not set.
+     * @return mixed Query data.
+     */
+    public function getQuery($name, $default = null)
+    {
+        return Hash::get($this->query, $name, $default);
     }
 
     /**
@@ -1444,13 +1456,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Safely access the values in $this->params.
      *
-     * As of 3.4.0, the setter mode of this method is *deprecated*.
-     * Use `withParam` instead.
-     *
      * @param string $name The name of the parameter to get.
      * @param mixed ...$args Value to set (deprecated).
      * @return mixed|$this The value of the provided parameter. Will
      *   return false if the parameter doesn't exist or is falsey.
+     * @deprecated 3.4.0 Use getParam() and withParam() instead.
      */
     public function param($name, ...$args)
     {
