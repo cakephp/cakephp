@@ -518,8 +518,8 @@ class Connection implements ConnectionInterface
      *
      * ### Example:
      *
-     * `$connection->useSavePoints(true)` Returns true if drivers supports save points, false otherwise
-     * `$connection->useSavePoints(false)` Disables usage of savepoints and returns false
+     * `$connection->enableSavePoints(true)` Returns true if drivers supports save points, false otherwise
+     * `$connection->enableSavePoints(false)` Disables usage of savepoints and returns false
      *
      * @param bool $enable Whether or not save points should be used.
      * @return $this
