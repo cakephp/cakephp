@@ -3009,18 +3009,26 @@ XML;
      *
      * @return void
      */
-    public function testCookie()
+    public function testGetCookie()
     {
         $request = new Request([
             'cookies' => [
-                'testing' => 'A value in the cookie'
+                'testing' => 'A value in the cookie',
+                'user' => [
+                    'remember' => '1'
+                ]
             ]
         ]);
-        $result = $request->cookie('testing');
-        $this->assertEquals('A value in the cookie', $result);
+        $this->assertEquals('A value in the cookie', $request->cookie('testing'));
+        $this->assertEquals('A value in the cookie', $request->getCookie('testing'));
 
-        $result = $request->cookie('not there');
-        $this->assertNull($result);
+        $this->assertNull($request->cookie('not there'));
+        $this->assertNull($request->getCookie('not there'));
+        $this->assertSame('default', $request->getCookie('not there', 'default'));
+
+        $this->assertSame('1', $request->getCookie('user.remember'));
+        $this->assertSame('1', $request->getCookie('user.remember', 'default'));
+        $this->assertSame('default', $request->getCookie('user.not there', 'default'));
     }
 
     /**

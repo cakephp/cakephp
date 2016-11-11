@@ -1389,7 +1389,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|null $name Query string variable name or null to read all.
      * @return string|array|null The value being read
-     * @deprecated 3.4.0 Use getQuery() instead.
+     * @deprecated 3.4.0 Use getQuery() and withQueryParams() instead.
      */
     public function query($name = null)
     {
@@ -1542,6 +1542,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $key The key you want to read.
      * @return null|string Either the cookie value, or null if the value doesn't exist.
+     * @deprecated 3.4.0 Use getCookie() instead.
      */
     public function cookie($key)
     {
@@ -1550,6 +1551,18 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         }
 
         return null;
+    }
+
+    /**
+     * Read cookie data from the request's cookie data.
+     *
+     * @param string $key The key you want to read.
+     * @param string $default The default value if the cookie is not set.
+     * @return null|string Either the cookie value, or null if the value doesn't exist.
+     */
+    public function getCookie($key, $default = null)
+    {
+        return Hash::get($this->cookies, $key, $default);
     }
 
     /**
