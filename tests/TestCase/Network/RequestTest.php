@@ -2587,7 +2587,7 @@ class RequestTest extends TestCase
      *
      * @dataProvider paramReadingDataProvider
      */
-    public function testParamReading($toRead, $expected)
+    public function testGetParam($toRead, $expected)
     {
         $request = new Request('/');
         $request->addParams([
@@ -2603,6 +2603,26 @@ class RequestTest extends TestCase
             'zero' => '0',
         ]);
         $this->assertSame($expected, $request->param($toRead));
+        $this->assertSame($expected, $request->getParam($toRead));
+    }
+
+    /**
+     * Test getParam returning a default value.
+     *
+     * @return void
+     */
+    public function testGetParamDefault()
+    {
+        $request = new Request([
+            'params' => [
+                'controller' => 'Articles',
+                'null' => null,
+            ]
+        ]);
+        $this->assertSame('Articles', $request->getParam('controller', 'default'));
+        $this->assertSame('default', $request->getParam('null', 'default'));
+        $this->assertNull($request->getParam('unset', null));
+        $this->assertFalse($request->getParam('unset'));
     }
 
     /**

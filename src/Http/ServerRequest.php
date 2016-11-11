@@ -1459,11 +1459,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
 
             return $this;
         }
-        if (!isset($this->params[$name])) {
-            return Hash::get($this->params, $name, false);
-        }
-
-        return $this->params[$name];
+        return $this->getParam($name);
     }
 
     /**
@@ -1740,6 +1736,22 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         $copy->params = Hash::insert($copy->params, $name, $value);
 
         return $copy;
+    }
+
+    /**
+     * Safely access the values in $this->params.
+     *
+     * @param string $name The name of the parameter to get.
+     * @param mixed $default The default value if $name is not set.
+     * @return mixed
+     */
+    public function getParam($name, $default = false)
+    {
+        if (!isset($this->params[$name])) {
+            return Hash::get($this->params, $name, $default);
+        }
+
+        return $this->params[$name];
     }
 
     /**
