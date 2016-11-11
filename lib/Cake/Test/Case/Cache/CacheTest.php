@@ -548,10 +548,10 @@ class CacheTest extends CakeTestCase {
  */
 	public function testEngineSuccess() {
 		$actual = Cache::engine();
-		$this->assertIsA($actual, 'CacheEngine');
+		$this->assertInstanceOf('CacheEngine', $actual);
 
 		$actual = Cache::engine('default');
-		$this->assertIsA($actual, 'CacheEngine');
+		$this->assertInstanceOf('CacheEngine', $actual);
 	}
 
 /**
@@ -577,6 +577,8 @@ class CacheTest extends CakeTestCase {
 		));
 
 		$actual = Cache::engine('memcached');
+		$this->assertInstanceOf('MemcachedEngine', $actual);
+
 		$this->assertTrue($actual->add('test_add_key', 'test data', 10));
 		$this->assertFalse($actual->add('test_add_key', 'test data', 10));
 		$this->assertTrue($actual->delete('test_add_key'));
