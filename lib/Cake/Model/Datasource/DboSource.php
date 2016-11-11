@@ -60,12 +60,48 @@ class DboSource extends DataSource {
 	public static $methodCache = array();
 
 /**
- * Whether or not to cache the results of DboSource::name() and DboSource::conditions()
+ * Whether or not to cache the results of DboSource::name(), DboSource::fields() and DboSource::conditions()
  * into the memory cache. Set to false to disable the use of the memory cache.
  *
  * @var bool
  */
 	public $cacheMethods = true;
+
+/**
+ * Filters to apply to the results of DboSource::name(), DboSource::fields() and DboSource::conditions().
+ * When the filter function for a given method does not return true then the result is not added to the memory cache.
+ *
+ * For instance:
+ *
+ * ```
+ * array(
+ * 	// For method fields, do not cache values that contain floats
+ * 	'fields' => function ($value) {
+ * 		$hasFloat = preg_grep('/(\d+)?\.\d+/', $value);
+ *
+ * 		return count($hasFloat) === 0;
+ * 	},
+ * 	// For method name, do not cache values that have the name floats
+ * 	'name' => function ($value) {
+ * 		return preg_match('/^`rating_diff`$/', $value) !== 1;
+ * 	}
+ * )
+ * ```
+ *
+ * or
+ *
+ * ```
+ * array(
+ * 	// For method fields, do not cache any values
+ * 	'fields' => function () {
+ * 		return false;
+ * 	},
+ * )
+ * ```
+ *
+ * @var array
+ */
+	public $cacheMethodFilters = array();
 
 /**
  * Flag to support nested transactions. If it is set to false, you will be able to use
@@ -786,6 +822,14 @@ class DboSource extends DataSource {
 		if ($value === null) {
 			return (isset(static::$methodCache[$method][$key])) ? static::$methodCache[$method][$key] : null;
 		}
+
+		$methodFilterExists = (
+			isset($this->cacheMethodFilters[$method]) && is_callable($this->cacheMethodFilters[$method])
+		);
+		if ($methodFilterExists && !call_user_func($this->cacheMethodFilters[$method], $value)) {
+			return $value;
+		}
+
 		$this->_methodCacheChange = true;
 		return static::$methodCache[$method][$key] = $value;
 	}
