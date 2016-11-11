@@ -51,21 +51,34 @@ class DboSource extends DataSource {
 	public $alias = 'AS ';
 
 /**
- * Caches result from query parsing operations. Cached results for both DboSource::name() and
- * DboSource::conditions() will be stored here. Method caching uses `md5()`. If you have
- * problems with collisions, set DboSource::$cacheMethods to false.
+ * Caches result from query parsing operations. Cached results for both DboSource::name(), DboSource::fields() and
+ * DboSource::conditions() will be stored here.
+ *
+ * Method caching uses `md5` (by default) to construct cache keys.
+ * If you have problems with collisions, try a different hashing algorithm in DboSource::$cacheMethodHashAlgo or
+ * set DboSource::$cacheMethods to false.
  *
  * @var array
  */
 	public static $methodCache = array();
 
 /**
- * Whether or not to cache the results of DboSource::name() and DboSource::conditions()
+ * Whether or not to cache the results of DboSource::name(), DboSource::fields() and DboSource::conditions()
  * into the memory cache. Set to false to disable the use of the memory cache.
  *
  * @var bool
  */
 	public $cacheMethods = true;
+
+/**
+ * Method caching uses `md5` (by default) to construct cache keys. If you have problems with collisions,
+ * try a different hashing algorithm or set DboSource::$cacheMethods to false.
+ *
+ * @var string
+ * @see http://php.net/manual/en/function.hash-algos.php
+ * @see http://softwareengineering.stackexchange.com/questions/49550/which-hashing-algorithm-is-best-for-uniqueness-and-speed
+ */
+	public $cacheMethodHashAlgo = 'md5';
 
 /**
  * Flag to support nested transactions. If it is set to false, you will be able to use
@@ -815,7 +828,7 @@ class DboSource extends DataSource {
 			}
 			return $data;
 		}
-		$cacheKey = md5($this->startQuote . $data . $this->endQuote);
+		$cacheKey = hash($this->cacheMethodHashAlgo, $this->startQuote . $data . $this->endQuote);
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
 			return $return;
 		}
@@ -2533,7 +2546,7 @@ class DboSource extends DataSource {
 			$Model->schemaName,
 			$Model->table
 		);
-		$cacheKey = md5(serialize($cacheKey));
+		$cacheKey = hash($this->cacheMethodHashAlgo, serialize($cacheKey));
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
 			return $return;
 		}
