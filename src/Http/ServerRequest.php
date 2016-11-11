@@ -1396,6 +1396,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         if ($name === null) {
             return $this->query;
         }
+
         return $this->getQuery($name);
     }
 
@@ -1470,7 +1471,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * When reading values you will get `null` for keys/values that do not exist.
      *
-     * @param string $name|null Dot separated name of the value to read. Or null to read all data.
+     * @param string|null $name Dot separated name of the value to read. Or null to read all data.
      * @param mixed $default The default data.
      * @return mixed The value being read.
      */
@@ -1479,6 +1480,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         if ($name === null) {
             return $this->data;
         }
+
         return Hash::get($this->data, $name, $default);
     }
 
@@ -1498,6 +1500,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
 
             return $this;
         }
+
         return $this->getParam($name);
     }
 
