@@ -1429,15 +1429,13 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * $request->data('Post.title', 'New post!');
      * ```
      *
-     * As of 3.4.0, the setter mode of this method is *deprecated*.
-     * Use `withData` instead.
-     *
      * You can write to any value, even paths/keys that do not exist, and the arrays
      * will be created for you.
      *
      * @param string|null $name Dot separated name of the value to read/write
      * @param mixed ...$args The data to set (deprecated)
      * @return mixed|$this Either the value being read, or this so you can chain consecutive writes.
+     * @deprecated 3.4.0 Use withData() and getData() or getParsedBody() instead.
      */
     public function data($name = null, ...$args)
     {
@@ -1451,6 +1449,37 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         }
 
         return $this->data;
+    }
+
+    /**
+     * Provides a safe accessor for request data. Allows
+     * you to use Hash::get() compatible paths.
+     *
+     * ### Reading values.
+     *
+     * ```
+     * // get all data
+     * $request->getData();
+     *
+     * // Read a specific field.
+     * $request->data('Post.title');
+     *
+     * // With a default value.
+     * $request->data('Post.not there', 'default value);
+     * ```
+     *
+     * When reading values you will get `null` for keys/values that do not exist.
+     *
+     * @param string $name|null Dot separated name of the value to read. Or null to read all data.
+     * @param mixed $default The default data.
+     * @return mixed The value being read.
+     */
+    public function getData($name = null, $default = null)
+    {
+        if ($name === null) {
+            return $this->data;
+        }
+        return Hash::get($this->data, $name, $default);
     }
 
     /**

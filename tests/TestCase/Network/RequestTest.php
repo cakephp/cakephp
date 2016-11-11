@@ -2527,14 +2527,17 @@ class RequestTest extends TestCase
             ]
         ];
         $request = new Request(compact('post'));
-        $result = $request->data('Model');
-        $this->assertEquals($post['Model'], $result);
+        $this->assertEquals($post['Model'], $request->data('Model'));
+        $this->assertEquals($post['Model'], $request->getData('Model'));
 
-        $result = $request->data();
-        $this->assertEquals($post, $result);
+        $this->assertEquals($post, $request->data());
+        $this->assertEquals($post, $request->getData());
 
-        $result = $request->data('Model.imaginary');
-        $this->assertNull($result);
+        $this->assertNull($request->data('Model.imaginary'));
+        $this->assertNull($request->getData('Model.imaginary'));
+
+        $this->assertSame('value', $request->getData('Model.field', 'default'));
+        $this->assertSame('default', $request->getData('Model.imaginary', 'default'));
     }
 
     /**
