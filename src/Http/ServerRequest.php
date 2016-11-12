@@ -1389,6 +1389,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|null $name Query string variable name or null to read all.
      * @return string|array|null The value being read
+     * @deprecated 3.4.0 Use getQuery() and withQueryParams() instead.
      */
     public function query($name = null)
     {
@@ -1396,7 +1397,19 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             return $this->query;
         }
 
-        return Hash::get($this->query, $name);
+        return $this->getQuery($name);
+    }
+
+    /**
+     * Read a specific query value or dotted path.
+     *
+     * @param string $name The name or dotted path to the query param.
+     * @param mixed $default The default value if the named parameter is not set.
+     * @return null|string|array Query data.
+     */
+    public function getQuery($name, $default = null)
+    {
+        return Hash::get($this->query, $name, $default);
     }
 
     /**
@@ -1417,15 +1430,13 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * $request->data('Post.title', 'New post!');
      * ```
      *
-     * As of 3.4.0, the setter mode of this method is *deprecated*.
-     * Use `withData` instead.
-     *
      * You can write to any value, even paths/keys that do not exist, and the arrays
      * will be created for you.
      *
      * @param string|null $name Dot separated name of the value to read/write
      * @param mixed ...$args The data to set (deprecated)
      * @return mixed|$this Either the value being read, or this so you can chain consecutive writes.
+     * @deprecated 3.4.0 Use withData() and getData() or getParsedBody() instead.
      */
     public function data($name = null, ...$args)
     {
@@ -1442,15 +1453,45 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     }
 
     /**
-     * Safely access the values in $this->params.
+     * Provides a safe accessor for request data. Allows
+     * you to use Hash::get() compatible paths.
      *
-     * As of 3.4.0, the setter mode of this method is *deprecated*.
-     * Use `withParam` instead.
+     * ### Reading values.
+     *
+     * ```
+     * // get all data
+     * $request->getData();
+     *
+     * // Read a specific field.
+     * $request->data('Post.title');
+     *
+     * // With a default value.
+     * $request->data('Post.not there', 'default value);
+     * ```
+     *
+     * When reading values you will get `null` for keys/values that do not exist.
+     *
+     * @param string|null $name Dot separated name of the value to read. Or null to read all data.
+     * @param mixed $default The default data.
+     * @return null|string|array The value being read.
+     */
+    public function getData($name = null, $default = null)
+    {
+        if ($name === null) {
+            return $this->data;
+        }
+
+        return Hash::get($this->data, $name, $default);
+    }
+
+    /**
+     * Safely access the values in $this->params.
      *
      * @param string $name The name of the parameter to get.
      * @param mixed ...$args Value to set (deprecated).
      * @return mixed|$this The value of the provided parameter. Will
      *   return false if the parameter doesn't exist or is falsey.
+     * @deprecated 3.4.0 Use getParam() and withParam() instead.
      */
     public function param($name, ...$args)
     {
@@ -1459,11 +1500,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
 
             return $this;
         }
-        if (!isset($this->params[$name])) {
-            return Hash::get($this->params, $name, false);
-        }
 
-        return $this->params[$name];
+        return $this->getParam($name);
     }
 
     /**
@@ -1507,6 +1545,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $key The key you want to read.
      * @return null|string Either the cookie value, or null if the value doesn't exist.
+     * @deprecated 3.4.0 Use getCookie() instead.
      */
     public function cookie($key)
     {
@@ -1515,6 +1554,18 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         }
 
         return null;
+    }
+
+    /**
+     * Read cookie data from the request's cookie data.
+     *
+     * @param string $key The key or dotted path you want to read.
+     * @param string $default The default value if the cookie is not set.
+     * @return null|array|string Either the cookie value, or null if the value doesn't exist.
+     */
+    public function getCookie($key, $default = null)
+    {
+        return Hash::get($this->cookies, $key, $default);
     }
 
     /**
@@ -1740,6 +1791,18 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         $copy->params = Hash::insert($copy->params, $name, $value);
 
         return $copy;
+    }
+
+    /**
+     * Safely access the values in $this->params.
+     *
+     * @param string $name The name or dotted path to parameter.
+     * @param mixed $default The default value if $name is not set.
+     * @return mixed
+     */
+    public function getParam($name, $default = false)
+    {
+        return Hash::get($this->params, $name, $default);
     }
 
     /**

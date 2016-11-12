@@ -2396,40 +2396,40 @@ class RequestTest extends TestCase
         ];
         $request = new Request($array);
 
-        $result = $request->query('foo');
-        $this->assertSame('bar', $result);
-
-        $result = $request->query('zero');
-        $this->assertSame('0', $result);
-
-        $result = $request->query('imaginary');
-        $this->assertNull($result);
-
-        $result = $request->query();
-        $this->assertSame($array['query'], $result);
+        $this->assertSame('bar', $request->query('foo'));
+        $this->assertSame('0', $request->query('zero'));
+        $this->assertNull($request->query('imaginary'));
+        $this->assertSame($array['query'], $request->query());
     }
 
     /**
-     * Test the query() method with arrays passed via $_GET
+     * Test the getQuery() method
      *
      * @return void
      */
-    public function testQueryWithArray()
+    public function testGetQuery()
     {
-        $get['test'] = ['foo', 'bar'];
+        $array = [
+            'query' => [
+                'foo' => 'bar',
+                'zero' => '0',
+                'test' => [
+                    'foo', 'bar'
+                ]
+            ]
+        ];
+        $request = new Request($array);
 
-        $request = new Request([
-            'query' => $get
-        ]);
+        $this->assertSame('bar', $request->getQuery('foo'));
+        $this->assertSame('0', $request->getQuery('zero'));
+        $this->assertNull($request->getQuery('imaginary'));
+        $this->assertSame('default', $request->getQuery('imaginary', 'default'));
+        $this->assertFalse($request->getQuery('imaginary', false));
 
-        $result = $request->query('test');
-        $this->assertEquals(['foo', 'bar'], $result);
-
-        $result = $request->query('test.1');
-        $this->assertEquals('bar', $result);
-
-        $result = $request->query('test.2');
-        $this->assertNull($result);
+        $this->assertSame(['foo', 'bar'], $request->getQuery('test'));
+        $this->assertSame('bar', $request->getQuery('test.1'));
+        $this->assertNull($request->getQuery('test.2'));
+        $this->assertSame('default', $request->getQuery('test.2', 'default'));
     }
 
     /**
@@ -2527,14 +2527,17 @@ class RequestTest extends TestCase
             ]
         ];
         $request = new Request(compact('post'));
-        $result = $request->data('Model');
-        $this->assertEquals($post['Model'], $result);
+        $this->assertEquals($post['Model'], $request->data('Model'));
+        $this->assertEquals($post['Model'], $request->getData('Model'));
 
-        $result = $request->data();
-        $this->assertEquals($post, $result);
+        $this->assertEquals($post, $request->data());
+        $this->assertEquals($post, $request->getData());
 
-        $result = $request->data('Model.imaginary');
-        $this->assertNull($result);
+        $this->assertNull($request->data('Model.imaginary'));
+        $this->assertNull($request->getData('Model.imaginary'));
+
+        $this->assertSame('value', $request->getData('Model.field', 'default'));
+        $this->assertSame('default', $request->getData('Model.imaginary', 'default'));
     }
 
     /**
@@ -2587,7 +2590,7 @@ class RequestTest extends TestCase
      *
      * @dataProvider paramReadingDataProvider
      */
-    public function testParamReading($toRead, $expected)
+    public function testGetParam($toRead, $expected)
     {
         $request = new Request('/');
         $request->addParams([
@@ -2603,6 +2606,26 @@ class RequestTest extends TestCase
             'zero' => '0',
         ]);
         $this->assertSame($expected, $request->param($toRead));
+        $this->assertSame($expected, $request->getParam($toRead));
+    }
+
+    /**
+     * Test getParam returning a default value.
+     *
+     * @return void
+     */
+    public function testGetParamDefault()
+    {
+        $request = new Request([
+            'params' => [
+                'controller' => 'Articles',
+                'null' => null,
+            ]
+        ]);
+        $this->assertSame('Articles', $request->getParam('controller', 'default'));
+        $this->assertSame('default', $request->getParam('null', 'default'));
+        $this->assertNull($request->getParam('unset', null));
+        $this->assertFalse($request->getParam('unset'));
     }
 
     /**
@@ -2986,18 +3009,26 @@ XML;
      *
      * @return void
      */
-    public function testCookie()
+    public function testGetCookie()
     {
         $request = new Request([
             'cookies' => [
-                'testing' => 'A value in the cookie'
+                'testing' => 'A value in the cookie',
+                'user' => [
+                    'remember' => '1'
+                ]
             ]
         ]);
-        $result = $request->cookie('testing');
-        $this->assertEquals('A value in the cookie', $result);
+        $this->assertEquals('A value in the cookie', $request->cookie('testing'));
+        $this->assertEquals('A value in the cookie', $request->getCookie('testing'));
 
-        $result = $request->cookie('not there');
-        $this->assertNull($result);
+        $this->assertNull($request->cookie('not there'));
+        $this->assertNull($request->getCookie('not there'));
+        $this->assertSame('default', $request->getCookie('not there', 'default'));
+
+        $this->assertSame('1', $request->getCookie('user.remember'));
+        $this->assertSame('1', $request->getCookie('user.remember', 'default'));
+        $this->assertSame('default', $request->getCookie('user.not there', 'default'));
     }
 
     /**
