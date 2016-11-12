@@ -1405,7 +1405,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name The name or dotted path to the query param.
      * @param mixed $default The default value if the named parameter is not set.
-     * @return mixed Query data.
+     * @return null|string|array Query data.
      */
     public function getQuery($name, $default = null)
     {
@@ -1473,7 +1473,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|null $name Dot separated name of the value to read. Or null to read all data.
      * @param mixed $default The default data.
-     * @return mixed The value being read.
+     * @return null|string|array The value being read.
      */
     public function getData($name = null, $default = null)
     {
@@ -1561,7 +1561,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $key The key or dotted path you want to read.
      * @param string $default The default value if the cookie is not set.
-     * @return null|string Either the cookie value, or null if the value doesn't exist.
+     * @return null|array|string Either the cookie value, or null if the value doesn't exist.
      */
     public function getCookie($key, $default = null)
     {
