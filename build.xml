@@ -213,10 +213,10 @@
 	-->
 	<target name="distribute" depends="prepare" description="Upload pear packages to pear.cakephp.org">
 		<echo msg="Uploading tgz file to cakephp.org" />
-		<exec command="scp ${dist.dir}/${pear.package}.tgz root@cakephp.org:${pirum.dir}" dir="." checkreturn="true" />
+		<exec command="scp ${dist.dir}/${pear.package}.tgz root@new.cakephp.org:${pirum.dir}" dir="." checkreturn="true" />
 
 		<echo msg="Rebuilding pear.cakephp.org container" />
-		<exec command="ssh root@cakephp.org dokku ps:rebuild pear" checkreturn="true" />
+		<exec command="ssh root@new.cakephp.org dokku ps:rebuild pear" checkreturn="true" />
 	</target>
 
 	<target name="codestyle" description="Check codestyle (human readable format)">
