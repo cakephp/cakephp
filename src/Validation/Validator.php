@@ -179,28 +179,58 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * deciding whether a validation rule can be applied. All validation methods,
      * when called will receive the full list of providers stored in this validator.
      *
+     * @param string $name The name under which the provider should be set.
+     * @param object|string $object Provider object or class name.
+     * @return $this
+     */
+    public function setProvider($name, $object)
+    {
+        $this->_providers[$name] = $object;
+
+        return $this;
+    }
+
+    /**
+     * Returns the provider stored under that name if it exists.
+     *
+     * @param string $name The name under which the provider should be set.
+     * @return object|string|null
+     */
+    public function getProvider($name)
+    {
+        if (isset($this->_providers[$name])) {
+            return $this->_providers[$name];
+        }
+        if ($name !== 'default') {
+            return null;
+        }
+
+        $this->_providers[$name] = new RulesProvider();
+
+        return $this->_providers[$name];
+    }
+
+    /**
+     * Associates an object to a name so it can be used as a provider. Providers are
+     * objects or class names that can contain methods used during validation of for
+     * deciding whether a validation rule can be applied. All validation methods,
+     * when called will receive the full list of providers stored in this validator.
+     *
      * If called with no arguments, it will return the provider stored under that name if
      * it exists, otherwise it returns this instance of chaining.
      *
+     * @deprecated 3.4.0 Use setProvider()/getProvider() instead.
      * @param string $name The name under which the provider should be set.
      * @param null|object|string $object Provider object or class name.
      * @return $this|object|string|null
      */
     public function provider($name, $object = null)
     {
-        if ($object === null) {
-            if (isset($this->_providers[$name])) {
-                return $this->_providers[$name];
-            }
-            if ($name === 'default') {
-                return $this->_providers[$name] = new RulesProvider();
-            }
-
-            return null;
+        if ($object !== null) {
+            return $this->setProvider($name, $object);
         }
-        $this->_providers[$name] = $object;
 
-        return $this;
+        return $this->getProvider($name);
     }
 
     /**
