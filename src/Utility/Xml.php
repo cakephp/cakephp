@@ -203,8 +203,8 @@ class Xml
      */
     public static function fromArray($input, $options = [])
     {
-        if (is_object($input) && method_exists($input, 'toArray')) {
-            $input = $input->toArray();
+        if (is_object($input) && method_exists($input, 'toArray') && is_callable([$input, 'toArray'])) {
+            $input = call_user_func([$input, 'toArray']);
         }
         if (!is_array($input) || count($input) !== 1) {
             throw new XmlException('Invalid input.');
@@ -257,8 +257,8 @@ class Xml
         }
         foreach ($data as $key => $value) {
             if (is_string($key)) {
-                if (is_object($value) && method_exists($value, 'toArray')) {
-                    $value = $value->toArray();
+                if (is_object($value) && method_exists($value, 'toArray') && is_callable([$value, 'toArray'])) {
+                    $value = call_user_func([$value, 'toArray']);
                 }
 
                 if (!is_array($value)) {
@@ -323,8 +323,8 @@ class Xml
     {
         extract($data);
         $childNS = $childValue = null;
-        if (is_object($value) && method_exists($value, 'toArray')) {
-            $value = $value->toArray();
+        if (is_object($value) && method_exists($value, 'toArray') && is_callable([$value, 'toArray'])) {
+            $value = call_user_func([$value, 'toArray']);
         }
         if (is_array($value)) {
             if (isset($value['@'])) {
