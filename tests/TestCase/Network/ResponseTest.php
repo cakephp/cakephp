@@ -2108,7 +2108,7 @@ class ResponseTest extends TestCase
         $result = $response->__debugInfo();
 
         $expected = [
-            'status' => (int) 200,
+            'status' => 200,
             'contentType' => 'text/html',
             'headers' => [],
             'file' => null,
