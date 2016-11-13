@@ -203,7 +203,7 @@ class Xml
      */
     public static function fromArray($input, $options = [])
     {
-        if (method_exists($input, 'toArray')) {
+        if (is_object($input) && method_exists($input, 'toArray')) {
             $input = $input->toArray();
         }
         if (!is_array($input) || count($input) !== 1) {
@@ -257,7 +257,7 @@ class Xml
         }
         foreach ($data as $key => $value) {
             if (is_string($key)) {
-                if (method_exists($value, 'toArray')) {
+                if (is_object($value) && method_exists($value, 'toArray')) {
                     $value = $value->toArray();
                 }
 
@@ -323,7 +323,7 @@ class Xml
     {
         extract($data);
         $childNS = $childValue = null;
-        if (method_exists($value, 'toArray')) {
+        if (is_object($value) && method_exists($value, 'toArray')) {
             $value = $value->toArray();
         }
         if (is_array($value)) {
