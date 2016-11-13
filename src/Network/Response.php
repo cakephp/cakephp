@@ -1666,4 +1666,24 @@ class Response
     {
         exit($status);
     }
+
+    /**
+     * Returns an array that can be used to describe the internal state of this
+     * object.
+     *
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return [
+            'status' => $this->_status,
+            'contentType' => $this->_contentType,
+            'headers' => $this->_headers,
+            'file' => $this->_file,
+            'fileRange' => $this->_fileRange,
+            'cookies' => $this->_cookies,
+            'cacheDirectives' => $this->_cacheDirectives,
+            'body' => $this->_body,
+        ];
+    }
 }
