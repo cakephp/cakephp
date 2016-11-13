@@ -2096,4 +2096,27 @@ class ResponseTest extends TestCase
         $this->assertNull($response->location('http://example.org'), 'Setting a location should return null');
         $this->assertEquals('http://example.org', $response->location(), 'Reading a location should return the value.');
     }
+
+    /**
+     * Tests __debugInfo
+     *
+     * @return void
+     */
+    public function testDebugInfo()
+    {
+        $response = new Response();
+        $result = $response->__debugInfo();
+
+        $expected = [
+            'status' => (int) 200,
+            'contentType' => 'text/html',
+            'headers' => [],
+            'file' => null,
+            'fileRange' => [],
+            'cookies' => [],
+            'cacheDirectives' => [],
+            'body' => null
+        ];
+        $this->assertEquals($expected, $result);
+    }
 }
