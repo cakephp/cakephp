@@ -338,7 +338,7 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function columnSql(Table $schema, $name)
+    public function columnSql(TableSchema $schema, $name)
     {
         $data = $schema->column($name);
         $out = $this->_driver->quoteIdentifier($name);
@@ -420,7 +420,7 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function addConstraintSql(Table $schema)
+    public function addConstraintSql(TableSchema $schema)
     {
         $sqlPattern = 'ALTER TABLE %s ADD %s;';
         $sql = [];
@@ -478,7 +478,7 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function constraintSql(Table $schema, $name)
+    public function constraintSql(TableSchema $schema, $name)
     {
         $data = $schema->constraint($name);
         $out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
