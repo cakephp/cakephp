@@ -110,6 +110,23 @@ class DboSecondTestSource extends DboSource {
 }
 
 /**
+ * DboThirdTestSource
+ *
+ * @package       Cake.Test.Case.Model.Datasource
+ */
+class DboThirdTestSource extends DboSource {
+
+	public function connect($config = array()) {
+		$this->connected = true;
+	}
+
+	public function cacheMethodHasher($value) {
+		return hash('sha1', $value);
+	}
+
+}
+
+/**
  * DboSourceTest class
  *
  * @package       Cake.Test.Case.Model.Datasource
@@ -760,7 +777,7 @@ class DboSourceTest extends CakeTestCase {
 
 		$name = 'Model.fieldlbqndkezcoapfgirmjsh';
 		$actual = $testDb->cacheMethodHasher($name);
-		$expected = 'f4441bb8fcbe0944';
+		$expected = 'beb8b6469359285b7c2865dce0ef743feb16cb71';
 
 		$this->assertEquals($expected, $actual);
 	}
