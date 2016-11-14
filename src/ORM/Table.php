@@ -1208,11 +1208,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * @param string|array $primaryKey Primary key value.
+     * @param int|string|array $primaryKey Primary key value.
      *
      * @return array Conditions.
      */
-    protected function primaryKeyToConditions($primaryKey)
+    public function primaryKeyToConditions($primaryKey)
     {
         $key = (array)$this->primaryKey();
         $alias = $this->alias();

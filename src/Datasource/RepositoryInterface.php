@@ -65,7 +65,7 @@ interface RepositoryInterface
      * $article = $articles->get($id, ['contain' => ['Comments]]);
      * ```
      *
-     * @param string|array $primaryKey Primary key value to find
+     * @param int|string|array $primaryKey Primary key value to find
      * @param array|\ArrayAccess $options options accepted by `Table::find()`
      * @throws \Cake\Datasource\Exception\RecordNotFoundException if the record with such id
      * could not be found
