@@ -738,6 +738,34 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * Test that cacheMethodFilter does not filter by default.
+ *
+ * @return void
+ */
+	public function testCacheMethodFilter() {
+		$method = 'name';
+		$key = '49d9207adfce6df1dd3ee8c30c434414';
+		$value = '`menus`';
+		$actual = $this->testDb->cacheMethodFilter($method, $key, $value);
+
+		$this->assertTrue($actual);
+
+		$method = 'fields';
+		$key = '2b57253ab1fffb3e95fa4f95299220b1';
+		$value = ["`Menu`.`id`", "`Menu`.`name`"];
+		$actual = $this->testDb->cacheMethodFilter($method, $key, $value);
+
+		$this->assertTrue($actual);
+
+		$method = 'non-existing';
+		$key = '';
+		$value = '``';
+		$actual = $this->testDb->cacheMethodFilter($method, $key, $value);
+
+		$this->assertTrue($actual);
+	}
+
+/**
  * Test that rare collisions do not happen with method caching
  *
  * @return void
