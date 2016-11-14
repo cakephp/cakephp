@@ -1212,7 +1212,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @return array Conditions.
      */
-    public function primaryKeyToConditions($primaryKey)
+    protected function primaryKeyToConditions($primaryKey)
     {
         $key = (array)$this->primaryKey();
         $alias = $this->alias();
