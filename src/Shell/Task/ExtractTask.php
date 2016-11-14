@@ -140,7 +140,7 @@ class ExtractTask extends Shell
                 return;
             }
             if (strtoupper($response) === 'D') {
-                $this->err('<warning>No directories selected.</warning> Please choose a directory.');
+                $this->warn('No directories selected. Please choose a directory.');
             } elseif (is_dir($response)) {
                 $this->_paths[] = $response;
                 $defaultPath = 'D';
