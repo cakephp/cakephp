@@ -51,34 +51,23 @@ class DboSource extends DataSource {
 	public $alias = 'AS ';
 
 /**
- * Caches result from query parsing operations. Cached results for both DboSource::name(), DboSource::fields() and
- * DboSource::conditions() will be stored here.
+ * Caches result from query parsing operations. Cached results for both DboSource::name() and DboSource::fields()
+ * will be stored here.
  *
- * Method caching uses `md5` (by default) to construct cache keys.
- * If you have problems with collisions, try a different hashing algorithm in DboSource::$cacheMethodHashAlgo or
- * set DboSource::$cacheMethods to false.
+ * Method caching uses `md5` (by default) to construct cache keys. If you have problems with collisions,
+ * try a different hashing algorithm by overriding DboSource::cacheMethodHasher or set DboSource::$cacheMethods to false.
  *
  * @var array
  */
 	public static $methodCache = array();
 
 /**
- * Whether or not to cache the results of DboSource::name(), DboSource::fields() and DboSource::conditions()
- * into the memory cache. Set to false to disable the use of the memory cache.
+ * Whether or not to cache the results of DboSource::name() and DboSource::fields() into the memory cache.
+ * Set to false to disable the use of the memory cache.
  *
  * @var bool
  */
 	public $cacheMethods = true;
-
-/**
- * Method caching uses `md5` (by default) to construct cache keys. If you have problems with collisions,
- * try a different hashing algorithm or set DboSource::$cacheMethods to false.
- *
- * @var string
- * @see http://php.net/manual/en/function.hash-algos.php
- * @see http://softwareengineering.stackexchange.com/questions/49550/which-hashing-algorithm-is-best-for-uniqueness-and-speed
- */
-	public $cacheMethodHashAlgo = 'md5';
 
 /**
  * Flag to support nested transactions. If it is set to false, you will be able to use
@@ -804,6 +793,21 @@ class DboSource extends DataSource {
 	}
 
 /**
+ * Hashes a given value.
+ *
+ * Method caching uses `md5` (by default) to construct cache keys. If you have problems with collisions,
+ * try a different hashing algorithm or set DboSource::$cacheMethods to false.
+ *
+ * @param string $value Value to hash
+ * @return string Hashed value
+ * @see http://php.net/manual/en/function.hash-algos.php
+ * @see http://softwareengineering.stackexchange.com/questions/49550/which-hashing-algorithm-is-best-for-uniqueness-and-speed
+ */
+	public function cacheMethodHasher($value) {
+		return md5($value);
+	}
+
+/**
  * Returns a quoted name of $data for use in an SQL statement.
  * Strips fields out of SQL functions before quoting.
  *
@@ -828,7 +832,7 @@ class DboSource extends DataSource {
 			}
 			return $data;
 		}
-		$cacheKey = hash($this->cacheMethodHashAlgo, $this->startQuote . $data . $this->endQuote);
+		$cacheKey = $this->cacheMethodHasher($this->startQuote . $data . $this->endQuote);
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
 			return $return;
 		}
@@ -2546,7 +2550,7 @@ class DboSource extends DataSource {
 			$Model->schemaName,
 			$Model->table
 		);
-		$cacheKey = hash($this->cacheMethodHashAlgo, serialize($cacheKey));
+		$cacheKey = $this->cacheMethodHasher(serialize($cacheKey));
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
 			return $return;
 		}
