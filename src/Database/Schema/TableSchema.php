@@ -759,10 +759,10 @@ class TableSchema
     }
 
     /**
-     * Get/Set whether the table is temporary in the database
+     * Sets whether the table is temporary in the database.
      *
-     * @param bool $temporary Whether or not the table is to be temporary
-     * @return $this TableSchema instance.
+     * @param bool $temporary Whether or not the table is to be temporary.
+     * @return $this Instance.
      */
     public function setTemporary($temporary)
     {
@@ -772,11 +772,11 @@ class TableSchema
     }
 
     /**
-     * Get/Set whether the table is temporary in the database
+     * Gets whether the table is temporary in the database.
      *
-     * @return bool The current temporary setting
+     * @return bool The current temporary setting.
      */
-    public function getTemporary()
+    public function isTemporary()
     {
         return $this->_temporary;
     }
@@ -784,7 +784,7 @@ class TableSchema
     /**
      * Get/Set whether the table is temporary in the database
      *
-     * @deprecated 3.4.0 Use setTemporary()/getTemporary() instead.
+     * @deprecated 3.4.0 Use setTemporary()/isTemporary() instead.
      * @param bool|null $temporary whether or not the table is to be temporary
      * @return $this|bool Either the TableSchema instance, the current temporary setting
      */
@@ -794,7 +794,7 @@ class TableSchema
             return $this->setTemporary($temporary);
         }
 
-        return $this->getTemporary();
+        return $this->isTemporary();
     }
 
     /**

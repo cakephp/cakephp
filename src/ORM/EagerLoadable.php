@@ -217,21 +217,12 @@ class EagerLoadable
     }
 
     /**
-     * Gets whether or not this level can be fetched using a join.
-     *
-     * @return bool
-     */
-    public function getCanBeJoined()
-    {
-        return $this->_canBeJoined;
-    }
-
-    /**
      * Sets whether or not this level can be fetched using a join.
      *
      * If called with no arguments it returns the current value.
      *
-     * @deprecated 3.4.0 Use setCanBeJoined()/getCanBeJoined() instead.
+     * As of 3.4.0 the setter part is deprecated, use setCanBeJoined() instead.
+     *
      * @param bool|null $possible The value to set.
      * @return bool
      */
