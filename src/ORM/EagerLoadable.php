@@ -211,16 +211,15 @@ class EagerLoadable
      */
     public function setCanBeJoined($possible)
     {
-        $this->_canBeJoined = $possible;
+        $this->_canBeJoined = (bool)$possible;
 
         return $this;
     }
 
     /**
-     * Sets whether or not this level can be fetched using a join.
+     * Gets whether or not this level can be fetched using a join.
      *
-     * If called with no arguments it returns the current value.
-     *
+     * If called with arguments it sets the value.
      * As of 3.4.0 the setter part is deprecated, use setCanBeJoined() instead.
      *
      * @param bool|null $possible The value to set.
@@ -232,7 +231,7 @@ class EagerLoadable
             $this->setCanBeJoined($possible);
         }
 
-        return $this->getCanBeJoined();
+        return $this->_canBeJoined;
     }
 
     /**
