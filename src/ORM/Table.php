@@ -1208,9 +1208,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * @param string|array $primaryKey
+     * @param string|array $primaryKey Primary key value.
      *
-     * @return array
+     * @return array Conditions.
      */
     protected function primaryKeyToConditions($primaryKey)
     {
