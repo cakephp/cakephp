@@ -786,8 +786,55 @@ class DboSource extends DataSource {
 		if ($value === null) {
 			return (isset(static::$methodCache[$method][$key])) ? static::$methodCache[$method][$key] : null;
 		}
+		if (!$this->cacheMethodFilter($method, $key, $value)) {
+			return $value;
+		}
 		$this->_methodCacheChange = true;
 		return static::$methodCache[$method][$key] = $value;
+	}
+
+/**
+ * Filters to apply to the results of `name` and `fields`. When the filter for a given method does not return `true`
+ * then the result is not added to the memory cache.
+ *
+ * Some examples:
+ *
+ * ```
+ * // For method fields, do not cache values that contain floats
+ * if ($method === 'fields') {
+ * 	$hasFloat = preg_grep('/(\d+)?\.\d+/', $value);
+ *
+ * 	return count($hasFloat) === 0;
+ * }
+ *
+ * return true;
+ * ```
+ *
+ * ```
+ * // For method name, do not cache values that have the name created
+ * if ($method === 'name') {
+ * 	return preg_match('/^`created`$/', $value) !== 1;
+ * }
+ *
+ * return true;
+ * ```
+ *
+ * ```
+ * // For method name, do not cache values that have the key 472551d38e1f8bbc78d7dfd28106166f
+ * if ($key === '472551d38e1f8bbc78d7dfd28106166f') {
+ * 	return false;
+ * }
+ *
+ * return true;
+ * ```
+ *
+ * @param string $method Name of the method being cached.
+ * @param string $key The key name for the cache operation.
+ * @param mixed $value The value to cache into memory.
+ * @return bool Whether or not to cache
+ */
+	public function cacheMethodFilter($method, $key, $value) {
+		return true;
 	}
 
 /**
