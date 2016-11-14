@@ -110,6 +110,23 @@ class DboSecondTestSource extends DboSource {
 }
 
 /**
+ * DboThirdTestSource
+ *
+ * @package       Cake.Test.Case.Model.Datasource
+ */
+class DboThirdTestSource extends DboSource {
+
+	public function connect($config = array()) {
+		$this->connected = true;
+	}
+
+	public function cacheMethodHasher($value) {
+		return hash('sha1', $value);
+	}
+
+}
+
+/**
  * DboFourthTestSource
  *
  * @package       Cake.Test.Case.Model.Datasource
@@ -836,6 +853,34 @@ class DboSourceTest extends CakeTestCase {
 		$actual = $testDb->cacheMethodFilter($method, $key, $value);
 
 		$this->assertTrue($actual);
+	}
+
+/**
+ * Test that cacheMethodHasher uses md5 by default.
+ *
+ * @return void
+ */
+	public function testCacheMethodHasher() {
+		$name = 'Model.fieldlbqndkezcoapfgirmjsh';
+		$actual = $this->testDb->cacheMethodHasher($name);
+		$expected = '4a45dc9ed52f98c393d04ac424ee5078';
+
+		$this->assertEquals($expected, $actual);
+	}
+
+/**
+ * Test that cacheMethodHasher can be overridden to use a different hashing algorithm.
+ *
+ * @return void
+ */
+	public function testCacheMethodHasherOverridden() {
+		$testDb = new DboThirdTestSource();
+
+		$name = 'Model.fieldlbqndkezcoapfgirmjsh';
+		$actual = $testDb->cacheMethodHasher($name);
+		$expected = 'beb8b6469359285b7c2865dce0ef743feb16cb71';
+
+		$this->assertEquals($expected, $actual);
 	}
 
 /**
