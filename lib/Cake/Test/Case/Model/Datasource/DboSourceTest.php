@@ -110,6 +110,35 @@ class DboSecondTestSource extends DboSource {
 }
 
 /**
+ * DboFourthTestSource
+ *
+ * @package       Cake.Test.Case.Model.Datasource
+ */
+class DboFourthTestSource extends DboSource {
+
+	public function connect($config = array()) {
+		$this->connected = true;
+	}
+
+	public function cacheMethodFilter($method, $key, $value) {
+		if ($method === 'name') {
+			if ($value === '`menus`') {
+				return false;
+			} elseif ($key === '1fca740733997f1ebbedacfc7678592a') {
+				return false;
+			}
+		} elseif ($method === 'fields') {
+			$endsWithName = preg_grep('/`name`$/', $value);
+
+			return count($endsWithName) === 0;
+		}
+
+		return true;
+	}
+
+}
+
+/**
  * DboSourceTest class
  *
  * @package       Cake.Test.Case.Model.Datasource
@@ -752,7 +781,7 @@ class DboSourceTest extends CakeTestCase {
 
 		$method = 'fields';
 		$key = '2b57253ab1fffb3e95fa4f95299220b1';
-		$value = ["`Menu`.`id`", "`Menu`.`name`"];
+		$value = array("`Menu`.`id`", "`Menu`.`name`");
 		$actual = $this->testDb->cacheMethodFilter($method, $key, $value);
 
 		$this->assertTrue($actual);
@@ -761,6 +790,50 @@ class DboSourceTest extends CakeTestCase {
 		$key = '';
 		$value = '``';
 		$actual = $this->testDb->cacheMethodFilter($method, $key, $value);
+
+		$this->assertTrue($actual);
+	}
+
+/**
+ * Test that cacheMethodFilter can be overridden to do actual filtering.
+ *
+ * @return void
+ */
+	public function testCacheMethodFilterOverridden() {
+		$testDb = new DboFourthTestSource();
+
+		$method = 'name';
+		$key = '49d9207adfce6df1dd3ee8c30c434414';
+		$value = '`menus`';
+		$actual = $testDb->cacheMethodFilter($method, $key, $value);
+
+		$this->assertFalse($actual);
+
+		$method = 'name';
+		$key = '1fca740733997f1ebbedacfc7678592a';
+		$value = '`Menu`.`id`';
+		$actual = $testDb->cacheMethodFilter($method, $key, $value);
+
+		$this->assertFalse($actual);
+
+		$method = 'fields';
+		$key = '2b57253ab1fffb3e95fa4f95299220b1';
+		$value = array("`Menu`.`id`", "`Menu`.`name`");
+		$actual = $testDb->cacheMethodFilter($method, $key, $value);
+
+		$this->assertFalse($actual);
+
+		$method = 'name';
+		$key = 'd2bc458620afb092c61ab4383b7475e0';
+		$value = '`Menu`';
+		$actual = $testDb->cacheMethodFilter($method, $key, $value);
+
+		$this->assertTrue($actual);
+
+		$method = 'non-existing';
+		$key = '';
+		$value = '``';
+		$actual = $testDb->cacheMethodFilter($method, $key, $value);
 
 		$this->assertTrue($actual);
 	}
