@@ -738,6 +738,34 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * Test that cacheMethodHasher uses md5 by default.
+ *
+ * @return void
+ */
+	public function testCacheMethodHasher() {
+		$name = 'Model.fieldlbqndkezcoapfgirmjsh';
+		$actual = $this->testDb->cacheMethodHasher($name);
+		$expected = '4a45dc9ed52f98c393d04ac424ee5078';
+
+		$this->assertEquals($expected, $actual);
+	}
+
+/**
+ * Test that cacheMethodHasher can be overridden to use a different hashing algorithm.
+ *
+ * @return void
+ */
+	public function testCacheMethodHasherOverridden() {
+		$testDb = new DboThirdTestSource();
+
+		$name = 'Model.fieldlbqndkezcoapfgirmjsh';
+		$actual = $testDb->cacheMethodHasher($name);
+		$expected = 'f4441bb8fcbe0944';
+
+		$this->assertEquals($expected, $actual);
+	}
+
+/**
  * Test that rare collisions do not happen with method caching
  *
  * @return void
