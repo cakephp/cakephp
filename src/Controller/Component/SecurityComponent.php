@@ -85,13 +85,6 @@ class SecurityComponent extends Component
     protected $_action = null;
 
     /**
-     * Request object
-     *
-     * @var \Cake\Http\ServerRequest
-     */
-    public $request;
-
-    /**
      * The Session object
      *
      * @var \Cake\Network\Session
@@ -107,9 +100,9 @@ class SecurityComponent extends Component
     public function startup(Event $event)
     {
         $controller = $event->subject();
-        $this->session = $this->request->session();
-        $this->_action = $this->request->param('action');
-        $hasData = (bool)$this->request->data();
+        $this->session = $controller->request->session();
+        $this->_action = $controller->request->param('action');
+        $hasData = (bool)$controller->request->data();
         try {
             $this->_secureRequired($controller);
             $this->_authRequired($controller);
@@ -264,14 +257,15 @@ class SecurityComponent extends Component
      */
     protected function _authRequired(Controller $controller)
     {
+        $request = $controller->request;
         if (is_array($this->_config['requireAuth']) &&
             !empty($this->_config['requireAuth']) &&
-            $this->request->data()
+            $request->data()
         ) {
             $requireAuth = $this->_config['requireAuth'];
 
-            if (in_array($this->request->param('action'), $requireAuth) || $requireAuth == ['*']) {
-                if (!isset($this->request->data['_Token'])) {
+            if (in_array($request->param('action'), $requireAuth) || $requireAuth == ['*']) {
+                if (!isset($request->data['_Token'])) {
                     throw new AuthSecurityException('\'_Token\' was not found in request data.');
                 }
 
@@ -279,23 +273,23 @@ class SecurityComponent extends Component
                     $tData = $this->session->read('_Token');
 
                     if (!empty($tData['allowedControllers']) &&
-                        !in_array($this->request->param('controller'), $tData['allowedControllers'])) {
+                        !in_array($request->param('controller'), $tData['allowedControllers'])) {
                         throw new AuthSecurityException(
                             sprintf(
                                 'Controller \'%s\' was not found in allowed controllers: \'%s\'.',
-                                $this->request->param('controller'),
+                                $request->param('controller'),
                                 implode(', ', (array)$tData['allowedControllers'])
                             )
                         );
                     }
                     if (!empty($tData['allowedActions']) &&
-                        !in_array($this->request->param('action'), $tData['allowedActions'])
+                        !in_array($request->param('action'), $tData['allowedActions'])
                     ) {
                         throw new AuthSecurityException(
                             sprintf(
                                 'Action \'%s::%s\' was not found in allowed actions: \'%s\'.',
-                                $this->request->param('controller'),
-                                $this->request->param('action'),
+                                $request->param('controller'),
+                                $request->param('action'),
                                 implode(', ', (array)$tData['allowedActions'])
                             )
                         );
@@ -346,7 +340,7 @@ class SecurityComponent extends Component
      */
     protected function _validToken(Controller $controller)
     {
-        $check = $controller->request->data;
+        $check = $controller->request->getData();
 
         $message = '\'%s\' was not found in request data.';
         if (!isset($check['_Token'])) {
