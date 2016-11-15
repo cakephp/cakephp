@@ -407,7 +407,7 @@ class Shell
      * to be dispatched.
      * Built-in extra parameter is :
      * - `requested` : if used, will prevent the Shell welcome message to be displayed
-     * @return mixed
+     * @return int|bool|null
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#the-cakephp-console
      */
     public function runCommand($argv, $autoMethod = false, $extra = [])
@@ -417,7 +417,7 @@ class Shell
         try {
             list($this->params, $this->args) = $this->OptionParser->parse($argv);
         } catch (ConsoleException $e) {
-            $this->err('<error>Error: ' . $e->getMessage() . '</error>');
+            $this->err('Error: ' . $e->getMessage());
             $this->out($this->OptionParser->help($command));
 
             return false;
@@ -496,7 +496,7 @@ class Shell
      * Display the help in the correct format
      *
      * @param string $command The command to get help for.
-     * @return int|bool
+     * @return int|bool The number of bytes returned from writing to stdout.
      */
     protected function _displayHelp($command)
     {
@@ -609,7 +609,7 @@ class Shell
      *
      * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool The number of bytes returned from writing to stdout.
      */
     public function verbose($message, $newlines = 1)
     {
@@ -621,7 +621,7 @@ class Shell
      *
      * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool The number of bytes returned from writing to stdout.
      */
     public function quiet($message, $newlines = 1)
     {
@@ -642,7 +642,7 @@ class Shell
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
-     * @return int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool The number of bytes returned from writing to stdout.
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
      */
     public function out($message = null, $newlines = 1, $level = Shell::NORMAL)
@@ -656,7 +656,7 @@ class Shell
      *
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|bool Returns the number of bytes returned from writing to stderr.
+     * @return int|bool The number of bytes returned from writing to stderr.
      */
     public function err($message = null, $newlines = 1)
     {
@@ -669,7 +669,7 @@ class Shell
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
-     * @return int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool The number of bytes returned from writing to stdout.
      * @see http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
      */
     public function info($message = null, $newlines = 1, $level = Shell::NORMAL)
@@ -682,7 +682,7 @@ class Shell
      *
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|bool Returns the number of bytes returned from writing to stderr.
+     * @return int|bool The number of bytes returned from writing to stderr.
      * @see http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::err
      */
     public function warn($message = null, $newlines = 1)
@@ -696,7 +696,7 @@ class Shell
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
-     * @return int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool The number of bytes returned from writing to stdout.
      * @see http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
      */
     public function success($message = null, $newlines = 1, $level = Shell::NORMAL)

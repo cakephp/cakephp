@@ -81,6 +81,7 @@ class CsrfComponent extends Component
         $response = $controller->response;
         $cookieName = $this->_config['cookieName'];
 
+        /* @var \Cake\Network\Request $request */
         $cookieData = $request->cookie($cookieName);
         if ($cookieData) {
             $request->params['_csrfToken'] = $cookieData;
@@ -150,7 +151,7 @@ class CsrfComponent extends Component
         $post = $request->data($this->_config['field']);
         $header = $request->header('X-CSRF-Token');
 
-        if (empty($cookie)) {
+        if (!$cookie) {
             throw new InvalidCsrfTokenException(__d('cake', 'Missing CSRF token cookie'));
         }
 

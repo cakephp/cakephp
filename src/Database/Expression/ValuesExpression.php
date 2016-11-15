@@ -52,9 +52,9 @@ class ValuesExpression implements ExpressionInterface
     /**
      * The Query object to use as a values expression
      *
-     * @var \Cake\Database\Query
+     * @var \Cake\Database\Query|null
      */
-    protected $_query = false;
+    protected $_query = null;
 
     /**
      * Whether or not values have been casted to expressions
@@ -169,7 +169,7 @@ class ValuesExpression implements ExpressionInterface
      * the currently stored query
      *
      * @param \Cake\Database\Query|null $query The query to set/get
-     * @return \Cake\Database\Query
+     * @return \Cake\Database\Query|null
      */
     public function query(Query $query = null)
     {
@@ -296,6 +296,7 @@ class ValuesExpression implements ExpressionInterface
 
         foreach ($this->_values as $row => $values) {
             foreach ($types as $col => $type) {
+                /* @var \Cake\Database\Type\ExpressionTypeInterface $type */
                 $this->_values[$row][$col] = $type->toExpression($values[$col]);
             }
         }

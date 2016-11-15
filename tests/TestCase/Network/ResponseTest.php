@@ -2350,4 +2350,27 @@ class ResponseTest extends TestCase
         $this->assertFalse($response->hasHeader('Accept'));
         $this->assertFalse($response->hasHeader('accept'));
     }
+
+    /**
+     * Tests __debugInfo
+     *
+     * @return void
+     */
+    public function testDebugInfo()
+    {
+        $response = new Response();
+        $result = $response->__debugInfo();
+
+        $expected = [
+            'status' => 200,
+            'contentType' => 'text/html',
+            'headers' => [],
+            'file' => null,
+            'fileRange' => [],
+            'cookies' => [],
+            'cacheDirectives' => [],
+            'body' => null
+        ];
+        $this->assertEquals($expected, $result);
+    }
 }
