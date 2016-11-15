@@ -1179,4 +1179,34 @@ XML;
 XML;
         $result = Xml::build($xml);
     }
+
+    /**
+     * Test building Xml with valid class-name in value.
+     *
+     * @see https://github.com/cakephp/cakephp/pull/9754
+     * @return void
+     */
+    public function testClassnameInValueRegressionTest()
+    {
+        $classname = self::class; // Will always be a valid class name
+        $data = [
+            'outer' => [
+                'inner' => $classname
+            ]
+        ];
+        $obj = Xml::build($data);
+        $result = $obj->asXml();
+        $this->assertContains('<inner>' . $classname . '</inner>', $result);
+    }
+
+    /**
+     * Needed function for testClassnameInValueRegressionTest.
+     *
+     * @ignore
+     * @return array
+     */
+    public function toArray()
+    {
+        return [];
+    }
 }
