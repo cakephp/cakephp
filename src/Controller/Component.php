@@ -66,6 +66,8 @@ class Component implements EventListenerInterface
      * Request object
      *
      * @var \Cake\Http\ServerRequest
+     * @deprecated 3.4.0 Storing references to the request is deprecated. Use Component::getController()
+     *   or callback $event->subject() to access the controller & request instead.
      */
     public $request;
 
@@ -73,6 +75,8 @@ class Component implements EventListenerInterface
      * Response object
      *
      * @var \Cake\Network\Response
+     * @deprecated 3.4.0 Storing references to the response is deprecated. Use Component::getController()
+     *   or callback $event->subject() to access the controller & response instead.
      */
     public $response;
 
@@ -127,6 +131,16 @@ class Component implements EventListenerInterface
             $this->_componentMap = $registry->normalizeArray($this->components);
         }
         $this->initialize($config);
+    }
+
+    /**
+     * Get the controller this component is bound to.
+     *
+     * @return \Cake\Controller\Controller The bound controller.
+     */
+    public function getController()
+    {
+        return $this->_registry->getController();
     }
 
     /**
