@@ -25,7 +25,7 @@ use Cake\Datasource\ConnectionInterface;
  * or by incrementally building an instance using
  * methods.
  *
- * Once created Table instances can be added to
+ * Once created TableSchema instances can be added to
  * Schema\Collection objects. They can also be converted into SQL using the
  * createSql(), dropSql() and truncateSql() methods.
  */
@@ -711,38 +711,90 @@ class TableSchema
     }
 
     /**
-     * Get/set the options for a table.
+     * Sets the options for a table.
      *
      * Table options allow you to set platform specific table level options.
      * For example the engine type in MySQL.
      *
-     * @param array|null $options The options to set, or null to read options.
-     * @return $this|array Either the table instance, or an array of options when reading.
+     * @param array $options The options to set, or null to read options.
+     * @return $this TableSchema instance
      */
-    public function options($options = null)
+    public function setOptions($options)
     {
-        if ($options === null) {
-            return $this->_options;
-        }
         $this->_options = array_merge($this->_options, $options);
 
         return $this;
     }
 
     /**
-     * Get/Set whether the table is temporary in the database
+     * Gets the options for a table.
      *
-     * @param bool|null $set whether or not the table is to be temporary
-     * @return $this|bool Either the table instance, the current temporary setting
+     * Table options allow you to set platform specific table level options.
+     * For example the engine type in MySQL.
+     *
+     * @return array An array of options.
      */
-    public function temporary($set = null)
+    public function getOptions()
     {
-        if ($set === null) {
-            return $this->_temporary;
+        return $this->_options;
+    }
+
+    /**
+     * Get/set the options for a table.
+     *
+     * Table options allow you to set platform specific table level options.
+     * For example the engine type in MySQL.
+     *
+     * @deprecated 3.4.0 Use setOptions()/getOptions() instead.
+     * @param array|null $options The options to set, or null to read options.
+     * @return $this|array Either the TableSchema instance, or an array of options when reading.
+     */
+    public function options($options = null)
+    {
+        if ($options !== null) {
+            return $this->setOptions($options);
         }
-        $this->_temporary = (bool)$set;
+
+        return $this->getOptions();
+    }
+
+    /**
+     * Sets whether the table is temporary in the database.
+     *
+     * @param bool $temporary Whether or not the table is to be temporary.
+     * @return $this Instance.
+     */
+    public function setTemporary($temporary)
+    {
+        $this->_temporary = (bool)$temporary;
 
         return $this;
+    }
+
+    /**
+     * Gets whether the table is temporary in the database.
+     *
+     * @return bool The current temporary setting.
+     */
+    public function isTemporary()
+    {
+        return $this->_temporary;
+    }
+
+    /**
+     * Get/Set whether the table is temporary in the database
+     *
+     * @deprecated 3.4.0 Use setTemporary()/isTemporary() instead.
+     * @param bool|null $temporary whether or not the table is to be temporary
+     * @return $this|bool Either the TableSchema instance, the current temporary setting
+     */
+    public function temporary($temporary = null)
+    {
+        if ($temporary !== null) {
+            return $this->setTemporary($temporary);
+        }
+
+        return $this->isTemporary();
     }
 
     /**

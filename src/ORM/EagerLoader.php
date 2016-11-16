@@ -160,18 +160,42 @@ class EagerLoader
     }
 
     /**
-     * Set whether or not contained associations will load fields automatically.
+     * Sets whether or not contained associations will load fields automatically.
      *
-     * @param bool|null $value The value to set.
+     * @param bool $enable The value to set.
+     * @return $this
+     */
+    public function enableAutoFields($enable)
+    {
+        $this->_autoFields = (bool)$enable;
+
+        return $this;
+    }
+
+    /**
+     * Gets whether or not contained associations will load fields automatically.
+     *
      * @return bool The current value.
      */
-    public function autoFields($value = null)
+    public function isAutoFieldsEnabled()
     {
-        if ($value !== null) {
-            $this->_autoFields = (bool)$value;
+        return $this->_autoFields;
+    }
+
+    /**
+     * Sets/Gets whether or not contained associations will load fields automatically.
+     *
+     * @deprecated 3.4.0 Use enableAutoFields()/isAutoFieldsEnabled() instead.
+     * @param bool|null $enable The value to set.
+     * @return bool The current value.
+     */
+    public function autoFields($enable = null)
+    {
+        if ($enable !== null) {
+            $this->enableAutoFields($enable);
         }
 
-        return $this->_autoFields;
+        return $this->isAutoFieldsEnabled();
     }
 
     /**
@@ -181,25 +205,22 @@ class EagerLoader
      * parameter, this will translate in setting all those associations with the
      * `matching` option.
      *
-     * If called with no arguments it will return the current tree of associations to
-     * be matched.
+     *  ### Options
+     *  - 'joinType': INNER, OUTER, ...
+     *  - 'fields': Fields to contain
      *
-     * @param string|null $assoc A single association or a dot separated path of associations.
+     * @param string $assoc A single association or a dot separated path of associations.
      * @param callable|null $builder the callback function to be used for setting extra
      * options to the filtering query
-     * @param array $options Extra options for the association matching, such as 'joinType'
-     * and 'fields'
-     * @return array The resulting containments array
+     * @param array $options Extra options for the association matching.
+     * @return $this
      */
-    public function matching($assoc = null, callable $builder = null, $options = [])
+    public function setMatching($assoc, callable $builder = null, $options = [])
     {
         if ($this->_matching === null) {
             $this->_matching = new self();
         }
 
-        if ($assoc === null) {
-            return $this->_matching->contain();
-        }
         if (!isset($options['joinType'])) {
             $options['joinType'] = 'INNER';
         }
@@ -218,7 +239,50 @@ class EagerLoader
 
         $pointer[$last] = ['queryBuilder' => $builder, 'matching' => true] + $options;
 
-        return $this->_matching->contain($containments);
+        $this->_matching->contain($containments);
+
+        return $this;
+    }
+
+    /**
+     * Returns the current tree of associations to be matched.
+     *
+     * @return array The resulting containments array
+     */
+    public function getMatching()
+    {
+        if ($this->_matching === null) {
+            $this->_matching = new self();
+        }
+
+        return $this->_matching->contain();
+    }
+
+    /**
+     * Adds a new association to the list that will be used to filter the results of
+     * any given query based on the results of finding records for that association.
+     * You can pass a dot separated path of associations to this method as its first
+     * parameter, this will translate in setting all those associations with the
+     * `matching` option.
+     *
+     * If called with no arguments it will return the current tree of associations to
+     * be matched.
+     *
+     * @deprecated 3.4.0 Use setMatching()/getMatching() instead.
+     * @param string|null $assoc A single association or a dot separated path of associations.
+     * @param callable|null $builder the callback function to be used for setting extra
+     * options to the filtering query
+     * @param array $options Extra options for the association matching, such as 'joinType'
+     * and 'fields'
+     * @return array The resulting containments array
+     */
+    public function matching($assoc = null, callable $builder = null, $options = [])
+    {
+        if ($assoc !== null) {
+            $this->setMatching($assoc, $builder, $options);
+        }
+
+        return $this->getMatching();
     }
 
     /**

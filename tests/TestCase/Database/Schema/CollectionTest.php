@@ -25,7 +25,14 @@ use Cake\TestSuite\TestCase;
  */
 class CollectionTest extends TestCase
 {
+    /**
+     * @var \Cake\Database\Connection
+     */
+    public $connection;
 
+    /**
+     * @var array
+     */
     public $fixtures = [
         'core.users'
     ];
@@ -77,7 +84,7 @@ class CollectionTest extends TestCase
     public function testDescribeCache()
     {
         $schema = $this->connection->schemaCollection();
-        $table = $this->connection->schemaCollection()->describe('users');
+        $table = $schema->describe('users');
 
         Cache::delete('test_users', '_cake_model_');
         $this->connection->cacheMetadata(true);

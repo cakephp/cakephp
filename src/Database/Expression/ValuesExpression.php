@@ -103,21 +103,44 @@ class ValuesExpression implements ExpressionInterface
     }
 
     /**
-     * Sets the columns to be inserted. If no params are passed, then it returns
-     * the currently stored columns
+     * Sets the columns to be inserted.
      *
-     * @param array|null $cols arrays with columns to be inserted
-     * @return array|$this
+     * @param array $cols Array with columns to be inserted.
+     * @return $this
      */
-    public function columns($cols = null)
+    public function setColumns($cols)
     {
-        if ($cols === null) {
-            return $this->_columns;
-        }
         $this->_columns = $cols;
         $this->_castedExpressions = false;
 
         return $this;
+    }
+
+    /**
+     * Gets the columns to be inserted.
+     *
+     * @return array
+     */
+    public function getColumns()
+    {
+        return $this->_columns;
+    }
+
+    /**
+     * Sets the columns to be inserted. If no params are passed, then it returns
+     * the currently stored columns.
+     *
+     * @deprecated 3.4.0 Use setColumns()/getColumns() instead.
+     * @param array|null $cols Array with columns to be inserted.
+     * @return array|$this
+     */
+    public function columns($cols = null)
+    {
+        if ($cols !== null) {
+            return $this->setColumns($cols);
+        }
+
+        return $this->getColumns();
     }
 
     /**
@@ -142,21 +165,13 @@ class ValuesExpression implements ExpressionInterface
     }
 
     /**
-     * Sets the values to be inserted. If no params are passed, then it returns
-     * the currently stored values
+     * Sets the values to be inserted.
      *
-     * @param array|null $values arrays with values to be inserted
-     * @return array|$this
+     * @param array $values Array with values to be inserted.
+     * @return $this
      */
-    public function values($values = null)
+    public function setValues($values)
     {
-        if ($values === null) {
-            if (!$this->_castedExpressions) {
-                $this->_processExpressions();
-            }
-
-            return $this->_values;
-        }
         $this->_values = $values;
         $this->_castedExpressions = false;
 
@@ -164,19 +179,76 @@ class ValuesExpression implements ExpressionInterface
     }
 
     /**
+     * Gets the values to be inserted.
+     *
+     * @return array
+     */
+    public function getValues()
+    {
+        if (!$this->_castedExpressions) {
+            $this->_processExpressions();
+        }
+
+        return $this->_values;
+    }
+
+    /**
+     * Sets the values to be inserted. If no params are passed, then it returns
+     * the currently stored values
+     *
+     * @param array|null $values Array with values to be inserted.
+     * @return array|$this
+     */
+    public function values($values = null)
+    {
+        if ($values !== null) {
+            return $this->setValues($values);
+        }
+
+        return $this->getValues();
+    }
+
+    /**
+     * Sets the query object to be used as the values expression to be evaluated
+     * to insert records in the table.
+     *
+     * @param \Cake\Database\Query $query The query to set
+     * @return $this
+     */
+    public function setQuery(Query $query)
+    {
+        $this->_query = $query;
+
+        return $this;
+    }
+
+    /**
+     * Gets the query object to be used as the values expression to be evaluated
+     * to insert records in the table.
+     *
+     * @return \Cake\Database\Query
+     */
+    public function getQuery()
+    {
+        return $this->_query;
+    }
+
+    /**
      * Sets the query object to be used as the values expression to be evaluated
      * to insert records in the table. If no params are passed, then it returns
      * the currently stored query
      *
-     * @param \Cake\Database\Query|null $query The query to set/get
-     * @return \Cake\Database\Query|null
+     * @deprecated 3.4.0 Use setQuery()/getQuery() instead.
+     * @param \Cake\Database\Query|null $query The query to set
+     * @return \Cake\Database\Query|null|$this
      */
     public function query(Query $query = null)
     {
-        if ($query === null) {
-            return $this->_query;
+        if ($query !== null) {
+            return $this->setQuery($query);
         }
-        $this->_query = $query;
+
+        return $this->getQuery();
     }
 
     /**

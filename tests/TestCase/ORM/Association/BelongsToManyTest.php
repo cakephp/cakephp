@@ -181,7 +181,7 @@ class BelongsToManyTest extends TestCase
     public function testJunctionConnection()
     {
         $mock = $this->getMockBuilder('Cake\Database\Connection')
-                ->setMethods(['driver'])
+                ->setMethods(['setDriver'])
                 ->setConstructorArgs(['name' => 'other_source'])
                 ->getMock();
         ConnectionManager::config('other_source', $mock);
@@ -192,7 +192,7 @@ class BelongsToManyTest extends TestCase
             'targetTable' => $this->tag
         ]);
         $junction = $assoc->junction();
-        $this->assertSame($mock, $junction->connection());
+        $this->assertSame($mock, $junction->getConnection());
         ConnectionManager::drop('other_source');
     }
 
