@@ -52,7 +52,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test Route compiling.
+     * Test Route compiling.
      *
      * @return void
      */
@@ -121,7 +121,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that route parameters that overlap don't cause errors.
+     * Test that route parameters that overlap don't cause errors.
      *
      * @return void
      */
@@ -137,7 +137,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test compiling routes with keys that have patterns
+     * Test compiling routes with keys that have patterns
      *
      * @return void
      */
@@ -206,6 +206,11 @@ class RouteTest extends TestCase
         $this->assertEquals(['url_title', 'id'], $route->keys);
     }
 
+    /**
+     * Test routes with unicode patterns.
+     *
+     * @return void
+     */
     public function testRouteCompilingWithUnicodePatterns()
     {
         $route = new Route(
@@ -226,7 +231,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test more complex route compiling & parsing with mid route greedy stars
+     * Test more complex route compiling & parsing with mid route greedy stars
      * and optional routing parameters
      *
      * @return void
@@ -287,7 +292,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that routes match their pattern.
+     * Test that routes match their pattern.
      *
      * @return void
      */
@@ -436,7 +441,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that non-greedy routes fail with extra passed args
+     * Test that non-greedy routes fail with extra passed args
      *
      * @return void
      */
@@ -452,7 +457,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that falsey values do not interrupt a match.
+     * Test that falsey values do not interrupt a match.
      *
      * @return void
      */
@@ -466,7 +471,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test match() with greedy routes, and passed args.
+     * Test match() with greedy routes, and passed args.
      *
      * @return void
      */
@@ -622,7 +627,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that match with patterns works.
+     * Test that match with patterns works.
      *
      * @return void
      */
@@ -676,7 +681,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * Test separartor.
+     * Test separator.
      *
      * @return void
      */
@@ -701,7 +706,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test the parse method of Route.
+     * Test the parse method of Route.
      *
      * @return void
      */
@@ -769,7 +774,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test numerically indexed defaults, get appended to pass
+     * Test numerically indexed defaults, get appended to pass
      *
      * @return void
      */
@@ -787,7 +792,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that http header conditions can cause route failures.
+     * Test that http header conditions can cause route failures.
      *
      * @return void
      */
@@ -807,7 +812,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that http header conditions can cause route failures.
+     * Test that http header conditions can cause route failures.
      *
      * @return void
      */
@@ -833,7 +838,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that http header conditions can work with URL generation
+     * Test that http header conditions can work with URL generation
      *
      * @return void
      */
@@ -901,7 +906,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that patterns work for :action
+     * Test that patterns work for :action
      *
      * @return void
      */
@@ -932,7 +937,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test the parseArgs method
+     * Test the parseArgs method
      *
      * @return void
      */
@@ -987,7 +992,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test restructuring args with pass key
+     * Test restructuring args with pass key
      *
      * @return void
      */
@@ -1053,7 +1058,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test getName();
+     * Test getName();
      *
      * @return void
      */
@@ -1134,7 +1139,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that utf-8 patterns work for :section
+     * Test that utf-8 patterns work for :section
      *
      * @return void
      */
