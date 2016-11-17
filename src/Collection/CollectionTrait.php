@@ -371,7 +371,7 @@ trait CollectionTrait
      */
     public function append($items)
     {
-        $list = new AppendIterator;
+        $list = new AppendIterator();
         $list->append($this->unwrap());
         $list->append((new Collection($items))->unwrap());
 

@@ -707,7 +707,7 @@ class TimeTest extends TestCase
      * @dataProvider classNameProvider
      * @return void
      */
-    public function testJsonEnconde($class)
+    public function testJsonEncode($class)
     {
         if (version_compare(INTL_ICU_VERSION, '50.0', '<')) {
             $this->markTestSkipped('ICU 5x is needed');
@@ -718,6 +718,9 @@ class TimeTest extends TestCase
 
         $class::setJsonEncodeFormat('yyyy-MM-dd HH:mm:ss');
         $this->assertEquals('"2014-04-20 10:10:10"', json_encode($time));
+
+        $class::setJsonEncodeFormat($class::UNIX_TIMESTAMP_FORMAT);
+        $this->assertEquals('1397988610', json_encode($time));
     }
 
     /**

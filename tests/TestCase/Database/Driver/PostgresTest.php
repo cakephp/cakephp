@@ -14,8 +14,9 @@
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Database\Query;
 use Cake\TestSuite\TestCase;
-use \PDO;
+use PDO;
 
 /**
  * Tests Postgres driver
@@ -155,7 +156,7 @@ class PostgresTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $query = new \Cake\Database\Query($connection);
+        $query = new Query($connection);
         $query->insert(['id', 'title'])
             ->into('articles')
             ->values([1, 'foo']);
@@ -163,7 +164,7 @@ class PostgresTest extends TestCase
         $query = $translator($query);
         $this->assertEquals('RETURNING *', $query->clause('epilog'));
 
-        $query = new \Cake\Database\Query($connection);
+        $query = new Query($connection);
         $query->insert(['id', 'title'])
             ->into('articles')
             ->values([1, 'foo'])

@@ -1583,7 +1583,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function func()
     {
         if (empty($this->_functionsBuilder)) {
-            $this->_functionsBuilder = new FunctionsBuilder;
+            $this->_functionsBuilder = new FunctionsBuilder();
         }
 
         return $this->_functionsBuilder;
@@ -1763,7 +1763,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     {
         if ($binder === null) {
             if ($this->_valueBinder === null) {
-                $this->_valueBinder = new ValueBinder;
+                $this->_valueBinder = new ValueBinder();
             }
 
             return $this->_valueBinder;

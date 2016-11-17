@@ -154,13 +154,13 @@ class TupleComparison extends Comparison
             return;
         }
 
-        foreach ($value as $i => $value) {
+        foreach ($value as $i => $val) {
             if ($this->isMulti()) {
-                foreach ($value as $v) {
+                foreach ($val as $v) {
                     $this->_traverseValue($v, $callable);
                 }
             } else {
-                $this->_traverseValue($value, $callable);
+                $this->_traverseValue($val, $callable);
             }
         }
     }

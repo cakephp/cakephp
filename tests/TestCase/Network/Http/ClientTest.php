@@ -194,6 +194,40 @@ class ClientTest extends TestCase
     }
 
     /**
+     * test get request with no data
+     *
+     * @return void
+     */
+    public function testGetNoData()
+    {
+        $response = new Response();
+
+        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+            ->setMethods(['send'])
+            ->getMock();
+        $mock->expects($this->once())
+            ->method('send')
+            ->with($this->callback(function ($request) {
+                $this->assertEquals(Request::METHOD_GET, $request->getMethod());
+                $this->assertEmpty($request->getHeaderLine('Content-Type'), 'Should have no content-type set');
+                $this->assertEquals(
+                    'http://cakephp.org/search',
+                    $request->getUri() . ''
+                );
+
+                return true;
+            }))
+            ->will($this->returnValue([$response]));
+
+        $http = new Client([
+            'host' => 'cakephp.org',
+            'adapter' => $mock
+        ]);
+        $result = $http->get('/search');
+        $this->assertSame($result, $response);
+    }
+
+    /**
      * test get request with querystring data
      *
      * @return void

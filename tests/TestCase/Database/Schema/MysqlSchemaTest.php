@@ -472,23 +472,33 @@ SQL;
             // strings
             [
                 'title',
+                ['type' => 'string', 'length' => 25, 'null' => true, 'default' => null],
+                '`title` VARCHAR(25)',
+            ],
+            [
+                'title',
                 ['type' => 'string', 'length' => 25, 'null' => false],
                 '`title` VARCHAR(25) NOT NULL'
             ],
             [
                 'title',
                 ['type' => 'string', 'length' => 25, 'null' => true, 'default' => 'ignored'],
-                '`title` VARCHAR(25) DEFAULT NULL'
+                '`title` VARCHAR(25) DEFAULT \'ignored\'',
             ],
             [
-                'id',
-                ['type' => 'string', 'length' => 32, 'fixed' => true, 'null' => false],
-                '`id` CHAR(32) NOT NULL'
+                'title',
+                ['type' => 'string', 'length' => 25, 'null' => true, 'default' => ''],
+                '`title` VARCHAR(25) DEFAULT \'\'',
             ],
             [
                 'role',
                 ['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
                 '`role` VARCHAR(10) NOT NULL DEFAULT \'admin\''
+            ],
+            [
+                'id',
+                ['type' => 'string', 'length' => 32, 'fixed' => true, 'null' => false],
+                '`id` CHAR(32) NOT NULL'
             ],
             [
                 'title',
@@ -623,8 +633,18 @@ SQL;
             ],
             [
                 'checked',
+                ['type' => 'boolean', 'default' => false, 'null' => false],
+                '`checked` BOOLEAN NOT NULL DEFAULT FALSE'
+            ],
+            [
+                'checked',
                 ['type' => 'boolean', 'default' => true, 'null' => false],
                 '`checked` BOOLEAN NOT NULL DEFAULT TRUE'
+            ],
+            [
+                'checked',
+                ['type' => 'boolean', 'default' => false, 'null' => true],
+                '`checked` BOOLEAN DEFAULT FALSE'
             ],
             // datetimes
             [

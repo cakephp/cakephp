@@ -84,7 +84,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     /**
      * Test an invalid rendering class.
      *
-     * @expectedException Exception
+     * @expectedException \Exception
      * @expectedExceptionMessage The 'TotallyInvalid' renderer class could not be found
      */
     public function testInvalidRenderer()

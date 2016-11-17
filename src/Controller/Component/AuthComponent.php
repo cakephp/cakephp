@@ -276,6 +276,7 @@ class AuthComponent extends Component
             return null;
         }
 
+        /* @var \Cake\Controller\Controller $controller */
         $controller = $event->subject();
 
         $action = strtolower($controller->request->params['action']);

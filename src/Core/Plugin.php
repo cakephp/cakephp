@@ -158,7 +158,7 @@ class Plugin
 
         if ($config['autoload'] === true) {
             if (empty(static::$_loader)) {
-                static::$_loader = new ClassLoader;
+                static::$_loader = new ClassLoader();
                 static::$_loader->register();
             }
             static::$_loader->addNamespace(

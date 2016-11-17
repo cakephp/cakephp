@@ -491,6 +491,30 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test explicit method/enctype options.
+     *
+     * Explicit method overwrites inferred method from 'type'
+     *
+     * @return void
+     */
+    public function testCreateExplictMethodEnctype()
+    {
+        $encoding = strtolower(Configure::read('App.encoding'));
+        $result = $this->Form->create(false, [
+            'type' => 'get',
+            'method' => 'put',
+            'enctype' => 'multipart/form-data'
+        ]);
+        $expected = ['form' => [
+            'method' => 'put',
+            'action' => '/articles/add',
+            'enctype' => 'multipart/form-data',
+            'accept-charset' => $encoding
+        ]];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test create() with the templates option.
      *
      * @return void
@@ -2660,8 +2684,8 @@ class FormHelperTest extends TestCase
      */
     public function testFormValidationMultiRecord()
     {
-        $one = new Entity;
-        $two = new Entity;
+        $one = new Entity();
+        $two = new Entity();
         TableRegistry::get('Contacts', [
             'className' => __NAMESPACE__ . '\ContactsTable'
         ]);

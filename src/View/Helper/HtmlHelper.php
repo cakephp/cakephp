@@ -89,6 +89,7 @@ class HtmlHelper extends Helper
      * Breadcrumbs.
      *
      * @var array
+     * @deprecated 3.3.6 Use the BreadcrumbsHelper instead
      */
     protected $_crumbs = [];
 
@@ -153,6 +154,7 @@ class HtmlHelper extends Helper
      * @return $this
      * @see \Cake\View\Helper\HtmlHelper::link() for details on $options that can be used.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
+     * @deprecated 3.3.6 Use the BreadcrumbsHelper instead
      */
     public function addCrumb($name, $link = null, array $options = [])
     {
@@ -682,6 +684,7 @@ class HtmlHelper extends Helper
      *   also be an array, see above for details.
      * @return string|null Composed bread crumbs
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
+     * @deprecated 3.3.6 Use the BreadcrumbsHelper instead
      */
     public function getCrumbs($separator = '&raquo;', $startText = false)
     {
@@ -720,6 +723,7 @@ class HtmlHelper extends Helper
      *   also be an array, see `HtmlHelper::getCrumbs` for details.
      * @return string|null Breadcrumbs HTML list.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
+     * @deprecated 3.3.6 Use the BreadcrumbsHelper instead
      */
     public function getCrumbList(array $options = [], $startText = false)
     {
@@ -772,6 +776,7 @@ class HtmlHelper extends Helper
      * @param string|array|bool $startText Text to prepend
      * @param bool $escape If the output should be escaped or not
      * @return array Crumb list including startText (if provided)
+     * @deprecated 3.3.6 Use the BreadcrumbsHelper instead
      */
     protected function _prepareCrumbs($startText, $escape = true)
     {

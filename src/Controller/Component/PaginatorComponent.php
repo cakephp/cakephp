@@ -179,6 +179,7 @@ class PaginatorComponent extends Component
         $options['page'] = (int)$options['page'] < 1 ? 1 : (int)$options['page'];
         list($finder, $options) = $this->_extractFinder($options);
 
+        /* @var \Cake\Datasource\RepositoryInterface $object */
         if (empty($query)) {
             $query = $object->find($finder, $options);
         } else {

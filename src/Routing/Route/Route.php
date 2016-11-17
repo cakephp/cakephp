@@ -350,7 +350,7 @@ class Route
         if (empty($this->_extensions)) {
             return [$url, null];
         }
-        preg_match('/\.([0-9a-z]*)$/', $url, $match);
+        preg_match('/\.([0-9a-z\.]*)$/', $url, $match);
         if (empty($match[1])) {
             return [$url, null];
         }

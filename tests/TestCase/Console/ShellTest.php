@@ -1174,6 +1174,36 @@ TEXT;
     }
 
     /**
+     * test run command missing parameters
+     *
+     * @return void
+     */
+    public function testRunCommandMainMissingArgument()
+    {
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['main', 'startup', 'getOptionParser'])
+            ->setConstructorArgs([$io])
+            ->getMock();
+
+        $parser = new ConsoleOptionParser('test');
+        $parser->addArgument('filename', [
+            'required' => true,
+            'help' => 'a file',
+        ]);
+        $shell->expects($this->once())
+            ->method('getOptionParser')
+            ->will($this->returnValue($parser));
+        $shell->expects($this->never())->method('main');
+
+        $io->expects($this->once())
+            ->method('err')
+            ->with('<error>Error: Missing required arguments. filename is required.</error>');
+        $result = $shell->runCommand([]);
+        $this->assertFalse($result, 'Shell should fail');
+    }
+
+    /**
      * test wrapBlock wrapping text.
      *
      * @return void

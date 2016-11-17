@@ -24,6 +24,15 @@ use Cake\TestSuite\TestCase;
  */
 class DateTypeTest extends TestCase
 {
+    /**
+     * @var \Cake\Database\Type\DateType
+     */
+    public $type;
+
+    /**
+     * @var \Cake\Database\Driver
+     */
+    public $driver;
 
     /**
      * Setup
@@ -203,10 +212,10 @@ class DateTypeTest extends TestCase
     {
         $this->type->useImmutable();
         $this->assertInstanceOf('DateTimeImmutable', $this->type->marshal('2015-11-01'));
-        $this->assertInstanceOf('DateTimeImmutable', $this->type->toPhp('2015-11-01', $this->driver));
+        $this->assertInstanceOf('DateTimeImmutable', $this->type->toPHP('2015-11-01', $this->driver));
 
         $this->type->useMutable();
         $this->assertInstanceOf('DateTime', $this->type->marshal('2015-11-01'));
-        $this->assertInstanceOf('DateTime', $this->type->toPhp('2015-11-01', $this->driver));
+        $this->assertInstanceOf('DateTime', $this->type->toPHP('2015-11-01', $this->driver));
     }
 }

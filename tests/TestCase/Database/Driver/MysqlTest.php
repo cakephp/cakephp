@@ -16,7 +16,7 @@ namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
-use \PDO;
+use PDO;
 
 /**
  * Tests Mysql driver

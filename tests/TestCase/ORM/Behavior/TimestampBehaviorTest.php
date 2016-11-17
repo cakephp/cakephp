@@ -221,9 +221,9 @@ class TimestampBehaviorTest extends TestCase
     public function testGetTimestamp()
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
-        $this->Behavior = new TimestampBehavior($table);
+        $behavior = new TimestampBehavior($table);
 
-        $return = $this->Behavior->timestamp();
+        $return = $behavior->timestamp();
         $this->assertInstanceOf(
             'DateTime',
             $return,
@@ -232,22 +232,20 @@ class TimestampBehaviorTest extends TestCase
 
         $now = Time::now();
         $this->assertEquals($now, $return);
-
-        return $this->Behavior;
     }
 
     /**
      * testGetTimestampPersists
      *
-     * @depends testGetTimestamp
      * @return void
      */
-    public function testGetTimestampPersists($behavior)
+    public function testGetTimestampPersists()
     {
-        $this->Behavior = $behavior;
+        $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $behavior = new TimestampBehavior($table);
 
-        $initialValue = $this->Behavior->timestamp();
-        $postValue = $this->Behavior->timestamp();
+        $initialValue = $behavior->timestamp();
+        $postValue = $behavior->timestamp();
 
         $this->assertSame(
             $initialValue,
@@ -259,15 +257,15 @@ class TimestampBehaviorTest extends TestCase
     /**
      * testGetTimestampRefreshes
      *
-     * @depends testGetTimestamp
      * @return void
      */
-    public function testGetTimestampRefreshes($behavior)
+    public function testGetTimestampRefreshes()
     {
-        $this->Behavior = $behavior;
+        $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $behavior = new TimestampBehavior($table);
 
-        $initialValue = $this->Behavior->timestamp();
-        $postValue = $this->Behavior->timestamp(null, true);
+        $initialValue = $behavior->timestamp();
+        $postValue = $behavior->timestamp(null, true);
 
         $this->assertNotSame(
             $initialValue,

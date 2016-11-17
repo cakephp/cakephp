@@ -332,9 +332,8 @@ class SqliteSchema extends BaseSchema
             $out .= ' PRIMARY KEY AUTOINCREMENT';
         }
 
-        if (isset($data['null']) && $data['null'] === true) {
+        if (isset($data['null']) && $data['null'] === true && $data['type'] === 'timestamp') {
             $out .= ' DEFAULT NULL';
-            unset($data['default']);
         }
         if (isset($data['default'])) {
             $out .= ' DEFAULT ' . $this->_driver->schemaValue($data['default']);

@@ -47,7 +47,7 @@ class ResponseEmitter implements EmitterInterface
             if (Configure::read('debug')) {
                 trigger_error($message, E_USER_WARNING);
             } else {
-                Log::warn($message);
+                Log::warning($message);
             }
         }
 

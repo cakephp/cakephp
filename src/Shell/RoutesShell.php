@@ -69,7 +69,7 @@ class RoutesShell extends Shell
             $this->helper('table')->output($output);
             $this->out();
         } catch (MissingRouteException $e) {
-            $this->err("<warning>'$url' did not match any routes.</warning>");
+            $this->warn("'$url' did not match any routes.");
             $this->out();
 
             return false;
