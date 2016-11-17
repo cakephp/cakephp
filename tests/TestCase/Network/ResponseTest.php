@@ -2111,6 +2111,22 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test the withLocation method.
+     *
+     * @return void
+     */
+    public function testWithLocation()
+    {
+        $response = new Response();
+        $this->assertSame('', $response->getHeaderLine('Location'), 'No header should be set.');
+        $new = $response->withLocation('http://example.org');
+
+        $this->assertNotSame($new, $response);
+        $this->assertSame('', $response->getHeaderLine('Location'), 'No header should be set');
+        $this->assertSame('http://example.org', $new->getHeaderLine('Location'), 'Header should be set');
+    }
+
+    /**
      * Test get protocol version.
      *
      * @return void

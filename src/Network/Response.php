@@ -723,6 +723,17 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Return an instance with an updated location header
+     *
+     * @param string $url The location to redirect to.
+     * @return static A new response with the Location header set.
+     */
+    public function withLocation($url)
+    {
+        return $this->withHeader('Location', $url);
+    }
+
+    /**
      * Sets a header.
      *
      * @param string $header Header key.
