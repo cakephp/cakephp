@@ -40,6 +40,85 @@ trait InstanceConfigTrait
     protected $_configInitialized = false;
 
     /**
+     * Sets the config.
+     *
+     * ### Usage
+     *
+     * Setting a specific value:
+     *
+     * ```
+     * $this->setConfig('key', $value);
+     * ```
+     *
+     * Setting a nested value:
+     *
+     * ```
+     * $this->setConfig('some.nested.key', $value);
+     * ```
+     *
+     * Updating multiple config settings at the same time:
+     *
+     * ```
+     * $this->setConfig(['one' => 'value', 'another' => 'value']);
+     * ```
+     *
+     * @param string|array $key The key to set, or a complete array of configs.
+     * @param mixed|null $value The value to set.
+     * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
+     * @return $this
+     * @throws \Cake\Core\Exception\Exception When trying to set a key that is invalid.
+     */
+    public function setConfig($key, $value = null, $merge = true)
+    {
+        if (!$this->_configInitialized) {
+            $this->_config = $this->_defaultConfig;
+            $this->_configInitialized = true;
+        }
+
+        $this->_configWrite($key, $value, $merge);
+
+        return $this;
+    }
+
+    /**
+     * Returns the config.
+     *
+     * ### Usage
+     *
+     * Reading the whole config:
+     *
+     * ```
+     * $this->getConfig();
+     * ```
+     *
+     * Reading a specific value:
+     *
+     * ```
+     * $this->getConfig('key');
+     * ```
+     *
+     * Reading a nested value:
+     *
+     * ```
+     * $this->getConfig('some.nested.key');
+     * ```
+     *
+     * @param string|null $key The key to get or null for the whole config.
+     * @return mixed Config value being read.
+     */
+    public function getConfig($key = null)
+    {
+        if (!$this->_configInitialized) {
+            $this->_config = $this->_defaultConfig;
+            $this->_configInitialized = true;
+        }
+
+        return $this->_configRead($key);
+    }
+
+    /**
+     * Gets/Sets the config.
+     *
      * ### Usage
      *
      * Reading the whole config:
@@ -78,6 +157,7 @@ trait InstanceConfigTrait
      * $this->config(['one' => 'value', 'another' => 'value']);
      * ```
      *
+     * @deprecated 3.4.0 use setConfig()/getConfig() instead.
      * @param string|array|null $key The key to get/set, or a complete array of configs.
      * @param mixed|null $value The value to set.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
@@ -86,18 +166,11 @@ trait InstanceConfigTrait
      */
     public function config($key = null, $value = null, $merge = true)
     {
-        if (!$this->_configInitialized) {
-            $this->_config = $this->_defaultConfig;
-            $this->_configInitialized = true;
-        }
-
         if (is_array($key) || func_num_args() >= 2) {
-            $this->_configWrite($key, $value, $merge);
-
-            return $this;
+            return $this->setConfig($key, $value, $merge);
         }
 
-        return $this->_configRead($key);
+        return $this->getConfig($key);
     }
 
     /**
@@ -139,7 +212,7 @@ trait InstanceConfigTrait
     }
 
     /**
-     * Read a config variable
+     * Reads a config key.
      *
      * @param string|null $key Key to read.
      * @return mixed
@@ -169,7 +242,7 @@ trait InstanceConfigTrait
     }
 
     /**
-     * Write a config variable
+     * Writes a config key.
      *
      * @param string|array $key Key to write to.
      * @param mixed $value Value to write.
@@ -230,7 +303,7 @@ trait InstanceConfigTrait
     }
 
     /**
-     * Delete a single config key
+     * Deletes a single config key.
      *
      * @param string $key Key to delete.
      * @return void
