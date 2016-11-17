@@ -670,6 +670,7 @@ class Response implements ResponseInterface
      *  - an array of string headers is also accepted
      * @param string|array|null $value The header value(s)
      * @return array List of headers to be sent
+     * @deprecated 3.4.0 Use `withHeader()`, `getHeaderLine()` and `getHeaders()` instead.
      */
     public function header($header = null, $value = null)
     {
@@ -705,7 +706,9 @@ class Response implements ResponseInterface
      *
      * @param null|string $url Either null to get the current location, or a string to set one.
      * @return string|null When setting the location null will be returned. When reading the location
-     *    a string of the current location header value (if any) will be returned.
+     *   a string of the current location header value (if any) will be returned.
+     * @deprecated 3.4.0 Mutable responses are deprecated. Use `withLocation()` and `getHeaderLine()`
+     *   instead.
      */
     public function location($url = null)
     {
@@ -753,6 +756,7 @@ class Response implements ResponseInterface
      *
      * @param string|callable|null $content the string or callable message to be sent
      * @return string Current message buffer if $content param is passed as null
+     * @deprecated 3.4.0 Mutable response methods are deprecated. Use `withBody()` and `getBody()` instead.
      */
     public function body($content = null)
     {
@@ -806,7 +810,7 @@ class Response implements ResponseInterface
      * @param int|null $code the HTTP status code
      * @return int Current status code
      * @throws \InvalidArgumentException When an unknown status code is reached.
-     * @deprecated 3.4.0 Use getStatusCode() to read the status code instead.
+     * @deprecated 3.4.0 Use `getStatusCode()` and `withStatusCode()` instead.
      */
     public function statusCode($code = null)
     {
