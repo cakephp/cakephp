@@ -687,7 +687,7 @@ class Text
      *
      * @param string $text The string being checked for length
      * @param array $options An array of options.
-     * @return string
+     * @return int
      */
     protected static function _strlen($text, array $options)
     {
