@@ -106,6 +106,31 @@ class RouteTest extends TestCase
     }
 
     /**
+     * Test that single letter placeholders work.
+     *
+     * @return void
+     */
+    public function testRouteBuildingSmallPlaceholders()
+    {
+        $route = new Route(
+            '/fighters/:id/move/:x/:y',
+            ['controller' => 'Fighters', 'action' => 'move'],
+            ['id' => '\d+', 'x' => '\d+', 'y' => '\d+', 'pass' => ['id', 'x', 'y']]
+        );
+        $pattern = $route->compile();
+        $this->assertRegExp($pattern, '/fighters/123/move/8/42');
+
+        $result = $route->match([
+            'controller' => 'Fighters',
+            'action' => 'move',
+            'id' => 123,
+            'x' => 8,
+            'y' => 42
+        ]);
+        $this->assertEquals('/fighters/123/move/8/42', $result);
+    }
+
+    /**
      * Test parsing routes with extensions.
      *
      * @return void

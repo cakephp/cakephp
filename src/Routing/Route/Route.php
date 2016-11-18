@@ -195,7 +195,7 @@ class Route
         $names = $routeParams = [];
         $parsed = preg_quote($this->template, '#');
 
-        preg_match_all('#:([A-Za-z0-9_-]+[A-Z0-9a-z])#', $route, $namedElements);
+        preg_match_all('/:([a-z0-9-_]+(?<![-_]))/i', $route, $namedElements);
         foreach ($namedElements[1] as $i => $name) {
             $search = '\\' . $namedElements[0][$i];
             if (isset($this->options[$name])) {
