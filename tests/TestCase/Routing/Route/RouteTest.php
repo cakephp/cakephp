@@ -25,14 +25,6 @@ use Cake\TestSuite\TestCase;
 class RouteProtected extends Route
 {
     /**
-     * @return array
-     */
-    public function peekExtensions()
-    {
-        return $this->_extensions;
-    }
-
-    /**
      * @param $url
      * @return array
      */
@@ -216,16 +208,16 @@ class RouteTest extends TestCase
     public function testSetExtensions()
     {
         $route = new RouteProtected('/:controller/:action/*', []);
-        $this->assertEquals([], $route->peekExtensions());
+        $this->assertEquals([], $route->getExtensions());
         $route->setExtensions(['xml']);
-        $this->assertEquals(['xml'], $route->peekExtensions());
+        $this->assertEquals(['xml'], $route->getExtensions());
         $route->setExtensions(['xml', 'json', 'zip']);
-        $this->assertEquals(['xml', 'json', 'zip'], $route->peekExtensions());
+        $this->assertEquals(['xml', 'json', 'zip'], $route->getExtensions());
         $route->setExtensions([]);
-        $this->assertEquals([], $route->peekExtensions());
+        $this->assertEquals([], $route->getExtensions());
 
         $route = new RouteProtected('/:controller/:action/*', [], ['_ext' => ['one', 'two']]);
-        $this->assertEquals(['one', 'two'], $route->peekExtensions());
+        $this->assertEquals(['one', 'two'], $route->getExtensions());
     }
 
     /**

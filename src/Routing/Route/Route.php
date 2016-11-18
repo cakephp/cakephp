@@ -368,7 +368,7 @@ class Route
      */
     protected function _parseExtension($url)
     {
-        if (count($this->_extensions) && strpos($url, '.')) {
+        if (count($this->_extensions) && strpos($url, '.') !== false) {
             foreach ($this->_extensions as $ext) {
                 $len = strlen($ext) + 1;
                 if (substr($url, -$len) === '.' . $ext) {
