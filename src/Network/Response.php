@@ -1025,9 +1025,9 @@ class Response implements ResponseInterface
         if (strpos($contentType, '/') === false) {
             return false;
         }
-
         $this->_contentType = $contentType;
         $this->_setContentType();
+
         return $contentType;
     }
 
@@ -1121,9 +1121,9 @@ class Response implements ResponseInterface
         if ($charset === null) {
             return $this->_charset;
         }
-
         $this->_charset = $charset;
         $this->_setContentType();
+
         return $this->_charset;
     }
 

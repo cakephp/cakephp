@@ -712,7 +712,7 @@ class ResponseTest extends TestCase
         $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
         $response->modified('+1 day');
         $this->assertEquals($time->format($format) . ' GMT', $response->modified());
-        $this->assertEquals($time->format($format). ' GMT', $response->getHeaderLine('Last-Modified'));
+        $this->assertEquals($time->format($format) . ' GMT', $response->getHeaderLine('Last-Modified'));
     }
 
     /**
