@@ -454,13 +454,14 @@ class Response implements ResponseInterface
         if (isset($options['status'])) {
             $this->statusCode($options['status']);
         }
-        if (isset($options['type'])) {
-            $this->type($options['type']);
-        }
         if (!isset($options['charset'])) {
             $options['charset'] = Configure::read('App.encoding');
         }
-        $this->charset($options['charset']);
+        $this->_charset = $options['charset'];
+        if (isset($options['type'])) {
+            $this->_contentType = $this->resolveType($options['type']);
+        }
+        $this->_setContentType();
     }
 
     /**
@@ -519,7 +520,10 @@ class Response implements ResponseInterface
         $codeMessage = $this->_statusCodes[$this->_status];
         $this->_setCookies();
         $this->_sendHeader("{$this->_protocol} {$this->_status} {$codeMessage}");
-        $this->_setContentType();
+
+        if (in_array($this->_status, [304, 204])) {
+            $this->_setContentType();
+        }
 
         foreach ($this->headers as $header => $values) {
             foreach ((array)$values as $value) {
@@ -559,9 +563,6 @@ class Response implements ResponseInterface
      */
     protected function _setContentType()
     {
-        if (in_array($this->_status, [304, 204])) {
-            return;
-        }
         $whitelist = [
             'application/javascript', 'application/json', 'application/xml', 'application/rss+xml'
         ];
@@ -675,7 +676,7 @@ class Response implements ResponseInterface
     public function header($header = null, $value = null)
     {
         if ($header === null) {
-            return $this->headers;
+            return $this->getSimpleHeaders();
         }
 
         $headers = is_array($header) ? $header : [$header => $value];
@@ -687,16 +688,36 @@ class Response implements ResponseInterface
                 list($header, $value) = explode(':', $header, 2);
             }
 
-            if ($this->hasHeader($header)) {
-                $header = $this->headerNames[strtolower($header)];
+            $lower = strtolower($header);
+            if (array_key_exists($lower, $this->headerNames)) {
+                $header = $this->headerNames[$lower];
             } else {
-                $this->headerNames[strtolower($header)] = $header;
+                $this->headerNames[$lower] = $header;
             }
 
-            $this->headers[$header] = is_array($value) ? array_map('trim', $value) : trim($value);
+            $this->headers[$header] = is_array($value) ? array_map('trim', $value) : [trim($value)];
         }
 
-        return $this->headers;
+        return $this->getSimpleHeaders();
+    }
+
+    /**
+     * Backwards compatibility helper for getting flattened headers.
+     *
+     * Previously CakePHP would store headers as a simple dictionary, now that
+     * we're supporting PSR7, the internal storage has each header as an array.
+     *
+     * @return array
+     */
+    protected function getSimpleHeaders()
+    {
+        $out = [];
+        foreach ($this->headers as $key => $values) {
+            $header = $this->headerNames[strtolower($key)];
+            $out[$header] = implode(',', $values);
+        }
+
+        return $out;
     }
 
     /**
@@ -720,20 +741,31 @@ class Response implements ResponseInterface
 
             return $result;
         }
+        if ($this->_status === 200) {
+            $this->_status = 302;
+        }
         $this->_setHeader('Location', $url);
 
         return null;
     }
 
     /**
-     * Return an instance with an updated location header
+     * Return an instance with an updated location header.
+     *
+     * If the current status code is 200, it will be replaced
+     * with 302.
      *
      * @param string $url The location to redirect to.
      * @return static A new response with the Location header set.
      */
     public function withLocation($url)
     {
-        return $this->withHeader('Location', $url);
+        $new = $this->withHeader('Location', $url);
+        if ($new->_status === 200) {
+            $new->_status = 302;
+        }
+
+        return $new;
     }
 
     /**
@@ -747,7 +779,7 @@ class Response implements ResponseInterface
     {
         $normalized = strtolower($header);
         $this->headerNames[$normalized] = $header;
-        $this->headers[$header] = $value;
+        $this->headers[$header] = [$value];
     }
 
     /**
@@ -810,7 +842,7 @@ class Response implements ResponseInterface
      * @param int|null $code the HTTP status code
      * @return int Current status code
      * @throws \InvalidArgumentException When an unknown status code is reached.
-     * @deprecated 3.4.0 Use `getStatusCode()` and `withStatusCode()` instead.
+     * @deprecated 3.4.0 Use `getStatusCode()` and `withStatus()` instead.
      */
     public function statusCode($code = null)
     {
@@ -994,7 +1026,47 @@ class Response implements ResponseInterface
             return false;
         }
 
-        return $this->_contentType = $contentType;
+        $this->_contentType = $contentType;
+        $this->_setContentType();
+        return $contentType;
+    }
+
+    /**
+     * Get an updated response with the content type set.
+     *
+     * Either a file extension which will be mapped to a mime-type or a concrete mime-type
+     *
+     * @param string $contentType Content type key alias or mime-type
+     * @return static
+     */
+    public function withType($contentType)
+    {
+        $mappedType = $this->resolveType($contentType);
+        $new = clone $this;
+        $new->_contentType = $mappedType;
+        $new->_setContentType();
+
+        return $new;
+    }
+
+    /**
+     * Translate and validate content-types.
+     *
+     * @param string $contentType The content-type or type alias.
+     * @return string The resolved content-type
+     * @throws \InvalidArgumentException When an invalid content-type or alias is used.
+     */
+    protected function resolveType($contentType)
+    {
+        $mapped = $this->getMimeType($contentType);
+        if ($mapped) {
+            return is_array($mapped) ? current($mapped) : $mapped;
+        }
+        if (strpos($contentType, '/') === false) {
+            throw new InvalidArgumentException(sprintf('"%s" is an invalid content type.', $contentType));
+        }
+
+        return $contentType;
     }
 
     /**
@@ -1050,7 +1122,9 @@ class Response implements ResponseInterface
             return $this->_charset;
         }
 
-        return $this->_charset = $charset;
+        $this->_charset = $charset;
+        $this->_setContentType();
+        return $this->_charset;
     }
 
     /**
