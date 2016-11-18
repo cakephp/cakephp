@@ -262,11 +262,12 @@ class SqliteTest extends TestCase
 
         $query->update('articles')
             ->set(['title' => 'FooBar'])
-            ->where(['published' => true])
+            ->where($query->newExpr()->isNotNull('published'))
+            ->andWhere(['published' => true])
             ->limit(5)
             ->offset(3)
             ->order(['created' => 'DESC']);
 
-        $this->assertEquals('UPDATE articles SET title = :c0 WHERE rowid in (SELECT rowid FROM articles WHERE published = :c1 ORDER BY created DESC LIMIT 5)', $query->sql());
+        $this->assertEquals('UPDATE articles SET title = :c0 WHERE rowid in (SELECT rowid FROM articles WHERE ((published) IS NOT NULL AND published = :c1) ORDER BY created DESC LIMIT 5)', $query->sql());
     }
 }

@@ -74,6 +74,8 @@ trait SqliteDialectTrait
      * Modifies the original delete query to support ORDER BY and LIMIT
      * clauses.
      *
+     * Note: field "rowid" exists in all SQLite tables.
+     *
      * @param \Cake\Database\Query $query The query to translate.
      * @return \Cake\Database\Query
      */
@@ -106,6 +108,8 @@ trait SqliteDialectTrait
     /**
      * Modifies the original delete query to support ORDER BY and LIMIT
      * clauses.
+     *
+     * Note: field "rowid" exists in all SQLite tables.
      *
      * @param \Cake\Database\Query $query The query to translate.
      * @return \Cake\Database\Query
