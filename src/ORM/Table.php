@@ -36,7 +36,6 @@ use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\RolledbackTransactionException;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
-use Cake\Validation\Validation;
 use Cake\Validation\ValidatorAwareTrait;
 use InvalidArgumentException;
 use RuntimeException;
@@ -755,7 +754,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $options += ['sourceTable' => $this];
         $association = new BelongsTo($associated, $options);
 
-        return $this->_associations->add($association->name(), $association);
+        return $this->_associations->add($association->getName(), $association);
     }
 
     /**
@@ -799,7 +798,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $options += ['sourceTable' => $this];
         $association = new HasOne($associated, $options);
 
-        return $this->_associations->add($association->name(), $association);
+        return $this->_associations->add($association->getName(), $association);
     }
 
     /**
@@ -849,7 +848,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $options += ['sourceTable' => $this];
         $association = new HasMany($associated, $options);
 
-        return $this->_associations->add($association->name(), $association);
+        return $this->_associations->add($association->getName(), $association);
     }
 
     /**
@@ -901,7 +900,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $options += ['sourceTable' => $this];
         $association = new BelongsToMany($associated, $options);
 
-        return $this->_associations->add($association->name(), $association);
+        return $this->_associations->add($association->getName(), $association);
     }
 
     /**
@@ -1363,6 +1362,37 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $statement->closeCursor();
 
         return $statement->rowCount();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function deleteEach($conditions, $options = [])
+    {
+        $options = $options + [
+                'strict' => true,
+                'limit' => 0
+            ];
+
+        $event = $this->dispatchEvent('Model.beforeDeleteEach', compact('conditions', 'options'));
+        if ($event->isStopped()) {
+            return $event->result();
+        }
+        $conditions = $event->data('conditions');
+
+        $count = 0;
+        do {
+            $entity = $this->find()->where($conditions)->first();
+            if ($entity === null) {
+                break;
+            }
+            if ($this->delete($entity, $options) === false && $options['strict']) {
+                break;
+            }
+            $count++;
+        } while ($entity !== null && ($options['limit'] == 0 || $count < $options['limit']));
+
+        return $this->dispatchEvent('Model.afterDeleteEach', compact('count'))->data('count');
     }
 
     /**
@@ -2352,6 +2382,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * - Model.beforeDelete => beforeDelete
      * - Model.afterDelete => afterDelete
      * - Model.afterDeleteCommit => afterDeleteCommit
+     * - Model.beforeDeleteEach => beforeDeleteEach
+     * - Model.afterDeleteEach => afterDeleteEach
      * - Model.beforeRules => beforeRules
      * - Model.afterRules => afterRules
      *
@@ -2369,6 +2401,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'Model.beforeDelete' => 'beforeDelete',
             'Model.afterDelete' => 'afterDelete',
             'Model.afterDeleteCommit' => 'afterDeleteCommit',
+            'Model.beforeDeleteEach' => 'beforeDeleteEach',
+            'Model.afterDeleteEach' => 'afterDeleteEach',
             'Model.beforeRules' => 'beforeRules',
             'Model.afterRules' => 'afterRules',
         ];
