@@ -104,8 +104,8 @@ class RouteCollection
         }
         $this->_paths[$path][] = $route;
 
-        $extensions = $route->extensions();
-        if ($extensions) {
+        $extensions = $route->getExtensions();
+        if (count($extensions) > 0) {
             $this->extensions($extensions);
         }
     }
