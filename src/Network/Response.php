@@ -521,7 +521,7 @@ class Response implements ResponseInterface
         $this->_setCookies();
         $this->_sendHeader("{$this->_protocol} {$this->_status} {$codeMessage}");
 
-        if (in_array($this->_status, [304, 204])) {
+        if (!in_array($this->_status, [304, 204])) {
             $this->_setContentType();
         }
 
