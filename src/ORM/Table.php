@@ -1369,8 +1369,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function deleteEach($conditions, $options = [])
     {
-        $options = $options + [
-                'strict' => true,
+        $options += [
+                'stopOnFailure' => true,
                 'limit' => 0
             ];
 
@@ -1386,7 +1386,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             if ($entity === null) {
                 break;
             }
-            if ($this->delete($entity, $options) === false && $options['strict']) {
+            if ($this->delete($entity, $options) === false && $options['stopOnFailure']) {
                 break;
             }
             $count++;
