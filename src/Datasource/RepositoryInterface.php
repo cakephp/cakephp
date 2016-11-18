@@ -115,13 +115,20 @@ interface RepositoryInterface
     public function deleteAll($conditions);
 
     /**
-     * Delete each record individually by matches the conditions. For each
+     * Delete each record individually by matching the conditions. For each
      * matched record Table::delete() is executed providing support for behaviors
      * and events.
      *
      * This method will continue execution until all records are deleted. You should
      * be aware of possible long execution times, and side effects of processing
      * events on a large collection of records.
+     *
+     * ### Options
+     *
+     * Options are passed to Table::delete() with the exception of these.
+     *
+     * - 'stopOnFailure' boolean (default True) stop deleting records should one fail to be deleted.
+     * - 'limit' integer (default 0) Limit the number of records to delete, zero means no limit.
      *
      * @param mixed $conditions Conditions to be used, accepts anything Query::where()
      * can take.
