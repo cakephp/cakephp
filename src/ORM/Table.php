@@ -1580,29 +1580,69 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function deleteEach($conditions, $options = [])
     {
         $options += [
-                'stopOnFailure' => true,
-                'limit' => 0
-            ];
+            'finder' => 'all',
+            'atomic' => true,
+            '_primary' => true,
+            'stopOnFailure' => true,
+            'batch' => 1,
+            'checkRules' => true
+        ];
 
-        $event = $this->dispatchEvent('Model.beforeDeleteEach', compact('conditions', 'options'));
-        if ($event->isStopped()) {
-            return $event->result();
+        $invalid = array_intersect(array_keys($options), ['limit', 'offset', 'page']);
+        if (count($invalid) !== 0) {
+            throw new InvalidArgumentException(sprintf('Option conflicts with batch deleting: %s', implode(', ', $invalid)));
         }
-        $conditions = $event->data('conditions');
 
         $count = 0;
-        do {
-            $entity = $this->find()->where($conditions)->first();
-            if ($entity === null) {
-                break;
-            }
-            if ($this->delete($entity, $options) === false && $options['stopOnFailure']) {
-                break;
-            }
-            $count++;
-        } while ($entity !== null && ($options['limit'] == 0 || $count < $options['limit']));
 
-        return $this->dispatchEvent('Model.afterDeleteEach', compact('count'))->data('count');
+        $atomic = function () use ($conditions, $options, &$count) {
+
+            $query = $this->find($options['finder'])
+                ->where($conditions)
+                ->applyOptions($options);
+
+            if ($options['batch'] > 0) {
+                $query->limit($options['batch']);
+            }
+
+            $entities = $query->all();
+            if ($entities->count() === 0) {
+                return false;
+            }
+
+            $event = $this->dispatchEvent('Model.beforeDeleteEach', compact('entities', 'options'));
+            if ($event->isStopped()) {
+                return false;
+            }
+
+            foreach ($entities as $entity) {
+                if ($this->delete($entity, ['checkRules' => $options['checkRules']]) === false && $options['stopOnFailure']) {
+                    return false;
+                }
+                $count++;
+            }
+
+            $event = $this->dispatchEvent('Model.afterDeleteEach', compact('entities', 'options'));
+
+            return !$event->isStopped();
+        };
+
+        do {
+            $result = false;
+            if ($options['atomic']) {
+                $result = $this->connection()->transactional($atomic);
+            } else {
+                $result = $atomic();
+            }
+
+            if (!$this->connection()->inTransaction() &&
+                ($options['atomic'] || (!$options['atomic'] && $options['_primary']))
+            ) {
+                $this->dispatchEvent('Model.afterDeleteEachCommit', compact('entities', 'options'));
+            }
+        } while ($result);
+
+        return $count;
     }
 
     /**
@@ -2595,6 +2635,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * - Model.afterDeleteCommit => afterDeleteCommit
      * - Model.beforeDeleteEach => beforeDeleteEach
      * - Model.afterDeleteEach => afterDeleteEach
+     * - Model.afterDeleteEachCommit => afterDeleteEachCommit
      * - Model.beforeRules => beforeRules
      * - Model.afterRules => afterRules
      *
@@ -2614,6 +2655,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'Model.afterDeleteCommit' => 'afterDeleteCommit',
             'Model.beforeDeleteEach' => 'beforeDeleteEach',
             'Model.afterDeleteEach' => 'afterDeleteEach',
+            'Model.afterDeleteEachCommit' => 'afterDeleteEachCommit',
             'Model.beforeRules' => 'beforeRules',
             'Model.afterRules' => 'afterRules',
         ];

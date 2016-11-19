@@ -115,26 +115,46 @@ interface RepositoryInterface
     public function deleteAll($conditions);
 
     /**
-     * Delete each record individually by matching the conditions. For each
-     * matched record Table::delete() is executed providing support for behaviors
-     * and events.
+     * Deletes records individually by reading batches that match the conditions. For each
+     * matched record Table::delete() is executed providing support for behaviors and events.
      *
-     * This method will continue execution until all records are deleted. You should
-     * be aware of possible long execution times, and side effects of processing
-     * events on a large collection of records.
+     * This method will continue execution until all records are deleted, or one of the events is stopped.
+     * If a record fails to be deleted the operation will stop (optional).
+     *
+     * This method will *not* trigger afterDeleteCommit events. The event afterDeleteEachCommit will be
+     * broadcast after each batch is committed.
+     *
+     * This method will *not* accept query options that alter the size of a batch, such as limit, offset
+     * and page.
      *
      * ### Options
      *
-     * Options are passed to Table::delete() with the exception of these.
+     * - 'finder' string Defaults to 'all'. The customer finder to use when reading batches.
+     * - `atomic` boolean Defaults to true. When true the deletion happens within a transaction.
+     * - 'stopOnFailure' boolean Defaults to true. Stop deleting records when a record fails to be deleted.
+     * - 'batch' integer Defaults to 1. Number of records to read in batches, zero reads all records.
+     * - `checkRules` boolean Defaults to true. Check deletion rules before deleting the record.
      *
-     * - 'stopOnFailure' boolean (default True) stop deleting records should one fail to be deleted.
-     * - 'limit' integer (default 0) Limit the number of records to delete, zero means no limit.
+     * ### Events
+     *
+     * - `Model.beforeDeleteEach` Fired before the batch delete occurs. If stopped the delete
+     *   will be aborted. Receives the event, \Cake\Datasource\ResultSetInterface, and options.
+     * - `Model.afterDeleteEach` Fired after the batch delete has been successful. Receives
+     *   the event, \Cake\Datasource\ResultSetInterface, and options.
+     * - `Model.afterDeleteEachCommit` Fired after the transaction is committed for
+     *   the batch of atomic deletes. Receives the event, \Cake\Datasource\ResultSetInterface, and options.
+     *
+     * ### Example:
+     *
+     * ```
+     * $count = $articles->deleteEach(['published' => true]);
+     * ```
      *
      * @param mixed $conditions Conditions to be used, accepts anything Query::where()
      * can take.
-     * @param array $options The options for the updates.
+     * @param array|\ArrayAccess $options An array that will be passed to Query::applyOptions()
      * @return int Count Returns the affected rows.
-     * @see \Cake\Datasource\RepositoryInterface::deleteAll()
+     * @see \Cake\Datasource\RepositoryInterface::delete()
      */
     public function deleteEach($conditions, $options = []);
 
