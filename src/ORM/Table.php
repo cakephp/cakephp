@@ -1437,19 +1437,19 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Handles the logic executing of a worker inside a transaction.
      *
-     * @param bool $atomic Whether to execute the worker inside a database transaction.
      * @param callable $worker The worker that will run inside the transaction.
+     * @param bool $atomic Whether to execute the worker inside a database transaction.
      * @return mixed
      */
-    protected function _executeTransaction($atomic, callable $worker)
+    protected function _executeTransaction(callable $worker, $atomic = true)
     {
         if ($atomic) {
             return $this->connection()->transactional(function () use ($worker) {
-                return call_user_func($worker);
+                return $worker();
             });
         }
 
-        return call_user_func($worker);
+        return $worker();
     }
 
     /**
@@ -1459,7 +1459,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param bool $primary True if a primary was used.
      * @return bool Returns true if a transaction was committed.
      */
-    protected function _getCommitUsed($atomic, $primary)
+    protected function _transactionCommitted($atomic, $primary)
     {
         return !$this->connection()->inTransaction() && ($atomic || (!$atomic && $primary));
     }
@@ -1504,9 +1504,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'defaults' => true
         ];
 
-        return $this->_executeTransaction($options['atomic'], function () use ($search, $callback, $options) {
+        return $this->_executeTransaction(function () use ($search, $callback, $options) {
             return $this->_processFindOrCreate($search, $callback, $options);
-        });
+        }, $options['atomic']);
     }
 
     /**
@@ -1721,12 +1721,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $entity;
         }
 
-        $success = $this->_executeTransaction($options['atomic'], function () use ($entity, $options) {
+        $success = $this->_executeTransaction(function () use ($entity, $options) {
             return $this->_processSave($entity, $options);
-        });
+        }, $options['atomic']);
 
         if ($success) {
-            if ($this->_getCommitUsed($options['atomic'], $options['_primary'])) {
+            if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
                 $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
             }
             if ($options['atomic'] || $options['_primary']) {
@@ -2051,11 +2051,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             '_primary' => true,
         ]);
 
-        $success = $this->_executeTransaction($options['atomic'], function () use ($entity, $options) {
+        $success = $this->_executeTransaction(function () use ($entity, $options) {
             return $this->_processDelete($entity, $options);
-        });
+        }, $options['atomic']);
 
-        if ($success && $this->_getCommitUsed($options['atomic'], $options['_primary'])) {
+        if ($success && $this->_transactionCommitted($options['atomic'], $options['_primary'])) {
             $this->dispatchEvent('Model.afterDeleteCommit', [
                 'entity' => $entity,
                 'options' => $options
