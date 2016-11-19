@@ -285,7 +285,7 @@ class ResponseTest extends TestCase
         $this->assertEquals($headers, $response->header());
 
         $response->header('Access-Control-Allow-Origin', ['domain1', 'domain2']);
-        $headers += ['Access-Control-Allow-Origin' => 'domain1,domain2'];
+        $headers += ['Access-Control-Allow-Origin' => ['domain1', 'domain2']];
         $this->assertEquals($headers, $response->header());
     }
 

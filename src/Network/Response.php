@@ -714,7 +714,10 @@ class Response implements ResponseInterface
         $out = [];
         foreach ($this->headers as $key => $values) {
             $header = $this->headerNames[strtolower($key)];
-            $out[$header] = implode(',', $values);
+            if (count($values) === 1) {
+                $values = $values[0];
+            }
+            $out[$header] = $values;
         }
 
         return $out;
