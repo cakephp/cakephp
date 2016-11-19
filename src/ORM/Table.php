@@ -36,6 +36,7 @@ use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\RolledbackTransactionException;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
+use Cake\Validation\Validation;
 use Cake\Validation\ValidatorAwareTrait;
 use InvalidArgumentException;
 use RuntimeException;
@@ -964,7 +965,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $options += ['sourceTable' => $this];
         $association = new BelongsTo($associated, $options);
 
-        return $this->_associations->add($association->getName(), $association);
+        return $this->_associations->add($association->name(), $association);
     }
 
     /**
@@ -1008,7 +1009,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $options += ['sourceTable' => $this];
         $association = new HasOne($associated, $options);
 
-        return $this->_associations->add($association->getName(), $association);
+        return $this->_associations->add($association->name(), $association);
     }
 
     /**
@@ -1058,7 +1059,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $options += ['sourceTable' => $this];
         $association = new HasMany($associated, $options);
 
-        return $this->_associations->add($association->getName(), $association);
+        return $this->_associations->add($association->name(), $association);
     }
 
     /**
@@ -1110,7 +1111,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $options += ['sourceTable' => $this];
         $association = new BelongsToMany($associated, $options);
 
-        return $this->_associations->add($association->getName(), $association);
+        return $this->_associations->add($association->name(), $association);
     }
 
     /**
