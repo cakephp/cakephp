@@ -201,6 +201,19 @@ class ClassRegistryTest extends CakeTestCase {
 	}
 
 /**
+ * Test that init() can make the Aco models with alias set properly
+ *
+ * @return void
+ */
+	public function testAddModelWithAliasAco()
+	{
+		$aco = ClassRegistry::init(array('class' => 'Aco', 'alias' => 'CustomAco'));
+		$this->assertInstanceOf('Aco', $aco);
+		$this->assertSame('Aco', $aco->name);
+		$this->assertSame('CustomAco', $aco->alias);
+	}
+
+/**
  * testClassRegistryFlush method
  *
  * @return void

@@ -40,12 +40,12 @@ class AclNode extends Model {
 /**
  * Constructor
  */
-	public function __construct() {
+	public function __construct($id = false, $table = null, $ds = null) {
 		$config = Configure::read('Acl.database');
 		if (isset($config)) {
 			$this->useDbConfig = $config;
 		}
-		parent::__construct();
+		parent::__construct($id, $table, $ds);
 	}
 
 /**
