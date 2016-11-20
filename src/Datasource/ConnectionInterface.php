@@ -17,6 +17,13 @@ namespace Cake\Datasource;
 /**
  * This interface defines the methods you can depend on in
  * a connection.
+ *
+ * The following methods will be added in version 4.0.0
+ *
+ * @method $this setDriver($driver, $config = []);
+ * @method \Cake\Database\Driver getDriver();
+ * @method bool inTransaction();
+ * @method bool rollback();
  */
 interface ConnectionInterface
 {
@@ -35,40 +42,6 @@ interface ConnectionInterface
     public function config();
 
     /**
-     * Sets the driver instance. If a string is passed it will be treated
-     * as a class name and will be instantiated.
-     *
-     * @param \Cake\Database\Driver|string $driver The driver instance to use.
-     * @param array $config Config for a new driver.
-     * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
-     * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
-     * @return $this
-     */
-    public function setDriver($driver, $config = []);
-
-    /**
-     * Gets the driver instance.
-     *
-     * @return \Cake\Database\Driver
-     */
-    public function getDriver();
-
-    /**
-     * Sets the driver instance. If a string is passed it will be treated
-     * as a class name and will be instantiated.
-     *
-     * If no params are passed it will return the current driver instance.
-     *
-     * @deprecated 3.4.0 Use setDriver()/getDriver() instead.
-     * @param \Cake\Database\Driver|string|null $driver The driver instance to use.
-     * @param array $config Either config for a new driver or null.
-     * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
-     * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
-     * @return \Cake\Database\Driver
-     */
-    public function driver($driver = null, $config = []);
-
-    /**
      * Executes a callable function inside a transaction, if any exception occurs
      * while executing the passed callable, the transaction will be rolled back
      * If the result of the callable function is `false`, the transaction will
@@ -83,20 +56,6 @@ interface ConnectionInterface
      *   rolling back the transaction.
      */
     public function transactional(callable $transaction);
-
-    /**
-     * Checks if a transaction is running.
-     *
-     * @return bool True if a transaction is running else false.
-     */
-    public function inTransaction();
-
-    /**
-     * Rollback current transaction.
-     *
-     * @return bool
-     */
-    public function rollback();
 
     /**
      * Run an operation with constraints disabled.
