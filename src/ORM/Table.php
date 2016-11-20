@@ -36,7 +36,6 @@ use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\RolledbackTransactionException;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
-use Cake\Validation\Validation;
 use Cake\Validation\ValidatorAwareTrait;
 use InvalidArgumentException;
 use RuntimeException;
@@ -1436,6 +1435,36 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Handles the logic executing of a worker inside a transaction.
+     *
+     * @param callable $worker The worker that will run inside the transaction.
+     * @param bool $atomic Whether to execute the worker inside a database transaction.
+     * @return mixed
+     */
+    protected function _executeTransaction(callable $worker, $atomic = true)
+    {
+        if ($atomic) {
+            return $this->connection()->transactional(function () use ($worker) {
+                return $worker();
+            });
+        }
+
+        return $worker();
+    }
+
+    /**
+     * Checks if the caller would have executed a commit on a transaction.
+     *
+     * @param bool $atomic True if an atomic transaction was used.
+     * @param bool $primary True if a primary was used.
+     * @return bool Returns true if a transaction was committed.
+     */
+    protected function _transactionCommitted($atomic, $primary)
+    {
+        return !$this->connection()->inTransaction() && ($atomic || (!$atomic && $primary));
+    }
+
+    /**
      * Finds an existing record or creates a new one.
      *
      * A find() will be done to locate an existing record using the attributes
@@ -1475,13 +1504,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'defaults' => true
         ];
 
-        if ($options['atomic']) {
-            return $this->connection()->transactional(function () use ($search, $callback, $options) {
-                return $this->_processFindOrCreate($search, $callback, $options);
-            });
-        }
-
-        return $this->_processFindOrCreate($search, $callback, $options);
+        return $this->_executeTransaction(function () use ($search, $callback, $options) {
+            return $this->_processFindOrCreate($search, $callback, $options);
+        }, $options['atomic']);
     }
 
     /**
@@ -1696,19 +1721,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $entity;
         }
 
-        $connection = $this->connection();
-        if ($options['atomic']) {
-            $success = $connection->transactional(function () use ($entity, $options) {
-                return $this->_processSave($entity, $options);
-            });
-        } else {
-            $success = $this->_processSave($entity, $options);
-        }
+        $success = $this->_executeTransaction(function () use ($entity, $options) {
+            return $this->_processSave($entity, $options);
+        }, $options['atomic']);
 
         if ($success) {
-            if (!$connection->inTransaction() &&
-                ($options['atomic'] || (!$options['atomic'] && $options['_primary']))
-            ) {
+            if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
                 $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
             }
             if ($options['atomic'] || $options['_primary']) {
@@ -2033,21 +2051,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             '_primary' => true,
         ]);
 
-        $process = function () use ($entity, $options) {
+        $success = $this->_executeTransaction(function () use ($entity, $options) {
             return $this->_processDelete($entity, $options);
-        };
+        }, $options['atomic']);
 
-        $connection = $this->connection();
-        if ($options['atomic']) {
-            $success = $connection->transactional($process);
-        } else {
-            $success = $process();
-        }
-
-        if ($success &&
-            !$connection->inTransaction() &&
-            ($options['atomic'] || (!$options['atomic'] && $options['_primary']))
-        ) {
+        if ($success && $this->_transactionCommitted($options['atomic'], $options['_primary'])) {
             $this->dispatchEvent('Model.afterDeleteCommit', [
                 'entity' => $entity,
                 'options' => $options
