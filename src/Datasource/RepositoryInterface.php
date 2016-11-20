@@ -17,6 +17,10 @@ namespace Cake\Datasource;
 /**
  * Describes the methods that any class representing a data storage should
  * comply with.
+ *
+ * New methods that will be added in version 4.0.0
+ *
+ * @method int deleteEach($conditions, $options = []);
  */
 interface RepositoryInterface
 {
@@ -114,49 +118,6 @@ interface RepositoryInterface
      */
     public function deleteAll($conditions);
 
-    /**
-     * Deletes records individually by reading batches that match the conditions. For each
-     * matched record Table::delete() is executed providing support for behaviors and events.
-     *
-     * This method will continue execution until all records are deleted, or one of the events is stopped.
-     * If a record fails to be deleted the operation will stop (optional).
-     *
-     * This method will *not* trigger afterDeleteCommit events. The event afterDeleteEachCommit will be
-     * broadcast after each batch is committed.
-     *
-     * This method will *not* accept query options that alter the size of a batch, such as limit, offset
-     * and page.
-     *
-     * ### Options
-     *
-     * - 'finder' string Defaults to 'all'. The customer finder to use when reading batches.
-     * - `atomic` boolean Defaults to true. When true the deletion happens within a transaction.
-     * - 'stopOnFailure' boolean Defaults to true. Stop deleting records when a record fails to be deleted.
-     * - 'batch' integer Defaults to 1. Number of records to read in batches, zero reads all records.
-     * - `checkRules` boolean Defaults to true. Check deletion rules before deleting the record.
-     *
-     * ### Events
-     *
-     * - `Model.beforeDeleteEach` Fired before the batch delete occurs. If stopped the delete
-     *   will be aborted. Receives the event, \Cake\Datasource\ResultSetInterface, and options.
-     * - `Model.afterDeleteEach` Fired after the batch delete has been successful. Receives
-     *   the event, \Cake\Datasource\ResultSetInterface, and options.
-     * - `Model.afterDeleteEachCommit` Fired after the transaction is committed for
-     *   the batch of atomic deletes. Receives the event, \Cake\Datasource\ResultSetInterface, and options.
-     *
-     * ### Example:
-     *
-     * ```
-     * $count = $articles->deleteEach(['published' => true]);
-     * ```
-     *
-     * @param mixed $conditions Conditions to be used, accepts anything Query::where()
-     * can take.
-     * @param array|\ArrayAccess $options An array that will be passed to Query::applyOptions()
-     * @return int Count Returns the affected rows.
-     * @see \Cake\Datasource\RepositoryInterface::delete()
-     */
-    public function deleteEach($conditions, $options = []);
 
     /**
      * Returns true if there is any record in this repository matching the specified
