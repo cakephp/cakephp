@@ -47,14 +47,6 @@ class RequestHandlerComponent extends Component
     public $enabled = true;
 
     /**
-     * Holds the reference to Controller::$response
-     *
-     * @var \Cake\Network\Response
-     * @deprecated 3.4.0 Will be removed in 4.0.0
-     */
-    public $response;
-
-    /**
      * Contains the file extension parsed out by the Router
      *
      * @var string|null
