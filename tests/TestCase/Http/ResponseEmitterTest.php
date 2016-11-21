@@ -64,6 +64,30 @@ class ResponseEmitterTest extends TestCase
     }
 
     /**
+     * Test emitting a no-content response
+     *
+     * @return void
+     */
+    public function testEmitNoContentResponse()
+    {
+        $response = (new Response())
+            ->withHeader('X-testing', 'value')
+            ->withStatus(204);
+        $response->getBody()->write('It worked');
+
+        ob_start();
+        $this->emitter->emit($response);
+        $out = ob_get_clean();
+
+        $this->assertEquals('', $out);
+        $expected = [
+            'HTTP/1.1 204 No Content',
+            'X-testing: value',
+        ];
+        $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
+    }
+
+    /**
      * Test emitting responses with cookies
      *
      * @return void
