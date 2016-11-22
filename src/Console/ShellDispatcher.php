@@ -244,7 +244,7 @@ class ShellDispatcher
         $io->setLoggers(false);
         $list = $task->getShellList() + ['app' => []];
         $fixed = array_flip($list['app']) + array_flip($list['CORE']);
-        $aliases = [];
+        $aliases = $others = [];
 
         foreach ($plugins as $plugin) {
             if (!isset($list[$plugin])) {
@@ -253,6 +253,11 @@ class ShellDispatcher
 
             foreach ($list[$plugin] as $shell) {
                 $aliases += [$shell => $plugin];
+                if (!isset($others[$shell])) {
+                    $others[$shell] = [$plugin];
+                } else {
+                    $others[$shell] = array_merge($others[$shell], [$plugin]);
+                }
             }
         }
 
@@ -269,12 +274,26 @@ class ShellDispatcher
             $other = static::alias($shell);
             if ($other) {
                 $other = $aliases[$shell];
-                Log::write(
-                    'debug',
-                    "command '$shell' in plugin '$plugin' was not aliased, conflicts with '$other'",
-                    ['shell-dispatcher']
-                );
+                if ($other !== $plugin) {
+                    Log::write(
+                        'debug',
+                        "command '$shell' in plugin '$plugin' was not aliased, conflicts with '$other'",
+                        ['shell-dispatcher']
+                    );
+                }
                 continue;
+            }
+
+            if (isset($others[$shell])) {
+                $conflicts = array_diff($others[$shell], [$plugin]);
+                if (count($conflicts) > 0) {
+                    $conflictList = implode("', '", $conflicts);
+                    Log::write(
+                        'debug',
+                        "command '$shell' in plugin '$plugin' was not aliased, conflicts with '$conflictList'",
+                        ['shell-dispatcher']
+                    );
+                }
             }
 
             static::alias($shell, "$plugin.$shell");
