@@ -562,6 +562,7 @@ class Response implements ResponseInterface
     {
         if (in_array($this->_status, [304, 204])) {
             $this->_clearHeader('Content-Type');
+
             return;
         }
         $whitelist = [
@@ -878,6 +879,7 @@ class Response implements ResponseInterface
 
         $this->_status = $code;
         $this->_setContentType();
+
         return $code;
     }
 
