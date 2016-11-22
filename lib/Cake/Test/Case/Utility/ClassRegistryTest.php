@@ -187,8 +187,7 @@ class ClassRegistryTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testAddModelWithAlias()
-	{
+	public function testAddModelWithAlias() {
 		$tag = ClassRegistry::init(array('class' => 'RegisterArticleTag', 'alias' => 'NewTag'));
 		$this->assertInstanceOf('RegisterArticleTag', $tag);
 		$this->assertSame('NewTag', $tag->alias);
@@ -205,8 +204,7 @@ class ClassRegistryTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testAddModelWithAliasAco()
-	{
+	public function testAddModelWithAliasAco() {
 		$aco = ClassRegistry::init(array('class' => 'Aco', 'alias' => 'CustomAco'));
 		$this->assertInstanceOf('Aco', $aco);
 		$this->assertSame('Aco', $aco->name);
