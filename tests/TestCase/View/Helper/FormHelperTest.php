@@ -400,10 +400,7 @@ class FormHelperTest extends TestCase
     public function contextSelectionProvider()
     {
         $entity = new Article();
-        $collection = $this->getMockBuilder('Cake\Collection\Collection')
-            ->setMethods(['extract'])
-            ->setConstructorArgs([[$entity]])
-            ->getMock();
+        $collection = new Collection([$entity]);
         $emptyCollection = new Collection([]);
         $emptyArray = [];
         $arrayObject = new \ArrayObject([]);
