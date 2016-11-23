@@ -1605,7 +1605,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function func()
     {
-        if (empty($this->_functionsBuilder)) {
+        if ($this->_functionsBuilder === null) {
             $this->_functionsBuilder = new FunctionsBuilder();
         }
 
@@ -1622,7 +1622,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function getIterator()
     {
-        if (empty($this->_iterator) || $this->_dirty) {
+        if ($this->_iterator === null || $this->_dirty) {
             $this->_iterator = $this->execute();
         }
 

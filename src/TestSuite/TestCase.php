@@ -35,7 +35,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     /**
      * The class responsible for managing the creation, loading and removing of fixtures
      *
-     * @var \Cake\TestSuite\Fixture\FixtureManager
+     * @var \Cake\TestSuite\Fixture\FixtureManager|null
      */
     public $fixtureManager = null;
 
@@ -134,7 +134,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
      */
     public function loadFixtures()
     {
-        if (empty($this->fixtureManager)) {
+        if ($this->fixtureManager === null) {
             throw new Exception('No fixture manager to load the test fixture');
         }
         $args = func_get_args();
