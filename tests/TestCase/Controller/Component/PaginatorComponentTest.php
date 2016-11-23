@@ -781,6 +781,7 @@ class PaginatorComponentTest extends TestCase
             foreach ($result as $record) {
                 $ids[] = $record->title;
             }
+
             return $ids;
         };
 
