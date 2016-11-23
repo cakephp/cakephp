@@ -757,12 +757,76 @@ class PaginatorComponentTest extends TestCase
             ]
         ];
         $result = $this->Paginator->validateSort($model, $options);
+
         $expected = [
             'model.author_id' => 'asc',
             'model.title' => 'asc'
         ];
 
         $this->assertEquals($expected, $result['order']);
+    }
+    
+    /**
+     * test that multiple sort works in combination with query.
+     *
+     * @return void
+     */
+    public function testValidateSortMultipleWithQuery()
+    {
+        $this->loadFixtures('Posts');
+        $table = TableRegistry::get('PaginatorPosts');
+
+        $titleExtractor = function ($result) {
+            $ids = [];
+            foreach ($result as $record) {
+                $ids[] = $record->title;
+            }
+            return $ids;
+        };
+
+        // Define two columns as default sort order
+        $settings = [
+            'order' => [
+                'author_id' => 'asc',
+                'title' => 'asc'
+            ]
+        ];
+
+        // Test with empty query
+        $this->request->query = [];
+        $result = $this->Paginator->paginate($table, $settings);
+        $this->assertCount(3, $result, '3 rows should come back');
+        $this->assertEquals(['First Post', 'Third Post', 'Second Post'], $titleExtractor($result));
+        $this->assertEquals(
+            ['PaginatorPosts.author_id' => 'asc', 'PaginatorPosts.title' => 'asc'],
+            $this->request->params['paging']['PaginatorPosts']['totalOrder']
+        );
+
+        // Test overwriting a sort field defined in the settings
+        $this->request->query = [
+            'sort' => 'author_id',
+            'direction' => 'desc'
+        ];
+        $result = $this->Paginator->paginate($table, $settings);
+        $this->assertCount(3, $result, '3 rows should come back');
+        $this->assertEquals(['Second Post', 'First Post', 'Third Post'], $titleExtractor($result));
+        $this->assertEquals(
+            ['PaginatorPosts.author_id' => 'desc', 'PaginatorPosts.title' => 'asc'],
+            $this->request->params['paging']['PaginatorPosts']['totalOrder']
+        );
+
+        // Test sorting by a field not defined in the settings
+        $this->request->query = [
+            'sort' => 'id',
+            'direction' => 'asc'
+        ];
+        $result = $this->Paginator->paginate($table, $settings);
+        $this->assertCount(3, $result, '3 rows should come back');
+        $this->assertEquals(['First Post', 'Second Post', 'Third Post'], $titleExtractor($result));
+        $this->assertEquals(
+            ['PaginatorPosts.id' => 'asc', 'PaginatorPosts.author_id' => 'asc', 'PaginatorPosts.title' => 'asc'],
+            $this->request->params['paging']['PaginatorPosts']['totalOrder']
+        );
     }
 
     /**
