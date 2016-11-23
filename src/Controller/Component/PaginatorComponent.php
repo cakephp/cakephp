@@ -336,9 +336,10 @@ class PaginatorComponent extends Component
             if (!in_array($direction, ['asc', 'desc'])) {
                 $direction = 'asc';
             }
-            
+
             // Union the sort option from URL and default sort option to allow sorting by multiple fields
-            $options['order'] = [$options['sort'] => $direction] + (isset($options['order']) ? $options['order'] : []);
+            $options['order'] = [$options['sort'] => $direction]
+                + (isset($options['order']) ? $options['order'] : []);
         }
         unset($options['sort'], $options['direction']);
 
