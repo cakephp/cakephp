@@ -765,7 +765,7 @@ class PaginatorComponentTest extends TestCase
 
         $this->assertEquals($expected, $result['order']);
     }
-    
+
     /**
      * test that multiple sort works in combination with query.
      *
