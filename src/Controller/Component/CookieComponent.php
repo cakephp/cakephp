@@ -101,9 +101,11 @@ class CookieComponent extends Component
     protected $_loaded = [];
 
     /**
-     * A reference to the Controller's Cake\Network\Response object
+     * A reference to the Controller's Cake\Network\Response object.
+     * Currently unused.
      *
      * @var \Cake\Network\Response
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     protected $_response = null;
 
@@ -121,13 +123,8 @@ class CookieComponent extends Component
 
         $controller = $this->_registry->getController();
 
-        if ($controller !== null) {
-            $this->_response =& $controller->response;
-        }
-
         if ($controller === null) {
             $this->request = ServerRequest::createFromGlobals();
-            $this->_response = new Response();
         }
 
         if (empty($this->_config['path'])) {
@@ -312,7 +309,8 @@ class CookieComponent extends Component
         $config = $this->configKey($name);
         $expires = new Time($config['expires']);
 
-        $this->_response->cookie([
+        $response = $this->getController()->response;
+        $response->cookie([
             'name' => $name,
             'value' => $this->_encrypt($value, $config['encryption'], $config['key']),
             'expire' => $expires->format('U'),
@@ -337,7 +335,8 @@ class CookieComponent extends Component
         $config = $this->configKey($name);
         $expires = new Time('now');
 
-        $this->_response->cookie([
+        $response = $this->getController()->response;
+        $response->cookie([
             'name' => $name,
             'value' => '',
             'expire' => $expires->format('U') - 42000,
