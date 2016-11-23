@@ -942,7 +942,7 @@ class PaginatorComponentTest extends TestCase
 
         $this->assertEquals($expected, $result['order']);
     }
-    
+
     /**
      * test that multiple sort works in combination with query.
      *
@@ -958,6 +958,7 @@ class PaginatorComponentTest extends TestCase
             foreach ($result as $record) {
                 $ids[] = $record->title;
             }
+
             return $ids;
         };
 
@@ -976,7 +977,7 @@ class PaginatorComponentTest extends TestCase
         $this->assertEquals(['First Post', 'Third Post', 'Second Post'], $titleExtractor($result));
         $this->assertEquals(
             ['PaginatorPosts.author_id' => 'asc', 'PaginatorPosts.title' => 'asc'],
-            $this->request->params['paging']['PaginatorPosts']['totalOrder']
+            $this->request->params['paging']['PaginatorPosts']['completeSort']
         );
 
         // Test overwriting a sort field defined in the settings
@@ -989,7 +990,7 @@ class PaginatorComponentTest extends TestCase
         $this->assertEquals(['Second Post', 'First Post', 'Third Post'], $titleExtractor($result));
         $this->assertEquals(
             ['PaginatorPosts.author_id' => 'desc', 'PaginatorPosts.title' => 'asc'],
-            $this->request->params['paging']['PaginatorPosts']['totalOrder']
+            $this->request->params['paging']['PaginatorPosts']['completeSort']
         );
 
         // Test sorting by a field not defined in the settings
@@ -1002,7 +1003,7 @@ class PaginatorComponentTest extends TestCase
         $this->assertEquals(['First Post', 'Second Post', 'Third Post'], $titleExtractor($result));
         $this->assertEquals(
             ['PaginatorPosts.id' => 'asc', 'PaginatorPosts.author_id' => 'asc', 'PaginatorPosts.title' => 'asc'],
-            $this->request->params['paging']['PaginatorPosts']['totalOrder']
+            $this->request->params['paging']['PaginatorPosts']['completeSort']
         );
     }
 
