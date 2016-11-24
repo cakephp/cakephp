@@ -280,6 +280,16 @@ class ViewTest extends TestCase
     public $fixtures = ['core.posts', 'core.users'];
 
     /**
+     * @var \Cake\View\View
+     */
+    public $View;
+
+    /**
+     * @var ViewPostsController
+     */
+    public $PostsController;
+
+    /**
      * setUp method
      *
      * @return void

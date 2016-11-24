@@ -241,7 +241,7 @@ class JsonViewTest extends TestCase
         $Controller->set($data);
         $Controller->set('_serialize', $serialize);
         $Controller->set('_jsonOptions', $jsonOptions);
-        $Controller->viewBuilder()->className('Json');
+        $Controller->viewBuilder()->setClassName('Json');
         $View = $Controller->createView();
         $output = $View->render(false);
 
@@ -264,7 +264,7 @@ class JsonViewTest extends TestCase
             'tags' => ['cakephp', 'framework'],
             '_serialize' => 'tags'
         ]);
-        $Controller->viewBuilder()->className('Json');
+        $Controller->viewBuilder()->setClassName('Json');
         $View = $Controller->createView();
         $View->render();
 
@@ -288,7 +288,7 @@ class JsonViewTest extends TestCase
             '_serialize' => 'data',
             '_jsonp' => true
         ]);
-        $Controller->viewBuilder()->className('Json');
+        $Controller->viewBuilder()->setClassName('Json');
         $View = $Controller->createView();
         $output = $View->render(false);
 
@@ -330,7 +330,7 @@ class JsonViewTest extends TestCase
             ]
         ];
         $Controller->set('user', $data);
-        $Controller->viewBuilder()->className('Json');
+        $Controller->viewBuilder()->setClassName('Json');
         $View = $Controller->createView();
         $View->viewPath = $Controller->name;
         $output = $View->render('index');
