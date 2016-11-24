@@ -379,6 +379,42 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test that setting certain status codes clears the status code.
+     *
+     * @return void
+     */
+    public function testStatusClearsContentType()
+    {
+        $response = new Response();
+        $response->statusCode(204);
+        $response->statusCode(304);
+        $this->assertFalse($response->hasHeader('Content-Type'));
+        $this->assertSame(304, $response->getStatusCode());
+
+        $response = new Response();
+        $response->type('pdf');
+        $response->statusCode(204);
+        $this->assertFalse($response->hasHeader('Content-Type'));
+        $this->assertSame(204, $response->getStatusCode());
+
+        $response = new Response();
+        $new = $response->withType('pdf')
+            ->withStatus(204);
+        $this->assertFalse($new->hasHeader('Content-Type'));
+        $this->assertSame(204, $new->getStatusCode());
+
+        $response = new Response();
+        $new = $response->withStatus(304)
+            ->withType('pdf');
+        $this->assertFalse($new->hasHeader('Content-Type'));
+
+        $response = new Response();
+        $response->statusCode(204);
+        $response->type('pdf');
+        $this->assertFalse($response->hasHeader('Content-Type'));
+    }
+
+    /**
      * Tests the send method and changing the content type
      *
      * @return void
@@ -1841,7 +1877,6 @@ class ResponseTest extends TestCase
                 'header',
                 'type',
                 '_sendHeader',
-                '_setContentType',
                 '_isActive',
             ])
             ->getMock();
@@ -1929,7 +1964,6 @@ class ResponseTest extends TestCase
                 'header',
                 'type',
                 '_sendHeader',
-                '_setContentType',
                 '_isActive',
             ])
             ->getMock();
@@ -1980,7 +2014,6 @@ class ResponseTest extends TestCase
                 'header',
                 'type',
                 '_sendHeader',
-                '_setContentType',
                 '_isActive',
             ])
             ->getMock();

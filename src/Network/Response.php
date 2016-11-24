@@ -520,10 +520,7 @@ class Response implements ResponseInterface
         $codeMessage = $this->_statusCodes[$this->_status];
         $this->_setCookies();
         $this->_sendHeader("{$this->_protocol} {$this->_status} {$codeMessage}");
-
-        if (!in_array($this->_status, [304, 204])) {
-            $this->_setContentType();
-        }
+        $this->_setContentType();
 
         foreach ($this->headers as $header => $values) {
             foreach ((array)$values as $value) {
@@ -563,6 +560,11 @@ class Response implements ResponseInterface
      */
     protected function _setContentType()
     {
+        if (in_array($this->_status, [304, 204])) {
+            $this->_clearHeader('Content-Type');
+
+            return;
+        }
         $whitelist = [
             'application/javascript', 'application/json', 'application/xml', 'application/rss+xml'
         ];
@@ -786,6 +788,22 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Clear header
+     *
+     * @param string $header Header key.
+     * @return void
+     */
+    protected function _clearHeader($header)
+    {
+        $normalized = strtolower($header);
+        if (!isset($this->headerNames[$normalized])) {
+            return;
+        }
+        $original = $this->headerNames[$normalized];
+        unset($this->headerNames[$normalized], $this->headers[$original]);
+    }
+
+    /**
      * Buffers the response message to be sent
      * if $content is null the current buffer is returned
      *
@@ -842,6 +860,9 @@ class Response implements ResponseInterface
      * Sets the HTTP status code to be sent
      * if $code is null the current code is returned
      *
+     * If the status code is 304 or 204, the existing Content-Type header
+     * will be cleared, as these response codes have no body.
+     *
      * @param int|null $code the HTTP status code
      * @return int Current status code
      * @throws \InvalidArgumentException When an unknown status code is reached.
@@ -856,7 +877,10 @@ class Response implements ResponseInterface
             throw new InvalidArgumentException('Unknown status code');
         }
 
-        return $this->_status = $code;
+        $this->_status = $code;
+        $this->_setContentType();
+
+        return $code;
     }
 
     /**
@@ -883,6 +907,9 @@ class Response implements ResponseInterface
      * immutability of the message, and MUST return an instance that has the
      * updated status and reason phrase.
      *
+     * If the status code is 304 or 204, the existing Content-Type header
+     * will be cleared, as these response codes have no body.
+     *
      * @link http://tools.ietf.org/html/rfc7231#section-6
      * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
      * @param int $code The 3-digit integer result code to set.
@@ -900,6 +927,7 @@ class Response implements ResponseInterface
             $reasonPhrase = $new->_statusCodes[$code];
         }
         $new->_reasonPhrase = $reasonPhrase;
+        $new->_setContentType();
 
         return $new;
     }
@@ -988,6 +1016,9 @@ class Response implements ResponseInterface
      * type('jpg');
      * ```
      *
+     * If you attempt to set the type on a 304 or 204 status code response, the
+     * content type will not take effect as these status codes do not have content-types.
+     *
      * ### Returning the current content type
      *
      * ```
@@ -1037,9 +1068,10 @@ class Response implements ResponseInterface
     /**
      * Get an updated response with the content type set.
      *
-     * Either a file extension which will be mapped to a mime-type or a concrete mime-type
+     * If you attempt to set the type on a 304 or 204 status code response, the
+     * content type will not take effect as these status codes do not have content-types.
      *
-     * @param string $contentType Content type key alias or mime-type
+     * @param string $contentType Either a file extension which will be mapped to a mime-type or a concrete mime-type.
      * @return static
      */
     public function withType($contentType)

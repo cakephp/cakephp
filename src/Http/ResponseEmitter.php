@@ -76,6 +76,9 @@ class ResponseEmitter implements EmitterInterface
      */
     protected function emitBody(ResponseInterface $response, $maxBufferLength)
     {
+        if (in_array($response->getStatusCode(), [204, 304])) {
+            return;
+        }
         $body = $response->getBody();
 
         if (!$body->isSeekable()) {
