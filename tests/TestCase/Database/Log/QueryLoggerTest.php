@@ -72,7 +72,7 @@ class QueryLoggerTest extends TestCase
      *
      * @return void
      */
-    public function testStringInterpolation2()
+    public function testStringInterpolationNotNamed()
     {
         $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')
             ->setMethods(['_log'])
@@ -92,7 +92,7 @@ class QueryLoggerTest extends TestCase
      *
      * @return void
      */
-    public function testStringInterpolation3()
+    public function testStringInterpolationDuplicate()
     {
         $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')
             ->setMethods(['_log'])

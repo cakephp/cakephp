@@ -90,7 +90,7 @@ class ValueBinder
             $this->_bindings[$param] = [
                 'value' => $value,
                 'type' => $type,
-                'placeholder' => $param
+                'placeholder' => substr($param, 1),
             ];
             $placeholders[$k] = $param;
             $this->_bindingsCount++;
