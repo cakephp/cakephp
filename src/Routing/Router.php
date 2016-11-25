@@ -458,7 +458,9 @@ class Router
     public static function getRequest($current = false)
     {
         if ($current) {
-            return end(static::$_requests);
+            $request = end(static::$_requests);
+
+            return $request ?: null;
         }
 
         return isset(static::$_requests[0]) ? static::$_requests[0] : null;
