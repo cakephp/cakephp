@@ -43,7 +43,6 @@ class TestHelper extends Helper
      * @var array
      */
     public $helpers = ['Html', 'TestPlugin.OtherHelper'];
-
 }
 
 /**
