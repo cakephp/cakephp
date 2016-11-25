@@ -361,6 +361,7 @@ class AuthComponent extends Component
      * @param \Cake\Controller\Controller $controller A reference to the controller object.
      * @return \Cake\Network\Response|null Null if current action is login action
      *   else response object returned by authenticate object or Controller::redirect().
+     * @throws \Cake\Core\Exception\Exception
      */
     protected function _unauthenticated(Controller $controller)
     {
@@ -369,6 +370,9 @@ class AuthComponent extends Component
         }
         $response = $this->response;
         $auth = end($this->_authenticateObjects);
+        if ($auth === false) {
+            throw new Exception('At least one authenticate object must be available.');
+        }
         $result = $auth->unauthenticated($this->request, $response);
         if ($result !== null) {
             return $result;
