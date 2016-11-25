@@ -1368,6 +1368,26 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that IN clauses generate correct placeholders
+     *
+     * @return void
+     */
+    public function testInClausePlaceholderGeneration()
+    {
+        $this->loadFixtures('Comments');
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('comments')
+            ->where(['id IN' => [1, 2]])
+            ->sql();
+        $bindings = $query->valueBinder()->bindings();
+        $this->assertArrayHasKey(':c0', $bindings);
+        $this->assertEquals('c0', $bindings[':c0']['placeholder']);
+        $this->assertArrayHasKey(':c1', $bindings);
+        $this->assertEquals('c1', $bindings[':c1']['placeholder']);
+    }
+
+    /**
      * Tests where() with callable types.
      *
      * @return void
