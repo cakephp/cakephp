@@ -94,24 +94,24 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Statement object resulting from executing this query.
      *
-     * @var \Cake\Database\StatementInterface
+     * @var \Cake\Database\StatementInterface|null
      */
-    protected $_iterator;
+    protected $_iterator = null;
 
     /**
      * The object responsible for generating query placeholders and temporarily store values
      * associated to each of those.
      *
-     * @var \Cake\Database\ValueBinder
+     * @var \Cake\Database\ValueBinder|null
      */
-    protected $_valueBinder;
+    protected $_valueBinder = null;
 
     /**
      * Instance of functions builder object used for generating arbitrary SQL functions.
      *
-     * @var \Cake\Database\FunctionsBuilder
+     * @var \Cake\Database\FunctionsBuilder|null
      */
-    protected $_functionsBuilder;
+    protected $_functionsBuilder = null;
 
     /**
      * Boolean for tracking whether or not buffered results
