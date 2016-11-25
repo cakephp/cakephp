@@ -86,8 +86,7 @@ class StringTemplate
      *
      * @var array
      */
-    protected $_defaultConfig = [
-    ];
+    protected $_defaultConfig = [];
 
     /**
      * A stack of template sets that have been stashed temporarily.
@@ -179,6 +178,7 @@ class StringTemplate
                 $this->_compiled[$name] = [null, null];
             }
 
+            $template = str_replace('%', '%%', $template);
             preg_match_all('#\{\{([\w\d\._]+)\}\}#', $template, $matches);
             $this->_compiled[$name] = [
                 str_replace($matches[0], '%s', $template),
