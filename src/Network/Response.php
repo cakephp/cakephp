@@ -1150,6 +1150,7 @@ class Response implements ResponseInterface
      *
      * @param string|null $charset Character set string.
      * @return string Current charset
+     * @deprecated 3.4.0 Use withCharset() instead.
      */
     public function charset($charset = null)
     {
@@ -1160,6 +1161,21 @@ class Response implements ResponseInterface
         $this->_setContentType();
 
         return $this->_charset;
+    }
+
+    /**
+     * Get a new instance with an updated charset.
+     *
+     * @param string $charset Character set string.
+     * @return static
+     */
+    public function withCharset($charset)
+    {
+        $new = clone $this;
+        $new->_charset = $charset;
+        $new->_setContentType();
+
+        return $new;
     }
 
     /**

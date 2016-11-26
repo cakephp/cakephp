@@ -131,6 +131,22 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests withCharset method
+     *
+     * @return void
+     */
+    public function testWithCharset()
+    {
+        $response = new Response();
+        $this->assertEquals('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
+
+        $new = $response->withCharset('iso-8859-1');
+        $this->assertNotContains('iso', $response->getHeaderLine('Content-Type'), 'Old instance not changed');
+
+        $this->assertEquals('text/html; charset=iso-8859-1', $new->getHeaderLine('Content-Type'));
+    }
+
+    /**
      * Tests the statusCode method
      *
      * @expectedException \InvalidArgumentException
