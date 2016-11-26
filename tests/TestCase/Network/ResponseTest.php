@@ -472,6 +472,26 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests the withDisabledCache method
+     *
+     * @return void
+     */
+    public function testWithDisabledCache()
+    {
+        $response = new Response();
+        $expected = [
+            'Expires' => ['Mon, 26 Jul 1997 05:00:00 GMT'],
+            'Last-Modified' => [gmdate("D, d M Y H:i:s") . " GMT"],
+            'Cache-Control' => ['no-store, no-cache, must-revalidate, post-check=0, pre-check=0'],
+            'Content-Type' => ['text/html; charset=UTF-8'],
+        ];
+        $new = $response->withDisabledCache();
+        $this->assertFalse($response->hasHeader('Expires'), 'Old instance not mutated.');
+
+        $this->assertEquals($expected, $new->getHeaders());
+    }
+
+    /**
      * Tests the cache method
      *
      * @return void

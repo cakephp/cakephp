@@ -1166,12 +1166,25 @@ class Response implements ResponseInterface
      * Sets the correct headers to instruct the client to not cache the response
      *
      * @return void
+     * @deprected 3.4.0 Use withDisabledCache() instead.
      */
     public function disableCache()
     {
         $this->_setHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
         $this->_setHeader('Last-Modified', gmdate("D, d M Y H:i:s") . " GMT");
         $this->_setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+    }
+
+    /**
+     * Create a new instance with headers to instruct the client to not cache the response
+     *
+     * @return static
+     */
+    public function withDisabledCache()
+    {
+        return $this->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT')
+            ->withHeader('Last-Modified', gmdate("D, d M Y H:i:s") . " GMT")
+            ->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
     }
 
     /**
