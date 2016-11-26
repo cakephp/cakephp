@@ -1541,6 +1541,7 @@ class Response implements ResponseInterface
      *
      * @param int|null $bytes Number of bytes
      * @return int|null
+     * @deprecated 3.4.0 Use withLength() to set length instead.
      */
     public function length($bytes = null)
     {
@@ -1553,6 +1554,17 @@ class Response implements ResponseInterface
         }
 
         return null;
+    }
+
+    /**
+     * Create a new response with the Content-Length header set.
+     *
+     * @param int|string $bytes Number of bytes
+     * @return static
+     */
+    public function withLength($bytes)
+    {
+        return $this->withHeader('Content-Length', (string)$bytes);
     }
 
     /**

@@ -696,6 +696,23 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests settings the content length
+     *
+     * @return void
+     */
+    public function testWithLength()
+    {
+        $response = new Response();
+        $this->assertFalse($response->hasHeader('Content-Length'));
+
+        $new = $response->withLength(100);
+        $this->assertFalse($response->hasHeader('Content-Length'), 'Old instance not modified');
+
+        $this->assertSame('100', $new->getHeaderLine('Content-Length'));
+        $this->assertSame('100', $new->length(), 'new method is compat with old.');
+    }
+
+    /**
      * Tests setting the expiration date
      *
      * @return void
