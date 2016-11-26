@@ -593,11 +593,10 @@ class CacheTest extends CakeTestCase {
  */
 	public function testEngineFailure() {
 		$actual = Cache::engine('some_config_that_does_not_exist');
-		$this->assertFalse($actual);
+		$this->assertNull($actual);
 
 		Configure::write('Cache.disable', true);
 		$actual = Cache::engine();
-		$this->assertFalse($actual);
+		$this->assertNull($actual);
 	}
-
 }
