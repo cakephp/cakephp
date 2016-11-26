@@ -616,4 +616,19 @@ class Cache {
 		self::set(null, $config);
 		return $success;
 	}
+
+/**
+ * Fetch the engine attached to a specific configuration name.
+ *
+ * @param string $config Optional string configuration name to get an engine for. Defaults to 'default'.
+ * @return bool|CacheEngine False if the engine has not been initialized else the engine
+ */
+	public static function engine($config = 'default') {
+		if (self::isInitialized($config)) {
+			return self::$_engines[$config];
+		}
+
+		return false;
+	}
+
 }
