@@ -235,12 +235,12 @@ class BreadcrumbsHelper extends Helper
      * - *innerAttrs* To provide attributes in case your separator is divided in two elements.
      * All other properties will be converted as HTML attributes and will replace the *attrs* key in the template.
      * If you use the default for this option (empty), it will not render a separator.
-     * @return string|null The breadcrumbs trail
+     * @return string The breadcrumbs trail
      */
     public function render(array $attributes = [], array $separator = [])
     {
-        if (empty($this->crumbs)) {
-            return null;
+        if (!$this->crumbs) {
+            return '';
         }
 
         $crumbs = $this->crumbs;

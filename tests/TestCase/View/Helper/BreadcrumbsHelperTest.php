@@ -357,7 +357,7 @@ class BreadcrumbsHelperTest extends TestCase
      */
     public function testRender()
     {
-        $this->assertEmpty($this->breadcrumbs->render());
+        $this->assertSame('', $this->breadcrumbs->render());
 
         $this->breadcrumbs
             ->add('Home', '/', ['class' => 'first', 'innerAttrs' => ['data-foo' => 'bar']])
