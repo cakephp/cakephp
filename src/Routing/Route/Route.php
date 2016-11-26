@@ -52,7 +52,7 @@ class Route
     /**
      * The routes template string.
      *
-     * @var string
+     * @var string|null
      */
     public $template = null;
 
@@ -60,21 +60,21 @@ class Route
      * Is this route a greedy route?  Greedy routes have a `/*` in their
      * template
      *
-     * @var string
+     * @var bool
      */
     protected $_greedy = false;
 
     /**
      * The compiled route regular expression
      *
-     * @var string
+     * @var string|null
      */
     protected $_compiledRoute = null;
 
     /**
      * The name for a route.  Fetch with Route::getName();
      *
-     * @var string
+     * @var string|null
      */
     protected $_name = null;
 

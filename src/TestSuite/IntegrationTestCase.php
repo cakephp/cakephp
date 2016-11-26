@@ -945,7 +945,7 @@ abstract class IntegrationTestCase extends TestCase
      */
     public function assertCookie($expected, $name, $message = '')
     {
-        if (empty($this->_response)) {
+        if (!$this->_response) {
             $this->fail('Not response set, cannot assert cookies.');
         }
         $result = $this->_response->cookie($name);
@@ -990,7 +990,7 @@ abstract class IntegrationTestCase extends TestCase
      */
     public function assertCookieEncrypted($expected, $name, $encrypt = 'aes', $key = null, $message = '')
     {
-        if (empty($this->_response)) {
+        if (!$this->_response) {
             $this->fail('No response set, cannot assert cookies.');
         }
         $result = $this->_response->cookie($name);
