@@ -55,12 +55,17 @@ class ErrorHandlerMiddleware
      * Constructor
      *
      * @param string|callable|null $renderer The renderer or class name
-     *   to use or a callable factory.
+     *   to use or a callable factory. If null, Configure::read('Error.exceptionRenderer')
+     *   will be used.
      * @param array $config Configuration options to use. If empty, `Configure::read('Error')`
      *   will be used.
      */
     public function __construct($renderer = null, array $config = [])
     {
+        if ($renderer === null) {
+            $renderer = Configure::read('Error.exceptionRenderer');
+        }
+
         $this->renderer = $renderer ?: 'Cake\Error\ExceptionRenderer';
         $config = $config ?: Configure::read('Error');
         $this->config($config);
