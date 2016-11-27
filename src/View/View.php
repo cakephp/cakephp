@@ -1073,7 +1073,7 @@ class View implements EventDispatcherInterface
         list($plugin, $name) = $this->pluginSplit($name);
         $name = str_replace('/', DIRECTORY_SEPARATOR, $name);
 
-        if (strpos($name, DIRECTORY_SEPARATOR) === false && $name[0] !== '.') {
+        if (strpos($name, DIRECTORY_SEPARATOR) === false && $name !== '' && $name[0] !== '.') {
             $name = $templatePath . $subDir . $this->_inflectViewFileName($name);
         } elseif (strpos($name, DIRECTORY_SEPARATOR) !== false) {
             if ($name[0] === DIRECTORY_SEPARATOR || $name[1] === ':') {
