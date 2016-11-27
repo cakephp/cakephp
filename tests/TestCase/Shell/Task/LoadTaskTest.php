@@ -46,6 +46,8 @@ class LoadTaskTest extends TestCase
             ->getMock();
 
         $this->bootstrap = ROOT . DS . 'config' . DS . 'bootstrap.php';
+        $this->bootstrapCli = ROOT . DS . 'config' . DS . 'bootstrap_cli.php';
+        copy($this->bootstrap, $this->bootstrapCli);
 
         $bootstrap = new File($this->bootstrap, false);
         $this->originalBootstrapContent = $bootstrap->read();
@@ -64,6 +66,7 @@ class LoadTaskTest extends TestCase
 
         $bootstrap = new File($this->bootstrap, false);
         $bootstrap->write($this->originalBootstrapContent);
+        unlink($this->bootstrapCli);
     }
 
     /**
@@ -109,6 +112,29 @@ class LoadTaskTest extends TestCase
 
         $expected = "Plugin::load('TestPlugin', ['autoload' => true, 'bootstrap' => true]);";
         $bootstrap = new File($this->bootstrap, false);
+        $this->assertContains($expected, $bootstrap->read());
+    }
+
+    /**
+     * Tests that loading with bootstrap_cli works.
+     *
+     * @return void
+     */
+    public function testLoadBootstrapCli()
+    {
+        $this->Task->params = [
+            'bootstrap' => false,
+            'routes' => false,
+            'autoload' => false,
+            'cli' => true
+        ];
+
+        $action = $this->Task->main('CliPlugin');
+
+        $this->assertTrue($action);
+
+        $expected = "Plugin::load('CliPlugin');";
+        $bootstrap = new File($this->bootstrapCli, false);
         $this->assertContains($expected, $bootstrap->read());
     }
 
