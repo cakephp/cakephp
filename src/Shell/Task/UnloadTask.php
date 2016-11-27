@@ -66,12 +66,16 @@ class UnloadTask extends Shell
         $finder = "@\nPlugin::load\((.|.\n|\n\s\s|\n\t|)+'$plugin'(.|.\n|)+\);\n@";
 
         $bootstrap = new File($this->bootstrap, false);
-        $contents = $bootstrap->read();
+        $content = $bootstrap->read();
 
-        if (!preg_match("@\n\s*Plugin::loadAll@", $contents)) {
-            $contents = preg_replace($finder, "", $contents);
+        if (!preg_match("@\n\s*Plugin::loadAll@", $content)) {
+            $newContent = preg_replace($finder, "", $content);
 
-            $bootstrap->write($contents);
+            if ($newContent === $content) {
+                return false;
+            }
+
+            $bootstrap->write($newContent);
 
             $this->out('');
             $this->out(sprintf('%s modified', $this->bootstrap));
