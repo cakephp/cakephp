@@ -22,6 +22,10 @@ use Cake\TestSuite\TestCase;
  */
 class LoadTaskTest extends TestCase
 {
+    /**
+     * @var \Cake\Shell\Task\LoadTask|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $Task;
 
     /**
      * setUp method
@@ -73,6 +77,7 @@ class LoadTaskTest extends TestCase
             'bootstrap' => false,
             'routes' => false,
             'autoload' => true,
+            'cli' => false
         ];
 
         $action = $this->Task->main('TestPlugin');
@@ -95,6 +100,7 @@ class LoadTaskTest extends TestCase
             'bootstrap' => true,
             'routes' => false,
             'autoload' => true,
+            'cli' => false
         ];
 
         $action = $this->Task->main('TestPlugin');
@@ -117,6 +123,7 @@ class LoadTaskTest extends TestCase
             'bootstrap' => false,
             'routes' => true,
             'autoload' => true,
+            'cli' => false
         ];
 
         $action = $this->Task->main('TestPlugin');
@@ -139,6 +146,7 @@ class LoadTaskTest extends TestCase
             'bootstrap' => false,
             'routes' => true,
             'autoload' => false,
+            'cli' => false
         ];
 
         $action = $this->Task->main('TestPlugin');
@@ -161,6 +169,7 @@ class LoadTaskTest extends TestCase
             'bootstrap' => false,
             'routes' => false,
             'autoload' => false,
+            'cli' => false
         ];
 
         $action = $this->Task->main('TestPlugin');

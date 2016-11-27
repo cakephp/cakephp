@@ -22,6 +22,10 @@ use Cake\TestSuite\TestCase;
  */
 class UnloadTaskTest extends TestCase
 {
+    /**
+     * @var \Cake\Shell\Task\UnloadTask|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $Task;
 
     /**
      * setUp method
@@ -80,6 +84,10 @@ class UnloadTaskTest extends TestCase
         $expected = "Plugin::load('TestPlugin', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);";
         $this->assertContains($expected, $bootstrap->read());
 
+        $this->Task->params = [
+            'cli' => false
+        ];
+
         $action = $this->Task->main('TestPlugin');
 
         $this->assertTrue($action);
@@ -97,6 +105,10 @@ class UnloadTaskTest extends TestCase
     public function testRegularExpressions()
     {
         $bootstrap = new File($this->bootstrap, false);
+
+        $this->Task->params = [
+            'cli' => false
+        ];
 
         //  Plugin::load('TestPlugin', [
         //      'boostrap' => false
