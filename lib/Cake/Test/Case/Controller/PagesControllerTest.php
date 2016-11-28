@@ -75,4 +75,21 @@ class PagesControllerTest extends CakeTestCase {
 		$Pages = new PagesController(new CakeRequest(null, false), new CakeResponse());
 		$Pages->display('non_existing_page');
 	}
+
+/**
+ * Test directory traversal protection
+ *
+ * @expectedException ForbiddenException
+ * @expectedExceptionCode 403
+ * @return void
+ */
+	public function testDirectoryTraversalProtection() {
+		App::build(array(
+			'View' => array(
+				CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS
+			)
+		));
+		$Pages = new PagesController(new CakeRequest(null, false), new CakeResponse());
+		$Pages->display('..', 'Posts', 'index');
+	}
 }
