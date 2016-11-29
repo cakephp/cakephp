@@ -131,6 +131,22 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests withCharset method
+     *
+     * @return void
+     */
+    public function testWithCharset()
+    {
+        $response = new Response();
+        $this->assertEquals('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
+
+        $new = $response->withCharset('iso-8859-1');
+        $this->assertNotContains('iso', $response->getHeaderLine('Content-Type'), 'Old instance not changed');
+
+        $this->assertEquals('text/html; charset=iso-8859-1', $new->getHeaderLine('Content-Type'));
+    }
+
+    /**
      * Tests the statusCode method
      *
      * @expectedException \InvalidArgumentException
@@ -472,6 +488,26 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests the withDisabledCache method
+     *
+     * @return void
+     */
+    public function testWithDisabledCache()
+    {
+        $response = new Response();
+        $expected = [
+            'Expires' => ['Mon, 26 Jul 1997 05:00:00 GMT'],
+            'Last-Modified' => [gmdate("D, d M Y H:i:s") . " GMT"],
+            'Cache-Control' => ['no-store, no-cache, must-revalidate, post-check=0, pre-check=0'],
+            'Content-Type' => ['text/html; charset=UTF-8'],
+        ];
+        $new = $response->withDisabledCache();
+        $this->assertFalse($response->hasHeader('Expires'), 'Old instance not mutated.');
+
+        $this->assertEquals($expected, $new->getHeaders());
+    }
+
+    /**
      * Tests the cache method
      *
      * @return void
@@ -693,6 +729,23 @@ class ResponseTest extends TestCase
         $response->length(100);
         $this->assertEquals(100, $response->length());
         $this->assertEquals('100', $response->getHeaderLine('Content-Length'));
+    }
+
+    /**
+     * Tests settings the content length
+     *
+     * @return void
+     */
+    public function testWithLength()
+    {
+        $response = new Response();
+        $this->assertFalse($response->hasHeader('Content-Length'));
+
+        $new = $response->withLength(100);
+        $this->assertFalse($response->hasHeader('Content-Length'), 'Old instance not modified');
+
+        $this->assertSame('100', $new->getHeaderLine('Content-Length'));
+        $this->assertSame('100', $new->length(), 'new method is compat with old.');
     }
 
     /**
