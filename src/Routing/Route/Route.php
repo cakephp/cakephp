@@ -101,19 +101,18 @@ class Route
     {
         $this->template = $template;
         $this->defaults = (array)$defaults;
-        $this->options = $options;
         if (isset($this->defaults['[method]'])) {
             $this->defaults['_method'] = $this->defaults['[method]'];
             unset($this->defaults['[method]']);
         }
-        if (isset($this->options['_ext'])) {
-            $this->_extensions = (array)$this->options['_ext'];
-        }
+        $this->options = $options + ['_ext' => []];
+        $this->setExtensions((array)$this->options['_ext']);
     }
 
     /**
      * Get/Set the supported extensions for this route.
      *
+     * @deprecated 3.3.9 Use getExtensions/setExtensions instead.
      * @param null|string|array $extensions The extensions to set. Use null to get.
      * @return array|null The extensions or null.
      */
@@ -123,6 +122,29 @@ class Route
             return $this->_extensions;
         }
         $this->_extensions = (array)$extensions;
+    }
+
+    /**
+     * Set the supported extensions for this route.
+     *
+     * @param array $extensions The extensions to set.
+     * @return $this
+     */
+    public function setExtensions(array $extensions)
+    {
+        $this->_extensions = array_map('strtolower', $extensions);
+
+        return $this;
+    }
+
+    /**
+     * Get the supported extensions for this route.
+     *
+     * @return array
+     */
+    public function getExtensions()
+    {
+        return $this->_extensions;
     }
 
     /**
@@ -173,7 +195,7 @@ class Route
         $names = $routeParams = [];
         $parsed = preg_quote($this->template, '#');
 
-        preg_match_all('#:([A-Za-z0-9_-]+[A-Z0-9a-z])#', $route, $namedElements);
+        preg_match_all('/:([a-z0-9-_]+(?<![-_]))/i', $route, $namedElements);
         foreach ($namedElements[1] as $i => $name) {
             $search = '\\' . $namedElements[0][$i];
             if (isset($this->options[$name])) {
@@ -346,20 +368,12 @@ class Route
      */
     protected function _parseExtension($url)
     {
-        if (empty($this->_extensions)) {
-            return [$url, null];
-        }
-        preg_match('/\.([0-9a-z\.]*)$/', $url, $match);
-        if (empty($match[1])) {
-            return [$url, null];
-        }
-        $ext = strtolower($match[1]);
-        $len = strlen($match[1]);
-        foreach ($this->_extensions as $name) {
-            if (strtolower($name) === $ext) {
-                $url = substr($url, 0, ($len + 1) * -1);
-
-                return [$url, $ext];
+        if (count($this->_extensions) && strpos($url, '.') !== false) {
+            foreach ($this->_extensions as $ext) {
+                $len = strlen($ext) + 1;
+                if (substr($url, -$len) === '.' . $ext) {
+                    return [substr($url, 0, $len * -1), $ext];
+                }
             }
         }
 

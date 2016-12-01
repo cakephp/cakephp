@@ -239,6 +239,10 @@ class BreadcrumbsHelper extends Helper
      */
     public function render(array $attributes = [], array $separator = [])
     {
+        if (!$this->crumbs) {
+            return '';
+        }
+
         $crumbs = $this->crumbs;
         $crumbsCount = count($crumbs);
         $templater = $this->templater();

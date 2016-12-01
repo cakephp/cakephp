@@ -34,7 +34,7 @@ class CacheShellTest extends TestCase
         parent::setUp();
         $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
         $this->shell = new CacheShell($this->io);
-        Cache::config('test', ['engine' => 'File', 'path' => TMP]);
+        Cache::config('test', ['engine' => 'File', 'path' => CACHE]);
     }
 
     /**

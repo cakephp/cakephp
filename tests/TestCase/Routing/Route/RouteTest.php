@@ -20,6 +20,21 @@ use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
 
 /**
+ * Used to expose protected methods for testing.
+ */
+class RouteProtected extends Route
+{
+    /**
+     * @param $url
+     * @return array
+     */
+    public function parseExtension($url)
+    {
+        return $this->_parseExtension($url);
+    }
+}
+
+/**
  * Test case for Route
  */
 class RouteTest extends TestCase
@@ -47,12 +62,12 @@ class RouteTest extends TestCase
 
         $this->assertEquals('/:controller/:action/:id', $route->template);
         $this->assertEquals([], $route->defaults);
-        $this->assertEquals(['id' => '[0-9]+'], $route->options);
+        $this->assertEquals(['id' => '[0-9]+', '_ext' => []], $route->options);
         $this->assertFalse($route->compiled());
     }
 
     /**
-     * test Route compiling.
+     * Test Route compiling.
      *
      * @return void
      */
@@ -91,6 +106,31 @@ class RouteTest extends TestCase
     }
 
     /**
+     * Test that single letter placeholders work.
+     *
+     * @return void
+     */
+    public function testRouteBuildingSmallPlaceholders()
+    {
+        $route = new Route(
+            '/fighters/:id/move/:x/:y',
+            ['controller' => 'Fighters', 'action' => 'move'],
+            ['id' => '\d+', 'x' => '\d+', 'y' => '\d+', 'pass' => ['id', 'x', 'y']]
+        );
+        $pattern = $route->compile();
+        $this->assertRegExp($pattern, '/fighters/123/move/8/42');
+
+        $result = $route->match([
+            'controller' => 'Fighters',
+            'action' => 'move',
+            'id' => 123,
+            'x' => 8,
+            'y' => 42
+        ]);
+        $this->assertEquals('/fighters/123/move/8/42', $result);
+    }
+
+    /**
      * Test parsing routes with extensions.
      *
      * @return void
@@ -109,8 +149,7 @@ class RouteTest extends TestCase
         $result = $route->parse('/posts/index.pdf', 'GET');
         $this->assertFalse(isset($result['_ext']));
 
-        $route->extensions(['pdf', 'json', 'xml', 'xml.gz']);
-        $result = $route->parse('/posts/index.pdf', 'GET');
+        $result = $route->setExtensions(['pdf', 'json', 'xml', 'xml.gz'])->parse('/posts/index.pdf', 'GET');
         $this->assertEquals('pdf', $result['_ext']);
 
         $result = $route->parse('/posts/index.json', 'GET');
@@ -124,7 +163,109 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that route parameters that overlap don't cause errors.
+     * @return array
+     */
+    public function provideMatchParseExtension()
+    {
+        return [
+            ['/foo/bar.xml', ['/foo/bar', 'xml'], ['xml', 'json', 'xml.gz']],
+            ['/foo/bar.json', ['/foo/bar', 'json'], ['xml', 'json', 'xml.gz']],
+            ['/foo/bar.xml.gz', ['/foo/bar', 'xml.gz'], ['xml', 'json', 'xml.gz']],
+            ['/foo/with.dots.json.xml.zip', ['/foo/with.dots.json.xml', 'zip'], ['zip']],
+            ['/foo/confusing.extensions.dots.json.xml.zip', ['/foo/confusing.extensions.dots.json.xml', 'zip'], ['json', 'xml', 'zip']],
+            ['/foo/confusing.extensions.dots.json.xml', ['/foo/confusing.extensions.dots.json', 'xml'], ['json', 'xml', 'zip']],
+            ['/foo/confusing.extensions.dots.json', ['/foo/confusing.extensions.dots', 'json'], ['json', 'xml', 'zip']],
+        ];
+    }
+
+    /**
+     * Expects _parseExtension to match extensions in URLs
+     *
+     * @param string $url
+     * @param array $expected
+     * @param array $ext
+     * @return void
+     * @dataProvider provideMatchParseExtension
+     */
+    public function testMatchParseExtension($url, array $expected, array $ext)
+    {
+        $route = new RouteProtected('/:controller/:action/*', [], ['_ext' => $ext]);
+        $result = $route->parseExtension($url);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function provideNoMatchParseExtension()
+    {
+        return [
+            ['/foo/bar', ['xml']],
+            ['/foo/bar.zip', ['xml']],
+            ['/foo/bar.xml.zip', ['xml']],
+            ['/foo/bar.', ['xml']],
+            ['/foo/bar.xml', []],
+            ['/foo/bar...xml...zip...', ['xml']]
+        ];
+    }
+
+    /**
+     * Expects _parseExtension to not match extensions in URLs
+     *
+     * @param string $url
+     * @param array $ext
+     * @return void
+     * @dataProvider provideNoMatchParseExtension
+     */
+    public function testNoMatchParseExtension($url, array $ext)
+    {
+        $route = new RouteProtected('/:controller/:action/*', [], ['_ext' => $ext]);
+        list($outUrl, $outExt) = $route->parseExtension($url);
+        $this->assertEquals($url, $outUrl);
+        $this->assertNull($outExt);
+    }
+
+    /**
+     * Expects extensions to be set
+     *
+     * @return void
+     */
+    public function testSetExtensions()
+    {
+        $route = new RouteProtected('/:controller/:action/*', []);
+        $this->assertEquals([], $route->getExtensions());
+        $route->setExtensions(['xml']);
+        $this->assertEquals(['xml'], $route->getExtensions());
+        $route->setExtensions(['xml', 'json', 'zip']);
+        $this->assertEquals(['xml', 'json', 'zip'], $route->getExtensions());
+        $route->setExtensions([]);
+        $this->assertEquals([], $route->getExtensions());
+
+        $route = new RouteProtected('/:controller/:action/*', [], ['_ext' => ['one', 'two']]);
+        $this->assertEquals(['one', 'two'], $route->getExtensions());
+    }
+
+    /**
+     * Expects extensions to be return.
+     *
+     * @return void
+     */
+    public function testGetExtensions()
+    {
+        $route = new RouteProtected('/:controller/:action/*', []);
+        $this->assertEquals([], $route->getExtensions());
+
+        $route = new RouteProtected('/:controller/:action/*', [], ['_ext' => ['one', 'two']]);
+        $this->assertEquals(['one', 'two'], $route->getExtensions());
+
+        $route = new RouteProtected('/:controller/:action/*', []);
+        $this->assertEquals([], $route->getExtensions());
+        $route->setExtensions(['xml', 'json', 'zip']);
+        $this->assertEquals(['xml', 'json', 'zip'], $route->getExtensions());
+    }
+
+    /**
+     * Test that route parameters that overlap don't cause errors.
      *
      * @return void
      */
@@ -140,7 +281,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test compiling routes with keys that have patterns
+     * Test compiling routes with keys that have patterns
      *
      * @return void
      */
@@ -209,6 +350,11 @@ class RouteTest extends TestCase
         $this->assertEquals(['url_title', 'id'], $route->keys);
     }
 
+    /**
+     * Test route with unicode
+     *
+     * @return void
+     */
     public function testRouteCompilingWithUnicodePatterns()
     {
         $route = new Route(
@@ -229,7 +375,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test more complex route compiling & parsing with mid route greedy stars
+     * Test more complex route compiling & parsing with mid route greedy stars
      * and optional routing parameters
      *
      * @return void
@@ -264,7 +410,7 @@ class RouteTest extends TestCase
         $this->assertRegExp($result, '/some_extra/page/this_is_the_slug');
         $this->assertRegExp($result, '/page/this_is_the_slug');
         $this->assertEquals(['slug', 'extra'], $route->keys);
-        $this->assertEquals(['extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view'], $route->options);
+        $this->assertEquals(['extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view', '_ext' => []], $route->options);
         $expected = [
             'controller' => 'pages',
             'action' => 'view'
@@ -290,7 +436,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that routes match their pattern.
+     * Test that routes match their pattern.
      *
      * @return void
      */
@@ -439,7 +585,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that non-greedy routes fail with extra passed args
+     * Test that non-greedy routes fail with extra passed args
      *
      * @return void
      */
@@ -455,7 +601,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that falsey values do not interrupt a match.
+     * Test that falsey values do not interrupt a match.
      *
      * @return void
      */
@@ -469,7 +615,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test match() with greedy routes, and passed args.
+     * Test match() with greedy routes, and passed args.
      *
      * @return void
      */
@@ -632,7 +778,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that match with patterns works.
+     * Test that match with patterns works.
      *
      * @return void
      */
@@ -779,7 +925,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test numerically indexed defaults, get appended to pass
+     * Test numerically indexed defaults, get appended to pass
      *
      * @return void
      */
@@ -797,7 +943,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that http header conditions can cause route failures.
+     * Test that http header conditions can cause route failures.
      *
      * @return void
      */
@@ -817,7 +963,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that http header conditions can cause route failures.
+     * Test that http header conditions can cause route failures.
      *
      * @return void
      */
@@ -843,7 +989,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that http header conditions can work with URL generation
+     * Test that http header conditions can work with URL generation
      *
      * @return void
      */
@@ -911,7 +1057,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that patterns work for :action
+     * Test that patterns work for :action
      *
      * @return void
      */
@@ -942,7 +1088,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test the parseArgs method
+     * Test the parseArgs method
      *
      * @return void
      */
@@ -997,7 +1143,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test restructuring args with pass key
+     * Test restructuring args with pass key
      *
      * @return void
      */
@@ -1063,7 +1209,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test getName();
+     * Test getName();
      *
      * @return void
      */
@@ -1144,7 +1290,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * test that utf-8 patterns work for :section
+     * Test that utf-8 patterns work for :section
      *
      * @return void
      */

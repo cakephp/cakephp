@@ -395,7 +395,7 @@ class TimestampBehaviorTest extends TestCase
         $row = $table->find('all')->where(['id' => $entity->id])->first();
 
         $now = Time::now();
-        $this->assertEquals($now, $row->created);
-        $this->assertEquals($now, $row->updated);
+        $this->assertEquals($now->toDateTimeString(), $row->created->toDateTimeString());
+        $this->assertEquals($now->toDateTimeString(), $row->updated->toDateTimeString());
     }
 }

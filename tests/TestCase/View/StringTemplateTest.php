@@ -115,6 +115,22 @@ class StringTemplateTest extends TestCase
     }
 
     /**
+     * Test formatting strings with URL encoding
+     *
+     * @return void
+     */
+    public function testFormatUrlEncoding()
+    {
+        $templates = [
+            'test' => '<img src="/img/foo%20bar.jpg">{{text}}',
+        ];
+        $this->template->add($templates);
+
+        $result = $this->template->format('test', ['text' => 'stuff!']);
+        $this->assertSame('<img src="/img/foo%20bar.jpg">stuff!', $result);
+    }
+
+    /**
      * Formatting array data should not trigger errors.
      *
      * @return void
