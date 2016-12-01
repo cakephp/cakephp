@@ -659,7 +659,7 @@ abstract class IntegrationTestCase extends TestCase
      */
     public function assertResponseCode($code)
     {
-        $actual = $this->_response->statusCode();
+        $actual = $this->_response->getStatusCode();
         $this->_assertStatus($code, $code, 'Status code is not ' . $code . ' but ' . $actual);
     }
 
@@ -676,7 +676,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert status code.');
         }
-        $status = $this->_response->statusCode();
+        $status = $this->_response->getStatusCode();
 
         if ($this->_exception && ($status < $min || $status > $max)) {
             $this->fail($this->_exception);
