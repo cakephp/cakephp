@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\View;
 
-use Cake\Core\InstanceConfigTrait;
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplateTrait;
 
@@ -24,7 +23,6 @@ use Cake\View\StringTemplateTrait;
 class TestStringTemplate
 {
 
-    use InstanceConfigTrait;
     use StringTemplateTrait;
 
     /**

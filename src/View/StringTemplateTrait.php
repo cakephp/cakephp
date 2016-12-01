@@ -14,12 +14,16 @@
  */
 namespace Cake\View;
 
+use Cake\Core\InstanceConfigTrait;
+
 /**
  * Adds string template functionality to any class by providing methods to
  * load and parse string templates.
  */
 trait StringTemplateTrait
 {
+
+    use InstanceConfigTrait;
 
     /**
      * StringTemplate instance.
