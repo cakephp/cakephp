@@ -975,7 +975,14 @@ class ResponseTest extends TestCase
      */
     public function testWithEtag()
     {
-        $this->markTestIncomplete();
+        $response = new Response();
+        $new = $response->withEtag('something');
+
+        $this->assertFalse($response->hasHeader('Etag'));
+        $this->assertEquals('"something"', $new->getHeaderLine('Etag'));
+
+        $new = $response->withEtag('something', true);
+        $this->assertEquals('W/"something"', $new->getHeaderLine('Etag'));
     }
 
     /**

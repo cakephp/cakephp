@@ -1492,6 +1492,7 @@ class Response implements ResponseInterface
      * @param bool $weak Whether the response is semantically the same as
      *   other with the same hash or not
      * @return string|null
+     * @deprecated 3.4.0 Use withEtag() instead.
      */
     public function etag($hash = null, $weak = false)
     {
@@ -1504,6 +1505,33 @@ class Response implements ResponseInterface
         }
 
         return null;
+    }
+
+    /**
+     * Create a new instance with the Etag header set.
+     *
+     * Etags are a strong indicative that a response can be cached by a
+     * HTTP client. A bad way of generating Etags is creating a hash of
+     * the response output, instead generate a unique hash of the
+     * unique components that identifies a request, such as a
+     * modification time, a resource Id, and anything else you consider it
+     * that makes the response unique.
+     *
+     * The second parameter is used to inform clients that the content has
+     * changed, but semantically it is equivalent to existing cached values. Consider
+     * a page with a hit counter, two different page views are equivalent, but
+     * they differ by a few bytes. This permits the Client to decide whether they should
+     * use the cached data.
+     *
+     * @param string $hash The unique hash that identifies this response
+     * @param bool $weak Whether the response is semantically the same as
+     *   other with the same hash or not. Defaults to false
+     * @return static
+     */
+    public function withEtag($hash, $weak = false)
+    {
+        $hash = sprintf('%s"%s"', ($weak) ? 'W/' : null, $hash);
+        return $this->withHeader('Etag', $hash);
     }
 
     /**
