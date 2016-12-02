@@ -1440,6 +1440,7 @@ class Response implements ResponseInterface
      * @param string|array|null $cacheVariances A single Vary string or an array
      *   containing the list for variances.
      * @return array|null
+     * @deprecated 3.4.0 Use withVary() instead.
      */
     public function vary($cacheVariances = null)
     {
@@ -1453,6 +1454,22 @@ class Response implements ResponseInterface
         }
 
         return null;
+    }
+
+    /**
+     * Create a new instance with the Vary header set.
+     *
+     * If an array is passed values will be imploded into a comma
+     * separated string. If no parameters are passed, then an
+     * array with the current Vary header value is returned
+     *
+     * @param string|array $cacheVariances A single Vary string or an array 
+     *   containing the list for variances.
+     * @return static
+     */
+    public function withVary($cacheVariances)
+    {
+        return $this->withHeader('Vary', (array) $cacheVariances);
     }
 
     /**

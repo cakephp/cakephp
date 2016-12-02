@@ -832,6 +832,16 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests withSharable()
+     *
+     * @return void
+     */
+    public function testWithSharable()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
      * Tests setting of max-age Cache-Control directive
      *
      * @return void
@@ -848,6 +858,16 @@ class ResponseTest extends TestCase
         $response->maxAge(3600);
         $response->sharable(false);
         $this->assertEquals('max-age=3600, private', $response->getHeaderLine('Cache-Control'));
+    }
+
+    /**
+     * Tests withMaxAge()
+     *
+     * @return void
+     */
+    public function testWithMaxAge()
+    {
+        $this->markTestIncomplete();
     }
 
     /**
@@ -913,6 +933,24 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests withVary()
+     *
+     * @return void
+     */
+    public function testWithVary()
+    {
+        $response = new Response();
+        $new = $response->withVary('Accept-encoding');
+
+        $this->assertFalse($response->hasHeader('Vary'));
+        $this->assertEquals('Accept-encoding', $new->getHeaderLine('Vary'));
+
+        $new = $response->withVary(['Accept-encoding', 'Accept-language']);
+        $this->assertFalse($response->hasHeader('Vary'));
+        $this->assertEquals('Accept-encoding,Accept-language', $new->getHeaderLine('Vary'));
+    }
+
+    /**
      * Tests getting/setting the Etag header
      *
      * @return void
@@ -928,6 +966,16 @@ class ResponseTest extends TestCase
         $response->etag('something', true);
         $this->assertEquals('W/"something"', $response->etag());
         $this->assertEquals('W/"something"', $response->getHeaderLine('Etag'));
+    }
+
+    /**
+     * Tests withEtag()
+     *
+     * @return void
+     */
+    public function testWithEtag()
+    {
+        $this->markTestIncomplete();
     }
 
     /**
@@ -949,6 +997,16 @@ class ResponseTest extends TestCase
         $this->assertEmpty($response->header());
         $this->assertEmpty($response->body());
         $this->assertEquals(304, $response->statusCode());
+    }
+
+    /**
+     * Tests withNotModified()
+     *
+     * @return void
+     */
+    public function testWithNotModified()
+    {
+        $this->markTestIncomplete();
     }
 
     /**
