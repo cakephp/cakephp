@@ -1334,6 +1334,24 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Create an instance with Cache-Control max-age directive set.
+     *
+     * The max-age is the number of seconds after which the response should no longer be considered
+     * a good candidate to be fetched from the local (client) cache.
+     *
+     * @param int $seconds The seconds a cached response can be considered valid
+     * @return static
+     */
+    public function withMaxAge($seconds)
+    {
+        $new = clone $this;
+        $new->_cacheDirectives['max-age'] = $seconds;
+        $new->_setCacheControl();
+
+        return $new;
+    }
+
+    /**
      * Sets the Cache-Control must-revalidate directive.
      * must-revalidate indicates that the response should not be served
      * stale by a cache under any circumstance without first revalidating

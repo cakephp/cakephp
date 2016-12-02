@@ -879,7 +879,15 @@ class ResponseTest extends TestCase
      */
     public function testWithMaxAge()
     {
-        $this->markTestIncomplete();
+        $response = new Response();
+        $this->assertFalse($response->hasHeader('Cache-Control'));
+
+        $new = $response->withMaxAge(3600);
+        $this->assertEquals('max-age=3600', $new->getHeaderLine('Cache-Control'));
+
+        $new = $response->withMaxAge(3600)
+            ->withSharable(false);
+        $this->assertEquals('max-age=3600, private', $new->getHeaderLine('Cache-Control'));
     }
 
     /**
