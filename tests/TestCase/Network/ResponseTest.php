@@ -838,7 +838,19 @@ class ResponseTest extends TestCase
      */
     public function testWithSharable()
     {
-        $this->markTestIncomplete();
+        $response = new Response();
+        $new = $response->withSharable(true);
+        $this->assertFalse($response->hasHeader('Cache-Control'), 'old instance unchanged');
+        $this->assertEquals('public', $new->getHeaderLine('Cache-Control'));
+
+        $new = $response->withSharable(false);
+        $this->assertEquals('private', $new->getHeaderLine('Cache-Control'));
+
+        $new = $response->withSharable(true, 3600);
+        $this->assertEquals('public, max-age=3600', $new->getHeaderLine('Cache-Control'));
+
+        $new = $response->withSharable(false, 3600);
+        $this->assertEquals('private, max-age=3600', $new->getHeaderLine('Cache-Control'));
     }
 
     /**

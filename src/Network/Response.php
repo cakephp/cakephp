@@ -1265,6 +1265,30 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Create a new instace with the public/private Cache-Control directive set.
+     *
+     * @param bool $public If set to true, the Cache-Control header will be set as public
+     *   if set to false, the response will be set to private.
+     * @param int|null $time time in seconds after which the response should no longer be considered fresh.
+     * @return static
+     */
+    public function withSharable($public, $time = null)
+    {
+        $new = clone $this;
+        unset($new->_cacheDirectives['private'], $new->_cacheDirectives['public']);
+
+        $key = $public ? 'public' : 'private';
+        $new->_cacheDirectives[$key] = true;
+
+        if ($time !== null) {
+            $new->_cacheDirectives['max-age'] = $time;
+        }
+        $new->_setCacheControl();
+
+        return $new;
+    }
+
+    /**
      * Sets the Cache-Control s-maxage directive.
      *
      * The max-age is the number of seconds after which the response should no longer be considered
