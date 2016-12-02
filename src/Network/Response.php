@@ -1534,13 +1534,13 @@ class Response implements ResponseInterface
      * separated string. If no parameters are passed, then an
      * array with the current Vary header value is returned
      *
-     * @param string|array $cacheVariances A single Vary string or an array 
+     * @param string|array $cacheVariances A single Vary string or an array
      *   containing the list for variances.
      * @return static
      */
     public function withVary($cacheVariances)
     {
-        return $this->withHeader('Vary', (array) $cacheVariances);
+        return $this->withHeader('Vary', (array)$cacheVariances);
     }
 
     /**
