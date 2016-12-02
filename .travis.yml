@@ -20,6 +20,7 @@ services:
   - memcached
   - redis-server
   - postgresql
+  - mysql
 
 addons:
   postgresql: "9.4"
@@ -50,7 +51,6 @@ before_install:
 
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
 
-  - if [ $DB = 'mysql' ]; then sudo apt-get -y install mysql-server; fi
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test2;'; fi
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test3;'; fi
