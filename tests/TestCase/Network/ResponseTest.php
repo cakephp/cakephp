@@ -1013,7 +1013,26 @@ class ResponseTest extends TestCase
      */
     public function testWithNotModified()
     {
-        $this->markTestIncomplete();
+        $response = new Response(['body' => 'something']);
+        $response = $response->withLength(100)
+            ->withStatus(200)
+            ->withHeader('Last-Modified', 'value')
+            ->withHeader('Content-Language', 'en-EN')
+            ->withHeader('X-things', 'things')
+            ->withType('application/json');
+
+        $new = $response->withNotModified();
+        $this->assertTrue($response->hasHeader('Content-Language'), 'old instance not changed');
+        $this->assertTrue($response->hasHeader('Content-Length'), 'old instance not changed');
+
+        $this->assertFalse($new->hasHeader('Content-Type'));
+        $this->assertFalse($new->hasHeader('Content-Length'));
+        $this->assertFalse($new->hasHeader('Content-Language'));
+        $this->assertFalse($new->hasHeader('Last-Modified'));
+
+        $this->assertSame('things', $new->getHeaderLine('X-things'), 'Other headers are retained');
+        $this->assertSame(304, $new->getStatusCode());
+        $this->assertSame('', $new->getBody()->getContents());
     }
 
     /**

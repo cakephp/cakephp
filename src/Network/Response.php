@@ -1432,6 +1432,35 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Create a new instance as 'not modified'
+     *
+     * This will remove any body contents set the status code
+     * to "304" and removing headers that describe
+     * a response body.
+     *
+     * @return static
+     */
+    public function withNotModified()
+    {
+        $new = $this->withStatus(304);
+        $new->_createStream();
+        $remove = [
+            'Allow',
+            'Content-Encoding',
+            'Content-Language',
+            'Content-Length',
+            'Content-MD5',
+            'Content-Type',
+            'Last-Modified'
+        ];
+        foreach ($remove as $header) {
+            $new = $new->withoutHeader($header);
+        }
+
+        return $new;
+    }
+
+    /**
      * Sets the Vary header for the response, if an array is passed,
      * values will be imploded into a comma separated string. If no
      * parameters are passed, then an array with the current Vary header
@@ -1531,6 +1560,7 @@ class Response implements ResponseInterface
     public function withEtag($hash, $weak = false)
     {
         $hash = sprintf('%s"%s"', ($weak) ? 'W/' : null, $hash);
+
         return $this->withHeader('Etag', $hash);
     }
 
