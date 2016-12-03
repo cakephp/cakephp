@@ -452,6 +452,25 @@ class CookieComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test delete() on corrupted/truncated cookie data.
+ *
+ * @return void
+ */
+	public function testDeleteCorruptedCookieData() {
+		$this->Cookie->type('aes');
+		$this->Cookie->key = sha1('some bad key');
+
+		$data = $this->_implode(array('name' => 'jill', 'age' => 24));
+		// Corrupt the cookie data by slicing some bytes off.
+		$_COOKIE['CakeTestCookie'] = array(
+			'BadData' => substr(Security::encrypt($data, $this->Cookie->key), 0, -5)
+		);
+
+		$this->assertNull($this->Cookie->delete('BadData.name'));
+		$this->assertNull($this->Cookie->read('BadData.name'));
+	}
+
+/**
  * testReadingCookieArray
  *
  * @return void
