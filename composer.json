@@ -24,7 +24,7 @@
         "ext-mbstring": "*",
         "cakephp/chronos": "~1.0",
         "aura/intl": "1.1.*",
-        "psr/log": "1.0",
+        "psr/log": "^1.0",
         "zendframework/zend-diactoros": "~1.0"
     },
     "suggest": {

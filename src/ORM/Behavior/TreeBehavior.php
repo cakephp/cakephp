@@ -483,10 +483,12 @@ class TreeBehavior extends Behavior
      */
     public function findTreeList(Query $query, array $options)
     {
+        $left = $this->_table->aliasField($this->config('left'));
+
         $results = $this->_scope($query)
             ->find('threaded', [
                 'parentField' => $this->config('parent'),
-                'order' => [$this->config('left') => 'ASC'],
+                'order' => [$left => 'ASC'],
             ]);
 
         return $this->formatTreeList($results, $options);

@@ -256,7 +256,15 @@ class TreeBehaviorTest extends TestCase
     {
         $table = TableRegistry::get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
-        $result = $table->find('treeList')->toArray();
+        $query = $table->find('treeList');
+
+        $result = null;
+        $query->clause('order')->iterateParts(function ($dir, $field) use (&$result) {
+            $result = $field;
+        });
+        $this->assertEquals('MenuLinkTrees.lft', $result);
+
+        $result = $query->toArray();
         $expected = [
             1 => 'Link 1',
             2 => '_Link 2',

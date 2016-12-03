@@ -9,7 +9,7 @@ dist: trusty
 
 env:
   matrix:
-    - DB=mysql db_dsn='mysql://root@0.0.0.0/cakephp_test'
+    - DB=mysql db_dsn='mysql://root@127.0.0.1/cakephp_test'
     - DB=pgsql db_dsn='postgres://postgres@127.0.0.1/cakephp_test'
     - DB=sqlite db_dsn='sqlite:///:memory:'
   global:
@@ -19,6 +19,7 @@ services:
   - memcached
   - redis-server
   - postgresql
+  - mysql
 
 addons:
   postgresql: "9.4"
@@ -49,7 +50,6 @@ before_install:
 
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
 
-  - if [ $DB = 'mysql' ]; then sudo apt-get -y install mysql-server; fi
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test2;'; fi
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test3;'; fi
