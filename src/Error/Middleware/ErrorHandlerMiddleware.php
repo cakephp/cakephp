@@ -17,7 +17,6 @@ namespace Cake\Error\Middleware;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Http\ResponseTransformer;
 use Cake\Log\Log;
 use Exception;
 
@@ -99,7 +98,7 @@ class ErrorHandlerMiddleware
             $res = $renderer->render();
             $this->logException($request, $exception);
 
-            return ResponseTransformer::toPsr($res);
+            return $res;
         } catch (\Exception $e) {
             $this->logException($request, $e);
 
