@@ -824,7 +824,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertEquals($content, $this->_response->body(), $message);
+        $this->assertEquals($content, (string)$this->_response->getBody(), $message);
     }
 
     /**
@@ -839,7 +839,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertContains($content, (string)$this->_response->body(), $message);
+        $this->assertContains($content, (string)$this->_response->getBody(), $message);
     }
 
     /**
@@ -854,7 +854,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertNotContains($content, (string)$this->_response->body(), $message);
+        $this->assertNotContains($content, (string)$this->_response->getBody(), $message);
     }
 
     /**
@@ -868,7 +868,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertNotEmpty((string)$this->_response->body(), $message);
+        $this->assertNotEmpty((string)$this->_response->getBody(), $message);
     }
     /**
      * Assert response content is empty.
@@ -881,7 +881,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertEmpty((string)$this->_response->body(), $message);
+        $this->assertEmpty((string)$this->_response->getBody(), $message);
     }
 
     /**
