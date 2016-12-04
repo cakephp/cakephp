@@ -1659,6 +1659,7 @@ class AuthComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testRedirectUrlWithoutLoginRedirect() {
+		$this->Auth->loginRedirect = null;
 		$this->Auth->Session->write('Auth.redirect', '/users/login');
 		$this->Auth->request->addParams(Router::parse('/users/login'));
 		$result = $this->Auth->redirectUrl();
