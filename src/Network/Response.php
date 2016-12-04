@@ -1265,6 +1265,30 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Create a new instace with the public/private Cache-Control directive set.
+     *
+     * @param bool $public If set to true, the Cache-Control header will be set as public
+     *   if set to false, the response will be set to private.
+     * @param int|null $time time in seconds after which the response should no longer be considered fresh.
+     * @return static
+     */
+    public function withSharable($public, $time = null)
+    {
+        $new = clone $this;
+        unset($new->_cacheDirectives['private'], $new->_cacheDirectives['public']);
+
+        $key = $public ? 'public' : 'private';
+        $new->_cacheDirectives[$key] = true;
+
+        if ($time !== null) {
+            $new->_cacheDirectives['max-age'] = $time;
+        }
+        $new->_setCacheControl();
+
+        return $new;
+    }
+
+    /**
      * Sets the Cache-Control s-maxage directive.
      *
      * The max-age is the number of seconds after which the response should no longer be considered
@@ -1307,6 +1331,24 @@ class Response implements ResponseInterface
         }
 
         return null;
+    }
+
+    /**
+     * Create an instance with Cache-Control max-age directive set.
+     *
+     * The max-age is the number of seconds after which the response should no longer be considered
+     * a good candidate to be fetched from the local (client) cache.
+     *
+     * @param int $seconds The seconds a cached response can be considered valid
+     * @return static
+     */
+    public function withMaxAge($seconds)
+    {
+        $new = clone $this;
+        $new->_cacheDirectives['max-age'] = $seconds;
+        $new->_setCacheControl();
+
+        return $new;
     }
 
     /**
@@ -1432,6 +1474,35 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Create a new instance as 'not modified'
+     *
+     * This will remove any body contents set the status code
+     * to "304" and removing headers that describe
+     * a response body.
+     *
+     * @return static
+     */
+    public function withNotModified()
+    {
+        $new = $this->withStatus(304);
+        $new->_createStream();
+        $remove = [
+            'Allow',
+            'Content-Encoding',
+            'Content-Language',
+            'Content-Length',
+            'Content-MD5',
+            'Content-Type',
+            'Last-Modified'
+        ];
+        foreach ($remove as $header) {
+            $new = $new->withoutHeader($header);
+        }
+
+        return $new;
+    }
+
+    /**
      * Sets the Vary header for the response, if an array is passed,
      * values will be imploded into a comma separated string. If no
      * parameters are passed, then an array with the current Vary header
@@ -1440,6 +1511,7 @@ class Response implements ResponseInterface
      * @param string|array|null $cacheVariances A single Vary string or an array
      *   containing the list for variances.
      * @return array|null
+     * @deprecated 3.4.0 Use withVary() instead.
      */
     public function vary($cacheVariances = null)
     {
@@ -1453,6 +1525,22 @@ class Response implements ResponseInterface
         }
 
         return null;
+    }
+
+    /**
+     * Create a new instance with the Vary header set.
+     *
+     * If an array is passed values will be imploded into a comma
+     * separated string. If no parameters are passed, then an
+     * array with the current Vary header value is returned
+     *
+     * @param string|array $cacheVariances A single Vary string or an array
+     *   containing the list for variances.
+     * @return static
+     */
+    public function withVary($cacheVariances)
+    {
+        return $this->withHeader('Vary', (array)$cacheVariances);
     }
 
     /**
@@ -1475,6 +1563,7 @@ class Response implements ResponseInterface
      * @param bool $weak Whether the response is semantically the same as
      *   other with the same hash or not
      * @return string|null
+     * @deprecated 3.4.0 Use withEtag() instead.
      */
     public function etag($hash = null, $weak = false)
     {
@@ -1487,6 +1576,34 @@ class Response implements ResponseInterface
         }
 
         return null;
+    }
+
+    /**
+     * Create a new instance with the Etag header set.
+     *
+     * Etags are a strong indicative that a response can be cached by a
+     * HTTP client. A bad way of generating Etags is creating a hash of
+     * the response output, instead generate a unique hash of the
+     * unique components that identifies a request, such as a
+     * modification time, a resource Id, and anything else you consider it
+     * that makes the response unique.
+     *
+     * The second parameter is used to inform clients that the content has
+     * changed, but semantically it is equivalent to existing cached values. Consider
+     * a page with a hit counter, two different page views are equivalent, but
+     * they differ by a few bytes. This permits the Client to decide whether they should
+     * use the cached data.
+     *
+     * @param string $hash The unique hash that identifies this response
+     * @param bool $weak Whether the response is semantically the same as
+     *   other with the same hash or not. Defaults to false
+     * @return static
+     */
+    public function withEtag($hash, $weak = false)
+    {
+        $hash = sprintf('%s"%s"', ($weak) ? 'W/' : null, $hash);
+
+        return $this->withHeader('Etag', $hash);
     }
 
     /**

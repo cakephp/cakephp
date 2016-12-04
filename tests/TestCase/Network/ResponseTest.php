@@ -832,6 +832,28 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests withSharable()
+     *
+     * @return void
+     */
+    public function testWithSharable()
+    {
+        $response = new Response();
+        $new = $response->withSharable(true);
+        $this->assertFalse($response->hasHeader('Cache-Control'), 'old instance unchanged');
+        $this->assertEquals('public', $new->getHeaderLine('Cache-Control'));
+
+        $new = $response->withSharable(false);
+        $this->assertEquals('private', $new->getHeaderLine('Cache-Control'));
+
+        $new = $response->withSharable(true, 3600);
+        $this->assertEquals('public, max-age=3600', $new->getHeaderLine('Cache-Control'));
+
+        $new = $response->withSharable(false, 3600);
+        $this->assertEquals('private, max-age=3600', $new->getHeaderLine('Cache-Control'));
+    }
+
+    /**
      * Tests setting of max-age Cache-Control directive
      *
      * @return void
@@ -848,6 +870,24 @@ class ResponseTest extends TestCase
         $response->maxAge(3600);
         $response->sharable(false);
         $this->assertEquals('max-age=3600, private', $response->getHeaderLine('Cache-Control'));
+    }
+
+    /**
+     * Tests withMaxAge()
+     *
+     * @return void
+     */
+    public function testWithMaxAge()
+    {
+        $response = new Response();
+        $this->assertFalse($response->hasHeader('Cache-Control'));
+
+        $new = $response->withMaxAge(3600);
+        $this->assertEquals('max-age=3600', $new->getHeaderLine('Cache-Control'));
+
+        $new = $response->withMaxAge(3600)
+            ->withSharable(false);
+        $this->assertEquals('max-age=3600, private', $new->getHeaderLine('Cache-Control'));
     }
 
     /**
@@ -913,6 +953,24 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests withVary()
+     *
+     * @return void
+     */
+    public function testWithVary()
+    {
+        $response = new Response();
+        $new = $response->withVary('Accept-encoding');
+
+        $this->assertFalse($response->hasHeader('Vary'));
+        $this->assertEquals('Accept-encoding', $new->getHeaderLine('Vary'));
+
+        $new = $response->withVary(['Accept-encoding', 'Accept-language']);
+        $this->assertFalse($response->hasHeader('Vary'));
+        $this->assertEquals('Accept-encoding,Accept-language', $new->getHeaderLine('Vary'));
+    }
+
+    /**
      * Tests getting/setting the Etag header
      *
      * @return void
@@ -928,6 +986,23 @@ class ResponseTest extends TestCase
         $response->etag('something', true);
         $this->assertEquals('W/"something"', $response->etag());
         $this->assertEquals('W/"something"', $response->getHeaderLine('Etag'));
+    }
+
+    /**
+     * Tests withEtag()
+     *
+     * @return void
+     */
+    public function testWithEtag()
+    {
+        $response = new Response();
+        $new = $response->withEtag('something');
+
+        $this->assertFalse($response->hasHeader('Etag'));
+        $this->assertEquals('"something"', $new->getHeaderLine('Etag'));
+
+        $new = $response->withEtag('something', true);
+        $this->assertEquals('W/"something"', $new->getHeaderLine('Etag'));
     }
 
     /**
@@ -949,6 +1024,35 @@ class ResponseTest extends TestCase
         $this->assertEmpty($response->header());
         $this->assertEmpty($response->body());
         $this->assertEquals(304, $response->statusCode());
+    }
+
+    /**
+     * Tests withNotModified()
+     *
+     * @return void
+     */
+    public function testWithNotModified()
+    {
+        $response = new Response(['body' => 'something']);
+        $response = $response->withLength(100)
+            ->withStatus(200)
+            ->withHeader('Last-Modified', 'value')
+            ->withHeader('Content-Language', 'en-EN')
+            ->withHeader('X-things', 'things')
+            ->withType('application/json');
+
+        $new = $response->withNotModified();
+        $this->assertTrue($response->hasHeader('Content-Language'), 'old instance not changed');
+        $this->assertTrue($response->hasHeader('Content-Length'), 'old instance not changed');
+
+        $this->assertFalse($new->hasHeader('Content-Type'));
+        $this->assertFalse($new->hasHeader('Content-Length'));
+        $this->assertFalse($new->hasHeader('Content-Language'));
+        $this->assertFalse($new->hasHeader('Last-Modified'));
+
+        $this->assertSame('things', $new->getHeaderLine('X-things'), 'Other headers are retained');
+        $this->assertSame(304, $new->getStatusCode());
+        $this->assertSame('', $new->getBody()->getContents());
     }
 
     /**
