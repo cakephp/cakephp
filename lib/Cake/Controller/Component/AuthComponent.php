@@ -742,6 +742,9 @@ class AuthComponent extends Component {
 
 			if (Router::normalize($redir) === Router::normalize($this->loginAction)) {
 				$redir = $this->loginRedirect;
+				if (!$redir) {
+					$redir = '/';
+				}
 			}
 		} elseif ($this->loginRedirect) {
 			$redir = $this->loginRedirect;

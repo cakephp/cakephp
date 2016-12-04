@@ -1653,6 +1653,19 @@ class AuthComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Test that redirectUrl() returns '/' if loginRedirect is empty
+ * and Auth.redirect is the login page.
+ *
+ * @return void
+ */
+	public function testRedirectUrlWithoutLoginRedirect() {
+		$this->Auth->Session->write('Auth.redirect', '/users/login');
+		$this->Auth->request->addParams(Router::parse('/users/login'));
+		$result = $this->Auth->redirectUrl();
+		$this->assertEquals('/', $result);
+	}
+
+/**
  * test password hashing
  *
  * @return void
