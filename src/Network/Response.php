@@ -1376,6 +1376,31 @@ class Response implements ResponseInterface
         return array_key_exists('must-revalidate', $this->_cacheDirectives);
     }
 
+
+    /**
+     * Create an instance with Cache-Control must-revalidate directive set.
+     *
+     * Sets the Cache-Control must-revalidate directive.
+     * must-revalidate indicates that the response should not be served
+     * stale by a cache under any circumstance without first revalidating
+     * with the origin.
+     *
+     * @param bool $enable If boolean sets or unsets the directive.
+     * @return static
+     */
+    public function withMustRevalidate($enable)
+    {
+        $new = clone $this;
+        if ($enable) {
+            $new->_cacheDirectives['must-revalidate'] = true;
+        } else {
+            unset($new->_cacheDirectives['must-revalidate']);
+        }
+        $new->_setCacheControl();
+
+        return $new;
+    }
+
     /**
      * Helper method to generate a valid Cache-Control header from the options set
      * in other methods

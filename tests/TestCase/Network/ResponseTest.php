@@ -556,6 +556,16 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests the withCache method
+     *
+     * @return void
+     */
+    public function testWithCache()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
      * Tests the compress method
      *
      * @return void
@@ -777,6 +787,16 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests the withExpires method
+     *
+     * @return void
+     */
+    public function testWithExpires()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
      * Tests setting the modification date
      *
      * @return void
@@ -802,6 +822,16 @@ class ResponseTest extends TestCase
         $response->modified('+1 day');
         $this->assertEquals($time->format($format) . ' GMT', $response->modified());
         $this->assertEquals($time->format($format) . ' GMT', $response->getHeaderLine('Last-Modified'));
+    }
+
+    /**
+     * Tests the withModified method
+     *
+     * @return void
+     */
+    public function testWithModified()
+    {
+        $this->markTestIncomplete();
     }
 
     /**
@@ -916,9 +946,6 @@ class ResponseTest extends TestCase
      */
     public function testMustRevalidate()
     {
-        $response = $this->getMockBuilder('Cake\Network\Response')
-            ->setMethods(['_sendHeader', '_sendContent'])
-            ->getMock();
         $response = new Response();
         $this->assertFalse($response->mustRevalidate());
 
@@ -933,6 +960,24 @@ class ResponseTest extends TestCase
         $response->sharedMaxAge(3600);
         $response->mustRevalidate(true);
         $this->assertEquals('s-maxage=3600, must-revalidate', $response->getHeaderLine('Cache-Control'));
+    }
+
+    /**
+     * Tests setting of must-revalidate Cache-Control directive
+     *
+     * @return void
+     */
+    public function testWithMustRevalidate()
+    {
+        $response = new Response();
+        $this->assertFalse($response->hasHeader('Cache-Control'));
+
+        $new = $response->withMustRevalidate(true);
+        $this->assertFalse($response->hasHeader('Cache-Control'));
+        $this->assertEquals('must-revalidate', $new->getHeaderLine('Cache-Control'));
+
+        $new = $new->withMustRevalidate(false);
+        $this->assertEmpty($new->getHeaderLine('Cache-Control'));
     }
 
     /**
