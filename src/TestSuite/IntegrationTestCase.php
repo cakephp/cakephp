@@ -592,6 +592,16 @@ abstract class IntegrationTestCase extends TestCase
     }
 
     /**
+     * Get the response body as string
+     *
+     * @return string The response body.
+     */
+    protected function _getBodyAsString()
+    {
+        return (string)$this->_response->getBody();
+    }
+
+    /**
      * Fetches a view variable by name.
      *
      * If the view variable does not exist, null will be returned.
@@ -824,7 +834,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertEquals($content, (string)$this->_response->getBody(), $message);
+        $this->assertEquals($content, $this->_getBodyAsString(), $message);
     }
 
     /**
@@ -839,7 +849,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertContains($content, (string)$this->_response->getBody(), $message);
+        $this->assertContains($content, $this->_getBodyAsString(), $message);
     }
 
     /**
@@ -854,7 +864,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertNotContains($content, (string)$this->_response->getBody(), $message);
+        $this->assertNotContains($content, $this->_getBodyAsString(), $message);
     }
 
     /**
@@ -868,7 +878,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertNotEmpty((string)$this->_response->getBody(), $message);
+        $this->assertNotEmpty($this->_getBodyAsString(), $message);
     }
     /**
      * Assert response content is empty.
@@ -881,7 +891,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertEmpty((string)$this->_response->getBody(), $message);
+        $this->assertEmpty($this->_getBodyAsString(), $message);
     }
 
     /**
