@@ -449,8 +449,6 @@ class ConfigureTest extends CakeTestCase {
 /**
  * test reader() throwing exceptions on missing interface.
  *
- * @expectedException PHPUnit_Framework_Error
- * @throws PHPUnit_Framework_Error
  * @return void
  */
 	public function testReaderExceptionOnIncorrectClass() {
@@ -458,8 +456,9 @@ class ConfigureTest extends CakeTestCase {
 
 		try {
 			Configure::config('test', $reader);
+			$this->fail('No error raised');
 		} catch (Throwable $t) {
-			throw new PHPUnit_Framework_Error($t);
+			$this->assertTrue(true, 'TypeError raised');
 		}
 	}
 

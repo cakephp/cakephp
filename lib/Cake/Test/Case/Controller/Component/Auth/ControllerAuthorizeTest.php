@@ -47,15 +47,14 @@ class ControllerAuthorizeTest extends CakeTestCase {
 /**
  * testControllerTypeError
  *
- * @expectedException PHPUnit_Framework_Error
- * @throws PHPUnit_Framework_Error
  * @return void
  */
 	public function testControllerTypeError() {
 		try {
 			$this->auth->controller(new StdClass());
+			$this->fail('No exception thrown');
 		} catch (Throwable $t) {
-			throw new PHPUnit_Framework_Error($t);
+			$this->assertTrue(true, 'Exception was raised');
 		}
 	}
 
