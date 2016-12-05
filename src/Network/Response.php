@@ -1237,6 +1237,7 @@ class Response implements ResponseInterface
         if (!is_int($time)) {
             $time = strtotime($time);
         }
+
         return $this->withHeader('Date', gmdate("D, j M Y G:i:s ", time()) . 'GMT')
             ->withModified($since)
             ->withExpires($time)
@@ -1503,6 +1504,7 @@ class Response implements ResponseInterface
     public function withExpires($time)
     {
         $date = $this->_getUTCDate($time);
+
         return $this->withHeader('Expires', $date->format('D, j M Y H:i:s') . ' GMT');
     }
 
@@ -1553,6 +1555,7 @@ class Response implements ResponseInterface
     public function withModified($time)
     {
         $date = $this->_getUTCDate($time);
+
         return $this->withHeader('Last-Modified', $date->format('D, j M Y H:i:s') . ' GMT');
     }
 
