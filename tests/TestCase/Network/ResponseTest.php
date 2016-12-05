@@ -562,7 +562,17 @@ class ResponseTest extends TestCase
      */
     public function testWithCache()
     {
-        $this->markTestIncomplete();
+        $response = new Response();
+        $since = $time = time();
+
+        $new = $response->withCache($since, $time);
+        $this->assertFalse($response->hasHeader('Date'));
+        $this->assertFalse($response->hasHeader('Last-Modified'));
+
+        $this->assertEquals(gmdate("D, j M Y G:i:s ", $since) . 'GMT', $new->getHeaderLine('Date'));
+        $this->assertEquals(gmdate("D, j M Y H:i:s ", $since) . 'GMT', $new->getHeaderLine('Last-Modified'));
+        $this->assertEquals(gmdate("D, j M Y H:i:s", $time) . " GMT", $new->getHeaderLine('Expires'));
+        $this->assertEquals('public, max-age=0', $new->getHeaderLine('Cache-Control'));
     }
 
     /**
@@ -793,7 +803,23 @@ class ResponseTest extends TestCase
      */
     public function testWithExpires()
     {
-        $this->markTestIncomplete();
+        $format = 'D, j M Y H:i:s';
+        $response = new Response();
+        $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
+
+        $new = $response->withExpires($now);
+        $this->assertFalse($response->hasHeader('Expires'));
+
+        $now->setTimeZone(new \DateTimeZone('UTC'));
+        $this->assertEquals($now->format($format) . ' GMT', $new->getHeaderLine('Expires'));
+
+        $now = time();
+        $new = $response->withExpires($now);
+        $this->assertEquals(gmdate($format) . ' GMT', $new->getHeaderLine('Expires'));
+
+        $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
+        $new = $response->withExpires('+1 day');
+        $this->assertEquals($time->format($format) . ' GMT', $new->getHeaderLine('Expires'));
     }
 
     /**
@@ -831,7 +857,22 @@ class ResponseTest extends TestCase
      */
     public function testWithModified()
     {
-        $this->markTestIncomplete();
+        $format = 'D, j M Y H:i:s';
+        $response = new Response();
+        $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
+        $new = $response->withModified($now);
+        $this->assertFalse($response->hasHeader('Last-Modified'));
+
+        $now->setTimeZone(new \DateTimeZone('UTC'));
+        $this->assertEquals($now->format($format) . ' GMT', $new->getHeaderLine('Last-Modified'));
+
+        $now = time();
+        $new = $response->withModified($now);
+        $this->assertEquals(gmdate($format) . ' GMT', $new->getHeaderLine('Last-Modified'));
+
+        $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
+        $new = $response->withModified('+1 day');
+        $this->assertEquals($time->format($format) . ' GMT', $new->getHeaderLine('Last-Modified'));
     }
 
     /**
