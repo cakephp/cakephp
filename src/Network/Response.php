@@ -1332,6 +1332,24 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Create a new instance with the Cache-Control s-maxage directive.
+     *
+     * The max-age is the number of seconds after which the response should no longer be considered
+     * a good candidate to be fetched from a shared cache (like in a proxy server).
+     *
+     * @param int $seconds The number of seconds for shared max-age
+     * @return static
+     */
+    public function withSharedMaxAge($seconds)
+    {
+        $new = clone $this;
+        $new->_cacheDirectives['s-maxage'] = $seconds;
+        $new->_setCacheControl();
+
+        return $new;
+    }
+
+    /**
      * Sets the Cache-Control max-age directive.
      * The max-age is the number of seconds after which the response should no longer be considered
      * a good candidate to be fetched from the local (client) cache.

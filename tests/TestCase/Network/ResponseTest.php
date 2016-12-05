@@ -981,6 +981,23 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests setting of s-maxage Cache-Control directive
+     *
+     * @return void
+     */
+    public function testWithSharedMaxAge()
+    {
+        $response = new Response();
+        $new = $response->withSharedMaxAge(3600);
+
+        $this->assertFalse($response->hasHeader('Cache-Control'));
+        $this->assertEquals('s-maxage=3600', $new->getHeaderLine('Cache-Control'));
+
+        $new = $response->withSharedMaxAge(3600)->withSharable(true);
+        $this->assertEquals('s-maxage=3600, public', $new->getHeaderLine('Cache-Control'));
+    }
+
+    /**
      * Tests setting of must-revalidate Cache-Control directive
      *
      * @return void
