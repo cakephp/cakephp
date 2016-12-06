@@ -114,7 +114,7 @@ class FlashComponent extends Component
 
         if ($options['duplicate'] === false) {
             foreach ($messages as $existingMessage) {
-                if ($existingMessage['message'] == $message) {
+                if ($existingMessage['message'] === $message) {
                     return;
                 }
             }
