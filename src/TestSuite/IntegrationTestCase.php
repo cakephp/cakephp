@@ -858,6 +858,36 @@ abstract class IntegrationTestCase extends TestCase
     }
 
     /**
+     * Asserts that the response body matches a given regular expression.
+     *
+     * @param string $pattern
+     * @param string $message
+     * @return void
+     */
+    public function assertResponseRegExp($pattern, $message = '')
+    {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert content. ' . $message);
+        }
+        $this->assertRegExp($pattern, (string)$this->_response->body(), $message);
+    }
+
+    /**
+     * Asserts that the response body does not match a given regular expression.
+     *
+     * @param string $pattern
+     * @param string $message
+     * @return void
+     */
+    public function assertResponseNotRegExp($pattern, $message = '')
+    {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert content. ' . $message);
+        }
+        $this->assertNotRegExp($pattern, (string)$this->_response->body(), $message);
+    }
+
+    /**
      * Assert response content is not empty.
      *
      * @param string $message The failure message that will be appended to the generated message.

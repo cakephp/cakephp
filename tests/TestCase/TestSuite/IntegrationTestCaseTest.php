@@ -747,6 +747,32 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test the content regexp assertion.
+     *
+     * @return void
+     */
+    public function testAssertResponseRegExp()
+    {
+        $this->_response = new Response();
+        $this->_response->body('Some content');
+
+        $this->assertResponseRegExp('/cont/');
+    }
+
+    /**
+     * Test the negated content regexp assertion.
+     *
+     * @return void
+     */
+    public function testAssertResponseNotRegExp()
+    {
+        $this->_response = new Response();
+        $this->_response->body('Some content');
+
+        $this->assertResponseNotRegExp('/cant/');
+    }
+
+    /**
      * Test that works in tandem with testEventManagerReset2 to
      * test the EventManager reset.
      *
