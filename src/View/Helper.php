@@ -14,8 +14,8 @@
  */
 namespace Cake\View;
 
-use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListenerInterface;
+use Cake\View\StringTemplateTrait;
 
 /**
  * Abstract base class for all other Helpers in CakePHP.
@@ -41,7 +41,7 @@ use Cake\Event\EventListenerInterface;
 class Helper implements EventListenerInterface
 {
 
-    use InstanceConfigTrait;
+    use StringTemplateTrait;
 
     /**
      * List of helpers used by this helper
