@@ -108,6 +108,13 @@ class FlashComponentTest extends TestCase
         ];
         $result = $this->Session->read('Flash.foobar');
         $this->assertEquals($expected, $result);
+
+
+        $this->Flash->config('duplicate', false);
+        $this->Flash->set('This test message should appear once only');
+        $this->Flash->set('This test message should appear once only');
+        $result = array_slice($this->Session->read('Flash.flash'), -2);
+        $this->assertNotEquals($result[0], $result[1]);
     }
 
     /**
