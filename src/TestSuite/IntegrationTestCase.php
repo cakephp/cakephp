@@ -860,8 +860,8 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * Asserts that the response body matches a given regular expression.
      *
-     * @param string $pattern
-     * @param string $message
+     * @param string $pattern The pattern to compare against.
+     * @param string $message The failure message that will be appended to the generated message.
      * @return void
      */
     public function assertResponseRegExp($pattern, $message = '')
@@ -875,8 +875,8 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * Asserts that the response body does not match a given regular expression.
      *
-     * @param string $pattern
-     * @param string $message
+     * @param string $pattern The pattern to compare against.
+     * @param string $message The failure message that will be appended to the generated message.
      * @return void
      */
     public function assertResponseNotRegExp($pattern, $message = '')
