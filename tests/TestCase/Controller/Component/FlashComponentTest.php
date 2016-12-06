@@ -108,7 +108,6 @@ class FlashComponentTest extends TestCase
         ];
         $result = $this->Session->read('Flash.foobar');
         $this->assertEquals($expected, $result);
-
     }
 
     public function testDuplicateIgnored()
