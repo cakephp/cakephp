@@ -287,35 +287,35 @@ class PaginatorComponent extends Component
     }
 
     /**
-     * Get the default settings for a $model. If there are no settings for a specific model, the general settings
+     * Get the settings for a $model. If there are no settings for a specific model, the general settings
      * will be used.
      *
-     * @param string $alias Model name to get default settings for.
-     * @param array $defaults The defaults to use for combining settings.
-     * @return array An array of pagination defaults for a model, or the general settings.
+     * @param string $alias Model name to get settings for.
+     * @param array $settings The settings which is used for combining.
+     * @return array An array of pagination settings for a model, or the general settings.
      */
-    public function getDefaults($alias, $defaults)
+    public function getDefaults($alias, $settings)
     {
-        if (isset($defaults[$alias])) {
-            $defaults = $defaults[$alias];
+        if (isset($settings[$alias])) {
+            $settings = $settings[$alias];
         }
 
-        $config = $this->config();
-        $maxLimit = isset($defaults['maxLimit']) ? $defaults['maxLimit'] : $config['maxLimit'];
-        $limit = isset($defaults['limit']) ? $defaults['limit'] : $config['limit'];
+        $default = $this->config();
+        $maxLimit = isset($settings['maxLimit']) ? $settings['maxLimit'] : $default['maxLimit'];
+        $limit = isset($settings['limit']) ? $settings['limit'] : $default['limit'];
 
         if ($limit > $maxLimit) {
             $limit = $maxLimit;
         }
-        if (empty($defaults['limit'])) {
-            $defaults['maxLimit'] = $maxLimit;
-            $defaults['limit'] = $limit;
+        if (empty($settings['limit'])) {
+            $settings['maxLimit'] = $maxLimit;
+            $settings['limit'] = $limit;
         }
 
-        $defaults['maxLimit'] = $maxLimit;
-        $defaults['limit'] = $limit;
+        $settings['maxLimit'] = $maxLimit;
+        $settings['limit'] = $limit;
 
-        return $defaults + $config;
+        return array_merge($default, $settings);
     }
 
     /**
