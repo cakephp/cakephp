@@ -307,10 +307,6 @@ class PaginatorComponent extends Component
         if ($limit > $maxLimit) {
             $limit = $maxLimit;
         }
-        if (empty($settings['limit'])) {
-            $settings['maxLimit'] = $maxLimit;
-            $settings['limit'] = $limit;
-        }
 
         $settings['maxLimit'] = $maxLimit;
         $settings['limit'] = $limit;
