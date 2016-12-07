@@ -222,7 +222,7 @@ class PaginatorComponent extends Component
             'sortDefault' => $sortDefault,
             'directionDefault' => $directionDefault,
             'scope' => $options['scope'],
-            'totalOrder' => $order
+            'completeSort' => $order
         ];
 
         if (!$request->param('paging')) {
