@@ -299,13 +299,22 @@ class PaginatorComponent extends Component
         if (isset($defaults[$alias])) {
             $defaults = $defaults[$alias];
         }
-        if (isset($defaults['limit']) &&
-            (empty($defaults['maxLimit']) || $defaults['limit'] > $defaults['maxLimit'])
-        ) {
-            $defaults['maxLimit'] = $defaults['limit'];
+
+        $config = $this->config();
+        $maxLimit = isset($defaults['maxLimit']) ? $defaults['maxLimit'] : $config['maxLimit'];
+        $limit = isset($defaults['limit']) ? $defaults['limit'] : $config['limit'];
+
+        if ($limit > $maxLimit) {
+            $limit = $maxLimit;
+        }
+        if (empty($defaults['limit'])) {
+            $defaults['maxLimit'] = $maxLimit;
+            $defaults['limit'] = $limit;
         }
 
-        return $defaults + $this->config();
+        $defaults['maxLimit'] = $maxLimit;
+        $defaults['limit'] = $limit;
+        return $defaults + $config;
     }
 
     /**
