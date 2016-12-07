@@ -108,11 +108,11 @@ class FlashComponent extends Component
         }
 
         $messages = [];
-        if ($options['clear'] === false) {
+        if (!$options['clear']) {
             $messages = (array)$this->_session->read('Flash.' . $options['key']);
         }
 
-        if ($options['duplicate'] === false) {
+        if (!$options['duplicate']) {
             foreach ($messages as $existingMessage) {
                 if ($existingMessage['message'] === $message) {
                     return;
