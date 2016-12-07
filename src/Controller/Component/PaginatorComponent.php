@@ -314,6 +314,7 @@ class PaginatorComponent extends Component
 
         $defaults['maxLimit'] = $maxLimit;
         $defaults['limit'] = $limit;
+
         return $defaults + $config;
     }
 
