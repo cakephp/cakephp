@@ -1209,6 +1209,7 @@ class Response implements ResponseInterface
      * @param string $since a valid time since the response text has not been modified
      * @param string $time a valid time for cache expiry
      * @return void
+     * @deprecated 3.4.0 Use withCache() instead.
      */
     public function cache($since, $time = '+1 day')
     {
@@ -1222,6 +1223,26 @@ class Response implements ResponseInterface
         $this->expires($time);
         $this->sharable(true);
         $this->maxAge($time - time());
+    }
+
+    /**
+     * Create a new instance with the headers to enable client caching.
+     *
+     * @param string $since a valid time since the response text has not been modified
+     * @param string $time a valid time for cache expiry
+     * @return static
+     */
+    public function withCache($since, $time = '+1 day')
+    {
+        if (!is_int($time)) {
+            $time = strtotime($time);
+        }
+
+        return $this->withHeader('Date', gmdate("D, j M Y G:i:s ", time()) . 'GMT')
+            ->withModified($since)
+            ->withExpires($time)
+            ->withSharable(true)
+            ->withMaxAge($time - time());
     }
 
     /**
@@ -1312,6 +1333,24 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Create a new instance with the Cache-Control s-maxage directive.
+     *
+     * The max-age is the number of seconds after which the response should no longer be considered
+     * a good candidate to be fetched from a shared cache (like in a proxy server).
+     *
+     * @param int $seconds The number of seconds for shared max-age
+     * @return static
+     */
+    public function withSharedMaxAge($seconds)
+    {
+        $new = clone $this;
+        $new->_cacheDirectives['s-maxage'] = $seconds;
+        $new->_setCacheControl();
+
+        return $new;
+    }
+
+    /**
      * Sets the Cache-Control max-age directive.
      * The max-age is the number of seconds after which the response should no longer be considered
      * a good candidate to be fetched from the local (client) cache.
@@ -1361,6 +1400,7 @@ class Response implements ResponseInterface
      * @param bool|null $enable if null, the method will return the current
      *   must-revalidate value. If boolean sets or unsets the directive.
      * @return bool
+     * @deprecated 3.4.0 Use withMustRevalidate() instead.
      */
     public function mustRevalidate($enable = null)
     {
@@ -1374,6 +1414,30 @@ class Response implements ResponseInterface
         }
 
         return array_key_exists('must-revalidate', $this->_cacheDirectives);
+    }
+
+    /**
+     * Create an instance with Cache-Control must-revalidate directive set.
+     *
+     * Sets the Cache-Control must-revalidate directive.
+     * must-revalidate indicates that the response should not be served
+     * stale by a cache under any circumstance without first revalidating
+     * with the origin.
+     *
+     * @param bool $enable If boolean sets or unsets the directive.
+     * @return static
+     */
+    public function withMustRevalidate($enable)
+    {
+        $new = clone $this;
+        if ($enable) {
+            $new->_cacheDirectives['must-revalidate'] = true;
+        } else {
+            unset($new->_cacheDirectives['must-revalidate']);
+        }
+        $new->_setCacheControl();
+
+        return $new;
     }
 
     /**
@@ -1405,6 +1469,7 @@ class Response implements ResponseInterface
      *
      * @param string|\DateTime|null $time Valid time string or \DateTime instance.
      * @return string|null
+     * @deprecated 3.4.0 Use withExpires() instead.
      */
     public function expires($time = null)
     {
@@ -1421,6 +1486,29 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Create a new instance with the Expires header set.
+     *
+     * ### Examples:
+     *
+     * ```
+     * // Will Expire the response cache now
+     * $response->withExpires('now')
+     *
+     * // Will set the expiration in next 24 hours
+     * $response->withExpires(new DateTime('+1 day'))
+     * ```
+     *
+     * @param string|\DateTime $time Valid time string or \DateTime instance.
+     * @return static
+     */
+    public function withExpires($time)
+    {
+        $date = $this->_getUTCDate($time);
+
+        return $this->withHeader('Expires', $date->format('D, j M Y H:i:s') . ' GMT');
+    }
+
+    /**
      * Sets the Last-Modified header for the response by taking a modification time
      * If called with no parameters it will return the current Last-Modified value
      *
@@ -1432,6 +1520,7 @@ class Response implements ResponseInterface
      *
      * @param string|\DateTime|null $time Valid time string or \DateTime instance.
      * @return string|null
+     * @deprecated 3.4.0 Use withModified() instead.
      */
     public function modified($time = null)
     {
@@ -1445,6 +1534,29 @@ class Response implements ResponseInterface
         }
 
         return null;
+    }
+
+    /**
+     * Create a new instance with the Last-Modified header set.
+     *
+     * ### Examples:
+     *
+     * ```
+     * // Will Expire the response cache now
+     * $response->withModified('now')
+     *
+     * // Will set the expiration in next 24 hours
+     * $response->withModified(new DateTime('+1 day'))
+     * ```
+     *
+     * @param string|\DateTime $time Valid time string or \DateTime instance.
+     * @return static
+     */
+    public function withModified($time)
+    {
+        $date = $this->_getUTCDate($time);
+
+        return $this->withHeader('Last-Modified', $date->format('D, j M Y H:i:s') . ' GMT');
     }
 
     /**

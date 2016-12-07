@@ -556,6 +556,26 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests the withCache method
+     *
+     * @return void
+     */
+    public function testWithCache()
+    {
+        $response = new Response();
+        $since = $time = time();
+
+        $new = $response->withCache($since, $time);
+        $this->assertFalse($response->hasHeader('Date'));
+        $this->assertFalse($response->hasHeader('Last-Modified'));
+
+        $this->assertEquals(gmdate("D, j M Y G:i:s ", $since) . 'GMT', $new->getHeaderLine('Date'));
+        $this->assertEquals(gmdate("D, j M Y H:i:s ", $since) . 'GMT', $new->getHeaderLine('Last-Modified'));
+        $this->assertEquals(gmdate("D, j M Y H:i:s", $time) . " GMT", $new->getHeaderLine('Expires'));
+        $this->assertEquals('public, max-age=0', $new->getHeaderLine('Cache-Control'));
+    }
+
+    /**
      * Tests the compress method
      *
      * @return void
@@ -777,6 +797,32 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests the withExpires method
+     *
+     * @return void
+     */
+    public function testWithExpires()
+    {
+        $format = 'D, j M Y H:i:s';
+        $response = new Response();
+        $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
+
+        $new = $response->withExpires($now);
+        $this->assertFalse($response->hasHeader('Expires'));
+
+        $now->setTimeZone(new \DateTimeZone('UTC'));
+        $this->assertEquals($now->format($format) . ' GMT', $new->getHeaderLine('Expires'));
+
+        $now = time();
+        $new = $response->withExpires($now);
+        $this->assertEquals(gmdate($format) . ' GMT', $new->getHeaderLine('Expires'));
+
+        $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
+        $new = $response->withExpires('+1 day');
+        $this->assertEquals($time->format($format) . ' GMT', $new->getHeaderLine('Expires'));
+    }
+
+    /**
      * Tests setting the modification date
      *
      * @return void
@@ -802,6 +848,31 @@ class ResponseTest extends TestCase
         $response->modified('+1 day');
         $this->assertEquals($time->format($format) . ' GMT', $response->modified());
         $this->assertEquals($time->format($format) . ' GMT', $response->getHeaderLine('Last-Modified'));
+    }
+
+    /**
+     * Tests the withModified method
+     *
+     * @return void
+     */
+    public function testWithModified()
+    {
+        $format = 'D, j M Y H:i:s';
+        $response = new Response();
+        $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
+        $new = $response->withModified($now);
+        $this->assertFalse($response->hasHeader('Last-Modified'));
+
+        $now->setTimeZone(new \DateTimeZone('UTC'));
+        $this->assertEquals($now->format($format) . ' GMT', $new->getHeaderLine('Last-Modified'));
+
+        $now = time();
+        $new = $response->withModified($now);
+        $this->assertEquals(gmdate($format) . ' GMT', $new->getHeaderLine('Last-Modified'));
+
+        $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
+        $new = $response->withModified('+1 day');
+        $this->assertEquals($time->format($format) . ' GMT', $new->getHeaderLine('Last-Modified'));
     }
 
     /**
@@ -910,15 +981,29 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests setting of s-maxage Cache-Control directive
+     *
+     * @return void
+     */
+    public function testWithSharedMaxAge()
+    {
+        $response = new Response();
+        $new = $response->withSharedMaxAge(3600);
+
+        $this->assertFalse($response->hasHeader('Cache-Control'));
+        $this->assertEquals('s-maxage=3600', $new->getHeaderLine('Cache-Control'));
+
+        $new = $response->withSharedMaxAge(3600)->withSharable(true);
+        $this->assertEquals('s-maxage=3600, public', $new->getHeaderLine('Cache-Control'));
+    }
+
+    /**
      * Tests setting of must-revalidate Cache-Control directive
      *
      * @return void
      */
     public function testMustRevalidate()
     {
-        $response = $this->getMockBuilder('Cake\Network\Response')
-            ->setMethods(['_sendHeader', '_sendContent'])
-            ->getMock();
         $response = new Response();
         $this->assertFalse($response->mustRevalidate());
 
@@ -933,6 +1018,24 @@ class ResponseTest extends TestCase
         $response->sharedMaxAge(3600);
         $response->mustRevalidate(true);
         $this->assertEquals('s-maxage=3600, must-revalidate', $response->getHeaderLine('Cache-Control'));
+    }
+
+    /**
+     * Tests setting of must-revalidate Cache-Control directive
+     *
+     * @return void
+     */
+    public function testWithMustRevalidate()
+    {
+        $response = new Response();
+        $this->assertFalse($response->hasHeader('Cache-Control'));
+
+        $new = $response->withMustRevalidate(true);
+        $this->assertFalse($response->hasHeader('Cache-Control'));
+        $this->assertEquals('must-revalidate', $new->getHeaderLine('Cache-Control'));
+
+        $new = $new->withMustRevalidate(false);
+        $this->assertEmpty($new->getHeaderLine('Cache-Control'));
     }
 
     /**
