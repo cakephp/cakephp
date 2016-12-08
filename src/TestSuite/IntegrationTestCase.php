@@ -879,7 +879,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertRegExp($pattern, (string)$this->_response->body(), $message);
+        $this->assertRegExp($pattern, $this->_getBodyAsString(), $message);
     }
 
     /**
@@ -894,7 +894,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertNotRegExp($pattern, (string)$this->_response->body(), $message);
+        $this->assertNotRegExp($pattern, $this->_getBodyAsString(), $message);
     }
 
     /**
