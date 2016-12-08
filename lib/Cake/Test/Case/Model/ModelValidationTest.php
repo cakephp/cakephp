@@ -2224,14 +2224,15 @@ class ModelValidationTest extends BaseModelTest {
  * Test that type hint exception is thrown
  *
  * @expectedException PHPUnit_Framework_Error
- * @throws PHPUnit_Framework_Error
  * @return void
+ * @throws PHPUnit_Framework_Error
  */
 	public function testValidatorTypehintException() {
 		try {
 			new ModelValidator('asdasds');
-		} catch (Throwable $t) {
-			throw new PHPUnit_Framework_Error($t);
+			$this->fail('No exeption raised');
+		} catch (TypeError $e) {
+			throw new PHPUnit_Framework_Error('Raised an error', 100, __FILE__, __LINE__);
 		}
 	}
 
