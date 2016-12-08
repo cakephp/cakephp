@@ -480,8 +480,8 @@ class PaginatorComponentTest extends TestCase
         $result = $this->Paginator->mergeOptions('Post', $settings);
         $expected = [
             'page' => 1,
-            'limit' => 200,
-            'maxLimit' => 200,
+            'limit' => 100,
+            'maxLimit' => 100,
             'paramType' => 'named',
             'whitelist' => ['limit', 'sort', 'page', 'direction']
         ];
@@ -494,9 +494,57 @@ class PaginatorComponentTest extends TestCase
         $result = $this->Paginator->mergeOptions('Post', $settings);
         $expected = [
             'page' => 1,
-            'limit' => 20,
+            'limit' => 10,
             'maxLimit' => 10,
             'paramType' => 'named',
+            'whitelist' => ['limit', 'sort', 'page', 'direction']
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * test getDefaults with limit > maxLimit in code.
+     *
+     * @return void
+     */
+    public function testGetDefaultMaxLimit()
+    {
+        $settings = [
+            'page' => 1,
+            'limit' => 2,
+            'maxLimit' => 10,
+            'order' => [
+                'Users.username' => 'asc'
+            ],
+        ];
+        $result = $this->Paginator->mergeOptions('Post', $settings);
+        $expected = [
+            'page' => 1,
+            'limit' => 2,
+            'maxLimit' => 10,
+            'order' => [
+                'Users.username' => 'asc'
+            ],
+            'whitelist' => ['limit', 'sort', 'page', 'direction']
+        ];
+        $this->assertEquals($expected, $result);
+
+        $settings = [
+            'page' => 1,
+            'limit' => 100,
+            'maxLimit' => 10,
+            'order' => [
+                'Users.username' => 'asc'
+            ],
+        ];
+        $result = $this->Paginator->mergeOptions('Post', $settings);
+        $expected = [
+            'page' => 1,
+            'limit' => 10,
+            'maxLimit' => 10,
+            'order' => [
+                'Users.username' => 'asc'
+            ],
             'whitelist' => ['limit', 'sort', 'page', 'direction']
         ];
         $this->assertEquals($expected, $result);
