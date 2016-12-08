@@ -133,7 +133,7 @@ class ErrorHandlerMiddleware
     protected function getRenderer($exception)
     {
         if (!$this->exceptionRenderer) {
-            $this->exceptionRenderer = $this->config('exceptionRender') ?: ExceptionRenderer::class;
+            $this->exceptionRenderer = $this->config('exceptionRenderer') ?: ExceptionRenderer::class;
         }
 
         if (is_string($this->exceptionRenderer)) {
