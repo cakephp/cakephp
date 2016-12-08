@@ -2159,10 +2159,6 @@ class FormHelper extends AppHelper {
 			$tag = 'selectstart';
 		}
 
-		if ($tag === 'checkboxmultiplestart') {
-			unset($attributes['required']);
-		}
-
 		if (!empty($tag) || isset($template)) {
 			$hasOptions = (count($options) > 0 || $showEmpty);
 			// Secure the field if there are options, or its a multi select.
@@ -2195,19 +2191,23 @@ class FormHelper extends AppHelper {
 			$attributes['id'] = Inflector::camelize($attributes['id']);
 		}
 
+		$selectAttributes = array(
+			'escape' => $escapeOptions,
+			'style' => $style,
+			'name' => $attributes['name'],
+			'value' => $attributes['value'],
+			'class' => $attributes['class'],
+			'id' => $attributes['id'],
+			'disabled' => $attributes['disabled'],
+		);
+		if (!empty($attributes['required'])) {
+			$selectAttributes['required'] = $attributes['required'];
+		}
 		$select = array_merge($select, $this->_selectOptions(
 			array_reverse($options, true),
 			array(),
 			$showParents,
-			array(
-				'escape' => $escapeOptions,
-				'style' => $style,
-				'name' => $attributes['name'],
-				'value' => $attributes['value'],
-				'class' => $attributes['class'],
-				'id' => $attributes['id'],
-				'disabled' => $attributes['disabled'],
-			)
+			$selectAttributes
 		));
 
 		$template = ($style === 'checkbox') ? 'checkboxmultipleend' : 'selectend';
@@ -2887,6 +2887,9 @@ class FormHelper extends AppHelper {
 					}
 
 					if ($attributes['style'] === 'checkbox') {
+						if (!empty($attributes['required'])) {
+							$htmlOptions['required'] = $attributes['required'];
+						}
 						$htmlOptions['value'] = $name;
 
 						$tagName = $attributes['id'] . $this->domIdSuffix($name);
