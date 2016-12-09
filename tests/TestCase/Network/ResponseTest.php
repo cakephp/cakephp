@@ -1643,9 +1643,12 @@ class ResponseTest extends TestCase
 
         ob_start();
         $result = $response->send();
-        $output = ob_get_clean();
-        $this->assertEquals("/* this is the test asset css file */", trim($output));
         $this->assertTrue($result !== false);
+        $output = ob_get_clean();
+
+        $expected = "/* this is the test asset css file */";
+        $this->assertEquals($expected, trim($output));
+        $this->assertEquals($expected, trim($response->getBody()->getContents()));
     }
 
     /**

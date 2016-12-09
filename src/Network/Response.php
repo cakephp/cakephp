@@ -2158,6 +2158,7 @@ class Response implements ResponseInterface
         }
 
         $this->_file = $file;
+        $this->stream = new Stream($file->path, 'rb');
     }
 
     public function withFile($path, array $options = [])
