@@ -2155,12 +2155,16 @@ class Response implements ResponseInterface
             'download' => null
         ];
 
+        $new = clone $this;
         $extension = strtolower($file->ext());
-        if ((!$extension || $this->type($extension) === false) && $options['download'] === null) {
+        $mapped = $this->getMimeType($extension);
+        if ((!$extension || !$mapped) && $options['download'] === null) {
             $options['download'] = true;
         }
 
-        $new = clone $this;
+        if ($mapped) {
+            $new = $new->withType($extension);
+        }
 
         $fileSize = $file->size();
         if ($options['download']) {
