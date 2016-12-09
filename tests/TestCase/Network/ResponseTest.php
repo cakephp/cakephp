@@ -1493,19 +1493,19 @@ class ResponseTest extends TestCase
         };
 
         return [
-            // [$fooRequest, null, '*', '', '', false, false],
-            // [$fooRequest, 'http://www.foo.com', '*', '', '', '*', false],
-            // [$fooRequest, 'http://www.foo.com', 'www.foo.com', '', '', 'http://www.foo.com', false],
-            // [$fooRequest, 'http://www.foo.com', '*.foo.com', '', '', 'http://www.foo.com', false],
-            // [$fooRequest, 'http://www.foo.com', 'http://*.foo.com', '', '', 'http://www.foo.com', false],
-            // [$fooRequest, 'http://www.foo.com', 'https://www.foo.com', '', '', false, false],
-            // [$fooRequest, 'http://www.foo.com', 'https://*.foo.com', '', '', false, false],
-            // [$fooRequest, 'http://www.foo.com', ['*.bar.com', '*.foo.com'], '', '', 'http://www.foo.com', false],
+            [$fooRequest, null, '*', '', '', false, false],
+            [$fooRequest, 'http://www.foo.com', '*', '', '', '*', false],
+            [$fooRequest, 'http://www.foo.com', 'www.foo.com', '', '', 'http://www.foo.com', false],
+            [$fooRequest, 'http://www.foo.com', '*.foo.com', '', '', 'http://www.foo.com', false],
+            [$fooRequest, 'http://www.foo.com', 'http://*.foo.com', '', '', 'http://www.foo.com', false],
+            [$fooRequest, 'http://www.foo.com', 'https://www.foo.com', '', '', false, false],
+            [$fooRequest, 'http://www.foo.com', 'https://*.foo.com', '', '', false, false],
+            [$fooRequest, 'http://www.foo.com', ['*.bar.com', '*.foo.com'], '', '', 'http://www.foo.com', false],
 
-            // [$fooRequest, 'http://not-foo.com', '*.foo.com', '', '', false, false],
-            // [$fooRequest, 'http://bad.academy', '*.acad.my', '', '', false, false],
-            // [$fooRequest, 'http://www.foo.com.at.bad.com', '*.foo.com', '', '', false, false],
-            // [$fooRequest, 'https://www.foo.com', '*.foo.com', '', '', false, false],
+            [$fooRequest, 'http://not-foo.com', '*.foo.com', '', '', false, false],
+            [$fooRequest, 'http://bad.academy', '*.acad.my', '', '', false, false],
+            [$fooRequest, 'http://www.foo.com.at.bad.com', '*.foo.com', '', '', false, false],
+            [$fooRequest, 'https://www.foo.com', '*.foo.com', '', '', false, false],
 
             [$secureRequest(), 'https://www.bar.com', 'www.bar.com', '', '', 'https://www.bar.com', false],
             [$secureRequest(), 'https://www.bar.com', 'http://www.bar.com', '', '', false, false],
