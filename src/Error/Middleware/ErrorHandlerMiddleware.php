@@ -17,6 +17,7 @@ namespace Cake\Error\Middleware;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Error\ExceptionRenderer;
 use Cake\Log\Log;
 use Exception;
 
@@ -52,16 +53,27 @@ class ErrorHandlerMiddleware
     ];
 
     /**
+     * Exception render.
+     *
+     * @var \Cake\Error\ExceptionRenderer|string|null
+     */
+    protected $exceptionRenderer;
+
+    /**
      * Constructor
      *
-     * @param string|callable|null $renderer The renderer or class name
-     *   to use or a callable factory.
+     * @param string|callable|null $exceptionRenderer The renderer or class name
+     *   to use or a callable factory. If null, Configure::read('Error.exceptionRenderer')
+     *   will be used.
      * @param array $config Configuration options to use. If empty, `Configure::read('Error')`
      *   will be used.
      */
-    public function __construct($renderer = null, array $config = [])
+    public function __construct($exceptionRenderer = null, array $config = [])
     {
-        $this->renderer = $renderer ?: 'Cake\Error\ExceptionRenderer';
+        if ($exceptionRenderer) {
+            $this->exceptionRenderer = $exceptionRenderer;
+        }
+
         $config = $config ?: Configure::read('Error');
         $this->config($config);
     }
@@ -120,15 +132,19 @@ class ErrorHandlerMiddleware
      */
     protected function getRenderer($exception)
     {
-        if (is_string($this->renderer)) {
-            $class = App::className($this->renderer, 'Error');
+        if (!$this->exceptionRenderer) {
+            $this->exceptionRenderer = $this->config('exceptionRenderer') ?: ExceptionRenderer::class;
+        }
+
+        if (is_string($this->exceptionRenderer)) {
+            $class = App::className($this->exceptionRenderer, 'Error');
             if (!$class) {
-                throw new Exception("The '{$this->renderer}' renderer class could not be found.");
+                throw new Exception("The '{$this->exceptionRenderer}' renderer class could not be found.");
             }
 
             return new $class($exception);
         }
-        $factory = $this->renderer;
+        $factory = $this->exceptionRenderer;
 
         return $factory($exception);
     }
