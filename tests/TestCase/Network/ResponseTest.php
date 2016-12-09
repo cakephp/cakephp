@@ -667,6 +667,21 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests the withDownload method
+     *
+     * @return void
+     */
+    public function testWithDownload()
+    {
+        $response = new Response();
+        $new = $response->withDownload('myfile.mp3');
+        $this->assertFalse($response->hasHeader('Content-Disposition'), 'No mutation');
+
+        $expected = 'attachment; filename="myfile.mp3"';
+        $this->assertEquals($expected, $new->getHeaderLine('Content-Disposition'));
+    }
+
+    /**
      * Tests the mapType method
      *
      * @return void
