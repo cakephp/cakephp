@@ -2100,26 +2100,11 @@ class Response implements ResponseInterface
      */
     public function file($path, array $options = [])
     {
+        $file = $this->validateFile($path);
         $options += [
             'name' => null,
             'download' => null
         ];
-
-        if (strpos($path, '../') !== false || strpos($path, '..\\') !== false) {
-            throw new NotFoundException('The requested file contains `..` and will not be read.');
-        }
-
-        if (!is_file($path)) {
-            $path = APP . $path;
-        }
-
-        $file = new File($path);
-        if (!$file->exists() || !$file->readable()) {
-            if (Configure::read('debug')) {
-                throw new NotFoundException(sprintf('The requested file %s was not found or not readable', $path));
-            }
-            throw new NotFoundException(__d('cake', 'The requested file was not found'));
-        }
 
         $extension = strtolower($file->ext());
         $download = $options['download'];
@@ -2163,22 +2148,7 @@ class Response implements ResponseInterface
 
     public function withFile($path, array $options = [])
     {
-        // TODO move validation into a helper method.
-        if (strpos($path, '../') !== false || strpos($path, '..\\') !== false) {
-            throw new NotFoundException('The requested file contains `..` and will not be read.');
-        }
-        if (!is_file($path)) {
-            $path = APP . $path;
-        }
-
-        $file = new File($path);
-        if (!$file->exists() || !$file->readable()) {
-            if (Configure::read('debug')) {
-                throw new NotFoundException(sprintf('The requested file %s was not found or not readable', $path));
-            }
-            throw new NotFoundException(__d('cake', 'The requested file was not found'));
-        }
-        // end refactor.
+        $file = $this->validateFile($path);
 
         $options += [
             'name' => null,
@@ -2225,6 +2195,33 @@ class Response implements ResponseInterface
         $new->stream = new Stream($file->path, 'rb');
 
         return $new;
+    }
+
+    /**
+     * Validate a file path is a valid response body.
+     *
+     * @param string $path The path to the file.
+     * @throws \Cake\Network\Exception\NotFoundException
+     * @return \Cake\Filesystem\File
+     */
+    protected function validateFile($path)
+    {
+        if (strpos($path, '../') !== false || strpos($path, '..\\') !== false) {
+            throw new NotFoundException('The requested file contains `..` and will not be read.');
+        }
+        if (!is_file($path)) {
+            $path = APP . $path;
+        }
+
+        $file = new File($path);
+        if (!$file->exists() || !$file->readable()) {
+            if (Configure::read('debug')) {
+                throw new NotFoundException(sprintf('The requested file %s was not found or not readable', $path));
+            }
+            throw new NotFoundException(__d('cake', 'The requested file was not found'));
+        }
+
+        return $file;
     }
 
     /**
