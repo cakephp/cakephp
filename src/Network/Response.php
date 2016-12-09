@@ -1770,10 +1770,22 @@ class Response implements ResponseInterface
      *
      * @param string $filename The name of the file as the browser will download the response
      * @return void
+     * @deprecated 3.4.0 Use withDownload() instead.
      */
     public function download($filename)
     {
         $this->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+    }
+
+    /**
+     * Create a new instance with the Content-Disposition header set.
+     *
+     * @param string $filename The name of the file as the browser will download the response
+     * @return static
+     */
+    public function withDownload($filename)
+    {
+        return $this->withHeader('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 
     /**
@@ -2148,6 +2160,72 @@ class Response implements ResponseInterface
         $this->_file = $file;
     }
 
+    public function withFile($path, array $options = [])
+    {
+        // TODO move validation into a helper method.
+        if (strpos($path, '../') !== false || strpos($path, '..\\') !== false) {
+            throw new NotFoundException('The requested file contains `..` and will not be read.');
+        }
+        if (!is_file($path)) {
+            $path = APP . $path;
+        }
+
+        $file = new File($path);
+        if (!$file->exists() || !$file->readable()) {
+            if (Configure::read('debug')) {
+                throw new NotFoundException(sprintf('The requested file %s was not found or not readable', $path));
+            }
+            throw new NotFoundException(__d('cake', 'The requested file was not found'));
+        }
+        // end refactor.
+
+        $options += [
+            'name' => null,
+            'download' => null
+        ];
+
+        $extension = strtolower($file->ext());
+        if ((!$extension || $this->type($extension) === false) && $options['download'] === null) {
+            $options['download'] = true;
+        }
+
+        $new = clone $this;
+
+        $fileSize = $file->size();
+        if ($options['download']) {
+            $agent = env('HTTP_USER_AGENT');
+
+            if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent)) {
+                $contentType = 'application/octet-stream';
+            } elseif (preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
+                $contentType = 'application/force-download';
+            }
+
+            if (!empty($contentType)) {
+                $new = $new->withType($contentType);
+            }
+            if ($options['name'] === null) {
+                $name = $file->name;
+            } else {
+                $name = $options['name'];
+            }
+            $new = $new->withDownload($name)
+                ->withHeader('Content-Transfer-Encoding', 'binary');
+        }
+
+        $new = $new->withHeader('Accept-Ranges', 'bytes');
+        $httpRange = env('HTTP_RANGE');
+        if (isset($httpRange)) {
+            $new->_fileRange($file, $httpRange);
+        } else {
+            $new = $new->withHeader('Content-Length', (string)$fileSize);
+        }
+        $new->_file = $file;
+        $new->stream = new Stream($file->path, 'rb');
+
+        return $new;
+    }
+
     /**
      * Get the current file if one exists.
      *
@@ -2167,6 +2245,8 @@ class Response implements ResponseInterface
      * @param \Cake\Filesystem\File $file The file to set a range on.
      * @param string $httpRange The range to use.
      * @return void
+     * @deprecated 3.4.0 Long term this needs to be refactored to follow immutable paradigms.
+     *   However for now, it is simpler to leave this alone.
      */
     protected function _fileRange($file, $httpRange)
     {
