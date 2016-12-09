@@ -1945,8 +1945,28 @@ class Response implements ResponseInterface
     /**
      * Create a new response with a cookie set.
      *
+     * ### Options
+     *
+     * - `name`: The Cookie name
+     * - `value`: Value of the cookie
+     * - `expire`: Time the cookie expires in
+     * - `path`: Path the cookie applies to
+     * - `domain`: Domain the cookie is for.
+     * - `secure`: Is the cookie https?
+     * - `httpOnly`: Is the cookie available in the client?
+     *
+     * ### Examples
+     *
+     * ```
+     * // set scalar value with defaults
+     * $response = $response->withCookie('remember_me', 1);
+     *
+     * // customize cookie attributes
+     * $response = $response->withCookie('remember_me', ['path' => '/login']);
+     * ```
+     *
      * @param string $name The name of the cookie to set.
-     * @param array|string $data Either a string value, or an array of cookie data.
+     * @param array|string $data Either a string value, or an array of cookie options.
      * @return static
      */
     public function withCookie($name, $data = '')
