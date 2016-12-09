@@ -1680,6 +1680,7 @@ class ResponseTest extends TestCase
             $new->getHeaderLine('Content-Disposition')
         );
         $this->assertEquals('bytes', $new->getHeaderLine('Accept-Ranges'));
+        $this->assertEquals('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
         $body = $new->getBody();
         $this->assertInstanceOf('Zend\Diactoros\Stream', $body);
 
@@ -2032,6 +2033,7 @@ class ResponseTest extends TestCase
             $new->getHeaderLine('Content-Type')
         );
         $this->assertFalse($new->hasHeader('Content-Disposition'));
+        $this->assertFalse($new->hasHeader('Content-Transfer-Encoding'));
     }
 
     /**

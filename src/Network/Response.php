@@ -2149,7 +2149,6 @@ class Response implements ResponseInterface
     public function withFile($path, array $options = [])
     {
         $file = $this->validateFile($path);
-
         $options += [
             'name' => null,
             'download' => null
@@ -2176,14 +2175,10 @@ class Response implements ResponseInterface
                 $contentType = 'application/force-download';
             }
 
-            if (!empty($contentType)) {
+            if (isset($contentType)) {
                 $new = $new->withType($contentType);
             }
-            if ($options['name'] === null) {
-                $name = $file->name;
-            } else {
-                $name = $options['name'];
-            }
+            $name = $options['name'] ?: $file->name;
             $new = $new->withDownload($name)
                 ->withHeader('Content-Transfer-Encoding', 'binary');
         }
