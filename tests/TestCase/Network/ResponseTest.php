@@ -1667,7 +1667,7 @@ class ResponseTest extends TestCase
             ]
         );
         $this->assertEquals(
-            'text/html; charset=UTF-8', 
+            'text/html; charset=UTF-8',
             $response->getHeaderLine('Content-Type'),
             'No mutation'
         );
