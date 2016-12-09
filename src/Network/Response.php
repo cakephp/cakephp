@@ -2097,6 +2097,7 @@ class Response implements ResponseInterface
      * @param array $options Options See above.
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException
+     * @deprecated 3.4.0 Use withFile() instead.
      */
     public function file($path, array $options = [])
     {
@@ -2146,6 +2147,26 @@ class Response implements ResponseInterface
         $this->stream = new Stream($file->path, 'rb');
     }
 
+    /**
+     * Create a new instance that is based on a file.
+     *
+     * This method will augment both the body and a number of related headers.
+     *
+     * If `$_SERVER['HTTP_RANGE']` is set, a slice of the file will be
+     * returned instead of the entire file.
+     *
+     * ### Options keys
+     *
+     * - name: Alternate download name
+     * - download: If `true` sets download header and forces file to
+     *   be downloaded rather than displayed inline.
+     *
+     * @param string $path Path to file. If the path is not an absolute path that resolves
+     *   to a file, `APP` will be prepended to the path.
+     * @param array $options Options See above.
+     * @return static
+     * @throws \Cake\Network\Exception\NotFoundException
+     */
     public function withFile($path, array $options = [])
     {
         $file = $this->validateFile($path);
@@ -2154,13 +2175,13 @@ class Response implements ResponseInterface
             'download' => null
         ];
 
-        $new = clone $this;
         $extension = strtolower($file->ext());
         $mapped = $this->getMimeType($extension);
         if ((!$extension || !$mapped) && $options['download'] === null) {
             $options['download'] = true;
         }
 
+        $new = clone $this;
         if ($mapped) {
             $new = $new->withType($extension);
         }
