@@ -1912,6 +1912,7 @@ class Response implements ResponseInterface
      * @param array|null $options Either null to get all cookies, string for a specific cookie
      *  or array to set cookie.
      * @return mixed
+     * @deprecated 3.4.0 Use getCookie() and withCookie() instead.
      */
     public function cookie($options = null)
     {
@@ -1939,6 +1940,53 @@ class Response implements ResponseInterface
         $options += $defaults;
 
         $this->_cookies[$options['name']] = $options;
+    }
+
+    /**
+     * Create a new response with a cookie set.
+     *
+     * @param string $name The name of the cookie to set.
+     * @param array|string $data Either a string value, or an array of cookie data.
+     * @return static
+     */
+    public function withCookie($name, $data = '')
+    {
+        if (!is_array($data)) {
+            $data = ['value' => $data];
+        }
+        $defaults = [
+            'value' => '',
+            'expire' => 0,
+            'path' => '/',
+            'domain' => '',
+            'secure' => false,
+            'httpOnly' => false
+        ];
+        $data += $defaults;
+        $data['name'] = $name;
+
+        $new = clone $this;
+        $new->_cookies[$name] = $data;
+
+        return $new;
+    }
+
+    /**
+     * Read a single cookie from the response.
+     *
+     * This method provides read access to pending cookies. It will
+     * not read the `Set-Cookie` header if set.
+     *
+     * @param string $name The cookie name you want to read.
+     * @return array|null Either the cookie data or null
+     */
+    public function getCookie($name)
+    {
+        if (isset($this->_cookies[$name])) {
+            return $this->_cookies[$name];
+        }
+
+        return null;
     }
 
     /**

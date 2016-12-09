@@ -1360,6 +1360,80 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test setting cookies with no value
+     *
+     * @return void
+     */
+    public function testWithCookieEmpty()
+    {
+        $response = new Response();
+        $new = $response->withCookie('testing');
+        $this->assertNull($response->getCookie('testing'), 'withCookie does not mutate');
+
+        $expected = [
+            'name' => 'testing',
+            'value' => '',
+            'expire' => 0,
+            'path' => '/',
+            'domain' => '',
+            'secure' => false,
+            'httpOnly' => false];
+        $result = $new->getCookie('testing');
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test setting cookies with scalar values
+     *
+     * @return void
+     */
+    public function testWithCookieScalar()
+    {
+        $response = new Response();
+        $new = $response->withCookie('testing', 'abc123');
+        $this->assertNull($response->getCookie('testing'), 'withCookie does not mutate');
+        $this->assertEquals('abc123', $new->getCookie('testing')['value']);
+
+        $new = $response->withCookie('testing', 99);
+        $this->assertEquals(99, $new->getCookie('testing')['value']);
+
+        $new = $response->withCookie('testing', false);
+        $this->assertFalse($new->getCookie('testing')['value']);
+
+        $new = $response->withCookie('testing', true);
+        $this->assertTrue($new->getCookie('testing')['value']);
+    }
+
+    /**
+     * Test withCookie() and array data.
+     *
+     * @return void
+     */
+    public function testWithCookieArray()
+    {
+        $response = new Response();
+        $cookie = [
+            'name' => 'ignored key',
+            'value' => '[a,b,c]',
+            'expire' => 1000,
+            'path' => '/test',
+            'secure' => true
+        ];
+        $new = $response->withCookie('testing', $cookie);
+        $this->assertNull($response->getCookie('testing'), 'withCookie does not mutate');
+        $expected = [
+            'name' => 'testing',
+            'value' => '[a,b,c]',
+            'expire' => 1000,
+            'path' => '/test',
+            'domain' => '',
+            'secure' => true,
+            'httpOnly' => false
+        ];
+        $this->assertEquals($expected, $new->getCookie('testing'));
+    }
+
+    /**
      * Test CORS
      *
      * @dataProvider corsData
