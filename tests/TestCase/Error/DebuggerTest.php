@@ -149,6 +149,30 @@ class DebuggerTest extends TestCase
     }
 
     /**
+     * Test outputError with description encoding
+     *
+     * @return void
+     */
+    public function testOutputErrorDescriptionEncoding()
+    {
+        Debugger::outputAs('html');
+
+        ob_start();
+        $debugger = Debugger::getInstance();
+        $debugger->outputError([
+            'error' => 'Notice',
+            'code' => E_NOTICE,
+            'level' => E_NOTICE,
+            'description' => 'Undefined index <script>alert(1)</script>',
+            'file' => __FILE__,
+            'line' => __LINE__,
+        ]);
+        $result = ob_get_clean();
+        $this->assertContains('&lt;script&gt;', $result);
+        $this->assertNotContains('<script>', $result);
+    }
+
+    /**
      * Tests that changes in output formats using Debugger::output() change the templates used.
      *
      * @return void
