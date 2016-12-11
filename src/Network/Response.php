@@ -2227,7 +2227,7 @@ class Response implements ResponseInterface
     protected function validateFile($path)
     {
         if (strpos($path, '../') !== false || strpos($path, '..\\') !== false) {
-            throw new NotFoundException('The requested file contains `..` and will not be read.');
+            throw new NotFoundException(__d('cake', 'The requested file contains `..` and will not be read.'));
         }
         if (!is_file($path)) {
             $path = APP . $path;
