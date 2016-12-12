@@ -897,9 +897,10 @@ class ViewTest extends TestCase
     }
 
     /**
-     * Test elementInexistent method
+     * Test loading inexistent view element
      *
      * @expectedException \Cake\View\Exception\MissingElementException
+     * @expectedExceptionMessage Element file "Element\non_existent_element.ctp" is missing
      * @return void
      */
     public function testElementInexistent()
@@ -908,12 +909,13 @@ class ViewTest extends TestCase
     }
 
     /**
-     * Test elementInexistent3 method
+     * Test loading inexistent plugin view element
      *
      * @expectedException \Cake\View\Exception\MissingElementException
+     * @expectedExceptionMessage Element file "test_plugin.Element\plugin_element.ctp" is missing
      * @return void
      */
-    public function testElementInexistent3()
+    public function testElementInexistentPluginElement()
     {
         $this->View->element('test_plugin.plugin_element');
     }
