@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Network;
 
+use Cake\Network\Exception\NotFoundException;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
@@ -663,6 +664,21 @@ class ResponseTest extends TestCase
         ];
         $response->download('myfile.mp3');
         $this->assertEquals($expected, $response->header());
+    }
+
+    /**
+     * Tests the withDownload method
+     *
+     * @return void
+     */
+    public function testWithDownload()
+    {
+        $response = new Response();
+        $new = $response->withDownload('myfile.mp3');
+        $this->assertFalse($response->hasHeader('Content-Disposition'), 'No mutation');
+
+        $expected = 'attachment; filename="myfile.mp3"';
+        $this->assertEquals($expected, $new->getHeaderLine('Content-Disposition'));
     }
 
     /**
@@ -1360,6 +1376,80 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test setting cookies with no value
+     *
+     * @return void
+     */
+    public function testWithCookieEmpty()
+    {
+        $response = new Response();
+        $new = $response->withCookie('testing');
+        $this->assertNull($response->getCookie('testing'), 'withCookie does not mutate');
+
+        $expected = [
+            'name' => 'testing',
+            'value' => '',
+            'expire' => 0,
+            'path' => '/',
+            'domain' => '',
+            'secure' => false,
+            'httpOnly' => false];
+        $result = $new->getCookie('testing');
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test setting cookies with scalar values
+     *
+     * @return void
+     */
+    public function testWithCookieScalar()
+    {
+        $response = new Response();
+        $new = $response->withCookie('testing', 'abc123');
+        $this->assertNull($response->getCookie('testing'), 'withCookie does not mutate');
+        $this->assertEquals('abc123', $new->getCookie('testing')['value']);
+
+        $new = $response->withCookie('testing', 99);
+        $this->assertEquals(99, $new->getCookie('testing')['value']);
+
+        $new = $response->withCookie('testing', false);
+        $this->assertFalse($new->getCookie('testing')['value']);
+
+        $new = $response->withCookie('testing', true);
+        $this->assertTrue($new->getCookie('testing')['value']);
+    }
+
+    /**
+     * Test withCookie() and array data.
+     *
+     * @return void
+     */
+    public function testWithCookieArray()
+    {
+        $response = new Response();
+        $cookie = [
+            'name' => 'ignored key',
+            'value' => '[a,b,c]',
+            'expire' => 1000,
+            'path' => '/test',
+            'secure' => true
+        ];
+        $new = $response->withCookie('testing', $cookie);
+        $this->assertNull($response->getCookie('testing'), 'withCookie does not mutate');
+        $expected = [
+            'name' => 'testing',
+            'value' => '[a,b,c]',
+            'expire' => 1000,
+            'path' => '/test',
+            'domain' => '',
+            'secure' => true,
+            'httpOnly' => false
+        ];
+        $this->assertEquals($expected, $new->getCookie('testing'));
+    }
+
+    /**
      * Test CORS
      *
      * @dataProvider corsData
@@ -1419,19 +1509,19 @@ class ResponseTest extends TestCase
         };
 
         return [
-            // [$fooRequest, null, '*', '', '', false, false],
-            // [$fooRequest, 'http://www.foo.com', '*', '', '', '*', false],
-            // [$fooRequest, 'http://www.foo.com', 'www.foo.com', '', '', 'http://www.foo.com', false],
-            // [$fooRequest, 'http://www.foo.com', '*.foo.com', '', '', 'http://www.foo.com', false],
-            // [$fooRequest, 'http://www.foo.com', 'http://*.foo.com', '', '', 'http://www.foo.com', false],
-            // [$fooRequest, 'http://www.foo.com', 'https://www.foo.com', '', '', false, false],
-            // [$fooRequest, 'http://www.foo.com', 'https://*.foo.com', '', '', false, false],
-            // [$fooRequest, 'http://www.foo.com', ['*.bar.com', '*.foo.com'], '', '', 'http://www.foo.com', false],
+            [$fooRequest, null, '*', '', '', false, false],
+            [$fooRequest, 'http://www.foo.com', '*', '', '', '*', false],
+            [$fooRequest, 'http://www.foo.com', 'www.foo.com', '', '', 'http://www.foo.com', false],
+            [$fooRequest, 'http://www.foo.com', '*.foo.com', '', '', 'http://www.foo.com', false],
+            [$fooRequest, 'http://www.foo.com', 'http://*.foo.com', '', '', 'http://www.foo.com', false],
+            [$fooRequest, 'http://www.foo.com', 'https://www.foo.com', '', '', false, false],
+            [$fooRequest, 'http://www.foo.com', 'https://*.foo.com', '', '', false, false],
+            [$fooRequest, 'http://www.foo.com', ['*.bar.com', '*.foo.com'], '', '', 'http://www.foo.com', false],
 
-            // [$fooRequest, 'http://not-foo.com', '*.foo.com', '', '', false, false],
-            // [$fooRequest, 'http://bad.academy', '*.acad.my', '', '', false, false],
-            // [$fooRequest, 'http://www.foo.com.at.bad.com', '*.foo.com', '', '', false, false],
-            // [$fooRequest, 'https://www.foo.com', '*.foo.com', '', '', false, false],
+            [$fooRequest, 'http://not-foo.com', '*.foo.com', '', '', false, false],
+            [$fooRequest, 'http://bad.academy', '*.acad.my', '', '', false, false],
+            [$fooRequest, 'http://www.foo.com.at.bad.com', '*.foo.com', '', '', false, false],
+            [$fooRequest, 'https://www.foo.com', '*.foo.com', '', '', false, false],
 
             [$secureRequest(), 'https://www.bar.com', 'www.bar.com', '', '', 'https://www.bar.com', false],
             [$secureRequest(), 'https://www.bar.com', 'http://www.bar.com', '', '', false, false],
@@ -1461,55 +1551,62 @@ class ResponseTest extends TestCase
     }
 
     /**
-     * test file with ../
+     * test withFile() not found
      *
      * @expectedException \Cake\Network\Exception\NotFoundException
-     * @expectedExceptionMessage The requested file contains `..` and will not be read.
      * @return void
      */
-    public function testFileWithForwardSlashPathTraversal()
+    public function testWithFileNotFound()
     {
         $response = new Response();
-        $response->file('my/../cat.gif');
+        $response->withFile('/some/missing/folder/file.jpg');
     }
 
     /**
-     * test file with ..\
+     * Provider for various kinds of unacceptable files.
      *
-     * @expectedException \Cake\Network\Exception\NotFoundException
-     * @expectedExceptionMessage The requested file contains `..` and will not be read.
-     * @return void
+     * @return array
      */
-    public function testFileWithBackwardSlashPathTraversal()
+    public function invalidFileProvider()
     {
-        $response = new Response();
-        $response->file('my\..\cat.gif');
+        return [
+            ['my/../cat.gif', 'The requested file contains `..` and will not be read.'],
+            ['my\..\cat.gif', 'The requested file contains `..` and will not be read.'],
+            ['my/ca..t.gif', 'my/ca..t.gif was not found or not readable'],
+            ['my/ca..t/image.gif', 'my/ca..t/image.gif was not found or not readable'],
+        ];
     }
 
     /**
-     * test file with ..
+     * test invalid file paths.
      *
-     * @expectedException \Cake\Network\Exception\NotFoundException
-     * @expectedExceptionMessage my/ca..t.gif was not found or not readable
+     * @dataProvider invalidFileProvider
      * @return void
      */
-    public function testFileWithDotsInTheFilename()
+    public function testFileInvalidPath($path, $expectedMessage)
     {
         $response = new Response();
-        $response->file('my/ca..t.gif');
+        try {
+            $response->file($path);
+        } catch (NotFoundException $e) {
+            $this->assertContains($expectedMessage, $e->getMessage());
+        }
     }
 
     /**
-     * test file with .. in a path fragment
+     * test withFile and invalid paths
      *
-     * @expectedException \Cake\Network\Exception\NotFoundException
-     * @expectedExceptionMessage my/ca..t/image.gif was not found or not readable
+     * @dataProvider invalidFileProvider
      * @return void
      */
-    public function testFileWithDotsInAPathFragment()
+    public function testWithFileInvalidPath($path, $expectedMessage)
     {
         $response = new Response();
-        $response->file('my/ca..t/image.gif');
+        try {
+            $response->withFile($path);
+        } catch (NotFoundException $e) {
+            $this->assertContains($expectedMessage, $e->getMessage());
+        }
     }
 
     /**
@@ -1546,9 +1643,50 @@ class ResponseTest extends TestCase
 
         ob_start();
         $result = $response->send();
-        $output = ob_get_clean();
-        $this->assertEquals("/* this is the test asset css file */", trim($output));
         $this->assertTrue($result !== false);
+        $output = ob_get_clean();
+
+        $expected = "/* this is the test asset css file */";
+        $this->assertEquals($expected, trim($output));
+        $this->assertEquals($expected, trim($response->getBody()->getContents()));
+    }
+
+    /**
+     * test withFile() + download & name
+     *
+     * @return void
+     */
+    public function testWithFileDownloadAndName()
+    {
+        $response = new Response();
+        $new = $response->withFile(
+            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+            [
+                'name' => 'something_special.css',
+                'download' => true,
+            ]
+        );
+        $this->assertEquals(
+            'text/html; charset=UTF-8',
+            $response->getHeaderLine('Content-Type'),
+            'No mutation'
+        );
+        $this->assertEquals(
+            'text/css; charset=UTF-8',
+            $new->getHeaderLine('Content-Type')
+        );
+        $this->assertEquals(
+            'attachment; filename="something_special.css"',
+            $new->getHeaderLine('Content-Disposition')
+        );
+        $this->assertEquals('bytes', $new->getHeaderLine('Accept-Ranges'));
+        $this->assertEquals('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
+        $body = $new->getBody();
+        $this->assertInstanceOf('Zend\Diactoros\Stream', $body);
+
+        $expected = "/* this is the test asset css file */";
+        $this->assertEquals($expected, trim($body->getContents()));
+        $this->assertEquals($expected, trim($new->getFile()->read()));
     }
 
     /**
@@ -1660,6 +1798,26 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * test withFile() + a generic agent
+     *
+     * @return void
+     */
+    public function testWithFileUnknownFileTypeGeneric()
+    {
+        $response = new Response();
+        $new = $response->withFile(CONFIG . 'no_section.ini');
+        $this->assertEquals('text/html; charset=UTF-8', $new->getHeaderLine('Content-Type'));
+        $this->assertEquals(
+            'attachment; filename="no_section.ini"',
+            $new->getHeaderLine('Content-Disposition')
+        );
+        $this->assertEquals('bytes', $new->getHeaderLine('Accept-Ranges'));
+        $body = $new->getBody();
+        $expected = "some_key = some_value\nbool_key = 1\n";
+        $this->assertEquals($expected, $body->getContents());
+    }
+
+    /**
      * testFileWithUnknownFileTypeOpera method
      *
      * @return void
@@ -1716,6 +1874,27 @@ class ResponseTest extends TestCase
         if ($currentUserAgent !== null) {
             $_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
         }
+    }
+
+    /**
+     * test withFile() + opera
+     *
+     * @return void
+     */
+    public function testWithFileUnknownFileTypeOpera()
+    {
+        $currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
+        $_SERVER['HTTP_USER_AGENT'] = 'Opera/9.80 (Windows NT 6.0; U; en) Presto/2.8.99 Version/11.10';
+        $response = new Response();
+
+        $new = $response->withFile(CONFIG . 'no_section.ini');
+        $this->assertEquals('application/octet-stream', $new->getHeaderLine('Content-Type'));
+        $this->assertEquals(
+            'attachment; filename="no_section.ini"',
+            $new->getHeaderLine('Content-Disposition')
+        );
+
+        $_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
     }
 
     /**
@@ -1778,6 +1957,24 @@ class ResponseTest extends TestCase
             $_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
         }
     }
+
+    /**
+     * test withFile() + old IE
+     *
+     * @return void
+     */
+    public function testWithFileUnknownFileTypeOldIe()
+    {
+        $currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
+        $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; Media Center PC 4.0; SLCC1; .NET CLR 3.0.04320)';
+        $response = new Response();
+
+        $new = $response->withFile(CONFIG . 'no_section.ini');
+        $this->assertEquals('application/force-download', $new->getHeaderLine('Content-Type'));
+
+        $_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
+    }
+
     /**
      * testFileWithUnknownFileNoDownload method
      *
@@ -1818,6 +2015,25 @@ class ResponseTest extends TestCase
         if ($currentUserAgent !== null) {
             $_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
         }
+    }
+
+    /**
+     * test withFile() + no download
+     *
+     * @return void
+     */
+    public function testWithFileNoDownload()
+    {
+        $response = new Response();
+        $new = $response->withFile(CONFIG . 'no_section.ini', [
+            'download' => false
+        ]);
+        $this->assertEquals(
+            'text/html; charset=UTF-8',
+            $new->getHeaderLine('Content-Type')
+        );
+        $this->assertFalse($new->hasHeader('Content-Disposition'));
+        $this->assertFalse($new->hasHeader('Content-Transfer-Encoding'));
     }
 
     /**
@@ -1897,6 +2113,18 @@ class ResponseTest extends TestCase
             ->will($this->returnValue(true));
 
         $response->file(TEST_APP . 'vendor/img/test_2.JPG');
+    }
+
+    /**
+     * Test that uppercase extensions result in correct content-types
+     *
+     * @return void
+     */
+    public function testWithFileUpperExtension()
+    {
+        $response = new Response();
+        $new = $response->withFile(TEST_APP . 'vendor/img/test_2.JPG');
+        $this->assertEquals('image/jpeg', $new->getHeaderLine('Content-Type'));
     }
 
     /**
@@ -2014,6 +2242,30 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test withFile() & the various range offset types.
+     *
+     * @dataProvider rangeProvider
+     * @return void
+     */
+    public function testWithFileRangeOffsets($range, $length, $offsetResponse)
+    {
+        $_SERVER['HTTP_RANGE'] = $range;
+        $response = new Response();
+        $new = $response->withFile(
+            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+            ['download' => true]
+        );
+        $this->assertEquals(
+            'attachment; filename="test_asset.css"',
+            $new->getHeaderLine('Content-Disposition')
+        );
+        $this->assertEquals('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
+        $this->assertEquals('bytes', $new->getHeaderLine('Accept-Ranges'));
+        $this->assertEquals($length, $new->getHeaderLine('Content-Length'));
+        $this->assertEquals($offsetResponse, $new->getHeaderLine('Content-Range'));
+    }
+
+    /**
      * Test fetching ranges from a file.
      *
      * @return void
@@ -2073,6 +2325,31 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test withFile() fetching ranges from a file.
+     *
+     * @return void
+     */
+    public function testWithFileRange()
+    {
+        $_SERVER['HTTP_RANGE'] = 'bytes=8-25';
+        $response = new Response();
+        $new = $response->withFile(
+            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+            ['download' => true]
+        );
+
+        $this->assertEquals(
+            'attachment; filename="test_asset.css"',
+            $new->getHeaderLine('Content-Disposition')
+        );
+        $this->assertEquals('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
+        $this->assertEquals('bytes', $new->getHeaderLine('Accept-Ranges'));
+        $this->assertEquals('18', $new->getHeaderLine('Content-Length'));
+        $this->assertEquals('bytes 8-25/38', $new->getHeaderLine('Content-Range'));
+        $this->assertEquals(206, $new->getStatusCode());
+    }
+
+    /**
      * Provider for invalid range header values.
      *
      * @return array
@@ -2125,6 +2402,32 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test withFile() and invalid ranges
+     *
+     * @dataProvider invalidFileRangeProvider
+     * @return void
+     */
+    public function testWithFileInvalidRange($range)
+    {
+        $_SERVER['HTTP_RANGE'] = $range;
+        $response = new Response();
+        $new = $response->withFile(
+            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+            ['download' => true]
+        );
+
+        $this->assertEquals(
+            'attachment; filename="test_asset.css"',
+            $new->getHeaderLine('Content-Disposition')
+        );
+        $this->assertEquals('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
+        $this->assertEquals('bytes', $new->getHeaderLine('Accept-Ranges'));
+        $this->assertEquals('38', $new->getHeaderLine('Content-Length'));
+        $this->assertEquals('bytes 0-37/38', $new->getHeaderLine('Content-Range'));
+        $this->assertEquals(206, $new->getStatusCode());
+    }
+
+    /**
      * Test reversed file ranges.
      *
      * @return void
@@ -2166,6 +2469,30 @@ class ResponseTest extends TestCase
 
         $this->assertEquals(416, $response->statusCode());
         $result = $response->send();
+    }
+
+    /**
+     * Test withFile() and a reversed range
+     *
+     * @return void
+     */
+    public function testWithFileReversedRange()
+    {
+        $_SERVER['HTTP_RANGE'] = 'bytes=30-2';
+        $response = new Response();
+        $new = $response->withFile(
+            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+            ['download' => true]
+        );
+
+        $this->assertEquals(
+            'attachment; filename="test_asset.css"',
+            $new->getHeaderLine('Content-Disposition')
+        );
+        $this->assertEquals('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
+        $this->assertEquals('bytes', $new->getHeaderLine('Accept-Ranges'));
+        $this->assertEquals('bytes 0-37/38', $new->getHeaderLine('Content-Range'));
+        $this->assertEquals(416, $new->getStatusCode());
     }
 
     /**

@@ -1770,10 +1770,22 @@ class Response implements ResponseInterface
      *
      * @param string $filename The name of the file as the browser will download the response
      * @return void
+     * @deprecated 3.4.0 Use withDownload() instead.
      */
     public function download($filename)
     {
         $this->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+    }
+
+    /**
+     * Create a new instance with the Content-Disposition header set.
+     *
+     * @param string $filename The name of the file as the browser will download the response
+     * @return static
+     */
+    public function withDownload($filename)
+    {
+        return $this->withHeader('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 
     /**
@@ -1912,6 +1924,7 @@ class Response implements ResponseInterface
      * @param array|null $options Either null to get all cookies, string for a specific cookie
      *  or array to set cookie.
      * @return mixed
+     * @deprecated 3.4.0 Use getCookie() and withCookie() instead.
      */
     public function cookie($options = null)
     {
@@ -1939,6 +1952,73 @@ class Response implements ResponseInterface
         $options += $defaults;
 
         $this->_cookies[$options['name']] = $options;
+    }
+
+    /**
+     * Create a new response with a cookie set.
+     *
+     * ### Options
+     *
+     * - `name`: The Cookie name
+     * - `value`: Value of the cookie
+     * - `expire`: Time the cookie expires in
+     * - `path`: Path the cookie applies to
+     * - `domain`: Domain the cookie is for.
+     * - `secure`: Is the cookie https?
+     * - `httpOnly`: Is the cookie available in the client?
+     *
+     * ### Examples
+     *
+     * ```
+     * // set scalar value with defaults
+     * $response = $response->withCookie('remember_me', 1);
+     *
+     * // customize cookie attributes
+     * $response = $response->withCookie('remember_me', ['path' => '/login']);
+     * ```
+     *
+     * @param string $name The name of the cookie to set.
+     * @param array|string $data Either a string value, or an array of cookie options.
+     * @return static
+     */
+    public function withCookie($name, $data = '')
+    {
+        if (!is_array($data)) {
+            $data = ['value' => $data];
+        }
+        $defaults = [
+            'value' => '',
+            'expire' => 0,
+            'path' => '/',
+            'domain' => '',
+            'secure' => false,
+            'httpOnly' => false
+        ];
+        $data += $defaults;
+        $data['name'] = $name;
+
+        $new = clone $this;
+        $new->_cookies[$name] = $data;
+
+        return $new;
+    }
+
+    /**
+     * Read a single cookie from the response.
+     *
+     * This method provides read access to pending cookies. It will
+     * not read the `Set-Cookie` header if set.
+     *
+     * @param string $name The cookie name you want to read.
+     * @return array|null Either the cookie data or null
+     */
+    public function getCookie($name)
+    {
+        if (isset($this->_cookies[$name])) {
+            return $this->_cookies[$name];
+        }
+
+        return null;
     }
 
     /**
@@ -2017,29 +2097,15 @@ class Response implements ResponseInterface
      * @param array $options Options See above.
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException
+     * @deprecated 3.4.0 Use withFile() instead.
      */
     public function file($path, array $options = [])
     {
+        $file = $this->validateFile($path);
         $options += [
             'name' => null,
             'download' => null
         ];
-
-        if (strpos($path, '../') !== false || strpos($path, '..\\') !== false) {
-            throw new NotFoundException('The requested file contains `..` and will not be read.');
-        }
-
-        if (!is_file($path)) {
-            $path = APP . $path;
-        }
-
-        $file = new File($path);
-        if (!$file->exists() || !$file->readable()) {
-            if (Configure::read('debug')) {
-                throw new NotFoundException(sprintf('The requested file %s was not found or not readable', $path));
-            }
-            throw new NotFoundException(__d('cake', 'The requested file was not found'));
-        }
 
         $extension = strtolower($file->ext());
         $download = $options['download'];
@@ -2078,6 +2144,104 @@ class Response implements ResponseInterface
         }
 
         $this->_file = $file;
+        $this->stream = new Stream($file->path, 'rb');
+    }
+
+    /**
+     * Create a new instance that is based on a file.
+     *
+     * This method will augment both the body and a number of related headers.
+     *
+     * If `$_SERVER['HTTP_RANGE']` is set, a slice of the file will be
+     * returned instead of the entire file.
+     *
+     * ### Options keys
+     *
+     * - name: Alternate download name
+     * - download: If `true` sets download header and forces file to
+     *   be downloaded rather than displayed inline.
+     *
+     * @param string $path Path to file. If the path is not an absolute path that resolves
+     *   to a file, `APP` will be prepended to the path.
+     * @param array $options Options See above.
+     * @return static
+     * @throws \Cake\Network\Exception\NotFoundException
+     */
+    public function withFile($path, array $options = [])
+    {
+        $file = $this->validateFile($path);
+        $options += [
+            'name' => null,
+            'download' => null
+        ];
+
+        $extension = strtolower($file->ext());
+        $mapped = $this->getMimeType($extension);
+        if ((!$extension || !$mapped) && $options['download'] === null) {
+            $options['download'] = true;
+        }
+
+        $new = clone $this;
+        if ($mapped) {
+            $new = $new->withType($extension);
+        }
+
+        $fileSize = $file->size();
+        if ($options['download']) {
+            $agent = env('HTTP_USER_AGENT');
+
+            if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent)) {
+                $contentType = 'application/octet-stream';
+            } elseif (preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
+                $contentType = 'application/force-download';
+            }
+
+            if (isset($contentType)) {
+                $new = $new->withType($contentType);
+            }
+            $name = $options['name'] ?: $file->name;
+            $new = $new->withDownload($name)
+                ->withHeader('Content-Transfer-Encoding', 'binary');
+        }
+
+        $new = $new->withHeader('Accept-Ranges', 'bytes');
+        $httpRange = env('HTTP_RANGE');
+        if (isset($httpRange)) {
+            $new->_fileRange($file, $httpRange);
+        } else {
+            $new = $new->withHeader('Content-Length', (string)$fileSize);
+        }
+        $new->_file = $file;
+        $new->stream = new Stream($file->path, 'rb');
+
+        return $new;
+    }
+
+    /**
+     * Validate a file path is a valid response body.
+     *
+     * @param string $path The path to the file.
+     * @throws \Cake\Network\Exception\NotFoundException
+     * @return \Cake\Filesystem\File
+     */
+    protected function validateFile($path)
+    {
+        if (strpos($path, '../') !== false || strpos($path, '..\\') !== false) {
+            throw new NotFoundException(__d('cake', 'The requested file contains `..` and will not be read.'));
+        }
+        if (!is_file($path)) {
+            $path = APP . $path;
+        }
+
+        $file = new File($path);
+        if (!$file->exists() || !$file->readable()) {
+            if (Configure::read('debug')) {
+                throw new NotFoundException(sprintf('The requested file %s was not found or not readable', $path));
+            }
+            throw new NotFoundException(__d('cake', 'The requested file was not found'));
+        }
+
+        return $file;
     }
 
     /**
@@ -2099,6 +2263,8 @@ class Response implements ResponseInterface
      * @param \Cake\Filesystem\File $file The file to set a range on.
      * @param string $httpRange The range to use.
      * @return void
+     * @deprecated 3.4.0 Long term this needs to be refactored to follow immutable paradigms.
+     *   However for now, it is simpler to leave this alone.
      */
     protected function _fileRange($file, $httpRange)
     {
