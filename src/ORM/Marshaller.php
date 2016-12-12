@@ -20,7 +20,6 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
-use Cake\ORM\PropertyMarshalInterface;
 use RuntimeException;
 
 /**

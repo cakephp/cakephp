@@ -18,7 +18,6 @@ use Cake\Database\Driver;
 use Cake\Database\Type;
 use Cake\Database\TypeInterface;
 use InvalidArgumentException;
-use JsonSerializable;
 use PDO;
 
 /**
