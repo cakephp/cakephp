@@ -900,7 +900,7 @@ class ViewTest extends TestCase
      * Test loading inexistent view element
      *
      * @expectedException \Cake\View\Exception\MissingElementException
-     * @expectedExceptionMessage Element file "Element\non_existent_element.ctp" is missing
+     * @expectedExceptionMessageRegExp $Element file \"Element[\\|/]non_existent_element\.ctp\" is missing$
      * @return void
      */
     public function testElementInexistent()
@@ -912,7 +912,7 @@ class ViewTest extends TestCase
      * Test loading inexistent plugin view element
      *
      * @expectedException \Cake\View\Exception\MissingElementException
-     * @expectedExceptionMessage Element file "test_plugin.Element\plugin_element.ctp" is missing
+     * @expectedExceptionMessageRegExp $Element file "test_plugin\.Element[\\|/]plugin_element\.ctp\" is missing$
      * @return void
      */
     public function testElementInexistentPluginElement()
