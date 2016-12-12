@@ -15,7 +15,6 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Type;
-use Cake\Database\Type\ExpressionTypeInterface;
 
 /**
  * Offers a method to convert values to ExpressionInterface objects
