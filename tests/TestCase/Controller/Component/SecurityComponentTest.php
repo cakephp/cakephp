@@ -143,6 +143,8 @@ class SecurityComponentTest extends TestCase
     /**
      * setUp method
      *
+     * Initializes environment state.
+     *
      * @return void
      */
     public function setUp()
@@ -169,7 +171,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * Tear-down method. Resets environment state.
+     * tearDown method
+     *
+     * Resets environment state.
      *
      * @return void
      */
@@ -195,8 +199,10 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testBlackholeWithBrokenCallback method
+     *
      * Test that requests are still blackholed when controller has incorrect
-     * visibility keyword in the blackhole callback
+     * visibility keyword in the blackhole callback.
      *
      * @expectedException \Cake\Network\Exception\BadRequestException
      * @return void
@@ -221,6 +227,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testExceptionWhenActionIsBlackholeCallback method
+     *
      * Ensure that directly requesting the blackholeCallback as the controller
      * action results in an exception.
      *
@@ -240,7 +248,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * test that initialize can set properties.
+     * testConstructorSettingProperties method
+     *
+     * Test that initialize can set properties.
      *
      * @return void
      */
@@ -404,6 +414,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePost method
+     *
      * Simple hash validation test
      *
      * @return void
@@ -426,6 +438,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostOnGetWithData method
+     *
      * Test that validatePost fires on GET with request data.
      * This could happen when method overriding is used.
      *
@@ -455,6 +469,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostNoSession method
+     *
      * Test that validatePost fails if you are missing the session information.
      *
      * @return void
@@ -482,6 +498,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostNoUnlockedInRequestData method
+     *
      * Test that validatePost fails if you are missing unlocked in request data.
      *
      * @return void
@@ -503,7 +521,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * test that validatePost fails if any of its required fields are missing.
+     * testValidatePostFormHacking method
+     *
+     * Test that validatePost fails if any of its required fields are missing.
      *
      * @return void
      * @triggers Controller.startup $this->Controller
@@ -523,6 +543,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostObjectDeserialize
+     *
      * Test that objects can't be passed into the serialized string. This was a vector for RFI and LFI
      * attacks. Thanks to Felix Wilhelm
      *
@@ -554,6 +576,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostIgnoresCsrfToken method
+     *
      * Tests validation post data ignores `_csrfToken`.
      *
      * @return void
@@ -577,7 +601,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * Tests validation of checkbox arrays
+     * testValidatePostArray method
+     *
+     * Tests validation of checkbox arrays.
      *
      * @return void
      * @triggers Controller.startup $this->Controller
@@ -609,6 +635,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidateIntFieldName method
+     *
      * Tests validation of integer field names.
      *
      * @return void
@@ -682,7 +710,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * Tests hash validation for multiple records, including locked fields
+     * testValidatePostComplex method
+     *
+     * Tests hash validation for multiple records, including locked fields.
      *
      * @return void
      * @triggers Controller.startup $this->Controller
@@ -714,7 +744,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * test ValidatePost with multiple select elements.
+     * testValidatePostMultipleSelect method
+     *
+     * Test ValidatePost with multiple select elements.
      *
      * @return void
      * @triggers Controller.startup $this->Controller
@@ -858,7 +890,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * test validating post data with posted unlocked fields.
+     * testValidatePostDisabledFieldsInData method
+     *
+     * Test validating post data with posted unlocked fields.
      *
      * @return void
      * @triggers Controller.startup $this->Controller
@@ -886,7 +920,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * test that missing 'unlocked' input causes failure
+     * testValidatePostFailNoDisabled method
+     *
+     * Test that missing 'unlocked' input causes failure.
      *
      * @return void
      * @triggers Controller.startup $this->Controller
@@ -912,7 +948,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * test that missing 'debug' input causes failure
+     * testValidatePostFailNoDebug method
+     *
+     * Test that missing 'debug' input causes failure.
      *
      * @return void
      * @triggers Controller.startup $this->Controller
@@ -939,7 +977,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * test that missing 'debug' input is not the problem when debug mode disabled
+     * testValidatePostFailNoDebugMode method
+     *
+     * Test that missing 'debug' input is not the problem when debug mode disabled.
      *
      * @return void
      * @triggers Controller.startup $this->Controller
@@ -965,6 +1005,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostFailDisabledFieldTampering method
+     *
      * Test that validatePost fails when unlocked fields are changed.
      *
      * @return void
@@ -1102,6 +1144,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidateNestedNumericSets method
+     *
      * Test that values like Foo.0.1
      *
      * @return void
@@ -1233,7 +1277,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * test validatePost with radio buttons
+     * testValidatePostRadio method
+     *
+     * Test validatePost with radio buttons.
      *
      * @return void
      * @triggers Controller.startup $this->Controller
@@ -1279,7 +1325,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * test validatePost uses here() as a hash input.
+     * testValidatePostUrlAsHashInput method
+     *
+     * Test validatePost uses here() as a hash input.
      *
      * @return void
      * @triggers Controller.startup $this->Controller
@@ -1321,7 +1369,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * test that blackhole doesn't delete the _Token session key so repeat data submissions
+     * testBlackHoleNotDeletingSessionInformation method
+     *
+     * Test that blackhole doesn't delete the _Token session key so repeat data submissions
      * stay blackholed.
      *
      * @return void
@@ -1337,7 +1387,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * Test generateToken()
+     * testGenerateToken method
+     *
+     * Test generateToken().
      *
      * @return void
      */
@@ -1351,7 +1403,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * Test unlocked actions
+     * testUnlockedActions method
+     *
+     * Test unlocked actions.
      *
      * @return void
      * @triggers Controller.startup $this->Controller
@@ -1368,7 +1422,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * Test that debug token format is right
+     * testValidatePostDebugFormat method
+     *
+     * Test that debug token format is right.
      *
      * @return void
      * @triggers Controller.startup $this->Controller
@@ -1405,7 +1461,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * test blackhole will now throw passed exception if debug enabled
+     * testBlackholeThrowsException method
+     *
+     * Test blackhole will now throw passed exception if debug enabled.
      *
      * @expectedException \Cake\Controller\Exception\SecurityException
      * @expectedExceptionMessage error description
@@ -1418,7 +1476,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * test blackhole will throw BadRequest if debug disabled
+     * testBlackholeThrowsBadRequest method
+     *
+     * Test blackhole will throw BadRequest if debug disabled.
      *
      * @return void
      */
@@ -1439,7 +1499,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * Test that validatePost fails with tampered fields and explanation
+     * testValidatePostFailTampering method
+     *
+     * Test that validatePost fails with tampered fields and explanation.
      *
      * @return void
      * @triggers Controller.startup $this->Controller
@@ -1470,7 +1532,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * Test that validatePost fails with tampered fields and explanation
+     * testValidatePostFailTamperingMutatedIntoArray method
+     *
+     * Test that validatePost fails with tampered fields and explanation.
      *
      * @return void
      * @triggers Controller.startup $this->Controller
@@ -1501,7 +1565,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * Test that debug token should not be sent if debug is disabled
+     * testValidatePostUnexpectedDebugToken method
+     *
+     * Test that debug token should not be sent if debug is disabled.
      *
      * @return void
      * @triggers Controller.startup $this->Controller
@@ -1532,7 +1598,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * Auth required throws exception token not found
+     * testAuthRequiredThrowsExceptionTokenNotFoundPost method
+     *
+     * Auth required throws exception token not found.
      *
      * @return void
      * @expectedException \Cake\Controller\Exception\AuthSecurityException
@@ -1548,7 +1616,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * Auth required throws exception token not found in Session
+     * testAuthRequiredThrowsExceptionTokenNotFoundSession method
+     *
+     * Auth required throws exception token not found in Session.
      *
      * @return void
      * @expectedException \Cake\Controller\Exception\AuthSecurityException
@@ -1564,7 +1634,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * Auth required throws exception controller not allowed
+     * testAuthRequiredThrowsExceptionControllerNotAllowed method
+     *
+     * Auth required throws exception controller not allowed.
      *
      * @return void
      * @expectedException \Cake\Controller\Exception\AuthSecurityException
@@ -1584,7 +1656,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * Auth required throws exception controller not allowed
+     * testAuthRequiredThrowsExceptionActionNotAllowed method
+     *
+     * Auth required throws exception controller not allowed.
      *
      * @return void
      * @expectedException \Cake\Controller\Exception\AuthSecurityException
@@ -1604,7 +1678,9 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * Auth required throws exception controller not allowed
+     * testAuthRequired method
+     *
+     * Auth required throws exception controller not allowed.
      *
      * @return void
      * @triggers Controller.startup $this->Controller
