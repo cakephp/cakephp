@@ -1526,7 +1526,16 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $query = $this->find();
             $search($query);
         } elseif (is_array($search)) {
-            $query = $this->find()->where($search);
+            $where = [];
+            foreach ($search as $property => $value) {
+                if (is_array($value)) {
+                    $property = $property . ' in';
+                } else {
+                    $property = $property . ' is';
+                }
+                $where[$property] = $value;
+            }
+            $query = $this->find()->where($where);
         } elseif ($search instanceof Query) {
             $query = $search;
         } else {

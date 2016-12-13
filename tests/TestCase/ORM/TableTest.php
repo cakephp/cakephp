@@ -5584,6 +5584,36 @@ class TableTest extends TestCase
         $this->assertNotNull($secondArticle->id);
         $this->assertEquals('Not there', $secondArticle->title);
         $this->assertEquals($firstArticle->id, $secondArticle->id);
+
+        // Test if findOrCreate is null-safe
+        $thirdArticle = $articles->findOrCreate(['title' => 'Not Existing Article', 'body' => null]);
+        $this->assertFalse($thirdArticle->isNew());
+        $this->assertNotNull($thirdArticle->id);
+        $this->assertEquals('Not Existing Article', $thirdArticle->title);
+        $this->assertNull($thirdArticle->body);
+
+        $fourthArticle = $articles->findOrCreate(['title' => 'Not Existing Article', 'body' => null]);
+        $this->assertFalse($fourthArticle->isNew());
+        $this->assertNotNull($fourthArticle->id);
+        $this->assertEquals('Not Existing Article', $fourthArticle->title);
+        $this->assertNull($fourthArticle->body);
+        $this->assertEquals($thirdArticle->id, $fourthArticle->id);
+
+        // Test if findOrCreate can handle IN statements
+        $fifthArticle = $articles->findOrCreate(['title' => ['Some', 'Values']], function($article) {
+            $article->title = 'Some';
+        });
+        $this->assertFalse($fifthArticle->isNew());
+        $this->assertNotNull($fifthArticle->id);
+        $this->assertEquals('Some', $fifthArticle->title);
+
+        $sixtArticle = $articles->findOrCreate(['title' => ['Some', 'Values']], function($article) {
+            $this->fail('Should not be called for existing entities.');
+        });
+        $this->assertFalse($sixtArticle->isNew());
+        $this->assertNotNull($sixtArticle->id);
+        $this->assertEquals('Some', $sixtArticle->title);
+        $this->assertEquals($fifthArticle->id, $sixtArticle->id);
     }
 
     /**
