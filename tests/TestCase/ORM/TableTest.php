@@ -5600,14 +5600,14 @@ class TableTest extends TestCase
         $this->assertEquals($thirdArticle->id, $fourthArticle->id);
 
         // Test if findOrCreate can handle IN statements
-        $fifthArticle = $articles->findOrCreate(['title' => ['Some', 'Values']], function($article) {
+        $fifthArticle = $articles->findOrCreate(['title' => ['Some', 'Values']], function ($article) {
             $article->title = 'Some';
         });
         $this->assertFalse($fifthArticle->isNew());
         $this->assertNotNull($fifthArticle->id);
         $this->assertEquals('Some', $fifthArticle->title);
 
-        $sixtArticle = $articles->findOrCreate(['title' => ['Some', 'Values']], function($article) {
+        $sixtArticle = $articles->findOrCreate(['title' => ['Some', 'Values']], function ($article) {
             $this->fail('Should not be called for existing entities.');
         });
         $this->assertFalse($sixtArticle->isNew());
