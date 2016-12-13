@@ -161,6 +161,7 @@ class DebuggerTest extends CakeTestCase {
  * @return void
  */
 	public function testOutputEncodeDescription() {
+		$this->skipIf(version_compare(PHP_VERSION, '5.4.0', '<'), 'Index errors are different in PHP 5.3');
 		set_error_handler('Debugger::showError');
 		$this->_restoreError = true;
 
