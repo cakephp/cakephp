@@ -386,12 +386,12 @@ XML;
      */
     public function testFromArrayZeroValue()
     {
-        $xml = array(
-            'tag' => array(
+        $xml = [
+            'tag' => [
                 '@' => 0,
                 '@test' => 'A test'
-            )
-        );
+            ]
+        ];
         $obj = Xml::fromArray($xml);
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -399,9 +399,9 @@ XML;
 XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
 
-        $xml = array(
-            'tag' => array('0')
-        );
+        $xml = [
+            'tag' => ['0']
+        ];
         $obj = Xml::fromArray($xml);
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
