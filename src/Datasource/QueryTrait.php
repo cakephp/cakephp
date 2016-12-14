@@ -456,7 +456,7 @@ trait QueryTrait
         if (in_array($method, get_class_methods($resultSetClass))) {
             $results = $this->all();
 
-            return call_user_func_array([$results, $method], $arguments);
+            return $results->$method(...$arguments);
         }
         throw new BadMethodCallException(
             sprintf('Unknown method "%s"', $method)

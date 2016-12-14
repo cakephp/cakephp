@@ -206,7 +206,7 @@ class RequestHandlerComponent extends Component
                 throw new RuntimeException(sprintf("Invalid callable for '%s' type.", $type));
             }
             if ($this->requestedWith($type)) {
-                $input = call_user_func_array([$request, 'input'], $handler);
+                $input = $request->input(...$handler);
                 $request->data = (array)$input;
             }
         }

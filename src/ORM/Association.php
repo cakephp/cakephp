@@ -1309,7 +1309,7 @@ abstract class Association
      */
     public function __call($method, $argument)
     {
-        return call_user_func_array([$this->target(), $method], $argument);
+        return $this->target()->$method(...$argument);
     }
 
     /**

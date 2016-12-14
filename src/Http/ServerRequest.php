@@ -587,7 +587,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
 
             array_unshift($params, $type);
 
-            return call_user_func_array([$this, 'is'], $params);
+            return $this->is(...$params);
         }
         throw new BadMethodCallException(sprintf('Method %s does not exist', $name));
     }
@@ -683,7 +683,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         if (is_callable($detect)) {
             array_unshift($args, $this);
 
-            return call_user_func_array($detect, $args);
+            return $detect(...$args);
         }
         if (isset($detect['env']) && $this->_environmentDetector($detect)) {
             return true;

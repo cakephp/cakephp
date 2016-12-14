@@ -432,7 +432,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
         $callable = [$this, $request->param('action')];
 
-        return call_user_func_array($callable, $request->param('pass'));
+        return $callable(...$request->param('pass'));
     }
 
     /**
@@ -577,7 +577,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     {
         $this->request = $this->request->withParam('action', $action);
 
-        return call_user_func_array([&$this, $action], $args);
+        return $this->$action(...$args);
     }
 
     /**
