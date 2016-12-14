@@ -5607,13 +5607,13 @@ class TableTest extends TestCase
         $this->assertNotNull($fifthArticle->id);
         $this->assertEquals('Some', $fifthArticle->title);
 
-        $sixtArticle = $articles->findOrCreate(['title' => ['Some', 'Values']], function ($article) {
+        $sixthArticle = $articles->findOrCreate(['title' => ['Some', 'Values']], function ($article) {
             $this->fail('Should not be called for existing entities.');
         });
-        $this->assertFalse($sixtArticle->isNew());
-        $this->assertNotNull($sixtArticle->id);
-        $this->assertEquals('Some', $sixtArticle->title);
-        $this->assertEquals($fifthArticle->id, $sixtArticle->id);
+        $this->assertFalse($sixthArticle->isNew());
+        $this->assertNotNull($sixthArticle->id);
+        $this->assertEquals('Some', $sixthArticle->title);
+        $this->assertEquals($fifthArticle->id, $sixthArticle->id);
     }
 
     /**
