@@ -2909,14 +2909,15 @@ SQL;
  * testDropSchemaNoSchema method
  *
  * @expectedException PHPUnit_Framework_Error
- * @throws PHPUnit_Framework_Error
  * @return void
+ * @throws PHPUnit_Framework_Error
  */
 	public function testDropSchemaNoSchema() {
 		try {
 			$this->Dbo->dropSchema(null);
-		} catch (Throwable $t) {
-			throw new PHPUnit_Framework_Error($t);
+			$this->fail('No exception');
+		} catch (TypeError $e) {
+			throw new PHPUnit_Framework_Error('Raised an error', 100, __FILE__, __LINE__);
 		}
 	}
 

@@ -283,8 +283,11 @@ class CookieComponent extends Component {
 			return null;
 		}
 
-		if (!empty($names[1]) && is_array($this->_values[$this->name][$key])) {
-			return Hash::get($this->_values[$this->name][$key], $names[1]);
+		if (!empty($names[1])) {
+			if (is_array($this->_values[$this->name][$key])) {
+				return Hash::get($this->_values[$this->name][$key], $names[1]);
+			}
+			return null;
 		}
 		return $this->_values[$this->name][$key];
 	}
@@ -336,7 +339,7 @@ class CookieComponent extends Component {
 			return;
 		}
 		$names = explode('.', $key, 2);
-		if (isset($this->_values[$this->name][$names[0]])) {
+		if (isset($this->_values[$this->name][$names[0]]) && is_array($this->_values[$this->name][$names[0]])) {
 			$this->_values[$this->name][$names[0]] = Hash::remove($this->_values[$this->name][$names[0]], $names[1]);
 		}
 		$this->_delete('[' . implode('][', $names) . ']');

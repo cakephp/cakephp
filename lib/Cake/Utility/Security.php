@@ -171,7 +171,7 @@ class Security {
 /**
  * Get random bytes from a secure source.
  *
- * This method will fall back to an insecure source an trigger a warning
+ * This method will fall back to an insecure source and trigger a warning,
  * if it cannot find a secure source of random data.
  *
  * @param int $length The number of bytes you want.

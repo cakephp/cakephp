@@ -32,6 +32,7 @@ class PagesController extends AppController {
  * Displays a view
  *
  * @return void
+ * @throws ForbiddenException When a directory traversal attempt.
  * @throws NotFoundException When the view file could not be found
  *   or MissingViewException in debug mode.
  */
@@ -41,6 +42,9 @@ class PagesController extends AppController {
 		$count = count($path);
 		if (!$count) {
 			return $this->redirect('/');
+		}
+		if (in_array('..', $path, true) || in_array('.', $path, true)) {
+			throw new ForbiddenException();
 		}
 		$page = $subpage = $title_for_layout = null;
 

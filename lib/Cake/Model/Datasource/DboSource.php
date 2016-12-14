@@ -51,17 +51,19 @@ class DboSource extends DataSource {
 	public $alias = 'AS ';
 
 /**
- * Caches result from query parsing operations. Cached results for both DboSource::name() and
- * DboSource::conditions() will be stored here. Method caching uses `md5()`. If you have
- * problems with collisions, set DboSource::$cacheMethods to false.
+ * Caches result from query parsing operations. Cached results for both DboSource::name() and DboSource::fields()
+ * will be stored here.
+ *
+ * Method caching uses `md5` (by default) to construct cache keys. If you have problems with collisions,
+ * try a different hashing algorithm by overriding DboSource::cacheMethodHasher or set DboSource::$cacheMethods to false.
  *
  * @var array
  */
 	public static $methodCache = array();
 
 /**
- * Whether or not to cache the results of DboSource::name() and DboSource::conditions()
- * into the memory cache. Set to false to disable the use of the memory cache.
+ * Whether or not to cache the results of DboSource::name() and DboSource::fields() into the memory cache.
+ * Set to false to disable the use of the memory cache.
  *
  * @var bool
  */
@@ -786,8 +788,70 @@ class DboSource extends DataSource {
 		if ($value === null) {
 			return (isset(static::$methodCache[$method][$key])) ? static::$methodCache[$method][$key] : null;
 		}
+		if (!$this->cacheMethodFilter($method, $key, $value)) {
+			return $value;
+		}
 		$this->_methodCacheChange = true;
 		return static::$methodCache[$method][$key] = $value;
+	}
+
+/**
+ * Filters to apply to the results of `name` and `fields`. When the filter for a given method does not return `true`
+ * then the result is not added to the memory cache.
+ *
+ * Some examples:
+ *
+ * ```
+ * // For method fields, do not cache values that contain floats
+ * if ($method === 'fields') {
+ * 	$hasFloat = preg_grep('/(\d+)?\.\d+/', $value);
+ *
+ * 	return count($hasFloat) === 0;
+ * }
+ *
+ * return true;
+ * ```
+ *
+ * ```
+ * // For method name, do not cache values that have the name created
+ * if ($method === 'name') {
+ * 	return preg_match('/^`created`$/', $value) !== 1;
+ * }
+ *
+ * return true;
+ * ```
+ *
+ * ```
+ * // For method name, do not cache values that have the key 472551d38e1f8bbc78d7dfd28106166f
+ * if ($key === '472551d38e1f8bbc78d7dfd28106166f') {
+ * 	return false;
+ * }
+ *
+ * return true;
+ * ```
+ *
+ * @param string $method Name of the method being cached.
+ * @param string $key The key name for the cache operation.
+ * @param mixed $value The value to cache into memory.
+ * @return bool Whether or not to cache
+ */
+	public function cacheMethodFilter($method, $key, $value) {
+		return true;
+	}
+
+/**
+ * Hashes a given value.
+ *
+ * Method caching uses `md5` (by default) to construct cache keys. If you have problems with collisions,
+ * try a different hashing algorithm or set DboSource::$cacheMethods to false.
+ *
+ * @param string $value Value to hash
+ * @return string Hashed value
+ * @see http://php.net/manual/en/function.hash-algos.php
+ * @see http://softwareengineering.stackexchange.com/questions/49550/which-hashing-algorithm-is-best-for-uniqueness-and-speed
+ */
+	public function cacheMethodHasher($value) {
+		return md5($value);
 	}
 
 /**
@@ -815,7 +879,7 @@ class DboSource extends DataSource {
 			}
 			return $data;
 		}
-		$cacheKey = md5($this->startQuote . $data . $this->endQuote);
+		$cacheKey = $this->cacheMethodHasher($this->startQuote . $data . $this->endQuote);
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
 			return $return;
 		}
@@ -2533,7 +2597,7 @@ class DboSource extends DataSource {
 			$Model->schemaName,
 			$Model->table
 		);
-		$cacheKey = md5(serialize($cacheKey));
+		$cacheKey = $this->cacheMethodHasher(serialize($cacheKey));
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
 			return $return;
 		}
