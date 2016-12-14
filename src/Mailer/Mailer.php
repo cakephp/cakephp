@@ -202,7 +202,7 @@ abstract class Mailer implements EventListenerInterface
      */
     public function __call($method, $args)
     {
-        call_user_func_array([$this->_email, $method], $args);
+        $this->_email->$method(...$args);
 
         return $this;
     }
@@ -245,7 +245,7 @@ abstract class Mailer implements EventListenerInterface
             $this->_email->viewBuilder()->template($action);
         }
 
-        call_user_func_array([$this, $action], $args);
+        $this->$action(...$args);
 
         $result = $this->_email->send();
         $this->reset();

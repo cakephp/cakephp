@@ -443,13 +443,13 @@ class Shell
             array_shift($this->args);
             $this->startup();
 
-            return call_user_func_array([$this, $method], $this->args);
+            return $this->$method(...$this->args);
         }
 
         if ($isMethod && isset($subcommands[$command])) {
             $this->startup();
 
-            return call_user_func_array([$this, $method], $this->args);
+            return $this->$method(...$this->args);
         }
 
         if ($this->hasTask($command) && isset($subcommands[$command])) {
@@ -463,7 +463,7 @@ class Shell
             $this->command = 'main';
             $this->startup();
 
-            return call_user_func_array([$this, 'main'], $this->args);
+            return $this->main(...$this->args);
         }
 
         $this->out($this->OptionParser->help($command));

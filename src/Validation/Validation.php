@@ -928,7 +928,7 @@ class Validation
             E_USER_DEPRECATED
         );
 
-        return call_user_func_array([$object, $method], [$check, $args]);
+        return $object->$method($check, $args);
     }
 
     /**

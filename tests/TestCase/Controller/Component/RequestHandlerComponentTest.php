@@ -307,7 +307,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertNull($this->RequestHandler->ext);
 
-        call_user_func_array(['Cake\Routing\Router', 'extensions'], [$extensions, false]);
+        Router::extensions($extensions, false);
     }
 
     /**

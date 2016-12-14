@@ -66,17 +66,7 @@ abstract class AbstractDecorator
     protected function _call($args)
     {
         $callable = $this->_callable;
-        switch (count($args)) {
-            case 0:
-                return $callable();
-            case 1:
-                return $callable($args[0]);
-            case 2:
-                return $callable($args[0], $args[1]);
-            case 3:
-                return $callable($args[0], $args[1], $args[2]);
-            default:
-                return call_user_func_array($callable, $args);
-        }
+
+        return $callable(...$args);
     }
 }
