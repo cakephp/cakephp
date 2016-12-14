@@ -312,7 +312,7 @@ class Xml {
 				$childNS = $value['xmlns:'];
 				unset($value['xmlns:']);
 			}
-		} elseif (!empty($value) || $value === 0) {
+		} elseif (!empty($value) || $value === 0 || $value === '0') {
 			$childValue = (string)$value;
 		}
 
