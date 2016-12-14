@@ -84,14 +84,6 @@ use Exception;
  */
 class ErrorHandler extends BaseErrorHandler
 {
-
-    /**
-     * Options to use for the Error handling.
-     *
-     * @var array
-     */
-    protected $_options = [];
-
     /**
      * Constructor
      *
