@@ -402,8 +402,7 @@ XML;
  *
  * @return void
  */
-	public function testFromArrayZeroValue()
-	{
+	public function testFromArrayZeroValue() {
 		$xml = array(
 			'tag' => array(
 				'@' => 0,
