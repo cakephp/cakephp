@@ -1005,7 +1005,7 @@ class View implements EventDispatcherInterface
         extract($dataForView);
         ob_start();
 
-        include $viewFile;
+        include func_get_arg(0);
 
         return ob_get_clean();
     }
