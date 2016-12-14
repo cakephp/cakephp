@@ -156,6 +156,24 @@ class DebuggerTest extends CakeTestCase {
 	}
 
 /**
+ * test encodes error messages
+ *
+ * @return void
+ */
+	public function testOutputEncodeDescription() {
+		set_error_handler('Debugger::showError');
+		$this->_restoreError = true;
+
+		ob_start();
+		$a = array();
+		$b = $a['<script>alert(1)</script>'];
+		$result = ob_get_clean();
+
+		$this->assertNotContains('<script>alert(1)', $result);
+		$this->assertContains('&lt;script&gt;alert(1)', $result);
+	}
+
+/**
  * Tests that changes in output formats using Debugger::output() change the templates used.
  *
  * @return void
