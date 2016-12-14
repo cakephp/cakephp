@@ -324,7 +324,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             'assertTags() is deprecated, use assertHtml() instead.',
             E_USER_DEPRECATED
         );
-        static::assertHtml($expected, $string, $fullDebug);
+        $this->assertHtml($expected, $string, $fullDebug);
     }
 
     /**
