@@ -395,7 +395,15 @@ XML;
 		$obj = Xml::fromArray($xml, 'attributes');
 		$xmlText = '<' . '?xml version="1.0" encoding="UTF-8"?><tags><tag id="1">defect</tag></tags>';
 		$this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
+	}
 
+/**
+ * Test fromArray() with zero values.
+ *
+ * @return void
+ */
+	public function testFromArrayZeroValue()
+	{
 		$xml = array(
 			'tag' => array(
 				'@' => 0,
@@ -406,6 +414,16 @@ XML;
 		$xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tag test="A test">0</tag>
+XML;
+		$this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
+
+		$xml = array(
+			'tag' => array('0')
+		);
+		$obj = Xml::fromArray($xml);
+		$xmlText = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<tag>0</tag>
 XML;
 		$this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
 	}
