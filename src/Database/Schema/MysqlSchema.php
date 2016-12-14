@@ -393,15 +393,15 @@ class MysqlSchema extends BaseSchema
             $out .= ' NULL';
             unset($data['default']);
         }
-        if (isset($data['default']) && !in_array($data['type'], ['timestamp', 'datetime'])) {
-            $out .= ' DEFAULT ' . $this->_driver->schemaValue($data['default']);
-            unset($data['default']);
-        }
         if (isset($data['default']) &&
             in_array($data['type'], ['timestamp', 'datetime']) &&
             strtolower($data['default']) === 'current_timestamp'
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
+            unset($data['default']);
+        }
+        if (isset($data['default'])) {
+            $out .= ' DEFAULT ' . $this->_driver->schemaValue($data['default']);
             unset($data['default']);
         }
         if (isset($data['comment']) && $data['comment'] !== '') {

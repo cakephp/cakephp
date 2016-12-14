@@ -60,6 +60,10 @@ class MysqlSchemaTest extends TestCase
                 ['type' => 'time', 'length' => null]
             ],
             [
+                'TIMESTAMP',
+                ['type' => 'timestamp', 'length' => null]
+            ],
+            [
                 'TINYINT(1)',
                 ['type' => 'boolean', 'length' => null]
             ],
@@ -652,6 +656,16 @@ SQL;
                 ['type' => 'datetime', 'comment' => 'Created timestamp'],
                 '`created` DATETIME COMMENT \'Created timestamp\''
             ],
+            [
+                'created',
+                ['type' => 'datetime', 'null' => false, 'default' => 'current_timestamp'],
+                '`created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP'
+            ],
+            [
+                'open_date',
+                ['type' => 'datetime', 'null' => false, 'default' => '2016-12-07 23:04:00'],
+                '`open_date` DATETIME NOT NULL DEFAULT \'2016-12-07 23:04:00\''
+            ],
             // Date & Time
             [
                 'start_date',
@@ -675,9 +689,9 @@ SQL;
                 '`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP'
             ],
             [
-                'created',
-                ['type' => 'datetime', 'null' => false, 'default' => 'current_timestamp'],
-                '`created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP'
+                'open_date',
+                ['type' => 'timestamp', 'null' => false, 'default' => '2016-12-07 23:04:00'],
+                '`open_date` TIMESTAMP NOT NULL DEFAULT \'2016-12-07 23:04:00\''
             ],
         ];
     }

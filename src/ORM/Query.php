@@ -24,7 +24,6 @@ use Cake\Datasource\QueryInterface;
 use Cake\Datasource\QueryTrait;
 use JsonSerializable;
 use RuntimeException;
-use Traversable;
 
 /**
  * Extends the base Query class to provide new methods related to association

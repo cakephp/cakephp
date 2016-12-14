@@ -21,8 +21,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use UnexpectedValueException;
 use Zend\Diactoros\Response\EmitterInterface;
-use Zend\Diactoros\Response\SapiEmitter;
-use Zend\Diactoros\Response\SapiStreamEmitter;
 
 /**
  * Runs an application invoking all the PSR7 middleware and the registered application.

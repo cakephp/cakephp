@@ -1583,7 +1583,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Test form security with Model.field.0 style inputs
+     * testFormSecurityArrayFields method
+     *
+     * Test form security with Model.field.0 style inputs.
      *
      * @return void
      */
@@ -1602,7 +1604,7 @@ class FormHelperTest extends TestCase
     /**
      * testFormSecurityMultipleInputDisabledFields method
      *
-     * test secure form generation with multiple records and disabled fields.
+     * Test secure form generation with multiple records and disabled fields.
      *
      * @return void
      */
@@ -1921,7 +1923,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test securing inputs with custom name attributes.
+     * testFormSecureWithCustomNameAttribute method
+     *
+     * Test securing inputs with custom name attributes.
      *
      * @return void
      */
@@ -2099,6 +2103,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testSecuredInputCustomName method
+     *
      * Test secured inputs with custom names.
      *
      * @return void
@@ -2126,6 +2132,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testSecuredInputDuplicate method
+     *
      * Test that a hidden field followed by a visible field
      * undoes the hidden field locking.
      *
@@ -2151,7 +2159,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Tests that the correct keys are added to the field hash index
+     * testFormSecuredFileInput method
+     *
+     * Tests that the correct keys are added to the field hash index.
      *
      * @return void
      */
@@ -2169,7 +2179,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test that multiple selects keys are added to field hash
+     * testFormSecuredMultipleSelect method
+     *
+     * Test that multiple selects keys are added to field hash.
      *
      * @return void
      */
@@ -2218,6 +2230,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testFormSecuredAndDisabledNotAssoc method
+     *
      * Test that when disabled is in a list based attribute array it works.
      *
      * @return void
@@ -2240,7 +2254,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test that forms with disabled inputs + secured forms leave off the inputs from the form
+     * testFormSecuredAndDisabled method
+     *
+     * Test that forms with disabled inputs + secured forms leave off the inputs from the form
      * hashing.
      *
      * @return void
@@ -2294,7 +2310,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test disableField
+     * testUnlockFieldAddsToList method
+     *
+     * Test disableField.
      *
      * @return void
      */
@@ -2311,7 +2329,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test unlockField removing from fields array.
+     * testUnlockFieldRemovingFromFields method
+     *
+     * Test unlockField removing from fields array.
      *
      * @return void
      */
@@ -2333,7 +2353,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test reset unlockFields, when create new form.
+     * testResetUnlockFields method
+     *
+     * Test reset unlockFields, when create new form.
      *
      * @return void
      */
@@ -2356,6 +2378,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testSecuredFormUrlIgnoresHost method
+     *
      * Test that only the path + query elements of a form's URL show up in their hash.
      *
      * @return void
@@ -2385,6 +2409,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testSecuredFormUrlHasHtmlAndIdentifer method
+     *
      * Test that URL, HTML and identifer show up in their hashs.
      *
      * @return void
@@ -2423,7 +2449,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test error message display
+     * testErrorMessageDisplay method
+     *
+     * Test error message display.
      *
      * @return void
      */
@@ -2527,6 +2555,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testEmptyErrorValidation method
+     *
      * Test validation errors, when validation message is an empty string.
      *
      * @return void
@@ -2557,6 +2587,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testEmptyInputErrorValidation method
+     *
      * Test validation errors, when calling input() overriding validation message by an empty string.
      *
      * @return void
@@ -2587,7 +2619,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Test validation errors, when calling input() overriding validation messages
+     * testInputErrorMessage method
+     *
+     * Test validation errors, when calling input() overriding validation messages.
      *
      * @return void
      */
@@ -2642,7 +2676,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Tests displaying errors for nested entities
+     * testFormValidationAssociated method
+     *
+     * Tests displaying errors for nested entities.
      *
      * @return void
      */
@@ -2660,7 +2696,7 @@ class FormHelperTest extends TestCase
     /**
      * testFormValidationAssociatedSecondLevel method
      *
-     * test form error display with associated model.
+     * Test form error display with associated model.
      *
      * @return void
      */
@@ -2678,7 +2714,7 @@ class FormHelperTest extends TestCase
     /**
      * testFormValidationMultiRecord method
      *
-     * test form error display with multiple records.
+     * Test form error display with multiple records.
      *
      * @return void
      */
@@ -2779,7 +2815,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Tests the input method and passing custom options
+     * testInputCustomization method
+     *
+     * Tests the input method and passing custom options.
      *
      * @return void
      */
@@ -2993,6 +3031,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testInputWithTemplateFile method
+     *
      * Test that input() accepts a template file.
      *
      * @return void
@@ -3015,7 +3055,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Test that nested inputs end with brackets
+     * testNestedInputsEndWithBrackets method
+     *
+     * Test that nested inputs end with brackets.
      *
      * @return void
      */
@@ -3038,7 +3080,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Test id prefix
+     * testCreateIdPrefix method
+     *
+     * Test id prefix.
      *
      * @return void
      */
@@ -3133,6 +3177,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testInputZero method
+     *
      * Test that inputs with 0 can be created.
      *
      * @return void
@@ -3154,7 +3200,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test input() with checkbox creation
+     * testInputCheckbox method
+     *
+     * Test input() with checkbox creation.
      *
      * @return void
      */
@@ -3232,7 +3280,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Test that input() does not create wrapping div and label tag for hidden fields
+     * testInputHidden method
+     *
+     * Test that input() does not create wrapping div and label tag for hidden fields.
      *
      * @return void
      */
@@ -3257,7 +3307,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test form->input() with datetime
+     * testInputDatetime method
+     *
+     * Test form->input() with datetime.
      *
      * @return void
      */
@@ -3297,7 +3349,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test form->input() with datetime with id prefix
+     * testInputDatetimeIdPrefix method
+     *
+     * Test form->input() with datetime with id prefix.
      *
      * @return void
      */
@@ -3340,6 +3394,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testInputCheckboxWithDisabledElements method
+     *
      * Test generating checkboxes with disabled elements.
      *
      * @return void
@@ -3410,7 +3466,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test input name with leading integer, ensure attributes are generated correctly.
+     * testInputWithLeadingInteger method
+     *
+     * Test input name with leading integer, ensure attributes are generated correctly.
      *
      * @return void
      */
@@ -3424,7 +3482,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test form->input() with select type inputs.
+     * testInputSelectType method
+     *
+     * Test form->input() with select type inputs.
      *
      * @return void
      */
@@ -3585,7 +3645,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test that input() and a non standard primary key makes a hidden input by default.
+     * testInputWithNonStandardPrimaryKeyMakesHidden method
+     *
+     * Test that input() and a non standard primary key makes a hidden input by default.
      *
      * @return void
      */
@@ -3615,7 +3677,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test that overriding the magic select type widget is possible
+     * testInputOverridingMagicSelectType method
+     *
+     * Test that overriding the magic select type widget is possible.
      *
      * @return void
      */
@@ -3647,7 +3711,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Test that inferred types do not override developer input
+     * testInputMagicTypeDoesNotOverride method
+     *
+     * Test that inferred types do not override developer input.
      *
      * @return void
      */
@@ -3714,7 +3780,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Test that magic input() selects are created for type=number
+     * testInputMagicSelectForTypeNumber method
+     *
+     * Test that magic input() selects are created for type=number.
      *
      * @return void
      */
@@ -3749,6 +3817,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testInvalidInputTypeOption method
+     *
      * Test invalid 'input' type option to input() function.
      *
      * @expectedException \RuntimeException
@@ -3761,6 +3831,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testInputMagicSelectChangeToRadio method
+     *
      * Test that magic input() selects can easily be converted into radio types without error.
      *
      * @return void
@@ -3775,7 +3847,7 @@ class FormHelperTest extends TestCase
     /**
      * testFormInputSubmit method
      *
-     * test correct results for form::input() and type submit.
+     * Test correct results for form::input() and type submit.
      *
      * @return void
      */
@@ -3793,7 +3865,7 @@ class FormHelperTest extends TestCase
     /**
      * testFormInputs method
      *
-     * test correct results from form::inputs().
+     * Test correct results from form::inputs().
      *
      * @return void
      */
@@ -3867,6 +3939,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testFormInputs method
+     *
      * Test the inputs() method.
      *
      * @return void
@@ -3949,7 +4023,7 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * testFormInputsBlacklist
+     * testFormInputsBlacklist method
      *
      * @return void
      */
@@ -3998,7 +4072,7 @@ class FormHelperTest extends TestCase
     /**
      * testSelectAsCheckbox method
      *
-     * test multi-select widget with checkbox formatting.
+     * Test multi-select widget with checkbox formatting.
      *
      * @return void
      */
@@ -4052,7 +4126,7 @@ class FormHelperTest extends TestCase
     /**
      * testLabel method
      *
-     * test label generation.
+     * Test label generation.
      *
      * @return void
      */
@@ -4092,6 +4166,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testLabelContainInput method
+     *
      * Test that label() can accept an input with the correct template vars.
      *
      * @return void
@@ -4116,7 +4192,7 @@ class FormHelperTest extends TestCase
     /**
      * testTextbox method
      *
-     * test textbox element generation
+     * Test textbox element generation.
      *
      * @return void
      */
@@ -4136,6 +4212,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testTextBoxDataAndError method
+     *
      * Test that text() hooks up with request data and error fields.
      *
      * @return void
@@ -4175,7 +4253,7 @@ class FormHelperTest extends TestCase
     /**
      * testDefaultValue method
      *
-     * Test default value setting
+     * Test default value setting.
      *
      * @return void
      */
@@ -4226,7 +4304,7 @@ class FormHelperTest extends TestCase
     /**
      * testError method
      *
-     * Test field error generation
+     * Test field error generation.
      *
      * @return void
      */
@@ -4263,7 +4341,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test error translation can use rule names for translating.
+     * testErrorRuleName method
+     *
+     * Test error translation can use rule names for translating.
      *
      * @return void
      */
@@ -4313,6 +4393,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testErrorMessages method
+     *
      * Test error with nested lists.
      *
      * @return void
@@ -4336,7 +4418,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test error() with multiple messages.
+     * testErrorMultipleMessages method
+     *
+     * Test error() with multiple messages.
      *
      * @return void
      */
@@ -4366,7 +4450,7 @@ class FormHelperTest extends TestCase
     /**
      * testPassword method
      *
-     * Test password element generation
+     * Test password element generation.
      *
      * @return void
      */
@@ -4392,7 +4476,7 @@ class FormHelperTest extends TestCase
     /**
      * testRadio method
      *
-     * Test radio element set generation
+     * Test radio element set generation.
      *
      * @return void
      */
@@ -4481,7 +4565,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Test default value setting on radio() method
+     * testRadioDefaultValue method
+     *
+     * Test default value setting on radio() method.
      *
      * @return void
      */
@@ -4512,7 +4598,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Test that input works with radio types
+     * testInputRadio method
+     *
+     * Test that input works with radio types.
      *
      * @return void
      */
@@ -4585,7 +4673,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Test that radio() works with label = false
+     * testRadioNoLabel method
+     *
+     * Test that radio() works with label = false.
      *
      * @return void
      */
@@ -4601,7 +4691,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test generating radio input inside label ala twitter bootstrap
+     * testRadioInputInsideLabel method
+     *
+     * Test generating radio input inside label ala twitter bootstrap.
      *
      * @return void
      */
@@ -4644,7 +4736,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test disabling the hidden input for radio buttons
+     * testRadioHiddenInputDisabling method
+     *
+     * Test disabling the hidden input for radio buttons.
      *
      * @return void
      */
@@ -4661,9 +4755,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * testRadio method
+     * testRadioOutOfRange method
      *
-     * Test radio element set generation
+     * Test radio element set generation.
      *
      * @return void
      */
@@ -4777,6 +4871,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testSelectEscapeHtml method
+     *
      * Test that select() escapes HTML.
      *
      * @return void
@@ -4819,7 +4915,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test select() with required and disabled attributes.
+     * testSelectRequired method
+     *
+     * Test select() with required and disabled attributes.
      *
      * @return void
      */
@@ -4855,7 +4953,7 @@ class FormHelperTest extends TestCase
     /**
      * testNestedSelect method
      *
-     * test select element generation with optgroups
+     * Test select element generation with optgroups.
      *
      * @return void
      */
@@ -4895,7 +4993,7 @@ class FormHelperTest extends TestCase
     /**
      * testSelectMultiple method
      *
-     * test generation of multiple select elements
+     * Test generation of multiple select elements.
      *
      * @return void
      */
@@ -4941,6 +5039,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testCheckboxZeroValue method
+     *
      * Test that a checkbox can have 0 for the value and 1 for the hidden input.
      *
      * @return void
@@ -4971,7 +5071,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test generation of habtm select boxes.
+     * testHabtmSelectBox method
+     *
+     * Test generation of habtm select boxes.
      *
      * @return void
      */
@@ -5081,6 +5183,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testErrorsForBelongsToManySelect method
+     *
      * Tests that errors for belongsToMany select fields are being
      * picked up properly.
      *
@@ -5126,7 +5230,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test generation of multi select elements in checkbox format
+     * testSelectMultipleCheckboxes method
+     *
+     * Test generation of multi select elements in checkbox format.
      *
      * @return void
      */
@@ -5252,6 +5358,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testSelectMultipleCheckboxRequestData method
+     *
      * Ensure that multiCheckbox reads from the request data.
      *
      * @return void
@@ -5292,7 +5400,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Checks the security hash array generated for multiple-input checkbox elements
+     * testSelectMultipleCheckboxSecurity method
+     *
+     * Checks the security hash array generated for multiple-input checkbox elements.
      *
      * @return void
      */
@@ -5314,6 +5424,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testSelectMultipleSecureWithNoOptions method
+     *
      * Multiple select elements should always be secured as they always participate
      * in the POST data.
      *
@@ -5332,6 +5444,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testSelectNoSecureWithNoOptions method
+     *
      * When a select box has no options it should not be added to the fields list
      * as it always fail post validation.
      *
@@ -5359,7 +5473,7 @@ class FormHelperTest extends TestCase
     /**
      * testInputMultipleCheckboxes method
      *
-     * test input() resulting in multi select elements being generated.
+     * Test input() resulting in multi select elements being generated.
      *
      * @return void
      */
@@ -5433,7 +5547,7 @@ class FormHelperTest extends TestCase
     /**
      * testSelectHiddenFieldOmission method
      *
-     * test that select() with 'hiddenField' => false omits the hidden field
+     * Test that select() with 'hiddenField' => false omits the hidden field.
      *
      * @return void
      */
@@ -5448,7 +5562,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test that select() with multiple = checkbox works with overriding name attribute.
+     * testSelectCheckboxMultipleOverrideName method
+     *
+     * Test that select() with multiple = checkbox works with overriding name attribute.
      *
      * @return void
      */
@@ -5487,6 +5603,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testInputMultiCheckbox method
+     *
      * Test that input() works with multicheckbox.
      *
      * @return void
@@ -5523,7 +5641,7 @@ class FormHelperTest extends TestCase
     /**
      * testCheckbox method
      *
-     * Test generation of checkboxes
+     * Test generation of checkboxes.
      *
      * @return void
      */
@@ -5555,7 +5673,7 @@ class FormHelperTest extends TestCase
     /**
      * testCheckboxDefaultValue method
      *
-     * Test default value setting on checkbox() method
+     * Test default value setting on checkbox() method.
      *
      * @return void
      */
@@ -5594,6 +5712,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testCheckboxCheckedAndError method
+     *
      * Test checkbox being checked or having errors.
      *
      * @return void
@@ -5630,7 +5750,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test checkbox() with a custom name attribute
+     * testCheckboxCustomNameAttribute method
+     *
+     * Test checkbox() with a custom name attribute.
      *
      * @return void
      */
@@ -5645,6 +5767,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testCheckboxHiddenField method
+     *
      * Test that the hidden input for checkboxes can be omitted or set to a
      * specific value.
      *
@@ -5682,6 +5806,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testTime method
+     *
      * Test the time type.
      *
      * @return void
@@ -5714,6 +5840,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testTimeFormat24NoMeridian method
+     *
      * Ensure that timeFormat=24 has no merdian.
      *
      * @return void.
@@ -5735,6 +5863,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testDate method
+     *
      * Test the date type.
      *
      * @return void
@@ -5756,7 +5886,7 @@ class FormHelperTest extends TestCase
     /**
      * testDateTime method
      *
-     * Test generation of date/time select elements
+     * Test generation of date/time select elements.
      *
      * @return void
      */
@@ -5857,6 +5987,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testDateTimeSecured method
+     *
      * Test that datetime fields are added to protected fields list.
      *
      * @return void
@@ -5885,6 +6017,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testDateTimeSecuredDisabled method
+     *
      * Test that datetime fields are added to protected fields list.
      *
      * @return void
@@ -5903,6 +6037,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testDatetimeEmpty method
+     *
      * Test empty defaulting to true for datetime.
      *
      * @return void
@@ -5959,6 +6095,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testDatetimeMinuteInterval method
+     *
      * Test datetime with interval option.
      *
      * @return void
@@ -6016,7 +6154,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Test dateTime with rounding
+     * testDateTimeRounding method
+     *
+     * Test dateTime with rounding.
      *
      * @return void
      */
@@ -6044,7 +6184,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test that datetime() and default values work.
+     * testDatetimeWithDefault method
+     *
+     * Test that datetime() and default values work.
      *
      * @return void
      */
@@ -6064,7 +6206,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * testDateTime all zeros
+     * testDateTimeAllZeros method
+     *
+     * Test datetime() with all zeros.
      *
      * @return void
      */
@@ -6081,7 +6225,7 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * testDateTimeEmptyAsArray
+     * testDateTimeEmptyAsArray method
      *
      * @return void
      */
@@ -6119,7 +6263,7 @@ class FormHelperTest extends TestCase
     /**
      * testFormDateTimeMulti method
      *
-     * test multiple datetime element generation
+     * Test multiple datetime element generation.
      *
      * @return void
      */
@@ -6136,6 +6280,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testDateTimeLabelIdMatchesFirstInput method
+     *
      * When changing the date format, the label should always focus the first select box when
      * clicked.
      *
@@ -6154,7 +6300,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test datetime second=true
+     * testDateTimeSecondOptions method
+     *
+     * Test datetime second=true.
      *
      * @return void
      */
@@ -6175,6 +6323,8 @@ class FormHelperTest extends TestCase
 
     /**
      * testMonth method
+     *
+     * Test generation of a month input.
      *
      * @return void
      */
@@ -6269,6 +6419,8 @@ class FormHelperTest extends TestCase
 
     /**
      * testDay method
+     *
+     * Test generation of a day input.
      *
      * @return void
      */
@@ -6365,6 +6517,8 @@ class FormHelperTest extends TestCase
     /**
      * testMinute method
      *
+     * Test generation of a minute input.
+     *
      * @return void
      */
     public function testMinute()
@@ -6456,6 +6610,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testMeridian method
+     *
      * Test generating an input for the meridian.
      *
      * @return void
@@ -6481,6 +6637,8 @@ class FormHelperTest extends TestCase
 
     /**
      * testHour method
+     *
+     * Test generation of an hour input.
      *
      * @return void
      */
@@ -6581,6 +6739,8 @@ class FormHelperTest extends TestCase
     /**
      * testYear method
      *
+     * Test generation of a year input.
+     *
      * @return void
      */
     public function testYear()
@@ -6645,7 +6805,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Test minYear being prior to the unix epoch
+     * testInputDatetimePreEpoch method
+     *
+     * Test minYear being prior to the unix epoch.
      *
      * @return void
      */
@@ -6702,6 +6864,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testInputDate method
+     *
      * Test that input() accepts the type of date and passes options in.
      *
      * @return void
@@ -6723,6 +6887,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testInputLabelFalse method
+     *
      * Test the label option being set to false.
      *
      * @return void
@@ -6743,7 +6909,7 @@ class FormHelperTest extends TestCase
      * testInputDateMaxYear method
      *
      * Let's say we want to only allow users born from 2006 to 2008 to register
-     * This being the first signup page, we still don't have any data
+     * This being the first signup page, we still don't have any data.
      *
      * @return void
      */
@@ -6766,6 +6932,8 @@ class FormHelperTest extends TestCase
 
     /**
      * testTextArea method
+     *
+     * Test generation of a textarea input.
      *
      * @return void
      */
@@ -6818,7 +6986,7 @@ class FormHelperTest extends TestCase
     /**
      * testTextAreaWithStupidCharacters method
      *
-     * test text area with non-ascii characters
+     * Test text area with non-ascii characters.
      *
      * @return void
      */
@@ -6838,7 +7006,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Test textareas waxlength read from schema.
+     * testTextAreaMaxLength method
+     *
+     * Test textareas maxlength read from schema.
      *
      * @return void
      */
@@ -6877,6 +7047,8 @@ class FormHelperTest extends TestCase
     /**
      * testHiddenField method
      *
+     * Test generation of a hidden input.
+     *
      * @return void
      */
     public function testHiddenField()
@@ -6901,6 +7073,8 @@ class FormHelperTest extends TestCase
     /**
      * testFileUploadField method
      *
+     * Test generation of a file upload input.
+     *
      * @return void
      */
     public function testFileUploadField()
@@ -6923,7 +7097,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test File upload input on a model not used in create();
+     * testFileUploadOnOtherModel method
+     *
+     * Test File upload input on a model not used in create().
      *
      * @return void
      */
@@ -6939,6 +7115,8 @@ class FormHelperTest extends TestCase
 
     /**
      * testButton method
+     *
+     * Test generation of a form button.
      *
      * @return void
      */
@@ -6972,6 +7150,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testButtonUnlockedByDefault method
+     *
      * Test that button() makes unlocked fields by default.
      *
      * @return void
@@ -7010,6 +7190,11 @@ class FormHelperTest extends TestCase
         $this->assertTrue(strpos($result, '<input type="hidden" name="extra" value="value"') !== false);
     }
 
+    /**
+     * testPostButtonMethodType method
+     *
+     * @return void
+     */
     public function testPostButtonMethodType()
     {
         $result = $this->Form->postButton('Hi', '/controller/action', ['method' => 'patch']);
@@ -7026,6 +7211,11 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
     }
 
+    /**
+     * testPostButtonFormOptions method
+     *
+     * @return void
+     */
     public function testPostButtonFormOptions()
     {
         $result = $this->Form->postButton('Hi', '/controller/action', ['form' => ['class' => 'inline']]);
@@ -7043,6 +7233,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testPostButtonNestedData method
+     *
      * Test using postButton with N dimensional data.
      *
      * @return void
@@ -7063,6 +7255,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testSecurePostButton method
+     *
      * Test that postButton adds _Token fields.
      *
      * @return void
@@ -7158,7 +7352,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Test the confirm option for postLink()
+     * testPostLinkWithConfirm method
+     *
+     * Test the confirm option for postLink().
      *
      * @return void
      */
@@ -7198,7 +7394,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test postLink() with query string args.
+     * testPostLinkWithQuery method
+     *
+     * Test postLink() with query string args.
      *
      * @return void
      */
@@ -7223,6 +7421,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testPostLinkWithData method
+     *
      * Test postLink with additional data.
      *
      * @return void
@@ -7244,6 +7444,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testPostLinkSecurityHash method
+     *
      * Test that security hashes for postLink include the url.
      *
      * @return void
@@ -7295,6 +7497,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testPostLinkSecurityHashBlockMode method
+     *
      * Test that postLink doesn't modify the fields in the containing form.
      *
      * postLink() calls inside open forms should not modify the field list
@@ -7324,6 +7528,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testPostLinkSecurityHashNoDebugMode method
+     *
      * Test that security does not include debug token if debug is false.
      *
      * @return void
@@ -7365,6 +7571,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testPostLinkNestedData method
+     *
      * Test using postLink with N dimensional data.
      *
      * @return void
@@ -7385,7 +7593,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test creating postLinks after a GET form.
+     * testPostLinkAfterGetForm method
+     *
+     * Test creating postLinks after a GET form.
      *
      * @return void
      */
@@ -7427,7 +7637,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Test that postLink adds form tags to view block
+     * testPostLinkFormBuffer method
+     *
+     * Test that postLink adds form tags to view block.
      *
      * @return void
      */
@@ -7552,7 +7764,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test image submit types.
+     * testSubmitImage method
+     *
+     * Test image submit types.
      *
      * @return void
      */
@@ -7592,6 +7806,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testSubmitUnlockedByDefault method
+     *
      * Submit buttons should be unlocked by default as there could be multiples, and only one will
      * be submitted at a time.
      *
@@ -7608,6 +7824,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testSubmitImageTimestamp method
+     *
      * Test submit image with timestamps.
      *
      * @return void
@@ -7626,7 +7844,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test that datetime() works with GET style forms.
+     * testDateTimeWithGetForms method
+     *
+     * Test that datetime() works with GET style forms.
      *
      * @return void
      */
@@ -7791,6 +8011,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testMultiRecordForm method
+     *
      * Test the generation of fields for a multi record form.
      *
      * @return void
@@ -7889,7 +8111,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test that some html5 inputs + FormHelper::__call() work
+     * testHtml5Inputs method
+     *
+     * Test that some html5 inputs + FormHelper::__call() work.
      *
      * @return void
      */
@@ -7921,6 +8145,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testHtml5InputWithInput method
+     *
      * Test accessing html5 inputs through input().
      *
      * @return void
@@ -7941,6 +8167,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testHtml5InputException method
+     *
      * Test errors when field name is missing.
      *
      * @expectedException \Cake\Core\Exception\Exception
@@ -7952,6 +8180,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testRequiredAttribute method
+     *
      * Tests that formhelper sets required attributes.
      *
      * @return void
@@ -8003,7 +8233,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Tests that it is possible to put inputs outside of the label
+     * testInputsNotNested method
+     *
+     * Tests that it is possible to put inputs outside of the label.
      *
      * @return void
      */
@@ -8079,6 +8311,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testInputContainerTemplates method
+     *
      * Test that *Container templates are used by input.
      *
      * @return void
@@ -8130,6 +8364,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testFormGroupTemplates method
+     *
      * Test that *Container templates are used by input.
      *
      * @return void
@@ -8150,6 +8386,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testResetTemplates method
+     *
      * Test resetting templates.
      *
      * @return void
@@ -8164,6 +8402,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testContext method
+     *
      * Test the context method.
      *
      * @return void
@@ -8179,7 +8419,7 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * testAutoDomId
+     * testAutoDomId method
      *
      * @return void
      */

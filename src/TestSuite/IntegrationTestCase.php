@@ -17,8 +17,6 @@ use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
 use Cake\Network\Session;
 use Cake\Routing\Router;
-use Cake\TestSuite\LegacyRequestDispatcher;
-use Cake\TestSuite\MiddlewareDispatcher;
 use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;

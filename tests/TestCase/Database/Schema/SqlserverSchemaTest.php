@@ -628,6 +628,16 @@ SQL;
                 ['type' => 'datetime'],
                 '[created] DATETIME'
             ],
+            [
+                'open_date',
+                ['type' => 'datetime', 'null' => false, 'default' => '2016-12-07 23:04:00'],
+                '[open_date] DATETIME NOT NULL DEFAULT \'2016-12-07 23:04:00\''
+            ],
+            [
+                'open_date',
+                ['type' => 'datetime', 'null' => false, 'default' => 'current_timestamp'],
+                '[open_date] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP'
+            ],
             // Date & Time
             [
                 'start_date',

@@ -799,6 +799,7 @@ class Debugger
 
         if (!empty($tpl['escapeContext'])) {
             $context = h($context);
+            $data['description'] = h($data['description']);
         }
 
         $infoData = compact('code', 'context', 'trace');
