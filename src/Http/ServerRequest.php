@@ -125,6 +125,13 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     public $trustProxy = false;
 
     /**
+     * Contents of php://input
+     *
+     * @var string
+     */
+    protected $_input;
+
+    /**
      * The built in detectors used with `is()` can be modified with `addDetector()`.
      *
      * There are several ways to specify a detector, see \Cake\Http\ServerRequest::addDetector() for the
