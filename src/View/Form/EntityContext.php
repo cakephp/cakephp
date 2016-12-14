@@ -82,7 +82,7 @@ class EntityContext implements ContextInterface
     protected $_tables = [];
 
     /**
-     * Dictionary of validatiors.
+     * Dictionary of validators.
      *
      * @var array
      */
