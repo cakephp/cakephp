@@ -1885,7 +1885,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Get the uploaded file from a dotted path.
      *
      * @param string $path The dot separated path to the file you want.
-     * @return null|Psr\Http\Message\UploadedFileInterface
+     * @return null|\Psr\Http\Message\UploadedFileInterface
      */
     public function getUploadedFile($path)
     {
