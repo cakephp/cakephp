@@ -570,13 +570,12 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param string $action The new action to be 'redirected' to.
      *   Any other parameters passed to this method will be passed as parameters to the new action.
+     * @param array ...$args Arguments passed to the action
      * @return mixed Returns the return value of the called action
      */
-    public function setAction($action)
+    public function setAction($action, ...$args)
     {
         $this->request = $this->request->withParam('action', $action);
-        $args = func_get_args();
-        unset($args[0]);
 
         return call_user_func_array([&$this, $action], $args);
     }

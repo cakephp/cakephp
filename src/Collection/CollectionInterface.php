@@ -891,8 +891,8 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *
      * ```
      * $collection = new Collection([1, 2]);
-     * $zipped = $collection->zipWith([3, 4], [5, 6], function () {
-     *   return array_sum(func_get_args());
+     * $zipped = $collection->zipWith([3, 4], [5, 6], function (...$args) {
+     *   return array_sum($args);
      * });
      * $zipped->toList(); // returns [9, 12]; [(1 + 3 + 5), (2 + 4 + 6)]
      * ```

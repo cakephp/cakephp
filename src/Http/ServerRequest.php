@@ -634,17 +634,16 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|array $type The type of request you want to check. If an array
      *   this method will return true if the request matches any type.
+     * @param array ...$args List of arguments
      * @return bool Whether or not the request is the type you are checking.
      */
-    public function is($type)
+    public function is($type, ...$args)
     {
         if (is_array($type)) {
             $result = array_map([$this, 'is'], $type);
 
             return count(array_filter($result)) > 0;
         }
-        $args = func_get_args();
-        array_shift($args);
 
         $type = strtolower($type);
         if (!isset(static::$_detectors[$type])) {
