@@ -82,6 +82,13 @@ class EntityContext implements ContextInterface
     protected $_tables = [];
 
     /**
+     * Dictionary of validatiors.
+     *
+     * @var array
+     */
+    protected $_validator = [];
+
+    /**
      * Constructor.
      *
      * @param \Cake\Http\ServerRequest $request The request object.
