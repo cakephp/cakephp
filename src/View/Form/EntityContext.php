@@ -84,7 +84,7 @@ class EntityContext implements ContextInterface
     /**
      * Dictionary of validators.
      *
-     * @var array
+     * @var \Cake\Validation\Validator[]
      */
     protected $_validator = [];
 
