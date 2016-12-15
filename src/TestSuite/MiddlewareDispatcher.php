@@ -102,7 +102,7 @@ class MiddlewareDispatcher
      * Create a PSR7 request from the request spec.
      *
      * @param array $spec The request spec.
-     * @return Psr\Http\Message\RequestInterface
+     * @return \Psr\Http\Message\RequestInterface
      */
     protected function _createRequest($spec)
     {
