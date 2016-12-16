@@ -67,7 +67,7 @@ class ShellTestShell extends Shell
      * @param int $status
      * @return void
      */
-    protected function _stop($status = 0)
+    protected function _stop($status = Shell::CODE_SUCCESS)
     {
         $this->stopped = $status;
     }
@@ -991,7 +991,7 @@ TEXT;
      *
      * @return void
      */
-    public function testRunCommandBaseclassMethod()
+    public function testRunCommandBaseClassMethod()
     {
         $shell = $this->getMockBuilder('Cake\Console\Shell')
             ->setMethods(['startup', 'getOptionParser', 'out', 'hr'])
