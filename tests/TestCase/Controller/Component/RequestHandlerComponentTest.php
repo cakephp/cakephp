@@ -627,9 +627,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testRenderAs()
     {
-        $this->assertFalse(in_array('Rss', $this->Controller->helpers));
         $this->RequestHandler->renderAs($this->Controller, 'rss');
-        $this->assertTrue(in_array('Rss', $this->Controller->helpers));
 
         $this->Controller->viewBuilder()->templatePath('request_handler_test\\rss');
         $this->RequestHandler->renderAs($this->Controller, 'js');

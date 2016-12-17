@@ -594,15 +594,6 @@ class RequestHandlerComponent extends Component
         if ($response->getMimeType($type)) {
             $this->respondAs($type, $options);
         }
-
-        $helper = ucfirst($type);
-
-        if (!in_array($helper, $controller->helpers) && empty($controller->helpers[$helper])) {
-            $helperClass = App::className($helper, 'View/Helper', 'Helper');
-            if ($helperClass !== false) {
-                $controller->helpers[] = $helper;
-            }
-        }
     }
 
     /**
