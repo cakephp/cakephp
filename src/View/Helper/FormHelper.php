@@ -732,6 +732,7 @@ class FormHelper extends Helper
             if (!in_array($field, $this->fields)) {
                 if ($value !== null) {
                     $this->fields[$field] = $value;
+
                     return;
                 }
                 if (isset($this->fields[$field]) && $value === null) {

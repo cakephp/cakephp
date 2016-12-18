@@ -506,6 +506,7 @@ class SecurityComponent extends Component
         if (empty($data['_Token']['optional'])) {
             return [];
         }
+
         return json_decode(urldecode($data['_Token']['optional']), true);
     }
 
@@ -519,6 +520,7 @@ class SecurityComponent extends Component
     {
         $optional = $this->_optional($data);
         ksort($optional, SORT_STRING);
+
         return implode('|', array_keys($optional));
     }
 
