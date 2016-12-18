@@ -231,7 +231,7 @@ abstract class BaseErrorHandler
      * Increases the PHP "memory_limit" ini setting by the specified amount
      * in kilobytes
      *
-     * @param string $additionalKb Number in kilobytes
+     * @param int $additionalKb Number in kilobytes
      * @return void
      */
     public function increaseMemoryLimit($additionalKb)
@@ -242,7 +242,7 @@ abstract class BaseErrorHandler
         }
         $limit = trim($limit);
         $units = strtoupper(substr($limit, -1));
-        $current = substr($limit, 0, strlen($limit) - 1);
+        $current = (int)substr($limit, 0, strlen($limit) - 1);
         if ($units === 'M') {
             $current = $current * 1024;
             $units = 'K';
