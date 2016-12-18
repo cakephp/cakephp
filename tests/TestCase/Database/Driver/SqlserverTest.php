@@ -237,4 +237,39 @@ class SqlserverTest extends TestCase
         $expected = 'INSERT INTO articles (title) OUTPUT INSERTED.* VALUES (:c0)';
         $this->assertEquals($expected, $query->sql());
     }
+
+    /**
+     * Test that delete queries have sub-queries with TOP for limits.
+     *
+     * @return void
+     */
+    public function testDeleteWithLimit()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+            ->setMethods(['_connect', 'connection', '_version'])
+            ->setConstructorArgs([[]])
+            ->getMock();
+        $driver
+            ->expects($this->any())
+            ->method('_version')
+            ->will($this->returnValue(8));
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
+        $connection
+            ->expects($this->any())
+            ->method('driver')
+            ->will($this->returnValue($driver));
+
+        $query = new Query($connection);
+        $query->delete('articles')
+            ->where(['published' => true])
+            ->limit(1);
+
+        // work in progress
+        $expected = 'WITH CTE AS (SELECT TOP 1 * FROM articles WHERE published = :c0) DELETE ?? FROM CTE ??';
+        $this->assertEquals($expected, $query->sql());
+    }
 }

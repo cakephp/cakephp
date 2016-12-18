@@ -2480,6 +2480,7 @@ class QueryTest extends TestCase
             ],
             'decorators' => 0,
             'executed' => false,
+            'connection' => 'test',
             'hydrate' => false,
             'buffered' => false,
             'formatters' => 1,

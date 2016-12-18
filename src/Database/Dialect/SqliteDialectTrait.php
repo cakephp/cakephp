@@ -15,6 +15,7 @@
 namespace Cake\Database\Dialect;
 
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Query;
 use Cake\Database\Schema\SqliteSchema;
 use Cake\Database\SqlDialectTrait;
 use Cake\Database\SqliteCompiler;
@@ -27,7 +28,10 @@ use Cake\Database\SqliteCompiler;
 trait SqliteDialectTrait
 {
 
-    use SqlDialectTrait;
+    use SqlDialectTrait {
+        _updateQueryTranslator as _sqlUpdateQueryTranslator;
+        _deleteQueryTranslator as _sqlDeleteQueryTranslator;
+    }
     use TupleComparisonTranslatorTrait;
 
     /**
@@ -65,6 +69,73 @@ trait SqliteDialectTrait
         'week' => 'W',
         'year' => 'Y'
     ];
+
+    /**
+     * Modifies the original delete query to support ORDER BY and LIMIT
+     * clauses.
+     *
+     * Note: field "rowid" exists in all SQLite tables.
+     *
+     * @param \Cake\Database\Query $query The query to translate.
+     * @return \Cake\Database\Query
+     */
+    protected function _updateQueryTranslator($query)
+    {
+        $query = $this->_sqlUpdateQueryTranslator($query);
+
+        if ($query->clause('limit') === null) {
+            return $query;
+        }
+
+        $table = $query->clause('update');
+
+        $inner = new Query($query->connection());
+        $inner->select('rowid')
+            ->from($table)
+            ->where($query->clause('where'))
+            ->order($query->clause('order'))
+            ->limit($query->clause('limit'));
+
+        $outer = new Query($query->connection());
+        $outer
+            ->update($table)
+            ->set($query->clause('set'))
+            ->where(['rowid IN' => $inner]);
+
+        return $outer;
+    }
+
+    /**
+     * Modifies the original delete query to support ORDER BY and LIMIT
+     * clauses.
+     *
+     * Note: field "rowid" exists in all SQLite tables.
+     *
+     * @param \Cake\Database\Query $query The query to translate.
+     * @return \Cake\Database\Query
+     */
+    protected function _deleteQueryTranslator($query)
+    {
+        $query = $this->_sqlDeleteQueryTranslator($query);
+
+        if ($query->clause('limit') === null) {
+            return $query;
+        }
+
+        $inner = new Query($query->connection());
+        $inner->select('rowid')
+            ->from($query->clause('from'))
+            ->where($query->clause('where'))
+            ->order($query->clause('order'))
+            ->limit($query->clause('limit'));
+
+        $outer = new Query($query->connection());
+        $outer
+            ->delete($query->clause('from'))
+            ->where(['rowid IN' => $inner]);
+
+        return $outer;
+    }
 
     /**
      * Returns a dictionary of expressions to be transformed when compiling a Query

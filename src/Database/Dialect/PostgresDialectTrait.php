@@ -15,6 +15,7 @@
 namespace Cake\Database\Dialect;
 
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Query;
 use Cake\Database\Schema\PostgresSchema;
 use Cake\Database\SqlDialectTrait;
 
@@ -27,7 +28,10 @@ use Cake\Database\SqlDialectTrait;
 trait PostgresDialectTrait
 {
 
-    use SqlDialectTrait;
+    use SqlDialectTrait {
+        _updateQueryTranslator as _sqlUpdateQueryTranslator;
+        _deleteQueryTranslator as _sqlDeleteQueryTranslator;
+    }
 
     /**
      *  String used to start a database identifier quoting to make it safe
@@ -62,6 +66,39 @@ trait PostgresDialectTrait
     }
 
     /**
+     * Adds support for LIMIT clause, but requires that the Postgres table was created with object IDs enabled.
+     *
+     * @param \Cake\Database\Query $query The query to translate
+     * @return \Cake\Database\Query The modified query
+     */
+    protected function _updateQueryTranslator($query)
+    {
+        $query = $this->_sqlUpdateQueryTranslator($query);
+
+        if ($query->clause('limit') === null) {
+            return $query;
+        }
+
+        $table = $query->clause('update');
+
+        $inner = new Query($query->connection());
+        $inner->select('ctid')
+            ->from($table)
+            ->where($query->clause('where'))
+            ->order($query->clause('order'))
+            ->limit($query->clause('limit'))
+            ->offset(0);
+
+        $outer = new Query($query->connection());
+        $outer
+            ->update($table)
+            ->set($query->clause('set'))
+            ->where(['ctid IN' => $inner]);
+
+        return $outer;
+    }
+
+    /**
      * Modifies the original insert query to append a "RETURNING *" epilogue
      * so that the latest insert id can be retrieved
      *
@@ -75,6 +112,37 @@ trait PostgresDialectTrait
         }
 
         return $query;
+    }
+
+    /**
+     * Modifies the original delete query to support ORDER BY and LIMIT
+     * clauses.
+     *
+     * @param \Cake\Database\Query $query The query to translate.
+     * @return \Cake\Database\Query
+     */
+    protected function _deleteQueryTranslator($query)
+    {
+        $query = $this->_sqlDeleteQueryTranslator($query);
+
+        if ($query->clause('limit') === null) {
+            return $query;
+        }
+
+        $inner = new Query($query->connection());
+        $inner->select('ctid')
+            ->from($query->clause('from'))
+            ->where($query->clause('where'))
+            ->order($query->clause('order'))
+            ->limit($query->clause('limit'))
+            ->offset(0);
+
+        $outer = new Query($query->connection());
+        $outer
+            ->delete($query->clause('from'))
+            ->where(['ctid IN' => $inner]);
+
+        return $outer;
     }
 
     /**
