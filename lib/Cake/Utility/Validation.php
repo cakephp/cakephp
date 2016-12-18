@@ -539,7 +539,7 @@ class Validation {
 	}
 
 /**
- * Checks whether the length of a string (in character) is greater or equal to a minimal length.
+ * Checks whether the length of a string (in characters) is greater or equal to a minimal length.
  *
  * @param string $check The string to test
  * @param int $min The minimal string length
@@ -550,7 +550,7 @@ class Validation {
 	}
 
 /**
- * Checks whether the length of a string (in character) is smaller or equal to a maximal length..
+ * Checks whether the length of a string (in characters) is smaller or equal to a maximal length..
  *
  * @param string $check The string to test
  * @param int $max The maximal string length
