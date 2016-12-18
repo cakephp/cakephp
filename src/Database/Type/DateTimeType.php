@@ -79,18 +79,12 @@ class DateTimeType extends Type implements TypeInterface
     protected $_className;
 
     /**
-     * Identifier name for this type
-     *
-     * @var string|null
-     */
-    protected $_name = null;
-
-    /**
      * {@inheritDoc}
      */
     public function __construct($name = null)
     {
-        $this->_name = $name;
+        parent::__construct($name);
+
         $this->_setClassName(static::$dateTimeClass, 'DateTime');
     }
 
@@ -290,6 +284,7 @@ class DateTimeType extends Type implements TypeInterface
      */
     protected function _parseValue($value)
     {
+        /* @var \Cake\I18n\Time $class */
         $class = $this->_className;
 
         return $class::parseDateTime($value, $this->_localeFormat);
