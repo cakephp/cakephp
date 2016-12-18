@@ -140,13 +140,17 @@ class ErrorHandlerMiddleware
         if (is_string($this->exceptionRenderer)) {
             $class = App::className($this->exceptionRenderer, 'Error');
             if (!$class) {
-                throw new Exception(sprintf("The '%s' renderer class could not be found.",
-                    $this->exceptionRenderer));
+                throw new Exception(sprintf(
+                    "The '%s' renderer class could not be found.",
+                    $this->exceptionRenderer
+                ));
             }
             if (!$class instanceof ExceptionRendererInterface) {
-                throw new Exception(sprintf("The '%s' renderer class must implement %s.",
+                throw new Exception(sprintf(
+                    "The '%s' renderer class must implement %s.",
                     $this->exceptionRenderer,
-                    ExceptionRendererInterface::class));
+                    ExceptionRendererInterface::class
+                ));
             }
 
             return new $class($exception);

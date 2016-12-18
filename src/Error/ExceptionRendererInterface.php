@@ -14,7 +14,6 @@
  */
 namespace Cake\Error;
 
-
 interface ExceptionRendererInterface
 {
     /**
