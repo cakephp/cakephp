@@ -544,6 +544,7 @@ class SecurityComponent extends Component
                 }
             }
         }
+
         return true;
     }
 
@@ -748,6 +749,7 @@ class SecurityComponent extends Component
                 $messages[] = sprintf($stringKeyMessage, $key, $value, $dataFields[$key]);
             }
         }
+
         return $messages;
     }
 }
