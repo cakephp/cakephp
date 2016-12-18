@@ -145,13 +145,6 @@ class ErrorHandlerMiddleware
                     $this->exceptionRenderer
                 ));
             }
-            if (!$class instanceof ExceptionRendererInterface) {
-                throw new Exception(sprintf(
-                    "The '%s' renderer class must implement %s.",
-                    $this->exceptionRenderer,
-                    ExceptionRendererInterface::class
-                ));
-            }
 
             return new $class($exception);
         }
