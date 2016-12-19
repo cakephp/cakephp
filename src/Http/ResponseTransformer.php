@@ -133,7 +133,7 @@ class ResponseTransformer
      * Convert a PSR7 Response headers into a flat array
      *
      * @param \Psr\Http\Message\ResponseInterface $response The response to convert.
-     * @return \Cake\Network\Response The equivalent CakePHP response
+     * @return array Headers.
      */
     protected static function collapseHeaders(PsrResponse $response)
     {

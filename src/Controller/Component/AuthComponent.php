@@ -192,7 +192,7 @@ class AuthComponent extends Component
     /**
      * Storage object.
      *
-     * @var \Cake\Auth\Storage\StorageInterface
+     * @var \Cake\Auth\Storage\StorageInterface|null
      */
     protected $_storage;
 

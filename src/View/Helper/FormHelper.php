@@ -161,7 +161,7 @@ class FormHelper extends Helper
     /**
      * Defines the type of form being created. Set by FormHelper::create().
      *
-     * @var string
+     * @var string|null
      */
     public $requestType = null;
 
@@ -185,7 +185,7 @@ class FormHelper extends Helper
     /**
      * Context for the current form.
      *
-     * @var \Cake\View\Form\ContextInterface
+     * @var \Cake\View\Form\ContextInterface|null
      */
     protected $_context;
 
@@ -689,7 +689,9 @@ class FormHelper extends Helper
         if ($lock) {
             if (!in_array($field, $this->fields)) {
                 if ($value !== null) {
-                    return $this->fields[$field] = $value;
+                    $this->fields[$field] = $value;
+
+                    return;
                 }
                 if (isset($this->fields[$field]) && $value === null) {
                     unset($this->fields[$field]);

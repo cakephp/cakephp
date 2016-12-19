@@ -52,9 +52,9 @@ class SmtpTransport extends AbstractTransport
     /**
      * Content of email to return
      *
-     * @var string
+     * @var array
      */
-    protected $_content;
+    protected $_content = [];
 
     /**
      * The response of the last sent SMTP command.

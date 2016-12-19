@@ -72,7 +72,7 @@ class DecimalType extends Type implements TypeInterface
      *
      * @param null|string|resource $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return float
+     * @return float|null
      * @throws \Cake\Core\Exception\Exception
      */
     public function toPHP($value, Driver $driver)

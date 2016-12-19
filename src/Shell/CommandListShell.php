@@ -127,7 +127,7 @@ class CommandListShell extends Shell
             }
         }
         $this->_io->outputAs(ConsoleOutput::RAW);
-        $this->out($shells->saveXml());
+        $this->out($shells->saveXML());
     }
 
     /**

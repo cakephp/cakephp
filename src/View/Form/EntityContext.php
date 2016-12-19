@@ -295,7 +295,7 @@ class EntityContext implements ContextInterface
      *
      * @param array|\Traversable $values The list from which to extract primary keys from
      * @param array $path Each one of the parts in a path for a field name
-     * @return array
+     * @return array|null
      */
     protected function _extractMultiple($values, $path)
     {

@@ -298,7 +298,7 @@ trait SqlserverDialectTrait
      * Used by Cake\Schema package to reflect schema and
      * generate schema.
      *
-     * @return \Cake\Database\Schema\MysqlSchema
+     * @return \Cake\Database\Schema\SqlserverSchema
      */
     public function schemaDialect()
     {

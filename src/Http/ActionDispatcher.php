@@ -67,8 +67,8 @@ class ActionDispatcher
      * Dispatches a Request & Response
      *
      * @param \Cake\Http\ServerRequest $request The request to dispatch.
-     * @param \Cake\Network\Response $response The response to dispatch.
-     * @return \Cake\Network\Response A modified/replaced response.
+     * @param \Cake\Http\Response $response The response to dispatch.
+     * @return \Cake\Http\Response A modified/replaced response.
      */
     public function dispatch(ServerRequest $request, Response $response)
     {

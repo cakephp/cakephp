@@ -128,7 +128,7 @@ class TranslatorRegistry extends TranslatorLocator
      * @param string $name The translator package to retrieve.
      * @param string|null $locale The locale to use; if empty, uses the default
      * locale.
-     * @return \Aura\Intl\TranslatorInterface A translator object.
+     * @return \Aura\Intl\TranslatorInterface|null A translator object.
      * @throws \Aura\Intl\Exception If no translator with that name could be found
      * for the given locale.
      */

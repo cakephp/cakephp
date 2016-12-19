@@ -167,7 +167,7 @@ class Folder
      * Change directory to $path.
      *
      * @param string $path Path to the directory to change to
-     * @return string The new path. Returns false on failure
+     * @return string|bool The new path. Returns false on failure
      */
     public function cd($path)
     {
@@ -924,7 +924,7 @@ class Folder
      * Get the real path (taking ".." and such into account)
      *
      * @param string $path Path to resolve
-     * @return string The resolved path
+     * @return string|bool The resolved path
      */
     public function realpath($path)
     {

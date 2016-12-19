@@ -38,9 +38,9 @@ class I18n
     /**
      * The translators collection
      *
-     * @var \Aura\Intl\TranslatorLocator
+     * @var \Aura\Intl\TranslatorLocator|null
      */
-    protected static $_collection;
+    protected static $_collection = null;
 
     /**
      * The environment default locale
@@ -54,7 +54,7 @@ class I18n
      * for getting specific translators based of their name and locale
      * or to configure some aspect of future translations that are not yet constructed.
      *
-     * @return \Aura\Intl\TranslatorLocator The translators collection.
+     * @return \Aura\Intl\TranslatorLocator|\Cake\I18n\TranslatorRegistry The translators collection.
      */
     public static function translators()
     {
@@ -121,7 +121,7 @@ class I18n
      * @param string|null $locale The locale for the translator.
      * @param callable|null $loader A callback function or callable class responsible for
      * constructing a translations package instance.
-     * @return \Aura\Intl\Translator|null The configured translator.
+     * @return \Aura\Intl\TranslatorInterface|null The configured translator.
      */
     public static function translator($name = 'default', $locale = null, callable $loader = null)
     {

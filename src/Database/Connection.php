@@ -88,9 +88,9 @@ class Connection implements ConnectionInterface
     /**
      * The schema collection object
      *
-     * @var \Cake\Database\Schema\Collection
+     * @var \Cake\Database\Schema\Collection|null
      */
-    protected $_schemaCollection;
+    protected $_schemaCollection = null;
 
     /**
      * Constructor.
@@ -612,7 +612,7 @@ class Connection implements ConnectionInterface
      */
     public function disableForeignKeys()
     {
-        $this->execute($this->_driver->disableForeignKeySql())->closeCursor();
+        $this->execute($this->_driver->disableForeignKeySQL())->closeCursor();
     }
 
     /**
@@ -622,7 +622,7 @@ class Connection implements ConnectionInterface
      */
     public function enableForeignKeys()
     {
-        $this->execute($this->_driver->enableForeignKeySql())->closeCursor();
+        $this->execute($this->_driver->enableForeignKeySQL())->closeCursor();
     }
 
     /**

@@ -129,9 +129,9 @@ class Log
     /**
      * LogEngineRegistry class
      *
-     * @var \Cake\Log\LogEngineRegistry
+     * @var \Cake\Log\LogEngineRegistry|null
      */
-    protected static $_registry;
+    protected static $_registry = null;
 
     /**
      * Handled log levels

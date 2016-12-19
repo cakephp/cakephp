@@ -205,7 +205,7 @@ class TimeHelper extends Helper
      */
     public function toUnix($dateString, $timezone = null)
     {
-        return (new Time($dateString, $timezone))->toUnixString();
+        return (int)(new Time($dateString, $timezone))->toUnixString();
     }
 
     /**
@@ -334,7 +334,7 @@ class TimeHelper extends Helper
      */
     public function gmt($string = null)
     {
-        return (new Time($string))->toUnixString();
+        return (int)(new Time($string))->toUnixString();
     }
 
     /**

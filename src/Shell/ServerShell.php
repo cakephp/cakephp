@@ -48,7 +48,7 @@ class ServerShell extends Shell
     /**
      * listen port
      *
-     * @var string
+     * @var int
      */
     protected $_port = null;
 

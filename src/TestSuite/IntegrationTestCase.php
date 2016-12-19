@@ -54,14 +54,14 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @var string|null
      */
-    protected $_appClass;
+    protected $_appClass = null;
 
     /**
      * The customized application constructor arguments.
      *
      * @var array|null
      */
-    protected $_appArgs;
+    protected $_appArgs = null;
 
     /**
      * The data used to build the next request.
@@ -73,16 +73,16 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * The response for the most recent request.
      *
-     * @var \Cake\Http\Response
+     * @var \Cake\Http\Response|null
      */
-    protected $_response;
+    protected $_response = null;
 
     /**
      * The exception being thrown if the case.
      *
-     * @var \Cake\Core\Exception\Exception
+     * @var \Exception|null
      */
-    protected $_exception;
+    protected $_exception = null;
 
     /**
      * Session data to use in the next request.
@@ -101,30 +101,30 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * The controller used in the last request.
      *
-     * @var \Cake\Controller\Controller
+     * @var \Cake\Controller\Controller|null
      */
-    protected $_controller;
+    protected $_controller = null;
 
     /**
      * The last rendered view
      *
-     * @var string
+     * @var string|null
      */
-    protected $_viewName;
+    protected $_viewName = null;
 
     /**
      * The last rendered layout
      *
-     * @var string
+     * @var string|null
      */
-    protected $_layoutName;
+    protected $_layoutName = null;
 
     /**
      * The session instance from the last request
      *
-     * @var \Cake\Network\Session
+     * @var \Cake\Network\Session|null
      */
-    protected $_requestSession;
+    protected $_requestSession = null;
 
     /**
      * Boolean flag for whether or not the request should have
@@ -435,7 +435,7 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * Get the correct dispatcher instance.
      *
-     * @return object A dispatcher instance
+     * @return \Cake\TestSuite\MiddlewareDispatcher|\Cake\TestSuite\LegacyRequestDispatcher A dispatcher instance
      */
     protected function _makeDispatcher()
     {

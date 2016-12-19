@@ -210,6 +210,6 @@ class HelpFormatter
             $argument->xml($arguments);
         }
 
-        return $string ? $xml->asXml() : $xml;
+        return $string ? $xml->asXML() : $xml;
     }
 }

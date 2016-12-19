@@ -746,7 +746,7 @@ class PaginatorHelper extends Helper
      * options and a modulus of 8, ellipsis content will be inserted after the first and last link sets.
      *
      * @param array $options Options for the numbers.
-     * @return string numbers string.
+     * @return string|false Numbers string.
      * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html#creating-page-number-links
      */
     public function numbers(array $options = [])
@@ -987,7 +987,7 @@ class PaginatorHelper extends Helper
      * @param string|int $first if string use as label for the link. If numeric, the number of page links
      *   you want at the beginning of the range.
      * @param array $options An array of options.
-     * @return string numbers string.
+     * @return string|false Numbers string.
      * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html#creating-jump-links
      */
     public function first($first = '<< first', array $options = [])
@@ -1048,7 +1048,7 @@ class PaginatorHelper extends Helper
      *
      * @param string|int $last if string use as label for the link, if numeric print page numbers
      * @param array $options Array of options
-     * @return string numbers string.
+     * @return string|false Numbers string.
      * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html#creating-jump-links
      */
     public function last($last = 'last >>', array $options = [])

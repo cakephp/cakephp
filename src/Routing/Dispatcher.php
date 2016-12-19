@@ -50,7 +50,7 @@ class Dispatcher
      * If the controller is found, and the action is not found an exception will be thrown.
      *
      * @param \Cake\Http\ServerRequest $request Request object to dispatch.
-     * @param \Cake\Network\Response $response Response object to put the results of the dispatch into.
+     * @param \Cake\Http\Response $response Response object to put the results of the dispatch into.
      * @return string|null if `$request['return']` is set then it returns response body, null otherwise
      * @throws \LogicException When the controller did not get created in the Dispatcher.beforeDispatch event.
      */

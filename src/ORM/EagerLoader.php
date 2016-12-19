@@ -40,9 +40,9 @@ class EagerLoader
      * Contains a nested array with the compiled containments tree
      * This is a normalized version of the user provided containments array.
      *
-     * @var array
+     * @var \Cake\ORM\EagerLoadable[]|\Cake\ORM\EagerLoadable|null
      */
-    protected $_normalized;
+    protected $_normalized = null;
 
     /**
      * List of options accepted by associations in contain()
@@ -67,7 +67,7 @@ class EagerLoader
     /**
      * A list of associations that should be loaded with a separate query
      *
-     * @var array
+     * @var \Cake\ORM\EagerLoadable[]
      */
     protected $_loadExternal = [];
 
@@ -457,7 +457,7 @@ class EagerLoader
      *
      * @param \Cake\ORM\Table $repository The table containing the associations
      * to be loaded
-     * @return array
+     * @return \Cake\ORM\EagerLoadable[]
      */
     public function externalAssociations(Table $repository)
     {
@@ -481,7 +481,7 @@ class EagerLoader
      * separated strings representing associations that lead to this `$alias` in the
      * chain of associations to be loaded. The second value is the path to follow in
      * entities' properties to fetch a record of the corresponding association.
-     * @return array normalized associations
+     * @return \Cake\ORM\EagerLoadable Object with normalized associations
      * @throws \InvalidArgumentException When containments refer to associations that do not exist.
      */
     protected function _normalizeContain(Table $parent, $alias, $options, $paths)
@@ -551,6 +551,7 @@ class EagerLoader
                 if (count($configs) < 2) {
                     continue;
                 }
+                /* @var \Cake\ORM\EagerLoadable $loadable */
                 foreach ($configs as $loadable) {
                     if (strpos($loadable->aliasPath(), '.')) {
                         $this->_correctStrategy($loadable);
@@ -624,7 +625,7 @@ class EagerLoader
      * @param \Cake\ORM\Query $query The query for which to eager load external
      * associations
      * @param \Cake\Database\StatementInterface $statement The statement created after executing the $query
-     * @return \Cake\Database\Statement\CallbackStatement statement modified statement with extra loaders
+     * @return \Cake\Database\StatementInterface statement modified statement with extra loaders
      */
     public function loadExternal($query, $statement)
     {
@@ -687,6 +688,7 @@ class EagerLoader
         }
 
         $visitor = function ($level, $matching = false) use (&$visitor, &$map) {
+            /* @var \Cake\ORM\EagerLoadable $meta */
             foreach ($level as $assoc => $meta) {
                 $canBeJoined = $meta->canBeJoined();
                 $instance = $meta->instance();
@@ -750,6 +752,7 @@ class EagerLoader
     protected function _collectKeys($external, $query, $statement)
     {
         $collectKeys = [];
+        /* @var \Cake\ORM\EagerLoadable $meta */
         foreach ($external as $meta) {
             $instance = $meta->instance();
             if (!$instance->requiresKeys($meta->config())) {

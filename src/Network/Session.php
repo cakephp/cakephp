@@ -319,7 +319,7 @@ class Session
         }
 
         if (ini_get('session.use_cookies') && headers_sent($file, $line)) {
-            return;
+            return false;
         }
 
         if (!session_start()) {

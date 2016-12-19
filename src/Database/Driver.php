@@ -86,7 +86,7 @@ abstract class Driver
      * If first argument is passed,
      *
      * @param null|\PDO $connection The connection object
-     * @return void
+     * @return \Cake\Database\Connection
      */
     abstract public function connection($connection = null);
 
@@ -258,7 +258,7 @@ abstract class Driver
             is_numeric($value) && strpos($value, ',') === false &&
             $value[0] !== '0' && strpos($value, 'e') === false)
         ) {
-            return $value;
+            return (string)$value;
         }
 
         return $this->_connection->quote($value, PDO::PARAM_STR);

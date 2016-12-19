@@ -183,7 +183,7 @@ class TimeHelperTest extends TestCase
      */
     public function testToUnix()
     {
-        $this->assertEquals(1397980800, $this->Time->toUnix('2014-04-20 08:00:00'));
+        $this->assertSame(1397980800, $this->Time->toUnix('2014-04-20 08:00:00'));
     }
 
     /**

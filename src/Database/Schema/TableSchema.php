@@ -399,7 +399,7 @@ class TableSchema
      * based upon.
      *
      * @param string $column The column name to get the base type from
-     * @return string The base type name
+     * @return string|null The base type name
      */
     public function baseColumnType($column)
     {

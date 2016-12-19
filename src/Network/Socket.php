@@ -53,7 +53,7 @@ class Socket
     /**
      * Reference to socket connection resource
      *
-     * @var resource
+     * @var resource|null
      */
     public $connection = null;
 
@@ -312,8 +312,8 @@ class Socket
     /**
      * Write data to the socket.
      *
-     * @param string $data The data to write to the socket
-     * @return bool Success
+     * @param string $data The data to write to the socket.
+     * @return int Bytes written.
      */
     public function write($data)
     {

@@ -222,7 +222,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * The transport instance to use for sending mail.
      *
-     * @var \Cake\Mailer\AbstractTransport
+     * @var \Cake\Mailer\AbstractTransport|null
      */
     protected $_transport = null;
 
@@ -237,14 +237,14 @@ class Email implements JsonSerializable, Serializable
      * Charset the email header is sent in
      * If null, the $charset property will be used as default
      *
-     * @var string
+     * @var string|null
      */
     public $headerCharset = null;
 
     /**
      * The application wide charset, used to encode headers and body
      *
-     * @var string
+     * @var string|null
      */
     protected $_appCharset = null;
 
@@ -260,7 +260,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * If set, boundary to use for multipart mime messages
      *
-     * @var string
+     * @var string|null
      */
     protected $_boundary = null;
 

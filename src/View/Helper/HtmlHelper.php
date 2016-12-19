@@ -924,6 +924,7 @@ class HtmlHelper extends Helper
             $count = 0;
         }
 
+        $out = [];
         foreach ($data as $line) {
             $count++;
             $cellsOut = $this->_renderCells($line, $useCount);
@@ -942,7 +943,7 @@ class HtmlHelper extends Helper
      *
      * @param array $line Line data to render.
      * @param bool $useCount Renders the count into the row. Default is false.
-     * @return string
+     * @return string[]
      */
     protected function _renderCells($line, $useCount = false)
     {

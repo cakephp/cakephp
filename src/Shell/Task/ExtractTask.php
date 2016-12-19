@@ -93,7 +93,7 @@ class ExtractTask extends Shell
     /**
      * Holds the validation string domain to use for validation messages when extracting
      *
-     * @var bool
+     * @var string
      */
     protected $_validationDomain = 'default';
 

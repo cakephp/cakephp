@@ -102,7 +102,7 @@ class Cache
     /**
      * Cache Registry used for creating and using cache adapters.
      *
-     * @var \Cake\Cache\CacheRegistry
+     * @var \Cake\Core\ObjectRegistry
      */
     protected static $_registry;
 
