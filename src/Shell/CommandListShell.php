@@ -23,6 +23,8 @@ use SimpleXmlElement;
 
 /**
  * Shows a list of commands available from the console.
+ *
+ * @property \Cake\Shell\Task\CommandTask $Command
  */
 class CommandListShell extends Shell
 {

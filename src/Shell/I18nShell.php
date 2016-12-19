@@ -21,6 +21,8 @@ use DirectoryIterator;
 
 /**
  * Shell for I18N management.
+ *
+ * @property \Cake\Shell\Task\ExtractTask $Extract
  */
 class I18nShell extends Shell
 {

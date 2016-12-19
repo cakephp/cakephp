@@ -18,6 +18,8 @@ use Cake\Console\Shell;
 
 /**
  * Provide command completion shells such as bash.
+ *
+ * @property \Cake\Shell\Task\CommandTask $Command
  */
 class CompletionShell extends Shell
 {
