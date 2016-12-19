@@ -4,9 +4,9 @@
     "license": "MIT",
     "authors": [
         {
-        "name": "CakePHP Community",
-        "homepage": "http://cakephp.org"
-    }
+            "name": "CakePHP Community",
+            "homepage": "http://cakephp.org"
+        }
     ],
     "autoload": {
         "psr-4": {
