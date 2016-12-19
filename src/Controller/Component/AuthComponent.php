@@ -32,6 +32,8 @@ use Cake\Utility\Hash;
  *
  * Binds access control with user authentication and session management.
  *
+ * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
+ * @property \Cake\Controller\Component\FlashComponent $Flash
  * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html
  */
 class AuthComponent extends Component
@@ -972,9 +974,11 @@ class AuthComponent extends Component
      */
     public function flash($message)
     {
-        if ($message !== false) {
-            $this->Flash->set($message, $this->_config['flash']);
+        if ($message === false) {
+            return;
         }
+
+        $this->Flash->set($message, $this->_config['flash']);
     }
 
     /**
