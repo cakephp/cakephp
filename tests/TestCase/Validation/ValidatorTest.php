@@ -1524,6 +1524,18 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the minLengthBytes proxy method
+     *
+     * @return void
+     */
+    public function testMinLengthBytes()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'minLengthBytes', 11, [11]);
+        $this->assertNotEmpty($validator->errors(['username' => 'ÆΔΩЖÇ']));
+    }
+
+    /**
      * Tests the maxLength proxy method
      *
      * @return void
@@ -1533,6 +1545,18 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'maxLength', 2, [2]);
         $this->assertNotEmpty($validator->errors(['username' => 'aaa']));
+    }
+
+    /**
+     * Tests the maxLengthBytes proxy method
+     *
+     * @return void
+     */
+    public function testMaxLengthBytes()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'maxLengthBytes', 9, [9]);
+        $this->assertNotEmpty($validator->errors(['username' => 'ÆΔΩЖÇ']));
     }
 
     /**
