@@ -1495,7 +1495,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   created entities. This callback will be called *before* the entity
      *   is persisted.
      * @param array $options The options to use when saving.
-     * @return EntityInterface An entity.
+     * @return \Cake\Datasource\EntityInterface An entity.
      */
     public function findOrCreate($search, callable $callback = null, $options = [])
     {
@@ -1518,7 +1518,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   created entities. This callback will be called *before* the entity
      *   is persisted.
      * @param array $options The options to use when saving.
-     * @return EntityInterface An entity.
+     * @return \Cake\Datasource\EntityInterface An entity.
      */
     protected function _processFindOrCreate($search, callable $callback = null, $options = [])
     {

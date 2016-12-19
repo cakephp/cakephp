@@ -124,7 +124,7 @@ class Server
     /**
      * Get the current application.
      *
-     * @return BaseApplication The application that will be run.
+     * @return \Cake\Http\BaseApplication The application that will be run.
      */
     public function getApp()
     {
