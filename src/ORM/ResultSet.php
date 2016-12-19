@@ -497,7 +497,10 @@ class ResultSet implements ResultSetInterface
                 array_intersect_key($row, $keys)
             );
             if ($this->_hydrate) {
-                $options['source'] = $matching['instance']->registryAlias();
+                /** @var \Cake\ORM\Table $table */
+                $table = $matching['instance'];
+                $options['source'] = $table->registryAlias();
+                /** @var \Cake\Datasource\EntityInterface $entity */
                 $entity = new $matching['entityClass']($results['_matchingData'][$alias], $options);
                 $entity->clean();
                 $results['_matchingData'][$alias] = $entity;
@@ -518,6 +521,7 @@ class ResultSet implements ResultSetInterface
                 continue;
             }
 
+            /** @var \Cake\ORM\Association $instance */
             $instance = $assoc['instance'];
 
             if (!$assoc['canBeJoined'] && !isset($row[$alias])) {

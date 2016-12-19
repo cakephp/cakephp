@@ -719,6 +719,7 @@ class TreeBehavior extends Behavior
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
                 ->where(function ($exp) use ($config, $nodeRight) {
+                    /* @var \Cake\Database\Expression\QueryExpression $exp */
                     return $exp->gt($config['leftField'], $nodeRight);
                 })
                 ->orderAsc($config['leftField'])
@@ -731,6 +732,7 @@ class TreeBehavior extends Behavior
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
                 ->where(function ($exp) use ($config, $nodeRight) {
+                    /* @var \Cake\Database\Expression\QueryExpression $exp */
                     return $exp->gt($config['leftField'], $nodeRight);
                 })
                 ->orderDesc($config['leftField'])
