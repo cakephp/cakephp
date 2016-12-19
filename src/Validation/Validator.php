@@ -181,7 +181,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $name The name under which the provider should be set.
      * @param object|string $object Provider object or class name.
-     * @return $this
+     * @return self
      */
     public function setProvider($name, $object)
     {
@@ -222,7 +222,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @deprecated 3.4.0 Use setProvider()/getProvider() instead.
      * @param string $name The name under which the provider should be set.
      * @param null|object|string $object Provider object or class name.
-     * @return $this|object|string|null
+     * @return self|object|string|null
      */
     public function provider($name, $object = null)
     {
@@ -335,7 +335,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field The name of the field from which the rule will be added
      * @param array|string $name The alias for a single rule or multiple rules array
      * @param array|\Cake\Validation\ValidationRule $rule the rule to add
-     * @return $this
+     * @return self
      */
     public function add($field, $name, $rule = [])
     {
@@ -369,7 +369,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The root field for the nested validator.
      * @param \Cake\Validation\Validator $validator The nested validator.
-     * @return $this
+     * @return self
      */
     public function addNested($field, Validator $validator)
     {
@@ -404,7 +404,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The root field for the nested validator.
      * @param \Cake\Validation\Validator $validator The nested validator.
-     * @return $this
+     * @return self
      */
     public function addNestedMany($field, Validator $validator)
     {
@@ -446,7 +446,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field from which the rule will be removed
      * @param string|null $rule the name of the rule to be removed
-     * @return $this
+     * @return self
      */
     public function remove($field, $rule = null)
     {
@@ -475,7 +475,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   If a callable is passed then the field will be required only when the callback
      *   returns true.
      * @param string|null $message The message to show if the field presence validation fails.
-     * @return $this
+     * @return self
      */
     public function requirePresence($field, $mode = true, $message = null)
     {
@@ -565,7 +565,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Valid values are true (always), 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
      * @param string|null $message The message to show if the field is not
-     * @return $this
+     * @return self
      */
     public function allowEmpty($field, $when = true, $message = null)
     {
@@ -679,7 +679,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   to be empty. Valid values are true (always), 'create', 'update'. If a
      *   callable is passed then the field will allowed to be empty only when
      *   the callback returns false.
-     * @return $this
+     * @return self
      */
     public function notEmpty($field, $message = null, $when = false)
     {
@@ -722,7 +722,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::notBlank()
-     * @return $this
+     * @return self
      */
     public function notBlank($field, $message = null, $when = null)
     {
@@ -741,7 +741,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::alphaNumeric()
-     * @return $this
+     * @return self
      */
     public function alphaNumeric($field, $message = null, $when = null)
     {
@@ -761,7 +761,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::alphaNumeric()
-     * @return $this
+     * @return self
      */
     public function lengthBetween($field, array $range, $message = null, $when = null)
     {
@@ -785,7 +785,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::cc()
-     * @return $this
+     * @return self
      */
     public function creditCard($field, $type = 'all', $message = null, $when = null)
     {
@@ -805,7 +805,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::comparison()
-     * @return $this
+     * @return self
      */
     public function greaterThan($field, $value, $message = null, $when = null)
     {
@@ -825,7 +825,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::comparison()
-     * @return $this
+     * @return self
      */
     public function greaterThanOrEqual($field, $value, $message = null, $when = null)
     {
@@ -845,7 +845,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::comparison()
-     * @return $this
+     * @return self
      */
     public function lessThan($field, $value, $message = null, $when = null)
     {
@@ -865,7 +865,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::comparison()
-     * @return $this
+     * @return self
      */
     public function lessThanOrEqual($field, $value, $message = null, $when = null)
     {
@@ -885,7 +885,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::comparison()
-     * @return $this
+     * @return self
      */
     public function equals($field, $value, $message = null, $when = null)
     {
@@ -905,7 +905,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::comparison()
-     * @return $this
+     * @return self
      */
     public function notEquals($field, $value, $message = null, $when = null)
     {
@@ -927,7 +927,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::compareWith()
-     * @return $this
+     * @return self
      */
     public function sameAs($field, $secondField, $message = null, $when = null)
     {
@@ -947,7 +947,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::containsNonAlphaNumeric()
-     * @return $this
+     * @return self
      */
     public function containsNonAlphaNumeric($field, $limit = 1, $message = null, $when = null)
     {
@@ -967,7 +967,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::date()
-     * @return $this
+     * @return self
      */
     public function date($field, $formats = ['ymd'], $message = null, $when = null)
     {
@@ -987,7 +987,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::datetime()
-     * @return $this
+     * @return self
      */
     public function dateTime($field, $formats = ['ymd'], $message = null, $when = null)
     {
@@ -1006,7 +1006,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::time()
-     * @return $this
+     * @return self
      */
     public function time($field, $message = null, $when = null)
     {
@@ -1026,7 +1026,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::localizedTime()
-     * @return $this
+     * @return self
      */
     public function localizedTime($field, $type = 'datetime', $message = null, $when = null)
     {
@@ -1045,7 +1045,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::boolean()
-     * @return $this
+     * @return self
      */
     public function boolean($field, $message = null, $when = null)
     {
@@ -1065,7 +1065,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::decimal()
-     * @return $this
+     * @return self
      */
     public function decimal($field, $places = null, $message = null, $when = null)
     {
@@ -1085,7 +1085,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::email()
-     * @return $this
+     * @return self
      */
     public function email($field, $checkMX = false, $message = null, $when = null)
     {
@@ -1106,7 +1106,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::ip()
-     * @return $this
+     * @return self
      */
     public function ip($field, $message = null, $when = null)
     {
@@ -1125,7 +1125,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::ip()
-     * @return $this
+     * @return self
      */
     public function ipv4($field, $message = null, $when = null)
     {
@@ -1144,7 +1144,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::ip()
-     * @return $this
+     * @return self
      */
     public function ipv6($field, $message = null, $when = null)
     {
@@ -1164,7 +1164,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::minLength()
-     * @return $this
+     * @return self
      */
     public function minLength($field, $min, $message = null, $when = null)
     {
@@ -1184,7 +1184,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::maxLength()
-     * @return $this
+     * @return self
      */
     public function maxLength($field, $max, $message = null, $when = null)
     {
@@ -1203,7 +1203,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::numeric()
-     * @return $this
+     * @return self
      */
     public function numeric($field, $message = null, $when = null)
     {
@@ -1222,7 +1222,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::naturalNumber()
-     * @return $this
+     * @return self
      */
     public function naturalNumber($field, $message = null, $when = null)
     {
@@ -1241,7 +1241,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::naturalNumber()
-     * @return $this
+     * @return self
      */
     public function nonNegativeInteger($field, $message = null, $when = null)
     {
@@ -1261,7 +1261,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::range()
-     * @return $this
+     * @return self
      */
     public function range($field, array $range, $message = null, $when = null)
     {
@@ -1285,7 +1285,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::url()
-     * @return $this
+     * @return self
      */
     public function url($field, $message = null, $when = null)
     {
@@ -1306,7 +1306,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::url()
-     * @return $this
+     * @return self
      */
     public function urlWithProtocol($field, $message = null, $when = null)
     {
@@ -1326,7 +1326,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::inList()
-     * @return $this
+     * @return self
      */
     public function inList($field, array $list, $message = null, $when = null)
     {
@@ -1345,7 +1345,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::uuid()
-     * @return $this
+     * @return self
      */
     public function uuid($field, $message = null, $when = null)
     {
@@ -1367,7 +1367,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::uploadedFile()
-     * @return $this
+     * @return self
      */
     public function uploadedFile($field, array $options, $message = null, $when = null)
     {
@@ -1388,7 +1388,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::uuid()
-     * @return $this
+     * @return self
      */
     public function latLong($field, $message = null, $when = null)
     {
@@ -1407,7 +1407,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::latitude()
-     * @return $this
+     * @return self
      */
     public function latitude($field, $message = null, $when = null)
     {
@@ -1426,7 +1426,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::longitude()
-     * @return $this
+     * @return self
      */
     public function longitude($field, $message = null, $when = null)
     {
@@ -1445,7 +1445,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::ascii()
-     * @return $this
+     * @return self
      */
     public function ascii($field, $message = null, $when = null)
     {
@@ -1464,7 +1464,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::utf8()
-     * @return $this
+     * @return self
      */
     public function utf8($field, $message = null, $when = null)
     {
@@ -1485,7 +1485,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::utf8()
-     * @return $this
+     * @return self
      */
     public function utf8Extended($field, $message = null, $when = null)
     {
@@ -1504,7 +1504,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::isInteger()
-     * @return $this
+     * @return self
      */
     public function integer($field, $message = null, $when = null)
     {
@@ -1522,7 +1522,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
-     * @return $this
+     * @return self
      */
     public function isArray($field, $message = null, $when = null)
     {
@@ -1543,7 +1543,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::multiple()
-     * @return $this
+     * @return self
      */
     public function multipleOptions($field, array $options = [], $message = null, $when = null)
     {
@@ -1566,7 +1566,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::numElements()
-     * @return $this
+     * @return self
      */
     public function hasAtLeast($field, $count, $message = null, $when = null)
     {
@@ -1593,7 +1593,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::numElements()
-     * @return $this
+     * @return self
      */
     public function hasAtMost($field, $count, $message = null, $when = null)
     {

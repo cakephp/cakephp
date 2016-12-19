@@ -41,7 +41,7 @@ class DateType extends DateTimeType
     /**
      * Change the preferred class name to the FrozenDate implementation.
      *
-     * @return $this
+     * @return self
      */
     public function useImmutable()
     {
@@ -53,7 +53,7 @@ class DateType extends DateTimeType
     /**
      * Change the preferred class name to the mutable Date implementation.
      *
-     * @return $this
+     * @return self
      */
     public function useMutable()
     {

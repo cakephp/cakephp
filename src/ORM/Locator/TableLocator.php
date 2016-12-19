@@ -61,7 +61,7 @@ class TableLocator implements LocatorInterface
      *
      * @param string|array $alias Name of the alias or array to completely overwrite current config.
      * @param array|null $options list of options for the alias
-     * @return $this
+     * @return self
      * @throws \RuntimeException When you attempt to configure an existing table instance.
      */
     public function setConfig($alias, $options = null)

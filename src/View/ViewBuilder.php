@@ -117,7 +117,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Get/set path for template files.
      *
      * @param string|null $path Path for view files. If null returns current path.
-     * @return string|$this
+     * @return string|self
      */
     public function templatePath($path = null)
     {
@@ -134,7 +134,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Get/set path for layout files.
      *
      * @param string|null $path Path for layout files. If null returns current path.
-     * @return string|$this
+     * @return string|self
      */
     public function layoutPath($path = null)
     {
@@ -153,7 +153,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * automatically applied to rendered views.
      *
      * @param bool|null $autoLayout Boolean to turn on/off. If null returns current value.
-     * @return bool|$this
+     * @return bool|self
      */
     public function autoLayout($autoLayout = null)
     {
@@ -171,7 +171,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      *
      * @param string|null|false $name Plugin name. If null returns current plugin.
      *   Use false to remove the current plugin name.
-     * @return string|$this
+     * @return string|self
      */
     public function plugin($name = null)
     {
@@ -189,7 +189,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      *
      * @param array|null $helpers Helpers to use.
      * @param bool $merge Whether or not to merge existing data with the new data.
-     * @return array|$this
+     * @return array|self
      */
     public function helpers(array $helpers = null, $merge = true)
     {
@@ -209,7 +209,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      *
      * @param string|null|false $theme Theme name. If null returns current theme.
      *   Use false to remove the current theme.
-     * @return string|$this
+     * @return string|self
      */
     public function theme($theme = null)
     {
@@ -227,7 +227,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * filename in /src/Template/<SubFolder> without the .ctp extension.
      *
      * @param string|null $name View file name to set. If null returns current name.
-     * @return string|$this
+     * @return string|self
      */
     public function template($name = null)
     {
@@ -246,7 +246,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * without the .ctp extension.
      *
      * @param string|null $name Layout file name to set. If null returns current name.
-     * @return string|$this
+     * @return string|self
      */
     public function layout($name = null)
     {
@@ -266,7 +266,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      *
      * @param array|null $options Either an array of options or null to get current options.
      * @param bool $merge Whether or not to merge existing data with the new data.
-     * @return array|$this
+     * @return array|self
      */
     public function options(array $options = null, $merge = true)
     {
@@ -285,7 +285,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Get/set the view name
      *
      * @param string|null $name The name of the view
-     * @return array|$this
+     * @return array|self
      */
     public function name($name = null)
     {
@@ -306,7 +306,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @param string|null $name The class name for the view. Can
      *   be a plugin.class name reference, a short alias, or a fully
      *   namespaced name.
-     * @return array|$this
+     * @return array|self
      */
     public function className($name = null)
     {
@@ -391,7 +391,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Configures a view builder instance from serialized config.
      *
      * @param array $config View builder configuration array.
-     * @return $this Configured view builder instance.
+     * @return self Configured view builder instance.
      */
     public function createFromArray($config)
     {
@@ -418,7 +418,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Unserializes the view builder object.
      *
      * @param string $data Serialized string.
-     * @return $this Configured view builder instance.
+     * @return self Configured view builder instance.
      */
     public function unserialize($data)
     {

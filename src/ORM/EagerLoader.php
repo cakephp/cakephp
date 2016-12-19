@@ -163,7 +163,7 @@ class EagerLoader
      * Sets whether or not contained associations will load fields automatically.
      *
      * @param bool $enable The value to set.
-     * @return $this
+     * @return self
      */
     public function enableAutoFields($enable)
     {
@@ -213,7 +213,7 @@ class EagerLoader
      * @param callable|null $builder the callback function to be used for setting extra
      * options to the filtering query
      * @param array $options Extra options for the association matching.
-     * @return $this
+     * @return self
      */
     public function setMatching($assoc, callable $builder = null, $options = [])
     {

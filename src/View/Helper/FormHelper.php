@@ -2729,7 +2729,7 @@ class FormHelper extends Helper
      * You need to supply one valid context or multiple, as a list of strings. Order sets priority.
      *
      * @param string|array $sources A string or a list of strings identifying a source.
-     * @return $this
+     * @return self
      */
     public function setValueSources($sources)
     {

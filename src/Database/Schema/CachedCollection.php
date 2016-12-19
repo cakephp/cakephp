@@ -85,7 +85,7 @@ class CachedCollection extends Collection
      * disables it if false is passed.
      *
      * @param bool $enable Whether or not to enable caching
-     * @return $this
+     * @return self
      */
     public function setCacheMetadata($enable)
     {

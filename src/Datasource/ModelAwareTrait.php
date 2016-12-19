@@ -134,7 +134,7 @@ trait ModelAwareTrait
      *
      * @param string|null $modelType The model type or null to retrieve the current
      *
-     * @return string|$this
+     * @return string|self
      */
     public function modelType($modelType = null)
     {

@@ -75,7 +75,7 @@ class RuleInvoker
      * Old options will be merged with the new ones.
      *
      * @param array $options The options to set.
-     * @return $this
+     * @return self
      */
     public function setOptions(array $options)
     {
@@ -90,7 +90,7 @@ class RuleInvoker
      * Only truthy names will be set.
      *
      * @param string $name The name to set.
-     * @return $this
+     * @return self
      */
     public function setName($name)
     {

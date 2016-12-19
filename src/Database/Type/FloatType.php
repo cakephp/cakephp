@@ -120,7 +120,7 @@ class FloatType extends Type implements TypeInterface
      * by using a locale aware parser.
      *
      * @param bool $enable Whether or not to enable
-     * @return $this
+     * @return self
      */
     public function useLocaleParser($enable = true)
     {
