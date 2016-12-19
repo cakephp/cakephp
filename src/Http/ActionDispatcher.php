@@ -17,7 +17,6 @@ namespace Cake\Http;
 use Cake\Controller\Controller;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
-use Cake\Network\Response;
 use Cake\Routing\Router;
 use LogicException;
 

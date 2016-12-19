@@ -302,7 +302,7 @@ object(Cake\View\View) {
 	hasRendered => false
 	uuids => []
 	request => object(Cake\Http\ServerRequest) {}
-	response => object(Cake\Network\Response) {}
+	response => object(Cake\Http\Response) {}
 	elementCache => 'default'
 	viewClass => null
 	viewVars => []

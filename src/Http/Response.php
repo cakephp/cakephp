@@ -12,12 +12,13 @@
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Network;
+namespace Cake\Http;
 
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
 use Cake\Http\CallbackStream;
 use Cake\Log\Log;
+use Cake\Network\CorsBuilder;
 use Cake\Network\Exception\NotFoundException;
 use DateTime;
 use DateTimeZone;
@@ -1850,7 +1851,7 @@ class Response implements ResponseInterface
      * @param \Cake\Http\ServerRequest $request Request object
      * @return bool Whether the response was marked as not modified or not.
      */
-    public function checkNotModified(Request $request)
+    public function checkNotModified(ServerRequest $request)
     {
         $etags = preg_split('/\s*,\s*/', $request->header('If-None-Match'), null, PREG_SPLIT_NO_EMPTY);
         $modifiedSince = $request->header('If-Modified-Since');
@@ -2061,7 +2062,7 @@ class Response implements ResponseInterface
      * @return \Cake\Network\CorsBuilder A builder object the provides a fluent interface for defining
      *   additional CORS headers.
      */
-    public function cors(Request $request, $allowedDomains = [], $allowedMethods = [], $allowedHeaders = [])
+    public function cors(ServerRequest $request, $allowedDomains = [], $allowedMethods = [], $allowedHeaders = [])
     {
         $origin = $request->header('Origin');
         $ssl = $request->is('ssl');

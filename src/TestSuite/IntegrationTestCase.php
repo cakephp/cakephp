@@ -73,7 +73,7 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * The response for the most recent request.
      *
-     * @var \Cake\Network\Response
+     * @var \Cake\Http\Response
      */
     protected $_response;
 
