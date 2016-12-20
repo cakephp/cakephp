@@ -24,7 +24,7 @@ class Response extends Base
     /**
      * Stub the send() method so headers and output are not sent.
      *
-     * @return $this
+     * @return self
      */
     public function send()
     {

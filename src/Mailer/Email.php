@@ -365,7 +365,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
-     * @return array|$this
+     * @return array|self
      * @throws \InvalidArgumentException
      */
     public function from($email = null, $name = null)
@@ -383,7 +383,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
-     * @return array|$this
+     * @return array|self
      * @throws \InvalidArgumentException
      */
     public function sender($email = null, $name = null)
@@ -401,7 +401,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
-     * @return array|$this
+     * @return array|self
      * @throws \InvalidArgumentException
      */
     public function replyTo($email = null, $name = null)
@@ -419,7 +419,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
-     * @return array|$this
+     * @return array|self
      * @throws \InvalidArgumentException
      */
     public function readReceipt($email = null, $name = null)
@@ -437,7 +437,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
-     * @return array|$this
+     * @return array|self
      * @throws \InvalidArgumentException
      */
     public function returnPath($email = null, $name = null)
@@ -455,7 +455,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
-     * @return array|$this
+     * @return array|self
      */
     public function to($email = null, $name = null)
     {
@@ -472,7 +472,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
-     * @return $this
+     * @return self
      */
     public function addTo($email, $name = null)
     {
@@ -485,7 +485,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
-     * @return array|$this
+     * @return array|self
      */
     public function cc($email = null, $name = null)
     {
@@ -502,7 +502,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
-     * @return $this
+     * @return self
      */
     public function addCc($email, $name = null)
     {
@@ -515,7 +515,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
-     * @return array|$this
+     * @return array|self
      */
     public function bcc($email = null, $name = null)
     {
@@ -532,7 +532,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
-     * @return $this
+     * @return self
      */
     public function addBcc($email, $name = null)
     {
@@ -579,7 +579,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|bool|null $regex The pattern to use for email address validation,
      *   null to unset the pattern and make use of filter_var() instead, false or
      *   nothing to return the current value
-     * @return string|$this
+     * @return string|self
      */
     public function emailPattern($regex = false)
     {
@@ -598,7 +598,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array $email String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string $name Name
-     * @return $this
+     * @return self
      * @throws \InvalidArgumentException
      */
     protected function _setEmail($varName, $email, $name)
@@ -652,7 +652,7 @@ class Email implements JsonSerializable, Serializable
      *   Array with email as key, name as value or email as value (without name)
      * @param string $name Name
      * @param string $throwMessage Exception message
-     * @return $this
+     * @return self
      * @throws \InvalidArgumentException
      */
     protected function _setEmailSingle($varName, $email, $name, $throwMessage)
@@ -674,7 +674,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array $email String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string $name Name
-     * @return $this
+     * @return self
      * @throws \InvalidArgumentException
      */
     protected function _addEmail($varName, $email, $name)
@@ -705,7 +705,7 @@ class Email implements JsonSerializable, Serializable
      * Get/Set Subject.
      *
      * @param string|null $subject Subject string.
-     * @return string|$this
+     * @return string|self
      */
     public function subject($subject = null)
     {
@@ -731,7 +731,7 @@ class Email implements JsonSerializable, Serializable
      * Sets headers for the message
      *
      * @param array $headers Associative array containing headers to be set.
-     * @return $this
+     * @return self
      */
     public function setHeaders(array $headers)
     {
@@ -744,7 +744,7 @@ class Email implements JsonSerializable, Serializable
      * Add header for the message
      *
      * @param array $headers Headers to set.
-     * @return $this
+     * @return self
      */
     public function addHeaders(array $headers)
     {
@@ -875,7 +875,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @param bool|string $template Template name or null to not use
      * @param bool|string $layout Layout name or null to not use
-     * @return array|$this
+     * @return array|self
      */
     public function template($template = false, $layout = false)
     {
@@ -897,7 +897,7 @@ class Email implements JsonSerializable, Serializable
      * View class for render
      *
      * @param string|null $viewClass View class name.
-     * @return string|$this
+     * @return string|self
      */
     public function viewRender($viewClass = null)
     {
@@ -913,7 +913,7 @@ class Email implements JsonSerializable, Serializable
      * Variables to be set on render
      *
      * @param array|null $viewVars Variables to set for view.
-     * @return array|$this
+     * @return array|self
      */
     public function viewVars($viewVars = null)
     {
@@ -929,7 +929,7 @@ class Email implements JsonSerializable, Serializable
      * Theme to use when rendering
      *
      * @param string|null $theme Theme name.
-     * @return string|$this
+     * @return string|self
      */
     public function theme($theme = null)
     {
@@ -945,7 +945,7 @@ class Email implements JsonSerializable, Serializable
      * Helpers to be used in render
      *
      * @param array|null $helpers Helpers list.
-     * @return array|$this
+     * @return array|self
      */
     public function helpers($helpers = null)
     {
@@ -961,7 +961,7 @@ class Email implements JsonSerializable, Serializable
      * Email format
      *
      * @param string|null $format Formatting string.
-     * @return string|$this
+     * @return string|self
      * @throws \InvalidArgumentException
      */
     public function emailFormat($format = null)
@@ -985,7 +985,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @param string|\Cake\Mailer\AbstractTransport|null $name Either the name of a configured
      *   transport, or a transport instance.
-     * @return \Cake\Mailer\AbstractTransport|$this
+     * @return \Cake\Mailer\AbstractTransport|self
      * @throws \LogicException When the chosen transport lacks a send method.
      * @throws \InvalidArgumentException When $name is neither a string nor an object.
      */
@@ -1064,7 +1064,7 @@ class Email implements JsonSerializable, Serializable
      * Message-ID
      *
      * @param bool|string|null $message True to generate a new Message-ID, False to ignore (not send in email), String to set as Message-ID
-     * @return bool|string|$this
+     * @return bool|string|self
      * @throws \InvalidArgumentException
      */
     public function messageId($message = null)
@@ -1088,7 +1088,7 @@ class Email implements JsonSerializable, Serializable
      * Domain as top level (the part after @)
      *
      * @param string|null $domain Manually set the domain for CLI mailing
-     * @return string|$this
+     * @return string|self
      */
     public function domain($domain = null)
     {
@@ -1146,7 +1146,7 @@ class Email implements JsonSerializable, Serializable
      * attachment compatibility with outlook email clients.
      *
      * @param string|array|null $attachments String with the filename or array with filenames
-     * @return array|$this Either the array of attachments when getting or $this when setting.
+     * @return array|self Either the array of attachments when getting or $this when setting.
      * @throws \InvalidArgumentException
      */
     public function attachments($attachments = null)
@@ -1194,7 +1194,7 @@ class Email implements JsonSerializable, Serializable
      * Add attachments
      *
      * @param string|array $attachments String with the filename or array with filenames
-     * @return $this
+     * @return self
      * @throws \InvalidArgumentException
      * @see \Cake\Mailer\Email::attachments()
      */
@@ -1301,7 +1301,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @param null|string|array $config String with configuration name, or
      *    an array with config or null to return current config.
-     * @return string|array|$this
+     * @return string|array|self
      */
     public function profile($config = null)
     {
@@ -1479,7 +1479,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Reset all the internal variables to be able to send out a new email.
      *
-     * @return $this
+     * @return self
      */
     public function reset()
     {
@@ -2036,7 +2036,7 @@ class Email implements JsonSerializable, Serializable
      * Configures an email instance object from serialized config.
      *
      * @param array $config Email configuration array.
-     * @return $this Configured email instance.
+     * @return self Configured email instance.
      */
     public function createFromArray($config)
     {

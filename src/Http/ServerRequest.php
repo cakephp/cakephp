@@ -885,7 +885,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * This modifies the parameters available through `$request->params`.
      *
      * @param array $params Array of parameters to merge in
-     * @return $this The current object, you can chain this method.
+     * @return self The current object, you can chain this method.
      */
     public function addParams(array $params)
     {
@@ -899,7 +899,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Provides an easy way to modify, here, webroot and base.
      *
      * @param array $paths Array of paths to merge in
-     * @return $this The current object, you can chain this method.
+     * @return self The current object, you can chain this method.
      */
     public function addPaths(array $paths)
     {
@@ -1441,7 +1441,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|null $name Dot separated name of the value to read/write
      * @param mixed ...$args The data to set (deprecated)
-     * @return mixed|$this Either the value being read, or this so you can chain consecutive writes.
+     * @return mixed|self Either the value being read, or this so you can chain consecutive writes.
      * @deprecated 3.4.0 Use withData() and getData() or getParsedBody() instead.
      */
     public function data($name = null, ...$args)
@@ -1495,7 +1495,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name The name of the parameter to get.
      * @param mixed ...$args Value to set (deprecated).
-     * @return mixed|$this The value of the provided parameter. Will
+     * @return mixed|self The value of the provided parameter. Will
      *   return false if the parameter doesn't exist or is falsey.
      * @deprecated 3.4.0 Use getParam() and withParam() instead.
      */
@@ -1679,7 +1679,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string|null $value Value to set. Default null.
      * @param string|null $default Default value when trying to retrieve an environment
      *   variable's value that does not exist. The value parameter must be null.
-     * @return $this|string|null This instance if used as setter,
+     * @return self|string|null This instance if used as setter,
      *   if used as getter either the environment value, or null if the value doesn't exist.
      */
     public function env($key, $value = null, $default = null)

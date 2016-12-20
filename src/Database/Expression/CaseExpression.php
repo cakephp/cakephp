@@ -83,7 +83,7 @@ class CaseExpression implements ExpressionInterface
      * @param array|\Cake\Database\ExpressionInterface $values associative array of values of each condition
      * @param array $types associative array of types to be associated with the values
      *
-     * @return $this
+     * @return self
      */
     public function add($conditions = [], $values = [], $types = [])
     {

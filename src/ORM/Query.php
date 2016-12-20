@@ -178,7 +178,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param array|\Cake\Database\ExpressionInterface|string|\Cake\ORM\Table|\Cake\ORM\Association $fields fields
      * to be added to the list.
      * @param bool $overwrite whether to reset fields with passed list or not
-     * @return $this
+     * @return self
      */
     public function select($fields = [], $overwrite = false)
     {
@@ -202,7 +202,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * This method returns the same query object for chaining.
      *
      * @param \Cake\ORM\Table $table The table to pull types from
-     * @return $this
+     * @return self
      */
     public function addDefaultTypes(Table $table)
     {
@@ -222,7 +222,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * and storing containments.
      *
      * @param \Cake\ORM\EagerLoader $instance The eager loader to use.
-     * @return $this
+     * @return self
      */
     public function setEagerLoader(EagerLoader $instance)
     {
@@ -253,7 +253,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @deprecated 3.4.0 Use setEagerLoader()/getEagerLoader() instead.
      * @param \Cake\ORM\EagerLoader|null $instance The eager loader to use. Pass null
      *   to get the current eagerloader.
-     * @return \Cake\ORM\EagerLoader|$this
+     * @return \Cake\ORM\EagerLoader|self
      */
     public function eagerLoader(EagerLoader $instance = null)
     {
@@ -373,7 +373,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param array|string|null $associations List of table aliases to be queried.
      * @param bool $override Whether override previous list with the one passed
      * defaults to merging previous list with the new one.
-     * @return array|$this
+     * @return array|self
      */
     public function contain($associations = null, $override = false)
     {
@@ -469,7 +469,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param string $assoc The association to filter by
      * @param callable|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
-     * @return $this
+     * @return self
      */
     public function matching($assoc, callable $builder = null)
     {
@@ -541,7 +541,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param string $assoc The association to join with
      * @param callable|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
-     * @return $this
+     * @return self
      */
     public function leftJoinWith($assoc, callable $builder = null)
     {
@@ -587,7 +587,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param string $assoc The association to join with
      * @param callable|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
-     * @return $this
+     * @return self
      * @see \Cake\ORM\Query::matching()
      */
     public function innerJoinWith($assoc, callable $builder = null)
@@ -650,7 +650,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param string $assoc The association to filter by
      * @param callable|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
-     * @return $this
+     * @return self
      */
     public function notMatching($assoc, callable $builder = null)
     {
@@ -868,7 +868,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * instead
      *
      * @param callable|null $counter The counter value
-     * @return $this
+     * @return self
      */
     public function counter($counter)
     {
@@ -884,7 +884,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @param bool|null $enable Use a boolean to set the hydration mode.
      *   Null will fetch the current hydration mode.
-     * @return bool|$this A boolean when reading, and $this when setting the mode.
+     * @return bool|self A boolean when reading, and $this when setting the mode.
      */
     public function hydrate($enable = null)
     {
@@ -901,7 +901,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * {@inheritDoc}
      *
-     * @return $this
+     * @return self
      * @throws \RuntimeException When you attempt to cache a non-select query.
      */
     public function cache($key, $config = 'default')
@@ -1086,7 +1086,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Can be combined with set() and where() methods to create update queries.
      *
      * @param string|null $table Unused parameter.
-     * @return $this
+     * @return self
      */
     public function update($table = null)
     {
@@ -1102,7 +1102,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Can be combined with the where() method to create delete queries.
      *
      * @param string|null $table Unused parameter.
-     * @return $this
+     * @return self
      */
     public function delete($table = null)
     {
@@ -1123,7 +1123,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @param array $columns The columns to insert into.
      * @param array $types A map between columns & their datatypes.
-     * @return $this
+     * @return self
      */
     public function insert(array $columns, array $types = [])
     {
@@ -1187,7 +1187,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * auto-fields with this method.
      *
      * @param bool|null $value The value to set or null to read the current value.
-     * @return bool|$this Either the current value or the query object.
+     * @return bool|self Either the current value or the query object.
      */
     public function autoFields($value = null)
     {

@@ -106,7 +106,7 @@ class ValuesExpression implements ExpressionInterface
      * Sets the columns to be inserted.
      *
      * @param array $cols Array with columns to be inserted.
-     * @return $this
+     * @return self
      */
     public function setColumns($cols)
     {
@@ -132,7 +132,7 @@ class ValuesExpression implements ExpressionInterface
      *
      * @deprecated 3.4.0 Use setColumns()/getColumns() instead.
      * @param array|null $cols Array with columns to be inserted.
-     * @return array|$this
+     * @return array|self
      */
     public function columns($cols = null)
     {
@@ -168,7 +168,7 @@ class ValuesExpression implements ExpressionInterface
      * Sets the values to be inserted.
      *
      * @param array $values Array with values to be inserted.
-     * @return $this
+     * @return self
      */
     public function setValues($values)
     {
@@ -197,7 +197,7 @@ class ValuesExpression implements ExpressionInterface
      * the currently stored values
      *
      * @param array|null $values Array with values to be inserted.
-     * @return array|$this
+     * @return array|self
      */
     public function values($values = null)
     {
@@ -213,7 +213,7 @@ class ValuesExpression implements ExpressionInterface
      * to insert records in the table.
      *
      * @param \Cake\Database\Query $query The query to set
-     * @return $this
+     * @return self
      */
     public function setQuery(Query $query)
     {
@@ -240,7 +240,7 @@ class ValuesExpression implements ExpressionInterface
      *
      * @deprecated 3.4.0 Use setQuery()/getQuery() instead.
      * @param \Cake\Database\Query|null $query The query to set
-     * @return \Cake\Database\Query|null|$this
+     * @return \Cake\Database\Query|null|self
      */
     public function query(Query $query = null)
     {

@@ -42,7 +42,7 @@ class Schema
      * Add multiple fields to the schema.
      *
      * @param array $fields The fields to add.
-     * @return $this
+     * @return self
      */
     public function addFields(array $fields)
     {
@@ -59,7 +59,7 @@ class Schema
      * @param string $name The field name.
      * @param string|array $attrs The attributes for the field, or the type
      *   as a string.
-     * @return $this
+     * @return self
      */
     public function addField($name, $attrs)
     {
@@ -76,7 +76,7 @@ class Schema
      * Removes a field to the schema.
      *
      * @param string $name The field to remove.
-     * @return $this
+     * @return self
      */
     public function removeField($name)
     {
