@@ -501,9 +501,7 @@ class View implements EventDispatcherInterface
             list ($plugin, $name) = pluginSplit($name, true);
             $name = str_replace('/', DIRECTORY_SEPARATOR, $name);
             $file = $plugin . 'Element' . DIRECTORY_SEPARATOR . $name . $this->_ext;
-            throw new MissingElementException(
-                sprintf('Element file "%s" is missing', $file)
-            );
+            throw new MissingElementException([$file]);
         }
     }
 

@@ -717,7 +717,7 @@ class Validation
     }
 
     /**
-     * Checks whether the length of a string is greater or equal to a minimal length.
+     * Checks whether the length of a string (in characters) is greater or equal to a minimal length.
      *
      * @param string $check The string to test
      * @param int $min The minimal string length
@@ -729,7 +729,7 @@ class Validation
     }
 
     /**
-     * Checks whether the length of a string is smaller or equal to a maximal length..
+     * Checks whether the length of a string (in characters) is smaller or equal to a maximal length.
      *
      * @param string $check The string to test
      * @param int $max The maximal string length
@@ -738,6 +738,30 @@ class Validation
     public static function maxLength($check, $max)
     {
         return mb_strlen($check) <= $max;
+    }
+
+    /**
+     * Checks whether the length of a string (in bytes) is greater or equal to a minimal length.
+     *
+     * @param string $check The string to test
+     * @param int $min The minimal string length (in bytes)
+     * @return bool Success
+     */
+    public static function minLengthBytes($check, $min)
+    {
+        return strlen($check) >= $min;
+    }
+
+    /**
+     * Checks whether the length of a string (in bytes) is smaller or equal to a maximal length.
+     *
+     * @param string $check The string to test
+     * @param int $max The maximal string length
+     * @return bool Success
+     */
+    public static function maxLengthBytes($check, $max)
+    {
+        return strlen($check) <= $max;
     }
 
     /**

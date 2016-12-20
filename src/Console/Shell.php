@@ -49,6 +49,13 @@ class Shell
     const CODE_ERROR = 1;
 
     /**
+     * Default success code
+     *
+     * @var int
+     */
+    const CODE_SUCCESS = 0;
+
+    /**
      * Output constant making verbose shells.
      *
      * @var int
@@ -881,7 +888,7 @@ class Shell
      * @throws \Cake\Console\Exception\StopException
      * @return void
      */
-    protected function _stop($status = 0)
+    protected function _stop($status = self::CODE_SUCCESS)
     {
         throw new StopException('Halting error reached', $status);
     }

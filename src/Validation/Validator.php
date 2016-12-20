@@ -1179,6 +1179,26 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a string length validation rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
+     * @param int $min The minimum length required.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::minLengthBytes()
+     * @return $this
+     */
+    public function minLengthBytes($field, $min, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'minLengthBytes', $extra + [
+            'rule' => ['minLengthBytes', $min]
+        ]);
+    }
+
+    /**
+     * Add a string length validation rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
      * @param int $max The maximum length allowed.
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
@@ -1192,6 +1212,26 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
         return $this->add($field, 'maxLength', $extra + [
             'rule' => ['maxLength', $max]
+        ]);
+    }
+
+    /**
+     * Add a string length validation rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param int $max The maximum length allowed.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::maxLengthBytes()
+     * @return $this
+     */
+    public function maxLengthBytes($field, $max, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'maxLengthBytes', $extra + [
+            'rule' => ['maxLengthBytes', $max]
         ]);
     }
 
