@@ -351,6 +351,42 @@ class Configure
     }
 
     /**
+     * Write new and overwrite existing values into an existing configuration file.
+     *
+     * ### Usage
+     *
+     * ```
+     * Configure::updateDump('my_config', 'default', ['Key.key' => 'value'])
+     * ```
+     *
+     * The third parameter ($values) follows the same syntax as Configure::write()
+     * but as an array of values to be created or updated.
+     *
+     * @param string $key Identifier of the config file to be updated.
+     * @param array $values Values to add or overwrite.
+     * @param string $config  The name of the configured adapter to dump data with.
+     * @return bool Success
+     */
+    public static function updateDump($key, array $values, $config = 'default')
+    {
+        $engine = static::_getEngine($config);
+        if (!$engine) {
+            throw new Exception(sprintf('There is no "%s" config engine.', $config));
+        }
+
+        $current = static::$_values;
+        static::clear();
+        static::load($key, $config);
+        foreach ($values as $str => $value) {
+            static::write($str, $value);
+        }
+        $newConfig = static::read();
+        static::dump($key, $config, array_keys($newConfig));
+
+        return (bool)static::write($current);
+    }
+
+    /**
      * Get the configured engine. Internally used by `Configure::load()` and `Configure::dump()`
      * Will create new PhpConfig for default if not configured yet.
      *
