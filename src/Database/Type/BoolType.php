@@ -29,23 +29,6 @@ class BoolType extends Type implements TypeInterface
 {
 
     /**
-     * Identifier name for this type
-     *
-     * @var string|null
-     */
-    protected $_name = null;
-
-    /**
-     * Constructor
-     *
-     * @param string|null $name The name identifying this type
-     */
-    public function __construct($name = null)
-    {
-        $this->_name = $name;
-    }
-
-    /**
      * Convert bool data into the database format.
      *
      * @param mixed $value The value to convert.

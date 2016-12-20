@@ -29,23 +29,6 @@ class FloatType extends Type implements TypeInterface
 {
 
     /**
-     * Identifier name for this type
-     *
-     * @var string|null
-     */
-    protected $_name = null;
-
-    /**
-     * Constructor
-     *
-     * @param string|null $name The name identifying this type
-     */
-    public function __construct($name = null)
-    {
-        $this->_name = $name;
-    }
-
-    /**
      * The class to use for representing number objects
      *
      * @var string
@@ -137,7 +120,7 @@ class FloatType extends Type implements TypeInterface
      * by using a locale aware parser.
      *
      * @param bool $enable Whether or not to enable
-     * @return $this
+     * @return self
      */
     public function useLocaleParser($enable = true)
     {

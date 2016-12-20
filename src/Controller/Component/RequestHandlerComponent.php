@@ -206,7 +206,7 @@ class RequestHandlerComponent extends Component
                 throw new RuntimeException(sprintf("Invalid callable for '%s' type.", $type));
             }
             if ($this->requestedWith($type)) {
-                $input = call_user_func_array([$request, 'input'], $handler);
+                $input = $request->input(...$handler);
                 $request->data = (array)$input;
             }
         }
@@ -593,15 +593,6 @@ class RequestHandlerComponent extends Component
         $response = $controller->response;
         if ($response->getMimeType($type)) {
             $this->respondAs($type, $options);
-        }
-
-        $helper = ucfirst($type);
-
-        if (!in_array($helper, $controller->helpers) && empty($controller->helpers[$helper])) {
-            $helperClass = App::className($helper, 'View/Helper', 'Helper');
-            if ($helperClass !== false) {
-                $controller->helpers[] = $helper;
-            }
         }
     }
 

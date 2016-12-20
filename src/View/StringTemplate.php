@@ -151,7 +151,7 @@ class StringTemplate
      * ```
      *
      * @param array $templates An associative list of named templates.
-     * @return $this
+     * @return self
      */
     public function add(array $templates)
     {

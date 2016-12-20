@@ -169,7 +169,7 @@ class ConsoleOptionParser
      *
      * @param string|null $command The command name this parser is for. The command name is used for generating help.
      * @param bool $defaultOptions Whether you want the verbose and quiet options set.
-     * @return $this
+     * @return self
      */
     public static function create($command, $defaultOptions = true)
     {
@@ -197,7 +197,7 @@ class ConsoleOptionParser
      *
      * @param array $spec The spec to build the OptionParser with.
      * @param bool $defaultOptions Whether you want the verbose and quiet options set.
-     * @return $this
+     * @return self
      */
     public static function buildFromArray($spec, $defaultOptions = true)
     {
@@ -244,7 +244,7 @@ class ConsoleOptionParser
      * Get or set the command name for shell/task.
      *
      * @param array|\Cake\Console\ConsoleOptionParser $spec ConsoleOptionParser or spec to merge with.
-     * @return $this
+     * @return self
      */
     public function merge($spec)
     {
@@ -274,7 +274,7 @@ class ConsoleOptionParser
      * Sets the command name for shell/task.
      *
      * @param string $text The text to set.
-     * @return $this
+     * @return self
      */
     public function setCommand($text)
     {
@@ -298,7 +298,7 @@ class ConsoleOptionParser
      *
      * @deprecated 3.4.0 Use setCommand()/getCommand() instead.
      * @param string|null $text The text to set, or null if you want to read
-     * @return string|$this If reading, the value of the command. If setting $this will be returned.
+     * @return string|self If reading, the value of the command. If setting $this will be returned.
      */
     public function command($text = null)
     {
@@ -314,7 +314,7 @@ class ConsoleOptionParser
      *
      * @param string|array $text The text to set. If an array the
      *   text will be imploded with "\n".
-     * @return $this
+     * @return self
      */
     public function setDescription($text)
     {
@@ -342,7 +342,7 @@ class ConsoleOptionParser
      * @deprecated 3.4.0 Use setDescription()/getDescription() instead.
      * @param string|array|null $text The text to set, or null if you want to read. If an array the
      *   text will be imploded with "\n".
-     * @return string|$this If reading, the value of the description. If setting $this will be returned.
+     * @return string|self If reading, the value of the description. If setting $this will be returned.
      */
     public function description($text = null)
     {
@@ -359,7 +359,7 @@ class ConsoleOptionParser
      *
      * @param string|array $text The text to set. If an array the text will
      *   be imploded with "\n".
-     * @return $this
+     * @return self
      */
     public function setEpilog($text)
     {
@@ -388,7 +388,7 @@ class ConsoleOptionParser
      * @deprecated 3.4.0 Use setEpilog()/getEpilog() instead.
      * @param string|array|null $text Text when setting or null when reading. If an array the text will
      *   be imploded with "\n".
-     * @return string|$this If reading, the value of the epilog. If setting $this will be returned.
+     * @return string|self If reading, the value of the epilog. If setting $this will be returned.
      */
     public function epilog($text = null)
     {
@@ -419,7 +419,7 @@ class ConsoleOptionParser
      * @param \Cake\Console\ConsoleInputOption|string $name The long name you want to the value to be parsed out as when options are parsed.
      *   Will also accept an instance of ConsoleInputOption
      * @param array $options An array of parameters that define the behavior of the option
-     * @return $this
+     * @return self
      */
     public function addOption($name, array $options = [])
     {
@@ -452,7 +452,7 @@ class ConsoleOptionParser
      * Remove an option from the option parser.
      *
      * @param string $name The option name to remove.
-     * @return $this
+     * @return self
      */
     public function removeOption($name)
     {
@@ -477,7 +477,7 @@ class ConsoleOptionParser
      * @param \Cake\Console\ConsoleInputArgument|string $name The name of the argument.
      *   Will also accept an instance of ConsoleInputArgument.
      * @param array $params Parameters for the argument, see above.
-     * @return $this
+     * @return self
      */
     public function addArgument($name, array $params = [])
     {
@@ -517,7 +517,7 @@ class ConsoleOptionParser
      *
      * @param array $args Array of arguments to add.
      * @see \Cake\Console\ConsoleOptionParser::addArgument()
-     * @return $this
+     * @return self
      */
     public function addArguments(array $args)
     {
@@ -538,7 +538,7 @@ class ConsoleOptionParser
      *
      * @param array $options Array of options to add.
      * @see \Cake\Console\ConsoleOptionParser::addOption()
-     * @return $this
+     * @return self
      */
     public function addOptions(array $options)
     {
@@ -566,7 +566,7 @@ class ConsoleOptionParser
      *
      * @param \Cake\Console\ConsoleInputSubcommand|string $name Name of the subcommand. Will also accept an instance of ConsoleInputSubcommand
      * @param array $options Array of params, see above.
-     * @return $this
+     * @return self
      */
     public function addSubcommand($name, array $options = [])
     {
@@ -592,7 +592,7 @@ class ConsoleOptionParser
      * Remove a subcommand from the option parser.
      *
      * @param string $name The subcommand name to remove.
-     * @return $this
+     * @return self
      */
     public function removeSubcommand($name)
     {
@@ -605,7 +605,7 @@ class ConsoleOptionParser
      * Add multiple subcommands at once.
      *
      * @param array $commands Array of subcommands.
-     * @return $this
+     * @return self
      */
     public function addSubcommands(array $commands)
     {

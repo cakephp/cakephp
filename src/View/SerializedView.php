@@ -22,7 +22,7 @@ use RuntimeException;
 /**
  * Parent class for view classes generating serialized outputs like JsonView and XmlView.
  */
-class SerializedView extends View
+abstract class SerializedView extends View
 {
 
     /**
@@ -64,6 +64,15 @@ class SerializedView extends View
             parent::loadHelpers();
         }
     }
+
+    /**
+     * Serialize view vars.
+     *
+     * @param array|string $serialize The name(s) of the view variable(s) that
+     *   need(s) to be serialized
+     * @return string The serialized data
+     */
+    abstract protected function _serialize($serialize);
 
     /**
      * Render view template or return serialized data.

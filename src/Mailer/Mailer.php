@@ -174,7 +174,7 @@ abstract class Mailer implements EventListenerInterface
      * Sets layout to use.
      *
      * @param string $layout Name of the layout to use.
-     * @return $this object.
+     * @return self object.
      */
     public function layout($layout)
     {
@@ -198,11 +198,11 @@ abstract class Mailer implements EventListenerInterface
      *
      * @param string $method Method name.
      * @param array $args Method arguments
-     * @return $this
+     * @return self
      */
     public function __call($method, $args)
     {
-        call_user_func_array([$this->_email, $method], $args);
+        $this->_email->$method(...$args);
 
         return $this;
     }
@@ -212,7 +212,7 @@ abstract class Mailer implements EventListenerInterface
      *
      * @param string|array $key Variable name or hash of view variables.
      * @param mixed $value View variable value.
-     * @return $this object.
+     * @return self object.
      */
     public function set($key, $value = null)
     {
@@ -245,7 +245,7 @@ abstract class Mailer implements EventListenerInterface
             $this->_email->viewBuilder()->template($action);
         }
 
-        call_user_func_array([$this, $action], $args);
+        $this->$action(...$args);
 
         $result = $this->_email->send();
         $this->reset();
@@ -256,7 +256,7 @@ abstract class Mailer implements EventListenerInterface
     /**
      * Reset email instance.
      *
-     * @return $this
+     * @return self
      */
     protected function reset()
     {

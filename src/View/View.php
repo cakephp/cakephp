@@ -998,18 +998,14 @@ class View implements EventDispatcherInterface
      *
      * @param string $viewFile Filename of the view
      * @param array $dataForView Data to include in rendered view.
-     *    If empty the current View::$viewVars will be used.
      * @return string Rendered output
      */
     protected function _evaluate($viewFile, $dataForView)
     {
-        $this->__viewFile = $viewFile;
         extract($dataForView);
         ob_start();
 
-        include $this->__viewFile;
-
-        unset($this->__viewFile);
+        include func_get_arg(0);
 
         return ob_get_clean();
     }

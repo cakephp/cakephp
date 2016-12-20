@@ -60,7 +60,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Removes a property or list of properties from this entity
      *
      * @param string|array $property The property to unset.
-     * @return \Cake\ORM\
+     * @return \Cake\Datasource\EntityInterface
      */
     public function unsetProperty($property);
 

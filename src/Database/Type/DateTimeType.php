@@ -79,18 +79,12 @@ class DateTimeType extends Type implements TypeInterface
     protected $_className;
 
     /**
-     * Identifier name for this type
-     *
-     * @var string|null
-     */
-    protected $_name = null;
-
-    /**
      * {@inheritDoc}
      */
     public function __construct($name = null)
     {
-        $this->_name = $name;
+        parent::__construct($name);
+
         $this->_setClassName(static::$dateTimeClass, 'DateTime');
     }
 
@@ -206,7 +200,7 @@ class DateTimeType extends Type implements TypeInterface
      * by using a locale aware parser.
      *
      * @param bool $enable Whether or not to enable
-     * @return $this
+     * @return self
      */
     public function useLocaleParser($enable = true)
     {
@@ -232,7 +226,7 @@ class DateTimeType extends Type implements TypeInterface
      *
      * @param string|array $format The format in which the string are passed.
      * @see \Cake\I18n\Time::parseDateTime()
-     * @return $this
+     * @return self
      */
     public function setLocaleFormat($format)
     {
@@ -244,7 +238,7 @@ class DateTimeType extends Type implements TypeInterface
     /**
      * Change the preferred class name to the FrozenTime implementation.
      *
-     * @return $this
+     * @return self
      */
     public function useImmutable()
     {
@@ -272,7 +266,7 @@ class DateTimeType extends Type implements TypeInterface
     /**
      * Change the preferred class name to the mutable Time implementation.
      *
-     * @return $this
+     * @return self
      */
     public function useMutable()
     {
@@ -290,6 +284,7 @@ class DateTimeType extends Type implements TypeInterface
      */
     protected function _parseValue($value)
     {
+        /* @var \Cake\I18n\Time $class */
         $class = $this->_className;
 
         return $class::parseDateTime($value, $this->_localeFormat);

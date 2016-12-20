@@ -93,7 +93,7 @@ class FormData implements Countable
      * @param string|\Cake\Http\Client\FormData $name The name of the part to add,
      *   or the part data object.
      * @param mixed $value The value for the part.
-     * @return $this
+     * @return self
      */
     public function add($name, $value = null)
     {
@@ -124,7 +124,7 @@ class FormData implements Countable
      * Iterates the parameter and adds all the key/values.
      *
      * @param array $data Array of data to add.
-     * @return $this
+     * @return self
      */
     public function addMany(array $data)
     {

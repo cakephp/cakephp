@@ -307,7 +307,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertNull($this->RequestHandler->ext);
 
-        call_user_func_array(['Cake\Routing\Router', 'extensions'], [$extensions, false]);
+        Router::extensions($extensions, false);
     }
 
     /**
@@ -627,9 +627,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testRenderAs()
     {
-        $this->assertFalse(in_array('Rss', $this->Controller->helpers));
         $this->RequestHandler->renderAs($this->Controller, 'rss');
-        $this->assertTrue(in_array('Rss', $this->Controller->helpers));
 
         $this->Controller->viewBuilder()->templatePath('request_handler_test\\rss');
         $this->RequestHandler->renderAs($this->Controller, 'js');

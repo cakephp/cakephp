@@ -31,6 +31,13 @@ abstract class BaseErrorHandler
 {
 
     /**
+     * Options to use for the Error handling.
+     *
+     * @var array
+     */
+    protected $_options = [];
+
+    /**
      * Display an error message in an environment specific way.
      *
      * Subclasses should implement this method to display the error as

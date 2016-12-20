@@ -77,7 +77,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * Sets the name of the SQL function to be invoke in this expression.
      *
      * @param string $name The name of the function
-     * @return $this
+     * @return self
      */
     public function setName($name)
     {
@@ -102,7 +102,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      *
      * @deprecated 3.4.0 Use setName()/getName() instead.
      * @param string|null $name The name of the function
-     * @return string|$this
+     * @return string|self
      */
     public function name($name = null)
     {
@@ -122,7 +122,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * passed arguments
      * @param bool $prepend Whether to prepend or append to the list of arguments
      * @see \Cake\Database\Expression\FunctionExpression::__construct() for more details.
-     * @return $this
+     * @return self
      */
     public function add($params, $types = [], $prepend = false)
     {

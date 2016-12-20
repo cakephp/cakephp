@@ -125,6 +125,13 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     public $trustProxy = false;
 
     /**
+     * Contents of php://input
+     *
+     * @var string
+     */
+    protected $_input;
+
+    /**
      * The built in detectors used with `is()` can be modified with `addDetector()`.
      *
      * There are several ways to specify a detector, see \Cake\Http\ServerRequest::addDetector() for the
@@ -587,7 +594,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
 
             array_unshift($params, $type);
 
-            return call_user_func_array([$this, 'is'], $params);
+            return $this->is(...$params);
         }
         throw new BadMethodCallException(sprintf('Method %s does not exist', $name));
     }
@@ -634,17 +641,16 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|array $type The type of request you want to check. If an array
      *   this method will return true if the request matches any type.
+     * @param array ...$args List of arguments
      * @return bool Whether or not the request is the type you are checking.
      */
-    public function is($type)
+    public function is($type, ...$args)
     {
         if (is_array($type)) {
             $result = array_map([$this, 'is'], $type);
 
             return count(array_filter($result)) > 0;
         }
-        $args = func_get_args();
-        array_shift($args);
 
         $type = strtolower($type);
         if (!isset(static::$_detectors[$type])) {
@@ -684,7 +690,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         if (is_callable($detect)) {
             array_unshift($args, $this);
 
-            return call_user_func_array($detect, $args);
+            return $detect(...$args);
         }
         if (isset($detect['env']) && $this->_environmentDetector($detect)) {
             return true;
@@ -879,7 +885,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * This modifies the parameters available through `$request->params`.
      *
      * @param array $params Array of parameters to merge in
-     * @return $this The current object, you can chain this method.
+     * @return self The current object, you can chain this method.
      */
     public function addParams(array $params)
     {
@@ -893,7 +899,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Provides an easy way to modify, here, webroot and base.
      *
      * @param array $paths Array of paths to merge in
-     * @return $this The current object, you can chain this method.
+     * @return self The current object, you can chain this method.
      */
     public function addPaths(array $paths)
     {
@@ -1435,7 +1441,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|null $name Dot separated name of the value to read/write
      * @param mixed ...$args The data to set (deprecated)
-     * @return mixed|$this Either the value being read, or this so you can chain consecutive writes.
+     * @return mixed|self Either the value being read, or this so you can chain consecutive writes.
      * @deprecated 3.4.0 Use withData() and getData() or getParsedBody() instead.
      */
     public function data($name = null, ...$args)
@@ -1489,7 +1495,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name The name of the parameter to get.
      * @param mixed ...$args Value to set (deprecated).
-     * @return mixed|$this The value of the provided parameter. Will
+     * @return mixed|self The value of the provided parameter. Will
      *   return false if the parameter doesn't exist or is falsey.
      * @deprecated 3.4.0 Use getParam() and withParam() instead.
      */
@@ -1673,7 +1679,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string|null $value Value to set. Default null.
      * @param string|null $default Default value when trying to retrieve an environment
      *   variable's value that does not exist. The value parameter must be null.
-     * @return $this|string|null This instance if used as setter,
+     * @return self|string|null This instance if used as setter,
      *   if used as getter either the environment value, or null if the value doesn't exist.
      */
     public function env($key, $value = null, $default = null)
@@ -1886,7 +1892,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Get the uploaded file from a dotted path.
      *
      * @param string $path The dot separated path to the file you want.
-     * @return null|Psr\Http\Message\UploadedFileInterface
+     * @return null|\Psr\Http\Message\UploadedFileInterface
      */
     public function getUploadedFile($path)
     {

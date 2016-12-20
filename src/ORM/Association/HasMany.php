@@ -106,7 +106,7 @@ class HasMany extends Association
      *
      * @param string $strategy the strategy name to be used
      * @throws \InvalidArgumentException if an invalid strategy name is passed
-     * @return $this
+     * @return self
      */
     public function setSaveStrategy($strategy)
     {
@@ -582,7 +582,7 @@ class HasMany extends Association
      * Sets the sort order in which target records should be returned.
      *
      * @param mixed $sort A find() compatible order clause
-     * @return $this
+     * @return self
      */
     public function setSort($sort)
     {

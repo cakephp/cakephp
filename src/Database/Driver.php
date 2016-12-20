@@ -301,7 +301,7 @@ abstract class Driver
      * in queries.
      *
      * @param bool $enable Whether to enable auto quoting
-     * @return $this
+     * @return self
      */
     public function enableAutoQuoting($enable)
     {

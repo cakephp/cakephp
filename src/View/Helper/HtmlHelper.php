@@ -151,7 +151,7 @@ class HtmlHelper extends Helper
      * @param string $name Text for link
      * @param string|array|null $link URL for link (if empty it won't be a link)
      * @param string|array $options Link attributes e.g. ['id' => 'selected']
-     * @return $this
+     * @return self
      * @see \Cake\View\Helper\HtmlHelper::link() for details on $options that can be used.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
      * @deprecated 3.3.6 Use the BreadcrumbsHelper instead

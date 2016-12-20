@@ -222,7 +222,7 @@ trait EntityTrait
      * first argument is also an array, in which case will be treated as $options
      * @param array $options options to be used for setting the property. Allowed option
      * keys are `setter` and `guard`
-     * @return $this
+     * @return self
      * @throws \InvalidArgumentException
      */
     public function set($property, $value = null, array $options = [])
@@ -385,7 +385,7 @@ trait EntityTrait
      * ```
      *
      * @param string|array $property The property to unset.
-     * @return $this
+     * @return self
      */
     public function unsetProperty($property)
     {
@@ -405,7 +405,7 @@ trait EntityTrait
      * will be returned. Otherwise the hidden properties will be set.
      *
      * @param null|array $properties Either an array of properties to hide or null to get properties
-     * @return array|$this
+     * @return array|self
      */
     public function hiddenProperties($properties = null)
     {
@@ -424,7 +424,7 @@ trait EntityTrait
      * will be returned. Otherwise the virtual properties will be set.
      *
      * @param null|array $properties Either an array of properties to treat as virtual or null to get properties
-     * @return array|$this
+     * @return array|self
      */
     public function virtualProperties($properties = null)
     {
@@ -757,7 +757,7 @@ trait EntityTrait
      * @param string|array|null $field The field to get errors for, or the array of errors to set.
      * @param string|array|null $errors The errors to be set for $field
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
-     * @return array|$this
+     * @return array|self
      */
     public function errors($field = null, $errors = null, $overwrite = false)
     {
@@ -876,7 +876,7 @@ trait EntityTrait
      * @param string|array|null $field The field to get invalid value for, or the value to set.
      * @param mixed|null $value The invalid value to be set for $field.
      * @param bool $overwrite Whether or not to overwrite pre-existing values for $field.
-     * @return $this|mixed
+     * @return self|mixed
      */
     public function invalid($field = null, $value = null, $overwrite = false)
     {
@@ -936,7 +936,7 @@ trait EntityTrait
      * @param string|array $property single or list of properties to change its accessibility
      * @param bool|null $set true marks the property as accessible, false will
      * mark it as protected.
-     * @return $this|bool
+     * @return self|bool
      */
     public function accessible($property, $set = null)
     {
@@ -971,7 +971,7 @@ trait EntityTrait
      * this entity came from if it is known.
      *
      * @param string|null $alias the alias of the repository
-     * @return string|$this
+     * @return string|self
      */
     public function source($alias = null)
     {

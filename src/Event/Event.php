@@ -175,7 +175,7 @@ class Event
      * Listeners can attach a result value to the event.
      *
      * @param mixed $value The value to set.
-     * @return $this
+     * @return self
      */
     public function setResult($value = null)
     {
@@ -205,7 +205,7 @@ class Event
      *
      * @param array|string $key An array will replace all payload data, and a key will set just that array item.
      * @param mixed $value The value to set.
-     * @return $this
+     * @return self
      */
     public function setData($key, $value = null)
     {

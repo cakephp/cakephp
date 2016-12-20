@@ -32,7 +32,7 @@ trait TypedResultTrait
      * If called without arguments, returns the current known type
      *
      * @param string|null $type The name of the type that is to be returned
-     * @return string|$this
+     * @return string|self
      */
     public function returnType($type = null)
     {

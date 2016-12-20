@@ -75,7 +75,7 @@ class RuleInvoker
      * Old options will be merged with the new ones.
      *
      * @param array $options The options to set.
-     * @return $this
+     * @return self
      */
     public function setOptions(array $options)
     {
@@ -90,7 +90,7 @@ class RuleInvoker
      * Only truthy names will be set.
      *
      * @param string $name The name to set.
-     * @return $this
+     * @return self
      */
     public function setName($name)
     {
@@ -104,7 +104,7 @@ class RuleInvoker
     /**
      * Invoke the rule.
      *
-     * @param \Cake\Datasouce\EntityInterface $entity The entity the rule
+     * @param \Cake\Datasource\EntityInterface $entity The entity the rule
      *   should apply to.
      * @param array $scope The rule's scope/options.
      * @return bool Whether or not the rule passed.

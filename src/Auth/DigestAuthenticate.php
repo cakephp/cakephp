@@ -83,8 +83,6 @@ class DigestAuthenticate extends BasicAuthenticate
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
-        $this->_registry = $registry;
-
         $this->config([
             'nonceLifetime' => 300,
             'secret' => Configure::read('Security.salt'),
@@ -93,7 +91,7 @@ class DigestAuthenticate extends BasicAuthenticate
             'opaque' => null,
         ]);
 
-        $this->config($config);
+        parent::__construct($registry, $config);
     }
 
     /**

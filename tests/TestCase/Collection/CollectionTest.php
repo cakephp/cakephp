@@ -1553,8 +1553,8 @@ class CollectionTest extends TestCase
         });
         $this->assertEquals([3, 8], $zipped->toList());
 
-        $zipped = $collection->zipWith([3, 4], [5, 6, 7], function () {
-            return array_sum(func_get_args());
+        $zipped = $collection->zipWith([3, 4], [5, 6, 7], function (...$args) {
+            return array_sum($args);
         });
         $this->assertEquals([9, 12], $zipped->toList());
     }
