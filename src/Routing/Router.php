@@ -999,7 +999,7 @@ class Router
     /**
      * Get the route scopes and their connected routes.
      *
-     * @return array
+     * @return \Cake\Routing\Route\Route[]
      */
     public static function routes()
     {

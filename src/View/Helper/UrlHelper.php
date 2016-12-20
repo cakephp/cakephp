@@ -21,7 +21,7 @@ use Cake\Utility\Inflector;
 use Cake\View\Helper;
 
 /**
- * UrlHelper class for generating urls.
+ * UrlHelper class for generating URLs.
  */
 class UrlHelper extends Helper
 {
@@ -35,7 +35,7 @@ class UrlHelper extends Helper
      *    escaped afterwards before being displayed.
      * - `fullBase`: If true, the full base URL will be prepended to the result
      *
-     * @param string|array|null $url Either a relative string url like `/products/view/23` or
+     * @param string|array|null $url Either a relative string URL like `/products/view/23` or
      *    an array of URL parameters. Using an array for URLs will allow you to leverage
      *    the reverse routing features of CakePHP.
      * @param array|bool $options Array of options; bool `full` for BC reasons.

@@ -1855,7 +1855,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name The attribute name.
      * @param mixed|null $default The default value if the attribute has not been set.
-     * @return static
+     * @return mixed
      */
     public function getAttribute($name, $default = null)
     {

@@ -24,7 +24,7 @@ use Cake\View\View;
  *
  * Text manipulations: Highlight, excerpt, truncate, strip of links, convert email addresses to mailto: links...
  *
- * @property HtmlHelper $Html
+ * @property \Cake\View\Helper\HtmlHelper $Html
  * @link http://book.cakephp.org/3.0/en/views/helpers/text.html
  * @see \Cake\Utility\Text
  */
