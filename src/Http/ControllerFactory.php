@@ -15,7 +15,6 @@
 namespace Cake\Http;
 
 use Cake\Core\App;
-use Cake\Network\Response;
 use Cake\Routing\Exception\MissingControllerException;
 use Cake\Utility\Inflector;
 use ReflectionClass;

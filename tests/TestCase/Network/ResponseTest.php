@@ -14,6 +14,8 @@
  */
 namespace Cake\Test\TestCase\Network;
 
+include_once CORE_TEST_CASES . DS . 'Http' . DS . 'server_mocks.php';
+
 use Cake\Network\Exception\NotFoundException;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -25,28 +27,6 @@ use Zend\Diactoros\Stream;
  */
 class ResponseTest extends TestCase
 {
-
-    /**
-     * Setup for tests
-     *
-     * @return void
-     */
-    public function setUp()
-    {
-        parent::setUp();
-        include_once __DIR__ . DS . 'mocks.php';
-    }
-
-    /**
-     * Cleanup after tests
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
     /**
      * Tests the request object constructor
      *
@@ -313,7 +293,7 @@ class ResponseTest extends TestCase
      */
     public function testSend()
     {
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_sendHeader', '_sendContent', '_setCookies'])
             ->getMock();
         $response->header([
@@ -438,7 +418,7 @@ class ResponseTest extends TestCase
      */
     public function testSendWithCallableBody()
     {
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_sendHeader'])
             ->getMock();
         $response->body(function () {
@@ -458,7 +438,7 @@ class ResponseTest extends TestCase
      */
     public function testSendWithCallableBodyWithReturn()
     {
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_sendHeader'])
             ->getMock();
         $response->body(function () {
@@ -744,7 +724,7 @@ class ResponseTest extends TestCase
      */
     public function testProtocol()
     {
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_sendHeader', '_sendContent'])
             ->getMock();
         $response->protocol('HTTP/1.0');
@@ -1131,7 +1111,7 @@ class ResponseTest extends TestCase
      */
     public function testNotModified()
     {
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_sendHeader', '_sendContent'])
             ->getMock();
         $response->body('something');
@@ -1182,7 +1162,7 @@ class ResponseTest extends TestCase
     public function testCheckNotModifiedByEtagStar()
     {
         $_SERVER['HTTP_IF_NONE_MATCH'] = '*';
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['notModified'])
             ->getMock();
         $response->etag('something');
@@ -1198,7 +1178,7 @@ class ResponseTest extends TestCase
     public function testCheckNotModifiedByEtagExact()
     {
         $_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['notModified'])
             ->getMock();
         $response->etag('something', true);
@@ -1215,7 +1195,7 @@ class ResponseTest extends TestCase
     {
         $_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
         $_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['notModified'])
             ->getMock();
         $response->etag('something', true);
@@ -1233,7 +1213,7 @@ class ResponseTest extends TestCase
     {
         $_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
         $_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['notModified'])
             ->getMock();
         $response->etag('something', true);
@@ -1251,7 +1231,7 @@ class ResponseTest extends TestCase
     {
         $_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something-else", "other"';
         $_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['notModified'])
             ->getMock();
         $response->etag('something', true);
@@ -1268,7 +1248,7 @@ class ResponseTest extends TestCase
     public function testCheckNotModifiedByTime()
     {
         $_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['notModified'])
             ->getMock();
         $response->modified('2012-01-01 00:00:00');
@@ -1285,7 +1265,7 @@ class ResponseTest extends TestCase
     {
         $_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
         $_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['notModified'])
             ->getMock();
         $response->expects($this->never())->method('notModified');

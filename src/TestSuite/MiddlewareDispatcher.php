@@ -15,7 +15,6 @@ namespace Cake\TestSuite;
 
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
-use Cake\Http\ResponseTransformer;
 use Cake\Http\Server;
 use Cake\Http\ServerRequestFactory;
 use LogicException;
@@ -71,7 +70,7 @@ class MiddlewareDispatcher
      * Run a request and get the response.
      *
      * @param \Cake\Http\ServerRequest $request The request to execute.
-     * @return \Cake\Network\Response The generated response.
+     * @return \Cake\Http\Response The generated response.
      */
     public function execute($request)
     {
