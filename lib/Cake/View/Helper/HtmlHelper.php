@@ -173,6 +173,10 @@ class HtmlHelper extends AppHelper {
 /**
  * Adds a link to the breadcrumbs array.
  *
+ * ### Options
+ *
+ * 'prepend' Prepend the breadcrumb to. Using this option
+ *
  * @param string $name Text for link
  * @param string $link URL for link (if empty it won't be a link)
  * @param string|array $options Link attributes e.g. array('id' => 'selected')
