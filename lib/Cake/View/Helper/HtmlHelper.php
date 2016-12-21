@@ -180,9 +180,9 @@ class HtmlHelper extends AppHelper {
  * @see HtmlHelper::link() for details on $options that can be used.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
  */
-	public function addCrumb($name, $link = null, $options = array()) {
+	public function addCrumb($name, $link = null, $options = null) {
 		$prepend = false;
-		if (isset($options['prepend'])) {
+		if (is_array($options) && isset($options['prepend'])) {
 			$prepend = $options['prepend'];
 			unset($options['prepend']);
 		}
