@@ -18,6 +18,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Error\ExceptionRenderer;
+use Cake\Error\ExceptionRendererInterface;
 use Cake\Log\Log;
 use Exception;
 
@@ -55,7 +56,7 @@ class ErrorHandlerMiddleware
     /**
      * Exception render.
      *
-     * @var \Cake\Error\ExceptionRenderer|string|null
+     * @var \Cake\Error\ExceptionRendererInterface|string|null
      */
     protected $exceptionRenderer;
 
@@ -127,7 +128,7 @@ class ErrorHandlerMiddleware
      * Get a renderer instance
      *
      * @param \Exception $exception The exception being rendered.
-     * @return \Cake\Error\BaseErrorHandler The exception renderer.
+     * @return \Cake\Error\ExceptionRendererInterface The exception renderer.
      * @throws \Exception When the renderer class cannot be found.
      */
     protected function getRenderer($exception)
@@ -139,7 +140,10 @@ class ErrorHandlerMiddleware
         if (is_string($this->exceptionRenderer)) {
             $class = App::className($this->exceptionRenderer, 'Error');
             if (!$class) {
-                throw new Exception("The '{$this->exceptionRenderer}' renderer class could not be found.");
+                throw new Exception(sprintf(
+                    "The '%s' renderer class could not be found.",
+                    $this->exceptionRenderer
+                ));
             }
 
             return new $class($exception);

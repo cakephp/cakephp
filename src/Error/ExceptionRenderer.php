@@ -47,7 +47,7 @@ use PDOException;
  * Using a subclass of ExceptionRenderer gives you full control over how Exceptions are rendered, you
  * can configure your class in your config/app.php.
  */
-class ExceptionRenderer
+class ExceptionRenderer implements ExceptionRendererInterface
 {
 
     /**
@@ -121,6 +121,7 @@ class ExceptionRenderer
 
         try {
             $class = App::className('Error', 'Controller', 'Controller');
+            /* @var \Cake\Controller\Controller $controller */
             $controller = new $class($request, $response);
             $controller->startupProcess();
             $startup = true;
