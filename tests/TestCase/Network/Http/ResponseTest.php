@@ -36,7 +36,7 @@ class ResponseTest extends TestCase
         $response = new Response($headers, 'winner!');
 
         $this->assertEquals('1.0', $response->getProtocolVersion());
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode());
         $this->assertEquals('OK', $response->getReasonPhrase());
         $this->assertEquals(
             'text/html;charset="UTF-8"',
@@ -63,7 +63,7 @@ class ResponseTest extends TestCase
         ];
         $response = new Response($headers, 'ok');
 
-        $this->assertEquals(200, $response->statusCode());
+        $this->assertSame(200, $response->statusCode());
         $this->assertEquals('1.0', $response->version());
         $this->assertEquals(
             'text/html;charset="UTF-8"',
@@ -86,7 +86,7 @@ class ResponseTest extends TestCase
         $response = new Response($headers, 'ok');
 
         $this->assertEquals('1.0', $response->version());
-        $this->assertEquals(200, $response->statusCode());
+        $this->assertSame(200, $response->statusCode());
     }
 
     /**
@@ -342,10 +342,10 @@ XML;
             'Content-Type: text/html'
         ];
         $response = new Response($headers, '');
-        $this->assertEquals(404, $response->statusCode());
-        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertSame(404, $response->statusCode());
+        $this->assertSame(404, $response->getStatusCode());
 
-        $this->assertEquals(404, $response->code);
+        $this->assertSame(404, $response->code);
         $this->assertTrue(isset($response->code));
     }
 
