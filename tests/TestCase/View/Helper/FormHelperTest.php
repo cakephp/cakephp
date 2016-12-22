@@ -108,7 +108,7 @@ class ValidateUsersTable extends Table
 /**
  * FormHelperTest class
  *
- * @property FormHelper $Form
+ * @property \Cake\View\Helper\FormHelper $Form
  */
 class FormHelperTest extends TestCase
 {
@@ -250,7 +250,7 @@ class FormHelperTest extends TestCase
             'val' => 1
         ];
         $mock = $this->getMockBuilder('Cake\View\Widget\WidgetInterface')->getMock();
-        $this->assertNull($this->Form->addWidget('test', $mock));
+        $this->Form->addWidget('test', $mock);
         $mock->expects($this->once())
             ->method('render')
             ->with($data)
@@ -272,7 +272,7 @@ class FormHelperTest extends TestCase
             'name' => 'test'
         ];
         $mock = $this->getMockBuilder('Cake\View\Widget\WidgetInterface')->getMock();
-        $this->assertNull($this->Form->addWidget('test', $mock));
+        $this->Form->addWidget('test', $mock);
 
         $mock->expects($this->at(0))
             ->method('render')
