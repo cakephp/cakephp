@@ -65,6 +65,7 @@
         "cakephp/database": "self.version",
         "cakephp/event": "self.version",
         "cakephp/filesystem": "self.version",
+        "cakephp/form": "self.version",
         "cakephp/i18n": "self.version",
         "cakephp/log": "self.version",
         "cakephp/orm": "self.version",
