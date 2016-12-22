@@ -200,12 +200,12 @@ class TimeHelper extends Helper
      *
      * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
-     * @return int Unix timestamp
+     * @return string UNIX timestamp
      * @see \Cake\I18n\Time::toUnix()
      */
     public function toUnix($dateString, $timezone = null)
     {
-        return (int)(new Time($dateString, $timezone))->toUnixString();
+        return (new Time($dateString, $timezone))->toUnixString();
     }
 
     /**
@@ -329,12 +329,12 @@ class TimeHelper extends Helper
      * Returns gmt as a UNIX timestamp.
      *
      * @param int|string|\DateTime|null $string UNIX timestamp, strtotime() valid string or DateTime object
-     * @return int UNIX timestamp
+     * @return string UNIX timestamp
      * @see \Cake\I18n\Time::gmt()
      */
     public function gmt($string = null)
     {
-        return (int)(new Time($string))->toUnixString();
+        return (new Time($string))->toUnixString();
     }
 
     /**
