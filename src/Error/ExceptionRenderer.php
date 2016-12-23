@@ -212,6 +212,7 @@ class ExceptionRenderer
 
         return $result;
     }
+
     /**
      * Get method name
      *
