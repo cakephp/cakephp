@@ -29,6 +29,15 @@ use RuntimeException;
  */
 class DateTimeType extends Type implements TypeInterface
 {
+    /**
+     * Identifier name for this type.
+     *
+     * (This property is declared here again so that the inheritance from
+     * Cake\Database\Type can be removed in the future.)
+     *
+     * @var string|null
+     */
+    protected $_name = null;
 
     /**
      * The class to use for representing date objects
@@ -83,7 +92,7 @@ class DateTimeType extends Type implements TypeInterface
      */
     public function __construct($name = null)
     {
-        parent::__construct($name);
+        $this->_name = $name;
 
         $this->_setClassName(static::$dateTimeClass, 'DateTime');
     }
