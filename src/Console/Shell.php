@@ -340,7 +340,7 @@ class Shell
      *      'extra' => ['param' => 'value']
      * ]);`
      *
-     * @return mixed The return of the other shell.
+     * @return int The cli command exit code. 0 is success.
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#invoking-other-shells-from-your-shell
      */
     public function dispatchShell()
