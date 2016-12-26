@@ -342,7 +342,7 @@ class Email implements JsonSerializable, Serializable
             $config = static::config('default');
         }
         if ($config) {
-            $this->profile($config);
+            $this->setProfile($config);
         }
         if (empty($this->headerCharset)) {
             $this->headerCharset = $this->charset;
@@ -999,6 +999,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Get/Set Subject.
      *
+     * @deprecated 3.4.0 Use setSubject()/getSubject() instead.
      * @param string|null $subject Subject string.
      * @return string|self
      */
@@ -2009,7 +2010,7 @@ class Email implements JsonSerializable, Serializable
 
         $this->_message = $this->_render($this->_wrap($content));
 
-        $transport = $this->transport();
+        $transport = $this->getTransport();
         if (!$transport) {
             $msg = 'Cannot send email, transport was not defined. Did you call transport() or define ' .
                 ' a transport in the set profile?';
@@ -2070,13 +2071,13 @@ class Email implements JsonSerializable, Serializable
         /* @var \Cake\Mailer\Email $instance */
         $instance = new $class($transportConfig);
         if ($to !== null) {
-            $instance->to($to);
+            $instance->setTo($to);
         }
         if ($subject !== null) {
-            $instance->subject($subject);
+            $instance->setSubject($subject);
         }
         if (is_array($message)) {
-            $instance->viewVars($message);
+            $instance->setViewVars($message);
             $message = null;
         } elseif ($message === null && array_key_exists('message', $config = $instance->profile())) {
             $message = $config['message'];
