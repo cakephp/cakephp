@@ -42,6 +42,11 @@ class StringTemplateTraitTest extends TestCase
 {
 
     /**
+     * @var TestStringTemplate
+     */
+    public $Template;
+
+    /**
      * setUp method
      *
      * @return void
@@ -62,13 +67,13 @@ class StringTemplateTraitTest extends TestCase
         $templates = [
             'text' => '<p>{{text}}</p>',
         ];
-        $this->Template->templates($templates);
+        $this->Template->setTemplates($templates);
 
         $this->assertEquals(
             [
                 'text' => '<p>{{text}}</p>'
             ],
-            $this->Template->templates(),
+            $this->Template->getTemplates(),
             'newly added template should be included in template list'
         );
     }
@@ -89,7 +94,7 @@ class StringTemplateTraitTest extends TestCase
             [
                 'text' => '<p>{{text}}</p>'
             ],
-            $this->Template->templates(),
+            $this->Template->getTemplates(),
             'Configured templates should be included in template list'
         );
     }
@@ -104,7 +109,7 @@ class StringTemplateTraitTest extends TestCase
         $templates = [
             'text' => '<p>{{text}}</p>',
         ];
-        $this->Template->templates($templates);
+        $this->Template->setTemplates($templates);
         $result = $this->Template->formatTemplate('text', [
             'text' => 'CakePHP'
         ]);
@@ -124,7 +129,7 @@ class StringTemplateTraitTest extends TestCase
         $templates = [
             'text' => '<p>{{text}}</p>',
         ];
-        $this->Template->templates($templates);
+        $this->Template->setTemplates($templates);
         $result = $this->Template->templater();
         $this->assertInstanceOf('Cake\View\StringTemplate', $result);
     }
