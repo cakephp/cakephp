@@ -485,7 +485,7 @@ class Email implements JsonSerializable, Serializable
             return $this->getReplyTo();
         }
 
-        return $this->setReplyTo($email. $name);
+        return $this->setReplyTo($email, $name);
     }
 
     /**
@@ -1829,7 +1829,7 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Add or read transport configuration.
+     * Sets transport configuration.
      *
      * Use this method to define transports to use in delivery profiles.
      * Once defined you cannot edit the configurations, and must use
@@ -1840,27 +1840,25 @@ class Email implements JsonSerializable, Serializable
      * closure will be evaluated for each message.
      *
      * The `className` is used to define the class to use for a transport.
-     * It can either be a short name, or a fully qualified classname
+     * It can either be a short name, or a fully qualified class name
      *
-     * @param string|array $key The configuration name to read/write. Or
+     * @param string|array $key The configuration name to write. Or
      *   an array of multiple transports to set.
      * @param array|\Cake\Mailer\AbstractTransport|null $config Either an array of configuration
-     *   data, or a transport instance.
-     * @return array|null Either null when setting or an array of data when reading.
+     *   data, or a transport instance. Null when using key as array.
+     * @return void
      * @throws \BadMethodCallException When modifying an existing configuration.
      */
-    public static function configTransport($key, $config = null)
+    public static function setConfigTransport($key, $config = null)
     {
-        if ($config === null && is_string($key)) {
-            return isset(static::$_transportConfig[$key]) ? static::$_transportConfig[$key] : null;
-        }
-        if ($config === null && is_array($key)) {
+        if (is_array($key)) {
             foreach ($key as $name => $settings) {
-                static::configTransport($name, $settings);
+                static::setConfigTransport($name, $settings);
             }
 
-            return null;
+            return;
         }
+
         if (isset(static::$_transportConfig[$key])) {
             throw new BadMethodCallException(sprintf('Cannot modify an existing config "%s"', $key));
         }
@@ -1876,6 +1874,52 @@ class Email implements JsonSerializable, Serializable
         }
 
         static::$_transportConfig[$key] = $config;
+    }
+
+    /**
+     * Gets current transport configuration.
+     *
+     * @return array|null Transport config.
+     */
+    public static function getConfigTransport($key)
+    {
+        return isset(static::$_transportConfig[$key]) ? static::$_transportConfig[$key] : null;
+    }
+
+    /**
+     * Add or read transport configuration.
+     *
+     * Use this method to define transports to use in delivery profiles.
+     * Once defined you cannot edit the configurations, and must use
+     * Email::dropTransport() to flush the configuration first.
+     *
+     * When using an array of configuration data a new transport
+     * will be constructed for each message sent. When using a Closure, the
+     * closure will be evaluated for each message.
+     *
+     * The `className` is used to define the class to use for a transport.
+     * It can either be a short name, or a fully qualified classname
+     *
+     * @deprecated 3.4.0 Use setConfigTransport()/getConfigTransport() instead.
+     * @param string|array $key The configuration name to read/write. Or
+     *   an array of multiple transports to set.
+     * @param array|\Cake\Mailer\AbstractTransport|null $config Either an array of configuration
+     *   data, or a transport instance.
+     * @return array|null Either null when setting or an array of data when reading.
+     * @throws \BadMethodCallException When modifying an existing configuration.
+     */
+    public static function configTransport($key, $config = null)
+    {
+        if ($config === null && is_string($key)) {
+            return static::getConfigTransport($key);
+        }
+        if ($config === null && is_array($key)) {
+            static::setConfigTransport($key);
+
+            return null;
+        }
+
+        static::setConfigTransport($key, $config);
     }
 
     /**
