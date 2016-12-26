@@ -84,6 +84,15 @@ class RequestHandlerComponent extends Component
     ];
 
     /**
+     * Set the layout to be used when rendering the AuthComponent's ajaxLogin element.
+     *
+     * @var string
+     * @deprecated 3.3.11 This feature property is not supported and will
+     *   be removed in 4.0.0
+     */
+    public $ajaxLayout;
+
+    /**
      * Constructor. Parses the accepted content types accepted by the client using HTTP_ACCEPT
      *
      * @param \Cake\Controller\ComponentRegistry $registry ComponentRegistry object.

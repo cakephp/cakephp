@@ -298,30 +298,7 @@ class FormHelper extends Helper
     }
 
     /**
-     * Returns if a field is required to be filled based on validation properties from the validating object.
-     *
-     * @param \Cake\Validation\ValidationSet $validationRules Validation rules set.
-     * @return bool true if field is required to be filled, false otherwise
-     */
-    protected function _isRequiredField($validationRules)
-    {
-        if (empty($validationRules) || count($validationRules) === 0) {
-            return false;
-        }
-        $validationRules->isUpdate($this->requestType === 'put');
-        foreach ($validationRules as $rule) {
-            if ($rule->skip()) {
-                continue;
-            }
-
-            return !$validationRules->isEmptyAllowed();
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns an HTML FORM element.
+     * Returns an HTML form element.
      *
      * ### Options:
      *

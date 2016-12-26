@@ -213,6 +213,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
 
         return $result;
     }
+
     /**
      * Get method name
      *
