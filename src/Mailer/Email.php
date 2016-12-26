@@ -2180,7 +2180,7 @@ class Email implements JsonSerializable, Serializable
 
         $this->viewBuilder()->setLayout('default');
         $this->viewBuilder()->setTemplate('');
-        $this->viewBuilder()->setClassname('Cake\View\View');
+        $this->viewBuilder()->setClassName('Cake\View\View');
         $this->viewVars = [];
         $this->viewBuilder()->setTheme(false);
         $this->viewBuilder()->setHelpers(['Html'], false);
