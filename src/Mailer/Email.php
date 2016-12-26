@@ -1880,6 +1880,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Gets current transport configuration.
      *
+     * @param string $key The configuration name to read.
      * @return array|null Transport config.
      */
     public static function getConfigTransport($key)
