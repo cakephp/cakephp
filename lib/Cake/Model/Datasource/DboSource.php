@@ -1125,10 +1125,8 @@ class DboSource extends DataSource {
 		}
 
 		if (!empty($queryData['fields'])) {
-			$noAssocFields = true;
 			$queryData['fields'] = $this->fields($Model, null, $queryData['fields']);
 		} else {
-			$noAssocFields = false;
 			$queryData['fields'] = $this->fields($Model);
 		}
 
@@ -1162,7 +1160,20 @@ class DboSource extends DataSource {
 					continue;
 				}
 
-				if ($noAssocFields) {
+				if (!empty($queryData['fields'])) {
+					foreach ($queryData['fields'] as $key => $field) {
+						$fieldExploded = explode('.', $field);
+						if (count($fieldExploded) == 2 && str_replace('`', '', $fieldExploded[0]) == $LinkModel->alias) {
+							if ($LinkModel->isVirtualField(str_replace('`', '', $fieldExploded[1]))) {
+								unset($queryData['fields'][$key]);
+								$vField = $LinkModel->getVirtualField(str_replace('`', '', $fieldExploded[1]));
+								$assocData['fields'][] = $vField . ' AS ' . str_replace('`', '', $fieldExploded[0]) . '__' . str_replace('`', '', $fieldExploded[1]);
+							} else {
+								$assocData['fields'][] = $field;
+							}
+						}
+					}
+				} else {
 					$assocData['fields'] = false;
 				}
 
