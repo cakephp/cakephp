@@ -84,16 +84,16 @@ class MailerTest extends TestCase
 
     public function testSet()
     {
-        $email = $this->getMockForEmail('viewVars');
+        $email = $this->getMockForEmail('setViewVars');
         $email->expects($this->once())
-            ->method('viewVars')
+            ->method('setViewVars')
             ->with(['key' => 'value']);
         $result = (new TestMailer($email))->set('key', 'value');
         $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
 
-        $email = $this->getMockForEmail('viewVars');
+        $email = $this->getMockForEmail('setViewVars');
         $email->expects($this->once())
-            ->method('viewVars')
+            ->method('setViewVars')
             ->with(['key' => 'value']);
         $result = (new TestMailer($email))->set(['key' => 'value']);
         $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
