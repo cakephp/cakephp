@@ -1180,8 +1180,6 @@ class DboSource extends DataSource {
 					} else {
 						$assocData['fields'] = $this->fields($LinkModel, $assoc, $assocData['fields']);
 					}
-				} else {
-					$assocData['fields'] = false;
 				}
 
 				$external = isset($assocData['external']);
