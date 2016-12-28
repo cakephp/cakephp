@@ -1175,6 +1175,11 @@ class DboSource extends DataSource {
 							}
 						}
 					}
+					if (empty($assocData['fields'])) {
+						$assocData['fields'] = false;
+					} else {
+						$assocData['fields'] = $this->fields($LinkModel, $assoc, $assocData['fields']);
+					}
 				} else {
 					$assocData['fields'] = false;
 				}
