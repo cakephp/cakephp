@@ -132,7 +132,7 @@ class TimestampBehavior extends Behavior
      *
      * @param \DateTime|null $ts Timestamp
      * @param bool $refreshTimestamp If true timestamp is refreshed.
-     * @return \Cake\I18n\Time
+     * @return \DateTime
      */
     public function timestamp(DateTime $ts = null, $refreshTimestamp = false)
     {

@@ -129,7 +129,7 @@ class Shell
     /**
      * Contains tasks to load and instantiate
      *
-     * @var array
+     * @var array|bool
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::$tasks
      */
     public $tasks = [];

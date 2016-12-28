@@ -966,8 +966,8 @@ class TreeBehavior extends Behavior
     protected function _getPrimaryKey()
     {
         if (!$this->_primaryKey) {
-            $this->_primaryKey = (array)$this->_table->primaryKey();
-            $this->_primaryKey = $this->_primaryKey[0];
+            $primaryKey = (array)$this->_table->primaryKey();
+            $this->_primaryKey = $primaryKey[0];
         }
 
         return $this->_primaryKey;

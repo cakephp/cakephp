@@ -102,7 +102,7 @@ class ConsoleInputSubcommand
     /**
      * Get the usage value for this option
      *
-     * @return mixed Either false or a ConsoleOptionParser
+     * @return \Cake\Console\ConsoleOptionParser|bool Either false or a ConsoleOptionParser
      */
     public function parser()
     {

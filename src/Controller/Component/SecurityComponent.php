@@ -637,7 +637,7 @@ class SecurityComponent extends Component
      *
      * @param array $expectedFields Expected fields
      * @param string $missingMessage Message template
-     * @return string Error message about expected fields
+     * @return string|null Error message about expected fields
      */
     protected function _debugExpectedFields($expectedFields = [], $missingMessage = '')
     {

@@ -51,6 +51,11 @@ class TextHelperTest extends TestCase
 {
 
     /**
+     * @var \Cake\View\Helper\TextHelper
+     */
+    public $Text;
+
+    /**
      * setUp method
      *
      * @return void
@@ -450,7 +455,7 @@ class TextHelperTest extends TestCase
     /**
      * Data provider for autoLinkEmail.
      *
-     * @return void
+     * @return array
      */
     public function autoLinkEmailProvider()
     {

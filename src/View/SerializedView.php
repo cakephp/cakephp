@@ -83,7 +83,7 @@ abstract class SerializedView extends View
      *   names. If true all view variables will be serialized. If unset normal
      *   view template will be rendered.
      *
-     * @param string|null $view The view being rendered.
+     * @param string|bool|null $view The view being rendered.
      * @param string|null $layout The layout being rendered.
      * @return string|null The rendered view.
      */

@@ -23,6 +23,8 @@ use Cake\View\View;
 
 /**
  * FlashHelperTest class
+ *
+ * @property \Cake\View\Helper\FlashHelper $Flash
  */
 class FlashHelperTest extends TestCase
 {

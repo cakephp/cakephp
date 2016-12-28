@@ -97,7 +97,7 @@ trait CookieCryptTrait
      * @param array $values Values to decrypt
      * @param string|bool $mode Encryption mode
      * @param string|null $key Used as the security salt if specified.
-     * @return string decrypted string
+     * @return string|array Decrypted values
      */
     protected function _decrypt($values, $mode, $key = null)
     {
@@ -119,7 +119,7 @@ trait CookieCryptTrait
      * @param string $value The value to decode & decrypt.
      * @param string|false $encrypt The encryption cipher to use.
      * @param string|null $key Used as the security salt if specified.
-     * @return string Decoded value.
+     * @return string|array Decoded values.
      */
     protected function _decode($value, $encrypt, $key)
     {
@@ -158,7 +158,7 @@ trait CookieCryptTrait
      * Maintains reading backwards compatibility with 1.x CookieComponent::_implode().
      *
      * @param string $string A string containing JSON encoded data, or a bare string.
-     * @return array Map of key and values
+     * @return string|array Map of key and values
      */
     protected function _explode($string)
     {

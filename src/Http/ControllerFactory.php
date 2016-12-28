@@ -62,16 +62,16 @@ class ControllerFactory
             strpos($controller, '.') !== false ||
             $firstChar === strtolower($firstChar)
         ) {
-            return $this->missingController($request);
+            $this->missingController($request);
         }
 
         $className = App::className($pluginPath . $controller, $namespace, 'Controller');
         if (!$className) {
-            return $this->missingController($request);
+            $this->missingController($request);
         }
         $reflection = new ReflectionClass($className);
         if ($reflection->isAbstract() || $reflection->isInterface()) {
-            return $this->missingController($request);
+            $this->missingController($request);
         }
 
         return $reflection->newInstance($request, $response, $controller);

@@ -60,7 +60,7 @@ class ValuesExpression implements ExpressionInterface
      * Whether or not values have been casted to expressions
      * already.
      *
-     * @var string
+     * @var bool
      */
     protected $_castedExpressions = false;
 

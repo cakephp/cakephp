@@ -29,6 +29,11 @@ class RssHelperTest extends TestCase
 {
 
     /**
+     * @var \Cake\View\Helper\RssHelper
+     */
+    public $Rss;
+
+    /**
      * setUp method
      *
      * @return void

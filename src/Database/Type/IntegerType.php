@@ -55,7 +55,7 @@ class IntegerType extends Type implements TypeInterface
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return int
+     * @return int|null
      */
     public function toDatabase($value, Driver $driver)
     {
@@ -75,7 +75,7 @@ class IntegerType extends Type implements TypeInterface
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return int
+     * @return int|null
      */
     public function toPHP($value, Driver $driver)
     {

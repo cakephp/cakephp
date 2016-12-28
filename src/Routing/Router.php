@@ -45,7 +45,7 @@ class Router
     /**
      * Default route class.
      *
-     * @var bool
+     * @var string
      */
     protected static $_defaultRouteClass = 'Cake\Routing\Route\Route';
 

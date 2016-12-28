@@ -568,7 +568,7 @@ class View implements EventDispatcherInterface
      * a plugin template/layout can be used instead of the app ones. If the chosen plugin is not found
      * the template will be located along the regular view path cascade.
      *
-     * @param string|null $view Name of view file to use
+     * @param string|false|null $view Name of view file to use
      * @param string|null $layout Layout to use.
      * @return string|null Rendered content or null if content already rendered and returned earlier.
      * @throws \Cake\Core\Exception\Exception If there is an error in the view.

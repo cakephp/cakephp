@@ -85,7 +85,7 @@ class CookieComponent extends Component
      *
      * Accessed in the controller using $this->Cookie->read('Name.key');
      *
-     * @var string
+     * @var array
      */
     protected $_values = [];
 
@@ -104,7 +104,7 @@ class CookieComponent extends Component
      * A reference to the Controller's Cake\Network\Response object.
      * Currently unused.
      *
-     * @var \Cake\Network\Response
+     * @var \Cake\Network\Response|null
      * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     protected $_response = null;

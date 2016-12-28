@@ -37,7 +37,7 @@ trait QueryTrait
      *
      * When set, query execution will be bypassed.
      *
-     * @var \Cake\Datasource\ResultSetInterface
+     * @var \Cake\Datasource\ResultSetInterface|null
      * @see \Cake\Datasource\QueryTrait::setResult()
      */
     protected $_results;
@@ -265,7 +265,7 @@ trait QueryTrait
      */
     public function all()
     {
-        if (isset($this->_results)) {
+        if ($this->_results !== null) {
             return $this->_results;
         }
 

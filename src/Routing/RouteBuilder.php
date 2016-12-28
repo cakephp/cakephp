@@ -189,7 +189,7 @@ class RouteBuilder
     /**
      * Get the parameter names/values for this scope.
      *
-     * @return string
+     * @return array
      */
     public function params()
     {

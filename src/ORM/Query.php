@@ -148,7 +148,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * When set, count query execution will be bypassed.
      *
-     * @var int
+     * @var int|null
      */
     protected $_resultsCount;
 

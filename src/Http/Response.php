@@ -479,7 +479,7 @@ class Response implements ResponseInterface
      * Sends the complete response to the client including headers and message body.
      * Will echo out the content in the response body.
      *
-     * @return void
+     * @return void|null
      * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     public function send()

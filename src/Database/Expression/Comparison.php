@@ -42,7 +42,7 @@ class Comparison implements ExpressionInterface, FieldInterface
     /**
      * The type to be used for casting the value to a database representation
      *
-     * @var string
+     * @var string|array
      */
     protected $_type;
 

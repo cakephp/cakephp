@@ -1618,7 +1618,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * iterated without having to call execute() manually, thus making it look like
      * a result set instead of the query itself.
      *
-     * @return \Iterator
+     * @return \Cake\Database\StatementInterface|null
      */
     public function getIterator()
     {

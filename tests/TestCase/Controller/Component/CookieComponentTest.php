@@ -29,6 +29,11 @@ class CookieComponentTest extends TestCase
 {
 
     /**
+     * @var \Cake\Controller\Component\CookieComponent
+     */
+    protected $Cookie;
+
+    /**
      * start
      *
      * @return void

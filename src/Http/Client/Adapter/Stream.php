@@ -29,7 +29,7 @@ class Stream
     /**
      * Context resource used by the stream API.
      *
-     * @var resource
+     * @var resource|null
      */
     protected $_context;
 
@@ -50,7 +50,7 @@ class Stream
     /**
      * The stream resource.
      *
-     * @var resource
+     * @var resource|null
      */
     protected $_stream;
 
@@ -71,7 +71,7 @@ class Stream
     public function send(Request $request, array $options)
     {
         $this->_stream = null;
-        $this->_context = [];
+        $this->_context = null;
         $this->_contextOptions = [];
         $this->_sslContextOptions = [];
         $this->_connectionErrors = [];

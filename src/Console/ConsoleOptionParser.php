@@ -100,7 +100,7 @@ class ConsoleOptionParser
     /**
      * Map of short -> long options, generated when using addOption()
      *
-     * @var string
+     * @var array
      */
     protected $_shortOptions = [];
 
@@ -501,7 +501,7 @@ class ConsoleOptionParser
             if ($a->isEqualTo($arg)) {
                 return $this;
             }
-            if ($options['required'] && !$a->isRequired()) {
+            if (!empty($options['required']) && !$a->isRequired()) {
                 throw new LogicException('A required argument cannot follow an optional one');
             }
         }

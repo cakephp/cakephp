@@ -37,7 +37,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * Statement instance implementation, such as PDOStatement
      * or any other custom implementation.
      *
-     * @var mixed
+     * @var \Cake\Database\StatementInterface
      */
     protected $_statement;
 

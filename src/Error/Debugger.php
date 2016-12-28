@@ -62,7 +62,7 @@ class Debugger
      * Templates used when generating trace or error strings. Can be global or indexed by the format
      * value used in $_outputFormat.
      *
-     * @var string
+     * @var array
      */
     protected $_templates = [
         'log' => [
@@ -98,7 +98,7 @@ class Debugger
     /**
      * Holds current output data when outputFormat is false.
      *
-     * @var string
+     * @var array
      */
     protected $_data = [];
 
@@ -163,13 +163,13 @@ class Debugger
      * Returns a reference to the Debugger singleton object instance.
      *
      * @param string|null $class Class name.
-     * @return object|Debugger
+     * @return object|\Cake\Error\Debugger
      */
     public static function getInstance($class = null)
     {
         static $instance = [];
         if (!empty($class)) {
-            if (!$instance || strtolower($class) != strtolower(get_class($instance[0]))) {
+            if (!$instance || strtolower($class) !== strtolower(get_class($instance[0]))) {
                 $instance[0] = new $class();
             }
         }

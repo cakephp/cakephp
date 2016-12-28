@@ -27,7 +27,15 @@ use Cake\View\View;
 class TimeHelperTest extends TestCase
 {
 
-    public $Time = null;
+    /**
+     * @var \Cake\View\Helper\TimeHelper
+     */
+    public $Time;
+
+    /**
+     * @var string
+     */
+    public $locale;
 
     /**
      * setUp method
@@ -183,7 +191,7 @@ class TimeHelperTest extends TestCase
      */
     public function testToUnix()
     {
-        $this->assertEquals(1397980800, $this->Time->toUnix('2014-04-20 08:00:00'));
+        $this->assertSame('1397980800', $this->Time->toUnix('2014-04-20 08:00:00'));
     }
 
     /**
@@ -599,7 +607,7 @@ class TimeHelperTest extends TestCase
      */
     public function assertTimeFormat($expected, $result)
     {
-        return $this->assertEquals(
+        $this->assertEquals(
             str_replace([',', '(', ')', ' at', ' à'], '', $expected),
             str_replace([',', '(', ')', ' at', ' à'], '', $result)
         );

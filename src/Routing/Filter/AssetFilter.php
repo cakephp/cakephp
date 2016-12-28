@@ -66,6 +66,7 @@ class AssetFilter extends DispatcherFilter
      */
     public function beforeDispatch(Event $event)
     {
+        /* @var \Cake\Http\ServerRequest $request */
         $request = $event->data('request');
 
         $url = urldecode($request->url);
@@ -77,6 +78,7 @@ class AssetFilter extends DispatcherFilter
         if ($assetFile === null || !file_exists($assetFile)) {
             return null;
         }
+        /* @var \Cake\Network\Response $response */
         $response = $event->data('response');
         $event->stopPropagation();
 

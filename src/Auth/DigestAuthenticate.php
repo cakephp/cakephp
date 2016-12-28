@@ -132,7 +132,7 @@ class DigestAuthenticate extends BasicAuthenticate
      * Gets the digest headers from the request/environment.
      *
      * @param \Cake\Http\ServerRequest $request Request object.
-     * @return array Array of digest information.
+     * @return array|bool Array of digest information.
      */
     protected function _getDigest(ServerRequest $request)
     {

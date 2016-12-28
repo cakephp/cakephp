@@ -52,7 +52,7 @@ class MapReduce implements IteratorAggregate
     /**
      * Holds the original data that needs to be processed
      *
-     * @var \Traversable
+     * @var \Traversable|null
      */
     protected $_data;
 
@@ -74,7 +74,7 @@ class MapReduce implements IteratorAggregate
     /**
      * Count of elements emitted during the Reduce phase
      *
-     * @var string
+     * @var int
      */
     protected $_counter = 0;
 

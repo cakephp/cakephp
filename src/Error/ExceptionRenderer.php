@@ -51,11 +51,18 @@ class ExceptionRenderer implements ExceptionRendererInterface
 {
 
     /**
+     * The exception being handled.
+     *
+     * @var \Exception
+     */
+    public $error;
+
+    /**
      * Controller instance.
      *
      * @var \Cake\Controller\Controller
      */
-    public $controller = null;
+    public $controller;
 
     /**
      * Template to render for Cake\Core\Exception\Exception
@@ -70,13 +77,6 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * @var string
      */
     public $method = '';
-
-    /**
-     * The exception being handled.
-     *
-     * @var \Exception
-     */
-    public $error = null;
 
     /**
      * Creates the controller to perform rendering on the error response.

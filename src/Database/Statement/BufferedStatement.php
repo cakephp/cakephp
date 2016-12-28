@@ -46,6 +46,7 @@ class BufferedStatement extends StatementDecorator
 
     /**
      * Current record pointer
+     *
      * @var int
      */
     protected $_counter = 0;

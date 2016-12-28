@@ -115,7 +115,7 @@ abstract class ServerRequestFactory extends BaseFactory
      *
      * @param string $base The base path to remove.
      * @param \Psr\Http\Message\UriInterface $uri The uri to update.
-     * @return \Psr\Http\Message\ServerRequestInterface The modified Uri instance.
+     * @return \Psr\Http\Message\UriInterface The modified Uri instance.
      */
     protected static function updatePath($base, $uri)
     {

@@ -163,7 +163,7 @@ class Route
      * Modifies defaults property so all necessary keys are set
      * and populates $this->names with the named routing elements.
      *
-     * @return array Returns a string regular expression of the compiled route.
+     * @return string Returns a string regular expression of the compiled route.
      */
     public function compile()
     {

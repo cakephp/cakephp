@@ -156,6 +156,7 @@ class DispatcherFilter implements EventListenerInterface
      */
     public function matches(Event $event)
     {
+        /* @var \Cake\Http\ServerRequest $request */
         $request = $event->data('request');
         $pass = true;
         if (!empty($this->_config['for'])) {
