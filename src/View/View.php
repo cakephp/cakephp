@@ -73,7 +73,9 @@ use RuntimeException;
 class View implements EventDispatcherInterface
 {
 
-    use CellTrait;
+    use CellTrait {
+        cell as public;
+    }
     use EventDispatcherTrait;
     use LogTrait;
     use RequestActionTrait;
