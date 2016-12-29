@@ -43,7 +43,7 @@ class WeakPasswordHasher extends AbstractPasswordHasher
         if (Configure::read('debug')) {
             Debugger::checkSecurityKeys();
         }
-        parent::config($config);
+        parent::__construct($config);
     }
 
     /**

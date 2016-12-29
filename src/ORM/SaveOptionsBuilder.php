@@ -52,6 +52,7 @@ class SaveOptionsBuilder extends ArrayObject
      */
     public function __construct(Table $table, array $options = [])
     {
+        parent::__construct();
         $this->_table = $table;
         $this->parseArrayOptions($options);
     }
