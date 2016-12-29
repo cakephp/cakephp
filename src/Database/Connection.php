@@ -24,7 +24,6 @@ use Cake\Database\Log\QueryLogger;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Datasource\ConnectionInterface;
-use Exception;
 
 /**
  * Represents a connection with a database server.
@@ -214,7 +213,7 @@ class Connection implements ConnectionInterface
             $this->_driver->connect();
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new MissingConnectionException(['reason' => $e->getMessage()]);
         }
     }
@@ -653,7 +652,7 @@ class Connection implements ConnectionInterface
 
         try {
             $result = $callback($this);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->rollback();
             throw $e;
         }
@@ -686,7 +685,7 @@ class Connection implements ConnectionInterface
 
         try {
             $result = $callback($this);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->enableForeignKeys();
             throw $e;
         }
