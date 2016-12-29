@@ -1166,10 +1166,16 @@ class DboSource extends DataSource {
 						if (count($fieldExploded) === 2 && trim($fieldExploded[0], " \`]['") === $LinkModel->alias) {
 							$modelName = trim($fieldExploded[0], " \`]['");
 							$fieldName = trim($fieldExploded[1], " \`]['");
+							$virtualFields = $LinkModel->getVirtualField();
+							if (!empty($virtualFields)) {
+								foreach ($virtualFields as $virtualFieldName => $virtualFieldValue) {
+									if ($fieldName === '*' || $fieldName === $virtualFieldName) {
+										$assocData['fields'][] = $virtualFieldValue . ' AS ' . $modelName . '__' . $virtualFieldName;
+									}
+								}
+							}
 							if ($LinkModel->isVirtualField($fieldName)) {
 								unset($queryData['fields'][$key]);
-								$vField = $LinkModel->getVirtualField($fieldName);
-								$assocData['fields'][] = $vField . ' AS ' . $modelName . '__' . $fieldName;
 							} else {
 								$assocData['fields'][] = $field;
 							}
