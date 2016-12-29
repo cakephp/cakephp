@@ -102,7 +102,7 @@ class AclNode extends Model {
 					'alias' => "{$type}{$i}",
 					'type' => 'INNER',
 					'conditions' => array(
-						$db->name("{$type}{$i}.alias") . ' = ' . $db->value($alias, 'string')
+						"{$type}{$i}.alias" => $alias
 					)
 				);
 
