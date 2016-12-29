@@ -84,7 +84,7 @@ class SessionStorage implements StorageInterface
 
         $this->_user = $this->_session->read($this->_config['key']) ?: false;
 
-        return $this->_user;
+        return $this->_user ?: null;
     }
 
     /**
