@@ -458,7 +458,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function implementedEvents()
     {
         return [
-            'Controller.initialize' => 'beforeFilter',
+            'Controller.beforeFilter' => 'beforeFilter',
             'Controller.beforeRender' => 'beforeRender',
             'Controller.beforeRedirect' => 'beforeRedirect',
             'Controller.shutdown' => 'afterFilter',
@@ -499,6 +499,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             return $event->result;
         }
         $event = $this->dispatchEvent('Controller.startup');
+        if ($event->result instanceof Response) {
+            return $event->result;
+        }
+        $event = $this->dispatchEvent('Controller.beforeFilter');
         if ($event->result instanceof Response) {
             return $event->result;
         }
