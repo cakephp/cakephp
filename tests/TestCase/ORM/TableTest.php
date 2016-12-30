@@ -2691,13 +2691,13 @@ class TableTest extends TestCase
     }
 
     /**
-     * Tests that when updating the primary key is not passed to the list of
-     * attributes to change
+     * Tests that when updating the primary key is passed to the list of
+     * attributes to change, the key is updated.
      *
      * @group save
      * @return void
      */
-    public function testSaveUpdatePrimaryKeyNotModified()
+    public function testSaveUpdatePrimaryKeyModified()
     {
         $table = $this->getMockBuilder('\Cake\ORM\Table')
             ->setMethods(['query'])
@@ -2729,7 +2729,7 @@ class TableTest extends TestCase
             'id' => 2,
             'username' => 'baggins'
         ], ['markNew' => false]);
-        $this->assertSame($entity, $table->save($entity));
+        $this->assertNotSame($entity, $table->save($entity));
     }
 
     /**
