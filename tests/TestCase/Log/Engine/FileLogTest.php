@@ -205,6 +205,32 @@ class FileLogTest extends TestCase
         $this->assertEquals(0, count(glob($path . 'debug.log.*')));
     }
 
+    public function testNoRotation()
+    {
+        $path = TMP . 'tests' . DS;
+        $this->_deleteLogs($path);
+
+        file_put_contents($path . 'error.log', "this text is under 35 bytes\n");
+        $log = new FileLog([
+            'path' => $path,
+            'size' => 35,
+            'rotate' => false
+        ]);
+        $log->log('warning', 'Test warning one');
+        $this->assertTrue(file_exists($path . 'error.log'));
+
+        $result = file_get_contents($path . 'error.log');
+        $this->assertRegExp('/Warning: Test warning one/', $result);
+        $this->assertEquals(0, count(glob($path . 'error.log.*')));
+
+        clearstatcache();
+        $log->log('warning', 'Test warning second');
+
+        $result = file_get_contents($path . 'error.log');
+        $this->assertRegExp('/Warning: Test warning second/', $result);
+        $this->assertEquals(0, count(glob($path . 'error.log.*')));
+    }
+
     public function testMaskSetting()
     {
         if (DS === '\\') {
