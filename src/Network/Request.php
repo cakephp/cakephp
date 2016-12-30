@@ -1226,6 +1226,94 @@ class Request implements ArrayAccess
 
         return $this->params[$name];
     }
+    
+    /**
+	 * Extracts values from $this->data or $this->query and returns them (by default)
+	 * as a prepared hash with dot notation as a key and value as the value to be used
+	 * for instance for feeding the ORM.
+	 *
+	 * The second parameter $options configures the extraction:
+	 * 1. The unnamed option [0] may be set to 'query' or 'data', and defaults to query,
+	 *    where 'query' will try to extract from the request query string and 'data'
+	 *    will try to extract from the request data array.
+	 *
+	 * 2. By default this method will return a hash with dot notation prefix as the key,
+	 *    and the extracted value as a value, as convenience to be used by the query builder.
+	 *    The dotnotation returned will only return one level up, e.g. extracting
+	 *    Users.Profiles.is_visible will return given value on that path with the key
+	 *    'Profiles.is_visible'. to be able to inject into ORM's matching() and alike.
+	 *    You may specify 'return' => 'fullPath' to return the full path instead.
+	 *    You may also specify option 'return' => 'value' to simply return the found value,
+	 *    without any hash instead.
+	 *     
+	 * 3. You may EITHER specify the option 'default' to set a default value in case the
+	 *    path's extraction returns no value OR you may specify an exception to be thrown
+	 *    in case no value is found. The exception may either be a short string like 'BadRequest'
+	 *    which will look the exception up in namespace \Cake\Network\Exception\*Exception
+	 *    or a fully qualified namespaced exception class.
+     *
+     * Examples:
+     *
+	 * Returns '1':
+	 * $this->request->extract('Users.status', ['return' => 'value']);
+	 *
+	 * Returns ['Profiles.status' => 'bar] for query-string ?Users[Profiles][status]=bar:
+	 * $this->request->extract('Users.Profiles.status', ['return' => 'value']);
+	 *
+	 * Examples for feeding the ORM:
+	 *
+	 * $query = $this->User->find();
+	 *
+	 * Supplies the ORM's where condition with the Users.status set via query string,
+	 * defaulting to 1 in case it is missing:
+     * $query->where($this->request->extract('Users.status', ['default' => 1]));
+	 *
+     * Explicitly fetches the User status from the query string with no default and
+	 * supplies the value to the ORM's condition call:
+	 * $query->where($this->request->extract('Users.status', ['query']));
+	 *
+     * Explicitly fetches the User status from the data and
+	 * and in case it is missing throws a BadRequestException:
+     * $query->where($this->request->extract('Users.status', ['data', 'missing' => 'BadRequest']));
+     *
+     * @param string|array $path The path being searched for in form of a dot separated string.
+     * @param array $options An array of $options to configure the extraction.
+     * @return array
+     */
+	public function extract($path, $options = array('query'))
+	{
+		if (empty($options[0]) || !in_array($options[0], ['query', 'data'])){
+			$options[0] = 'query';
+		}
+		$context = $options[0];
+		$value = \Cake\Utility\Hash::get($this->{$context}, $path);
+		if (empty($value) && $value !== '0') {
+			if (isset($options['default'])) {
+				$value = $options['default'];
+			} else if (!empty($options['missing'])) {
+				if (stripos($options['missing'], '\\') === 0) {
+					throw new $options['missing'];
+				} else {
+					$exception = '\Cake\Network\Exception\\' . $options['missing'] . 'Exception';
+					throw new $exception;
+				}
+			} 
+		}
+		if (!empty($options['return'])) {
+			if ($options['return'] === 'value') {
+				return $value;
+			}
+			if ($options['return'] === 'fullPath') {
+				return [$path => $value];
+			}
+		}
+		$dotCount = count(explode('.', $path)) - 1;
+		if ($dotCount > 1) {
+			$path = explode('.', $path);
+			$path = $path[$dotCount - 1] . '.' . $path[$dotCount];
+		}
+		return [$path => $value];
+	}
 
     /**
      * Read data from `php://input`. Useful when interacting with XML or JSON
