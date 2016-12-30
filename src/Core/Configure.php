@@ -383,7 +383,7 @@ class Configure
         $newConfig = static::read();
         static::dump($key, $config, array_keys($newConfig));
 
-        return (bool)static::write($current);
+        return static::write($current);
     }
 
     /**

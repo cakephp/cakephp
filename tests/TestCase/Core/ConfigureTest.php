@@ -559,7 +559,7 @@ class ConfigureTest extends TestCase
 
         $uniqueKeyName = 'UniqueKeyName';
         $result = Configure::updateDump('config_test', [$uniqueKeyName . '.testKey' => 'testValue'], 'test_Engine');
-        $this->assertTrue($result > 0);
+        $this->assertTrue($result);
 
         $fileContents = file_get_contents(TMP . 'config_test.php');
         $this->assertContains($uniqueKeyName, $fileContents);
