@@ -35,6 +35,11 @@ class I18nShell extends Shell
     public $tasks = ['Extract'];
 
     /**
+     * @var string[]
+     */
+    protected $_paths;
+
+    /**
      * Override main() for help message hook
      *
      * @return void

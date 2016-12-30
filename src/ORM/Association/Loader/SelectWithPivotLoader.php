@@ -171,7 +171,7 @@ class SelectWithPivotLoader extends SelectLoader
             if (!isset($result[$this->junctionProperty])) {
                 throw new RuntimeException(sprintf(
                     '"%s" is missing from the belongsToMany results. Results cannot be created.',
-                    $this->_junctionProperty
+                    $this->junctionProperty
                 ));
             }
 

@@ -19,6 +19,10 @@ use Cake\Core\Plugin;
 
 /**
  * Shell for tasks related to plugins.
+ *
+ * @property \Cake\Shell\Task\AssetsTask $Assets
+ * @property \Cake\Shell\Task\LoadTask $Load
+ * @property \Cake\Shell\Task\UnloadTask $Unload
  */
 class PluginShell extends Shell
 {
