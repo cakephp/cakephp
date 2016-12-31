@@ -475,6 +475,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller(null, new Response());
 
         $response = $Controller->redirect('http://cakephp.org', (int)$code);
+        $this->assertSame($response, $Controller->response);
         $this->assertEquals($code, $response->statusCode());
         $this->assertEquals('http://cakephp.org', $response->header()['Location']);
         $this->assertFalse($Controller->autoRender);
@@ -534,6 +535,7 @@ class ControllerTest extends TestCase
 
         $result = $Controller->redirect('http://cakephp.org');
         $this->assertSame($newResponse, $result);
+        $this->assertSame($newResponse, $Controller->response);
     }
 
     /**
