@@ -2425,6 +2425,3 @@ class Response implements ResponseInterface
         ];
     }
 }
-
-// Ensure backwards compat alias exists.
-class_exists('Cake\Network\Response');
