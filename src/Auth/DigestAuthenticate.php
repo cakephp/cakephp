@@ -81,8 +81,6 @@ class DigestAuthenticate extends BasicAuthenticate
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
-        $this->_registry = $registry;
-
         $this->config([
             'realm' => null,
             'qop' => 'auth',
@@ -90,7 +88,7 @@ class DigestAuthenticate extends BasicAuthenticate
             'opaque' => null,
         ]);
 
-        $this->config($config);
+        parent::__construct($registry, $config);
     }
 
     /**

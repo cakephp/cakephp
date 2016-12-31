@@ -1,0 +1,3 @@
+parameters:
+	autoload_files:
+		- %rootDir%/../../../src/basics.php

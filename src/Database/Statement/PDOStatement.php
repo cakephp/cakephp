@@ -15,7 +15,6 @@
 namespace Cake\Database\Statement;
 
 use PDO;
-use PDOStatement as Statement;
 
 /**
  * Decorator for \PDOStatement class mainly used for converting human readable
@@ -23,18 +22,6 @@ use PDOStatement as Statement;
  */
 class PDOStatement extends StatementDecorator
 {
-
-    /**
-     * Constructor
-     *
-     * @param \PDOStatement|null $statement Original statement to be decorated.
-     * @param \Cake\Database\Driver|null $driver Driver instance.
-     */
-    public function __construct(Statement $statement = null, $driver = null)
-    {
-        $this->_statement = $statement;
-        $this->_driver = $driver;
-    }
 
     /**
      * Assign a value to a positional or named variable in prepared query. If using
