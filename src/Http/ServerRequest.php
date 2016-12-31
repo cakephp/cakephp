@@ -41,7 +41,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Array of parameters parsed from the URL.
      *
      * @var array
-     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use param() instead.
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getParam() instead.
      */
     public $params = [
         'plugin' => null,
@@ -57,7 +57,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * data.
      *
      * @var array
-     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use data() instead.
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getData() instead.
      */
     public $data = [];
 
@@ -65,7 +65,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Array of querystring arguments
      *
      * @var array
-     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use query() instead.
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getQuery() instead.
      */
     public $query = [];
 
@@ -73,7 +73,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Array of cookie data.
      *
      * @var array
-     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use cookie() instead.
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getCookie() instead.
      */
     public $cookies = [];
 
@@ -607,7 +607,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string $name The property being accessed.
      * @return mixed Either the value of the parameter or null.
      * @deprecated 3.4.0 Accessing routing parameters through __get will removed in 4.0.0.
-     *   Use param() instead.
+     *   Use getParam() instead.
      */
     public function __get($name)
     {
