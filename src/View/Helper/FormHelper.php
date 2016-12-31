@@ -857,20 +857,20 @@ class FormHelper extends Helper
     }
 
     /**
-     * Generate a set of inputs for `$fields`. If $fields is empty the fields of current model
-     * will be used.
+     * Generate a set of controls for `$fields`. If $fields is empty the fields
+     * of current model will be used.
      *
-     * You can customize individual inputs through `$fields`.
+     * You can customize individual controls through `$fields`.
      * ```
-     * $this->Form->allInputs([
+     * $this->Form->allControls([
      *   'name' => ['label' => 'custom label']
      * ]);
      * ```
      *
-     * You can exclude fields by specifying them as false:
+     * You can exclude fields by specifying them as `false`:
      *
      * ```
-     * $this->Form->allInputs(['title' => false]);
+     * $this->Form->allControls(['title' => false]);
      * ```
      *
      * In the above example, no field would be generated for the title field.
@@ -881,12 +881,12 @@ class FormHelper extends Helper
      * - `fieldset` Set to false to disable the fieldset. You can also pass an array of params to be
      *    applied as HTML attributes to the fieldset tag. If you pass an empty array, the fieldset will
      *    be enabled
-     * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
+     * - `legend` Set to false to disable the legend for the generated control set. Or supply a string
      *    to customize the legend text.
-     * @return string Completed form inputs.
+     * @return string Completed form controls.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#generating-entire-forms
      */
-    public function allInputs(array $fields = [], array $options = [])
+    public function allControls(array $fields = [], array $options = [])
     {
         $context = $this->_getContext();
 
@@ -897,32 +897,53 @@ class FormHelper extends Helper
             Hash::normalize($fields)
         );
 
-        return $this->inputs($fields, $options);
+        return $this->controls($fields, $options);
     }
 
     /**
-     * Generate a set of inputs for `$fields` wrapped in a fieldset element.
+     * Generate a set of controls for `$fields`. If $fields is empty the fields
+     * of current model will be used.
      *
-     * You can customize individual inputs through `$fields`.
+     * @param array $fields An array of customizations for the fields that will be
+     *   generated. This array allows you to set custom types, labels, or other options.
+     * @param array $options Options array. Valid keys are:
+     * - `fieldset` Set to false to disable the fieldset. You can also pass an array of params to be
+     *    applied as HTML attributes to the fieldset tag. If you pass an empty array, the fieldset will
+     *    be enabled
+     * - `legend` Set to false to disable the legend for the generated control set. Or supply a string
+     *    to customize the legend text.
+     * @return string Completed form controls.
+     * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#generating-entire-forms
+     * @deprecated 3.4.0 Use FormHelper::allControls() instead.
+     */
+    public function allInputs(array $fields = [], array $options = [])
+    {
+        return $this->allControls($fields, $options);
+    }
+
+    /**
+     * Generate a set of controls for `$fields` wrapped in a fieldset element.
+     *
+     * You can customize individual controls through `$fields`.
      * ```
-     * $this->Form->inputs([
+     * $this->Form->controls([
      *   'name' => ['label' => 'custom label'],
      *   'email'
      * ]);
      * ```
      *
-     * @param array $fields An array of the fields to generate. This array allows you to set custom
-     *   types, labels, or other options.
+     * @param array $fields An array of the fields to generate. This array allows
+     *   you to set custom types, labels, or other options.
      * @param array $options Options array. Valid keys are:
-     * - `fieldset` Set to false to disable the fieldset. You can also pass an array of params to be
-     *    applied as HTML attributes to the fieldset tag. If you pass an empty array, the fieldset will
-     *    be enabled
-     * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
-     *    to customize the legend text.
+     * - `fieldset` Set to false to disable the fieldset. You can also pass an
+     *    array of params to be applied as HTML attributes to the fieldset tag.
+     *    If you pass an empty array, the fieldset will be enabled.
+     * - `legend` Set to false to disable the legend for the generated input set.
+     *    Or supply a string to customize the legend text.
      * @return string Completed form inputs.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#generating-entire-forms
      */
-    public function inputs(array $fields, array $options = [])
+    public function controls(array $fields, array $options = [])
     {
         $fields = Hash::normalize($fields);
 
@@ -932,10 +953,30 @@ class FormHelper extends Helper
                 continue;
             }
 
-            $out .= $this->input($name, (array)$opts);
+            $out .= $this->control($name, (array)$opts);
         }
 
         return $this->fieldset($out, $options);
+    }
+
+    /**
+     * Generate a set of controls for `$fields` wrapped in a fieldset element.
+     *
+     * @param array $fields An array of the fields to generate. This array allows
+     *   you to set custom types, labels, or other options.
+     * @param array $options Options array. Valid keys are:
+     * - `fieldset` Set to false to disable the fieldset. You can also pass an
+     *    array of params to be applied as HTML attributes to the fieldset tag.
+     *    If you pass an empty array, the fieldset will be enabled.
+     * - `legend` Set to false to disable the legend for the generated input set.
+     *    Or supply a string to customize the legend text.
+     * @return string Completed form inputs.
+     * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#generating-entire-forms
+     * @deprecated 3.4.0 Use FormHelper::controls() instead.
+     */
+    public function inputs(array $fields, array $options = [])
+    {
+        return $this->controls($fields, $options);
     }
 
     /**
@@ -989,7 +1030,7 @@ class FormHelper extends Helper
     }
 
     /**
-     * Generates a form input element complete with label and wrapper div
+     * Generates a form control element complete with label and wrapper div.
      *
      * ### Options
      *
@@ -1016,7 +1057,7 @@ class FormHelper extends Helper
      * @return string Completed form widget.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-form-inputs
      */
-    public function input($fieldName, array $options = [])
+    public function control($fieldName, array $options = [])
     {
         $options += [
             'type' => null,
@@ -1088,6 +1129,20 @@ class FormHelper extends Helper
         }
 
         return $result;
+    }
+
+    /**
+     * Generates a form control element complete with label and wrapper div.
+     *
+     * @param string $fieldName This should be "modelname.fieldname"
+     * @param array $options Each type of input takes different options.
+     * @return string Completed form widget.
+     * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-form-inputs
+     * @deprecated 3.4.0 Use FormHelper::control() instead.
+     */
+    public function input($fieldName, array $options = [])
+    {
+        return $this->control($fieldName, $options);
     }
 
     /**
