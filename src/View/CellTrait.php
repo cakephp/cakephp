@@ -55,7 +55,7 @@ trait CellTrait
      * @throws \Cake\View\Exception\MissingCellException If Cell class was not found.
      * @throws \BadMethodCallException If Cell class does not specified cell action.
      */
-    public function cell($cell, array $data = [], array $options = [])
+    protected function cell($cell, array $data = [], array $options = [])
     {
         $parts = explode('::', $cell);
 
