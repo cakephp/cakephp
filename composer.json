@@ -78,6 +78,7 @@
         ],
         "cs-check": "phpcs --colors -p ./src ./tests",
         "cs-fix": "phpcbf --colors ./src ./tests",
-        "test": "phpunit --colors=always"
+        "test": "phpunit --colors=always",
+        "test-coverage": "phpunit --colors=always --coverage-clover=clover.xml"
     }
 }
