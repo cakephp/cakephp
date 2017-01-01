@@ -402,9 +402,9 @@ class Response implements ResponseInterface
     /**
      * Reason Phrase
      *
-     * @var string|null
+     * @var string
      */
-    protected $_reasonPhrase = null;
+    protected $_reasonPhrase = 'OK';
 
     /**
      * Stream mode options.
@@ -877,7 +877,9 @@ class Response implements ResponseInterface
         if (!isset($this->_statusCodes[$code])) {
             throw new InvalidArgumentException('Unknown status code');
         }
-
+        if (isset($this->_statusCodes[$code])) {
+            $this->_reasonPhrase = $this->_statusCodes[$code];
+        }
         $this->_status = $code;
         $this->_setContentType();
 

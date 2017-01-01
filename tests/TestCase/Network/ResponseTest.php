@@ -130,18 +130,30 @@ class ResponseTest extends TestCase
     /**
      * Tests the statusCode method
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testStatusCode()
     {
         $response = new Response();
         $this->assertEquals(200, $response->statusCode());
-        $response->statusCode(404);
-        $this->assertEquals(404, $response->statusCode());
-        $this->assertEquals(500, $response->statusCode(500));
 
-        //Throws exception
+        $response->statusCode(404);
+        $this->assertEquals(404, $response->getStatusCode(), 'Sets shared state.');
+        $this->assertEquals(404, $response->statusCode());
+        $this->assertEquals('Not Found', $response->getReasonPhrase());
+
+        $this->assertEquals(500, $response->statusCode(500));
+    }
+
+    /**
+     * Test invalid status codes
+     *
+     * @expectedException \InvalidArgumentException
+     * @return void
+     */
+    public function testStatusCodeInvalid()
+    {
+        $response = new Response();
         $response->statusCode(1001);
     }
 
