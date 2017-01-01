@@ -163,8 +163,8 @@ class ResponseEmitter implements EmitterInterface
     protected function emitHeaders(ResponseInterface $response)
     {
         $cookies = [];
-        if (method_exists($response, 'cookie')) {
-            $cookies = $response->cookie();
+        if (method_exists($response, 'getCookies')) {
+            $cookies = $response->getCookies();
         }
 
         foreach ($response->getHeaders() as $name => $values) {
