@@ -1430,6 +1430,46 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test getCookies() and array data.
+     *
+     * @return void
+     */
+    public function testGetCookies()
+    {
+        $response = new Response();
+        $cookie = [
+            'name' => 'ignored key',
+            'value' => '[a,b,c]',
+            'expire' => 1000,
+            'path' => '/test',
+            'secure' => true
+        ];
+        $new = $response->withCookie('testing', 'a')
+            ->withCookie('test2', ['value' => 'b', 'path' => '/test', 'secure' => true]);
+        $expected = [
+            'testing' => [
+                'name' => 'testing',
+                'value' => 'a',
+                'expire' => null,
+                'path' => '/',
+                'domain' => '',
+                'secure' => false,
+                'httpOnly' => false
+            ],
+            'test2' => [
+                'name' => 'test2',
+                'value' => 'b',
+                'expire' => null,
+                'path' => '/test',
+                'domain' => '',
+                'secure' => true,
+                'httpOnly' => false
+            ]
+        ];
+        $this->assertEquals($expected, $new->getCookies());
+    }
+
+    /**
      * Test CORS
      *
      * @dataProvider corsData
