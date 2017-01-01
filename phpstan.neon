@@ -12,3 +12,10 @@ parameters:
 		- '#Access to undefined constant Memcached::OPT_CLIENT_MODE#'
 		- '#Access to undefined constant Memcached::DYNAMIC_CLIENT_MODE#'
 		- '#Access to undefined constant PDO::SQLSRV_ENCODING_BINARY#'
+
+services:
+    -
+        class: Cake\PHPStan\AssociationTableMixinClassReflectionExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+            - phpstan.broker.propertiesClassReflectionExtension
