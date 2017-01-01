@@ -953,7 +953,7 @@ class FormHelper extends Helper
                 continue;
             }
 
-            $out .= $this->control($name, (array)$opts);
+            $out .= $this->input($name, (array)$opts);
         }
 
         return $this->fieldset($out, $options);
