@@ -76,8 +76,9 @@
             "@cs-check",
             "@test"
         ],
-        "cs-check": "phpcs --colors -p --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests",
-        "cs-fix": "phpcbf --colors --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests",
-        "test": "phpunit --colors=always"
+        "cs-check": "phpcs --colors -p ./src ./tests",
+        "cs-fix": "phpcbf --colors ./src ./tests",
+        "test": "phpunit",
+        "test-coverage": "phpunit --coverage-clover=clover.xml"
     }
 }
