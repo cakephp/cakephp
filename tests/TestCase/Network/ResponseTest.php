@@ -2742,8 +2742,8 @@ class ResponseTest extends TestCase
     public function testGetReasonPhrase()
     {
         $response = new Response();
-        $reasonPhrase = $response->getReasonPhrase();
-        $this->assertNull($reasonPhrase);
+        $this->assertSame('OK', $response->getReasonPhrase());
+
         $response = $response->withStatus(404);
         $reasonPhrase = $response->getReasonPhrase();
         $this->assertEquals('Not Found', $reasonPhrase);
