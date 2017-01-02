@@ -282,9 +282,9 @@ class ConsoleOptionParserTest extends TestCase
     public function testAddOptionWithMultiple()
     {
         $parser = new ConsoleOptionParser('test', false);
-        $parser->addOption('source', ['multiple' => true]);
+        $parser->addOption('source', ['short' => 's', 'multiple' => true]);
 
-        $result = $parser->parse(['--source', 'mysql', '--source', 'postgres']);
+        $result = $parser->parse(['--source', 'mysql', '-s', 'postgres']);
         $expected = [
             'source' => [
                 'mysql',
