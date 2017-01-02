@@ -15,9 +15,9 @@
 namespace Cake\Test\TestCase;
 
 use Cake\Http\CallbackStream;
+use Cake\Http\Response;
 use Cake\Http\ResponseEmitter;
 use Cake\TestSuite\TestCase;
-use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Stream;
 
@@ -85,6 +85,52 @@ class ResponseEmitterTest extends TestCase
             'X-testing: value',
         ];
         $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
+    }
+
+    /**
+     * Test emitting responses with array cookes
+     *
+     * @return void
+     */
+    public function testEmitResponseArrayCookies()
+    {
+        $response = (new Response())
+            ->withCookie('simple', ['value' => 'val', 'secure' => true])
+            ->withAddedHeader('Set-Cookie', 'google=not=nice;Path=/accounts; HttpOnly')
+            ->withHeader('Content-Type', 'text/plain');
+        $response->getBody()->write('ok');
+
+        ob_start();
+        $this->emitter->emit($response);
+        $out = ob_get_clean();
+
+        $this->assertEquals('ok', $out);
+        $expected = [
+            'HTTP/1.1 200 OK',
+            'Content-Type: text/plain'
+        ];
+        $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
+        $expected = [
+            [
+                'name' => 'simple',
+                'value' => 'val',
+                'path' => '/',
+                'expire' => 0,
+                'domain' => '',
+                'secure' => true,
+                'httponly' => false
+            ],
+            [
+                'name' => 'google',
+                'value' => 'not=nice',
+                'path' => '/accounts',
+                'expire' => 0,
+                'domain' => '',
+                'secure' => false,
+                'httponly' => true
+            ],
+        ];
+        $this->assertEquals($expected, $GLOBALS['mockedCookies']);
     }
 
     /**

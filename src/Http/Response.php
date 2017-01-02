@@ -402,9 +402,9 @@ class Response implements ResponseInterface
     /**
      * Reason Phrase
      *
-     * @var string|null
+     * @var string
      */
-    protected $_reasonPhrase = null;
+    protected $_reasonPhrase = 'OK';
 
     /**
      * Stream mode options.
@@ -877,7 +877,9 @@ class Response implements ResponseInterface
         if (!isset($this->_statusCodes[$code])) {
             throw new InvalidArgumentException('Unknown status code');
         }
-
+        if (isset($this->_statusCodes[$code])) {
+            $this->_reasonPhrase = $this->_statusCodes[$code];
+        }
         $this->_status = $code;
         $this->_setContentType();
 
@@ -1925,7 +1927,7 @@ class Response implements ResponseInterface
      * @param array|null $options Either null to get all cookies, string for a specific cookie
      *  or array to set cookie.
      * @return mixed
-     * @deprecated 3.4.0 Use getCookie() and withCookie() instead.
+     * @deprecated 3.4.0 Use getCookie(), getCookies() and withCookie() instead.
      */
     public function cookie($options = null)
     {
@@ -2020,6 +2022,18 @@ class Response implements ResponseInterface
         }
 
         return null;
+    }
+
+    /**
+     * Get all cookies in the response.
+     *
+     * Returns an associative array of cookie name => cookie data.
+     *
+     * @return array
+     */
+    public function getCookies()
+    {
+        return $this->_cookies;
     }
 
     /**

@@ -130,18 +130,30 @@ class ResponseTest extends TestCase
     /**
      * Tests the statusCode method
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testStatusCode()
     {
         $response = new Response();
         $this->assertEquals(200, $response->statusCode());
-        $response->statusCode(404);
-        $this->assertEquals(404, $response->statusCode());
-        $this->assertEquals(500, $response->statusCode(500));
 
-        //Throws exception
+        $response->statusCode(404);
+        $this->assertEquals(404, $response->getStatusCode(), 'Sets shared state.');
+        $this->assertEquals(404, $response->statusCode());
+        $this->assertEquals('Not Found', $response->getReasonPhrase());
+
+        $this->assertEquals(500, $response->statusCode(500));
+    }
+
+    /**
+     * Test invalid status codes
+     *
+     * @expectedException \InvalidArgumentException
+     * @return void
+     */
+    public function testStatusCodeInvalid()
+    {
+        $response = new Response();
         $response->statusCode(1001);
     }
 
@@ -1430,6 +1442,46 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test getCookies() and array data.
+     *
+     * @return void
+     */
+    public function testGetCookies()
+    {
+        $response = new Response();
+        $cookie = [
+            'name' => 'ignored key',
+            'value' => '[a,b,c]',
+            'expire' => 1000,
+            'path' => '/test',
+            'secure' => true
+        ];
+        $new = $response->withCookie('testing', 'a')
+            ->withCookie('test2', ['value' => 'b', 'path' => '/test', 'secure' => true]);
+        $expected = [
+            'testing' => [
+                'name' => 'testing',
+                'value' => 'a',
+                'expire' => null,
+                'path' => '/',
+                'domain' => '',
+                'secure' => false,
+                'httpOnly' => false
+            ],
+            'test2' => [
+                'name' => 'test2',
+                'value' => 'b',
+                'expire' => null,
+                'path' => '/test',
+                'domain' => '',
+                'secure' => true,
+                'httpOnly' => false
+            ]
+        ];
+        $this->assertEquals($expected, $new->getCookies());
+    }
+
+    /**
      * Test CORS
      *
      * @dataProvider corsData
@@ -2690,8 +2742,8 @@ class ResponseTest extends TestCase
     public function testGetReasonPhrase()
     {
         $response = new Response();
-        $reasonPhrase = $response->getReasonPhrase();
-        $this->assertNull($reasonPhrase);
+        $this->assertSame('OK', $response->getReasonPhrase());
+
         $response = $response->withStatus(404);
         $reasonPhrase = $response->getReasonPhrase();
         $this->assertEquals('Not Found', $reasonPhrase);
