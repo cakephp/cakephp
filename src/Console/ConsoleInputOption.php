@@ -95,8 +95,7 @@ class ConsoleInputOption
         $default = '',
         $choices = [],
         $multiple = false
-    )
-    {
+    ) {
         if (is_array($name) && isset($name['name'])) {
             foreach ($name as $key => $value) {
                 $this->{'_' . $key} = $value;
