@@ -3020,6 +3020,22 @@ class RouterTest extends TestCase
     }
 
     /**
+     * Test the scope() options
+     *
+     * @return void
+     */
+    public function testScopeOptions()
+    {
+        $options = ['param' => 'value', 'routeClass' => 'InflectedRoute', 'extensions' => ['json']];
+        Router::scope('/path', $options, function ($routes) {
+            $this->assertSame('InflectedRoute', $routes->routeClass());
+            $this->assertSame(['json'], $routes->extensions());
+            $this->assertEquals('/path', $routes->path());
+            $this->assertEquals(['param' => 'value'], $routes->params());
+        });
+    }
+
+    /**
      * Test the scope() method
      *
      * @return void

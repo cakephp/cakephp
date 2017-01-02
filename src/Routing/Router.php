@@ -895,6 +895,16 @@ class Router
      * re-open or re-use a scope the connected routes will be merged with the
      * existing ones.
      *
+     * ### Options
+     *
+     * The `$params` array allows you to define options for the routing scope.
+     * The options listed below *are not* available to be used as routing defaults
+     *
+     * - `routeClass` The route class to use in this scope. Defaults to
+     *   `Router::defaultRouteClass()`
+     * - `extensions` The extensions to enable in this scope. Defaults to the globally
+     *   enabled extensions set with `Router::extensions()`
+     *
      * ### Example
      *
      * ```
@@ -906,12 +916,8 @@ class Router
      * The above would result in a `/blog/` route being created, with both the
      * plugin & controller default parameters set.
      *
-     * You can use Router::plugin() and Router::prefix() as shortcuts to creating
+     * You can use `Router::plugin()` and `Router::prefix()` as shortcuts to creating
      * specific kinds of scopes.
-     *
-     * Routing scopes will inherit the globally set extensions configured with
-     * Router::extensions(). You can also set valid extensions using
-     * `$routes->extensions()` in your closure.
      *
      * @param string $path The path prefix for the scope. This path will be prepended
      *   to all routes connected in the scoped collection.
@@ -923,9 +929,17 @@ class Router
      */
     public static function scope($path, $params = [], $callback = null)
     {
-        $builder = new RouteBuilder(static::$_collection, '/', [], [
+        $options = [
             'routeClass' => static::defaultRouteClass(),
             'extensions' => static::$_defaultExtensions,
+        ];
+        if (is_array($params)) {
+            $options = $params + $options;
+            unset($params['routeClass'], $params['extensions']);
+        }
+        $builder = new RouteBuilder(static::$_collection, '/', [], [
+            'routeClass' => $options['routeClass'],
+            'extensions' => $options['extensions'],
         ]);
         $builder->scope($path, $params, $callback);
     }
