@@ -46,6 +46,8 @@ class PostgresSchema extends BaseSchema
             c.collation_name,
             d.description as comment,
             ordinal_position,
+            c.numeric_precision as column_precision,
+            c.numeric_scale as column_scale,
             pg_get_serial_sequence(attr.attrelid::regclass::text, attr.attname) IS NOT NULL AS has_serial
         FROM information_schema.columns c
         INNER JOIN pg_catalog.pg_namespace ns ON (ns.nspname = table_schema)
@@ -158,6 +160,7 @@ class PostgresSchema extends BaseSchema
         if (!empty($row['has_serial'])) {
             $field['autoIncrement'] = true;
         }
+
         $field += [
             'default' => $this->_defaultValue($row['default']),
             'null' => $row['null'] === 'YES' ? true : false,
@@ -165,6 +168,11 @@ class PostgresSchema extends BaseSchema
             'comment' => $row['comment']
         ];
         $field['length'] = $row['char_length'] ?: $field['length'];
+
+        if ($field['type'] === 'numeric' || $field['type'] === 'decimal') {
+            $field['length'] = $row['column_precision'];
+            $field['precision'] = $row['column_scale'] ? $row['column_scale'] : null;
+        }
         $schema->addColumn($row['name'], $field);
     }
 

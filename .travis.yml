@@ -94,7 +94,7 @@ script:
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.0 ]]; then export CODECOVERAGE=1; vendor/bin/phpunit --coverage-clover=clover.xml; fi
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.0 ]]; then vendor/bin/phpunit; fi
 
-  - if [[ $PHPCS = 1 ]]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi
+  - if [[ $PHPCS = 1 ]]; then composer cs-check; fi
   - if [[ $PHPCS = 3 ]]; then vendor/bin/phpcs -p -s --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi
   - if [[ $PHPSTAN = 1 ]]; then composer require --dev phpstan/phpstan:dev-master && vendor/bin/phpstan analyse -c phpstan.neon -l 0 src; fi
 
