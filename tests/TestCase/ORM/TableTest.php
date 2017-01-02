@@ -197,6 +197,24 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test that composeField() works.
+     *
+     * @return void
+     */
+    public function testComposeField()
+    {
+        $table = new Table(['alias' => 'Users']);
+        $this->assertEquals('Users.id', $table->composeField('id'));
+        $this->assertEquals('Users.id', $table->composeField('Users.id'));
+
+        $this->assertEquals('Users.id <', $table->composeField('id', '<'));
+        $this->assertEquals('Users.id <', $table->composeField('Users.id', '<'));
+
+        $this->assertEquals('Users.id <', $table->composeField('id <', '<'));
+        $this->assertEquals('Users.id <', $table->composeField('Users.id <', '<'));
+    }
+
+    /**
      * Tests connection method
      *
      * @return void

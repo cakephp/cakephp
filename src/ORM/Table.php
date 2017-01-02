@@ -404,6 +404,24 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Compose field based on name and operator.
+     *
+     * If `$operator` is already found in `$field` it will result in no-op.
+     *
+     * @param string $field The field to compose
+     * @param string|null $operator Operator to use as postfix
+     * @return string
+     */
+    public function composeField($field, $operator = null)
+    {
+        if ($operator === null || strpos($field, $operator) !== false) {
+            return $this->aliasField($field);
+        }
+
+        return sprintf('%s %s', $this->aliasField($field), $operator);
+    }
+
+    /**
      * Returns the connection instance or sets a new one
      *
      * @param \Cake\Datasource\ConnectionInterface|null $conn The new connection instance
