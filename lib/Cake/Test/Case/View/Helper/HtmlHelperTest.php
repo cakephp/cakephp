@@ -1500,6 +1500,28 @@ class HtmlHelperTest extends CakeTestCase {
 			'Fourth'
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Html->addCrumb('Zeroth', '#zeroth', array('prepend' => true));
+
+		$result = $this->Html->getCrumbs();
+		$expected = array(
+			array('a' => array('href' => '#zeroth')),
+			'Zeroth',
+			'/a',
+			'&raquo;',
+			array('a' => array('href' => '#first')),
+			'First',
+			'/a',
+			'&raquo;',
+			array('a' => array('href' => '#second')),
+			'Second',
+			'/a',
+			'&raquo;',
+			array('a' => array('href' => '#third')),
+			'Third',
+			'/a',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
