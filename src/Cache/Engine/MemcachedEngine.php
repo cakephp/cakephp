@@ -89,6 +89,11 @@ class MemcachedEngine extends CacheEngine
     protected $_serializers = [];
 
     /**
+     * @var string[]
+     */
+    protected $_compiledGroupNames = [];
+
+    /**
      * Initialize the Cache Engine
      *
      * Called automatically by the cache frontend

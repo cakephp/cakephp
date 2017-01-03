@@ -48,6 +48,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Cake\\PHPStan\\": "tests/PHPStan",
             "Cake\\Test\\": "tests",
             "TestApp\\": "tests/test_app/TestApp",
             "TestPlugin\\": "tests/test_app/Plugin/TestPlugin/src",

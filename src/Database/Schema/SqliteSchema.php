@@ -31,6 +31,13 @@ class SqliteSchema extends BaseSchema
     protected $_constraintsIdMap = [];
 
     /**
+     * Whether there is any table in this connection to SQLite containing sequences.
+     *
+     * @var bool
+     */
+    protected $_hasSequences;
+
+    /**
      * Convert a column definition to the abstract types.
      *
      * The returned type will be a type that

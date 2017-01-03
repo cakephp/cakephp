@@ -1,3 +1,21 @@
 parameters:
 	autoload_files:
 		- %rootDir%/../../../src/basics.php
+	ignoreErrors:
+		- '#Function wincache_ucache_[a-zA-Z0-9_]+ not found#'
+		- '#Function xcache_[a-zA-Z0-9_]+ not found#'
+		- '#Function fastcgi_[a-zA-Z0-9_]+ not found#'
+		- '#Function apache_[a-zA-Z0-9_]+ not found#'
+		- '#Cake\\Database\\Type\\[a-zA-Z0-9_]+Type::__construct\(\) does not call parent constructor from Cake\\Database\\Type#'
+		- '#Constructor of class Cake\\[a-zA-Z0-9_\\]+ has an unused parameter#'
+		- '#Call to an undefined method Cake\\Console\\Shell::main\(\)#'
+		- '#Access to undefined constant Memcached::OPT_CLIENT_MODE#'
+		- '#Access to undefined constant Memcached::DYNAMIC_CLIENT_MODE#'
+		- '#Access to undefined constant PDO::SQLSRV_ENCODING_BINARY#'
+
+services:
+    -
+        class: Cake\PHPStan\AssociationTableMixinClassReflectionExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+            - phpstan.broker.propertiesClassReflectionExtension

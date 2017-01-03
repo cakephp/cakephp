@@ -30,6 +30,16 @@ class QueryCacher
 {
 
     /**
+     * @var string|callable
+     */
+    protected $_key;
+
+    /**
+     * @var string|CacheEngine
+     */
+    protected $_config;
+
+    /**
      * Constructor.
      *
      * @param string|\Closure $key The key or function to generate a key.
