@@ -343,6 +343,8 @@ class ConsoleOptionParser
      * - `boolean` - The option uses no value, it's just a boolean switch. Defaults to false.
      *    If an option is defined as boolean, it will always be added to the parsed params. If no present
      *    it will be false, if present it will be true.
+     * - `multiple` - The option can be provided multiple times. The parsed option
+     *   will be an array of values when this option is enabled.
      * - `choices` A list of valid choices for this option. If left empty all values are valid..
      *   An exception will be raised when parse() encounters an invalid value.
      *
