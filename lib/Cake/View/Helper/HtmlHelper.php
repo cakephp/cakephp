@@ -175,7 +175,7 @@ class HtmlHelper extends AppHelper {
  *
  * ### Options
  *
- * 'prepend' Prepend the breadcrumb to. Using this option
+ * - 'prepend' Prepend the breadcrumb to. Using this option
  *
  * @param string $name Text for link
  * @param string $link URL for link (if empty it won't be a link)
