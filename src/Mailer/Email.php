@@ -333,10 +333,10 @@ class Email implements JsonSerializable, Serializable
         }
 
         $this->viewBuilder()
-            ->className('Cake\View\View')
-            ->template('')
-            ->layout('default')
-            ->helpers(['Html']);
+            ->setClassName('Cake\View\View')
+            ->setTemplate('')
+            ->setLayout('default')
+            ->setHelpers(['Html']);
 
         if ($config === null) {
             $config = static::config('default');
@@ -881,13 +881,13 @@ class Email implements JsonSerializable, Serializable
     {
         if ($template === false) {
             return [
-                'template' => $this->viewBuilder()->template(),
-                'layout' => $this->viewBuilder()->layout()
+                'template' => $this->viewBuilder()->getTemplate(),
+                'layout' => $this->viewBuilder()->getLayout()
             ];
         }
-        $this->viewBuilder()->template($template ?: '');
+        $this->viewBuilder()->setTemplate($template ?: '');
         if ($layout !== false) {
-            $this->viewBuilder()->layout($layout ?: false);
+            $this->viewBuilder()->setLayout($layout ?: false);
         }
 
         return $this;
@@ -902,9 +902,9 @@ class Email implements JsonSerializable, Serializable
     public function viewRender($viewClass = null)
     {
         if ($viewClass === null) {
-            return $this->viewBuilder()->className();
+            return $this->viewBuilder()->getClassName();
         }
-        $this->viewBuilder()->className($viewClass);
+        $this->viewBuilder()->setClassName($viewClass);
 
         return $this;
     }
@@ -934,9 +934,9 @@ class Email implements JsonSerializable, Serializable
     public function theme($theme = null)
     {
         if ($theme === null) {
-            return $this->viewBuilder()->theme();
+            return $this->viewBuilder()->getTheme();
         }
-        $this->viewBuilder()->theme($theme);
+        $this->viewBuilder()->setTheme($theme);
 
         return $this;
     }
@@ -950,9 +950,9 @@ class Email implements JsonSerializable, Serializable
     public function helpers($helpers = null)
     {
         if ($helpers === null) {
-            return $this->viewBuilder()->helpers();
+            return $this->viewBuilder()->getHelpers();
         }
-        $this->viewBuilder()->helpers((array)$helpers, false);
+        $this->viewBuilder()->setHelpers((array)$helpers, false);
 
         return $this;
     }
@@ -1466,10 +1466,10 @@ class Email implements JsonSerializable, Serializable
         }
 
         if (array_key_exists('helpers', $config)) {
-            $this->viewBuilder()->helpers($config['helpers'], false);
+            $this->viewBuilder()->setHelpers($config['helpers'], false);
         }
         if (array_key_exists('viewRender', $config)) {
-            $this->viewBuilder()->className($config['viewRender']);
+            $this->viewBuilder()->setClassName($config['viewRender']);
         }
         if (array_key_exists('viewVars', $config)) {
             $this->set($config['viewVars']);
@@ -1505,12 +1505,12 @@ class Email implements JsonSerializable, Serializable
         $this->_profile = [];
         $this->_emailPattern = self::EMAIL_PATTERN;
 
-        $this->viewBuilder()->layout('default');
-        $this->viewBuilder()->template('');
-        $this->viewBuilder()->classname('Cake\View\View');
+        $this->viewBuilder()->setLayout('default');
+        $this->viewBuilder()->setTemplate('');
+        $this->viewBuilder()->setClassname('Cake\View\View');
         $this->viewVars = [];
-        $this->viewBuilder()->theme(false);
-        $this->viewBuilder()->helpers(['Html'], false);
+        $this->viewBuilder()->setTheme(false);
+        $this->viewBuilder()->setHelpers(['Html'], false);
 
         return $this;
     }
@@ -1889,7 +1889,7 @@ class Email implements JsonSerializable, Serializable
     {
         $types = $this->_getTypes();
         $rendered = [];
-        $template = $this->viewBuilder()->template();
+        $template = $this->viewBuilder()->getTemplate();
         if (empty($template)) {
             foreach ($types as $type) {
                 $rendered[$type] = $this->_encodeString($content, $this->charset);

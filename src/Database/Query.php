@@ -143,7 +143,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function __construct($connection)
     {
-        $this->connection($connection);
+        $this->setConnection($connection);
     }
 
     /**
@@ -211,7 +211,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     {
         $statement = $this->_connection->run($this);
         $driver = $this->_connection->driver();
-        $typeMap = $this->selectTypeMap();
+        $typeMap = $this->getSelectTypeMap();
 
         if ($typeMap->toArray() && $this->_typeCastAttached === false) {
             $this->decorateResults(new FieldTypeConverter($typeMap, $driver));
@@ -247,7 +247,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             $generator->resetCount();
         }
 
-        return $this->connection()->compileQuery($this, $generator);
+        return $this->getConnection()->compileQuery($this, $generator);
     }
 
     /**
@@ -1370,7 +1370,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         $this->_type = 'insert';
         $this->_parts['insert'][1] = $columns;
         if (!$this->_parts['values']) {
-            $this->_parts['values'] = new ValuesExpression($columns, $this->typeMap()->types($types));
+            $this->_parts['values'] = new ValuesExpression($columns, $this->getTypeMap()->setTypes($types));
         } else {
             $this->_parts['values']->columns($columns);
         }
@@ -1484,11 +1484,11 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function set($key, $value = null, $types = [])
     {
         if (empty($this->_parts['set'])) {
-            $this->_parts['set'] = $this->newExpr()->tieWith(',');
+            $this->_parts['set'] = $this->newExpr()->setConjunction(',');
         }
 
         if ($this->_parts['set']->isCallable($key)) {
-            $exp = $this->newExpr()->tieWith(',');
+            $exp = $this->newExpr()->setConjunction(',');
             $this->_parts['set']->add($key($exp));
 
             return $this;
@@ -1581,7 +1581,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function newExpr($rawExpression = null)
     {
-        $expression = new QueryExpression([], $this->typeMap());
+        $expression = new QueryExpression([], $this->getTypeMap());
 
         if ($rawExpression !== null) {
             $expression->add($rawExpression);
@@ -1945,11 +1945,11 @@ class Query implements ExpressionInterface, IteratorAggregate
             $append = $append($this->newExpr(), $this);
         }
 
-        if ($expression->tieWith() === $conjunction) {
+        if ($expression->getConjunction() === $conjunction) {
             $expression->add($append, $types);
         } else {
             $expression = $this->newExpr()
-                ->tieWith($conjunction)
+                ->setConjunction($conjunction)
                 ->add([$append, $expression], $types);
         }
 
@@ -2041,7 +2041,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             '(help)' => 'This is a Query object, to get the results execute or iterate it.',
             'sql' => $sql,
             'params' => $params,
-            'defaultTypes' => $this->defaultTypes(),
+            'defaultTypes' => $this->getDefaultTypes(),
             'decorators' => count($this->_resultDecorators),
             'executed' => $this->_iterator ? true : false
         ];

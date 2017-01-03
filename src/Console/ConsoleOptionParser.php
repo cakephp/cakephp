@@ -143,7 +143,7 @@ class ConsoleOptionParser
      */
     public function __construct($command = null, $defaultOptions = true)
     {
-        $this->command($command);
+        $this->setCommand($command);
 
         $this->addOption('help', [
             'short' => 'h',
@@ -212,10 +212,10 @@ class ConsoleOptionParser
             $parser->addSubcommands($spec['subcommands']);
         }
         if (!empty($spec['description'])) {
-            $parser->description($spec['description']);
+            $parser->setDescription($spec['description']);
         }
         if (!empty($spec['epilog'])) {
-            $parser->epilog($spec['epilog']);
+            $parser->setEpilog($spec['epilog']);
         }
 
         return $parser;
@@ -261,10 +261,10 @@ class ConsoleOptionParser
             $this->addSubcommands($spec['subcommands']);
         }
         if (!empty($spec['description'])) {
-            $this->description($spec['description']);
+            $this->setDescription($spec['description']);
         }
         if (!empty($spec['epilog'])) {
-            $this->epilog($spec['epilog']);
+            $this->setEpilog($spec['epilog']);
         }
 
         return $this;
@@ -722,7 +722,7 @@ class ConsoleOptionParser
             $this->_subcommands[$subcommand]->parser() instanceof self
         ) {
             $subparser = $this->_subcommands[$subcommand]->parser();
-            $subparser->command($this->command() . ' ' . $subparser->command());
+            $subparser->setCommand($this->getCommand() . ' ' . $subparser->getCommand());
 
             return $subparser->help(null, $format, $width);
         }

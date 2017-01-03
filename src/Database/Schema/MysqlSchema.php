@@ -59,7 +59,7 @@ class MysqlSchema extends BaseSchema
      */
     public function convertOptionsDescription(TableSchema $schema, $row)
     {
-        $schema->options([
+        $schema->SetOptions([
             'engine' => $row['Engine'],
             'collation' => $row['Collation'],
         ]);
@@ -271,9 +271,9 @@ class MysqlSchema extends BaseSchema
     public function createTableSql(TableSchema $schema, $columns, $constraints, $indexes)
     {
         $content = implode(",\n", array_merge($columns, $constraints, $indexes));
-        $temporary = $schema->temporary() ? ' TEMPORARY ' : ' ';
+        $temporary = $schema->isTemporary() ? ' TEMPORARY ' : ' ';
         $content = sprintf("CREATE%sTABLE `%s` (\n%s\n)", $temporary, $schema->name(), $content);
-        $options = $schema->options();
+        $options = $schema->getOptions();
         if (isset($options['engine'])) {
             $content .= sprintf(' ENGINE=%s', $options['engine']);
         }

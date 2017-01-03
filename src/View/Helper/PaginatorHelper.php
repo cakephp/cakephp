@@ -103,7 +103,7 @@ class PaginatorHelper extends Helper
         unset($query['page'], $query['limit'], $query['sort'], $query['direction']);
         $this->config(
             'options.url',
-            array_merge($this->request->param('pass'), ['?' => $query])
+            array_merge($this->request->getParam('pass'), ['?' => $query])
         );
     }
 
@@ -118,11 +118,11 @@ class PaginatorHelper extends Helper
         if (empty($model)) {
             $model = $this->defaultModel();
         }
-        if (!$this->request->param('paging') || !$this->request->param('paging.' . $model)) {
+        if (!$this->request->getParam('paging') || !$this->request->getParam('paging.' . $model)) {
             return [];
         }
 
-        return $this->request->param('paging.' . $model);
+        return $this->request->getParam('paging.' . $model);
     }
 
     /**
@@ -152,19 +152,19 @@ class PaginatorHelper extends Helper
     public function options(array $options = [])
     {
         if (!empty($options['paging'])) {
-            if (!$this->request->param('paging')) {
+            if (!$this->request->getParam('paging')) {
                 $this->request->params['paging'] = [];
             }
-            $this->request->params['paging'] = $options['paging'] + $this->request->param('paging');
+            $this->request->params['paging'] = $options['paging'] + $this->request->getParam('paging');
             unset($options['paging']);
         }
         $model = $this->defaultModel();
 
         if (!empty($options[$model])) {
-            if (!$this->request->param('paging.' . $model)) {
+            if (!$this->request->getParam('paging.' . $model)) {
                 $this->request->params['paging'][$model] = [];
             }
-            $this->request->params['paging'][$model] = $options[$model] + $this->request->param('paging.' . $model);
+            $this->request->params['paging'][$model] = $options[$model] + $this->request->getParam('paging.' . $model);
             unset($options[$model]);
         }
         $this->_config['options'] = array_filter($options + $this->_config['options']);
@@ -640,10 +640,10 @@ class PaginatorHelper extends Helper
         if ($this->_defaultModel) {
             return $this->_defaultModel;
         }
-        if (!$this->request->param('paging')) {
+        if (!$this->request->getParam('paging')) {
             return null;
         }
-        list($this->_defaultModel) = array_keys($this->request->param('paging'));
+        list($this->_defaultModel) = array_keys($this->request->getParam('paging'));
 
         return $this->_defaultModel;
     }

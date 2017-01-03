@@ -178,7 +178,7 @@ abstract class Mailer implements EventListenerInterface
      */
     public function layout($layout)
     {
-        $this->_email->viewBuilder()->layout($layout);
+        $this->_email->viewBuilder()->setLayout($layout);
 
         return $this;
     }
@@ -241,8 +241,8 @@ abstract class Mailer implements EventListenerInterface
         }
 
         $this->_email->setHeaders($headers);
-        if (!$this->_email->viewBuilder()->template()) {
-            $this->_email->viewBuilder()->template($action);
+        if (!$this->_email->viewBuilder()->getTemplate()) {
+            $this->_email->viewBuilder()->setTemplate($action);
         }
 
         $this->$action(...$args);

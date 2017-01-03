@@ -127,7 +127,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
     public function add($params, $types = [], $prepend = false)
     {
         $put = $prepend ? 'array_unshift' : 'array_push';
-        $typeMap = $this->typeMap()->types($types);
+        $typeMap = $this->getTypeMap()->setTypes($types);
         foreach ($params as $k => $p) {
             if ($p === 'literal') {
                 $put($this->_conditions, $k);

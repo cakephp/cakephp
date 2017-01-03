@@ -64,10 +64,10 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function __construct($conditions = [], $types = [], $conjunction = 'AND')
     {
-        $this->typeMap($types);
-        $this->tieWith(strtoupper($conjunction));
+        $this->setTypeMap($types);
+        $this->setConjunction(strtoupper($conjunction));
         if (!empty($conditions)) {
-            $this->add($conditions, $this->typeMap()->types());
+            $this->add($conditions, $this->getTypeMap()->getTypes());
         }
     }
 
@@ -124,7 +124,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function type($conjunction = null)
     {
-        return $this->tieWith($conjunction);
+        return $this->setConjunction($conjunction);
     }
 
     /**
@@ -450,10 +450,10 @@ class QueryExpression implements ExpressionInterface, Countable
     public function and_($conditions, $types = [])
     {
         if ($this->isCallable($conditions)) {
-            return $conditions(new self([], $this->typeMap()->types($types)));
+            return $conditions(new self([], $this->getTypeMap()->setTypes($types)));
         }
 
-        return new self($conditions, $this->typeMap()->types($types));
+        return new self($conditions, $this->getTypeMap()->setTypes($types));
     }
 
     /**
@@ -468,10 +468,10 @@ class QueryExpression implements ExpressionInterface, Countable
     public function or_($conditions, $types = [])
     {
         if ($this->isCallable($conditions)) {
-            return $conditions(new self([], $this->typeMap()->types($types), 'OR'));
+            return $conditions(new self([], $this->getTypeMap()->setTypes($types), 'OR'));
         }
 
-        return new self($conditions, $this->typeMap()->types($types), 'OR');
+        return new self($conditions, $this->getTypeMap()->setTypes($types), 'OR');
     }
 // @codingStandardsIgnoreEnd
 
@@ -675,7 +675,7 @@ class QueryExpression implements ExpressionInterface, Countable
     {
         $operators = ['and', 'or', 'xor'];
 
-        $typeMap = $this->typeMap()->types($types);
+        $typeMap = $this->getTypeMap()->setTypes($types);
 
         foreach ($conditions as $k => $c) {
             $numericKey = is_numeric($k);
@@ -741,7 +741,7 @@ class QueryExpression implements ExpressionInterface, Countable
             list($expression, $operator) = $parts;
         }
 
-        $type = $this->typeMap()->type($expression);
+        $type = $this->getTypeMap()->type($expression);
         $operator = strtolower(trim($operator));
 
         $typeMultiple = strpos($type, '[]') !== false;
@@ -794,7 +794,7 @@ class QueryExpression implements ExpressionInterface, Countable
     {
         $field = $field instanceof IdentifierExpression ? $field->getIdentifier() : $field;
         if (is_string($field)) {
-            return $this->typeMap()->type($field);
+            return $this->getTypeMap()->type($field);
         }
 
         return null;

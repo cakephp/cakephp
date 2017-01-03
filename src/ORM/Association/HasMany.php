@@ -332,7 +332,7 @@ class HasMany extends Association
 
         $foreignKey = (array)$this->foreignKey();
         $target = $this->target();
-        $targetPrimaryKey = array_merge((array)$target->primaryKey(), $foreignKey);
+        $targetPrimaryKey = array_merge((array)$target->getPrimaryKey(), $foreignKey);
         $property = $this->property();
 
         $conditions = [
@@ -435,7 +435,7 @@ class HasMany extends Association
      */
     protected function _unlinkAssociated(array $properties, EntityInterface $entity, Table $target, array $remainingEntities = [], array $options = [])
     {
-        $primaryKey = (array)$target->primaryKey();
+        $primaryKey = (array)$target->getPrimaryKey();
         $exclusions = new Collection($remainingEntities);
         $exclusions = $exclusions->map(
             function ($ent) use ($primaryKey) {
@@ -520,7 +520,7 @@ class HasMany extends Association
             false,
             array_map(
                 function ($prop) use ($table) {
-                    return $table->schema()->isNullable($prop);
+                    return $table->getSchema()->isNullable($prop);
                 },
                 $properties
             )

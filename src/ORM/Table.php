@@ -698,8 +698,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getDisplayField()
     {
         if ($this->_displayField === null) {
-            $schema = $this->schema();
-            $primary = (array)$this->primaryKey();
+            $schema = $this->getSchema();
+            $primary = (array)$this->getPrimaryKey();
             $this->_displayField = array_shift($primary);
             if ($schema->column('title')) {
                 $this->_displayField = 'title';
@@ -1251,7 +1251,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function findList(Query $query, array $options)
     {
         $options += [
-            'keyField' => $this->primaryKey(),
+            'keyField' => $this->getPrimaryKey(),
             'valueField' => $this->displayField(),
             'groupField' => null
         ];
@@ -1272,7 +1272,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 (array)$options['valueField'],
                 (array)$options['groupField']
             );
-            $columns = $this->schema()->columns();
+            $columns = $this->getSchema()->columns();
             if (count($fields) === count(array_intersect($fields, $columns))) {
                 $query->select($fields);
             }
@@ -1319,7 +1319,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function findThreaded(Query $query, array $options)
     {
         $options += [
-            'keyField' => $this->primaryKey(),
+            'keyField' => $this->getPrimaryKey(),
             'parentField' => 'parent_id',
             'nestingKey' => 'children'
         ];
@@ -1392,7 +1392,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function get($primaryKey, $options = [])
     {
-        $key = (array)$this->primaryKey();
+        $key = (array)$this->getPrimaryKey();
         $alias = $this->alias();
         foreach ($key as $index => $keyname) {
             $key[$index] = $alias . '.' . $keyname;
@@ -1751,7 +1751,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _processSave($entity, $options)
     {
-        $primaryColumns = (array)$this->primaryKey();
+        $primaryColumns = (array)$this->getPrimaryKey();
 
         if ($options['checkExisting'] && $primaryColumns && $entity->isNew() && $entity->has($primaryColumns)) {
             $alias = $this->alias();
@@ -1785,7 +1785,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return false;
         }
 
-        $data = $entity->extract($this->schema()->columns(), true);
+        $data = $entity->extract($this->getSchema()->columns(), true);
         $isNew = $entity->isNew();
 
         if ($isNew) {
@@ -1799,7 +1799,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         if (!$success && $isNew) {
-            $entity->unsetProperty($this->primaryKey());
+            $entity->unsetProperty($this->getPrimaryKey());
             $entity->isNew(true);
         }
 
@@ -1855,7 +1855,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _insert($entity, $data)
     {
-        $primary = (array)$this->primaryKey();
+        $primary = (array)$this->getPrimaryKey();
         if (empty($primary)) {
             $msg = sprintf(
                 'Cannot insert row in "%s" table, it has no primary key.',
@@ -1874,7 +1874,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $data = $data + $filteredKeys;
 
         if (count($primary) > 1) {
-            $schema = $this->schema();
+            $schema = $this->getSchema();
             foreach ($primary as $k => $v) {
                 if (!isset($data[$k]) && empty($schema->column($k)['autoIncrement'])) {
                     $msg = 'Cannot insert row, some of the primary key values are missing. ';
@@ -1900,7 +1900,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($statement->rowCount() !== 0) {
             $success = $entity;
             $entity->set($filteredKeys, ['guard' => false]);
-            $schema = $this->schema();
+            $schema = $this->getSchema();
             $driver = $this->connection()->driver();
             foreach ($primary as $key => $v) {
                 if (!isset($data[$key])) {
@@ -1931,7 +1931,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (!$primary || count((array)$primary) > 1) {
             return null;
         }
-        $typeName = $this->schema()->columnType($primary[0]);
+        $typeName = $this->getSchema()->columnType($primary[0]);
         $type = Type::build($typeName);
 
         return $type->newId();
@@ -1947,7 +1947,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _update($entity, $data)
     {
-        $primaryColumns = (array)$this->primaryKey();
+        $primaryColumns = (array)$this->getPrimaryKey();
         $primaryKey = $entity->extract($primaryColumns);
 
         $data = array_diff_key($data, $primaryKey);
@@ -2005,7 +2005,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($return === false) {
             foreach ($entities as $key => $entity) {
                 if (isset($isNew[$key]) && $isNew[$key]) {
-                    $entity->unsetProperty($this->primaryKey());
+                    $entity->unsetProperty($this->getPrimaryKey());
                     $entity->isNew(true);
                 }
             }
@@ -2083,7 +2083,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return false;
         }
 
-        $primaryKey = (array)$this->primaryKey();
+        $primaryKey = (array)$this->getPrimaryKey();
         if (!$entity->has($primaryKey)) {
             $msg = 'Deleting requires all primary key values.';
             throw new InvalidArgumentException($msg);
