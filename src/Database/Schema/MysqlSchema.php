@@ -59,7 +59,7 @@ class MysqlSchema extends BaseSchema
      */
     public function convertOptionsDescription(TableSchema $schema, $row)
     {
-        $schema->SetOptions([
+        $schema->setOptions([
             'engine' => $row['Engine'],
             'collation' => $row['Collation'],
         ]);
