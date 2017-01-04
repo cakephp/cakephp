@@ -360,6 +360,18 @@ class Route
     }
 
     /**
+     * Check to see if the host matches the route requirements
+     */
+    public function hostMatches($host)
+    {
+        if (!isset($this->options['_host'])) {
+            return true;
+        }
+        // TODO implement
+        return true;
+    }
+
+    /**
      * Removes the extension from $url if it contains a registered extension.
      * If no registered extension is found, no extension is returned and the URL is returned unmodified.
      *
