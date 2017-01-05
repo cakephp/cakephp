@@ -76,6 +76,12 @@ class FlashHelperTest extends CakeTestCase {
 					'message' => 'Recorded',
 					'element' => 'flash_classy',
 					'params' => array()
+				),
+				'default' => array(
+					'key' => 'default',
+					'message' => 'Default',
+					'element' => 'default',
+					'params' => array()
 				)
 			)
 		));
@@ -152,6 +158,15 @@ class FlashHelperTest extends CakeTestCase {
 
 		$result = $this->Flash->render('flash', array('element' => 'TestPlugin.plugin_element'));
 		$expected = 'this is the plugin element';
+		$this->assertContains($expected, $result);
+	}
+
+/**
+ * Test that the default element fallbacks to the Flash/default element.
+ */
+	public function testFlashFallback() {
+		$result = $this->Flash->render('default');
+		$expected = '<div class="message">Default</div>';
 		$this->assertContains($expected, $result);
 	}
 }
