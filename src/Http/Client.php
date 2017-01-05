@@ -372,7 +372,7 @@ class Client
     public function send(Request $request, $options = [])
     {
         $responses = $this->_adapter->send($request, $options);
-        $url = $request->url();
+        $url = $request->getUri();
         foreach ($responses as $response) {
             $this->_cookies->store($response, $url);
         }

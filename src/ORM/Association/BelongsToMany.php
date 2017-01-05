@@ -461,7 +461,7 @@ class BelongsToMany extends Association
             'foreignKey' => false,
         ];
         $assoc->attachTo($query, $newOptions);
-        $query->eagerLoader()->addToJoinsMap($junction->alias(), $assoc, true);
+        $query->getEagerLoader()->addToJoinsMap($junction->alias(), $assoc, true);
 
         parent::attachTo($query, $options);
 
@@ -799,7 +799,7 @@ class BelongsToMany extends Association
         $belongsTo = $junction->association($target->alias());
         $foreignKey = (array)$this->foreignKey();
         $assocForeignKey = (array)$belongsTo->foreignKey();
-        $targetPrimaryKey = (array)$target->primaryKey();
+        $targetPrimaryKey = (array)$target->getPrimaryKey();
         $bindingKey = (array)$this->bindingKey();
         $jointProperty = $this->_junctionProperty;
         $junctionAlias = $junction->alias();
@@ -1273,7 +1273,7 @@ class BelongsToMany extends Association
             }
         }
 
-        $primary = (array)$target->primaryKey();
+        $primary = (array)$target->getPrimaryKey();
         $jointProperty = $this->_junctionProperty;
         foreach ($targetEntities as $k => $entity) {
             if (!($entity instanceof EntityInterface)) {
@@ -1342,7 +1342,7 @@ class BelongsToMany extends Association
         $source = $this->source();
         $junction = $this->junction();
         $jointProperty = $this->_junctionProperty;
-        $primary = (array)$target->primaryKey();
+        $primary = (array)$target->getPrimaryKey();
 
         $result = [];
         $missing = [];
@@ -1369,7 +1369,7 @@ class BelongsToMany extends Association
         $hasMany = $source->association($junction->alias());
         $foreignKey = (array)$this->foreignKey();
         $assocForeignKey = (array)$belongsTo->foreignKey();
-        $sourceKey = $sourceEntity->extract((array)$source->primaryKey());
+        $sourceKey = $sourceEntity->extract((array)$source->getPrimaryKey());
 
         foreach ($missing as $key) {
             $unions[] = $hasMany->find('all')

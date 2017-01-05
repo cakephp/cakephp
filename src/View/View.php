@@ -113,7 +113,7 @@ class View implements EventDispatcherInterface
      * Current passed params. Passed to View from the creating Controller for convenience.
      *
      * @var array
-     * @deprecated 3.1.0 Use `$this->request->param('pass')` instead.
+     * @deprecated 3.1.0 Use `$this->request->getParam('pass')` instead.
      */
     public $passedArgs = [];
 
@@ -1226,8 +1226,8 @@ class View implements EventDispatcherInterface
     protected function _getSubPaths($basePath)
     {
         $paths = [$basePath];
-        if ($this->request->param('prefix')) {
-            $prefixPath = explode('/', $this->request->param('prefix'));
+        if ($this->request->getParam('prefix')) {
+            $prefixPath = explode('/', $this->request->getParam('prefix'));
             $path = '';
             foreach ($prefixPath as $prefixPart) {
                 $path .= Inflector::camelize($prefixPart) . DIRECTORY_SEPARATOR;

@@ -102,7 +102,7 @@ class SelectWithPivotLoader extends SelectLoader
         // and that the required keys are in the selected columns.
 
         $tempName = $this->alias . '_CJoin';
-        $schema = $assoc->schema();
+        $schema = $assoc->getSchema();
         $joinFields = $types = [];
 
         foreach ($schema->typeMap() as $f => $type) {
@@ -116,15 +116,15 @@ class SelectWithPivotLoader extends SelectLoader
             ->select($joinFields);
 
         $query
-            ->eagerLoader()
+            ->getEagerLoader()
             ->addToJoinsMap($tempName, $assoc, false, $this->junctionProperty);
 
         $assoc->attachTo($query, [
-            'aliasPath' => $assoc->alias(),
+            'aliasPath' => $assoc->getAlias(),
             'includeFields' => false,
             'propertyPath' => $this->junctionProperty,
         ]);
-        $query->typeMap()->addDefaults($types);
+        $query->getTypeMap()->addDefaults($types);
 
         return $query;
     }

@@ -363,7 +363,7 @@ class ResultSet implements ResultSetInterface
      */
     protected function _calculateAssociationMap($query)
     {
-        $map = $query->eagerLoader()->associationsMap($this->_defaultTable);
+        $map = $query->getEagerLoader()->associationsMap($this->_defaultTable);
         $this->_matchingMap = (new Collection($map))
             ->match(['matching' => true])
             ->indexBy('alias')
@@ -430,7 +430,7 @@ class ResultSet implements ResultSetInterface
     protected function _getTypes($table, $fields)
     {
         $types = [];
-        $schema = $table->schema();
+        $schema = $table->getSchema();
         $map = array_keys(Type::map() + ['string' => 1, 'text' => 1, 'boolean' => 1]);
         $typeMap = array_combine(
             $map,

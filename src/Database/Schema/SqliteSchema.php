@@ -445,7 +445,7 @@ class SqliteSchema extends BaseSchema
     {
         $lines = array_merge($columns, $constraints);
         $content = implode(",\n", array_filter($lines));
-        $temporary = $schema->temporary() ? ' TEMPORARY ' : ' ';
+        $temporary = $schema->isTemporary() ? ' TEMPORARY ' : ' ';
         $table = sprintf("CREATE%sTABLE \"%s\" (\n%s\n)", $temporary, $schema->name(), $content);
         $out = [$table];
         foreach ($indexes as $index) {

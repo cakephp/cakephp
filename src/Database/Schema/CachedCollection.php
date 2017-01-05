@@ -40,7 +40,7 @@ class CachedCollection extends Collection
     public function __construct(ConnectionInterface $connection, $cacheKey = true)
     {
         parent::__construct($connection);
-        $this->cacheMetadata($cacheKey);
+        $this->setCacheMetadata($cacheKey);
     }
 
     /**
@@ -50,7 +50,7 @@ class CachedCollection extends Collection
     public function describe($name, array $options = [])
     {
         $options += ['forceRefresh' => false];
-        $cacheConfig = $this->cacheMetadata();
+        $cacheConfig = $this->getCacheMetadata();
         $cacheKey = $this->cacheKey($name);
 
         if (!empty($cacheConfig) && !$options['forceRefresh']) {

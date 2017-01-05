@@ -65,7 +65,7 @@ class Marshaller
     protected function _buildPropertyMap($data, $options)
     {
         $map = [];
-        $schema = $this->_table->schema();
+        $schema = $this->_table->getSchema();
 
         // Is a concrete column?
         foreach (array_keys($data) as $prop) {
@@ -166,7 +166,7 @@ class Marshaller
     {
         list($data, $options) = $this->_prepareDataAndOptions($data, $options);
 
-        $primaryKey = (array)$this->_table->primaryKey();
+        $primaryKey = (array)$this->_table->getPrimaryKey();
         $entityClass = $this->_table->entityClass();
         /* @var Entity $entity */
         $entity = new $entityClass();
@@ -364,7 +364,7 @@ class Marshaller
         $data = array_values($data);
 
         $target = $assoc->target();
-        $primaryKey = array_flip((array)$target->primaryKey());
+        $primaryKey = array_flip((array)$target->getPrimaryKey());
         $records = $conditions = [];
         $primaryCount = count($primaryKey);
         $conditions = [];
@@ -454,7 +454,7 @@ class Marshaller
         }
 
         $target = $assoc->target();
-        $primaryKey = (array)$target->primaryKey();
+        $primaryKey = (array)$target->getPrimaryKey();
         $multi = count($primaryKey) > 1;
         $primaryKey = array_map([$target, 'aliasField'], $primaryKey);
 
@@ -529,7 +529,7 @@ class Marshaller
         $keys = [];
 
         if (!$isNew) {
-            $keys = $entity->extract((array)$this->_table->primaryKey());
+            $keys = $entity->extract((array)$this->_table->getPrimaryKey());
         }
 
         if (isset($options['accessibleFields'])) {
@@ -539,7 +539,7 @@ class Marshaller
         }
 
         $errors = $this->_validate($data + $keys, $options, $isNew);
-        $schema = $this->_table->schema();
+        $schema = $this->_table->getSchema();
         $options['isMerge'] = true;
         $propertyMap = $this->_buildPropertyMap($data, $options);
         $properties = $marshalledAssocs = [];
@@ -628,7 +628,7 @@ class Marshaller
      */
     public function mergeMany($entities, array $data, array $options = [])
     {
-        $primary = (array)$this->_table->primaryKey();
+        $primary = (array)$this->_table->getPrimaryKey();
 
         $indexed = (new Collection($data))
             ->groupBy(function ($el) use ($primary) {

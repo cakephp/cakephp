@@ -73,7 +73,7 @@ class ValuesExpression implements ExpressionInterface
     public function __construct(array $columns, $typeMap)
     {
         $this->_columns = $columns;
-        $this->typeMap($typeMap);
+        $this->setTypeMap($typeMap);
     }
 
     /**
@@ -94,7 +94,7 @@ class ValuesExpression implements ExpressionInterface
             );
         }
         if ($data instanceof Query) {
-            $this->query($data);
+            $this->setQuery($data);
 
             return;
         }
@@ -275,7 +275,7 @@ class ValuesExpression implements ExpressionInterface
         $placeholders = [];
 
         $types = [];
-        $typeMap = $this->typeMap();
+        $typeMap = $this->getTypeMap();
         foreach ($defaults as $col => $v) {
             $types[$col] = $typeMap->type($col);
         }
@@ -300,8 +300,8 @@ class ValuesExpression implements ExpressionInterface
             $placeholders[] = implode(', ', $rowPlaceholders);
         }
 
-        if ($this->query()) {
-            return ' ' . $this->query()->sql($generator);
+        if ($this->getQuery()) {
+            return ' ' . $this->getQuery()->sql($generator);
         }
 
         return sprintf(' VALUES (%s)', implode('), (', $placeholders));
@@ -350,7 +350,7 @@ class ValuesExpression implements ExpressionInterface
     protected function _processExpressions()
     {
         $types = [];
-        $typeMap = $this->typeMap();
+        $typeMap = $this->getTypeMap();
 
         $columns = $this->_columnNames();
         foreach ($columns as $c) {

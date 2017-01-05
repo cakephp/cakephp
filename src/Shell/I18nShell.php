@@ -87,7 +87,7 @@ class I18nShell extends Shell
             $language = $this->in('Please specify language code, e.g. `en`, `eng`, `en_US` etc.');
         }
         if (strlen($language) < 2) {
-            return $this->error('Invalid language code. Valid is `en`, `eng`, `en_US` etc.');
+            return $this->abort('Invalid language code. Valid is `en`, `eng`, `en_US` etc.');
         }
 
         $this->_paths = [APP];

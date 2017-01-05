@@ -491,8 +491,8 @@ abstract class Association
     {
         if ($this->_bindingKey === null) {
             $this->_bindingKey = $this->isOwningSide($this->source()) ?
-                $this->source()->primaryKey() :
-                $this->target()->primaryKey();
+                $this->source()->getPrimaryKey() :
+                $this->target()->getPrimaryKey();
         }
 
         return $this->_bindingKey;
@@ -686,7 +686,7 @@ abstract class Association
     {
         if (!$this->_propertyName) {
             $this->_propertyName = $this->_propertyName();
-            if (in_array($this->_propertyName, $this->_sourceTable->schema()->columns())) {
+            if (in_array($this->_propertyName, $this->_sourceTable->getSchema()->columns())) {
                 $msg = 'Association property name "%s" clashes with field of same name of table "%s".' .
                     ' You should explicitly specify the "propertyName" option.';
                 trigger_error(
@@ -926,7 +926,7 @@ abstract class Association
     {
         $target = $this->_targetTable;
         if (!empty($options['negateMatch'])) {
-            $primaryKey = $query->aliasFields((array)$target->primaryKey(), $this->_name);
+            $primaryKey = $query->aliasFields((array)$target->getPrimaryKey(), $this->_name);
             $query->andWhere(function ($exp) use ($primaryKey) {
                 array_map([$exp, 'isNull'], $primaryKey);
 
@@ -1098,7 +1098,7 @@ abstract class Association
      */
     protected function _appendFields($query, $surrogate, $options)
     {
-        if ($query->eagerLoader()->autoFields() === false) {
+        if ($query->getEagerLoader()->autoFields() === false) {
             return;
         }
 
@@ -1108,12 +1108,12 @@ abstract class Association
 
         if (empty($fields) && !$autoFields) {
             if ($options['includeFields'] && ($fields === null || $fields !== false)) {
-                $fields = $target->schema()->columns();
+                $fields = $target->getSchema()->columns();
             }
         }
 
         if ($autoFields === true) {
-            $fields = array_merge((array)$fields, $target->schema()->columns());
+            $fields = array_merge((array)$fields, $target->getSchema()->columns());
         }
 
         if ($fields) {
@@ -1181,7 +1181,7 @@ abstract class Association
      */
     protected function _bindNewAssociations($query, $surrogate, $options)
     {
-        $loader = $surrogate->eagerLoader();
+        $loader = $surrogate->getEagerLoader();
         $contain = $loader->contain();
         $matching = $loader->matching();
 
@@ -1194,7 +1194,7 @@ abstract class Association
             $newContain[$options['aliasPath'] . '.' . $alias] = $value;
         }
 
-        $eagerLoader = $query->eagerLoader();
+        $eagerLoader = $query->getEagerLoader();
         $eagerLoader->contain($newContain);
 
         foreach ($matching as $alias => $value) {

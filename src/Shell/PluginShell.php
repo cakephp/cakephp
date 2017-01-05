@@ -58,7 +58,7 @@ class PluginShell extends Shell
     {
         $parser = parent::getOptionParser();
 
-        $parser->description('Plugin Shell perform various tasks related to plugin.')
+        $parser->setDescription('Plugin Shell perform various tasks related to plugin.')
             ->addSubcommand('assets', [
                 'help' => 'Symlink / copy plugin assets to app\'s webroot',
                 'parser' => $this->Assets->getOptionParser()

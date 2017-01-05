@@ -422,17 +422,17 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if (!isset($request)) {
             throw new LogicException('No Request object configured. Cannot invoke action');
         }
-        if (!$this->isAction($request->param('action'))) {
+        if (!$this->isAction($request->getParam('action'))) {
             throw new MissingActionException([
                 'controller' => $this->name . "Controller",
-                'action' => $request->param('action'),
-                'prefix' => $request->param('prefix') ?: '',
-                'plugin' => $request->param('plugin'),
+                'action' => $request->getParam('action'),
+                'prefix' => $request->getParam('prefix') ?: '',
+                'plugin' => $request->getParam('plugin'),
             ]);
         }
-        $callable = [$this, $request->param('action')];
+        $callable = [$this, $request->getParam('action')];
 
-        return $callable(...$request->param('pass'));
+        return $callable(...$request->getParam('pass'));
     }
 
     /**
@@ -591,12 +591,12 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function render($view = null, $layout = null)
     {
         $builder = $this->viewBuilder();
-        if (!$builder->templatePath()) {
-            $builder->templatePath($this->_viewPath());
+        if (!$builder->getTemplatePath()) {
+            $builder->setTemplatePath($this->_viewPath());
         }
 
         if (!empty($this->request->params['bare'])) {
-            $builder->autoLayout(false);
+            $builder->enableAutoLayout(false);
         }
         $builder->className($this->viewClass);
 
@@ -610,8 +610,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             return $this->response;
         }
 
-        if ($builder->template() === null && $this->request->param('action')) {
-            $builder->template($this->request->param('action'));
+        if ($builder->getTemplate() === null && $this->request->getParam('action')) {
+            $builder->setTemplate($this->request->getParam('action'));
         }
 
         $this->View = $this->createView();
@@ -628,10 +628,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     protected function _viewPath()
     {
         $viewPath = $this->name;
-        if ($this->request->param('prefix')) {
+        if ($this->request->getParam('prefix')) {
             $prefixes = array_map(
                 'Cake\Utility\Inflector::camelize',
-                explode('/', $this->request->param('prefix'))
+                explode('/', $this->request->getParam('prefix'))
             );
             $viewPath = implode(DIRECTORY_SEPARATOR, $prefixes) . DIRECTORY_SEPARATOR . $viewPath;
         }

@@ -290,7 +290,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             return;
         }
 
-        $primaryKey = (array)$this->_table->primaryKey();
+        $primaryKey = (array)$this->_table->getPrimaryKey();
         $key = $entity->get(current($primaryKey));
 
         // When we have no key and bundled translations, we
@@ -572,7 +572,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         }
 
         $fields = $this->_config['fields'];
-        $primaryKey = (array)$this->_table->primaryKey();
+        $primaryKey = (array)$this->_table->getPrimaryKey();
         $key = $entity->get(current($primaryKey));
         $find = [];
 
