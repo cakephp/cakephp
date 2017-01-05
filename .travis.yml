@@ -87,8 +87,9 @@ before_install:
   - set +H
 
 before_script:
-  - if [[ $PHPCS != 3 ]]; then composer install --prefer-dist --no-interaction; fi
-  - if [[ $PHPCS = 3 ]]; then composer require --dev  squizlabs/php_codesniffer=3.0.x-dev@dev cakephp/cakephp-codesniffer=3.0.x-dev@dev; fi
+  - composer install --prefer-dist --no-interaction
+  - if [[ $PHPCS = 3 ]]; then composer remove --dev cakephp/cakephp-codesniffer; fi
+  - if [[ $PHPCS = 3 ]]; then composer require --dev squizlabs/php_codesniffer='3.0.*@dev' cakephp/cakephp-codesniffer='3.0.*@dev'; fi
 
 script:
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.0 ]]; then export CODECOVERAGE=1; vendor/bin/phpunit --coverage-clover=clover.xml; fi
