@@ -361,13 +361,13 @@ class Route
 
     /**
      * Check to see if the host matches the route requirements
+     *
+     * @param string $host The request's host name
+     * @return bool Whether or not the host matches any conditions set in for this route.
      */
     public function hostMatches($host)
     {
-        if (!isset($this->options['_host'])) {
-            return true;
-        }
-        // TODO implement
+        // Will be implemented later
         return true;
     }
 
