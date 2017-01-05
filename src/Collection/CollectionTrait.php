@@ -704,6 +704,7 @@ trait CollectionTrait
      * @return \Iterator
      * @deprecated
      */
+    // @codingStandardsIgnoreLine
     public function _unwrap()
     {
         return $this->unwrap();
