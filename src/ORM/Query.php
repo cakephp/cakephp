@@ -896,7 +896,8 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * @return bool
      */
-    public function isHydrationEnabled() {
+    public function isHydrationEnabled()
+    {
         return $this->_hydrate;
     }
 
