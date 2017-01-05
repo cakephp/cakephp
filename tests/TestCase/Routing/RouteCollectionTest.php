@@ -200,20 +200,6 @@ class RouteCollectionTest extends TestCase
         ];
         $this->assertEquals($expected, $result);
 
-        $request = new ServerRequest(['url' => '/b/the-thing?one=two']);
-        $result = $this->collection->parseRequest($request);
-        $expected = [
-            'controller' => 'Articles',
-            'action' => 'view',
-            'id' => 'the-thing',
-            'pass' => [],
-            'plugin' => null,
-            'key' => 'value',
-            '?' => ['one' => 'two'],
-            '_matchedRoute' => '/b/:id',
-        ];
-        $this->assertEquals($expected, $result);
-
         $request = new ServerRequest(['url' => '/b/media/search']);
         $result = $this->collection->parseRequest($request);
         $expected = [
@@ -237,6 +223,21 @@ class RouteCollectionTest extends TestCase
             '_matchedRoute' => '/b/media/search/*',
         ];
         $this->assertEquals($expected, $result);
+
+        $request = new ServerRequest(['url' => '/b/the-thing?one=two']);
+        $result = $this->collection->parseRequest($request);
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'view',
+            'id' => 'the-thing',
+            'pass' => [],
+            'plugin' => null,
+            'key' => 'value',
+            '?' => ['one' => 'two'],
+            '_matchedRoute' => '/b/:id',
+        ];
+        $this->assertEquals($expected, $result);
+
     }
 
     /**
