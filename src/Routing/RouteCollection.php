@@ -184,7 +184,7 @@ class RouteCollection
                 return $r;
             }
         }
-        throw new MissingRouteException(['url' => $uri]);
+        throw new MissingRouteException(['url' => $urlPath]);
     }
 
     /**
