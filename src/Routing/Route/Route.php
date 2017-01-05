@@ -92,6 +92,9 @@ class Route
      *
      * - `_ext` - Defines the extensions used for this route.
      * - `pass` - Copies the listed parameters into params['pass'].
+     * - `_host` - Define the host name pattern if you want this route to only match
+     *   specific host names. You can use `.*` and to create wildcard subdomains/hosts
+     *   e.g. `*.example.com` matches all subdomains on `example.com`.
      *
      * @param string $template Template string with parameter placeholders
      * @param array|string $defaults Defaults for the route.
