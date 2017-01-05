@@ -367,8 +367,11 @@ class Route
      */
     public function hostMatches($host)
     {
-        // Will be implemented later
-        return true;
+        if (!isset($this->options['_host'])) {
+            return true;
+        }
+        $pattern = '@^' . str_replace('\*', '.*', preg_quote($this->options['_host'], '@')) . '$@';
+        return preg_match($pattern, $host) !== 0;
     }
 
     /**

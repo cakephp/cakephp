@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Routing;
 
 use Cake\Http\ServerRequest;
+use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Route\Route;
@@ -174,6 +175,90 @@ class RouteCollectionTest extends TestCase
         $request = new ServerRequest(['url' => '/']);
         $result = $this->collection->parseRequest($request);
         $this->assertEquals([], $result, 'Should not match, missing /b');
+    }
+
+    /**
+     * Test parseRequest() checks host conditions
+     *
+     * @return void
+     */
+    public function testParseRequestCheckHostCondition()
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->connect('/fallback', ['controller' => 'Articles', 'action' => 'index'], ['_host' => '*.example.com']);
+
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'a.example.com',
+                'PATH_INFO' => '/fallback'
+            ]
+        ]);
+        $result = $this->collection->parseRequest($request);
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'index',
+            'pass' => [],
+            'plugin' => null,
+            '_matchedRoute' => '/fallback'
+        ];
+        $this->assertEquals($expected, $result, 'Should match, domain is correct');
+
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'foo.bar.example.com',
+                'PATH_INFO' => '/fallback'
+            ]
+        ]);
+        $result = $this->collection->parseRequest($request);
+        $this->assertEquals($expected, $result, 'Should match, domain is a matching subdomain');
+
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'example.test.com',
+                'PATH_INFO' => '/fallback'
+            ]
+        ]);
+        try {
+            $this->collection->parseRequest($request);
+            $this->fail('No exception raised');
+        } catch (MissingRouteException $e) {
+            $this->assertContains('/fallback', $e->getMessage());
+        }
+    }
+
+    /**
+     * Get a list of hostnames
+     *
+     * @return array
+     */
+    public static function hostProvider()
+    {
+        return [
+            ['wrong.example'],
+            ['example.com'],
+            ['aexample.com'],
+        ];
+    }
+
+    /**
+     * Test parseRequest() checks host conditions
+     *
+     * @dataProvider hostProvider
+     * @expectedException \Cake\Routing\Exception\MissingRouteException
+     * @expectedExceptionMessage A route matching "/fallback" could not be found
+     */
+    public function testParseRequestCheckHostConditionFail($host)
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->connect('/fallback', ['controller' => 'Articles', 'action' => 'index'], ['_host' => '*.example.com']);
+
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => $host,
+                'PATH_INFO' => '/fallback'
+            ]
+        ]);
+        $this->collection->parseRequest($request);
     }
 
     /**
