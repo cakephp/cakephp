@@ -160,12 +160,12 @@ class RouteCollection
         $uri = $request->getUri();
         $method = $request->getMethod();
         $urlPath = $uri->getPath();
+        $host = $uri->getHost();
         foreach (array_keys($this->_paths) as $path) {
             if (strpos($urlPath, $path) !== 0) {
                 continue;
             }
 
-            $host = $uri->getHost();
             /* @var \Cake\Routing\Route\Route $route */
             foreach ($this->_paths[$path] as $route) {
                 if (!$route->hostMatches($host)) {
