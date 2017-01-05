@@ -50,7 +50,6 @@ abstract class ServerRequestFactory extends BaseFactory
             'environment' => $server,
             'uri' => $uri,
             'files' => $files,
-            'input' => 'php://input',
             'cookies' => $cookies ?: $_COOKIE,
             'query' => $query ?: $_GET,
             'post' => $body ?: $_POST,
