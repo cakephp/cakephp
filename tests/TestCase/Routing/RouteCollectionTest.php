@@ -185,7 +185,11 @@ class RouteCollectionTest extends TestCase
     public function testParseRequestCheckHostCondition()
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $routes->connect('/fallback', ['controller' => 'Articles', 'action' => 'index'], ['_host' => '*.example.com']);
+        $routes->connect(
+            '/fallback',
+            ['controller' => 'Articles', 'action' => 'index'],
+            ['_host' => '*.example.com']
+        );
 
         $request = new ServerRequest([
             'environment' => [
@@ -250,7 +254,11 @@ class RouteCollectionTest extends TestCase
     public function testParseRequestCheckHostConditionFail($host)
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $routes->connect('/fallback', ['controller' => 'Articles', 'action' => 'index'], ['_host' => '*.example.com']);
+        $routes->connect(
+            '/fallback',
+            ['controller' => 'Articles', 'action' => 'index'],
+            ['_host' => '*.example.com']
+        );
 
         $request = new ServerRequest([
             'environment' => [
