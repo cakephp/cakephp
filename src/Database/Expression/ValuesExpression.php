@@ -196,6 +196,7 @@ class ValuesExpression implements ExpressionInterface
      * Sets the values to be inserted. If no params are passed, then it returns
      * the currently stored values
      *
+     * @deprecated 3.4.0 Use setValues()/getValues() instead.
      * @param array|null $values Array with values to be inserted.
      * @return array|self
      */
