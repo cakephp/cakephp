@@ -78,7 +78,7 @@ class TypeMap
     /**
      * Returns the currently configured types.
      *
-     * @return self|array
+     * @return array
      */
     public function getDefaults()
     {
