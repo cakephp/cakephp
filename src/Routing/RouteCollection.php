@@ -157,8 +157,8 @@ class RouteCollection
      */
     public function parseRequest(ServerRequestInterface $request)
     {
-        $method = $request->getMethod();
         $uri = $request->getUri();
+        $method = $request->getMethod();
         $urlPath = $uri->getPath();
         foreach (array_keys($this->_paths) as $path) {
             if (strpos($urlPath, $path) !== 0) {
@@ -184,7 +184,7 @@ class RouteCollection
                 return $r;
             }
         }
-        throw new MissingRouteException(['url' => $url]);
+        throw new MissingRouteException(['url' => $uri]);
     }
 
     /**
