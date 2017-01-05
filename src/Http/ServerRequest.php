@@ -314,6 +314,9 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         if ($config['url']) {
             $uri = $uri->withPath('/' . $config['url']);
         }
+        if (strlen($querystr)) {
+            $uri = $uri->withQuery($querystr);
+        }
 
         $this->uri = $uri;
         $this->base = $config['base'];

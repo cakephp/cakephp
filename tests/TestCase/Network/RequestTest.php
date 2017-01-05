@@ -172,6 +172,7 @@ class RequestTest extends TestCase
         $expected = ['one' => 'something', 'two' => 'else'];
         $this->assertEquals($expected, $request->query);
         $this->assertEquals('some/path', $request->url);
+        $this->assertEquals('one=something&two=else', $request->getUri()->getQuery());
     }
 
     /**
