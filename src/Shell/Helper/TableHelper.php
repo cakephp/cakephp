@@ -45,7 +45,7 @@ class TableHelper extends Helper
         foreach ($rows as $line) {
             foreach ($line as $k => $v) {
                 $columnLength = mb_strwidth($line[$k]);
-                if ($columnLength > (isset($widths[$k]) ? $widths[$k] : 0)) {
+                if ($columnLength >= (isset($widths[$k]) ? $widths[$k] : 0)) {
                     $widths[$k] = $columnLength;
                 }
             }
