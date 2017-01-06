@@ -880,8 +880,35 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * Toggle hydrating entities.
      *
-     * If set to false array results will be returned
+     * If set to false array results will be returned for the query.
      *
+     * @param bool $enable Use a boolean to set the hydration mode.
+     * @return self
+     */
+    public function enableHydration($enable)
+    {
+        $this->_dirty();
+        $this->_hydrate = (bool)$enable;
+
+        return $this;
+    }
+
+    /**
+     * Returns the current hydration mode.
+     *
+     * @return bool
+     */
+    public function isHydrationEnabled()
+    {
+        return $this->_hydrate;
+    }
+
+    /**
+     * Toggle hydrating entities.
+     *
+     * If set to false array results will be returned.
+     *
+     * @deprecated 3.4.0 Use enableHydration()/isHydrationEnabled() instead.
      * @param bool|null $enable Use a boolean to set the hydration mode.
      *   Null will fetch the current hydration mode.
      * @return bool|self A boolean when reading, and $this when setting the mode.
@@ -889,13 +916,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function hydrate($enable = null)
     {
         if ($enable === null) {
-            return $this->_hydrate;
+            return $this->isHydrationEnabled();
         }
 
-        $this->_dirty();
-        $this->_hydrate = (bool)$enable;
-
-        return $this;
+        return $this->enableHydration($enable);
     }
 
     /**
@@ -1181,22 +1205,51 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
+     * Sets whether or not the ORM should automatically append fields.
+     *
+     * By default calling select() will disable auto-fields. You can re-enable
+     * auto-fields with this method.
+     *
+     * @param bool $value Set true to enable, false to disable.
+     * @return self
+     */
+    public function enableAutoFields($value)
+    {
+        $this->_autoFields = (bool)$value;
+
+        return $this;
+    }
+
+    /**
+     * Gets whether or not the ORM should automatically append fields.
+     *
+     * By default calling select() will disable auto-fields. You can re-enable
+     * auto-fields with enableAutoFields().
+     *
+     * @return bool The current value.
+     */
+    public function isAutoFieldsEnabled()
+    {
+        return $this->_autoFields;
+    }
+
+    /**
      * Get/Set whether or not the ORM should automatically append fields.
      *
      * By default calling select() will disable auto-fields. You can re-enable
      * auto-fields with this method.
      *
+     * @deprecated 3.4.0 Use enableAutoFields()/isAutoFieldsEnabled() instead.
      * @param bool|null $value The value to set or null to read the current value.
      * @return bool|self Either the current value or the query object.
      */
     public function autoFields($value = null)
     {
         if ($value === null) {
-            return $this->_autoFields;
+            return $this->isAutoFieldsEnabled();
         }
-        $this->_autoFields = (bool)$value;
 
-        return $this;
+        return $this->enableAutoFields($value);
     }
 
     /**
@@ -1209,7 +1262,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $result = $this->_applyDecorators($result);
 
-        if (!($result instanceof ResultSet) && $this->bufferResults()) {
+        if (!($result instanceof ResultSet) && $this->isBufferedResultsEnabled()) {
             $class = $this->_decoratorClass();
             $result = new $class($result->buffered());
         }
