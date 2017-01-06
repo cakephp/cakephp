@@ -330,7 +330,6 @@ class RouteCollectionTest extends TestCase
             '_matchedRoute' => '/b/:id',
         ];
         $this->assertEquals($expected, $result);
-
     }
 
     /**

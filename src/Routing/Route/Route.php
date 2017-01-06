@@ -374,6 +374,7 @@ class Route
             return true;
         }
         $pattern = '@^' . str_replace('\*', '.*', preg_quote($this->options['_host'], '@')) . '$@';
+
         return preg_match($pattern, $host) !== 0;
     }
 
