@@ -24,6 +24,20 @@ use Cake\TestSuite\TestCase;
  */
 class TableHelperTest extends TestCase
 {
+    /**
+     * @var ConsoleOutput
+     */
+    public $stub;
+
+    /**
+     * @var ConsoleIo
+     */
+    public $io;
+
+    /**
+     * @var TableHelper
+     */
+    public $helper;
 
     /**
      * setUp method
@@ -59,6 +73,50 @@ class TableHelperTest extends TestCase
             '| short        | Longish thing | short         |',
             '| Longer thing | short         | Longest Value |',
             '+--------------+---------------+---------------+',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
+     * Test that output works when data contains just empty strings.
+     */
+    public function testEmptyStrings()
+    {
+        $data = [
+            ['Header 1', 'Header', 'Empty'],
+            ['short', 'Longish thing', ''],
+            ['Longer thing', 'short', ''],
+        ];
+        $this->helper->output($data);
+        $expected = [
+            '+--------------+---------------+-------+',
+            '| <info>Header 1</info>     | <info>Header</info>        | <info>Empty</info> |',
+            '+--------------+---------------+-------+',
+            '| short        | Longish thing |       |',
+            '| Longer thing | short         |       |',
+            '+--------------+---------------+-------+',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
+     * Test that output works when data contains nulls.
+     */
+    public function testNullValues()
+    {
+        $data = [
+            ['Header 1', 'Header', 'Empty'],
+            ['short', 'Longish thing', null],
+            ['Longer thing', 'short', null],
+        ];
+        $this->helper->output($data);
+        $expected = [
+            '+--------------+---------------+-------+',
+            '| <info>Header 1</info>     | <info>Header</info>        | <info>Empty</info> |',
+            '+--------------+---------------+-------+',
+            '| short        | Longish thing |       |',
+            '| Longer thing | short         |       |',
+            '+--------------+---------------+-------+',
         ];
         $this->assertEquals($expected, $this->stub->messages());
     }
