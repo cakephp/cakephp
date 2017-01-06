@@ -144,7 +144,11 @@ class RouteCollection
                 return $r;
             }
         }
-        throw new MissingRouteException(['url' => $url]);
+        throw new MissingRouteException([
+            'method' => $method,
+            'url' => $url,
+            'message' => 'A "%s" route matching "%s" could not be found.',
+        ]);
     }
 
     /**
