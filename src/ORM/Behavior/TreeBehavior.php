@@ -158,7 +158,7 @@ class TreeBehavior extends Behavior
      *
      * Manages updating level of descendents of currently saved entity.
      *
-     * @param \Cake\Event\Event $event The beforeSave event that was fired
+     * @param \Cake\Event\Event $event The afterSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity the entity that is going to be saved
      * @return void
      */
