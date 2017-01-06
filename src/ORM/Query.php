@@ -880,7 +880,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * Toggle hydrating entities.
      *
-     * If set to false array results will be returned.
+     * If set to false array results will be returned for the query.
      *
      * @param bool $enable Use a boolean to set the hydration mode.
      * @return self
@@ -894,6 +894,8 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
+     * Returns the current hydration mode.
+     *
      * @return bool
      */
     public function isHydrationEnabled()
