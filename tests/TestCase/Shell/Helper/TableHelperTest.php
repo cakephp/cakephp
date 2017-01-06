@@ -100,7 +100,7 @@ class TableHelperTest extends TestCase
     }
 
     /**
-     * Test that output works when data contains just empty strings.
+     * Test that output works when data contains nulls.
      */
     public function testNullValues()
     {
