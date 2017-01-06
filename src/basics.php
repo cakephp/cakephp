@@ -31,7 +31,7 @@ if (!function_exists('debug')) {
      * Prints out debug information about given variable and returns the
      * variable that was passed.
      *
-     * Only runs if debug level is greater than zero.
+     * Only runs if debug mode is enabled.
      *
      * @param mixed $var Variable to show debug information for.
      * @param bool|null $showHtml If set to true, the method prints the debug data in a browser-friendly way.
@@ -156,7 +156,7 @@ if (!function_exists('dd')) {
     /**
      * Prints out debug information about given variable and dies.
      *
-     * Only runs if debug level is greater than zero.
+     * Only runs if debug mode is enabled.
      * It will otherwise just continue code execution and ignore this function.
      *
      * @param mixed $var Variable to show debug information for.
