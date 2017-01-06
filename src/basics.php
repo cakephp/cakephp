@@ -151,3 +151,28 @@ if (!function_exists('breakpoint')) {
         );
     }
 }
+
+if (!function_exists('dd')) {
+    /**
+     * Prints out debug information about given variable and dies.
+     *
+     * Only runs if debug level is greater than zero.
+     * It will otherwise just continue code execution and ignore this function.
+     *
+     * @param mixed $var Variable to show debug information for.
+     * @param bool|null $showHtml If set to true, the method prints the debug data in a browser-friendly way.
+     * @return void
+     * @link http://book.cakephp.org/3.0/en/development/debugging.html#basic-debugging
+     */
+    function dd($var, $showHtml = null)
+    {
+        if (!Configure::read('debug')) {
+            return;
+        }
+
+        debug($var, $showHtml, false);
+        $backtrace = debug_backtrace(false, 1);
+        pr('dd-location: ' . $backtrace[0]['file'] . ':' . $backtrace[0]['line']);
+        die(1);
+    }
+}
