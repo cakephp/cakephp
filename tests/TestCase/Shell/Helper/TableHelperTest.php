@@ -100,6 +100,28 @@ class TableHelperTest extends TestCase
     }
 
     /**
+     * Test that output works when data contains just empty strings.
+     */
+    public function testNullValues()
+    {
+        $data = [
+            ['Header 1', 'Header', 'Empty'],
+            ['short', 'Longish thing', null],
+            ['Longer thing', 'short', null],
+        ];
+        $this->helper->output($data);
+        $expected = [
+            '+--------------+---------------+-------+',
+            '| <info>Header 1</info>     | <info>Header</info>        | <info>Empty</info> |',
+            '+--------------+---------------+-------+',
+            '| short        | Longish thing |       |',
+            '| Longer thing | short         |       |',
+            '+--------------+---------------+-------+',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
      * Test output with multi-byte characters
      *
      * @return void
