@@ -173,7 +173,7 @@ if (!function_exists('dd')) {
             return;
         }
 
-        debug($var, $showHtml, false);
+        debug($var, $showHtml);
         die(1);
     }
 }
