@@ -31,7 +31,7 @@ if (!function_exists('debug')) {
      * Prints out debug information about given variable and returns the
      * variable that was passed.
      *
-     * Only runs if debug level is greater than zero.
+     * Only runs if debug mode is enabled.
      *
      * @param mixed $var Variable to show debug information for.
      * @param bool|null $showHtml If set to true, the method prints the debug data in a browser-friendly way.
@@ -149,5 +149,30 @@ if (!function_exists('breakpoint')) {
             "psy/psysh must be installed and you must be in a CLI environment to use the breakpoint function",
             E_USER_WARNING
         );
+    }
+}
+
+if (!function_exists('dd')) {
+    /**
+     * Prints out debug information about given variable and dies.
+     *
+     * Only runs if debug mode is enabled.
+     * It will otherwise just continue code execution and ignore this function.
+     *
+     * @param mixed $var Variable to show debug information for.
+     * @param bool|null $showHtml If set to true, the method prints the debug data in a browser-friendly way.
+     * @return void
+     * @link http://book.cakephp.org/3.0/en/development/debugging.html#basic-debugging
+     */
+    function dd($var, $showHtml = null)
+    {
+        if (!Configure::read('debug')) {
+            return;
+        }
+
+        debug($var, $showHtml, false);
+        $backtrace = debug_backtrace(false, 1);
+        pr('dd-location: ' . $backtrace[0]['file'] . ':' . $backtrace[0]['line']);
+        die(1);
     }
 }
