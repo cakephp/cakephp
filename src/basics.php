@@ -51,7 +51,10 @@ if (!function_exists('debug')) {
         $line = '';
         $lineInfo = '';
         if ($showFrom) {
-            $trace = Debugger::trace(['start' => 1, 'depth' => 2, 'format' => 'array']);
+            $trace = Debugger::trace(['start' => 1, 'depth' => 3, 'format' => 'array']);
+            if (count($trace) > 1) {
+                array_shift($trace);
+            }
             $search = [];
             if (defined('ROOT')) {
                 $search = [ROOT];
@@ -171,8 +174,6 @@ if (!function_exists('dd')) {
         }
 
         debug($var, $showHtml, false);
-        $backtrace = debug_backtrace(false, 1);
-        pr('dd-location: ' . $backtrace[0]['file'] . ':' . $backtrace[0]['line']);
         die(1);
     }
 }
