@@ -52,7 +52,10 @@ if (!function_exists('debug')) {
         $lineInfo = '';
         if ($showFrom) {
             $trace = Debugger::trace(['start' => 1, 'depth' => 3, 'format' => 'array']);
-            if (count($trace) > 1) {
+            if (count($trace) > 1
+                && $trace[1]['function'] === 'dd'
+                && !isset($trace[1]['object'])
+            ) {
                 array_shift($trace);
             }
             $search = [];
