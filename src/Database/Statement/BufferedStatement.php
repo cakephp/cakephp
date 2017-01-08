@@ -91,7 +91,6 @@ class BufferedStatement extends StatementDecorator
             return $row;
         }
 
-        $this->_fetchType = $type;
         $record = parent::fetch($type);
 
         if ($record === false) {
