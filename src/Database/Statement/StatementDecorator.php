@@ -27,6 +27,8 @@ use IteratorAggregate;
  *
  * This class is but a decorator of an actual statement implementation, such as
  * PDOStatement.
+ *
+ * @property-read string $queryString
  */
 class StatementDecorator implements StatementInterface, Countable, IteratorAggregate
 {
