@@ -801,7 +801,7 @@ class Debugger
      *    data in a browser-friendly way.
      * @return void
      */
-    public static function print($var, $location = [], $showHtml = null)
+    public static function printVar($var, $location = [], $showHtml = null)
     {
         $location += ['file' => null, 'line' => null];
         $file = $location['file'];

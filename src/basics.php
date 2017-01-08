@@ -55,7 +55,7 @@ if (!function_exists('debug')) {
             ];
         }
 
-        Debugger::print($var, $location, $showHtml);
+        Debugger::printVar($var, $location, $showHtml);
 
         return $var;
     }
@@ -136,7 +136,7 @@ if (!function_exists('dd')) {
             'file' => $trace[0]['file']
         ];
 
-        Debugger::print($var, $location);
+        Debugger::printVar($var, $location);
         die(1);
     }
 }

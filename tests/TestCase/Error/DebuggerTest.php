@@ -587,14 +587,14 @@ eos;
     }
 
     /**
-     * test testPrint()
+     * test testPrintVar()
      *
      * @return void
      */
-    public function testPrint()
+    public function testPrintVar()
     {
         ob_start();
-        Debugger::print('this-is-a-test', ['file' => __FILE__, 'line' => __LINE__], false);
+        Debugger::printVar('this-is-a-test', ['file' => __FILE__, 'line' => __LINE__], false);
         $result = ob_get_clean();
         $expectedText = <<<EXPECTED
 %s (line %d)
@@ -609,7 +609,7 @@ EXPECTED;
 
         ob_start();
         $value = '<div>this-is-a-test</div>';
-        Debugger::print($value, ['file' => __FILE__, 'line' => __LINE__], true);
+        Debugger::printVar($value, ['file' => __FILE__, 'line' => __LINE__], true);
         $result = ob_get_clean();
         $expectedHtml = <<<EXPECTED
 <div class="cake-debug-output">
@@ -623,7 +623,7 @@ EXPECTED;
         $this->assertEquals($expected, $result);
 
         ob_start();
-        Debugger::print('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], true);
+        Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], true);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
 <div class="cake-debug-output">
@@ -637,7 +637,7 @@ EXPECTED;
         $this->assertEquals($expected, $result);
 
         ob_start();
-        Debugger::print('<div>this-is-a-test</div>', [], true);
+        Debugger::printVar('<div>this-is-a-test</div>', [], true);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
 <div class="cake-debug-output">
@@ -651,7 +651,7 @@ EXPECTED;
         $this->assertEquals($expected, $result);
 
         ob_start();
-        Debugger::print('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__]);
+        Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__]);
         $result = ob_get_clean();
         $expectedHtml = <<<EXPECTED
 <div class="cake-debug-output">
@@ -676,7 +676,7 @@ EXPECTED;
         $this->assertEquals($expected, $result);
 
         ob_start();
-        Debugger::print('<div>this-is-a-test</div>');
+        Debugger::printVar('<div>this-is-a-test</div>');
         $result = ob_get_clean();
         $expectedHtml = <<<EXPECTED
 <div class="cake-debug-output">
@@ -701,7 +701,7 @@ EXPECTED;
         $this->assertEquals($expected, $result);
 
         ob_start();
-        Debugger::print('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], false);
+        Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], false);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
 %s (line %d)
@@ -714,7 +714,7 @@ EXPECTED;
         $this->assertEquals($expected, $result);
 
         ob_start();
-        Debugger::print('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], false);
+        Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], false);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
 %s (line %d)
@@ -727,7 +727,7 @@ EXPECTED;
         $this->assertEquals($expected, $result);
 
         ob_start();
-        Debugger::print('<div>this-is-a-test</div>', [], false);
+        Debugger::printVar('<div>this-is-a-test</div>', [], false);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
 
@@ -740,7 +740,7 @@ EXPECTED;
         $this->assertEquals($expected, $result);
 
         ob_start();
-        Debugger::print(false, [], false);
+        Debugger::printVar(false, [], false);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
 
