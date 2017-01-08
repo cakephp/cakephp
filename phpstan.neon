@@ -12,6 +12,9 @@ parameters:
 		- '#Access to undefined constant Memcached::DYNAMIC_CLIENT_MODE#'
 		- '#Access to undefined constant PDO::SQLSRV_ATTR_ENCODING#'
 		- '#Access to undefined constant PDO::SQLSRV_ENCODING_BINARY#'
+		- '#Access to an undefined property Cake\\Http\\Client\\Message::\$headers#'
+		- '#Access to an undefined property Cake\\[a-zA-Z0-9_\\]+::\$_validViewOptions#'
+		- '#Access to an undefined property Cake\\Database\\Driver::\$_connection#'
 	earlyTerminatingMethodCalls:
 		Cake\Shell\Shell:
 			- abort
