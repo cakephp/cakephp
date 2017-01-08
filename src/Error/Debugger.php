@@ -792,6 +792,68 @@ class Debugger
     }
 
     /**
+     * Prints out debug information about given variable.
+     *
+     * @param mixed $var Variable to show debug information for.
+     * @param array $location If contains keys "file" and "line" their values will
+     *    be used to show location info.
+     * @param bool|null $showHtml If set to true, the method prints the debug
+     *    data in a browser-friendly way.
+     * @return void
+     */
+    public static function print($var, $location = [], $showHtml = null)
+    {
+        $location += ['file' => null, 'line' => null];
+        $file = $location['file'];
+        $line = $location['line'];
+        $lineInfo = '';
+        if ($file) {
+            $search = [];
+            if (defined('ROOT')) {
+                $search = [ROOT];
+            }
+            if (defined('CAKE_CORE_INCLUDE_PATH')) {
+                array_unshift($search, CAKE_CORE_INCLUDE_PATH);
+            }
+            $file = str_replace($search, '', $file);
+        }
+        $html = <<<HTML
+<div class="cake-debug-output">
+%s
+<pre class="cake-debug">
+%s
+</pre>
+</div>
+HTML;
+        $text = <<<TEXT
+%s
+########## DEBUG ##########
+%s
+###########################
+
+TEXT;
+        $template = $html;
+        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') || $showHtml === false) {
+            $template = $text;
+            if ($file && $line) {
+                $lineInfo = sprintf('%s (line %s)', $file, $line);
+            }
+        }
+        if ($showHtml === null && $template !== $text) {
+            $showHtml = true;
+        }
+        $var = Debugger::exportVar($var, 25);
+        if ($showHtml) {
+            $template = $html;
+            $var = h($var);
+            if ($file && $line) {
+                $lineInfo = sprintf('<span><strong>%s</strong> (line <strong>%s</strong>)</span>', $file, $line);
+            }
+        }
+        printf($template, $lineInfo, $var);
+    }
+
+    /**
      * Verifies that the application's salt and cipher seed value has been changed from the default value.
      *
      * @return void
