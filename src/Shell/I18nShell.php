@@ -79,7 +79,7 @@ class I18nShell extends Shell
      * Inits PO file from POT file.
      *
      * @param string|null $language Language code to use.
-     * @return int|null
+     * @return void
      */
     public function init($language = null)
     {
@@ -87,7 +87,7 @@ class I18nShell extends Shell
             $language = $this->in('Please specify language code, e.g. `en`, `eng`, `en_US` etc.');
         }
         if (strlen($language) < 2) {
-            return $this->abort('Invalid language code. Valid is `en`, `eng`, `en_US` etc.');
+            $this->abort('Invalid language code. Valid is `en`, `eng`, `en_US` etc.');
         }
 
         $this->_paths = [APP];
