@@ -144,11 +144,15 @@ class RouteCollection
                 return $r;
             }
         }
-        throw new MissingRouteException([
-            'method' => $method,
-            'url' => $url,
-            'message' => 'A "%s" route matching "%s" could not be found.',
-        ]);
+
+        $exceptionProperties = ['url' => $url];
+        if ($method !== '') {
+            // Ensure that if the method is included, it is the first element of
+            // the array, to match the order that the strings are printed in the
+            // MissingRouteException error message, $_messageTemplateWithMethod.
+            $exceptionProperties = array_merge(['method' => $method], $exceptionProperties);
+        }
+        throw new MissingRouteException($exceptionProperties);
     }
 
     /**

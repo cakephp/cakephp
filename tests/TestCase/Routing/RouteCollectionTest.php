@@ -37,7 +37,7 @@ class RouteCollectionTest extends TestCase
      * Test parse() throws an error on unknown routes.
      *
      * @expectedException \Cake\Routing\Exception\MissingRouteException
-     * @expectedExceptionMessage A "" route matching "/" could not be found
+     * @expectedExceptionMessage A route matching "/" could not be found
      */
     public function testParseMissingRoute()
     {
