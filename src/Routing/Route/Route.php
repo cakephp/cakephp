@@ -15,6 +15,7 @@
 namespace Cake\Routing\Route;
 
 use Cake\Http\ServerRequest;
+use Psr\Http\Message\ServerRequestInterface;
 use Cake\Routing\Router;
 
 /**
@@ -285,11 +286,30 @@ class Route
      * Checks to see if the given URL can be parsed by this route.
      *
      * If the route can be parsed an array of parameters will be returned; if not
+     * false will be returned.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request The URL to attempt to parse.
+     * @return array|false An array of request parameters, or false on failure.
+     */
+    public function parseRequest(ServerRequestInterface $request)
+    {
+        $uri = $request->getUri();
+        if (isset($this->options['_host']) && !$this->hostMatches($uri->getHost())) {
+            return false;
+        }
+        return $this->parse($uri->getPath(), $request->getMethod());
+    }
+
+    /**
+     * Checks to see if the given URL can be parsed by this route.
+     *
+     * If the route can be parsed an array of parameters will be returned; if not
      * false will be returned. String URLs are parsed if they match a routes regular expression.
      *
      * @param string $url The URL to attempt to parse.
      * @param string $method The HTTP method of the request being parsed.
      * @return array|false An array of request parameters, or false on failure.
+     * @deprecated 3.4.0 Use/implement parseRequest() instead as it provides more flexibility/control.
      */
     public function parse($url, $method = '')
     {
@@ -356,7 +376,6 @@ class Route
                 }
             }
         }
-
         $route['_matchedRoute'] = $this->template;
 
         return $route;
@@ -370,9 +389,6 @@ class Route
      */
     public function hostMatches($host)
     {
-        if (!isset($this->options['_host'])) {
-            return true;
-        }
         $pattern = '@^' . str_replace('\*', '.*', preg_quote($this->options['_host'], '@')) . '$@';
 
         return preg_match($pattern, $host) !== 0;

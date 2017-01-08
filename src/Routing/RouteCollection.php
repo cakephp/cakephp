@@ -158,9 +158,7 @@ class RouteCollection
     public function parseRequest(ServerRequestInterface $request)
     {
         $uri = $request->getUri();
-        $method = $request->getMethod();
         $urlPath = $uri->getPath();
-        $host = $uri->getHost();
         foreach (array_keys($this->_paths) as $path) {
             if (strpos($urlPath, $path) !== 0) {
                 continue;
@@ -168,11 +166,7 @@ class RouteCollection
 
             /* @var \Cake\Routing\Route\Route $route */
             foreach ($this->_paths[$path] as $route) {
-                if (!$route->hostMatches($host)) {
-                    continue;
-                }
-
-                $r = $route->parse($urlPath, $method);
+                $r = $route->parseRequest($request);
                 if ($r === false) {
                     continue;
                 }
