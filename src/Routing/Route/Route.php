@@ -15,8 +15,8 @@
 namespace Cake\Routing\Route;
 
 use Cake\Http\ServerRequest;
-use Psr\Http\Message\ServerRequestInterface;
 use Cake\Routing\Router;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * A single Route used by the Router to connect requests to
@@ -297,6 +297,7 @@ class Route
         if (isset($this->options['_host']) && !$this->hostMatches($uri->getHost())) {
             return false;
         }
+
         return $this->parse($uri->getPath(), $request->getMethod());
     }
 
