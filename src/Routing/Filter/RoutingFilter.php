@@ -55,7 +55,7 @@ class RoutingFilter extends DispatcherFilter
 
         try {
             if (empty($request->params['controller'])) {
-                $params = Router::parse($request->url, $request->method());
+                $params = Router::parseRequest($request);
                 $request->addParams($params);
             }
 

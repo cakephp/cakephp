@@ -14,6 +14,8 @@
  */
 namespace Cake\Test\TestCase\Routing;
 
+use Cake\Http\ServerRequest;
+use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Route\Route;
@@ -154,6 +156,178 @@ class RouteCollectionTest extends TestCase
             'pass' => [],
             '_matchedRoute' => '/:controller/:action',
 
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test parseRequest() throws an error on unknown routes.
+     *
+     * @expectedException \Cake\Routing\Exception\MissingRouteException
+     * @expectedExceptionMessage A route matching "/" could not be found
+     */
+    public function testParseRequestMissingRoute()
+    {
+        $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
+        $routes->connect('/', ['controller' => 'Articles']);
+        $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
+
+        $request = new ServerRequest(['url' => '/']);
+        $result = $this->collection->parseRequest($request);
+        $this->assertEquals([], $result, 'Should not match, missing /b');
+    }
+
+    /**
+     * Test parseRequest() checks host conditions
+     *
+     * @return void
+     */
+    public function testParseRequestCheckHostCondition()
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->connect(
+            '/fallback',
+            ['controller' => 'Articles', 'action' => 'index'],
+            ['_host' => '*.example.com']
+        );
+
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'a.example.com',
+                'PATH_INFO' => '/fallback'
+            ]
+        ]);
+        $result = $this->collection->parseRequest($request);
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'index',
+            'pass' => [],
+            'plugin' => null,
+            '_matchedRoute' => '/fallback'
+        ];
+        $this->assertEquals($expected, $result, 'Should match, domain is correct');
+
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'foo.bar.example.com',
+                'PATH_INFO' => '/fallback'
+            ]
+        ]);
+        $result = $this->collection->parseRequest($request);
+        $this->assertEquals($expected, $result, 'Should match, domain is a matching subdomain');
+
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'example.test.com',
+                'PATH_INFO' => '/fallback'
+            ]
+        ]);
+        try {
+            $this->collection->parseRequest($request);
+            $this->fail('No exception raised');
+        } catch (MissingRouteException $e) {
+            $this->assertContains('/fallback', $e->getMessage());
+        }
+    }
+
+    /**
+     * Get a list of hostnames
+     *
+     * @return array
+     */
+    public static function hostProvider()
+    {
+        return [
+            ['wrong.example'],
+            ['example.com'],
+            ['aexample.com'],
+        ];
+    }
+
+    /**
+     * Test parseRequest() checks host conditions
+     *
+     * @dataProvider hostProvider
+     * @expectedException \Cake\Routing\Exception\MissingRouteException
+     * @expectedExceptionMessage A route matching "/fallback" could not be found
+     */
+    public function testParseRequestCheckHostConditionFail($host)
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->connect(
+            '/fallback',
+            ['controller' => 'Articles', 'action' => 'index'],
+            ['_host' => '*.example.com']
+        );
+
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => $host,
+                'PATH_INFO' => '/fallback'
+            ]
+        ]);
+        $this->collection->parseRequest($request);
+    }
+
+    /**
+     * Test parsing routes.
+     *
+     * @return void
+     */
+    public function testParseRequest()
+    {
+        $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
+        $routes->connect('/', ['controller' => 'Articles']);
+        $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
+        $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search']);
+
+        $request = new ServerRequest(['url' => '/b/']);
+        $result = $this->collection->parseRequest($request);
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'index',
+            'pass' => [],
+            'plugin' => null,
+            'key' => 'value',
+            '_matchedRoute' => '/b',
+        ];
+        $this->assertEquals($expected, $result);
+
+        $request = new ServerRequest(['url' => '/b/media/search']);
+        $result = $this->collection->parseRequest($request);
+        $expected = [
+            'key' => 'value',
+            'pass' => [],
+            'plugin' => null,
+            'controller' => 'Media',
+            'action' => 'search',
+            '_matchedRoute' => '/b/media/search/*',
+        ];
+        $this->assertEquals($expected, $result);
+
+        $request = new ServerRequest(['url' => '/b/media/search/thing']);
+        $result = $this->collection->parseRequest($request);
+        $expected = [
+            'key' => 'value',
+            'pass' => ['thing'],
+            'plugin' => null,
+            'controller' => 'Media',
+            'action' => 'search',
+            '_matchedRoute' => '/b/media/search/*',
+        ];
+        $this->assertEquals($expected, $result);
+
+        $request = new ServerRequest(['url' => '/b/the-thing?one=two']);
+        $result = $this->collection->parseRequest($request);
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'view',
+            'id' => 'the-thing',
+            'pass' => [],
+            'plugin' => null,
+            'key' => 'value',
+            '?' => ['one' => 'two'],
+            '_matchedRoute' => '/b/:id',
         ];
         $this->assertEquals($expected, $result);
     }

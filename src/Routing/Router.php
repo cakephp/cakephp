@@ -338,6 +338,7 @@ class Router
      * @param string $method The HTTP method being used.
      * @return array Parsed elements from URL.
      * @throws \Cake\Routing\Exception\MissingRouteException When a route cannot be handled
+     * @deprecated 3.4.0 Use Router::parseRequest() instead.
      */
     public static function parse($url, $method = '')
     {
@@ -349,6 +350,22 @@ class Router
         }
 
         return static::$_collection->parse($url, $method);
+    }
+
+    /**
+     * Get the routing parameters for the request is possible.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request to parse request data from.
+     * @return array Parsed elements from URL.
+     * @throws \Cake\Routing\Exception\MissingRouteException When a route cannot be handled
+     */
+    public static function parseRequest(ServerRequestInterface $request)
+    {
+        if (!static::$initialized) {
+            static::_loadRoutes();
+        }
+
+        return static::$_collection->parseRequest($request);
     }
 
     /**

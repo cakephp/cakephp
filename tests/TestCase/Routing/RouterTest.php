@@ -1596,6 +1596,26 @@ class RouterTest extends TestCase
     }
 
     /**
+     * test parseRequest
+     *
+     * @return void
+     */
+    public function testParseRequest()
+    {
+        Router::connect('/articles/:action/*', ['controller' => 'Articles']);
+        $request = new Request(['url' => '/articles/view/1']);
+        $result = Router::parseRequest($request);
+        $expected = [
+            'pass' => ['1'],
+            'plugin' => null,
+            'controller' => 'Articles',
+            'action' => 'view',
+            '_matchedRoute' => '/articles/:action/*',
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * testUuidRoutes method
      *
      * @return void
