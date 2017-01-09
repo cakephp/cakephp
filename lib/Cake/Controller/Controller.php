@@ -754,7 +754,7 @@ class Controller extends CakeObject implements CakeEventListener {
  *     or an absolute URL
  * @param int|array|null $status HTTP status code (eg: 301). Defaults to 302 when null is passed.
  * @param bool $exit If true, exit() will be called after the redirect
- * @return \Cake\Network\Response|null
+ * @return CakeResponse|null
  * @triggers Controller.beforeRedirect $this, array($url, $status, $exit)
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::redirect
  */
