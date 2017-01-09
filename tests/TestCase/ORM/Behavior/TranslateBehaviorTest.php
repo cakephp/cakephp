@@ -321,6 +321,36 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
+     * Tests translationField method for translated fields.
+     *
+     * @return void
+     */
+    public function testTranslationFieldForTranslatedFields()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+
+        $expected = 'Articles_title_translation.content';
+        $field = $table->translationField('title');
+        $this->assertSame($expected, $field);
+    }
+
+    /**
+     * Tests translationField method for other fields.
+     *
+     * @return void
+     */
+    public function testTranslationFieldForOtherFields()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+
+        $expected = 'Articles.foo';
+        $field = $table->translationField('foo');
+        $this->assertSame($expected, $field);
+    }
+
+    /**
      * Tests that translating fields work when other formatters are used
      *
      * @return void
