@@ -324,7 +324,7 @@ class Scaffold {
  *
  * @param string $message Message to display
  * @param string $element Flash template to use
- * @return \Cake\Network\Response|null
+ * @return CakeResponse|null
  */
 	protected function _sendMessage($message, $element = 'default') {
 		if ($this->_validSession) {
