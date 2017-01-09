@@ -530,4 +530,19 @@ class EagerLoaderTest extends TestCase
 
         return $elements;
     }
+
+    /**
+     * Assert that matching('something') and SetMatching('something') return consistent type
+     */
+    public function testSetMatchingReturnType()
+    {
+        $loader = new EagerLoader();
+        $result = $loader->setMatching('clients');
+        $this->assertArrayHasKey('clients', $result);
+        $this->assertArrayHasKey('clients', $loader->getMatching());
+
+        $result = $loader->matching('customers');
+        $this->assertArrayHasKey('customers', $result);
+        $this->assertArrayHasKey('customers', $loader->getMatching());
+    }
 }
