@@ -50,6 +50,23 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
+     * Test parse() throws an error on known routes called with unknown methods.
+     *
+     * @expectedException \Cake\Routing\Exception\MissingRouteException
+     * @expectedExceptionMessage A "POST" route matching "/b" could not be found
+     */
+    public function testParseMissingRouteMethod()
+    {
+        $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
+        $routes->connect('/', ['controller' => 'Articles', '_method' => ['GET']]);
+
+        $result = $this->collection->parse('/b', 'GET');
+        $this->assertNotEmpty($result, 'Route should be found');
+        $result = $this->collection->parse('/b', 'POST');
+        $this->assertEquals([], $result, 'Should not match with missing method');
+    }
+
+    /**
      * Test parsing routes.
      *
      * @return void
