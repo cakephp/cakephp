@@ -213,7 +213,7 @@ class EagerLoader
      * @param callable|null $builder the callback function to be used for setting extra
      * options to the filtering query
      * @param array $options Extra options for the association matching.
-     * @return self
+     * @return array Containments.
      */
     public function setMatching($assoc, callable $builder = null, $options = [])
     {
@@ -239,9 +239,7 @@ class EagerLoader
 
         $pointer[$last] = ['queryBuilder' => $builder, 'matching' => true] + $options;
 
-        $this->_matching->contain($containments);
-
-        return $this;
+        return $this->_matching->contain($containments);
     }
 
     /**
