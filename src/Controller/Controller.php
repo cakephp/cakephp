@@ -235,8 +235,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $this->name = $name;
         }
 
-        if ($this->name === null && $request && $request->param('controller')) {
-            $this->name = $request->param('controller');
+        if ($this->name === null && $request && $request->getParam('controller')) {
+            $this->name = $request->getParam('controller');
         }
 
         if ($this->name === null) {
@@ -401,10 +401,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function setRequest(ServerRequest $request)
     {
         $this->request = $request;
-        $this->plugin = $request->param('plugin') ?: null;
+        $this->plugin = $request->getParam('plugin') ?: null;
 
-        if ($request->param('pass')) {
-            $this->passedArgs = $request->param('pass');
+        if ($request->getParam('pass')) {
+            $this->passedArgs = $request->getParam('pass');
         }
     }
 
@@ -551,7 +551,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             return null;
         }
 
-        if (!$response->location()) {
+        if (!$response->getHeaderLine('Location')) {
             $response = $response->withLocation(Router::url($url, true));
         }
 
@@ -595,10 +595,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $builder->setTemplatePath($this->_viewPath());
         }
 
-        if (!empty($this->request->params['bare'])) {
+        if ($this->request->getParam('bare')) {
             $builder->enableAutoLayout(false);
         }
-        $builder->className($this->viewClass);
+        $builder->getClassName($this->viewClass);
 
         $this->autoRender = false;
 

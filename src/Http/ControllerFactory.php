@@ -35,19 +35,19 @@ class ControllerFactory
     {
         $pluginPath = $controller = null;
         $namespace = 'Controller';
-        if (isset($request->params['plugin'])) {
-            $pluginPath = $request->params['plugin'] . '.';
+        if ($request->getParam('plugin')) {
+            $pluginPath = $request->getParam('plugin') . '.';
         }
-        if (isset($request->params['controller'])) {
-            $controller = $request->params['controller'];
+        if ($request->getParam('controller')) {
+            $controller = $request->getParam('controller');
         }
-        if (isset($request->params['prefix'])) {
-            if (strpos($request->params['prefix'], '/') === false) {
-                $namespace .= '/' . Inflector::camelize($request->params['prefix']);
+        if ($request->getParam('prefix')) {
+            if (strpos($request->getParam('prefix'), '/') === false) {
+                $namespace .= '/' . Inflector::camelize($request->getParam('prefix'));
             } else {
                 $prefixes = array_map(
                     'Cake\Utility\Inflector::camelize',
-                    explode('/', $request->params['prefix'])
+                    explode('/', $request->getParam('prefix'))
                 );
                 $namespace .= '/' . implode('/', $prefixes);
             }
@@ -87,10 +87,10 @@ class ControllerFactory
     protected function missingController($request)
     {
         throw new MissingControllerException([
-            'class' => $request->param('controller'),
-            'plugin' => $request->param('plugin'),
-            'prefix' => $request->param('prefix'),
-            '_ext' => $request->param('_ext')
+            'class' => $request->getParam('controller'),
+            'plugin' => $request->getParam('plugin'),
+            'prefix' => $request->getParam('prefix'),
+            '_ext' => $request->getParam('_ext')
         ]);
     }
 }
