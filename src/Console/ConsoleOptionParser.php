@@ -601,7 +601,7 @@ class ConsoleOptionParser
             return $options;
         }
 
-        if ($options['parser'] && is_object($options['parser'])) {
+        if ($options['parser'] instanceof self) {
             if ($options['parser']->getDescription() !== null) {
                 return $options;
             }
@@ -611,7 +611,7 @@ class ConsoleOptionParser
             return $options;
         }
 
-        if ($options['parser'] && is_array($options['parser'])) {
+        if (is_array($options['parser'])) {
             if (isset($options['parser']['description'])) {
                 return $options;
             }
