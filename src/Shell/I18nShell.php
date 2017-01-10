@@ -147,7 +147,7 @@ class I18nShell extends Shell
             ]
         ];
 
-        $parser->description(
+        $parser->setDescription(
             'I18n Shell generates .pot files(s) with translations.'
         )->addSubcommand('extract', [
             'help' => 'Extract the po translations from your application',

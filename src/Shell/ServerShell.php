@@ -150,7 +150,7 @@ class ServerShell extends Shell
     {
         $parser = parent::getOptionParser();
 
-        $parser->description([
+        $parser->setDescription([
             'PHP Built-in Server for CakePHP',
             '<warning>[WARN] Don\'t use this in a production environment</warning>',
         ])->addOption('host', [
