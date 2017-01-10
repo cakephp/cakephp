@@ -1087,9 +1087,7 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->scriptBlock('window.foo = 2;');
         $expected = [
             '<script',
-            $this->cDataStart,
             'window.foo = 2;',
-            $this->cDataEnd,
             '/script',
         ];
         $this->assertHtml($expected, $result);
@@ -1097,9 +1095,7 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->scriptBlock('window.foo = 2;', ['type' => 'text/x-handlebars-template']);
         $expected = [
             'script' => ['type' => 'text/x-handlebars-template'],
-            $this->cDataStart,
             'window.foo = 2;',
-            $this->cDataEnd,
             '/script',
         ];
         $this->assertHtml($expected, $result);
