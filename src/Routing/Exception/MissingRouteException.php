@@ -29,7 +29,7 @@ class MissingRouteException extends Exception
     /**
      * Message template to use when the requested method is included.
      *
-     * @var  string
+     * @var string
      */
     protected $_messageTemplateWithMethod = 'A "%s" route matching "%s" could not be found.';
 
