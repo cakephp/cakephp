@@ -111,8 +111,8 @@ class JsonView extends SerializedView
             if ($this->viewVars['_jsonp'] === true) {
                 $jsonpParam = 'callback';
             }
-            if ($this->request->query($jsonpParam)) {
-                $return = sprintf('%s(%s)', h($this->request->query($jsonpParam)), $return);
+            if ($this->request->getQuery($jsonpParam)) {
+                $return = sprintf('%s(%s)', h($this->request->getQuery($jsonpParam)), $return);
                 $this->response->type('js');
             }
         }

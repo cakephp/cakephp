@@ -953,7 +953,7 @@ class FormHelper extends Helper
                 continue;
             }
 
-            $out .= $this->input($name, (array)$opts);
+            $out .= $this->control($name, (array)$opts);
         }
 
         return $this->fieldset($out, $options);
@@ -2731,7 +2731,7 @@ class FormHelper extends Helper
      */
     public function resetTemplates()
     {
-        $this->templates($this->_defaultConfig['templates']);
+        $this->setTemplates($this->_defaultConfig['templates']);
     }
 
     /**

@@ -115,7 +115,7 @@ trait ValidatorAwareTrait
             }
         }
 
-        $validator->provider(self::VALIDATOR_PROVIDER_NAME, $this);
+        $validator->setProvider(self::VALIDATOR_PROVIDER_NAME, $this);
 
         return $this->_validators[$name] = $validator;
     }
