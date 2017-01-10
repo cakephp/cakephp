@@ -538,7 +538,7 @@ class EagerLoaderTest extends TestCase
     {
         $loader = new EagerLoader();
         $result = $loader->setMatching('clients');
-        $this->assertArrayHasKey('clients', $result);
+        $this->assertInstanceOf(EagerLoader::class, $result);
         $this->assertArrayHasKey('clients', $loader->getMatching());
 
         $result = $loader->matching('customers');
