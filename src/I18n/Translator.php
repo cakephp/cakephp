@@ -20,8 +20,8 @@
  */
 namespace Cake\I18n;
 
-use Aura\Intl\TranslatorInterface;
 use Aura\Intl\FormatterInterface;
+use Aura\Intl\TranslatorInterface;
 
 /**
  * Provides missing message behavior for CakePHP internal message formats.
@@ -72,10 +72,10 @@ class Translator implements TranslatorInterface
         FormatterInterface $formatter,
         TranslatorInterface $fallback = null
     ) {
-        $this->locale    = $locale;
-        $this->messages  = $messages;
+        $this->locale = $locale;
+        $this->messages = $messages;
         $this->formatter = $formatter;
-        $this->fallback  = $fallback;
+        $this->fallback = $fallback;
     }
 
     /**
@@ -129,7 +129,7 @@ class Translator implements TranslatorInterface
             // No or missing context, fallback to the key/first message
             if ($context === null) {
                 $message = current($message['_context']);
-            } elseif(!isset($message['_context'][$context])) {
+            } elseif (!isset($message['_context'][$context])) {
                 $message = $key;
             } elseif (!isset($message['_context'][$context])) {
                 $message = $key;
@@ -143,6 +143,7 @@ class Translator implements TranslatorInterface
             if (is_array($message)) {
                 return array_values($message + [''])[0];
             }
+
             return $message;
         }
 
