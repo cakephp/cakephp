@@ -611,12 +611,6 @@ class ConsoleOptionParser
             return $options;
         }
 
-        if (is_array($options['parser'])) {
-            if (isset($options['parser']['description'])) {
-                return $options;
-            }
-        }
-
         $options['parser'] = [
             'description' => $options['help']
         ] + (array)$options['parser'];
