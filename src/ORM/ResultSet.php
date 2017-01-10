@@ -177,16 +177,16 @@ class ResultSet implements ResultSetInterface
     {
         $repository = $query->repository();
         $this->_statement = $statement;
-        $this->_driver = $query->connection()->driver();
+        $this->_driver = $query->getConnection()->driver();
         $this->_defaultTable = $query->repository();
         $this->_calculateAssociationMap($query);
-        $this->_hydrate = $query->hydrate();
+        $this->_hydrate = $query->isHydrationEnabled();
         $this->_entityClass = $repository->entityClass();
-        $this->_useBuffering = $query->bufferResults();
+        $this->_useBuffering = $query->isBufferedResultsEnabled();
         $this->_defaultAlias = $this->_defaultTable->alias();
         $this->_calculateColumnMap($query);
         $this->_calculateTypeMap();
-        $this->_autoFields = $query->autoFields();
+        $this->_autoFields = $query->isAutoFieldsEnabled();
 
         if ($this->_useBuffering) {
             $count = $this->count();
@@ -499,7 +499,7 @@ class ResultSet implements ResultSetInterface
             if ($this->_hydrate) {
                 /* @var \Cake\ORM\Table $table */
                 $table = $matching['instance'];
-                $options['source'] = $table->registryAlias();
+                $options['source'] = $table->getRegistryAlias();
                 /* @var \Cake\Datasource\EntityInterface $entity */
                 $entity = new $matching['entityClass']($results['_matchingData'][$alias], $options);
                 $entity->clean();
@@ -533,8 +533,8 @@ class ResultSet implements ResultSetInterface
                 $results[$alias] = $row[$alias];
             }
 
-            $target = $instance->target();
-            $options['source'] = $target->registryAlias();
+            $target = $instance->getTarget();
+            $options['source'] = $target->getRegistryAlias();
             unset($presentAliases[$alias]);
 
             if ($assoc['canBeJoined'] && $this->_autoFields !== false) {

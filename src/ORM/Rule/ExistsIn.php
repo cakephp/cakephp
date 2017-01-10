@@ -103,7 +103,7 @@ class ExistsIn
             $source = $options['repository'];
         }
         if ($source instanceof Association) {
-            $source = $source->source();
+            $source = $source->getSource();
         }
 
         if (!$entity->extract($this->_fields, true)) {

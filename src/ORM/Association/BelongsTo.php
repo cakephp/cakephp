@@ -49,7 +49,7 @@ class BelongsTo extends Association
     public function getForeignKey()
     {
         if ($this->_foreignKey === null) {
-            $this->_foreignKey = $this->_modelKey($this->target()->alias());
+            $this->_foreignKey = $this->_modelKey($this->getTarget()->getAlias());
         }
 
         return $this->_foreignKey;
@@ -108,7 +108,7 @@ class BelongsTo extends Association
      */
     public function isOwningSide(Table $side)
     {
-        return $side === $this->target();
+        return $side === $this->getTarget();
     }
 
     /**
@@ -136,20 +136,20 @@ class BelongsTo extends Association
      */
     public function saveAssociated(EntityInterface $entity, array $options = [])
     {
-        $targetEntity = $entity->get($this->property());
+        $targetEntity = $entity->get($this->getProperty());
         if (empty($targetEntity) || !($targetEntity instanceof EntityInterface)) {
             return $entity;
         }
 
-        $table = $this->target();
+        $table = $this->getTarget();
         $targetEntity = $table->save($targetEntity, $options);
         if (!$targetEntity) {
             return false;
         }
 
         $properties = array_combine(
-            (array)$this->foreignKey(),
-            $targetEntity->extract((array)$this->bindingKey())
+            (array)$this->getForeignKey(),
+            $targetEntity->extract((array)$this->getBindingKey())
         );
         $entity->set($properties, ['guard' => false]);
 
@@ -168,15 +168,15 @@ class BelongsTo extends Association
     protected function _joinCondition($options)
     {
         $conditions = [];
-        $tAlias = $this->target()->alias();
-        $sAlias = $this->_sourceTable->alias();
+        $tAlias = $this->getTarget()->getAlias();
+        $sAlias = $this->_sourceTable->getAlias();
         $foreignKey = (array)$options['foreignKey'];
-        $bindingKey = (array)$this->bindingKey();
+        $bindingKey = (array)$this->getBindingKey();
 
         if (count($foreignKey) !== count($bindingKey)) {
             if (empty($bindingKey)) {
                 $msg = 'The "%s" table does not define a primary key. Please set one.';
-                throw new RuntimeException(sprintf($msg, $this->target()->table()));
+                throw new RuntimeException(sprintf($msg, $this->setTarget()->getTable()));
             }
 
             $msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';
@@ -205,12 +205,12 @@ class BelongsTo extends Association
     public function eagerLoader(array $options)
     {
         $loader = new SelectLoader([
-            'alias' => $this->alias(),
-            'sourceAlias' => $this->source()->alias(),
-            'targetAlias' => $this->target()->alias(),
-            'foreignKey' => $this->foreignKey(),
-            'bindingKey' => $this->bindingKey(),
-            'strategy' => $this->strategy(),
+            'alias' => $this->getAlias(),
+            'sourceAlias' => $this->getSource()->getAlias(),
+            'targetAlias' => $this->getTarget()->getAlias(),
+            'foreignKey' => $this->getForeignKey(),
+            'bindingKey' => $this->getBindingKey(),
+            'strategy' => $this->getStrategy(),
             'associationType' => $this->type(),
             'finder' => [$this, 'find']
         ]);

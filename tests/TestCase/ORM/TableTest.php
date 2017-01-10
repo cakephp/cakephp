@@ -2570,10 +2570,10 @@ class TableTest extends TestCase
         $connection->driver($this->connection->driver());
 
         $table = $this->getMockBuilder('\Cake\ORM\Table')
-            ->setMethods(['connection'])
+            ->setMethods(['getConnection'])
             ->setConstructorArgs([['table' => 'users']])
             ->getMock();
-        $table->expects($this->any())->method('connection')
+        $table->expects($this->any())->method('getConnection')
             ->will($this->returnValue($connection));
 
         $connection->expects($this->once())->method('begin');
@@ -2602,14 +2602,14 @@ class TableTest extends TestCase
             ->getMock();
         $connection->driver(ConnectionManager::get('test')->driver());
         $table = $this->getMockBuilder('\Cake\ORM\Table')
-            ->setMethods(['query', 'connection'])
+            ->setMethods(['query', 'getConnection'])
             ->setConstructorArgs([['table' => 'users']])
             ->getMock();
         $query = $this->getMockBuilder('\Cake\ORM\Query')
             ->setMethods(['execute', 'addDefaultTypes'])
             ->setConstructorArgs([null, $table])
             ->getMock();
-        $table->expects($this->any())->method('connection')
+        $table->expects($this->any())->method('getConnection')
             ->will($this->returnValue($connection));
 
         $table->expects($this->once())->method('query')
@@ -2642,7 +2642,7 @@ class TableTest extends TestCase
             ->getMock();
         $connection->driver(ConnectionManager::get('test')->driver());
         $table = $this->getMockBuilder('\Cake\ORM\Table')
-            ->setMethods(['query', 'connection', 'exists'])
+            ->setMethods(['query', 'getConnection', 'exists'])
             ->setConstructorArgs([['table' => 'users']])
             ->getMock();
         $query = $this->getMockBuilder('\Cake\ORM\Query')
@@ -2650,7 +2650,7 @@ class TableTest extends TestCase
             ->setConstructorArgs([null, $table])
             ->getMock();
 
-        $table->expects($this->any())->method('connection')
+        $table->expects($this->any())->method('getConnection')
             ->will($this->returnValue($connection));
 
         $table->expects($this->once())->method('query')
@@ -4580,7 +4580,7 @@ class TableTest extends TestCase
         $associations = new AssociationCollection();
 
         $hasManyArticles = $this->getMockBuilder('Cake\ORM\Association\HasMany')
-            ->setMethods(['target'])
+            ->setMethods(['getTarget'])
             ->setConstructorArgs([
                 'articles',
                 [
@@ -4591,7 +4591,7 @@ class TableTest extends TestCase
                 ]
             ])
             ->getMock();
-        $hasManyArticles->method('target')->willReturn($articles);
+        $hasManyArticles->method('getTarget')->willReturn($articles);
 
         $associations->add('articles', $hasManyArticles);
 

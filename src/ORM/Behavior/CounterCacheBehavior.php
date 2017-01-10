@@ -132,8 +132,8 @@ class CounterCacheBehavior extends Behavior
      */
     protected function _processAssociation(Event $event, EntityInterface $entity, Association $assoc, array $settings)
     {
-        $foreignKeys = (array)$assoc->foreignKey();
-        $primaryKeys = (array)$assoc->bindingKey();
+        $foreignKeys = (array)$assoc->getForeignKey();
+        $primaryKeys = (array)$assoc->getBindingKey();
         $countConditions = $entity->extract($foreignKeys);
         $updateConditions = array_combine($primaryKeys, $countConditions);
         $countOriginalConditions = $entity->extractOriginalChanged($foreignKeys);
@@ -154,7 +154,7 @@ class CounterCacheBehavior extends Behavior
                 $count = $this->_getCount($config, $countConditions);
             }
 
-            $assoc->target()->updateAll([$field => $count], $updateConditions);
+            $assoc->getTarget()->updateAll([$field => $count], $updateConditions);
 
             if (isset($updateOriginalConditions)) {
                 if (!is_string($config) && is_callable($config)) {
@@ -162,7 +162,7 @@ class CounterCacheBehavior extends Behavior
                 } else {
                     $count = $this->_getCount($config, $countOriginalConditions);
                 }
-                $assoc->target()->updateAll([$field => $count], $updateOriginalConditions);
+                $assoc->getTarget()->updateAll([$field => $count], $updateOriginalConditions);
             }
         }
     }

@@ -122,18 +122,18 @@ class HasOne extends Association
      */
     public function saveAssociated(EntityInterface $entity, array $options = [])
     {
-        $targetEntity = $entity->get($this->property());
+        $targetEntity = $entity->get($this->getProperty());
         if (empty($targetEntity) || !($targetEntity instanceof EntityInterface)) {
             return $entity;
         }
 
         $properties = array_combine(
-            (array)$this->foreignKey(),
-            $entity->extract((array)$this->bindingKey())
+            (array)$this->getForeignKey(),
+            $entity->extract((array)$this->getBindingKey())
         );
         $targetEntity->set($properties, ['guard' => false]);
 
-        if (!$this->target()->save($targetEntity, $options)) {
+        if (!$this->getTarget()->save($targetEntity, $options)) {
             $targetEntity->unsetProperty(array_keys($properties));
 
             return false;

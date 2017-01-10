@@ -232,7 +232,7 @@ abstract class Association
         $this->_options($options);
 
         if (!empty($options['strategy'])) {
-            $this->strategy($options['strategy']);
+            $this->setStrategy($options['strategy']);
         }
     }
 
@@ -490,9 +490,9 @@ abstract class Association
     public function getBindingKey()
     {
         if ($this->_bindingKey === null) {
-            $this->_bindingKey = $this->isOwningSide($this->source()) ?
-                $this->source()->getPrimaryKey() :
-                $this->target()->getPrimaryKey();
+            $this->_bindingKey = $this->isOwningSide($this->getSource()) ?
+                $this->getSource()->getPrimaryKey() :
+                $this->getTarget()->getPrimaryKey();
         }
 
         return $this->_bindingKey;
@@ -617,7 +617,7 @@ abstract class Association
      */
     public function canBeJoined(array $options = [])
     {
-        $strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
+        $strategy = isset($options['strategy']) ? $options['strategy'] : $this->getStrategy();
 
         return $strategy == $this::STRATEGY_JOIN;
     }
@@ -690,7 +690,7 @@ abstract class Association
                 $msg = 'Association property name "%s" clashes with field of same name of table "%s".' .
                     ' You should explicitly specify the "propertyName" option.';
                 trigger_error(
-                    sprintf($msg, $this->_propertyName, $this->_sourceTable->table()),
+                    sprintf($msg, $this->_propertyName, $this->_sourceTable->getTable()),
                     E_USER_WARNING
                 );
             }
@@ -865,18 +865,18 @@ abstract class Association
      */
     public function attachTo(Query $query, array $options = [])
     {
-        $target = $this->target();
-        $joinType = empty($options['joinType']) ? $this->joinType() : $options['joinType'];
-        $table = $target->table();
+        $target = $this->getTarget();
+        $joinType = empty($options['joinType']) ? $this->getJoinType() : $options['joinType'];
+        $table = $target->getTable();
 
         $options += [
             'includeFields' => true,
-            'foreignKey' => $this->foreignKey(),
+            'foreignKey' => $this->getForeignKey(),
             'conditions' => [],
             'fields' => [],
             'type' => $joinType,
             'table' => $table,
-            'finder' => $this->finder()
+            'finder' => $this->getFinder()
         ];
 
         if (!empty($options['foreignKey'])) {
@@ -896,7 +896,7 @@ abstract class Association
             if (!($dummy instanceof Query)) {
                 throw new RuntimeException(sprintf(
                     'Query builder for association "%s" did not return a query',
-                    $this->name()
+                    $this->getName()
                 ));
             }
         }
@@ -950,9 +950,9 @@ abstract class Association
      */
     public function transformRow($row, $nestKey, $joined, $targetProperty = null)
     {
-        $sourceAlias = $this->source()->alias();
+        $sourceAlias = $this->getSource()->getAlias();
         $nestKey = $nestKey ?: $this->_name;
-        $targetProperty = $targetProperty ?: $this->property();
+        $targetProperty = $targetProperty ?: $this->getProperty();
         if (isset($row[$sourceAlias])) {
             $row[$sourceAlias][$targetProperty] = $row[$nestKey];
             unset($row[$nestKey]);
@@ -973,9 +973,9 @@ abstract class Association
      */
     public function defaultRowValue($row, $joined)
     {
-        $sourceAlias = $this->source()->alias();
+        $sourceAlias = $this->getSource()->getAlias();
         if (isset($row[$sourceAlias])) {
-            $row[$sourceAlias][$this->property()] = null;
+            $row[$sourceAlias][$this->getProperty()] = null;
         }
 
         return $row;
@@ -994,12 +994,12 @@ abstract class Association
      */
     public function find($type = null, array $options = [])
     {
-        $type = $type ?: $this->finder();
+        $type = $type ?: $this->getFinder();
         list($type, $opts) = $this->_extractFinder($type);
 
-        return $this->target()
+        return $this->getTarget()
             ->find($type, $options + $opts)
-            ->where($this->conditions());
+            ->where($this->getConditions());
     }
 
     /**
@@ -1019,7 +1019,7 @@ abstract class Association
                 ->clause('where');
         }
 
-        return $this->target()->exists($conditions);
+        return $this->getTarget()->exists($conditions);
     }
 
     /**
@@ -1033,9 +1033,9 @@ abstract class Association
      */
     public function updateAll($fields, $conditions)
     {
-        $target = $this->target();
+        $target = $this->getTarget();
         $expression = $target->query()
-            ->where($this->conditions())
+            ->where($this->getConditions())
             ->where($conditions)
             ->clause('where');
 
@@ -1052,9 +1052,9 @@ abstract class Association
      */
     public function deleteAll($conditions)
     {
-        $target = $this->target();
+        $target = $this->getTarget();
         $expression = $target->query()
-            ->where($this->conditions())
+            ->where($this->getConditions())
             ->where($conditions)
             ->clause('where');
 
@@ -1070,7 +1070,7 @@ abstract class Association
      */
     public function requiresKeys(array $options = [])
     {
-        $strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
+        $strategy = isset($options['strategy']) ? $options['strategy'] : $this->getStrategy();
 
         return $strategy === static::STRATEGY_SELECT;
     }
@@ -1098,13 +1098,13 @@ abstract class Association
      */
     protected function _appendFields($query, $surrogate, $options)
     {
-        if ($query->getEagerLoader()->autoFields() === false) {
+        if ($query->getEagerLoader()->isAutoFieldsEnabled() === false) {
             return;
         }
 
         $fields = $surrogate->clause('select') ?: $options['fields'];
         $target = $this->_targetTable;
-        $autoFields = $surrogate->autoFields();
+        $autoFields = $surrogate->isAutoFieldsEnabled();
 
         if (empty($fields) && !$autoFields) {
             if ($options['includeFields'] && ($fields === null || $fields !== false)) {
@@ -1117,7 +1117,7 @@ abstract class Association
         }
 
         if ($fields) {
-            $query->select($query->aliasFields($fields, $target->alias()));
+            $query->select($query->aliasFields($fields, $target->getAlias()));
         }
         $query->addDefaultTypes($target);
     }
@@ -1183,7 +1183,7 @@ abstract class Association
     {
         $loader = $surrogate->getEagerLoader();
         $contain = $loader->contain();
-        $matching = $loader->matching();
+        $matching = $loader->getMatching();
 
         if (!$contain && !$matching) {
             return;
@@ -1198,7 +1198,7 @@ abstract class Association
         $eagerLoader->contain($newContain);
 
         foreach ($matching as $alias => $value) {
-            $eagerLoader->matching(
+            $eagerLoader->setMatching(
                 $options['aliasPath'] . '.' . $alias,
                 $value['queryBuilder'],
                 $value
@@ -1218,15 +1218,15 @@ abstract class Association
     protected function _joinCondition($options)
     {
         $conditions = [];
-        $tAlias = $this->target()->alias();
-        $sAlias = $this->source()->alias();
+        $tAlias = $this->getTarget()->getAlias();
+        $sAlias = $this->getSource()->getAlias();
         $foreignKey = (array)$options['foreignKey'];
-        $bindingKey = (array)$this->bindingKey();
+        $bindingKey = (array)$this->getBindingKey();
 
         if (count($foreignKey) !== count($bindingKey)) {
             if (empty($bindingKey)) {
                 $msg = 'The "%s" table does not define a primary key. Please set one.';
-                throw new RuntimeException(sprintf($msg, $this->target()->table()));
+                throw new RuntimeException(sprintf($msg, $this->getTarget()->getTable()));
             }
 
             $msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';
@@ -1284,7 +1284,7 @@ abstract class Association
      */
     public function __get($property)
     {
-        return $this->target()->{$property};
+        return $this->getTarget()->{$property};
     }
 
     /**
@@ -1296,7 +1296,7 @@ abstract class Association
      */
     public function __isset($property)
     {
-        return isset($this->target()->{$property});
+        return isset($this->getTarget()->{$property});
     }
 
     /**
@@ -1309,7 +1309,7 @@ abstract class Association
      */
     public function __call($method, $argument)
     {
-        return $this->target()->$method(...$argument);
+        return $this->getTarget()->$method(...$argument);
     }
 
     /**

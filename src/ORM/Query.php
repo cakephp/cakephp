@@ -183,11 +183,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function select($fields = [], $overwrite = false)
     {
         if ($fields instanceof Association) {
-            $fields = $fields->target();
+            $fields = $fields->getTarget();
         }
 
         if ($fields instanceof Table) {
-            $fields = $this->aliasFields($fields->getSchema()->columns(), $fields->alias());
+            $fields = $this->aliasFields($fields->getSchema()->columns(), $fields->getAlias());
         }
 
         return parent::select($fields, $overwrite);
@@ -206,13 +206,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function addDefaultTypes(Table $table)
     {
-        $alias = $table->alias();
+        $alias = $table->getAlias();
         $map = $table->getSchema()->typeMap();
         $fields = [];
         foreach ($map as $f => $type) {
             $fields[$f] = $fields[$alias . '.' . $f] = $fields[$alias . '__' . $f] = $type;
         }
-        $this->typeMap()->addDefaults($fields);
+        $this->getTypeMap()->addDefaults($fields);
 
         return $this;
     }
@@ -388,7 +388,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         $result = $loader->contain($associations);
-        $this->_addAssociationsToTypeMap($this->repository(), $this->typeMap(), $result);
+        $this->_addAssociationsToTypeMap($this->repository(), $this->getTypeMap(), $result);
 
         return $this;
     }
@@ -410,7 +410,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             if (!$association) {
                 continue;
             }
-            $target = $association->target();
+            $target = $association->getTarget();
             $primary = (array)$target->getPrimaryKey();
             if (empty($primary) || $typeMap->type($target->aliasField($primary[0])) === null) {
                 $this->addDefaultTypes($target);
@@ -474,7 +474,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function matching($assoc, callable $builder = null)
     {
         $result = $this->getEagerLoader()->setMatching($assoc, $builder)->getMatching();
-        $this->_addAssociationsToTypeMap($this->repository(), $this->typeMap(), $result);
+        $this->_addAssociationsToTypeMap($this->repository(), $this->getTypeMap(), $result);
         $this->_dirty();
 
         return $this;
@@ -551,7 +551,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                 'fields' => false
             ])
             ->getMatching();
-        $this->_addAssociationsToTypeMap($this->repository(), $this->typeMap(), $result);
+        $this->_addAssociationsToTypeMap($this->repository(), $this->getTypeMap(), $result);
         $this->_dirty();
 
         return $this;
@@ -597,10 +597,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
                 'joinType' => 'INNER',
-                'fields' => false
             ])
+                'fields' => false
             ->getMatching();
-        $this->_addAssociationsToTypeMap($this->repository(), $this->typeMap(), $result);
+        $this->_addAssociationsToTypeMap($this->repository(), $this->getTypeMap(), $result);
         $this->_dirty();
 
         return $this;
@@ -665,7 +665,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                 'negateMatch' => true
             ])
             ->getMatching();
-        $this->_addAssociationsToTypeMap($this->repository(), $this->typeMap(), $result);
+        $this->_addAssociationsToTypeMap($this->repository(), $this->getTypeMap(), $result);
         $this->_dirty();
 
         return $this;
@@ -757,13 +757,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $clone = clone $this;
         $clone->triggerBeforeFind();
-        $clone->autoFields(false);
+        $clone->enableAutoFields(false);
         $clone->limit(null);
         $clone->order([], true);
         $clone->offset(null);
         $clone->mapReduce(null, null, true);
         $clone->formatResults(null, true);
-        $clone->selectTypeMap(new TypeMap());
+        $clone->setSelectTypeMap(new TypeMap());
         $clone->decorateResults(null, true);
 
         return $clone;
@@ -840,13 +840,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $count = ['count' => $query->func()->count('*')];
 
         if (!$complex) {
-            $query->getEagerLoader()->autoFields(false);
+            $query->getEagerLoader()->enableAutoFields(false);
             $statement = $query
                 ->select($count, true)
-                ->autoFields(false)
+                ->enableAutoFields(false)
                 ->execute();
         } else {
-            $statement = $this->connection()->newQuery()
+            $statement = $this->getConnection()->newQuery()
                 ->select($count)
                 ->from(['count_source' => $query])
                 ->execute();
@@ -1067,7 +1067,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     protected function _addDefaultSelectTypes()
     {
-        $typeMap = $this->typeMap()->defaults();
+        $typeMap = $this->getTypeMap()->getDefaults();
         $select = $this->clause('select');
         $types = [];
 
@@ -1083,7 +1083,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                 $types[$alias] = $value->returnType();
             }
         }
-        $this->selectTypeMap()->addDefaults($types);
+        $this->getSelectTypeMap()->addDefaults($types);
     }
 
     /**
@@ -1192,7 +1192,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             'formatters' => count($this->_formatters),
             'mapReducers' => count($this->_mapReduce),
             'contain' => $eagerLoader ? $eagerLoader->contain() : [],
-            'matching' => $eagerLoader ? $eagerLoader->matching() : [],
+            'matching' => $eagerLoader ? $eagerLoader->getMatching() : [],
             'extraOptions' => $this->_options,
             'repository' => $this->_repository
         ];

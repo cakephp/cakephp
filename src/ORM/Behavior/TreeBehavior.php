@@ -516,7 +516,7 @@ class TreeBehavior extends Behavior
         return $query->formatResults(function ($results) use ($options) {
             $options += [
                 'keyPath' => $this->_getPrimaryKey(),
-                'valuePath' => $this->_table->displayField(),
+                'valuePath' => $this->_table->getDisplayField(),
                 'spacer' => '_',
             ];
 
@@ -539,7 +539,7 @@ class TreeBehavior extends Behavior
      */
     public function removeFromTree(EntityInterface $node)
     {
-        return $this->_table->connection()->transactional(function () use ($node) {
+        return $this->_table->getConnection()->transactional(function () use ($node) {
             $this->_ensureFields($node);
 
             return $this->_removeFromTree($node);
@@ -604,7 +604,7 @@ class TreeBehavior extends Behavior
             return false;
         }
 
-        return $this->_table->connection()->transactional(function () use ($node, $number) {
+        return $this->_table->getConnection()->transactional(function () use ($node, $number) {
             $this->_ensureFields($node);
 
             return $this->_moveUp($node, $number);
@@ -692,7 +692,7 @@ class TreeBehavior extends Behavior
             return false;
         }
 
-        return $this->_table->connection()->transactional(function () use ($node, $number) {
+        return $this->_table->getConnection()->transactional(function () use ($node, $number) {
             $this->_ensureFields($node);
 
             return $this->_moveDown($node, $number);
@@ -802,7 +802,7 @@ class TreeBehavior extends Behavior
      */
     public function recover()
     {
-        $this->_table->connection()->transactional(function () {
+        $this->_table->getConnection()->transactional(function () {
             $this->_recoverTree();
         });
     }
@@ -895,15 +895,15 @@ class TreeBehavior extends Behavior
             $exp = $query->newExpr();
 
             $movement = clone $exp;
-            $movement->add($field)->add("$shift")->tieWith($dir);
+            $movement->add($field)->add("$shift")->setConjunction($dir);
 
             $inverse = clone $exp;
             $movement = $mark ?
-                $inverse->add($movement)->tieWith('*')->add('-1') :
+                $inverse->add($movement)->setConjunction('*')->add('-1') :
                 $movement;
 
             $where = clone $exp;
-            $where->add($field)->add($conditions)->tieWith('');
+            $where->add($field)->add($conditions)->setConjunction('');
 
             $query->update()
                 ->set($exp->eq($field, $movement))

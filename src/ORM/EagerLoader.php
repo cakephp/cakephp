@@ -418,7 +418,7 @@ class EagerLoader
         $processed = [];
         do {
             foreach ($attachable as $alias => $loadable) {
-                $config = $loadable->config() + [
+                $config = $loadable->getConfig() + [
                     'aliasPath' => $loadable->aliasPath(),
                     'propertyPath' => $loadable->propertyPath(),
                     'includeFields' => $includeFields,
@@ -490,22 +490,22 @@ class EagerLoader
         $instance = $parent->association($alias);
         if (!$instance) {
             throw new InvalidArgumentException(
-                sprintf('%s is not associated with %s', $parent->alias(), $alias)
+                sprintf('%s is not associated with %s', $parent->getAlias(), $alias)
             );
         }
-        if ($instance->alias() !== $alias) {
+        if ($instance->getAlias() !== $alias) {
             throw new InvalidArgumentException(sprintf(
                 "You have contained '%s' but that association was bound as '%s'.",
                 $alias,
-                $instance->alias()
+                $instance->getAlias()
             ));
         }
 
         $paths += ['aliasPath' => '', 'propertyPath' => '', 'root' => $alias];
         $paths['aliasPath'] .= '.' . $alias;
-        $paths['propertyPath'] .= '.' . $instance->property();
+        $paths['propertyPath'] .= '.' . $instance->getProperty();
 
-        $table = $instance->target();
+        $table = $instance->getTarget();
 
         $extra = array_diff_key($options, $defaults);
         $config = [
@@ -514,7 +514,7 @@ class EagerLoader
             'config' => array_diff_key($options, $extra),
             'aliasPath' => trim($paths['aliasPath'], '.'),
             'propertyPath' => trim($paths['propertyPath'], '.'),
-            'targetProperty' => $instance->property()
+            'targetProperty' => $instance->getProperty()
         ];
         $config['canBeJoined'] = $instance->canBeJoined($config['config']);
         $eagerLoadable = new EagerLoadable($alias, $config);
@@ -570,7 +570,7 @@ class EagerLoader
      */
     protected function _correctStrategy($loadable)
     {
-        $config = $loadable->config();
+        $config = $loadable->getConfig();
         $currentStrategy = isset($config['strategy']) ?
             $config['strategy'] :
             'join';
@@ -580,7 +580,7 @@ class EagerLoader
         }
 
         $config['strategy'] = Association::STRATEGY_SELECT;
-        $loadable->config($config);
+        $loadable->setConfig($config);
         $loadable->canBeJoined(false);
     }
 
@@ -634,14 +634,14 @@ class EagerLoader
             return $statement;
         }
 
-        $driver = $query->connection()->driver();
+        $driver = $query->getConnection()->driver();
         list($collected, $statement) = $this->_collectKeys($external, $query, $statement);
 
         foreach ($external as $meta) {
             $contain = $meta->associations();
             $instance = $meta->instance();
-            $config = $meta->config();
-            $alias = $instance->source()->alias();
+            $config = $meta->getConfig();
+            $alias = $instance->getSource()->getAlias();
             $path = $meta->aliasPath();
 
             $requiresKeys = $instance->requiresKeys($config);
@@ -683,7 +683,7 @@ class EagerLoader
     {
         $map = [];
 
-        if (!$this->matching() && !$this->contain() && empty($this->_joinsMap)) {
+        if (!$this->getMatching() && !$this->contain() && empty($this->_joinsMap)) {
             return $map;
         }
 
@@ -698,7 +698,7 @@ class EagerLoader
                     'alias' => $assoc,
                     'instance' => $instance,
                     'canBeJoined' => $canBeJoined,
-                    'entityClass' => $instance->target()->entityClass(),
+                    'entityClass' => $instance->getTarget()->getEntityClass(),
                     'nestKey' => $canBeJoined ? $assoc : $meta->aliasPath(),
                     'matching' => $forMatching !== null ? $forMatching : $matching,
                     'targetProperty' => $meta->targetProperty()
@@ -736,7 +736,7 @@ class EagerLoader
             'instance' => $assoc,
             'canBeJoined' => true,
             'forMatching' => $asMatching,
-            'targetProperty' => $targetProperty ?: $assoc->property()
+            'targetProperty' => $targetProperty ?: $assoc->getProperty()
         ]);
     }
 
@@ -755,16 +755,16 @@ class EagerLoader
         /* @var \Cake\ORM\EagerLoadable $meta */
         foreach ($external as $meta) {
             $instance = $meta->instance();
-            if (!$instance->requiresKeys($meta->config())) {
+            if (!$instance->requiresKeys($meta->getConfig())) {
                 continue;
             }
 
-            $source = $instance->source();
+            $source = $instance->getSource();
             $keys = $instance->type() === Association::MANY_TO_ONE ?
-                (array)$instance->foreignKey() :
-                (array)$instance->bindingKey();
+                (array)$instance->getForeignKey() :
+                (array)$instance->getBindingKey();
 
-            $alias = $source->alias();
+            $alias = $source->getAlias();
             $pkFields = [];
             foreach ($keys as $key) {
                 $pkFields[] = key($query->aliasField($key, $alias));
@@ -777,7 +777,7 @@ class EagerLoader
         }
 
         if (!($statement instanceof BufferedStatement)) {
-            $statement = new BufferedStatement($statement, $query->connection()->driver());
+            $statement = new BufferedStatement($statement, $query->getConnection()->driver());
         }
 
         return [$this->_groupKeys($statement, $collectKeys), $statement];
