@@ -673,6 +673,8 @@ class ConsoleOptionParserTest extends TestCase
 
         $result = $parser->help('method');
         $expected = <<<TEXT
+This is another command
+
 <info>Usage:</info>
 cake mycommand method [--connection] [-h] [-0]
 
@@ -681,6 +683,48 @@ cake mycommand method [--connection] [-h] [-0]
 --connection      Db connection.
 --help, -h        Display this help.
 --zero, -0        Zero.
+
+TEXT;
+        $this->assertTextEquals($expected, $result, 'Help is not correct.');
+    }
+
+    /**
+     * test that help() with a command param shows the help for a subcommand
+     *
+     * @return void
+     */
+    public function testHelpSubcommandHelpArray()
+    {
+        $subParser = [
+            'options' => [
+                'foo' => [
+                    'short' => 'f',
+                    'help' => 'Foo.',
+                    'boolean' => true,
+                ]
+            ],
+        ];
+
+        $parser = new ConsoleOptionParser('mycommand', false);
+        $parser->addSubcommand('method', [
+            'help' => 'This is a subcommand',
+            'parser' => $subParser
+        ])
+            ->addOption('test', ['help' => 'A test option.']);
+
+        $result = $parser->help('method');
+        $expected = <<<TEXT
+This is a subcommand
+
+<info>Usage:</info>
+cake mycommand method [-f] [-h] [-q] [-v]
+
+<info>Options:</info>
+
+--foo, -f      Foo.
+--help, -h     Display this help.
+--quiet, -q    Enable quiet output.
+--verbose, -v  Enable verbose output.
 
 TEXT;
         $this->assertTextEquals($expected, $result, 'Help is not correct.');

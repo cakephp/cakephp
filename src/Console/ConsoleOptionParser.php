@@ -582,12 +582,42 @@ class ConsoleOptionParser
                 'parser' => null
             ];
             $options += $defaults;
+
+            $options = $this->_mergeSubcommandHelpToParserDescription($options);
+
             $command = new ConsoleInputSubcommand($options);
         }
         $this->_subcommands[$name] = $command;
         asort($this->_subcommands);
 
         return $this;
+    }
+
+    /**
+     * @param array $options Options
+     * @return array
+     */
+    protected function _mergeSubcommandHelpToParserDescription($options)
+    {
+        if (!$options['help']) {
+            return $options;
+        }
+
+        if ($options['parser'] instanceof self) {
+            if ($options['parser']->getDescription() !== null) {
+                return $options;
+            }
+
+            $options['parser']->setDescription($options['help']);
+
+            return $options;
+        }
+
+        $options['parser'] = [
+            'description' => $options['help']
+        ] + (array)$options['parser'];
+
+        return $options;
     }
 
     /**
