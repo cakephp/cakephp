@@ -2080,7 +2080,7 @@ class Email implements JsonSerializable, Serializable
         if (is_array($message)) {
             $instance->setViewVars($message);
             $message = null;
-        } elseif ($message === null && array_key_exists('message', $config = $instance->profile())) {
+        } elseif ($message === null && array_key_exists('message', $config = $instance->getProfile())) {
             $message = $config['message'];
         }
 
