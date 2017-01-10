@@ -532,7 +532,9 @@ class EagerLoaderTest extends TestCase
     }
 
     /**
-     * Assert that matching('something') and SetMatching('something') return consistent type
+     * Asserts that matching('something') and setMatching('something') return consistent type.
+     *
+     * @return void
      */
     public function testSetMatchingReturnType()
     {
