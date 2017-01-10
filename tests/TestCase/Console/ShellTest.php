@@ -1318,7 +1318,7 @@ TEXT;
         $io->expects($this->at(0))
             ->method('setLoggers')
             ->with(true);
-        $io->expects($this->at(3))
+        $io->expects($this->at(2))
             ->method('setLoggers')
             ->with(ConsoleIo::QUIET);
 
