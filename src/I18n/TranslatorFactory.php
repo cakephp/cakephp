@@ -14,10 +14,9 @@
  */
 namespace Cake\I18n;
 
-use Aura\Intl\TranslatorFactory as BaseTranslatorFactory;
-
-use Aura\Intl\TranslatorInterface;
 use Aura\Intl\FormatterInterface;
+use Aura\Intl\TranslatorFactory as BaseTranslatorFactory;
+use Aura\Intl\TranslatorInterface;
 
 /**
  * Factory to create translators
