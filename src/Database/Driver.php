@@ -63,7 +63,7 @@ abstract class Driver
         $config += $this->_baseConfig;
         $this->_config = $config;
         if (!empty($config['quoteIdentifiers'])) {
-            $this->autoQuoting(true);
+            $this->enableAutoQuoting(true);
         }
     }
 
