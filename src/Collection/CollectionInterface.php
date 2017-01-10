@@ -135,7 +135,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ```
      *
      * @param callable $c a callback function
-     * @return bool true if the provided callback returns true for any element in this 
+     * @return bool true if the provided callback returns true for any element in this
      * collection, false otherwise
      */
     public function some(callable $c);
