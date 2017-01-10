@@ -583,7 +583,7 @@ class RequestHandlerComponent extends Component
 
         if ($viewClass) {
             $controller->viewClass = $viewClass;
-            $builder->getClassName($viewClass);
+            $builder->setClassName($viewClass);
         } else {
             if (!$this->_renderType) {
                 $builder->setTemplatePath($builder->getTemplatePath() . DIRECTORY_SEPARATOR . $type);

@@ -53,7 +53,7 @@ trait EmailAssertTrait
     {
         if ($new || !$this->_email) {
             $this->_email = new Email();
-            $this->_email->getProfile(['transport' => 'debug'] + $this->_email->getProfile());
+            $this->_email->setProfile(['transport' => 'debug'] + $this->_email->getProfile());
         }
 
         return $this->_email;
