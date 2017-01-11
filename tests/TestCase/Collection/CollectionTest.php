@@ -141,6 +141,12 @@ class CollectionTest extends TestCase
      */
     public function testReject()
     {
+        $collection = new Collection([]);
+        $result = $collection->reject(function ($v) {
+            return false;
+        });
+        $this->assertSame([], iterator_to_array($result));
+
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
         $result = $collection->reject(function ($v, $k, $items) use ($collection) {
@@ -212,7 +218,7 @@ class CollectionTest extends TestCase
 
         $callable->expects($this->never())
             ->method('__invoke');
-        $this->assertFalse($collection->every($callable));
+        $this->assertTrue($collection->every($callable));
     }
 
     /**
@@ -222,6 +228,12 @@ class CollectionTest extends TestCase
      */
     public function testSomeReturnTrue()
     {
+        $collection = new Collection([]);
+        $result = $collection->some(function ($v) {
+            return true;
+        });
+        $this->assertFalse($result);
+
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
         $callable = $this->getMockBuilder(\StdClass::class)
@@ -275,6 +287,9 @@ class CollectionTest extends TestCase
      */
     public function testContains()
     {
+        $collection = new Collection([]);
+        $this->assertFalse($collection->contains('a'));
+
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
         $this->assertTrue($collection->contains(2));
