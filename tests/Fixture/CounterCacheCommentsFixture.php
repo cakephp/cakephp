@@ -17,22 +17,21 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Short description for class.
+ * Counter Cache Test Fixtures
  */
-class CounterCacheUsersFixture extends TestFixture
+class CounterCacheCommentsFixture extends TestFixture
 {
 
     public $fields = [
         'id' => ['type' => 'integer'],
-        'name' => ['type' => 'string', 'length' => 255, 'null' => false],
-        'post_count' => ['type' => 'integer', 'null' => true],
-        'comment_count' => ['type' => 'integer', 'null' => true],
-        'posts_published' => ['type' => 'integer', 'null' => true],
+        'title' => ['type' => 'string', 'length' => 255],
+        'user_id' => ['type' => 'integer', 'null' => true],
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
     ];
 
     public $records = [
-        ['name' => 'Alexander', 'post_count' => 2, 'comment_count' => 2, 'posts_published' => 1],
-        ['name' => 'Steven', 'post_count' => 1, 'comment_count' => 1, 'posts_published' => 1],
+        ['title' => 'First Comment', 'user_id' => 1],
+        ['title' => 'Second Comment', 'user_id' => 1],
+        ['title' => 'Third Comment', 'user_id' => 2],
     ];
 }
