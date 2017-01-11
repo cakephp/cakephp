@@ -89,9 +89,8 @@ trait CollectionTrait
      */
     public function every(callable $c)
     {
-        $return = false;
+        $return = true;
         foreach ($this->unwrap() as $key => $value) {
-            $return = true;
             if (!$c($value, $key)) {
                 return false;
             }
