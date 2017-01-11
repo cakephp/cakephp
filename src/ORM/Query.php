@@ -473,7 +473,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function matching($assoc, callable $builder = null)
     {
-        $result = $this->getEagerLoader()->matching($assoc, $builder);
+        $result = $this->getEagerLoader()->setMatching($assoc, $builder)->getMatching();
         $this->_addAssociationsToTypeMap($this->repository(), $this->typeMap(), $result);
         $this->_dirty();
 
@@ -545,10 +545,12 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function leftJoinWith($assoc, callable $builder = null)
     {
-        $result = $this->getEagerLoader()->matching($assoc, $builder, [
-            'joinType' => 'LEFT',
-            'fields' => false
-        ]);
+        $result = $this->getEagerLoader()
+            ->setMatching($assoc, $builder, [
+                'joinType' => 'LEFT',
+                'fields' => false
+            ])
+            ->getMatching();
         $this->_addAssociationsToTypeMap($this->repository(), $this->typeMap(), $result);
         $this->_dirty();
 
@@ -592,10 +594,12 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function innerJoinWith($assoc, callable $builder = null)
     {
-        $result = $this->getEagerLoader()->matching($assoc, $builder, [
-            'joinType' => 'INNER',
-            'fields' => false
-        ]);
+        $result = $this->getEagerLoader()
+            ->setMatching($assoc, $builder, [
+                'joinType' => 'INNER',
+                'fields' => false
+            ])
+            ->getMatching();
         $this->_addAssociationsToTypeMap($this->repository(), $this->typeMap(), $result);
         $this->_dirty();
 
@@ -654,11 +658,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function notMatching($assoc, callable $builder = null)
     {
-        $result = $this->getEagerLoader()->matching($assoc, $builder, [
-            'joinType' => 'LEFT',
-            'fields' => false,
-            'negateMatch' => true
-        ]);
+        $result = $this->getEagerLoader()
+            ->setMatching($assoc, $builder, [
+                'joinType' => 'LEFT',
+                'fields' => false,
+                'negateMatch' => true
+            ])
+            ->getMatching();
         $this->_addAssociationsToTypeMap($this->repository(), $this->typeMap(), $result);
         $this->_dirty();
 

@@ -213,7 +213,7 @@ class EagerLoader
      * @param callable|null $builder the callback function to be used for setting extra
      * options to the filtering query
      * @param array $options Extra options for the association matching.
-     * @return self
+     * @return $this
      */
     public function setMatching($assoc, callable $builder = null, $options = [])
     {
