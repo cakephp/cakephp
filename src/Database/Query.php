@@ -1809,7 +1809,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param bool $enable Whether or not to enable buffering
      * @return self
      */
-    public function enableBufferedResults($enable)
+    public function enableBufferedResults($enable = true)
     {
         $this->_dirty();
         $this->_useBufferedResults = (bool)$enable;

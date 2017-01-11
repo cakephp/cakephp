@@ -597,8 +597,8 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
                 'joinType' => 'INNER',
-            ])
                 'fields' => false
+            ])
             ->getMatching();
         $this->_addAssociationsToTypeMap($this->repository(), $this->getTypeMap(), $result);
         $this->_dirty();
@@ -891,7 +891,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param bool $enable Use a boolean to set the hydration mode.
      * @return self
      */
-    public function enableHydration($enable)
+    public function enableHydration($enable = true)
     {
         $this->_dirty();
         $this->_hydrate = (bool)$enable;
@@ -1219,7 +1219,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param bool $value Set true to enable, false to disable.
      * @return self
      */
-    public function enableAutoFields($value)
+    public function enableAutoFields($value = true)
     {
         $this->_autoFields = (bool)$value;
 

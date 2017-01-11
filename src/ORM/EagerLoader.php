@@ -165,7 +165,7 @@ class EagerLoader
      * @param bool $enable The value to set.
      * @return self
      */
-    public function enableAutoFields($enable)
+    public function enableAutoFields($enable = true)
     {
         $this->_autoFields = (bool)$enable;
 

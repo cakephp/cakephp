@@ -199,7 +199,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @param bool $enable Boolean to turn on/off.
      * @return $this
      */
-    public function enableAutoLayout($enable)
+    public function enableAutoLayout($enable = true)
     {
         $this->_autoLayout = (bool)$enable;
 
