@@ -379,7 +379,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 return false;
             }
             foreach ($this->providers() as $provider) {
-                $validator->provider($provider, $this->provider($provider));
+                $validator->setProvider($provider, $this->getProvider($provider));
             }
             $errors = $validator->errors($value, $context['newRecord']);
 
@@ -414,7 +414,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 return false;
             }
             foreach ($this->providers() as $provider) {
-                $validator->provider($provider, $this->provider($provider));
+                $validator->setProvider($provider, $this->getProvider($provider));
             }
             $errors = [];
             foreach ($value as $i => $row) {
@@ -1775,7 +1775,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     {
         $errors = [];
         // Loading default provider in case there is none
-        $this->provider('default');
+        $this->getProvider('default');
         $message = 'The provided value is invalid';
 
         if ($this->_useI18n) {

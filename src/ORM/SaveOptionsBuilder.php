@@ -107,7 +107,7 @@ class SaveOptionsBuilder extends ArrayObject
             }
             $this->_checkAssociation($table, $key);
             if (isset($associated['associated'])) {
-                $this->_associated($table->association($key)->target(), $associated['associated']);
+                $this->_associated($table->association($key)->getTarget(), $associated['associated']);
                 continue;
             }
         }

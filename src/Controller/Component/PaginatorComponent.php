@@ -224,10 +224,10 @@ class PaginatorComponent extends Component
             'scope' => $options['scope'],
         ];
 
-        if (!$request->param('paging')) {
+        if (!$request->getParam('paging')) {
             $request->params['paging'] = [];
         }
-        $request->params['paging'] = [$alias => $paging] + (array)$request->param('paging');
+        $request->params['paging'] = [$alias => $paging] + (array)$request->getParam('paging');
 
         if ($requestedPage > $page) {
             throw new NotFoundException();

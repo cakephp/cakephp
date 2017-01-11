@@ -223,7 +223,7 @@ class SelectLoader
 
         $missingFields = $missingKey($select, $key);
         if ($missingFields) {
-            $driver = $fetchQuery->connection()->driver();
+            $driver = $fetchQuery->getConnection()->driver();
             $quoted = array_map([$driver, 'quoteIdentifier'], $key);
             $missingFields = $missingKey($select, $quoted);
         }
@@ -309,7 +309,7 @@ class SelectLoader
     protected function _createTupleCondition($query, $keys, $filter, $operator)
     {
         $types = [];
-        $defaults = $query->defaultTypes();
+        $defaults = $query->getDefaultTypes();
         foreach ($keys as $k) {
             if (isset($defaults[$k])) {
                 $types[] = $defaults[$k];
@@ -363,7 +363,7 @@ class SelectLoader
     protected function _buildSubquery($query)
     {
         $filterQuery = clone $query;
-        $filterQuery->autoFields(false);
+        $filterQuery->enableAutoFields(false);
         $filterQuery->mapReduce(null, null, true);
         $filterQuery->formatResults(null, true);
         $filterQuery->contain([], true);

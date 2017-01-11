@@ -92,32 +92,32 @@ trait SqliteDialectTrait
      */
     protected function _transformFunctionExpression(FunctionExpression $expression)
     {
-        switch ($expression->name()) {
+        switch ($expression->getName()) {
             case 'CONCAT':
                 // CONCAT function is expressed as exp1 || exp2
-                $expression->name('')->tieWith(' ||');
+                $expression->setName('')->setConjunction(' ||');
                 break;
             case 'DATEDIFF':
                 $expression
-                    ->name('ROUND')
-                    ->tieWith('-')
+                    ->setName('ROUND')
+                    ->setConjunction('-')
                     ->iterateParts(function ($p) {
                         return new FunctionExpression('JULIANDAY', [$p['value']], [$p['type']]);
                     });
                 break;
             case 'NOW':
-                $expression->name('DATETIME')->add(["'now'" => 'literal']);
+                $expression->setName('DATETIME')->add(["'now'" => 'literal']);
                 break;
             case 'CURRENT_DATE':
-                $expression->name('DATE')->add(["'now'" => 'literal']);
+                $expression->setName('DATE')->add(["'now'" => 'literal']);
                 break;
             case 'CURRENT_TIME':
-                $expression->name('TIME')->add(["'now'" => 'literal']);
+                $expression->setName('TIME')->add(["'now'" => 'literal']);
                 break;
             case 'EXTRACT':
                 $expression
-                    ->name('STRFTIME')
-                    ->tieWith(' ,')
+                    ->setName('STRFTIME')
+                    ->setConjunction(' ,')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 0) {
                             $value = rtrim(strtolower($p), 's');
@@ -131,8 +131,8 @@ trait SqliteDialectTrait
                 break;
             case 'DATE_ADD':
                 $expression
-                    ->name('DATE')
-                    ->tieWith(',')
+                    ->setName('DATE')
+                    ->setConjunction(',')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 1) {
                             $p = ['value' => $p, 'type' => null];
@@ -143,8 +143,8 @@ trait SqliteDialectTrait
                 break;
             case 'DAYOFWEEK':
                 $expression
-                    ->name('STRFTIME')
-                    ->tieWith(' ')
+                    ->setName('STRFTIME')
+                    ->setConjunction(' ')
                     ->add(["'%w', " => 'literal'], [], true)
                     ->add([') + (1' => 'literal']); // Sqlite starts on index 0 but Sunday should be 1
                 break;

@@ -577,26 +577,26 @@ class RequestHandlerComponent extends Component
         }
 
         $viewClass = null;
-        if ($builder->className() === null) {
+        if ($builder->getClassName() === null) {
             $viewClass = App::className($view, 'View', 'View');
         }
 
         if ($viewClass) {
             $controller->viewClass = $viewClass;
-            $builder->className($viewClass);
+            $builder->setClassName($viewClass);
         } else {
             if (!$this->_renderType) {
-                $builder->templatePath($builder->templatePath() . DIRECTORY_SEPARATOR . $type);
+                $builder->setTemplatePath($builder->getTemplatePath() . DIRECTORY_SEPARATOR . $type);
             } else {
-                $builder->templatePath(preg_replace(
+                $builder->setTemplatePath(preg_replace(
                     "/([\/\\\\]{$this->_renderType})$/",
                     DIRECTORY_SEPARATOR . $type,
-                    $builder->templatePath()
+                    $builder->getTemplatePath()
                 ));
             }
 
             $this->_renderType = $type;
-            $builder->layoutPath($type);
+            $builder->setLayoutPath($type);
         }
 
         $response = $controller->response;
@@ -645,7 +645,7 @@ class RequestHandlerComponent extends Component
         if (!$type) {
             return false;
         }
-        if (!$request->param('requested')) {
+        if (!$request->getParam('requested')) {
             $response->type($cType);
         }
         if (!empty($options['charset'])) {

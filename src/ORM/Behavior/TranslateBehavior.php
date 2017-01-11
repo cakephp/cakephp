@@ -141,8 +141,8 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      */
     public function setupFieldAssociations($fields, $table, $model, $strategy)
     {
-        $targetAlias = $this->_translationTable->alias();
-        $alias = $this->_table->alias();
+        $targetAlias = $this->_translationTable->getAlias();
+        $alias = $this->_table->getAlias();
         $filter = $this->_config['onlyTranslated'];
         $tableLocator = $this->tableLocator();
 
@@ -153,7 +153,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
                 $fieldTable = $tableLocator->get($name, [
                     'className' => $table,
                     'alias' => $name,
-                    'table' => $this->_translationTable->table()
+                    'table' => $this->_translationTable->getTable()
                 ]);
             } else {
                 $fieldTable = $tableLocator->get($name);
@@ -226,7 +226,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
         $contain = [];
         $fields = $this->_config['fields'];
-        $alias = $this->_table->alias();
+        $alias = $this->_table->getAlias();
         $select = $query->clause('select');
 
         $changeFilter = isset($options['filterByCurrentLocale']) &&
@@ -266,7 +266,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)
     {
         $locale = $entity->get('_locale') ?: $this->locale();
-        $newOptions = [$this->_translationTable->alias() => ['validate' => false]];
+        $newOptions = [$this->_translationTable->getAlias() => ['validate' => false]];
         $options['associated'] = $newOptions + $options['associated'];
 
         $this->_bundleTranslatedFields($entity);
@@ -317,7 +317,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
                 'foreign_key' => $key,
                 'model' => $model
             ])
-            ->bufferResults(false)
+            ->enableBufferedResults(false)
             ->indexBy('field');
 
         $modified = [];
@@ -438,7 +438,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     public function findTranslations(Query $query, array $options)
     {
         $locales = isset($options['locales']) ? $options['locales'] : [];
-        $targetAlias = $this->_translationTable->alias();
+        $targetAlias = $this->_translationTable->getAlias();
 
         return $query
             ->contain([$targetAlias => function ($q) use ($locales, $targetAlias) {
@@ -467,7 +467,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         $name = namespaceSplit(get_class($table));
         $name = substr(end($name), 0, -5);
         if (empty($name)) {
-            $name = $table->table() ?: $table->alias();
+            $name = $table->getTable() ?: $table->getAlias();
             $name = Inflector::camelize($name);
         }
 
@@ -537,7 +537,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
             $result = [];
             foreach ($grouped->combine('field', 'content', 'locale') as $locale => $keys) {
-                $entityClass = $this->_table->entityClass();
+                $entityClass = $this->_table->getEntityClass();
                 $translation = new $entityClass($keys + ['locale' => $locale], [
                     'markNew' => false,
                     'useSetters' => false,
@@ -617,7 +617,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      */
     protected function _findExistingTranslations($ruleSet)
     {
-        $association = $this->_table->association($this->_translationTable->alias());
+        $association = $this->_table->association($this->_translationTable->getAlias());
 
         $query = $association->find()
             ->select(['id', 'num' => 0])

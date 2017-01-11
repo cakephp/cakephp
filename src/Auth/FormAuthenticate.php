@@ -74,8 +74,8 @@ class FormAuthenticate extends BaseAuthenticate
         }
 
         return $this->_findUser(
-            $request->data[$fields['username']],
-            $request->data[$fields['password']]
+            $request->getData($fields['username']),
+            $request->getData($fields['password'])
         );
     }
 }

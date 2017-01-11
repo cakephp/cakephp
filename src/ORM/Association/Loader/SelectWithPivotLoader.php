@@ -94,8 +94,8 @@ class SelectWithPivotLoader extends SelectLoader
             $query = $queryBuilder($query);
         }
 
-        if ($query->autoFields() === null) {
-            $query->autoFields($query->clause('select') === []);
+        if ($query->isAutoFieldsEnabled() === null) {
+            $query->enableAutoFields($query->clause('select') === []);
         }
 
         // Ensure that association conditions are applied
@@ -165,7 +165,7 @@ class SelectWithPivotLoader extends SelectLoader
     {
         $resultMap = [];
         $key = (array)$options['foreignKey'];
-        $hydrated = $fetchQuery->hydrate();
+        $hydrated = $fetchQuery->isHydrationEnabled();
 
         foreach ($fetchQuery->all() as $result) {
             if (!isset($result[$this->junctionProperty])) {

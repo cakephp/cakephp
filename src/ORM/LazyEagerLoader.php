@@ -117,7 +117,7 @@ class LazyEagerLoader
         $map = [];
         $container = $source->associations();
         foreach ($associations as $assoc) {
-            $map[$assoc] = $container->get($assoc)->property();
+            $map[$assoc] = $container->get($assoc)->getProperty();
         }
 
         return $map;

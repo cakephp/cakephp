@@ -98,31 +98,31 @@ trait CellTrait
 
         $builder = $instance->viewBuilder();
         if (!empty($plugin)) {
-            $builder->plugin($plugin);
+            $builder->setPlugin($plugin);
         }
         if (!empty($this->helpers)) {
-            $builder->helpers($this->helpers);
+            $builder->setHelpers($this->helpers);
             $instance->helpers = $this->helpers;
         }
 
         if ($this instanceof View) {
             if (!empty($this->theme)) {
-                $builder->theme($this->theme);
+                $builder->setTheme($this->theme);
             }
 
             $class = get_class($this);
-            $builder->className($class);
+            $builder->setClassName($class);
             $instance->viewClass = $class;
 
             return $instance;
         }
 
         if (method_exists($this, 'viewBuilder')) {
-            $builder->theme($this->viewBuilder()->theme());
+            $builder->setTheme($this->viewBuilder()->theme());
         }
 
         if (isset($this->viewClass)) {
-            $builder->className($this->viewClass);
+            $builder->getClassName($this->viewClass);
             $instance->viewClass = $this->viewClass;
         }
 
