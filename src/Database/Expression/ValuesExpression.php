@@ -106,7 +106,7 @@ class ValuesExpression implements ExpressionInterface
      * Sets the columns to be inserted.
      *
      * @param array $cols Array with columns to be inserted.
-     * @return self
+     * @return $this
      */
     public function setColumns($cols)
     {
@@ -168,7 +168,7 @@ class ValuesExpression implements ExpressionInterface
      * Sets the values to be inserted.
      *
      * @param array $values Array with values to be inserted.
-     * @return self
+     * @return $this
      */
     public function setValues($values)
     {
@@ -214,7 +214,7 @@ class ValuesExpression implements ExpressionInterface
      * to insert records in the table.
      *
      * @param \Cake\Database\Query $query The query to set
-     * @return self
+     * @return $this
      */
     public function setQuery(Query $query)
     {

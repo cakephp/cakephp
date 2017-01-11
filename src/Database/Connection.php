@@ -149,7 +149,7 @@ class Connection implements ConnectionInterface
      * @param array $config Config for a new driver.
      * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
      * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
-     * @return self
+     * @return $this
      */
     public function setDriver($driver, $config = [])
     {
@@ -334,7 +334,7 @@ class Connection implements ConnectionInterface
      * Sets a Schema\Collection object for this connection.
      *
      * @param \Cake\Database\Schema\Collection $collection The schema collection object
-     * @return self
+     * @return $this
      */
     public function setSchemaCollection(SchemaCollection $collection)
     {
@@ -521,7 +521,7 @@ class Connection implements ConnectionInterface
      * `$connection->enableSavePoints(false)` Disables usage of savepoints and returns false
      *
      * @param bool $enable Whether or not save points should be used.
-     * @return self
+     * @return $this
      */
     public function enableSavePoints($enable)
     {
