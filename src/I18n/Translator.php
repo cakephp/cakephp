@@ -64,7 +64,7 @@ class Translator implements TranslatorInterface
      * @param string $locale The locale being used.
      * @param array $messages The message keys and translations.
      * @param \Aura\Intl\FormatterInterface $formatter A message formatter.
-     * @param \Aura\Intl\TranslatorInterface $fallback A fallback translator.
+     * @param \Aura\Intl\TranslatorInterface|null $fallback A fallback translator.
      */
     public function __construct(
         $locale,
@@ -82,7 +82,7 @@ class Translator implements TranslatorInterface
      * Gets the message translation by its key.
      *
      * @param string $key The message key.
-     * @return mixed The message translation string, or false if not found.
+     * @return string|bool The message translation string, or false if not found.
      */
     protected function getMessage($key)
     {
