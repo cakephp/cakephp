@@ -76,13 +76,13 @@ class CsrfComponent extends Component
      */
     public function startup(Event $event)
     {
-        $controller = $event->subject();
+        $controller = $event->getSubject();
         $request = $controller->request;
         $response = $controller->response;
         $cookieName = $this->_config['cookieName'];
 
         /* @var \Cake\Network\Request $request */
-        $cookieData = $request->cookie($cookieName);
+        $cookieData = $request->getCookie($cookieName);
         if ($cookieData) {
             $request->params['_csrfToken'] = $cookieData;
         }

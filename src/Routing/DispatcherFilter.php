@@ -138,7 +138,7 @@ class DispatcherFilter implements EventListenerInterface
      */
     public function handle(Event $event)
     {
-        $name = $event->name();
+        $name = $event->getName();
         list(, $method) = explode('.', $name);
         if (empty($this->_config['for']) && empty($this->_config['when'])) {
             return $this->{$method}($event);
@@ -157,7 +157,7 @@ class DispatcherFilter implements EventListenerInterface
     public function matches(Event $event)
     {
         /* @var \Cake\Http\ServerRequest $request */
-        $request = $event->data('request');
+        $request = $event->getData('request');
         $pass = true;
         if (!empty($this->_config['for'])) {
             $len = strlen('preg:');
@@ -170,7 +170,7 @@ class DispatcherFilter implements EventListenerInterface
             }
         }
         if ($pass && !empty($this->_config['when'])) {
-            $response = $event->data('response');
+            $response = $event->getData('response');
             $pass = $this->_config['when']($request, $response);
         }
 

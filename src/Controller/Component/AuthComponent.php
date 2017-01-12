@@ -280,12 +280,12 @@ class AuthComponent extends Component
      */
     public function authCheck(Event $event)
     {
-        if ($this->_config['checkAuthIn'] !== $event->name()) {
+        if ($this->_config['checkAuthIn'] !== $event->getName()) {
             return null;
         }
 
         /* @var \Cake\Controller\Controller $controller */
-        $controller = $event->subject();
+        $controller = $event->getSubject();
 
         $action = strtolower($controller->request->params['action']);
         if (!$controller->isAction($action)) {

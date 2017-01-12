@@ -26,7 +26,7 @@ class EventList implements ArrayAccess, Countable
     /**
      * Events list
      *
-     * @var array
+     * @var \Cake\Event\Event[]
      */
     protected $_events = [];
 
@@ -124,7 +124,7 @@ class EventList implements ArrayAccess, Countable
     public function hasEvent($name)
     {
         foreach ($this->_events as $event) {
-            if ($event->name() === $name) {
+            if ($event->getName() === $name) {
                 return true;
             }
         }

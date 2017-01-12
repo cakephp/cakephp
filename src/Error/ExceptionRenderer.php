@@ -383,6 +383,6 @@ class ExceptionRenderer implements ExceptionRendererInterface
         ];
         $result = $dispatcher->dispatchEvent('Dispatcher.afterDispatch', $args);
 
-        return $result->data('response');
+        return $result->getData('response');
     }
 }

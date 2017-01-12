@@ -189,12 +189,12 @@ class RequestHandlerComponent extends Component
      */
     public function startup(Event $event)
     {
-        $controller = $event->subject();
+        $controller = $event->getSubject();
         $request = $controller->request;
         $response = $controller->response;
 
-        if ($request->param('_ext')) {
-            $this->ext = $request->param('_ext');
+        if ($request->getParam('_ext')) {
+            $this->ext = $request->getParam('_ext');
         }
         if (!$this->ext || in_array($this->ext, ['html', 'htm'])) {
             $this->_setExtension($request, $response);
@@ -273,7 +273,7 @@ class RequestHandlerComponent extends Component
             parse_str($querystr, $query);
         }
         /* @var \Cake\Controller\Controller $controller */
-        $controller = $event->subject();
+        $controller = $event->getSubject();
         $response->body($controller->requestAction($url, [
             'return',
             'bare' => false,
@@ -313,7 +313,7 @@ class RequestHandlerComponent extends Component
     public function beforeRender(Event $event)
     {
         /* @var \Cake\Controller\Controller $controller */
-        $controller = $event->subject();
+        $controller = $event->getSubject();
         $response = $controller->response;
         $request = $controller->request;
 
