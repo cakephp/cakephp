@@ -429,13 +429,13 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     public function translationField($field)
     {
         $table = $this->_table;
-        $associationName = $table->alias() . '_' . $field . '_translation';
+        $associationName = $table->getAlias() . '_' . $field . '_translation';
 
         if ($table->associations()->has($associationName)) {
             return $associationName . '.content';
-        } else {
-            return $table->aliasField($field);
         }
+
+        return $table->aliasField($field);
     }
 
     /**
