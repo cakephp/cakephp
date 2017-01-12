@@ -77,15 +77,15 @@ class ActionDispatcher
         }
         $beforeEvent = $this->dispatchEvent('Dispatcher.beforeDispatch', compact('request', 'response'));
 
-        $request = $beforeEvent->data('request');
-        if ($beforeEvent->result() instanceof Response) {
-            return $beforeEvent->result();
+        $request = $beforeEvent->getData('request');
+        if ($beforeEvent->getResult() instanceof Response) {
+            return $beforeEvent->getResult();
         }
 
         // Use the controller built by an beforeDispatch
         // event handler if there is one.
-        if ($beforeEvent->data('controller') instanceof Controller) {
-            $controller = $beforeEvent->data('controller');
+        if ($beforeEvent->getData('controller') instanceof Controller) {
+            $controller = $beforeEvent->getData('controller');
         } else {
             $controller = $this->factory->create($request, $response);
         }
@@ -97,7 +97,7 @@ class ActionDispatcher
 
         $afterEvent = $this->dispatchEvent('Dispatcher.afterDispatch', compact('request', 'response'));
 
-        return $afterEvent->data('response');
+        return $afterEvent->getData('response');
     }
 
     /**

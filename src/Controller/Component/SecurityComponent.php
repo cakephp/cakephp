@@ -99,15 +99,15 @@ class SecurityComponent extends Component
      */
     public function startup(Event $event)
     {
-        $controller = $event->subject();
+        $controller = $event->getSubject();
         $this->session = $controller->request->session();
-        $this->_action = $controller->request->param('action');
-        $hasData = (bool)$controller->request->data();
+        $this->_action = $controller->request->getParam('action');
+        $hasData = (bool)$controller->request->getData();
         try {
             $this->_secureRequired($controller);
             $this->_authRequired($controller);
 
-            $isNotRequestAction = !$controller->request->param('requested');
+            $isNotRequestAction = !$controller->request->getParam('requested');
 
             if ($this->_action === $this->_config['blackHoleCallback']) {
                 throw new AuthSecurityException(sprintf('Action %s is defined as the blackhole callback.', $this->_action));
@@ -124,7 +124,7 @@ class SecurityComponent extends Component
         }
 
         $this->generateToken($controller->request);
-        if ($hasData && is_array($controller->request->data())) {
+        if ($hasData && is_array($controller->request->getData())) {
             unset($controller->request->data['_Token']);
         }
     }
@@ -264,7 +264,7 @@ class SecurityComponent extends Component
         ) {
             $requireAuth = $this->_config['requireAuth'];
 
-            if (in_array($request->param('action'), $requireAuth) || $requireAuth == ['*']) {
+            if (in_array($request->getParam('action'), $requireAuth) || $requireAuth == ['*']) {
                 if (!isset($request->data['_Token'])) {
                     throw new AuthSecurityException('\'_Token\' was not found in request data.');
                 }
@@ -492,7 +492,7 @@ class SecurityComponent extends Component
     protected function _debugPostTokenNotMatching(Controller $controller, $hashParts)
     {
         $messages = [];
-        $expectedParts = json_decode(urldecode($controller->request->data['_Token']['debug']), true);
+        $expectedParts = json_decode(urldecode($controller->request->getData('_Token.debug')), true);
         if (!is_array($expectedParts) || count($expectedParts) !== 3) {
             return 'Invalid security debug token.';
         }

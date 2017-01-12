@@ -2314,7 +2314,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * ```
      * $article = $this->Articles->newEntity(
-     *   $this->request->data(),
+     *   $this->request->getData(),
      *   ['associated' => ['Tags', 'Comments.Users']]
      * );
      * ```
@@ -2323,7 +2323,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * passing the `fieldList` option, which is also accepted for associations:
      *
      * ```
-     * $article = $this->Articles->newEntity($this->request->data(), [
+     * $article = $this->Articles->newEntity($this->request->getData(), [
      *  'fieldList' => ['title', 'body', 'tags', 'comments'],
      *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
      * ]
@@ -2336,7 +2336,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * ```
      * $article = $this->Articles->newEntity(
-     *   $this->request->data(),
+     *   $this->request->getData(),
      *   ['accessibleFields' => ['protected_field' => true]]
      * );
      * ```
@@ -2347,7 +2347,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * ```
      * $article = $this->Articles->newEntity(
-     *   $this->request->data(),
+     *   $this->request->getData(),
      *   ['validate' => false]
      * );
      * ```
@@ -2384,7 +2384,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * ```
      * $articles = $this->Articles->newEntities(
-     *   $this->request->data(),
+     *   $this->request->getData(),
      *   ['associated' => ['Tags', 'Comments.Users']]
      * );
      * ```
@@ -2393,7 +2393,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * passing the `fieldList` option, which is also accepted for associations:
      *
      * ```
-     * $articles = $this->Articles->newEntities($this->request->data(), [
+     * $articles = $this->Articles->newEntities($this->request->getData(), [
      *  'fieldList' => ['title', 'body', 'tags', 'comments'],
      *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
      *  ]
@@ -2424,7 +2424,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * passing the `fieldList` option, which is also accepted for associations:
      *
      * ```
-     * $article = $this->Articles->patchEntity($article, $this->request->data(), [
+     * $article = $this->Articles->patchEntity($article, $this->request->getData(), [
      *  'fieldList' => ['title', 'body', 'tags', 'comments'],
      *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
      *  ]
@@ -2436,7 +2436,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * The `validate` option can be used to disable validation on the passed data:
      *
      * ```
-     * $article = $this->patchEntity($article, $this->request->data(),[
+     * $article = $this->patchEntity($article, $this->request->getData(),[
      *  'validate' => false
      * ]);
      * ```
@@ -2469,7 +2469,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * passing the `fieldList` option, which is also accepted for associations:
      *
      * ```
-     * $articles = $this->Articles->patchEntities($articles, $this->request->data(), [
+     * $articles = $this->Articles->patchEntities($articles, $this->request->getData(), [
      *  'fieldList' => ['title', 'body', 'tags', 'comments'],
      *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
      *  ]

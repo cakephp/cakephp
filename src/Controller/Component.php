@@ -67,7 +67,7 @@ class Component implements EventListenerInterface
      *
      * @var \Cake\Http\ServerRequest
      * @deprecated 3.4.0 Storing references to the request is deprecated. Use Component::getController()
-     *   or callback $event->subject() to access the controller & request instead.
+     *   or callback $event->getSubject() to access the controller & request instead.
      */
     public $request;
 
@@ -76,7 +76,7 @@ class Component implements EventListenerInterface
      *
      * @var \Cake\Network\Response
      * @deprecated 3.4.0 Storing references to the response is deprecated. Use Component::getController()
-     *   or callback $event->subject() to access the controller & response instead.
+     *   or callback $event->getSubject() to access the controller & response instead.
      */
     public $response;
 

@@ -456,7 +456,7 @@ abstract class IntegrationTestCase extends TestCase
     public function controllerSpy($event, $controller = null)
     {
         if (!$controller) {
-            $controller = $event->subject();
+            $controller = $event->getSubject();
         }
         $this->_controller = $controller;
         $events = $controller->eventManager();
