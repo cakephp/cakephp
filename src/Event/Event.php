@@ -74,9 +74,9 @@ class Event
      *
      * @param string $name Name of the event
      * @param object|null $subject the object that this event applies to (usually the object that is generating the event)
-     * @param array|null $data any value you wish to be transported with this event to it can be read by listeners
+     * @param array|\ArrayAccess|null $data any value you wish to be transported with this event to it can be read by listeners
      */
-    public function __construct($name, $subject = null, array $data = null)
+    public function __construct($name, $subject = null, $data = null)
     {
         $this->_name = $name;
         $this->_data = (array)$data;
