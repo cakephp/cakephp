@@ -18,6 +18,7 @@
  */
 namespace Cake\Test\TestCase\Event;
 
+use ArrayObject;
 use Cake\Event\Event;
 use Cake\TestSuite\TestCase;
 
@@ -80,6 +81,23 @@ class EventTest extends TestCase
     public function testEventData()
     {
         $event = new Event('fake.event', $this, ['some' => 'data']);
+        $this->assertEquals(['some' => 'data'], $event->data());
+        $this->assertEquals(['some' => 'data'], $event->getData());
+
+        $this->assertEquals('data', $event->getData('some'));
+        $this->assertNull($event->getData('undef'));
+    }
+
+    /**
+     * Tests that it is possible to get/set custom data in a event
+     *
+     * @return void
+     * @triggers fake.event $this, array('some' => 'data')
+     */
+    public function testEventDataObject()
+    {
+        $data = new ArrayObject(['some' => 'data']);
+        $event = new Event('fake.event', $this, $data);
         $this->assertEquals(['some' => 'data'], $event->data());
         $this->assertEquals(['some' => 'data'], $event->getData());
 
