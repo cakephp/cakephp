@@ -75,7 +75,10 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      */
     protected $_defaultConfig = [
         'implementedFinders' => ['translations' => 'findTranslations'],
-        'implementedMethods' => ['locale' => 'locale'],
+        'implementedMethods' => [
+            'locale' => 'locale',
+            'translationField' => 'translationField'
+        ],
         'fields' => [],
         'translationTable' => 'I18n',
         'defaultLocale' => '',
@@ -411,6 +414,28 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         }
 
         return $this->_locale = (string)$locale;
+    }
+
+    /**
+     * Returns a fully aliased field name for translated fields.
+     *
+     * If the requested field is configured as a translation field, the `content`
+     * field with an alias of a corresponding association is returned. Table-aliased
+     * field name is returned for all other fields.
+     *
+     * @param string $field Field name to be aliased.
+     * @return string
+     */
+    public function translationField($field)
+    {
+        $table = $this->_table;
+        $associationName = $table->getAlias() . '_' . $field . '_translation';
+
+        if ($table->associations()->has($associationName)) {
+            return $associationName . '.content';
+        }
+
+        return $table->aliasField($field);
     }
 
     /**
