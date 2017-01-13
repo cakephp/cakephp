@@ -175,7 +175,7 @@ abstract class Mailer implements EventListenerInterface
      *
      * @deprecated 3.4.0 Use setLayout() which sets the layout on the email class instead.
      * @param string $layout Name of the layout to use.
-     * @return self object.
+     * @return $this
      */
     public function layout($layout)
     {
@@ -199,7 +199,7 @@ abstract class Mailer implements EventListenerInterface
      *
      * @param string $method Method name.
      * @param array $args Method arguments
-     * @return self
+     * @return $this
      */
     public function __call($method, $args)
     {
@@ -213,7 +213,7 @@ abstract class Mailer implements EventListenerInterface
      *
      * @param string|array $key Variable name or hash of view variables.
      * @param mixed $value View variable value.
-     * @return self object.
+     * @return $this
      */
     public function set($key, $value = null)
     {
@@ -257,7 +257,7 @@ abstract class Mailer implements EventListenerInterface
     /**
      * Reset email instance.
      *
-     * @return self
+     * @return $this
      */
     protected function reset()
     {

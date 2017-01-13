@@ -197,7 +197,7 @@ trait InstanceConfigTrait
      *
      * @param string|array $key The key to set, or a complete array of configs.
      * @param mixed|null $value The value to set.
-     * @return self The object itself.
+     * @return $this
      */
     public function configShallow($key, $value = null)
     {

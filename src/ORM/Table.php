@@ -331,7 +331,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Sets the database table name.
      *
      * @param string $table Table name.
-     * @return self
+     * @return $this
      */
     public function setTable($table)
     {
@@ -379,7 +379,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Sets the table alias.
      *
      * @param string $alias Table alias
-     * @return self
+     * @return $this
      */
     public function setAlias($alias)
     {
@@ -439,7 +439,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Sets the table registry key used to create this table instance.
      *
      * @param string $registryAlias The key used to access this object.
-     * @return self
+     * @return $this
      */
     public function setRegistryAlias($registryAlias)
     {
@@ -483,7 +483,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Sets the connection instance.
      *
      * @param \Cake\Datasource\ConnectionInterface $connection The connection instance
-     * @return self
+     * @return $this
      */
     public function setConnection(ConnectionInterface $connection)
     {
@@ -543,7 +543,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * out of it and used as the schema for this table.
      *
      * @param array|\Cake\Database\Schema\TableSchema $schema Schema to be used for this table
-     * @return self
+     * @return $this
      */
     public function setSchema($schema)
     {
@@ -634,7 +634,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Sets the primary key field name.
      *
      * @param string|array $key Sets a new name to be used as primary key
-     * @return self
+     * @return $this
      */
     public function setPrimaryKey($key)
     {
@@ -681,7 +681,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Sets the display field.
      *
      * @param string $key Name to be used as display field.
-     * @return self
+     * @return $this
      */
     public function setDisplayField($key)
     {
@@ -766,7 +766,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $name The name of the class to use
      * @throws \Cake\ORM\Exception\MissingEntityException when the entity class cannot be found
-     * @return self
+     * @return $this
      */
     public function setEntityClass($name)
     {

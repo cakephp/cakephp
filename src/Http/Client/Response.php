@@ -319,7 +319,7 @@ class Response extends Message implements ResponseInterface
      *
      * @param int $code The status code to set.
      * @param string $reasonPhrase The status reason phrase.
-     * @return self A copy of the current object with an updated status code.
+     * @return $this A copy of the current object with an updated status code.
      */
     public function withStatus($code, $reasonPhrase = '')
     {

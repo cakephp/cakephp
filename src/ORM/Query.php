@@ -178,7 +178,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param array|\Cake\Database\ExpressionInterface|string|\Cake\ORM\Table|\Cake\ORM\Association $fields fields
      * to be added to the list.
      * @param bool $overwrite whether to reset fields with passed list or not
-     * @return self
+     * @return $this
      */
     public function select($fields = [], $overwrite = false)
     {
@@ -202,7 +202,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * This method returns the same query object for chaining.
      *
      * @param \Cake\ORM\Table $table The table to pull types from
-     * @return self
+     * @return $this
      */
     public function addDefaultTypes(Table $table)
     {
@@ -222,7 +222,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * and storing containments.
      *
      * @param \Cake\ORM\EagerLoader $instance The eager loader to use.
-     * @return self
+     * @return $this
      */
     public function setEagerLoader(EagerLoader $instance)
     {
@@ -469,7 +469,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param string $assoc The association to filter by
      * @param callable|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
-     * @return self
+     * @return $this
      */
     public function matching($assoc, callable $builder = null)
     {
@@ -541,7 +541,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param string $assoc The association to join with
      * @param callable|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
-     * @return self
+     * @return $this
      */
     public function leftJoinWith($assoc, callable $builder = null)
     {
@@ -589,7 +589,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param string $assoc The association to join with
      * @param callable|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
-     * @return self
+     * @return $this
      * @see \Cake\ORM\Query::matching()
      */
     public function innerJoinWith($assoc, callable $builder = null)
@@ -654,7 +654,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param string $assoc The association to filter by
      * @param callable|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
-     * @return self
+     * @return $this
      */
     public function notMatching($assoc, callable $builder = null)
     {
@@ -874,7 +874,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * instead
      *
      * @param callable|null $counter The counter value
-     * @return self
+     * @return $this
      */
     public function counter($counter)
     {
@@ -889,7 +889,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * If set to false array results will be returned for the query.
      *
      * @param bool $enable Use a boolean to set the hydration mode.
-     * @return self
+     * @return $this
      */
     public function enableHydration($enable = true)
     {
@@ -931,7 +931,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * {@inheritDoc}
      *
-     * @return self
+     * @return $this
      * @throws \RuntimeException When you attempt to cache a non-select query.
      */
     public function cache($key, $config = 'default')
@@ -1116,7 +1116,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Can be combined with set() and where() methods to create update queries.
      *
      * @param string|null $table Unused parameter.
-     * @return self
+     * @return $this
      */
     public function update($table = null)
     {
@@ -1132,7 +1132,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Can be combined with the where() method to create delete queries.
      *
      * @param string|null $table Unused parameter.
-     * @return self
+     * @return $this
      */
     public function delete($table = null)
     {
@@ -1153,7 +1153,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @param array $columns The columns to insert into.
      * @param array $types A map between columns & their datatypes.
-     * @return self
+     * @return $this
      */
     public function insert(array $columns, array $types = [])
     {
@@ -1217,7 +1217,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * auto-fields with this method.
      *
      * @param bool $value Set true to enable, false to disable.
-     * @return self
+     * @return $this
      */
     public function enableAutoFields($value = true)
     {

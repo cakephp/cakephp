@@ -209,7 +209,7 @@ class DateTimeType extends Type implements TypeInterface
      * by using a locale aware parser.
      *
      * @param bool $enable Whether or not to enable
-     * @return self
+     * @return $this
      */
     public function useLocaleParser($enable = true)
     {
@@ -235,7 +235,7 @@ class DateTimeType extends Type implements TypeInterface
      *
      * @param string|array $format The format in which the string are passed.
      * @see \Cake\I18n\Time::parseDateTime()
-     * @return self
+     * @return $this
      */
     public function setLocaleFormat($format)
     {
@@ -247,7 +247,7 @@ class DateTimeType extends Type implements TypeInterface
     /**
      * Change the preferred class name to the FrozenTime implementation.
      *
-     * @return self
+     * @return $this
      */
     public function useImmutable()
     {
@@ -275,7 +275,7 @@ class DateTimeType extends Type implements TypeInterface
     /**
      * Change the preferred class name to the mutable Time implementation.
      *
-     * @return self
+     * @return $this
      */
     public function useMutable()
     {

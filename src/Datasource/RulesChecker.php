@@ -130,7 +130,7 @@ class RulesChecker
      * @param string|null $name The alias for a rule.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
-     * @return self
+     * @return $this
      */
     public function add(callable $rule, $name = null, array $options = [])
     {
@@ -155,7 +155,7 @@ class RulesChecker
      * @param string|null $name The alias for a rule.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
-     * @return self
+     * @return $this
      */
     public function addCreate(callable $rule, $name = null, array $options = [])
     {
@@ -180,7 +180,7 @@ class RulesChecker
      * @param string|null $name The alias for a rule.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
-     * @return self
+     * @return $this
      */
     public function addUpdate(callable $rule, $name = null, array $options = [])
     {
@@ -205,7 +205,7 @@ class RulesChecker
      * @param string|null $name The alias for a rule.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
-     * @return self
+     * @return $this
      */
     public function addDelete(callable $rule, $name = null, array $options = [])
     {

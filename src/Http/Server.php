@@ -112,7 +112,7 @@ class Server
      * Set the application.
      *
      * @param BaseApplication $app The application to set.
-     * @return self
+     * @return $this
      */
     public function setApp(BaseApplication $app)
     {
@@ -135,7 +135,7 @@ class Server
      * Set the runner
      *
      * @param \Cake\Http\Runner $runner The runner to use.
-     * @return self
+     * @return $this
      */
     public function setRunner(Runner $runner)
     {

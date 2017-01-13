@@ -240,7 +240,7 @@ abstract class Association
      * Sets the name for this association.
      *
      * @param string $name Name to be assigned
-     * @return self
+     * @return $this
      */
     public function setName($name)
     {
@@ -279,7 +279,7 @@ abstract class Association
      * Sets whether or not cascaded deletes should also fire callbacks.
      *
      * @param bool $cascadeCallbacks cascade callbacks switch value
-     * @return self
+     * @return $this
      */
     public function setCascadeCallbacks($cascadeCallbacks)
     {
@@ -329,7 +329,7 @@ abstract class Association
      * Sets the table instance for the source side of the association.
      *
      * @param \Cake\ORM\Table $table the instance to be assigned as source side
-     * @return self
+     * @return $this
      */
     public function setSource(Table $table)
     {
@@ -369,7 +369,7 @@ abstract class Association
      * Sets the table instance for the target side of the association.
      *
      * @param \Cake\ORM\Table $table the instance to be assigned as target side
-     * @return self
+     * @return $this
      */
     public function setTarget(Table $table)
     {
@@ -428,7 +428,7 @@ abstract class Association
      *
      * @param array $conditions list of conditions to be used
      * @see \Cake\Database\Query::where() for examples on the format of the array
-     * @return self
+     * @return $this
      */
     public function setConditions($conditions)
     {
@@ -472,7 +472,7 @@ abstract class Association
      * When not manually specified the primary key of the owning side table is used.
      *
      * @param string $key the table field to be used to link both tables together
-     * @return self
+     * @return $this
      */
     public function setBindingKey($key)
     {
@@ -531,7 +531,7 @@ abstract class Association
      * Sets the name of the field representing the foreign key to the target table.
      *
      * @param string $key the key to be used to link both tables together
-     * @return self
+     * @return $this
      */
     public function setForeignKey($key)
     {
@@ -566,7 +566,7 @@ abstract class Association
      * If no parameters are passed the current setting is returned.
      *
      * @param bool $dependent Set the dependent mode. Use null to read the current state.
-     * @return self
+     * @return $this
      */
     public function setDependent($dependent)
     {
@@ -626,7 +626,7 @@ abstract class Association
      * Sets the type of join to be used when adding the association to a query.
      *
      * @param string $type the join type to be used (e.g. INNER)
-     * @return self
+     * @return $this
      */
     public function setJoinType($type)
     {
@@ -667,7 +667,7 @@ abstract class Association
      * in the source table record.
      *
      * @param string $name The name of the association property. Use null to read the current value.
-     * @return self
+     * @return $this
      */
     public function setProperty($name)
     {
@@ -735,7 +735,7 @@ abstract class Association
      * rendering any changes to this setting void.
      *
      * @param string $name The strategy type. Use null to read the current value.
-     * @return self
+     * @return $this
      * @throws \InvalidArgumentException When an invalid strategy is provided.
      */
     public function setStrategy($name)
@@ -796,7 +796,7 @@ abstract class Association
      * Sets the default finder to use for fetching rows from the target table.
      *
      * @param string $finder the finder name to use
-     * @return self
+     * @return $this
      */
     public function setFinder($finder)
     {

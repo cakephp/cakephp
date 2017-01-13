@@ -32,7 +32,7 @@ trait StringTemplateTrait
      * Sets templates to use.
      *
      * @param array $templates Templates to be added.
-     * @return self
+     * @return $this
      */
     public function setTemplates(array $templates)
     {
@@ -58,7 +58,7 @@ trait StringTemplateTrait
      * @deprecated 3.4.0 Use setTemplates()/getTemplates() instead.
      * @param string|null|array $templates null or string allow reading templates. An array
      *   allows templates to be added.
-     * @return self|string|array
+     * @return $this|string|array
      */
     public function templates($templates = null)
     {
