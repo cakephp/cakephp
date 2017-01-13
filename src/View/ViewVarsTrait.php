@@ -28,7 +28,7 @@ trait ViewVarsTrait
      * The name of default View class.
      *
      * @var string
-     * @deprecated 3.1.0 Use `$this->viewBuilder()->className()` instead.
+     * @deprecated 3.1.0 Use `$this->viewBuilder()->getClassName()`/`$this->viewBuilder()->setClassName()` instead.
      */
     public $viewClass = null;
 
