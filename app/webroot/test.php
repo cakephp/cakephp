@@ -27,23 +27,6 @@ if (!defined('DS')) {
 }
 
 /**
- * These are the debug modes of CakePHP framework
- *
- * 0 = Production mode. No output.
- * 1 = Show errors and warnings.
- * 2 = Show errors, warnings, and SQL. [SQL log is only shown when you add $this->element(‘sql_dump’) to your view or layout.]
- */
-if (!defined('CAKE_PRODUCTION_MODE')) {
-	define('CAKE_PRODUCTION_MODE', 0);
-}
-if (!defined('CAKE_DEBUG_MODE')) {
-	define('CAKE_DEBUG_MODE', 1);
-}
-if (!defined('CAKE_DEEP_DEBUG_MODE')) {
-	define('CAKE_DEEP_DEBUG_MODE', 2);
-}
-
-/**
  * These defines should only be edited if you have CakePHP installed in
  * a directory layout other than the way it is distributed.
  * When using custom settings be sure to use the DS and do not add a trailing DS.
