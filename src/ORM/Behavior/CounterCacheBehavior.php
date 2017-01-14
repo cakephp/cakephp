@@ -18,6 +18,8 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\ORM\Association;
 use Cake\ORM\Behavior;
+use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 
 /**
  * CounterCache behavior
@@ -74,9 +76,59 @@ use Cake\ORM\Behavior;
  *     ]
  * ]
  * ```
+ *
+ * Ignore updating the field if it is dirty
+ * ```
+ * [
+ *     'Users' => [
+ *         'posts_published' => [
+ *             'ignoreDirty' => true
+ *         ]
+ *     ]
+ * ]
+ * ```
  */
 class CounterCacheBehavior extends Behavior
 {
+
+    /**
+     * Store the fields which should be ignored
+     *
+     * @var array
+     */
+    protected $_ignoreDirty = [];
+
+    /**
+     * beforeSave callback.
+     *
+     * Check if a field, which should be ignored, is dirty
+     *
+     * @param \Cake\Event\Event $event The beforeSave event that was fired
+     * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
+     * @return void
+     */
+    public function beforeSave(Event $event, EntityInterface $entity)
+    {
+        foreach ($this->_config as $assoc => $settings) {
+            $assoc = $this->_table->association($assoc);
+            foreach ($settings as $field => $config) {
+                if (is_int($field)) {
+                    continue;
+                }
+
+                $registryAlias = $assoc->target()->registryAlias();
+                $entityAlias = $assoc->property();
+
+                if (!is_callable($config) &&
+                    isset($config['ignoreDirty']) &&
+                    $config['ignoreDirty'] === true &&
+                    $entity->$entityAlias->dirty($field)
+                ) {
+                    $this->_ignoreDirty[$registryAlias][$field] = true;
+                }
+            }
+        }
+    }
 
     /**
      * afterSave callback.
@@ -90,6 +142,7 @@ class CounterCacheBehavior extends Behavior
     public function afterSave(Event $event, EntityInterface $entity)
     {
         $this->_processAssociations($event, $entity);
+        $this->_ignoreDirty = [];
     }
 
     /**
@@ -146,6 +199,12 @@ class CounterCacheBehavior extends Behavior
             if (is_int($field)) {
                 $field = $config;
                 $config = [];
+            }
+
+            if (isset($this->_ignoreDirty[$assoc->target()->registryAlias()][$field]) &&
+                $this->_ignoreDirty[$assoc->target()->registryAlias()][$field] === true
+            ) {
+                continue;
             }
 
             if (!is_string($config) && is_callable($config)) {

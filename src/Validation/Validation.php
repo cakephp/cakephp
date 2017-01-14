@@ -390,7 +390,9 @@ class Validation
         if ($check instanceof DateTimeInterface) {
             return true;
         }
-
+        if (is_object($check)) {
+            return false;
+        }
         if (is_array($check)) {
             $check = static::_getDateString($check);
             $format = 'ymd';
@@ -456,6 +458,9 @@ class Validation
         if ($check instanceof DateTimeInterface) {
             return true;
         }
+        if (is_object($check)) {
+            return false;
+        }
         $valid = false;
         if (is_array($check)) {
             $check = static::_getDateString($check);
@@ -506,6 +511,9 @@ class Validation
     {
         if ($check instanceof DateTimeInterface) {
             return true;
+        }
+        if (is_object($check)) {
+            return false;
         }
         static $methods = [
             'date' => 'parseDate',

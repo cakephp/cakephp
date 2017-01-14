@@ -1,17 +1,17 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP Project
- * @since         1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
- */
+* CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+* Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+*
+* Licensed under The MIT License
+* For full copyright and license information, please see the LICENSE.txt
+* Redistributions of files must retain the above copyright notice.
+*
+* @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+* @link          http://cakephp.org CakePHP Project
+* @since         1.2.0
+* @license       http://www.opensource.org/licenses/mit-license.php MIT License
+*/
 namespace Cake\Test\TestCase\Error;
 
 use Cake\Controller\Controller;
@@ -21,8 +21,8 @@ use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 
 /**
- * DebuggerTestCaseDebugger class
- */
+* DebuggerTestCaseDebugger class
+*/
 class DebuggerTestCaseDebugger extends Debugger
 {
 }
@@ -593,6 +593,8 @@ eos;
 
     /**
      * Tests reading the output mask settings.
+     *
+     * @return void
      */
     public function testSetOutputMask()
     {
@@ -629,5 +631,172 @@ eos;
         $result = Debugger::exportVar($object);
         $expected = "object(Cake\\Test\\TestCase\\Error\\SecurityThing){password=>[**********]}";
         $this->assertEquals($expected, preg_replace('/\s+/', '', $result));
+    }
+
+    /**
+     * test testPrintVar()
+     *
+     * @return void
+     */
+    public function testPrintVar()
+    {
+        ob_start();
+        Debugger::printVar('this-is-a-test', ['file' => __FILE__, 'line' => __LINE__], false);
+        $result = ob_get_clean();
+        $expectedText = <<<EXPECTED
+%s (line %d)
+########## DEBUG ##########
+'this-is-a-test'
+###########################
+
+EXPECTED;
+        $expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
+
+        $this->assertEquals($expected, $result);
+
+        ob_start();
+        $value = '<div>this-is-a-test</div>';
+        Debugger::printVar($value, ['file' => __FILE__, 'line' => __LINE__], true);
+        $result = ob_get_clean();
+        $expectedHtml = <<<EXPECTED
+<div class="cake-debug-output">
+<span><strong>%s</strong> (line <strong>%d</strong>)</span>
+<pre class="cake-debug">
+&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
+</pre>
+</div>
+EXPECTED;
+        $expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 10);
+        $this->assertEquals($expected, $result);
+
+        ob_start();
+        Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], true);
+        $result = ob_get_clean();
+        $expected = <<<EXPECTED
+<div class="cake-debug-output">
+<span><strong>%s</strong> (line <strong>%d</strong>)</span>
+<pre class="cake-debug">
+&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
+</pre>
+</div>
+EXPECTED;
+        $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 10);
+        $this->assertEquals($expected, $result);
+
+        ob_start();
+        Debugger::printVar('<div>this-is-a-test</div>', [], true);
+        $result = ob_get_clean();
+        $expected = <<<EXPECTED
+<div class="cake-debug-output">
+
+<pre class="cake-debug">
+&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
+</pre>
+</div>
+EXPECTED;
+        $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 10);
+        $this->assertEquals($expected, $result);
+
+        ob_start();
+        Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__]);
+        $result = ob_get_clean();
+        $expectedHtml = <<<EXPECTED
+<div class="cake-debug-output">
+<span><strong>%s</strong> (line <strong>%d</strong>)</span>
+<pre class="cake-debug">
+&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
+</pre>
+</div>
+EXPECTED;
+        $expectedText = <<<EXPECTED
+%s (line %d)
+########## DEBUG ##########
+'<div>this-is-a-test</div>'
+###########################
+
+EXPECTED;
+        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
+            $expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
+        } else {
+            $expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
+        }
+        $this->assertEquals($expected, $result);
+
+        ob_start();
+        Debugger::printVar('<div>this-is-a-test</div>');
+        $result = ob_get_clean();
+        $expectedHtml = <<<EXPECTED
+<div class="cake-debug-output">
+
+<pre class="cake-debug">
+&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
+</pre>
+</div>
+EXPECTED;
+        $expectedText = <<<EXPECTED
+
+########## DEBUG ##########
+'<div>this-is-a-test</div>'
+###########################
+
+EXPECTED;
+        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
+            $expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
+        } else {
+            $expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
+        }
+        $this->assertEquals($expected, $result);
+
+        ob_start();
+        Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], false);
+        $result = ob_get_clean();
+        $expected = <<<EXPECTED
+%s (line %d)
+########## DEBUG ##########
+'<div>this-is-a-test</div>'
+###########################
+
+EXPECTED;
+        $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
+        $this->assertEquals($expected, $result);
+
+        ob_start();
+        Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], false);
+        $result = ob_get_clean();
+        $expected = <<<EXPECTED
+%s (line %d)
+########## DEBUG ##########
+'<div>this-is-a-test</div>'
+###########################
+
+EXPECTED;
+        $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
+        $this->assertEquals($expected, $result);
+
+        ob_start();
+        Debugger::printVar('<div>this-is-a-test</div>', [], false);
+        $result = ob_get_clean();
+        $expected = <<<EXPECTED
+
+########## DEBUG ##########
+'<div>this-is-a-test</div>'
+###########################
+
+EXPECTED;
+        $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
+        $this->assertEquals($expected, $result);
+
+        ob_start();
+        Debugger::printVar(false, [], false);
+        $result = ob_get_clean();
+        $expected = <<<EXPECTED
+
+########## DEBUG ##########
+false
+###########################
+
+EXPECTED;
+        $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
+        $this->assertEquals($expected, $result);
     }
 }

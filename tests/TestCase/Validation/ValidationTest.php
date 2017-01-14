@@ -22,6 +22,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
 use Cake\Validation\Validator;
 use Locale;
+use stdClass;
 use Zend\Diactoros\UploadedFile;
 
 require_once __DIR__ . '/stubs.php';
@@ -930,6 +931,11 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::time($dateTime));
         $this->assertTrue(Validation::dateTime($dateTime));
         $this->assertTrue(Validation::localizedTime($dateTime));
+
+        $this->assertFalse(Validation::time(new stdClass()));
+        $this->assertFalse(Validation::date(new stdClass()));
+        $this->assertFalse(Validation::dateTime(new stdClass()));
+        $this->assertFalse(Validation::localizedTime(new stdClass()));
     }
 
     /**
