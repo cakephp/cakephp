@@ -987,8 +987,14 @@ class Router
             $callback = $params;
             $params = [];
         }
-        $name = Inflector::underscore($name);
-        $path = '/' . $name;
+
+        if (empty($params['path'])) {
+            $path = '/' . Inflector::underscore($name);
+        } else {
+            $path = $params['path'];
+            unset($params['path']);
+        }
+
         $params = array_merge($params, ['prefix' => $name]);
         static::scope($path, $params, $callback);
     }
