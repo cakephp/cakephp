@@ -382,9 +382,12 @@ class TableTest extends TestCase
         $table->addColumn('title', [
             'type' => 'string'
         ]);
+        $table->addColumn('priority', [
+            'type' => 'integer'
+        ]);
         $result = $table->addIndex('faster', [
             'type' => 'index',
-            'columns' => ['title']
+            'columns' => ['title', 'priority DESC']
         ]);
         $this->assertSame($result, $table);
         $this->assertEquals(['faster'], $table->indexes());
