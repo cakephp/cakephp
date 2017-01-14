@@ -27,6 +27,23 @@ if (!defined('DS')) {
 }
 
 /**
+ * These are the debug modes of CakePHP framework
+ *
+ * 0 = Production mode. No output.
+ * 1 = Show errors and warnings.
+ * 2 = Show errors, warnings, and SQL. [SQL log is only shown when you add $this->element(‘sql_dump’) to your view or layout.]
+ */
+if (!defined('CAKE_PRODUCTION_MODE')) {
+	define('CAKE_PRODUCTION_MODE', 0);
+}
+if (!defined('CAKE_DEBUG_MODE')) {
+	define('CAKE_DEBUG_MODE', 1);
+}
+if (!defined('CAKE_DEEP_DEBUG_MODE')) {
+	define('CAKE_DEEP_DEBUG_MODE', 2);
+}
+
+/**
  * These defines should only be edited if you have CakePHP installed in
  * a directory layout other than the way it is distributed.
  * When using custom settings be sure to use the DS and do not add a trailing DS.
@@ -96,7 +113,7 @@ if (!empty($failed)) {
 	trigger_error("CakePHP core could not be found. Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/test.php. It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
 }
 
-if (Configure::read('debug') < 1) {
+if (Configure::read('debug') < CAKE_DEBUG_MODE) {
 	throw new NotFoundException(__d('cake_dev', 'Debug setting does not allow access to this URL.'));
 }
 
