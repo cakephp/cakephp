@@ -111,7 +111,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * The full address to the current request
      *
      * @var string
-     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use here() instead.
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getRequestTarget() instead.
      */
     public $here;
 
@@ -2074,7 +2074,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name Name of the key being accessed.
      * @return mixed
-     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use param(), data() and query() instead.
+     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use getParam(), getData() and getQuery() instead.
      */
     public function offsetGet($name)
     {
@@ -2097,7 +2097,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string $name Name of the key being written
      * @param mixed $value The value being written.
      * @return void
-     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use param(), data() and query() instead.
+     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use setParam(), setData() and setQuery() instead.
      */
     public function offsetSet($name, $value)
     {
@@ -2109,7 +2109,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name thing to check.
      * @return bool
-     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use param(), data() and query() instead.
+     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use getParam(), getData() and getQuery() instead.
      */
     public function offsetExists($name)
     {
@@ -2125,7 +2125,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name Name to unset.
      * @return void
-     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use param(), data() and query() instead.
+     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use setParam(), setData() and setQuery() instead.
      */
     public function offsetUnset($name)
     {
