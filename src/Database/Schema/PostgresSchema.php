@@ -409,17 +409,22 @@ class PostgresSchema extends BaseSchema
 
         if (isset($data['null']) && $data['null'] === false) {
             $out .= ' NOT NULL';
+        } elseif (isset($data['null']) && $data['null'] === true) {
+            $out .= ' NULL';
         }
-        if (isset($data['null']) && $data['null'] === true && $data['type'] === 'timestamp') {
-            $out .= ' DEFAULT NULL';
-            unset($data['default']);
-        }
-        if (isset($data['default']) && $data['type'] !== 'timestamp') {
+
+        if (isset($data['default']) &&
+            in_array($data['type'], ['timestamp', 'datetime']) &&
+            strtolower($data['default']) === 'current_timestamp') {
+            $out .= ' DEFAULT CURRENT_TIMESTAMP';
+        } elseif (isset($data['default'])) {
             $defaultValue = $data['default'];
             if ($data['type'] === 'boolean') {
                 $defaultValue = (bool)$defaultValue;
             }
             $out .= ' DEFAULT ' . $this->_driver->schemaValue($defaultValue);
+        } elseif (isset($data['null']) && $data['null'] === true) {
+            $out .= ' DEFAULT NULL';
         }
 
         return $out;
