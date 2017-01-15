@@ -53,10 +53,6 @@ matrix:
 
   allow_failures:
     - php: hhvm
-    - php: 7.0
-      env: PHPSTAN=1 DEFAULT=0
-    - php: 7.1
-      env: PHPSTAN=1 DEFAULT=0
 
     - php: 7.0
       env: PHPCS=3 DEFAULT=0
