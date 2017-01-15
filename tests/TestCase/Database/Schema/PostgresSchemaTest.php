@@ -652,7 +652,7 @@ SQL;
             [
                 'title',
                 ['type' => 'string', 'length' => 25, 'null' => true, 'default' => 'ignored'],
-                '"title" VARCHAR(25) DEFAULT \'ignored\'',
+                '"title" VARCHAR(25) NULL DEFAULT \'ignored\'',
             ],
             [
                 'id',
@@ -817,7 +817,7 @@ SQL;
             [
                 'created',
                 ['type' => 'timestamp', 'null' => true],
-                '"created" TIMESTAMP DEFAULT NULL'
+                '"created" TIMESTAMP NULL DEFAULT NULL'
             ],
         ];
     }
