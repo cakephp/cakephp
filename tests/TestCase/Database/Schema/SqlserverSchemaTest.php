@@ -499,7 +499,7 @@ SQL;
             [
                 'title',
                 ['type' => 'string', 'length' => 25, 'null' => true, 'default' => 'ignored'],
-                '[title] NVARCHAR(25) DEFAULT NULL'
+                "[title] NVARCHAR(25) NULL DEFAULT 'ignored'"
             ],
             [
                 'id',
@@ -663,7 +663,7 @@ SQL;
             [
                 'created',
                 ['type' => 'timestamp', 'null' => true],
-                '[created] DATETIME DEFAULT NULL'
+                '[created] DATETIME NULL DEFAULT NULL'
             ],
         ];
     }
