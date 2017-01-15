@@ -554,7 +554,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset joins with passed list or not
      * @see \Cake\Database\Type
-     * @return $this
+     * @return $this|array
      */
     public function join($tables = null, $types = [], $overwrite = false)
     {
