@@ -168,6 +168,18 @@ class XmlTest extends CakeTestCase {
 	}
 
 /**
+ * test build() method with huge option
+ *
+ * @return void
+ */
+	public function testBuildHuge() {
+		$xml = '<tag>value</tag>';
+		$obj = Xml::build($xml, array('parseHuge' => true));
+		$this->assertEquals('tag', $obj->getName());
+		$this->assertEquals('value', (string)$obj);
+	}
+
+/**
  * Test that the readFile option disables local file parsing.
  *
  * @expectedException XmlException
