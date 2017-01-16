@@ -971,6 +971,9 @@ class Router
      * For example a path of `admin` would result in `'prefix' => 'admin'` being
      * applied to all connected routes.
      *
+     * The prefix name will be inflected to the underscore version to create
+     * the routing path. If you want a custom path name, use the `path` option.
+     *
      * You can re-open a prefix as many times as necessary, as well as nest prefixes.
      * Nested prefixes will result in prefix values like `admin/api` which translates
      * to the `Controller\Admin\Api\` namespace.
@@ -987,8 +990,14 @@ class Router
             $callback = $params;
             $params = [];
         }
-        $name = Inflector::underscore($name);
-        $path = '/' . $name;
+
+        if (empty($params['path'])) {
+            $path = '/' . Inflector::underscore($name);
+        } else {
+            $path = $params['path'];
+            unset($params['path']);
+        }
+
         $params = array_merge($params, ['prefix' => $name]);
         static::scope($path, $params, $callback);
     }
