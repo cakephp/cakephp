@@ -121,7 +121,7 @@ class XmlTest extends TestCase
     public function testBuildHuge()
     {
         $xml = '<tag>value</tag>';
-        $obj = Xml::build($xml, array('parseHuge' => true));
+        $obj = Xml::build($xml, ['parseHuge' => true]);
         $this->assertEquals('tag', $obj->getName());
         $this->assertEquals('value', (string)$obj);
     }
