@@ -501,7 +501,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Get the response body as JSON decoded data.
      *
-     * @return mixed
+     * @return array|null
      */
     protected function _getJson()
     {
