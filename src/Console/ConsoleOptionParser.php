@@ -583,41 +583,12 @@ class ConsoleOptionParser
             ];
             $options += $defaults;
 
-            $options = $this->_mergeSubcommandHelpToParserDescription($options);
-
             $command = new ConsoleInputSubcommand($options);
         }
         $this->_subcommands[$name] = $command;
         asort($this->_subcommands);
 
         return $this;
-    }
-
-    /**
-     * @param array $options Options
-     * @return array
-     */
-    protected function _mergeSubcommandHelpToParserDescription($options)
-    {
-        if (!$options['help']) {
-            return $options;
-        }
-
-        if ($options['parser'] instanceof self) {
-            if ($options['parser']->getDescription() !== null) {
-                return $options;
-            }
-
-            $options['parser']->setDescription($options['help']);
-
-            return $options;
-        }
-
-        $options['parser'] = [
-            'description' => $options['help']
-        ] + (array)$options['parser'];
-
-        return $options;
     }
 
     /**
@@ -750,12 +721,16 @@ class ConsoleOptionParser
      */
     public function help($subcommand = null, $format = 'text', $width = 72)
     {
-        if (isset($this->_subcommands[$subcommand]) &&
-            $this->_subcommands[$subcommand]->parser() instanceof self
-        ) {
-            $subparser = $this->_subcommands[$subcommand]->parser();
-            $subparser->setCommand($this->getCommand() . ' ' . $subparser->getCommand());
-
+        if (isset($this->_subcommands[$subcommand])) {
+            $command = $this->_subcommands[$subcommand];
+            $subparser = $command->parser();
+            if (!($subparser instanceof self)) {
+                $subparser = clone $this;
+            }
+            if (strlen($subparser->getDescription()) === 0) {
+                $subparser->setDescription($command->getRawHelp());
+            }
+            $subparser->setCommand($this->getCommand() . ' ' . $subcommand);
             return $subparser->help(null, $format, $width);
         }
 

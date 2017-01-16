@@ -32,14 +32,14 @@ class ConsoleInputSubcommand
      *
      * @var string
      */
-    protected $_name;
+    protected $_name = '';
 
     /**
      * Help string for the subcommand
      *
      * @var string
      */
-    protected $_help;
+    protected $_help = '';
 
     /**
      * The ConsoleOptionParser for this subcommand.
@@ -81,6 +81,16 @@ class ConsoleInputSubcommand
     public function name()
     {
         return $this->_name;
+    }
+
+    /**
+     * Get the raw help string for this command
+     *
+     * @return string
+     */
+    public function getRawHelp()
+    {
+        return $this->_help;
     }
 
     /**
