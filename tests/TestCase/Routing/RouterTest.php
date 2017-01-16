@@ -3104,6 +3104,12 @@ class RouterTest extends TestCase
             $this->assertEquals('/admin', $routes->path());
             $this->assertEquals(['prefix' => 'admin', 'param' => 'value'], $routes->params());
         });
+
+        Router::prefix('CustomPath', ['path' => '/custom-path'], function ($routes) {
+            $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
+            $this->assertEquals('/custom-path', $routes->path());
+            $this->assertEquals(['prefix' => 'CustomPath'], $routes->params());
+        });
     }
 
     /**
