@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\Console\Shell;
 use Cake\Console\ShellDispatcher;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -204,12 +205,12 @@ class ShellDispatcherTest extends TestCase
 
         $dispatcher->args = ['mock_with_main'];
         $result = $dispatcher->dispatch();
-        $this->assertSame(0, $result);
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
         $this->assertEquals([], $dispatcher->args);
 
         $dispatcher->args = ['mock_with_main'];
         $result = $dispatcher->dispatch();
-        $this->assertSame(0, $result);
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
         $this->assertEquals([], $dispatcher->args);
     }
 
@@ -237,7 +238,7 @@ class ShellDispatcherTest extends TestCase
 
         $dispatcher->args = ['mock_without_main', 'initdb'];
         $result = $dispatcher->dispatch();
-        $this->assertEquals(0, $result);
+        $this->assertEquals(Shell::CODE_SUCCESS, $result);
     }
 
     /**
@@ -264,7 +265,7 @@ class ShellDispatcherTest extends TestCase
 
         $dispatcher->args = ['example'];
         $result = $dispatcher->dispatch();
-        $this->assertEquals(0, $result);
+        $this->assertEquals(Shell::CODE_SUCCESS, $result);
     }
 
     /**
@@ -291,7 +292,7 @@ class ShellDispatcherTest extends TestCase
 
         $dispatcher->args = ['Example'];
         $result = $dispatcher->dispatch();
-        $this->assertEquals(0, $result);
+        $this->assertEquals(Shell::CODE_SUCCESS, $result);
     }
 
     /**
@@ -318,7 +319,7 @@ class ShellDispatcherTest extends TestCase
 
         $dispatcher->args = ['sample'];
         $result = $dispatcher->dispatch();
-        $this->assertEquals(0, $result);
+        $this->assertEquals(Shell::CODE_SUCCESS, $result);
     }
 
     /**

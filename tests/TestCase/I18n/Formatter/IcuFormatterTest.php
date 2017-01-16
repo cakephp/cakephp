@@ -125,55 +125,6 @@ class IcuFormatterTest extends TestCase
     }
 
     /**
-     * Tests that strings stored inside context namespaces can also be formatted
-     *
-     * @return void
-     */
-    public function testFormatWithContext()
-    {
-        $messages = [
-            'simple' => [
-                '_context' => [
-                    'context a' => 'Text "a" {0}',
-                    'context b' => 'Text "b" {0}'
-                ]
-            ],
-            'complex' => [
-                '_context' => [
-                    'context b' => [
-                        0 => 'Only one',
-                        1 => 'there are {0}'
-                    ]
-                ]
-            ]
-        ];
-
-        $formatter = new IcuFormatter();
-        $this->assertEquals(
-            'Text "a" is good',
-            $formatter->format('en', $messages['simple'], ['_context' => 'context a', 'is good'])
-        );
-        $this->assertEquals(
-            'Text "b" is good',
-            $formatter->format('en', $messages['simple'], ['_context' => 'context b', 'is good'])
-        );
-        $this->assertEquals(
-            'Text "a" is good',
-            $formatter->format('en', $messages['simple'], ['is good'])
-        );
-
-        $this->assertEquals(
-            'Only one',
-            $formatter->format('en', $messages['complex'], ['_context' => 'context b', '_count' => 1])
-        );
-
-        $this->assertEquals(
-            'there are 2',
-            $formatter->format('en', $messages['complex'], ['_context' => 'context b', '_count' => 2, 2])
-        );
-    }
-
-    /**
      * Tests that it is possible to provide a singular fallback when passing a string message.
      * This is useful for getting quick feedback on the code during development instead of
      * having to provide all plural forms even for the default language

@@ -212,6 +212,7 @@ class ExceptionRenderer
 
         return $result;
     }
+
     /**
      * Get method name
      *
@@ -352,7 +353,7 @@ class ExceptionRenderer
         $builder->helpers($helpers, false)
             ->layoutPath('')
             ->templatePath('Error');
-        $view = $this->controller->createView();
+        $view = $this->controller->createView('View');
 
         $this->controller->response->body($view->render($template, 'error'));
         $this->controller->response->type('html');

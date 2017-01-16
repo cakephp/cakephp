@@ -144,7 +144,15 @@ class RouteCollection
                 return $r;
             }
         }
-        throw new MissingRouteException(['url' => $url]);
+
+        $exceptionProperties = ['url' => $url];
+        if ($method !== '') {
+            // Ensure that if the method is included, it is the first element of
+            // the array, to match the order that the strings are printed in the
+            // MissingRouteException error message, $_messageTemplateWithMethod.
+            $exceptionProperties = array_merge(['method' => $method], $exceptionProperties);
+        }
+        throw new MissingRouteException($exceptionProperties);
     }
 
     /**

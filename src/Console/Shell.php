@@ -49,6 +49,13 @@ class Shell
     const CODE_ERROR = 1;
 
     /**
+     * Default success code
+     *
+     * @var int
+     */
+    const CODE_SUCCESS = 0;
+
+    /**
      * Output constant making verbose shells.
      *
      * @var int
@@ -177,7 +184,6 @@ class Shell
             ['tasks'],
             ['associative' => ['tasks']]
         );
-        $this->_io->setLoggers(true);
 
         if (isset($this->modelClass)) {
             $this->loadModel();
@@ -333,7 +339,7 @@ class Shell
      *      'extra' => ['param' => 'value']
      * ]);`
      *
-     * @return mixed The return of the other shell.
+     * @return int The cli command exit code. 0 is success.
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#invoking-other-shells-from-your-shell
      */
     public function dispatchShell()
@@ -881,7 +887,7 @@ class Shell
      * @throws \Cake\Console\Exception\StopException
      * @return void
      */
-    protected function _stop($status = 0)
+    protected function _stop($status = self::CODE_SUCCESS)
     {
         throw new StopException('Halting error reached', $status);
     }

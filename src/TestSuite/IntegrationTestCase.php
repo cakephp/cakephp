@@ -17,8 +17,6 @@ use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
 use Cake\Network\Session;
 use Cake\Routing\Router;
-use Cake\TestSuite\LegacyRequestDispatcher;
-use Cake\TestSuite\MiddlewareDispatcher;
 use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -855,6 +853,36 @@ abstract class IntegrationTestCase extends TestCase
             $this->fail('No response set, cannot assert content. ' . $message);
         }
         $this->assertNotContains($content, (string)$this->_response->body(), $message);
+    }
+
+    /**
+     * Asserts that the response body matches a given regular expression.
+     *
+     * @param string $pattern The pattern to compare against.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertResponseRegExp($pattern, $message = '')
+    {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert content. ' . $message);
+        }
+        $this->assertRegExp($pattern, (string)$this->_response->body(), $message);
+    }
+
+    /**
+     * Asserts that the response body does not match a given regular expression.
+     *
+     * @param string $pattern The pattern to compare against.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertResponseNotRegExp($pattern, $message = '')
+    {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert content. ' . $message);
+        }
+        $this->assertNotRegExp($pattern, (string)$this->_response->body(), $message);
     }
 
     /**

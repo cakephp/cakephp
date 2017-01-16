@@ -181,6 +181,29 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * test adding an option and using the short value for parsing.
+     *
+     * @return void
+     */
+    public function testAddOptionWithMultipleShort()
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('source', [
+            'multiple' => true,
+            'short' => 's'
+        ]);
+        $result = $parser->parse(['-s', 'mysql', '-s', 'postgres']);
+        $this->assertEquals(
+            [
+                'source' => ['mysql', 'postgres'],
+                'help' => false
+            ],
+            $result[0],
+            'Short parameter did not parse out'
+        );
+    }
+
+    /**
      * Test that adding an option using a two letter short value causes an exception.
      * As they will not parse correctly.
      *
@@ -249,6 +272,53 @@ class ConsoleOptionParserTest extends TestCase
         $result = $parser->parse(['--test', 'value', '-t', '--connection', 'postgres']);
         $expected = ['test' => 'value', 'table' => true, 'connection' => 'postgres', 'help' => false];
         $this->assertEquals($expected, $result[0], 'multiple options did not parse');
+    }
+
+    /**
+     * test adding an option that accepts multiple values.
+     *
+     * @return void
+     */
+    public function testAddOptionWithMultiple()
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('source', ['short' => 's', 'multiple' => true]);
+
+        $result = $parser->parse(['--source', 'mysql', '-s', 'postgres']);
+        $expected = [
+            'source' => [
+                'mysql',
+                'postgres'
+            ],
+            'help' => false
+        ];
+        $this->assertEquals($expected, $result[0], 'options with multiple values did not parse');
+    }
+
+    /**
+     * test adding multiple options, including one that accepts multiple values.
+     *
+     * @return void
+     */
+    public function testAddMultipleOptionsWithMultiple()
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser
+            ->addOption('source', ['multiple' => true])
+            ->addOption('name')
+            ->addOption('export', ['boolean' => true]);
+
+        $result = $parser->parse(['--export', '--source', 'mysql', '--name', 'annual-report', '--source', 'postgres']);
+        $expected = [
+            'export' => true,
+            'source' => [
+                'mysql',
+                'postgres'
+            ],
+            'name' => 'annual-report',
+            'help' => false
+        ];
+        $this->assertEquals($expected, $result[0], 'options with multiple values did not parse');
     }
 
     /**

@@ -31,7 +31,7 @@ if (!function_exists('debug')) {
      * Prints out debug information about given variable and returns the
      * variable that was passed.
      *
-     * Only runs if debug level is greater than zero.
+     * Only runs if debug mode is enabled.
      *
      * @param mixed $var Variable to show debug information for.
      * @param bool|null $showHtml If set to true, the method prints the debug data in a browser-friendly way.
@@ -46,58 +46,18 @@ if (!function_exists('debug')) {
             return $var;
         }
 
-        $originalVar = $var;
-        $file = '';
-        $line = '';
-        $lineInfo = '';
+        $location = [];
         if ($showFrom) {
             $trace = Debugger::trace(['start' => 1, 'depth' => 2, 'format' => 'array']);
-            $search = [];
-            if (defined('ROOT')) {
-                $search = [ROOT];
-            }
-            if (defined('CAKE_CORE_INCLUDE_PATH')) {
-                array_unshift($search, CAKE_CORE_INCLUDE_PATH);
-            }
-            $file = str_replace($search, '', $trace[0]['file']);
-            $line = $trace[0]['line'];
+            $location = [
+                'line' => $trace[0]['line'],
+                'file' => $trace[0]['file']
+            ];
         }
-        $html = <<<HTML
-<div class="cake-debug-output">
-%s
-<pre class="cake-debug">
-%s
-</pre>
-</div>
-HTML;
-        $text = <<<TEXT
-%s
-########## DEBUG ##########
-%s
-###########################
 
-TEXT;
-        $template = $html;
-        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') || $showHtml === false) {
-            $template = $text;
-            if ($showFrom) {
-                $lineInfo = sprintf('%s (line %s)', $file, $line);
-            }
-        }
-        if ($showHtml === null && $template !== $text) {
-            $showHtml = true;
-        }
-        $var = Debugger::exportVar($var, 25);
-        if ($showHtml) {
-            $template = $html;
-            $var = h($var);
-            if ($showFrom) {
-                $lineInfo = sprintf('<span><strong>%s</strong> (line <strong>%s</strong>)</span>', $file, $line);
-            }
-        }
-        printf($template, $lineInfo, $var);
+        Debugger::printVar($var, $location, $showHtml);
 
-        return $originalVar;
+        return $var;
     }
 
 }
@@ -149,5 +109,34 @@ if (!function_exists('breakpoint')) {
             "psy/psysh must be installed and you must be in a CLI environment to use the breakpoint function",
             E_USER_WARNING
         );
+    }
+}
+
+if (!function_exists('dd')) {
+    /**
+     * Prints out debug information about given variable and dies.
+     *
+     * Only runs if debug mode is enabled.
+     * It will otherwise just continue code execution and ignore this function.
+     *
+     * @param mixed $var Variable to show debug information for.
+     * @param bool|null $showHtml If set to true, the method prints the debug data in a browser-friendly way.
+     * @return void
+     * @link http://book.cakephp.org/3.0/en/development/debugging.html#basic-debugging
+     */
+    function dd($var, $showHtml = null)
+    {
+        if (!Configure::read('debug')) {
+            return;
+        }
+
+        $trace = Debugger::trace(['start' => 1, 'depth' => 2, 'format' => 'array']);
+        $location = [
+            'line' => $trace[0]['line'],
+            'file' => $trace[0]['file']
+        ];
+
+        Debugger::printVar($var, $location);
+        die(1);
     }
 }

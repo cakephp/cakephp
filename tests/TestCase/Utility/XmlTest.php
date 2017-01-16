@@ -114,6 +114,19 @@ class XmlTest extends TestCase
     }
 
     /**
+     * test build() method with huge option
+     *
+     * @return void
+     */
+    public function testBuildHuge()
+    {
+        $xml = '<tag>value</tag>';
+        $obj = Xml::build($xml, ['parseHuge' => true]);
+        $this->assertEquals('tag', $obj->getName());
+        $this->assertEquals('value', (string)$obj);
+    }
+
+    /**
      * Test that the readFile option disables local file parsing.
      *
      * @expectedException \Cake\Utility\Exception\XmlException
@@ -377,7 +390,15 @@ XML;
         $obj = Xml::fromArray($xml, 'attributes');
         $xmlText = '<' . '?xml version="1.0" encoding="UTF-8"?><tags><tag id="1">defect</tag></tags>';
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
+    }
 
+    /**
+     * Test fromArray() with zero values.
+     *
+     * @return void
+     */
+    public function testFromArrayZeroValue()
+    {
         $xml = [
             'tag' => [
                 '@' => 0,
@@ -388,6 +409,16 @@ XML;
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tag test="A test">0</tag>
+XML;
+        $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
+
+        $xml = [
+            'tag' => ['0']
+        ];
+        $obj = Xml::fromArray($xml);
+        $xmlText = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<tag>0</tag>
 XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
     }

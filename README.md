@@ -40,6 +40,7 @@ tests for CakePHP by doing the following:
 * [CakePHP](http://www.cakephp.org) - The rapid development PHP framework.
 * [CookBook](http://book.cakephp.org) - The CakePHP user documentation; start learning here!
 * [API](http://api.cakephp.org) - A reference to CakePHP's classes.
+* [Awesome CakePHP](https://github.com/FriendsOfCake/awesome-cakephp) - A list of featured resources around the framework.
 * [Plugins](http://plugins.cakephp.org) - A repository of extensions to the framework.
 * [The Bakery](http://bakery.cakephp.org) - Tips, tutorials and articles.
 * [Community Center](http://community.cakephp.org) - A source for everything community related.

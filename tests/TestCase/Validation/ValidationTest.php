@@ -22,6 +22,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
 use Cake\Validation\Validator;
 use Locale;
+use stdClass;
 
 require_once __DIR__ . '/stubs.php';
 
@@ -929,6 +930,11 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::time($dateTime));
         $this->assertTrue(Validation::dateTime($dateTime));
         $this->assertTrue(Validation::localizedTime($dateTime));
+
+        $this->assertFalse(Validation::time(new stdClass()));
+        $this->assertFalse(Validation::date(new stdClass()));
+        $this->assertFalse(Validation::dateTime(new stdClass()));
+        $this->assertFalse(Validation::localizedTime(new stdClass()));
     }
 
     /**
@@ -1986,6 +1992,22 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * maxLengthBytes method
+     *
+     * @return void
+     */
+    public function testMaxLengthBytes()
+    {
+        $this->assertTrue(Validation::maxLengthBytes('ab', 3));
+        $this->assertTrue(Validation::maxLengthBytes('abc', 3));
+        $this->assertTrue(Validation::maxLengthBytes('ÆΔΩЖÇ', 10));
+        $this->assertTrue(Validation::maxLengthBytes('ÆΔΩЖÇ', 11));
+
+        $this->assertFalse(Validation::maxLengthBytes('abcd', 3));
+        $this->assertFalse(Validation::maxLengthBytes('ÆΔΩЖÇ', 9));
+    }
+
+    /**
      * testMinLength method
      *
      * @return void
@@ -1998,6 +2020,22 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::minLength('abc', 3));
         $this->assertTrue(Validation::minLength('abcd', 3));
         $this->assertTrue(Validation::minLength('ÆΔΩЖÇ', 2));
+    }
+
+    /**
+     * minLengthBytes method
+     *
+     * @return void
+     */
+    public function testMinLengthBytes()
+    {
+        $this->assertFalse(Validation::minLengthBytes('ab', 3));
+        $this->assertFalse(Validation::minLengthBytes('ÆΔΩЖÇ', 11));
+
+        $this->assertTrue(Validation::minLengthBytes('abc', 3));
+        $this->assertTrue(Validation::minLengthBytes('abcd', 3));
+        $this->assertTrue(Validation::minLengthBytes('ÆΔΩЖÇ', 10));
+        $this->assertTrue(Validation::minLengthBytes('ÆΔΩЖÇ', 9));
     }
 
     /**

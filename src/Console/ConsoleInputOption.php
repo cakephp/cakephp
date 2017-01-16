@@ -62,6 +62,13 @@ class ConsoleInputOption
     protected $_default;
 
     /**
+     * Can the option accept multiple value definition.
+     *
+     * @var bool
+     */
+    protected $_multiple;
+
+    /**
      * An array of choices for the option.
      *
      * @var array
@@ -77,10 +84,18 @@ class ConsoleInputOption
      * @param bool $boolean Whether this option is a boolean option. Boolean options don't consume extra tokens
      * @param string $default The default value for this option.
      * @param array $choices Valid choices for this option.
+     * @param bool $multiple Whether this option can accept multiple value definition.
      * @throws \Cake\Console\Exception\ConsoleException
      */
-    public function __construct($name, $short = '', $help = '', $boolean = false, $default = '', $choices = [])
-    {
+    public function __construct(
+        $name,
+        $short = '',
+        $help = '',
+        $boolean = false,
+        $default = '',
+        $choices = [],
+        $multiple = false
+    ) {
         if (is_array($name) && isset($name['name'])) {
             foreach ($name as $key => $value) {
                 $this->{'_' . $key} = $value;
@@ -92,6 +107,7 @@ class ConsoleInputOption
             $this->_boolean = $boolean;
             $this->_default = $default;
             $this->_choices = $choices;
+            $this->_multiple = $multiple;
         }
         if (strlen($this->_short) > 1) {
             throw new ConsoleException(
@@ -183,6 +199,16 @@ class ConsoleInputOption
     public function isBoolean()
     {
         return (bool)$this->_boolean;
+    }
+
+    /**
+     * Check if this option accepts multiple values.
+     *
+     * @return bool
+     */
+    public function acceptsMultiple()
+    {
+        return (bool)$this->_multiple;
     }
 
     /**

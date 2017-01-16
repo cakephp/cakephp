@@ -202,6 +202,7 @@ class Stream
             $this->_contextOptions['max_redirects'] = (int)$options['redirect'];
         }
         if (isset($options['proxy']['proxy'])) {
+            $this->_contextOptions['request_fulluri'] = true;
             $this->_contextOptions['proxy'] = $options['proxy']['proxy'];
         }
     }

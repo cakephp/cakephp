@@ -195,7 +195,7 @@ class Response extends Message implements ResponseInterface
             if (substr($value, 0, 5) === 'HTTP/') {
                 preg_match('/HTTP\/([\d.]+) ([0-9]+)(.*)/i', $value, $matches);
                 $this->protocol = $matches[1];
-                $this->code = $matches[2];
+                $this->code = (int)$matches[2];
                 $this->reasonPhrase = trim($matches[3]);
                 continue;
             }
@@ -501,7 +501,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Get the response body as JSON decoded data.
      *
-     * @return mixed
+     * @return array|null
      */
     protected function _getJson()
     {
@@ -598,6 +598,6 @@ class Response extends Message implements ResponseInterface
             return $val !== null;
         }
 
-        return isset($this->$key);
+        return isset($this->{$key});
     }
 }
