@@ -731,6 +731,7 @@ class ConsoleOptionParser
                 $subparser->setDescription($command->getRawHelp());
             }
             $subparser->setCommand($this->getCommand() . ' ' . $subcommand);
+
             return $subparser->help(null, $format, $width);
         }
 
@@ -818,7 +819,7 @@ class ConsoleOptionParser
         if ($option->validChoice($value)) {
             if ($option->acceptsMultiple($value)) {
                 $params[$name][] = $value;
-            } else {
+fi            } else {
                 $params[$name] = $value;
             }
 
