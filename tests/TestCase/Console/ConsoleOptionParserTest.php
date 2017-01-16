@@ -592,6 +592,30 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * Test addSubcommand inherits options as no
+     * parser is created.
+     *
+     * @return void
+     */
+    public function testAddSubcommandInheritOptions()
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addSubcommand('build', [
+            'help' => 'Build things'
+        ])->addOption('connection', [
+            'short' => 'c',
+            'default' => 'default'
+        ])->addArgument('name', ['required' => false]);
+
+        $result = $parser->parse(['build']);
+        $this->assertEquals('default', $result[0]['connection']);
+
+        $result = $parser->subcommands();
+        $this->assertArrayHasKey('build', $result);
+        $this->assertFalse($result['build']->parser(), 'No parser should be created');
+    }
+
+    /**
      * test addSubcommand with an object.
      *
      * @return void
