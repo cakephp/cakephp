@@ -17,9 +17,9 @@ namespace Cake\I18n;
 use Aura\Intl\Exception;
 use Aura\Intl\FormatterLocator;
 use Aura\Intl\PackageLocator;
-use Aura\Intl\TranslatorFactory;
 use Aura\Intl\TranslatorLocator;
 use Cake\Cache\CacheEngine;
+use Cake\I18n\TranslatorFactory;
 
 /**
  * Constructs and stores instances of translators that can be
@@ -69,18 +69,13 @@ class TranslatorRegistry extends TranslatorLocator
     protected $_cacher;
 
     /**
-     *
      * Constructor.
      *
      * @param \Aura\Intl\PackageLocator $packages The package locator.
-     *
      * @param \Aura\Intl\FormatterLocator $formatters The formatter locator.
-     *
-     * @param \Aura\Intl\TranslatorFactory $factory A translator factory to
-     * create translator objects for the locale and package.
-     *
+     * @param \Cake\I18n\TranslatorFactory $factory A translator factory to
+     *   create translator objects for the locale and package.
      * @param string $locale The default locale code to use.
-     *
      */
     public function __construct(
         PackageLocator $packages,
