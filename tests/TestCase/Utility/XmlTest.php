@@ -88,7 +88,7 @@ class XmlTest extends TestCase
         $xml = CORE_TESTS . 'Fixture/sample.xml';
         $obj = Xml::build($xml);
         $this->assertEquals('tags', $obj->getName());
-        $this->assertEquals(2, count($obj));
+        $this->assertCount(2, $obj);
 
         $this->assertEquals(Xml::build($xml), Xml::build(file_get_contents($xml)));
 
@@ -272,7 +272,7 @@ class XmlTest extends TestCase
         $obj = Xml::fromArray($xml, 'attributes');
         $this->assertTrue($obj instanceof \SimpleXMLElement);
         $this->assertEquals('tags', $obj->getName());
-        $this->assertEquals(2, count($obj));
+        $this->assertCount(2, $obj);
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>
@@ -285,7 +285,7 @@ XML;
         $obj = Xml::fromArray($xml);
         $this->assertTrue($obj instanceof \SimpleXMLElement);
         $this->assertEquals('tags', $obj->getName());
-        $this->assertEquals(2, count($obj));
+        $this->assertCount(2, $obj);
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>
@@ -320,7 +320,7 @@ XML;
             ]
         ];
         $obj = Xml::fromArray($xml, 'tags');
-        $this->assertEquals(6, count($obj));
+        $this->assertCount(6, $obj);
         $this->assertSame((string)$obj->bool, '1');
         $this->assertSame((string)$obj->int, '1');
         $this->assertSame((string)$obj->float, '10.2');
@@ -808,7 +808,7 @@ XML;
         $rss = file_get_contents(CORE_TESTS . 'Fixture/rss.xml');
         $rssAsArray = Xml::toArray(Xml::build($rss));
         $this->assertEquals('2.0', $rssAsArray['rss']['@version']);
-        $this->assertEquals(2, count($rssAsArray['rss']['channel']['item']));
+        $this->assertCount(2, $rssAsArray['rss']['channel']['item']);
 
         $atomLink = ['@href' => 'http://bakery.cakephp.org/articles/rss', '@rel' => 'self', '@type' => 'application/rss+xml'];
         $this->assertEquals($rssAsArray['rss']['channel']['atom:link'], $atomLink);

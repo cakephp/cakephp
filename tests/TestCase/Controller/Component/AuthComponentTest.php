@@ -367,10 +367,10 @@ class AuthComponentTest extends TestCase
     {
         $this->Controller->Auth->config('authorize', ['Controller']);
         $result = $this->Controller->Auth->constructAuthorize();
-        $this->assertEquals(1, count($result));
+        $this->assertCount(1, $result);
 
         $result = $this->Controller->Auth->constructAuthorize();
-        $this->assertEquals(1, count($result));
+        $this->assertCount(1, $result);
     }
 
     /**
@@ -410,10 +410,10 @@ class AuthComponentTest extends TestCase
     {
         $this->Controller->Auth->config('authenticate', ['Form']);
         $result = $this->Controller->Auth->constructAuthenticate();
-        $this->assertEquals(1, count($result));
+        $this->assertCount(1, $result);
 
         $result = $this->Controller->Auth->constructAuthenticate();
-        $this->assertEquals(1, count($result));
+        $this->assertCount(1, $result);
     }
 
     /**
@@ -445,7 +445,7 @@ class AuthComponentTest extends TestCase
         ]);
 
         $objects = $this->Controller->Auth->constructAuthenticate();
-        $this->assertEquals(2, count($objects));
+        $this->assertCount(2, $objects);
 
         $this->assertInstanceOf('Cake\Auth\FormAuthenticate', $objects['FormSimple']);
         $this->assertInstanceOf('Cake\Auth\FormAuthenticate', $objects['FormBlowfish']);

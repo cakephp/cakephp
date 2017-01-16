@@ -155,7 +155,7 @@ class ViewVarsTraitTest extends TestCase
         $result = $this->subject->viewOptions([], false);
 
         $this->assertTrue(is_array($result));
-        $this->assertTrue(empty($result));
+        $this->assertEmpty($result);
     }
 
     /**

@@ -505,7 +505,7 @@ class ShellTest extends TestCase
         $contents = "<?php{$eol}echo 'test';${eol}\$te = 'st';{$eol}";
         $result = $this->Shell->createFile($file, $contents);
         $this->assertTrue($result);
-        $this->assertTrue(file_exists($file));
+        $this->assertFileExists($file);
         $this->assertEquals(file_get_contents($file), $contents);
     }
 
@@ -527,11 +527,11 @@ class ShellTest extends TestCase
             ->will($this->returnValue('n'));
 
         touch($file);
-        $this->assertTrue(file_exists($file));
+        $this->assertFileExists($file);
 
         $contents = "My content";
         $result = $this->Shell->createFile($file, $contents);
-        $this->assertTrue(file_exists($file));
+        $this->assertFileExists($file);
         $this->assertTextEquals('', file_get_contents($file));
         $this->assertFalse($result, 'Did not create file.');
     }
@@ -554,11 +554,11 @@ class ShellTest extends TestCase
             ->will($this->returnValue('y'));
 
         touch($file);
-        $this->assertTrue(file_exists($file));
+        $this->assertFileExists($file);
 
         $contents = "My content";
         $result = $this->Shell->createFile($file, $contents);
-        $this->assertTrue(file_exists($file));
+        $this->assertFileExists($file);
         $this->assertTextEquals($contents, file_get_contents($file));
         $this->assertTrue($result, 'Did create file.');
     }
@@ -576,7 +576,7 @@ class ShellTest extends TestCase
         new Folder($path, true);
 
         touch($file);
-        $this->assertTrue(file_exists($file));
+        $this->assertFileExists($file);
 
         $this->io->expects($this->never())->method('askChoice');
 
@@ -609,10 +609,10 @@ class ShellTest extends TestCase
 
         foreach ($files as $file => $contents) {
             touch($file);
-            $this->assertTrue(file_exists($file));
+            $this->assertFileExists($file);
 
             $result = $this->Shell->createFile($file, $contents);
-            $this->assertTrue(file_exists($file));
+            $this->assertFileExists($file);
             $this->assertTextEquals($contents, file_get_contents($file));
             $this->assertTrue($result, 'Did create file.');
         }
@@ -636,7 +636,7 @@ class ShellTest extends TestCase
         chmod($path, 0444);
 
         $this->Shell->createFile($file, 'testing');
-        $this->assertFalse(file_exists($file));
+        $this->assertFileNotExists($file);
 
         chmod($path, 0744);
         rmdir($path);

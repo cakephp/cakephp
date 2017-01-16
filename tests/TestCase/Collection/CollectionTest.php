@@ -574,7 +574,7 @@ class CollectionTest extends TestCase
     {
         $data = [1, 2, 3, 4];
         $collection = (new Collection($data))->shuffle();
-        $this->assertEquals(count($data), count(iterator_to_array($collection)));
+        $this->assertCount(count($data), iterator_to_array($collection));
 
         foreach ($collection as $value) {
             $this->assertContains($value, $data);
@@ -590,7 +590,7 @@ class CollectionTest extends TestCase
     {
         $data = [1, 2, 3, 4];
         $collection = (new Collection($data))->sample(2);
-        $this->assertEquals(2, count(iterator_to_array($collection)));
+        $this->assertCount(2, iterator_to_array($collection));
 
         foreach ($collection as $value) {
             $this->assertContains($value, $data);

@@ -71,37 +71,37 @@ class FileLogTest extends TestCase
 
         $log = new FileLog(['path' => LOGS]);
         $log->log('warning', 'Test warning');
-        $this->assertTrue(file_exists(LOGS . 'error.log'));
+        $this->assertFileExists(LOGS . 'error.log');
 
         $result = file_get_contents(LOGS . 'error.log');
         $this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning/', $result);
 
         $log->log('debug', 'Test warning');
-        $this->assertTrue(file_exists(LOGS . 'debug.log'));
+        $this->assertFileExists(LOGS . 'debug.log');
 
         $result = file_get_contents(LOGS . 'debug.log');
         $this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Debug: Test warning/', $result);
 
         $log->log('random', 'Test warning');
-        $this->assertTrue(file_exists(LOGS . 'random.log'));
+        $this->assertFileExists(LOGS . 'random.log');
 
         $result = file_get_contents(LOGS . 'random.log');
         $this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Random: Test warning/', $result);
 
         $object = new StringObject;
         $log->log('debug', $object);
-        $this->assertTrue(file_exists(LOGS . 'debug.log'));
+        $this->assertFileExists(LOGS . 'debug.log');
         $result = file_get_contents(LOGS . 'debug.log');
         $this->assertContains('Debug: Hey!', $result);
 
         $object = new JsonObject;
         $log->log('debug', $object);
-        $this->assertTrue(file_exists(LOGS . 'debug.log'));
+        $this->assertFileExists(LOGS . 'debug.log');
         $result = file_get_contents(LOGS . 'debug.log');
         $this->assertContains('Debug: ' . json_encode(['hello' => 'world']), $result);
 
         $log->log('debug', [1, 2]);
-        $this->assertTrue(file_exists(LOGS . 'debug.log'));
+        $this->assertFileExists(LOGS . 'debug.log');
         $result = file_get_contents(LOGS . 'debug.log');
         $this->assertContains('Debug: ' . print_r([1, 2], true), $result);
     }
@@ -118,7 +118,7 @@ class FileLogTest extends TestCase
 
         $log = new FileLog(compact('path'));
         $log->log('warning', 'Test warning');
-        $this->assertTrue(file_exists($path . 'error.log'));
+        $this->assertFileExists($path . 'error.log');
     }
 
     /**
@@ -138,17 +138,17 @@ class FileLogTest extends TestCase
             'rotate' => 2
         ]);
         $log->log('warning', 'Test warning one');
-        $this->assertTrue(file_exists($path . 'error.log'));
+        $this->assertFileExists($path . 'error.log');
 
         $result = file_get_contents($path . 'error.log');
         $this->assertRegExp('/Warning: Test warning one/', $result);
-        $this->assertEquals(0, count(glob($path . 'error.log.*')));
+        $this->assertCount(0, glob($path . 'error.log.*'));
 
         clearstatcache();
         $log->log('warning', 'Test warning second');
 
         $files = glob($path . 'error.log.*');
-        $this->assertEquals(1, count($files));
+        $this->assertCount(1, $files);
 
         $result = file_get_contents($files[0]);
         $this->assertRegExp('/this text is under 35 bytes/', $result);
@@ -162,7 +162,7 @@ class FileLogTest extends TestCase
         $this->assertRegExp('/Warning: Test warning third/', $result);
 
         $files = glob($path . 'error.log.*');
-        $this->assertEquals(2, count($files));
+        $this->assertCount(2, $files);
 
         $result = file_get_contents($files[0]);
         $this->assertRegExp('/this text is under 35 bytes/', $result);
@@ -178,7 +178,7 @@ class FileLogTest extends TestCase
 
         // rotate count reached so file count should not increase
         $files = glob($path . 'error.log.*');
-        $this->assertEquals(2, count($files));
+        $this->assertCount(2, $files);
 
         $result = file_get_contents($path . 'error.log');
         $this->assertRegExp('/Warning: Test warning fourth/', $result);
@@ -197,12 +197,12 @@ class FileLogTest extends TestCase
         ]);
         file_put_contents($path . 'debug.log.0000000000', "The oldest log file with over 35 bytes.\n");
         $log->log('debug', 'Test debug');
-        $this->assertTrue(file_exists($path . 'debug.log'));
+        $this->assertFileExists($path . 'debug.log');
 
         $result = file_get_contents($path . 'debug.log');
         $this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Debug: Test debug/', $result);
         $this->assertFalse(strstr($result, 'greater than 5 bytes'));
-        $this->assertEquals(0, count(glob($path . 'debug.log.*')));
+        $this->assertCount(0, glob($path . 'debug.log.*'));
     }
 
     public function testMaskSetting()
