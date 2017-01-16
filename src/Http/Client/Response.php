@@ -598,6 +598,6 @@ class Response extends Message implements ResponseInterface
             return $val !== null;
         }
 
-        return isset($this->$key);
+        return isset($this->{$key});
     }
 }
