@@ -887,7 +887,7 @@ class Validation
      *
      * @param string $check Value to check.
      * @param array $list List to check against.
-     * @param bool $caseInsensitive Set to true for case insensitive comparison.
+     * @param bool $case Insensitive Set to true for case insensitive comparison.
      * @return bool Success.
      */
     public static function inList($check, array $list, $caseInsensitive = false)
