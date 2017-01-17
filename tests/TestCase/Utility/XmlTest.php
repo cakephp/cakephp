@@ -88,7 +88,7 @@ class XmlTest extends TestCase
         $xml = CORE_TESTS . 'Fixture/sample.xml';
         $obj = Xml::build($xml);
         $this->assertEquals('tags', $obj->getName());
-        $this->assertCount(2, $obj);
+        $this->assertEquals(2, count($obj));
 
         $this->assertEquals(Xml::build($xml), Xml::build(file_get_contents($xml)));
 
@@ -272,7 +272,7 @@ class XmlTest extends TestCase
         $obj = Xml::fromArray($xml, 'attributes');
         $this->assertTrue($obj instanceof \SimpleXMLElement);
         $this->assertEquals('tags', $obj->getName());
-        $this->assertCount(2, $obj);
+        $this->assertEquals(2, count($obj));
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>
