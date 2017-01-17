@@ -3108,7 +3108,7 @@ class RouterTest extends TestCase
         Router::prefix('CustomPath', ['path' => '/custom-path'], function ($routes) {
             $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
             $this->assertEquals('/custom-path', $routes->path());
-            $this->assertEquals(['prefix' => 'CustomPath'], $routes->params());
+            $this->assertEquals(['prefix' => 'custom_path'], $routes->params());
         });
     }
 

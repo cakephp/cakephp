@@ -990,9 +990,10 @@ class Router
             $callback = $params;
             $params = [];
         }
+        $name = Inflector::underscore($name);
 
         if (empty($params['path'])) {
-            $path = '/' . Inflector::underscore($name);
+            $path = '/' . $name;
         } else {
             $path = $params['path'];
             unset($params['path']);
