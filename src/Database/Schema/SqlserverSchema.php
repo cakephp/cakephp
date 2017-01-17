@@ -400,8 +400,6 @@ class SqlserverSchema extends BaseSchema
 
         if (isset($data['null']) && $data['null'] === false) {
             $out .= ' NOT NULL';
-        } elseif (isset($data['null']) && $data['null'] === true) {
-            $out .= ' NULL';
         }
 
         if (isset($data['default']) &&
@@ -411,7 +409,7 @@ class SqlserverSchema extends BaseSchema
         } elseif (isset($data['default'])) {
             $default = is_bool($data['default']) ? (int)$data['default'] : $this->_driver->schemaValue($data['default']);
             $out .= ' DEFAULT ' . $default;
-        } elseif (isset($data['null']) && $data['null'] === true) {
+        } elseif (isset($data['null']) && $data['null'] !== false) {
             $out .= ' DEFAULT NULL';
         }
 
