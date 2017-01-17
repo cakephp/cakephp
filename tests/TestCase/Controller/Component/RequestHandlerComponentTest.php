@@ -356,7 +356,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->initialize([]);
         $this->Controller->beforeFilter($event);
         $this->RequestHandler->startup($event);
-        $this->assertEquals(true, $this->Controller->request->params['isAjax']);
+        $this->assertTrue($this->Controller->request->params['isAjax']);
     }
 
     /**

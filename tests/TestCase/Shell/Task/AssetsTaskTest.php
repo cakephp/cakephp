@@ -74,7 +74,7 @@ class AssetsTaskTest extends TestCase
 
         $path = WWW_ROOT . 'test_plugin';
         $link = new \SplFileInfo($path);
-        $this->assertTrue(file_exists($path . DS . 'root.js'));
+        $this->assertFileExists($path . DS . 'root.js');
         if (DS === '\\') {
             $this->assertTrue($link->isDir());
             $folder = new Folder($path);
@@ -90,7 +90,7 @@ class AssetsTaskTest extends TestCase
         // be a link. But if the directory is created by the shell itself
         // symlinking fails and the assets folder is copied as fallback.
         $this->assertTrue($link->isDir());
-        $this->assertTrue(file_exists($path . DS . 'css' . DS . 'company.css'));
+        $this->assertFileExists($path . DS . 'css' . DS . 'company.css');
         $folder = new Folder(WWW_ROOT . 'company');
         $folder->delete();
     }
@@ -114,7 +114,7 @@ class AssetsTaskTest extends TestCase
         } else {
             $this->assertTrue($link->isLink());
         }
-        $this->assertTrue(file_exists($path . DS . 'css' . DS . 'company.css'));
+        $this->assertFileExists($path . DS . 'css' . DS . 'company.css');
         $folder = new Folder(WWW_ROOT . 'company');
         $folder->delete();
     }
@@ -150,7 +150,7 @@ class AssetsTaskTest extends TestCase
         Plugin::load('TestPluginTwo');
 
         $this->Task->symlink();
-        $this->assertFalse(file_exists(WWW_ROOT . 'test_plugin_two'));
+        $this->assertFileNotExists(WWW_ROOT . 'test_plugin_two');
     }
 
     /**
@@ -167,7 +167,7 @@ class AssetsTaskTest extends TestCase
 
         $path = WWW_ROOT . 'test_plugin';
         $link = new \SplFileInfo($path);
-        $this->assertTrue(file_exists($path . DS . 'root.js'));
+        $this->assertFileExists($path . DS . 'root.js');
         unlink($path);
 
         $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
@@ -191,7 +191,7 @@ class AssetsTaskTest extends TestCase
         $path = WWW_ROOT . 'test_plugin';
         $dir = new \SplFileInfo($path);
         $this->assertTrue($dir->isDir());
-        $this->assertTrue(file_exists($path . DS . 'root.js'));
+        $this->assertFileExists($path . DS . 'root.js');
 
         $folder = new Folder($path);
         $folder->delete();
@@ -199,7 +199,7 @@ class AssetsTaskTest extends TestCase
         $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
         $link = new \SplFileInfo($path);
         $this->assertTrue($link->isDir());
-        $this->assertTrue(file_exists($path . DS . 'css' . DS . 'company.css'));
+        $this->assertFileExists($path . DS . 'css' . DS . 'company.css');
 
         $folder = new Folder(WWW_ROOT . 'company');
         $folder->delete();
