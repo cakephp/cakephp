@@ -409,8 +409,6 @@ class PostgresSchema extends BaseSchema
 
         if (isset($data['null']) && $data['null'] === false) {
             $out .= ' NOT NULL';
-        } elseif (isset($data['null']) && $data['null'] === true) {
-            $out .= ' NULL';
         }
 
         if (isset($data['default']) &&
