@@ -285,7 +285,7 @@ XML;
         $obj = Xml::fromArray($xml);
         $this->assertTrue($obj instanceof \SimpleXMLElement);
         $this->assertEquals('tags', $obj->getName());
-        $this->assertCount(2, $obj);
+        $this->assertEquals(2, count($obj));
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>
@@ -320,7 +320,7 @@ XML;
             ]
         ];
         $obj = Xml::fromArray($xml, 'tags');
-        $this->assertCount(6, $obj);
+        $this->assertEquals(6, count($obj));
         $this->assertSame((string)$obj->bool, '1');
         $this->assertSame((string)$obj->int, '1');
         $this->assertSame((string)$obj->float, '10.2');
