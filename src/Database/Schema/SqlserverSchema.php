@@ -402,21 +402,15 @@ class SqlserverSchema extends BaseSchema
             $out .= ' NOT NULL';
         }
 
-        if (isset($data['null']) && $data['null'] === true) {
-            $out .= ' DEFAULT NULL';
-            unset($data['default']);
-        }
-
         if (isset($data['default']) &&
             in_array($data['type'], ['timestamp', 'datetime']) &&
-            strtolower($data['default']) === 'current_timestamp'
-        ) {
+            strtolower($data['default']) === 'current_timestamp') {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
-            unset($data['default']);
-        }
-        if (isset($data['default'])) {
+        } elseif (isset($data['default'])) {
             $default = is_bool($data['default']) ? (int)$data['default'] : $this->_driver->schemaValue($data['default']);
             $out .= ' DEFAULT ' . $default;
+        } elseif (isset($data['null']) && $data['null'] !== false) {
+            $out .= ' DEFAULT NULL';
         }
 
         return $out;

@@ -499,7 +499,7 @@ SQL;
             [
                 'title',
                 ['type' => 'string', 'length' => 25, 'null' => true, 'default' => 'ignored'],
-                '[title] NVARCHAR(25) DEFAULT NULL'
+                "[title] NVARCHAR(25) DEFAULT 'ignored'"
             ],
             [
                 'id',
@@ -622,7 +622,7 @@ SQL;
                 ['type' => 'boolean', 'default' => true, 'null' => false],
                 '[checked] BIT NOT NULL DEFAULT 1'
             ],
-            // datetimes
+            // Datetime
             [
                 'created',
                 ['type' => 'datetime'],
@@ -638,6 +638,16 @@ SQL;
                 ['type' => 'datetime', 'null' => false, 'default' => 'current_timestamp'],
                 '[open_date] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP'
             ],
+            [
+                'null_date',
+                ['type' => 'datetime', 'null' => true, 'default' => 'current_timestamp'],
+                '[null_date] DATETIME DEFAULT CURRENT_TIMESTAMP'
+            ],
+            [
+                'null_date',
+                ['type' => 'datetime', 'null' => true],
+                '[null_date] DATETIME DEFAULT NULL'
+            ],
             // Date & Time
             [
                 'start_date',
@@ -649,7 +659,7 @@ SQL;
                 ['type' => 'time'],
                 '[start_time] TIME'
             ],
-            // timestamps
+            // Timestamp
             [
                 'created',
                 ['type' => 'timestamp', 'null' => true],
