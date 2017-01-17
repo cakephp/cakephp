@@ -421,7 +421,7 @@ class PostgresSchema extends BaseSchema
                 $defaultValue = (bool)$defaultValue;
             }
             $out .= ' DEFAULT ' . $this->_driver->schemaValue($defaultValue);
-        } elseif (isset($data['null']) && $data['null'] === true) {
+        } elseif (isset($data['null']) && $data['null'] !== false) {
             $out .= ' DEFAULT NULL';
         }
 
