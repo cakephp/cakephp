@@ -559,6 +559,34 @@ class RouterTest extends TestCase
     }
 
     /**
+     * Test url() with _host option routes with request context
+     *
+     * @return void
+     */
+    public function testUrlGenerationHostOptionRequestContext()
+    {
+        $server = [
+            'HTTP_HOST' => 'foo.example.com',
+            'DOCUMENT_ROOT' => '/Users/markstory/Sites',
+            'SCRIPT_FILENAME' => '/Users/markstory/Sites/subdir/webroot/index.php',
+            'PHP_SELF' => '/subdir/webroot/index.php/articles/view/1',
+            'REQUEST_URI' => '/subdir/articles/view/1',
+            'QUERY_STRING' => '',
+            'SERVER_PORT' => 80,
+        ];
+
+        Router::connect('/fallback', ['controller' => 'Articles'], ['_host' => '*.example.com']);
+        $request = ServerRequestFactory::fromGlobals($server);
+        Router::setRequestContext($request);
+
+        $result = Router::url(['controller' => 'Articles', 'action' => 'index']);
+        $this->assertEquals('http://foo.example.com/subdir/fallback', $result);
+
+        $result = Router::url(['controller' => 'Articles', 'action' => 'index'], true);
+        $this->assertEquals('http://foo.example.com/subdir/fallback', $result);
+    }
+
+    /**
      * Test that catch all routes work with a variety of falsey inputs.
      *
      * @return void

@@ -480,7 +480,7 @@ class Route
             $this->compile();
         }
         $defaults = $this->defaults;
-        $context += ['params' => []];
+        $context += ['params' => [], '_port' => null, '_scheme' => null, '_host' => null];
 
         if (!empty($this->options['persist']) &&
             is_array($this->options['persist'])
@@ -500,6 +500,21 @@ class Route
 
             if ($hostOptions['_port'] == $context['_port']) {
                 unset($hostOptions['_port']);
+            }
+        }
+
+        // Apply the _host option if possible
+        if (isset($this->options['_host'])) {
+            if (!isset($hostOptions['_host']) && strpos($this->options['_host'], '*') === false) {
+                $hostOptions['_host'] = $this->options['_host'];
+            }
+            if (!isset($hostOptions['_host'])) {
+                $hostOptions['_host'] = $context['_host'];
+            }
+
+            // The host did not match the route preferences
+            if (!$this->hostMatches($hostOptions['_host'])) {
+                return false;
             }
         }
 
@@ -671,11 +686,12 @@ class Route
         ) {
             $host = $params['_host'];
 
-            // append the port if it exists.
+            // append the port & scheme if they exists.
             if (isset($params['_port'])) {
                 $host .= ':' . $params['_port'];
             }
-            $out = "{$params['_scheme']}://{$host}{$out}";
+            $scheme = isset($params['_scheme']) ? $params['_scheme'] : 'http';
+            $out = "{$scheme}://{$host}{$out}";
         }
         if (!empty($params['_ext']) || !empty($query)) {
             $out = rtrim($out, '/');
