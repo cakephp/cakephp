@@ -53,7 +53,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
     /**
      * Constructor
      *
-     * @param mixed $field The field name to compare for values in between the range.
+     * @param string|\Cake\Database\ExpressionInterface $field The field name to compare for values in between the range.
      * @param mixed $from The initial value of the range.
      * @param mixed $to The ending value in the comparison range.
      * @param string|null $type The data type name to bind the values with.

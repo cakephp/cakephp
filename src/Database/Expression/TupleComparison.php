@@ -29,7 +29,7 @@ class TupleComparison extends Comparison
     /**
      * Constructor
      *
-     * @param string|array $fields the fields to use to form a tuple
+     * @param string|array|\Cake\Database\ExpressionInterface $fields the fields to use to form a tuple
      * @param array|\Cake\Database\ExpressionInterface $values the values to use to form a tuple
      * @param array $types the types names to use for casting each of the values, only
      * one type per position in the value array in needed
