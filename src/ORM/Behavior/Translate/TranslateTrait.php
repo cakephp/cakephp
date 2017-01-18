@@ -30,7 +30,7 @@ trait TranslateTrait
      * it.
      *
      * @param string $language Language to return entity for.
-     * @return self|\Cake\ORM\Entity
+     * @return $this|\Cake\ORM\Entity
      */
     public function translation($language)
     {

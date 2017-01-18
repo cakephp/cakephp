@@ -224,7 +224,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Uses the $_GET, $_POST, $_FILES, $_COOKIE, $_SERVER, $_ENV and php://input data to construct
      * the request.
      *
-     * @return \Cake\Http\ServerRequest
+     * @return self
      * @deprecated 3.4.0 Use `Cake\Http\ServerRequestFactory` instead.
      */
     public static function createFromGlobals()
@@ -888,7 +888,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * This modifies the parameters available through `$request->params`.
      *
      * @param array $params Array of parameters to merge in
-     * @return self The current object, you can chain this method.
+     * @return $this The current object, you can chain this method.
      */
     public function addParams(array $params)
     {
@@ -902,7 +902,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Provides an easy way to modify, here, webroot and base.
      *
      * @param array $paths Array of paths to merge in
-     * @return self The current object, you can chain this method.
+     * @return $this The current object, you can chain this method.
      */
     public function addPaths(array $paths)
     {
@@ -1682,7 +1682,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string|null $value Value to set. Default null.
      * @param string|null $default Default value when trying to retrieve an environment
      *   variable's value that does not exist. The value parameter must be null.
-     * @return self|string|null This instance if used as setter,
+     * @return $this|string|null This instance if used as setter,
      *   if used as getter either the environment value, or null if the value doesn't exist.
      */
     public function env($key, $value = null, $default = null)

@@ -76,7 +76,7 @@ class EventManager
      * If called with the first parameter, it will be set as the globally available instance
      *
      * @param \Cake\Event\EventManager|null $manager Event manager instance.
-     * @return \Cake\Event\EventManager the global event manager
+     * @return static The global event manager
      */
     public static function instance($manager = null)
     {
@@ -84,7 +84,7 @@ class EventManager
             static::$_generalManager = $manager;
         }
         if (empty(static::$_generalManager)) {
-            static::$_generalManager = new EventManager();
+            static::$_generalManager = new static();
         }
 
         static::$_generalManager->_isGlobal = true;

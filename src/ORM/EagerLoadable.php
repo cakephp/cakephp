@@ -207,7 +207,7 @@ class EagerLoadable
      * Sets whether or not this level can be fetched using a join.
      *
      * @param bool $possible The value to set.
-     * @return self
+     * @return $this
      */
     public function setCanBeJoined($possible)
     {
@@ -239,7 +239,7 @@ class EagerLoadable
      * the records.
      *
      * @param array $config The value to set.
-     * @return self
+     * @return $this
      */
     public function setConfig(array $config)
     {

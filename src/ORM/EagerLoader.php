@@ -163,7 +163,7 @@ class EagerLoader
      * Sets whether or not contained associations will load fields automatically.
      *
      * @param bool $enable The value to set.
-     * @return self
+     * @return $this
      */
     public function enableAutoFields($enable = true)
     {
@@ -218,7 +218,7 @@ class EagerLoader
     public function setMatching($assoc, callable $builder = null, $options = [])
     {
         if ($this->_matching === null) {
-            $this->_matching = new self();
+            $this->_matching = new static();
         }
 
         if (!isset($options['joinType'])) {
@@ -252,7 +252,7 @@ class EagerLoader
     public function getMatching()
     {
         if ($this->_matching === null) {
-            $this->_matching = new self();
+            $this->_matching = new static();
         }
 
         return $this->_matching->contain();

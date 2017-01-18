@@ -222,7 +222,7 @@ trait EntityTrait
      * first argument is also an array, in which case will be treated as $options
      * @param array $options options to be used for setting the property. Allowed option
      * keys are `setter` and `guard`
-     * @return self
+     * @return $this
      * @throws \InvalidArgumentException
      */
     public function set($property, $value = null, array $options = [])
@@ -385,7 +385,7 @@ trait EntityTrait
      * ```
      *
      * @param string|array $property The property to unset.
-     * @return self
+     * @return $this
      */
     public function unsetProperty($property)
     {
@@ -876,7 +876,7 @@ trait EntityTrait
      * @param string|array|null $field The field to get invalid value for, or the value to set.
      * @param mixed|null $value The invalid value to be set for $field.
      * @param bool $overwrite Whether or not to overwrite pre-existing values for $field.
-     * @return self|mixed
+     * @return $this|mixed
      */
     public function invalid($field = null, $value = null, $overwrite = false)
     {
@@ -936,7 +936,7 @@ trait EntityTrait
      * @param string|array $property single or list of properties to change its accessibility
      * @param bool|null $set true marks the property as accessible, false will
      * mark it as protected.
-     * @return self|bool
+     * @return $this|bool
      */
     public function accessible($property, $set = null)
     {

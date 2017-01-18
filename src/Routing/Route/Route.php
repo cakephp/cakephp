@@ -132,7 +132,7 @@ class Route
      * Set the supported extensions for this route.
      *
      * @param array $extensions The extensions to set.
-     * @return self
+     * @return $this
      */
     public function setExtensions(array $extensions)
     {

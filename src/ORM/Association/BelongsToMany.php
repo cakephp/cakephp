@@ -160,7 +160,7 @@ class BelongsToMany extends Association
      * Sets the name of the field representing the foreign key to the target table.
      *
      * @param string $key the key to be used to link both tables together
-     * @return self
+     * @return $this
      */
     public function setTargetForeignKey($key)
     {
@@ -619,7 +619,7 @@ class BelongsToMany extends Association
      *
      * @param string $strategy the strategy name to be used
      * @throws \InvalidArgumentException if an invalid strategy name is passed
-     * @return self
+     * @return $this
      */
     public function setSaveStrategy($strategy)
     {
@@ -985,7 +985,7 @@ class BelongsToMany extends Association
      * Sets the current join table, either the name of the Table instance or the instance itself.
      *
      * @param string|\Cake\ORM\Table $through Name of the Table instance or the instance itself
-     * @return self
+     * @return $this
      */
     public function setThrough($through)
     {
