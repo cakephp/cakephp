@@ -97,7 +97,7 @@ interface QueryInterface
      * ```
      *
      * @param array $options list of query clauses to apply new parts to.
-     * @return self
+     * @return $this
      */
     public function applyOptions(array $options);
 
@@ -115,7 +115,7 @@ interface QueryInterface
      *
      * @param string $finder The finder method to use.
      * @param array $options The options for the finder.
-     * @return self Returns a modified query.
+     * @return $this Returns a modified query.
      */
     public function find($finder, array $options = []);
 
@@ -154,7 +154,7 @@ interface QueryInterface
      * ```
      *
      * @param int $num number of records to be returned
-     * @return self
+     * @return $this
      */
     public function limit($num);
 
@@ -174,7 +174,7 @@ interface QueryInterface
      * ```
      *
      * @param int $num number of records to be skipped
-     * @return self
+     * @return $this
      */
     public function offset($num);
 
@@ -223,7 +223,7 @@ interface QueryInterface
      *
      * @param array|string $fields fields to be added to the list
      * @param bool $overwrite whether to reset order with field list or not
-     * @return self
+     * @return $this
      */
     public function order($fields, $overwrite = false);
 
@@ -239,7 +239,7 @@ interface QueryInterface
      * @param int $num The page number you want.
      * @param int|null $limit The number of rows you want in the page. If null
      *  the current limit clause will be used.
-     * @return self
+     * @return $this
      */
     public function page($num, $limit = null);
 
@@ -369,7 +369,7 @@ interface QueryInterface
      * @param string|array|callable|null $conditions The conditions to filter on.
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
-     * @return self
+     * @return $this
      */
     public function where($conditions = null, $types = [], $overwrite = false);
 }

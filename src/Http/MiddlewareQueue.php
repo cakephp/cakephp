@@ -89,7 +89,7 @@ class MiddlewareQueue implements Countable
      * Append a middleware callable to the end of the queue.
      *
      * @param callable|string|array $middleware The middleware(s) to append.
-     * @return self
+     * @return $this
      */
     public function add($middleware)
     {
@@ -107,7 +107,7 @@ class MiddlewareQueue implements Countable
      * Alias for MiddlewareQueue::add().
      *
      * @param callable|string|array $middleware The middleware(s) to append.
-     * @return self
+     * @return $this
      * @see MiddlewareQueue::add()
      */
     public function push($middleware)
@@ -119,7 +119,7 @@ class MiddlewareQueue implements Countable
      * Prepend a middleware to the start of the queue.
      *
      * @param callable|string|array $middleware The middleware(s) to prepend.
-     * @return self
+     * @return $this
      */
     public function prepend($middleware)
     {
@@ -141,7 +141,7 @@ class MiddlewareQueue implements Countable
      *
      * @param int $index The index to insert at.
      * @param callable|string $middleware The middleware to insert.
-     * @return self
+     * @return $this
      */
     public function insertAt($index, $middleware)
     {
@@ -158,7 +158,7 @@ class MiddlewareQueue implements Countable
      *
      * @param string $class The classname to insert the middleware before.
      * @param callable|string $middleware The middleware to insert.
-     * @return self
+     * @return $this
      * @throws \LogicException If middleware to insert before is not found.
      */
     public function insertBefore($class, $middleware)
@@ -187,7 +187,7 @@ class MiddlewareQueue implements Countable
      *
      * @param string $class The classname to insert the middleware before.
      * @param callable|string $middleware The middleware to insert.
-     * @return self
+     * @return $this
      */
     public function insertAfter($class, $middleware)
     {

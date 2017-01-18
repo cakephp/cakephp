@@ -163,7 +163,7 @@ class EagerLoader
      * Sets whether or not contained associations will load fields automatically.
      *
      * @param bool $enable The value to set.
-     * @return self
+     * @return $this
      */
     public function enableAutoFields($enable = true)
     {

@@ -77,7 +77,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param string $conjunction Value to be used for joining conditions. If null it
      * will not set any value, but return the currently stored one
-     * @return self
+     * @return $this
      */
     public function setConjunction($conjunction)
     {
@@ -145,7 +145,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param array $types associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @see \Cake\Database\Query::where() for examples on conditions
-     * @return self
+     * @return $this
      */
     public function add($conditions, $types = [])
     {
@@ -174,7 +174,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|null $type the type name for $value as configured using the Type map.
      * If it is suffixed with "[]" and the value is an array then multiple placeholders
      * will be created, one per each value in the array.
-     * @return self
+     * @return $this
      */
     public function eq($field, $value, $type = null)
     {
@@ -193,7 +193,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|null $type the type name for $value as configured using the Type map.
      * If it is suffixed with "[]" and the value is an array then multiple placeholders
      * will be created, one per each value in the array.
-     * @return self
+     * @return $this
      */
     public function notEq($field, $value, $type = null)
     {
@@ -210,7 +210,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|\Cake\Database\ExpressionInterface $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
      * @param string|null $type the type name for $value as configured using the Type map.
-     * @return self
+     * @return $this
      */
     public function gt($field, $value, $type = null)
     {
@@ -227,7 +227,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|\Cake\Database\ExpressionInterface $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
      * @param string|null $type the type name for $value as configured using the Type map.
-     * @return self
+     * @return $this
      */
     public function lt($field, $value, $type = null)
     {
@@ -244,7 +244,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|\Cake\Database\ExpressionInterface $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
      * @param string|null $type the type name for $value as configured using the Type map.
-     * @return self
+     * @return $this
      */
     public function gte($field, $value, $type = null)
     {
@@ -261,7 +261,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|\Cake\Database\ExpressionInterface $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
      * @param string|null $type the type name for $value as configured using the Type map.
-     * @return self
+     * @return $this
      */
     public function lte($field, $value, $type = null)
     {
@@ -277,7 +277,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param string|\Cake\Database\ExpressionInterface $field database field to be
      * tested for null
-     * @return self
+     * @return $this
      */
     public function isNull($field)
     {
@@ -293,7 +293,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param string|\Cake\Database\ExpressionInterface $field database field to be
      * tested for not null
-     * @return self
+     * @return $this
      */
     public function isNotNull($field)
     {
@@ -310,7 +310,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|\Cake\Database\ExpressionInterface $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
      * @param string|null $type the type name for $value as configured using the Type map.
-     * @return self
+     * @return $this
      */
     public function like($field, $value, $type = null)
     {
@@ -327,7 +327,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|\Cake\Database\ExpressionInterface $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
      * @param string|null $type the type name for $value as configured using the Type map.
-     * @return self
+     * @return $this
      */
     public function notLike($field, $value, $type = null)
     {
@@ -345,7 +345,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|\Cake\Database\ExpressionInterface $field Database field to be compared against value
      * @param string|array $values the value to be bound to $field for comparison
      * @param string|null $type the type name for $value as configured using the Type map.
-     * @return self
+     * @return $this
      */
     public function in($field, $values, $type = null)
     {
@@ -368,7 +368,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * passed in $conditions. If there are more $values than $conditions, the last $value is used as the `ELSE` value
      * @param array $types associative array of types to be associated with the values
      * passed in $values
-     * @return self
+     * @return $this
      */
     public function addCase($conditions, $values = [], $types = [])
     {
@@ -382,7 +382,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|\Cake\Database\ExpressionInterface $field Database field to be compared against value
      * @param array $values the value to be bound to $field for comparison
      * @param string|null $type the type name for $value as configured using the Type map.
-     * @return self
+     * @return $this
      */
     public function notIn($field, $values, $type = null)
     {
@@ -400,7 +400,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Adds a new condition to the expression object in the form "EXISTS (...)".
      *
      * @param \Cake\Database\ExpressionInterface $query the inner query
-     * @return self
+     * @return $this
      */
     public function exists(ExpressionInterface $query)
     {
@@ -411,7 +411,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Adds a new condition to the expression object in the form "NOT EXISTS (...)".
      *
      * @param \Cake\Database\ExpressionInterface $query the inner query
-     * @return self
+     * @return $this
      */
     public function notExists(ExpressionInterface $query)
     {
@@ -426,7 +426,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param mixed $from The initial value of the range.
      * @param mixed $to The ending value in the comparison range.
      * @param string|null $type the type name for $value as configured using the Type map.
-     * @return self
+     * @return $this
      */
     public function between($field, $from, $to, $type = null)
     {
@@ -484,7 +484,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|array|\Cake\Database\ExpressionInterface $conditions to be added and negated
      * @param array $types associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
-     * @return self
+     * @return $this
      */
     public function not($conditions, $types = [])
     {
@@ -508,7 +508,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param string $left Left join condition field name.
      * @param string $right Right join condition field name.
-     * @return self
+     * @return $this
      */
     public function equalFields($left, $right)
     {
@@ -589,7 +589,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * modified part is stored.
      *
      * @param callable $callable The callable to apply to each part.
-     * @return self
+     * @return $this
      */
     public function iterateParts(callable $callable)
     {

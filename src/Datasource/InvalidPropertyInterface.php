@@ -30,7 +30,7 @@ interface InvalidPropertyInterface
      * @param string|array|null $field The field to get invalid value for, or the value to set.
      * @param mixed|null $value The invalid value to be set for $field.
      * @param bool $overwrite Whether or not to overwrite pre-existing values for $field.
-     * @return self|mixed
+     * @return $this|mixed
      */
     public function invalid($field = null, $value = null, $overwrite = false);
 }
