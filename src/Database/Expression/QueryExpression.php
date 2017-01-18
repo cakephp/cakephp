@@ -450,10 +450,10 @@ class QueryExpression implements ExpressionInterface, Countable
     public function and_($conditions, $types = [])
     {
         if ($this->isCallable($conditions)) {
-            return $conditions(new self([], $this->getTypeMap()->setTypes($types)));
+            return $conditions(new static([], $this->getTypeMap()->setTypes($types)));
         }
 
-        return new self($conditions, $this->getTypeMap()->setTypes($types));
+        return new static($conditions, $this->getTypeMap()->setTypes($types));
     }
 
     /**
@@ -468,10 +468,10 @@ class QueryExpression implements ExpressionInterface, Countable
     public function or_($conditions, $types = [])
     {
         if ($this->isCallable($conditions)) {
-            return $conditions(new self([], $this->getTypeMap()->setTypes($types), 'OR'));
+            return $conditions(new static([], $this->getTypeMap()->setTypes($types), 'OR'));
         }
 
-        return new self($conditions, $this->getTypeMap()->setTypes($types), 'OR');
+        return new static($conditions, $this->getTypeMap()->setTypes($types), 'OR');
     }
 // @codingStandardsIgnoreEnd
 
@@ -685,7 +685,7 @@ class QueryExpression implements ExpressionInterface, Countable
             }
 
             if ($this->isCallable($c)) {
-                $expr = new QueryExpression([], $typeMap);
+                $expr = new static([], $typeMap);
                 $c = $c($expr, $this);
             }
 
@@ -695,12 +695,12 @@ class QueryExpression implements ExpressionInterface, Countable
             }
 
             if ($numericKey && is_array($c) || in_array(strtolower($k), $operators)) {
-                $this->_conditions[] = new self($c, $typeMap, $numericKey ? 'AND' : $k);
+                $this->_conditions[] = new static($c, $typeMap, $numericKey ? 'AND' : $k);
                 continue;
             }
 
             if (strtolower($k) === 'not') {
-                $this->_conditions[] = new UnaryExpression('NOT', new self($c, $typeMap));
+                $this->_conditions[] = new UnaryExpression('NOT', new static($c, $typeMap));
                 continue;
             }
 
