@@ -95,7 +95,7 @@ class FileEngineTest extends TestCase
 
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('test', $data, 'file_test');
-        $this->assertTrue(file_exists(TMP . 'tests/cake_test'));
+        $this->assertFileExists(TMP . 'tests/cake_test');
 
         $result = Cache::read('test', 'file_test');
         $expecting = $data;
@@ -166,7 +166,7 @@ class FileEngineTest extends TestCase
 
         $result = Cache::delete('delete_test', 'file_test');
         $this->assertTrue($result);
-        $this->assertFalse(file_exists(TMP . 'tests/delete_test'));
+        $this->assertFileNotExists(TMP . 'tests/delete_test');
 
         $result = Cache::delete('delete_test', 'file_test');
         $this->assertFalse($result);
@@ -205,30 +205,30 @@ class FileEngineTest extends TestCase
         Cache::write('serialize_test1', $data, 'file_test');
         Cache::write('serialize_test2', $data, 'file_test');
         Cache::write('serialize_test3', $data, 'file_test');
-        $this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test1'));
-        $this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test2'));
-        $this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test3'));
+        $this->assertFileExists(TMP . 'tests/cake_serialize_test1');
+        $this->assertFileExists(TMP . 'tests/cake_serialize_test2');
+        $this->assertFileExists(TMP . 'tests/cake_serialize_test3');
 
         sleep(1);
         $result = Cache::clear(true, 'file_test');
         $this->assertTrue($result);
-        $this->assertFalse(file_exists(TMP . 'tests/cake_serialize_test1'));
-        $this->assertFalse(file_exists(TMP . 'tests/cake_serialize_test2'));
-        $this->assertFalse(file_exists(TMP . 'tests/cake_serialize_test3'));
+        $this->assertFileNotExists(TMP . 'tests/cake_serialize_test1');
+        $this->assertFileNotExists(TMP . 'tests/cake_serialize_test2');
+        $this->assertFileNotExists(TMP . 'tests/cake_serialize_test3');
 
         $data = 'this is a test of the emergency broadcasting system';
         Cache::write('serialize_test1', $data, 'file_test');
         Cache::write('serialize_test2', $data, 'file_test');
         Cache::write('serialize_test3', $data, 'file_test');
-        $this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test1'));
-        $this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test2'));
-        $this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test3'));
+        $this->assertFileExists(TMP . 'tests/cake_serialize_test1');
+        $this->assertFileExists(TMP . 'tests/cake_serialize_test2');
+        $this->assertFileExists(TMP . 'tests/cake_serialize_test3');
 
         $result = Cache::clear(false, 'file_test');
         $this->assertTrue($result);
-        $this->assertFalse(file_exists(CACHE . 'cake_serialize_test1'));
-        $this->assertFalse(file_exists(CACHE . 'cake_serialize_test2'));
-        $this->assertFalse(file_exists(CACHE . 'cake_serialize_test3'));
+        $this->assertFileNotExists(CACHE . 'cake_serialize_test1');
+        $this->assertFileNotExists(CACHE . 'cake_serialize_test2');
+        $this->assertFileNotExists(CACHE . 'cake_serialize_test3');
     }
 
     /**
@@ -307,7 +307,7 @@ class FileEngineTest extends TestCase
     {
         $result = Cache::write('views.countries.something', 'here', 'file_test');
         $this->assertTrue($result);
-        $this->assertTrue(file_exists(TMP . 'tests/cake_views_countries_something'));
+        $this->assertFileExists(TMP . 'tests/cake_views_countries_something');
 
         $result = Cache::read('views.countries.something', 'file_test');
         $this->assertEquals('here', $result);
@@ -317,11 +317,11 @@ class FileEngineTest extends TestCase
 
         $result = Cache::write('domain.test.com:8080', 'here', 'file_test');
         $this->assertTrue($result);
-        $this->assertTrue(file_exists(TMP . 'tests/cake_domain_test_com_8080'));
+        $this->assertFileExists(TMP . 'tests/cake_domain_test_com_8080');
 
         $result = Cache::write('command>dir|more', 'here', 'file_test');
         $this->assertTrue($result);
-        $this->assertTrue(file_exists(TMP . 'tests/cake_command_dir_more'));
+        $this->assertFileExists(TMP . 'tests/cake_command_dir_more');
     }
 
     /**
@@ -526,13 +526,13 @@ class FileEngineTest extends TestCase
         $this->assertEquals('rchavik', Cache::read('user', 'repeat'));
 
         Cache::delete('user', 'repeat');
-        $this->assertEquals(false, Cache::read('user', 'repeat'));
+        $this->assertFalse(Cache::read('user', 'repeat'));
 
         $this->assertTrue(Cache::write('user', 'ADmad', 'repeat'));
         $this->assertEquals('ADmad', Cache::read('user', 'repeat'));
 
         Cache::clearGroup('users', 'repeat');
-        $this->assertEquals(false, Cache::read('user', 'repeat'));
+        $this->assertFalse(Cache::read('user', 'repeat'));
 
         $this->assertTrue(Cache::write('user', 'markstory', 'repeat'));
         $this->assertEquals('markstory', Cache::read('user', 'repeat'));

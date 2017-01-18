@@ -700,7 +700,7 @@ abstract class IntegrationTestCase extends TestCase
         }
         $result = $this->_response->header();
         if ($url === null) {
-            $this->assertTrue(!empty($result['Location']), $message);
+            $this->assertNotEmpty($result['Location'], $message);
 
             return;
         }

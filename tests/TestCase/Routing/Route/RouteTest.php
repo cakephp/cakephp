@@ -391,7 +391,7 @@ class RouteTest extends TestCase
         $this->assertRegExp($result, '/posts/08/01/2007/title-of-post');
         $result = $route->parse('/posts/08/01/2007/title-of-post', 'GET');
 
-        $this->assertEquals(count($result), 7);
+        $this->assertCount(7, $result);
         $this->assertEquals($result['controller'], 'posts');
         $this->assertEquals($result['action'], 'view');
         $this->assertEquals($result['year'], '2007');

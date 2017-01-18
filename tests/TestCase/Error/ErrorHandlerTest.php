@@ -178,7 +178,7 @@ class ErrorHandlerTest extends TestCase
         @include 'invalid.file';
         //@codingStandardsIgnoreEnd
         $result = ob_get_clean();
-        $this->assertTrue(empty($result));
+        $this->assertEmpty($result);
     }
 
     /**

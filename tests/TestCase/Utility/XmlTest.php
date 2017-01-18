@@ -808,7 +808,7 @@ XML;
         $rss = file_get_contents(CORE_TESTS . 'Fixture/rss.xml');
         $rssAsArray = Xml::toArray(Xml::build($rss));
         $this->assertEquals('2.0', $rssAsArray['rss']['@version']);
-        $this->assertEquals(2, count($rssAsArray['rss']['channel']['item']));
+        $this->assertCount(2, $rssAsArray['rss']['channel']['item']);
 
         $atomLink = ['@href' => 'http://bakery.cakephp.org/articles/rss', '@rel' => 'self', '@type' => 'application/rss+xml'];
         $this->assertEquals($rssAsArray['rss']['channel']['atom:link'], $atomLink);

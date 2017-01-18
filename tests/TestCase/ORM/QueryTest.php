@@ -1701,7 +1701,7 @@ class QueryTest extends TestCase
             ->execute();
 
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-        $this->assertTrue($result->rowCount() > 0);
+        $this->assertGreaterThan(0, $result->rowCount());
     }
 
     /**
@@ -1722,7 +1722,7 @@ class QueryTest extends TestCase
             ->execute();
 
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-        $this->assertTrue($result->rowCount() > 0);
+        $this->assertGreaterThan(0, $result->rowCount());
     }
 
     /**
@@ -1766,7 +1766,7 @@ class QueryTest extends TestCase
             ->execute();
 
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-        $this->assertTrue($result->rowCount() > 0);
+        $this->assertGreaterThan(0, $result->rowCount());
     }
 
     /**

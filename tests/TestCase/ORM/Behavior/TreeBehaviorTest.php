@@ -227,7 +227,7 @@ class TreeBehaviorTest extends TestCase
         // leaf
         $nodeIds = [];
         $nodes = $table->find('children', ['for' => 5])->all();
-        $this->assertEquals(0, count($nodes->extract('id')->toArray()));
+        $this->assertCount(0, $nodes->extract('id')->toArray());
 
         // direct children
         $nodes = $table->find('children', ['for' => 1, 'direct' => true])->all();
