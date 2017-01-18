@@ -1041,11 +1041,30 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function findList(Query $query, array $options)
     {
-        $options += [
+        $defaults = [
             'keyField' => $this->primaryKey(),
             'valueField' => $this->displayField(),
             'groupField' => null
         ];
+
+        if ($query->clause('select') && count($query->clause('select')) <= 3) {
+            $select = (array)$query->clause('select');
+            foreach (array_keys($defaults) as $fieldName) {
+                $part = array_splice($select, 0, 1);
+                if (empty($part)) {
+                    break;
+                }
+                list($key, $value) = each($part);
+
+                if (is_numeric($key)) {
+                    $defaults[$fieldName] = $value;
+                } else {
+                    $defaults[$fieldName] = $key;
+                }
+            }
+        }
+
+        $options += $defaults;
 
         if (isset($options['idField'])) {
             $options['keyField'] = $options['idField'];
