@@ -537,6 +537,8 @@ class RouteTest extends TestCase
 
     /**
      * Test match() with _host and other keys.
+     *
+     * @return void
      */
     public function testMatchWithHostKeys()
     {
@@ -583,6 +585,72 @@ class RouteTest extends TestCase
             $context
         );
         $this->assertEquals('https://example.com:8080/dir/posts/index', $result);
+    }
+
+    /**
+     * Test that the _host option sets the default host.
+     *
+     * @return void
+     */
+    public function testMatchWithHostOption()
+    {
+        $route = new Route(
+            '/fallback',
+            ['controller' => 'Articles', 'action' => 'index'],
+            ['_host' => 'www.example.com']
+        );
+        $result = $route->match([
+            'controller' => 'Articles',
+            'action' => 'index'
+        ]);
+        $this->assertSame('http://www.example.com/fallback', $result);
+    }
+
+    /**
+     * Test wildcard host options
+     *
+     * @return void
+     */
+    public function testMatchWithHostWildcardOption()
+    {
+        $route = new Route(
+            '/fallback',
+            ['controller' => 'Articles', 'action' => 'index'],
+            ['_host' => '*.example.com']
+        );
+        $result = $route->match([
+            'controller' => 'Articles',
+            'action' => 'index'
+        ]);
+        $this->assertFalse($result, 'No request context means no match');
+
+        $result = $route->match([
+            'controller' => 'Articles',
+            'action' => 'index',
+        ], ['_host' => 'wrong.com']);
+        $this->assertFalse($result, 'Request context has bad host');
+
+        $result = $route->match([
+            'controller' => 'Articles',
+            'action' => 'index',
+            '_host' => 'wrong.com'
+        ]);
+        $this->assertFalse($result, 'Url param is wrong');
+
+        $result = $route->match([
+            'controller' => 'Articles',
+            'action' => 'index',
+            '_host' => 'foo.example.com'
+        ]);
+        $this->assertSame('http://foo.example.com/fallback', $result);
+
+        $result = $route->match([
+            'controller' => 'Articles',
+            'action' => 'index',
+        ], [
+            '_host' => 'foo.example.com'
+        ]);
+        $this->assertSame('http://foo.example.com/fallback', $result);
     }
 
     /**
