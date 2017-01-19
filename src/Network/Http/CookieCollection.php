@@ -1,3 +1,17 @@
 <?php
-// @deprecated Backwards compatibility with earler 3.x versions.
-class_alias('Cake\Http\Client\CookieCollection', 'Cake\Network\Http\CookieCollection');
+// @codingStandardsIgnoreFile
+namespace Cake\Network\Http;
+
+class_alias(\Cake\Http\Client\CookieCollection::class, CookieCollection::class);
+
+if (class_exists(CookieCollection::class)) {
+    return;
+}
+
+/**
+ * @deprecated Use \Cake\Http\Client\CookieCollection instead.
+ */
+class CookieCollection extends \Cake\Http\Client\CookieCollection
+{
+
+}
