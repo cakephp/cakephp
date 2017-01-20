@@ -21,6 +21,7 @@
 namespace Cake\I18n;
 
 use Aura\Intl\FormatterInterface;
+use Aura\Intl\Package;
 use Aura\Intl\TranslatorInterface;
 
 /**
@@ -52,28 +53,28 @@ class Translator implements TranslatorInterface
     protected $locale;
 
     /**
-     * The message keys and translations.
+     * The Package containing keys and translations.
      *
-     * @var array
+     * @var \Aura\Intl\Package
      */
-    protected $messages = [];
+    protected $package;
 
     /**
      * Constructor
      *
      * @param string $locale The locale being used.
-     * @param array $messages The message keys and translations.
+     * @param \Aura\Intl\Package $package The Package containing keys and translations.
      * @param \Aura\Intl\FormatterInterface $formatter A message formatter.
      * @param \Aura\Intl\TranslatorInterface|null $fallback A fallback translator.
      */
     public function __construct(
         $locale,
-        array $messages,
+        Package $package,
         FormatterInterface $formatter,
         TranslatorInterface $fallback = null
     ) {
         $this->locale = $locale;
-        $this->messages = $messages;
+        $this->package = $package;
         $this->formatter = $formatter;
         $this->fallback = $fallback;
     }
@@ -86,17 +87,20 @@ class Translator implements TranslatorInterface
      */
     protected function getMessage($key)
     {
-        if (isset($this->messages[$key])) {
-            return $this->messages[$key];
+        $message = $this->package->getMessage($key);
+        if ($message) {
+            return $message;
         }
 
         if ($this->fallback) {
             // get the message from the fallback translator
             $message = $this->fallback->getMessage($key);
-            // speed optimization: retain locally
-            $this->messages[$key] = $message;
-            // done!
-            return $message;
+            if ($message) {
+                // speed optimization: retain locally
+                $this->package->addMessage($key, $message);
+                // done!
+                return $message;
+            }
         }
 
         // no local message, no fallback
@@ -148,5 +152,15 @@ class Translator implements TranslatorInterface
         }
 
         return $this->formatter->format($this->locale, $message, $tokensValues);
+    }
+
+    /**
+     * An object of type Package
+     *
+     * @return \Aura\Intl\Package
+     */
+    public function getPackage()
+    {
+        return $this->package;
     }
 }
