@@ -23,7 +23,7 @@
         "ext-intl": "*",
         "ext-mbstring": "*",
         "cakephp/chronos": "~1.0",
-        "aura/intl": "3.0.*@beta",
+        "aura/intl": "^3.0.0",
         "psr/log": "^1.0",
         "zendframework/zend-diactoros": "~1.0"
     },
