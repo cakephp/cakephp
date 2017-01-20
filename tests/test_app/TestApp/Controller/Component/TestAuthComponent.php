@@ -22,13 +22,13 @@ use Cake\Event\Event;
 class TestAuthComponent extends AuthComponent
 {
     /**
-     * @var string
+     * @var string|null
      */
     public $authCheckCalledFrom = null;
 
     /**
      * @param Event $event
-     * @return \Cake\Network\Response|null|void
+     * @return \Cake\Network\Response|null
      */
     public function authCheck(Event $event)
     {
