@@ -14,9 +14,6 @@
  */
 namespace Cake\Mailer;
 
-use Cake\Core\App;
-use Cake\Mailer\Exception\MissingMailerException;
-
 /**
  * Provides functionality for loading mailer classes
  * onto properties of the host object.
@@ -37,16 +34,6 @@ trait MailerAwareTrait
      */
     public function getMailer($name, Email $email = null)
     {
-        if ($email === null) {
-            $email = new Email();
-        }
-
-        $className = App::className($name, 'Mailer', 'Mailer');
-
-        if (empty($className)) {
-            throw new MissingMailerException(compact('name'));
-        }
-
-        return (new $className($email));
+        return Mailer::getMailer($name, $email);
     }
 }
