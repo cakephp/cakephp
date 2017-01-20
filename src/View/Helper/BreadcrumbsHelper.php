@@ -234,12 +234,11 @@ class BreadcrumbsHelper extends Helper
             return false;
         }
 
-        $validCrumbs = [];
+        $this->crumbs = [];
         foreach ($crumbs as $crumb) {
-            $validCrumbs[] = $crumb + ['title' => '', 'url' => null, 'options' => []];
+            $this->crumbs[] = $crumb + ['title' => '', 'url' => null, 'options' => []];
         }
 
-        $this->crumbs = $validCrumbs;
         return $this->crumbs;
     }
 
