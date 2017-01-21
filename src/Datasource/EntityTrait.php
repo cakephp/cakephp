@@ -725,13 +725,28 @@ trait EntityTrait
     public function dirty($property = null, $isDirty = null)
     {
         if ($property === null) {
-            return !empty($this->_dirty);
+            return $this->isDirty();
         }
 
         if ($isDirty === null) {
-            return isset($this->_dirty[$property]);
+            return $this->isDirty($property);
         }
 
+        $this->setDirty($property, $isDirty);
+
+        return true;
+    }
+
+    /**
+     * Sets the dirty status of a single property.
+     *
+     * @param string $property the field to set or check status for
+     * @param bool $isDirty true means the property was changed, false means
+     * it was not changed
+     * @return self
+     */
+    public function setDirty($property, $isDirty)
+    {
         if ($isDirty === false) {
             unset($this->_dirty[$property]);
 
@@ -741,7 +756,22 @@ trait EntityTrait
         $this->_dirty[$property] = true;
         unset($this->_errors[$property], $this->_invalid[$property]);
 
-        return true;
+        return $this;
+    }
+
+    /**
+     * Checks if the entity is dirty or if a single property of it is dirty.
+     *
+     * @param string $property the field to check the status for
+     * @return bool Whether the property was changed or not
+     */
+    public function isDirty($property = null)
+    {
+        if ($property === null) {
+            return !empty($this->_dirty);
+        }
+
+        return isset($this->_dirty[$property]);
     }
 
     /**
@@ -908,17 +938,7 @@ trait EntityTrait
     public function errors($field = null, $errors = null, $overwrite = false)
     {
         if ($field === null) {
-            $diff = array_diff_key($this->_properties, $this->_errors);
-
-            return $this->_errors + (new Collection($diff))
-                ->filter(function ($value) {
-                    return is_array($value) || $value instanceof EntityInterface;
-                })
-                ->map(function ($value) {
-                    return $this->_readError($value);
-                })
-                ->filter()
-                ->toArray();
+            return $this->getErrors();
         }
 
         if (is_string($field) && $errors === null) {
