@@ -224,12 +224,13 @@ class BreadcrumbsHelper extends Helper
     }
 
     /**
-     * Overrides the crumb list.
+     * Sets the crumb list.
      *
-     * @param array $crumbs Array of crumb elements to override existing
+     * @param array $crumbs The new crumbs list.
      * @return array|bool The breadcrumbs or false if invalid data supplied.
      */
-    public function setCrumbs($crumbs) {
+    public function setCrumbs($crumbs)
+	{
         if (!is_array($crumbs)) {
             return false;
         }

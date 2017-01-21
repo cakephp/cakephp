@@ -355,7 +355,8 @@ class BreadcrumbsHelperTest extends TestCase
      *
      * @return void
      */
-    public function testSetCrumbs() {
+    public function testSetCrumbs()
+	{
         $input = [
             [
                 'title' => 'Home',
@@ -397,7 +398,8 @@ class BreadcrumbsHelperTest extends TestCase
      *
      * @return void
      */
-    public function testSetCrumbsInvalidData() {
+    public function testSetCrumbsInvalidData()
+	{
         $results = $this->breadcrumbs->setCrumbs('test');
         $this->assertFalse($results);
 
@@ -410,7 +412,8 @@ class BreadcrumbsHelperTest extends TestCase
      *
      * @return void
      */
-    public function testSetCrumbsEmpty() {
+    public function testSetCrumbsEmpty()
+	{
         $this->breadcrumbs->add('Home', '/', ['class' => 'first']);
 
         $this->breadcrumbs->setCrumbs([]);
