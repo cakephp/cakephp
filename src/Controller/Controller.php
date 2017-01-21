@@ -524,7 +524,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Redirects to given $url, after turning off $this->autoRender.
      *
-     * @param string|array $url A string or array-based URL pointing to another location within the app,
+     * @param string|array|null $url A string or array-based URL pointing to another location within the app,
      *     or an absolute URL
      * @param int $status HTTP status code (eg: 301)
      * @return \Cake\Network\Response|null

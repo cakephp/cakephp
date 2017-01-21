@@ -481,6 +481,21 @@ class ControllerTest extends TestCase
     }
 
     /**
+     * testRedirect method
+     *
+     * @return void
+     */
+    public function testRedirectSameUrl()
+    {
+        $Controller = new Controller(null, new Response());
+
+        $response = $Controller->redirect(null);
+        $this->assertEquals(302, $response->statusCode());
+        $this->assertEquals('http://localhost/', $response->header()['Location']);
+        $this->assertFalse($Controller->autoRender);
+    }
+
+    /**
      * test that beforeRedirect callbacks can set the URL that is being redirected to.
      *
      * @return void
