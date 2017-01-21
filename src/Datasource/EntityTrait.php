@@ -422,7 +422,7 @@ trait EntityTrait
      *
      * @param null|array $properties Either an array of properties to treat as virtual or null to get properties
      * @param bool $merge Merge the new properties with the existing. By default false.
-     * @return array|self
+     * @return self
      */
     public function setHiddenProperties(array $properties, $merge = false)
     {
@@ -860,13 +860,17 @@ trait EntityTrait
      * $entity->errors('salary', ['must be numeric', 'must be a positive number']);
      * ```
      *
-     * @param string|array|null $field The field to get errors for, or the array of errors to set.
-     * @param string|array|null $errors The errors to be set for $field
+     * @param string $field The field to get errors for, or the array of errors to set.
+     * @param string|array $errors The errors to be set for $field
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
      * @return self
      */
-    public function setError($field, array $errors, $overwrite = false)
+    public function setError($field, $errors, $overwrite = false)
     {
+        if (is_string($errors)) {
+            $errors = [$errors];
+        }
+
         return $this->setErrors([$field => $errors], $overwrite);
     }
 
@@ -1082,6 +1086,10 @@ trait EntityTrait
      */
     public function accessible($property, $set = null)
     {
+        if ($set === null) {
+            return $this->isAccessible($property, $set);
+        }
+
         return $this->setAccess($property, $set);
     }
 
@@ -1104,9 +1112,6 @@ trait EntityTrait
      * $entity->accessible('*', false); // Mark all properties as protected
      * ```
      *
-     * When called without the second param it will return whether or not the property
-     * can be set.
-     *
      * ### Example:
      *
      * ```
@@ -1114,20 +1119,12 @@ trait EntityTrait
      * ```
      *
      * @param string|array $property single or list of properties to change its accessibility
-     * @param bool|null $set true marks the property as accessible, false will
+     * @param bool $set true marks the property as accessible, false will
      * mark it as protected.
-     * @return self|bool
+     * @return self
      */
-    public function setAccess($property, $set = null)
+    public function setAccess($property, $set)
     {
-        if ($set === null) {
-            $value = isset($this->_accessible[$property]) ?
-                $this->_accessible[$property] :
-                null;
-
-            return ($value === null && !empty($this->_accessible['*'])) || $value;
-        }
-
         if ($property === '*') {
             $this->_accessible = array_map(function ($p) use ($set) {
                 return (bool)$set;
@@ -1145,19 +1142,38 @@ trait EntityTrait
     }
 
     /**
+     * Checks if a property is accessible
+     *
+     * @param string $property Property name to check
+     * @return bool
+     */
+    public function isAccessible($property)
+    {
+        $value = isset($this->_accessible[$property]) ?
+            $this->_accessible[$property] :
+            null;
+
+        return ($value === null && !empty($this->_accessible['*'])) || $value;
+    }
+
+    /**
      * Returns the alias of the repository from which this entity came from.
      *
-     * If called with no arguments, it returns the alias of the repository
-     * this entity came from if it is known.
-     *
-     * @param string|null $alias the alias of the repository
      * @return string|self
      */
-    public function getSource($alias = null)
+    public function getSource()
     {
-        if ($alias === null) {
-            return $this->_registryAlias;
-        }
+        return $this->_registryAlias;
+    }
+
+    /**
+     * Sets the source alias
+     *
+     * @param string $alias the alias of the repository
+     * @return self
+     */
+    public function setSource($alias)
+    {
         $this->_registryAlias = $alias;
 
         return $this;
@@ -1169,13 +1185,18 @@ trait EntityTrait
      * If called with no arguments, it returns the alias of the repository
      * this entity came from if it is known.
      *
-     * @deprecated Use setSource() instead.
      * @param string|null $alias the alias of the repository
      * @return string|self
      */
     public function source($alias = null)
     {
-        return $this->getSource($alias);
+        if (is_null($alias)) {
+            return $this->getSource($alias);
+        }
+
+        $this->setSource($alias);
+
+        return $this;
     }
 
     /**
