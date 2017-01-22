@@ -49,7 +49,7 @@ abstract class ServerRequestFactory extends BaseFactory
         $request = new ServerRequest([
             'environment' => $server,
             'uri' => $uri,
-            'files' => $files,
+            'files' => $files ?: $_FILES,
             'cookies' => $cookies ?: $_COOKIE,
             'query' => $query ?: $_GET,
             'post' => $body ?: $_POST,
