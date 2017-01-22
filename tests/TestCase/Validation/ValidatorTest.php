@@ -1790,9 +1790,18 @@ class ValidatorTest extends TestCase
             $validator,
             'multipleOptions',
             ['min' => 1, 'caseInsensitive' => true],
+            [['min' => 1], true],
+            'multiple'
+        );
+
+        $this->assertProxyMethod(
+            $validator,
+            'multipleOptions',
+            ['min' => 1, 'caseInsensitive' => false],
             [['min' => 1], false],
             'multiple'
         );
+
         $this->assertNotEmpty($validator->errors(['username' => '']));
     }
 
