@@ -88,7 +88,7 @@ trait QueryTrait
      * and this query object will be returned for chaining.
      *
      * @param \Cake\Datasource\RepositoryInterface|null $table The default table object to use
-     * @return \Cake\Datasource\RepositoryInterface|self
+     * @return \Cake\Datasource\RepositoryInterface|$this
      */
     public function repository(RepositoryInterface $table = null)
     {

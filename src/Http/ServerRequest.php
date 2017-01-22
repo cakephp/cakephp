@@ -1444,7 +1444,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|null $name Dot separated name of the value to read/write
      * @param mixed ...$args The data to set (deprecated)
-     * @return mixed|self Either the value being read, or this so you can chain consecutive writes.
+     * @return mixed|$this Either the value being read, or this so you can chain consecutive writes.
      * @deprecated 3.4.0 Use withData() and getData() or getParsedBody() instead.
      */
     public function data($name = null, ...$args)
@@ -1498,7 +1498,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name The name of the parameter to get.
      * @param mixed ...$args Value to set (deprecated).
-     * @return mixed|self The value of the provided parameter. Will
+     * @return mixed|$this The value of the provided parameter. Will
      *   return false if the parameter doesn't exist or is falsey.
      * @deprecated 3.4.0 Use getParam() and withParam() instead.
      */

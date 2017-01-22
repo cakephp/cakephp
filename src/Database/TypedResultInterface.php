@@ -25,7 +25,7 @@ interface TypedResultInterface
      * If called without arguments, returns the current known type
      *
      * @param string|null $type The name of the type that is to be returned
-     * @return string|self
+     * @return string|$this
      */
     public function returnType($type = null);
 }

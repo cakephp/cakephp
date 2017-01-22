@@ -141,7 +141,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      *
      * @deprecated 3.4.0 Use setTemplatePath()/getTemplatePath() instead.
      * @param string|null $path Path for view files. If null returns current path.
-     * @return string|self
+     * @return string|$this
      */
     public function templatePath($path = null)
     {
@@ -180,7 +180,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      *
      * @deprecated 3.4.0 Use setLayoutPath()/getLayoutPath() instead.
      * @param string|null $path Path for layout files. If null returns current path.
-     * @return string|self
+     * @return string|$this
      */
     public function layoutPath($path = null)
     {
@@ -224,7 +224,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      *
      * @deprecated 3.4.0 Use enableAutoLayout()/isAutoLayoutEnabled() instead.
      * @param bool|null $enable Boolean to turn on/off. If null returns current value.
-     * @return bool|self
+     * @return bool|$this
      */
     public function autoLayout($enable = null)
     {
@@ -267,7 +267,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @deprecated 3.4.0 Use setPlugin()/getPlugin() instead.
      * @param string|null|false $name Plugin name. If null returns current plugin.
      *   Use false to remove the current plugin name.
-     * @return string|self
+     * @return string|$this
      */
     public function plugin($name = null)
     {
@@ -311,7 +311,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @deprecated 3.4.0 Use setHelpers()/getHelpers() instead.
      * @param array|null $helpers Helpers to use.
      * @param bool $merge Whether or not to merge existing data with the new data.
-     * @return array|self
+     * @return array|$this
      */
     public function helpers(array $helpers = null, $merge = true)
     {
@@ -354,7 +354,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @deprecated 3.4.0 Use setTheme()/getTheme() instead.
      * @param string|null|false $theme Theme name. If null returns current theme.
      *   Use false to remove the current theme.
-     * @return string|self
+     * @return string|$this
      */
     public function theme($theme = null)
     {
@@ -396,7 +396,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      *
      * @deprecated 3.4.0 Use setTemplate()/getTemplate()
      * @param string|null $name View file name to set. If null returns current name.
-     * @return string|self
+     * @return string|$this
      */
     public function template($name = null)
     {
@@ -439,7 +439,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      *
      * @deprecated 3.4.0 Use setLayout()/getLayout() instead.
      * @param string|null $name Layout file name to set. If null returns current name.
-     * @return string|self
+     * @return string|$this
      */
     public function layout($name = null)
     {
@@ -487,7 +487,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @deprecated 3.4.0 Use setOptions()/getOptions() instead.
      * @param array|null $options Either an array of options or null to get current options.
      * @param bool $merge Whether or not to merge existing data with the new data.
-     * @return array|self
+     * @return array|$this
      */
     public function options(array $options = null, $merge = true)
     {
@@ -526,7 +526,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      *
      * @deprecated 3.4.0 Use setName()/getName() instead.
      * @param string|null $name The name of the view
-     * @return string|self
+     * @return string|$this
      */
     public function name($name = null)
     {
@@ -573,7 +573,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @param string|null $name The class name for the view. Can
      *   be a plugin.class name reference, a short alias, or a fully
      *   namespaced name.
-     * @return string|self
+     * @return string|$this
      */
     public function className($name = null)
     {

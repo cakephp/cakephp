@@ -255,7 +255,7 @@ interface QueryInterface
      * that is, the repository that will appear in the from clause.
      *
      * @param \Cake\Datasource\RepositoryInterface|null $repository The default repository object to use
-     * @return \Cake\Datasource\RepositoryInterface|self
+     * @return \Cake\Datasource\RepositoryInterface|$this
      */
     public function repository(RepositoryInterface $repository = null);
 

@@ -1847,7 +1847,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @deprecated 3.4.0 Use enableBufferedResults()/isBufferedResultsEnabled() instead.
      * @param bool|null $enable Whether or not to enable buffering
-     * @return bool|self
+     * @return bool|$this
      */
     public function bufferResults($enable = null)
     {

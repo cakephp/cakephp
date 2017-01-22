@@ -405,7 +405,7 @@ trait EntityTrait
      * will be returned. Otherwise the hidden properties will be set.
      *
      * @param null|array $properties Either an array of properties to hide or null to get properties
-     * @return array|self
+     * @return array|$this
      */
     public function hiddenProperties($properties = null)
     {
@@ -424,7 +424,7 @@ trait EntityTrait
      * will be returned. Otherwise the virtual properties will be set.
      *
      * @param null|array $properties Either an array of properties to treat as virtual or null to get properties
-     * @return array|self
+     * @return array|$this
      */
     public function virtualProperties($properties = null)
     {
@@ -757,7 +757,7 @@ trait EntityTrait
      * @param string|array|null $field The field to get errors for, or the array of errors to set.
      * @param string|array|null $errors The errors to be set for $field
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
-     * @return array|self
+     * @return array|$this
      */
     public function errors($field = null, $errors = null, $overwrite = false)
     {
@@ -971,7 +971,7 @@ trait EntityTrait
      * this entity came from if it is known.
      *
      * @param string|null $alias the alias of the repository
-     * @return string|self
+     * @return string|$this
      */
     public function source($alias = null)
     {

@@ -132,7 +132,7 @@ class ValuesExpression implements ExpressionInterface
      *
      * @deprecated 3.4.0 Use setColumns()/getColumns() instead.
      * @param array|null $cols Array with columns to be inserted.
-     * @return array|self
+     * @return array|$this
      */
     public function columns($cols = null)
     {
@@ -198,7 +198,7 @@ class ValuesExpression implements ExpressionInterface
      *
      * @deprecated 3.4.0 Use setValues()/getValues() instead.
      * @param array|null $values Array with values to be inserted.
-     * @return array|self
+     * @return array|$this
      */
     public function values($values = null)
     {
@@ -241,7 +241,7 @@ class ValuesExpression implements ExpressionInterface
      *
      * @deprecated 3.4.0 Use setQuery()/getQuery() instead.
      * @param \Cake\Database\Query|null $query The query to set
-     * @return \Cake\Database\Query|null|self
+     * @return \Cake\Database\Query|null|$this
      */
     public function query(Query $query = null)
     {
