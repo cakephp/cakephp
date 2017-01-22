@@ -1075,7 +1075,7 @@ class PaginatorHelper extends Helper
      * ### Options:
      *
      * - `model` The model to use defaults to PaginatorHelper::defaultModel()
-     * - `block` The block name to append the output to, or false/absenst to return as a string
+     * - `block` The block name to append the output to, or false/absent to return as a string
      *
      * @param array $options Array of options
      * @return string|null Meta links

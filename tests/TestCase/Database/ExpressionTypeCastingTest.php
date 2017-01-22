@@ -96,7 +96,7 @@ class ExpressionTypeCastingTest extends TestCase
     }
 
     /**
-     * Tests that the Between expression casts values to expresisons correctly
+     * Tests that the Between expression casts values to expressions correctly
      *
      * @return void
      */

@@ -881,7 +881,7 @@ class ExceptionRendererTest extends TestCase
      *
      * @return void
      */
-    public function testRenderShutdownEventsOnDispatcherFacotry()
+    public function testRenderShutdownEventsOnDispatcherFactory()
     {
         $filter = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
             ->setMethods(['afterDispatch'])

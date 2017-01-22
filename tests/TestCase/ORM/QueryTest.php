@@ -1833,7 +1833,7 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests that calling an inexistent method in query throws an
+     * Tests that calling an non-existent method in query throws an
      * exception
      *
      * @expectedException \BadMethodCallException
@@ -1917,7 +1917,7 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Integration test for query caching usigna  real cache engine and
+     * Integration test for query caching using a real cache engine and
      * a formatResults callback
      *
      * @return void
@@ -2215,7 +2215,7 @@ class QueryTest extends TestCase
         $query->where(['dirty' => 'cache']);
 
         $secondResult = $query->count();
-        $this->assertSame(2, $secondResult, 'The query cache should be droppped with any modification');
+        $this->assertSame(2, $secondResult, 'The query cache should be dropped with any modification');
 
         $thirdResult = $query->count();
         $this->assertSame(2, $thirdResult, 'The query has not been modified, the cached value is valid');

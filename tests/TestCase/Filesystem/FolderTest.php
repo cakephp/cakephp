@@ -520,7 +520,7 @@ class FolderTest extends TestCase
         $this->assertSame([], array_diff($expected, $result));
 
         $expected = [];
-        $result = $folder->subdirectories('NonExistantPath');
+        $result = $folder->subdirectories('NonExistentPath');
         $this->assertSame([], array_diff($expected, $result));
         $result = $folder->subdirectories($path . DS . 'Exception');
         $this->assertSame([], array_diff($expected, $result));
@@ -880,7 +880,7 @@ class FolderTest extends TestCase
     }
 
     /**
-     * test that errors and messages can be resetted
+     * test that errors and messages can be restarted
      *
      * @return void
      */
@@ -1130,7 +1130,7 @@ class FolderTest extends TestCase
     }
 
     /**
-     * testCopyWithoutResursive
+     * testCopyWithoutRecursive
      *
      * Verify that only the files exist in the target directory.
      *

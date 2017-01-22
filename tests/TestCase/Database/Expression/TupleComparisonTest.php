@@ -129,7 +129,7 @@ class TupleComparisonTest extends TestCase
     }
 
     /**
-     * Tests that a single ExpressionInteface can be used as the value for
+     * Tests that a single ExpressionInterface can be used as the value for
      * comparison
      *
      * @return void
@@ -143,7 +143,7 @@ class TupleComparisonTest extends TestCase
     }
 
     /**
-     * Tests that a single ExpressionInteface can be used as the field for
+     * Tests that a single ExpressionInterface can be used as the field for
      * comparison
      *
      * @return void

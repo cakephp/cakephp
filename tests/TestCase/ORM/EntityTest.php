@@ -537,7 +537,7 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests unsetProperty whith multiple properties
+     * Tests unsetProperty with multiple properties
      *
      * @return void
      */
@@ -689,7 +689,7 @@ class EntityTest extends TestCase
      *
      * @return void
      */
-    public function testSetGetLongProperyNames()
+    public function testSetGetLongPropertyNames()
     {
         $entity = $this->getMockBUilder('\Cake\ORM\Entity')
             ->setMethods(['_getVeryLongProperty', '_setVeryLongProperty'])
@@ -713,7 +713,7 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests that jsonSerialize is called recursivily for contained entities
+     * Tests that jsonSerialize is called recursively for contained entities
      *
      * @return void
      */
@@ -750,8 +750,8 @@ class EntityTest extends TestCase
         $expected = [];
         $this->assertEquals($expected, $entity->extract([]));
 
-        $expected = ['id' => 1, 'crazyness' => null];
-        $this->assertEquals($expected, $entity->extract(['id', 'crazyness']));
+        $expected = ['id' => 1, 'craziness' => null];
+        $this->assertEquals($expected, $entity->extract(['id', 'craziness']));
     }
 
     /**
@@ -1059,7 +1059,7 @@ class EntityTest extends TestCase
 
         $this->assertEquals([], $entity->errors('boo'));
         $entity['boo'] = [
-            'someting' => 'stupid',
+            'something' => 'stupid',
             'and' => false
         ];
         $this->assertEquals([], $entity->errors('boo'));
@@ -1236,7 +1236,7 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests that a wildcard can be used for setting accesible properties
+     * Tests that a wildcard can be used for setting accessible properties
      *
      * @return void
      */
@@ -1390,7 +1390,7 @@ class EntityTest extends TestCase
         return [[''], [null], [false]];
     }
     /**
-     * Tests that trying to get an empty propetry name throws exception
+     * Tests that trying to get an empty property name throws exception
      *
      * @dataProvider emptyNamesProvider
      * @expectedException \InvalidArgumentException

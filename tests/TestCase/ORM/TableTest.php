@@ -6257,7 +6257,7 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    public function testLoadBelognsTo()
+    public function testLoadBelongsTo()
     {
         $table = TableRegistry::get('Articles');
         $table->belongsTo('Authors');

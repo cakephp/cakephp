@@ -317,7 +317,7 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
-     * Tests that no exceptions are generated becuase of ambiguous column names in queries
+     * Tests that no exceptions are generated because of ambiguous column names in queries
      * during a  save operation
      *
      * @see https://github.com/cakephp/cakephp/issues/3803
@@ -356,7 +356,7 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Tests that whe saving deep associations for a belongsToMany property,
-     * data is not removed becuase of excesive associations filtering.
+     * data is not removed because of excessive associations filtering.
      *
      * @see https://github.com/cakephp/cakephp/issues/4009
      * @return void

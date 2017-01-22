@@ -428,7 +428,7 @@ class EagerLoaderTest extends TestCase
     }
 
     /**
-     * Tests that the path for gettings to a deep assocition is materialized in an
+     * Tests that the path for getting to a deep association is materialized in an
      * array key
      *
      * @return void

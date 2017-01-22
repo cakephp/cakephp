@@ -390,7 +390,7 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
-     * Test liking entities having a non persited target entity
+     * Test liking entities having a non persisted target entity
      *
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Cannot link not persisted entities
@@ -462,7 +462,7 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
-     * Test liking entities having a non persited source entity
+     * Test liking entities having a non persisted source entity
      *
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Source entity needs to be persisted before proceeding
@@ -482,7 +482,7 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
-     * Test liking entities having a non persited target entity
+     * Test liking entities having a non persisted target entity
      *
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Cannot link not persisted entities
@@ -941,7 +941,7 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
-     * Tests that custom foreignKeys are properly trasmitted to involved associations
+     * Tests that custom foreignKeys are properly transmitted to involved associations
      * when they are customized
      *
      * @return void
@@ -1057,7 +1057,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * Tests that fetching belongsToMany association will not force
-     * all fields being returned, but intead will honor the select() clause
+     * all fields being returned, but instead will honor the select() clause
      *
      * @see https://github.com/cakephp/cakephp/issues/7916
      * @return void

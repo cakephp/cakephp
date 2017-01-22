@@ -25,7 +25,7 @@ use Zend\Diactoros\CallbackStream as BaseCallbackStream;
  *
  * Ideally we can amend/update diactoros, but we need to figure
  * that out with the diactoros project. Until then we'll use this shim
- * to provide backwards compatiblity with existing CakePHP apps.
+ * to provide backwards compatibility with existing CakePHP apps.
  *
  * @internal
  */

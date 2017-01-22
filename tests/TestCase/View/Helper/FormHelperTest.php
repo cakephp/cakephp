@@ -494,7 +494,7 @@ class FormHelperTest extends TestCase
      *
      * @return void
      */
-    public function testCreateExplictMethodEnctype()
+    public function testCreateExplicitMethodEnctype()
     {
         $encoding = strtolower(Configure::read('App.encoding'));
         $result = $this->Form->create(false, [

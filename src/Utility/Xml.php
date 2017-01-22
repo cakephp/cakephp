@@ -323,7 +323,7 @@ class Xml
     /**
      * Helper to _fromArray(). It will create childs of arrays
      *
-     * @param array $data Array with informations to create childs
+     * @param array $data Array with information to create childs
      * @return void
      */
     protected static function _createChild($data)

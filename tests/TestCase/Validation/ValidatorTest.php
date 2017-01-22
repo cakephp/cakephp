@@ -1086,7 +1086,7 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests it is possible to check for validation sets for a field using an array inteface
+     * Tests it is possible to check for validation sets for a field using an array interface
      *
      * @return void
      */
@@ -1102,7 +1102,7 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests it is possible to set validation rules for a field using an array inteface
+     * Tests it is possible to set validation rules for a field using an array interface
      *
      * @return void
      */
@@ -1123,7 +1123,7 @@ class ValidatorTest extends TestCase
      *
      * @return void
      */
-    public function testArrayAccessUset()
+    public function testArrayAccessUnset()
     {
         $validator = new Validator;
         $validator
@@ -1153,7 +1153,7 @@ class ValidatorTest extends TestCase
      *
      * @return void
      */
-    public function testAddMulitple()
+    public function testAddMultiple()
     {
         $validator = new Validator;
         $validator->add('title', [
