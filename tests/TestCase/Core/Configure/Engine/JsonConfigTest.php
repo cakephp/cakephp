@@ -96,7 +96,7 @@ class JsonConfigTest extends TestCase
      * Test reading an empty file.
      *
      * @expectedException \Cake\Core\Exception\Exception
-     * @expectedExceptionMessage Decoding JSON config file "empty.json" did not return an array
+     * @expectedExceptionMessage config file "empty.json"
      * @return void
      */
     public function testReadEmptyFile()
