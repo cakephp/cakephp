@@ -424,7 +424,7 @@ trait EntityTrait
      * @param bool $merge Merge the new properties with the existing. By default false.
      * @return self
      */
-    public function setHiddenProperties(array $properties, $merge = false)
+    public function setHidden(array $properties, $merge = false)
     {
         if ($merge === false) {
             $this->_hidden = $properties;
@@ -442,7 +442,7 @@ trait EntityTrait
      *
      * @return array
      */
-    public function getHiddenProperties()
+    public function getHidden()
     {
         return $this->_hidden;
     }
@@ -459,11 +459,10 @@ trait EntityTrait
     public function virtualProperties($properties = null)
     {
         if ($properties === null) {
-            return $this->_virtual;
+            return $this->getVirtual();
         }
-        $this->_virtual = $properties;
 
-        return $this;
+        return $this->setVirtual($properties);
     }
 
     /**
@@ -473,7 +472,7 @@ trait EntityTrait
      * @param bool $merge Merge the new properties with the existing. By default false.
      * @return self
      */
-    public function setVirtualProperties(array $properties, $merge = false)
+    public function setVirtual(array $properties, $merge = false)
     {
         if ($merge === false) {
             $this->_virtual = $properties;
@@ -491,7 +490,7 @@ trait EntityTrait
      *
      * @return array
      */
-    public function getVirtualProperties()
+    public function getVirtual()
     {
         return $this->_virtual;
     }
