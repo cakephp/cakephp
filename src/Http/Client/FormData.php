@@ -268,3 +268,6 @@ class FormData implements Countable
         return http_build_query($data);
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Http\Client\FormData', 'Cake\Network\Http\FormData');

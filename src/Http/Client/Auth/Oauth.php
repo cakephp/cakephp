@@ -350,3 +350,6 @@ class Oauth
         );
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Http\Client\Auth\Oauth', 'Cake\Network\Http\Auth\Oauth');

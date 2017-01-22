@@ -42,8 +42,6 @@
             "src/Core/functions.php",
             "src/Collection/functions.php",
             "src/I18n/functions.php",
-            "src/Database/backwards_compat.php",
-            "src/Http/backwards_compat.php",
             "src/Utility/bootstrap.php"
         ]
     },

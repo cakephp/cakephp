@@ -142,3 +142,6 @@ class Digest
         return $authHeader;
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Http\Client\Auth\Digest', 'Cake\Network\Http\Auth\Digest');

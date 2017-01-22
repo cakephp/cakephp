@@ -117,3 +117,6 @@ class CookieCollection
         return array_values($this->_cookies);
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Http\Client\CookieCollection', 'Cake\Network\Http\CookieCollection');
