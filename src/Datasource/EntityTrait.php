@@ -222,7 +222,7 @@ trait EntityTrait
      * first argument is also an array, in which case will be treated as $options
      * @param array $options options to be used for setting the property. Allowed option
      * keys are `setter` and `guard`
-     * @return self
+     * @return $this
      * @throws \InvalidArgumentException
      */
     public function set($property, $value = null, array $options = [])
@@ -385,7 +385,7 @@ trait EntityTrait
      * ```
      *
      * @param string|array $property The property to unset.
-     * @return self
+     * @return $this
      */
     public function unsetProperty($property)
     {
@@ -422,7 +422,7 @@ trait EntityTrait
      *
      * @param null|array $properties Either an array of properties to treat as virtual or null to get properties
      * @param bool $merge Merge the new properties with the existing. By default false.
-     * @return self
+     * @return $this
      */
     public function setHidden(array $properties, $merge = false)
     {
@@ -470,7 +470,7 @@ trait EntityTrait
      *
      * @param array $properties An array of properties to treat as virtual.
      * @param bool $merge Merge the new properties with the existing. By default false.
-     * @return self
+     * @return $this
      */
     public function setVirtual(array $properties, $merge = false)
     {
@@ -742,7 +742,7 @@ trait EntityTrait
      * @param string $property the field to set or check status for
      * @param bool $isDirty true means the property was changed, false means
      * it was not changed
-     * @return self
+     * @return $this
      */
     public function setDirty($property, $isDirty)
     {
@@ -865,7 +865,7 @@ trait EntityTrait
      *
      * @param array $fields The array of errors to set.
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $fields
-     * @return self
+     * @return $this
      */
     public function setErrors(array $fields, $overwrite = false)
     {
@@ -892,7 +892,7 @@ trait EntityTrait
      * @param string $field The field to get errors for, or the array of errors to set.
      * @param string|array $errors The errors to be set for $field
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
-     * @return self
+     * @return $this
      */
     public function setError($field, $errors, $overwrite = false)
     {
@@ -1041,7 +1041,7 @@ trait EntityTrait
      * @param string|array|null $field The field to get invalid value for, or the value to set.
      * @param mixed|null $value The invalid value to be set for $field.
      * @param bool $overwrite Whether or not to overwrite pre-existing values for $field.
-     * @return self|mixed
+     * @return $this|mixed
      */
     public function invalid($field = null, $value = null, $overwrite = false)
     {
@@ -1101,7 +1101,7 @@ trait EntityTrait
      * @param string|array $property single or list of properties to change its accessibility
      * @param bool|null $set true marks the property as accessible, false will
      * mark it as protected.
-     * @return self|bool
+     * @return $this|bool
      */
     public function accessible($property, $set = null)
     {
@@ -1140,7 +1140,7 @@ trait EntityTrait
      * @param string|array $property single or list of properties to change its accessibility
      * @param bool $set true marks the property as accessible, false will
      * mark it as protected.
-     * @return self
+     * @return $this
      */
     public function setAccess($property, $set)
     {
@@ -1189,7 +1189,7 @@ trait EntityTrait
      * Sets the source alias
      *
      * @param string $alias the alias of the repository
-     * @return self
+     * @return $this
      */
     public function setSource($alias)
     {
