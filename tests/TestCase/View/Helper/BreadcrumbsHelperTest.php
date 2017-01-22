@@ -201,6 +201,24 @@ class BreadcrumbsHelperTest extends TestCase
     }
 
     /**
+     * Test ability to empty crumbs list.
+     *
+     * @return void
+     */
+    public function testReset()
+    {
+        $this->breadcrumbs->add('Home', '/');
+        $this->breadcrumbs->add('Products', '/products');
+
+        $crumbs = $this->breadcrumbs->getCrumbs();
+        $this->assertEquals(count($crumbs), 2);
+
+        $this->breadcrumbs->reset();
+        $actual = $this->breadcrumbs->getCrumbs();
+        $this->assertEquals($actual, []);
+    }
+
+    /**
      * Test adding crumbs to a specific index
      *
      * @return void
