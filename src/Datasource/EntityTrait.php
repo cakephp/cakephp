@@ -821,7 +821,6 @@ trait EntityTrait
     /**
      * Returns all validation errors.
      *
-     * @param string $field
      * @return array
      */
     public function getErrors()
@@ -864,8 +863,9 @@ trait EntityTrait
      * // Sets the error messages for multiple fields at once
      * $entity->errors(['salary' => ['message'], 'name' => ['another message']);
      * ```
-     * @param array|null $field The field to get errors for, or the array of errors to set.
-     * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
+     *
+     * @param array $fields The array of errors to set.
+     * @param bool $overwrite Whether or not to overwrite pre-existing errors for $fields
      * @return self
      */
     public function setErrors(array $fields, $overwrite = false)
