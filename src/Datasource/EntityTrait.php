@@ -420,7 +420,7 @@ trait EntityTrait
     /**
      * Sets hidden properties.
      *
-     * @param null|array $properties Either an array of properties to treat as virtual or null to get properties
+     * @param array $properties An array of properties to treat as virtual.
      * @param bool $merge Merge the new properties with the existing. By default false.
      * @return $this
      */
@@ -1125,16 +1125,10 @@ trait EntityTrait
      * ### Example:
      *
      * ```
-     * $entity->accessible('id', true); // Mark id as not protected
-     * $entity->accessible('author_id', false); // Mark author_id as protected
-     * $entity->accessible(['id', 'user_id'], true); // Mark both properties as accessible
-     * $entity->accessible('*', false); // Mark all properties as protected
-     * ```
-     *
-     * ### Example:
-     *
-     * ```
-     * $entity->accessible('id'); // Returns whether it can be set or not
+     * $entity->setAccess('id', true); // Mark id as not protected
+     * $entity->setAccess('author_id', false); // Mark author_id as protected
+     * $entity->setAccess(['id', 'user_id'], true); // Mark both properties as accessible
+     * $entity->setAccess('*', false); // Mark all properties as protected
      * ```
      *
      * @param string|array $property single or list of properties to change its accessibility
@@ -1163,6 +1157,12 @@ trait EntityTrait
     /**
      * Checks if a property is accessible
      *
+     * ### Example:
+     *
+     * ```
+     * $entity->isAccessible('id'); // Returns whether it can be set or not
+     * ```
+     *
      * @param string $property Property name to check
      * @return bool
      */
@@ -1178,7 +1178,7 @@ trait EntityTrait
     /**
      * Returns the alias of the repository from which this entity came from.
      *
-     * @return string|self
+     * @return string
      */
     public function getSource()
     {
