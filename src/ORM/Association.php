@@ -1225,8 +1225,12 @@ abstract class Association
 
         if (count($foreignKey) !== count($bindingKey)) {
             if (empty($bindingKey)) {
-                $msg = 'The "%s" table does not define a primary key. Please set one.';
-                throw new RuntimeException(sprintf($msg, $this->getTarget()->getTable()));
+                $table = $this->getTarget()->getTable();
+                if ($this->isOwningSide($this->getSource())) {
+                    $table = $this->getSource()->getTable();
+                }
+                $msg = 'The "%s" table does not define a primary key, and cannot have join conditions generated.';
+                throw new RuntimeException(sprintf($msg, $table));
             }
 
             $msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';

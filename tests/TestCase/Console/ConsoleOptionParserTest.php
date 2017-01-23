@@ -625,7 +625,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser = new ConsoleOptionParser('test', false);
         $parser->addSubcommand(new ConsoleInputSubcommand('test'));
         $result = $parser->subcommands();
-        $this->assertEquals(1, count($result));
+        $this->assertCount(1, $result);
         $this->assertEquals('test', $result['test']->name());
     }
 
@@ -639,7 +639,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser = new ConsoleOptionParser('test', false);
         $parser->addSubcommand(new ConsoleInputSubcommand('test'));
         $result = $parser->subcommands();
-        $this->assertEquals(1, count($result));
+        $this->assertCount(1, $result);
         $parser->removeSubcommand('test');
         $result = $parser->subcommands();
         $this->assertEquals(0, count($result), 'Remove a subcommand does not work');
@@ -787,10 +787,10 @@ TEXT;
         $this->assertTrue(isset($options['other']));
 
         $args = $parser->arguments();
-        $this->assertEquals(2, count($args));
+        $this->assertCount(2, $args);
 
         $commands = $parser->subcommands();
-        $this->assertEquals(1, count($commands));
+        $this->assertCount(1, $commands);
     }
 
     /**
@@ -883,8 +883,8 @@ TEXT;
         $this->assertTrue(isset($options['name']));
         $this->assertTrue(isset($options['other']));
 
-        $this->assertEquals(2, count($result['arguments']));
-        $this->assertEquals(1, count($result['subcommands']));
+        $this->assertCount(2, $result['arguments']);
+        $this->assertCount(1, $result['subcommands']);
     }
 
     /**
@@ -913,7 +913,7 @@ TEXT;
         $this->assertTrue(isset($options['file']));
         $this->assertTrue(isset($options['output']));
 
-        $this->assertEquals(2, count($result['arguments']));
-        $this->assertEquals(6, count($result['options']));
+        $this->assertCount(2, $result['arguments']);
+        $this->assertCount(6, $result['options']);
     }
 }

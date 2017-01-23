@@ -580,7 +580,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result[0]);
         $expected['link']['href'] = 'preg:/.*css\/vendor\.generic\.css/';
         $this->assertHtml($expected, $result[1]);
-        $this->assertEquals(2, count($result));
+        $this->assertCount(2, $result);
 
         $this->View->expects($this->at(0))
             ->method('append')
@@ -680,7 +680,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result[0]);
         $expected['link']['href'] = 'preg:/.*test_plugin\/css\/vendor\.generic\.css/';
         $this->assertHtml($expected, $result[1]);
-        $this->assertEquals(2, count($result));
+        $this->assertCount(2, $result);
 
         Plugin::unload('TestPlugin');
     }

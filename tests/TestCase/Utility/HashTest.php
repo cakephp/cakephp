@@ -2175,7 +2175,7 @@ class HashTest extends TestCase
     public function testCombine()
     {
         $result = Hash::combine([], '{n}.User.id', '{n}.User.Data');
-        $this->assertTrue(empty($result));
+        $this->assertEmpty($result);
 
         $a = static::userData();
 

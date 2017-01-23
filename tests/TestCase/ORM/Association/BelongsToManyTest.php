@@ -1040,6 +1040,23 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Tests that eager loading requires association keys
+     *
+     * @expectedException RuntimeException
+     * @expectedExceptionMessage The "tags" table does not define a primary key
+     * @return void
+     */
+    public function testEagerLoadingRequiresPrimaryKey()
+    {
+        $table = TableRegistry::get('Articles');
+        $tags = TableRegistry::get('Tags');
+        $tags->schema()->dropConstraint('primary');
+
+        $table->belongsToMany('Tags');
+        $table->find()->contain('Tags')->first();
+    }
+
+    /**
      * Tests that fetching belongsToMany association will not force
      * all fields being returned, but intead will honor the select() clause
      *

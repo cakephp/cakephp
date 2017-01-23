@@ -13,6 +13,7 @@
 namespace Cake\Test\TestCase\Mailer;
 
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 use TestApp\Mailer\TestMailer;
 
 class MailerTest extends TestCase
@@ -136,6 +137,33 @@ class MailerTest extends TestCase
 
         $mailer->send('test', ['foo', 'bar']);
         $this->assertEquals($mailer->template, 'test');
+    }
+
+    /**
+     * Test that mailers call reset() when send fails
+     */
+    public function testSendFailsEmailIsReset()
+    {
+        $email = $this->getMockForEmail(['send', 'reset']);
+        $email->expects($this->once())
+            ->method('send')
+            ->will($this->throwException(new RuntimeException('kaboom')));
+
+        $mailer = $this->getMockBuilder('TestApp\Mailer\TestMailer')
+            ->setMethods(['welcome', 'reset'])
+            ->setConstructorArgs([$email])
+            ->getMock();
+
+        // Mailer should be reset even if sending fails.
+        $mailer->expects($this->once())
+            ->method('reset');
+
+        try {
+            $mailer->send('welcome', ['foo', 'bar']);
+            $this->fail('Exception should bubble up.');
+        } catch (RuntimeException $e) {
+            $this->assertTrue(true, 'Exception was raised');
+        }
     }
 
     /**

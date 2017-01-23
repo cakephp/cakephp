@@ -122,7 +122,7 @@ class DebuggerTest extends TestCase
         $this->assertRegExp($pattern, $result[0]);
 
         $return = Debugger::excerpt('[internal]', 2, 2);
-        $this->assertTrue(empty($return));
+        $this->assertEmpty($return);
 
         $result = Debugger::excerpt(__FILE__, __LINE__, 5);
         $this->assertCount(11, $result);

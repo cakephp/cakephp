@@ -234,22 +234,25 @@ abstract class Mailer implements EventListenerInterface
      */
     public function send($action, $args = [], $headers = [])
     {
-        if (!method_exists($this, $action)) {
-            throw new MissingActionException([
-                'mailer' => $this->getName() . 'Mailer',
-                'action' => $action,
-            ]);
+        try {
+            if (!method_exists($this, $action)) {
+                throw new MissingActionException([
+                    'mailer' => $this->getName() . 'Mailer',
+                    'action' => $action,
+                ]);
+            }
+
+            $this->_email->setHeaders($headers);
+            if (!$this->_email->viewBuilder()->getTemplate()) {
+                $this->_email->viewBuilder()->setTemplate($action);
+            }
+
+            $this->$action(...$args);
+
+            $result = $this->_email->send();
+        } finally {
+            $this->reset();
         }
-
-        $this->_email->setHeaders($headers);
-        if (!$this->_email->viewBuilder()->getTemplate()) {
-            $this->_email->viewBuilder()->setTemplate($action);
-        }
-
-        $this->$action(...$args);
-
-        $result = $this->_email->send();
-        $this->reset();
 
         return $result;
     }

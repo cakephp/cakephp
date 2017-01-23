@@ -4623,7 +4623,7 @@ class TableTest extends TestCase
 
         $this->assertTrue($authors->Articles->link($author, $newArticles));
         $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
-        $this->assertEquals(count($author->articles), $sizeArticles);
+        $this->assertCount($sizeArticles, $author->articles);
 
         $newArticles = array_merge(
             $author->articles,
@@ -4681,7 +4681,7 @@ class TableTest extends TestCase
 
         $this->assertTrue($authors->Articles->link($author, $newArticles));
         $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
-        $this->assertEquals(count($author->articles), $sizeArticles);
+        $this->assertCount($sizeArticles, $author->articles);
 
         $newArticles = [];
 
@@ -4726,7 +4726,7 @@ class TableTest extends TestCase
 
         $this->assertTrue($authors->Articles->link($author, $newArticles));
         $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
-        $this->assertEquals(count($author->articles), $sizeArticles);
+        $this->assertCount($sizeArticles, $author->articles);
         $this->assertTrue($authors->Articles->replace($author, $newArticles));
         $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
     }
@@ -4766,7 +4766,7 @@ class TableTest extends TestCase
         $this->assertTrue($authors->Articles->link($author, $newArticles));
 
         $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
-        $this->assertEquals(count($author->articles), $sizeArticles);
+        $this->assertCount($sizeArticles, $author->articles);
 
         $newArticles = array_merge(
             $author->articles,
@@ -4786,7 +4786,7 @@ class TableTest extends TestCase
         unset($newArticles[0]);
 
         $this->assertTrue($authors->Articles->replace($author, $newArticles));
-        $this->assertEquals(count($newArticles), count($author->articles));
+        $this->assertCount(count($newArticles), $author->articles);
         $this->assertEquals((new Collection($newArticles))->extract('title'), (new Collection($author->articles))->extract('title'));
     }
 
