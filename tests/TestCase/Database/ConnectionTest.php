@@ -435,17 +435,17 @@ class ConnectionTest extends TestCase
      */
     public function testDeleteWithConditions()
     {
-        $this->connection->delete('things', ['id' => '1-rest-is-ommited'], ['id' => 'integer']);
+        $this->connection->delete('things', ['id' => '1-rest-is-omitted'], ['id' => 'integer']);
         $result = $this->connection->execute('SELECT * FROM things');
         $this->assertCount(1, $result);
         $result->closeCursor();
 
-        $this->connection->delete('things', ['id' => '1-rest-is-ommited'], ['id' => 'integer']);
+        $this->connection->delete('things', ['id' => '1-rest-is-omitted'], ['id' => 'integer']);
         $result = $this->connection->execute('SELECT * FROM things');
         $this->assertCount(1, $result);
         $result->closeCursor();
 
-        $this->connection->delete('things', ['id' => '2-rest-is-ommited'], ['id' => 'integer']);
+        $this->connection->delete('things', ['id' => '2-rest-is-omitted'], ['id' => 'integer']);
         $result = $this->connection->execute('SELECT * FROM things');
         $this->assertCount(0, $result);
         $result->closeCursor();
@@ -478,7 +478,7 @@ class ConnectionTest extends TestCase
      *
      * @return void
      */
-    public function testVirtualNestedTrasanction()
+    public function testVirtualNestedTransaction()
     {
         //starting 3 virtual transaction
         $this->connection->begin();
@@ -502,7 +502,7 @@ class ConnectionTest extends TestCase
      *
      * @return void
      */
-    public function testVirtualNestedTrasanction2()
+    public function testVirtualNestedTransaction2()
     {
         //starting 3 virtual transaction
         $this->connection->begin();
@@ -525,7 +525,7 @@ class ConnectionTest extends TestCase
      * @return void
      */
 
-    public function testVirtualNestedTrasanction3()
+    public function testVirtualNestedTransaction3()
     {
         //starting 3 virtual transaction
         $this->connection->begin();

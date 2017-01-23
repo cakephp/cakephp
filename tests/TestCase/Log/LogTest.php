@@ -652,7 +652,7 @@ class LogTest extends TestCase
         Log::drop('error');
         Log::drop('debug');
 
-        $result = Log::write('error', 'Bad stuff', 'unpossible');
+        $result = Log::write('error', 'Bad stuff', 'impossible');
         $this->assertFalse($result);
     }
 

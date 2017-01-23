@@ -1074,7 +1074,7 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
-     * Test that prev() and the shared implementation underneath picks up from optins
+     * Test that prev() and the shared implementation underneath picks up from options
      *
      * @return void
      */

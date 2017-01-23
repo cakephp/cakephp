@@ -170,7 +170,7 @@ class TableLocatorTest extends TestCase
     }
 
     /**
-     * Are auto-models instanciated correctly? How about when they have an alias?
+     * Are auto-models instantiated correctly? How about when they have an alias?
      *
      * @return void
      */

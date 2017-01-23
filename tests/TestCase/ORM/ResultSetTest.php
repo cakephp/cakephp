@@ -269,7 +269,7 @@ class ResultSetTest extends TestCase
      *
      * @return void
      */
-    public function testBelongsToEagerLoaderLeavesEmptyAssocation()
+    public function testBelongsToEagerLoaderLeavesEmptyAssociation()
     {
         $comments = TableRegistry::get('Comments');
         $comments->belongsTo('Articles');
@@ -329,7 +329,7 @@ class ResultSetTest extends TestCase
      *
      * @return void
      */
-    public function testHasOneEagerLoaderLeavesEmptyAssocation()
+    public function testHasOneEagerLoaderLeavesEmptyAssociation()
     {
         $this->table->hasOne('Comments');
 

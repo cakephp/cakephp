@@ -274,7 +274,7 @@ class ConfigureTest extends TestCase
      * @expectedException \RuntimeException
      * @return void
      */
-    public function testLoadExceptionOnNonExistantFile()
+    public function testLoadExceptionOnNonExistentFile()
     {
         Configure::config('test', new PhpConfig());
         Configure::load('non_existing_configuration_file', 'test');

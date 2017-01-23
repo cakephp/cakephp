@@ -128,10 +128,10 @@ class ConsoleErrorHandlerTest extends TestCase
      */
     public function testError404Exception()
     {
-        $exception = new NotFoundException('dont use me in cli.');
+        $exception = new NotFoundException('don\'t use me in cli.');
 
         $this->stderr->expects($this->once())->method('write')
-            ->with($this->stringContains('dont use me in cli.'));
+            ->with($this->stringContains('don\'t use me in cli.'));
 
         $this->Error->handleException($exception);
     }
@@ -143,10 +143,10 @@ class ConsoleErrorHandlerTest extends TestCase
      */
     public function testError500Exception()
     {
-        $exception = new InternalErrorException('dont use me in cli.');
+        $exception = new InternalErrorException('don\'t use me in cli.');
 
         $this->stderr->expects($this->once())->method('write')
-            ->with($this->stringContains('dont use me in cli.'));
+            ->with($this->stringContains('don\'t use me in cli.'));
 
         $this->Error->handleException($exception);
     }

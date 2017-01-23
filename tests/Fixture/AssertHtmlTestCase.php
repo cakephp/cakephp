@@ -4,7 +4,7 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\TestCase;
 
 /**
- * This class helps in indirectly testing the functionalities of TestCase::assertHtml
+ * This class helps in indirectly testing the functionality of TestCase::assertHtml
  */
 class AssertHtmlTestCase extends TestCase
 {
