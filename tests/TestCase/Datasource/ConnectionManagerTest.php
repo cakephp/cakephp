@@ -24,7 +24,7 @@ class FakeConnection
      *
      * @param array $config configuration for connecting to database
      */
-    public function __construct($config)
+    public function __construct($config = [])
     {
         $this->_config = $config;
     }
