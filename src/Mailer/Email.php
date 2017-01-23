@@ -390,7 +390,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
-     * @return array|self
+     * @return array|$this
      * @throws \InvalidArgumentException
      */
     public function from($email = null, $name = null)
@@ -433,7 +433,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
-     * @return array|self
+     * @return array|$this
      * @throws \InvalidArgumentException
      */
     public function sender($email = null, $name = null)
@@ -476,7 +476,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
-     * @return array|self
+     * @return array|$this
      * @throws \InvalidArgumentException
      */
     public function replyTo($email = null, $name = null)
@@ -519,7 +519,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
-     * @return array|self
+     * @return array|$this
      * @throws \InvalidArgumentException
      */
     public function readReceipt($email = null, $name = null)
@@ -562,7 +562,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
-     * @return array|self
+     * @return array|$this
      * @throws \InvalidArgumentException
      */
     public function returnPath($email = null, $name = null)
@@ -605,7 +605,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
-     * @return array|self
+     * @return array|$this
      */
     public function to($email = null, $name = null)
     {
@@ -659,7 +659,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
-     * @return array|self
+     * @return array|$this
      */
     public function cc($email = null, $name = null)
     {
@@ -713,7 +713,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
-     * @return array|self
+     * @return array|$this
      */
     public function bcc($email = null, $name = null)
     {
@@ -852,7 +852,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|bool|null $regex The pattern to use for email address validation,
      *   null to unset the pattern and make use of filter_var() instead, false or
      *   nothing to return the current value
-     * @return string|self
+     * @return string|$this
      */
     public function emailPattern($regex = false)
     {
@@ -1001,7 +1001,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @deprecated 3.4.0 Use setSubject()/getSubject() instead.
      * @param string|null $subject Subject string.
-     * @return string|self
+     * @return string|$this
      */
     public function subject($subject = null)
     {
@@ -1217,7 +1217,7 @@ class Email implements JsonSerializable, Serializable
      * @deprecated 3.4.0 Use setTemplate()/getTemplate() and setLayout()/getLayout() instead.
      * @param bool|string $template Template name or null to not use
      * @param bool|string $layout Layout name or null to not use
-     * @return array|self
+     * @return array|$this
      */
     public function template($template = false, $layout = false)
     {
@@ -1263,7 +1263,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @deprecated 3.4.0 Use setViewRenderer()/getViewRenderer() instead.
      * @param string|null $viewClass View class name.
-     * @return string|self
+     * @return string|$this
      */
     public function viewRender($viewClass = null)
     {
@@ -1303,7 +1303,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @deprecated 3.4.0 Use setViewVars()/getViewVars() instead.
      * @param array|null $viewVars Variables to set for view.
-     * @return array|self
+     * @return array|$this
      */
     public function viewVars($viewVars = null)
     {
@@ -1342,7 +1342,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @deprecated 3.4.0 Use setTheme()/getTheme() instead.
      * @param string|null $theme Theme name.
-     * @return string|self
+     * @return string|$this
      */
     public function theme($theme = null)
     {
@@ -1381,7 +1381,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @deprecated 3.4.0 Use setHelpers()/getHelpers() instead.
      * @param array|null $helpers Helpers list.
-     * @return array|self
+     * @return array|$this
      */
     public function helpers($helpers = null)
     {
@@ -1424,7 +1424,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @deprecated 3.4.0 Use setEmailFormat()/getEmailFormat() instead.
      * @param string|null $format Formatting string.
-     * @return string|self
+     * @return string|$this
      * @throws \InvalidArgumentException
      */
     public function emailFormat($format = null)
@@ -1488,7 +1488,7 @@ class Email implements JsonSerializable, Serializable
      * @deprecated 3.4.0 Use setTransport()/getTransport() instead.
      * @param string|\Cake\Mailer\AbstractTransport|null $name Either the name of a configured
      *   transport, or a transport instance.
-     * @return \Cake\Mailer\AbstractTransport|self
+     * @return \Cake\Mailer\AbstractTransport|$this
      * @throws \LogicException When the chosen transport lacks a send method.
      * @throws \InvalidArgumentException When $name is neither a string nor an object.
      */
@@ -1584,7 +1584,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @deprecated 3.4.0 Use setMessageId()/getMessageId() instead.
      * @param bool|string|null $message True to generate a new Message-ID, False to ignore (not send in email), String to set as Message-ID
-     * @return bool|string|self
+     * @return bool|string|$this
      * @throws \InvalidArgumentException
      */
     public function messageId($message = null)
@@ -1626,7 +1626,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @deprecated 3.4.0 Use setDomain()/getDomain() instead.
      * @param string|null $domain Manually set the domain for CLI mailing
-     * @return string|self
+     * @return string|$this
      */
     public function domain($domain = null)
     {
@@ -1782,7 +1782,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @deprecated 3.4.0 Use setAttachments()/getAttachments() instead.
      * @param string|array|null $attachments String with the filename or array with filenames
-     * @return array|self Either the array of attachments when getting or $this when setting.
+     * @return array|$this Either the array of attachments when getting or $this when setting.
      * @throws \InvalidArgumentException
      */
     public function attachments($attachments = null)
@@ -1978,7 +1978,7 @@ class Email implements JsonSerializable, Serializable
      * @deprecated 3.4.0 Use setProfile()/getProfile() instead.
      * @param null|string|array $config String with configuration name, or
      *    an array with config or null to return current config.
-     * @return string|array|self
+     * @return string|array|$this
      */
     public function profile($config = null)
     {
