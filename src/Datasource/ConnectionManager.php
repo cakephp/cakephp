@@ -30,7 +30,7 @@ class ConnectionManager
 {
 
     use StaticConfigTrait {
-        config as protected _config;
+        setConfig as protected _setConfig;
         parseDsn as protected _parseDsn;
     }
 
@@ -71,13 +71,13 @@ class ConnectionManager
      * @throws \Cake\Core\Exception\Exception When trying to modify an existing config.
      * @see \Cake\Core\StaticConfigTrait::config()
      */
-    public static function config($key, $config = null)
+    public static function setConfig($key, $config = null)
     {
         if (is_array($config)) {
             $config['name'] = $key;
         }
 
-        return static::_config($key, $config);
+        return static::_setConfig($key, $config);
     }
 
     /**
