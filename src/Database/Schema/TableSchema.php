@@ -879,3 +879,6 @@ class TableSchema
         return $dialect->dropConstraintSql($this);
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Database\Schema\TableSchema', 'Cake\Database\Schema\Table');

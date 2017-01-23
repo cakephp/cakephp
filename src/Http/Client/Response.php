@@ -601,3 +601,6 @@ class Response extends Message implements ResponseInterface
         return isset($this->{$key});
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Http\Client\Response', 'Cake\Network\Http\Response');
