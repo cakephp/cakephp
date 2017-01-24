@@ -183,7 +183,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *
      * @param callable $c The callback function to be called
      * @param mixed $zero The state of reduction
-     * @return void
+     * @return mixed
      */
     public function reduce(callable $c, $zero = null);
 
