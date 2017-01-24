@@ -1059,7 +1059,11 @@ class FormHelper extends Helper
         }
 
         $label = $this->_getLabel($fieldName, compact('input', 'label', 'error', 'nestedInput') + $options);
-        $result = $this->_groupTemplate(compact('input', 'label', 'error', 'options'));
+        if ($nestedInput) {
+            $result = $this->_groupTemplate(compact('label', 'error', 'options'));
+        } else {
+            $result = $this->_groupTemplate(compact('input', 'label', 'error', 'options'));
+        }
         $result = $this->_inputContainerTemplate([
             'content' => $result,
             'error' => $error,
@@ -1088,7 +1092,7 @@ class FormHelper extends Helper
         }
 
         return $this->formatTemplate($groupTemplate, [
-            'input' => $options['input'],
+            'input' => isset($options['input']) ? $options['input'] : [],
             'label' => $options['label'],
             'error' => $options['error'],
             'templateVars' => isset($options['options']['templateVars']) ? $options['options']['templateVars'] : []
