@@ -44,7 +44,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function each(callable $c)
     {
@@ -85,7 +84,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function every(callable $c)
     {
@@ -101,7 +99,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function some(callable $c)
     {
@@ -116,7 +113,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function contains($value)
     {
@@ -141,7 +137,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function reduce(callable $c, $zero = null)
     {
@@ -165,7 +160,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function extract($matcher)
     {
@@ -183,7 +177,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function max($callback, $type = SORT_NUMERIC)
     {
@@ -192,7 +185,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function min($callback, $type = SORT_NUMERIC)
     {
@@ -201,7 +193,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function sortBy($callback, $dir = SORT_DESC, $type = SORT_NUMERIC)
     {
@@ -210,7 +201,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function groupBy($callback)
     {
@@ -225,7 +215,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function indexBy($callback)
     {
@@ -240,7 +229,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function countBy($callback)
     {
@@ -259,7 +247,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function sumOf($matcher = null)
     {
@@ -278,7 +265,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function shuffle()
     {
@@ -290,7 +276,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function sample($size = 10)
     {
@@ -299,7 +284,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function take($size = 1, $from = 0)
     {
@@ -308,7 +292,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function skip($howMany)
     {
@@ -317,7 +300,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function match(array $conditions)
     {
@@ -326,7 +308,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function firstMatch(array $conditions)
     {
@@ -335,7 +316,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function first()
     {
@@ -346,7 +326,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function last()
     {
@@ -366,7 +345,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function append($items)
     {
@@ -379,7 +357,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function combine($keyPath, $valuePath, $groupPath = null)
     {
@@ -419,7 +396,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function nest($idPath, $parentPath, $nestingKey = 'children')
     {
@@ -476,7 +452,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function toArray($preserveKeys = true)
     {
@@ -497,7 +472,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function toList()
     {
@@ -506,7 +480,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function jsonSerialize()
     {
@@ -515,7 +488,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function compile($preserveKeys = true)
     {
@@ -568,7 +540,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function unfold(callable $transformer = null)
     {
@@ -588,7 +559,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function through(callable $handler)
     {
@@ -599,7 +569,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function zip($items)
     {
@@ -608,7 +577,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function zipWith($items, $callable)
     {
@@ -624,7 +592,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function chunk($chunkSize)
     {
@@ -644,7 +611,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function chunkWithKeys($chunkSize, $preserveKeys = true)
     {
@@ -672,7 +638,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function isEmpty()
     {
@@ -685,7 +650,6 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
-     *
      */
     public function unwrap()
     {
