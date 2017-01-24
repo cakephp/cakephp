@@ -2897,7 +2897,8 @@ class DboSource extends DataSource {
 			$isKey = (
 				strpos($key, '(') !== false ||
 				strpos($key, ')') !== false ||
-				strpos($key, '|') !== false
+				strpos($key, '|') !== false ||
+				strpos($key, '->') !== false
 			);
 			$key = $isKey ? $this->_quoteFields($key) : $this->name($key);
 		}

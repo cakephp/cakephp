@@ -244,15 +244,16 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
- * test that PostgreSQL json operators can be used.
+ * test that SQL JSON operators can be used.
  *
  * @return void
  */
 	public function testColumnHyphenOperator() {
 		$result = $this->testDb->conditions(array('Foo.bar->>\'fieldName\'' => 42));
-		echo "Result is: ";
-		echo $result;
-		$this->assertEquals(' WHERE `Foo`.`bar`->>\'fieldName\' = 42', $result, 'pgsql json operator failed');
+		$this->assertEquals(' WHERE `Foo`.`bar`->>\'fieldName\' = 42', $result, 'SQL JSON operator failed');
+
+		$result = $this->testDb->conditions(array('Foo.bar->\'fieldName\'' => 42));
+		$this->assertEquals(' WHERE `Foo`.`bar`->\'fieldName\' = 42', $result, 'SQL JSON operator failed');
 	}
 
 /**
