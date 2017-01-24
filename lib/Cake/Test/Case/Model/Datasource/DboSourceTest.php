@@ -244,6 +244,27 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * test that SQL JSON operators can be used.
+ *
+ * @return void
+ */
+	public function testColumnHyphenOperator() {
+		//PostgreSQL style
+		$result = $this->testDb->conditions(array('Foo.bar->>\'fieldName\'' => 42));
+		$this->assertEquals(' WHERE `Foo`.`bar`->>\'fieldName\' = 42', $result, 'SQL JSON operator failed');
+		$result = $this->testDb->conditions(array('Foo.bar->\'fieldName\'' => 42));
+		$this->assertEquals(' WHERE `Foo`.`bar`->\'fieldName\' = 42', $result, 'SQL JSON operator failed');
+
+		// MYSQL style
+		$result = $this->testDb->conditions(array('Foo.bar->>\'$.fieldName\'' => 42));
+		$this->assertEquals(' WHERE `Foo`.`bar`->>\'$.fieldName\' = 42', $result, 'SQL JSON operator failed');
+
+		//Without defining table name.
+		$result = $this->testDb->conditions(array('bar->>\'$.fieldName\'' => 42));
+		$this->assertEquals(' WHERE `bar`->>\'$.fieldName\' = 42', $result, 'SQL JSON operator failed');
+	}
+
+/**
  * test that order() will accept objects made from DboSource::expression
  *
  * @return void
