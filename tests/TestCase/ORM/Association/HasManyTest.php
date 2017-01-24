@@ -714,12 +714,12 @@ class HasManyTest extends TestCase
 
         // Ensure that after each model is saved, we are still within a transaction.
         $listenerAfterSave = function ($e, $entity, $options) use ($articles) {
-            $debugInfo = $articles->connection()->__debugInfo();
-            $transactionLevel = $debugInfo['transactionLevel'];
-            $this->assertGreaterThan(0, $transactionLevel);
+            $this->assertTrue($articles->connection()->inTransaction(), 'Multiple transactions used to save associated models.');
         };
         $articles->eventManager()->on('Model.afterSave', $listenerAfterSave);
-        $assoc->link($entity, $articles->find('all')->toArray());
+
+        $options = ['atomic' => false];
+        $assoc->link($entity, $articles->find('all')->toArray(), $options);
 
         // Ensure that link was successful.
         $new = $this->author->get(2, ['contain' => 'Articles']);
