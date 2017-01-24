@@ -262,7 +262,7 @@ class DboSourceTest extends CakeTestCase {
 		//Without defining table name.
 		$result = $this->testDb->conditions(array('bar->>\'$.fieldName\'' => 42));
 		$this->assertEquals(' WHERE `bar`->>\'$.fieldName\' = 42', $result, 'SQL JSON operator failed');
-    }
+	}
 
 /**
  * test that order() will accept objects made from DboSource::expression
