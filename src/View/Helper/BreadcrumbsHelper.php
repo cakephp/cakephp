@@ -224,6 +224,18 @@ class BreadcrumbsHelper extends Helper
     }
 
     /**
+     * Removes all existing crumbs.
+     *
+     * @return $this
+     */
+    public function reset()
+    {
+        $this->crumbs = [];
+
+        return $this;
+    }
+
+    /**
      * Renders the breadcrumbs trail.
      *
      * @param array $attributes Array of attributes applied to the `wrapper` template. Accepts the `templateVars` key to
