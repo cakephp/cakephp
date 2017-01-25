@@ -1103,7 +1103,9 @@ class HtmlHelper extends Helper
      *
      * Outputs:
      *
-     * `<video src="http://www.somehost.com/files/audio.mp3">Fallback text</video>`
+	 * ```
+     * <video src="http://www.somehost.com/files/audio.mp3">Fallback text</video>
+	 * ```
      *
      * Using a video file:
      *
@@ -1113,7 +1115,9 @@ class HtmlHelper extends Helper
      *
      * Outputs:
      *
-     * `<video src="/files/video.mp4">Fallback text</video>`
+	 * ```
+     * <video src="/files/video.mp4">Fallback text</video>
+	 * ```
      *
      * Using multiple video files:
      *
