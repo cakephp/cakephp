@@ -143,7 +143,7 @@ class ValueBinder
         if (empty($bindings)) {
             return;
         }
-        $params = $types = [];
+
         foreach ($bindings as $b) {
             $statement->bindValue($b['placeholder'], $b['value'], $b['type']);
         }
