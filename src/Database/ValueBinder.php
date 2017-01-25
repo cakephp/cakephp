@@ -67,8 +67,8 @@ class ValueBinder
     public function placeholder($token)
     {
         $number = $this->_bindingsCount++;
-        if ($token[0] !== ':' || $token !== '?') {
-            $token = sprintf(':c%s', $number);
+        if ($token[0] !== ':' && $token !== '?') {
+            $token = sprintf(':%s%s', $token, $number);
         }
 
         return $token;
