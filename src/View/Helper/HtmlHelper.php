@@ -195,9 +195,9 @@ class HtmlHelper extends Helper
      *
      * Create a meta tag that is output inline:
      *
-	 * ```
+     * ```
      * $this->Html->meta('icon', 'favicon.ico');
-	 * ```
+     * ```
      *
      * Append the meta tag to custom view block "meta":
      *
@@ -1103,9 +1103,9 @@ class HtmlHelper extends Helper
      *
      * Outputs:
      *
-	 * ```
+     * ```
      * <video src="http://www.somehost.com/files/audio.mp3">Fallback text</video>
-	 * ```
+     * ```
      *
      * Using a video file:
      *
@@ -1115,9 +1115,9 @@ class HtmlHelper extends Helper
      *
      * Outputs:
      *
-	 * ```
+     * ```
      * <video src="/files/video.mp4">Fallback text</video>
-	 * ```
+     * ```
      *
      * Using multiple video files:
      *
