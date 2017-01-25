@@ -40,7 +40,7 @@ class PagesController extends AppController {
 /**
  * Displays a view
  *
- * @return void
+ * @return \Cake\Network\Response|null
  * @throws ForbiddenException When a directory traversal attempt.
  * @throws NotFoundException When the view file could not be found
  *   or MissingViewException in debug mode.
