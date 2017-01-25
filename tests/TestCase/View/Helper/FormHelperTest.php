@@ -8483,7 +8483,7 @@ class FormHelperTest extends TestCase
      */
     public function testNestedLabelInput()
     {
-        $result = $this->Form->input('foo', [ 'nestedInput' => true]);
+        $result = $this->Form->input('foo', ['nestedInput' => true]);
         $expected = [
             'div' => ['class' => 'input text'],
             'label' => ['for' => 'foo'],
