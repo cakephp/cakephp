@@ -351,6 +351,80 @@ class BreadcrumbsHelperTest extends TestCase
     }
 
     /**
+     * Tests the setCrumbs method
+     *
+     * @return void
+     */
+    public function testSetCrumbs()
+	{
+        $input = [
+            [
+                'title' => 'Home',
+                'url' => '/',
+                'options' => ['class' => 'first']
+            ],
+            [
+                'title' => 'Missing URL and options Key'
+            ],
+            []
+        ];
+
+        $this->breadcrumbs->setCrumbs($input);
+
+        $actual = $this->breadcrumbs->getCrumbs();
+        $expected = [
+            [
+                'title' => 'Home',
+                'url' => '/',
+                'options' => ['class' => 'first']
+            ],
+            [
+                'title' => 'Missing URL and options Key',
+                'url' => null,
+                'options' => [],
+            ],
+            [
+                'title' => '',
+                'url' => null,
+                'options' => [],
+            ]
+        ];
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Tests adding invalid data to setCrumbs returns false.
+     *
+     * @return void
+     */
+    public function testSetCrumbsInvalidData()
+	{
+        $results = $this->breadcrumbs->setCrumbs('test');
+        $this->assertFalse($results);
+
+        $results = $this->breadcrumbs->setCrumbs(null);
+        $this->assertFalse($results);
+    }
+
+    /**
+     * Tests passing empty array to setCrumbs.
+     *
+     * @return void
+     */
+    public function testSetCrumbsEmpty()
+	{
+        $this->breadcrumbs->add('Home', '/', ['class' => 'first']);
+
+        $this->breadcrumbs->setCrumbs([]);
+
+        $expected = [];
+        $actual = $this->breadcrumbs->getCrumbs();
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
      * Tests the render method
      *
      * @return void

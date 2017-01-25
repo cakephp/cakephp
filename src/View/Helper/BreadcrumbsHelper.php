@@ -224,6 +224,26 @@ class BreadcrumbsHelper extends Helper
     }
 
     /**
+     * Sets the crumb list.
+     *
+     * @param array $crumbs The new crumbs list.
+     * @return array|bool The breadcrumbs or false if invalid data supplied.
+     */
+    public function setCrumbs($crumbs)
+	{
+        if (!is_array($crumbs)) {
+            return false;
+        }
+
+        $this->crumbs = [];
+        foreach ($crumbs as $crumb) {
+            $this->crumbs[] = $crumb + ['title' => '', 'url' => null, 'options' => []];
+        }
+
+        return $this->crumbs;
+    }
+
+    /**
      * Renders the breadcrumbs trail.
      *
      * @param array $attributes Array of attributes applied to the `wrapper` template. Accepts the `templateVars` key to
