@@ -86,14 +86,13 @@ class ValueBinder
     {
         $placeholders = [];
         foreach ($values as $k => $value) {
-            $param = ":c" . $this->_bindingsCount;
+            $param = $this->placeholder('c');
             $this->_bindings[$param] = [
                 'value' => $value,
                 'type' => $type,
                 'placeholder' => substr($param, 1),
             ];
             $placeholders[$k] = $param;
-            $this->_bindingsCount++;
         }
 
         return $placeholders;
