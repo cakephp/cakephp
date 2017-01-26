@@ -2562,8 +2562,9 @@ class RouterTest extends CakeTestCase {
 			'named' => array('page' => 123, 'sort' => 'Article.title', 'direction' => 'desc'),
 			'url' => array(),
 		);
-		$result = Router::reverse($params);
+		$result = Router::reverseToArray($params);
 		$expected = array(
+			'plugin' => null,
 			'controller' => 'posts',
 			'action' => 'index',
 			123,
@@ -2585,6 +2586,7 @@ class RouterTest extends CakeTestCase {
 		$request->query = array('url' => 'eng/posts/view/123', 'test' => 'value');
 		$result = Router::reverseToArray($request);
 		$expected = array(
+			'plugin' => null,
 			'controller' => 'posts',
 			'action' => 'view',
 			123,
