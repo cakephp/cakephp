@@ -1100,7 +1100,7 @@ class Router {
 	 * @param CakeRequest|array $params The params array or CakeRequest object that needs to be reversed.
 	 * @return array The URL array ready to be used for redirect or HTML link.
 	 */
-	public function reverseToArray($params) {
+	public static function reverseToArray($params) {
 		if ($params instanceof CakeRequest) {
 			$url = $params->query;
 			$params = $params->params;
