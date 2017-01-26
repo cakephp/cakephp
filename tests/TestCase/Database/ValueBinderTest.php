@@ -124,15 +124,15 @@ class ValueBinderTest extends TestCase
         $this->assertCount(2, $valueBinder->bindings());
 
         // Ensure the placeholder generation IS affected by resetCount
-        $valueBinder->placeholder('c');
-        $valueBinder->placeholder('c');
-        $result = $valueBinder->placeholder('c');
-        $this->assertEquals(':c2', $result);
+        $valueBinder->placeholder('param');
+        $valueBinder->placeholder('param');
+        $result = $valueBinder->placeholder('param');
+        $this->assertEquals(':param2', $result);
 
         $valueBinder->resetCount();
 
-        $placeholder = $valueBinder->placeholder('c');
-        $this->assertEquals(':c0', $placeholder);
+        $placeholder = $valueBinder->placeholder('param');
+        $this->assertEquals(':param0', $placeholder);
         $this->assertCount(2, $valueBinder->bindings());
     }
 
