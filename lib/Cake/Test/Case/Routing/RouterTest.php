@@ -2564,7 +2564,6 @@ class RouterTest extends CakeTestCase {
 		);
 		$result = Router::reverseToArray($params);
 		$expected = array(
-			'plugin' => null,
 			'controller' => 'posts',
 			'action' => 'index',
 			123,
