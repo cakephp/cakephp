@@ -2303,7 +2303,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array $options The options array, optionally containing the 'scope' key.
      *   May also be the validation context, if there are no options.
      * @param array|null $context Either the validation context or null.
-     * @return bool True, if the value is unique, or false, if a non-scalar value was given.
+     * @return bool True if the value is unique, or false if a non-scalar, non-unique value was given.
      */
     public function validateUnique($value, array $options, array $context = null)
     {
