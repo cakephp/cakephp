@@ -9,6 +9,24 @@ use PHPUnit_Framework_ExpectationFailedException;
  */
 class AssertHtmlTest extends TestCase
 {
+    public function testAssertHtmlWhitespace()
+    {
+        $input = <<<HTML
+<div class="wrapper">
+    <h4 class="widget-title">Popular tags
+        <i class="i-icon"></i>
+    </h4>
+</div>
+HTML;
+        $pattern = [
+            'div' => ['class' => 'wrapper'],
+            'h4' => ['class' => 'widget-title'], 'Popular tags',
+            'i' => ['class' => 'i-icon'], '/i',
+            '/h4',
+            '/div'
+        ];
+        $this->assertHtml($pattern, $input);
+    }
     /**
      * test assertHtml works with single and double quotes
      *
