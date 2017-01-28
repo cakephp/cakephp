@@ -120,7 +120,7 @@ class ComponentRegistryTest extends TestCase
     }
 
     /**
-     * test missingcomponent exception
+     * test MissingComponent exception
      *
      * @expectedException \Cake\Controller\Exception\MissingComponentException
      * @return void

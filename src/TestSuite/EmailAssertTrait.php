@@ -46,7 +46,7 @@ trait EmailAssertTrait
     /**
      * Creates an email instance overriding its transport for testing purposes.
      *
-     * @param bool $new Tells if new instance should forcebly be created.
+     * @param bool $new Tells if new instance should forcibly be created.
      * @return \Cake\Mailer\Email
      */
     public function email($new = false)

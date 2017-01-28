@@ -295,12 +295,12 @@ class CellTest extends TestCase
     }
 
     /**
-     * Tests that using an unexisting cell throws an exception.
+     * Tests that using an non-existent cell throws an exception.
      *
      * @expectedException \Cake\View\Exception\MissingCellException
      * @return void
      */
-    public function testUnexistingCell()
+    public function testNonExistentCell()
     {
         $cell = $this->View->cell('TestPlugin.Void::echoThis', ['arg1' => 'v1']);
         $cell = $this->View->cell('Void::echoThis', ['arg1' => 'v1', 'arg2' => 'v2']);

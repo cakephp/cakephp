@@ -4079,11 +4079,11 @@ class QueryTest extends TestCase
 
 
     /**
-     * Tests that the json type can save and get data symetrically
+     * Tests that the json type can save and get data symmetrically
      *
      * @return void
      */
-    public function testSymetricJsonType()
+    public function testSymmetricJsonType()
     {
         $query = new Query($this->connection);
         $insert = $query

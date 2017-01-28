@@ -219,7 +219,7 @@ class EntityContext implements ContextInterface
      * @param array $options Options:
      *   - `default`: Default value to return if no value found in request
      *     data or entity.
-     *   - `schemaDefault`: Boolen indicating whether default value from table
+     *   - `schemaDefault`: Boolean indicating whether default value from table
      *     schema should be used if it's not explicitly provided.
      * @return mixed The value of the field or null on a miss.
      */
@@ -316,7 +316,7 @@ class EntityContext implements ContextInterface
      * will be returned.
      *
      * @param array|null $path Each one of the parts in a path for a field name
-     *  or null to get the entity passed in contructor context.
+     *  or null to get the entity passed in constructor context.
      * @return \Cake\Datasource\EntityInterface|\Traversable|array|bool
      * @throws \RuntimeException When properties cannot be read.
      */

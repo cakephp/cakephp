@@ -1059,7 +1059,7 @@ class BelongsToMany extends Association
                 $matching[$field] = $value;
             }
             // Assume that operators contain junction conditions.
-            // Trying to munge complex conditions could result in incorrect queries.
+            // Trying to manage complex conditions could result in incorrect queries.
             if ($isString && in_array(strtoupper($field), ['OR', 'NOT', 'AND', 'XOR'])) {
                 $matching[$field] = $value;
             }

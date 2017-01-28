@@ -856,7 +856,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      * @expectedExceptionMessage No response set, cannot assert file
      * @return void
      */
-    public function testAssertFileNoReponse()
+    public function testAssertFileNoResponse()
     {
         $this->assertFileResponse('foo');
     }

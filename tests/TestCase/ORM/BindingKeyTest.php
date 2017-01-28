@@ -18,7 +18,7 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * Integration tests for usinge the bindingKey in associations
+ * Integration tests for using the bindingKey in associations
  */
 class BindingKeyTest extends TestCase
 {

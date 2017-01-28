@@ -2517,11 +2517,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * the same site_id. Scoping will only be used if the scoping field is present in
      * the data to be validated.
      *
-     * @param mixed $value The value of column to be checked for uniqueness
+     * @param mixed $value The value of column to be checked for uniqueness.
      * @param array $options The options array, optionally containing the 'scope' key.
-     *   May also be the validation context if there are no options.
+     *   May also be the validation context, if there are no options.
      * @param array|null $context Either the validation context or null.
-     * @return bool true if the value is unique
+     * @return bool True if the value is unique, or false if a non-scalar, non-unique value was given.
      */
     public function validateUnique($value, array $options, array $context = null)
     {

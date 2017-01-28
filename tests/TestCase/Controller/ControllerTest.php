@@ -93,7 +93,7 @@ class TestController extends ControllerTestAppController
      * beforeFilter handler
      *
      * @param \Cake\Event\Event $event
-     * @retun void
+     * @return void
      */
     public function beforeFilter(Event $event)
     {

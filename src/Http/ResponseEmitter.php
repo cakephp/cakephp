@@ -133,7 +133,7 @@ class ResponseEmitter implements EmitterInterface
      * Emit the status line.
      *
      * Emits the status line using the protocol version and status code from
-     * the response; if a reason phrase is availble, it, too, is emitted.
+     * the response; if a reason phrase is available, it, too, is emitted.
      *
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
      * @return void

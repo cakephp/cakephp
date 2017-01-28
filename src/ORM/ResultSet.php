@@ -502,7 +502,6 @@ class ResultSet implements ResultSetInterface
                 $options['source'] = $table->getRegistryAlias();
                 /* @var \Cake\Datasource\EntityInterface $entity */
                 $entity = new $matching['entityClass']($results['_matchingData'][$alias], $options);
-                $entity->clean();
                 $results['_matchingData'][$alias] = $entity;
             }
         }
@@ -553,7 +552,6 @@ class ResultSet implements ResultSetInterface
 
             if ($this->_hydrate && $results[$alias] !== null && $assoc['canBeJoined']) {
                 $entity = new $assoc['entityClass']($results[$alias], $options);
-                $entity->clean();
                 $results[$alias] = $entity;
             }
 

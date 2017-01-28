@@ -402,7 +402,6 @@ class FormHelperTest extends TestCase
         $entity = new Article();
         $collection = new Collection([$entity]);
         $emptyCollection = new Collection([]);
-        $emptyArray = [];
         $arrayObject = new \ArrayObject([]);
         $data = [
             'schema' => [
@@ -496,7 +495,7 @@ class FormHelperTest extends TestCase
      *
      * @return void
      */
-    public function testCreateExplictMethodEnctype()
+    public function testCreateExplicitMethodEnctype()
     {
         $encoding = strtolower(Configure::read('App.encoding'));
         $result = $this->Form->create(false, [
@@ -899,7 +898,7 @@ class FormHelperTest extends TestCase
      * Test base form URL when url param is passed with multiple parameters (&)
      *
      */
-    public function testCreateQuerystringrequest()
+    public function testCreateQueryStringRequest()
     {
         $encoding = strtolower(Configure::read('App.encoding'));
         $result = $this->Form->create($this->article, [
@@ -1090,7 +1089,6 @@ class FormHelperTest extends TestCase
     public function testCreateEndGetNoSecurity()
     {
         $this->Form->request->params['_csrfToken'] = 'testKey';
-        $encoding = strtolower(Configure::read('App.encoding'));
         $article = new Article();
         $result = $this->Form->create($article, [
             'type' => 'get',
@@ -1474,7 +1472,6 @@ class FormHelperTest extends TestCase
      */
     public function testSecuritySubmitImageNoName()
     {
-        $key = 'testKey';
         $this->Form->request->params['_Token'] = 'testKey';
 
         $this->Form->create(false);
@@ -2409,18 +2406,18 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * testSecuredFormUrlHasHtmlAndIdentifer method
+     * testSecuredFormUrlHasHtmlAndIdentifier method
      *
-     * Test that URL, HTML and identifer show up in their hashs.
+     * Test that URL, HTML and identifier show up in their hashes.
      *
      * @return void
      */
-    public function testSecuredFormUrlHasHtmlAndIdentifer()
+    public function testSecuredFormUrlHasHtmlAndIdentifier()
     {
         $this->Form->request->params['_Token'] = ['key' => 'testKey'];
 
         $expected = 'ece0693fb1b19ca116133db1832ac29baaf41ce5%3A';
-        $res = $this->Form->create($this->article, [
+        $this->Form->create($this->article, [
             'url' => [
                 'controller' => 'articles',
                 'action' => 'view',
@@ -3069,6 +3066,7 @@ class FormHelperTest extends TestCase
                 'type' => 'text', 'name' => 'nested[text][]'
             ],
         ];
+        $this->assertHtml($expected, $result);
 
         $result = $this->Form->file('nested.file[]');
         $expected = [
@@ -5411,7 +5409,7 @@ class FormHelperTest extends TestCase
         $this->Form->request->params['_Token'] = 'testKey';
         $this->assertEquals([], $this->Form->fields);
 
-        $result = $this->Form->select(
+        $this->Form->select(
             'Model.multi_field',
             ['1' => 'first', '2' => 'second', '3' => 'third'],
             ['multiple' => 'checkbox']
@@ -5596,6 +5594,8 @@ class FormHelperTest extends TestCase
             new Collection(['1', '2']),
             ['name' => 'fish']
         );
+        $this->assertHtml($expected, $result);
+
         $result = $this->Form->multiCheckbox('category', ['1', '2'], [
             'name' => 'fish',
         ]);
@@ -6046,7 +6046,6 @@ class FormHelperTest extends TestCase
     public function testDatetimeEmpty()
     {
         extract($this->dateRegex);
-        $now = strtotime('now');
 
         $result = $this->Form->dateTime('Contact.date', [
             'timeFormat' => 12,
@@ -6104,7 +6103,6 @@ class FormHelperTest extends TestCase
     public function testDatetimeMinuteInterval()
     {
         extract($this->dateRegex);
-        $now = strtotime('now');
 
         $result = $this->Form->dateTime('Contact.date', [
             'interval' => 5,
@@ -7870,7 +7868,7 @@ class FormHelperTest extends TestCase
      */
     public function testForMagicControlNonExistingNorValidated()
     {
-        $result = $this->Form->create($this->article);
+        $this->Form->create($this->article);
         $this->Form->templates(['inputContainer' => '{{content}}']);
         $result = $this->Form->control('non_existing_nor_validated');
         $expected = [
@@ -8794,5 +8792,30 @@ class FormHelperTest extends TestCase
         $this->Form->setValueSources(['context', 'query']);
         $result = $this->Form->getSourceValue('category');
         $this->assertEquals('sesame-cookies', $result);
+    }
+
+    /**
+     * testNestedLabelInput method
+     *
+     * Test the `nestedInput` parameter
+     *
+     * @return void
+     */
+    public function testNestedLabelInput()
+    {
+        $result = $this->Form->input('foo', ['nestedInput' => true]);
+        $expected = [
+            'div' => ['class' => 'input text'],
+            'label' => ['for' => 'foo'],
+            ['input' => [
+                'type' => 'text',
+                'name' => 'foo',
+                'id' => 'foo'
+            ]],
+            'Foo',
+            '/label',
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
     }
 }

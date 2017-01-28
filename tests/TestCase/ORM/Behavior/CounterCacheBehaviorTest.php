@@ -321,7 +321,7 @@ class CounterCacheBehaviorTest extends TestCase
     }
 
     /**
-     * Testing counter cache with lambda returning subqueryn
+     * Testing counter cache with lambda returning a subquery
      *
      * @return void
      */

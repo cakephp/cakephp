@@ -121,7 +121,7 @@ class CompletionShell extends Shell
         )->addSubcommand('commands', [
             'help' => 'Output a list of available commands',
             'parser' => [
-                'description' => 'List all availables',
+                'description' => 'List all available',
             ]
         ])->addSubcommand('subcommands', [
             'help' => 'Output a list of available subcommands',

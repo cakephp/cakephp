@@ -164,7 +164,7 @@ class FloatType extends Type implements TypeInterface
     }
 
     /**
-     * Converts a string into a float point after parseing it using the locale
+     * Converts a string into a float point after parsing it using the locale
      * aware parser.
      *
      * @param string $value The value to parse and convert to an float.

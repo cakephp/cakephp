@@ -77,7 +77,7 @@ class CollectionTest extends TestCase
      *
      * @return void
      */
-    public function testEeach()
+    public function testEach()
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
@@ -1689,8 +1689,8 @@ class CollectionTest extends TestCase
     public function testSerializeSimpleCollection()
     {
         $collection = new Collection([1, 2, 3]);
-        $selialized = serialize($collection);
-        $unserialized = unserialize($selialized);
+        $serialized = serialize($collection);
+        $unserialized = unserialize($serialized);
         $this->assertEquals($collection->toList(), $unserialized->toList());
         $this->assertEquals($collection->toArray(), $unserialized->toArray());
     }
@@ -1704,8 +1704,8 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection([1, 2, 3]);
         $collection = $collection->append(['a' => 4, 'b' => 5, 'c' => 6]);
-        $selialized = serialize($collection);
-        $unserialized = unserialize($selialized);
+        $serialized = serialize($collection);
+        $unserialized = unserialize($serialized);
         $this->assertEquals($collection->toList(), $unserialized->toList());
         $this->assertEquals($collection->toArray(), $unserialized->toArray());
     }
@@ -1726,8 +1726,8 @@ class CollectionTest extends TestCase
             return $e % 2;
         });
 
-        $selialized = serialize($collection);
-        $unserialized = unserialize($selialized);
+        $serialized = serialize($collection);
+        $unserialized = unserialize($serialized);
         $this->assertEquals($collection->toList(), $unserialized->toList());
         $this->assertEquals($collection->toArray(), $unserialized->toArray());
     }
@@ -1741,8 +1741,8 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection([4, 5]);
         $collection = $collection->zip([1, 2]);
-        $selialized = serialize($collection);
-        $unserialized = unserialize($selialized);
+        $serialized = serialize($collection);
+        $unserialized = unserialize($serialized);
         $this->assertEquals($collection->toList(), $unserialized->toList());
     }
 

@@ -156,7 +156,7 @@ class TreeBehavior extends Behavior
     /**
      * After save listener.
      *
-     * Manages updating level of descendents of currently saved entity.
+     * Manages updating level of descendants of currently saved entity.
      *
      * @param \Cake\Event\Event $event The afterSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity the entity that is going to be saved
@@ -172,9 +172,9 @@ class TreeBehavior extends Behavior
     }
 
     /**
-     * Set level for descendents.
+     * Set level for descendants.
      *
-     * @param \Cake\Datasource\EntityInterface $entity The entity whose descendents need to be updated.
+     * @param \Cake\Datasource\EntityInterface $entity The entity whose descendants need to be updated.
      * @return void
      */
     protected function _setChildrenLevel($entity)
