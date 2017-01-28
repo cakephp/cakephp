@@ -248,6 +248,38 @@ class I18nTest extends TestCase
     }
 
     /**
+     * Tests the __() functions with explict null params
+     *
+     * @return void
+     */
+    public function testBasicTranslateFunctionsWithNullParam()
+    {
+        $this->assertEquals('text {0}', __('text {0}'));
+        $this->assertEquals('text ', __('text {0}', null));
+
+        $this->assertEquals('text {0}', __n('text {0}', 'texts {0}', 1));
+        $this->assertEquals('text ', __n('text {0}', 'texts {0}', 1, null));
+
+        $this->assertEquals('text {0}', __d('default', 'text {0}'));
+        $this->assertEquals('text ', __d('default', 'text {0}', null));
+
+        $this->assertEquals('text {0}', __dn('default', 'text {0}', 'texts {0}', 1));
+        $this->assertEquals('text ', __dn('default', 'text {0}', 'texts {0}', 1, null));
+
+        $this->assertEquals('text {0}', __x('default', 'text {0}'));
+        $this->assertEquals('text ', __x('default', 'text {0}', null));
+
+        $this->assertEquals('text {0}', __xn('default', 'text {0}', 'texts {0}', 1));
+        $this->assertEquals('text ', __xn('default', 'text {0}', 'texts {0}', 1, null));
+
+        $this->assertEquals('text {0}', __dx('default', 'words', 'text {0}'));
+        $this->assertEquals('text ', __dx('default', 'words', 'text {0}', null));
+
+        $this->assertEquals('text {0}', __dxn('default', 'words', 'text {0}', 'texts {0}', 1));
+        $this->assertEquals('text ', __dxn('default', 'words', 'text {0}', 'texts {0}', 1, null));
+    }
+
+    /**
      * Tests the __() function on a plural key
      *
      * @return void
