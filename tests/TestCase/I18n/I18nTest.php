@@ -242,6 +242,9 @@ class I18nTest extends TestCase
         I18n::defaultFormatter('sprintf');
         $this->assertEquals('%d is 1 (po translated)', __('%d = 1'));
         $this->assertEquals('1 is 1 (po translated)', __('%d = 1', 1));
+        $this->assertEquals('1 is 1 (po translated)', __('%d = 1', [1]));
+        $this->assertEquals('The red dog, and blue cat', __('The %s dog, and %s cat', ['red', 'blue']));
+        $this->assertEquals('The red dog, and blue cat', __('The %s dog, and %s cat', 'red', 'blue'));
     }
 
     /**
@@ -268,6 +271,12 @@ class I18nTest extends TestCase
 
         $result = __n('singular msg', '%d = 0 or > 1', 2);
         $this->assertEquals('2 is 2-4 (po translated)', $result);
+
+        $result = __n('%s %s and %s are good', '%s and %s are best', 1, ['red', 'blue']);
+        $this->assertEquals('1 red and blue are good', $result);
+
+        $result = __n('%s %s and %s are good', '%s and %s are best', 1, 'red', 'blue');
+        $this->assertEquals('1 red and blue are good', $result);
     }
 
     /**
@@ -290,6 +299,9 @@ class I18nTest extends TestCase
         $this->assertEquals('Le moo', __d('custom', 'Cow'));
 
         $result = __d('custom', 'The {0} is tasty', ['fruit']);
+        $this->assertEquals('The fruit is delicious', $result);
+
+        $result = __d('custom', 'The {0} is tasty', 'fruit');
         $this->assertEquals('The fruit is delicious', $result);
 
         $result = __d('custom', 'Average price {0}', ['9.99']);
@@ -354,6 +366,9 @@ class I18nTest extends TestCase
 
         $this->assertEquals('The letters A and B', __x('character', 'letters', ['A', 'B']));
         $this->assertEquals('The letter A', __x('character', 'letter', ['A']));
+
+        $this->assertEquals('The letters A and B', __x('character', 'letters', 'A', 'B'));
+        $this->assertEquals('The letter A', __x('character', 'letter', 'A'));
 
         $this->assertEquals(
             'She wrote a letter to Thomas and Sara',
