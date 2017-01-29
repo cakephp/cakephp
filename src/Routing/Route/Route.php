@@ -295,7 +295,8 @@ class Route
         }
         list($url, $ext) = $this->_parseExtension($url);
 
-        if (!preg_match($this->_compiledRoute, urldecode($url), $route)) {
+        $decodedUrl = implode('/', array_map([$this, '_urlDecodeWithoutSlash'], explode('/', $url)));
+        if (!preg_match($this->_compiledRoute, $decodedUrl, $route)) {
             return false;
         }
 
@@ -357,6 +358,19 @@ class Route
         $route['_matchedRoute'] = $this->template;
 
         return $route;
+    }
+
+    /**
+     * Keep the encoding of slash character
+     *
+     * @param string $str The string to decode
+     * @return string
+     */
+    protected function _urlDecodeWithoutSlash($str)
+    {
+        $decodedStr = urldecode($str);
+
+        return str_replace("/", "%2F", $decodedStr);
     }
 
     /**
