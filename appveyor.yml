@@ -11,9 +11,9 @@ branches:
   only:
     - master
     - 3.next
+
 environment:
-  global:
-    PHP: "C:/PHP"
+  PATH: 'C:\php\;%PATH%'
 
   matrix:
       - db: 2012
@@ -22,15 +22,14 @@ environment:
 services:
   - mssql2012sp1
 
-init:
-  - SET PATH=C:\php\;%PATH%
-
 install:
   - cd c:\
   - appveyor DownloadFile http://windows.php.net/downloads/releases/archives/php-5.5.10-nts-Win32-VC11-x86.zip -FileName php.zip
   - 7z x php.zip -oc:\php
   - appveyor DownloadFile https://dl.dropboxusercontent.com/s/euip490d9183jkr/SQLSRV32.cab -FileName sqlsrv.cab
   - 7z x sqlsrv.cab -oc:\php\ext php*_55_nts.dll
+  - cd c:\php\ext
+  - appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.4.0-5.5-vc11-nts.dll -FileName php_xdebug.dll
   - cd c:\php
   - copy php.ini-production php.ini
   - echo date.timezone="UTC" >> php.ini
@@ -41,6 +40,7 @@ install:
   - echo extension=php_intl.dll >> php.ini
   - echo extension=php_mbstring.dll >> php.ini
   - echo extension=php_fileinfo.dll >> php.ini
+  - echo zend_extension="c:\php\ext\php_xdebug.dll" >> php.ini
   - cd C:\projects\cakephp
   - appveyor DownloadFile https://getcomposer.org/composer.phar
   - php composer.phar install --prefer-dist --no-interaction --ansi --no-progress
@@ -84,4 +84,6 @@ before_test:
 test_script:
   - sqlcmd -S ".\SQL2012SP1" -U sa -P Password12! -Q "create database cakephp;"
   - cd C:\projects\cakephp
-  - vendor\bin\phpunit.bat
+  - vendor\bin\phpunit.bat --coverage-clover=clover.xml
+  - appveyor DownloadFile https://codecov.io/bash -FileName codecov.sh
+  - bash codecov.sh
