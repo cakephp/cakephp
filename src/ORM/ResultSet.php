@@ -330,7 +330,8 @@ class ResultSet implements ResultSetInterface
      */
     public function unserialize($serialized)
     {
-        $this->_results = unserialize($serialized);
+        // closes #10111 prevent SqlFixedArray instances
+        $this->_results = (array)unserialize($serialized);
         $this->_useBuffering = true;
         $this->_count = count($this->_results);
     }
