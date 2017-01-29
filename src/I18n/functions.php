@@ -28,10 +28,11 @@ if (!function_exists('__')) {
         if (!$singular) {
             return null;
         }
+        if (isset($args[0]) && is_array($args[0])) {
+            $args = $args[0];
+        }
 
-        $arguments = func_num_args() === 2 ? (array)$args[0] : $args;
-
-        return I18n::translator()->translate($singular, $arguments);
+        return I18n::translator()->translate($singular, $args);
     }
 
 }
@@ -53,12 +54,13 @@ if (!function_exists('__n')) {
         if (!$singular) {
             return null;
         }
-
-        $arguments = func_num_args() === 4 ? (array)$args[0] : $args;
+        if (isset($args[0]) && is_array($args[0])) {
+            $args = $args[0];
+        }
 
         return I18n::translator()->translate(
             $plural,
-            ['_count' => $count, '_singular' => $singular] + $arguments
+            ['_count' => $count, '_singular' => $singular] + $args
         );
     }
 
@@ -79,9 +81,11 @@ if (!function_exists('__d')) {
         if (!$msg) {
             return null;
         }
-        $arguments = func_num_args() === 3 ? (array)$args[0] : $args;
+        if (isset($args[0]) && is_array($args[0])) {
+            $args = $args[0];
+        }
 
-        return I18n::translator($domain)->translate($msg, $arguments);
+        return I18n::translator($domain)->translate($msg, $args);
     }
 
 }
@@ -105,12 +109,13 @@ if (!function_exists('__dn')) {
         if (!$singular) {
             return null;
         }
-
-        $arguments = func_num_args() === 5 ? (array)$args[0] : $args;
+        if (isset($args[0]) && is_array($args[0])) {
+            $args = $args[0];
+        }
 
         return I18n::translator($domain)->translate(
             $plural,
-            ['_count' => $count, '_singular' => $singular] + $arguments
+            ['_count' => $count, '_singular' => $singular] + $args
         );
     }
 
@@ -133,10 +138,11 @@ if (!function_exists('__x')) {
         if (!$singular) {
             return null;
         }
+        if (isset($args[0]) && is_array($args[0])) {
+            $args = $args[0];
+        }
 
-        $arguments = func_num_args() === 3 ? (array)$args[0] : $args;
-
-        return I18n::translator()->translate($singular, ['_context' => $context] + $arguments);
+        return I18n::translator()->translate($singular, ['_context' => $context] + $args);
     }
 
 }
@@ -161,12 +167,13 @@ if (!function_exists('__xn')) {
         if (!$singular) {
             return null;
         }
-
-        $arguments = func_num_args() === 5 ? (array)$args[0] : $args;
+        if (isset($args[0]) && is_array($args[0])) {
+            $args = $args[0];
+        }
 
         return I18n::translator()->translate(
             $plural,
-            ['_count' => $count, '_singular' => $singular, '_context' => $context] + $arguments
+            ['_count' => $count, '_singular' => $singular, '_context' => $context] + $args
         );
     }
 
@@ -190,12 +197,13 @@ if (!function_exists('__dx')) {
         if (!$msg) {
             return null;
         }
-
-        $arguments = func_num_args() === 4 ? (array)$args[0] : $args;
+        if (isset($args[0]) && is_array($args[0])) {
+            $args = $args[0];
+        }
 
         return I18n::translator($domain)->translate(
             $msg,
-            ['_context' => $context] + $arguments
+            ['_context' => $context] + $args
         );
     }
 
@@ -222,12 +230,13 @@ if (!function_exists('__dxn')) {
         if (!$singular) {
             return null;
         }
-
-        $arguments = func_num_args() === 6 ? (array)$args[0] : $args;
+        if (isset($args[0]) && is_array($args[0])) {
+            $args = $args[0];
+        }
 
         return I18n::translator($domain)->translate(
             $plural,
-            ['_count' => $count, '_singular' => $singular, '_context' => $context] + $arguments
+            ['_count' => $count, '_singular' => $singular, '_context' => $context] + $args
         );
     }
 
