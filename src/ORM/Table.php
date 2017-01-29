@@ -36,7 +36,6 @@ use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\RolledbackTransactionException;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
-use Cake\Validation\Validation;
 use Cake\Validation\ValidatorAwareTrait;
 use InvalidArgumentException;
 use RuntimeException;
@@ -1590,7 +1589,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * ### Options
      *
-     * - 'finder' string Defaults to 'all'. The customer finder to use when reading batches.
+     * - 'finder' string Defaults to 'all'. The custom finder to use when reading batches.
+     * - 'options' array Defaults to []. The options to pass to the finder when reading batches.
      * - `atomic` boolean Defaults to true. When true the deletion happens within a transaction.
      * - 'stopOnFailure' boolean Defaults to true. Stop deleting records when a record fails to be deleted.
      * - 'batch' integer Defaults to 1. Number of records to read in batches, zero reads all records.
@@ -1621,6 +1621,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $options += [
             'finder' => 'all',
+            'options' => [],
             'atomic' => true,
             '_primary' => true,
             'stopOnFailure' => true,
@@ -1633,11 +1634,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw new InvalidArgumentException(sprintf('Option conflicts with batch deleting: %s', implode(', ', $invalid)));
         }
 
+        if((int)$options['batch'] <= 0) {
+            throw new InvalidArgumentException(sprintf('Invalid batch size: %s', (string)$options['batch']));
+        }
+
         $count = 0;
 
         $atomic = function () use ($conditions, $options, &$count) {
 
-            $query = $this->find($options['finder'])
+            $query = $this->find($options['finder'], $options['options'])
                 ->where($conditions)
                 ->applyOptions($options);
 

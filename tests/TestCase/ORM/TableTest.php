@@ -27,9 +27,9 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\I18n\Time;
-use Cake\ORM\AssociationCollection;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
+use Cake\ORM\AssociationCollection;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
@@ -963,6 +963,102 @@ class TableTest extends TestCase
 
         $table->deleteAll(['id >' => 4]);
     }
+
+    /**
+     * @return array
+     */
+    public function dataDeleteEach()
+    {
+        return [
+            [['batch' => 1]],
+            [['batch' => 100]],
+            [['atomic' => false]],
+            [['stopOnFailure' => false]],
+            [['checkRules' => false]]
+        ];
+    }
+
+    /**
+     * @dataProvider dataDeleteEach
+     * @param array $options
+     */
+    public function testDeleteEach(array $options) {
+        $table = new Table([
+            'table' => 'users',
+            'connection' => $this->connection,
+        ]);
+        $result = $table->deleteEach(['username !=' => 'mariano'], $options);
+        $this->assertSame(3, $result);
+
+        $result = $table->find('all')->toArray();
+        $this->assertCount(1, $result, 'Only one record should remain');
+        $this->assertEquals('mariano', $result[0]['username']);
+    }
+
+    /**
+     * @return array
+     */
+    public function dataDeleteEachInvalidArgument()
+    {
+        return [
+            [['limit' => 10]],
+            [['offset' => 10]],
+            [['page' => 10]]
+        ];
+    }
+
+    /**
+     * @param array $invalidParams
+     * @dataProvider dataDeleteEachInvalidArgument
+     * @expectedException \InvalidArgumentException
+     */
+    public function testDeleteEachInvalidArgument(array $invalidParams) {
+        $table = new Table([
+            'table' => 'users',
+            'connection' => $this->connection,
+        ]);
+        $table->deleteEach(['username !=' => 'mariano'], $invalidParams);
+    }
+
+    /**
+     *
+     */
+    public function testDeleteEachFinder() {
+
+        $table = TableRegistry::get('articles');
+        $result = $table->deleteEach(['username !=' => 'mariano'], ['finder' => 'published']);
+        $this->assertSame(4, $result);
+    }
+
+    /**
+     *
+     */
+    public function testDeleteEachAtomic() {
+
+    }
+
+    /**
+     * Tests failure by having a rule block delete.
+     */
+    public function testDeleteEachStopOnFailure() {
+
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid batch size: 0
+     */
+    public function testDeleteEachZeroBatch() {
+
+    }
+
+    /**
+     *
+     */
+    public function testDeleteEachCheckRules() {
+
+    }
+
 
     /**
      * Tests that array options are passed to the query object using applyOptions
