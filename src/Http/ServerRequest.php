@@ -1539,6 +1539,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function input($callback = null, ...$args)
     {
+        $this->stream->rewind();
         $input = $this->stream->getContents();
         if ($callback) {
             array_unshift($args, $input);
