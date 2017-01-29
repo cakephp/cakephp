@@ -648,7 +648,7 @@ class BelongsToMany extends Association
 
         $options['associated'] = $joinAssociations;
         $success = $this->_saveLinks($parentEntity, $persisted, $options);
-        if (!$success && !empty($options['atomic'])) {
+        if (!$success) {
             $parentEntity->set($this->property(), $original);
 
             return false;
@@ -700,7 +700,7 @@ class BelongsToMany extends Association
 
             $saved = $junction->save($joint, $options);
 
-            if (!$saved && !empty($options['atomic'])) {
+            if (!$saved) {
                 return false;
             }
 
