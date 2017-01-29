@@ -404,6 +404,7 @@ trait EntityTrait
      * If the properties argument is null, the currently hidden properties
      * will be returned. Otherwise the hidden properties will be set.
      *
+     * @deprecated 3.4.0 Use EntityTrait::setHidden() and EntityTrait::getHidden()
      * @param null|array $properties Either an array of properties to hide or null to get properties
      * @return array|self
      */
@@ -453,6 +454,7 @@ trait EntityTrait
      * If the properties argument is null, the currently virtual properties
      * will be returned. Otherwise the virtual properties will be set.
      *
+     * @deprecated 3.4.0 Use EntityTrait::getVirtual() and EntityTrait::setVirtual()
      * @param null|array $properties Either an array of properties to treat as virtual or null to get properties
      * @return array|self
      */
@@ -715,6 +717,7 @@ trait EntityTrait
      * When called with no arguments it will return whether or not there are any
      * dirty property in the entity
      *
+     * @deprecated 3.4.0 Use EntityTrait::setDirty() and EntityTrait::isDirty()
      * @param string|null $property the field to set or check status for
      * @param null|bool $isDirty true means the property was changed, false means
      * it was not changed and null will make the function return current state
@@ -929,6 +932,7 @@ trait EntityTrait
      * When used as a setter, this method will return this entity instance for method
      * chaining.
      *
+     * @deprecated 3.4.0 Use EntityTrait::setError(), EntityTrait::setErrors(), EntityTrait::getError() and EntityTrait::getErrors()
      * @param string|array|null $field The field to get errors for, or the array of errors to set.
      * @param string|array|null $errors The errors to be set for $field
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
@@ -1098,6 +1102,7 @@ trait EntityTrait
      * $entity->accessible('id'); // Returns whether it can be set or not
      * ```
      *
+     * @deprecated 3.4.0 Use EntityTrait::setAccess() and EntityTrait::isAccessible()
      * @param string|array $property single or list of properties to change its accessibility
      * @param bool|null $set true marks the property as accessible, false will
      * mark it as protected.
@@ -1204,6 +1209,7 @@ trait EntityTrait
      * If called with no arguments, it returns the alias of the repository
      * this entity came from if it is known.
      *
+     * @deprecated 3.4.0 Use EntityTrait::getSource() and EntityTrait::setSource()
      * @param string|null $alias the alias of the repository
      * @return string|self
      */
