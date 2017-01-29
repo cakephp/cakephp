@@ -172,6 +172,20 @@ class LogTest extends TestCase
     }
 
     /**
+     * Test the various setConfig call signatures.
+     *
+     * @dataProvider configProvider
+     * @return void
+     */
+    public function testSetConfigVariants($settings)
+    {
+        Log::setConfig('test', $settings);
+        $this->assertContains('test', Log::configured());
+        $this->assertInstanceOf('Cake\Log\Engine\FileLog', Log::engine('test'));
+        Log::drop('test');
+    }
+
+    /**
      * Test that config() throws an exception when adding an
      * adapter with the wrong type.
      *
@@ -181,6 +195,19 @@ class LogTest extends TestCase
     public function testConfigInjectErrorOnWrongType()
     {
         Log::config('test', new \StdClass);
+        Log::info('testing');
+    }
+
+    /**
+     * Test that setConfig() throws an exception when adding an
+     * adapter with the wrong type.
+     *
+     * @expectedException \RuntimeException
+     * @return void
+     */
+    public function testSetConfigInjectErrorOnWrongType()
+    {
+        Log::setConfig('test', new \StdClass);
         Log::info('testing');
     }
 
