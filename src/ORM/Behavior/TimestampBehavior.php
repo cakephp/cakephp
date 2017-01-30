@@ -73,7 +73,7 @@ class TimestampBehavior extends Behavior
     public function initialize(array $config)
     {
         if (isset($config['events'])) {
-            $this->config('events', $config['events'], false);
+            $this->setConfig('events', $config['events'], false);
         }
     }
 

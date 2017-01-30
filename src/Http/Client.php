@@ -155,10 +155,10 @@ class Client
      */
     public function __construct($config = [])
     {
-        $this->config($config);
+        $this->setConfig($config);
 
         $adapter = $this->_config['adapter'];
-        $this->config('adapter', null);
+        $this->setConfig('adapter', null);
         if (is_string($adapter)) {
             $adapter = new $adapter();
         }
@@ -166,7 +166,7 @@ class Client
 
         if (!empty($this->_config['cookieJar'])) {
             $this->_cookies = $this->_config['cookieJar'];
-            $this->config('cookieJar', null);
+            $this->setConfig('cookieJar', null);
         } else {
             $this->_cookies = new CookieCollection();
         }

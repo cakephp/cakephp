@@ -62,7 +62,7 @@ class AuthComponent extends Component
      *   when users are identified.
      *
      *   ```
-     *   $this->Auth->config('authenticate', [
+     *   $this->Auth->setConfig('authenticate', [
      *      'Form' => [
      *         'userModel' => 'Users.Users'
      *      ]
@@ -74,7 +74,7 @@ class AuthComponent extends Component
      *   config that should be set to all authentications objects using the 'all' key:
      *
      *   ```
-     *   $this->Auth->config('authenticate', [
+     *   $this->Auth->setConfig('authenticate', [
      *       AuthComponent::ALL => [
      *          'userModel' => 'Users.Users',
      *          'scope' => ['Users.active' => 1]
@@ -89,7 +89,7 @@ class AuthComponent extends Component
      *   when authorization checks are done.
      *
      *   ```
-     *   $this->Auth->config('authorize', [
+     *   $this->Auth->setConfig('authorize', [
      *      'Crud' => [
      *          'actionPath' => 'controllers/'
      *      ]
@@ -101,7 +101,7 @@ class AuthComponent extends Component
      *   that should be set to all authorization objects using the AuthComponent::ALL key:
      *
      *   ```
-     *   $this->Auth->config('authorize', [
+     *   $this->Auth->setConfig('authorize', [
      *      AuthComponent::ALL => [
      *          'actionPath' => 'controllers/'
      *      ],
@@ -496,13 +496,13 @@ class AuthComponent extends Component
             'authError' => __d('cake', 'You are not authorized to access that location.')
         ];
 
-        $config = $this->config();
+        $config = $this->getConfig();
         foreach ($config as $key => $value) {
             if ($value !== null) {
                 unset($defaults[$key]);
             }
         }
-        $this->config($defaults);
+        $this->setConfig($defaults);
     }
 
     /**
@@ -917,7 +917,7 @@ class AuthComponent extends Component
     public function __get($name)
     {
         if ($name === 'sessionKey') {
-            return $this->storage()->config('key');
+            return $this->storage()->getConfig('key');
         }
 
         return parent::__get($name);
@@ -936,13 +936,13 @@ class AuthComponent extends Component
             $this->_storage = null;
 
             if ($value === false) {
-                $this->config('storage', 'Memory');
+                $this->setConfig('storage', 'Memory');
 
                 return;
             }
 
-            $this->config('storage', 'Session');
-            $this->storage()->config('key', $value);
+            $this->setConfig('storage', 'Session');
+            $this->storage()->setConfig('key', $value);
 
             return;
         }

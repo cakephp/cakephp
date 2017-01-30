@@ -76,7 +76,7 @@ class ErrorHandlerMiddleware
         }
 
         $config = $config ?: Configure::read('Error');
-        $this->config($config);
+        $this->setConfig($config);
     }
 
     /**
@@ -134,7 +134,7 @@ class ErrorHandlerMiddleware
     protected function getRenderer($exception)
     {
         if (!$this->exceptionRenderer) {
-            $this->exceptionRenderer = $this->config('exceptionRenderer') ?: ExceptionRenderer::class;
+            $this->exceptionRenderer = $this->getConfig('exceptionRenderer') ?: ExceptionRenderer::class;
         }
 
         if (is_string($this->exceptionRenderer)) {
@@ -162,11 +162,11 @@ class ErrorHandlerMiddleware
      */
     protected function logException($request, $exception)
     {
-        if (!$this->config('log')) {
+        if (!$this->getConfig('log')) {
             return;
         }
 
-        $skipLog = $this->config('skipLog');
+        $skipLog = $this->getConfig('skipLog');
         if ($skipLog) {
             foreach ((array)$skipLog as $class) {
                 if ($exception instanceof $class) {
@@ -205,7 +205,7 @@ class ErrorHandlerMiddleware
         if ($referer) {
             $message .= "\nReferer URL: " . $referer;
         }
-        if ($this->config('trace')) {
+        if ($this->getConfig('trace')) {
             $message .= "\nStack Trace:\n" . $exception->getTraceAsString() . "\n\n";
         }
 

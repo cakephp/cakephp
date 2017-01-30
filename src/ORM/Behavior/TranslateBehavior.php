@@ -208,7 +208,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     {
         $locale = $this->locale();
 
-        if ($locale === $this->config('defaultLocale')) {
+        if ($locale === $this->getConfig('defaultLocale')) {
             return;
         }
 
@@ -278,7 +278,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
         // No additional translation records need to be saved,
         // as the entity is in the default locale.
-        if ($noBundled && $locale === $this->config('defaultLocale')) {
+        if ($noBundled && $locale === $this->getConfig('defaultLocale')) {
             return;
         }
 
