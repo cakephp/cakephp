@@ -105,7 +105,7 @@ class Log
 {
 
     use StaticConfigTrait {
-        config as protected _config;
+        setConfig as protected _setConfig;
     }
 
     /**
@@ -276,9 +276,9 @@ class Log
      * @return array|null Null when adding configuration and an array of configuration data when reading.
      * @throws \BadMethodCallException When trying to modify an existing config.
      */
-    public static function config($key, $config = null)
+    public static function setConfig($key, $config = null)
     {
-        $return = static::_config($key, $config);
+        $return = static::_setConfig($key, $config);
         if ($return !== null) {
             return $return;
         }
