@@ -85,7 +85,7 @@ class Validation
      */
     public static function notBlank($check)
     {
-        if (empty($check) && $check !== '0' && $check !== 0) {
+        if (empty($check) && !is_bool($check) && !is_numeric($check)) {
             return false;
         }
 
