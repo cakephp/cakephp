@@ -355,7 +355,13 @@ class ResultSet implements ResultSetInterface
             return $this->_count = $this->_statement->rowCount();
         }
 
-        return $this->_count = count($this->_results);
+        if($this->_results instanceof SplFixedArray) {
+            $this->_count = $this->_results->count();
+        } else {
+            $this->_count = count($this->_results);
+        }
+
+        return $this->_count;
     }
 
     /**
