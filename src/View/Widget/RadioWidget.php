@@ -183,15 +183,7 @@ class RadioWidget implements WidgetInterface
                 $data['label']['class'] = [];
             }
             if (isset($radio['checked']) && $radio['checked']) {
-                if (isset($data['label']['class'])) {
-                    if (is_array($data['label']['class'])) {
-                        $data['label']['class'][] = 'selected';
-                    } elseif (is_string($data['label']['class'])) {
-                        $data['label']['class'] .= ' selected';
-                    }
-                } else {
-                    $data['label']['class'] = 'selected';
-                }
+                $data['label'] = $this->_templates->addClass($data['label'], 'selected', ['useIndex' => 'class']);
             }
         }
 

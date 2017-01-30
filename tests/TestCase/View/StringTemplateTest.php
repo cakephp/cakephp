@@ -300,4 +300,97 @@ class StringTemplateTest extends TestCase
         $this->assertNull($this->template->pop());
         $this->assertNull($this->template->pop());
     }
+
+    public function testAddClassMethod()
+    {
+        // Test new class as null, string, array, false etc
+        $result = $this->template->addClass([], 'new_class');
+        $this->assertEquals($result, ['new_class']);
+        $result = $this->template->addClass([], ['new_class']);
+        $this->assertEquals($result, ['new_class']);
+        $result = $this->template->addClass([], false);
+        $this->assertEquals($result, []);
+        $result = $this->template->addClass([], null);
+        $this->assertEquals($result, []);
+        $result = $this->template->addClass(null, null);
+        $this->assertNull($result);
+
+        // Test current class as null, string, array, false etc
+        $result = $this->template->addClass(['current'], 'new_class');
+        $this->assertEquals($result, ['current', 'new_class']);
+        $result = $this->template->addClass('current', 'new_class');
+        $this->assertEquals($result, ['current', 'new_class']);
+        $result = $this->template->addClass('', 'new_class');
+        $this->assertEquals($result, ['new_class']);
+        $result = $this->template->addClass(null, 'new_class');
+        $this->assertEquals($result, ['new_class']);
+        $result = $this->template->addClass(false, 'new_class');
+        $this->assertEquals($result, ['new_class']);
+        $result = $this->template->addClass(new \StdClass(), 'new_class');
+        $this->assertEquals($result, ['new_class']);
+
+        // Test we don't repeat the class
+        $result = $this->template->addClass(['new_class'], 'new_class');
+        $this->assertEquals($result, ['new_class']);
+    }
+
+    public function testAddClassMethodOptions()
+    {
+        // Test useIndex option
+        $result = $this->template->addClass(
+            [
+                'class' => 'current_class',
+                'other_index1' => false,
+                'type' => 'text'
+            ],
+            'new_class',
+            [
+                'useIndex' => 'class'
+            ]
+        );
+
+        $this->assertEquals($result, [
+            'class' => ['current_class', 'new_class'],
+            'other_index1' => false,
+            'type' => 'text'
+        ]);
+
+        // Test the use index which doesn't exist in input
+        $result = $this->template->addClass(
+            [
+                'class' => 'current_class',
+                'other_index1' => false,
+                'type' => 'text'
+            ],
+            'new_class',
+            [
+                'useIndex' => 'non_existent_class'
+            ]
+        );
+        $this->assertEquals($result, [
+            'class' => 'current_class',
+            'other_index1' => false,
+            'type' => 'text',
+            'non_existent_class' => ['new_class']
+        ]);
+
+        // Test returnArray option (will return space separated string
+        $result = $this->template->addClass(
+            ['current_class'],
+            'new_class',
+            [
+                'returnArray' => false
+            ]
+        );
+        $this->assertEquals($result, 'current_class new_class');
+
+        $result = $this->template->addClass(
+            null,
+            'new_class',
+            [
+                'returnArray' => false
+            ]
+        );
+        $this->assertEquals($result, 'new_class');
+    }
 }

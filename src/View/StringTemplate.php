@@ -16,6 +16,7 @@ namespace Cake\View;
 
 use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Utility\Hash;
 use RuntimeException;
 
 /**
@@ -322,5 +323,66 @@ class StringTemplate
         }
 
         return $key . '="' . ($escape ? h($value) : $value) . '"';
+    }
+
+    /**
+     * Adds a class and returns a unique list either in array or space separated
+     *
+     * ### Options
+     *
+     * - `useIndex` if you are inputting an array with an 'element' called 'class' and want the same returning
+     *                  you should set this to 'class'
+     * - `returnArray` Setting this to `false` will return a space separated string (default is `true`)
+     *
+     * @param array|string $input The array or string to add the class to
+     * @param array|string $newClass the new class or classes to add
+     * @param array $options See above for options
+     * @return array|string
+     */
+    public function addClass($input, $newClass, $options = [])
+    {
+        // NOOP
+        if (empty($newClass)) {
+            return $input;
+        }
+
+        $options = $options + [
+                'useIndex' => null,
+                'returnArray' => true
+            ];
+
+        $useIndex = $options['useIndex'];
+        if (is_string($useIndex)) {
+            $class = Hash::get($input, $useIndex, []);
+        } else {
+            $class = $input;
+        }
+
+        // Convert and sanitise the inputs
+        if (!is_array($class)) {
+            if (is_string($class) && !empty($class)) {
+                $class = explode(' ', $class);
+            } else {
+                $class = [];
+            }
+        }
+
+        if (is_string($newClass)) {
+            $newClass = explode(' ', $newClass);
+        }
+
+        $class = array_unique(array_merge($class, $newClass));
+
+        if ($options['returnArray'] === false) {
+            $class = implode(" ", $class);
+        }
+
+        if (is_string($useIndex)) {
+            $input = Hash::insert($input, $useIndex, $class);
+        } else {
+            $input = $class;
+        }
+
+        return $input;
     }
 }
