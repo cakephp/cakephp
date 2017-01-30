@@ -118,11 +118,11 @@ trait CellTrait
         }
 
         if (method_exists($this, 'viewBuilder')) {
-            $builder->setTheme($this->viewBuilder()->theme());
+            $builder->setTheme($this->viewBuilder()->getTheme());
         }
 
         if (isset($this->viewClass)) {
-            $builder->getClassName($this->viewClass);
+            $builder->setClassName($this->viewClass);
             $instance->viewClass = $this->viewClass;
         }
 
