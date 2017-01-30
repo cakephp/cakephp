@@ -17,27 +17,13 @@ namespace Cake\Test\TestCase\Cache\Engine;
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Core\Configure;
-use Cake\ORM\ResultSet;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use TestApp\Model\Table\ArticlesTable;
 
 /**
  * FileEngineTest class
  */
 class FileEngineTest extends TestCase
 {
-    /**
-     * @var array
-     */
-    public $fixtures = [
-        'core.articles'
-    ];
-
-    /**
-     * @var bool
-     */
-    public $autoFixtures = false;
 
     /**
      * setUp method
@@ -204,34 +190,6 @@ class FileEngineTest extends TestCase
         $delete = Cache::delete('serialize_test', 'file_test');
         $this->assertSame($read, serialize($data));
         $this->assertSame(unserialize($read), $data);
-    }
-
-    /**
-     * Verify across PHP versions that caching of ResultSet objects works as expected.
-     *
-     * @see https://github.com/cakephp/cakephp/issues/10111
-     * @return void
-     */
-    public function testResultSetCache()
-    {
-        Configure::write('App.namespace', 'TestApp');
-        $this->loadFixtures('Articles');
-
-        /* @var ArticlesTable $articles */
-        $articles = TableRegistry::get('Articles');
-        $query = $articles->find()->all();
-        $this->assertInstanceOf(ResultSet::class, $query);
-        $this->assertSame(3, count($query->toArray()));
-
-        $this->_configCache(['serialize' => true]);
-        $write = Cache::write('articles', $query, 'file_test');
-        $this->assertTrue($write);
-
-        $read = Cache::read('articles', 'file_test');
-        $this->assertInstanceOf(ResultSet::class, $read);
-        $this->assertSame(3, count($read->toArray()));
-
-        TableRegistry::clear();
     }
 
     /**
