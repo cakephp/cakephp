@@ -317,6 +317,10 @@ class ResultSet implements ResultSetInterface
             $this->next();
         }
 
+        if($this->_results instanceof SplFixedArray) {
+            return serialize($this->_results->toArray());
+        }
+
         return serialize($this->_results);
     }
 
@@ -330,8 +334,7 @@ class ResultSet implements ResultSetInterface
      */
     public function unserialize($serialized)
     {
-        // closes #10111 prevent SqlFixedArray instances
-        $this->_results = (array)unserialize($serialized);
+        $this->_results = (array)(unserialize($serialized) ?: []);
         $this->_useBuffering = true;
         $this->_count = count($this->_results);
     }
