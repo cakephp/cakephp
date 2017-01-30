@@ -332,14 +332,22 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function __get($name)
     {
-        if (in_array($name, ['layout', 'view', 'theme', 'autoLayout', 'viewPath', 'layoutPath'], true)) {
-            $method = $name === 'viewPath' ? 'templatePath' : $name;
+        $deprecated = [
+            'layout' => 'getLayout',
+            'view' => 'getTemplate',
+            'theme' => 'getTheme',
+            'autoLayout' => 'isAutoLayoutEnabled',
+            'viewPath' => 'getTemplatePath',
+            'layoutPath' => 'getLayoutPath',
+        ];
+        if (isset($deprecated[$name])) {
+            $method = $deprecated[$name];
             trigger_error(
-                sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->set%s()/$this->viewBuilder()->get%s() instead.', $name, ucfirst($method)),
+                sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.', $name, $method),
                 E_USER_DEPRECATED
             );
 
-            return $this->viewBuilder()->{$name}();
+            return $this->viewBuilder()->{$method}();
         }
 
         list($plugin, $class) = pluginSplit($this->modelClass, true);
@@ -360,21 +368,17 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function __set($name, $value)
     {
         $deprecated = [
-            'layout' => 'layout',
-            'view' => 'template',
-            'theme' => 'theme',
-            'autoLayout' => 'autoLayout',
-            'viewPath' => 'templatePath',
-            'layoutPath' => 'layoutPath',
+            'layout' => 'setLayout',
+            'view' => 'setTemplate',
+            'theme' => 'setTheme',
+            'autoLayout' => 'enableAutoLayout',
+            'viewPath' => 'setTemplatePath',
+            'layoutPath' => 'setLayoutPath',
         ];
         if (isset($deprecated[$name])) {
             $method = $deprecated[$name];
             trigger_error(
-                sprintf(
-                    'Controller::$%s is deprecated. Use $this->viewBuilder()->set%s()/$this->viewBuilder()->get%s() instead.',
-                    $name,
-                    ucfirst($method)
-                ),
+                sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.', $name, $method),
                 E_USER_DEPRECATED
             );
             $this->viewBuilder()->{$method}($value);
