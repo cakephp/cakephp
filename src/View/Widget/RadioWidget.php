@@ -173,6 +173,28 @@ class RadioWidget implements WidgetInterface
         if (isset($data['val']) && (string)$data['val'] === (string)$radio['value']) {
             $radio['checked'] = true;
         }
+
+        if (!is_bool($data['label'])) {
+            if (isset($data['label']['class']) && is_string($data['label']['class'])) {
+                $data['label']['class'] = explode(' ', $data['label']['class']);
+            }
+
+            if (!isset($data['label']['class']) || !is_array($data['label']['class'])) {
+                $data['label']['class'] = [];
+            }
+            if (isset($radio['checked']) && $radio['checked']) {
+                if(isset($data['label']['class'])) {
+                    if (is_array($data['label']['class'])) {
+                        $data['label']['class'][] = 'selected';
+                    } else if(is_string($data['label']['class'])) {
+                        $data['label']['class'] .= ' selected';
+                    }
+                } else {
+                    $data['label']['class'] = 'selected';
+                }
+            }
+        }
+
         if ($this->_isDisabled($radio, $data['disabled'])) {
             $radio['disabled'] = true;
         }

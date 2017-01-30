@@ -1008,7 +1008,8 @@ class FormHelper extends Helper
             'required' => null,
             'options' => null,
             'templates' => [],
-            'templateVars' => []
+            'templateVars' => [],
+            'optionsLabel' => true
         ];
         $options = $this->_parseOptions($fieldName, $options);
         $options += ['id' => $this->_domId($fieldName)];
@@ -1038,6 +1039,9 @@ class FormHelper extends Helper
         $label = $options['label'];
         unset($options['label']);
 
+        $optionsLabel = $options['optionsLabel'];
+        unset($options['optionsLabel']);
+
         $nestedInput = false;
         if ($options['type'] === 'checkbox') {
             $nestedInput = true;
@@ -1049,7 +1053,7 @@ class FormHelper extends Helper
             $options['hiddenField'] = '_split';
         }
 
-        $input = $this->_getInput($fieldName, $options);
+        $input = $this->_getInput($fieldName, $options + [ 'label' => $optionsLabel] );
         if ($options['type'] === 'hidden' || $options['type'] === 'submit') {
             if ($newTemplates) {
                 $templater->pop();
@@ -1850,7 +1854,7 @@ class FormHelper extends Helper
 
         $input = $this->formatTemplate('inputSubmit', [
             'type' => $type,
-            'attrs' => $this->templater()->formatAttributes($options),
+            'attrs' => $this->templater()->formatAttributes($options, ['label']),
             'templateVars' => $options['templateVars']
         ]);
 

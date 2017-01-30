@@ -55,7 +55,7 @@ class TextareaWidget extends BasicWidget
             'templateVars' => $data['templateVars'],
             'attrs' => $this->_templates->formatAttributes(
                 $data,
-                ['name', 'val']
+                ['name', 'val', 'label']
             )
         ]);
     }

@@ -125,7 +125,7 @@ class SelectBoxWidget extends BasicWidget
             $template = 'selectMultiple';
             unset($data['multiple']);
         }
-        $attrs = $this->_templates->formatAttributes($data);
+        $attrs = $this->_templates->formatAttributes($data, ['label']);
 
         return $this->_templates->format($template, [
             'name' => $name,

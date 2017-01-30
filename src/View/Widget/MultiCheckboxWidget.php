@@ -112,7 +112,8 @@ class MultiCheckboxWidget implements WidgetInterface
             'disabled' => null,
             'val' => null,
             'idPrefix' => null,
-            'templateVars' => []
+            'templateVars' => [],
+            'label' => true
         ];
         $this->_idPrefix = $data['idPrefix'];
         $this->_clearIds();
@@ -152,6 +153,9 @@ class MultiCheckboxWidget implements WidgetInterface
             if (!isset($checkbox['templateVars'])) {
                 $checkbox['templateVars'] = $data['templateVars'];
             }
+            if (!isset($checkbox['label'])) {
+                $checkbox['label'] = $data['label'];
+            }
             if (!empty($data['templateVars'])) {
                 $checkbox['templateVars'] = array_merge($data['templateVars'], $checkbox['templateVars']);
             }
@@ -188,22 +192,39 @@ class MultiCheckboxWidget implements WidgetInterface
             'templateVars' => $checkbox['templateVars'],
             'attrs' => $this->_templates->formatAttributes(
                 $checkbox,
-                ['name', 'value', 'text']
+                ['name', 'value', 'text', 'label']
             )
         ]);
 
-        $labelAttrs = [
-            'for' => $checkbox['id'],
-            'escape' => $checkbox['escape'],
-            'text' => $checkbox['text'],
-            'templateVars' => $checkbox['templateVars'],
-            'input' => $input,
-        ];
-        if (!empty($checkbox['checked']) && empty($labelAttrs['class'])) {
-            $labelAttrs['class'] = 'selected';
-        }
-        $label = $this->_label->render($labelAttrs, $context);
+        if ($checkbox['label'] === false && strpos($this->_templates->get('radioWrapper'), '{{input}}') === false) {
+            $label = $input;
+        } else {
+            $labelAttrs = [
+                    'for' => $checkbox['id'],
+                    'escape' => $checkbox['escape'],
+                    'text' => $checkbox['text'],
+                    'templateVars' => $checkbox['templateVars'],
+                    'input' => $input
+                ];
 
+            if(is_array($checkbox['label'])) {
+                $labelAttrs += $checkbox['label'];
+            }
+
+            if (isset($checkbox['checked']) && $checkbox['checked']) {
+                if(isset($labelAttrs['class'])) {
+                    if (is_array($labelAttrs['class'])) {
+                        $labelAttrs['class'][] = 'selected';
+                    } else if(is_string($labelAttrs['class'])) {
+                        $labelAttrs['class'] .= ' selected';
+                    }
+                } else {
+                    $labelAttrs['class'] = 'selected';
+                }
+            }
+
+            $label = $this->_label->render($labelAttrs, $context);
+        }
         return $this->_templates->format('checkboxWrapper', [
             'templateVars' => $checkbox['templateVars'],
             'label' => $label,
