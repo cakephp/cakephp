@@ -313,6 +313,11 @@ class ResultSet implements ResultSetInterface
      */
     public function serialize()
     {
+        if (!$this->_useBuffering) {
+            $msg = 'You cannot serialize an un-buffered ResultSet. Use Query::bufferResults() to get a buffered ResultSet.';
+            throw new Exception($msg);
+        }
+
         while ($this->valid()) {
             $this->next();
         }

@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
@@ -109,6 +108,16 @@ class ResultSetTest extends TestCase
         $serialized = serialize($results2);
         $outcome = unserialize($serialized);
         $this->assertEquals($expected, $outcome->toArray());
+    }
+
+    /**
+     * @expectedException \Cake\Database\Exception
+     * @expectedExceptionMessage You cannot serialize an un-buffered ResultSet. Use Query::bufferResults() to get a buffered ResultSet.
+     */
+    public function testSerializationUnbuffered()
+    {
+        $results = $this->table->find('all')->bufferResults(false)->all();
+        serialize($results);
     }
 
     /**
