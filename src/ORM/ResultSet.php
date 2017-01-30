@@ -317,7 +317,7 @@ class ResultSet implements ResultSetInterface
             $this->next();
         }
 
-        if($this->_results instanceof SplFixedArray) {
+        if ($this->_results instanceof SplFixedArray) {
             return serialize($this->_results->toArray());
         }
 
@@ -334,9 +334,10 @@ class ResultSet implements ResultSetInterface
      */
     public function unserialize($serialized)
     {
-        $this->_results = (array)(unserialize($serialized) ?: []);
+        $results = (array)(unserialize($serialized) ?: []);
+        $this->_results = SplFixedArray::fromArray($results);
         $this->_useBuffering = true;
-        $this->_count = count($this->_results);
+        $this->_count = $this->_results->count();
     }
 
     /**
@@ -355,7 +356,7 @@ class ResultSet implements ResultSetInterface
             return $this->_count = $this->_statement->rowCount();
         }
 
-        if($this->_results instanceof SplFixedArray) {
+        if ($this->_results instanceof SplFixedArray) {
             $this->_count = $this->_results->count();
         } else {
             $this->_count = count($this->_results);
