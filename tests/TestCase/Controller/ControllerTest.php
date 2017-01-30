@@ -1042,4 +1042,53 @@ class ControllerTest extends TestCase
 
         $this->assertArrayHasKey('testVariable', $controller->View->viewVars);
     }
+
+    /**
+     * Tests deprecated view propertiyes work
+     *
+     * @param $property Deprecated property name
+     * @param $getter Getter name
+     * @param $setter Setter name
+     * @param mixed $value Value to be set
+     * @return void
+     * @dataProvider deprecatedViewPropertyProvider
+     */
+    public function testDeprecatedViewProperty($property, $getter, $setter, $value)
+    {
+        $controller = new AnotherTestController();
+        $message = false;
+
+        set_error_handler(function ($errno, $errstr) use (&$message) {
+            $message = ($errno === E_USER_DEPRECATED ? $errstr : false);
+        });
+
+        try {
+            $controller->$property = $value;
+            $this->assertSame(sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.', $property, $setter), $message);
+
+            $this->assertSame($value, $controller->$property);
+            $this->assertSame(sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.', $property, $getter), $message);
+
+            $this->assertSame($value, $controller->viewBuilder()->{$getter}());
+        } finally {
+            restore_error_handler();
+        }
+    }
+
+    /**
+     * Data provider for testing deprecated view properties
+     *
+     * @return array
+     */
+    public function deprecatedViewPropertyProvider()
+    {
+        return [
+            ['layout', 'getLayout', 'setLayout', 'custom'],
+            ['view', 'getTemplate', 'setTemplate', 'view'],
+            ['theme', 'getTheme', 'setTheme', 'Modern'],
+            ['autoLayout', 'isAutoLayoutEnabled', 'enableAutoLayout', false],
+            ['viewPath', 'getTemplatePath', 'setTemplatePath', 'Templates'],
+            ['layoutPath', 'getLayoutPath', 'setLayoutPath', 'Layouts'],
+        ];
+    }
 }
