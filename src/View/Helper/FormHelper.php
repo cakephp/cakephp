@@ -1053,7 +1053,7 @@ class FormHelper extends Helper
             $options['hiddenField'] = '_split';
         }
 
-        $input = $this->_getInput($fieldName, $options + [ 'label' => $optionsLabel] );
+        $input = $this->_getInput($fieldName, $options + ['label' => $optionsLabel]);
         if ($options['type'] === 'hidden' || $options['type'] === 'submit') {
             if ($newTemplates) {
                 $templater->pop();

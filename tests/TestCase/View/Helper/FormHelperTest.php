@@ -8505,9 +8505,8 @@ class FormHelperTest extends TestCase
      * Tests false, class (as string and array) also makes sure 'selected' is added to the class if checked.
      * Also checks to make sure any custom attributes are rendered
      */
-    public function testControlLabelManipulator()
+    public function testControlLabelManipulation()
     {
-
         // Tests removal of label around input (Radio)
         $result = $this->Form->input('test', [
             'type' => 'radio',
@@ -8601,15 +8600,13 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         // Tests class as array and adding selected as well as custom attributes (Radio)
-        $result = $this->Form->radio('test', ['A', 'B'],
-            [
-                'label' => [
-                    'class' => ['custom-class', 'another-class'],
-                    'some-other-attr' => 'blah'
-                ],
-                'value' => 1
-            ]
-        );
+        $result = $this->Form->radio('test', ['A', 'B'], [
+            'label' => [
+                'class' => ['custom-class', 'another-class'],
+                'some-other-attr' => 'blah'
+            ],
+            'value' => 1
+        ]);
         $expected = [
             'input' => ['type' => 'hidden', 'name' => 'test', 'value' => ''],
             ['label' => ['class' => 'custom-class another-class', 'some-other-attr' => 'blah', 'for' => 'test-0']],

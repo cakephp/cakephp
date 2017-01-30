@@ -183,10 +183,10 @@ class RadioWidget implements WidgetInterface
                 $data['label']['class'] = [];
             }
             if (isset($radio['checked']) && $radio['checked']) {
-                if(isset($data['label']['class'])) {
+                if (isset($data['label']['class'])) {
                     if (is_array($data['label']['class'])) {
                         $data['label']['class'][] = 'selected';
-                    } else if(is_string($data['label']['class'])) {
+                    } elseif (is_string($data['label']['class'])) {
                         $data['label']['class'] .= ' selected';
                     }
                 } else {

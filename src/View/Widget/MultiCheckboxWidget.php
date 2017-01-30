@@ -200,22 +200,22 @@ class MultiCheckboxWidget implements WidgetInterface
             $label = $input;
         } else {
             $labelAttrs = [
-                    'for' => $checkbox['id'],
-                    'escape' => $checkbox['escape'],
-                    'text' => $checkbox['text'],
-                    'templateVars' => $checkbox['templateVars'],
-                    'input' => $input
-                ];
+                'for' => $checkbox['id'],
+                'escape' => $checkbox['escape'],
+                'text' => $checkbox['text'],
+                'templateVars' => $checkbox['templateVars'],
+                'input' => $input
+            ];
 
-            if(is_array($checkbox['label'])) {
+            if (is_array($checkbox['label'])) {
                 $labelAttrs += $checkbox['label'];
             }
 
             if (isset($checkbox['checked']) && $checkbox['checked']) {
-                if(isset($labelAttrs['class'])) {
+                if (isset($labelAttrs['class'])) {
                     if (is_array($labelAttrs['class'])) {
                         $labelAttrs['class'][] = 'selected';
-                    } else if(is_string($labelAttrs['class'])) {
+                    } elseif (is_string($labelAttrs['class'])) {
                         $labelAttrs['class'] .= ' selected';
                     }
                 } else {
@@ -225,6 +225,7 @@ class MultiCheckboxWidget implements WidgetInterface
 
             $label = $this->_label->render($labelAttrs, $context);
         }
+
         return $this->_templates->format('checkboxWrapper', [
             'templateVars' => $checkbox['templateVars'],
             'label' => $label,
