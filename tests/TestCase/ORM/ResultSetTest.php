@@ -111,16 +111,6 @@ class ResultSetTest extends TestCase
     }
 
     /**
-     * @expectedException \Cake\Database\Exception
-     * @expectedExceptionMessage You cannot serialize an un-buffered ResultSet. Use Query::bufferResults() to get a buffered ResultSet.
-     */
-    public function testSerializationUnbuffered()
-    {
-        $results = $this->table->find('all')->bufferResults(false)->all();
-        serialize($results);
-    }
-
-    /**
      * Test iteration after serialization
      *
      * @return void
