@@ -330,9 +330,9 @@ class StringTemplate
      *
      * ### Options
      *
-     * - `useIndex` if you are inputting an array with an 'element' called 'class' and want the same returning
-     *                  you should set this to 'class'
-     * - `returnArray` Setting this to `false` will return a space separated string (default is `true`)
+     * - `useIndex` if you are inputting an array with an 'element' other than 'class'.
+     *              Also setting to 'false' will manipulate the whole array (default is 'class')
+     * - `asString` Setting this to `true` will return a space separated string (default is `false`)
      *
      * @param array|string $input The array or string to add the class to
      * @param array|string $newClass the new class or classes to add
@@ -346,13 +346,13 @@ class StringTemplate
             return $input;
         }
 
-        $options = $options + [
-                'useIndex' => null,
-                'returnArray' => true
-            ];
+        $options += [
+            'useIndex' => 'class',
+            'asString' => false
+        ];
 
         $useIndex = $options['useIndex'];
-        if (is_string($useIndex)) {
+        if (is_string($useIndex) && is_array($input)) {
             $class = Hash::get($input, $useIndex, []);
         } else {
             $class = $input;
@@ -373,11 +373,14 @@ class StringTemplate
 
         $class = array_unique(array_merge($class, $newClass));
 
-        if ($options['returnArray'] === false) {
-            $class = implode(" ", $class);
+        if ($options['asString'] === true) {
+            $class = implode(' ', $class);
         }
 
         if (is_string($useIndex)) {
+            if (!is_array($input)) {
+                $input = [];
+            }
             $input = Hash::insert($input, $useIndex, $class);
         } else {
             $input = $class;
