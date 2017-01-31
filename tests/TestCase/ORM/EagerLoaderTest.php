@@ -413,6 +413,28 @@ class EagerLoaderTest extends TestCase
     }
 
     /**
+     * Tests that custom registry alias is honored in contain.
+     *
+     * @return void
+     */
+    public function testContainWithCustomRegistryAlias()
+    {
+        $this->table->belongsTo('foo', [
+            'registryAlias' => 'clients'
+        ]);
+
+        $query = new Query($this->connection, $this->table);
+        $query->select()->contain('foo')->sql();
+        $select = $query->clause('select');
+        $expected = [
+            'foo__id' => 'foo.id', 'clients__name' => 'clients.name',
+            'clients__id' => 'clients.id', 'clients__phone' => 'clients.phone'
+        ];
+        $expected = $this->_quoteArray($expected);
+        $this->assertEquals($expected, $select);
+    }
+
+    /**
      * Check that normalizing contains checks alias names.
      *
      * @expectedException \InvalidArgumentException
