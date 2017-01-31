@@ -161,10 +161,7 @@ class MultiCheckboxWidget implements WidgetInterface
             }
             $checkbox['name'] = $data['name'];
             $checkbox['escape'] = $data['escape'];
-
-            if ($this->_isSelected($checkbox['value'], $data['val'])) {
-                $checkbox['checked'] = true;
-            }
+            $checkbox['checked'] = $this->_isSelected($checkbox['value'], $data['val']);
             if ($this->_isDisabled($checkbox['value'], $data['disabled'])) {
                 $checkbox['disabled'] = true;
             }
@@ -211,7 +208,7 @@ class MultiCheckboxWidget implements WidgetInterface
                 $labelAttrs += $checkbox['label'];
             }
 
-            if (isset($checkbox['checked']) && $checkbox['checked']) {
+            if ($checkbox['checked']) {
                 $labelAttrs = $this->_templates->addClass($labelAttrs, 'selected');
             }
 
