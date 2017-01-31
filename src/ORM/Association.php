@@ -101,6 +101,13 @@ abstract class Association
     protected $_className;
 
     /**
+     * The registry alias of the target table object
+     *
+     * @var string
+     */
+    protected $_registryAlias;
+
+    /**
      * The field name in the owning side table that is used to match with the foreignKey
      *
      * @var string|array
@@ -205,6 +212,7 @@ abstract class Association
         $defaults = [
             'cascadeCallbacks',
             'className',
+            'registryAlias',
             'conditions',
             'dependent',
             'finder',
@@ -366,6 +374,25 @@ abstract class Association
     }
 
     /**
+     * The registry alias of the target table object
+     *
+     * @return string
+     */
+    public function getRegistryAlias()
+    {
+        if ($this->_registryAlias === null) {
+            if (strpos($this->_className, '.')) {
+                list($plugin) = pluginSplit($this->_className, true);
+                $this->_registryAlias = $plugin . $this->_name;
+            } else {
+                $this->_registryAlias = $this->_name;
+            }
+        }
+
+        return $this->_registryAlias;
+    }
+
+    /**
      * Sets the table instance for the target side of the association.
      *
      * @param \Cake\ORM\Table $table the instance to be assigned as target side
@@ -386,12 +413,7 @@ abstract class Association
     public function getTarget()
     {
         if (!$this->_targetTable) {
-            if (strpos($this->_className, '.')) {
-                list($plugin) = pluginSplit($this->_className, true);
-                $registryAlias = $plugin . $this->_name;
-            } else {
-                $registryAlias = $this->_name;
-            }
+            $registryAlias = $this->getRegistryAlias();
 
             $tableLocator = $this->tableLocator();
 
