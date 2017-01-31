@@ -77,7 +77,9 @@ class ConnectionManager
             $config['name'] = $key;
         }
 
-        return static::_setConfig($key, $config);
+        static::_setConfig($key, $config);
+
+        return static::getConfig($key);
     }
 
     /**
