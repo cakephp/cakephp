@@ -37,7 +37,7 @@ class TranslatorFactory extends BaseTranslatorFactory
      * Returns a new Translator.
      * @param string $locale The locale code for the translator.
      * @param array $messages The localized messages for the translator.
-     * @param FormatterInterface $formatter The formatter to use for 
+     * @param FormatterInterface $formatter The formatter to use for
      * interpolating token values.
      * @param TranslatorInterface $fallback A fallback translator to use, if
      * any.
@@ -57,6 +57,7 @@ class TranslatorFactory extends BaseTranslatorFactory
                 get_class($fallback)
             ));
         }
+
         return new $class($locale, $messages, $formatter, $fallback);
     }
 }
