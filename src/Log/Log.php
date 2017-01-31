@@ -278,7 +278,9 @@ class Log
      */
     public static function setConfig($key, $config = null)
     {
-        $return = static::_setConfig($key, $config);
+        static::_setConfig($key, $config);
+
+        $return = static::getConfig($key);
         if ($return !== null) {
             return $return;
         }
