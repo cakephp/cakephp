@@ -1,11 +1,12 @@
-# CakePHP Framework
-
+<p align="center"><a href="https://cakephp.org" target="_blank"><img src="https://cakephp.org/img/trademarks/logo-1.jpg"></a></p>
+<p align="center">
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
 [![Build Status](https://img.shields.io/travis/cakephp/cakephp/master.svg?style=flat-square)](https://travis-ci.org/cakephp/cakephp)
 [![Coverage Status](https://img.shields.io/codecov/c/github/cakephp/cakephp.svg?style=flat-square)](https://codecov.io/github/cakephp/cakephp)
 [![Code Consistency](https://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/grade.svg)](http://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/)
 [![Total Downloads](https://img.shields.io/packagist/dt/cakephp/cakephp.svg?style=flat-square)](https://packagist.org/packages/cakephp/cakephp)
 [![Latest Stable Version](https://img.shields.io/packagist/v/cakephp/cakephp.svg?style=flat-square&label=stable)](https://packagist.org/packages/cakephp/cakephp)
+<p>
 
 [CakePHP](http://www.cakephp.org) is a rapid development framework for PHP which
 uses commonly known design patterns like Associative Data
