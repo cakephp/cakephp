@@ -55,7 +55,7 @@ class CheckboxWidget extends BasicWidget
 
         $attrs = $this->_templates->formatAttributes(
             $data,
-            ['name', 'value', 'label']
+            ['name', 'value']
         );
 
         return $this->_templates->format('checkbox', [

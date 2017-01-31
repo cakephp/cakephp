@@ -3325,8 +3325,7 @@ class FormHelperTest extends TestCase
                 'empty' => false,
                 'id' => 'prueba',
                 'required' => false,
-                'templateVars' => [],
-                'label' => true
+                'templateVars' => []
             ])
             ->will($this->returnValue('This is it!'));
         $result = $this->Form->input('prueba', [
@@ -3371,8 +3370,7 @@ class FormHelperTest extends TestCase
                 'empty' => false,
                 'id' => 'prefix-prueba',
                 'required' => false,
-                'templateVars' => [],
-                'label' => true
+                'templateVars' => []
             ])
             ->will($this->returnValue('This is it!'));
         $result = $this->Form->input('prueba', [

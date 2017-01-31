@@ -1134,22 +1134,24 @@ class FormHelper extends Helper
      */
     protected function _getInput($fieldName, $options)
     {
+        $label = $options['label'];
+        unset($options['label']);
         switch (strtolower($options['type'])) {
             case 'select':
                 $opts = $options['options'];
                 unset($options['options']);
 
-                return $this->select($fieldName, $opts, $options);
+                return $this->select($fieldName, $opts, $options + ['label' => $label]);
             case 'radio':
                 $opts = $options['options'];
                 unset($options['options']);
 
-                return $this->radio($fieldName, $opts, $options);
+                return $this->radio($fieldName, $opts, $options + ['label' => $label]);
             case 'multicheckbox':
                 $opts = $options['options'];
                 unset($options['options']);
 
-                return $this->multiCheckbox($fieldName, $opts, $options);
+                return $this->multiCheckbox($fieldName, $opts, $options + ['label' => $label]);
             case 'input':
                 throw new RuntimeException("Invalid type 'input' used for field '$fieldName'");
 
@@ -1933,6 +1935,8 @@ class FormHelper extends Helper
 
             return $this->multiCheckbox($fieldName, $options, $attributes);
         }
+
+        unset($attributes['label']);
 
         // Secure the field if there are options, or it's a multi select.
         // Single selects with no options don't submit, but multiselects do.
