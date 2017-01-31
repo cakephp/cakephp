@@ -507,5 +507,4 @@ class AssociationTest extends TestCase
         $this->assertEquals('Foo.Bar', $assoc->getTarget()->registryAlias());
         $this->assertEquals('Bar', $assoc->getTarget()->alias());
     }
-
 }
