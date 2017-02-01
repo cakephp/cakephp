@@ -300,7 +300,7 @@ class PaginatorComponent extends Component
             $settings = $settings[$alias];
         }
 
-        $defaults = $this->config();
+        $defaults = $this->getConfig();
         $maxLimit = isset($settings['maxLimit']) ? $settings['maxLimit'] : $defaults['maxLimit'];
         $limit = isset($settings['limit']) ? $settings['limit'] : $defaults['limit'];
 

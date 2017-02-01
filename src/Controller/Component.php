@@ -125,7 +125,7 @@ class Component implements EventListenerInterface
             $this->response =& $controller->response;
         }
 
-        $this->config($config);
+        $this->setConfig($config);
 
         if ($this->components) {
             $this->_componentMap = $registry->normalizeArray($this->components);
@@ -217,7 +217,7 @@ class Component implements EventListenerInterface
         return [
             'components' => $this->components,
             'implementedEvents' => $this->implementedEvents(),
-            '_config' => $this->config(),
+            '_config' => $this->getConfig(),
         ];
     }
 }

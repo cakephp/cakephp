@@ -95,10 +95,10 @@ trait StringTemplateTrait
     public function templater()
     {
         if ($this->_templater === null) {
-            $class = $this->config('templateClass') ?: 'Cake\View\StringTemplate';
+            $class = $this->getConfig('templateClass') ?: 'Cake\View\StringTemplate';
             $this->_templater = new $class();
 
-            $templates = $this->config('templates');
+            $templates = $this->getConfig('templates');
             if ($templates) {
                 if (is_string($templates)) {
                     $this->_templater->add($this->_defaultConfig['templates']);

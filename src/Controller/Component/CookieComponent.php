@@ -118,7 +118,7 @@ class CookieComponent extends Component
     public function initialize(array $config)
     {
         if (!$this->_config['key']) {
-            $this->config('key', Security::salt());
+            $this->setConfig('key', Security::salt());
         }
 
         $controller = $this->_registry->getController();
@@ -128,7 +128,7 @@ class CookieComponent extends Component
         }
 
         if (empty($this->_config['path'])) {
-            $this->config('path', $this->request->webroot);
+            $this->setConfig('path', $this->request->webroot);
         }
     }
 

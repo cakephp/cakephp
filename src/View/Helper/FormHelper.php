@@ -238,7 +238,7 @@ class FormHelper extends Helper
 
         $this->widgetRegistry($registry, $widgets);
         $this->_addDefaultContextProviders();
-        $this->_idPrefix = $this->config('idPrefix');
+        $this->_idPrefix = $this->getConfig('idPrefix');
     }
 
     /**
@@ -548,7 +548,7 @@ class FormHelper extends Helper
         $this->requestType = null;
         $this->_context = null;
         $this->_valueSources = ['context'];
-        $this->_idPrefix = $this->config('idPrefix');
+        $this->_idPrefix = $this->getConfig('idPrefix');
 
         return $out;
     }

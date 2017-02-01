@@ -220,7 +220,7 @@ class SecurityComponent extends Component
         if (isset($actions[0]) && is_array($actions[0])) {
             $actions = $actions[0];
         }
-        $this->config('require' . $method, (empty($actions)) ? ['*'] : $actions);
+        $this->setConfig('require' . $method, (empty($actions)) ? ['*'] : $actions);
     }
 
     /**
@@ -424,7 +424,7 @@ class SecurityComponent extends Component
         }
 
         $unlockedFields = array_unique(
-            array_merge((array)$this->config('disabledFields'), (array)$this->_config['unlockedFields'], $unlocked)
+            array_merge((array)$this->getConfig('disabledFields'), (array)$this->_config['unlockedFields'], $unlocked)
         );
 
         foreach ($fieldList as $i => $key) {

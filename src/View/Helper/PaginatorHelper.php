@@ -101,7 +101,7 @@ class PaginatorHelper extends Helper
 
         $query = $this->request->getQueryParams();
         unset($query['page'], $query['limit'], $query['sort'], $query['direction']);
-        $this->config(
+        $this->setConfig(
             'options.url',
             array_merge($this->request->getParam('pass'), ['?' => $query])
         );

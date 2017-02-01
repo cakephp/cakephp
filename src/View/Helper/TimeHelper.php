@@ -55,7 +55,7 @@ class TimeHelper extends Helper
             return $timezone;
         }
 
-        return $this->config('outputTimezone');
+        return $this->getConfig('outputTimezone');
     }
 
     /**

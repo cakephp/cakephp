@@ -43,7 +43,7 @@ abstract class BaseLog extends AbstractLogger
      */
     public function __construct(array $config = [])
     {
-        $this->config($config);
+        $this->setConfig($config);
 
         if (!is_array($this->_config['scopes']) && $this->_config['scopes'] !== false) {
             $this->_config['scopes'] = (array)$this->_config['scopes'];

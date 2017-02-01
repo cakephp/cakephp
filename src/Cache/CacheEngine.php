@@ -65,7 +65,7 @@ abstract class CacheEngine
      */
     public function init(array $config = [])
     {
-        $this->config($config);
+        $this->setConfig($config);
 
         if (!empty($this->_config['groups'])) {
             sort($this->_config['groups']);

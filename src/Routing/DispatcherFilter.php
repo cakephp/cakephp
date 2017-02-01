@@ -101,7 +101,7 @@ class DispatcherFilter implements EventListenerInterface
         if (!isset($config['priority'])) {
             $config['priority'] = $this->_priority;
         }
-        $this->config($config);
+        $this->setConfig($config);
         if (isset($config['when']) && !is_callable($config['when'])) {
             throw new InvalidArgumentException('"when" conditions must be a callable.');
         }

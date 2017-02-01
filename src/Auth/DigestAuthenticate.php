@@ -83,7 +83,7 @@ class DigestAuthenticate extends BasicAuthenticate
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
-        $this->config([
+        $this->setConfig([
             'nonceLifetime' => 300,
             'secret' => Configure::read('Security.salt'),
             'realm' => null,
@@ -251,8 +251,8 @@ class DigestAuthenticate extends BasicAuthenticate
      */
     protected function generateNonce()
     {
-        $expiryTime = microtime(true) + $this->config('nonceLifetime');
-        $signatureValue = md5($expiryTime . ':' . $this->config('secret'));
+        $expiryTime = microtime(true) + $this->getConfig('nonceLifetime');
+        $signatureValue = md5($expiryTime . ':' . $this->getConfig('secret'));
         $nonceValue = $expiryTime . ':' . $signatureValue;
 
         return base64_encode($nonceValue);
@@ -279,6 +279,6 @@ class DigestAuthenticate extends BasicAuthenticate
             return false;
         }
 
-        return md5($expires . ':' . $this->config('secret')) === $checksum;
+        return md5($expires . ':' . $this->getConfig('secret')) === $checksum;
     }
 }

@@ -192,10 +192,10 @@ class Debugger
     public static function configInstance($key = null, $value = null, $merge = true)
     {
         if (is_array($key) || func_num_args() >= 2) {
-            return static::getInstance()->config($key, $value, $merge);
+            return static::getInstance()->setConfig($key, $value, $merge);
         }
 
-        return static::getInstance()->config($key);
+        return static::getInstance()->getConfig($key);
     }
 
     /**
