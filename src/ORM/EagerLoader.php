@@ -502,7 +502,7 @@ class EagerLoader
         }
 
         $paths += ['aliasPath' => '', 'propertyPath' => '', 'root' => $alias];
-        $paths['aliasPath'] .= '.' . $alias;
+        $paths['aliasPath'] .= '.' . $instance->getTarget()->getAlias();
         $paths['propertyPath'] .= '.' . $instance->getProperty();
 
         $table = $instance->getTarget();
@@ -699,7 +699,7 @@ class EagerLoader
                     'instance' => $instance,
                     'canBeJoined' => $canBeJoined,
                     'entityClass' => $instance->getTarget()->getEntityClass(),
-                    'nestKey' => $canBeJoined ? $assoc : $meta->aliasPath(),
+                    'nestKey' => $canBeJoined ? $instance->getTarget()->getAlias() : $meta->aliasPath(),
                     'matching' => $forMatching !== null ? $forMatching : $matching,
                     'targetProperty' => $meta->targetProperty()
                 ];
@@ -732,7 +732,7 @@ class EagerLoader
     public function addToJoinsMap($alias, Association $assoc, $asMatching = false, $targetProperty = null)
     {
         $this->_joinsMap[$alias] = new EagerLoadable($alias, [
-            'aliasPath' => $alias,
+            'aliasPath' => $assoc->getTarget()->getAlias(),
             'instance' => $assoc,
             'canBeJoined' => true,
             'forMatching' => $asMatching,
