@@ -1188,13 +1188,13 @@ class Request implements ArrayAccess
      * will be created for you.
      *
      * @param string|null $name Dot separated name of the value to read/write
+     * @param string|null $value Value to be written
      * @return mixed|$this Either the value being read, or this so you can chain consecutive writes.
      */
-    public function data($name = null)
+    public function data($name = null, $value = null)
     {
-        $args = func_get_args();
-        if (count($args) === 2) {
-            $this->data = Hash::insert($this->data, $name, $args[1]);
+        if ($value !== null) {
+            $this->data = Hash::insert($this->data, $name, $value);
 
             return $this;
         }
