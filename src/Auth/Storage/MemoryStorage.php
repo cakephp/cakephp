@@ -25,7 +25,7 @@ class MemoryStorage implements StorageInterface
      *
      * @var array|null
      */
-    protected $_user;
+    protected $user;
 
     /**
      * Redirect url.
