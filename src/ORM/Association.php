@@ -928,7 +928,7 @@ abstract class Association
 
         $joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
         $options['conditions'] = $dummy->clause('where');
-        $query->join([$this->_name => array_intersect_key($options, $joinOptions)]);
+        $query->join([$target->getAlias() => array_intersect_key($options, $joinOptions)]);
 
         $this->_appendFields($query, $dummy, $options);
         $this->_formatAssociationResults($query, $dummy, $options);
@@ -948,7 +948,7 @@ abstract class Association
     {
         $target = $this->_targetTable;
         if (!empty($options['negateMatch'])) {
-            $primaryKey = $query->aliasFields((array)$target->getPrimaryKey(), $this->_name);
+            $primaryKey = $query->aliasFields((array)$target->getPrimaryKey(), $target->getAlias());
             $query->andWhere(function ($exp) use ($primaryKey) {
                 array_map([$exp, 'isNull'], $primaryKey);
 
@@ -973,7 +973,7 @@ abstract class Association
     public function transformRow($row, $nestKey, $joined, $targetProperty = null)
     {
         $sourceAlias = $this->getSource()->getAlias();
-        $nestKey = $nestKey ?: $this->_name;
+        $nestKey = $nestKey ?: $this->getTarget()->getAlias();
         $targetProperty = $targetProperty ?: $this->getProperty();
         if (isset($row[$sourceAlias])) {
             $row[$sourceAlias][$targetProperty] = $row[$nestKey];
