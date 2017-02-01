@@ -495,7 +495,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *     ->select(['total_articles' => $query->func()->count('Articles.id')])
      *     ->leftJoinWith('Articles')
      *     ->group(['Users.id'])
-     *     ->autoFields(true);
+     *     ->setAutoFields(true);
      * ```
      *
      * You can also customize the conditions passed to the LEFT JOIN:
@@ -508,7 +508,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *         return $q->where(['Articles.votes >=' => 5]);
      *     })
      *     ->group(['Users.id'])
-     *     ->autoFields(true);
+     *     ->setAutoFields(true);
      * ```
      *
      * This will create the following SQL:

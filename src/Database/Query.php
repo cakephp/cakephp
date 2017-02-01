@@ -1371,7 +1371,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         if (!$this->_parts['values']) {
             $this->_parts['values'] = new ValuesExpression($columns, $this->getTypeMap()->setTypes($types));
         } else {
-            $this->_parts['values']->columns($columns);
+            $this->_parts['values']->setColumns($columns);
         }
 
         return $this;

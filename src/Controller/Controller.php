@@ -212,7 +212,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Holds all passed params.
      *
      * @var array
-     * @deprecated 3.1.0 Use `$this->request->params['pass']` instead.
+     * @deprecated 3.1.0 Use `$this->request->getParam('pass')` instead.
      */
     public $passedArgs = [];
 
