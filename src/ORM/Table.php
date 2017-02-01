@@ -316,7 +316,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *  {
      *      $this->belongsTo('Users');
      *      $this->belongsToMany('Tagging.Tags');
-     *      $this->primaryKey('something_else');
+     *      $this->setPrimaryKey('something_else');
      *  }
      * ```
      *

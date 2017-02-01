@@ -87,7 +87,7 @@ trait SqlDialectTrait
     public function queryTranslator($type)
     {
         return function ($query) use ($type) {
-            if ($this->autoQuoting()) {
+            if ($this->isAutoQuotingEnabled()) {
                 $query = (new IdentifierQuoter($this))->quote($query);
             }
 

@@ -216,7 +216,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             return function ($q) use ($field, $locale, $query, $select) {
                 $q->where([$q->repository()->aliasField('locale') => $locale]);
 
-                if ($query->autoFields() ||
+                if ($query->isAutoFieldsEnabled() ||
                     in_array($field, $select, true) ||
                     in_array($this->_table->aliasField($field), $select, true)
                 ) {

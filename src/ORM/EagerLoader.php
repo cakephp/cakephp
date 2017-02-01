@@ -581,7 +581,7 @@ class EagerLoader
 
         $config['strategy'] = Association::STRATEGY_SELECT;
         $loadable->setConfig($config);
-        $loadable->canBeJoined(false);
+        $loadable->setCanBeJoined(false);
     }
 
     /**
@@ -611,7 +611,7 @@ class EagerLoader
                 $this->_correctStrategy($loadable);
             }
 
-            $loadable->canBeJoined(false);
+            $loadable->setCanBeJoined(false);
             $this->_loadExternal[] = $loadable;
         }
 
