@@ -993,6 +993,9 @@ class FormHelper extends Helper
      * - `templates` - The templates you want to use for this input. Any templates will be merged on top of
      *   the already loaded templates. This option can either be a filename in /config that contains
      *   the templates you want to load, or an array of templates to use.
+     * - `labelOptions` - Either `false` to disable label around nestedWidgets e.g. radio, multicheckbox or an array
+     *   of attributes for the label tag. `selected` will be added to any classes e.g. `class => 'myclass'` where
+     *   widget is checked
      *
      * @param string $fieldName This should be "modelname.fieldname"
      * @param array $options Each type of input takes different options.
@@ -1469,7 +1472,9 @@ class FormHelper extends Helper
      * ### Attributes:
      *
      * - `value` - Indicates the value when this radio button is checked.
-     * - `label` - boolean to indicate whether or not labels for widgets should be displayed.
+     * - `label` - Either `false` to disable label around the widget or an array of attributes for
+     *    the label tag. `selected` will be added to any classes e.g. `class => 'myclass'` where widget
+     *    is checked
      * - `hiddenField` - boolean to indicate if you want the results of radio() to include
      *    a hidden input with a value of ''. This is useful for creating radio sets that are non-continuous.
      * - `disabled` - Set to `true` or `disabled` to disable all the radio buttons.
@@ -1978,6 +1983,9 @@ class FormHelper extends Helper
      *   You can also set disabled to a list of values you want to disable when creating checkboxes.
      * - `hiddenField` - Set to false to remove the hidden field that ensures a value
      *   is always submitted.
+     * - `label` - Either `false` to disable label around the widget or an array of attributes for
+     *   the label tag. `selected` will be added to any classes e.g. `class => 'myclass'` where
+     *   widget is checked
      *
      * Can be used in place of a select box with the multiple attribute.
      *
