@@ -8500,12 +8500,11 @@ class FormHelperTest extends TestCase
     /**
      * Tests to make sure `labelOptions` is rendered correctly by MultiCheckboxWidget and RadioWidget
      *
-     * Tests false, class (as string and array) also makes sure 'selected' is added to the class if checked.
-     * Also checks to make sure any custom attributes are rendered
+     * This test makes sure `false` excludes the label from the render
+     *
      */
-    public function testControlLabelManipulation()
+    public function testInputLabelManipulationDisableLabels()
     {
-        // Tests removal of label around input (Radio)
         $result = $this->Form->input('test', [
             'type' => 'radio',
             'options' => ['A', 'B'],
@@ -8523,108 +8522,6 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        // Tests String class (Radio)
-        $result = $this->Form->input('test', [
-            'type' => 'radio',
-            'options' => ['A', 'B'],
-            'labelOptions' => ['class' => 'custom-class']
-        ]);
-        $expected = [
-            ['div' => ['class' => 'input radio']],
-            '<label',
-            'Test',
-            '/label',
-            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '']],
-            ['label' => ['for' => 'test-0', 'class' => 'custom-class']],
-            ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
-            'A',
-            '/label',
-            ['label' => ['for' => 'test-1', 'class' => 'custom-class']],
-            ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '1', 'id' => 'test-1']],
-            'B',
-            '/label',
-            '/div',
-        ];
-        $this->assertHtml($expected, $result);
-
-        // Tests to make sure selected is added to class (Radio)
-        $result = $this->Form->input('test', [
-            'type' => 'radio',
-            'options' => ['A', 'B'],
-            'value' => 1,
-            'labelOptions' => ['class' => 'custom-class']
-        ]);
-        $expected = [
-            ['div' => ['class' => 'input radio']],
-            '<label',
-            'Test',
-            '/label',
-            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '']],
-            ['label' => ['for' => 'test-0', 'class' => 'custom-class']],
-            ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
-            'A',
-            '/label',
-            ['label' => ['for' => 'test-1', 'class' => 'custom-class selected']],
-            ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '1', 'id' => 'test-1', 'checked' => 'checked']],
-            'B',
-            '/label',
-            '/div',
-        ];
-        $this->assertHtml($expected, $result);
-
-        // Tests class as array and adding selected (Radio)
-        $result = $this->Form->input('test', [
-            'type' => 'radio',
-            'options' => ['A', 'B'],
-            'value' => 1,
-            'labelOptions' => ['class' => ['custom-class', 'custom-class-array']]
-        ]);
-        $expected = [
-            ['div' => ['class' => 'input radio']],
-            '<label',
-            'Test',
-            '/label',
-            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '']],
-            ['label' => ['for' => 'test-0', 'class' => 'custom-class custom-class-array']],
-            ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
-            'A',
-            '/label',
-            ['label' => ['for' => 'test-1', 'class' => 'custom-class custom-class-array selected']],
-            ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '1', 'id' => 'test-1', 'checked' => 'checked']],
-            'B',
-            '/label',
-            '/div',
-        ];
-        $this->assertHtml($expected, $result);
-
-        // Tests class as array and adding selected as well as custom attributes (Radio)
-        $result = $this->Form->radio('test', ['A', 'B'], [
-            'label' => [
-                'class' => ['custom-class', 'another-class'],
-                'data-name' => 'bob'
-            ],
-            'value' => 1
-        ]);
-        $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'test', 'value' => ''],
-            ['label' => ['class' => 'custom-class another-class', 'data-name' => 'bob', 'for' => 'test-0']],
-            ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
-            'A',
-            '/label',
-            ['label' => ['class' => 'custom-class another-class selected', 'data-name' => 'bob', 'for' => 'test-1']],
-            ['input' => [
-                'type' => 'radio',
-                'name' => 'test',
-                'value' => '1',
-                'id' => 'test-1',
-                'checked' => 'checked'
-            ]],
-            'B',
-            '/label',
-        ];
-        $this->assertHtml($expected, $result);
-
-        // Tests removal of label around input (MultiCheckbox)
         $result = $this->Form->input('checkbox1', [
             'label' => 'My checkboxes',
             'multiple' => 'checkbox',
@@ -8650,8 +8547,126 @@ class FormHelperTest extends TestCase
             '/div'
         ];
         $this->assertHtml($expected, $result);
+    }
 
-        // Tests class as array, adding selected to class with custom attributes (MultiCheckbox)
+    /**
+     * Tests to make sure `labelOptions` is rendered correctly by RadioWidget
+     *
+     * This test checks rendering of class (as string and array) also makes sure 'selected' is
+     * added to the class if checked.
+     *
+     * Also checks to make sure any custom attributes are rendered correctly
+     */
+    public function testInputLabelManipulationRadios()
+    {
+        $result = $this->Form->input('test', [
+            'type' => 'radio',
+            'options' => ['A', 'B'],
+            'labelOptions' => ['class' => 'custom-class']
+        ]);
+        $expected = [
+            ['div' => ['class' => 'input radio']],
+            '<label',
+            'Test',
+            '/label',
+            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '']],
+            ['label' => ['for' => 'test-0', 'class' => 'custom-class']],
+            ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
+            'A',
+            '/label',
+            ['label' => ['for' => 'test-1', 'class' => 'custom-class']],
+            ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '1', 'id' => 'test-1']],
+            'B',
+            '/label',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->input('test', [
+            'type' => 'radio',
+            'options' => ['A', 'B'],
+            'value' => 1,
+            'labelOptions' => ['class' => 'custom-class']
+        ]);
+        $expected = [
+            ['div' => ['class' => 'input radio']],
+            '<label',
+            'Test',
+            '/label',
+            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '']],
+            ['label' => ['for' => 'test-0', 'class' => 'custom-class']],
+            ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
+            'A',
+            '/label',
+            ['label' => ['for' => 'test-1', 'class' => 'custom-class selected']],
+            ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '1', 'id' => 'test-1', 'checked' => 'checked']],
+            'B',
+            '/label',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->input('test', [
+            'type' => 'radio',
+            'options' => ['A', 'B'],
+            'value' => 1,
+            'labelOptions' => ['class' => ['custom-class', 'custom-class-array']]
+        ]);
+        $expected = [
+            ['div' => ['class' => 'input radio']],
+            '<label',
+            'Test',
+            '/label',
+            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '']],
+            ['label' => ['for' => 'test-0', 'class' => 'custom-class custom-class-array']],
+            ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
+            'A',
+            '/label',
+            ['label' => ['for' => 'test-1', 'class' => 'custom-class custom-class-array selected']],
+            ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '1', 'id' => 'test-1', 'checked' => 'checked']],
+            'B',
+            '/label',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->radio('test', ['A', 'B'], [
+            'label' => [
+                'class' => ['custom-class', 'another-class'],
+                'data-name' => 'bob'
+            ],
+            'value' => 1
+        ]);
+        $expected = [
+            'input' => ['type' => 'hidden', 'name' => 'test', 'value' => ''],
+            ['label' => ['class' => 'custom-class another-class', 'data-name' => 'bob', 'for' => 'test-0']],
+            ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
+            'A',
+            '/label',
+            ['label' => ['class' => 'custom-class another-class selected', 'data-name' => 'bob', 'for' => 'test-1']],
+            ['input' => [
+                'type' => 'radio',
+                'name' => 'test',
+                'value' => '1',
+                'id' => 'test-1',
+                'checked' => 'checked'
+            ]],
+            'B',
+            '/label',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Tests to make sure `labelOptions` is rendered correctly by MultiCheckboxWidget
+     *
+     * This test checks rendering of class (as string and array) also makes sure 'selected' is
+     * added to the class if checked.
+     *
+     * Also checks to make sure any custom attributes are rendered correctly
+     */
+    public function testInputLabelManipulationCheckboxes()
+    {
         $result = $this->Form->input('checkbox1', [
             'label' => 'My checkboxes',
             'multiple' => 'checkbox',
@@ -8663,7 +8678,6 @@ class FormHelperTest extends TestCase
             'labelOptions' => ['class' => 'custom-class'],
             'value' => ['1']
         ]);
-
         $expected = [
             ['div' => ['class' => 'input select']],
             ['label' => ['for' => 'checkbox1']],
@@ -8703,7 +8717,6 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        // Tests class as array, adding selected to class with custom attributes (MultiCheckbox)
         $result = $this->Form->input('checkbox1', [
             'label' => 'My checkboxes',
             'multiple' => 'checkbox',
@@ -8716,7 +8729,6 @@ class FormHelperTest extends TestCase
             'value' => ['1']
 
         ]);
-
         $expected = [
             ['div' => ['class' => 'input select']],
             ['label' => ['for' => 'checkbox1']],
