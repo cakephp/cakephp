@@ -1009,7 +1009,7 @@ class FormHelper extends Helper
             'options' => null,
             'templates' => [],
             'templateVars' => [],
-            'optionsLabel' => true
+            'labelOptions' => true
         ];
         $options = $this->_parseOptions($fieldName, $options);
         $options += ['id' => $this->_domId($fieldName)];
@@ -1039,8 +1039,8 @@ class FormHelper extends Helper
         $label = $options['label'];
         unset($options['label']);
 
-        $optionsLabel = $options['optionsLabel'];
-        unset($options['optionsLabel']);
+        $labelOptions = $options['labelOptions'];
+        unset($options['labelOptions']);
 
         $nestedInput = false;
         if ($options['type'] === 'checkbox') {
@@ -1053,7 +1053,7 @@ class FormHelper extends Helper
             $options['hiddenField'] = '_split';
         }
 
-        $input = $this->_getInput($fieldName, $options + ['label' => $optionsLabel]);
+        $input = $this->_getInput($fieldName, $options + ['labelOptions' => $labelOptions]);
         if ($options['type'] === 'hidden' || $options['type'] === 'submit') {
             if ($newTemplates) {
                 $templater->pop();
@@ -1134,8 +1134,8 @@ class FormHelper extends Helper
      */
     protected function _getInput($fieldName, $options)
     {
-        $label = $options['label'];
-        unset($options['label']);
+        $label = $options['labelOptions'];
+        unset($options['labelOptions']);
         switch (strtolower($options['type'])) {
             case 'select':
                 $opts = $options['options'];

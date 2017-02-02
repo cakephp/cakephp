@@ -8498,7 +8498,7 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Tests to make sure `optionsLabel` is rendered correctly by MultiCheckboxWidget and RadioWidget
+     * Tests to make sure `labelOptions` is rendered correctly by MultiCheckboxWidget and RadioWidget
      *
      * Tests false, class (as string and array) also makes sure 'selected' is added to the class if checked.
      * Also checks to make sure any custom attributes are rendered
@@ -8509,7 +8509,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->input('test', [
             'type' => 'radio',
             'options' => ['A', 'B'],
-            'optionsLabel' => false
+            'labelOptions' => false
         ]);
         $expected = [
             ['div' => ['class' => 'input radio']],
@@ -8527,7 +8527,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->input('test', [
             'type' => 'radio',
             'options' => ['A', 'B'],
-            'optionsLabel' => ['class' => 'custom-class']
+            'labelOptions' => ['class' => 'custom-class']
         ]);
         $expected = [
             ['div' => ['class' => 'input radio']],
@@ -8552,7 +8552,7 @@ class FormHelperTest extends TestCase
             'type' => 'radio',
             'options' => ['A', 'B'],
             'value' => 1,
-            'optionsLabel' => ['class' => 'custom-class']
+            'labelOptions' => ['class' => 'custom-class']
         ]);
         $expected = [
             ['div' => ['class' => 'input radio']],
@@ -8577,7 +8577,7 @@ class FormHelperTest extends TestCase
             'type' => 'radio',
             'options' => ['A', 'B'],
             'value' => 1,
-            'optionsLabel' => ['class' => ['custom-class', 'custom-class-array']]
+            'labelOptions' => ['class' => ['custom-class', 'custom-class-array']]
         ]);
         $expected = [
             ['div' => ['class' => 'input radio']],
@@ -8633,7 +8633,7 @@ class FormHelperTest extends TestCase
                 ['text' => 'First Checkbox', 'value' => 1],
                 ['text' => 'Second Checkbox', 'value' => 2]
             ],
-            'optionsLabel' => false
+            'labelOptions' => false
         ]);
         $expected = [
             ['div' => ['class' => 'input select']],
@@ -8660,7 +8660,7 @@ class FormHelperTest extends TestCase
                 ['text' => 'First Checkbox', 'value' => 1],
                 ['text' => 'Second Checkbox', 'value' => 2]
             ],
-            'optionsLabel' => ['class' => 'custom-class'],
+            'labelOptions' => ['class' => 'custom-class'],
             'value' => ['1']
         ]);
 
@@ -8712,7 +8712,7 @@ class FormHelperTest extends TestCase
                 ['text' => 'First Checkbox', 'value' => 1],
                 ['text' => 'Second Checkbox', 'value' => 2]
             ],
-            'optionsLabel' => ['class' => ['custom-class', 'another-class'], 'data-name' => 'bob'],
+            'labelOptions' => ['class' => ['custom-class', 'another-class'], 'data-name' => 'bob'],
             'value' => ['1']
 
         ]);
