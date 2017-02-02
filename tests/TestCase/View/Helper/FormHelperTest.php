@@ -8601,17 +8601,17 @@ class FormHelperTest extends TestCase
         $result = $this->Form->radio('test', ['A', 'B'], [
             'label' => [
                 'class' => ['custom-class', 'another-class'],
-                'some-other-attr' => 'blah'
+                'data-name' => 'bob'
             ],
             'value' => 1
         ]);
         $expected = [
             'input' => ['type' => 'hidden', 'name' => 'test', 'value' => ''],
-            ['label' => ['class' => 'custom-class another-class', 'some-other-attr' => 'blah', 'for' => 'test-0']],
+            ['label' => ['class' => 'custom-class another-class', 'data-name' => 'bob', 'for' => 'test-0']],
             ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
             'A',
             '/label',
-            ['label' => ['class' => 'custom-class another-class selected', 'some-other-attr' => 'blah', 'for' => 'test-1']],
+            ['label' => ['class' => 'custom-class another-class selected', 'data-name' => 'bob', 'for' => 'test-1']],
             ['input' => [
                 'type' => 'radio',
                 'name' => 'test',
@@ -8712,7 +8712,7 @@ class FormHelperTest extends TestCase
                 ['text' => 'First Checkbox', 'value' => 1],
                 ['text' => 'Second Checkbox', 'value' => 2]
             ],
-            'optionsLabel' => ['class' => ['custom-class', 'another-class'], 'some-other-attr' => 'blah'],
+            'optionsLabel' => ['class' => ['custom-class', 'another-class'], 'data-name' => 'bob'],
             'value' => ['1']
 
         ]);
@@ -8726,7 +8726,7 @@ class FormHelperTest extends TestCase
             ['div' => ['class' => 'checkbox']],
             ['label' => [
                 'class' => 'custom-class another-class selected',
-                'some-other-attr' => 'blah',
+                'data-name' => 'bob',
                 'for' => 'checkbox1-1'
             ]],
             ['input' => [
@@ -8742,7 +8742,7 @@ class FormHelperTest extends TestCase
             ['div' => ['class' => 'checkbox']],
             ['label' => [
                 'class' => 'custom-class another-class',
-                'some-other-attr' => 'blah',
+                'data-name' => 'bob',
                 'for' => 'checkbox1-2'
             ]],
             ['input' => [
