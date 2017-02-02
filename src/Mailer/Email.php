@@ -1846,7 +1846,8 @@ class Email implements JsonSerializable, Serializable
      * @param int|null $priority 1 (highest) to 5 (lowest)
      * @return $this
      */
-    public function setPriority($priority) {
+    public function setPriority($priority)
+    {
         $this->_priority = $priority;
 
         return $this;
@@ -1857,7 +1858,8 @@ class Email implements JsonSerializable, Serializable
      *
      * @return int
      */
-    public function getPriority() {
+    public function getPriority()
+    {
         return $this->_priority;
     }
 
