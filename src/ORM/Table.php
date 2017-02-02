@@ -114,6 +114,9 @@ use RuntimeException;
  *   The event is triggered only for the primary table on which save() is directly called.
  *   The event is not triggered if a transaction is started before calling save.
  *
+ * - `failedSave(Event $event, EntityInterface $entity, ArrayObject $options)`
+ *   Fired after an entity was not saved.
+ *
  * - `beforeDelete(Event $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired before an entity is deleted. By stopping this event you will abort
  *   the delete operation.
@@ -1430,6 +1433,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   for atomic save, listeners will receive the entity and the options array
      *   as arguments.
      *
+     * When saving fails, this method will trigger the Model.failedSave event
+     *
      * This method will determine whether the passed entity needs to be
      * inserted or updated in the database. It does that by checking the `isNew`
      * method on the entity. If the entity to be saved returns a non-empty value from
@@ -1479,6 +1484,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         ]);
 
         if ($entity->errors()) {
+            $this->dispatchEvent('Model.failedSave', compact('entity', 'options'));
+
             return false;
         }
 
@@ -1536,6 +1543,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $mode = $entity->isNew() ? RulesChecker::CREATE : RulesChecker::UPDATE;
         if ($options['checkRules'] && !$this->checkRules($entity, $mode, $options)) {
+            $this->dispatchEvent('Model.failedSave', compact('entity', 'options'));
+
             return false;
         }
 
@@ -1554,6 +1563,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         );
 
         if (!$saved && $options['atomic']) {
+            $this->dispatchEvent('Model.failedSave', compact('entity', 'options'));
+
             return false;
         }
 
@@ -1573,6 +1584,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (!$success && $isNew) {
             $entity->unsetProperty($this->primaryKey());
             $entity->isNew(true);
+        }
+
+        if ($success === false) {
+            $this->dispatchEvent('Model.failedSave', compact('entity', 'options'));
         }
 
         return $success ? $entity : false;
@@ -2367,6 +2382,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'Model.beforeSave' => 'beforeSave',
             'Model.afterSave' => 'afterSave',
             'Model.afterSaveCommit' => 'afterSaveCommit',
+            'Model.failedSave' => 'failedSave',
             'Model.beforeDelete' => 'beforeDelete',
             'Model.afterDelete' => 'afterDelete',
             'Model.afterDeleteCommit' => 'afterDeleteCommit',

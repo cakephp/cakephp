@@ -1682,6 +1682,7 @@ class TableTest extends TestCase
                 'beforeFind',
                 'beforeSave',
                 'afterSave',
+                'failedSave',
                 'beforeDelete',
                 'afterDelete',
                 'afterRules'
@@ -1694,6 +1695,7 @@ class TableTest extends TestCase
             'Model.beforeFind' => 'beforeFind',
             'Model.beforeSave' => 'beforeSave',
             'Model.afterSave' => 'afterSave',
+            'Model.failedSave' => 'failedSave',
             'Model.beforeDelete' => 'beforeDelete',
             'Model.afterDelete' => 'afterDelete',
             'Model.afterRules' => 'afterRules',
@@ -2492,6 +2494,48 @@ class TableTest extends TestCase
         $this->assertFalse($table->save($data));
         $this->assertFalse($called);
         $this->assertFalse($calledAfterCommit);
+    }
+
+    /**
+     * Asserts that failedSave callback is called on unsuccessful save
+     *
+     * @group save
+     * @return void
+     */
+    public function testFailedSaveCalled()
+    {
+        $table = $this->getMockBuilder('\Cake\ORM\Table')
+            ->setMethods(['query'])
+            ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
+            ->getMock();
+        $query = $this->getMockBuilder('\Cake\ORM\Query')
+            ->setMethods(['execute', 'addDefaultTypes'])
+            ->setConstructorArgs([null, $table])
+            ->getMock();
+        $statement = $this->getMockBuilder('\Cake\Database\Statement\StatementDecorator')->getMock();
+        $data = new Entity([
+            'username' => 'superuser',
+            'created' => new Time('2013-10-10 00:00'),
+            'updated' => new Time('2013-10-10 00:00')
+        ]);
+
+        $table->expects($this->once())->method('query')
+            ->will($this->returnValue($query));
+
+        $query->expects($this->once())->method('execute')
+            ->will($this->returnValue($statement));
+
+        $statement->expects($this->once())->method('rowCount')
+            ->will($this->returnValue(0));
+
+        $called = false;
+        $listener = function ($e, $entity, $options) use ($data, &$called) {
+            $called = true;
+        };
+        $table->eventManager()->on('Model.failedDelete', $listener);
+
+        $this->assertFalse($table->save($data));
+        $this->assertFalse($called);
     }
 
     /**
@@ -5996,6 +6040,7 @@ class TableTest extends TestCase
                 $afterSaveCount ++;
             }
         );
+
         $entity = new Entity(['title' => 'Title']);
         $this->assertNotFalse($table->save($entity));
         $this->assertEquals(1, $buildRulesCount);
@@ -6003,6 +6048,17 @@ class TableTest extends TestCase
         $this->assertEquals(1, $afterRulesCount);
         $this->assertEquals(1, $beforeSaveCount);
         $this->assertEquals(1, $afterSaveCount);
+
+        $failedSaveCount = 0;
+        $eventManager->on(
+            'Model.failedSave',
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$failedSaveCount) {
+                $failedSaveCount ++;
+            }
+        );
+        $otherEntity = new Entity(['foo' => 'bar']);
+        $this->assertFalse($table->save($otherEntity));
+        $this->assertEquals(1, $failedSaveCount);
 
         $beforeDeleteCount =
         $afterDeleteCount = 0;
