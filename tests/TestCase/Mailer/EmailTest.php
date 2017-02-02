@@ -539,7 +539,8 @@ class EmailTest extends TestCase
     /**
      * @return void
      */
-    public function testPriority() {
+    public function testPriority()
+    {
         $this->Email->setPriority(4);
 
         $this->assertSame(4, $this->Email->getPriority());
