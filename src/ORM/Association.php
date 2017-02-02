@@ -406,8 +406,8 @@ abstract class Association
             if (!is_a($this->_targetTable, $className)) {
                 throw new RuntimeException(sprintf(
                     'Invalid Table retrieved from a registry. Requested: %s, got: %s',
-                    get_class($this->_targetTable),
-                    $className
+                    $className,
+                    get_class($this->_targetTable)
                 ));
             }
         }
