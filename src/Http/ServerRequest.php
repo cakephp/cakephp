@@ -1489,6 +1489,9 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         if ($name === null) {
             return $this->data;
         }
+        if (!is_array($this->data) && $name) {
+            return $default;
+        }
 
         return Hash::get($this->data, $name, $default);
     }

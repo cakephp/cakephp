@@ -647,8 +647,8 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         $query = $association->find()
             ->select(['id', 'num' => 0])
             ->where(current($ruleSet))
-            ->hydrate(false)
-            ->bufferResults(false);
+            ->enableHydration(false)
+            ->enableBufferedResults(false);
 
         unset($ruleSet[0]);
         foreach ($ruleSet as $i => $conditions) {

@@ -827,7 +827,7 @@ class TreeBehavior extends Behavior
             ->select([$aliasedPrimaryKey])
             ->where([$this->_table->aliasField($parent) . ' IS' => $parentId])
             ->order($order)
-            ->hydrate(false);
+            ->enableHydration(false);
 
         $leftCounter = $counter;
         $nextLevel = $level + 1;

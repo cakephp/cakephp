@@ -265,7 +265,7 @@ class SecurityComponent extends Component
             $requireAuth = $this->_config['requireAuth'];
 
             if (in_array($request->getParam('action'), $requireAuth) || $requireAuth == ['*']) {
-                if (!isset($request->data['_Token'])) {
+                if ($request->getData('_Token') === null) {
                     throw new AuthSecurityException('\'_Token\' was not found in request data.');
                 }
 

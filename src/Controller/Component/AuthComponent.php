@@ -287,7 +287,7 @@ class AuthComponent extends Component
         /* @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
 
-        $action = strtolower($controller->request->params['action']);
+        $action = strtolower($controller->request->getParam('action'));
         if (!$controller->isAction($action)) {
             return null;
         }
@@ -346,7 +346,7 @@ class AuthComponent extends Component
      */
     protected function _isAllowed(Controller $controller)
     {
-        $action = strtolower($controller->request->params['action']);
+        $action = strtolower($controller->request->getParam('action'));
 
         return in_array($action, array_map('strtolower', $this->allowedActions));
     }

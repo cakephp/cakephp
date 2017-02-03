@@ -169,7 +169,7 @@ class SelectLoader
             ->select($options['fields'])
             ->where($options['conditions'])
             ->eagerLoaded(true)
-            ->hydrate($options['query']->hydrate());
+            ->enableHydration($options['query']->isHydrationEnabled());
 
         if ($useSubquery) {
             $filter = $this->_buildSubquery($options['query']);
