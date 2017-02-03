@@ -30,7 +30,7 @@
         "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation."
     },
     "require-dev": {
-        "phpunit/phpunit": "*",
+        "phpunit/phpunit": "~5.7.0",
         "cakephp/cakephp-codesniffer": "~2.1"
     },
     "autoload": {
