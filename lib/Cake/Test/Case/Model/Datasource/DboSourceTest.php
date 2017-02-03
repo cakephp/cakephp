@@ -1295,6 +1295,33 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * Test having method
+ *
+ * @return void
+ */
+	public function testHaving() {
+		$this->loadFixtures('User');
+
+		$result = $this->testDb->having(array('COUNT(*) >' => 0));
+		$this->assertEquals(' HAVING COUNT(*) > 0', $result);
+
+		$User = ClassRegistry::init('User');
+		$result = $this->testDb->having('COUNT(User.id) > 0', true, $User);
+		$this->assertEquals(' HAVING COUNT(`User`.`id`) > 0', $result);
+	}
+
+/**
+ * Test getLockingHint method
+ *
+ * @return void
+ */
+	public function testGetLockingHint() {
+		$this->assertEquals(' FOR UPDATE', $this->testDb->getLockingHint(true));
+		$this->assertNull($this->testDb->getLockingHint(false));
+		$this->assertNull($this->testDb->getLockingHint(null));
+	}
+
+/**
  * Test getting the last error.
  *
  * @return void
@@ -1427,24 +1454,56 @@ class DboSourceTest extends CakeTestCase {
  */
 	public function testBuildStatementDefaults() {
 		$conn = $this->getMock('MockPDO', array('quote'));
-		$conn->expects($this->at(0))
+		$conn->expects($this->any())
 			->method('quote')
-			->will($this->returnValue('foo bar'));
+			->will($this->returnArgument(0));
 		$db = new DboTestSource();
 		$db->setConnection($conn);
+
 		$subQuery = $db->buildStatement(
 			array(
 				'fields' => array('DISTINCT(AssetsTag.asset_id)'),
-				'table' => "assets_tags",
-				'alias' => "AssetsTag",
-				'conditions' => array("Tag.name" => 'foo bar'),
+				'table' => 'assets_tags',
+				'alias' => 'AssetsTag',
+				'conditions' => array('Tag.name' => 'foo bar'),
 				'limit' => null,
-				'group' => "AssetsTag.asset_id"
+				'group' => 'AssetsTag.asset_id'
 			),
 			$this->Model
 		);
 		$expected = 'SELECT DISTINCT(AssetsTag.asset_id) FROM assets_tags AS AssetsTag   WHERE Tag.name = foo bar  GROUP BY AssetsTag.asset_id';
 		$this->assertEquals($expected, $subQuery);
+
+		// HAVING
+		$sql = $db->buildStatement(
+			array(
+				'fields' => array('user_id', 'COUNT(*) AS count'),
+				'table' => 'articles',
+				'alias' => 'Article',
+				'group' => 'user_id',
+				'order' => array('COUNT(*)' => 'DESC'),
+				'limit' => 5,
+				'having' => array('COUNT(*) >' => 10),
+			),
+			$this->Model
+		);
+		$expected = 'SELECT user_id, COUNT(*) AS count FROM articles AS Article   WHERE 1 = 1  GROUP BY user_id  HAVING COUNT(*) > 10  ORDER BY COUNT(*) DESC  LIMIT 5';
+		$this->assertEquals($expected, $sql);
+
+		// FOR UPDATE
+		$sql = $db->buildStatement(
+			array(
+				'fields' => array('id'),
+				'table' => 'users',
+				'alias' => 'User',
+				'order' => array('id'),
+				'limit' => 1,
+				'lock' => true,
+			),
+			$this->Model
+		);
+		$expected = 'SELECT id FROM users AS User   WHERE 1 = 1   ORDER BY id ASC  LIMIT 1  FOR UPDATE';
+		$this->assertEquals($expected, $sql);
 	}
 
 /**
@@ -2023,5 +2082,30 @@ class DboSourceTest extends CakeTestCase {
 
 		$result = $this->db->length("enum('One Value','ANOTHER ... VALUE ...')");
 		$this->assertEquals(21, $result);
+	}
+
+/**
+ * Test find with locking hint
+ */
+	public function testFindWithLockingHint() {
+		$db = $this->getMock('DboTestSource', array('connect', '_execute', 'execute', 'describ'));
+
+		$Test = $this->getMock('Test', array('getDataSource'));
+		$Test->expects($this->any())
+			->method('getDataSource')
+			->will($this->returnValue($db));
+
+		$expected = 'SELECT Test.id FROM tests AS Test   WHERE id = 1   ORDER BY Test.id ASC  LIMIT 1  FOR UPDATE';
+
+		$db->expects($this->once())
+			->method('execute')
+			->with($expected);
+
+		$Test->find('first', array(
+			'recursive' => -1,
+			'fields' => array('id'),
+			'conditions' => array('id' => 1),
+			'lock' => true,
+		));
 	}
 }

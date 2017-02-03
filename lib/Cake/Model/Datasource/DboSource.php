@@ -213,7 +213,9 @@ class DboSource extends DataSource {
 		'limit' => null,
 		'joins' => array(),
 		'group' => null,
-		'offset' => null
+		'offset' => null,
+		'having' => null,
+		'lock' => null,
 	);
 
 /**
@@ -1732,7 +1734,9 @@ class DboSource extends DataSource {
 				'joins' => $queryData['joins'],
 				'conditions' => $queryData['conditions'],
 				'order' => $queryData['order'],
-				'group' => $queryData['group']
+				'group' => $queryData['group'],
+				'having' => $queryData['having'],
+				'lock' => $queryData['lock'],
 			),
 			$Model
 		);
@@ -2011,7 +2015,9 @@ class DboSource extends DataSource {
 			'order' => $this->order($query['order'], 'ASC', $Model),
 			'limit' => $this->limit($query['limit'], $query['offset']),
 			'joins' => implode(' ', $query['joins']),
-			'group' => $this->group($query['group'], $Model)
+			'group' => $this->group($query['group'], $Model),
+			'having' => $this->having($query['having'], true, $Model),
+			'lock' => $this->getLockingHint($query['lock']),
 		));
 	}
 
@@ -2041,7 +2047,9 @@ class DboSource extends DataSource {
 
 		switch (strtolower($type)) {
 			case 'select':
-				return trim("SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order} {$limit}");
+				$having = !empty($having) ? " $having" : '';
+				$lock = !empty($lock) ? " $lock" : '';
+				return trim("SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group}{$having} {$order} {$limit}{$lock}");
 			case 'create':
 				return "INSERT INTO {$table} ({$fields}) VALUES ({$values})";
 			case 'update':
@@ -2549,6 +2557,8 @@ class DboSource extends DataSource {
 		static $base = null;
 		if ($base === null) {
 			$base = array_fill_keys(array('conditions', 'fields', 'joins', 'order', 'limit', 'offset', 'group'), array());
+			$base['having'] = null;
+			$base['lock'] = null;
 			$base['callbacks'] = null;
 		}
 		return (array)$data + $base;
@@ -3123,6 +3133,35 @@ class DboSource extends DataSource {
 		$fields = implode(', ', $fields);
 
 		return ' GROUP BY ' . $this->_quoteFields($fields);
+	}
+
+/**
+ * Create a HAVING SQL clause.
+ *
+ * @param mixed $fields Array or string of conditions
+ * @param bool $quoteValues If true, values should be quoted
+ * @param Model $Model A reference to the Model instance making the query
+ * @return string|null
+ */
+	public function having($fields, $quoteValues = true, Model $Model = null) {
+		if (!$fields) {
+			return null;
+		}
+		return ' HAVING ' . $this->conditions($fields, $quoteValues, false, $Model);
+	}
+
+/**
+ * Returns a locking hint for the given mode.
+ * Currently, this method only returns FOR UPDATE when the mode is true.
+ *
+ * @param mixed $mode Lock mode
+ * @return string|null
+ */
+	public function getLockingHint($mode) {
+		if ($mode !== true) {
+			return null;
+		}
+		return ' FOR UPDATE';
 	}
 
 /**

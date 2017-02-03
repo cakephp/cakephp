@@ -626,4 +626,25 @@ SQL;
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * Test Sqlite Datasource doesn't support locking hint
+ *
+ * @return void
+ */
+	public function testBuildStatementWithoutLockingHint() {
+		$model = new TestModel();
+		$sql = $this->Dbo->buildStatement(
+			array(
+				'fields' => array('id'),
+				'table' => 'users',
+				'alias' => 'User',
+				'order' => array('id'),
+				'limit' => 1,
+				'lock' => true,
+			),
+			$model
+		);
+		$expected = 'SELECT id FROM users AS "User"   WHERE 1 = 1   ORDER BY "id" ASC  LIMIT 1';
+		$this->assertEquals($expected, $sql);
+	}
 }
