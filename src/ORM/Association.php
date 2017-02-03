@@ -244,6 +244,13 @@ abstract class Association
      */
     public function setName($name)
     {
+        if ($this->_targetTable !== null) {
+            $alias = $this->_targetTable->getAlias();
+            if ($alias !== $name) {
+                throw new InvalidArgumentException('Association name does not match target table alias.');
+            }
+        }
+
         $this->_name = $name;
 
         return $this;
