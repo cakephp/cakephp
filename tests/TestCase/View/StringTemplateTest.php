@@ -359,11 +359,11 @@ class StringTemplateTest extends TestCase
     }
 
     /**
-     * Test addClass method useIndex option
+     * Test addClass method useIndex param
      *
      * Tests for useIndex being the default, 'my_class' and false
      */
-    public function testAddClassMethodUseIndexOption()
+    public function testAddClassMethodUseIndex()
     {
         $result = $this->template->addClass(
             [
@@ -372,9 +372,7 @@ class StringTemplateTest extends TestCase
                 'type' => 'text'
             ],
             'new_class',
-            [
-                'useIndex' => 'class'
-            ]
+            'class'
         );
         $this->assertEquals($result, [
             'class' => ['current_class', 'new_class'],
@@ -389,9 +387,7 @@ class StringTemplateTest extends TestCase
                 'type' => 'text'
             ],
             'new_class',
-            [
-                'useIndex' => 'my_class'
-            ]
+            'my_class'
         );
         $this->assertEquals($result, [
             'other_index1' => false,
@@ -405,48 +401,12 @@ class StringTemplateTest extends TestCase
                 'text'
             ],
             'new_class',
-            [
-                'useIndex' => false
-            ]
+            false
         );
         $this->assertEquals($result, [
             'current_class',
             'text',
             'new_class'
         ]);
-    }
-
-    /**
-     * Test addClass method to make sure `asString` option is handle correctly
-     */
-    public function testAddClassMethodAsStringOption()
-    {
-        $result = $this->template->addClass(
-            ['class' => 'current_class'],
-            'new_class',
-            [
-                'asString' => true
-            ]
-        );
-        $this->assertEquals($result, ['class' => 'current_class new_class']);
-
-        $result = $this->template->addClass(
-            ['current_class'],
-            'new_class',
-            [
-                'useIndex' => false,
-                'asString' => true
-            ]
-        );
-        $this->assertEquals($result, 'current_class new_class');
-
-        $result = $this->template->addClass(
-            null,
-            'new_class',
-            [
-                'asString' => true
-            ]
-        );
-        $this->assertEquals($result, ['class' => 'new_class']);
     }
 }

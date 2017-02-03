@@ -332,26 +332,20 @@ class StringTemplate
      *
      * - `useIndex` if you are inputting an array with an 'element' other than 'class'.
      *              Also setting to 'false' will manipulate the whole array (default is 'class')
-     * - `asString` Setting this to `true` will return a space separated string (default is `false`)
      *
      * @param array|string $input The array or string to add the class to
      * @param array|string $newClass the new class or classes to add
-     * @param array $options See above for options
+     * @param string $useIndex if you are inputting an array with an 'element' other than 'class'.
+     *               Also setting to 'false' will manipulate the whole array (default is 'class')
      * @return array|string
      */
-    public function addClass($input, $newClass, $options = [])
+    public function addClass($input, $newClass, $useIndex = 'class')
     {
         // NOOP
         if (empty($newClass)) {
             return $input;
         }
 
-        $options += [
-            'useIndex' => 'class',
-            'asString' => false
-        ];
-
-        $useIndex = $options['useIndex'];
         if (is_string($useIndex) && is_array($input)) {
             $class = Hash::get($input, $useIndex, []);
         } else {
@@ -372,10 +366,6 @@ class StringTemplate
         }
 
         $class = array_unique(array_merge($class, $newClass));
-
-        if ($options['asString'] === true) {
-            $class = implode(' ', $class);
-        }
 
         if (is_string($useIndex)) {
             if (!is_array($input)) {
