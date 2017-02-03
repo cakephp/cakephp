@@ -6296,6 +6296,43 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that saveOrFail triggers an exception on not successful save
+     *
+     * @return void
+     * @expectedException \Cake\ORM\Exception\PersistenceFailedException
+     * @expectedExceptionMessage Entity save failure.
+     */
+    public function testSaveOrFail()
+    {
+        $entity = new Entity([
+            'foo' => 'bar'
+        ]);
+        $table = TableRegistry::get('users');
+
+        $table->saveOrFail($entity);
+
+        $row = $table->find('all')->where(['foo' => 'bar'])->toArray();
+        $this->assertSame([], $row->toArray());
+    }
+
+    /**
+     * Tests that deleteOrFail triggers an exception on not successful delete
+     *
+     * @return void
+     * @expectedException \Cake\ORM\Exception\PersistenceFailedException
+     * @expectedExceptionMessage Entity delete failure.
+     */
+    public function testDeleteOrFail()
+    {
+        $entity = new Entity([
+            'id' => 999
+        ]);
+        $table = TableRegistry::get('users');
+
+        $result = $table->deleteOrFail($entity);
+    }
+
+    /**
      * Test getting the save options builder.
      *
      * @return void
