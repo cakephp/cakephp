@@ -397,20 +397,23 @@ abstract class Association
             $tableLocator = $this->tableLocator();
 
             $config = [];
-            if (!$tableLocator->exists($registryAlias)) {
+            $exists = $tableLocator->exists($registryAlias);
+            if (!$exists) {
                 $config = ['className' => $this->_className];
             }
             $this->_targetTable = $tableLocator->get($registryAlias, $config);
 
-            $targetClassName = get_class($this->_targetTable);
-            $className = $this->_getClassName($registryAlias, ['className' => $this->_className]);
+            if ($exists) {
+                $targetClassName = get_class($this->_targetTable);
+                $className = $this->_getClassName($registryAlias, ['className' => $this->_className]);
 
-            if ($targetClassName !== $className) {
-                throw new RuntimeException(sprintf(
-                    'Invalid Table retrieved from a registry. Requested: %s, got: %s',
-                    $className,
-                    $targetClassName
-                ));
+                if ($targetClassName !== $className) {
+                    throw new RuntimeException(sprintf(
+                        'Invalid Table retrieved from a registry. Requested: %s, got: %s',
+                        $className,
+                        $targetClassName
+                    ));
+                }
             }
         }
 
