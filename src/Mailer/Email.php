@@ -2206,6 +2206,7 @@ class Email implements JsonSerializable, Serializable
         $this->_message = '';
         $this->_emailFormat = 'text';
         $this->_transport = null;
+        $this->_priority = null;
         $this->charset = 'utf-8';
         $this->headerCharset = null;
         $this->_attachments = [];
