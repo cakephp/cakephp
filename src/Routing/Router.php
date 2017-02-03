@@ -524,8 +524,8 @@ class Router
      *
      * ```
      * Router::addUrlFilter(function ($params, $request) {
-     *  if (isset($request->params['lang']) && !isset($params['lang'])) {
-     *    $params['lang'] = $request->params['lang'];
+     *  if ($request->getParam('lang') && !isset($params['lang'])) {
+     *    $params['lang'] = $request->getParam('lang');
      *  }
      *  return $params;
      * });
@@ -614,7 +614,7 @@ class Router
         if ($request) {
             $params = $request->params;
             $here = $request->here;
-            $base = $request->base;
+            $base = $request->getAttribute('base');
         } else {
             $base = Configure::read('App.base');
             if (isset(static::$_requestContext['_base'])) {
@@ -814,7 +814,7 @@ class Router
      * Instructs the router to parse out file extensions
      * from the URL. For example, http://example.com/posts.rss would yield a file
      * extension of "rss". The file extension itself is made available in the
-     * controller as `$this->request->params['_ext']`, and is used by the RequestHandler
+     * controller as `$this->request->getParam('_ext')`, and is used by the RequestHandler
      * component to automatically switch to alternate layouts and templates, and
      * load helpers corresponding to the given content, i.e. RssHelper. Switching
      * layouts and helpers requires that the chosen extension has a defined mime type
@@ -872,7 +872,7 @@ class Router
             return $request;
         }
         $named = [];
-        foreach ($request->params['pass'] as $key => $value) {
+        foreach ($request->getParam('pass') as $key => $value) {
             if (strpos($value, $options['separator']) === false) {
                 continue;
             }

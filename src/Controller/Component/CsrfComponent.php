@@ -65,7 +65,7 @@ class CsrfComponent extends Component
      * Validates the CSRF token for POST data. If
      * the request is a GET request, and the cookie value is absent a cookie will be set.
      *
-     * Once a cookie is set it will be copied into request->params['_csrfToken']
+     * Once a cookie is set it will be copied into request->getParam('_csrfToken')
      * so that application and framework code can easily access the csrf token.
      *
      * RequestAction requests do not get checked, nor will
