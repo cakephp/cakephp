@@ -402,12 +402,14 @@ abstract class Association
             }
             $this->_targetTable = $tableLocator->get($registryAlias, $config);
 
+            $targetClassName = get_class($this->_targetTable);
             $className = $this->_getClassName($registryAlias, ['className' => $this->_className]);
-            if (!is_a($this->_targetTable, $className)) {
+
+            if ($targetClassName !== $className) {
                 throw new RuntimeException(sprintf(
                     'Invalid Table retrieved from a registry. Requested: %s, got: %s',
                     $className,
-                    get_class($this->_targetTable)
+                    $targetClassName
                 ));
             }
         }
@@ -1301,7 +1303,9 @@ abstract class Association
             $options['className'] = Inflector::camelize($alias);
         }
 
-        return App::className($options['className'], 'Model/Table', 'Table') ?: 'Cake\ORM\Table';
+        $className = App::className($options['className'], 'Model/Table', 'Table') ?: 'Cake\ORM\Table';
+
+        return ltrim($className, '\\');
     }
 
     /**
