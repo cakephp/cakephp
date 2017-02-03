@@ -21,6 +21,23 @@ use JsonSerializable;
  * Describes the methods that any class representing a data storage should
  * comply with.
  *
+ * In 4.x the following methods will officially be added to the interface:
+ *
+ * @method $this setHidden(array $properties, $merge = false)
+ * @method array getHidden()
+ * @method $this setVirtual(array $properties, $merge = false)
+ * @method array getVirtual()
+ * @method $this setDirty($property, $isDirty)
+ * @method bool isDirty($property = null)
+ * @method array getErrors()
+ * @method array getError($field)
+ * @method array setErrors(array $fields, $overwrite = false)
+ * @method array setError($field, $errors, overwrite = false)
+ * @method $this setAccess(array $properties, $merge = false)
+ * @method array isAccessible($property)
+ * @method $this setSource($source)
+ * @method array getSource()
+ *
  * @property mixed $id Alias for commonly used primary key.
  */
 interface EntityInterface extends ArrayAccess, JsonSerializable
