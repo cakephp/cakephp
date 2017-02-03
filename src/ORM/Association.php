@@ -409,7 +409,7 @@ abstract class Association
      * Sets the table instance for the target side of the association. If no arguments
      * are passed, the current configured table instance is returned
      *
-     * @deprecated 3.4.0 Use setTable()/getTable() instead.
+     * @deprecated 3.4.0 Use setTarget()/getTarget() instead.
      * @param \Cake\ORM\Table|null $table the instance to be assigned as target side
      * @return \Cake\ORM\Table
      */
