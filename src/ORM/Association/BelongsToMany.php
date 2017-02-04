@@ -194,7 +194,7 @@ class BelongsToMany extends Association
     public function targetForeignKey($key = null)
     {
         if ($key !== null) {
-            return $this->setTargetForeignKey($key);
+            $this->setTargetForeignKey($key);
         }
 
         return $this->getTargetForeignKey();
@@ -224,22 +224,6 @@ class BelongsToMany extends Association
         }
 
         return $this->_foreignKey;
-    }
-
-    /**
-     * Sets the name of the field representing the foreign key to the source table.
-     * If no parameters are passed current field is returned
-     *
-     * @param string|null $key the key to be used to link both tables together
-     * @return string
-     */
-    public function foreignKey($key = null)
-    {
-        if ($key !== null) {
-            $this->setForeignKey($key);
-        }
-
-        return $this->getForeignKey();
     }
 
     /**
@@ -990,19 +974,6 @@ class BelongsToMany extends Association
         $this->_targetConditions = $this->_junctionConditions = null;
 
         return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @deprecated 3.4.0 Use setConditions()/getConditions() instead.
-     */
-    public function conditions($conditions = null)
-    {
-        if ($conditions !== null) {
-            $this->setConditions($conditions);
-        }
-
-        return $this->getConditions();
     }
 
     /**

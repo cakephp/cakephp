@@ -564,23 +564,6 @@ class HasMany extends Association
     }
 
     /**
-     * Sets the name of the field representing the foreign key to the source table.
-     * If no parameters are passed current field is returned
-     *
-     * @deprecated 3.4.0 Use setForeignKey()/getForeignKey() instead.
-     * @param string|null $key the key to be used to link both tables together
-     * @return string
-     */
-    public function foreignKey($key = null)
-    {
-        if ($key !== null) {
-            return $this->setForeignKey($key);
-        }
-
-        return $this->getForeignKey();
-    }
-
-    /**
      * Sets the sort order in which target records should be returned.
      *
      * @param mixed $sort A find() compatible order clause
