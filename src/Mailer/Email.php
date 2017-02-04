@@ -265,6 +265,13 @@ class Email implements JsonSerializable, Serializable
     protected $_boundary = null;
 
     /**
+     * Contains the optional priority of the email.
+     *
+     * @var int|null
+     */
+    protected $_priority = null;
+
+    /**
      * An array mapping url schemes to fully qualified Transport class names
      *
      * @var array
@@ -1118,6 +1125,10 @@ class Email implements JsonSerializable, Serializable
             }
         }
 
+        if ($this->_priority) {
+            $headers['X-Priority'] = $this->_priority;
+        }
+
         if ($include['subject']) {
             $headers['Subject'] = $this->_subject;
         }
@@ -1830,6 +1841,29 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
+     * Sets priority.
+     *
+     * @param int|null $priority 1 (highest) to 5 (lowest)
+     * @return $this
+     */
+    public function setPriority($priority)
+    {
+        $this->_priority = $priority;
+
+        return $this;
+    }
+
+    /**
+     * Gets priority.
+     *
+     * @return int
+     */
+    public function getPriority()
+    {
+        return $this->_priority;
+    }
+
+    /**
      * Sets transport configuration.
      *
      * Use this method to define transports to use in delivery profiles.
@@ -2172,6 +2206,7 @@ class Email implements JsonSerializable, Serializable
         $this->_message = '';
         $this->_emailFormat = 'text';
         $this->_transport = null;
+        $this->_priority = null;
         $this->charset = 'utf-8';
         $this->headerCharset = null;
         $this->_attachments = [];
