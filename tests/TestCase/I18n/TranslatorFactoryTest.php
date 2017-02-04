@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\I18n;
 
+use Aura\Intl\Package;
 use Aura\Intl\Translator as AuraTranslator;
 use Cake\I18n\TranslatorFactory;
 use Cake\TestSuite\TestCase;
@@ -32,8 +33,9 @@ class TranslatorFactoryTest extends TestCase
     public function testNewInstanceErrorOnFallback()
     {
         $formatter = $this->getMockBuilder('Aura\Intl\FormatterInterface')->getMock();
-        $fallback = new AuraTranslator('en_CA', [], $formatter, null);
+        $package = $this->getMockBuilder(Package::class)->getMock();
+        $fallback = new AuraTranslator('en_CA', $package, $formatter, null);
         $factory = new TranslatorFactory();
-        $factory->newInstance('en_CA', [], $formatter, $fallback);
+        $factory->newInstance('en_CA', $package, $formatter, $fallback);
     }
 }

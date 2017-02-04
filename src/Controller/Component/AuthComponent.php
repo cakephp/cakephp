@@ -387,7 +387,7 @@ class AuthComponent extends Component
         }
 
         if (!empty($this->_config['ajaxLogin'])) {
-            $controller->viewBuilder()->templatePath('Element');
+            $controller->viewBuilder()->setTemplatePath('Element');
             $response = $controller->render(
                 $this->_config['ajaxLogin'],
                 $this->RequestHandler->ajaxLayout
@@ -745,8 +745,8 @@ class AuthComponent extends Component
             if (!empty($result) && is_array($result)) {
                 $this->_authenticationProvider = $auth;
                 $event = $this->dispatchEvent('Auth.afterIdentify', [$result, $auth]);
-                if ($event->result() !== null) {
-                    $result = $event->result();
+                if ($event->getResult() !== null) {
+                    $result = $event->getResult();
                 }
                 $this->storage()->write($result);
 
@@ -777,7 +777,7 @@ class AuthComponent extends Component
      */
     public function redirectUrl($url = null)
     {
-        $redirectUrl = $this->request->query(static::QUERY_STRING_REDIRECT);
+        $redirectUrl = $this->request->getQuery(static::QUERY_STRING_REDIRECT);
         if ($redirectUrl && (substr($redirectUrl, 0, 1) !== '/' || substr($redirectUrl, 0, 2) === '//')) {
             $redirectUrl = null;
         }
@@ -821,8 +821,8 @@ class AuthComponent extends Component
             if (!empty($result)) {
                 $this->_authenticationProvider = $auth;
                 $event = $this->dispatchEvent('Auth.afterIdentify', [$result, $auth]);
-                if ($event->result() !== null) {
-                    return $event->result();
+                if ($event->getResult() !== null) {
+                    return $event->getResult();
                 }
 
                 return $result;

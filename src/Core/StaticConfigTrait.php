@@ -292,7 +292,7 @@ trait StaticConfigTrait
         $parsed = $queryArgs + $parsed;
 
         if (empty($parsed['className'])) {
-            $classMap = static::dsnClassMap();
+            $classMap = static::getDsnClassMap();
 
             $parsed['className'] = $parsed['scheme'];
             if (isset($classMap[$parsed['scheme']])) {

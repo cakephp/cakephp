@@ -58,7 +58,7 @@ trait TranslateTrait
         }
 
         // Assume the user will modify any of the internal translations, helps with saving
-        $this->dirty('_translations', true);
+        $this->setDirty('_translations', true);
 
         return $i18n[$language];
     }

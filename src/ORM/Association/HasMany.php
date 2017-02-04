@@ -264,7 +264,7 @@ class HasMany extends Association
 
         $sourceEntity->set($property, $currentEntities);
 
-        $savedEntity = $this->connection()->transactional(function () use ($sourceEntity, $options) {
+        $savedEntity = $this->getConnection()->transactional(function () use ($sourceEntity, $options) {
             return $this->saveAssociated($sourceEntity, $options);
         });
 

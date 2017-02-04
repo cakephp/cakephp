@@ -346,7 +346,7 @@ class Email implements JsonSerializable, Serializable
             ->setHelpers(['Html']);
 
         if ($config === null) {
-            $config = static::config('default');
+            $config = static::getConfig('default');
         }
         if ($config) {
             $this->setProfile($config);
@@ -2136,7 +2136,7 @@ class Email implements JsonSerializable, Serializable
     {
         if (is_string($config)) {
             $name = $config;
-            $config = static::config($name);
+            $config = static::getConfig($name);
             if (empty($config)) {
                 throw new InvalidArgumentException(sprintf('Unknown email configuration "%s".', $name));
             }
