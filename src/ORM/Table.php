@@ -1771,7 +1771,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $event = $this->dispatchEvent('Model.beforeSave', compact('entity', 'options'));
 
         if ($event->isStopped()) {
-            return $event->result();
+            return $event->getResult();
         }
 
         $saved = $this->_associations->saveParents(
@@ -2099,7 +2099,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         ]);
 
         if ($event->isStopped()) {
-            return $event->result();
+            return $event->getResult();
         }
 
         $this->_associations->cascadeDelete(

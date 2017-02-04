@@ -51,7 +51,7 @@ use Cake\Log\LogTrait;
  *   propagation.
  *
  * While the controller is not an explicit argument for the callback methods it
- * is the subject of each event and can be fetched using Event::subject().
+ * is the subject of each event and can be fetched using Event::getSubject().
  *
  * @link http://book.cakephp.org/3.0/en/controllers/components.html
  * @see \Cake\Controller\Controller::$components

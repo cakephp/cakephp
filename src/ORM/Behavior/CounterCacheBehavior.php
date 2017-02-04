@@ -116,8 +116,8 @@ class CounterCacheBehavior extends Behavior
                     continue;
                 }
 
-                $registryAlias = $assoc->target()->registryAlias();
-                $entityAlias = $assoc->property();
+                $registryAlias = $assoc->getTarget()->getRegistryAlias();
+                $entityAlias = $assoc->getProperty();
 
                 if (!is_callable($config) &&
                     isset($config['ignoreDirty']) &&
@@ -201,8 +201,8 @@ class CounterCacheBehavior extends Behavior
                 $config = [];
             }
 
-            if (isset($this->_ignoreDirty[$assoc->target()->registryAlias()][$field]) &&
-                $this->_ignoreDirty[$assoc->target()->registryAlias()][$field] === true
+            if (isset($this->_ignoreDirty[$assoc->getTarget()->getRegistryAlias()][$field]) &&
+                $this->_ignoreDirty[$assoc->getTarget()->getRegistryAlias()][$field] === true
             ) {
                 continue;
             }

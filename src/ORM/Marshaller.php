@@ -170,11 +170,11 @@ class Marshaller
         $entityClass = $this->_table->getEntityClass();
         /* @var Entity $entity */
         $entity = new $entityClass();
-        $entity->source($this->_table->getRegistryAlias());
+        $entity->setSource($this->_table->getRegistryAlias());
 
         if (isset($options['accessibleFields'])) {
             foreach ((array)$options['accessibleFields'] as $key => $value) {
-                $entity->accessible($key, $value);
+                $entity->setAccess($key, $value);
             }
         }
         $errors = $this->_validate($data, $options, true);
@@ -210,7 +210,7 @@ class Marshaller
             $entity->set($properties);
         }
 
-        $entity->errors($errors);
+        $entity->setErrors($errors);
 
         return $entity;
     }

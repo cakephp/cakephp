@@ -242,11 +242,11 @@ trait EntityTrait
         $options += ['setter' => true, 'guard' => $guard];
 
         foreach ($property as $p => $value) {
-            if ($options['guard'] === true && !$this->accessible($p)) {
+            if ($options['guard'] === true && !$this->isAccessible($p)) {
                 continue;
             }
 
-            $this->dirty($p, true);
+            $this->setDirty($p, true);
 
             if (!array_key_exists($p, $this->_original) &&
                 array_key_exists($p, $this->_properties) &&
@@ -658,7 +658,7 @@ trait EntityTrait
     {
         $result = [];
         foreach ($properties as $property) {
-            if (!$onlyDirty || $this->dirty($property)) {
+            if (!$onlyDirty || $this->isDirty($property)) {
                 $result[$property] = $this->get($property);
             }
         }
