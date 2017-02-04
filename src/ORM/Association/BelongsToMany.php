@@ -244,18 +244,42 @@ class BelongsToMany extends Association
 
     /**
      * Sets the sort order in which target records should be returned.
+     *
+     * @param mixed $sort A find() compatible order clause
+     * @return $this
+     */
+    public function setSort($sort)
+    {
+        $this->_sort = $sort;
+
+        return $this;
+    }
+
+    /**
+     * Gets the sort order in which target records should be returned.
+     *
+     * @return mixed
+     */
+    public function getSort()
+    {
+        return $this->_sort;
+    }
+
+    /**
+     * Sets the sort order in which target records should be returned.
      * If no arguments are passed the currently configured value is returned
      *
+     * @deprecated 3.4.0 Use setSort()/getSort() instead.
      * @param mixed $sort A find() compatible order clause
      * @return mixed
      */
     public function sort($sort = null)
     {
         if ($sort !== null) {
-            $this->_sort = $sort;
+            $this->setSort($sort);
         }
 
-        return $this->_sort;
+        return $this->getSort();
     }
 
     /**
@@ -554,7 +578,7 @@ class BelongsToMany extends Association
             'bindingKey' => $this->getBindingKey(),
             'strategy' => $this->getStrategy(),
             'associationType' => $this->type(),
-            'sort' => $this->sort(),
+            'sort' => $this->getSort(),
             'junctionAssociationName' => $name,
             'junctionProperty' => $this->_junctionProperty,
             'junctionAssoc' => $this->getTarget()->association($name),
@@ -1450,7 +1474,7 @@ class BelongsToMany extends Association
             $this->setSaveStrategy($opts['saveStrategy']);
         }
         if (isset($opts['sort'])) {
-            $this->sort($opts['sort']);
+            $this->setSort($opts['sort']);
         }
     }
 }
