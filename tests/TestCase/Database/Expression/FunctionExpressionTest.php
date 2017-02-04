@@ -44,15 +44,15 @@ class FunctionExpressionTest extends TestCase
     {
         $f = new FunctionExpression('MyFunction', ['foo', 'bar']);
         $binder = new ValueBinder;
-        $this->assertEquals("MyFunction(:c0, :c1)", $f->sql($binder));
+        $this->assertEquals("MyFunction(:param0, :param1)", $f->sql($binder));
 
-        $this->assertEquals('foo', $binder->bindings()[':c0']['value']);
-        $this->assertEquals('bar', $binder->bindings()[':c1']['value']);
+        $this->assertEquals('foo', $binder->bindings()[':param0']['value']);
+        $this->assertEquals('bar', $binder->bindings()[':param1']['value']);
 
         $binder = new ValueBinder;
         $f = new FunctionExpression('MyFunction', ['bar']);
-        $this->assertEquals("MyFunction(:c0)", $f->sql($binder));
-        $this->assertEquals('bar', $binder->bindings()[':c0']['value']);
+        $this->assertEquals("MyFunction(:param0)", $f->sql($binder));
+        $this->assertEquals('bar', $binder->bindings()[':param0']['value']);
     }
 
     /**
@@ -64,7 +64,7 @@ class FunctionExpressionTest extends TestCase
     {
         $binder = new ValueBinder;
         $f = new FunctionExpression('MyFunction', ['foo' => 'literal', 'bar']);
-        $this->assertEquals("MyFunction(foo, :c0)", $f->sql($binder));
+        $this->assertEquals("MyFunction(foo, :param0)", $f->sql($binder));
     }
 
     /**
@@ -78,7 +78,7 @@ class FunctionExpressionTest extends TestCase
         $binder = new ValueBinder;
         $f = new FunctionExpression('MyFunction', ['foo', 'bar']);
         $g = new FunctionExpression('Wrapper', ['bar' => 'literal', $f]);
-        $this->assertEquals("Wrapper(bar, (MyFunction(:c0, :c1)))", $g->sql($binder));
+        $this->assertEquals("Wrapper(bar, (MyFunction(:param0, :param1)))", $g->sql($binder));
     }
 
     /**

@@ -1999,13 +1999,14 @@ class CollectionTest extends TestCase
             ['Product A', '200', '100', '50'],
             ['Product B', '300', '200', '100'],
             ['Product C', '400', '300', '200'],
+            ['Product D', '500', '400', '300'],
         ]);
         $transposed = $collection->transpose();
         $expected = [
-            ['Products', 'Product A', 'Product B', 'Product C'],
-            ['2012', '200', '300', '400'],
-            ['2013', '100', '200', '300'],
-            ['2014', '50', '100', '200'],
+            ['Products', 'Product A', 'Product B', 'Product C', 'Product D'],
+            ['2012', '200', '300', '400', '500'],
+            ['2013', '100', '200', '300', '400'],
+            ['2014', '50', '100', '200', '300'],
         ];
 
         $this->assertEquals($expected, $transposed->toList());

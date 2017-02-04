@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;

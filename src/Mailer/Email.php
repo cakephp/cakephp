@@ -2046,7 +2046,7 @@ class Email implements JsonSerializable, Serializable
         }
         Log::write(
             $config['level'],
-            PHP_EOL . $contents['headers'] . PHP_EOL . $contents['message'],
+            PHP_EOL . $contents['headers'] . PHP_EOL . PHP_EOL . $contents['message'],
             $config['scope']
         );
     }

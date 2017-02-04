@@ -84,6 +84,8 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::notBlank('π'));
         $this->assertTrue(Validation::notBlank('0'));
         $this->assertTrue(Validation::notBlank(0));
+        $this->assertTrue(Validation::notBlank(0.0));
+        $this->assertTrue(Validation::notBlank('0.0'));
         $this->assertFalse(Validation::notBlank("\t "));
         $this->assertFalse(Validation::notBlank(""));
     }

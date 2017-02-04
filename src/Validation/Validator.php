@@ -1745,7 +1745,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     protected function _fieldIsEmpty($data)
     {
-        if (empty($data) && $data !== '0' && $data !== false && $data !== 0 && $data !== 0.0) {
+        if (empty($data) && !is_bool($data) && !is_numeric($data)) {
             return true;
         }
         $isArray = is_array($data);

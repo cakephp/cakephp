@@ -268,9 +268,6 @@ class ValuesExpression implements ExpressionInterface
             $this->_processExpressions();
         }
 
-        $i = 0;
-        $columns = [];
-
         $columns = $this->_columnNames();
         $defaults = array_fill_keys($columns, null);
         $placeholders = [];
@@ -293,7 +290,7 @@ class ValuesExpression implements ExpressionInterface
                     continue;
                 }
 
-                $placeholder = $generator->placeholder($i);
+                $placeholder = $generator->placeholder('c');
                 $rowPlaceholders[] = $placeholder;
                 $generator->bind($placeholder, $value, $types[$column]);
             }

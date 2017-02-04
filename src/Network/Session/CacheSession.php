@@ -100,7 +100,11 @@ class CacheSession implements SessionHandlerInterface
      */
     public function write($id, $data)
     {
-        return Cache::write($id, $data, $this->_options['config']);
+        if (!$id) {
+            return false;
+        }
+
+        return (bool)Cache::write($id, $data, $this->_options['config']);
     }
 
     /**
@@ -111,7 +115,9 @@ class CacheSession implements SessionHandlerInterface
      */
     public function destroy($id)
     {
-        return Cache::delete($id, $this->_options['config']);
+        Cache::delete($id, $this->_options['config']);
+
+        return true;
     }
 
     /**

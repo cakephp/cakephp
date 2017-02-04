@@ -129,7 +129,7 @@ class FunctionsBuilderTest extends TestCase
     {
         $function = $this->functions->concat(['title' => 'literal', ' is a string']);
         $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
-        $this->assertEquals("CONCAT(title, :c0)", $function->sql(new ValueBinder));
+        $this->assertEquals("CONCAT(title, :param0)", $function->sql(new ValueBinder));
         $this->assertEquals('string', $function->returnType());
     }
 
@@ -142,7 +142,7 @@ class FunctionsBuilderTest extends TestCase
     {
         $function = $this->functions->coalesce(['NULL' => 'literal', '1', 'a'], ['a' => 'date']);
         $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
-        $this->assertEquals("COALESCE(NULL, :c0, :c1)", $function->sql(new ValueBinder));
+        $this->assertEquals("COALESCE(NULL, :param0, :param1)", $function->sql(new ValueBinder));
         $this->assertEquals('date', $function->returnType());
     }
 

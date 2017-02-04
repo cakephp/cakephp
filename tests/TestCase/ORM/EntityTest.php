@@ -713,6 +713,20 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Tests serializing an entity as PHP
+     *
+     * @return void
+     */
+    public function testPhpSerialize()
+    {
+        $data = ['name' => 'James', 'age' => 20, 'phones' => ['123', '457']];
+        $entity = new Entity($data);
+        $copy = unserialize(serialize($entity));
+        $this->assertInstanceOf(Entity::class, $copy);
+        $this->assertEquals($data, $copy->toArray());
+    }
+
+    /**
      * Tests that jsonSerialize is called recursively for contained entities
      *
      * @return void
