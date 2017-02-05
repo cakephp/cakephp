@@ -1473,8 +1473,21 @@ class DboSourceTest extends CakeTestCase {
 		);
 		$expected = 'SELECT DISTINCT(AssetsTag.asset_id) FROM assets_tags AS AssetsTag   WHERE Tag.name = foo bar  GROUP BY AssetsTag.asset_id';
 		$this->assertEquals($expected, $subQuery);
+	}
 
-		// HAVING
+/**
+ * Test build statement with having option
+ *
+ * @return void
+ */
+	public function testBuildStatementWithHaving() {
+		$conn = $this->getMock('MockPDO', array('quote'));
+		$conn->expects($this->any())
+			->method('quote')
+			->will($this->returnArgument(0));
+		$db = new DboTestSource();
+		$db->setConnection($conn);
+
 		$sql = $db->buildStatement(
 			array(
 				'fields' => array('user_id', 'COUNT(*) AS count'),
@@ -1489,8 +1502,21 @@ class DboSourceTest extends CakeTestCase {
 		);
 		$expected = 'SELECT user_id, COUNT(*) AS count FROM articles AS Article   WHERE 1 = 1  GROUP BY user_id  HAVING COUNT(*) > 10  ORDER BY COUNT(*) DESC  LIMIT 5';
 		$this->assertEquals($expected, $sql);
+	}
 
-		// FOR UPDATE
+/**
+ * Test build statement with lock option
+ *
+ * @return void
+ */
+	public function testBuildStatementWithLockingHint() {
+		$conn = $this->getMock('MockPDO', array('quote'));
+		$conn->expects($this->any())
+			->method('quote')
+			->will($this->returnArgument(0));
+		$db = new DboTestSource();
+		$db->setConnection($conn);
+
 		$sql = $db->buildStatement(
 			array(
 				'fields' => array('id'),

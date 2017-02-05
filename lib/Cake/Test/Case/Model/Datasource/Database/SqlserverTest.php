@@ -708,18 +708,17 @@ SQL;
 	}
 
 /**
- * Test build statement
+ * Test build statement with having option
  *
  * @return void
  */
-	public function testBuildStatement() {
+	public function testBuildStatementWithHaving() {
 		$db = $this->getMock('SqlserverTestDb', array('getVersion'), array($this->Dbo->config));
 
 		$db->expects($this->any())
 			->method('getVersion')
 			->will($this->returnValue('11.00.0000'));
 
-		// HAVING
 		$query = array(
 			'fields' => array('user_id', 'COUNT(*) AS count'),
 			'table' => 'articles',
@@ -737,8 +736,20 @@ SQL;
 		$sql = $db->buildStatement(array('offset' => 15) + $query, $this->model);
 		$expected = 'SELECT user_id, COUNT(*) AS count FROM articles AS [Article]   WHERE 1 = 1  GROUP BY user_id  HAVING COUNT(*) > 10  ORDER BY COUNT(*) DESC  OFFSET 15 ROWS FETCH FIRST 5 ROWS ONLY';
 		$this->assertEquals($expected, $sql);
+	}
 
-		// WITH (UPDLOCK)
+/**
+ * Test build statement with lock option
+ *
+ * @return void
+ */
+	public function testBuildStatementWithLockingHint() {
+		$db = $this->getMock('SqlserverTestDb', array('getVersion'), array($this->Dbo->config));
+
+		$db->expects($this->any())
+			->method('getVersion')
+			->will($this->returnValue('11.00.0000'));
+
 		$query = array(
 			'fields' => array('id'),
 			'table' => 'users',
@@ -758,18 +769,17 @@ SQL;
 	}
 
 /**
- * Test build statement with legacy version
+ * Test build statement with having option for legacy version
  *
  * @return void
  */
-	public function testBuildStatementWithLegacyVersion() {
+	public function testBuildStatementWithHavingForLegacyVersion() {
 		$db = $this->getMock('SqlserverTestDb', array('getVersion'), array($this->Dbo->config));
 
 		$db->expects($this->any())
 			->method('getVersion')
 			->will($this->returnValue('10.00.0000'));
 
-		// HAVING
 		$query = array(
 			'fields' => array('user_id', 'COUNT(*) AS count'),
 			'table' => 'articles',
@@ -794,8 +804,20 @@ WHERE _cake_paging_._cake_page_rownum_ > 15
 ORDER BY _cake_paging_._cake_page_rownum_
 SQL;
 		$this->assertEquals($expected, preg_replace('/^\s+|\s+$/m', '', $sql));
+	}
 
-		// WITH (UPDLOCK)
+/**
+ * Test build statement with lock option for legacy version
+ *
+ * @return void
+ */
+	public function testBuildStatementWithLockingHintForLegacyVersion() {
+		$db = $this->getMock('SqlserverTestDb', array('getVersion'), array($this->Dbo->config));
+
+		$db->expects($this->any())
+			->method('getVersion')
+			->will($this->returnValue('10.00.0000'));
+
 		$query = array(
 			'fields' => array('id'),
 			'table' => 'users',
