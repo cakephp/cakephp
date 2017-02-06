@@ -134,7 +134,7 @@ dist/cakephp-$(DASH_VERSION).zip: build/app build/cakephp composer.phar
 	cd build/app && find . -not -path '*.git*' | zip ../../dist/cakephp-$(DASH_VERSION).zip -@
 
 # Easier to type alias for zip balls
-package: dist/cakephp-$(DASH_VERSION).zip
+package: clean dist/cakephp-$(DASH_VERSION).zip
 
 
 
