@@ -1037,8 +1037,6 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Get a single header as a string from the request.
      *
-     * Return an array of header values
-     *
      * @param string $name The header you want to get (case-insensitive)
      * @return string Header values collapsed into a comma separated string.
      */
