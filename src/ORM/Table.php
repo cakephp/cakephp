@@ -1183,25 +1183,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function get($primaryKey, $options = [])
     {
-        $key = (array)$this->primaryKey();
-        $alias = $this->alias();
-        foreach ($key as $index => $keyname) {
-            $key[$index] = $alias . '.' . $keyname;
-        }
-        $primaryKey = (array)$primaryKey;
-        if (count($key) !== count($primaryKey)) {
-            $primaryKey = $primaryKey ?: [null];
-            $primaryKey = array_map(function ($key) {
-                return var_export($key, true);
-            }, $primaryKey);
-
-            throw new InvalidPrimaryKeyException(sprintf(
-                'Record not found in table "%s" with primary key [%s]',
-                $this->table(),
-                implode($primaryKey, ', ')
-            ));
-        }
-        $conditions = array_combine($key, $primaryKey);
+        $conditions = $this->primaryKeyToConditions($primaryKey);
 
         $cacheConfig = isset($options['cache']) ? $options['cache'] : false;
         $cacheKey = isset($options['key']) ? $options['key'] : false;
@@ -1223,6 +1205,35 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         return $query->firstOrFail();
+    }
+
+    /**
+     * @param int|string|array $primaryKey Primary key value.
+     *
+     * @return array Conditions.
+     */
+    protected function primaryKeyToConditions($primaryKey)
+    {
+        $key = (array)$this->primaryKey();
+        $alias = $this->alias();
+        foreach ($key as $index => $keyname) {
+            $key[$index] = $alias . '.' . $keyname;
+        }
+        $primaryKey = (array)$primaryKey;
+        if (count($key) !== count($primaryKey)) {
+            $primaryKey = $primaryKey ?: [null];
+            $primaryKey = array_map(function ($key) {
+                return var_export($key, true);
+            }, $primaryKey);
+
+            throw new InvalidPrimaryKeyException(sprintf(
+                'Record not found in table "%s" with primary key [%s]',
+                $this->table(),
+                implode($primaryKey, ', ')
+            ));
+        }
+
+        return array_combine($key, $primaryKey);
     }
 
     /**
