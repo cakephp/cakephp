@@ -328,15 +328,9 @@ class StringTemplate
     /**
      * Adds a class and returns a unique list either in array or space separated
      *
-     * ### Options
-     *
-     * - `useIndex` if you are inputting an array with an 'element' other than 'class'.
-     *              Also setting to 'false' will manipulate the whole array (default is 'class')
-     *
      * @param array|string $input The array or string to add the class to
      * @param array|string $newClass the new class or classes to add
-     * @param string $useIndex if you are inputting an array with an 'element' other than 'class'.
-     *               Also setting to 'false' will manipulate the whole array (default is 'class')
+     * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
      * @return array|string
      */
     public function addClass($input, $newClass, $useIndex = 'class')
@@ -346,10 +340,11 @@ class StringTemplate
             return $input;
         }
 
-        if (is_string($useIndex) && is_array($input)) {
+        if (is_array($input)) {
             $class = Hash::get($input, $useIndex, []);
         } else {
             $class = $input;
+            $input = [];
         }
 
         // Convert and sanitise the inputs
@@ -367,14 +362,7 @@ class StringTemplate
 
         $class = array_unique(array_merge($class, $newClass));
 
-        if (is_string($useIndex)) {
-            if (!is_array($input)) {
-                $input = [];
-            }
-            $input = Hash::insert($input, $useIndex, $class);
-        } else {
-            $input = $class;
-        }
+        $input = Hash::insert($input, $useIndex, $class);
 
         return $input;
     }
