@@ -67,19 +67,20 @@ class IsUnique
         if (!$entity->extract($this->_fields, true)) {
             return true;
         }
+        $this->_options = $options + $this->_options;
         $allowMultipleNulls = $this->_options['allowMultipleNulls'];
 
-        $alias = $options['repository']->alias();
+        $alias = $this->_options['repository']->alias();
         $conditions = $this->_alias($alias, $entity->extract($this->_fields), $allowMultipleNulls);
         if ($entity->isNew() === false) {
-            $keys = (array)$options['repository']->primaryKey();
+            $keys = (array)$this->_options['repository']->primaryKey();
             $keys = $this->_alias($alias, $entity->extract($keys), $allowMultipleNulls);
             if (array_filter($keys, 'strlen')) {
                 $conditions['NOT'] = $keys;
             }
         }
 
-        return !$options['repository']->exists($conditions);
+        return !$this->_options['repository']->exists($conditions);
     }
 
     /**
