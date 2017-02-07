@@ -3107,7 +3107,7 @@ class TableTest extends TestCase
         $Articles->associations()->removeAll();
 
         $Authors->hasMany('AliasedArticles', [
-            'className' => 'articles',
+            'className' => 'Articles',
             'dependent' => true,
             'cascadeCallbacks' => true
         ]);

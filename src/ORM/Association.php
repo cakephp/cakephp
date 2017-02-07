@@ -15,6 +15,7 @@
 namespace Cake\ORM;
 
 use Cake\Collection\Collection;
+use Cake\Core\App;
 use Cake\Core\ConventionsTrait;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
@@ -396,10 +397,24 @@ abstract class Association
             $tableLocator = $this->tableLocator();
 
             $config = [];
-            if (!$tableLocator->exists($registryAlias)) {
+            $exists = $tableLocator->exists($registryAlias);
+            if (!$exists) {
                 $config = ['className' => $this->_className];
             }
             $this->_targetTable = $tableLocator->get($registryAlias, $config);
+
+            if ($exists) {
+                $targetClassName = get_class($this->_targetTable);
+                $className = $this->_getClassName($registryAlias, ['className' => $this->_className]);
+
+                if ($targetClassName !== $className) {
+                    throw new RuntimeException(sprintf(
+                        'Invalid Table retrieved from a registry. Requested: %s, got: %s',
+                        $className,
+                        $targetClassName
+                    ));
+                }
+            }
         }
 
         return $this->_targetTable;
@@ -1276,6 +1291,24 @@ abstract class Association
         }
 
         return [key($finderData), current($finderData)];
+    }
+
+    /**
+     * Gets the table class name.
+     *
+     * @param string $alias The alias name you want to get.
+     * @param array $options Table options array.
+     * @return string
+     */
+    protected function _getClassName($alias, array $options = [])
+    {
+        if (empty($options['className'])) {
+            $options['className'] = Inflector::camelize($alias);
+        }
+
+        $className = App::className($options['className'], 'Model/Table', 'Table') ?: 'Cake\ORM\Table';
+
+        return ltrim($className, '\\');
     }
 
     /**

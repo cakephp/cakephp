@@ -142,6 +142,31 @@ class AssociationTest extends TestCase
     }
 
     /**
+     * Tests that an exception is thrown when invalid target table is fetched
+     * from a registry.
+     *
+     * @return void
+     * @expectedException \RuntimeException
+     */
+    public function testInvalidTableFetchedFromRegistry()
+    {
+        TableRegistry::get('Test');
+
+        $config = [
+            'className' => '\Cake\Test\TestCase\ORM\TestTable',
+        ];
+        $this->association = $this->getMockBuilder('\Cake\ORM\Association')
+            ->setMethods([
+                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
+                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys'
+            ])
+            ->setConstructorArgs(['Test', $config])
+            ->getMock();
+
+        $this->association->getTarget();
+    }
+
+    /**
      * Tests that cascadeCallbacks() returns the correct configured value
      *
      * @return void
