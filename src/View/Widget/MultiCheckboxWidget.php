@@ -161,9 +161,7 @@ class MultiCheckboxWidget implements WidgetInterface
             if ($this->_isSelected($checkbox['value'], $data['val'])) {
                 $checkbox['checked'] = true;
             }
-            if ($this->_isDisabled($checkbox['value'], $data['disabled'])) {
-                $checkbox['disabled'] = true;
-            }
+            $checkbox['disabled'] = $this->_isDisabled($checkbox['value'], $data['disabled']);
             if (empty($checkbox['id'])) {
                 $checkbox['id'] = $this->_id($checkbox['name'], $checkbox['value']);
             }
