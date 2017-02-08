@@ -187,7 +187,7 @@ class RadioWidget implements WidgetInterface
             'name' => $radio['name'],
             'value' => $escape ? h($radio['value']) : $radio['value'],
             'templateVars' => $radio['templateVars'],
-            'attrs' => $this->_templates->formatAttributes($radio, ['name', 'value', 'text']),
+            'attrs' => $this->_templates->formatAttributes($radio + $data, ['name', 'value', 'text', 'options', 'label', 'val', 'type']),
         ]);
 
         $label = $this->_renderLabel(
