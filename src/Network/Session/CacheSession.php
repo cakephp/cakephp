@@ -111,7 +111,7 @@ class CacheSession implements SessionHandlerInterface
      * Method called on the destruction of a cache session.
      *
      * @param int $id ID that uniquely identifies session in cache
-     * @return bool True for successful delete, false otherwise.
+     * @return bool Always true.
      */
     public function destroy($id)
     {
@@ -124,7 +124,7 @@ class CacheSession implements SessionHandlerInterface
      * Helper function called on gc for cache sessions.
      *
      * @param string $maxlifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
-     * @return bool True (irrespective of whether or not the garbage is being successfully collected)
+     * @return bool Always true.
      */
     public function gc($maxlifetime)
     {
