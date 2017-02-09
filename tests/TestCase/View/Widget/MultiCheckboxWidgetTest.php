@@ -486,4 +486,57 @@ class MultiCheckboxWidgetTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
     }
+
+    /**
+     * testRenderCustomAttributes method
+     *
+     * Test render with custom attributes
+     *
+     * @return void
+     */
+    public function testRenderCustomAttributes()
+    {
+        $label = new LabelWidget($this->templates);
+        $input = new MultiCheckboxWidget($this->templates, $label);
+        $result = $input->render([
+            'name' => 'category',
+            'options' => ['1', '2'],
+            'class' => 'my-class',
+            'data-ref' => 'custom-attr',
+        ], $this->context);
+        $expected = [
+            ['div' => ['class' => 'checkbox']],
+            [
+                'input' => [
+                    'type' => 'checkbox',
+                    'name' => 'category[]',
+                    'value' => '0',
+                    'id' => 'category-0',
+                    'class' => 'my-class',
+                    'data-ref' => 'custom-attr'
+                ]
+            ],
+            ['label' => ['for' => 'category-0']],
+            '1',
+            '/label',
+            '/div',
+
+            ['div' => ['class' => 'checkbox']],
+            [
+                'input' => [
+                    'type' => 'checkbox',
+                    'name' => 'category[]',
+                    'value' => '1',
+                    'id' => 'category-1',
+                    'class' => 'my-class',
+                    'data-ref' => 'custom-attr'
+                ]
+            ],
+            ['label' => ['for' => 'category-1']],
+            '2',
+            '/label',
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+    }
 }
