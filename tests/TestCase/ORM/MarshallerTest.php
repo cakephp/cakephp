@@ -1555,6 +1555,41 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test merge when an association has been replaced with null
+     *
+     * @return void
+     */
+    public function testMergeAssociationNullOut()
+    {
+        $user = new Entity([
+            'id' => 1,
+            'username' => 'user',
+        ]);
+        $article = new Entity([
+           'title' => 'title for post',
+           'user_id' => 1,
+           'user' => $user,
+        ]);
+
+        $user->accessible('*', true);
+        $article->accessible('*', true);
+
+        $data = [
+            'title' => 'Chelsea',
+            'user_id' => '',
+            'user' => ''
+        ];
+
+        $marshall = new Marshaller($this->articles);
+        $marshall->merge($article, $data, [
+            'associated' => ['Users']
+        ]);
+        $this->assertNull($article->user);
+        $this->assertSame('', $article->user_id);
+        $this->assertTrue($article->dirty('user'));
+    }
+
+    /**
      * Tests merging one to many associations
      *
      * @return void
@@ -2571,7 +2606,7 @@ class MarshallerTest extends TestCase
      *
      * @return void
      */
-    public function testAssociatoinsFieldList()
+    public function testAssociationsFieldList()
     {
         $data = [
             'title' => 'My title',
@@ -2605,7 +2640,7 @@ class MarshallerTest extends TestCase
      *
      * @return void
      */
-    public function testMergeAssociationWithfieldList()
+    public function testMergeAssociationWithFieldList()
     {
         $user = new Entity([
             'username' => 'mark',
