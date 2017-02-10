@@ -410,7 +410,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
                     $tags = $matches[1];
                     $type = 'Regex matches';
                 } else {
-                    $tags = preg_quote($tags, '/');
+                    $tags = '\s*' . preg_quote($tags, '/');
                     $type = 'Text equals';
                 }
                 $regex[] = [
