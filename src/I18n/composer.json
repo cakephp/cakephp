@@ -19,7 +19,7 @@
         "lib-ICU": ">=4.8",
         "ext-intl": "*",
         "cakephp/chronos": "*",
-        "aura/intl": "1.1.*"
+        "aura/intl": "^3.0.0"
     },
     "suggest": {
         "cakephp/cache": "Require this if you want automatic caching of translators"
