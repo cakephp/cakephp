@@ -460,7 +460,8 @@ class StaticConfigTraitTest extends TestCase
      *
      * @return void
      */
-    public function testConfigBC() {
+    public function testConfigBC()
+    {
         $result = TestLogStaticConfig::config(404);
         $this->assertNull($result);
     }
