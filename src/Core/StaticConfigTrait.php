@@ -163,7 +163,7 @@ trait StaticConfigTrait
      */
     public static function config($key, $config = null)
     {
-        if ($config !== null || !is_string($key)) {
+        if ($config !== null || is_array($key)) {
             static::setConfig($key, $config);
 
             return null;
