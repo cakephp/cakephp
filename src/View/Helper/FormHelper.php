@@ -1473,7 +1473,7 @@ class FormHelper extends Helper
      *
      * - `value` - Indicates the value when this radio button is checked.
      * - `label` - Either `false` to disable label around the widget or an array of attributes for
-     *    the label tag. `selected` will be added to any classes e.g. `class => 'myclass'` where widget
+     *    the label tag. `selected` will be added to any classes e.g. `'class' => 'myclass'` where widget
      *    is checked
      * - `hiddenField` - boolean to indicate if you want the results of radio() to include
      *    a hidden input with a value of ''. This is useful for creating radio sets that are non-continuous.
@@ -1984,7 +1984,7 @@ class FormHelper extends Helper
      * - `hiddenField` - Set to false to remove the hidden field that ensures a value
      *   is always submitted.
      * - `label` - Either `false` to disable label around the widget or an array of attributes for
-     *   the label tag. `selected` will be added to any classes e.g. `class => 'myclass'` where
+     *   the label tag. `selected` will be added to any classes e.g. `'class' => 'myclass'` where
      *   widget is checked
      *
      * Can be used in place of a select box with the multiple attribute.

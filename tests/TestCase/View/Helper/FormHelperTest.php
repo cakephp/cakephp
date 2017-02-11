@@ -8727,7 +8727,6 @@ class FormHelperTest extends TestCase
             ],
             'labelOptions' => ['class' => ['custom-class', 'another-class'], 'data-name' => 'bob'],
             'value' => ['1']
-
         ]);
         $expected = [
             ['div' => ['class' => 'input select']],
