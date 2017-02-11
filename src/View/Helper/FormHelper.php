@@ -2002,6 +2002,7 @@ class FormHelper extends Helper
             ];
             $hidden = $this->hidden($fieldName, $hiddenAttributes);
         }
+        unset($attributes['hiddenField']);
 
         return $hidden . $this->widget('multicheckbox', $attributes);
     }
