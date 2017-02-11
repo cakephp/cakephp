@@ -958,6 +958,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date('31.11.2006', ['dmy']));
         $this->assertFalse(Validation::date('31/11/2006', ['dmy']));
         $this->assertFalse(Validation::date('31 11 2006', ['dmy']));
+        $this->assertFalse(Validation::date("27/12/2006\n", ['dmy']));
     }
 
     /**
@@ -1110,6 +1111,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date('11.31.2006', ['mdy']));
         $this->assertFalse(Validation::date('11/31/2006', ['mdy']));
         $this->assertFalse(Validation::date('11 31 2006', ['mdy']));
+        $this->assertFalse(Validation::date("12-27-2006\n", ['mdy']));
     }
 
     /**
@@ -1258,6 +1260,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date('2006.11.31', ['ymd']));
         $this->assertFalse(Validation::date('2006/11/31', ['ymd']));
         $this->assertFalse(Validation::date('2006 11 31', ['ymd']));
+        $this->assertFalse(Validation::date("2006-12-27\n", ['ymd']));
     }
 
     /**
@@ -1326,6 +1329,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::date('27 Dec 2006', ['dMy']));
         $this->assertFalse(Validation::date('2006 Dec 27', ['dMy']));
         $this->assertFalse(Validation::date('2006 December 27', ['dMy']));
+        $this->assertFalse(Validation::date("27 December 2006\n", ['dMy']));
     }
 
     /**
@@ -1353,6 +1357,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date('27 Dec 2006', ['Mdy']));
         $this->assertFalse(Validation::date('2006 December 27', ['Mdy']));
         $this->assertTrue(Validation::date('Sep 12, 2011', ['Mdy']));
+        $this->assertFalse(Validation::date("December 27, 2006\n", ['Mdy']));
     }
 
     /**
@@ -1380,6 +1385,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::date('Dec 2006', ['My']));
         $this->assertTrue(Validation::date('December/2006', ['My']));
         $this->assertTrue(Validation::date('Dec/2006', ['My']));
+        $this->assertFalse(Validation::date("December 2006\n", ['My']));
     }
 
     /**
@@ -1399,6 +1405,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::date('12 06', ['my']));
         $this->assertFalse(Validation::date('13 06', ['my']));
         $this->assertFalse(Validation::date('13 2006', ['my']));
+        $this->assertFalse(Validation::date("01/2006\n", ['my']));
     }
 
     /**
@@ -1423,6 +1430,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date('2006/12/', ['ym']));
         $this->assertFalse(Validation::date('06/12 ', ['ym']));
         $this->assertFalse(Validation::date('06/13 ', ['ym']));
+        $this->assertFalse(Validation::date("2006/12\n", ['ym']));
     }
 
     /**
@@ -1443,6 +1451,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date(' 2012', ['y']));
         $this->assertFalse(Validation::date('3000', ['y']));
         $this->assertFalse(Validation::date('1799', ['y']));
+        $this->assertFalse(Validation::date("1900\n", ['y']));
     }
 
     /**
@@ -1530,6 +1539,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::time('1:00pm'));
         $this->assertFalse(Validation::time('13:00pm'));
         $this->assertFalse(Validation::time('9:00'));
+        $this->assertFalse(Validation::time("09:00\n"));
     }
 
     /**
@@ -1642,14 +1652,15 @@ class ValidationTest extends TestCase
     }
 
     /**
-     * testDateCustomRegx method
+     * testDateCustomRegex method
      *
      * @return void
      */
-    public function testDateCustomRegx()
+    public function testDateCustomRegex()
     {
-        $this->assertTrue(Validation::date('2006-12-27', null, '%^(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$%'));
-        $this->assertFalse(Validation::date('12-27-2006', null, '%^(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$%'));
+        $this->assertTrue(Validation::date('2006-12-27', null, '%^(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$%D'));
+        $this->assertFalse(Validation::date('12-27-2006', null, '%^(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$%D'));
+        $this->assertFalse(Validation::date("2006-12-27\n", null, '%^(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$%D'));
     }
 
     /**
@@ -1684,6 +1695,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::decimal('', null));
         $this->assertFalse(Validation::decimal('string', null));
         $this->assertFalse(Validation::decimal('1234.', null));
+        $this->assertFalse(Validation::decimal("1234\n", null));
     }
 
     /**
@@ -1718,6 +1730,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::decimal('1234', true));
         $this->assertFalse(Validation::decimal('-1234', true));
         $this->assertFalse(Validation::decimal('+1234', true));
+        $this->assertFalse(Validation::decimal("+1234.54321\n", true));
     }
 
     /**
@@ -1756,6 +1769,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::decimal(1234.5678, 3));
         $this->assertFalse(Validation::decimal(-1234.5678, 3));
         $this->assertFalse(Validation::decimal(1234.5678, 3));
+        $this->assertFalse(Validation::decimal(".12\n", 2));
     }
 
     /**
@@ -1777,8 +1791,9 @@ class ValidationTest extends TestCase
      */
     public function testDecimalCustomRegex()
     {
-        $this->assertTrue(Validation::decimal('1.54321', null, '/^[-+]?[0-9]+(\\.[0-9]+)?$/s'));
-        $this->assertFalse(Validation::decimal('.54321', null, '/^[-+]?[0-9]+(\\.[0-9]+)?$/s'));
+        $this->assertTrue(Validation::decimal('1.54321', null, '/^[-+]?[0-9]+(\\.[0-9]+)?$/Ds'));
+        $this->assertFalse(Validation::decimal('.54321', null, '/^[-+]?[0-9]+(\\.[0-9]+)?$/Ds'));
+        $this->assertFalse(Validation::decimal("1.54321\n", null, '/^[-+]?[0-9]+(\\.[0-9]+)?$/Ds'));
     }
 
     /**
@@ -1880,6 +1895,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::email('abc@yahoo!.com'));
         $this->assertFalse(Validation::email('abc@example_underscored.com'));
         $this->assertFalse(Validation::email('raw@test.ra.ru....com'));
+        $this->assertFalse(Validation::email("abc@example.com\n"));
     }
 
     /**
@@ -1902,8 +1918,9 @@ class ValidationTest extends TestCase
      */
     public function testEmailCustomRegex()
     {
-        $this->assertTrue(Validation::email('abc.efg@cakephp.org', null, '/^[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$/i'));
-        $this->assertFalse(Validation::email('abc.efg@com.caphpkeinvalid', null, '/^[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$/i'));
+        $this->assertTrue(Validation::email('abc.efg@cakephp.org', null, '/^[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$/Di'));
+        $this->assertFalse(Validation::email('abc.efg@com.caphpkeinvalid', null, '/^[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$/Di'));
+        $this->assertFalse(Validation::email("abc.efg@cakephp.org\n", null, '/^[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$/Di'));
     }
 
     /**
@@ -2089,6 +2106,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::url('http://www.domain.com/fakeenco%ode'));
         $this->assertFalse(Validation::url('--.example.com'));
         $this->assertFalse(Validation::url('www.cakephp.org', true));
+        $this->assertFalse(Validation::url("http://www.cakephp.org\n"));
 
         $this->assertTrue(Validation::url('http://example.com/~userdir/subdir/index.html'));
         $this->assertTrue(Validation::url('http://www.zwischenraume.de'));
@@ -2127,6 +2145,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::uuid('550e8400-e29b-11d4-a71-446655440000'));
         $this->assertFalse(Validation::uuid('550e8400-e29b-11d-a716-446655440000'));
         $this->assertFalse(Validation::uuid('550e8400-e29-11d4-a716-446655440000'));
+        $this->assertFalse(Validation::uuid("00000000-0000-0000-0000-000000000000\n"));
     }
 
     /**
@@ -2244,6 +2263,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::money('100.111,1'));
         $this->assertTrue(Validation::money('100.111,11'));
         $this->assertFalse(Validation::money('100.111,111'));
+        $this->assertFalse(Validation::money("100\n"));
 
         $this->assertTrue(Validation::money('$100'));
         $this->assertTrue(Validation::money('$100.11'));
@@ -2257,6 +2277,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::money('100.112$', 'right'));
         $this->assertTrue(Validation::money('100.1$', 'right'));
         $this->assertFalse(Validation::money('100.1111$', 'right'));
+        $this->assertFalse(Validation::money("100\n", 'right'));
 
         $this->assertTrue(Validation::money('€100'));
         $this->assertTrue(Validation::money('€100.11'));
@@ -2358,6 +2379,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::naturalNumber(-2));
         $this->assertFalse(Validation::naturalNumber('0'));
         $this->assertFalse(Validation::naturalNumber('050'));
+        $this->assertFalse(Validation::naturalNumber("2\n"));
 
         $this->assertTrue(Validation::naturalNumber('2'));
         $this->assertTrue(Validation::naturalNumber(49));
@@ -2684,6 +2706,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::geoCoordinate('-245.274398, -133.775136'));
         $this->assertTrue(Validation::geoCoordinate('51.165691', ['format' => 'lat']));
         $this->assertTrue(Validation::geoCoordinate('10.451526', ['format' => 'long']));
+        $this->assertFalse(Validation::geoCoordinate("51.165691, 10.451526\n"));
     }
 
     /**
@@ -2697,6 +2720,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::latitude('0.000000'));
         $this->assertTrue(Validation::latitude('51.165691'));
         $this->assertFalse(Validation::latitude('200.23552'));
+        $this->assertFalse(Validation::latitude("51.165691\n"));
     }
 
     /**
@@ -2711,6 +2735,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::longitude('0.123456'));
         $this->assertTrue(Validation::longitude('10.451526'));
         $this->assertFalse(Validation::longitude('-190.52236'));
+        $this->assertFalse(Validation::longitude("10.451526\n"));
     }
 
     /**
@@ -2746,6 +2771,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::isInteger([]));
         $this->assertFalse(Validation::isInteger(new \StdClass));
         $this->assertFalse(Validation::isInteger('2 bears'));
+        $this->assertFalse(Validation::isInteger("10\n"));
     }
 
     /**
