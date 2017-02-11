@@ -161,13 +161,11 @@ class MultiCheckboxWidget implements WidgetInterface
             if ($this->_isSelected($checkbox['value'], $data['val'])) {
                 $checkbox['checked'] = true;
             }
-            if ($this->_isDisabled($checkbox['value'], $data['disabled'])) {
-                $checkbox['disabled'] = true;
-            }
+            $checkbox['disabled'] = $this->_isDisabled($checkbox['value'], $data['disabled']);
             if (empty($checkbox['id'])) {
                 $checkbox['id'] = $this->_id($checkbox['name'], $checkbox['value']);
             }
-            $out[] = $this->_renderInput($checkbox, $context);
+            $out[] = $this->_renderInput($checkbox + $data, $context);
         }
 
         return $out;
@@ -188,7 +186,7 @@ class MultiCheckboxWidget implements WidgetInterface
             'templateVars' => $checkbox['templateVars'],
             'attrs' => $this->_templates->formatAttributes(
                 $checkbox,
-                ['name', 'value', 'text']
+                ['name', 'value', 'text', 'options', 'label', 'val', 'type', 'hiddenField']
             )
         ]);
 
