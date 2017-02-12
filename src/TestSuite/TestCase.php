@@ -401,7 +401,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
                     }
                     $regex[] = [
                         sprintf('%sClose %s tag', $prefix[0], substr($tags, strlen($match[0]))),
-                        sprintf('%s<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], substr($tags, strlen($match[0]))),
+                        sprintf('%s\s*<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], substr($tags, strlen($match[0]))),
                         $i,
                     ];
                     continue;
@@ -410,7 +410,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
                     $tags = $matches[1];
                     $type = 'Regex matches';
                 } else {
-                    $tags = preg_quote($tags, '/');
+                    $tags = '\s*' . preg_quote($tags, '/');
                     $type = 'Text equals';
                 }
                 $regex[] = [
