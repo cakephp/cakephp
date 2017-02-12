@@ -135,6 +135,13 @@ class Message
     protected $_cookies = [];
 
     /**
+     * Body for the message.
+     *
+     * @var string|null
+     */
+    protected $_body;
+
+    /**
      * Get all headers
      *
      * @return array
