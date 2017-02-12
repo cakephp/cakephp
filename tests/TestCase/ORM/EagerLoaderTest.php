@@ -276,6 +276,30 @@ class EagerLoaderTest extends TestCase
         $this->assertEquals($expected, $loader->contain());
     }
 
+
+    /**
+     * Tests setting containments using direct key value pairs works just as with key array.
+     *
+     * @return void
+     */
+    public function testContainKeyValueNotation()
+    {
+        $loader = new EagerLoader;
+        $loader->contain([
+            'clients',
+            'companies' => 'categories',
+        ]);
+        $expected = [
+            'clients' => [
+            ],
+            'companies' => [
+                'categories' => [
+                ],
+            ],
+        ];
+        $this->assertEquals($expected, $loader->contain());
+    }
+
     /**
      * Tests that it is possible to pass a function as the array value for contain
      *
