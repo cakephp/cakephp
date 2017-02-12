@@ -748,6 +748,9 @@ trait CollectionTrait
             if (count($row) != $length) {
                 throw new LogicException('Child arrays do not have even length');
             }
+        }
+
+        for ($column = 0; $column < $length; $column++) {
             $result[] = array_column($arrayValue, $column);
         }
 

@@ -18,7 +18,7 @@ use Cake\Error\Debugger;
 
 <ul class="stack-trace">
 <?php foreach ($error->getTrace() as $i => $stack): ?>
-    <?php $class = (isset($stack['file']) && strpos(APP, $stack['file']) === false) ? 'vendor-frame' : 'app-frame'; ?>
+    <?php $class = (isset($stack['file']) && strpos($stack['file'], APP) === false) ? 'vendor-frame' : 'app-frame'; ?>
     <li class="stack-frame <?= $class ?>">
     <?php if (isset($stack['function'])): ?>
         <a href="#" data-target="stack-frame-<?= $i ?>">
