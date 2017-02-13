@@ -13,7 +13,9 @@
  */
 namespace Cake\Http\Cookie;
 
-class CookieCollection
+use \ArrayIterator ;
+
+class CookieCollection extends ArrayIterator
 {
     /**
      * @var Cookie[]

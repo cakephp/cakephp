@@ -17,13 +17,13 @@ use InvalidArgumentException;
 use Iterator;
 use Psr\Http\Message\ServerRequestInterface;
 
-class RequestCookies extends CookieCollection implements Iterator
+class RequestCookies extends CookieCollection
 {
     /**
      * Create instance from a server request.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request Request object
-     * @return \Cake\Http\Client\Cookie\RequestCookies
+     * @return \Cake\Http\Client\RequestCookies
      */
     public static function createFromRequest(ServerRequestInterface $request)
     {
@@ -65,61 +65,5 @@ class RequestCookies extends CookieCollection implements Iterator
         }
 
         return $this->cookies[$key];
-    }
-
-    /**
-     * Current
-     *
-     * @return \Cake\Http\Client\Cookie\Cookie $cookie
-     */
-    public function current()
-    {
-        return current($this->cookies);
-    }
-
-    /**
-     * Key
-     *
-     * @return string
-     */
-    public function key()
-    {
-        $key = key($this->cookies);
-        if ($key === null) {
-            return $key;
-        }
-        $cookie = $this->cookies[$key];
-
-        return $cookie->getName();
-    }
-
-    /**
-     * Next
-     *
-     * @return void
-     */
-    public function next()
-    {
-        next($this->cookies);
-    }
-
-    /**
-     * Valid
-     *
-     * @return bool
-     */
-    public function valid()
-    {
-        return key($this->cookies) !== null;
-    }
-
-    /**
-     * Rewind
-     *
-     * @return void
-     */
-    public function rewind()
-    {
-        reset($this->cookies);
     }
 }
