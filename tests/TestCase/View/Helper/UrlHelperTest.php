@@ -29,6 +29,11 @@ class UrlHelperTest extends TestCase
 {
 
     /**
+     * @var \Cake\View\Helper\UrlHelper
+     */
+    public $Helper;
+
+    /**
      * setUp method
      *
      * @return void

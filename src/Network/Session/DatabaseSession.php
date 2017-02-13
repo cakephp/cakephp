@@ -95,8 +95,8 @@ class DatabaseSession implements SessionHandlerInterface
         $result = $this->_table
             ->find('all')
             ->select(['data'])
-            ->where([$this->_table->primaryKey() => $id])
-            ->hydrate(false)
+            ->where([$this->_table->getPrimaryKey() => $id])
+            ->enableHydration(false)
             ->first();
 
         if (empty($result)) {
@@ -130,7 +130,7 @@ class DatabaseSession implements SessionHandlerInterface
         }
         $expires = time() + $this->_timeout;
         $record = compact('data', 'expires');
-        $record[$this->_table->primaryKey()] = $id;
+        $record[$this->_table->getPrimaryKey()] = $id;
         $result = $this->_table->save(new Entity($record));
 
         return (bool)$result;
@@ -145,7 +145,7 @@ class DatabaseSession implements SessionHandlerInterface
     public function destroy($id)
     {
         $this->_table->delete(new Entity(
-            [$this->_table->primaryKey() => $id],
+            [$this->_table->getPrimaryKey() => $id],
             ['markNew' => false]
         ));
 

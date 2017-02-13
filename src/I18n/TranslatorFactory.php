@@ -15,6 +15,7 @@
 namespace Cake\I18n;
 
 use Aura\Intl\FormatterInterface;
+use Aura\Intl\Package;
 use Aura\Intl\TranslatorFactory as BaseTranslatorFactory;
 use Aura\Intl\TranslatorInterface;
 use RuntimeException;
@@ -37,7 +38,7 @@ class TranslatorFactory extends BaseTranslatorFactory
      * Returns a new Translator.
      *
      * @param string $locale The locale code for the translator.
-     * @param array $messages The localized messages for the translator.
+     * @param \Aura\Intl\Package $package The Package containing keys and translations.
      * @param \Aura\Intl\FormatterInterface $formatter The formatter to use for interpolating token values.
      * @param \Aura\Intl\TranslatorInterface $fallback A fallback translator to use, if any.
      * @throws \Cake\Core\Exception\Exception If fallback class does not match Cake\I18n\Translator
@@ -45,7 +46,7 @@ class TranslatorFactory extends BaseTranslatorFactory
      */
     public function newInstance(
         $locale,
-        array $messages,
+        Package $package,
         FormatterInterface $formatter,
         TranslatorInterface $fallback = null
     ) {
@@ -57,6 +58,6 @@ class TranslatorFactory extends BaseTranslatorFactory
             ));
         }
 
-        return new $class($locale, $messages, $formatter, $fallback);
+        return new $class($locale, $package, $formatter, $fallback);
     }
 }

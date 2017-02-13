@@ -307,7 +307,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertNull($this->RequestHandler->ext);
 
-        call_user_func_array(['Cake\Routing\Router', 'extensions'], [$extensions, false]);
+        Router::extensions($extensions, false);
     }
 
     /**
@@ -478,9 +478,7 @@ class RequestHandlerComponentTest extends TestCase
         $event = new Event('Controller.beforeRender', $this->Controller);
         $_SERVER['REQUEST_METHOD'] = 'PUT';
         $_SERVER['CONTENT_TYPE'] = 'application/xml';
-        $this->Controller->request = $this->getMockBuilder('Cake\Network\Request')
-            ->setMethods(['_readInput'])
-            ->getMock();
+        $this->Controller->request = new Request();
         $this->RequestHandler->beforeRender($event);
         $this->assertTrue(is_array($this->Controller->request->data));
         $this->assertFalse(is_object($this->Controller->request->data));
@@ -497,9 +495,7 @@ class RequestHandlerComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $_SERVER['REQUEST_METHOD'] = 'PUT';
         $_SERVER['CONTENT_TYPE'] = 'application/xml; charset=UTF-8';
-        $this->Controller->request = $this->getMockBuilder('Cake\Network\Request')
-            ->setMethods(['_readInput'])
-            ->getMock();
+        $this->Controller->request = new Request();
         $this->RequestHandler->startup($event);
         $this->assertTrue(is_array($this->Controller->request->data));
         $this->assertFalse(is_object($this->Controller->request->data));
@@ -513,19 +509,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testStartupProcessData()
     {
-        $this->Controller->request = $this->getMockBuilder('Cake\Network\Request')
-            ->setMethods(['_readInput'])
-            ->getMock();
-        $this->Controller->request->expects($this->at(0))
-            ->method('_readInput')
-            ->will($this->returnValue(''));
-        $this->Controller->request->expects($this->at(1))
-            ->method('_readInput')
-            ->will($this->returnValue('"invalid"'));
-        $this->Controller->request->expects($this->at(2))
-            ->method('_readInput')
-            ->will($this->returnValue('{"valid":true}'));
-
+        $this->Controller->request = new Request();
         $this->Controller->request->env('REQUEST_METHOD', 'POST');
         $this->Controller->request->env('CONTENT_TYPE', 'application/json');
 
@@ -533,9 +517,11 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->startup($event);
         $this->assertEquals([], $this->Controller->request->data);
 
+        $this->Controller->request->setInput('"invalid"');
         $this->RequestHandler->startup($event);
         $this->assertEquals(['invalid'], $this->Controller->request->data);
 
+        $this->Controller->request->setInput('{"valid":true}');
         $this->RequestHandler->startup($event);
         $this->assertEquals(['valid' => true], $this->Controller->request->data);
     }
@@ -548,13 +534,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testStartupIgnoreFileAsXml()
     {
-        $this->Controller->request = $this->getMockBuilder('Cake\Network\Request')
-            ->setMethods(['_readInput'])
-            ->getMock();
-        $this->Controller->request->expects($this->any())
-            ->method('_readInput')
-            ->will($this->returnValue('/dev/random'));
-
+        $this->Controller->request = new Request(['input' => '/dev/random']);
         $this->Controller->request->env('REQUEST_METHOD', 'POST');
         $this->Controller->request->env('CONTENT_TYPE', 'application/xml');
 
@@ -572,12 +552,9 @@ class RequestHandlerComponentTest extends TestCase
     public function testStartupCustomTypeProcess()
     {
         $restore = error_reporting(E_ALL & ~E_USER_DEPRECATED);
-        $this->Controller->request = $this->getMockBuilder('Cake\Network\Request')
-            ->setMethods(['_readInput'])
-            ->getMock();
-        $this->Controller->request->expects($this->once())
-            ->method('_readInput')
-            ->will($this->returnValue('"A","csv","string"'));
+        $this->Controller->request = new Request([
+            'input' => '"A","csv","string"'
+        ]);
         $this->RequestHandler->addInputType('csv', ['str_getcsv']);
         $this->Controller->request->env('REQUEST_METHOD', 'POST');
         $this->Controller->request->env('CONTENT_TYPE', 'text/csv');
@@ -650,9 +627,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testRenderAs()
     {
-        $this->assertFalse(in_array('Rss', $this->Controller->helpers));
         $this->RequestHandler->renderAs($this->Controller, 'rss');
-        $this->assertTrue(in_array('Rss', $this->Controller->helpers));
 
         $this->Controller->viewBuilder()->templatePath('request_handler_test\\rss');
         $this->RequestHandler->renderAs($this->Controller, 'js');
@@ -673,16 +648,16 @@ class RequestHandlerComponentTest extends TestCase
             ->method('parseAccept')
             ->will($this->returnValue(['1.0' => ['application/xml']]));
 
-        $this->RequestHandler->response = $this->getMockBuilder('Cake\Network\Response')
+        $this->Controller->response = $this->getMockBuilder('Cake\Network\Response')
             ->setMethods(['type', 'download', 'charset'])
             ->getMock();
-        $this->RequestHandler->response->expects($this->at(0))
+        $this->Controller->response->expects($this->at(0))
             ->method('type')
             ->with('application/xml');
-        $this->RequestHandler->response->expects($this->at(1))
+        $this->Controller->response->expects($this->at(1))
             ->method('charset')
             ->with('UTF-8');
-        $this->RequestHandler->response->expects($this->at(2))
+        $this->Controller->response->expects($this->at(2))
             ->method('download')
             ->with('myfile.xml');
 
@@ -698,12 +673,12 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testRespondAs()
     {
-        $this->RequestHandler->response = $this->getMockBuilder('Cake\Network\Response')
+        $this->Controller->response = $this->getMockBuilder('Cake\Network\Response')
             ->setMethods(['type'])
             ->getMock();
-        $this->RequestHandler->response->expects($this->at(0))->method('type')
+        $this->Controller->response->expects($this->at(0))->method('type')
             ->with('application/json');
-        $this->RequestHandler->response->expects($this->at(1))->method('type')
+        $this->Controller->response->expects($this->at(1))->method('type')
             ->with('text/xml');
 
         $result = $this->RequestHandler->respondAs('json');
@@ -723,20 +698,20 @@ class RequestHandlerComponentTest extends TestCase
             ->setMethods(['_header'])
             ->setConstructorArgs([$this->Controller->components()])
             ->getMock();
-        $this->RequestHandler->response = $this->getMockBuilder('Cake\Network\Response')
+        $this->Controller->response = $this->getMockBuilder('Cake\Network\Response')
             ->setMethods(['type', 'download'])
             ->getMock();
-        $this->RequestHandler->request = $this->getMockBuilder('Cake\Network\Request')
+        $this->Controller->request = $this->getMockBuilder('Cake\Network\Request')
             ->setMethods(['parseAccept'])
             ->getMock();
 
-        $this->RequestHandler->request->expects($this->once())
+        $this->Controller->request->expects($this->once())
             ->method('parseAccept')
             ->will($this->returnValue(['1.0' => ['application/xml']]));
 
-        $this->RequestHandler->response->expects($this->once())->method('download')
+        $this->Controller->response->expects($this->once())->method('download')
             ->with('myfile.xml');
-        $this->RequestHandler->response->expects($this->once())->method('type')
+        $this->Controller->response->expects($this->once())->method('type')
             ->with('application/xml');
 
         $result = $this->RequestHandler->respondAs('xml', ['attachment' => 'myfile.xml']);
@@ -844,7 +819,7 @@ class RequestHandlerComponentTest extends TestCase
             ->with('mobile')
             ->will($this->returnValue(true));
 
-        $this->RequestHandler->request = $request;
+        $this->Controller->request = $request;
         $this->assertTrue($this->RequestHandler->isMobile());
     }
 
@@ -929,18 +904,18 @@ class RequestHandlerComponentTest extends TestCase
         Router::connect('/:controller/:action');
         $event = new Event('Controller.beforeRedirect', $this->Controller);
 
-        $this->Controller->RequestHandler = new RequestHandlerComponent($this->Controller->components());
+        $this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
         $this->Controller->request = $this->getMockBuilder('Cake\Network\Request')
             ->setMethods(['is'])
             ->getMock();
         $this->Controller->response = $this->getMockBuilder('Cake\Network\Response')
             ->setMethods(['_sendHeader', 'stop'])
             ->getMock();
-        $this->Controller->RequestHandler->request = $this->Controller->request;
-        $this->Controller->RequestHandler->response = $this->Controller->response;
-        $this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
+        $this->Controller->request->expects($this->any())
+            ->method('is')
+            ->will($this->returnValue(true));
 
-        $response = $this->Controller->RequestHandler->beforeRedirect(
+        $response = $this->RequestHandler->beforeRedirect(
             $event,
             ['controller' => 'RequestHandlerTest', 'action' => 'destination'],
             $this->Controller->response
@@ -958,23 +933,21 @@ class RequestHandlerComponentTest extends TestCase
     {
         Configure::write('App.namespace', 'TestApp');
         Router::connect('/:controller/:action');
-        $event = new Event('Controller.beforeRedirect', $this->Controller);
 
-        $this->Controller->RequestHandler = new RequestHandlerComponent($this->Controller->components());
+        $this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
         $this->Controller->request = $this->getMockBuilder('Cake\Network\Request')
             ->setMethods(['is'])
             ->getMock();
         $this->Controller->response = $this->getMockBuilder('Cake\Network\Response')
             ->setMethods(['_sendHeader', 'stop'])
             ->getMock();
-        $this->Controller->RequestHandler->request = $this->Controller->request;
-        $this->Controller->RequestHandler->response = $this->Controller->response;
         $this->Controller->request->expects($this->any())
             ->method('is')
             ->with('ajax')
             ->will($this->returnValue(true));
+        $event = new Event('Controller.beforeRedirect', $this->Controller);
 
-        $response = $this->Controller->RequestHandler->beforeRedirect(
+        $response = $this->RequestHandler->beforeRedirect(
             $event,
             '/request_action/params_pass?a=b&x=y?ish',
             $this->Controller->response
@@ -982,7 +955,7 @@ class RequestHandlerComponentTest extends TestCase
         $data = json_decode($response, true);
         $this->assertEquals('/request_action/params_pass', $data['here']);
 
-        $response = $this->Controller->RequestHandler->beforeRedirect(
+        $response = $this->RequestHandler->beforeRedirect(
             $event,
             '/request_action/query_pass?a=b&x=y?ish',
             $this->Controller->response
@@ -1003,15 +976,13 @@ class RequestHandlerComponentTest extends TestCase
         Router::connect('/:controller/:action');
         $event = new Event('Controller.beforeRedirect', $this->Controller);
 
-        $this->Controller->RequestHandler = new RequestHandlerComponent($this->Controller->components());
+        $this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
         $this->Controller->request = $this->getMockBuilder('Cake\Network\Request')
             ->setMethods(['is'])
             ->getMock();
         $this->Controller->response = $this->getMockBuilder('Cake\Network\Response')
             ->setMethods(['_sendHeader', 'stop'])
             ->getMock();
-        $this->Controller->RequestHandler->request = $this->Controller->request;
-        $this->Controller->RequestHandler->response = $this->Controller->response;
         $this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
 
         $cookies = [
@@ -1019,7 +990,7 @@ class RequestHandlerComponentTest extends TestCase
         ];
         $this->Controller->request->cookies = $cookies;
 
-        $response = $this->Controller->RequestHandler->beforeRedirect(
+        $response = $this->RequestHandler->beforeRedirect(
             $event,
             '/request_action/cookie_pass',
             $this->Controller->response
@@ -1040,7 +1011,7 @@ class RequestHandlerComponentTest extends TestCase
         Router::connect('/:controller/:action');
         $event = new Event('Controller.beforeRedirect', $this->Controller);
 
-        $this->Controller->RequestHandler = new RequestHandlerComponent($this->Controller->components());
+        $this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
         $this->Controller->request = $this->getMockBuilder('Cake\Network\Request')
             ->setMethods(['is'])
             ->getMock();
@@ -1048,11 +1019,9 @@ class RequestHandlerComponentTest extends TestCase
             ->setMethods(['_sendHeader', 'stop'])
             ->getMock();
         $this->Controller->response->statusCode(302);
-        $this->Controller->RequestHandler->request = $this->Controller->request;
-        $this->Controller->RequestHandler->response = $this->Controller->response;
         $this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
 
-        $response = $this->Controller->RequestHandler->beforeRedirect(
+        $response = $this->RequestHandler->beforeRedirect(
             $event,
             ['controller' => 'RequestHandlerTest', 'action' => 'destination'],
             $this->Controller->response
@@ -1074,18 +1043,16 @@ class RequestHandlerComponentTest extends TestCase
         Router::connect('/:controller/:action');
         $event = new Event('Controller.beforeRedirect', $this->Controller);
 
-        $this->Controller->RequestHandler = new RequestHandlerComponent($this->Controller->components());
+        $this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
         $this->Controller->request = $this->getMockBuilder('Cake\Network\Request')
             ->setMethods(['is'])
             ->getMock();
         $this->Controller->response = $this->getMockBuilder('Cake\Network\Response')
             ->setMethods(['_sendHeader', 'stop'])
             ->getMock();
-        $this->Controller->RequestHandler->request = $this->Controller->request;
-        $this->Controller->RequestHandler->response = $this->Controller->response;
         $this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
 
-        $response = $this->Controller->RequestHandler->beforeRedirect(
+        $response = $this->RequestHandler->beforeRedirect(
             $event,
             ['controller' => 'RequestHandlerTest', 'action' => 'ajax2_layout'],
             $this->Controller->response
@@ -1115,8 +1082,7 @@ class RequestHandlerComponentTest extends TestCase
         ]);
 
         $RequestHandler = new RequestHandlerComponent($this->Controller->components());
-        $RequestHandler->request = new Request('posts/index');
-        $RequestHandler->response = $this->Controller->response;
+        $this->Controller->request = new Request('posts/index');
 
         ob_start();
         $RequestHandler->beforeRedirect(
@@ -1150,14 +1116,16 @@ class RequestHandlerComponentTest extends TestCase
     public function testCheckNotModifiedByEtagStar()
     {
         $_SERVER['HTTP_IF_NONE_MATCH'] = '*';
-        $event = new Event('Controller.beforeRender', $this->Controller);
-        $RequestHandler = new RequestHandlerComponent($this->Controller->components());
-        $RequestHandler->response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Network\Response')
             ->setMethods(['notModified', 'stop'])
             ->getMock();
-        $RequestHandler->response->etag('something');
-        $RequestHandler->response->expects($this->once())->method('notModified');
-        $this->assertFalse($RequestHandler->beforeRender($event));
+        $response->etag('something');
+        $response->expects($this->once())->method('notModified');
+        $this->Controller->response = $response;
+
+        $event = new Event('Controller.beforeRender', $this->Controller);
+        $requestHandler = new RequestHandlerComponent($this->Controller->components());
+        $this->assertFalse($requestHandler->beforeRender($event));
     }
 
     /**
@@ -1169,14 +1137,16 @@ class RequestHandlerComponentTest extends TestCase
     public function testCheckNotModifiedByEtagExact()
     {
         $_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
-        $event = new Event('Controller.beforeRender');
-        $RequestHandler = new RequestHandlerComponent($this->Controller->components());
-        $RequestHandler->response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Network\Response')
             ->setMethods(['notModified', 'stop'])
             ->getMock();
-        $RequestHandler->response->etag('something', true);
-        $RequestHandler->response->expects($this->once())->method('notModified');
-        $this->assertFalse($RequestHandler->beforeRender($event));
+        $response->etag('something', true);
+        $response->expects($this->once())->method('notModified');
+        $this->Controller->response = $response;
+        $event = new Event('Controller.beforeRender', $this->Controller);
+
+        $requestHandler = new RequestHandlerComponent($this->Controller->components());
+        $this->assertFalse($requestHandler->beforeRender($event));
     }
 
     /**
@@ -1189,15 +1159,17 @@ class RequestHandlerComponentTest extends TestCase
     {
         $_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
         $_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
-        $event = new Event('Controller.beforeRender', $this->Controller);
-        $RequestHandler = new RequestHandlerComponent($this->Controller->components());
-        $RequestHandler->response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Network\Response')
             ->setMethods(['notModified', 'stop'])
             ->getMock();
-        $RequestHandler->response->etag('something', true);
-        $RequestHandler->response->modified('2012-01-01 00:00:00');
-        $RequestHandler->response->expects($this->once())->method('notModified');
-        $this->assertFalse($RequestHandler->beforeRender($event));
+        $response->etag('something', true);
+        $response->modified('2012-01-01 00:00:00');
+        $response->expects($this->once())->method('notModified');
+        $this->Controller->response = $response;
+
+        $event = new Event('Controller.beforeRender', $this->Controller);
+        $requestHandler = new RequestHandlerComponent($this->Controller->components());
+        $this->assertFalse($requestHandler->beforeRender($event));
     }
 
     /**
@@ -1208,13 +1180,15 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testCheckNotModifiedNoInfo()
     {
-        $event = new Event('Controller.beforeRender', $this->Controller);
-        $RequestHandler = new RequestHandlerComponent($this->Controller->components());
-        $RequestHandler->response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Network\Response')
             ->setMethods(['notModified', 'stop'])
             ->getMock();
-        $RequestHandler->response->expects($this->never())->method('notModified');
-        $this->assertNull($RequestHandler->beforeRender($event));
+        $response->expects($this->never())->method('notModified');
+        $this->Controller->response = $response;
+
+        $event = new Event('Controller.beforeRender', $this->Controller);
+        $requestHandler = new RequestHandlerComponent($this->Controller->components());
+        $this->assertNull($requestHandler->beforeRender($event));
     }
 
     /**

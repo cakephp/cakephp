@@ -1094,6 +1094,26 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Tests error getters and setters
+     *
+     * @return void
+     */
+    public function testGetAndSetErrors()
+    {
+        $entity = new Entity();
+        $this->assertEmpty($entity->getErrors());
+
+        $entity->setError('foo', 'bar');
+        $this->assertEquals(['bar'], $entity->errors('foo'));
+
+        $expected = [
+            'foo' => ['bar']
+        ];
+        $result = $entity->getErrors();
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Tests that it is possible to get errors for nested entities
      *
      * @return void
@@ -1392,6 +1412,17 @@ class EntityTest extends TestCase
         $this->assertNull($entity->source());
         $entity->source('foos');
         $this->assertEquals('foos', $entity->source());
+    }
+
+    /**
+     * Test the source getter
+     */
+    public function testGetAndSetSource()
+    {
+        $entity = new Entity();
+        $this->assertNull($entity->getSource());
+        $entity->setSource('foos');
+        $this->assertEquals('foos', $entity->getSource());
     }
 
     /**

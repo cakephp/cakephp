@@ -18,12 +18,11 @@ use Cake\Core\Configure;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\ServerRequestFactory;
 use Cake\Log\Log;
-use Cake\Network\Response as CakeResponse;
+use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 use LogicException;
 use Psr\Log\LoggerInterface;
 use Zend\Diactoros\Request;
-use Zend\Diactoros\Response;
 
 /**
  * Test for ErrorHandlerMiddleware
@@ -111,13 +110,13 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
         $factory = function ($exception) {
             $this->assertInstanceOf('LogicException', $exception);
-            $cakeResponse = new CakeResponse;
+            $response = new Response;
             $mock = $this->getMockBuilder('StdClass')
                 ->setMethods(['render'])
                 ->getMock();
             $mock->expects($this->once())
                 ->method('render')
-                ->will($this->returnValue($cakeResponse));
+                ->will($this->returnValue($response));
 
             return $mock;
         };
@@ -142,6 +141,8 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new \Cake\Network\Exception\NotFoundException('whoops');
         };
         $result = $middleware($request, $response, $next);
+        $this->assertInstanceOf('Psr\Http\Message\ResponseInterface', $result);
+        $this->assertInstanceOf('Cake\Network\Response', $result);
         $this->assertNotSame($result, $response);
         $this->assertEquals(404, $result->getStatusCode());
         $this->assertContains("was not found", '' . $result->getBody());

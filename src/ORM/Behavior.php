@@ -162,7 +162,7 @@ class Behavior implements EventListenerInterface
             $config
         );
         $this->_table = $table;
-        $this->config($config);
+        $this->setConfig($config);
         $this->initialize($config);
     }
 
@@ -193,7 +193,7 @@ class Behavior implements EventListenerInterface
             return $config;
         }
         if (isset($config[$key]) && $config[$key] === []) {
-            $this->config($key, [], false);
+            $this->setConfig($key, [], false);
             unset($config[$key]);
 
             return $config;
@@ -206,7 +206,7 @@ class Behavior implements EventListenerInterface
                 $indexedCustom[$method] = $alias;
             }
         }
-        $this->config($key, array_flip($indexedCustom), false);
+        $this->setConfig($key, array_flip($indexedCustom), false);
         unset($config[$key]);
 
         return $config;
@@ -263,7 +263,7 @@ class Behavior implements EventListenerInterface
             'Model.beforeRules' => 'beforeRules',
             'Model.afterRules' => 'afterRules',
         ];
-        $config = $this->config();
+        $config = $this->getConfig();
         $priority = isset($config['priority']) ? $config['priority'] : null;
         $events = [];
 
@@ -307,7 +307,7 @@ class Behavior implements EventListenerInterface
      */
     public function implementedFinders()
     {
-        $methods = $this->config('implementedFinders');
+        $methods = $this->getConfig('implementedFinders');
         if (isset($methods)) {
             return $methods;
         }
@@ -338,7 +338,7 @@ class Behavior implements EventListenerInterface
      */
     public function implementedMethods()
     {
-        $methods = $this->config('implementedMethods');
+        $methods = $this->getConfig('implementedMethods');
         if (isset($methods)) {
             return $methods;
         }

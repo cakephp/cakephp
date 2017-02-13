@@ -18,6 +18,8 @@ use Cake\Console\Shell;
 
 /**
  * Provide command completion shells such as bash.
+ *
+ * @property \Cake\Shell\Task\CommandTask $Command
  */
 class CompletionShell extends Shell
 {
@@ -114,7 +116,7 @@ class CompletionShell extends Shell
     {
         $parser = parent::getOptionParser();
 
-        $parser->description(
+        $parser->setDescription(
             'Used by shells like bash to autocomplete command name, options and arguments'
         )->addSubcommand('commands', [
             'help' => 'Output a list of available commands',
@@ -149,7 +151,7 @@ class CompletionShell extends Shell
             ]
         ])->addSubcommand('fuzzy', [
             'help' => 'Guess autocomplete'
-        ])->epilog([
+        ])->setEpilog([
             'This command is not intended to be called manually',
         ]);
 

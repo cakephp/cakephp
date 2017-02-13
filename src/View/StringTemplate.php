@@ -30,7 +30,7 @@ class StringTemplate
 {
 
     use InstanceConfigTrait {
-        config as get;
+        getConfig as get;
     }
 
     /**
@@ -156,7 +156,7 @@ class StringTemplate
      */
     public function add(array $templates)
     {
-        $this->config($templates);
+        $this->setConfig($templates);
         $this->_compileTemplates(array_keys($templates));
 
         return $this;
@@ -213,7 +213,7 @@ class StringTemplate
      */
     public function remove($name)
     {
-        $this->config($name, null);
+        $this->setConfig($name, null);
         unset($this->_compiled[$name]);
     }
 

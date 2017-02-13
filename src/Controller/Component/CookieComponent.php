@@ -15,8 +15,8 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
+use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
-use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
@@ -85,7 +85,7 @@ class CookieComponent extends Component
      *
      * Accessed in the controller using $this->Cookie->read('Name.key');
      *
-     * @var string
+     * @var array
      */
     protected $_values = [];
 
@@ -101,9 +101,11 @@ class CookieComponent extends Component
     protected $_loaded = [];
 
     /**
-     * A reference to the Controller's Cake\Network\Response object
+     * A reference to the Controller's Cake\Network\Response object.
+     * Currently unused.
      *
-     * @var \Cake\Network\Response
+     * @var \Cake\Network\Response|null
+     * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     protected $_response = null;
 
@@ -116,22 +118,17 @@ class CookieComponent extends Component
     public function initialize(array $config)
     {
         if (!$this->_config['key']) {
-            $this->config('key', Security::salt());
+            $this->setConfig('key', Security::salt());
         }
 
         $controller = $this->_registry->getController();
 
-        if ($controller !== null) {
-            $this->_response =& $controller->response;
-        }
-
         if ($controller === null) {
-            $this->request = Request::createFromGlobals();
-            $this->_response = new Response();
+            $this->request = ServerRequest::createFromGlobals();
         }
 
         if (empty($this->_config['path'])) {
-            $this->config('path', $this->request->webroot);
+            $this->setConfig('path', $this->request->webroot);
         }
     }
 
@@ -312,7 +309,8 @@ class CookieComponent extends Component
         $config = $this->configKey($name);
         $expires = new Time($config['expires']);
 
-        $this->_response->cookie([
+        $response = $this->getController()->response;
+        $response->cookie([
             'name' => $name,
             'value' => $this->_encrypt($value, $config['encryption'], $config['key']),
             'expire' => $expires->format('U'),
@@ -337,7 +335,8 @@ class CookieComponent extends Component
         $config = $this->configKey($name);
         $expires = new Time('now');
 
-        $this->_response->cookie([
+        $response = $this->getController()->response;
+        $response->cookie([
             'name' => $name,
             'value' => '',
             'expire' => $expires->format('U') - 42000,

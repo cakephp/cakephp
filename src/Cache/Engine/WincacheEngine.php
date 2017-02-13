@@ -204,7 +204,7 @@ class WincacheEngine extends CacheEngine
      */
     public function clearGroup($group)
     {
-        $success = null;
+        $success = false;
         wincache_ucache_inc($this->_config['prefix'] . $group, 1, $success);
 
         return $success;

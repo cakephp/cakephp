@@ -44,6 +44,11 @@ class HelperRegistryTest extends TestCase
     public $Helpers;
 
     /**
+     * @var \Cake\Event\EventManager
+     */
+    public $Events;
+
+    /**
      * setUp
      *
      * @return void
@@ -241,7 +246,7 @@ class HelperRegistryTest extends TestCase
         );
         $this->assertCount(1, $this->Events->listeners('View.beforeRender'));
 
-        $this->assertNull($this->Helpers->reset(), 'No return expected');
+        $this->Helpers->reset();
         $this->assertCount(0, $this->Events->listeners('View.beforeRender'));
 
         $this->assertNotSame($instance, $this->Helpers->load('EventListenerTest'));

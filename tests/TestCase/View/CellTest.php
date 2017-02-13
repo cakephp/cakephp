@@ -18,6 +18,8 @@ use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
+use Cake\View\View;
+use TestApp\Controller\CellTraitTestController;
 use TestApp\View\CustomJsonView;
 
 /**
@@ -27,6 +29,11 @@ use TestApp\View\CustomJsonView;
  */
 class CellTest extends TestCase
 {
+
+    /**
+     * @var \Cake\View\View
+     */
+    public $View;
 
     /**
      * setUp method
@@ -40,7 +47,7 @@ class CellTest extends TestCase
         Plugin::load(['TestPlugin', 'TestTheme']);
         $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
         $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
-        $this->View = new \Cake\View\View($request, $response);
+        $this->View = new View($request, $response);
     }
 
     /**
@@ -139,7 +146,7 @@ class CellTest extends TestCase
 
         $this->assertContains('This is the alternate template', "{$appCell}");
         $this->assertEquals('alternate_teaser_list', $appCell->template);
-        $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->template());
+        $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->getTemplate());
     }
 
     /**
@@ -153,7 +160,7 @@ class CellTest extends TestCase
 
         $this->assertContains('Articles subdir custom_template_path template', "{$appCell}");
         $this->assertEquals('custom_template_path', $appCell->template);
-        $this->assertEquals('Cell/Articles/Subdir', $appCell->viewBuilder()->templatePath());
+        $this->assertEquals('Cell/Articles/Subdir', $appCell->viewBuilder()->getTemplatePath());
     }
 
     /**
@@ -166,7 +173,7 @@ class CellTest extends TestCase
         $appCell = $this->View->cell('Articles::customTemplateViewBuilder');
 
         $this->assertContains('This is the alternate template', "{$appCell}");
-        $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->template());
+        $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->getTemplate());
     }
 
     /**
@@ -205,9 +212,9 @@ class CellTest extends TestCase
         $this->View->theme = 'TestTheme';
         $cell = $this->View->cell('Articles', ['msg' => 'hello world!']);
 
-        $this->assertEquals($this->View->theme, $cell->viewBuilder()->theme());
+        $this->assertEquals($this->View->theme, $cell->viewBuilder()->getTheme());
         $this->assertContains('Themed cell content.', $cell->render());
-        $this->assertEquals($cell->View->theme, $cell->viewBuilder()->theme());
+        $this->assertEquals($cell->View->theme, $cell->viewBuilder()->getTheme());
     }
 
     /**
@@ -347,8 +354,29 @@ class CellTest extends TestCase
         $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
         $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $view = new CustomJsonView($request, $response);
+        $view->theme = 'Pretty';
         $cell = $view->cell('Articles');
         $this->assertSame('TestApp\View\CustomJsonView', $cell->viewClass);
+        $this->assertSame('TestApp\View\CustomJsonView', $cell->viewBuilder()->getClassName());
+        $this->assertSame('Pretty', $cell->viewBuilder()->getTheme());
+    }
+
+    /**
+     * Test that cells the view class name of a controller passed on.
+     *
+     * @return void
+     */
+    public function testCellInheritsController()
+    {
+        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $controller = new CellTraitTestController($request, $response);
+        $controller->viewBuilder()->setTheme('Pretty');
+        $controller->viewClass = 'Json';
+        $cell = $controller->cell('Articles');
+        $this->assertSame('Json', $cell->viewClass);
+        $this->assertSame('Json', $cell->viewBuilder()->getClassName());
+        $this->assertSame('Pretty', $cell->viewBuilder()->getTheme());
     }
 
     /**

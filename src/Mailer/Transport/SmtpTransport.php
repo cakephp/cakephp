@@ -52,9 +52,9 @@ class SmtpTransport extends AbstractTransport
     /**
      * Content of email to return
      *
-     * @var string
+     * @var array
      */
-    protected $_content;
+    protected $_content = [];
 
     /**
      * The response of the last sent SMTP command.
@@ -297,9 +297,9 @@ class SmtpTransport extends AbstractTransport
      */
     protected function _prepareFromAddress($email)
     {
-        $from = $email->returnPath();
+        $from = $email->getReturnPath();
         if (empty($from)) {
-            $from = $email->from();
+            $from = $email->getFrom();
         }
 
         return $from;
@@ -313,9 +313,9 @@ class SmtpTransport extends AbstractTransport
      */
     protected function _prepareRecipientAddresses($email)
     {
-        $to = $email->to();
-        $cc = $email->cc();
-        $bcc = $email->bcc();
+        $to = $email->getTo();
+        $cc = $email->getCc();
+        $bcc = $email->getBcc();
 
         return array_merge(array_keys($to), array_keys($cc), array_keys($bcc));
     }

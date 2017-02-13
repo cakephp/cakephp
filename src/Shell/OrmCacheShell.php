@@ -71,7 +71,7 @@ class OrmCacheShell extends Shell
         if (empty($name)) {
             $tables = $schema->listTables();
         }
-        $configName = $schema->cacheMetadata();
+        $configName = $schema->getCacheMetadata();
 
         foreach ($tables as $table) {
             $this->_io->verbose(sprintf(
@@ -90,10 +90,11 @@ class OrmCacheShell extends Shell
     /**
      * Helper method to get the schema collection.
      *
-     * @return false|\Cake\Database\Schema\Collection
+     * @return false|\Cake\Database\Schema\Collection|\Cake\Database\Schema\CachedCollection
      */
     protected function _getSchema()
     {
+        /* @var \Cake\Database\Connection $source */
         $source = ConnectionManager::get($this->params['connection']);
         if (!method_exists($source, 'schemaCollection')) {
             $msg = sprintf(
@@ -101,7 +102,7 @@ class OrmCacheShell extends Shell
                 'as it does not implement a "schemaCollection()" method.',
                 $this->params['connection']
             );
-            $this->error($msg);
+            $this->abort($msg);
 
             return false;
         }
@@ -111,7 +112,7 @@ class OrmCacheShell extends Shell
             $source->cacheMetadata(true);
         }
 
-        return $source->schemaCollection();
+        return $source->getSchemaCollection();
     }
 
     /**

@@ -9,21 +9,20 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.4.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace TestApp\Controller;
 
-namespace Cake\Network {
+use Cake\Controller\Controller;
+use Cake\View\CellTrait;
 
-    /**
-     * Mocks the headers_sent() function when invoked from the Cake\Network
-     * namespace so that it always returns false
-     *
-     * @return bool
-     */
-    function headers_sent()
-    {
-        return false;
+/**
+ * CellTraitTestController class.
+ */
+class CellTraitTestController extends Controller
+{
+    use CellTrait {
+        cell as public;
     }
-
 }

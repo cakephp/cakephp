@@ -53,7 +53,7 @@ class Socket
     /**
      * Reference to socket connection resource
      *
-     * @var resource
+     * @var resource|null
      */
     public $connection = null;
 
@@ -112,7 +112,7 @@ class Socket
      */
     public function __construct(array $config = [])
     {
-        $this->config($config);
+        $this->setConfig($config);
     }
 
     /**
@@ -198,14 +198,8 @@ class Socket
         if (!isset($this->_config['context']['ssl']['SNI_enabled'])) {
             $this->_config['context']['ssl']['SNI_enabled'] = true;
         }
-        if (version_compare(PHP_VERSION, '5.6.0', '>=')) {
-            if (empty($this->_config['context']['ssl']['peer_name'])) {
-                $this->_config['context']['ssl']['peer_name'] = $host;
-            }
-        } else {
-            if (empty($this->_config['context']['ssl']['SNI_server_name'])) {
-                $this->_config['context']['ssl']['SNI_server_name'] = $host;
-            }
+        if (empty($this->_config['context']['ssl']['peer_name'])) {
+            $this->_config['context']['ssl']['peer_name'] = $host;
         }
         if (empty($this->_config['context']['ssl']['cafile'])) {
             $dir = dirname(dirname(__DIR__));
@@ -318,8 +312,8 @@ class Socket
     /**
      * Write data to the socket.
      *
-     * @param string $data The data to write to the socket
-     * @return bool Success
+     * @param string $data The data to write to the socket.
+     * @return int Bytes written.
      */
     public function write($data)
     {

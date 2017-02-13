@@ -64,7 +64,7 @@ abstract class BaseApplication
     /**
      * Invoke the application.
      *
-     * - Convert the PSR request/response into CakePHP equivalents.
+     * - Convert the PSR response into CakePHP equivalents.
      * - Create the controller that will handle this request.
      * - Invoke the controller.
      *
@@ -75,15 +75,7 @@ abstract class BaseApplication
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
-        // Convert the request/response to CakePHP equivalents.
-        $cakeRequest = RequestTransformer::toCake($request);
-        $cakeResponse = ResponseTransformer::toCake($response);
-
-        // Dispatch the request/response to CakePHP
-        $cakeResponse = $this->getDispatcher()->dispatch($cakeRequest, $cakeResponse);
-
-        // Convert the response back into a PSR7 object.
-        return ResponseTransformer::toPsr($cakeResponse);
+        return $this->getDispatcher()->dispatch($request, $response);
     }
 
     /**

@@ -76,6 +76,9 @@ class ResponseEmitter implements EmitterInterface
      */
     protected function emitBody(ResponseInterface $response, $maxBufferLength)
     {
+        if (in_array($response->getStatusCode(), [204, 304])) {
+            return;
+        }
         $body = $response->getBody();
 
         if (!$body->isSeekable()) {
@@ -159,9 +162,14 @@ class ResponseEmitter implements EmitterInterface
      */
     protected function emitHeaders(ResponseInterface $response)
     {
+        $cookies = [];
+        if (method_exists($response, 'getCookies')) {
+            $cookies = $response->getCookies();
+        }
+
         foreach ($response->getHeaders() as $name => $values) {
             if (strtolower($name) === 'set-cookie') {
-                $this->emitCookies($values);
+                $cookies = array_merge($cookies, $values);
                 continue;
             }
             $first = true;
@@ -174,6 +182,8 @@ class ResponseEmitter implements EmitterInterface
                 $first = false;
             }
         }
+
+        $this->emitCookies($cookies);
     }
 
     /**
@@ -184,7 +194,20 @@ class ResponseEmitter implements EmitterInterface
      */
     protected function emitCookies(array $cookies)
     {
-        foreach ((array)$cookies as $cookie) {
+        foreach ($cookies as $cookie) {
+            if (is_array($cookie)) {
+                setcookie(
+                    $cookie['name'],
+                    $cookie['value'],
+                    $cookie['expire'],
+                    $cookie['path'],
+                    $cookie['domain'],
+                    $cookie['secure'],
+                    $cookie['httpOnly']
+                );
+                continue;
+            }
+
             if (strpos($cookie, '";"') !== false) {
                 $cookie = str_replace('";"', "{__cookie_replace__}", $cookie);
                 $parts = str_replace("{__cookie_replace__}", '";"', explode(';', $cookie));

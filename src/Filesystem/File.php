@@ -564,8 +564,8 @@ class File
     }
 
     /**
-     * Get the mime type of the file. Uses the finfo extension if
-     * its available, otherwise falls back to mime_content_type
+     * Gets the mime type of the file. Uses the finfo extension if
+     * it's available, otherwise falls back to mime_content_type().
      *
      * @return false|string The mimetype of the file, or false if reading fails.
      */

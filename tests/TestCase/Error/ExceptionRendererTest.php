@@ -860,7 +860,7 @@ class ExceptionRendererTest extends TestCase
     public function testRenderShutdownEvents()
     {
         $fired = [];
-        $listener = function ($event) use (&$fired) {
+        $listener = function (Event $event) use (&$fired) {
             $fired[] = $event->name();
         };
         $events = EventManager::instance();
@@ -905,7 +905,7 @@ class ExceptionRendererTest extends TestCase
     public function testSubclassTriggerShutdownEvents()
     {
         $fired = [];
-        $listener = function ($event) use (&$fired) {
+        $listener = function (Event $event) use (&$fired) {
             $fired[] = $event->name();
         };
         $events = EventManager::instance();

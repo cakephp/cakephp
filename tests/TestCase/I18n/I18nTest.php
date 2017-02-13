@@ -242,6 +242,41 @@ class I18nTest extends TestCase
         I18n::defaultFormatter('sprintf');
         $this->assertEquals('%d is 1 (po translated)', __('%d = 1'));
         $this->assertEquals('1 is 1 (po translated)', __('%d = 1', 1));
+        $this->assertEquals('1 is 1 (po translated)', __('%d = 1', [1]));
+        $this->assertEquals('The red dog, and blue cat', __('The %s dog, and %s cat', ['red', 'blue']));
+        $this->assertEquals('The red dog, and blue cat', __('The %s dog, and %s cat', 'red', 'blue'));
+    }
+
+    /**
+     * Tests the __() functions with explict null params
+     *
+     * @return void
+     */
+    public function testBasicTranslateFunctionsWithNullParam()
+    {
+        $this->assertEquals('text {0}', __('text {0}'));
+        $this->assertEquals('text ', __('text {0}', null));
+
+        $this->assertEquals('text {0}', __n('text {0}', 'texts {0}', 1));
+        $this->assertEquals('text ', __n('text {0}', 'texts {0}', 1, null));
+
+        $this->assertEquals('text {0}', __d('default', 'text {0}'));
+        $this->assertEquals('text ', __d('default', 'text {0}', null));
+
+        $this->assertEquals('text {0}', __dn('default', 'text {0}', 'texts {0}', 1));
+        $this->assertEquals('text ', __dn('default', 'text {0}', 'texts {0}', 1, null));
+
+        $this->assertEquals('text {0}', __x('default', 'text {0}'));
+        $this->assertEquals('text ', __x('default', 'text {0}', null));
+
+        $this->assertEquals('text {0}', __xn('default', 'text {0}', 'texts {0}', 1));
+        $this->assertEquals('text ', __xn('default', 'text {0}', 'texts {0}', 1, null));
+
+        $this->assertEquals('text {0}', __dx('default', 'words', 'text {0}'));
+        $this->assertEquals('text ', __dx('default', 'words', 'text {0}', null));
+
+        $this->assertEquals('text {0}', __dxn('default', 'words', 'text {0}', 'texts {0}', 1));
+        $this->assertEquals('text ', __dxn('default', 'words', 'text {0}', 'texts {0}', 1, null));
     }
 
     /**
@@ -268,6 +303,12 @@ class I18nTest extends TestCase
 
         $result = __n('singular msg', '%d = 0 or > 1', 2);
         $this->assertEquals('2 is 2-4 (po translated)', $result);
+
+        $result = __n('%s %s and %s are good', '%s and %s are best', 1, ['red', 'blue']);
+        $this->assertEquals('1 red and blue are good', $result);
+
+        $result = __n('%s %s and %s are good', '%s and %s are best', 1, 'red', 'blue');
+        $this->assertEquals('1 red and blue are good', $result);
     }
 
     /**
@@ -290,6 +331,9 @@ class I18nTest extends TestCase
         $this->assertEquals('Le moo', __d('custom', 'Cow'));
 
         $result = __d('custom', 'The {0} is tasty', ['fruit']);
+        $this->assertEquals('The fruit is delicious', $result);
+
+        $result = __d('custom', 'The {0} is tasty', 'fruit');
         $this->assertEquals('The fruit is delicious', $result);
 
         $result = __d('custom', 'Average price {0}', ['9.99']);
@@ -354,6 +398,9 @@ class I18nTest extends TestCase
 
         $this->assertEquals('The letters A and B', __x('character', 'letters', ['A', 'B']));
         $this->assertEquals('The letter A', __x('character', 'letter', ['A']));
+
+        $this->assertEquals('The letters A and B', __x('character', 'letters', 'A', 'B'));
+        $this->assertEquals('The letter A', __x('character', 'letter', 'A'));
 
         $this->assertEquals(
             'She wrote a letter to Thomas and Sara',
@@ -617,7 +664,7 @@ class I18nTest extends TestCase
      *
      * @return void
      */
-    public function testloaderFactory()
+    public function testLoaderFactory()
     {
         I18n::config('custom', function ($name, $locale) {
             $this->assertEquals('custom', $name);
@@ -656,6 +703,36 @@ class I18nTest extends TestCase
 
         $translator = I18n::translator();
         $this->assertEquals('%d is 1 (po translated)', $translator->translate('%d = 1'));
+    }
+
+    /**
+     * Tests that it is possible to register a fallback translators factory
+     *
+     * @return void
+     */
+    public function testFallbackLoaderFactory()
+    {
+        I18n::config('_fallback', function ($name) {
+            $package = new Package('default');
+
+            if ($name == 'custom') {
+                $package->setMessages([
+                    'Cow' => 'Le Moo custom',
+                ]);
+            } else {
+                $package->setMessages([
+                    'Cow' => 'Le Moo default',
+                ]);
+            }
+
+            return $package;
+        });
+
+        $translator = I18n::translator('custom');
+        $this->assertEquals('Le Moo custom', $translator->translate('Cow'));
+
+        $translator = I18n::translator();
+        $this->assertEquals('Le Moo default', $translator->translate('Cow'));
     }
 
     /**

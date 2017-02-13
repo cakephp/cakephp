@@ -527,6 +527,19 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * test that when there are required arguments after optional ones an exception is raised
+     *
+     * @expectedException \LogicException
+     * @return void
+     */
+    public function testPositionalArgRequiredAfterOptional()
+    {
+        $parser = new ConsoleOptionParser('test');
+        $parser->addArgument('name', ['required' => false])
+            ->addArgument('other', ['required' => true]);
+    }
+
+    /**
      * test that arguments with choices enforce them.
      *
      * @expectedException \Cake\Console\Exception\ConsoleException
@@ -576,6 +589,30 @@ class ConsoleOptionParserTest extends TestCase
             'help' => 'Initialize the database'
         ]);
         $this->assertEquals($parser, $result, 'Adding a subcommand is not chainable');
+    }
+
+    /**
+     * Test addSubcommand inherits options as no
+     * parser is created.
+     *
+     * @return void
+     */
+    public function testAddSubcommandInheritOptions()
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addSubcommand('build', [
+            'help' => 'Build things'
+        ])->addOption('connection', [
+            'short' => 'c',
+            'default' => 'default'
+        ])->addArgument('name', ['required' => false]);
+
+        $result = $parser->parse(['build']);
+        $this->assertEquals('default', $result[0]['connection']);
+
+        $result = $parser->subcommands();
+        $this->assertArrayHasKey('build', $result);
+        $this->assertFalse($result['build']->parser(), 'No parser should be created');
     }
 
     /**
@@ -649,6 +686,7 @@ class ConsoleOptionParserTest extends TestCase
     {
         $subParser = new ConsoleOptionParser('method', false);
         $subParser->addOption('connection', ['help' => 'Db connection.']);
+        $subParser->addOption('zero', ['short' => '0', 'help' => 'Zero.']);
 
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addSubcommand('method', [
@@ -659,13 +697,58 @@ class ConsoleOptionParserTest extends TestCase
 
         $result = $parser->help('method');
         $expected = <<<TEXT
+This is another command
+
 <info>Usage:</info>
-cake mycommand method [--connection] [-h]
+cake mycommand method [--connection] [-h] [-0]
 
 <info>Options:</info>
 
 --connection      Db connection.
 --help, -h        Display this help.
+--zero, -0        Zero.
+
+TEXT;
+        $this->assertTextEquals($expected, $result, 'Help is not correct.');
+    }
+
+    /**
+     * test that help() with a command param shows the help for a subcommand
+     *
+     * @return void
+     */
+    public function testHelpSubcommandHelpArray()
+    {
+        $subParser = [
+            'options' => [
+                'foo' => [
+                    'short' => 'f',
+                    'help' => 'Foo.',
+                    'boolean' => true,
+                ]
+            ],
+        ];
+
+        $parser = new ConsoleOptionParser('mycommand', false);
+        $parser->addSubcommand('method', [
+            'help' => 'This is a subcommand',
+            'parser' => $subParser
+        ])
+            ->addOption('test', ['help' => 'A test option.']);
+
+        $result = $parser->help('method');
+        $expected = <<<TEXT
+This is a subcommand
+
+<info>Usage:</info>
+cake mycommand method [-f] [-h] [-q] [-v]
+
+<info>Options:</info>
+
+--foo, -f      Foo.
+--help, -h     Display this help.
+--quiet, -q    Enable quiet output.
+--verbose, -v  Enable verbose output.
 
 TEXT;
         $this->assertTextEquals($expected, $result, 'Help is not correct.');

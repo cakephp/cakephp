@@ -177,16 +177,16 @@ class ResultSet implements ResultSetInterface
     {
         $repository = $query->repository();
         $this->_statement = $statement;
-        $this->_driver = $query->connection()->driver();
+        $this->_driver = $query->getConnection()->driver();
         $this->_defaultTable = $query->repository();
         $this->_calculateAssociationMap($query);
-        $this->_hydrate = $query->hydrate();
+        $this->_hydrate = $query->isHydrationEnabled();
         $this->_entityClass = $repository->entityClass();
-        $this->_useBuffering = $query->bufferResults();
+        $this->_useBuffering = $query->isBufferedResultsEnabled();
         $this->_defaultAlias = $this->_defaultTable->alias();
         $this->_calculateColumnMap($query);
         $this->_calculateTypeMap();
-        $this->_autoFields = $query->autoFields();
+        $this->_autoFields = $query->isAutoFieldsEnabled();
 
         if ($this->_useBuffering) {
             $count = $this->count();
@@ -379,7 +379,7 @@ class ResultSet implements ResultSetInterface
      */
     protected function _calculateAssociationMap($query)
     {
-        $map = $query->eagerLoader()->associationsMap($this->_defaultTable);
+        $map = $query->getEagerLoader()->associationsMap($this->_defaultTable);
         $this->_matchingMap = (new Collection($map))
             ->match(['matching' => true])
             ->indexBy('alias')
@@ -446,7 +446,7 @@ class ResultSet implements ResultSetInterface
     protected function _getTypes($table, $fields)
     {
         $types = [];
-        $schema = $table->schema();
+        $schema = $table->getSchema();
         $map = array_keys(Type::map() + ['string' => 1, 'text' => 1, 'boolean' => 1]);
         $typeMap = array_combine(
             $map,
@@ -513,7 +513,10 @@ class ResultSet implements ResultSetInterface
                 array_intersect_key($row, $keys)
             );
             if ($this->_hydrate) {
-                $options['source'] = $matching['instance']->registryAlias();
+                /* @var \Cake\ORM\Table $table */
+                $table = $matching['instance'];
+                $options['source'] = $table->getRegistryAlias();
+                /* @var \Cake\Datasource\EntityInterface $entity */
                 $entity = new $matching['entityClass']($results['_matchingData'][$alias], $options);
                 $results['_matchingData'][$alias] = $entity;
             }
@@ -533,6 +536,7 @@ class ResultSet implements ResultSetInterface
                 continue;
             }
 
+            /* @var \Cake\ORM\Association $instance */
             $instance = $assoc['instance'];
 
             if (!$assoc['canBeJoined'] && !isset($row[$alias])) {
@@ -544,8 +548,8 @@ class ResultSet implements ResultSetInterface
                 $results[$alias] = $row[$alias];
             }
 
-            $target = $instance->target();
-            $options['source'] = $target->registryAlias();
+            $target = $instance->getTarget();
+            $options['source'] = $target->getRegistryAlias();
             unset($presentAliases[$alias]);
 
             if ($assoc['canBeJoined'] && $this->_autoFields !== false) {

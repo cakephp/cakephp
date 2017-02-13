@@ -65,7 +65,7 @@ class Time extends MutableDateTime implements JsonSerializable
      * The format to use when formatting a time using `Cake\I18n\Time::timeAgoInWords()`
      * and the difference is more than `Cake\I18n\Time::$wordEnd`
      *
-     * @var string
+     * @var string|array|int
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
     public static $wordFormat = [IntlDateFormatter::SHORT, -1];
@@ -108,7 +108,7 @@ class Time extends MutableDateTime implements JsonSerializable
     public function __construct($time = null, $tz = null)
     {
         if ($time instanceof DateTimeInterface) {
-            $tz = $time->getTimeZone();
+            $tz = $time->getTimezone();
             $time = $time->format('Y-m-d H:i:s');
         }
 

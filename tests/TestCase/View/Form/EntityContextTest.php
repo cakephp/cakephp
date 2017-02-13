@@ -156,7 +156,7 @@ class EntityContextTest extends TestCase
      */
     public function testInvalidTable()
     {
-        $row = new \StdClass();
+        $row = new \stdClass();
         $context = new EntityContext($this->request, [
             'entity' => $row,
         ]);

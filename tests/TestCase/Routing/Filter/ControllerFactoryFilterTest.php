@@ -46,7 +46,7 @@ class ControllerFactoryFilterTest extends TestCase
 
         $this->assertEquals(
             'TestApp\Controller\Admin\PostsController',
-            get_class($event->data['controller'])
+            get_class($event->data('controller'))
         );
 
         $request->addParams(['prefix' => 'admin/sub', 'controller' => 'Posts', 'action' => 'index']);
@@ -55,7 +55,7 @@ class ControllerFactoryFilterTest extends TestCase
 
         $this->assertEquals(
             'TestApp\Controller\Admin\Sub\PostsController',
-            get_class($event->data['controller'])
+            get_class($event->data('controller'))
         );
     }
 }

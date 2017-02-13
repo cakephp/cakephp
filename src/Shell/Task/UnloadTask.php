@@ -38,9 +38,14 @@ class UnloadTask extends Shell
      */
     public function main($plugin = null)
     {
-        $this->bootstrap = ROOT . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'bootstrap.php';
+        $filename = 'bootstrap';
+        if ($this->params['cli']) {
+            $filename .= '_cli';
+        }
 
-        if (empty($plugin)) {
+        $this->bootstrap = ROOT . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . $filename . '.php';
+
+        if (!$plugin) {
             $this->err('You must provide a plugin name in CamelCase format.');
             $this->err('To unload an "Example" plugin, run `cake plugin unload Example`.');
 
@@ -58,15 +63,19 @@ class UnloadTask extends Shell
      */
     protected function _modifyBootstrap($plugin)
     {
-        $finder = "/\nPlugin::load\((.|.\n|\n\s\s|\n\t|)+'$plugin'(.|.\n|)+\);\n/";
+        $finder = "@\nPlugin::load\((.|.\n|\n\s\s|\n\t|)+'$plugin'(.|.\n|)+\);\n@";
 
         $bootstrap = new File($this->bootstrap, false);
-        $contents = $bootstrap->read();
+        $content = $bootstrap->read();
 
-        if (!preg_match("@\n\s*Plugin::loadAll@", $contents)) {
-            $contents = preg_replace($finder, "", $contents);
+        if (!preg_match("@\n\s*Plugin::loadAll@", $content)) {
+            $newContent = preg_replace($finder, "", $content);
 
-            $bootstrap->write($contents);
+            if ($newContent === $content) {
+                return false;
+            }
+
+            $bootstrap->write($newContent);
 
             $this->out('');
             $this->out(sprintf('%s modified', $this->bootstrap));
@@ -86,9 +95,14 @@ class UnloadTask extends Shell
     {
         $parser = parent::getOptionParser();
 
-        $parser->addArgument('plugin', [
-            'help' => 'Name of the plugin to load.',
-        ]);
+        $parser->addOption('cli', [
+                'help' => 'Use the bootstrap_cli file.',
+                'boolean' => true,
+                'default' => false,
+            ])
+            ->addArgument('plugin', [
+                'help' => 'Name of the plugin to load.',
+            ]);
 
         return $parser;
     }

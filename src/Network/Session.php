@@ -88,7 +88,7 @@ class Session
      * - timeout: The time in minutes the session should stay active
      *
      * @param array $sessionConfig Session config.
-     * @return \Cake\Network\Session
+     * @return static
      * @see \Cake\Network\Session::__construct()
      */
     public static function create($sessionConfig = [])
@@ -319,7 +319,7 @@ class Session
         }
 
         if (ini_get('session.use_cookies') && headers_sent($file, $line)) {
-            return;
+            return false;
         }
 
         if (!session_start()) {

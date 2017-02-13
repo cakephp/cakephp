@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Database\Exception;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Schema\TableSchema;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
@@ -325,7 +326,7 @@ class TableTest extends TestCase
         $schema = ['id' => ['type' => 'integer']];
         $table->schema($schema);
         $this->assertEquals(
-            new \Cake\Database\Schema\Table('another', $schema),
+            new TableSchema('another', $schema),
             $table->schema()
         );
     }
@@ -475,7 +476,7 @@ class TableTest extends TestCase
         ]);
         $table->eventManager()->on(
             'Model.beforeFind',
-            function ($event, $query, $options) {
+            function (Event $event, $query, $options) {
                 $query->limit(1);
             }
         );
@@ -499,7 +500,7 @@ class TableTest extends TestCase
         $expected = ['One', 'Two', 'Three'];
         $table->eventManager()->on(
             'Model.beforeFind',
-            function ($event, $query, $options) use ($expected) {
+            function (Event $event, $query, $options) use ($expected) {
                 $query->setResult($expected);
                 $event->stopPropagation();
             }
@@ -2569,10 +2570,10 @@ class TableTest extends TestCase
         $connection->driver($this->connection->driver());
 
         $table = $this->getMockBuilder('\Cake\ORM\Table')
-            ->setMethods(['connection'])
+            ->setMethods(['getConnection'])
             ->setConstructorArgs([['table' => 'users']])
             ->getMock();
-        $table->expects($this->any())->method('connection')
+        $table->expects($this->any())->method('getConnection')
             ->will($this->returnValue($connection));
 
         $connection->expects($this->once())->method('begin');
@@ -2601,14 +2602,14 @@ class TableTest extends TestCase
             ->getMock();
         $connection->driver(ConnectionManager::get('test')->driver());
         $table = $this->getMockBuilder('\Cake\ORM\Table')
-            ->setMethods(['query', 'connection'])
+            ->setMethods(['query', 'getConnection'])
             ->setConstructorArgs([['table' => 'users']])
             ->getMock();
         $query = $this->getMockBuilder('\Cake\ORM\Query')
             ->setMethods(['execute', 'addDefaultTypes'])
             ->setConstructorArgs([null, $table])
             ->getMock();
-        $table->expects($this->any())->method('connection')
+        $table->expects($this->any())->method('getConnection')
             ->will($this->returnValue($connection));
 
         $table->expects($this->once())->method('query')
@@ -2641,7 +2642,7 @@ class TableTest extends TestCase
             ->getMock();
         $connection->driver(ConnectionManager::get('test')->driver());
         $table = $this->getMockBuilder('\Cake\ORM\Table')
-            ->setMethods(['query', 'connection', 'exists'])
+            ->setMethods(['query', 'getConnection', 'exists'])
             ->setConstructorArgs([['table' => 'users']])
             ->getMock();
         $query = $this->getMockBuilder('\Cake\ORM\Query')
@@ -2649,7 +2650,7 @@ class TableTest extends TestCase
             ->setConstructorArgs([null, $table])
             ->getMock();
 
-        $table->expects($this->any())->method('connection')
+        $table->expects($this->any())->method('getConnection')
             ->will($this->returnValue($connection));
 
         $table->expects($this->once())->method('query')
@@ -2784,7 +2785,7 @@ class TableTest extends TestCase
         ]);
         $table = TableRegistry::get('users');
         $called = false;
-        $listener = function ($event, $entity) use (&$called) {
+        $listener = function (Event $event, $entity) use (&$called) {
             $this->assertFalse($entity->isNew());
             $called = true;
         };
@@ -3106,7 +3107,7 @@ class TableTest extends TestCase
         $Articles->associations()->removeAll();
 
         $Authors->hasMany('AliasedArticles', [
-            'className' => 'articles',
+            'className' => 'Articles',
             'dependent' => true,
             'cascadeCallbacks' => true
         ]);
@@ -3172,7 +3173,7 @@ class TableTest extends TestCase
             ->with($this->logicalAnd(
                 $this->attributeEqualTo('_name', 'Model.beforeDelete'),
                 $this->attributeEqualTo(
-                    'data',
+                    '_data',
                     ['entity' => $entity, 'options' => $options]
                 )
             ));
@@ -3182,7 +3183,7 @@ class TableTest extends TestCase
             ->with($this->logicalAnd(
                 $this->attributeEqualTo('_name', 'Model.afterDelete'),
                 $this->attributeEqualTo(
-                    'data',
+                    '_data',
                     ['entity' => $entity, 'options' => $options]
                 )
             ));
@@ -3192,7 +3193,7 @@ class TableTest extends TestCase
             ->with($this->logicalAnd(
                 $this->attributeEqualTo('_name', 'Model.afterDeleteCommit'),
                 $this->attributeEqualTo(
-                    'data',
+                    '_data',
                     ['entity' => $entity, 'options' => $options]
                 )
             ));
@@ -3277,7 +3278,7 @@ class TableTest extends TestCase
         $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $mock->expects($this->at(2))
             ->method('dispatch')
-            ->will($this->returnCallback(function ($event) {
+            ->will($this->returnCallback(function (Event $event) {
                 $event->stopPropagation();
             }));
 
@@ -3300,9 +3301,9 @@ class TableTest extends TestCase
         $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $mock->expects($this->at(2))
             ->method('dispatch')
-            ->will($this->returnCallback(function ($event) {
+            ->will($this->returnCallback(function (Event $event) {
                 $event->stopPropagation();
-                $event->result = 'got stopped';
+                $event->setResult('got stopped');
             }));
 
         $table = TableRegistry::get('users', ['eventManager' => $mock]);
@@ -4153,6 +4154,109 @@ class TableTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testBelongsToFluentInterface()
+    {
+        /* @var \TestApp\Model\Table\ArticlesTable $articles */
+        $articles = $this->getMockBuilder(Table::class)
+            ->setMethods(['_insert'])
+            ->setConstructorArgs([['table' => 'articles', 'connection' => $this->connection]])
+            ->getMock();
+        $authors = $this->getMockBuilder(Table::class)
+            ->setMethods(['_insert'])
+            ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
+            ->getMock();
+
+        $articles->belongsTo('authors')
+            ->setForeignKey('author_id')
+            ->setName('Authors')
+            ->setTarget($authors)
+            ->setBindingKey('id')
+            ->setConditions([])
+            ->setFinder('list')
+            ->setProperty('authors')
+            ->setJoinType('inner');
+    }
+
+    /**
+     * @return void
+     */
+    public function testHasOneFluentInterface()
+    {
+        /* @var \TestApp\Model\Table\AuthorsTable $authors */
+        $authors = $this->getMockBuilder(Table::class)
+            ->setMethods(['_insert'])
+            ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
+            ->getMock();
+
+        $authors->hasOne('articles')
+            ->setForeignKey('author_id')
+            ->setName('Articles')
+            ->setDependent(true)
+            ->setBindingKey('id')
+            ->setConditions([])
+            ->setCascadeCallbacks(true)
+            ->setFinder('list')
+            ->setStrategy('select')
+            ->setProperty('authors')
+            ->setJoinType('inner');
+    }
+
+    /**
+     * @return void
+     */
+    public function testHasManyFluentInterface()
+    {
+        /* @var \TestApp\Model\Table\AuthorsTable $authors */
+        $authors = $this->getMockBuilder(Table::class)
+            ->setMethods(['_insert'])
+            ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
+            ->getMock();
+
+        $authors->hasMany('articles')
+            ->setForeignKey('author_id')
+            ->setName('Articles')
+            ->setDependent(true)
+            ->setSort(['created' => 'DESC'])
+            ->setBindingKey('id')
+            ->setConditions([])
+            ->setCascadeCallbacks(true)
+            ->setFinder('list')
+            ->setStrategy('select')
+            ->setSaveStrategy('replace')
+            ->setProperty('authors')
+            ->setJoinType('inner');
+    }
+
+    /**
+     * @return void
+     */
+    public function testBelongsToManyFluentInterface()
+    {
+        /* @var \TestApp\Model\Table\AuthorsTable $authors */
+        $authors = $this->getMockBuilder(Table::class)
+            ->setMethods(['_insert'])
+            ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
+            ->getMock();
+
+        $authors->belongsToMany('articles')
+            ->setForeignKey('author_id')
+            ->setName('Articles')
+            ->setDependent(true)
+            ->setTargetForeignKey('article_id')
+            ->setBindingKey('id')
+            ->setConditions([])
+            ->setFinder('list')
+            ->setProperty('authors')
+            ->setSource($authors)
+            ->setStrategy('select')
+            ->setSaveStrategy('append')
+            ->setThrough('author_articles')
+            ->setJoinType('inner');
+    }
+
+    /**
      * Integration test for linking entities with belongsToMany
      *
      * @return void
@@ -4476,7 +4580,7 @@ class TableTest extends TestCase
         $associations = new AssociationCollection();
 
         $hasManyArticles = $this->getMockBuilder('Cake\ORM\Association\HasMany')
-            ->setMethods(['target'])
+            ->setMethods(['getTarget'])
             ->setConstructorArgs([
                 'articles',
                 [
@@ -4487,7 +4591,7 @@ class TableTest extends TestCase
                 ]
             ])
             ->getMock();
-        $hasManyArticles->method('target')->willReturn($articles);
+        $hasManyArticles->method('getTarget')->willReturn($articles);
 
         $associations->add('articles', $hasManyArticles);
 
@@ -5772,14 +5876,14 @@ class TableTest extends TestCase
     public function testInitializeEvent()
     {
         $count = 0;
-        $cb = function ($event) use (&$count) {
+        $cb = function (Event $event) use (&$count) {
             $count++;
         };
         EventManager::instance()->on('Model.initialize', $cb);
         $articles = TableRegistry::get('Articles');
 
         $this->assertEquals(1, $count, 'Callback should be called');
-        EventManager::instance()->detach($cb, 'Model.initialize');
+        EventManager::instance()->off('Model.initialize', $cb);
     }
 
     /**
@@ -5805,7 +5909,7 @@ class TableTest extends TestCase
     public function testBuildValidatorEvent()
     {
         $count = 0;
-        $cb = function ($event) use (&$count) {
+        $cb = function (Event $event) use (&$count) {
             $count++;
         };
         EventManager::instance()->on('Model.buildValidator', $cb);
@@ -6108,7 +6212,7 @@ class TableTest extends TestCase
         $counter = 0;
         $userTable->Comments
             ->eventManager()
-            ->on('Model.afterSave', function ($event, $entity) use (&$counter) {
+            ->on('Model.afterSave', function (Event $event, $entity) use (&$counter) {
                 if ($entity->dirty()) {
                     $counter++;
                 }
@@ -6145,7 +6249,7 @@ class TableTest extends TestCase
         $counter = 0;
         $table->Tags->junction()
             ->eventManager()
-            ->on('Model.afterSave', function ($event, $entity) use (&$counter) {
+            ->on('Model.afterSave', function (Event $event, $entity) use (&$counter) {
                 if ($entity->dirty()) {
                     $counter++;
                 }

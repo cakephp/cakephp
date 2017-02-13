@@ -14,7 +14,7 @@
  */
 namespace Cake\Http;
 
-use Cake\Network\Response as CakeResponse;
+use Cake\Http\Response as CakeResponse;
 use Psr\Http\Message\ResponseInterface as PsrResponse;
 use Zend\Diactoros\Response as DiactorosResponse;
 use Zend\Diactoros\Stream;
@@ -26,6 +26,7 @@ use Zend\Diactoros\Stream;
  * can be embedded as PSR7 middleware in a fully compatible way.
  *
  * @internal
+ * @deprecated 3.4.0 No longer used. Will be removed in 4.0.0
  */
 class ResponseTransformer
 {
@@ -132,7 +133,7 @@ class ResponseTransformer
      * Convert a PSR7 Response headers into a flat array
      *
      * @param \Psr\Http\Message\ResponseInterface $response The response to convert.
-     * @return \Cake\Network\Response The equivalent CakePHP response
+     * @return array Headers.
      */
     protected static function collapseHeaders(PsrResponse $response)
     {

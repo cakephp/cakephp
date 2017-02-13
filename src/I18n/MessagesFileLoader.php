@@ -130,7 +130,7 @@ class MessagesFileLoader
         }
 
         $name = ucfirst($ext);
-        $class = App::classname($name, 'I18n\Parser', 'FileParser');
+        $class = App::className($name, 'I18n\Parser', 'FileParser');
 
         if (!$class) {
             throw new RuntimeException(sprintf('Could not find class %s', "{$name}FileParser"));

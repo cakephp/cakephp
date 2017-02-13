@@ -167,7 +167,7 @@ class Folder
      * Change directory to $path.
      *
      * @param string $path Path to the directory to change to
-     * @return string The new path. Returns false on failure
+     * @return string|bool The new path. Returns false on failure
      */
     public function cd($path)
     {
@@ -238,11 +238,11 @@ class Folder
         }
 
         if ($dirs) {
-            $dirs = call_user_func_array('array_merge', $dirs);
+            $dirs = array_merge(...array_values($dirs));
         }
 
         if ($files) {
-            $files = call_user_func_array('array_merge', $files);
+            $files = array_merge(...array_values($files));
         }
 
         return [$dirs, $files];
@@ -924,7 +924,7 @@ class Folder
      * Get the real path (taking ".." and such into account)
      *
      * @param string $path Path to resolve
-     * @return string The resolved path
+     * @return string|bool The resolved path
      */
     public function realpath($path)
     {

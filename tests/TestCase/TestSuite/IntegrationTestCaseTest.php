@@ -44,6 +44,9 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         DispatcherFactory::add('Routing');
         DispatcherFactory::add('ControllerFactory');
         $this->useHttpServer(false);
+
+        // Load aliases, or tests fail in isolation.
+        class_exists('Cake\Network\Request');
     }
 
     /**
@@ -760,6 +763,18 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test the content regexp assertion failing
+     *
+     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedExceptionMessage No response set
+     * @return void
+     */
+    public function testAssertResponseRegExpNoResponse()
+    {
+        $this->assertResponseRegExp('/cont/');
+    }
+
+    /**
      * Test the negated content regexp assertion.
      *
      * @return void
@@ -770,6 +785,18 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->_response->body('Some content');
 
         $this->assertResponseNotRegExp('/cant/');
+    }
+
+    /**
+     * Test negated content regexp assertion failing
+     *
+     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedExceptionMessage No response set
+     * @return void
+     */
+    public function testAssertResponseNotRegExpNoResponse()
+    {
+        $this->assertResponseNotRegExp('/cont/');
     }
 
     /**

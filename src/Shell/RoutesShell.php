@@ -47,7 +47,7 @@ class RoutesShell extends Shell
      * Checks a url for the route that will be applied.
      *
      * @param string $url The URL to parse
-     * @return null|false
+     * @return bool Success
      */
     public function check($url)
     {
@@ -74,13 +74,15 @@ class RoutesShell extends Shell
 
             return false;
         }
+
+        return true;
     }
 
     /**
      * Generate a URL based on a set of parameters
      *
      * Takes variadic arguments of key/value pairs.
-     * @return null|false
+     * @return bool Success
      */
     public function generate()
     {
@@ -95,6 +97,8 @@ class RoutesShell extends Shell
 
             return false;
         }
+
+        return true;
     }
 
     /**
@@ -105,7 +109,7 @@ class RoutesShell extends Shell
     public function getOptionParser()
     {
         $parser = parent::getOptionParser();
-        $parser->description(
+        $parser->setDescription(
             'Get the list of routes connected in this application. ' .
             'This tool also lets you test URL generation and URL parsing.'
         )->addSubcommand('check', [

@@ -70,7 +70,7 @@ class EventFiredWith extends PHPUnit_Framework_Constraint
 
         $eventGroup = collection($firedEvents)
             ->groupBy(function (Event $event) {
-                return $event->name();
+                return $event->getName();
             })
             ->toArray();
 
@@ -84,13 +84,14 @@ class EventFiredWith extends PHPUnit_Framework_Constraint
             throw new PHPUnit_Framework_AssertionFailedError(sprintf('Event "%s" was fired %d times, cannot make data assertion', $other, count($events)));
         }
 
+        /* @var \Cake\Event\Event $event */
         $event = $events[0];
 
-        if (array_key_exists($this->_dataKey, $event->data) === false) {
+        if (array_key_exists($this->_dataKey, $event->getData()) === false) {
             return false;
         }
 
-        return $event->data[$this->_dataKey] === $this->_dataValue;
+        return $event->getData($this->_dataKey) === $this->_dataValue;
     }
 
     /**

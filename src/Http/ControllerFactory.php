@@ -15,8 +15,6 @@
 namespace Cake\Http;
 
 use Cake\Core\App;
-use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\Routing\Exception\MissingControllerException;
 use Cake\Utility\Inflector;
 use ReflectionClass;
@@ -29,27 +27,27 @@ class ControllerFactory
     /**
      * Create a controller for a given request/response
      *
-     * @param \Cake\Network\Request $request The request to build a controller for.
+     * @param \Cake\Http\ServerRequest $request The request to build a controller for.
      * @param \Cake\Network\Response $response The response to use.
      * @return \Cake\Controller\Controller
      */
-    public function create(Request $request, Response $response)
+    public function create(ServerRequest $request, Response $response)
     {
         $pluginPath = $controller = null;
         $namespace = 'Controller';
-        if (isset($request->params['plugin'])) {
-            $pluginPath = $request->params['plugin'] . '.';
+        if ($request->getParam('plugin')) {
+            $pluginPath = $request->getParam('plugin') . '.';
         }
-        if (isset($request->params['controller'])) {
-            $controller = $request->params['controller'];
+        if ($request->getParam('controller')) {
+            $controller = $request->getParam('controller');
         }
-        if (isset($request->params['prefix'])) {
-            if (strpos($request->params['prefix'], '/') === false) {
-                $namespace .= '/' . Inflector::camelize($request->params['prefix']);
+        if ($request->getParam('prefix')) {
+            if (strpos($request->getParam('prefix'), '/') === false) {
+                $namespace .= '/' . Inflector::camelize($request->getParam('prefix'));
             } else {
                 $prefixes = array_map(
                     'Cake\Utility\Inflector::camelize',
-                    explode('/', $request->params['prefix'])
+                    explode('/', $request->getParam('prefix'))
                 );
                 $namespace .= '/' . implode('/', $prefixes);
             }
@@ -64,16 +62,16 @@ class ControllerFactory
             strpos($controller, '.') !== false ||
             $firstChar === strtolower($firstChar)
         ) {
-            return $this->missingController($request);
+            $this->missingController($request);
         }
 
         $className = App::className($pluginPath . $controller, $namespace, 'Controller');
         if (!$className) {
-            return $this->missingController($request);
+            $this->missingController($request);
         }
         $reflection = new ReflectionClass($className);
         if ($reflection->isAbstract() || $reflection->isInterface()) {
-            return $this->missingController($request);
+            $this->missingController($request);
         }
 
         return $reflection->newInstance($request, $response, $controller);
@@ -82,17 +80,17 @@ class ControllerFactory
     /**
      * Throws an exception when a controller is missing.
      *
-     * @param \Cake\Network\Request $request The request.
+     * @param \Cake\Http\ServerRequest $request The request.
      * @throws \Cake\Routing\Exception\MissingControllerException
      * @return void
      */
     protected function missingController($request)
     {
         throw new MissingControllerException([
-            'class' => $request->param('controller'),
-            'plugin' => $request->param('plugin'),
-            'prefix' => $request->param('prefix'),
-            '_ext' => $request->param('_ext')
+            'class' => $request->getParam('controller'),
+            'plugin' => $request->getParam('plugin'),
+            'prefix' => $request->getParam('prefix'),
+            '_ext' => $request->getParam('_ext')
         ]);
     }
 }

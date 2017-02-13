@@ -72,7 +72,7 @@ class IsUnique
         $alias = $options['repository']->alias();
         $conditions = $this->_alias($alias, $entity->extract($this->_fields), $allowMultipleNulls);
         if ($entity->isNew() === false) {
-            $keys = (array)$options['repository']->primaryKey();
+            $keys = (array)$options['repository']->getPrimaryKey();
             $keys = $this->_alias($alias, $entity->extract($keys), $allowMultipleNulls);
             if (array_filter($keys, 'strlen')) {
                 $conditions['NOT'] = $keys;

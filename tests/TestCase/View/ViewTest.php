@@ -280,6 +280,16 @@ class ViewTest extends TestCase
     public $fixtures = ['core.posts', 'core.users'];
 
     /**
+     * @var \Cake\View\View
+     */
+    public $View;
+
+    /**
+     * @var ViewPostsController
+     */
+    public $PostsController;
+
+    /**
      * setUp method
      *
      * @return void
@@ -928,7 +938,7 @@ class ViewTest extends TestCase
     public function testElementCallbacks()
     {
         $count = 0;
-        $callback = function ($event, $file) use (&$count) {
+        $callback = function (Event $event, $file) use (&$count) {
             $count++;
         };
         $events = $this->View->eventManager();

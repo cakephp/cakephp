@@ -112,9 +112,11 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * });
      * ```
      *
+     * Empty collections always return true because it is a vacuous truth.
+     *
      * @param callable $c a callback function
      * @return bool true if for all elements in this collection the provided
-     * callback returns true, false otherwise
+     *   callback returns true, false otherwise.
      */
     public function every(callable $c);
 
@@ -891,8 +893,8 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *
      * ```
      * $collection = new Collection([1, 2]);
-     * $zipped = $collection->zipWith([3, 4], [5, 6], function () {
-     *   return array_sum(func_get_args());
+     * $zipped = $collection->zipWith([3, 4], [5, 6], function (...$args) {
+     *   return array_sum($args);
      * });
      * $zipped->toList(); // returns [9, 12]; [(1 + 3 + 5), (2 + 4 + 6)]
      * ```
@@ -916,8 +918,26 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *
      * @param int $chunkSize The maximum size for each chunk
      * @return \Cake\Collection\CollectionInterface
+     * @deprecated 4.0.0 Deprecated in favor of chunks
      */
     public function chunk($chunkSize);
+
+    /**
+     * Breaks the collection into smaller arrays of the given size.
+     *
+     * ### Example:
+     *
+     * ```
+     * $items ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6];
+     * $chunked = (new Collection($items))->chunkWithKeys(3)->toList();
+     * // Returns [['a' => 1, 'b' => 2, 'c' => 3], ['d' => 4, 'e' => 5, 'f' => 6]]
+     * ```
+     *
+     * @param int $chunkSize The maximum size for each chunk
+     * @param bool $preserveKeys If the keys of the array should be preserved
+     * @return \Cake\Collection\CollectionInterface
+     */
+    public function chunkWithKeys($chunkSize, $preserveKeys = true);
 
     /**
      * Returns whether or not there are elements in this collection

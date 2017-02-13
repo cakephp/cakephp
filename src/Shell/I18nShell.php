@@ -21,6 +21,8 @@ use DirectoryIterator;
 
 /**
  * Shell for I18N management.
+ *
+ * @property \Cake\Shell\Task\ExtractTask $Extract
  */
 class I18nShell extends Shell
 {
@@ -31,6 +33,11 @@ class I18nShell extends Shell
      * @var array
      */
     public $tasks = ['Extract'];
+
+    /**
+     * @var string[]
+     */
+    protected $_paths;
 
     /**
      * Override main() for help message hook
@@ -80,7 +87,7 @@ class I18nShell extends Shell
             $language = $this->in('Please specify language code, e.g. `en`, `eng`, `en_US` etc.');
         }
         if (strlen($language) < 2) {
-            return $this->error('Invalid language code. Valid is `en`, `eng`, `en_US` etc.');
+            return $this->abort('Invalid language code. Valid is `en`, `eng`, `en_US` etc.');
         }
 
         $this->_paths = [APP];
@@ -140,7 +147,7 @@ class I18nShell extends Shell
             ]
         ];
 
-        $parser->description(
+        $parser->setDescription(
             'I18n Shell generates .pot files(s) with translations.'
         )->addSubcommand('extract', [
             'help' => 'Extract the po translations from your application',

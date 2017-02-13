@@ -141,6 +141,12 @@ class CollectionTest extends TestCase
      */
     public function testReject()
     {
+        $collection = new Collection([]);
+        $result = $collection->reject(function ($v) {
+            return false;
+        });
+        $this->assertSame([], iterator_to_array($result));
+
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
         $result = $collection->reject(function ($v, $k, $items) use ($collection) {
@@ -212,7 +218,7 @@ class CollectionTest extends TestCase
 
         $callable->expects($this->never())
             ->method('__invoke');
-        $this->assertFalse($collection->every($callable));
+        $this->assertTrue($collection->every($callable));
     }
 
     /**
@@ -222,6 +228,12 @@ class CollectionTest extends TestCase
      */
     public function testSomeReturnTrue()
     {
+        $collection = new Collection([]);
+        $result = $collection->some(function ($v) {
+            return true;
+        });
+        $this->assertFalse($result);
+
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
         $callable = $this->getMockBuilder(\StdClass::class)
@@ -275,6 +287,9 @@ class CollectionTest extends TestCase
      */
     public function testContains()
     {
+        $collection = new Collection([]);
+        $this->assertFalse($collection->contains('a'));
+
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
         $this->assertTrue($collection->contains(2));
@@ -1553,8 +1568,8 @@ class CollectionTest extends TestCase
         });
         $this->assertEquals([3, 8], $zipped->toList());
 
-        $zipped = $collection->zipWith([3, 4], [5, 6, 7], function () {
-            return array_sum(func_get_args());
+        $zipped = $collection->zipWith([3, 4], [5, 6, 7], function (...$args) {
+            return array_sum($args);
         });
         $this->assertEquals([9, 12], $zipped->toList());
     }
@@ -1767,6 +1782,58 @@ class CollectionTest extends TestCase
         $collection = new Collection([1, 2, 3, [4, 5], 6, [7, [8, 9], 10], 11]);
         $chunked = $collection->chunk(2)->toList();
         $expected = [[1, 2], [3, [4, 5]], [6, [7, [8, 9], 10]], [11]];
+        $this->assertEquals($expected, $chunked);
+    }
+
+    /**
+     * Tests the chunkWithKeys method with exact chunks
+     *
+     * @return void
+     */
+    public function testChunkWithKeys()
+    {
+        $collection = new Collection(['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6]);
+        $chunked = $collection->chunkWithKeys(2)->toList();
+        $expected = [['a' => 1, 'b' => 2], ['c' => 3, 'd' => 4], ['e' => 5, 'f' => 6]];
+        $this->assertEquals($expected, $chunked);
+    }
+
+    /**
+     * Tests the chunkWithKeys method with overflowing chunk size
+     *
+     * @return void
+     */
+    public function testChunkWithKeysOverflow()
+    {
+        $collection = new Collection(['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7]);
+        $chunked = $collection->chunkWithKeys(2)->toList();
+        $expected = [['a' => 1, 'b' => 2], ['c' => 3, 'd' => 4], ['e' => 5, 'f' => 6], ['g' => 7]];
+        $this->assertEquals($expected, $chunked);
+    }
+
+    /**
+     * Tests the chunkWithKeys method with non-scalar items
+     *
+     * @return void
+     */
+    public function testChunkWithKeysNested()
+    {
+        $collection = new Collection(['a' => 1, 'b' => 2, 'c' => 3, 'd' => [4, 5], 'e' => 6, 'f' => [7, [8, 9], 10], 'g' => 11]);
+        $chunked = $collection->chunkWithKeys(2)->toList();
+        $expected = [['a' => 1, 'b' => 2], ['c' => 3, 'd' => [4, 5]], ['e' => 6, 'f' => [7, [8, 9], 10]], ['g' => 11]];
+        $this->assertEquals($expected, $chunked);
+    }
+
+    /**
+     * Tests the chunkWithKeys method without preserving keys
+     *
+     * @return void
+     */
+    public function testChunkWithKeysNoPreserveKeys()
+    {
+        $collection = new Collection(['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7]);
+        $chunked = $collection->chunkWithKeys(2, false)->toList();
+        $expected = [[0 => 1, 1 => 2], [0 => 3, 1 => 4], [0 => 5, 1 => 6], [0 => 7]];
         $this->assertEquals($expected, $chunked);
     }
 

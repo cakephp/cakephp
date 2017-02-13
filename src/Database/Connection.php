@@ -24,7 +24,6 @@ use Cake\Database\Log\QueryLogger;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Datasource\ConnectionInterface;
-use Exception;
 
 /**
  * Represents a connection with a database server.
@@ -81,16 +80,16 @@ class Connection implements ConnectionInterface
     /**
      * Logger object instance.
      *
-     * @var \Cake\Database\Log\QueryLogger
+     * @var \Cake\Database\Log\QueryLogger|null
      */
     protected $_logger = null;
 
     /**
      * The schema collection object
      *
-     * @var \Cake\Database\Schema\Collection
+     * @var \Cake\Database\Schema\Collection|null
      */
-    protected $_schemaCollection;
+    protected $_schemaCollection = null;
 
     /**
      * Constructor.
@@ -105,7 +104,7 @@ class Connection implements ConnectionInterface
         if (!empty($config['driver'])) {
             $driver = $config['driver'];
         }
-        $this->driver($driver, $config);
+        $this->setDriver($driver, $config);
 
         if (!empty($config['log'])) {
             $this->logQueries($config['log']);
@@ -146,19 +145,14 @@ class Connection implements ConnectionInterface
      * Sets the driver instance. If a string is passed it will be treated
      * as a class name and will be instantiated.
      *
-     * If no params are passed it will return the current driver instance.
-     *
-     * @param \Cake\Database\Driver|string|null $driver The driver instance to use.
-     * @param array $config Either config for a new driver or null.
+     * @param \Cake\Database\Driver|string $driver The driver instance to use.
+     * @param array $config Config for a new driver.
      * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
      * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
-     * @return \Cake\Database\Driver
+     * @return $this
      */
-    public function driver($driver = null, $config = [])
+    public function setDriver($driver, $config = [])
     {
-        if ($driver === null) {
-            return $this->_driver;
-        }
         if (is_string($driver)) {
             $className = App::className($driver, 'Database/Driver');
             if (!$className || !class_exists($className)) {
@@ -170,7 +164,41 @@ class Connection implements ConnectionInterface
             throw new MissingExtensionException(['driver' => get_class($driver)]);
         }
 
-        return $this->_driver = $driver;
+        $this->_driver = $driver;
+
+        return $this;
+    }
+
+    /**
+     * Gets the driver instance.
+     *
+     * @return \Cake\Database\Driver
+     */
+    public function getDriver()
+    {
+        return $this->_driver;
+    }
+
+    /**
+     * Sets the driver instance. If a string is passed it will be treated
+     * as a class name and will be instantiated.
+     *
+     * If no params are passed it will return the current driver instance.
+     *
+     * @deprecated 3.4.0 Use setDriver()/getDriver() instead.
+     * @param \Cake\Database\Driver|string|null $driver The driver instance to use.
+     * @param array $config Either config for a new driver or null.
+     * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
+     * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
+     * @return \Cake\Database\Driver
+     */
+    public function driver($driver = null, $config = [])
+    {
+        if ($driver !== null) {
+            $this->setDriver($driver, $config);
+        }
+
+        return $this->getDriver();
     }
 
     /**
@@ -185,7 +213,7 @@ class Connection implements ConnectionInterface
             $this->_driver->connect();
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new MissingConnectionException(['reason' => $e->getMessage()]);
         }
     }
@@ -259,7 +287,7 @@ class Connection implements ConnectionInterface
      */
     public function compileQuery(Query $query, ValueBinder $generator)
     {
-        return $this->driver()->compileQuery($query, $generator)[1];
+        return $this->getDriver()->compileQuery($query, $generator)[1];
     }
 
     /**
@@ -303,17 +331,25 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Gets or sets a Schema\Collection object for this connection.
+     * Sets a Schema\Collection object for this connection.
      *
-     * @param \Cake\Database\Schema\Collection|null $collection The schema collection object
+     * @param \Cake\Database\Schema\Collection $collection The schema collection object
+     * @return $this
+     */
+    public function setSchemaCollection(SchemaCollection $collection)
+    {
+        $this->_schemaCollection = $collection;
+
+        return $this;
+    }
+
+    /**
+     * Gets a Schema\Collection object for this connection.
+     *
      * @return \Cake\Database\Schema\Collection
      */
-    public function schemaCollection(SchemaCollection $collection = null)
+    public function getSchemaCollection()
     {
-        if ($collection !== null) {
-            return $this->_schemaCollection = $collection;
-        }
-
         if ($this->_schemaCollection !== null) {
             return $this->_schemaCollection;
         }
@@ -323,6 +359,22 @@ class Connection implements ConnectionInterface
         }
 
         return $this->_schemaCollection = new SchemaCollection($this);
+    }
+
+    /**
+     * Gets or sets a Schema\Collection object for this connection.
+     *
+     * @deprecated 3.4.0 Use setSchemaCollection()/getSchemaCollection()
+     * @param \Cake\Database\Schema\Collection|null $collection The schema collection object
+     * @return \Cake\Database\Schema\Collection
+     */
+    public function schemaCollection(SchemaCollection $collection = null)
+    {
+        if ($collection !== null) {
+            $this->setSchemaCollection($collection);
+        }
+
+        return $this->getSchemaCollection();
     }
 
     /**
@@ -394,7 +446,7 @@ class Connection implements ConnectionInterface
         }
 
         $this->_transactionLevel++;
-        if ($this->useSavePoints()) {
+        if ($this->isSavePointsEnabled()) {
             $this->createSavePoint($this->_transactionLevel);
         }
     }
@@ -418,7 +470,7 @@ class Connection implements ConnectionInterface
 
             return $this->_driver->commitTransaction();
         }
-        if ($this->useSavePoints()) {
+        if ($this->isSavePointsEnabled()) {
             $this->releaseSavePoint($this->_transactionLevel);
         }
 
@@ -438,7 +490,7 @@ class Connection implements ConnectionInterface
             return false;
         }
 
-        $useSavePoint = $this->useSavePoints();
+        $useSavePoint = $this->isSavePointsEnabled();
         if ($this->_transactionLevel === 0 || !$useSavePoint) {
             $this->_transactionLevel = 0;
             $this->_transactionStarted = false;
@@ -458,6 +510,41 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Enables/disables the usage of savepoints, enables only if driver the allows it.
+     *
+     * If you are trying to enable this feature, make sure you check the return value of this
+     * function to verify it was enabled successfully.
+     *
+     * ### Example:
+     *
+     * `$connection->enableSavePoints(true)` Returns true if drivers supports save points, false otherwise
+     * `$connection->enableSavePoints(false)` Disables usage of savepoints and returns false
+     *
+     * @param bool $enable Whether or not save points should be used.
+     * @return $this
+     */
+    public function enableSavePoints($enable)
+    {
+        if ($enable === false) {
+            $this->_useSavePoints = false;
+        } else {
+            $this->_useSavePoints = $this->_driver->supportsSavePoints();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Returns whether this connection is using savepoints for nested transactions
+     *
+     * @return bool true if enabled, false otherwise
+     */
+    public function isSavePointsEnabled()
+    {
+        return $this->_useSavePoints;
+    }
+
+    /**
      * Returns whether this connection is using savepoints for nested transactions
      * If a boolean is passed as argument it will enable/disable the usage of savepoints
      * only if driver the allows it.
@@ -471,20 +558,17 @@ class Connection implements ConnectionInterface
      * `$connection->useSavePoints(false)` Disables usage of savepoints and returns false
      * `$connection->useSavePoints()` Returns current status
      *
+     * @deprecated 3.4.0 Use enableSavePoints()/isSavePointsEnabled() instead.
      * @param bool|null $enable Whether or not save points should be used.
      * @return bool true if enabled, false otherwise
      */
     public function useSavePoints($enable = null)
     {
-        if ($enable === null) {
-            return $this->_useSavePoints;
+        if ($enable !== null) {
+            $this->enableSavePoints($enable);
         }
 
-        if ($enable === false) {
-            return $this->_useSavePoints = false;
-        }
-
-        return $this->_useSavePoints = $this->_driver->supportsSavePoints();
+        return $this->isSavePointsEnabled();
     }
 
     /**
@@ -527,7 +611,7 @@ class Connection implements ConnectionInterface
      */
     public function disableForeignKeys()
     {
-        $this->execute($this->_driver->disableForeignKeySql())->closeCursor();
+        $this->execute($this->_driver->disableForeignKeySQL())->closeCursor();
     }
 
     /**
@@ -537,7 +621,7 @@ class Connection implements ConnectionInterface
      */
     public function enableForeignKeys()
     {
-        $this->execute($this->_driver->enableForeignKeySql())->closeCursor();
+        $this->execute($this->_driver->enableForeignKeySQL())->closeCursor();
     }
 
     /**
@@ -568,7 +652,7 @@ class Connection implements ConnectionInterface
 
         try {
             $result = $callback($this);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->rollback();
             throw $e;
         }
@@ -601,7 +685,7 @@ class Connection implements ConnectionInterface
 
         try {
             $result = $callback($this);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->enableForeignKeys();
             throw $e;
         }
@@ -720,7 +804,7 @@ class Connection implements ConnectionInterface
      */
     protected function _newLogger(StatementInterface $statement)
     {
-        $log = new LoggingStatement($statement, $this->driver());
+        $log = new LoggingStatement($statement, $this->getDriver());
         $log->logger($this->logger());
 
         return $log;

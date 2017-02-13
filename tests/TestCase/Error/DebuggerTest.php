@@ -36,6 +36,11 @@ class DebuggableThing
     }
 }
 
+class SecurityThing
+{
+    public $password = 'pass1234';
+}
+
 /**
  * DebuggerTest class
  *
@@ -296,8 +301,8 @@ object(Cake\View\View) {
 	theme => null
 	hasRendered => false
 	uuids => []
-	request => object(Cake\Network\Request) {}
-	response => object(Cake\Network\Response) {}
+	request => object(Cake\Http\ServerRequest) {}
+	response => object(Cake\Http\Response) {}
 	elementCache => 'default'
 	viewClass => null
 	viewVars => []
@@ -584,6 +589,48 @@ object(Cake\Test\TestCase\Error\DebuggableThing) {
 }
 eos;
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests reading the output mask settings.
+     *
+     * @return void
+     */
+    public function testSetOutputMask()
+    {
+        Debugger::setOutputMask(['password' => '[**********]']);
+        $this->assertEquals(['password' => '[**********]'], Debugger::outputMask());
+        Debugger::setOutputMask(['serial' => 'XXXXXX']);
+        $this->assertEquals(['password' => '[**********]', 'serial' => 'XXXXXX'], Debugger::outputMask());
+        Debugger::setOutputMask([], false);
+        $this->assertEquals([], Debugger::outputMask());
+    }
+
+    /**
+     * Tests the masking of an array key.
+     *
+     * @return void
+     */
+    public function testMaskArray()
+    {
+        Debugger::setOutputMask(['password' => '[**********]']);
+        $result = Debugger::exportVar(['password' => 'pass1234']);
+        $expected = "['password'=>[**********]]";
+        $this->assertEquals($expected, preg_replace('/\s+/', '', $result));
+    }
+
+    /**
+     * Tests the masking of an array key.
+     *
+     * @return void
+     */
+    public function testMaskObject()
+    {
+        Debugger::setOutputMask(['password' => '[**********]']);
+        $object = new SecurityThing();
+        $result = Debugger::exportVar($object);
+        $expected = "object(Cake\\Test\\TestCase\\Error\\SecurityThing){password=>[**********]}";
+        $this->assertEquals($expected, preg_replace('/\s+/', '', $result));
     }
 
     /**

@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Routing\Route;
 
 use Cake\Core\Configure;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
@@ -536,6 +537,8 @@ class RouteTest extends TestCase
 
     /**
      * Test match() with _host and other keys.
+     *
+     * @return void
      */
     public function testMatchWithHostKeys()
     {
@@ -582,6 +585,72 @@ class RouteTest extends TestCase
             $context
         );
         $this->assertEquals('https://example.com:8080/dir/posts/index', $result);
+    }
+
+    /**
+     * Test that the _host option sets the default host.
+     *
+     * @return void
+     */
+    public function testMatchWithHostOption()
+    {
+        $route = new Route(
+            '/fallback',
+            ['controller' => 'Articles', 'action' => 'index'],
+            ['_host' => 'www.example.com']
+        );
+        $result = $route->match([
+            'controller' => 'Articles',
+            'action' => 'index'
+        ]);
+        $this->assertSame('http://www.example.com/fallback', $result);
+    }
+
+    /**
+     * Test wildcard host options
+     *
+     * @return void
+     */
+    public function testMatchWithHostWildcardOption()
+    {
+        $route = new Route(
+            '/fallback',
+            ['controller' => 'Articles', 'action' => 'index'],
+            ['_host' => '*.example.com']
+        );
+        $result = $route->match([
+            'controller' => 'Articles',
+            'action' => 'index'
+        ]);
+        $this->assertFalse($result, 'No request context means no match');
+
+        $result = $route->match([
+            'controller' => 'Articles',
+            'action' => 'index',
+        ], ['_host' => 'wrong.com']);
+        $this->assertFalse($result, 'Request context has bad host');
+
+        $result = $route->match([
+            'controller' => 'Articles',
+            'action' => 'index',
+            '_host' => 'wrong.com'
+        ]);
+        $this->assertFalse($result, 'Url param is wrong');
+
+        $result = $route->match([
+            'controller' => 'Articles',
+            'action' => 'index',
+            '_host' => 'foo.example.com'
+        ]);
+        $this->assertSame('http://foo.example.com/fallback', $result);
+
+        $result = $route->match([
+            'controller' => 'Articles',
+            'action' => 'index',
+        ], [
+            '_host' => 'foo.example.com'
+        ]);
+        $this->assertSame('http://foo.example.com/fallback', $result);
     }
 
     /**
@@ -854,6 +923,79 @@ class RouteTest extends TestCase
         $expected = '/posts/index/0?test=var&amp;var2=test2&amp;more=test+data';
         $this->assertEquals($expected, $result);
         ini_set('arg_separator.output', $restore);
+    }
+
+    /**
+     * Ensure that parseRequest() calls parse() as that is required
+     * for backwards compat
+     *
+     * @return void
+     */
+    public function testParseRequestDelegates()
+    {
+        $route = $this->getMockBuilder('Cake\Routing\Route\Route')
+            ->setMethods(['parse'])
+            ->setConstructorArgs(['/forward', ['controller' => 'Articles', 'action' => 'index']])
+            ->getMock();
+
+        $route->expects($this->once())
+            ->method('parse')
+            ->with('/forward', 'GET')
+            ->will($this->returnValue('works!'));
+
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/forward'
+            ]
+        ]);
+        $result = $route->parseRequest($request);
+    }
+
+    /**
+     * Test that parseRequest() applies host conditions
+     *
+     * @return void
+     */
+    public function testParseRequestHostConditions()
+    {
+        $route = new Route(
+            '/fallback',
+            ['controller' => 'Articles', 'action' => 'index'],
+            ['_host' => '*.example.com']
+        );
+
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'a.example.com',
+                'PATH_INFO' => '/fallback'
+            ]
+        ]);
+        $result = $route->parseRequest($request);
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'index',
+            'pass' => [],
+            '_matchedRoute' => '/fallback'
+        ];
+        $this->assertEquals($expected, $result, 'Should match, domain is correct');
+
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'foo.bar.example.com',
+                'PATH_INFO' => '/fallback'
+            ]
+        ]);
+        $result = $route->parseRequest($request);
+        $this->assertEquals($expected, $result, 'Should match, domain is a matching subdomain');
+
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'example.test.com',
+                'PATH_INFO' => '/fallback'
+            ]
+        ]);
+        $this->assertFalse($route->parseRequest($request));
     }
 
     /**

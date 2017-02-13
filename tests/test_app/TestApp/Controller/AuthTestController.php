@@ -32,12 +32,16 @@ class AuthTestController extends Controller
     /**
      * testUrl property
      *
-     * @var mixed
+     * @var string|array
      */
     public $testUrl = null;
 
     /**
      * construct method
+     *
+     * @param \Cake\Http\ServerRequest|null $request Request object for this controller. Can be null for testing,
+     *   but expect that features that use the request parameters will not work.
+     * @param \Cake\Network\Response|null $response Response object for this controller.
      */
     public function __construct($request = null, $response = null)
     {
@@ -99,9 +103,9 @@ class AuthTestController extends Controller
     /**
      * redirect method
      *
-     * @param mixed $url
-     * @param mixed $status
-     * @return void|\Cake\Network\Response
+     * @param string|array $url
+     * @param int $status
+     * @return \Cake\Network\Response|null
      */
     public function redirect($url, $status = null)
     {

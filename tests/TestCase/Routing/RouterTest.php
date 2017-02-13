@@ -559,6 +559,34 @@ class RouterTest extends TestCase
     }
 
     /**
+     * Test url() with _host option routes with request context
+     *
+     * @return void
+     */
+    public function testUrlGenerationHostOptionRequestContext()
+    {
+        $server = [
+            'HTTP_HOST' => 'foo.example.com',
+            'DOCUMENT_ROOT' => '/Users/markstory/Sites',
+            'SCRIPT_FILENAME' => '/Users/markstory/Sites/subdir/webroot/index.php',
+            'PHP_SELF' => '/subdir/webroot/index.php/articles/view/1',
+            'REQUEST_URI' => '/subdir/articles/view/1',
+            'QUERY_STRING' => '',
+            'SERVER_PORT' => 80,
+        ];
+
+        Router::connect('/fallback', ['controller' => 'Articles'], ['_host' => '*.example.com']);
+        $request = ServerRequestFactory::fromGlobals($server);
+        Router::setRequestContext($request);
+
+        $result = Router::url(['controller' => 'Articles', 'action' => 'index']);
+        $this->assertEquals('http://foo.example.com/subdir/fallback', $result);
+
+        $result = Router::url(['controller' => 'Articles', 'action' => 'index'], true);
+        $this->assertEquals('http://foo.example.com/subdir/fallback', $result);
+    }
+
+    /**
      * Test that catch all routes work with a variety of falsey inputs.
      *
      * @return void
@@ -1591,6 +1619,26 @@ class RouterTest extends TestCase
             'controller' => 'posts',
             'action' => 'view',
             '_matchedRoute' => '/posts/view/*',
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * test parseRequest
+     *
+     * @return void
+     */
+    public function testParseRequest()
+    {
+        Router::connect('/articles/:action/*', ['controller' => 'Articles']);
+        $request = new Request(['url' => '/articles/view/1']);
+        $result = Router::parseRequest($request);
+        $expected = [
+            'pass' => ['1'],
+            'plugin' => null,
+            'controller' => 'Articles',
+            'action' => 'view',
+            '_matchedRoute' => '/articles/:action/*',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -3020,6 +3068,22 @@ class RouterTest extends TestCase
     }
 
     /**
+     * Test the scope() options
+     *
+     * @return void
+     */
+    public function testScopeOptions()
+    {
+        $options = ['param' => 'value', 'routeClass' => 'InflectedRoute', 'extensions' => ['json']];
+        Router::scope('/path', $options, function ($routes) {
+            $this->assertSame('InflectedRoute', $routes->routeClass());
+            $this->assertSame(['json'], $routes->extensions());
+            $this->assertEquals('/path', $routes->path());
+            $this->assertEquals(['param' => 'value'], $routes->params());
+        });
+    }
+
+    /**
      * Test the scope() method
      *
      * @return void
@@ -3067,6 +3131,12 @@ class RouterTest extends TestCase
             $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
             $this->assertEquals('/admin', $routes->path());
             $this->assertEquals(['prefix' => 'admin', 'param' => 'value'], $routes->params());
+        });
+
+        Router::prefix('CustomPath', ['path' => '/custom-path'], function ($routes) {
+            $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
+            $this->assertEquals('/custom-path', $routes->path());
+            $this->assertEquals(['prefix' => 'custom_path'], $routes->params());
         });
     }
 
