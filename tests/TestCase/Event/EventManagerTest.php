@@ -873,4 +873,51 @@ class EventManagerTest extends TestCase
             $eventManager->__debugInfo()
         );
     }
+
+    /**
+     * Test that chainable methods return correct values.
+     *
+     * @return void
+     */
+    public function testChainableMethods()
+    {
+        $eventManager = new EventManager();
+
+        $listener = $this->createMock(EventListenerInterface::class);
+        $callable = function(){
+        };
+
+        $returnValue = $eventManager->on($listener);
+        $this->assertSame($eventManager, $returnValue);
+
+        $returnValue = $eventManager->on('foo', $callable);
+        $this->assertSame($eventManager, $returnValue);
+
+        $returnValue = $eventManager->on('foo', [], $callable);
+        $this->assertSame($eventManager, $returnValue);
+
+        $returnValue = $eventManager->off($listener);
+        $this->assertSame($eventManager, $returnValue);
+
+        $returnValue = $eventManager->off('foo', $listener);
+        $this->assertSame($eventManager, $returnValue);
+
+        $returnValue = $eventManager->off('foo', $callable);
+        $this->assertSame($eventManager, $returnValue);
+
+        $returnValue = $eventManager->off('foo');
+        $this->assertSame($eventManager, $returnValue);
+
+        $returnValue = $eventManager->setEventList(new EventList());
+        $this->assertSame($eventManager, $returnValue);
+
+        $returnValue = $eventManager->addEventToList(new Event('foo'));
+        $this->assertSame($eventManager, $returnValue);
+
+        $returnValue = $eventManager->trackEvents(true);
+        $this->assertSame($eventManager, $returnValue);
+
+        $returnValue = $eventManager->unsetEventList();
+        $this->assertSame($eventManager, $returnValue);
+    }
 }
