@@ -12,7 +12,7 @@
  * @since         3.1.6
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Http\Client\Cookie;
+namespace Cake\Http\Cookie;
 
 use Cake\Utility\Security;
 use RuntimeException;

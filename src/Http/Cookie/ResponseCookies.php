@@ -11,7 +11,7 @@
  * @since         3.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Http\Client\Cookie;
+namespace Cake\Http\Cookie;
 
 use Psr\Http\Message\ResponseInterface;
 

@@ -10,10 +10,10 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Http\Client;
+namespace Cake\Test\TestCase\Http\Cookie;
 
-use Cake\Http\Client\Cookie\Cookie;
-use Cake\Http\Client\Cookie\ResponseCookies;
+use Cake\Http\Cookie\Cookie;
+use Cake\Http\Cookie\ResponseCookies;
 use Cake\TestSuite\TestCase;
 
 /**
