@@ -20,7 +20,8 @@ use Cake\TestSuite\TestCase;
 /**
  * HTTP cookies test.
  */
-class RequestCookiesTest extends TestCase {
+class RequestCookiesTest extends TestCase
+{
 
     /**
      * Server Request
