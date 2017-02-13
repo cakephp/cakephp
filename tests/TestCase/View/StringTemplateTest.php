@@ -305,18 +305,23 @@ class StringTemplateTest extends TestCase
      * Test addClass method newClass parameter
      *
      * Tests null, string, array and false for `input`
+     *
+     * @return void
      */
     public function testAddClassMethodNewClass()
     {
-        // Test new class as null, string, array, false etc
         $result = $this->template->addClass([], 'new_class');
         $this->assertEquals($result, ['class' => ['new_class']]);
+
         $result = $this->template->addClass([], ['new_class']);
         $this->assertEquals($result, ['class' => ['new_class']]);
+
         $result = $this->template->addClass([], false);
         $this->assertEquals($result, []);
+
         $result = $this->template->addClass([], null);
         $this->assertEquals($result, []);
+
         $result = $this->template->addClass(null, null);
         $this->assertNull($result);
     }
@@ -325,23 +330,31 @@ class StringTemplateTest extends TestCase
      * Test addClass method input (currentClass) parameter
      *
      * Tests null, string, array, false and object
+     *
+     * @return void
      */
     public function testAddClassMethodCurrentClass()
     {
         $result = $this->template->addClass(['class' => ['current']], 'new_class');
         $this->assertEquals($result, ['class' => ['current', 'new_class']]);
+
         $result = $this->template->addClass('', 'new_class');
         $this->assertEquals($result, ['class' => ['new_class']]);
+
         $result = $this->template->addClass(null, 'new_class');
         $this->assertEquals($result, ['class' => ['new_class']]);
+
         $result = $this->template->addClass(false, 'new_class');
         $this->assertEquals($result, ['class' => ['new_class']]);
+
         $result = $this->template->addClass(new \StdClass(), 'new_class');
         $this->assertEquals($result, ['class' => ['new_class']]);
     }
 
     /**
      * Test addClass method string parameter, it should fallback to string
+     *
+     * @return void
      */
     public function testAddClassMethodFallbackToString()
     {
@@ -351,6 +364,8 @@ class StringTemplateTest extends TestCase
 
     /**
      * Test addClass method to make sure the returned array is unique
+     *
+     * @return void
      */
     public function testAddClassMethodUnique()
     {
@@ -362,6 +377,8 @@ class StringTemplateTest extends TestCase
      * Test addClass method useIndex param
      *
      * Tests for useIndex being the default, 'my_class' and false
+     *
+     * @return void
      */
     public function testAddClassMethodUseIndex()
     {

@@ -8502,6 +8502,7 @@ class FormHelperTest extends TestCase
      *
      * This test makes sure `false` excludes the label from the render
      *
+     * @return void
      */
     public function testInputLabelManipulationDisableLabels()
     {
@@ -8556,6 +8557,8 @@ class FormHelperTest extends TestCase
      * added to the class if checked.
      *
      * Also checks to make sure any custom attributes are rendered correctly
+     *
+     * @return void
      */
     public function testInputLabelManipulationRadios()
     {
@@ -8664,6 +8667,8 @@ class FormHelperTest extends TestCase
      * added to the class if checked.
      *
      * Also checks to make sure any custom attributes are rendered correctly
+     *
+     * @return void
      */
     public function testInputLabelManipulationCheckboxes()
     {
