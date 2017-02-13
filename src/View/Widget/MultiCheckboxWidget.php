@@ -187,7 +187,7 @@ class MultiCheckboxWidget implements WidgetInterface
             'templateVars' => $checkbox['templateVars'],
             'attrs' => $this->_templates->formatAttributes(
                 $checkbox,
-                ['name', 'value', 'text', 'options', 'label', 'val', 'type', 'hiddenField']
+                ['name', 'value', 'text', 'options', 'label', 'val', 'type']
             )
         ]);
 
