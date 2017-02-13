@@ -1526,7 +1526,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $saved = $this->save($entity, $options);
         if ($saved === false) {
-            throw new PersistenceFailedException(['save', $entity]);
+            throw new PersistenceFailedException($entity, ['save']);
         }
 
         return $saved;
@@ -1882,7 +1882,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $deleted = $this->delete($entity, $options);
         if ($deleted === false) {
-            throw new PersistenceFailedException(['delete', $entity]);
+            throw new PersistenceFailedException($entity, ['delete']);
         }
 
         return $deleted;

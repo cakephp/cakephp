@@ -6316,6 +6316,25 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that saveOrFail returns the right entity
+     *
+     * @return void
+     */
+    public function testSaveOrFailGetEntity()
+    {
+        $entity = new Entity([
+            'foo' => 'bar'
+        ]);
+        $table = TableRegistry::get('users');
+
+        try {
+            $table->saveOrFail($entity);
+        } catch (\Cake\ORM\Exception\PersistenceFailedException $e) {
+            $this->assertSame($entity, $e->getEntity());
+        }
+    }
+
+    /**
      * Tests that deleteOrFail triggers an exception on not successful delete
      *
      * @return void
@@ -6330,6 +6349,25 @@ class TableTest extends TestCase
         $table = TableRegistry::get('users');
 
         $result = $table->deleteOrFail($entity);
+    }
+
+    /**
+     * Tests that deleteOrFail returns the right entity
+     *
+     * @return void
+     */
+    public function testDeleteOrFailGetEntity()
+    {
+        $entity = new Entity([
+            'id' => 999
+        ]);
+        $table = TableRegistry::get('users');
+
+        try {
+            $table->deleteOrFail($entity);
+        } catch (\Cake\ORM\Exception\PersistenceFailedException $e) {
+            $this->assertSame($entity, $e->getEntity());
+        }
     }
 
     /**
