@@ -112,7 +112,8 @@ class MultiCheckboxWidget implements WidgetInterface
             'disabled' => null,
             'val' => null,
             'idPrefix' => null,
-            'templateVars' => []
+            'templateVars' => [],
+            'label' => true
         ];
         $this->_idPrefix = $data['idPrefix'];
         $this->_clearIds();
@@ -152,15 +153,15 @@ class MultiCheckboxWidget implements WidgetInterface
             if (!isset($checkbox['templateVars'])) {
                 $checkbox['templateVars'] = $data['templateVars'];
             }
+            if (!isset($checkbox['label'])) {
+                $checkbox['label'] = $data['label'];
+            }
             if (!empty($data['templateVars'])) {
                 $checkbox['templateVars'] = array_merge($data['templateVars'], $checkbox['templateVars']);
             }
             $checkbox['name'] = $data['name'];
             $checkbox['escape'] = $data['escape'];
-
-            if ($this->_isSelected($checkbox['value'], $data['val'])) {
-                $checkbox['checked'] = true;
-            }
+            $checkbox['checked'] = $this->_isSelected($checkbox['value'], $data['val']);
             $checkbox['disabled'] = $this->_isDisabled($checkbox['value'], $data['disabled']);
             if (empty($checkbox['id'])) {
                 $checkbox['id'] = $this->_id($checkbox['name'], $checkbox['value']);
@@ -190,17 +191,27 @@ class MultiCheckboxWidget implements WidgetInterface
             )
         ]);
 
-        $labelAttrs = [
-            'for' => $checkbox['id'],
-            'escape' => $checkbox['escape'],
-            'text' => $checkbox['text'],
-            'templateVars' => $checkbox['templateVars'],
-            'input' => $input,
-        ];
-        if (!empty($checkbox['checked']) && empty($labelAttrs['class'])) {
-            $labelAttrs['class'] = 'selected';
+        if ($checkbox['label'] === false && strpos($this->_templates->get('radioWrapper'), '{{input}}') === false) {
+            $label = $input;
+        } else {
+            $labelAttrs = [
+                'for' => $checkbox['id'],
+                'escape' => $checkbox['escape'],
+                'text' => $checkbox['text'],
+                'templateVars' => $checkbox['templateVars'],
+                'input' => $input
+            ];
+
+            if (is_array($checkbox['label'])) {
+                $labelAttrs += $checkbox['label'];
+            }
+
+            if ($checkbox['checked']) {
+                $labelAttrs = $this->_templates->addClass($labelAttrs, 'selected');
+            }
+
+            $label = $this->_label->render($labelAttrs, $context);
         }
-        $label = $this->_label->render($labelAttrs, $context);
 
         return $this->_templates->format('checkboxWrapper', [
             'templateVars' => $checkbox['templateVars'],
