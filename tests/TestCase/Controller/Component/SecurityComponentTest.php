@@ -456,6 +456,7 @@ class SecurityComponentTest extends TestCase
         $debug = urlencode(json_encode([
             'some-action',
             [],
+            [],
             []
         ]));
 
@@ -484,6 +485,7 @@ class SecurityComponentTest extends TestCase
         $unlocked = '';
         $debug = urlencode(json_encode([
             '/articles/index',
+            [],
             [],
             []
         ]));
@@ -560,6 +562,7 @@ class SecurityComponentTest extends TestCase
         $debug = urlencode(json_encode([
             '/articles/index',
             ['Model.password', 'Model.username', 'Model.valid'],
+            [],
             []
         ]));
 
@@ -618,6 +621,7 @@ class SecurityComponentTest extends TestCase
         $debug = urlencode(json_encode([
             'some-action',
             [],
+            [],
             []
         ]));
 
@@ -650,6 +654,7 @@ class SecurityComponentTest extends TestCase
         $unlocked = '';
         $debug = urlencode(json_encode([
             'some-action',
+            [],
             [],
             []
         ]));
@@ -1022,7 +1027,8 @@ class SecurityComponentTest extends TestCase
         $debug = urlencode(json_encode([
             '/articles/index',
             ['Model.hidden', 'Model.password'],
-            ['Model.username']
+            ['Model.username'],
+            []
         ]));
 
         // Tamper the values.
@@ -1206,6 +1212,7 @@ class SecurityComponentTest extends TestCase
                 'Address.1.id' => '124',
                 'Address.1.primary' => '1'
             ],
+            [],
             []
         ]));
 
@@ -1254,6 +1261,7 @@ class SecurityComponentTest extends TestCase
         $debug = urlencode(json_encode([
             '/articles/index',
             [],
+            [],
             []
         ]));
 
@@ -1292,6 +1300,7 @@ class SecurityComponentTest extends TestCase
         $unlocked = '';
         $debug = urlencode(json_encode([
             '/articles/index',
+            [],
             [],
             []
         ]));
@@ -1342,6 +1351,7 @@ class SecurityComponentTest extends TestCase
         $debug = urlencode(json_encode([
             'another-url',
             ['Model.username', 'Model.password'],
+            [],
             []
         ]));
 
@@ -1440,6 +1450,7 @@ class SecurityComponentTest extends TestCase
             '/articles/index',
             ['Model.hidden', 'Model.password'],
             ['Model.username'],
+            [],
             ['not expected']
         ]));
 
@@ -1515,6 +1526,7 @@ class SecurityComponentTest extends TestCase
         $debug = urlencode(json_encode([
             '/articles/index',
             $fields,
+            [],
             []
         ]));
         $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::salt()));
@@ -1548,6 +1560,7 @@ class SecurityComponentTest extends TestCase
         $debug = urlencode(json_encode([
             '/articles/index',
             $fields,
+            [],
             []
         ]));
         $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::salt()));
@@ -1562,6 +1575,85 @@ class SecurityComponentTest extends TestCase
 
         $result = $this->validatePost('SecurityException', 'Unexpected field \'Model.hidden.some-key\' in POST data, Missing field \'Model.hidden\' in POST data');
         $this->assertFalse($result);
+    }
+
+    /**
+     * testValidatePostFailOptionalTampering method
+     *
+     * Test that validatePost fails with tampered optional fields and explanation
+     *
+     * @return void
+     * @triggers Controller.startup $this->Controller
+     */
+    public function testValidatePostFailOptionalTampering()
+    {
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->Controller->Security->startup($event);
+        $unlocked = '';
+        $optionalFields = ['Model.hidden' => 'value', 'Model.id' => '1'];
+        $debug = urlencode(json_encode([
+            '/articles/index',
+            [],
+            [],
+            $optionalFields
+        ]));
+        $hash = Security::hash('/articles/index' . serialize([]) . $unlocked . implode('|', array_keys($optionalFields)) . Security::salt());
+        $fields = urlencode($hash . ':');
+
+        foreach ($optionalFields as $name => $value) {
+            $optionalFields[$name] = Security::hash($name . $value . $hash, 'sha1');
+        }
+        $optional = urlencode(json_encode($optionalFields));
+
+        $this->Controller->request->data = [
+            'Model' => [
+                'hidden' => 'tampered',
+                'id' => '1',
+            ],
+            '_Token' => compact('fields', 'unlocked', 'optional', 'debug')
+        ];
+
+        $result = $this->validatePost('SecurityException', 'Tampered optional field \'Model.hidden\' in POST data (expected value \'value\' but found \'tampered\')');
+        $this->assertFalse($result);
+    }
+
+    /**
+     * testValidatePostMissingOptional method
+     *
+     * Test that validatePost succeeds with a missing optional field
+     *
+     * @return void
+     * @triggers Controller.startup $this->Controller
+     */
+    public function testValidatePostMissingOptional()
+    {
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->Controller->Security->startup($event);
+        $unlocked = '';
+        $optionalFields = ['Model.hidden' => 'value', 'Model.id' => '1'];
+        $debug = urlencode(json_encode([
+            '/articles/index',
+            [],
+            [],
+            $optionalFields
+        ]));
+        $hash = Security::hash('/articles/index' . serialize([]) . $unlocked . implode(array_keys($optionalFields), '|') . Security::salt());
+        $fields = urlencode($hash . ':');
+
+        foreach ($optionalFields as $name => $value) {
+            $optionalFields[$name] = Security::hash($name . $value . $hash, 'sha1');
+        }
+        $optional = urlencode(json_encode($optionalFields));
+
+        $this->Controller->request->data = [
+            'Model' => [
+                'hidden' => 'value',
+            ],
+            '_Token' => compact('fields', 'unlocked', 'optional', 'debug')
+        ];
+
+        $result = $this->validatePost('SecurityException');
+        $this->assertTrue($result);
     }
 
     /**
@@ -1581,6 +1673,7 @@ class SecurityComponentTest extends TestCase
         $debug = urlencode(json_encode([
             '/articles/index',
             $fields,
+            [],
             []
         ]));
         $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::salt()));
