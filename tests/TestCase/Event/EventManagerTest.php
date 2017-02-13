@@ -884,7 +884,7 @@ class EventManagerTest extends TestCase
         $eventManager = new EventManager();
 
         $listener = $this->createMock(EventListenerInterface::class);
-        $callable = function(){
+        $callable = function () {
         };
 
         $returnValue = $eventManager->on($listener);
