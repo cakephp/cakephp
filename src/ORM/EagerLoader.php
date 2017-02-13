@@ -389,6 +389,10 @@ class EagerLoader
                 };
             }
 
+            if (!is_array($options)) {
+                $options = [$options => []];
+            }
+
             $pointer[$table] = $options + $pointer[$table];
         }
 

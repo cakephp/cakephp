@@ -1099,7 +1099,7 @@ trait EntityTrait
     public function accessible($property, $set = null)
     {
         if ($set === null) {
-            return $this->isAccessible($property, $set);
+            return $this->isAccessible($property);
         }
 
         return $this->setAccess($property, $set);
@@ -1204,7 +1204,7 @@ trait EntityTrait
     public function source($alias = null)
     {
         if (is_null($alias)) {
-            return $this->getSource($alias);
+            return $this->getSource();
         }
 
         $this->setSource($alias);
