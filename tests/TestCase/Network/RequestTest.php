@@ -172,6 +172,7 @@ class RequestTest extends TestCase
         $expected = ['one' => 'something', 'two' => 'else'];
         $this->assertEquals($expected, $request->query);
         $this->assertEquals('some/path', $request->url);
+        $this->assertEquals('one=something&two=else', $request->getUri()->getQuery());
     }
 
     /**
@@ -2519,7 +2520,7 @@ class RequestTest extends TestCase
      *
      * @return void
      */
-    public function testDataReading()
+    public function testGetData()
     {
         $post = [
             'Model' => [
@@ -2538,6 +2539,19 @@ class RequestTest extends TestCase
 
         $this->assertSame('value', $request->getData('Model.field', 'default'));
         $this->assertSame('default', $request->getData('Model.imaginary', 'default'));
+    }
+
+    /**
+     * Test that getData() doesn't fail on scalar data.
+     *
+     * @return void
+     */
+    public function testGetDataOnStringData()
+    {
+        $post = 'strange, but could happen';
+        $request = new Request(compact('post'));
+        $this->assertNull($request->getData('Model'));
+        $this->assertNull($request->getData('Model.field'));
     }
 
     /**

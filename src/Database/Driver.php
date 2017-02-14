@@ -63,7 +63,7 @@ abstract class Driver
         $config += $this->_baseConfig;
         $this->_config = $config;
         if (!empty($config['quoteIdentifiers'])) {
-            $this->autoQuoting(true);
+            $this->enableAutoQuoting();
         }
     }
 
@@ -301,9 +301,9 @@ abstract class Driver
      * in queries.
      *
      * @param bool $enable Whether to enable auto quoting
-     * @return self
+     * @return $this
      */
-    public function enableAutoQuoting($enable)
+    public function enableAutoQuoting($enable = true)
     {
         $this->_autoQuoting = (bool)$enable;
 

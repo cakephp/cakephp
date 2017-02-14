@@ -67,7 +67,7 @@ class AssetFilter extends DispatcherFilter
     public function beforeDispatch(Event $event)
     {
         /* @var \Cake\Http\ServerRequest $request */
-        $request = $event->data('request');
+        $request = $event->getData('request');
 
         $url = urldecode($request->url);
         if (strpos($url, '..') !== false || strpos($url, '.') === false) {
@@ -79,7 +79,7 @@ class AssetFilter extends DispatcherFilter
             return null;
         }
         /* @var \Cake\Network\Response $response */
-        $response = $event->data('response');
+        $response = $event->getData('response');
         $event->stopPropagation();
 
         $response->modified(filemtime($assetFile));

@@ -62,7 +62,7 @@ class AuthComponent extends Component
      *   when users are identified.
      *
      *   ```
-     *   $this->Auth->config('authenticate', [
+     *   $this->Auth->setConfig('authenticate', [
      *      'Form' => [
      *         'userModel' => 'Users.Users'
      *      ]
@@ -74,7 +74,7 @@ class AuthComponent extends Component
      *   config that should be set to all authentications objects using the 'all' key:
      *
      *   ```
-     *   $this->Auth->config('authenticate', [
+     *   $this->Auth->setConfig('authenticate', [
      *       AuthComponent::ALL => [
      *          'userModel' => 'Users.Users',
      *          'scope' => ['Users.active' => 1]
@@ -89,7 +89,7 @@ class AuthComponent extends Component
      *   when authorization checks are done.
      *
      *   ```
-     *   $this->Auth->config('authorize', [
+     *   $this->Auth->setConfig('authorize', [
      *      'Crud' => [
      *          'actionPath' => 'controllers/'
      *      ]
@@ -101,7 +101,7 @@ class AuthComponent extends Component
      *   that should be set to all authorization objects using the AuthComponent::ALL key:
      *
      *   ```
-     *   $this->Auth->config('authorize', [
+     *   $this->Auth->setConfig('authorize', [
      *      AuthComponent::ALL => [
      *          'actionPath' => 'controllers/'
      *      ],
@@ -280,14 +280,14 @@ class AuthComponent extends Component
      */
     public function authCheck(Event $event)
     {
-        if ($this->_config['checkAuthIn'] !== $event->name()) {
+        if ($this->_config['checkAuthIn'] !== $event->getName()) {
             return null;
         }
 
         /* @var \Cake\Controller\Controller $controller */
-        $controller = $event->subject();
+        $controller = $event->getSubject();
 
-        $action = strtolower($controller->request->params['action']);
+        $action = strtolower($controller->request->getParam('action'));
         if (!$controller->isAction($action)) {
             return null;
         }
@@ -346,7 +346,7 @@ class AuthComponent extends Component
      */
     protected function _isAllowed(Controller $controller)
     {
-        $action = strtolower($controller->request->params['action']);
+        $action = strtolower($controller->request->getParam('action'));
 
         return in_array($action, array_map('strtolower', $this->allowedActions));
     }
@@ -387,7 +387,7 @@ class AuthComponent extends Component
         }
 
         if (!empty($this->_config['ajaxLogin'])) {
-            $controller->viewBuilder()->templatePath('Element');
+            $controller->viewBuilder()->setTemplatePath('Element');
             $response = $controller->render(
                 $this->_config['ajaxLogin'],
                 $this->RequestHandler->ajaxLayout
@@ -496,13 +496,13 @@ class AuthComponent extends Component
             'authError' => __d('cake', 'You are not authorized to access that location.')
         ];
 
-        $config = $this->config();
+        $config = $this->getConfig();
         foreach ($config as $key => $value) {
             if ($value !== null) {
                 unset($defaults[$key]);
             }
         }
-        $this->config($defaults);
+        $this->setConfig($defaults);
     }
 
     /**
@@ -745,8 +745,8 @@ class AuthComponent extends Component
             if (!empty($result) && is_array($result)) {
                 $this->_authenticationProvider = $auth;
                 $event = $this->dispatchEvent('Auth.afterIdentify', [$result, $auth]);
-                if ($event->result() !== null) {
-                    $result = $event->result();
+                if ($event->getResult() !== null) {
+                    $result = $event->getResult();
                 }
                 $this->storage()->write($result);
 
@@ -777,7 +777,7 @@ class AuthComponent extends Component
      */
     public function redirectUrl($url = null)
     {
-        $redirectUrl = $this->request->query(static::QUERY_STRING_REDIRECT);
+        $redirectUrl = $this->request->getQuery(static::QUERY_STRING_REDIRECT);
         if ($redirectUrl && (substr($redirectUrl, 0, 1) !== '/' || substr($redirectUrl, 0, 2) === '//')) {
             $redirectUrl = null;
         }
@@ -821,8 +821,8 @@ class AuthComponent extends Component
             if (!empty($result)) {
                 $this->_authenticationProvider = $auth;
                 $event = $this->dispatchEvent('Auth.afterIdentify', [$result, $auth]);
-                if ($event->result() !== null) {
-                    return $event->result();
+                if ($event->getResult() !== null) {
+                    return $event->getResult();
                 }
 
                 return $result;
@@ -917,7 +917,7 @@ class AuthComponent extends Component
     public function __get($name)
     {
         if ($name === 'sessionKey') {
-            return $this->storage()->config('key');
+            return $this->storage()->getConfig('key');
         }
 
         return parent::__get($name);
@@ -936,13 +936,13 @@ class AuthComponent extends Component
             $this->_storage = null;
 
             if ($value === false) {
-                $this->config('storage', 'Memory');
+                $this->setConfig('storage', 'Memory');
 
                 return;
             }
 
-            $this->config('storage', 'Session');
-            $this->storage()->config('key', $value);
+            $this->setConfig('storage', 'Session');
+            $this->storage()->setConfig('key', $value);
 
             return;
         }

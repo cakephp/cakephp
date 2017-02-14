@@ -2071,6 +2071,131 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that dependent, non-cascading deletes are using the association
+     * conditions for deleting associated records.
+     *
+     * @return void
+     */
+    public function testHasManyNonCascadingUnlinkDeleteUsesAssociationConditions()
+    {
+        $Articles = TableRegistry::get('Articles');
+        $Comments = $Articles->hasMany('Comments', [
+            'dependent' => true,
+            'cascadeCallbacks' => false,
+            'saveStrategy' => HasMany::SAVE_REPLACE,
+            'conditions' => [
+                'Comments.published' => 'Y'
+            ]
+        ]);
+
+        $article = $Articles->newEntity([
+            'title' => 'Title',
+            'body' => 'Body',
+            'comments' => [
+                [
+                    'user_id' => 1,
+                    'comment' => 'First comment',
+                    'published' => 'Y'
+                ],
+                [
+                    'user_id' => 1,
+                    'comment' => 'Second comment',
+                    'published' => 'Y'
+                ]
+            ]
+        ]);
+        $article = $Articles->save($article);
+        $this->assertNotEmpty($article);
+
+        $comment3 = $Comments->target()->newEntity([
+            'article_id' => $article->get('id'),
+            'user_id' => 1,
+            'comment' => 'Third comment',
+            'published' => 'N'
+        ]);
+        $comment3 = $Comments->target()->save($comment3);
+        $this->assertNotEmpty($comment3);
+
+        $this->assertEquals(3, $Comments->target()->find()->where(['Comments.article_id' => $article->get('id')])->count());
+
+        unset($article->comments[1]);
+        $article->dirty('comments', true);
+
+        $article = $Articles->save($article);
+        $this->assertNotEmpty($article);
+
+        // Given the association condition of `'Comments.published' => 'Y'`,
+        // it is expected that only one of the three linked comments are
+        // actually being deleted, as only one of them matches the
+        // association condition.
+        $this->assertEquals(2, $Comments->target()->find()->where(['Comments.article_id' => $article->get('id')])->count());
+    }
+
+    /**
+     * Tests that non-dependent, non-cascading deletes are using the association
+     * conditions for updating associated records.
+     *
+     * @return void
+     */
+    public function testHasManyNonDependentNonCascadingUnlinkUpdateUsesAssociationConditions()
+    {
+        $Authors = TableRegistry::get('Authors');
+        $Authors->associations()->removeAll();
+        $Articles = $Authors->hasMany('Articles', [
+            'dependent' => false,
+            'cascadeCallbacks' => false,
+            'saveStrategy' => HasMany::SAVE_REPLACE,
+            'conditions' => [
+                'Articles.published' => 'Y'
+            ]
+        ]);
+
+        $author = $Authors->newEntity([
+            'name' => 'Name',
+            'articles' => [
+                [
+                    'title' => 'First article',
+                    'body' => 'First article',
+                    'published' => 'Y'
+                ],
+                [
+                    'title' => 'Second article',
+                    'body' => 'Second article',
+                    'published' => 'Y'
+                ]
+            ]
+        ]);
+        $author = $Authors->save($author);
+        $this->assertNotEmpty($author);
+
+        $article3 = $Articles->target()->newEntity([
+            'author_id' => $author->get('id'),
+            'title' => 'Third article',
+            'body' => 'Third article',
+            'published' => 'N'
+        ]);
+        $article3 = $Articles->target()->save($article3);
+        $this->assertNotEmpty($article3);
+
+        $this->assertEquals(3, $Articles->target()->find()->where(['Articles.author_id' => $author->get('id')])->count());
+
+        $article2 = $author->articles[1];
+        unset($author->articles[1]);
+        $author->dirty('articles', true);
+
+        $author = $Authors->save($author);
+        $this->assertNotEmpty($author);
+
+        // Given the association condition of `'Articles.published' => 'Y'`,
+        // it is expected that only one of the three linked articles are
+        // actually being unlinked (nulled), as only one of them matches the
+        // association condition.
+        $this->assertEquals(2, $Articles->target()->find()->where(['Articles.author_id' => $author->get('id')])->count());
+        $this->assertNull($Articles->get($article2->get('id'))->get('author_id'));
+        $this->assertEquals($author->get('id'), $Articles->get($article3->get('id'))->get('author_id'));
+    }
+
+    /**
      * Test that saving a new entity with a Primary Key set does not call exists when checkExisting is false.
      *
      * @group save
@@ -2445,10 +2570,10 @@ class TableTest extends TestCase
         $connection->driver($this->connection->driver());
 
         $table = $this->getMockBuilder('\Cake\ORM\Table')
-            ->setMethods(['connection'])
+            ->setMethods(['getConnection'])
             ->setConstructorArgs([['table' => 'users']])
             ->getMock();
-        $table->expects($this->any())->method('connection')
+        $table->expects($this->any())->method('getConnection')
             ->will($this->returnValue($connection));
 
         $connection->expects($this->once())->method('begin');
@@ -2477,14 +2602,14 @@ class TableTest extends TestCase
             ->getMock();
         $connection->driver(ConnectionManager::get('test')->driver());
         $table = $this->getMockBuilder('\Cake\ORM\Table')
-            ->setMethods(['query', 'connection'])
+            ->setMethods(['query', 'getConnection'])
             ->setConstructorArgs([['table' => 'users']])
             ->getMock();
         $query = $this->getMockBuilder('\Cake\ORM\Query')
             ->setMethods(['execute', 'addDefaultTypes'])
             ->setConstructorArgs([null, $table])
             ->getMock();
-        $table->expects($this->any())->method('connection')
+        $table->expects($this->any())->method('getConnection')
             ->will($this->returnValue($connection));
 
         $table->expects($this->once())->method('query')
@@ -2517,7 +2642,7 @@ class TableTest extends TestCase
             ->getMock();
         $connection->driver(ConnectionManager::get('test')->driver());
         $table = $this->getMockBuilder('\Cake\ORM\Table')
-            ->setMethods(['query', 'connection', 'exists'])
+            ->setMethods(['query', 'getConnection', 'exists'])
             ->setConstructorArgs([['table' => 'users']])
             ->getMock();
         $query = $this->getMockBuilder('\Cake\ORM\Query')
@@ -2525,7 +2650,7 @@ class TableTest extends TestCase
             ->setConstructorArgs([null, $table])
             ->getMock();
 
-        $table->expects($this->any())->method('connection')
+        $table->expects($this->any())->method('getConnection')
             ->will($this->returnValue($connection));
 
         $table->expects($this->once())->method('query')
@@ -2982,7 +3107,7 @@ class TableTest extends TestCase
         $Articles->associations()->removeAll();
 
         $Authors->hasMany('AliasedArticles', [
-            'className' => 'articles',
+            'className' => 'Articles',
             'dependent' => true,
             'cascadeCallbacks' => true
         ]);
@@ -4455,7 +4580,7 @@ class TableTest extends TestCase
         $associations = new AssociationCollection();
 
         $hasManyArticles = $this->getMockBuilder('Cake\ORM\Association\HasMany')
-            ->setMethods(['target'])
+            ->setMethods(['getTarget'])
             ->setConstructorArgs([
                 'articles',
                 [
@@ -4466,7 +4591,7 @@ class TableTest extends TestCase
                 ]
             ])
             ->getMock();
-        $hasManyArticles->method('target')->willReturn($articles);
+        $hasManyArticles->method('getTarget')->willReturn($articles);
 
         $associations->add('articles', $hasManyArticles);
 
@@ -4498,7 +4623,7 @@ class TableTest extends TestCase
 
         $this->assertTrue($authors->Articles->link($author, $newArticles));
         $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
-        $this->assertEquals(count($author->articles), $sizeArticles);
+        $this->assertCount($sizeArticles, $author->articles);
 
         $newArticles = array_merge(
             $author->articles,
@@ -4556,7 +4681,7 @@ class TableTest extends TestCase
 
         $this->assertTrue($authors->Articles->link($author, $newArticles));
         $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
-        $this->assertEquals(count($author->articles), $sizeArticles);
+        $this->assertCount($sizeArticles, $author->articles);
 
         $newArticles = [];
 
@@ -4601,7 +4726,7 @@ class TableTest extends TestCase
 
         $this->assertTrue($authors->Articles->link($author, $newArticles));
         $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
-        $this->assertEquals(count($author->articles), $sizeArticles);
+        $this->assertCount($sizeArticles, $author->articles);
         $this->assertTrue($authors->Articles->replace($author, $newArticles));
         $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
     }
@@ -4641,7 +4766,7 @@ class TableTest extends TestCase
         $this->assertTrue($authors->Articles->link($author, $newArticles));
 
         $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
-        $this->assertEquals(count($author->articles), $sizeArticles);
+        $this->assertCount($sizeArticles, $author->articles);
 
         $newArticles = array_merge(
             $author->articles,
@@ -4661,7 +4786,7 @@ class TableTest extends TestCase
         unset($newArticles[0]);
 
         $this->assertTrue($authors->Articles->replace($author, $newArticles));
-        $this->assertEquals(count($newArticles), count($author->articles));
+        $this->assertCount(count($newArticles), $author->articles);
         $this->assertEquals((new Collection($newArticles))->extract('title'), (new Collection($author->articles))->extract('title'));
     }
 

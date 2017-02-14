@@ -243,7 +243,7 @@ class BelongsToTest extends TestCase
      * @expectedExceptionMessage Cannot match provided foreignKey for "Companies", got "(company_id)" but expected foreign key for "(id, tenant_id)"
      * @return void
      */
-    public function testAttachToMultiPrimaryKeyMistmatch()
+    public function testAttachToMultiPrimaryKeyMismatch()
     {
         $this->company->primaryKey(['id', 'tenant_id']);
         $query = $this->client->query();

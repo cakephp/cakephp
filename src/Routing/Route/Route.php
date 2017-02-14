@@ -16,6 +16,7 @@ namespace Cake\Routing\Route;
 
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * A single Route used by the Router to connect requests to
@@ -92,6 +93,9 @@ class Route
      *
      * - `_ext` - Defines the extensions used for this route.
      * - `pass` - Copies the listed parameters into params['pass'].
+     * - `_host` - Define the host name pattern if you want this route to only match
+     *   specific host names. You can use `.*` and to create wildcard subdomains/hosts
+     *   e.g. `*.example.com` matches all subdomains on `example.com`.
      *
      * @param string $template Template string with parameter placeholders
      * @param array|string $defaults Defaults for the route.
@@ -128,7 +132,7 @@ class Route
      * Set the supported extensions for this route.
      *
      * @param array $extensions The extensions to set.
-     * @return self
+     * @return $this
      */
     public function setExtensions(array $extensions)
     {
@@ -282,11 +286,31 @@ class Route
      * Checks to see if the given URL can be parsed by this route.
      *
      * If the route can be parsed an array of parameters will be returned; if not
+     * false will be returned.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request The URL to attempt to parse.
+     * @return array|false An array of request parameters, or false on failure.
+     */
+    public function parseRequest(ServerRequestInterface $request)
+    {
+        $uri = $request->getUri();
+        if (isset($this->options['_host']) && !$this->hostMatches($uri->getHost())) {
+            return false;
+        }
+
+        return $this->parse($uri->getPath(), $request->getMethod());
+    }
+
+    /**
+     * Checks to see if the given URL can be parsed by this route.
+     *
+     * If the route can be parsed an array of parameters will be returned; if not
      * false will be returned. String URLs are parsed if they match a routes regular expression.
      *
      * @param string $url The URL to attempt to parse.
      * @param string $method The HTTP method of the request being parsed.
      * @return array|false An array of request parameters, or false on failure.
+     * @deprecated 3.4.0 Use/implement parseRequest() instead as it provides more flexibility/control.
      */
     public function parse($url, $method = '')
     {
@@ -303,7 +327,7 @@ class Route
             if (empty($method)) {
                 // Deprecated reading the global state is deprecated and will be removed in 4.x
                 $request = Router::getRequest(true) ?: ServerRequest::createFromGlobals();
-                $method = $request->env('REQUEST_METHOD');
+                $method = $request->getMethod();
             }
             if (!in_array($method, (array)$this->defaults['_method'], true)) {
                 return false;
@@ -353,10 +377,22 @@ class Route
                 }
             }
         }
-
         $route['_matchedRoute'] = $this->template;
 
         return $route;
+    }
+
+    /**
+     * Check to see if the host matches the route requirements
+     *
+     * @param string $host The request's host name
+     * @return bool Whether or not the host matches any conditions set in for this route.
+     */
+    public function hostMatches($host)
+    {
+        $pattern = '@^' . str_replace('\*', '.*', preg_quote($this->options['_host'], '@')) . '$@';
+
+        return preg_match($pattern, $host) !== 0;
     }
 
     /**
@@ -444,7 +480,7 @@ class Route
             $this->compile();
         }
         $defaults = $this->defaults;
-        $context += ['params' => []];
+        $context += ['params' => [], '_port' => null, '_scheme' => null, '_host' => null];
 
         if (!empty($this->options['persist']) &&
             is_array($this->options['persist'])
@@ -464,6 +500,21 @@ class Route
 
             if ($hostOptions['_port'] == $context['_port']) {
                 unset($hostOptions['_port']);
+            }
+        }
+
+        // Apply the _host option if possible
+        if (isset($this->options['_host'])) {
+            if (!isset($hostOptions['_host']) && strpos($this->options['_host'], '*') === false) {
+                $hostOptions['_host'] = $this->options['_host'];
+            }
+            if (!isset($hostOptions['_host'])) {
+                $hostOptions['_host'] = $context['_host'];
+            }
+
+            // The host did not match the route preferences
+            if (!$this->hostMatches($hostOptions['_host'])) {
+                return false;
             }
         }
 
@@ -635,11 +686,12 @@ class Route
         ) {
             $host = $params['_host'];
 
-            // append the port if it exists.
+            // append the port & scheme if they exists.
             if (isset($params['_port'])) {
                 $host .= ':' . $params['_port'];
             }
-            $out = "{$params['_scheme']}://{$host}{$out}";
+            $scheme = isset($params['_scheme']) ? $params['_scheme'] : 'http';
+            $out = "{$scheme}://{$host}{$out}";
         }
         if (!empty($params['_ext']) || !empty($query)) {
             $out = rtrim($out, '/');

@@ -1086,7 +1086,7 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests it is possible to check for validation sets for a field using an array inteface
+     * Tests it is possible to check for validation sets for a field using an array interface
      *
      * @return void
      */
@@ -1102,7 +1102,7 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests it is possible to set validation rules for a field using an array inteface
+     * Tests it is possible to set validation rules for a field using an array interface
      *
      * @return void
      */
@@ -1123,7 +1123,7 @@ class ValidatorTest extends TestCase
      *
      * @return void
      */
-    public function testArrayAccessUset()
+    public function testArrayAccessUnset()
     {
         $validator = new Validator;
         $validator
@@ -1153,7 +1153,7 @@ class ValidatorTest extends TestCase
      *
      * @return void
      */
-    public function testAddMulitple()
+    public function testAddMultiple()
     {
         $validator = new Validator;
         $validator->add('title', [
@@ -1790,9 +1790,18 @@ class ValidatorTest extends TestCase
             $validator,
             'multipleOptions',
             ['min' => 1, 'caseInsensitive' => true],
+            [['min' => 1], true],
+            'multiple'
+        );
+
+        $this->assertProxyMethod(
+            $validator,
+            'multipleOptions',
+            ['min' => 1, 'caseInsensitive' => false],
             [['min' => 1], false],
             'multiple'
         );
+
         $this->assertNotEmpty($validator->errors(['username' => '']));
     }
 

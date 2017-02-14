@@ -155,10 +155,10 @@ class Client
      */
     public function __construct($config = [])
     {
-        $this->config($config);
+        $this->setConfig($config);
 
         $adapter = $this->_config['adapter'];
-        $this->config('adapter', null);
+        $this->setConfig('adapter', null);
         if (is_string($adapter)) {
             $adapter = new $adapter();
         }
@@ -166,7 +166,7 @@ class Client
 
         if (!empty($this->_config['cookieJar'])) {
             $this->_cookies = $this->_config['cookieJar'];
-            $this->config('cookieJar', null);
+            $this->setConfig('cookieJar', null);
         } else {
             $this->_cookies = new CookieCollection();
         }
@@ -372,7 +372,7 @@ class Client
     public function send(Request $request, $options = [])
     {
         $responses = $this->_adapter->send($request, $options);
-        $url = $request->url();
+        $url = $request->getUri();
         foreach ($responses as $response) {
             $this->_cookies->store($response, $url);
         }
@@ -549,3 +549,5 @@ class Client
         return new $class($this, $options);
     }
 }
+// @deprecated Backwards compatibility with earler 3.x versions.
+class_alias('Cake\Http\Client', 'Cake\Network\Http\Client');

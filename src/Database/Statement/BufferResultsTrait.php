@@ -33,7 +33,7 @@ trait BufferResultsTrait
      * Whether or not to buffer results in php
      *
      * @param bool $buffer Toggle buffering
-     * @return self
+     * @return $this
      */
     public function bufferResults($buffer)
     {

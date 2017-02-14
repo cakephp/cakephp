@@ -151,7 +151,7 @@ class HtmlHelper extends Helper
      * @param string $name Text for link
      * @param string|array|null $link URL for link (if empty it won't be a link)
      * @param string|array $options Link attributes e.g. ['id' => 'selected']
-     * @return self
+     * @return $this
      * @see \Cake\View\Helper\HtmlHelper::link() for details on $options that can be used.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
      * @deprecated 3.3.6 Use the BreadcrumbsHelper instead
@@ -195,7 +195,9 @@ class HtmlHelper extends Helper
      *
      * Create a meta tag that is output inline:
      *
-     * `$this->Html->meta('icon', 'favicon.ico');
+     * ```
+     * $this->Html->meta('icon', 'favicon.ico');
+     * ```
      *
      * Append the meta tag to custom view block "meta":
      *
@@ -568,7 +570,8 @@ class HtmlHelper extends Helper
      *
      * ### Options
      *
-     * - `safe` (boolean) Whether or not the $script should be wrapped in `<![CDATA[ ]]>`
+     * - `safe` (boolean) Whether or not the $script should be wrapped in `<![CDATA[ ]]>`.
+     *   Defaults to `false`.
      * - `block` Set to true to append output to view block "script" or provide
      *   custom block name.
      *
@@ -580,7 +583,7 @@ class HtmlHelper extends Helper
      */
     public function scriptBlock($script, array $options = [])
     {
-        $options += ['safe' => true, 'block' => null];
+        $options += ['safe' => false, 'block' => null];
         if ($options['safe']) {
             $script = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
         }
@@ -1102,7 +1105,9 @@ class HtmlHelper extends Helper
      *
      * Outputs:
      *
-     * `<video src="http://www.somehost.com/files/audio.mp3">Fallback text</video>`
+     * ```
+     * <video src="http://www.somehost.com/files/audio.mp3">Fallback text</video>
+     * ```
      *
      * Using a video file:
      *
@@ -1112,7 +1117,9 @@ class HtmlHelper extends Helper
      *
      * Outputs:
      *
-     * `<video src="/files/video.mp4">Fallback text</video>`
+     * ```
+     * <video src="/files/video.mp4">Fallback text</video>
+     * ```
      *
      * Using multiple video files:
      *

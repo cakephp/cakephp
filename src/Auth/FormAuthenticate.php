@@ -48,7 +48,7 @@ class FormAuthenticate extends BaseAuthenticate
     protected function _checkFields(ServerRequest $request, array $fields)
     {
         foreach ([$fields['username'], $fields['password']] as $field) {
-            $value = $request->data($field);
+            $value = $request->getData($field);
             if (empty($value) || !is_string($value)) {
                 return false;
             }
@@ -74,8 +74,8 @@ class FormAuthenticate extends BaseAuthenticate
         }
 
         return $this->_findUser(
-            $request->data[$fields['username']],
-            $request->data[$fields['password']]
+            $request->getData($fields['username']),
+            $request->getData($fields['password'])
         );
     }
 }

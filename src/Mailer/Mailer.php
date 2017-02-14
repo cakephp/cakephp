@@ -33,8 +33,8 @@ use Cake\Mailer\Exception\MissingActionException;
  *     public function resetPassword($user)
  *     {
  *         $this
- *             ->subject('Reset Password')
- *             ->to($user->email)
+ *             ->setSubject('Reset Password')
+ *             ->setTo($user->email)
  *             ->set(['token' => $user->token]);
  *     }
  * }
@@ -173,12 +173,13 @@ abstract class Mailer implements EventListenerInterface
     /**
      * Sets layout to use.
      *
+     * @deprecated 3.4.0 Use setLayout() which sets the layout on the email class instead.
      * @param string $layout Name of the layout to use.
-     * @return self object.
+     * @return $this
      */
     public function layout($layout)
     {
-        $this->_email->viewBuilder()->layout($layout);
+        $this->_email->viewBuilder()->setLayout($layout);
 
         return $this;
     }
@@ -198,7 +199,7 @@ abstract class Mailer implements EventListenerInterface
      *
      * @param string $method Method name.
      * @param array $args Method arguments
-     * @return self
+     * @return $this
      */
     public function __call($method, $args)
     {
@@ -212,11 +213,11 @@ abstract class Mailer implements EventListenerInterface
      *
      * @param string|array $key Variable name or hash of view variables.
      * @param mixed $value View variable value.
-     * @return self object.
+     * @return $this
      */
     public function set($key, $value = null)
     {
-        $this->_email->viewVars(is_string($key) ? [$key => $value] : $key);
+        $this->_email->setViewVars(is_string($key) ? [$key => $value] : $key);
 
         return $this;
     }
@@ -241,8 +242,8 @@ abstract class Mailer implements EventListenerInterface
         }
 
         $this->_email->setHeaders($headers);
-        if (!$this->_email->viewBuilder()->template()) {
-            $this->_email->viewBuilder()->template($action);
+        if (!$this->_email->viewBuilder()->getTemplate()) {
+            $this->_email->viewBuilder()->setTemplate($action);
         }
 
         $this->$action(...$args);
@@ -256,7 +257,7 @@ abstract class Mailer implements EventListenerInterface
     /**
      * Reset email instance.
      *
-     * @return self
+     * @return $this
      */
     protected function reset()
     {

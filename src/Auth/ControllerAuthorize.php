@@ -27,7 +27,7 @@ use Cake\Http\ServerRequest;
  * ```
  *  public function isAuthorized($user)
  *  {
- *      if ($this->request->param('admin')) {
+ *      if ($this->request->getParam('admin')) {
  *          return $user['role'] === 'admin';
  *      }
  *      return !empty($user);

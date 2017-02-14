@@ -109,7 +109,7 @@ class RoutesShell extends Shell
     public function getOptionParser()
     {
         $parser = parent::getOptionParser();
-        $parser->description(
+        $parser->setDescription(
             'Get the list of routes connected in this application. ' .
             'This tool also lets you test URL generation and URL parsing.'
         )->addSubcommand('check', [

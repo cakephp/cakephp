@@ -65,7 +65,7 @@ class Marshaller
     protected function _buildPropertyMap($data, $options)
     {
         $map = [];
-        $schema = $this->_table->schema();
+        $schema = $this->_table->getSchema();
 
         // Is a concrete column?
         foreach (array_keys($data) as $prop) {
@@ -95,7 +95,7 @@ class Marshaller
                     throw new \InvalidArgumentException(sprintf(
                         'Cannot marshal data for "%s" association. It is not associated with "%s".',
                         $key,
-                        $this->_table->alias()
+                        $this->_table->getAlias()
                     ));
                 }
                 continue;
@@ -107,7 +107,7 @@ class Marshaller
                 $callback = function ($value, $entity) use ($assoc, $nested) {
                     $options = $nested + ['associated' => []];
 
-                    return $this->_mergeAssociation($entity->get($assoc->property()), $assoc, $value, $options);
+                    return $this->_mergeAssociation($entity->get($assoc->getProperty()), $assoc, $value, $options);
                 };
             } else {
                 $callback = function ($value, $entity) use ($assoc, $nested) {
@@ -116,7 +116,7 @@ class Marshaller
                     return $this->_marshalAssociation($assoc, $value, $options);
                 };
             }
-            $map[$assoc->property()] = $callback;
+            $map[$assoc->getProperty()] = $callback;
         }
 
         $behaviors = $this->_table->behaviors();
@@ -166,15 +166,15 @@ class Marshaller
     {
         list($data, $options) = $this->_prepareDataAndOptions($data, $options);
 
-        $primaryKey = (array)$this->_table->primaryKey();
-        $entityClass = $this->_table->entityClass();
+        $primaryKey = (array)$this->_table->getPrimaryKey();
+        $entityClass = $this->_table->getEntityClass();
         /* @var Entity $entity */
         $entity = new $entityClass();
-        $entity->source($this->_table->registryAlias());
+        $entity->setSource($this->_table->getRegistryAlias());
 
         if (isset($options['accessibleFields'])) {
             foreach ((array)$options['accessibleFields'] as $key => $value) {
-                $entity->accessible($key, $value);
+                $entity->setAccess($key, $value);
             }
         }
         $errors = $this->_validate($data, $options, true);
@@ -210,7 +210,7 @@ class Marshaller
             $entity->set($properties);
         }
 
-        $entity->errors($errors);
+        $entity->setErrors($errors);
 
         return $entity;
     }
@@ -260,7 +260,7 @@ class Marshaller
             unset($options['fieldList']);
         }
 
-        $tableName = $this->_table->alias();
+        $tableName = $this->_table->getAlias();
         if (isset($data[$tableName])) {
             $data += $data[$tableName];
             unset($data[$tableName]);
@@ -286,7 +286,7 @@ class Marshaller
         if (!is_array($value)) {
             return null;
         }
-        $targetTable = $assoc->target();
+        $targetTable = $assoc->getTarget();
         $marshaller = $targetTable->marshaller();
         $types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
         if (in_array($assoc->type(), $types)) {
@@ -363,8 +363,8 @@ class Marshaller
 
         $data = array_values($data);
 
-        $target = $assoc->target();
-        $primaryKey = array_flip((array)$target->primaryKey());
+        $target = $assoc->getTarget();
+        $primaryKey = array_flip((array)$target->getPrimaryKey());
         $records = $conditions = [];
         $primaryCount = count($primaryKey);
         $conditions = [];
@@ -453,8 +453,8 @@ class Marshaller
             return [];
         }
 
-        $target = $assoc->target();
-        $primaryKey = (array)$target->primaryKey();
+        $target = $assoc->getTarget();
+        $primaryKey = (array)$target->getPrimaryKey();
         $multi = count($primaryKey) > 1;
         $primaryKey = array_map([$target, 'aliasField'], $primaryKey);
 
@@ -529,7 +529,7 @@ class Marshaller
         $keys = [];
 
         if (!$isNew) {
-            $keys = $entity->extract((array)$this->_table->primaryKey());
+            $keys = $entity->extract((array)$this->_table->getPrimaryKey());
         }
 
         if (isset($options['accessibleFields'])) {
@@ -539,7 +539,7 @@ class Marshaller
         }
 
         $errors = $this->_validate($data + $keys, $options, $isNew);
-        $schema = $this->_table->schema();
+        $schema = $this->_table->getSchema();
         $options['isMerge'] = true;
         $propertyMap = $this->_buildPropertyMap($data, $options);
         $properties = $marshalledAssocs = [];
@@ -628,7 +628,7 @@ class Marshaller
      */
     public function mergeMany($entities, array $data, array $options = [])
     {
-        $primary = (array)$this->_table->primaryKey();
+        $primary = (array)$this->_table->getPrimaryKey();
 
         $indexed = (new Collection($data))
             ->groupBy(function ($el) use ($primary) {
@@ -710,7 +710,7 @@ class Marshaller
             return $this->_marshalAssociation($assoc, $value, $options);
         }
 
-        $targetTable = $assoc->target();
+        $targetTable = $assoc->getTarget();
         $marshaller = $targetTable->marshaller();
         $types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
         if (in_array($assoc->type(), $types)) {

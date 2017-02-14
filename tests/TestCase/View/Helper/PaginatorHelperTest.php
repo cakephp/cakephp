@@ -1080,7 +1080,7 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
-     * Test that prev() and the shared implementation underneath picks up from optins
+     * Test that prev() and the shared implementation underneath picks up from options
      *
      * @return void
      */
@@ -2545,5 +2545,54 @@ class PaginatorHelperTest extends TestCase
         $this->assertNull($result);
 
         $this->assertSame($expected, $this->View->fetch('meta'));
+    }
+
+    /**
+     * test the limitControl() method
+     *
+     * @return void
+     */
+    public function testLimitControl()
+    {
+        $out = $this->Paginator->limitControl([1 => 1]);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()']],
+            ['option' => ['value' => '']],
+            '/option',
+            ['option' => ['value' => '1']],
+            '1',
+            '/option',
+            '/select',
+            '/div',
+            '/form'
+        ];
+        $this->assertHtml($expected, $out);
+
+        $out = $this->Paginator->limitControl([1 => 1, 5 => 5], null, ['class' => 'form-control']);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()', 'class' => 'form-control']],
+            ['option' => ['value' => '']],
+            '/option',
+            ['option' => ['value' => '1']],
+            '1',
+            '/option',
+            ['option' => ['value' => '5']],
+            '5',
+            '/option',
+            '/select',
+            '/div',
+            '/form'
+        ];
+        $this->assertHtml($expected, $out);
     }
 }

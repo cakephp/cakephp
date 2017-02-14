@@ -31,6 +31,13 @@ class SqliteSchema extends BaseSchema
     protected $_constraintsIdMap = [];
 
     /**
+     * Whether there is any table in this connection to SQLite containing sequences.
+     *
+     * @var bool
+     */
+    protected $_hasSequences;
+
+    /**
      * Convert a column definition to the abstract types.
      *
      * The returned type will be a type that
@@ -438,7 +445,7 @@ class SqliteSchema extends BaseSchema
     {
         $lines = array_merge($columns, $constraints);
         $content = implode(",\n", array_filter($lines));
-        $temporary = $schema->temporary() ? ' TEMPORARY ' : ' ';
+        $temporary = $schema->isTemporary() ? ' TEMPORARY ' : ' ';
         $table = sprintf("CREATE%sTABLE \"%s\" (\n%s\n)", $temporary, $schema->name(), $content);
         $out = [$table];
         foreach ($indexes as $index) {

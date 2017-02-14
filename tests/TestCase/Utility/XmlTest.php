@@ -114,6 +114,19 @@ class XmlTest extends TestCase
     }
 
     /**
+     * test build() method with huge option
+     *
+     * @return void
+     */
+    public function testBuildHuge()
+    {
+        $xml = '<tag>value</tag>';
+        $obj = Xml::build($xml, ['parseHuge' => true]);
+        $this->assertEquals('tag', $obj->getName());
+        $this->assertEquals('value', (string)$obj);
+    }
+
+    /**
      * Test that the readFile option disables local file parsing.
      *
      * @expectedException \Cake\Utility\Exception\XmlException
@@ -795,7 +808,7 @@ XML;
         $rss = file_get_contents(CORE_TESTS . 'Fixture/rss.xml');
         $rssAsArray = Xml::toArray(Xml::build($rss));
         $this->assertEquals('2.0', $rssAsArray['rss']['@version']);
-        $this->assertEquals(2, count($rssAsArray['rss']['channel']['item']));
+        $this->assertCount(2, $rssAsArray['rss']['channel']['item']);
 
         $atomLink = ['@href' => 'http://bakery.cakephp.org/articles/rss', '@rel' => 'self', '@type' => 'application/rss+xml'];
         $this->assertEquals($rssAsArray['rss']['channel']['atom:link'], $atomLink);

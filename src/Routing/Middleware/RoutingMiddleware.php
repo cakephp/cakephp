@@ -45,10 +45,7 @@ class RoutingMiddleware
                 }
                 $request = $request->withAttribute(
                     'params',
-                    Router::parse(
-                        $request->getUri()->getPath(),
-                        $request->getMethod()
-                    )
+                    Router::parseRequest($request)
                 );
             }
         } catch (RedirectException $e) {

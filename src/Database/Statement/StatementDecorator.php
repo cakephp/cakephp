@@ -27,6 +27,8 @@ use IteratorAggregate;
  *
  * This class is but a decorator of an actual statement implementation, such as
  * PDOStatement.
+ *
+ * @property-read string $queryString
  */
 class StatementDecorator implements StatementInterface, Countable, IteratorAggregate
 {
@@ -279,14 +281,14 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
             return;
         }
 
-        $annonymousParams = is_int(key($params)) ? true : false;
+        $anonymousParams = is_int(key($params)) ? true : false;
         $offset = 1;
         foreach ($params as $index => $value) {
             $type = null;
             if (isset($types[$index])) {
                 $type = $types[$index];
             }
-            if ($annonymousParams) {
+            if ($anonymousParams) {
                 $index += $offset;
             }
             $this->bindValue($index, $value, $type);

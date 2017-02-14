@@ -338,6 +338,7 @@ class Router
      * @param string $method The HTTP method being used.
      * @return array Parsed elements from URL.
      * @throws \Cake\Routing\Exception\MissingRouteException When a route cannot be handled
+     * @deprecated 3.4.0 Use Router::parseRequest() instead.
      */
     public static function parse($url, $method = '')
     {
@@ -349,6 +350,22 @@ class Router
         }
 
         return static::$_collection->parse($url, $method);
+    }
+
+    /**
+     * Get the routing parameters for the request is possible.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request to parse request data from.
+     * @return array Parsed elements from URL.
+     * @throws \Cake\Routing\Exception\MissingRouteException When a route cannot be handled
+     */
+    public static function parseRequest(ServerRequestInterface $request)
+    {
+        if (!static::$initialized) {
+            static::_loadRoutes();
+        }
+
+        return static::$_collection->parseRequest($request);
     }
 
     /**
@@ -507,8 +524,8 @@ class Router
      *
      * ```
      * Router::addUrlFilter(function ($params, $request) {
-     *  if (isset($request->params['lang']) && !isset($params['lang'])) {
-     *    $params['lang'] = $request->params['lang'];
+     *  if ($request->getParam('lang') && !isset($params['lang'])) {
+     *    $params['lang'] = $request->getParam('lang');
      *  }
      *  return $params;
      * });
@@ -597,7 +614,7 @@ class Router
         if ($request) {
             $params = $request->params;
             $here = $request->here;
-            $base = $request->base;
+            $base = $request->getAttribute('base');
         } else {
             $base = Configure::read('App.base');
             if (isset(static::$_requestContext['_base'])) {
@@ -797,7 +814,7 @@ class Router
      * Instructs the router to parse out file extensions
      * from the URL. For example, http://example.com/posts.rss would yield a file
      * extension of "rss". The file extension itself is made available in the
-     * controller as `$this->request->params['_ext']`, and is used by the RequestHandler
+     * controller as `$this->request->getParam('_ext')`, and is used by the RequestHandler
      * component to automatically switch to alternate layouts and templates, and
      * load helpers corresponding to the given content, i.e. RssHelper. Switching
      * layouts and helpers requires that the chosen extension has a defined mime type
@@ -855,7 +872,7 @@ class Router
             return $request;
         }
         $named = [];
-        foreach ($request->params['pass'] as $key => $value) {
+        foreach ($request->getParam('pass') as $key => $value) {
             if (strpos($value, $options['separator']) === false) {
                 continue;
             }
@@ -895,6 +912,16 @@ class Router
      * re-open or re-use a scope the connected routes will be merged with the
      * existing ones.
      *
+     * ### Options
+     *
+     * The `$params` array allows you to define options for the routing scope.
+     * The options listed below *are not* available to be used as routing defaults
+     *
+     * - `routeClass` The route class to use in this scope. Defaults to
+     *   `Router::defaultRouteClass()`
+     * - `extensions` The extensions to enable in this scope. Defaults to the globally
+     *   enabled extensions set with `Router::extensions()`
+     *
      * ### Example
      *
      * ```
@@ -906,12 +933,8 @@ class Router
      * The above would result in a `/blog/` route being created, with both the
      * plugin & controller default parameters set.
      *
-     * You can use Router::plugin() and Router::prefix() as shortcuts to creating
+     * You can use `Router::plugin()` and `Router::prefix()` as shortcuts to creating
      * specific kinds of scopes.
-     *
-     * Routing scopes will inherit the globally set extensions configured with
-     * Router::extensions(). You can also set valid extensions using
-     * `$routes->extensions()` in your closure.
      *
      * @param string $path The path prefix for the scope. This path will be prepended
      *   to all routes connected in the scoped collection.
@@ -923,9 +946,17 @@ class Router
      */
     public static function scope($path, $params = [], $callback = null)
     {
-        $builder = new RouteBuilder(static::$_collection, '/', [], [
+        $options = [
             'routeClass' => static::defaultRouteClass(),
             'extensions' => static::$_defaultExtensions,
+        ];
+        if (is_array($params)) {
+            $options = $params + $options;
+            unset($params['routeClass'], $params['extensions']);
+        }
+        $builder = new RouteBuilder(static::$_collection, '/', [], [
+            'routeClass' => $options['routeClass'],
+            'extensions' => $options['extensions'],
         ]);
         $builder->scope($path, $params, $callback);
     }
@@ -939,6 +970,9 @@ class Router
      * The path parameter is used to generate the routing parameter name.
      * For example a path of `admin` would result in `'prefix' => 'admin'` being
      * applied to all connected routes.
+     *
+     * The prefix name will be inflected to the underscore version to create
+     * the routing path. If you want a custom path name, use the `path` option.
      *
      * You can re-open a prefix as many times as necessary, as well as nest prefixes.
      * Nested prefixes will result in prefix values like `admin/api` which translates
@@ -957,7 +991,14 @@ class Router
             $params = [];
         }
         $name = Inflector::underscore($name);
-        $path = '/' . $name;
+
+        if (empty($params['path'])) {
+            $path = '/' . $name;
+        } else {
+            $path = $params['path'];
+            unset($params['path']);
+        }
+
         $params = array_merge($params, ['prefix' => $name]);
         static::scope($path, $params, $callback);
     }

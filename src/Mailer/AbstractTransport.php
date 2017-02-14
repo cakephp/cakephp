@@ -46,7 +46,7 @@ abstract class AbstractTransport
      */
     public function __construct($config = [])
     {
-        $this->config($config);
+        $this->setConfig($config);
     }
 
     /**

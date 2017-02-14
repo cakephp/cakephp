@@ -166,7 +166,7 @@ class RequestHandlerComponent extends Component
         }
 
         $extensions = array_unique(
-            array_merge(Router::extensions(), array_keys($this->config('viewClassMap')))
+            array_merge(Router::extensions(), array_keys($this->getConfig('viewClassMap')))
         );
         foreach ($accepts as $types) {
             $ext = array_intersect($extensions, $types);
@@ -189,12 +189,12 @@ class RequestHandlerComponent extends Component
      */
     public function startup(Event $event)
     {
-        $controller = $event->subject();
+        $controller = $event->getSubject();
         $request = $controller->request;
         $response = $controller->response;
 
-        if ($request->param('_ext')) {
-            $this->ext = $request->param('_ext');
+        if ($request->getParam('_ext')) {
+            $this->ext = $request->getParam('_ext');
         }
         if (!$this->ext || in_array($this->ext, ['html', 'htm'])) {
             $this->_setExtension($request, $response);
@@ -210,7 +210,7 @@ class RequestHandlerComponent extends Component
             return;
         }
 
-        foreach ($this->config('inputTypeMap') as $type => $handler) {
+        foreach ($this->getConfig('inputTypeMap') as $type => $handler) {
             if (!is_callable($handler[0])) {
                 throw new RuntimeException(sprintf("Invalid callable for '%s' type.", $type));
             }
@@ -254,7 +254,7 @@ class RequestHandlerComponent extends Component
      */
     public function beforeRedirect(Event $event, $url, Response $response)
     {
-        if (!$this->config('enableBeforeRedirect')) {
+        if (!$this->getConfig('enableBeforeRedirect')) {
             return null;
         }
         $request = $this->request;
@@ -273,7 +273,7 @@ class RequestHandlerComponent extends Component
             parse_str($querystr, $query);
         }
         /* @var \Cake\Controller\Controller $controller */
-        $controller = $event->subject();
+        $controller = $event->getSubject();
         $response->body($controller->requestAction($url, [
             'return',
             'bare' => false,
@@ -313,7 +313,7 @@ class RequestHandlerComponent extends Component
     public function beforeRender(Event $event)
     {
         /* @var \Cake\Controller\Controller $controller */
-        $controller = $event->subject();
+        $controller = $event->getSubject();
         $response = $controller->response;
         $request = $controller->request;
 
@@ -562,7 +562,7 @@ class RequestHandlerComponent extends Component
     public function renderAs(Controller $controller, $type, array $options = [])
     {
         $defaults = ['charset' => 'UTF-8'];
-        $viewClassMap = $this->config('viewClassMap');
+        $viewClassMap = $this->getConfig('viewClassMap');
 
         if (Configure::read('App.encoding') !== null) {
             $defaults['charset'] = Configure::read('App.encoding');
@@ -577,26 +577,26 @@ class RequestHandlerComponent extends Component
         }
 
         $viewClass = null;
-        if ($builder->className() === null) {
+        if ($builder->getClassName() === null) {
             $viewClass = App::className($view, 'View', 'View');
         }
 
         if ($viewClass) {
             $controller->viewClass = $viewClass;
-            $builder->className($viewClass);
+            $builder->setClassName($viewClass);
         } else {
             if (!$this->_renderType) {
-                $builder->templatePath($builder->templatePath() . DIRECTORY_SEPARATOR . $type);
+                $builder->setTemplatePath($builder->getTemplatePath() . DIRECTORY_SEPARATOR . $type);
             } else {
-                $builder->templatePath(preg_replace(
+                $builder->setTemplatePath(preg_replace(
                     "/([\/\\\\]{$this->_renderType})$/",
                     DIRECTORY_SEPARATOR . $type,
-                    $builder->templatePath()
+                    $builder->getTemplatePath()
                 ));
             }
 
             $this->_renderType = $type;
-            $builder->layoutPath($type);
+            $builder->setLayoutPath($type);
         }
 
         $response = $controller->response;
@@ -645,7 +645,7 @@ class RequestHandlerComponent extends Component
         if (!$type) {
             return false;
         }
-        if (!$request->param('requested')) {
+        if (!$request->getParam('requested')) {
             $response->type($cType);
         }
         if (!empty($options['charset'])) {
@@ -707,18 +707,18 @@ class RequestHandlerComponent extends Component
      *    for the handler.
      * @return void
      * @throws \Cake\Core\Exception\Exception
-     * @deprecated 3.1.0 Use config('addInputType', ...) instead.
+     * @deprecated 3.1.0 Use setConfig('addInputType', ...) instead.
      */
     public function addInputType($type, $handler)
     {
         trigger_error(
-            'RequestHandlerComponent::addInputType() is deprecated. Use config("inputTypeMap", ...) instead.',
+            'RequestHandlerComponent::addInputType() is deprecated. Use setConfig("inputTypeMap", ...) instead.',
             E_USER_DEPRECATED
         );
         if (!is_array($handler) || !isset($handler[0]) || !is_callable($handler[0])) {
             throw new Exception('You must give a handler callback.');
         }
-        $this->config('inputTypeMap.' . $type, $handler);
+        $this->setConfig('inputTypeMap.' . $type, $handler);
     }
 
     /**
@@ -727,23 +727,23 @@ class RequestHandlerComponent extends Component
      * @param array|string|null $type The type string or array with format `['type' => 'viewClass']` to map one or more
      * @param array|null $viewClass The viewClass to be used for the type without `View` appended
      * @return array|string Returns viewClass when only string $type is set, else array with viewClassMap
-     * @deprecated 3.1.0 Use config('viewClassMap', ...) instead.
+     * @deprecated 3.1.0 Use setConfig('viewClassMap', ...) instead.
      */
     public function viewClassMap($type = null, $viewClass = null)
     {
         trigger_error(
-            'RequestHandlerComponent::viewClassMap() is deprecated. Use config("viewClassMap", ...) instead.',
+            'RequestHandlerComponent::viewClassMap() is deprecated. Use setConfig("viewClassMap", ...) instead.',
             E_USER_DEPRECATED
         );
         if (!$viewClass && is_string($type)) {
-            return $this->config('viewClassMap.' . $type);
+            return $this->getConfig('viewClassMap.' . $type);
         }
         if (is_string($type)) {
-            $this->config('viewClassMap.' . $type, $viewClass);
+            $this->setConfig('viewClassMap.' . $type, $viewClass);
         } elseif (is_array($type)) {
-            $this->config('viewClassMap', $type, true);
+            $this->setConfig('viewClassMap', $type, true);
         }
 
-        return $this->config('viewClassMap');
+        return $this->getConfig('viewClassMap');
     }
 }

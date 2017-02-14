@@ -24,6 +24,31 @@ use Cake\TestSuite\TestCase;
 class ServerRequestFactoryTest extends TestCase
 {
     /**
+     * @var array|null
+     */
+    protected $server = null;
+
+    /**
+     * @var array|null
+     */
+    protected $post = null;
+
+    /**
+     * @var array|null
+     */
+    protected $files = null;
+
+    /**
+     * @var array|null
+     */
+    protected $cookies = null;
+
+    /**
+     * @var array|null
+     */
+    protected $get = null;
+
+    /**
      * setup
      *
      * @return void
@@ -32,6 +57,10 @@ class ServerRequestFactoryTest extends TestCase
     {
         parent::setUp();
         $this->server = $_SERVER;
+        $this->post = $_POST;
+        $this->files = $_FILES;
+        $this->cookies = $_COOKIE;
+        $this->get = $_GET;
     }
 
     /**
@@ -43,6 +72,51 @@ class ServerRequestFactoryTest extends TestCase
     {
         parent::tearDown();
         $_SERVER = $this->server;
+        $_POST = $this->post;
+        $_FILES = $this->files;
+        $_COOKIE = $this->cookies;
+        $_GET = $this->get;
+    }
+
+    /**
+     * Test fromGlobals reads super globals
+     *
+     * @return void
+     */
+    public function testFromGlobalsSuperGlobals()
+    {
+        $_POST = [
+            'title' => 'custom'
+        ];
+        $_FILES = [
+            'image' => [
+                'tmp_name' => __FILE__,
+                'error' => 0,
+                'name' => 'cats.png',
+                'type' => 'image/png',
+                'size' => 2112
+            ]
+        ];
+        $_COOKIE = ['key' => 'value'];
+        $_GET = ['query' => 'string'];
+        $res = ServerRequestFactory::fromGlobals();
+        $this->assertSame($_COOKIE['key'], $res->getCookie('key'));
+        $this->assertSame($_GET['query'], $res->getQuery('query'));
+        $this->assertArrayHasKey('title', $res->getData());
+        $this->assertArrayHasKey('image', $res->getData());
+        $this->assertSame($_FILES['image'], $res->getData('image'));
+        $this->assertCount(1, $res->getUploadedFiles());
+    }
+
+    /**
+     * Test fromGlobals input
+     *
+     * @return void
+     */
+    public function testFromGlobalsInput()
+    {
+        $res = ServerRequestFactory::fromGlobals();
+        $this->assertSame('', $res->input());
     }
 
     /**

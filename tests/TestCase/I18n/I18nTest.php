@@ -68,7 +68,7 @@ class I18nTest extends TestCase
     public function testDefaultTranslator()
     {
         $translator = I18n::translator();
-        $this->assertInstanceOf('Aura\Intl\Translator', $translator);
+        $this->assertInstanceOf('Aura\Intl\TranslatorInterface', $translator);
         $this->assertEquals('%d is 1 (po translated)', $translator->translate('%d = 1'));
     }
 
@@ -242,6 +242,52 @@ class I18nTest extends TestCase
         I18n::defaultFormatter('sprintf');
         $this->assertEquals('%d is 1 (po translated)', __('%d = 1'));
         $this->assertEquals('1 is 1 (po translated)', __('%d = 1', 1));
+        $this->assertEquals('1 is 1 (po translated)', __('%d = 1', [1]));
+        $this->assertEquals('The red dog, and blue cat', __('The %s dog, and %s cat', ['red', 'blue']));
+        $this->assertEquals('The red dog, and blue cat', __('The %s dog, and %s cat', 'red', 'blue'));
+    }
+
+    /**
+     * Tests the __() functions with explict null params
+     *
+     * @return void
+     */
+    public function testBasicTranslateFunctionsWithNullParam()
+    {
+        $this->assertEquals('text {0}', __('text {0}'));
+        $this->assertEquals('text ', __('text {0}', null));
+
+        $this->assertEquals('text {0}', __n('text {0}', 'texts {0}', 1));
+        $this->assertEquals('text ', __n('text {0}', 'texts {0}', 1, null));
+
+        $this->assertEquals('text {0}', __d('default', 'text {0}'));
+        $this->assertEquals('text ', __d('default', 'text {0}', null));
+
+        $this->assertEquals('text {0}', __dn('default', 'text {0}', 'texts {0}', 1));
+        $this->assertEquals('text ', __dn('default', 'text {0}', 'texts {0}', 1, null));
+
+        $this->assertEquals('text {0}', __x('default', 'text {0}'));
+        $this->assertEquals('text ', __x('default', 'text {0}', null));
+
+        $this->assertEquals('text {0}', __xn('default', 'text {0}', 'texts {0}', 1));
+        $this->assertEquals('text ', __xn('default', 'text {0}', 'texts {0}', 1, null));
+
+        $this->assertEquals('text {0}', __dx('default', 'words', 'text {0}'));
+        $this->assertEquals('text ', __dx('default', 'words', 'text {0}', null));
+
+        $this->assertEquals('text {0}', __dxn('default', 'words', 'text {0}', 'texts {0}', 1));
+        $this->assertEquals('text ', __dxn('default', 'words', 'text {0}', 'texts {0}', 1, null));
+    }
+
+    /**
+     * Tests the __() function on a plural key
+     *
+     * @return void
+     */
+    public function testBasicTranslateFunctionPluralData()
+    {
+        I18n::defaultFormatter('sprintf');
+        $this->assertEquals('%d is 1 (po translated)', __('%d = 0 or > 1'));
     }
 
     /**
@@ -257,6 +303,12 @@ class I18nTest extends TestCase
 
         $result = __n('singular msg', '%d = 0 or > 1', 2);
         $this->assertEquals('2 is 2-4 (po translated)', $result);
+
+        $result = __n('%s %s and %s are good', '%s and %s are best', 1, ['red', 'blue']);
+        $this->assertEquals('1 red and blue are good', $result);
+
+        $result = __n('%s %s and %s are good', '%s and %s are best', 1, 'red', 'blue');
+        $this->assertEquals('1 red and blue are good', $result);
     }
 
     /**
@@ -279,6 +331,9 @@ class I18nTest extends TestCase
         $this->assertEquals('Le moo', __d('custom', 'Cow'));
 
         $result = __d('custom', 'The {0} is tasty', ['fruit']);
+        $this->assertEquals('The fruit is delicious', $result);
+
+        $result = __d('custom', 'The {0} is tasty', 'fruit');
         $this->assertEquals('The fruit is delicious', $result);
 
         $result = __d('custom', 'Average price {0}', ['9.99']);
@@ -344,6 +399,9 @@ class I18nTest extends TestCase
         $this->assertEquals('The letters A and B', __x('character', 'letters', ['A', 'B']));
         $this->assertEquals('The letter A', __x('character', 'letter', ['A']));
 
+        $this->assertEquals('The letters A and B', __x('character', 'letters', 'A', 'B'));
+        $this->assertEquals('The letter A', __x('character', 'letter', 'A'));
+
         $this->assertEquals(
             'She wrote a letter to Thomas and Sara',
             __x('communication', 'letters', ['Thomas', 'Sara'])
@@ -384,6 +442,30 @@ class I18nTest extends TestCase
         });
 
         $this->assertEquals('', __x('character', 'letter'));
+    }
+
+    /**
+     * Tests the __x() function with an invalid context
+     *
+     * @return void
+     */
+    public function testBasicContextFunctionInvalidContext()
+    {
+        I18n::translator('default', 'en_US', function () {
+            $package = new Package('default');
+            $package->setMessages([
+                'letter' => [
+                    '_context' => [
+                        'noun' => 'a paper letter',
+                    ]
+                ]
+            ]);
+
+            return $package;
+        });
+
+        $this->assertEquals('letter', __x('garbage', 'letter'));
+        $this->assertEquals('a paper letter', __('letter'));
     }
 
     /**

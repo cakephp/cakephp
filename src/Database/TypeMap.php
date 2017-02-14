@@ -66,7 +66,7 @@ class TypeMap
      *
      * @param array $defaults Associative array where keys are field names and values
      * are the correspondent type.
-     * @return self
+     * @return $this
      */
     public function setDefaults(array $defaults)
     {
@@ -78,7 +78,7 @@ class TypeMap
     /**
      * Returns the currently configured types.
      *
-     * @return self|array
+     * @return array
      */
     public function getDefaults()
     {
@@ -105,7 +105,7 @@ class TypeMap
      * @deprecated 3.4.0 Use setDefaults()/getDefaults() instead.
      * @param array|null $defaults associative array where keys are field names and values
      * are the correspondent type.
-     * @return self|array
+     * @return $this|array
      */
     public function defaults(array $defaults = null)
     {
@@ -142,7 +142,7 @@ class TypeMap
      *
      * @param array $types Associative array where keys are field names and values
      * are the correspondent type.
-     * @return self
+     * @return $this
      */
     public function setTypes(array $types)
     {
@@ -177,7 +177,7 @@ class TypeMap
      * @deprecated 3.4.0 Use setTypes()/getTypes() instead.
      * @param array|null $types associative array where keys are field names and values
      * are the correspondent type.
-     * @return self|array
+     * @return $this|array
      */
     public function types(array $types = null)
     {

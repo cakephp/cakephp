@@ -319,7 +319,7 @@ class Response extends Message implements ResponseInterface
      *
      * @param int $code The status code to set.
      * @param string $reasonPhrase The status reason phrase.
-     * @return self A copy of the current object with an updated status code.
+     * @return $this A copy of the current object with an updated status code.
      */
     public function withStatus($code, $reasonPhrase = '')
     {
@@ -501,7 +501,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Get the response body as JSON decoded data.
      *
-     * @return mixed
+     * @return array|null
      */
     protected function _getJson()
     {
@@ -598,6 +598,9 @@ class Response extends Message implements ResponseInterface
             return $val !== null;
         }
 
-        return isset($this->$key);
+        return isset($this->{$key});
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Http\Client\Response', 'Cake\Network\Http\Response');

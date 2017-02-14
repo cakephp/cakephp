@@ -49,7 +49,7 @@ class HasOne extends Association
     public function getForeignKey()
     {
         if ($this->_foreignKey === null) {
-            $this->_foreignKey = $this->_modelKey($this->source()->alias());
+            $this->_foreignKey = $this->_modelKey($this->getSource()->getAlias());
         }
 
         return $this->_foreignKey;
@@ -94,7 +94,7 @@ class HasOne extends Association
      */
     public function isOwningSide(Table $side)
     {
-        return $side === $this->source();
+        return $side === $this->getSource();
     }
 
     /**
@@ -122,18 +122,18 @@ class HasOne extends Association
      */
     public function saveAssociated(EntityInterface $entity, array $options = [])
     {
-        $targetEntity = $entity->get($this->property());
+        $targetEntity = $entity->get($this->getProperty());
         if (empty($targetEntity) || !($targetEntity instanceof EntityInterface)) {
             return $entity;
         }
 
         $properties = array_combine(
-            (array)$this->foreignKey(),
-            $entity->extract((array)$this->bindingKey())
+            (array)$this->getForeignKey(),
+            $entity->extract((array)$this->getBindingKey())
         );
         $targetEntity->set($properties, ['guard' => false]);
 
-        if (!$this->target()->save($targetEntity, $options)) {
+        if (!$this->getTarget()->save($targetEntity, $options)) {
             $targetEntity->unsetProperty(array_keys($properties));
 
             return false;
@@ -150,12 +150,12 @@ class HasOne extends Association
     public function eagerLoader(array $options)
     {
         $loader = new SelectLoader([
-            'alias' => $this->alias(),
-            'sourceAlias' => $this->source()->alias(),
-            'targetAlias' => $this->target()->alias(),
-            'foreignKey' => $this->foreignKey(),
-            'bindingKey' => $this->bindingKey(),
-            'strategy' => $this->strategy(),
+            'alias' => $this->getAlias(),
+            'sourceAlias' => $this->getSource()->getAlias(),
+            'targetAlias' => $this->getTarget()->getAlias(),
+            'foreignKey' => $this->getForeignKey(),
+            'bindingKey' => $this->getBindingKey(),
+            'strategy' => $this->getStrategy(),
             'associationType' => $this->type(),
             'finder' => [$this, 'find']
         ]);

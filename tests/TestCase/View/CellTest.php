@@ -19,6 +19,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
+use TestApp\Controller\CellTraitTestController;
 use TestApp\View\CustomJsonView;
 
 /**
@@ -295,12 +296,12 @@ class CellTest extends TestCase
     }
 
     /**
-     * Tests that using an unexisting cell throws an exception.
+     * Tests that using an non-existent cell throws an exception.
      *
      * @expectedException \Cake\View\Exception\MissingCellException
      * @return void
      */
-    public function testUnexistingCell()
+    public function testNonExistentCell()
     {
         $cell = $this->View->cell('TestPlugin.Void::echoThis', ['arg1' => 'v1']);
         $cell = $this->View->cell('Void::echoThis', ['arg1' => 'v1', 'arg2' => 'v2']);
@@ -353,8 +354,29 @@ class CellTest extends TestCase
         $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
         $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $view = new CustomJsonView($request, $response);
+        $view->theme = 'Pretty';
         $cell = $view->cell('Articles');
         $this->assertSame('TestApp\View\CustomJsonView', $cell->viewClass);
+        $this->assertSame('TestApp\View\CustomJsonView', $cell->viewBuilder()->getClassName());
+        $this->assertSame('Pretty', $cell->viewBuilder()->getTheme());
+    }
+
+    /**
+     * Test that cells the view class name of a controller passed on.
+     *
+     * @return void
+     */
+    public function testCellInheritsController()
+    {
+        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $controller = new CellTraitTestController($request, $response);
+        $controller->viewBuilder()->setTheme('Pretty');
+        $controller->viewClass = 'Json';
+        $cell = $controller->cell('Articles');
+        $this->assertSame('Json', $cell->viewClass);
+        $this->assertSame('Json', $cell->viewBuilder()->getClassName());
+        $this->assertSame('Pretty', $cell->viewBuilder()->getTheme());
     }
 
     /**

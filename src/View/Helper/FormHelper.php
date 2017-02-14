@@ -238,7 +238,7 @@ class FormHelper extends Helper
 
         $this->widgetRegistry($registry, $widgets);
         $this->_addDefaultContextProviders();
-        $this->_idPrefix = $this->config('idPrefix');
+        $this->_idPrefix = $this->getConfig('idPrefix');
     }
 
     /**
@@ -467,8 +467,8 @@ class FormHelper extends Helper
 
         $actionDefaults = [
             'plugin' => $this->plugin,
-            'controller' => $this->request->param('controller'),
-            'action' => $this->request->param('action'),
+            'controller' => $this->request->getParam('controller'),
+            'action' => $this->request->getParam('action'),
         ];
 
         $action = (array)$options['url'] + $actionDefaults;
@@ -507,17 +507,17 @@ class FormHelper extends Helper
      */
     protected function _csrfField()
     {
-        if ($this->request->param('_Token.unlockedFields')) {
-            foreach ((array)$this->request->param('_Token.unlockedFields') as $unlocked) {
+        if ($this->request->getParam('_Token.unlockedFields')) {
+            foreach ((array)$this->request->getParam('_Token.unlockedFields') as $unlocked) {
                 $this->_unlockedFields[] = $unlocked;
             }
         }
-        if (!$this->request->param('_csrfToken')) {
+        if (!$this->request->getParam('_csrfToken')) {
             return '';
         }
 
         return $this->hidden('_csrfToken', [
-            'value' => $this->request->param('_csrfToken'),
+            'value' => $this->request->getParam('_csrfToken'),
             'secure' => static::SECURE_SKIP
         ]);
     }
@@ -537,7 +537,7 @@ class FormHelper extends Helper
     {
         $out = '';
 
-        if ($this->requestType !== 'get' && $this->request->param('_Token')) {
+        if ($this->requestType !== 'get' && $this->request->getParam('_Token')) {
             $out .= $this->secure($this->fields, $secureAttributes);
             $this->fields = [];
             $this->_unlockedFields = [];
@@ -548,7 +548,7 @@ class FormHelper extends Helper
         $this->requestType = null;
         $this->_context = null;
         $this->_valueSources = ['context'];
-        $this->_idPrefix = $this->config('idPrefix');
+        $this->_idPrefix = $this->getConfig('idPrefix');
 
         return $out;
     }
@@ -570,7 +570,7 @@ class FormHelper extends Helper
      */
     public function secure(array $fields = [], array $secureAttributes = [])
     {
-        if (!$this->request->param('_Token')) {
+        if (!$this->request->getParam('_Token')) {
             return '';
         }
         $debugSecurity = Configure::read('debug');
@@ -857,20 +857,20 @@ class FormHelper extends Helper
     }
 
     /**
-     * Generate a set of inputs for `$fields`. If $fields is empty the fields of current model
-     * will be used.
+     * Generate a set of controls for `$fields`. If $fields is empty the fields
+     * of current model will be used.
      *
-     * You can customize individual inputs through `$fields`.
+     * You can customize individual controls through `$fields`.
      * ```
-     * $this->Form->allInputs([
+     * $this->Form->allControls([
      *   'name' => ['label' => 'custom label']
      * ]);
      * ```
      *
-     * You can exclude fields by specifying them as false:
+     * You can exclude fields by specifying them as `false`:
      *
      * ```
-     * $this->Form->allInputs(['title' => false]);
+     * $this->Form->allControls(['title' => false]);
      * ```
      *
      * In the above example, no field would be generated for the title field.
@@ -881,12 +881,12 @@ class FormHelper extends Helper
      * - `fieldset` Set to false to disable the fieldset. You can also pass an array of params to be
      *    applied as HTML attributes to the fieldset tag. If you pass an empty array, the fieldset will
      *    be enabled
-     * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
+     * - `legend` Set to false to disable the legend for the generated control set. Or supply a string
      *    to customize the legend text.
-     * @return string Completed form inputs.
+     * @return string Completed form controls.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#generating-entire-forms
      */
-    public function allInputs(array $fields = [], array $options = [])
+    public function allControls(array $fields = [], array $options = [])
     {
         $context = $this->_getContext();
 
@@ -897,32 +897,53 @@ class FormHelper extends Helper
             Hash::normalize($fields)
         );
 
-        return $this->inputs($fields, $options);
+        return $this->controls($fields, $options);
     }
 
     /**
-     * Generate a set of inputs for `$fields` wrapped in a fieldset element.
+     * Generate a set of controls for `$fields`. If $fields is empty the fields
+     * of current model will be used.
      *
-     * You can customize individual inputs through `$fields`.
+     * @param array $fields An array of customizations for the fields that will be
+     *   generated. This array allows you to set custom types, labels, or other options.
+     * @param array $options Options array. Valid keys are:
+     * - `fieldset` Set to false to disable the fieldset. You can also pass an array of params to be
+     *    applied as HTML attributes to the fieldset tag. If you pass an empty array, the fieldset will
+     *    be enabled
+     * - `legend` Set to false to disable the legend for the generated control set. Or supply a string
+     *    to customize the legend text.
+     * @return string Completed form controls.
+     * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#generating-entire-forms
+     * @deprecated 3.4.0 Use FormHelper::allControls() instead.
+     */
+    public function allInputs(array $fields = [], array $options = [])
+    {
+        return $this->allControls($fields, $options);
+    }
+
+    /**
+     * Generate a set of controls for `$fields` wrapped in a fieldset element.
+     *
+     * You can customize individual controls through `$fields`.
      * ```
-     * $this->Form->inputs([
+     * $this->Form->controls([
      *   'name' => ['label' => 'custom label'],
      *   'email'
      * ]);
      * ```
      *
-     * @param array $fields An array of the fields to generate. This array allows you to set custom
-     *   types, labels, or other options.
+     * @param array $fields An array of the fields to generate. This array allows
+     *   you to set custom types, labels, or other options.
      * @param array $options Options array. Valid keys are:
-     * - `fieldset` Set to false to disable the fieldset. You can also pass an array of params to be
-     *    applied as HTML attributes to the fieldset tag. If you pass an empty array, the fieldset will
-     *    be enabled
-     * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
-     *    to customize the legend text.
+     * - `fieldset` Set to false to disable the fieldset. You can also pass an
+     *    array of params to be applied as HTML attributes to the fieldset tag.
+     *    If you pass an empty array, the fieldset will be enabled.
+     * - `legend` Set to false to disable the legend for the generated input set.
+     *    Or supply a string to customize the legend text.
      * @return string Completed form inputs.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#generating-entire-forms
      */
-    public function inputs(array $fields, array $options = [])
+    public function controls(array $fields, array $options = [])
     {
         $fields = Hash::normalize($fields);
 
@@ -932,10 +953,30 @@ class FormHelper extends Helper
                 continue;
             }
 
-            $out .= $this->input($name, (array)$opts);
+            $out .= $this->control($name, (array)$opts);
         }
 
         return $this->fieldset($out, $options);
+    }
+
+    /**
+     * Generate a set of controls for `$fields` wrapped in a fieldset element.
+     *
+     * @param array $fields An array of the fields to generate. This array allows
+     *   you to set custom types, labels, or other options.
+     * @param array $options Options array. Valid keys are:
+     * - `fieldset` Set to false to disable the fieldset. You can also pass an
+     *    array of params to be applied as HTML attributes to the fieldset tag.
+     *    If you pass an empty array, the fieldset will be enabled.
+     * - `legend` Set to false to disable the legend for the generated input set.
+     *    Or supply a string to customize the legend text.
+     * @return string Completed form inputs.
+     * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#generating-entire-forms
+     * @deprecated 3.4.0 Use FormHelper::controls() instead.
+     */
+    public function inputs(array $fields, array $options = [])
+    {
+        return $this->controls($fields, $options);
     }
 
     /**
@@ -969,7 +1010,7 @@ class FormHelper extends Helper
             if (!$isCreate) {
                 $actionName = __d('cake', 'Edit %s');
             }
-            $modelName = Inflector::humanize(Inflector::singularize($this->request->param('controller')));
+            $modelName = Inflector::humanize(Inflector::singularize($this->request->getParam('controller')));
             $legend = sprintf($actionName, $modelName);
         }
 
@@ -989,7 +1030,7 @@ class FormHelper extends Helper
     }
 
     /**
-     * Generates a form input element complete with label and wrapper div
+     * Generates a form control element complete with label and wrapper div.
      *
      * ### Options
      *
@@ -1010,13 +1051,16 @@ class FormHelper extends Helper
      * - `templates` - The templates you want to use for this input. Any templates will be merged on top of
      *   the already loaded templates. This option can either be a filename in /config that contains
      *   the templates you want to load, or an array of templates to use.
+     * - `labelOptions` - Either `false` to disable label around nestedWidgets e.g. radio, multicheckbox or an array
+     *   of attributes for the label tag. `selected` will be added to any classes e.g. `class => 'myclass'` where
+     *   widget is checked
      *
      * @param string $fieldName This should be "modelname.fieldname"
      * @param array $options Each type of input takes different options.
      * @return string Completed form widget.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-form-inputs
      */
-    public function input($fieldName, array $options = [])
+    public function control($fieldName, array $options = [])
     {
         $options += [
             'type' => null,
@@ -1025,7 +1069,8 @@ class FormHelper extends Helper
             'required' => null,
             'options' => null,
             'templates' => [],
-            'templateVars' => []
+            'templateVars' => [],
+            'labelOptions' => true
         ];
         $options = $this->_parseOptions($fieldName, $options);
         $options += ['id' => $this->_domId($fieldName)];
@@ -1055,17 +1100,21 @@ class FormHelper extends Helper
         $label = $options['label'];
         unset($options['label']);
 
+        $labelOptions = $options['labelOptions'];
+        unset($options['labelOptions']);
+
         $nestedInput = false;
         if ($options['type'] === 'checkbox') {
             $nestedInput = true;
         }
         $nestedInput = isset($options['nestedInput']) ? $options['nestedInput'] : $nestedInput;
+        unset($options['nestedInput']);
 
         if ($nestedInput === true && $options['type'] === 'checkbox' && !array_key_exists('hiddenField', $options) && $label !== false) {
             $options['hiddenField'] = '_split';
         }
 
-        $input = $this->_getInput($fieldName, $options);
+        $input = $this->_getInput($fieldName, $options + ['labelOptions' => $labelOptions]);
         if ($options['type'] === 'hidden' || $options['type'] === 'submit') {
             if ($newTemplates) {
                 $templater->pop();
@@ -1075,7 +1124,11 @@ class FormHelper extends Helper
         }
 
         $label = $this->_getLabel($fieldName, compact('input', 'label', 'error', 'nestedInput') + $options);
-        $result = $this->_groupTemplate(compact('input', 'label', 'error', 'options'));
+        if ($nestedInput) {
+            $result = $this->_groupTemplate(compact('label', 'error', 'options'));
+        } else {
+            $result = $this->_groupTemplate(compact('input', 'label', 'error', 'options'));
+        }
         $result = $this->_inputContainerTemplate([
             'content' => $result,
             'error' => $error,
@@ -1088,6 +1141,20 @@ class FormHelper extends Helper
         }
 
         return $result;
+    }
+
+    /**
+     * Generates a form control element complete with label and wrapper div.
+     *
+     * @param string $fieldName This should be "modelname.fieldname"
+     * @param array $options Each type of input takes different options.
+     * @return string Completed form widget.
+     * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-form-inputs
+     * @deprecated 3.4.0 Use FormHelper::control() instead.
+     */
+    public function input($fieldName, array $options = [])
+    {
+        return $this->control($fieldName, $options);
     }
 
     /**
@@ -1104,7 +1171,7 @@ class FormHelper extends Helper
         }
 
         return $this->formatTemplate($groupTemplate, [
-            'input' => $options['input'],
+            'input' => isset($options['input']) ? $options['input'] : [],
             'label' => $options['label'],
             'error' => $options['error'],
             'templateVars' => isset($options['options']['templateVars']) ? $options['options']['templateVars'] : []
@@ -1142,22 +1209,24 @@ class FormHelper extends Helper
      */
     protected function _getInput($fieldName, $options)
     {
+        $label = $options['labelOptions'];
+        unset($options['labelOptions']);
         switch (strtolower($options['type'])) {
             case 'select':
                 $opts = $options['options'];
                 unset($options['options']);
 
-                return $this->select($fieldName, $opts, $options);
+                return $this->select($fieldName, $opts, $options + ['label' => $label]);
             case 'radio':
                 $opts = $options['options'];
                 unset($options['options']);
 
-                return $this->radio($fieldName, $opts, $options);
+                return $this->radio($fieldName, $opts, $options + ['label' => $label]);
             case 'multicheckbox':
                 $opts = $options['options'];
                 unset($options['options']);
 
-                return $this->multiCheckbox($fieldName, $opts, $options);
+                return $this->multiCheckbox($fieldName, $opts, $options + ['label' => $label]);
             case 'input':
                 throw new RuntimeException("Invalid type 'input' used for field '$fieldName'");
 
@@ -1475,7 +1544,9 @@ class FormHelper extends Helper
      * ### Attributes:
      *
      * - `value` - Indicates the value when this radio button is checked.
-     * - `label` - boolean to indicate whether or not labels for widgets should be displayed.
+     * - `label` - Either `false` to disable label around the widget or an array of attributes for
+     *    the label tag. `selected` will be added to any classes e.g. `'class' => 'myclass'` where widget
+     *    is checked
      * - `hiddenField` - boolean to indicate if you want the results of radio() to include
      *    a hidden input with a value of ''. This is useful for creating radio sets that are non-continuous.
      * - `disabled` - Set to `true` or `disabled` to disable all the radio buttons.
@@ -1942,6 +2013,8 @@ class FormHelper extends Helper
             return $this->multiCheckbox($fieldName, $options, $attributes);
         }
 
+        unset($attributes['label']);
+
         // Secure the field if there are options, or it's a multi select.
         // Single selects with no options don't submit, but multiselects do.
         if ($attributes['secure'] &&
@@ -1982,6 +2055,9 @@ class FormHelper extends Helper
      *   You can also set disabled to a list of values you want to disable when creating checkboxes.
      * - `hiddenField` - Set to false to remove the hidden field that ensures a value
      *   is always submitted.
+     * - `label` - Either `false` to disable label around the widget or an array of attributes for
+     *   the label tag. `selected` will be added to any classes e.g. `'class' => 'myclass'` where
+     *   widget is checked
      *
      * Can be used in place of a select box with the multiple attribute.
      *
@@ -2014,6 +2090,7 @@ class FormHelper extends Helper
             ];
             $hidden = $this->hidden($fieldName, $hiddenAttributes);
         }
+        unset($attributes['hiddenField']);
 
         return $hidden . $this->widget('multicheckbox', $attributes);
     }
@@ -2448,7 +2525,7 @@ class FormHelper extends Helper
     protected function _initInputField($field, $options = [])
     {
         if (!isset($options['secure'])) {
-            $options['secure'] = (bool)$this->request->param('_Token');
+            $options['secure'] = (bool)$this->request->getParam('_Token');
         }
         $context = $this->_getContext();
 
@@ -2676,7 +2753,7 @@ class FormHelper extends Helper
      */
     public function resetTemplates()
     {
-        $this->templates($this->_defaultConfig['templates']);
+        $this->setTemplates($this->_defaultConfig['templates']);
     }
 
     /**
@@ -2708,7 +2785,7 @@ class FormHelper extends Helper
      * You need to supply one valid context or multiple, as a list of strings. Order sets priority.
      *
      * @param string|array $sources A string or a list of strings identifying a source.
-     * @return self
+     * @return $this
      */
     public function setValueSources($sources)
     {

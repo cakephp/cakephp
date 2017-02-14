@@ -1,3 +1,3 @@
 <?php
-// @deprecated Backwards compatibility with earler 3.x versions.
-class_alias('Cake\Http\Client\FormData', 'Cake\Network\Http\FormData');
+// @deprecated Load new class and alias.
+class_exists('Cake\Http\Client\FormData');

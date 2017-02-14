@@ -46,6 +46,8 @@ class PostgresSchema extends BaseSchema
             c.collation_name,
             d.description as comment,
             ordinal_position,
+            c.numeric_precision as column_precision,
+            c.numeric_scale as column_scale,
             pg_get_serial_sequence(attr.attrelid::regclass::text, attr.attname) IS NOT NULL AS has_serial
         FROM information_schema.columns c
         INNER JOIN pg_catalog.pg_namespace ns ON (ns.nspname = table_schema)
@@ -158,6 +160,7 @@ class PostgresSchema extends BaseSchema
         if (!empty($row['has_serial'])) {
             $field['autoIncrement'] = true;
         }
+
         $field += [
             'default' => $this->_defaultValue($row['default']),
             'null' => $row['null'] === 'YES' ? true : false,
@@ -165,6 +168,11 @@ class PostgresSchema extends BaseSchema
             'comment' => $row['comment']
         ];
         $field['length'] = $row['char_length'] ?: $field['length'];
+
+        if ($field['type'] === 'numeric' || $field['type'] === 'decimal') {
+            $field['length'] = $row['column_precision'];
+            $field['precision'] = $row['column_scale'] ? $row['column_scale'] : null;
+        }
         $schema->addColumn($row['name'], $field);
     }
 
@@ -402,16 +410,19 @@ class PostgresSchema extends BaseSchema
         if (isset($data['null']) && $data['null'] === false) {
             $out .= ' NOT NULL';
         }
-        if (isset($data['null']) && $data['null'] === true && $data['type'] === 'timestamp') {
-            $out .= ' DEFAULT NULL';
-            unset($data['default']);
-        }
-        if (isset($data['default']) && $data['type'] !== 'timestamp') {
+
+        if (isset($data['default']) &&
+            in_array($data['type'], ['timestamp', 'datetime']) &&
+            strtolower($data['default']) === 'current_timestamp') {
+            $out .= ' DEFAULT CURRENT_TIMESTAMP';
+        } elseif (isset($data['default'])) {
             $defaultValue = $data['default'];
             if ($data['type'] === 'boolean') {
                 $defaultValue = (bool)$defaultValue;
             }
             $out .= ' DEFAULT ' . $this->_driver->schemaValue($defaultValue);
+        } elseif (isset($data['null']) && $data['null'] !== false) {
+            $out .= ' DEFAULT NULL';
         }
 
         return $out;
@@ -527,7 +538,7 @@ class PostgresSchema extends BaseSchema
         $content = array_merge($columns, $constraints);
         $content = implode(",\n", array_filter($content));
         $tableName = $this->_driver->quoteIdentifier($schema->name());
-        $temporary = $schema->temporary() ? ' TEMPORARY ' : ' ';
+        $temporary = $schema->isTemporary() ? ' TEMPORARY ' : ' ';
         $out = [];
         $out[] = sprintf("CREATE%sTABLE %s (\n%s\n)", $temporary, $tableName, $content);
         foreach ($indexes as $index) {

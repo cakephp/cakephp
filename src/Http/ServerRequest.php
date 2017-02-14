@@ -41,7 +41,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Array of parameters parsed from the URL.
      *
      * @var array
-     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use param() instead.
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getParam() instead.
      */
     public $params = [
         'plugin' => null,
@@ -57,7 +57,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * data.
      *
      * @var array
-     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use data() instead.
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getData() instead.
      */
     public $data = [];
 
@@ -65,7 +65,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Array of querystring arguments
      *
      * @var array
-     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use query() instead.
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getQuery() instead.
      */
     public $query = [];
 
@@ -73,7 +73,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Array of cookie data.
      *
      * @var array
-     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use cookie() instead.
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getCookie() instead.
      */
     public $cookies = [];
 
@@ -111,7 +111,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * The full address to the current request
      *
      * @var string
-     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use here() instead.
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getRequestTarget() instead.
      */
     public $here;
 
@@ -224,7 +224,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Uses the $_GET, $_POST, $_FILES, $_COOKIE, $_SERVER, $_ENV and php://input data to construct
      * the request.
      *
-     * @return \Cake\Http\ServerRequest
+     * @return self
      * @deprecated 3.4.0 Use `Cake\Http\ServerRequestFactory` instead.
      */
     public static function createFromGlobals()
@@ -313,6 +313,9 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         }
         if ($config['url']) {
             $uri = $uri->withPath('/' . $config['url']);
+        }
+        if (strlen($querystr)) {
+            $uri = $uri->withQuery($querystr);
         }
 
         $this->uri = $uri;
@@ -607,7 +610,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string $name The property being accessed.
      * @return mixed Either the value of the parameter or null.
      * @deprecated 3.4.0 Accessing routing parameters through __get will removed in 4.0.0.
-     *   Use param() instead.
+     *   Use getParam() instead.
      */
     public function __get($name)
     {
@@ -885,7 +888,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * This modifies the parameters available through `$request->params`.
      *
      * @param array $params Array of parameters to merge in
-     * @return self The current object, you can chain this method.
+     * @return $this The current object, you can chain this method.
      */
     public function addParams(array $params)
     {
@@ -899,7 +902,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Provides an easy way to modify, here, webroot and base.
      *
      * @param array $paths Array of paths to merge in
-     * @return self The current object, you can chain this method.
+     * @return $this The current object, you can chain this method.
      */
     public function addPaths(array $paths)
     {
@@ -1033,8 +1036,6 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
 
     /**
      * Get a single header as a string from the request.
-     *
-     * Return an array of header values
      *
      * @param string $name The header you want to get (case-insensitive)
      * @return string Header values collapsed into a comma separated string.
@@ -1441,7 +1442,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|null $name Dot separated name of the value to read/write
      * @param mixed ...$args The data to set (deprecated)
-     * @return mixed|self Either the value being read, or this so you can chain consecutive writes.
+     * @return mixed|$this Either the value being read, or this so you can chain consecutive writes.
      * @deprecated 3.4.0 Use withData() and getData() or getParsedBody() instead.
      */
     public function data($name = null, ...$args)
@@ -1469,10 +1470,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * $request->getData();
      *
      * // Read a specific field.
-     * $request->data('Post.title');
+     * $request->getData('Post.title');
      *
      * // With a default value.
-     * $request->data('Post.not there', 'default value);
+     * $request->getData('Post.not there', 'default value);
      * ```
      *
      * When reading values you will get `null` for keys/values that do not exist.
@@ -1486,6 +1487,9 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         if ($name === null) {
             return $this->data;
         }
+        if (!is_array($this->data) && $name) {
+            return $default;
+        }
 
         return Hash::get($this->data, $name, $default);
     }
@@ -1495,7 +1499,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name The name of the parameter to get.
      * @param mixed ...$args Value to set (deprecated).
-     * @return mixed|self The value of the provided parameter. Will
+     * @return mixed|$this The value of the provided parameter. Will
      *   return false if the parameter doesn't exist or is falsey.
      * @deprecated 3.4.0 Use getParam() and withParam() instead.
      */
@@ -1536,6 +1540,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function input($callback = null, ...$args)
     {
+        $this->stream->rewind();
         $input = $this->stream->getContents();
         if ($callback) {
             array_unshift($args, $input);
@@ -1679,7 +1684,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string|null $value Value to set. Default null.
      * @param string|null $default Default value when trying to retrieve an environment
      *   variable's value that does not exist. The value parameter must be null.
-     * @return self|string|null This instance if used as setter,
+     * @return $this|string|null This instance if used as setter,
      *   if used as getter either the environment value, or null if the value doesn't exist.
      */
     public function env($key, $value = null, $default = null)
@@ -2071,7 +2076,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name Name of the key being accessed.
      * @return mixed
-     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use param(), data() and query() instead.
+     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use getParam(), getData() and getQuery() instead.
      */
     public function offsetGet($name)
     {
@@ -2094,7 +2099,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string $name Name of the key being written
      * @param mixed $value The value being written.
      * @return void
-     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use param(), data() and query() instead.
+     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use setParam(), setData() and setQuery() instead.
      */
     public function offsetSet($name, $value)
     {
@@ -2106,7 +2111,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name thing to check.
      * @return bool
-     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use param(), data() and query() instead.
+     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use getParam(), getData() and getQuery() instead.
      */
     public function offsetExists($name)
     {
@@ -2122,10 +2127,13 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name Name to unset.
      * @return void
-     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use param(), data() and query() instead.
+     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use setParam(), setData() and setQuery() instead.
      */
     public function offsetUnset($name)
     {
         unset($this->params[$name]);
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Http\ServerRequest', 'Cake\Network\Request');

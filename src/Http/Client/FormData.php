@@ -93,7 +93,7 @@ class FormData implements Countable
      * @param string|\Cake\Http\Client\FormData $name The name of the part to add,
      *   or the part data object.
      * @param mixed $value The value for the part.
-     * @return self
+     * @return $this
      */
     public function add($name, $value = null)
     {
@@ -124,7 +124,7 @@ class FormData implements Countable
      * Iterates the parameter and adds all the key/values.
      *
      * @param array $data Array of data to add.
-     * @return self
+     * @return $this
      */
     public function addMany(array $data)
     {
@@ -268,3 +268,6 @@ class FormData implements Countable
         return http_build_query($data);
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Http\Client\FormData', 'Cake\Network\Http\FormData');

@@ -24,7 +24,6 @@ use Cake\Database\Log\QueryLogger;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Datasource\ConnectionInterface;
-use Exception;
 
 /**
  * Represents a connection with a database server.
@@ -150,7 +149,7 @@ class Connection implements ConnectionInterface
      * @param array $config Config for a new driver.
      * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
      * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
-     * @return self
+     * @return $this
      */
     public function setDriver($driver, $config = [])
     {
@@ -214,7 +213,7 @@ class Connection implements ConnectionInterface
             $this->_driver->connect();
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new MissingConnectionException(['reason' => $e->getMessage()]);
         }
     }
@@ -335,7 +334,7 @@ class Connection implements ConnectionInterface
      * Sets a Schema\Collection object for this connection.
      *
      * @param \Cake\Database\Schema\Collection $collection The schema collection object
-     * @return self
+     * @return $this
      */
     public function setSchemaCollection(SchemaCollection $collection)
     {
@@ -522,7 +521,7 @@ class Connection implements ConnectionInterface
      * `$connection->enableSavePoints(false)` Disables usage of savepoints and returns false
      *
      * @param bool $enable Whether or not save points should be used.
-     * @return self
+     * @return $this
      */
     public function enableSavePoints($enable)
     {
@@ -653,7 +652,7 @@ class Connection implements ConnectionInterface
 
         try {
             $result = $callback($this);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->rollback();
             throw $e;
         }
@@ -686,7 +685,7 @@ class Connection implements ConnectionInterface
 
         try {
             $result = $callback($this);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->enableForeignKeys();
             throw $e;
         }
@@ -747,7 +746,7 @@ class Connection implements ConnectionInterface
      *
      * Changing this setting will not modify existing schema collections objects.
      *
-     * @param bool|string $cache Either boolean false to disable meta dataing caching, or
+     * @param bool|string $cache Either boolean false to disable metadata caching, or
      *   true to use `_cake_model_` or the name of the cache config to use.
      * @return void
      */

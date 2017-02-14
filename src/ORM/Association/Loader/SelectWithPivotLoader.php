@@ -94,15 +94,15 @@ class SelectWithPivotLoader extends SelectLoader
             $query = $queryBuilder($query);
         }
 
-        if ($query->autoFields() === null) {
-            $query->autoFields($query->clause('select') === []);
+        if ($query->isAutoFieldsEnabled() === null) {
+            $query->enableAutoFields($query->clause('select') === []);
         }
 
         // Ensure that association conditions are applied
         // and that the required keys are in the selected columns.
 
         $tempName = $this->alias . '_CJoin';
-        $schema = $assoc->schema();
+        $schema = $assoc->getSchema();
         $joinFields = $types = [];
 
         foreach ($schema->typeMap() as $f => $type) {
@@ -116,15 +116,15 @@ class SelectWithPivotLoader extends SelectLoader
             ->select($joinFields);
 
         $query
-            ->eagerLoader()
+            ->getEagerLoader()
             ->addToJoinsMap($tempName, $assoc, false, $this->junctionProperty);
 
         $assoc->attachTo($query, [
-            'aliasPath' => $assoc->alias(),
+            'aliasPath' => $assoc->getAlias(),
             'includeFields' => false,
             'propertyPath' => $this->junctionProperty,
         ]);
-        $query->typeMap()->addDefaults($types);
+        $query->getTypeMap()->addDefaults($types);
 
         return $query;
     }
@@ -165,13 +165,13 @@ class SelectWithPivotLoader extends SelectLoader
     {
         $resultMap = [];
         $key = (array)$options['foreignKey'];
-        $hydrated = $fetchQuery->hydrate();
+        $hydrated = $fetchQuery->isHydrationEnabled();
 
         foreach ($fetchQuery->all() as $result) {
             if (!isset($result[$this->junctionProperty])) {
                 throw new RuntimeException(sprintf(
                     '"%s" is missing from the belongsToMany results. Results cannot be created.',
-                    $this->_junctionProperty
+                    $this->junctionProperty
                 ));
             }
 

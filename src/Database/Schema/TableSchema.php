@@ -327,7 +327,7 @@ class TableSchema
      *
      * @param string $name The name of the column
      * @param array $attrs The attributes for the column.
-     * @return self
+     * @return $this
      */
     public function addColumn($name, $attrs)
     {
@@ -482,7 +482,7 @@ class TableSchema
      *
      * @param string $name The name of the index.
      * @param array $attrs The attributes for the index.
-     * @return self
+     * @return $this
      * @throws \Cake\Database\Exception
      */
     public function addIndex($name, $attrs)
@@ -578,7 +578,7 @@ class TableSchema
      *
      * @param string $name The name of the constraint.
      * @param array $attrs The attributes for the constraint.
-     * @return self
+     * @return $this
      * @throws \Cake\Database\Exception
      */
     public function addConstraint($name, $attrs)
@@ -717,7 +717,7 @@ class TableSchema
      * For example the engine type in MySQL.
      *
      * @param array $options The options to set, or null to read options.
-     * @return self TableSchema instance
+     * @return $this
      */
     public function setOptions($options)
     {
@@ -747,7 +747,7 @@ class TableSchema
      *
      * @deprecated 3.4.0 Use setOptions()/getOptions() instead.
      * @param array|null $options The options to set, or null to read options.
-     * @return self|array Either the TableSchema instance, or an array of options when reading.
+     * @return $this|array Either the TableSchema instance, or an array of options when reading.
      */
     public function options($options = null)
     {
@@ -762,7 +762,7 @@ class TableSchema
      * Sets whether the table is temporary in the database.
      *
      * @param bool $temporary Whether or not the table is to be temporary.
-     * @return self Instance.
+     * @return $this
      */
     public function setTemporary($temporary)
     {
@@ -786,7 +786,7 @@ class TableSchema
      *
      * @deprecated 3.4.0 Use setTemporary()/isTemporary() instead.
      * @param bool|null $temporary whether or not the table is to be temporary
-     * @return self|bool Either the TableSchema instance, the current temporary setting
+     * @return $this|bool Either the TableSchema instance, the current temporary setting
      */
     public function temporary($temporary = null)
     {
@@ -879,3 +879,6 @@ class TableSchema
         return $dialect->dropConstraintSql($this);
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Database\Schema\TableSchema', 'Cake\Database\Schema\Table');

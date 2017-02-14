@@ -112,9 +112,11 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * });
      * ```
      *
+     * Empty collections always return true because it is a vacuous truth.
+     *
      * @param callable $c a callback function
      * @return bool true if for all elements in this collection the provided
-     * callback returns true, false otherwise
+     *   callback returns true, false otherwise.
      */
     public function every(callable $c);
 
@@ -135,8 +137,8 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ```
      *
      * @param callable $c a callback function
-     * @return bool true if for all elements in this collection the provided
-     * callback returns true, false otherwise
+     * @return bool true if the provided callback returns true for any element in this
+     * collection, false otherwise
      */
     public function some(callable $c);
 
@@ -183,7 +185,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *
      * @param callable $c The callback function to be called
      * @param mixed $zero The state of reduction
-     * @return void
+     * @return mixed
      */
     public function reduce(callable $c, $zero = null);
 

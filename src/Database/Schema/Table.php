@@ -1,3 +1,3 @@
 <?php
-// @deprecated Backwards compatibility with earlier 3.x versions.
-class_alias('Cake\Database\Schema\TableSchema', 'Cake\Database\Schema\Table');
+// @deprecated Load new class and alias
+class_exists('Cake\Database\Schema\TableSchema');

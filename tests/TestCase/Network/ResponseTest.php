@@ -130,18 +130,30 @@ class ResponseTest extends TestCase
     /**
      * Tests the statusCode method
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testStatusCode()
     {
         $response = new Response();
         $this->assertEquals(200, $response->statusCode());
-        $response->statusCode(404);
-        $this->assertEquals(404, $response->statusCode());
-        $this->assertEquals(500, $response->statusCode(500));
 
-        //Throws exception
+        $response->statusCode(404);
+        $this->assertEquals(404, $response->getStatusCode(), 'Sets shared state.');
+        $this->assertEquals(404, $response->statusCode());
+        $this->assertEquals('Not Found', $response->getReasonPhrase());
+
+        $this->assertEquals(500, $response->statusCode(500));
+    }
+
+    /**
+     * Test invalid status codes
+     *
+     * @expectedException \InvalidArgumentException
+     * @return void
+     */
+    public function testStatusCodeInvalid()
+    {
+        $response = new Response();
         $response->statusCode(1001);
     }
 
@@ -593,7 +605,7 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $result = $response->httpCodes();
-        $this->assertEquals(65, count($result));
+        $this->assertCount(65, $result);
 
         $result = $response->httpCodes(100);
         $expected = [100 => 'Continue'];
@@ -606,7 +618,7 @@ class ResponseTest extends TestCase
 
         $result = $response->httpCodes($codes);
         $this->assertTrue($result);
-        $this->assertEquals(67, count($response->httpCodes()));
+        $this->assertCount(67, $response->httpCodes());
 
         $result = $response->httpCodes(381);
         $expected = [381 => 'Unicorn Moved'];
@@ -615,7 +627,7 @@ class ResponseTest extends TestCase
         $codes = [404 => 'Sorry Bro'];
         $result = $response->httpCodes($codes);
         $this->assertTrue($result);
-        $this->assertEquals(67, count($response->httpCodes()));
+        $this->assertCount(67, $response->httpCodes());
 
         $result = $response->httpCodes(404);
         $expected = [404 => 'Sorry Bro'];
@@ -1427,6 +1439,46 @@ class ResponseTest extends TestCase
             'httpOnly' => false
         ];
         $this->assertEquals($expected, $new->getCookie('testing'));
+    }
+
+    /**
+     * Test getCookies() and array data.
+     *
+     * @return void
+     */
+    public function testGetCookies()
+    {
+        $response = new Response();
+        $cookie = [
+            'name' => 'ignored key',
+            'value' => '[a,b,c]',
+            'expire' => 1000,
+            'path' => '/test',
+            'secure' => true
+        ];
+        $new = $response->withCookie('testing', 'a')
+            ->withCookie('test2', ['value' => 'b', 'path' => '/test', 'secure' => true]);
+        $expected = [
+            'testing' => [
+                'name' => 'testing',
+                'value' => 'a',
+                'expire' => null,
+                'path' => '/',
+                'domain' => '',
+                'secure' => false,
+                'httpOnly' => false
+            ],
+            'test2' => [
+                'name' => 'test2',
+                'value' => 'b',
+                'expire' => null,
+                'path' => '/test',
+                'domain' => '',
+                'secure' => true,
+                'httpOnly' => false
+            ]
+        ];
+        $this->assertEquals($expected, $new->getCookies());
     }
 
     /**
@@ -2690,8 +2742,8 @@ class ResponseTest extends TestCase
     public function testGetReasonPhrase()
     {
         $response = new Response();
-        $reasonPhrase = $response->getReasonPhrase();
-        $this->assertNull($reasonPhrase);
+        $this->assertSame('OK', $response->getReasonPhrase());
+
         $response = $response->withStatus(404);
         $reasonPhrase = $response->getReasonPhrase();
         $this->assertEquals('Not Found', $reasonPhrase);

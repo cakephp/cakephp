@@ -72,7 +72,7 @@ class NullContext implements ContextInterface
      */
     public function val($field)
     {
-        return $this->_request->data($field);
+        return $this->_request->getData($field);
     }
 
     /**

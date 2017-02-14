@@ -16,10 +16,10 @@ namespace Cake\I18n;
 
 use Aura\Intl\FormatterLocator;
 use Aura\Intl\PackageLocator;
-use Aura\Intl\TranslatorFactory;
 use Cake\Cache\Cache;
 use Cake\I18n\Formatter\IcuFormatter;
 use Cake\I18n\Formatter\SprintfFormatter;
+use Cake\I18n\TranslatorFactory;
 use Locale;
 
 /**
@@ -38,7 +38,7 @@ class I18n
     /**
      * The translators collection
      *
-     * @var \Aura\Intl\TranslatorLocator|null
+     * @var \Cake\I18n\TranslatorRegistry|null
      */
     protected static $_collection = null;
 
@@ -54,7 +54,7 @@ class I18n
      * for getting specific translators based of their name and locale
      * or to configure some aspect of future translations that are not yet constructed.
      *
-     * @return \Aura\Intl\TranslatorLocator|\Cake\I18n\TranslatorRegistry The translators collection.
+     * @return \Cake\I18n\TranslatorRegistry The translators collection.
      */
     public static function translators()
     {

@@ -937,8 +937,8 @@ class MarshallerTest extends TestCase
         $this->assertEquals($data['tags'][1]['name'], $article->tags[1]->name);
         $this->assertEquals($article->tags[2], $tags->get(1));
 
-        $this->assertEquals($article->tags[0]->isNew(), true);
-        $this->assertEquals($article->tags[1]->isNew(), true);
+        $this->assertTrue($article->tags[0]->isNew());
+        $this->assertTrue($article->tags[1]->isNew());
         $this->assertEquals($article->tags[2]->isNew(), false);
 
         $tagCount = $tags->find()->count();

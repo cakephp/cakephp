@@ -167,7 +167,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         }
 
         $message = $this->_message($exception, $code);
-        $url = $this->controller->request->here();
+        $url = $this->controller->request->getRequestTarget();
 
         if (method_exists($exception, 'responseHeader')) {
             $this->controller->response->header($exception->responseHeader());
@@ -351,9 +351,9 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $helpers = ['Form', 'Html'];
         $this->controller->helpers = $helpers;
         $builder = $this->controller->viewBuilder();
-        $builder->helpers($helpers, false)
-            ->layoutPath('')
-            ->templatePath('Error');
+        $builder->setHelpers($helpers, false)
+            ->setLayoutPath('')
+            ->setTemplatePath('Error');
         $view = $this->controller->createView('View');
 
         $this->controller->response->body($view->render($template, 'error'));
@@ -375,7 +375,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $dispatcher = DispatcherFactory::create();
         $eventManager = $dispatcher->eventManager();
         foreach ($dispatcher->filters() as $filter) {
-            $eventManager->attach($filter);
+            $eventManager->on($filter);
         }
         $args = [
             'request' => $this->controller->request,
@@ -383,6 +383,6 @@ class ExceptionRenderer implements ExceptionRendererInterface
         ];
         $result = $dispatcher->dispatchEvent('Dispatcher.afterDispatch', $args);
 
-        return $result->data('response');
+        return $result->getData('response');
     }
 }

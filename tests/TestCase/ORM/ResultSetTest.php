@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
@@ -269,7 +268,7 @@ class ResultSetTest extends TestCase
      *
      * @return void
      */
-    public function testBelongsToEagerLoaderLeavesEmptyAssocation()
+    public function testBelongsToEagerLoaderLeavesEmptyAssociation()
     {
         $comments = TableRegistry::get('Comments');
         $comments->belongsTo('Articles');
@@ -329,7 +328,7 @@ class ResultSetTest extends TestCase
      *
      * @return void
      */
-    public function testHasOneEagerLoaderLeavesEmptyAssocation()
+    public function testHasOneEagerLoaderLeavesEmptyAssociation()
     {
         $this->table->hasOne('Comments');
 

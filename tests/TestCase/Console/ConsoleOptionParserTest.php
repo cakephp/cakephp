@@ -181,6 +181,29 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * test adding an option and using the short value for parsing.
+     *
+     * @return void
+     */
+    public function testAddOptionWithMultipleShort()
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('source', [
+            'multiple' => true,
+            'short' => 's'
+        ]);
+        $result = $parser->parse(['-s', 'mysql', '-s', 'postgres']);
+        $this->assertEquals(
+            [
+                'source' => ['mysql', 'postgres'],
+                'help' => false
+            ],
+            $result[0],
+            'Short parameter did not parse out'
+        );
+    }
+
+    /**
      * Test that adding an option using a two letter short value causes an exception.
      * As they will not parse correctly.
      *
@@ -249,6 +272,53 @@ class ConsoleOptionParserTest extends TestCase
         $result = $parser->parse(['--test', 'value', '-t', '--connection', 'postgres']);
         $expected = ['test' => 'value', 'table' => true, 'connection' => 'postgres', 'help' => false];
         $this->assertEquals($expected, $result[0], 'multiple options did not parse');
+    }
+
+    /**
+     * test adding an option that accepts multiple values.
+     *
+     * @return void
+     */
+    public function testAddOptionWithMultiple()
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('source', ['short' => 's', 'multiple' => true]);
+
+        $result = $parser->parse(['--source', 'mysql', '-s', 'postgres']);
+        $expected = [
+            'source' => [
+                'mysql',
+                'postgres'
+            ],
+            'help' => false
+        ];
+        $this->assertEquals($expected, $result[0], 'options with multiple values did not parse');
+    }
+
+    /**
+     * test adding multiple options, including one that accepts multiple values.
+     *
+     * @return void
+     */
+    public function testAddMultipleOptionsWithMultiple()
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser
+            ->addOption('source', ['multiple' => true])
+            ->addOption('name')
+            ->addOption('export', ['boolean' => true]);
+
+        $result = $parser->parse(['--export', '--source', 'mysql', '--name', 'annual-report', '--source', 'postgres']);
+        $expected = [
+            'export' => true,
+            'source' => [
+                'mysql',
+                'postgres'
+            ],
+            'name' => 'annual-report',
+            'help' => false
+        ];
+        $this->assertEquals($expected, $result[0], 'options with multiple values did not parse');
     }
 
     /**
@@ -522,6 +592,30 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * Test addSubcommand inherits options as no
+     * parser is created.
+     *
+     * @return void
+     */
+    public function testAddSubcommandInheritOptions()
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addSubcommand('build', [
+            'help' => 'Build things'
+        ])->addOption('connection', [
+            'short' => 'c',
+            'default' => 'default'
+        ])->addArgument('name', ['required' => false]);
+
+        $result = $parser->parse(['build']);
+        $this->assertEquals('default', $result[0]['connection']);
+
+        $result = $parser->subcommands();
+        $this->assertArrayHasKey('build', $result);
+        $this->assertFalse($result['build']->parser(), 'No parser should be created');
+    }
+
+    /**
      * test addSubcommand with an object.
      *
      * @return void
@@ -531,7 +625,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser = new ConsoleOptionParser('test', false);
         $parser->addSubcommand(new ConsoleInputSubcommand('test'));
         $result = $parser->subcommands();
-        $this->assertEquals(1, count($result));
+        $this->assertCount(1, $result);
         $this->assertEquals('test', $result['test']->name());
     }
 
@@ -545,7 +639,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser = new ConsoleOptionParser('test', false);
         $parser->addSubcommand(new ConsoleInputSubcommand('test'));
         $result = $parser->subcommands();
-        $this->assertEquals(1, count($result));
+        $this->assertCount(1, $result);
         $parser->removeSubcommand('test');
         $result = $parser->subcommands();
         $this->assertEquals(0, count($result), 'Remove a subcommand does not work');
@@ -603,6 +697,8 @@ class ConsoleOptionParserTest extends TestCase
 
         $result = $parser->help('method');
         $expected = <<<TEXT
+This is another command
+
 <info>Usage:</info>
 cake mycommand method [--connection] [-h] [-0]
 
@@ -611,6 +707,48 @@ cake mycommand method [--connection] [-h] [-0]
 --connection      Db connection.
 --help, -h        Display this help.
 --zero, -0        Zero.
+
+TEXT;
+        $this->assertTextEquals($expected, $result, 'Help is not correct.');
+    }
+
+    /**
+     * test that help() with a command param shows the help for a subcommand
+     *
+     * @return void
+     */
+    public function testHelpSubcommandHelpArray()
+    {
+        $subParser = [
+            'options' => [
+                'foo' => [
+                    'short' => 'f',
+                    'help' => 'Foo.',
+                    'boolean' => true,
+                ]
+            ],
+        ];
+
+        $parser = new ConsoleOptionParser('mycommand', false);
+        $parser->addSubcommand('method', [
+            'help' => 'This is a subcommand',
+            'parser' => $subParser
+        ])
+            ->addOption('test', ['help' => 'A test option.']);
+
+        $result = $parser->help('method');
+        $expected = <<<TEXT
+This is a subcommand
+
+<info>Usage:</info>
+cake mycommand method [-f] [-h] [-q] [-v]
+
+<info>Options:</info>
+
+--foo, -f      Foo.
+--help, -h     Display this help.
+--quiet, -q    Enable quiet output.
+--verbose, -v  Enable verbose output.
 
 TEXT;
         $this->assertTextEquals($expected, $result, 'Help is not correct.');
@@ -649,10 +787,10 @@ TEXT;
         $this->assertTrue(isset($options['other']));
 
         $args = $parser->arguments();
-        $this->assertEquals(2, count($args));
+        $this->assertCount(2, $args);
 
         $commands = $parser->subcommands();
-        $this->assertEquals(1, count($commands));
+        $this->assertCount(1, $commands);
     }
 
     /**
@@ -745,8 +883,8 @@ TEXT;
         $this->assertTrue(isset($options['name']));
         $this->assertTrue(isset($options['other']));
 
-        $this->assertEquals(2, count($result['arguments']));
-        $this->assertEquals(1, count($result['subcommands']));
+        $this->assertCount(2, $result['arguments']);
+        $this->assertCount(1, $result['subcommands']);
     }
 
     /**
@@ -775,7 +913,7 @@ TEXT;
         $this->assertTrue(isset($options['file']));
         $this->assertTrue(isset($options['output']));
 
-        $this->assertEquals(2, count($result['arguments']));
-        $this->assertEquals(6, count($result['options']));
+        $this->assertCount(2, $result['arguments']);
+        $this->assertCount(6, $result['options']);
     }
 }

@@ -65,7 +65,7 @@ class CsrfComponent extends Component
      * Validates the CSRF token for POST data. If
      * the request is a GET request, and the cookie value is absent a cookie will be set.
      *
-     * Once a cookie is set it will be copied into request->params['_csrfToken']
+     * Once a cookie is set it will be copied into request->getParam('_csrfToken')
      * so that application and framework code can easily access the csrf token.
      *
      * RequestAction requests do not get checked, nor will
@@ -76,13 +76,13 @@ class CsrfComponent extends Component
      */
     public function startup(Event $event)
     {
-        $controller = $event->subject();
+        $controller = $event->getSubject();
         $request = $controller->request;
         $response = $controller->response;
         $cookieName = $this->_config['cookieName'];
 
         /* @var \Cake\Network\Request $request */
-        $cookieData = $request->cookie($cookieName);
+        $cookieData = $request->getCookie($cookieName);
         if ($cookieData) {
             $request->params['_csrfToken'] = $cookieData;
         }
@@ -94,7 +94,7 @@ class CsrfComponent extends Component
         if ($request->is('get') && $cookieData === null) {
             $this->_setCookie($request, $response);
         }
-        if ($request->is(['put', 'post', 'delete', 'patch']) || $request->data()) {
+        if ($request->is(['put', 'post', 'delete', 'patch']) || $request->getData()) {
             $this->_validateToken($request);
             unset($request->data[$this->_config['field']]);
         }
@@ -132,7 +132,7 @@ class CsrfComponent extends Component
             'name' => $this->_config['cookieName'],
             'value' => $value,
             'expire' => $expiry->format('U'),
-            'path' => $request->webroot,
+            'path' => $request->getAttribute('webroot'),
             'secure' => $this->_config['secure'],
             'httpOnly' => $this->_config['httpOnly'],
         ]);
@@ -147,9 +147,9 @@ class CsrfComponent extends Component
      */
     protected function _validateToken(ServerRequest $request)
     {
-        $cookie = $request->cookie($this->_config['cookieName']);
-        $post = $request->data($this->_config['field']);
-        $header = $request->header('X-CSRF-Token');
+        $cookie = $request->getCookie($this->_config['cookieName']);
+        $post = $request->getData($this->_config['field']);
+        $header = $request->getHeaderLine('X-CSRF-Token');
 
         if (!$cookie) {
             throw new InvalidCsrfTokenException(__d('cake', 'Missing CSRF token cookie'));

@@ -133,7 +133,7 @@ class ResponseEmitter implements EmitterInterface
      * Emit the status line.
      *
      * Emits the status line using the protocol version and status code from
-     * the response; if a reason phrase is availble, it, too, is emitted.
+     * the response; if a reason phrase is available, it, too, is emitted.
      *
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
      * @return void
@@ -162,9 +162,14 @@ class ResponseEmitter implements EmitterInterface
      */
     protected function emitHeaders(ResponseInterface $response)
     {
+        $cookies = [];
+        if (method_exists($response, 'getCookies')) {
+            $cookies = $response->getCookies();
+        }
+
         foreach ($response->getHeaders() as $name => $values) {
             if (strtolower($name) === 'set-cookie') {
-                $this->emitCookies($values);
+                $cookies = array_merge($cookies, $values);
                 continue;
             }
             $first = true;
@@ -177,6 +182,8 @@ class ResponseEmitter implements EmitterInterface
                 $first = false;
             }
         }
+
+        $this->emitCookies($cookies);
     }
 
     /**
@@ -187,7 +194,20 @@ class ResponseEmitter implements EmitterInterface
      */
     protected function emitCookies(array $cookies)
     {
-        foreach ((array)$cookies as $cookie) {
+        foreach ($cookies as $cookie) {
+            if (is_array($cookie)) {
+                setcookie(
+                    $cookie['name'],
+                    $cookie['value'],
+                    $cookie['expire'],
+                    $cookie['path'],
+                    $cookie['domain'],
+                    $cookie['secure'],
+                    $cookie['httpOnly']
+                );
+                continue;
+            }
+
             if (strpos($cookie, '";"') !== false) {
                 $cookie = str_replace('";"', "{__cookie_replace__}", $cookie);
                 $parts = str_replace("{__cookie_replace__}", '";"', explode(';', $cookie));

@@ -73,7 +73,7 @@ class ValuesExpression implements ExpressionInterface
     public function __construct(array $columns, $typeMap)
     {
         $this->_columns = $columns;
-        $this->typeMap($typeMap);
+        $this->setTypeMap($typeMap);
     }
 
     /**
@@ -94,7 +94,7 @@ class ValuesExpression implements ExpressionInterface
             );
         }
         if ($data instanceof Query) {
-            $this->query($data);
+            $this->setQuery($data);
 
             return;
         }
@@ -106,7 +106,7 @@ class ValuesExpression implements ExpressionInterface
      * Sets the columns to be inserted.
      *
      * @param array $cols Array with columns to be inserted.
-     * @return self
+     * @return $this
      */
     public function setColumns($cols)
     {
@@ -132,7 +132,7 @@ class ValuesExpression implements ExpressionInterface
      *
      * @deprecated 3.4.0 Use setColumns()/getColumns() instead.
      * @param array|null $cols Array with columns to be inserted.
-     * @return array|self
+     * @return array|$this
      */
     public function columns($cols = null)
     {
@@ -168,7 +168,7 @@ class ValuesExpression implements ExpressionInterface
      * Sets the values to be inserted.
      *
      * @param array $values Array with values to be inserted.
-     * @return self
+     * @return $this
      */
     public function setValues($values)
     {
@@ -196,8 +196,9 @@ class ValuesExpression implements ExpressionInterface
      * Sets the values to be inserted. If no params are passed, then it returns
      * the currently stored values
      *
+     * @deprecated 3.4.0 Use setValues()/getValues() instead.
      * @param array|null $values Array with values to be inserted.
-     * @return array|self
+     * @return array|$this
      */
     public function values($values = null)
     {
@@ -213,7 +214,7 @@ class ValuesExpression implements ExpressionInterface
      * to insert records in the table.
      *
      * @param \Cake\Database\Query $query The query to set
-     * @return self
+     * @return $this
      */
     public function setQuery(Query $query)
     {
@@ -240,7 +241,7 @@ class ValuesExpression implements ExpressionInterface
      *
      * @deprecated 3.4.0 Use setQuery()/getQuery() instead.
      * @param \Cake\Database\Query|null $query The query to set
-     * @return \Cake\Database\Query|null|self
+     * @return \Cake\Database\Query|null|$this
      */
     public function query(Query $query = null)
     {
@@ -267,15 +268,12 @@ class ValuesExpression implements ExpressionInterface
             $this->_processExpressions();
         }
 
-        $i = 0;
-        $columns = [];
-
         $columns = $this->_columnNames();
         $defaults = array_fill_keys($columns, null);
         $placeholders = [];
 
         $types = [];
-        $typeMap = $this->typeMap();
+        $typeMap = $this->getTypeMap();
         foreach ($defaults as $col => $v) {
             $types[$col] = $typeMap->type($col);
         }
@@ -292,7 +290,7 @@ class ValuesExpression implements ExpressionInterface
                     continue;
                 }
 
-                $placeholder = $generator->placeholder($i);
+                $placeholder = $generator->placeholder('c');
                 $rowPlaceholders[] = $placeholder;
                 $generator->bind($placeholder, $value, $types[$column]);
             }
@@ -300,8 +298,8 @@ class ValuesExpression implements ExpressionInterface
             $placeholders[] = implode(', ', $rowPlaceholders);
         }
 
-        if ($this->query()) {
-            return ' ' . $this->query()->sql($generator);
+        if ($this->getQuery()) {
+            return ' ' . $this->getQuery()->sql($generator);
         }
 
         return sprintf(' VALUES (%s)', implode('), (', $placeholders));
@@ -350,7 +348,7 @@ class ValuesExpression implements ExpressionInterface
     protected function _processExpressions()
     {
         $types = [];
-        $typeMap = $this->typeMap();
+        $typeMap = $this->getTypeMap();
 
         $columns = $this->_columnNames();
         foreach ($columns as $c) {

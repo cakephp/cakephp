@@ -50,7 +50,7 @@ abstract class Helper
     public function __construct(ConsoleIo $io, array $config = [])
     {
         $this->_io = $io;
-        $this->config($config);
+        $this->setConfig($config);
     }
 
     /**

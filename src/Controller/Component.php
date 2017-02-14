@@ -51,7 +51,7 @@ use Cake\Log\LogTrait;
  *   propagation.
  *
  * While the controller is not an explicit argument for the callback methods it
- * is the subject of each event and can be fetched using Event::subject().
+ * is the subject of each event and can be fetched using Event::getSubject().
  *
  * @link http://book.cakephp.org/3.0/en/controllers/components.html
  * @see \Cake\Controller\Controller::$components
@@ -67,7 +67,7 @@ class Component implements EventListenerInterface
      *
      * @var \Cake\Http\ServerRequest
      * @deprecated 3.4.0 Storing references to the request is deprecated. Use Component::getController()
-     *   or callback $event->subject() to access the controller & request instead.
+     *   or callback $event->getSubject() to access the controller & request instead.
      */
     public $request;
 
@@ -76,7 +76,7 @@ class Component implements EventListenerInterface
      *
      * @var \Cake\Network\Response
      * @deprecated 3.4.0 Storing references to the response is deprecated. Use Component::getController()
-     *   or callback $event->subject() to access the controller & response instead.
+     *   or callback $event->getSubject() to access the controller & response instead.
      */
     public $response;
 
@@ -125,7 +125,7 @@ class Component implements EventListenerInterface
             $this->response =& $controller->response;
         }
 
-        $this->config($config);
+        $this->setConfig($config);
 
         if ($this->components) {
             $this->_componentMap = $registry->normalizeArray($this->components);
@@ -217,7 +217,7 @@ class Component implements EventListenerInterface
         return [
             'components' => $this->components,
             'implementedEvents' => $this->implementedEvents(),
-            '_config' => $this->config(),
+            '_config' => $this->getConfig(),
         ];
     }
 }

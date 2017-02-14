@@ -79,7 +79,7 @@ class AssociationCollection implements IteratorAggregate
     public function getByProperty($prop)
     {
         foreach ($this->_items as $assoc) {
-            if ($assoc->property() === $prop) {
+            if ($assoc->getProperty() === $prop) {
                 return $assoc;
             }
         }
@@ -224,7 +224,7 @@ class AssociationCollection implements IteratorAggregate
                 $msg = sprintf(
                     'Cannot save %s, it is not associated to %s',
                     $alias,
-                    $table->alias()
+                    $table->getAlias()
                 );
                 throw new InvalidArgumentException($msg);
             }
@@ -250,7 +250,7 @@ class AssociationCollection implements IteratorAggregate
      */
     protected function _save($association, $entity, $nested, $options)
     {
-        if (!$entity->dirty($association->property())) {
+        if (!$entity->dirty($association->getProperty())) {
             return true;
         }
         if (!empty($nested)) {
@@ -287,7 +287,7 @@ class AssociationCollection implements IteratorAggregate
     {
         $noCascade = [];
         foreach ($this->_items as $assoc) {
-            if (!$assoc->cascadeCallbacks()) {
+            if (!$assoc->getCascadeCallbacks()) {
                 $noCascade[] = $assoc;
                 continue;
             }

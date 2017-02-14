@@ -98,7 +98,7 @@ class CorsBuilder
      * You can use `*.example.com` wildcards to accept subdomains, or `*` to allow all domains
      *
      * @param string|array $domain The allowed domains
-     * @return self
+     * @return $this
      */
     public function allowOrigin($domain)
     {
@@ -145,7 +145,7 @@ class CorsBuilder
      * Set the list of allowed HTTP Methods.
      *
      * @param array $methods The allowed HTTP methods
-     * @return self
+     * @return $this
      */
     public function allowMethods(array $methods)
     {
@@ -157,7 +157,7 @@ class CorsBuilder
     /**
      * Enable cookies to be sent in CORS requests.
      *
-     * @return self
+     * @return $this
      */
     public function allowCredentials()
     {
@@ -170,7 +170,7 @@ class CorsBuilder
      * Whitelist headers that can be sent in CORS requests.
      *
      * @param array $headers The list of headers to accept in CORS requests.
-     * @return self
+     * @return $this
      */
     public function allowHeaders(array $headers)
     {
@@ -183,7 +183,7 @@ class CorsBuilder
      * Define the headers a client library/browser can expose to scripting
      *
      * @param array $headers The list of headers to expose CORS responses
-     * @return self
+     * @return $this
      */
     public function exposeHeaders(array $headers)
     {
@@ -196,7 +196,7 @@ class CorsBuilder
      * Define the max-age preflight OPTIONS requests are valid for.
      *
      * @param int $age The max-age for OPTIONS requests in seconds
-     * @return self
+     * @return $this
      */
     public function maxAge($age)
     {

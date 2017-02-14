@@ -300,4 +300,134 @@ class StringTemplateTest extends TestCase
         $this->assertNull($this->template->pop());
         $this->assertNull($this->template->pop());
     }
+
+    /**
+     * Test addClass method newClass parameter
+     *
+     * Tests null, string, array and false for `input`
+     *
+     * @return void
+     */
+    public function testAddClassMethodNewClass()
+    {
+        $result = $this->template->addClass([], 'new_class');
+        $this->assertEquals($result, ['class' => ['new_class']]);
+
+        $result = $this->template->addClass([], ['new_class']);
+        $this->assertEquals($result, ['class' => ['new_class']]);
+
+        $result = $this->template->addClass([], false);
+        $this->assertEquals($result, []);
+
+        $result = $this->template->addClass([], null);
+        $this->assertEquals($result, []);
+
+        $result = $this->template->addClass(null, null);
+        $this->assertNull($result);
+    }
+
+    /**
+     * Test addClass method input (currentClass) parameter
+     *
+     * Tests null, string, array, false and object
+     *
+     * @return void
+     */
+    public function testAddClassMethodCurrentClass()
+    {
+        $result = $this->template->addClass(['class' => ['current']], 'new_class');
+        $this->assertEquals($result, ['class' => ['current', 'new_class']]);
+
+        $result = $this->template->addClass('', 'new_class');
+        $this->assertEquals($result, ['class' => ['new_class']]);
+
+        $result = $this->template->addClass(null, 'new_class');
+        $this->assertEquals($result, ['class' => ['new_class']]);
+
+        $result = $this->template->addClass(false, 'new_class');
+        $this->assertEquals($result, ['class' => ['new_class']]);
+
+        $result = $this->template->addClass(new \StdClass(), 'new_class');
+        $this->assertEquals($result, ['class' => ['new_class']]);
+    }
+
+    /**
+     * Test addClass method string parameter, it should fallback to string
+     *
+     * @return void
+     */
+    public function testAddClassMethodFallbackToString()
+    {
+        $result = $this->template->addClass('current', 'new_class');
+        $this->assertEquals($result, ['class' => ['current', 'new_class']]);
+    }
+
+    /**
+     * Test addClass method to make sure the returned array is unique
+     *
+     * @return void
+     */
+    public function testAddClassMethodUnique()
+    {
+        $result = $this->template->addClass(['class' => ['new_class']], 'new_class');
+        $this->assertEquals($result, ['class' => ['new_class']]);
+    }
+
+    /**
+     * Test addClass method useIndex param
+     *
+     * Tests for useIndex being the default, 'my_class' and false
+     *
+     * @return void
+     */
+    public function testAddClassMethodUseIndex()
+    {
+        $result = $this->template->addClass(
+            [
+                'class' => 'current_class',
+                'other_index1' => false,
+                'type' => 'text'
+            ],
+            'new_class',
+            'class'
+        );
+        $this->assertEquals($result, [
+            'class' => ['current_class', 'new_class'],
+            'other_index1' => false,
+            'type' => 'text'
+        ]);
+
+        $result = $this->template->addClass(
+            [
+                'my_class' => 'current_class',
+                'other_index1' => false,
+                'type' => 'text'
+            ],
+            'new_class',
+            'my_class'
+        );
+        $this->assertEquals($result, [
+            'other_index1' => false,
+            'type' => 'text',
+            'my_class' => ['current_class', 'new_class']
+        ]);
+
+        $result = $this->template->addClass(
+            [
+                'class' => [
+                    'current_class',
+                    'text'
+                ]
+            ],
+            'new_class',
+            'non-existent'
+        );
+        $this->assertEquals($result, [
+            'class' => [
+                'current_class',
+                'text'
+            ],
+            'non-existent' => ['new_class']
+        ]);
+    }
 }

@@ -140,7 +140,7 @@ class PhpConfigTest extends TestCase
     {
         $engine = new PhpConfig(TMP);
         $result = $engine->dump('test', $this->testData);
-        $this->assertTrue($result > 0);
+        $this->assertGreaterThan(0, $result);
         $expected = <<<PHP
 <?php
 return array (
@@ -168,7 +168,7 @@ PHP;
         $this->assertTextEquals($expected, $contents);
 
         $result = $engine->dump('test', $this->testData);
-        $this->assertTrue($result > 0);
+        $this->assertGreaterThan(0, $result);
 
         $contents = file_get_contents($file);
         $this->assertTextEquals($expected, $contents);

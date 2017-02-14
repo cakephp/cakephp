@@ -186,7 +186,7 @@ class FunctionsBuilder
     public function extract($part, $expression, $types = [])
     {
         $expression = $this->_literalArgumentFunction('EXTRACT', $expression, $types, 'integer');
-        $expression->tieWith(' FROM')->add([$part => 'literal'], [], true);
+        $expression->setConjunction(' FROM')->add([$part => 'literal'], [], true);
 
         return $expression;
     }
@@ -207,7 +207,7 @@ class FunctionsBuilder
         }
         $interval = $value . ' ' . $unit;
         $expression = $this->_literalArgumentFunction('DATE_ADD', $expression, $types, 'datetime');
-        $expression->tieWith(', INTERVAL')->add([$interval => 'literal']);
+        $expression->setConjunction(', INTERVAL')->add([$interval => 'literal']);
 
         return $expression;
     }

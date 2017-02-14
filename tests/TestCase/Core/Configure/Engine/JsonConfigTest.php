@@ -96,7 +96,7 @@ class JsonConfigTest extends TestCase
      * Test reading an empty file.
      *
      * @expectedException \Cake\Core\Exception\Exception
-     * @expcetedExceptionMessage Decoding JSON config file "empty.json" did not return any array
+     * @expectedExceptionMessage config file "empty.json"
      * @return void
      */
     public function testReadEmptyFile()
@@ -154,7 +154,7 @@ class JsonConfigTest extends TestCase
     {
         $engine = new JsonConfig(TMP);
         $result = $engine->dump('test', $this->testData);
-        $this->assertTrue($result > 0);
+        $this->assertGreaterThan(0, $result);
         $expected = '{
     "One": {
         "two": "value",
@@ -176,7 +176,7 @@ class JsonConfigTest extends TestCase
         $this->assertTextEquals($expected, $contents);
 
         $result = $engine->dump('test', $this->testData);
-        $this->assertTrue($result > 0);
+        $this->assertGreaterThan(0, $result);
 
         $contents = file_get_contents($file);
         $this->assertTextEquals($expected, $contents);

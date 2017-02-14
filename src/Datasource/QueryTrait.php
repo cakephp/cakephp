@@ -88,7 +88,7 @@ trait QueryTrait
      * and this query object will be returned for chaining.
      *
      * @param \Cake\Datasource\RepositoryInterface|null $table The default table object to use
-     * @return \Cake\Datasource\RepositoryInterface|self
+     * @return \Cake\Datasource\RepositoryInterface|$this
      */
     public function repository(RepositoryInterface $table = null)
     {
@@ -110,7 +110,7 @@ trait QueryTrait
      * This method is most useful when combined with results stored in a persistent cache.
      *
      * @param \Cake\Datasource\ResultSetInterface $results The results this query should return.
-     * @return self The query instance.
+     * @return $this
      */
     public function setResult($results)
     {
@@ -166,7 +166,7 @@ trait QueryTrait
      *   When using a function, this query instance will be supplied as an argument.
      * @param string|\Cake\Cache\CacheEngine $config Either the name of the cache config to use, or
      *   a cache config instance.
-     * @return self This instance
+     * @return $this
      */
     public function cache($key, $config = 'default')
     {
@@ -185,7 +185,7 @@ trait QueryTrait
      * passed, the current configured query `_eagerLoaded` value is returned.
      *
      * @param bool|null $value Whether or not to eager load.
-     * @return self|\Cake\ORM\Query
+     * @return $this|\Cake\ORM\Query
      */
     public function eagerLoaded($value = null)
     {
@@ -309,7 +309,7 @@ trait QueryTrait
      * @param callable|null $mapper The mapper callable.
      * @param callable|null $reducer The reducing function.
      * @param bool $overwrite Set to true to overwrite existing map + reduce functions.
-     * @return self|array
+     * @return $this|array
      * @see \Cake\Collection\Iterator\MapReduce for details on how to use emit data to the map reducer.
      */
     public function mapReduce(callable $mapper = null, callable $reducer = null, $overwrite = false)
@@ -361,7 +361,7 @@ trait QueryTrait
      *
      * @param callable|null $formatter The formatting callable.
      * @param bool|int $mode Whether or not to overwrite, append or prepend the formatter.
-     * @return self|array
+     * @return $this|array
      */
     public function formatResults(callable $formatter = null, $mode = 0)
     {
@@ -468,7 +468,7 @@ trait QueryTrait
      * This is handy for passing all query clauses at once.
      *
      * @param array $options the options to be applied
-     * @return self This object
+     * @return $this
      */
     abstract public function applyOptions(array $options);
 

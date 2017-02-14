@@ -118,7 +118,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $name The name under which the rule should be set
      * @param \Cake\Validation\ValidationRule|array $rule The validation rule to be set
-     * @return self
+     * @return $this
      */
     public function add($name, $rule)
     {
@@ -142,7 +142,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      * ```
      *
      * @param string $name The name under which the rule should be unset
-     * @return self
+     * @return $this
      */
     public function remove($name)
     {

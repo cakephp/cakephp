@@ -106,7 +106,7 @@ class BasicAuthenticate extends BaseAuthenticate
      */
     public function loginHeaders(ServerRequest $request)
     {
-        $realm = $this->config('realm') ?: $request->env('SERVER_NAME');
+        $realm = $this->getConfig('realm') ?: $request->env('SERVER_NAME');
 
         return sprintf('WWW-Authenticate: Basic realm="%s"', $realm);
     }

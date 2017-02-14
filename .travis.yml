@@ -36,6 +36,15 @@ matrix:
     - php: 7.0
       env: PHPCS=1 DEFAULT=0
 
+    - php: 7.0
+      env: PHPCS=3 DEFAULT=0
+
+    - php: 7.0
+      env: PHPSTAN=1 DEFAULT=0
+
+    - php: 7.1
+      env: PHPSTAN=1 DEFAULT=0
+
     - php: hhvm
       env: HHVM=1 DB=sqlite db_dsn='sqlite:///:memory:'
 
@@ -44,6 +53,9 @@ matrix:
 
   allow_failures:
     - php: hhvm
+
+    - php: 7.0
+      env: PHPCS=3 DEFAULT=0
 
 before_install:
   - if [ $HHVM != 1 && $TRAVIS_PHP_VERSION != 7.* ]; then phpenv config-rm xdebug.ini; fi
@@ -65,19 +77,23 @@ before_install:
   - if [[ $TRAVIS_PHP_VERSION != 'hhvm' && $TRAVIS_PHP_VERSION != 7.1 ]] ; then echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
   - if [[ $TRAVIS_PHP_VERSION != 'hhvm' && $TRAVIS_PHP_VERSION != 7.1 ]] ; then echo 'apc.enable_cli = 1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
   - if [[ $TRAVIS_PHP_VERSION =~ 5.[56] ]] ; then echo yes | pecl install apcu-4.0.10; fi
-  - if [[ $TRAVIS_PHP_VERSION = 7.0 ]] ; then echo yes | pecl install channel://pecl.php.net/apcu-5.1.5; fi
+  - if [[ $TRAVIS_PHP_VERSION =~ 7.[01] ]] ; then echo yes | pecl install channel://pecl.php.net/apcu-5.1.5; fi
 
   - phpenv rehash
   - set +H
 
 before_script:
   - composer install --prefer-dist --no-interaction
+  - if [[ $PHPCS = 3 ]]; then composer remove --dev cakephp/cakephp-codesniffer; fi
+  - if [[ $PHPCS = 3 ]]; then composer require --dev squizlabs/php_codesniffer='^3.0@dev' cakephp/cakephp-codesniffer='^3.0@dev'; fi
 
 script:
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.0 ]]; then export CODECOVERAGE=1; vendor/bin/phpunit --coverage-clover=clover.xml; fi
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.0 ]]; then vendor/bin/phpunit; fi
 
-  - if [[ $PHPCS = 1 ]]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi
+  - if [[ $PHPCS = 1 ]]; then composer cs-check; fi
+  - if [[ $PHPCS = 3 ]]; then vendor/bin/phpcs -p -s --extensions=php ./src ./tests; fi
+  - if [[ $PHPSTAN = 1 ]]; then composer require --dev phpstan/phpstan:^0.6 && vendor/bin/phpstan analyse -c phpstan.neon -l 0 src; fi
 
 after_success:
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.0 ]]; then bash <(curl -s https://codecov.io/bash); fi

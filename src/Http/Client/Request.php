@@ -60,7 +60,7 @@ class Request extends Message implements RequestInterface
      * compatibility reasons, and is not part of the PSR7 interface.
      *
      * @param string|null $method The method for the request.
-     * @return self|string Either this or the current method.
+     * @return $this|string Either this or the current method.
      * @throws \Cake\Core\Exception\Exception On invalid methods.
      * @deprecated 3.3.0 Use getMethod() and withMethod() instead.
      */
@@ -85,7 +85,7 @@ class Request extends Message implements RequestInterface
      * compatibility reasons, and is not part of the PSR7 interface.
      *
      * @param string|null $url The url for the request. Leave null for get
-     * @return self|string Either $this or the url value.
+     * @return $this|string Either $this or the url value.
      * @deprecated 3.3.0 Use getUri() and withUri() instead.
      */
     public function url($url = null)
@@ -211,7 +211,7 @@ class Request extends Message implements RequestInterface
      * compatibility reasons, and is not part of the PSR7 interface.
      *
      * @param string|null $version The HTTP version.
-     * @return self|string Either $this or the HTTP version.
+     * @return $this|string Either $this or the HTTP version.
      * @deprecated 3.3.0 Use getProtocolVersion() and withProtocolVersion() instead.
      */
     public function version($version = null)
@@ -254,3 +254,6 @@ class Request extends Message implements RequestInterface
         return $this;
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Http\Client\Request', 'Cake\Network\Http\Request');

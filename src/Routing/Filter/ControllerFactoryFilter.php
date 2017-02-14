@@ -44,8 +44,8 @@ class ControllerFactoryFilter extends DispatcherFilter
      */
     public function beforeDispatch(Event $event)
     {
-        $request = $event->data('request');
-        $response = $event->data('response');
+        $request = $event->getData('request');
+        $response = $event->getData('response');
         $event->setData('controller', $this->_getController($request, $response));
     }
 

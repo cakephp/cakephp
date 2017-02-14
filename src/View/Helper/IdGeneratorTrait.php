@@ -14,7 +14,7 @@
  */
 namespace Cake\View\Helper;
 
-use Cake\Utility\Inflector;
+use Cake\Utility\Text;
 
 /**
  * A trait that provides id generating methods to be
@@ -79,7 +79,7 @@ trait IdGeneratorTrait
      */
     protected function _domId($value)
     {
-        $domId = mb_strtolower(Inflector::slug($value, '-'));
+        $domId = mb_strtolower(Text::slug($value, '-'));
         if ($this->_idPrefix) {
             $domId = $this->_idPrefix . '-' . $domId;
         }

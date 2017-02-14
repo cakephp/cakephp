@@ -71,7 +71,7 @@ class Comparison implements ExpressionInterface, FieldInterface
     /**
      * Constructor
      *
-     * @param string $field the field name to compare to a value
+     * @param string|\Cake\Database\ExpressionInterface $field the field name to compare to a value
      * @param mixed $value The value to be used in comparison
      * @param string $type the type name used to cast the value
      * @param string $operator the operator used for comparing field and value

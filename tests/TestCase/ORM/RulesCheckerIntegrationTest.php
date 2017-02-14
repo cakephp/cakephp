@@ -796,7 +796,7 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests isUnique rule with coflicting columns
+     * Tests isUnique rule with conflicting columns
      *
      * @group save
      * @return void
@@ -842,7 +842,7 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests the existsIn with coflicting columns
+     * Tests the existsIn with conflicting columns
      *
      * @group save
      * @return void

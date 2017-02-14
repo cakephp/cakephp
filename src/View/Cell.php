@@ -196,17 +196,17 @@ abstract class Cell
                 $template = Inflector::underscore($template);
             }
             if ($template === null) {
-                $template = $builder->template() ?: $this->template;
+                $template = $builder->getTemplate() ?: $this->template;
             }
-            $builder->layout(false)
-                ->template($template);
+            $builder->setLayout(false)
+                ->setTemplate($template);
 
             $className = get_class($this);
             $namePrefix = '\View\Cell\\';
             $name = substr($className, strpos($className, $namePrefix) + strlen($namePrefix));
             $name = substr($name, 0, -4);
-            if (!$builder->templatePath()) {
-                $builder->templatePath('Cell' . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name));
+            if (!$builder->getTemplatePath()) {
+                $builder->setTemplatePath('Cell' . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name));
             }
 
             $this->View = $this->createView();

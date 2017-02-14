@@ -327,7 +327,7 @@ abstract class BaseErrorHandler
      */
     protected function _requestContext($request)
     {
-        $message = "\nRequest URL: " . $request->here();
+        $message = "\nRequest URL: " . $request->getRequestTarget();
 
         $referer = $request->env('HTTP_REFERER');
         if ($referer) {

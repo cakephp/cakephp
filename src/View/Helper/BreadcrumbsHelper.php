@@ -72,7 +72,7 @@ class BreadcrumbsHelper extends Helper
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
      * the link)
      * - *templateVars*: Specific template vars in case you override the templates provided.
-     * @return self
+     * @return $this
      */
     public function add($title, $url = null, array $options = [])
     {
@@ -105,7 +105,7 @@ class BreadcrumbsHelper extends Helper
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
      * the link)
      * - *templateVars*: Specific template vars in case you override the templates provided.
-     * @return self
+     * @return $this
      */
     public function prepend($title, $url = null, array $options = [])
     {
@@ -141,7 +141,7 @@ class BreadcrumbsHelper extends Helper
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
      * the link)
      * - *templateVars*: Specific template vars in case you override the templates provided.
-     * @return self
+     * @return $this
      * @throws LogicException In case the index is out of bound
      */
     public function insertAt($index, $title, $url = null, array $options = [])
@@ -170,7 +170,7 @@ class BreadcrumbsHelper extends Helper
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
      * the link)
      * - *templateVars*: Specific template vars in case you override the templates provided.
-     * @return self
+     * @return $this
      * @throws LogicException In case the matching crumb can not be found
      */
     public function insertBefore($matchingTitle, $title, $url = null, array $options = [])
@@ -199,7 +199,7 @@ class BreadcrumbsHelper extends Helper
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
      * the link)
      * - *templateVars*: Specific template vars in case you override the templates provided.
-     * @return self
+     * @return $this
      * @throws LogicException In case the matching crumb can not be found.
      */
     public function insertAfter($matchingTitle, $title, $url = null, array $options = [])
@@ -221,6 +221,18 @@ class BreadcrumbsHelper extends Helper
     public function getCrumbs()
     {
         return $this->crumbs;
+    }
+
+    /**
+     * Removes all existing crumbs.
+     *
+     * @return $this
+     */
+    public function reset()
+    {
+        $this->crumbs = [];
+
+        return $this;
     }
 
     /**

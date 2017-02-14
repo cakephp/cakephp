@@ -202,6 +202,7 @@ class Stream
             $this->_contextOptions['max_redirects'] = (int)$options['redirect'];
         }
         if (isset($options['proxy']['proxy'])) {
+            $this->_contextOptions['request_fulluri'] = true;
             $this->_contextOptions['proxy'] = $options['proxy']['proxy'];
         }
     }
@@ -319,3 +320,6 @@ class Stream
         return array_merge($this->_contextOptions, $this->_sslContextOptions);
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Http\Client\Adapter\Stream', 'Cake\Network\Http\Adapter\Stream');

@@ -76,7 +76,7 @@ class EventManager
      * If called with the first parameter, it will be set as the globally available instance
      *
      * @param \Cake\Event\EventManager|null $manager Event manager instance.
-     * @return \Cake\Event\EventManager the global event manager
+     * @return static The global event manager
      */
     public static function instance($manager = null)
     {
@@ -84,7 +84,7 @@ class EventManager
             static::$_generalManager = $manager;
         }
         if (empty(static::$_generalManager)) {
-            static::$_generalManager = new EventManager();
+            static::$_generalManager = new static();
         }
 
         static::$_generalManager->_isGlobal = true;
@@ -370,7 +370,7 @@ class EventManager
             $event = new Event($event);
         }
 
-        $listeners = $this->listeners($event->name());
+        $listeners = $this->listeners($event->getName());
 
         if ($this->_trackEvents) {
             $this->addEventToList($event);
@@ -409,7 +409,7 @@ class EventManager
      */
     protected function _callListener(callable $listener, Event $event)
     {
-        $data = $event->data();
+        $data = $event->getData();
 
         return $listener($event, ...array_values($data));
     }
@@ -567,7 +567,7 @@ class EventManager
         }
         if ($this->_eventList) {
             foreach ($this->_eventList as $event) {
-                $properties['_dispatchedEvents'][] = $event->name() . ' with subject ' . get_class($event->subject());
+                $properties['_dispatchedEvents'][] = $event->getName() . ' with subject ' . get_class($event->getSubject());
             }
         }
 

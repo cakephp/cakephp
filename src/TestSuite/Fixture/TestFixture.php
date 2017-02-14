@@ -198,7 +198,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
             }
         }
         if (!empty($this->fields['_options'])) {
-            $this->_schema->options($this->fields['_options']);
+            $this->_schema->setOptions($this->fields['_options']);
         }
     }
 
@@ -219,7 +219,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
             if (!empty($import['table'])) {
                 throw new CakeException('You cannot define both table and model.');
             }
-            $import['table'] = TableRegistry::get($import['model'])->table();
+            $import['table'] = TableRegistry::get($import['model'])->getTable();
         }
 
         if (empty($import['table'])) {

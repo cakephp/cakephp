@@ -28,6 +28,7 @@ use Cake\View\View;
  * @property \Cake\View\Helper\UrlHelper $Url
  * @property \Cake\View\Helper\NumberHelper $Number
  * @property \Cake\View\Helper\HtmlHelper $Html
+ * @property \Cake\View\Helper\FormHelper $Form
  * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html
  */
 class PaginatorHelper extends Helper
@@ -40,7 +41,7 @@ class PaginatorHelper extends Helper
      *
      * @var array
      */
-    public $helpers = ['Url', 'Number', 'Html'];
+    public $helpers = ['Url', 'Number', 'Html', 'Form'];
 
     /**
      * Default config for this class
@@ -101,9 +102,9 @@ class PaginatorHelper extends Helper
 
         $query = $this->request->getQueryParams();
         unset($query['page'], $query['limit'], $query['sort'], $query['direction']);
-        $this->config(
+        $this->setConfig(
             'options.url',
-            array_merge($this->request->param('pass'), ['?' => $query])
+            array_merge($this->request->getParam('pass'), ['?' => $query])
         );
     }
 
@@ -118,11 +119,11 @@ class PaginatorHelper extends Helper
         if (empty($model)) {
             $model = $this->defaultModel();
         }
-        if (!$this->request->param('paging') || !$this->request->param('paging.' . $model)) {
+        if (!$this->request->getParam('paging') || !$this->request->getParam('paging.' . $model)) {
             return [];
         }
 
-        return $this->request->param('paging.' . $model);
+        return $this->request->getParam('paging.' . $model);
     }
 
     /**
@@ -152,19 +153,19 @@ class PaginatorHelper extends Helper
     public function options(array $options = [])
     {
         if (!empty($options['paging'])) {
-            if (!$this->request->param('paging')) {
+            if (!$this->request->getParam('paging')) {
                 $this->request->params['paging'] = [];
             }
-            $this->request->params['paging'] = $options['paging'] + $this->request->param('paging');
+            $this->request->params['paging'] = $options['paging'] + $this->request->getParam('paging');
             unset($options['paging']);
         }
         $model = $this->defaultModel();
 
         if (!empty($options[$model])) {
-            if (!$this->request->param('paging.' . $model)) {
+            if (!$this->request->getParam('paging.' . $model)) {
                 $this->request->params['paging'][$model] = [];
             }
-            $this->request->params['paging'][$model] = $options[$model] + $this->request->param('paging.' . $model);
+            $this->request->params['paging'][$model] = $options[$model] + $this->request->getParam('paging.' . $model);
             unset($options[$model]);
         }
         $this->_config['options'] = array_filter($options + $this->_config['options']);
@@ -640,10 +641,10 @@ class PaginatorHelper extends Helper
         if ($this->_defaultModel) {
             return $this->_defaultModel;
         }
-        if (!$this->request->param('paging')) {
+        if (!$this->request->getParam('paging')) {
             return null;
         }
-        list($this->_defaultModel) = array_keys($this->request->param('paging'));
+        list($this->_defaultModel) = array_keys($this->request->getParam('paging'));
 
         return $this->_defaultModel;
     }
@@ -1168,5 +1169,38 @@ class PaginatorHelper extends Helper
     public function implementedEvents()
     {
         return [];
+    }
+
+    /**
+     * Dropdown array for Select limit
+     *
+     * @param array $limits This is array of options.
+     * @param int|null $default Default limit for option selecting. Default value is $this->param('perPage').
+     * @param array $options Options for Select tag attributes like class, id or event
+     *
+     * @return string html output.
+     */
+    public function limitControl(array $limits = [], $default = null, array $options = [])
+    {
+        $out = $this->Form->create(null, ['type' => 'get']);
+
+        if (empty($default) || !is_numeric($default)) {
+            $default = $this->param('perPage');
+        }
+
+        if (empty($limits)) {
+            $limits += [20 => '20', 25 => '25', 50 => '50', 100 => '100'];
+        }
+
+        if (!in_array($default, $limits)) {
+            $limits += [$default => $default];
+        }
+
+        ksort($limits);
+
+        $out .= $this->Form->control('limit', ($options + ['type' => 'select', 'label' => __("View"), 'value' => $default, 'options' => $limits, 'onChange' => 'this.form.submit()']));
+        $out .= $this->Form->end();
+
+        return $out;
     }
 }

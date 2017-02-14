@@ -25,6 +25,12 @@ use Cake\TestSuite\Stub\Response;
  */
 class LegacyRequestDispatcher
 {
+
+    /**
+     * @var \Cake\TestSuite\IntegrationTestCase
+     */
+    protected $_test;
+
     /**
      * Constructor
      *
