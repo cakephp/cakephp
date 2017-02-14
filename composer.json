@@ -58,7 +58,7 @@
             "PluginJs\\": "tests/test_app/Plugin/PluginJs/src"
         },
         "files": [
-          "src/TestSuite/phpunit-forward-compat.php"
+            "src/TestSuite/phpunit-forward-compat.php"
         ]
     },
     "replace": {
