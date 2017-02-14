@@ -56,7 +56,10 @@
             "Company\\TestPluginThree\\": "tests/test_app/Plugin/Company/TestPluginThree/src",
             "Company\\TestPluginThree\\Test\\": "tests/test_app/Plugin/Company/TestPluginThree/tests",
             "PluginJs\\": "tests/test_app/Plugin/PluginJs/src"
-        }
+        },
+        "files": [
+          "src/TestSuite/phpunit-forward-compat.php"
+        ]
     },
     "replace": {
         "cakephp/cache": "self.version",
