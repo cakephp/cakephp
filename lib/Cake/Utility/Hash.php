@@ -48,11 +48,13 @@ class Hash {
 		}
 		if (is_string($path) || is_numeric($path)) {
 			$parts = explode('.', $path);
+		} elseif (is_bool($path) || $path === null) {
+			$parts = [$path];
 		} else {
 			if (!is_array($path)) {
 				throw new InvalidArgumentException(__d('cake_dev',
-					'Invalid Parameter %s, should be dot separated path or array.',
-					$path
+					'Invalid path parameter: %s, should be dot separated path or array.',
+					var_export($path, true)
 				));
 			}
 			$parts = $path;

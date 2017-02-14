@@ -236,10 +236,13 @@ class HashTest extends CakeTestCase {
  */
 	public function testGetEmptyKey() {
 		$data = array(
-			'' => 'some value'
+			true => 'true value',
+			false => 'false value',
+			'' => 'some value',
 		);
-		$result = Hash::get($data, '');
-		$this->assertSame($data[''], $result);
+		$this->assertSame($data[''], Hash::get($data, ''));
+		$this->assertSame($data[false], Hash::get($data, false));
+		$this->assertSame($data[true], Hash::get($data, true));
 	}
 
 /**
@@ -249,7 +252,7 @@ class HashTest extends CakeTestCase {
  * @return void
  */
 	public function testGetInvalidPath() {
-		Hash::get(array('one' => 'two'), true);
+		Hash::get(array('one' => 'two'), new StdClass());
 	}
 
 /**
