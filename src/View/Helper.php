@@ -156,6 +156,16 @@ class Helper implements EventListenerInterface
     }
 
     /**
+     * Get the view instance this helper is bound to.
+     *
+     * @return \Cake\View\View The bound view instance.
+     */
+    public function getView()
+    {
+        return $this->_View;
+    }
+
+    /**
      * Returns a string to be used as onclick handler for confirm dialogs.
      *
      * @param string $message Message to be displayed

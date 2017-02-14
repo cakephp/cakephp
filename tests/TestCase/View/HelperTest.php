@@ -151,6 +151,17 @@ class HelperTest extends TestCase
     }
 
     /**
+     * test getting view instance
+     *
+     * @return void
+     */
+    public function testGetView()
+    {
+        $Helper = new TestHelper($this->View);
+        $this->assertSame($this->View, $Helper->getView());
+    }
+
+    /**
      * Tests __debugInfo
      *
      * @return void
