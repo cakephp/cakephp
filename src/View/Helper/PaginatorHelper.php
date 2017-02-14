@@ -1126,23 +1126,30 @@ class PaginatorHelper extends Helper
      * Dropdown array for Select limit
      *
      * @param array $limits This is array of options.
-     * @param array $default Default limit for option selecting. Default is Paginator limit.
+     * @param integer $default Default limit for option selecting. Default is Paginator limit.
+     * @param array options Options for Select tag attributes like class, id or event
      *
      * @return string html output.
      */
-    public function limitSelect($limits = [], $default = 0)
+    public function limitSelect($limits = [], $default = null, $options = [])
     {
-        $out = $this->Form->create('', ['type' => 'get']);
+        $out = $this->Form->create(null, ['type' => 'get']);
 
         if (empty($limits)) {
             $limits = [10 => $this->Number->format(10), 25 => $this->Number->format(25), 50 => $this->Number->format(50), 100 => $this->Number->format(100)];
         }
 
-        if (empty($default)) {
-            $default = $this->param('limit');
+        if (empty($default) || !is_integer($default)) {
+            $default = $this->param('perPage');
         }
 
-        $out .= $this->Form->input('limit', ['type' => 'select', 'label' => __("View") . '&nbsp;', 'escape' => false, 'value' => $default, 'id' => 'select_limit', 'default' => $default, 'class' => 'form-control', 'options' => $limits, 'onChange' => 'this.form.submit()']);
+        if (!in_array($default, $limits)) {
+            $limits += [$default => $this->Number->format($default)];
+        }
+
+        ksort($limits);
+
+        $out .= $this->Form->input('limit', ['type' => 'select', 'label' => __("View") . '&nbsp;', 'escape' => false, 'value' => $default, 'id' => 'select_limit', 'default' => $default, 'options' => $limits, 'onChange' => 'this.form.submit()'] + $options);
 
         $out .= $this->Form->end();
 
