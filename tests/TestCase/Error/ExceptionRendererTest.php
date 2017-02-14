@@ -731,7 +731,7 @@ class ExceptionRendererTest extends TestCase
      */
     public function testMissingLayoutPathRenderSafe()
     {
-        $eventTriggered = false;
+        $this->called = false;
         $exception = new NotFoundException();
         $ExceptionRenderer = new ExceptionRenderer($exception);
 
@@ -739,11 +739,9 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->controller->helpers = ['Fail', 'Boom'];
         $ExceptionRenderer->controller->eventManager()->on(
             'Controller.beforeRender',
-            function (Event $event) use ($exception, &$eventTriggered) {
-                $eventTriggered = true;
+            function (Event $event) {
+                $this->called = true;
                 $event->subject()->viewBuilder()->layoutPath('boom');
-
-                throw $exception;
             }
         );
         $ExceptionRenderer->controller->request = new Request;
@@ -759,11 +757,9 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->controller->response = $response;
 
         $ExceptionRenderer->render();
+        $this->assertTrue($this->called, 'Listener added was not triggered.');
         $this->assertEquals('', $ExceptionRenderer->controller->viewBuilder()->layoutPath());
         $this->assertEquals('Error', $ExceptionRenderer->controller->viewBuilder()->templatePath());
-
-        // Just to ensure the callback has actually been triggered, so we're actually testing something:
-        $this->assertTrue($eventTriggered);
     }
 
     /**
