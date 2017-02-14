@@ -1145,7 +1145,7 @@ class PaginatorHelper extends Helper
         $out .= $this->Form->input('limit', ['type' => 'select', 'label' => __("View") . '&nbsp;', 'escape' => false, 'value' => $default, 'id' => 'select_limit', 'default' => $default, 'class' => 'form-control', 'options' => $limits, 'onChange' => 'this.form.submit()']);
 
         $out .= $this->Form->end();
-        
+
         return $out;
     }
 }
