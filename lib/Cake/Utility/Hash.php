@@ -49,7 +49,7 @@ class Hash {
 		if (is_string($path) || is_numeric($path)) {
 			$parts = explode('.', $path);
 		} elseif (is_bool($path) || $path === null) {
-			$parts = [$path];
+			$parts = array($path);
 		} else {
 			if (!is_array($path)) {
 				throw new InvalidArgumentException(__d('cake_dev',
