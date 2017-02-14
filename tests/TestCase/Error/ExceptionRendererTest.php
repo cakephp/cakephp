@@ -741,7 +741,7 @@ class ExceptionRendererTest extends TestCase
             'Controller.beforeRender',
             function (Event $event) {
                 $this->called = true;
-                $event->subject()->viewBuilder()->layoutPath('boom');
+                $event->subject()->viewBuilder()->setLayoutPath('boom');
             }
         );
         $ExceptionRenderer->controller->request = new Request;
