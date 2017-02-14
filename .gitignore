@@ -6,7 +6,6 @@
 /composer.lock
 /phpunit.xml
 /phpcs.xml
-/vendor
 *.mo
 
 # IDE and editor specific files #
