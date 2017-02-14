@@ -1134,7 +1134,7 @@ class PaginatorHelper extends Helper
     {
         $out = $this->Form->create('', ['type' => 'get']);
 
-        if (empty($limit)) {
+        if (empty($limits)) {
             $limits = [10 => $this->Number->format(10), 25 => $this->Number->format(25), 50 => $this->Number->format(50), 100 => $this->Number->format(100)];
         }
 
