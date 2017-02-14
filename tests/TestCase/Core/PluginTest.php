@@ -198,7 +198,7 @@ class PluginTest extends TestCase
      * Tests that loading a missing routes file throws a warning
      *
      * @return void
-     * @expectedException \PHPUNIT_FRAMEWORK_ERROR_WARNING
+     * @expectedException \PHPUnit\Framework\Error\Warning
      */
     public function testLoadMultipleWithDefaultsMissingFile()
     {

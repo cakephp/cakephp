@@ -1590,9 +1590,9 @@ class ViewTest extends TestCase
      * Test setting a block's content to an object without __toString magic method
      *
      * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
-     * which gets thrown as a PHPUnit_Framework_Error Exception by PHPUnit.
+     * which gets thrown as a \PHPUnit\Framework\Error\Error Exception by PHPUnit.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \PHPUnit\Framework\Error\Error
      * @return void
      */
     public function testBlockSetObjectWithoutToString()
@@ -1647,9 +1647,9 @@ class ViewTest extends TestCase
      * Test appending an object without __toString magic method to a block with append.
      *
      * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
-     * which gets thrown as a PHPUnit_Framework_Error Exception by PHPUnit.
+     * which gets thrown as a \PHPUnit\Framework\Error\Error     Exception by PHPUnit.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \PHPUnit\Framework\Error\Error
      * @return void
      */
     public function testBlockAppendObjectWithoutToString()
@@ -1679,9 +1679,9 @@ class ViewTest extends TestCase
      * Test prepending an object without __toString magic method to a block with prepend.
      *
      * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
-     * which gets thrown as a PHPUnit_Framework_Error Exception by PHPUnit.
+     * which gets thrown as a \PHPUnit\Framework\Error\Error Exception by PHPUnit.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \PHPUnit\Framework\Error\Error
      * @return void
      */
     public function testBlockPrependObjectWithoutToString()

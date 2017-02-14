@@ -50,7 +50,7 @@ class TestCaseTest extends TestCase
     /**
      * tests trying to assertEventFired without configuring an event list
      *
-     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedException \PHPUnit\Framework\AssertionFailedError
      */
     public function testEventFiredMisconfiguredEventList()
     {
@@ -61,7 +61,7 @@ class TestCaseTest extends TestCase
     /**
      * tests trying to assertEventFired without configuring an event list
      *
-     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedException \PHPUnit\Framework\AssertionFailedError
      */
     public function testEventFiredWithMisconfiguredEventList()
     {

@@ -21,6 +21,7 @@ use Cake\Mailer\Email;
 use Cake\Mailer\Transport\DebugTransport;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use Cake\View\Exception\MissingTemplateException;
 use Exception;
 use SimpleXmlElement;
 
@@ -169,7 +170,7 @@ class EmailTest extends TestCase
         $this->assertSame($expected, $this->Email->from());
         $this->assertSame($this->Email, $result);
 
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException(\InvalidArgumentException::class);
         $result = $this->Email->from(['cake@cakephp.org' => 'CakePHP', 'fail@cakephp.org' => 'From can only be one address']);
     }
 
@@ -810,8 +811,7 @@ class EmailTest extends TestCase
             'license' => ['file' => CORE_PATH . 'LICENSE.txt', 'mimetype' => 'text/plain']
         ];
         $this->assertSame($expected, $this->Email->attachments());
-
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException(\InvalidArgumentException::class);
         $this->Email->attachments([['nofile' => CAKE . 'basics.php', 'mimetype' => 'text/plain']]);
     }
 
@@ -1838,7 +1838,7 @@ class EmailTest extends TestCase
         $this->assertContains('Here is your value: 12345', $result['message']);
         $this->assertContains('This email was sent using the TestPlugin.', $result['message']);
 
-        $this->setExpectedException('Cake\View\Exception\MissingTemplateException');
+        $this->expectException(MissingTemplateException::class);
         $this->Email->template('test_plugin_tpl', 'plug_default')->send();
     }
 
@@ -2240,7 +2240,7 @@ class EmailTest extends TestCase
         $result = $this->Email->emailFormat();
         $this->assertEquals('html', $result);
 
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException(\InvalidArgumentException::class);
         $result = $this->Email->emailFormat('invalid');
     }
 
