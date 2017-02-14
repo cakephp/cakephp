@@ -1133,7 +1133,7 @@ class PaginatorHelper extends Helper
     public function showLimit($limits = [], $default = 0)
     {
         $out = $this->Form->create('', ['type' => 'get']);
-        
+
         if (empty($limit)) {
             $limits = [10 => $this->Number->format(10), 25 => $this->Number->format(25), 50 => $this->Number->format(50), 100 => $this->Number->format(100)];
         }
@@ -1142,17 +1142,7 @@ class PaginatorHelper extends Helper
             $default = $this->param('limit');
         }
 
-        $out .= $this->Form->input('limit', [
-            'type' => 'select',
-            'label' => __("View") . '&nbsp;',
-            'escape' => false,
-            'value' => $default,
-            'id' => 'select_limit',
-            'default' => $default,
-            'class' => 'form-control',
-            'options' => $limits,
-            'onChange' => 'this.form.submit()'
-        ]);
+        $out .= $this->Form->input('limit', ['type' => 'select', 'label' => __("View") . '&nbsp;', 'escape' => false, 'value' => $default, 'id' => 'select_limit', 'default' => $default, 'class' => 'form-control', 'options' => $limits, 'onChange' => 'this.form.submit()']);
 
         $out .= $this->Form->end();
         
