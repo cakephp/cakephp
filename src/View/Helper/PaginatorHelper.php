@@ -1130,7 +1130,7 @@ class PaginatorHelper extends Helper
      *
      * @return string html output.
      */
-    public function showLimit($limits = [], $default = 0)
+    public function limitSelect($limits = [], $default = 0)
     {
         $out = $this->Form->create('', ['type' => 'get']);
 
