@@ -2548,11 +2548,9 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
-     * @param array $limits
-     * @param int $default
-     * @param array $options
+     * test the limitSelect() method
      *
-     * @return string
+     * @return void
      */
     public function testLimitSelect()
     {
@@ -2581,7 +2579,7 @@ class PaginatorHelperTest extends TestCase
             ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
             ['div' => ['class' => 'input select']],
             ['label' => ['for' => 'limit']],
-            'View&nbsp;',
+            'View',
             '/label',
             ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()', 'class' => 'form-control']],
             ['option' => ['value' => '']],
