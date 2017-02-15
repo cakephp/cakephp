@@ -45,7 +45,7 @@ class CakeSocket {
 		'protocol' => 'tcp',
 		'port' => 80,
 		'timeout' => 30,
-        'cryptoType' => 'tls'
+		'cryptoType' => 'tls'
 	);
 
 /**
@@ -94,14 +94,14 @@ class CakeSocket {
 		'sslv3_client' => STREAM_CRYPTO_METHOD_SSLv3_CLIENT,
 		'sslv23_client' => STREAM_CRYPTO_METHOD_SSLv23_CLIENT,
 		'tls_client' => STREAM_CRYPTO_METHOD_TLS_CLIENT,
-        'tlsv1_1_client' => STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT,
-        'tlsv1_2_client' => STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT,
+		'tlsv1_1_client' => STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT,
+		'tlsv1_2_client' => STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT,
 		'sslv2_server' => STREAM_CRYPTO_METHOD_SSLv2_SERVER,
 		'sslv3_server' => STREAM_CRYPTO_METHOD_SSLv3_SERVER,
 		'sslv23_server' => STREAM_CRYPTO_METHOD_SSLv23_SERVER,
 		'tls_server' => STREAM_CRYPTO_METHOD_TLS_SERVER,
-        'tlsv1_1_server' => STREAM_CRYPTO_METHOD_TLSv1_1_SERVER,
-        'tlsv1_2_server' => STREAM_CRYPTO_METHOD_TLSv1_2_SERVER
+		'tlsv1_1_server' => STREAM_CRYPTO_METHOD_TLSv1_1_SERVER,
+		'tlsv1_2_server' => STREAM_CRYPTO_METHOD_TLSv1_2_SERVER
 		// @codingStandardsIgnoreEnd
 	);
 
@@ -210,7 +210,7 @@ class CakeSocket {
 					}
 				}
 
-                $this->enableCrypto($this->config['cryptoType'], 'client');
+				$this->enableCrypto($this->config['cryptoType'], 'client');
 			}
 		}
 		return $this->connected;
