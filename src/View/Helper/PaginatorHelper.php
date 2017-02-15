@@ -1134,7 +1134,7 @@ class PaginatorHelper extends Helper
     public function limitSelect($limits = [], $default = null, $options = [])
     {
         if (!in_array('Form', $this->helpers)) {
-            return "";
+            return '';
         }
 
         $out = $this->Form->create(null, ['type' => 'get']);
