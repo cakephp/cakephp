@@ -7,19 +7,44 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Http\Cookie;
 
+use Cake\Http\Client\Response;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\ResponseCookies;
 use Cake\TestSuite\TestCase;
 
 /**
- * HTTP cookies test.
+ * Response Cookies Test
  */
 class ResponseCookiesTest extends TestCase
 {
+    /**
+     * testAddToResponse
+     *
+     * @return void
+     */
+    public function testAddToResponse()
+    {
+        $cookies = [
+            new Cookie('one', 'one'),
+            new Cookie('two', 'two')
+        ];
 
+        $responseCookies = new ResponseCookies($cookies);
+
+        $response = new Response();
+        $response = $responseCookies->addToResponse($response);
+
+        $expected = [
+            'Set-Cookie' => [
+                'one=one',
+                'two=two'
+            ]
+        ];
+        $this->assertEquals($expected, $response->getHeaders());
+    }
 }

@@ -7,7 +7,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Http\Cookie;
@@ -31,9 +31,7 @@ class RequestCookiesTest extends TestCase
     public $request;
 
     /**
-     * setup
-     *
-     * @return null
+     * {@inheritDoc}
      */
     public function setUp()
     {
