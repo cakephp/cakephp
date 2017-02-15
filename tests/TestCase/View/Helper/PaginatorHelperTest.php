@@ -2557,12 +2557,12 @@ class PaginatorHelperTest extends TestCase
     public function testLimitSelect()
     {
         $out = $this->Paginator->limitSelect();
-        $this->assertHtml(['form' => ['type' => 'get'], 'input' => ['name' => 'limit', 'type' => 'select']], $out);
+        $this->assertHtml(['form' => ['method' => 'get'], 'input' => ['name' => 'limit', 'type' => 'select']], $out);
 
         $out = $this->Paginator->limitSelect([1 => 1, 5 => 5], 5);
-        $this->assertHtml(['form' => ['type' => 'get'], 'input' => ['name' => 'limit', 'type' => 'select', 'options' => [1 => 1, 5 => 5], 'default' => 5, 'value' => 5]], $out);
+        $this->assertHtml(['form' => ['method' => 'get'], 'input' => ['name' => 'limit', 'type' => 'select', 'options' => [1 => 1, 5 => 5], 'default' => 5, 'value' => 5]], $out);
 
         $out = $this->Paginator->limitSelect([1 => 1, 5 => 5], 5, ['class' => 'form-control']);
-        $this->assertHtml(['form' => ['type' => 'get'], 'input' => ['name' => 'limit', 'type' => 'select', 'class' => 'form-control', 'options' => [1 => 1, 5 => 5], 'default' => 5, 'value' => 5]], $out);
+        $this->assertHtml(['form' => ['method' => 'get'], 'input' => ['name' => 'limit', 'type' => 'select', 'class' => 'form-control', 'options' => [1 => 1, 5 => 5], 'default' => 5, 'value' => 5]], $out);
     }
 }
