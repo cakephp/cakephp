@@ -13,11 +13,18 @@
  */
 namespace Cake\Http\Cookie;
 
-use \ArrayIterator ;
+use ArrayIterator;
+use Countable;
+use InvalidArgumentException;
 
-class CookieCollection extends ArrayIterator
+/**
+ * Cookie Collection
+ */
+class CookieCollection extends ArrayIterator implements Countable
 {
     /**
+     * Cookie objects
+     *
      * @var Cookie[]
      */
     protected $cookies = [];
@@ -35,6 +42,8 @@ class CookieCollection extends ArrayIterator
             $key = mb_strtolower($name);
             $this->cookies[$key] = $cookie;
         }
+
+        parent::__construct($this->cookies);
     }
 
     /**
@@ -42,6 +51,7 @@ class CookieCollection extends ArrayIterator
      *
      * @param array $cookies Array of cookie objects
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function checkCookies(array $cookies)
     {
@@ -49,7 +59,7 @@ class CookieCollection extends ArrayIterator
             if (!$cookie instanceof CookieInterface) {
                 throw new InvalidArgumentException(
                     sprintf(
-                        'Expected %s[] as $cookies but instead got `%s` at index %d',
+                        'Expected `%s[]` as $cookies but instead got `%s` at index %d',
                         static::class,
                         is_object($cookie) ? get_class($cookie) : gettype($cookie),
                         $index

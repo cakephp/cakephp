@@ -14,7 +14,6 @@
 namespace Cake\Http\Cookie;
 
 use InvalidArgumentException;
-use Iterator;
 use Psr\Http\Message\ServerRequestInterface;
 
 class RequestCookies extends CookieCollection

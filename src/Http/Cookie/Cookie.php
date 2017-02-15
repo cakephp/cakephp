@@ -19,6 +19,9 @@ use DateTimeInterface;
 use InvalidArgumentException;
 use RuntimeException;
 
+/**
+ * Cookie object to build a cookie and turn it into a header value
+ */
 class Cookie implements CookieInterface
 {
 
@@ -29,12 +32,12 @@ class Cookie implements CookieInterface
      *
      * @var string
      */
-    protected $name;
+    protected $name = '';
 
     /**
      * Raw Cookie value
      */
-    protected $value;
+    protected $value = '';
 
     /**
      * Cookie data
@@ -44,7 +47,7 @@ class Cookie implements CookieInterface
      *
      * @var array
      */
-    protected $data;
+    protected $data = [];
 
     /**
      * @var bool
@@ -52,25 +55,25 @@ class Cookie implements CookieInterface
     protected $isExpanded = false;
 
     /**
-     * HTTP only
+     * Expiration time
      *
-     * @var bool
+     * @var int
      */
     protected $expiresAt = 0;
 
     /**
      * Path
      *
-     * @var string
+     * @var string|null
      */
-    protected $path = '';
+    protected $path = null;
 
     /**
      * Domain
      *
-     * @var string
+     * @var string|null
      */
-    protected $domain = '';
+    protected $domain = null;
 
     /**
      * Secure
@@ -84,14 +87,14 @@ class Cookie implements CookieInterface
      *
      * @var bool
      */
-    protected $httpOnly;
+    protected $httpOnly = false;
 
     /**
-     * The key for en- end decrypting the cookie
+     * The key for encrypting and decrypting the cookie
      *
      * @var string
      */
-    protected $encryptionKey;
+    protected $encryptionKey = '';
 
     /**
      * Constructor
@@ -107,6 +110,19 @@ class Cookie implements CookieInterface
     }
 
     /**
+     * Builds the expiration value part of the header string
+     *
+     * @return string
+     */
+    protected function _buildExpirationValue()
+    {
+        return sprintf(
+            '; expires=%s',
+            gmdate('D, d-M-Y H:i:s T', $this->expiresAt)
+        );
+    }
+
+    /**
      * Returns a header value as string
      *
      * @return string
@@ -115,15 +131,12 @@ class Cookie implements CookieInterface
     {
         $headerValue = sprintf('%s=%s', $this->name, urlencode($this->value));
         if ($this->expiresAt !== 0) {
-            $headerValue .= sprintf(
-                '; expires=%s',
-                gmdate('D, d-M-Y H:i:s T', $this->expiresAt)
-            );
+            $headerValue .= $this->_buildExpirationValue();
         }
-        if (empty($this->path) === false) {
+        if (!empty($this->path)) {
             $headerValue .= sprintf('; path=%s', $this->path);
         }
-        if (empty($this->domain) === false) {
+        if (!empty($this->domain)) {
             $headerValue .= sprintf('; domain=%s', $this->domain);
         }
         if ($this->secure) {
@@ -163,9 +176,9 @@ class Cookie implements CookieInterface
     /**
      * Validates the cookie name
      *
-     * @throws \InvalidArgumentException
      * @param string $name Name of the cookie
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function validateName($name)
     {
@@ -206,7 +219,7 @@ class Cookie implements CookieInterface
     /**
      * Sets the path
      *
-     * @param string $path Sets the path
+     * @param string|null $path Sets the path
      * @return $this
      */
     public function setPath($path)

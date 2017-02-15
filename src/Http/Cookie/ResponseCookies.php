@@ -17,7 +17,6 @@ use Psr\Http\Message\ResponseInterface;
 
 class ResponseCookies extends CookieCollection
 {
-
     /**
      * Adds the cookies to the response
      *
