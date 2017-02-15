@@ -411,10 +411,10 @@ abstract class Association
             $this->_targetTable = $tableLocator->get($registryAlias, $config);
 
             if ($exists) {
-                $targetClassName = get_class($this->_targetTable);
                 $className = $this->_getClassName($registryAlias, ['className' => $this->_className]);
 
-                if ($targetClassName !== $className) {
+                if (!$this->_targetTable instanceof $className) {
+                    $targetClassName = get_class($this->_targetTable);
                     throw new RuntimeException(sprintf(
                         'Invalid Table retrieved from a registry. Requested: %s, got: %s',
                         $className,
