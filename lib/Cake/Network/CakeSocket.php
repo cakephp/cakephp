@@ -44,7 +44,8 @@ class CakeSocket {
 		'host' => 'localhost',
 		'protocol' => 'tcp',
 		'port' => 80,
-		'timeout' => 30
+		'timeout' => 30,
+        'cryptoType' => 'tls'
 	);
 
 /**
@@ -93,10 +94,14 @@ class CakeSocket {
 		'sslv3_client' => STREAM_CRYPTO_METHOD_SSLv3_CLIENT,
 		'sslv23_client' => STREAM_CRYPTO_METHOD_SSLv23_CLIENT,
 		'tls_client' => STREAM_CRYPTO_METHOD_TLS_CLIENT,
+        'tlsv1_1_client' => STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT,
+        'tlsv1_2_client' => STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT,
 		'sslv2_server' => STREAM_CRYPTO_METHOD_SSLv2_SERVER,
 		'sslv3_server' => STREAM_CRYPTO_METHOD_SSLv3_SERVER,
 		'sslv23_server' => STREAM_CRYPTO_METHOD_SSLv23_SERVER,
-		'tls_server' => STREAM_CRYPTO_METHOD_TLS_SERVER
+		'tls_server' => STREAM_CRYPTO_METHOD_TLS_SERVER,
+        'tlsv1_1_server' => STREAM_CRYPTO_METHOD_TLSv1_1_SERVER,
+        'tlsv1_2_server' => STREAM_CRYPTO_METHOD_TLSv1_2_SERVER
 		// @codingStandardsIgnoreEnd
 	);
 
@@ -205,7 +210,7 @@ class CakeSocket {
 					}
 				}
 
-				$this->enableCrypto('tls', 'client');
+                $this->enableCrypto($this->config['cryptoType'], 'client');
 			}
 		}
 		return $this->connected;
@@ -433,7 +438,7 @@ class CakeSocket {
 /**
  * Encrypts current stream socket, using one of the defined encryption methods.
  *
- * @param string $type Type which can be one of 'sslv2', 'sslv3', 'sslv23' or 'tls'.
+ * @param string $type Type which can be one of 'sslv2', 'sslv3', 'sslv23', 'tls', 'tlsv1_1' or 'tlsv1_2'.
  * @param string $clientOrServer Can be one of 'client', 'server'. Default is 'client'.
  * @param bool $enable Enable or disable encryption. Default is true (enable)
  * @return bool True on success
