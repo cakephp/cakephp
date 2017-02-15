@@ -327,7 +327,7 @@ class Route
             if (empty($method)) {
                 // Deprecated reading the global state is deprecated and will be removed in 4.x
                 $request = Router::getRequest(true) ?: ServerRequest::createFromGlobals();
-                $method = $request->env('REQUEST_METHOD');
+                $method = $request->getMethod();
             }
             if (!in_array($method, (array)$this->defaults['_method'], true)) {
                 return false;
