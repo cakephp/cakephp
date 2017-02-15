@@ -166,7 +166,7 @@ class RouteCollection
     public function parseRequest(ServerRequestInterface $request)
     {
         $uri = $request->getUri();
-        $urlPath = $uri->getPath();
+        $urlPath = urldecode($uri->getPath());
         foreach (array_keys($this->_paths) as $path) {
             if (strpos($urlPath, $path) !== 0) {
                 continue;
