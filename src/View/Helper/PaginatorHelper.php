@@ -1182,14 +1182,10 @@ class PaginatorHelper extends Helper
      */
     public function limitSelect($limits = [], $default = null, $options = [])
     {
-        if (!in_array('Form', $this->helpers)) {
-            return '';
-        }
-
         $out = $this->Form->create(null, ['type' => 'get']);
 
         if (empty($limits)) {
-            $limits = [10 => $this->Number->format(10), 25 => $this->Number->format(25), 50 => $this->Number->format(50), 100 => $this->Number->format(100)];
+            $limits = [10 => 10, 25 => 25, 50 => 50, 100 => 100];
         }
 
         if (empty($default) || !is_integer($default)) {
@@ -1197,7 +1193,7 @@ class PaginatorHelper extends Helper
         }
 
         if (!in_array($default, $limits)) {
-            $limits += [$default => $this->Number->format($default)];
+            $limits += [$default => $default];
         }
 
         ksort($limits);
