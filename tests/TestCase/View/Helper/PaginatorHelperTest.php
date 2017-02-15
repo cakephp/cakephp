@@ -2556,13 +2556,47 @@ class PaginatorHelperTest extends TestCase
      */
     public function testLimitSelect()
     {
-        $out = $this->Paginator->limitSelect();
-        $this->assertHtml(['form' => ['method' => 'get'], 'input' => ['name' => 'limit', 'type' => 'select']], $out);
+        $out = $this->Paginator->limitSelect([1 => 1]);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'select_limit']],
+            'View&nbsp;',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'select_limit', 'onChange' => 'this.form.submit()']],
+            ['option' => ['value' => '']],
+            '0',
+            '/option',
+            ['option' => ['value' => '1']],
+            '1',
+            '/option',
+            '/select',
+            '/div',
+            '/form'
+        ];
+        $this->assertHtml($expected, $out);
 
-        $out = $this->Paginator->limitSelect([1 => 1, 5 => 5], 5);
-        $this->assertHtml(['form' => ['method' => 'get'], 'input' => ['name' => 'limit', 'type' => 'select', 'options' => [1 => 1, 5 => 5], 'default' => 5, 'value' => 5]], $out);
-
-        $out = $this->Paginator->limitSelect([1 => 1, 5 => 5], 5, ['class' => 'form-control']);
-        $this->assertHtml(['form' => ['method' => 'get'], 'input' => ['name' => 'limit', 'type' => 'select', 'class' => 'form-control', 'options' => [1 => 1, 5 => 5], 'default' => 5, 'value' => 5]], $out);
+        $out = $this->Paginator->limitSelect([1 => 1, 5 => 5], null, ['class' => 'form-control']);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'select_limit']],
+            'View&nbsp;',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'select_limit', 'onChange' => 'this.form.submit()', 'class' => 'form-control']],
+            ['option' => ['value' => '']],
+            '0',
+            '/option',
+            ['option' => ['value' => '1']],
+            '1',
+            '/option',
+            ['option' => ['value' => '5']],
+            '5',
+            '/option',
+            '/select',
+            '/div',
+            '/form'
+        ];
+        $this->assertHtml($expected, $out);
     }
 }
