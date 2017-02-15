@@ -20,8 +20,8 @@ use Cake\Controller\Exception\AuthSecurityException;
 use Cake\Controller\Exception\SecurityException;
 use Cake\Core\Configure;
 use Cake\Event\Event;
+use Cake\Http\ServerRequest;
 use Cake\Network\Exception\BadRequestException;
-use Cake\Network\Request;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 
@@ -85,13 +85,6 @@ class SecurityComponent extends Component
     protected $_action = null;
 
     /**
-     * Request object
-     *
-     * @var \Cake\Network\Request
-     */
-    public $request;
-
-    /**
      * The Session object
      *
      * @var \Cake\Network\Session
@@ -106,18 +99,15 @@ class SecurityComponent extends Component
      */
     public function startup(Event $event)
     {
-        $controller = $event->subject();
-        $this->session = $this->request->session();
-        $this->_action = $this->request->params['action'];
-        $hasData = !empty($this->request->data);
+        $controller = $event->getSubject();
+        $this->session = $controller->request->session();
+        $this->_action = $controller->request->getParam('action');
+        $hasData = (bool)$controller->request->getData();
         try {
             $this->_secureRequired($controller);
             $this->_authRequired($controller);
 
-            $isNotRequestAction = (
-                !isset($controller->request->params['requested']) ||
-                $controller->request->params['requested'] != 1
-            );
+            $isNotRequestAction = !$controller->request->getParam('requested');
 
             if ($this->_action === $this->_config['blackHoleCallback']) {
                 throw new AuthSecurityException(sprintf('Action %s is defined as the blackhole callback.', $this->_action));
@@ -134,7 +124,7 @@ class SecurityComponent extends Component
         }
 
         $this->generateToken($controller->request);
-        if ($hasData && is_array($controller->request->data)) {
+        if ($hasData && is_array($controller->request->getData())) {
             unset($controller->request->data['_Token']);
         }
     }
@@ -230,7 +220,7 @@ class SecurityComponent extends Component
         if (isset($actions[0]) && is_array($actions[0])) {
             $actions = $actions[0];
         }
-        $this->config('require' . $method, (empty($actions)) ? ['*'] : $actions);
+        $this->setConfig('require' . $method, (empty($actions)) ? ['*'] : $actions);
     }
 
     /**
@@ -267,14 +257,15 @@ class SecurityComponent extends Component
      */
     protected function _authRequired(Controller $controller)
     {
+        $request = $controller->request;
         if (is_array($this->_config['requireAuth']) &&
             !empty($this->_config['requireAuth']) &&
-            !empty($this->request->data)
+            $request->getData()
         ) {
             $requireAuth = $this->_config['requireAuth'];
 
-            if (in_array($this->request->params['action'], $requireAuth) || $requireAuth == ['*']) {
-                if (!isset($controller->request->data['_Token'])) {
+            if (in_array($request->getParam('action'), $requireAuth) || $requireAuth == ['*']) {
+                if ($request->getData('_Token') === null) {
                     throw new AuthSecurityException('\'_Token\' was not found in request data.');
                 }
 
@@ -282,23 +273,23 @@ class SecurityComponent extends Component
                     $tData = $this->session->read('_Token');
 
                     if (!empty($tData['allowedControllers']) &&
-                        !in_array($this->request->params['controller'], $tData['allowedControllers'])) {
+                        !in_array($request->getParam('controller'), $tData['allowedControllers'])) {
                         throw new AuthSecurityException(
                             sprintf(
                                 'Controller \'%s\' was not found in allowed controllers: \'%s\'.',
-                                $this->request->params['controller'],
+                                $request->getParam('controller'),
                                 implode(', ', (array)$tData['allowedControllers'])
                             )
                         );
                     }
                     if (!empty($tData['allowedActions']) &&
-                        !in_array($this->request->params['action'], $tData['allowedActions'])
+                        !in_array($request->getParam('action'), $tData['allowedActions'])
                     ) {
                         throw new AuthSecurityException(
                             sprintf(
                                 'Action \'%s::%s\' was not found in allowed actions: \'%s\'.',
-                                $this->request->params['controller'],
-                                $this->request->params['action'],
+                                $request->getParam('controller'),
+                                $request->getParam('action'),
                                 implode(', ', (array)$tData['allowedActions'])
                             )
                         );
@@ -321,7 +312,7 @@ class SecurityComponent extends Component
      */
     protected function _validatePost(Controller $controller)
     {
-        if (empty($controller->request->data)) {
+        if (!$controller->request->getData()) {
             return true;
         }
         $token = $this->_validToken($controller);
@@ -349,7 +340,7 @@ class SecurityComponent extends Component
      */
     protected function _validToken(Controller $controller)
     {
-        $check = $controller->request->data;
+        $check = $controller->request->getData();
 
         $message = '\'%s\' was not found in request data.';
         if (!isset($check['_Token'])) {
@@ -384,8 +375,8 @@ class SecurityComponent extends Component
      */
     protected function _hashParts(Controller $controller)
     {
-        $fieldList = $this->_fieldsList($controller->request->data);
-        $unlocked = $this->_sortedUnlocked($controller->request->data);
+        $fieldList = $this->_fieldsList($controller->request->getData());
+        $unlocked = $this->_sortedUnlocked($controller->request->getData());
 
         return [
             $controller->request->here(),
@@ -433,7 +424,7 @@ class SecurityComponent extends Component
         }
 
         $unlockedFields = array_unique(
-            array_merge((array)$this->config('disabledFields'), (array)$this->_config['unlockedFields'], $unlocked)
+            array_merge((array)$this->getConfig('disabledFields'), (array)$this->_config['unlockedFields'], $unlocked)
         );
 
         foreach ($fieldList as $i => $key) {
@@ -501,7 +492,7 @@ class SecurityComponent extends Component
     protected function _debugPostTokenNotMatching(Controller $controller, $hashParts)
     {
         $messages = [];
-        $expectedParts = json_decode(urldecode($controller->request->data['_Token']['debug']), true);
+        $expectedParts = json_decode(urldecode($controller->request->getData('_Token.debug')), true);
         if (!is_array($expectedParts) || count($expectedParts) !== 3) {
             return 'Invalid security debug token.';
         }
@@ -565,12 +556,12 @@ class SecurityComponent extends Component
      * Manually add form tampering prevention token information into the provided
      * request object.
      *
-     * @param \Cake\Network\Request $request The request object to add into.
+     * @param \Cake\Http\ServerRequest $request The request object to add into.
      * @return bool
      */
-    public function generateToken(Request $request)
+    public function generateToken(ServerRequest $request)
     {
-        if (isset($request->params['requested']) && $request->params['requested'] === 1) {
+        if ($request->is('requested')) {
             if ($this->session->check('_Token')) {
                 $request->params['_Token'] = $this->session->read('_Token');
             }
@@ -646,7 +637,7 @@ class SecurityComponent extends Component
      *
      * @param array $expectedFields Expected fields
      * @param string $missingMessage Message template
-     * @return string Error message about expected fields
+     * @return string|null Error message about expected fields
      */
     protected function _debugExpectedFields($expectedFields = [], $missingMessage = '')
     {

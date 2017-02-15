@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Core\Plugin;
 use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -317,7 +318,7 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
-     * Tests that no exceptions are generated becuase of ambiguous column names in queries
+     * Tests that no exceptions are generated because of ambiguous column names in queries
      * during a  save operation
      *
      * @see https://github.com/cakephp/cakephp/issues/3803
@@ -329,9 +330,9 @@ class QueryRegressionTest extends TestCase
         $articles = TableRegistry::get('Articles');
         $articles->belongsTo('Authors');
 
-        $articles->eventManager()->attach(function ($event, $query) {
+        $articles->eventManager()->on('Model.beforeFind', function (Event $event, $query) {
             return $query->contain('Authors');
-        }, 'Model.beforeFind');
+        });
 
         $article = $articles->newEntity();
         $article->title = 'Foo';
@@ -356,7 +357,7 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Tests that whe saving deep associations for a belongsToMany property,
-     * data is not removed becuase of excesive associations filtering.
+     * data is not removed because of excessive associations filtering.
      *
      * @see https://github.com/cakephp/cakephp/issues/4009
      * @return void

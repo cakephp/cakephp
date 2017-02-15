@@ -63,8 +63,8 @@ class ExpressionTypeCastingTest extends TestCase
         $comparison = new Comparison('field', 'the thing', 'test', '=');
         $binder = new ValueBinder;
         $sql = $comparison->sql($binder);
-        $this->assertEquals('field = (CONCAT(:c0, :c1))', $sql);
-        $this->assertEquals('the thing', $binder->bindings()[':c0']['value']);
+        $this->assertEquals('field = (CONCAT(:param0, :param1))', $sql);
+        $this->assertEquals('the thing', $binder->bindings()[':param0']['value']);
 
         $found = false;
         $comparison->traverse(function ($exp) use (&$found) {
@@ -84,9 +84,9 @@ class ExpressionTypeCastingTest extends TestCase
         $comparison = new Comparison('field', ['2', '3'], 'test[]', 'IN');
         $binder = new ValueBinder;
         $sql = $comparison->sql($binder);
-        $this->assertEquals('field IN (CONCAT(:c0, :c1),CONCAT(:c2, :c3))', $sql);
-        $this->assertEquals('2', $binder->bindings()[':c0']['value']);
-        $this->assertEquals('3', $binder->bindings()[':c2']['value']);
+        $this->assertEquals('field IN (CONCAT(:param0, :param1),CONCAT(:param2, :param3))', $sql);
+        $this->assertEquals('2', $binder->bindings()[':param0']['value']);
+        $this->assertEquals('3', $binder->bindings()[':param2']['value']);
 
         $found = false;
         $comparison->traverse(function ($exp) use (&$found) {
@@ -96,7 +96,7 @@ class ExpressionTypeCastingTest extends TestCase
     }
 
     /**
-     * Tests that the Between expression casts values to expresisons correctly
+     * Tests that the Between expression casts values to expressions correctly
      *
      * @return void
      */
@@ -105,9 +105,9 @@ class ExpressionTypeCastingTest extends TestCase
         $between = new BetweenExpression('field', 'from', 'to', 'test');
         $binder = new ValueBinder;
         $sql = $between->sql($binder);
-        $this->assertEquals('field BETWEEN CONCAT(:c0, :c1) AND CONCAT(:c2, :c3)', $sql);
-        $this->assertEquals('from', $binder->bindings()[':c0']['value']);
-        $this->assertEquals('to', $binder->bindings()[':c2']['value']);
+        $this->assertEquals('field BETWEEN CONCAT(:param0, :param1) AND CONCAT(:param2, :param3)', $sql);
+        $this->assertEquals('from', $binder->bindings()[':param0']['value']);
+        $this->assertEquals('to', $binder->bindings()[':param2']['value']);
 
         $expressions = [];
         $between->traverse(function ($exp) use (&$expressions) {
@@ -133,11 +133,11 @@ class ExpressionTypeCastingTest extends TestCase
 
         $binder = new ValueBinder;
         $sql = $case->sql($binder);
-        $this->assertEquals('CASE WHEN foo = :c0 THEN CONCAT(:c1, :c2) ELSE CONCAT(:c3, :c4) END', $sql);
+        $this->assertEquals('CASE WHEN foo = :c0 THEN CONCAT(:param1, :param2) ELSE CONCAT(:param3, :param4) END', $sql);
 
         $this->assertEquals('1', $binder->bindings()[':c0']['value']);
-        $this->assertEquals('value1', $binder->bindings()[':c1']['value']);
-        $this->assertEquals('value2', $binder->bindings()[':c3']['value']);
+        $this->assertEquals('value1', $binder->bindings()[':param1']['value']);
+        $this->assertEquals('value2', $binder->bindings()[':param3']['value']);
 
         $expressions = [];
         $case->traverse(function ($exp) use (&$expressions) {
@@ -158,8 +158,8 @@ class ExpressionTypeCastingTest extends TestCase
         $function = new FunctionExpression('DATE', ['2016-01'], ['test']);
         $binder = new ValueBinder;
         $sql = $function->sql($binder);
-        $this->assertEquals('DATE((CONCAT(:c0, :c1)))', $sql);
-        $this->assertEquals('2016-01', $binder->bindings()[':c0']['value']);
+        $this->assertEquals('DATE((CONCAT(:param0, :param1)))', $sql);
+        $this->assertEquals('2016-01', $binder->bindings()[':param0']['value']);
 
         $expressions = [];
         $function->traverse(function ($exp) use (&$expressions) {
@@ -184,11 +184,11 @@ class ExpressionTypeCastingTest extends TestCase
         $binder = new ValueBinder;
         $sql = $values->sql($binder);
         $this->assertEquals(
-            ' VALUES ((CONCAT(:c0, :c1))), ((CONCAT(:c2, :c3)))',
+            ' VALUES ((CONCAT(:param0, :param1))), ((CONCAT(:param2, :param3)))',
             $sql
         );
-        $this->assertEquals('foo', $binder->bindings()[':c0']['value']);
-        $this->assertEquals('bar', $binder->bindings()[':c2']['value']);
+        $this->assertEquals('foo', $binder->bindings()[':param0']['value']);
+        $this->assertEquals('bar', $binder->bindings()[':param2']['value']);
 
         $expressions = [];
         $values->traverse(function ($exp) use (&$expressions) {

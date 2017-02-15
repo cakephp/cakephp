@@ -26,6 +26,13 @@ class FileWidget implements WidgetInterface
 {
 
     /**
+     * Templates
+     *
+     * @var \Cake\View\StringTemplate
+     */
+    protected $_templates;
+
+    /**
      * Constructor
      *
      * @param \Cake\View\StringTemplate $templates Templates list.

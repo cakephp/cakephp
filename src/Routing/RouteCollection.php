@@ -17,6 +17,7 @@ namespace Cake\Routing;
 use Cake\Routing\Exception\DuplicateNamedRouteException;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Route\Route;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Contains a collection of routes.
@@ -144,7 +145,48 @@ class RouteCollection
                 return $r;
             }
         }
-        throw new MissingRouteException(['url' => $url]);
+
+        $exceptionProperties = ['url' => $url];
+        if ($method !== '') {
+            // Ensure that if the method is included, it is the first element of
+            // the array, to match the order that the strings are printed in the
+            // MissingRouteException error message, $_messageTemplateWithMethod.
+            $exceptionProperties = array_merge(['method' => $method], $exceptionProperties);
+        }
+        throw new MissingRouteException($exceptionProperties);
+    }
+
+    /**
+     * Takes the ServerRequestInterface, iterates the routes until one is able to parse the route.
+     *
+     * @param \Psr\Http\Messages\ServerRequestInterface $request The request to parse route data from.
+     * @return array An array of request parameters parsed from the URL.
+     * @throws \Cake\Routing\Exception\MissingRouteException When a URL has no matching route.
+     */
+    public function parseRequest(ServerRequestInterface $request)
+    {
+        $uri = $request->getUri();
+        $urlPath = urldecode($uri->getPath());
+        foreach (array_keys($this->_paths) as $path) {
+            if (strpos($urlPath, $path) !== 0) {
+                continue;
+            }
+
+            /* @var \Cake\Routing\Route\Route $route */
+            foreach ($this->_paths[$path] as $route) {
+                $r = $route->parseRequest($request);
+                if ($r === false) {
+                    continue;
+                }
+                if ($uri->getQuery()) {
+                    parse_str($uri->getQuery(), $queryParameters);
+                    $r['?'] = $queryParameters;
+                }
+
+                return $r;
+            }
+        }
+        throw new MissingRouteException(['url' => $urlPath]);
     }
 
     /**

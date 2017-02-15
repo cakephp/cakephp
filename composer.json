@@ -18,11 +18,12 @@
         "source": "https://github.com/cakephp/cakephp"
     },
     "require": {
-        "php": ">=5.5.9",
+        "php": ">=5.6.0",
+        "lib-ICU": ">=4.8",
         "ext-intl": "*",
         "ext-mbstring": "*",
         "cakephp/chronos": "~1.0",
-        "aura/intl": "1.1.*",
+        "aura/intl": "^3.0.0",
         "psr/log": "^1.0",
         "zendframework/zend-diactoros": "~1.0"
     },
@@ -30,7 +31,7 @@
         "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation."
     },
     "require-dev": {
-        "phpunit/phpunit": "*",
+        "phpunit/phpunit": "<6.0",
         "cakephp/cakephp-codesniffer": "~2.1"
     },
     "autoload": {
@@ -46,6 +47,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Cake\\PHPStan\\": "tests/PHPStan",
             "Cake\\Test\\": "tests",
             "TestApp\\": "tests/test_app/TestApp",
             "TestPlugin\\": "tests/test_app/Plugin/TestPlugin/src",
@@ -76,8 +78,9 @@
             "@cs-check",
             "@test"
         ],
-        "cs-check": "phpcs --colors -p --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests",
-        "cs-fix": "phpcbf --colors --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests",
-        "test": "phpunit --colors=always"
+        "cs-check": "phpcs --colors -p ./src ./tests",
+        "cs-fix": "phpcbf --colors ./src ./tests",
+        "test": "phpunit",
+        "test-coverage": "phpunit --coverage-clover=clover.xml"
     }
 }

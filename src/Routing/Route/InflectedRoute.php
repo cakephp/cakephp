@@ -43,7 +43,7 @@ class InflectedRoute extends Route
      */
     public function parse($url, $method = '')
     {
-        $params = parent::parse($url);
+        $params = parent::parse($url, $method);
         if (!$params) {
             return false;
         }

@@ -73,7 +73,7 @@ class TimestampBehavior extends Behavior
     public function initialize(array $config)
     {
         if (isset($config['events'])) {
-            $this->config('events', $config['events'], false);
+            $this->setConfig('events', $config['events'], false);
         }
     }
 
@@ -83,12 +83,12 @@ class TimestampBehavior extends Behavior
      * @param \Cake\Event\Event $event Event instance.
      * @param \Cake\Datasource\EntityInterface $entity Entity instance.
      * @throws \UnexpectedValueException if a field's when value is misdefined
-     * @return true (irrespective of the behavior logic, the save will not be prevented)
+     * @return bool Returns true irrespective of the behavior logic, the save will not be prevented.
      * @throws \UnexpectedValueException When the value for an event is not 'always', 'new' or 'existing'
      */
     public function handleEvent(Event $event, EntityInterface $entity)
     {
-        $eventName = $event->name();
+        $eventName = $event->getName();
         $events = $this->_config['events'];
 
         $new = $entity->isNew() !== false;
@@ -132,7 +132,7 @@ class TimestampBehavior extends Behavior
      *
      * @param \DateTime|null $ts Timestamp
      * @param bool $refreshTimestamp If true timestamp is refreshed.
-     * @return \Cake\I18n\Time
+     * @return \DateTime
      */
     public function timestamp(DateTime $ts = null, $refreshTimestamp = false)
     {

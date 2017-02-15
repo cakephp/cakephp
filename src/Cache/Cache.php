@@ -100,16 +100,9 @@ class Cache
     protected static $_groups = [];
 
     /**
-     * Whether to reset the settings with the next call to Cache::set();
-     *
-     * @var array
-     */
-    protected static $_reset = false;
-
-    /**
      * Cache Registry used for creating and using cache adapters.
      *
-     * @var \Cake\Cache\CacheRegistry
+     * @var \Cake\Core\ObjectRegistry
      */
     protected static $_registry;
 
@@ -126,7 +119,7 @@ class Cache
             static::$_registry = $registry;
         }
 
-        if (empty(static::$_registry)) {
+        if (!static::$_registry) {
             static::$_registry = new CacheRegistry();
         }
 
@@ -154,7 +147,7 @@ class Cache
         $registry->load($name, $config);
 
         if ($config['className'] instanceof CacheEngine) {
-            $config = $config['className']->config();
+            $config = $config['className']->getConfig();
         }
 
         if (!empty($config['groups'])) {

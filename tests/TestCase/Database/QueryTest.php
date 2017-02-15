@@ -2671,6 +2671,29 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that delete queries that contain joins do trigger a notice,
+     * warning about possible incompatibilities with aliases being removed
+     * from the conditions.
+     *
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.
+     * @return void
+     */
+    public function testDeleteRemovingAliasesCanBreakJoins()
+    {
+        $query = new Query($this->connection);
+
+        $query
+            ->delete('authors')
+            ->from(['a ' => 'authors'])
+            ->innerJoin('articles')
+            ->where(['a.id' => 1]);
+
+        $query->sql();
+    }
+
+    /**
      * Test setting select() & delete() modes.
      *
      * @return void
@@ -2706,6 +2729,20 @@ class QueryTest extends TestCase
         $result = $query->execute();
         $this->assertCount(1, $result);
         $result->closeCursor();
+    }
+
+    /**
+     * Test update with type checking
+     * by passing an array as table arg
+     *
+     * @expectedException \InvalidArgumentException
+     *
+     * @return void
+     */
+    public function testUpdateArgTypeChecking()
+    {
+        $query = new Query($this->connection);
+        $query->update(['Articles']);
     }
 
     /**
@@ -2851,6 +2888,68 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery(' WHERE <id> = :c2$', $result, !$this->autoQuote);
         $result = $query->execute();
         $this->assertCount(1, $result);
+    }
+
+    /**
+     * Tests that aliases are stripped from update query conditions
+     * where possible.
+     *
+     * @return void
+     */
+    public function testUpdateStripAliasesFromConditions()
+    {
+        $query = new Query($this->connection);
+
+        $query
+            ->update('authors')
+            ->set(['name' => 'name'])
+            ->where([
+                'OR' => [
+                    'a.id' => 1,
+                    'AND' => [
+                        'b.name NOT IN' => ['foo', 'bar'],
+                        'OR' => [
+                            $query->newExpr()->eq(new IdentifierExpression('c.name'), 'zap'),
+                            'd.name' => 'baz',
+                            (new Query($this->connection))->select(['e.name'])->where(['e.name' => 'oof'])
+                        ]
+                    ]
+                ],
+            ]);
+
+        $this->assertQuotedQuery(
+            'UPDATE <authors> SET <name> = :c0 WHERE \(' .
+                '<id> = :c1 OR \(' .
+                    '<name> not in \(:c2,:c3\) AND \(' .
+                        '\(<c>\.<name>\) = :c4 OR <name> = :c5 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c6\)' .
+                    '\)' .
+                '\)' .
+            '\)',
+            $query->sql(),
+            !$this->autoQuote
+        );
+    }
+
+    /**
+     * Tests that update queries that contain joins do trigger a notice,
+     * warning about possible incompatibilities with aliases being removed
+     * from the conditions.
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.
+     * @return void
+     */
+    public function testUpdateRemovingAliasesCanBreakJoins()
+    {
+        $query = new Query($this->connection);
+
+        $query
+            ->update('authors')
+            ->set(['name' => 'name'])
+            ->innerJoin('articles')
+            ->where(['a.id' => 1]);
+
+        $query->sql();
     }
 
     /**
@@ -3980,11 +4079,11 @@ class QueryTest extends TestCase
 
 
     /**
-     * Tests that the json type can save and get data symetrically
+     * Tests that the json type can save and get data symmetrically
      *
      * @return void
      */
-    public function testSymetricJsonType()
+    public function testSymmetricJsonType()
     {
         $query = new Query($this->connection);
         $insert = $query

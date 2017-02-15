@@ -29,7 +29,7 @@ class Stream
     /**
      * Context resource used by the stream API.
      *
-     * @var resource
+     * @var resource|null
      */
     protected $_context;
 
@@ -50,7 +50,7 @@ class Stream
     /**
      * The stream resource.
      *
-     * @var resource
+     * @var resource|null
      */
     protected $_stream;
 
@@ -71,7 +71,7 @@ class Stream
     public function send(Request $request, array $options)
     {
         $this->_stream = null;
-        $this->_context = [];
+        $this->_context = null;
         $this->_contextOptions = [];
         $this->_sslContextOptions = [];
         $this->_connectionErrors = [];
@@ -202,6 +202,7 @@ class Stream
             $this->_contextOptions['max_redirects'] = (int)$options['redirect'];
         }
         if (isset($options['proxy']['proxy'])) {
+            $this->_contextOptions['request_fulluri'] = true;
             $this->_contextOptions['proxy'] = $options['proxy']['proxy'];
         }
     }
@@ -319,3 +320,6 @@ class Stream
         return array_merge($this->_contextOptions, $this->_sslContextOptions);
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Http\Client\Adapter\Stream', 'Cake\Network\Http\Adapter\Stream');

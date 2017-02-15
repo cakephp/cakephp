@@ -20,8 +20,8 @@ use Cake\Core\Plugin;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
+use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
-use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
@@ -73,7 +73,9 @@ use RuntimeException;
 class View implements EventDispatcherInterface
 {
 
-    use CellTrait;
+    use CellTrait {
+        cell as public;
+    }
     use EventDispatcherTrait;
     use LogTrait;
     use RequestActionTrait;
@@ -111,7 +113,7 @@ class View implements EventDispatcherInterface
      * Current passed params. Passed to View from the creating Controller for convenience.
      *
      * @var array
-     * @deprecated 3.1.0 Use `$this->request->params['pass']` instead.
+     * @deprecated 3.1.0 Use `$this->request->getParam('pass')` instead.
      */
     public $passedArgs = [];
 
@@ -198,11 +200,11 @@ class View implements EventDispatcherInterface
     public $uuids = [];
 
     /**
-     * An instance of a Cake\Network\Request object that contains information about the current request.
+     * An instance of a \Cake\Http\ServerRequest object that contains information about the current request.
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
      *
-     * @var \Cake\Network\Request
+     * @var \Cake\Http\ServerRequest
      */
     public $request;
 
@@ -308,14 +310,14 @@ class View implements EventDispatcherInterface
     /**
      * Constructor
      *
-     * @param \Cake\Network\Request|null $request Request instance.
+     * @param \Cake\Http\ServerRequest|null $request Request instance.
      * @param \Cake\Network\Response|null $response Response instance.
      * @param \Cake\Event\EventManager|null $eventManager Event manager instance.
      * @param array $viewOptions View options. See View::$_passedVars for list of
      *   options which get set as class properties.
      */
     public function __construct(
-        Request $request = null,
+        ServerRequest $request = null,
         Response $response = null,
         EventManager $eventManager = null,
         array $viewOptions = []
@@ -332,18 +334,14 @@ class View implements EventDispatcherInterface
             }
         }
         $this->eventManager($eventManager);
-        $this->request = $request;
-        $this->response = $response;
-        if (empty($this->request)) {
-            $this->request = Router::getRequest(true);
-        }
-        if (empty($this->request)) {
-            $this->request = new Request();
-            $this->request->base = '';
-            $this->request->here = $this->request->webroot = '/';
-        }
-        if (empty($this->response)) {
-            $this->response = new Response();
+        $this->request = $request ?: Router::getRequest(true);
+        $this->response = $response ?: new Response();
+        if (!$this->request) {
+            $this->request = new ServerRequest([
+                'base' => '',
+                'url' => '',
+                'webroot' => '/'
+            ]);
         }
         $this->Blocks = new ViewBlock();
         $this->initialize();
@@ -491,7 +489,7 @@ class View implements EventDispatcherInterface
         }
 
         $pluginCheck = $options['plugin'] === false ? false : true;
-        $file = $this->_getElementFilename($name, $pluginCheck);
+        $file = $this->_getElementFileName($name, $pluginCheck);
         if ($file && $options['cache']) {
             return $this->cache(function () use ($file, $data, $options) {
                 echo $this->_renderElement($file, $data, $options);
@@ -572,7 +570,7 @@ class View implements EventDispatcherInterface
      * a plugin template/layout can be used instead of the app ones. If the chosen plugin is not found
      * the template will be located along the regular view path cascade.
      *
-     * @param string|null $view Name of view file to use
+     * @param string|false|null $view Name of view file to use
      * @param string|null $layout Layout to use.
      * @return string|null Rendered content or null if content already rendered and returned earlier.
      * @throws \Cake\Core\Exception\Exception If there is an error in the view.
@@ -973,8 +971,8 @@ class View implements EventDispatcherInterface
         $content = $this->_evaluate($viewFile, $data);
 
         $afterEvent = $this->dispatchEvent('View.afterRenderFile', [$viewFile, $content]);
-        if (isset($afterEvent->result)) {
-            $content = $afterEvent->result;
+        if ($afterEvent->getResult() !== null) {
+            $content = $afterEvent->getResult();
         }
 
         if (isset($this->_parents[$viewFile])) {
@@ -1002,18 +1000,14 @@ class View implements EventDispatcherInterface
      *
      * @param string $viewFile Filename of the view
      * @param array $dataForView Data to include in rendered view.
-     *    If empty the current View::$viewVars will be used.
      * @return string Rendered output
      */
     protected function _evaluate($viewFile, $dataForView)
     {
-        $this->__viewFile = $viewFile;
         extract($dataForView);
         ob_start();
 
-        include $this->__viewFile;
-
-        unset($this->__viewFile);
+        include func_get_arg(0);
 
         return ob_get_clean();
     }
@@ -1077,7 +1071,7 @@ class View implements EventDispatcherInterface
         list($plugin, $name) = $this->pluginSplit($name);
         $name = str_replace('/', DIRECTORY_SEPARATOR, $name);
 
-        if (strpos($name, DIRECTORY_SEPARATOR) === false && $name[0] !== '.') {
+        if (strpos($name, DIRECTORY_SEPARATOR) === false && $name !== '' && $name[0] !== '.') {
             $name = $templatePath . $subDir . $this->_inflectViewFileName($name);
         } elseif (strpos($name, DIRECTORY_SEPARATOR) !== false) {
             if ($name[0] === DIRECTORY_SEPARATOR || $name[1] === ':') {
@@ -1232,8 +1226,8 @@ class View implements EventDispatcherInterface
     protected function _getSubPaths($basePath)
     {
         $paths = [$basePath];
-        if (!empty($this->request->params['prefix'])) {
-            $prefixPath = explode('/', $this->request->params['prefix']);
+        if ($this->request->getParam('prefix')) {
+            $prefixPath = explode('/', $this->request->getParam('prefix'));
             $path = '';
             foreach ($prefixPath as $prefixPart) {
                 $path .= Inflector::camelize($prefixPart) . DIRECTORY_SEPARATOR;

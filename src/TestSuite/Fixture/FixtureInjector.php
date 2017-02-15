@@ -54,7 +54,7 @@ class FixtureInjector implements PHPUnit_Framework_TestListener
             $manager->setDebug(in_array('--debug', $_SERVER['argv']));
         }
         $this->_fixtureManager = $manager;
-        $this->_fixtureManager->shutdown();
+        $this->_fixtureManager->shutDown();
     }
 
     /**
@@ -81,7 +81,7 @@ class FixtureInjector implements PHPUnit_Framework_TestListener
     public function endTestSuite(PHPUnit_Framework_TestSuite $suite)
     {
         if ($this->_first === $suite) {
-            $this->_fixtureManager->shutdown();
+            $this->_fixtureManager->shutDown();
         }
     }
 

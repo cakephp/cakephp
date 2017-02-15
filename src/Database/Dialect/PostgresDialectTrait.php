@@ -102,15 +102,15 @@ trait PostgresDialectTrait
      */
     protected function _transformFunctionExpression(FunctionExpression $expression)
     {
-        switch ($expression->name()) {
+        switch ($expression->getName()) {
             case 'CONCAT':
                 // CONCAT function is expressed as exp1 || exp2
-                $expression->name('')->tieWith(' ||');
+                $expression->setName('')->setConjunction(' ||');
                 break;
             case 'DATEDIFF':
                 $expression
-                    ->name('')
-                    ->tieWith('-')
+                    ->setName('')
+                    ->setConjunction('-')
                     ->iterateParts(function ($p) {
                         if (is_string($p)) {
                             $p = ['value' => [$p => 'literal'], 'type' => null];
@@ -123,19 +123,19 @@ trait PostgresDialectTrait
                 break;
             case 'CURRENT_DATE':
                 $time = new FunctionExpression('LOCALTIMESTAMP', [' 0 ' => 'literal']);
-                $expression->name('CAST')->tieWith(' AS ')->add([$time, 'date' => 'literal']);
+                $expression->setName('CAST')->setConjunction(' AS ')->add([$time, 'date' => 'literal']);
                 break;
             case 'CURRENT_TIME':
                 $time = new FunctionExpression('LOCALTIMESTAMP', [' 0 ' => 'literal']);
-                $expression->name('CAST')->tieWith(' AS ')->add([$time, 'time' => 'literal']);
+                $expression->setName('CAST')->setConjunction(' AS ')->add([$time, 'time' => 'literal']);
                 break;
             case 'NOW':
-                $expression->name('LOCALTIMESTAMP')->add([' 0 ' => 'literal']);
+                $expression->setName('LOCALTIMESTAMP')->add([' 0 ' => 'literal']);
                 break;
             case 'DATE_ADD':
                 $expression
-                    ->name('')
-                    ->tieWith(' + INTERVAL')
+                    ->setName('')
+                    ->setConjunction(' + INTERVAL')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 1) {
                             $p = sprintf("'%s'", $p);
@@ -146,8 +146,8 @@ trait PostgresDialectTrait
                 break;
             case 'DAYOFWEEK':
                 $expression
-                    ->name('EXTRACT')
-                    ->tieWith(' ')
+                    ->setName('EXTRACT')
+                    ->setConjunction(' ')
                     ->add(['DOW FROM' => 'literal'], [], true)
                     ->add([') + (1' => 'literal']); // Postgres starts on index 0 but Sunday should be 1
                 break;

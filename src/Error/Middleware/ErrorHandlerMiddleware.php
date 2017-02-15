@@ -17,7 +17,8 @@ namespace Cake\Error\Middleware;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Http\ResponseTransformer;
+use Cake\Error\ExceptionRenderer;
+use Cake\Error\ExceptionRendererInterface;
 use Cake\Log\Log;
 use Exception;
 
@@ -53,18 +54,29 @@ class ErrorHandlerMiddleware
     ];
 
     /**
+     * Exception render.
+     *
+     * @var \Cake\Error\ExceptionRendererInterface|string|null
+     */
+    protected $exceptionRenderer;
+
+    /**
      * Constructor
      *
-     * @param string|callable|null $renderer The renderer or class name
-     *   to use or a callable factory.
+     * @param string|callable|null $exceptionRenderer The renderer or class name
+     *   to use or a callable factory. If null, Configure::read('Error.exceptionRenderer')
+     *   will be used.
      * @param array $config Configuration options to use. If empty, `Configure::read('Error')`
      *   will be used.
      */
-    public function __construct($renderer = null, array $config = [])
+    public function __construct($exceptionRenderer = null, array $config = [])
     {
-        $this->renderer = $renderer ?: 'Cake\Error\ExceptionRenderer';
+        if ($exceptionRenderer) {
+            $this->exceptionRenderer = $exceptionRenderer;
+        }
+
         $config = $config ?: Configure::read('Error');
-        $this->config($config);
+        $this->setConfig($config);
     }
 
     /**
@@ -99,7 +111,7 @@ class ErrorHandlerMiddleware
             $res = $renderer->render();
             $this->logException($request, $exception);
 
-            return ResponseTransformer::toPsr($res);
+            return $res;
         } catch (\Exception $e) {
             $this->logException($request, $e);
 
@@ -116,20 +128,27 @@ class ErrorHandlerMiddleware
      * Get a renderer instance
      *
      * @param \Exception $exception The exception being rendered.
-     * @return \Cake\Error\BaseErrorHandler The exception renderer.
+     * @return \Cake\Error\ExceptionRendererInterface The exception renderer.
      * @throws \Exception When the renderer class cannot be found.
      */
     protected function getRenderer($exception)
     {
-        if (is_string($this->renderer)) {
-            $class = App::className($this->renderer, 'Error');
+        if (!$this->exceptionRenderer) {
+            $this->exceptionRenderer = $this->getConfig('exceptionRenderer') ?: ExceptionRenderer::class;
+        }
+
+        if (is_string($this->exceptionRenderer)) {
+            $class = App::className($this->exceptionRenderer, 'Error');
             if (!$class) {
-                throw new Exception("The '{$this->renderer}' renderer class could not be found.");
+                throw new Exception(sprintf(
+                    "The '%s' renderer class could not be found.",
+                    $this->exceptionRenderer
+                ));
             }
 
             return new $class($exception);
         }
-        $factory = $this->renderer;
+        $factory = $this->exceptionRenderer;
 
         return $factory($exception);
     }
@@ -143,11 +162,11 @@ class ErrorHandlerMiddleware
      */
     protected function logException($request, $exception)
     {
-        if (!$this->config('log')) {
+        if (!$this->getConfig('log')) {
             return;
         }
 
-        $skipLog = $this->config('skipLog');
+        $skipLog = $this->getConfig('skipLog');
         if ($skipLog) {
             foreach ((array)$skipLog as $class) {
                 if ($exception instanceof $class) {
@@ -186,7 +205,7 @@ class ErrorHandlerMiddleware
         if ($referer) {
             $message .= "\nReferer URL: " . $referer;
         }
-        if ($this->config('trace')) {
+        if ($this->getConfig('trace')) {
             $message .= "\nStack Trace:\n" . $exception->getTraceAsString() . "\n\n";
         }
 

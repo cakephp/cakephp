@@ -48,7 +48,7 @@ class ServerShell extends Shell
     /**
      * listen port
      *
-     * @var string
+     * @var int
      */
     protected $_port = null;
 
@@ -150,7 +150,7 @@ class ServerShell extends Shell
     {
         $parser = parent::getOptionParser();
 
-        $parser->description([
+        $parser->setDescription([
             'PHP Built-in Server for CakePHP',
             '<warning>[WARN] Don\'t use this in a production environment</warning>',
         ])->addOption('host', [

@@ -93,7 +93,7 @@ class TestController extends ControllerTestAppController
      * beforeFilter handler
      *
      * @param \Cake\Event\Event $event
-     * @retun void
+     * @return void
      */
     public function beforeFilter(Event $event)
     {
@@ -412,7 +412,7 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new Request, new Response());
 
-        $Controller->eventManager()->on('Controller.beforeRender', function ($event) {
+        $Controller->eventManager()->on('Controller.beforeRender', function (Event $event) {
             $controller = $event->subject();
             $controller->viewClass = 'Json';
         });
@@ -437,9 +437,9 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new Request, new Response());
 
-        $Controller->eventManager()->attach(function ($event) {
+        $Controller->eventManager()->on('Controller.beforeRender', function (Event $event) {
             return false;
-        }, 'Controller.beforeRender');
+        });
 
         $result = $Controller->render('index');
         $this->assertInstanceOf('Cake\Network\Response', $result);
@@ -475,6 +475,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller(null, new Response());
 
         $response = $Controller->redirect('http://cakephp.org', (int)$code);
+        $this->assertSame($response, $Controller->response);
         $this->assertEquals($code, $response->statusCode());
         $this->assertEquals('http://cakephp.org', $response->header()['Location']);
         $this->assertFalse($Controller->autoRender);
@@ -489,9 +490,9 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(null, new Response());
 
-        $Controller->eventManager()->attach(function ($event, $url, $response) {
+        $Controller->eventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) {
             $response->location('http://book.cakephp.org');
-        }, 'Controller.beforeRedirect');
+        });
 
         $response = $Controller->redirect('http://cakephp.org', 301);
         $this->assertEquals('http://book.cakephp.org', $response->header()['Location']);
@@ -510,9 +511,9 @@ class ControllerTest extends TestCase
             ->getMock();
         $Controller = new Controller(null, $Response);
 
-        $Controller->eventManager()->attach(function ($event, $url, $response) {
+        $Controller->eventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) {
             $response->statusCode(302);
-        }, 'Controller.beforeRedirect');
+        });
 
         $response = $Controller->redirect('http://cakephp.org', 301);
 
@@ -528,12 +529,13 @@ class ControllerTest extends TestCase
         $Controller = new Controller(null, $Response);
 
         $newResponse = new Response;
-        $Controller->eventManager()->on('Controller.beforeRedirect', function ($event, $url, $response) use ($newResponse) {
+        $Controller->eventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) use ($newResponse) {
             return $newResponse;
         });
 
         $result = $Controller->redirect('http://cakephp.org');
         $this->assertSame($newResponse, $result);
+        $this->assertSame($newResponse, $Controller->response);
     }
 
     /**
@@ -1039,5 +1041,54 @@ class ControllerTest extends TestCase
         $controller->render('index');
 
         $this->assertArrayHasKey('testVariable', $controller->View->viewVars);
+    }
+
+    /**
+     * Tests deprecated view propertiyes work
+     *
+     * @param $property Deprecated property name
+     * @param $getter Getter name
+     * @param $setter Setter name
+     * @param mixed $value Value to be set
+     * @return void
+     * @dataProvider deprecatedViewPropertyProvider
+     */
+    public function testDeprecatedViewProperty($property, $getter, $setter, $value)
+    {
+        $controller = new AnotherTestController();
+        $message = false;
+
+        set_error_handler(function ($errno, $errstr) use (&$message) {
+            $message = ($errno === E_USER_DEPRECATED ? $errstr : false);
+        });
+
+        try {
+            $controller->$property = $value;
+            $this->assertSame(sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.', $property, $setter), $message);
+
+            $this->assertSame($value, $controller->$property);
+            $this->assertSame(sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.', $property, $getter), $message);
+
+            $this->assertSame($value, $controller->viewBuilder()->{$getter}());
+        } finally {
+            restore_error_handler();
+        }
+    }
+
+    /**
+     * Data provider for testing deprecated view properties
+     *
+     * @return array
+     */
+    public function deprecatedViewPropertyProvider()
+    {
+        return [
+            ['layout', 'getLayout', 'setLayout', 'custom'],
+            ['view', 'getTemplate', 'setTemplate', 'view'],
+            ['theme', 'getTheme', 'setTheme', 'Modern'],
+            ['autoLayout', 'isAutoLayoutEnabled', 'enableAutoLayout', false],
+            ['viewPath', 'getTemplatePath', 'setTemplatePath', 'Templates'],
+            ['layoutPath', 'getLayoutPath', 'setLayoutPath', 'Layouts'],
+        ];
     }
 }

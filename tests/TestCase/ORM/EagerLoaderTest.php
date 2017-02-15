@@ -276,6 +276,30 @@ class EagerLoaderTest extends TestCase
         $this->assertEquals($expected, $loader->contain());
     }
 
+
+    /**
+     * Tests setting containments using direct key value pairs works just as with key array.
+     *
+     * @return void
+     */
+    public function testContainKeyValueNotation()
+    {
+        $loader = new EagerLoader;
+        $loader->contain([
+            'clients',
+            'companies' => 'categories',
+        ]);
+        $expected = [
+            'clients' => [
+            ],
+            'companies' => [
+                'categories' => [
+                ],
+            ],
+        ];
+        $this->assertEquals($expected, $loader->contain());
+    }
+
     /**
      * Tests that it is possible to pass a function as the array value for contain
      *
@@ -428,7 +452,7 @@ class EagerLoaderTest extends TestCase
     }
 
     /**
-     * Tests that the path for gettings to a deep assocition is materialized in an
+     * Tests that the path for getting to a deep association is materialized in an
      * array key
      *
      * @return void
@@ -529,5 +553,22 @@ class EagerLoaderTest extends TestCase
         }
 
         return $elements;
+    }
+
+    /**
+     * Asserts that matching('something') and setMatching('something') return consistent type.
+     *
+     * @return void
+     */
+    public function testSetMatchingReturnType()
+    {
+        $loader = new EagerLoader();
+        $result = $loader->setMatching('clients');
+        $this->assertInstanceOf(EagerLoader::class, $result);
+        $this->assertArrayHasKey('clients', $loader->getMatching());
+
+        $result = $loader->matching('customers');
+        $this->assertArrayHasKey('customers', $result);
+        $this->assertArrayHasKey('customers', $loader->getMatching());
     }
 }

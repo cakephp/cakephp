@@ -47,7 +47,7 @@ trait ValidatorAwareTrait
     /**
      * A list of validation objects indexed by name
      *
-     * @var array
+     * @var \Cake\Validation\Validator[]
      */
     protected $_validators = [];
 
@@ -115,7 +115,7 @@ trait ValidatorAwareTrait
             }
         }
 
-        $validator->provider(self::VALIDATOR_PROVIDER_NAME, $this);
+        $validator->setProvider(self::VALIDATOR_PROVIDER_NAME, $this);
 
         return $this->_validators[$name] = $validator;
     }

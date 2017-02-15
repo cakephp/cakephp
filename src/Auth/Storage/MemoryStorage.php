@@ -30,7 +30,7 @@ class MemoryStorage implements StorageInterface
     /**
      * Redirect url.
      *
-     * @var string
+     * @var string|null
      */
     protected $_redirectUrl;
 

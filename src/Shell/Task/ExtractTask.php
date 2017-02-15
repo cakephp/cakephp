@@ -51,7 +51,7 @@ class ExtractTask extends Shell
     /**
      * Current file being processed
      *
-     * @var string
+     * @var string|null
      */
     protected $_file = null;
 
@@ -79,7 +79,7 @@ class ExtractTask extends Shell
     /**
      * Destination path
      *
-     * @var string
+     * @var string|null
      */
     protected $_output = null;
 
@@ -93,7 +93,7 @@ class ExtractTask extends Shell
     /**
      * Holds the validation string domain to use for validation messages when extracting
      *
-     * @var bool
+     * @var string
      */
     protected $_validationDomain = 'default';
 
@@ -311,7 +311,7 @@ class ExtractTask extends Shell
     public function getOptionParser()
     {
         $parser = parent::getOptionParser();
-        $parser->description(
+        $parser->setDescription(
             'CakePHP Language String Extraction:'
         )->addOption('app', [
             'help' => 'Directory where your application is located.'
@@ -364,6 +364,7 @@ class ExtractTask extends Shell
      */
     protected function _extractTokens()
     {
+        /* @var \Cake\Shell\Helper\ProgressHelper $progress */
         $progress = $this->helper('progress');
         $progress->init(['total' => count($this->_files)]);
         $isVerbose = $this->param('verbose');

@@ -172,6 +172,20 @@ class LogTest extends TestCase
     }
 
     /**
+     * Test the various setConfig call signatures.
+     *
+     * @dataProvider configProvider
+     * @return void
+     */
+    public function testSetConfigVariants($settings)
+    {
+        Log::setConfig('test', $settings);
+        $this->assertContains('test', Log::configured());
+        $this->assertInstanceOf('Cake\Log\Engine\FileLog', Log::engine('test'));
+        Log::drop('test');
+    }
+
+    /**
      * Test that config() throws an exception when adding an
      * adapter with the wrong type.
      *
@@ -181,6 +195,19 @@ class LogTest extends TestCase
     public function testConfigInjectErrorOnWrongType()
     {
         Log::config('test', new \StdClass);
+        Log::info('testing');
+    }
+
+    /**
+     * Test that setConfig() throws an exception when adding an
+     * adapter with the wrong type.
+     *
+     * @expectedException \RuntimeException
+     * @return void
+     */
+    public function testSetConfigInjectErrorOnWrongType()
+    {
+        Log::setConfig('test', new \StdClass);
         Log::info('testing');
     }
 
@@ -255,6 +282,54 @@ class LogTest extends TestCase
         Log::config('spam', [
             'engine' => 'File',
             'path' => LOGS,
+            'levels' => 'debug',
+            'file' => 'spam',
+        ]);
+        Log::config('eggs', [
+            'engine' => 'File',
+            'path' => LOGS,
+            'levels' => ['eggs', 'debug', 'error', 'warning'],
+            'file' => 'eggs',
+        ]);
+
+        $testMessage = 'selective logging';
+        Log::write('warning', $testMessage);
+
+        $this->assertFileExists(LOGS . 'eggs.log');
+        $this->assertFileNotExists(LOGS . 'spam.log');
+
+        Log::write('debug', $testMessage);
+        $this->assertFileExists(LOGS . 'spam.log');
+
+        $contents = file_get_contents(LOGS . 'spam.log');
+        $this->assertContains('Debug: ' . $testMessage, $contents);
+        $contents = file_get_contents(LOGS . 'eggs.log');
+        $this->assertContains('Debug: ' . $testMessage, $contents);
+
+        if (file_exists(LOGS . 'spam.log')) {
+            unlink(LOGS . 'spam.log');
+        }
+        if (file_exists(LOGS . 'eggs.log')) {
+            unlink(LOGS . 'eggs.log');
+        }
+    }
+
+    /**
+     * test selective logging by level using the `types` attribute
+     *
+     * @return void
+     */
+    public function testSelectiveLoggingByLevelUsingTypes()
+    {
+        if (file_exists(LOGS . 'spam.log')) {
+            unlink(LOGS . 'spam.log');
+        }
+        if (file_exists(LOGS . 'eggs.log')) {
+            unlink(LOGS . 'eggs.log');
+        }
+        Log::config('spam', [
+            'engine' => 'File',
+            'path' => LOGS,
             'types' => 'debug',
             'file' => 'spam',
         ]);
@@ -292,13 +367,13 @@ class LogTest extends TestCase
         Log::config('debug', [
             'engine' => 'File',
             'path' => LOGS,
-            'types' => ['notice', 'info', 'debug'],
+            'levels' => ['notice', 'info', 'debug'],
             'file' => 'debug',
         ]);
         Log::config('error', [
             'engine' => 'File',
             'path' => LOGS,
-            'types' => ['warning', 'error', 'critical', 'alert', 'emergency'],
+            'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
             'file' => 'error',
         ]);
     }
@@ -337,7 +412,7 @@ class LogTest extends TestCase
         Log::config('shops', [
             'engine' => 'File',
             'path' => LOGS,
-            'types' => ['info', 'debug', 'warning'],
+            'levels' => ['info', 'debug', 'warning'],
             'scopes' => ['transactions', 'orders'],
             'file' => 'shops',
         ]);
@@ -378,14 +453,14 @@ class LogTest extends TestCase
         Log::config('debug', [
             'engine' => 'File',
             'path' => LOGS,
-            'types' => ['notice', 'info', 'debug'],
+            'levels' => ['notice', 'info', 'debug'],
             'file' => 'debug',
             'scopes' => false
         ]);
         Log::config('shops', [
             'engine' => 'File',
             'path' => LOGS,
-            'types' => ['info', 'debug', 'warning'],
+            'levels' => ['info', 'debug', 'warning'],
             'file' => 'shops',
             'scopes' => ['transactions', 'orders'],
         ]);
@@ -424,7 +499,7 @@ class LogTest extends TestCase
         Log::config('shops', [
             'engine' => 'File',
             'path' => LOGS,
-            'types' => ['info', 'debug', 'notice', 'warning'],
+            'levels' => ['info', 'debug', 'notice', 'warning'],
             'scopes' => ['transactions', 'orders'],
             'file' => 'shops',
         ]);
@@ -465,14 +540,14 @@ class LogTest extends TestCase
         Log::config('shops', [
             'engine' => 'File',
             'path' => LOGS,
-            'types' => ['debug', 'notice', 'warning'],
+            'levels' => ['debug', 'notice', 'warning'],
             'scopes' => ['transactions', 'orders'],
             'file' => 'shops.log',
         ]);
         Log::config('eggs', [
             'engine' => 'File',
             'path' => LOGS,
-            'types' => ['debug', 'notice', 'warning'],
+            'levels' => ['debug', 'notice', 'warning'],
             'scopes' => ['eggs'],
             'file' => 'eggs.log',
         ]);
@@ -500,7 +575,7 @@ class LogTest extends TestCase
         Log::config('scope_test', [
             'engine' => 'TestApp',
             'path' => LOGS,
-            'types' => ['notice', 'info', 'debug'],
+            'levels' => ['notice', 'info', 'debug'],
             'scopes' => ['foo', 'bar'],
         ]);
 
@@ -527,13 +602,13 @@ class LogTest extends TestCase
         Log::config('debug', [
             'engine' => 'File',
             'path' => LOGS,
-            'types' => ['notice', 'info', 'debug'],
+            'levels' => ['notice', 'info', 'debug'],
             'file' => 'debug',
         ]);
         Log::config('error', [
             'engine' => 'File',
             'path' => LOGS,
-            'types' => ['emergency', 'alert', 'critical', 'error', 'warning'],
+            'levels' => ['emergency', 'alert', 'critical', 'error', 'warning'],
             'file' => 'error',
         ]);
 
@@ -604,7 +679,7 @@ class LogTest extends TestCase
         Log::drop('error');
         Log::drop('debug');
 
-        $result = Log::write('error', 'Bad stuff', 'unpossible');
+        $result = Log::write('error', 'Bad stuff', 'impossible');
         $this->assertFalse($result);
     }
 

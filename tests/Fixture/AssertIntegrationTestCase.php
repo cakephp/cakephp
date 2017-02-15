@@ -5,7 +5,7 @@ use Cake\Network\Response;
 use Cake\TestSuite\IntegrationTestCase;
 
 /**
- * This class helps in indirectly testing the functionalities of IntegrationTestCase
+ * This class helps in indirectly testing the functionality of IntegrationTestCase
  */
 class AssertIntegrationTestCase extends IntegrationTestCase
 {

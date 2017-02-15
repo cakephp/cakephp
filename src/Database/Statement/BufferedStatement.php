@@ -46,6 +46,7 @@ class BufferedStatement extends StatementDecorator
 
     /**
      * Current record pointer
+     *
      * @var int
      */
     protected $_counter = 0;
@@ -90,7 +91,6 @@ class BufferedStatement extends StatementDecorator
             return $row;
         }
 
-        $this->_fetchType = $type;
         $record = parent::fetch($type);
 
         if ($record === false) {

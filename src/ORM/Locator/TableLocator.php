@@ -36,7 +36,7 @@ class TableLocator implements LocatorInterface
     /**
      * Instances that belong to the registry.
      *
-     * @var array
+     * @var \Cake\ORM\Table[]
      */
     protected $_instances = [];
 
@@ -44,7 +44,7 @@ class TableLocator implements LocatorInterface
      * Contains a list of Table objects that were created out of the
      * built-in Table class. The list is indexed by table alias
      *
-     * @var array
+     * @var \Cake\ORM\Table[]
      */
     protected $_fallbacked = [];
 
@@ -59,29 +59,19 @@ class TableLocator implements LocatorInterface
      * Stores a list of options to be used when instantiating an object
      * with a matching alias.
      *
-     * The options that can be stored are those that are recognized by `get()`
-     * If second argument is omitted, it will return the current settings
-     * for $alias.
-     *
-     * If no arguments are passed it will return the full configuration array for
-     * all aliases
-     *
-     * @param string|null $alias Name of the alias
+     * @param string|array $alias Name of the alias or array to completely overwrite current config.
      * @param array|null $options list of options for the alias
-     * @return array The config data.
+     * @return $this
      * @throws \RuntimeException When you attempt to configure an existing table instance.
      */
-    public function config($alias = null, $options = null)
+    public function setConfig($alias, $options = null)
     {
-        if ($alias === null) {
-            return $this->_config;
-        }
         if (!is_string($alias)) {
-            return $this->_config = $alias;
+            $this->_config = $alias;
+
+            return $this;
         }
-        if ($options === null) {
-            return isset($this->_config[$alias]) ? $this->_config[$alias] : [];
-        }
+
         if (isset($this->_instances[$alias])) {
             throw new RuntimeException(sprintf(
                 'You cannot configure "%s", it has already been constructed.',
@@ -89,7 +79,54 @@ class TableLocator implements LocatorInterface
             ));
         }
 
-        return $this->_config[$alias] = $options;
+        $this->_config[$alias] = $options;
+
+        return $this;
+    }
+
+    /**
+     * Returns configuration for an alias or the full configuration array for all aliases.
+     *
+     * @param string|null $alias Alias to get config for, null for complete config.
+     * @return array The config data.
+     */
+    public function getConfig($alias = null)
+    {
+        if ($alias === null) {
+            return $this->_config;
+        }
+
+        return isset($this->_config[$alias]) ? $this->_config[$alias] : [];
+    }
+
+    /**
+     * Stores a list of options to be used when instantiating an object
+     * with a matching alias.
+     *
+     * The options that can be stored are those that are recognized by `get()`
+     * If second argument is omitted, it will return the current settings
+     * for $alias.
+     *
+     * If no arguments are passed it will return the full configuration array for
+     * all aliases
+     *
+     * @deprecated 3.4.0 Use setConfig()/getConfig() instead.
+     * @param string|array|null $alias Name of the alias
+     * @param array|null $options list of options for the alias
+     * @return array The config data.
+     * @throws \RuntimeException When you attempt to configure an existing table instance.
+     */
+    public function config($alias = null, $options = null)
+    {
+        if ($alias !== null) {
+            if (is_string($alias) && $options === null) {
+                return $this->getConfig($alias);
+            }
+
+            $this->setConfig($alias, $options);
+        }
+
+        return $this->getConfig($alias);
     }
 
     /**
@@ -244,7 +281,7 @@ class TableLocator implements LocatorInterface
      * debugging common mistakes when setting up associations or created new table
      * classes.
      *
-     * @return array
+     * @return \Cake\ORM\Table[]
      */
     public function genericInstances()
     {

@@ -15,7 +15,6 @@ namespace Cake\TestSuite;
 
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
-use Cake\Http\ResponseTransformer;
 use Cake\Http\Server;
 use Cake\Http\ServerRequestFactory;
 use LogicException;
@@ -70,8 +69,8 @@ class MiddlewareDispatcher
     /**
      * Run a request and get the response.
      *
-     * @param \Cake\Network\Request $request The request to execute.
-     * @return \Cake\Network\Response The generated response.
+     * @param \Cake\Http\ServerRequest $request The request to execute.
+     * @return \Psr\Http\Message\ResponseInterface The generated response.
      */
     public function execute($request)
     {
@@ -94,16 +93,15 @@ class MiddlewareDispatcher
 
         $server = new Server($app);
         $psrRequest = $this->_createRequest($request);
-        $response = $server->run($psrRequest);
 
-        return ResponseTransformer::toCake($response);
+        return $server->run($psrRequest);
     }
 
     /**
      * Create a PSR7 request from the request spec.
      *
      * @param array $spec The request spec.
-     * @return Psr\Http\Message\RequestInterface
+     * @return \Psr\Http\Message\RequestInterface
      */
     protected function _createRequest($spec)
     {

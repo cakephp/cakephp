@@ -119,9 +119,9 @@ class ConsoleOutput
     ];
 
     /**
-     * formatting options for colored output
+     * Formatting options for colored output.
      *
-     * @var string
+     * @var array
      */
     protected static $_options = [
         'bold' => 1,

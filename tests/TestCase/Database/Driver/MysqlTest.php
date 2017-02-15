@@ -94,7 +94,7 @@ class MysqlTest extends TestCase
             'port' => 3440,
             'flags' => [1 => true, 2 => false],
             'encoding' => 'a-language',
-            'timezone' => 'Antartica',
+            'timezone' => 'Antarctica',
             'init' => [
                 'Execute this',
                 'this too',
@@ -106,7 +106,7 @@ class MysqlTest extends TestCase
             ->getMock();
         $dsn = 'mysql:host=foo;port=3440;dbname=bar;charset=a-language';
         $expected = $config;
-        $expected['init'][] = "SET time_zone = 'Antartica'";
+        $expected['init'][] = "SET time_zone = 'Antarctica'";
         $expected['init'][] = "SET NAMES a-language";
         $expected['flags'] += [
             PDO::ATTR_PERSISTENT => false,
@@ -119,7 +119,7 @@ class MysqlTest extends TestCase
             ->getMock();
         $connection->expects($this->at(0))->method('exec')->with('Execute this');
         $connection->expects($this->at(1))->method('exec')->with('this too');
-        $connection->expects($this->at(2))->method('exec')->with("SET time_zone = 'Antartica'");
+        $connection->expects($this->at(2))->method('exec')->with("SET time_zone = 'Antarctica'");
         $connection->expects($this->at(3))->method('exec')->with("SET NAMES a-language");
         $connection->expects($this->exactly(4))->method('exec');
 

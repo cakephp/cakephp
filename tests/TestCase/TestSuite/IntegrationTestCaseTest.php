@@ -39,11 +39,15 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
 
+        Router::connect('/get/:controller/:action', ['_method' => 'GET'], ['routeClass' => 'InflectedRoute']);
         Router::connect('/:controller/:action/*', [], ['routeClass' => 'InflectedRoute']);
         DispatcherFactory::clear();
         DispatcherFactory::add('Routing');
         DispatcherFactory::add('ControllerFactory');
         $this->useHttpServer(false);
+
+        // Load aliases, or tests fail in isolation.
+        class_exists('Cake\Network\Request');
     }
 
     /**
@@ -179,6 +183,23 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->get('/request_action/test_request_action');
         $this->assertNotEmpty($this->_response);
         $this->assertInstanceOf('Cake\Network\Response', $this->_response);
+        $this->assertEquals('This is a test', $this->_response->body());
+
+        $this->_response = null;
+        $this->get('/get/request_action/test_request_action');
+        $this->assertEquals('This is a test', $this->_response->body());
+    }
+
+    /**
+     * Test sending get requests sets the request method
+     *
+     * @return void
+     */
+    public function testGetSpecificRouteHttpServer()
+    {
+        $this->useHttpServer(true);
+        $this->get('/get/request_action/test_request_action');
+        $this->assertResponseOk();
         $this->assertEquals('This is a test', $this->_response->body());
     }
 
@@ -760,6 +781,18 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test the content regexp assertion failing
+     *
+     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedExceptionMessage No response set
+     * @return void
+     */
+    public function testAssertResponseRegExpNoResponse()
+    {
+        $this->assertResponseRegExp('/cont/');
+    }
+
+    /**
      * Test the negated content regexp assertion.
      *
      * @return void
@@ -770,6 +803,18 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->_response->body('Some content');
 
         $this->assertResponseNotRegExp('/cant/');
+    }
+
+    /**
+     * Test negated content regexp assertion failing
+     *
+     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedExceptionMessage No response set
+     * @return void
+     */
+    public function testAssertResponseNotRegExpNoResponse()
+    {
+        $this->assertResponseNotRegExp('/cont/');
     }
 
     /**
@@ -829,7 +874,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      * @expectedExceptionMessage No response set, cannot assert file
      * @return void
      */
-    public function testAssertFileNoReponse()
+    public function testAssertFileNoResponse()
     {
         $this->assertFileResponse('foo');
     }

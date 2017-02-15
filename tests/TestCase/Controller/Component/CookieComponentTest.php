@@ -29,6 +29,11 @@ class CookieComponentTest extends TestCase
 {
 
     /**
+     * @var \Cake\Controller\Component\CookieComponent
+     */
+    protected $Cookie;
+
+    /**
      * start
      *
      * @return void
@@ -107,7 +112,7 @@ class CookieComponentTest extends TestCase
      */
     protected function _setCookieData()
     {
-        $this->Cookie->write(['Encrytped_array' => ['name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!']]);
+        $this->Cookie->write(['Encrypted_array' => ['name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!']]);
         $this->Cookie->write(['Encrypted_multi_cookies.name' => 'CakePHP']);
         $this->Cookie->write(['Encrypted_multi_cookies.version' => '1.2.0.x']);
         $this->Cookie->write(['Encrypted_multi_cookies.tag' => 'CakePHP Rocks!']);
@@ -158,7 +163,7 @@ class CookieComponentTest extends TestCase
     public function testReadEncryptedCookieData()
     {
         $this->_setCookieData();
-        $data = $this->Cookie->read('Encrytped_array');
+        $data = $this->Cookie->read('Encrypted_array');
         $expected = ['name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!'];
         $this->assertEquals($expected, $data);
 
@@ -499,8 +504,8 @@ class CookieComponentTest extends TestCase
         $expected = ['version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!'];
         $this->assertEquals($expected, $data);
 
-        $this->Cookie->delete('Encrytped_array');
-        $data = $this->Cookie->read('Encrytped_array');
+        $this->Cookie->delete('Encrypted_array');
+        $data = $this->Cookie->read('Encrypted_array');
         $this->assertNull($data);
 
         $this->Cookie->delete('Plain_multi_cookies.name');
@@ -522,15 +527,15 @@ class CookieComponentTest extends TestCase
     {
         $this->_setCookieData();
 
-        $data = $this->Cookie->read('Encrytped_array.name');
+        $data = $this->Cookie->read('Encrypted_array.name');
         $expected = 'CakePHP';
         $this->assertEquals($expected, $data);
 
-        $data = $this->Cookie->read('Encrytped_array.version');
+        $data = $this->Cookie->read('Encrypted_array.version');
         $expected = '1.2.0.x';
         $this->assertEquals($expected, $data);
 
-        $data = $this->Cookie->read('Encrytped_array.tag');
+        $data = $this->Cookie->read('Encrypted_array.tag');
         $expected = 'CakePHP Rocks!';
         $this->assertEquals($expected, $data);
 

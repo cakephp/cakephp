@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Core\Configure;
+use Cake\Event\Event;
 use Cake\Http\ActionDispatcher;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -141,8 +142,8 @@ class ActionDispatcherTest extends TestCase
             ->getMock();
         $filter->expects($this->once())
             ->method('afterDispatch')
-            ->will($this->returnCallback(function ($event) {
-                $event->data['response']->body('Filter body');
+            ->will($this->returnCallback(function (Event $event) {
+                $event->data('response')->body('Filter body');
             }));
 
         $req = new Request([

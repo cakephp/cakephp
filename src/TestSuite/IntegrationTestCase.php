@@ -54,14 +54,14 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @var string|null
      */
-    protected $_appClass;
+    protected $_appClass = null;
 
     /**
      * The customized application constructor arguments.
      *
      * @var array|null
      */
-    protected $_appArgs;
+    protected $_appArgs = null;
 
     /**
      * The data used to build the next request.
@@ -73,16 +73,16 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * The response for the most recent request.
      *
-     * @var \Cake\Network\Response
+     * @var \Cake\Http\Response|null
      */
-    protected $_response;
+    protected $_response = null;
 
     /**
      * The exception being thrown if the case.
      *
-     * @var \Cake\Core\Exception\Exception
+     * @var \Exception|null
      */
-    protected $_exception;
+    protected $_exception = null;
 
     /**
      * Session data to use in the next request.
@@ -101,30 +101,30 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * The controller used in the last request.
      *
-     * @var \Cake\Controller\Controller
+     * @var \Cake\Controller\Controller|null
      */
-    protected $_controller;
+    protected $_controller = null;
 
     /**
      * The last rendered view
      *
-     * @var string
+     * @var string|null
      */
-    protected $_viewName;
+    protected $_viewName = null;
 
     /**
      * The last rendered layout
      *
-     * @var string
+     * @var string|null
      */
-    protected $_layoutName;
+    protected $_layoutName = null;
 
     /**
      * The session instance from the last request
      *
-     * @var \Cake\Network\Session
+     * @var \Cake\Network\Session|null
      */
-    protected $_requestSession;
+    protected $_requestSession = null;
 
     /**
      * Boolean flag for whether or not the request should have
@@ -146,7 +146,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @var null|string
      */
-    protected $_cookieEncriptionKey = null;
+    protected $_cookieEncryptionKey = null;
 
     /**
      * Auto-detect if the HTTP middleware stack should be used.
@@ -296,8 +296,8 @@ abstract class IntegrationTestCase extends TestCase
      */
     protected function _getCookieEncryptionKey()
     {
-        if (isset($this->_cookieEncriptionKey)) {
-            return $this->_cookieEncriptionKey;
+        if (isset($this->_cookieEncryptionKey)) {
+            return $this->_cookieEncryptionKey;
         }
 
         return Security::salt();
@@ -319,7 +319,7 @@ abstract class IntegrationTestCase extends TestCase
      */
     public function cookieEncrypted($name, $value, $encrypt = 'aes', $key = null)
     {
-        $this->_cookieEncriptionKey = $key;
+        $this->_cookieEncryptionKey = $key;
         $this->_cookie[$name] = $this->_encrypt($value, $encrypt);
     }
 
@@ -435,7 +435,7 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * Get the correct dispatcher instance.
      *
-     * @return object A dispatcher instance
+     * @return \Cake\TestSuite\MiddlewareDispatcher|\Cake\TestSuite\LegacyRequestDispatcher A dispatcher instance
      */
     protected function _makeDispatcher()
     {
@@ -456,7 +456,7 @@ abstract class IntegrationTestCase extends TestCase
     public function controllerSpy($event, $controller = null)
     {
         if (!$controller) {
-            $controller = $event->subject();
+            $controller = $event->getSubject();
         }
         $this->_controller = $controller;
         $events = $controller->eventManager();
@@ -590,6 +590,16 @@ abstract class IntegrationTestCase extends TestCase
     }
 
     /**
+     * Get the response body as string
+     *
+     * @return string The response body.
+     */
+    protected function _getBodyAsString()
+    {
+        return (string)$this->_response->getBody();
+    }
+
+    /**
      * Fetches a view variable by name.
      *
      * If the view variable does not exist, null will be returned.
@@ -657,7 +667,7 @@ abstract class IntegrationTestCase extends TestCase
      */
     public function assertResponseCode($code)
     {
-        $actual = $this->_response->statusCode();
+        $actual = $this->_response->getStatusCode();
         $this->_assertStatus($code, $code, 'Status code is not ' . $code . ' but ' . $actual);
     }
 
@@ -674,7 +684,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert status code.');
         }
-        $status = $this->_response->statusCode();
+        $status = $this->_response->getStatusCode();
 
         if ($this->_exception && ($status < $min || $status > $max)) {
             $this->fail($this->_exception);
@@ -698,16 +708,16 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert location header. ' . $message);
         }
-        $result = $this->_response->header();
+        $result = $this->_response->getHeaderLine('Location');
         if ($url === null) {
-            $this->assertTrue(!empty($result['Location']), $message);
+            $this->assertNotEmpty($result, $message);
 
             return;
         }
-        if (empty($result['Location'])) {
+        if (empty($result)) {
             $this->fail('No location header set. ' . $message);
         }
-        $this->assertEquals(Router::url($url, ['_full' => true]), $result['Location'], $message);
+        $this->assertEquals(Router::url($url, ['_full' => true]), $result, $message);
     }
 
     /**
@@ -722,11 +732,11 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert location header. ' . $message);
         }
-        $result = $this->_response->header();
-        if (empty($result['Location'])) {
+        $result = $this->_response->getHeaderLine('Location');
+        if (empty($result)) {
             $this->fail('No location header set. ' . $message);
         }
-        $this->assertContains($url, $result['Location'], $message);
+        $this->assertContains($url, $result, $message);
     }
 
     /**
@@ -740,14 +750,14 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert location header. ' . $message);
         }
-        $result = $this->_response->header();
+        $result = $this->_response->getHeaderLine('Location');
         if (!$message) {
             $message = 'Redirect header set';
         }
-        if (!empty($result['Location'])) {
-            $message .= ': ' . $result['Location'];
+        if (!empty($result)) {
+            $message .= ': ' . $result;
         }
-        $this->assertTrue(empty($result['Location']), $message);
+        $this->assertTrue(empty($result), $message);
     }
 
     /**
@@ -763,11 +773,11 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert headers. ' . $message);
         }
-        $headers = $this->_response->header();
-        if (!isset($headers[$header])) {
+        if (!$this->_response->hasHeader($header)) {
             $this->fail("The '$header' header is not set. " . $message);
         }
-        $this->assertEquals($headers[$header], $content, $message);
+        $actual = $this->_response->getHeaderLine($header);
+        $this->assertEquals($content, $actual, $message);
     }
 
     /**
@@ -783,11 +793,11 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert headers. ' . $message);
         }
-        $headers = $this->_response->header();
-        if (!isset($headers[$header])) {
+        if (!$this->_response->hasHeader($header)) {
             $this->fail("The '$header' header is not set. " . $message);
         }
-        $this->assertContains($content, $headers[$header], $message);
+        $actual = $this->_response->getHeaderLine($header);
+        $this->assertContains($content, $actual, $message);
     }
 
     /**
@@ -822,7 +832,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertEquals($content, $this->_response->body(), $message);
+        $this->assertEquals($content, $this->_getBodyAsString(), $message);
     }
 
     /**
@@ -837,7 +847,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertContains($content, (string)$this->_response->body(), $message);
+        $this->assertContains($content, $this->_getBodyAsString(), $message);
     }
 
     /**
@@ -852,7 +862,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertNotContains($content, (string)$this->_response->body(), $message);
+        $this->assertNotContains($content, $this->_getBodyAsString(), $message);
     }
 
     /**
@@ -867,7 +877,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertRegExp($pattern, (string)$this->_response->body(), $message);
+        $this->assertRegExp($pattern, $this->_getBodyAsString(), $message);
     }
 
     /**
@@ -882,7 +892,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertNotRegExp($pattern, (string)$this->_response->body(), $message);
+        $this->assertNotRegExp($pattern, $this->_getBodyAsString(), $message);
     }
 
     /**
@@ -896,7 +906,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertNotEmpty((string)$this->_response->body(), $message);
+        $this->assertNotEmpty($this->_getBodyAsString(), $message);
     }
     /**
      * Assert response content is empty.
@@ -909,7 +919,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertEmpty((string)$this->_response->body(), $message);
+        $this->assertEmpty($this->_getBodyAsString(), $message);
     }
 
     /**
@@ -973,7 +983,7 @@ abstract class IntegrationTestCase extends TestCase
      */
     public function assertCookie($expected, $name, $message = '')
     {
-        if (empty($this->_response)) {
+        if (!$this->_response) {
             $this->fail('Not response set, cannot assert cookies.');
         }
         $result = $this->_response->cookie($name);
@@ -1018,11 +1028,11 @@ abstract class IntegrationTestCase extends TestCase
      */
     public function assertCookieEncrypted($expected, $name, $encrypt = 'aes', $key = null, $message = '')
     {
-        if (empty($this->_response)) {
+        if (!$this->_response) {
             $this->fail('No response set, cannot assert cookies.');
         }
         $result = $this->_response->cookie($name);
-        $this->_cookieEncriptionKey = $key;
+        $this->_cookieEncryptionKey = $key;
         $result['value'] = $this->_decrypt($result['value'], $encrypt);
         $this->assertEquals($expected, $result['value'], 'Cookie data differs. ' . $message);
     }

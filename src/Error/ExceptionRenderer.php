@@ -20,8 +20,8 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Event\Event;
+use Cake\Http\ServerRequest;
 use Cake\Network\Exception\HttpException;
-use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
@@ -47,15 +47,22 @@ use PDOException;
  * Using a subclass of ExceptionRenderer gives you full control over how Exceptions are rendered, you
  * can configure your class in your config/app.php.
  */
-class ExceptionRenderer
+class ExceptionRenderer implements ExceptionRendererInterface
 {
+
+    /**
+     * The exception being handled.
+     *
+     * @var \Exception
+     */
+    public $error;
 
     /**
      * Controller instance.
      *
      * @var \Cake\Controller\Controller
      */
-    public $controller = null;
+    public $controller;
 
     /**
      * Template to render for Cake\Core\Exception\Exception
@@ -70,13 +77,6 @@ class ExceptionRenderer
      * @var string
      */
     public $method = '';
-
-    /**
-     * The exception being handled.
-     *
-     * @var \Exception
-     */
-    public $error = null;
 
     /**
      * Creates the controller to perform rendering on the error response.
@@ -115,12 +115,13 @@ class ExceptionRenderer
     protected function _getController()
     {
         if (!$request = Router::getRequest(true)) {
-            $request = Request::createFromGlobals();
+            $request = ServerRequest::createFromGlobals();
         }
         $response = new Response();
 
         try {
             $class = App::className('Error', 'Controller', 'Controller');
+            /* @var \Cake\Controller\Controller $controller */
             $controller = new $class($request, $response);
             $controller->startupProcess();
             $startup = true;
@@ -166,7 +167,7 @@ class ExceptionRenderer
         }
 
         $message = $this->_message($exception, $code);
-        $url = $this->controller->request->here();
+        $url = $this->controller->request->getRequestTarget();
 
         if (method_exists($exception, 'responseHeader')) {
             $this->controller->response->header($exception->responseHeader());
@@ -350,9 +351,9 @@ class ExceptionRenderer
         $helpers = ['Form', 'Html'];
         $this->controller->helpers = $helpers;
         $builder = $this->controller->viewBuilder();
-        $builder->helpers($helpers, false)
-            ->layoutPath('')
-            ->templatePath('Error');
+        $builder->setHelpers($helpers, false)
+            ->setLayoutPath('')
+            ->setTemplatePath('Error');
         $view = $this->controller->createView('View');
 
         $this->controller->response->body($view->render($template, 'error'));
@@ -374,7 +375,7 @@ class ExceptionRenderer
         $dispatcher = DispatcherFactory::create();
         $eventManager = $dispatcher->eventManager();
         foreach ($dispatcher->filters() as $filter) {
-            $eventManager->attach($filter);
+            $eventManager->on($filter);
         }
         $args = [
             'request' => $this->controller->request,
@@ -382,6 +383,6 @@ class ExceptionRenderer
         ];
         $result = $dispatcher->dispatchEvent('Dispatcher.afterDispatch', $args);
 
-        return $result->data['response'];
+        return $result->getData('response');
     }
 }

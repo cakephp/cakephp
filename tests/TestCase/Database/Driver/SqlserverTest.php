@@ -102,7 +102,7 @@ class SqlserverTest extends TestCase
     public function testSelectLimitVersion12()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['_connect', 'connection', '_version'])
+            ->setMethods(['_connect', 'getConnection', '_version'])
             ->setConstructorArgs([[]])
             ->getMock();
         $driver
@@ -111,12 +111,12 @@ class SqlserverTest extends TestCase
             ->will($this->returnValue(12));
 
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
-            ->setMethods(['connect', 'driver'])
+            ->setMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();
         $connection
             ->expects($this->any())
-            ->method('driver')
+            ->method('getDriver')
             ->will($this->returnValue($driver));
 
         $query = new Query($connection);
@@ -155,7 +155,7 @@ class SqlserverTest extends TestCase
     public function testSelectLimitOldServer()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['_connect', 'connection', '_version'])
+            ->setMethods(['_connect', 'getConnection', '_version'])
             ->setConstructorArgs([[]])
             ->getMock();
         $driver
@@ -164,12 +164,12 @@ class SqlserverTest extends TestCase
             ->will($this->returnValue(8));
 
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
-            ->setMethods(['connect', 'driver'])
+            ->setMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();
         $connection
             ->expects($this->any())
-            ->method('driver')
+            ->method('getDriver')
             ->will($this->returnValue($driver));
 
         $query = new Query($connection);
@@ -219,16 +219,16 @@ class SqlserverTest extends TestCase
     public function testInsertUsesOutput()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['_connect', 'connection'])
+            ->setMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([[]])
             ->getMock();
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
-            ->setMethods(['connect', 'driver'])
+            ->setMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();
         $connection
             ->expects($this->any())
-            ->method('driver')
+            ->method('getDriver')
             ->will($this->returnValue($driver));
         $query = new Query($connection);
         $query->insert(['title'])

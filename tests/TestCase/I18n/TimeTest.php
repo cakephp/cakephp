@@ -916,6 +916,6 @@ class TimeTest extends TestCase
         $result = str_replace(['گرینویچ'], 'GMT', $result);
         $result = str_replace(['  '], ' ', $result);
 
-        return $this->assertSame($expected, $result, $message);
+        $this->assertSame($expected, $result, $message);
     }
 }

@@ -51,6 +51,11 @@ class TextHelperTest extends TestCase
 {
 
     /**
+     * @var \Cake\View\Helper\TextHelper
+     */
+    public $Text;
+
+    /**
      * setUp method
      *
      * @return void
@@ -347,6 +352,10 @@ class TextHelperTest extends TestCase
             [
                 "Text with partial www.cakephp.org\r\nwww.cakephp.org urls and CRLF",
                 "Text with partial <a href=\"http://www.cakephp.org\">www.cakephp.org</a>\r\n<a href=\"http://www.cakephp.org\">www.cakephp.org</a> urls and CRLF"
+            ],
+            [
+                'https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)',
+                '<a href="https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)">https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)</a>'
             ]
         ];
     }
@@ -450,7 +459,7 @@ class TextHelperTest extends TestCase
     /**
      * Data provider for autoLinkEmail.
      *
-     * @return void
+     * @return array
      */
     public function autoLinkEmailProvider()
     {

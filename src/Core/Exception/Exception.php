@@ -38,7 +38,7 @@ class Exception extends RuntimeException
     /**
      * Array of headers to be passed to Cake\Network\Response::header()
      *
-     * @var array
+     * @var array|null
      */
     protected $_responseHeaders = null;
 

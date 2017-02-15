@@ -377,13 +377,13 @@ class ConsoleIo
                 'types' => $outLevels,
                 'stream' => $this->_out
             ]);
-            Log::config('stdout', ['engine' => $stdout]);
+            Log::setConfig('stdout', ['engine' => $stdout]);
         }
         $stderr = new ConsoleLog([
             'types' => ['emergency', 'alert', 'critical', 'error', 'warning'],
             'stream' => $this->_err,
         ]);
-        Log::config('stderr', ['engine' => $stderr]);
+        Log::setConfig('stderr', ['engine' => $stderr]);
     }
 
     /**

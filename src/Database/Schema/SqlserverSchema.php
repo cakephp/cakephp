@@ -138,13 +138,13 @@ class SqlserverSchema extends BaseSchema
             return ['type' => 'uuid'];
         }
 
-        return ['type' => 'text', 'length' => null];
+        return ['type' => 'string', 'length' => null];
     }
 
     /**
      * {@inheritDoc}
      */
-    public function convertColumnDescription(Table $table, $row)
+    public function convertColumnDescription(TableSchema $schema, $row)
     {
         $field = $this->_convertColumn(
             $row['type'],
@@ -167,7 +167,7 @@ class SqlserverSchema extends BaseSchema
             'default' => $this->_defaultValue($row['default']),
             'collate' => $row['collation_name'],
         ];
-        $table->addColumn($row['name'], $field);
+        $schema->addColumn($row['name'], $field);
     }
 
     /**
@@ -220,7 +220,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function convertIndexDescription(Table $table, $row)
+    public function convertIndexDescription(TableSchema $schema, $row)
     {
         $type = Table::INDEX_INDEX;
         $name = $row['index_name'];
@@ -232,9 +232,9 @@ class SqlserverSchema extends BaseSchema
         }
 
         if ($type === Table::INDEX_INDEX) {
-            $existing = $table->index($name);
+            $existing = $schema->index($name);
         } else {
-            $existing = $table->constraint($name);
+            $existing = $schema->constraint($name);
         }
 
         $columns = [$row['column_name']];
@@ -243,14 +243,14 @@ class SqlserverSchema extends BaseSchema
         }
 
         if ($type === Table::CONSTRAINT_PRIMARY || $type === Table::CONSTRAINT_UNIQUE) {
-            $table->addConstraint($name, [
+            $schema->addConstraint($name, [
                 'type' => $type,
                 'columns' => $columns
             ]);
 
             return;
         }
-        $table->addIndex($name, [
+        $schema->addIndex($name, [
             'type' => $type,
             'columns' => $columns
         ]);
@@ -281,7 +281,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function convertForeignKeyDescription(Table $table, $row)
+    public function convertForeignKeyDescription(TableSchema $schema, $row)
     {
         $data = [
             'type' => Table::CONSTRAINT_FOREIGN,
@@ -291,7 +291,7 @@ class SqlserverSchema extends BaseSchema
             'delete' => $this->_convertOnClause($row['delete_type']),
         ];
         $name = $row['foreign_key_name'];
-        $table->addConstraint($name, $data);
+        $schema->addConstraint($name, $data);
     }
 
     /**
@@ -326,9 +326,9 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function columnSql(Table $table, $name)
+    public function columnSql(TableSchema $schema, $name)
     {
-        $data = $table->column($name);
+        $data = $schema->column($name);
         $out = $this->_driver->quoteIdentifier($name);
         $typeMap = [
             'integer' => ' INTEGER',
@@ -349,7 +349,7 @@ class SqlserverSchema extends BaseSchema
         }
 
         if ($data['type'] === 'integer' || $data['type'] === 'biginteger') {
-            if ([$name] === $table->primaryKey() || $data['autoIncrement'] === true) {
+            if ([$name] === $schema->primaryKey() || $data['autoIncrement'] === true) {
                 unset($data['null'], $data['default']);
                 $out .= ' IDENTITY(1, 1)';
             }
@@ -402,21 +402,15 @@ class SqlserverSchema extends BaseSchema
             $out .= ' NOT NULL';
         }
 
-        if (isset($data['null']) && $data['null'] === true) {
-            $out .= ' DEFAULT NULL';
-            unset($data['default']);
-        }
-
         if (isset($data['default']) &&
             in_array($data['type'], ['timestamp', 'datetime']) &&
-            strtolower($data['default']) === 'current_timestamp'
-        ) {
+            strtolower($data['default']) === 'current_timestamp') {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
-            unset($data['default']);
-        }
-        if (isset($data['default'])) {
+        } elseif (isset($data['default'])) {
             $default = is_bool($data['default']) ? (int)$data['default'] : $this->_driver->schemaValue($data['default']);
             $out .= ' DEFAULT ' . $default;
+        } elseif (isset($data['null']) && $data['null'] !== false) {
+            $out .= ' DEFAULT NULL';
         }
 
         return $out;
@@ -425,16 +419,16 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function addConstraintSql(Table $table)
+    public function addConstraintSql(TableSchema $schema)
     {
         $sqlPattern = 'ALTER TABLE %s ADD %s;';
         $sql = [];
 
-        foreach ($table->constraints() as $name) {
-            $constraint = $table->constraint($name);
+        foreach ($schema->constraints() as $name) {
+            $constraint = $schema->constraint($name);
             if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
-                $tableName = $this->_driver->quoteIdentifier($table->name());
-                $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($table, $name));
+                $tableName = $this->_driver->quoteIdentifier($schema->name());
+                $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($schema, $name));
             }
         }
 
@@ -444,15 +438,15 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function dropConstraintSql(Table $table)
+    public function dropConstraintSql(TableSchema $schema)
     {
         $sqlPattern = 'ALTER TABLE %s DROP CONSTRAINT %s;';
         $sql = [];
 
-        foreach ($table->constraints() as $name) {
-            $constraint = $table->constraint($name);
+        foreach ($schema->constraints() as $name) {
+            $constraint = $schema->constraint($name);
             if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
-                $tableName = $this->_driver->quoteIdentifier($table->name());
+                $tableName = $this->_driver->quoteIdentifier($schema->name());
                 $constraintName = $this->_driver->quoteIdentifier($name);
                 $sql[] = sprintf($sqlPattern, $tableName, $constraintName);
             }
@@ -464,9 +458,9 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function indexSql(Table $table, $name)
+    public function indexSql(TableSchema $schema, $name)
     {
-        $data = $table->index($name);
+        $data = $schema->index($name);
         $columns = array_map(
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
@@ -475,7 +469,7 @@ class SqlserverSchema extends BaseSchema
         return sprintf(
             'CREATE INDEX %s ON %s (%s)',
             $this->_driver->quoteIdentifier($name),
-            $this->_driver->quoteIdentifier($table->name()),
+            $this->_driver->quoteIdentifier($schema->name()),
             implode(', ', $columns)
         );
     }
@@ -483,9 +477,9 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function constraintSql(Table $table, $name)
+    public function constraintSql(TableSchema $schema, $name)
     {
-        $data = $table->constraint($name);
+        $data = $schema->constraint($name);
         $out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
         if ($data['type'] === Table::CONSTRAINT_PRIMARY) {
             $out = 'PRIMARY KEY';
@@ -527,11 +521,11 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function createTableSql(Table $table, $columns, $constraints, $indexes)
+    public function createTableSql(TableSchema $schema, $columns, $constraints, $indexes)
     {
         $content = array_merge($columns, $constraints);
         $content = implode(",\n", array_filter($content));
-        $tableName = $this->_driver->quoteIdentifier($table->name());
+        $tableName = $this->_driver->quoteIdentifier($schema->name());
         $out = [];
         $out[] = sprintf("CREATE TABLE %s (\n%s\n)", $tableName, $content);
         foreach ($indexes as $index) {
@@ -544,21 +538,21 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function truncateTableSql(Table $table)
+    public function truncateTableSql(TableSchema $schema)
     {
-        $name = $this->_driver->quoteIdentifier($table->name());
+        $name = $this->_driver->quoteIdentifier($schema->name());
         $queries = [
             sprintf('DELETE FROM %s', $name)
         ];
 
         // Restart identity sequences
-        $pk = $table->primaryKey();
+        $pk = $schema->primaryKey();
         if (count($pk) === 1) {
-            $column = $table->column($pk[0]);
+            $column = $schema->column($pk[0]);
             if (in_array($column['type'], ['integer', 'biginteger'])) {
                 $queries[] = sprintf(
                     "DBCC CHECKIDENT('%s', RESEED, 0)",
-                    $table->name()
+                    $schema->name()
                 );
             }
         }

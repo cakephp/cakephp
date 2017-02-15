@@ -68,12 +68,13 @@ class HtmlHelperTest extends TestCase
             ->setMethods(['append'])
             ->getMock();
         $this->Html = new HtmlHelper($this->View);
-        $this->Html->request = new Request();
-        $this->Html->request->webroot = '';
+        $this->Html->request = new Request([
+            'webroot' => '',
+        ]);
         $this->Html->Url->request = $this->Html->request;
 
-        Configure::write('App.namespace', 'TestApp');
         Plugin::load(['TestTheme']);
+        Configure::write('App.namespace', 'TestApp');
         Configure::write('Asset.timestamp', false);
     }
 
@@ -579,7 +580,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result[0]);
         $expected['link']['href'] = 'preg:/.*css\/vendor\.generic\.css/';
         $this->assertHtml($expected, $result[1]);
-        $this->assertEquals(2, count($result));
+        $this->assertCount(2, $result);
 
         $this->View->expects($this->at(0))
             ->method('append')
@@ -679,7 +680,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result[0]);
         $expected['link']['href'] = 'preg:/.*test_plugin\/css\/vendor\.generic\.css/';
         $this->assertHtml($expected, $result[1]);
-        $this->assertEquals(2, count($result));
+        $this->assertCount(2, $result);
 
         Plugin::unload('TestPlugin');
     }
@@ -1086,9 +1087,7 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->scriptBlock('window.foo = 2;');
         $expected = [
             '<script',
-            $this->cDataStart,
             'window.foo = 2;',
-            $this->cDataEnd,
             '/script',
         ];
         $this->assertHtml($expected, $result);
@@ -1096,9 +1095,7 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->scriptBlock('window.foo = 2;', ['type' => 'text/x-handlebars-template']);
         $expected = [
             'script' => ['type' => 'text/x-handlebars-template'],
-            $this->cDataStart,
             'window.foo = 2;',
-            $this->cDataEnd,
             '/script',
         ];
         $this->assertHtml($expected, $result);

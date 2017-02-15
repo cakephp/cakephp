@@ -40,7 +40,7 @@ abstract class ObjectRegistry
     /**
      * Map of loaded objects.
      *
-     * @var array
+     * @var object[]
      */
     protected $_loaded = [];
 
@@ -123,7 +123,7 @@ abstract class ObjectRegistry
         if (empty($config)) {
             return;
         }
-        $existingConfig = $existing->config();
+        $existingConfig = $existing->getConfig();
         unset($config['enabled'], $existingConfig['enabled']);
 
         $fail = false;

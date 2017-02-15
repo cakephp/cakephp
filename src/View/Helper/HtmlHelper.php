@@ -25,7 +25,7 @@ use Cake\View\View;
  *
  * HtmlHelper encloses all methods needed while working with HTML pages.
  *
- * @property UrlHelper $Url
+ * @property \Cake\View\Helper\UrlHelper $Url
  * @link http://book.cakephp.org/3.0/en/views/helpers/html.html
  */
 class HtmlHelper extends Helper
@@ -195,7 +195,9 @@ class HtmlHelper extends Helper
      *
      * Create a meta tag that is output inline:
      *
-     * `$this->Html->meta('icon', 'favicon.ico');
+     * ```
+     * $this->Html->meta('icon', 'favicon.ico');
+     * ```
      *
      * Append the meta tag to custom view block "meta":
      *
@@ -568,7 +570,8 @@ class HtmlHelper extends Helper
      *
      * ### Options
      *
-     * - `safe` (boolean) Whether or not the $script should be wrapped in `<![CDATA[ ]]>`
+     * - `safe` (boolean) Whether or not the $script should be wrapped in `<![CDATA[ ]]>`.
+     *   Defaults to `false`.
      * - `block` Set to true to append output to view block "script" or provide
      *   custom block name.
      *
@@ -580,7 +583,7 @@ class HtmlHelper extends Helper
      */
     public function scriptBlock($script, array $options = [])
     {
-        $options += ['safe' => true, 'block' => null];
+        $options += ['safe' => false, 'block' => null];
         if ($options['safe']) {
             $script = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
         }
@@ -924,6 +927,7 @@ class HtmlHelper extends Helper
             $count = 0;
         }
 
+        $out = [];
         foreach ($data as $line) {
             $count++;
             $cellsOut = $this->_renderCells($line, $useCount);
@@ -942,7 +946,7 @@ class HtmlHelper extends Helper
      *
      * @param array $line Line data to render.
      * @param bool $useCount Renders the count into the row. Default is false.
-     * @return string
+     * @return string[]
      */
     protected function _renderCells($line, $useCount = false)
     {
@@ -1101,7 +1105,9 @@ class HtmlHelper extends Helper
      *
      * Outputs:
      *
-     * `<video src="http://www.somehost.com/files/audio.mp3">Fallback text</video>`
+     * ```
+     * <video src="http://www.somehost.com/files/audio.mp3">Fallback text</video>
+     * ```
      *
      * Using a video file:
      *
@@ -1111,7 +1117,9 @@ class HtmlHelper extends Helper
      *
      * Outputs:
      *
-     * `<video src="/files/video.mp4">Fallback text</video>`
+     * ```
+     * <video src="/files/video.mp4">Fallback text</video>
+     * ```
      *
      * Using multiple video files:
      *

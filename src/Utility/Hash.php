@@ -837,7 +837,7 @@ class Hash
     public static function maxDimensions(array $data)
     {
         $depth = [];
-        if (is_array($data) && reset($data) !== false) {
+        if (is_array($data) && !empty($data)) {
             foreach ($data as $value) {
                 if (is_array($value)) {
                     $depth[] = static::maxDimensions($value) + 1;

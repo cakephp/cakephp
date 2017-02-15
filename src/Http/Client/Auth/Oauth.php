@@ -252,7 +252,7 @@ class Oauth
      *
      * Section 9.1.2. of the Oauth spec
      *
-     * @param Psr\Http\Message\UriInterface $uri Uri object to build a normalized version of.
+     * @param \Psr\Http\Message\UriInterface $uri Uri object to build a normalized version of.
      * @return string Normalized URL
      */
     protected function _normalizedUrl($uri)
@@ -350,3 +350,6 @@ class Oauth
         );
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Http\Client\Auth\Oauth', 'Cake\Network\Http\Auth\Oauth');

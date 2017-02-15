@@ -42,6 +42,6 @@ class ErrorController extends Controller
      */
     public function beforeRender(Event $event)
     {
-        $this->viewBuilder()->templatePath('Error');
+        $this->viewBuilder()->setTemplatePath('Error');
     }
 }
