@@ -150,6 +150,10 @@ class RouteCollectionTest extends TestCase
             '_matchedRoute' => '/ден/:day-:month',
         ];
         $this->assertEquals($expected, $result);
+
+        $request = new ServerRequest(['url' => $url]);
+        $result = $this->collection->parseRequest($request);
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -346,6 +350,32 @@ class RouteCollectionTest extends TestCase
             '?' => ['one' => 'two'],
             '_matchedRoute' => '/b/:id',
         ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test parsing routes that match non-ascii urls
+     *
+     * @return void
+     */
+    public function testParseRequestUnicode()
+    {
+        $routes = new RouteBuilder($this->collection, '/b', []);
+        $routes->connect('/alta/confirmación', ['controller' => 'Media', 'action' => 'confirm']);
+
+        $request = new ServerRequest(['url' => '/b/alta/confirmaci%C3%B3n']);
+        $result = $this->collection->parseRequest($request);
+        $expected = [
+            'controller' => 'Media',
+            'action' => 'confirm',
+            'pass' => [],
+            'plugin' => null,
+            '_matchedRoute' => '/b/alta/confirmación',
+        ];
+        $this->assertEquals($expected, $result);
+
+        $request = new ServerRequest(['url' => '/b/alta/confirmación']);
+        $result = $this->collection->parseRequest($request);
         $this->assertEquals($expected, $result);
     }
 
