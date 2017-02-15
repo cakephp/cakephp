@@ -709,6 +709,9 @@ class Marshaller
         if (!$original) {
             return $this->_marshalAssociation($assoc, $value, $options);
         }
+        if (!is_array($value)) {
+            return null;
+        }
 
         $targetTable = $assoc->getTarget();
         $marshaller = $targetTable->marshaller();

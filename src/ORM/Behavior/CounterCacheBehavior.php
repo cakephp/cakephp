@@ -105,10 +105,15 @@ class CounterCacheBehavior extends Behavior
      *
      * @param \Cake\Event\Event $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
+     * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function beforeSave(Event $event, EntityInterface $entity)
+    public function beforeSave(Event $event, EntityInterface $entity, $options)
     {
+        if (isset($options['ignoreCounterCache']) && $options['ignoreCounterCache'] === true) {
+            return;
+        }
+
         foreach ($this->_config as $assoc => $settings) {
             $assoc = $this->_table->association($assoc);
             foreach ($settings as $field => $config) {
@@ -137,10 +142,15 @@ class CounterCacheBehavior extends Behavior
      *
      * @param \Cake\Event\Event $event The afterSave event that was fired.
      * @param \Cake\Datasource\EntityInterface $entity The entity that was saved.
+     * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function afterSave(Event $event, EntityInterface $entity)
+    public function afterSave(Event $event, EntityInterface $entity, $options)
     {
+        if (isset($options['ignoreCounterCache']) && $options['ignoreCounterCache'] === true) {
+            return;
+        }
+
         $this->_processAssociations($event, $entity);
         $this->_ignoreDirty = [];
     }
@@ -152,10 +162,15 @@ class CounterCacheBehavior extends Behavior
      *
      * @param \Cake\Event\Event $event The afterDelete event that was fired.
      * @param \Cake\Datasource\EntityInterface $entity The entity that was deleted.
+     * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function afterDelete(Event $event, EntityInterface $entity)
+    public function afterDelete(Event $event, EntityInterface $entity, $options)
     {
+        if (isset($options['ignoreCounterCache']) && $options['ignoreCounterCache'] === true) {
+            return;
+        }
+
         $this->_processAssociations($event, $entity);
     }
 

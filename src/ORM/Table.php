@@ -607,7 +607,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param \Cake\Database\Schema\TableSchema $schema The table definition fetched from database.
      * @return \Cake\Database\Schema\TableSchema the altered schema
-     * @api
      */
     protected function _initializeSchema(TableSchema $schema)
     {

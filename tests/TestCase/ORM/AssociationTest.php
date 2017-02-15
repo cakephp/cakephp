@@ -203,6 +203,33 @@ class AssociationTest extends TestCase
     }
 
     /**
+     * Tests that a descendant table could be fetched from a registry.
+     *
+     * @return void
+     */
+    public function testTargetTableDescendant()
+    {
+        TableRegistry::get('Test', [
+            'className' => '\Cake\Test\TestCase\ORM\TestTable'
+        ]);
+        $className = '\Cake\ORM\Table';
+
+        $config = [
+            'className' => $className,
+        ];
+        $this->association = $this->getMockBuilder('\Cake\ORM\Association')
+            ->setMethods([
+                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
+                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys'
+            ])
+            ->setConstructorArgs(['Test', $config])
+            ->getMock();
+
+        $target = $this->association->getTarget();
+        $this->assertInstanceOf($className, $target);
+    }
+
+    /**
      * Tests that cascadeCallbacks() returns the correct configured value
      *
      * @return void
