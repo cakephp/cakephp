@@ -1149,7 +1149,7 @@ class BelongsToMany extends Association
      * target entity contains the joint property with its primary key and any extra
      * information to be stored.
      *
-     * On success, the passed `$sourceEntity` will contain `$targetEntities` as  value
+     * On success, the passed `$sourceEntity` will contain `$targetEntities` as value
      * in the corresponding property for this association.
      *
      * This method assumes that links between both the source entity and each of the
