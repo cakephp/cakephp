@@ -33,6 +33,7 @@ use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\Exception\MissingEntityException;
+use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Exception\RolledbackTransactionException;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
@@ -1739,6 +1740,26 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Try to save an entity or throw a PersistenceFailedException if the application rules checks failed,
+     * the entity contains errors or the save was aborted by a callback.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
+     * @param array|\ArrayAccess $options The options to use when saving.
+     * @return \Cake\Datasource\EntityInterface
+     * @throws \Cake\ORM\Exception\PersistenceFailedException When the entity couldn't be saved
+     * @see \Cake\ORM\Table::save()
+     */
+    public function saveOrFail(EntityInterface $entity, $options = [])
+    {
+        $saved = $this->save($entity, $options);
+        if ($saved === false) {
+            throw new PersistenceFailedException($entity, ['save']);
+        }
+
+        return $saved;
+    }
+
+    /**
      * Performs the actual saving of an entity based on the passed options.
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
@@ -2062,6 +2083,26 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         return $success;
+    }
+
+    /**
+     * Try to delete an entity or throw a PersistenceFailedException if the entity is new,
+     * has no primary key value, application rules checks failed or the delete was aborted by a callback.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The entity to remove.
+     * @param array|\ArrayAccess $options The options for the delete.
+     * @return bool success
+     * @throws \Cake\ORM\Exception\PersistenceFailedException
+     * @see \Cake\ORM\Table::delete()
+     */
+    public function deleteOrFail(EntityInterface $entity, $options = [])
+    {
+        $deleted = $this->delete($entity, $options);
+        if ($deleted === false) {
+            throw new PersistenceFailedException($entity, ['delete']);
+        }
+
+        return $deleted;
     }
 
     /**
