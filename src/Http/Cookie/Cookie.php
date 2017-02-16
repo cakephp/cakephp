@@ -14,13 +14,27 @@
 namespace Cake\Http\Cookie;
 
 use Cake\Utility\Hash;
-use Cake\Utility\Security;
 use DateTimeInterface;
 use InvalidArgumentException;
 use RuntimeException;
 
 /**
  * Cookie object to build a cookie and turn it into a header value
+ *
+ * An HTTP cookie (also called web cookie, Internet cookie, browser cookie or
+ * simply cookie) is a small piece of data sent from a website and stored on
+ * the user's computer by the user's web browser while the user is browsing.
+ *
+ * Cookies were designed to be a reliable mechanism for websites to remember
+ * stateful information (such as items added in the shopping cart in an online
+ * store) or to record the user's browsing activity (including clicking
+ * particular buttons, logging in, or recording which pages were visited in
+ * the past). They can also be used to remember arbitrary pieces of information
+ * that the user previously entered into form fields such as names, addresses,
+ * passwords, and credit card numbers.
+ *
+ * @link https://tools.ietf.org/html/rfc6265
+ * @link https://en.wikipedia.org/wiki/HTTP_cookie
  */
 class Cookie implements CookieInterface
 {
@@ -88,13 +102,6 @@ class Cookie implements CookieInterface
      * @var bool
      */
     protected $httpOnly = false;
-
-    /**
-     * The key for encrypting and decrypting the cookie
-     *
-     * @var string
-     */
-    protected $encryptionKey = '';
 
     /**
      * Constructor
@@ -312,7 +319,11 @@ class Cookie implements CookieInterface
     public function encrypt($key)
     {
         $this->encryptionKey = $key;
-        $this->value = $this->_encrypt($this->value, 'aes', $key);
+        $this->value = $this->_encrypt(
+            $this->value,
+            $this->encryptionCipher,
+            $key
+        );
 
         return $this;
     }
@@ -326,7 +337,11 @@ class Cookie implements CookieInterface
     public function decrypt($key)
     {
         $this->encryptionKey = $key;
-        $this->value = $this->_decrypt($this->value, 'aes', $key);
+        $this->value = $this->_decrypt(
+            $this->value,
+            $this->encryptionCipher,
+            $key
+        );
 
         return $this;
     }
@@ -339,7 +354,7 @@ class Cookie implements CookieInterface
     public function expand()
     {
         if (!$this->isExpanded) {
-            $this->data = $this->_explode($this->value);
+            $this->data = $this->_expand($this->value);
             $this->isExpanded = true;
         }
 
@@ -347,14 +362,14 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Serialized the data to a string
+     * Serializes the cookie value to a string
      *
      * @return $this
      */
     public function flatten()
     {
         if ($this->isExpanded) {
-            $this->value = $this->_implode($this->value);
+            $this->value = $this->_flatten($this->value);
             $this->isExpanded = false;
         }
 
@@ -369,32 +384,5 @@ class Cookie implements CookieInterface
     public function isExpanded()
     {
         return $this->isExpanded;
-    }
-
-    /**
-     * Sets the encryption key
-     *
-     * @param string $key Encryption key
-     * @return $this
-     */
-    public function setEncryptionKey($key)
-    {
-        $this->encryptionKey = $key;
-
-        return $this;
-    }
-
-    /**
-     * Gets the cryptographic key
-     *
-     * @return string
-     */
-    public function getEncryptionKey()
-    {
-        if (empty($this->encryptionKey)) {
-            return Security::salt();
-        }
-
-        return $this->encryptionKey;
     }
 }

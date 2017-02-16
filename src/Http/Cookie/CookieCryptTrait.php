@@ -20,25 +20,75 @@ use RuntimeException;
 /**
  * Cookie Crypt Trait.
  *
- * Provides the encrypt/decrypt logic for the CookieComponent.
- *
- * @link http://book.cakephp.org/3.0/en/controllers/components/cookie.html
+ * Provides the encrypt/decrypt logic.
  */
 trait CookieCryptTrait
 {
+
     /**
      * Valid cipher names for encrypted cookies.
      *
      * @var array
      */
-    protected $_validCiphers = ['aes', 'rijndael'];
+    protected $_validCiphers = [
+        'aes',
+        'rijndael'
+    ];
+
+    /**
+     * Encryption cipher
+     *
+     * @param string
+     */
+    protected $encryptionCipher = 'aes';
+
+    /**
+     * The key for encrypting and decrypting the cookie
+     *
+     * @var string
+     */
+    protected $encryptionKey = '';
+
+    /**
+     * Sets the encryption cipher
+     *
+     * @param string $cipher Cipher
+     * @return $this
+     */
+    public function setEncryptionCipher($cipher)
+    {
+        $this->checkCipher($cipher);
+        $this->encryptionCipher = $cipher;
+
+        return $this;
+    }
+
+    /**
+     * Sets the encryption key
+     *
+     * @param string $key Encryption key
+     * @return $this
+     */
+    public function setEncryptionKey($key)
+    {
+        $this->encryptionKey = $key;
+
+        return $this;
+    }
 
     /**
      * Returns the encryption key to be used.
      *
      * @return string
      */
-    abstract protected function getEncryptionKey();
+    public function getEncryptionKey()
+    {
+        if (empty($this->encryptionKey)) {
+            return Security::salt();
+        }
+
+        return $this->encryptionKey;
+    }
 
     /**
      * Encrypts $value using public $type method in Security class
@@ -52,7 +102,7 @@ trait CookieCryptTrait
     protected function _encrypt($value, $encrypt, $key = null)
     {
         if (is_array($value)) {
-            $value = $this->_implode($value);
+            $value = $this->_flatten($value);
         }
         if ($encrypt === false) {
             return $value;
@@ -124,7 +174,7 @@ trait CookieCryptTrait
     protected function _decode($value, $encrypt, $key)
     {
         if (!$encrypt) {
-            return $this->_explode($value);
+            return $this->_expand($value);
         }
 
         $this->checkCipher($encrypt);
@@ -140,7 +190,7 @@ trait CookieCryptTrait
             $value = Security::decrypt($value, $key);
         }
 
-        return $this->_explode($value);
+        return $this->_expand($value);
     }
 
     /**
@@ -149,19 +199,19 @@ trait CookieCryptTrait
      * @param array $array Map of key and values
      * @return string A json encoded string.
      */
-    protected function _implode(array $array)
+    protected function _flatten(array $array)
     {
         return json_encode($array);
     }
 
     /**
-     * Explode method to return array from string set in CookieComponent::_implode()
-     * Maintains reading backwards compatibility with 1.x CookieComponent::_implode().
+     * Explode method to return array from string set in CookieComponent::_flatten()
+     * Maintains reading backwards compatibility with 1.x CookieComponent::_flatten().
      *
      * @param string $string A string containing JSON encoded data, or a bare string.
      * @return string|array Map of key and values
      */
-    protected function _explode($string)
+    protected function _expand($string)
     {
         $first = substr($string, 0, 1);
         if ($first === '{' || $first === '[') {
