@@ -31,7 +31,7 @@ class RequestCookiesTest extends TestCase
     public $request;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function setUp()
     {

@@ -22,6 +22,7 @@ use InvalidArgumentException;
  */
 class CookieCollection extends ArrayIterator implements Countable
 {
+
     /**
      * Cookie objects
      *

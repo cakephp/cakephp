@@ -21,6 +21,7 @@ use Cake\TestSuite\TestCase;
  */
 class CookieCollectionTest extends TestCase
 {
+
     /**
      * Test constructor
      *

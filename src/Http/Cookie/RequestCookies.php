@@ -18,19 +18,20 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class RequestCookies extends CookieCollection
 {
+
     /**
      * Create instance from a server request.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request Request object
      * @return \Cake\Http\Client\RequestCookies
      */
-    public static function createFromRequest(ServerRequestInterface $request)
+    public static function createFromRequest(ServerRequestInterface $request, $cookieClass = Cookie::class)
     {
         $cookies = [];
         $cookieParams = $request->getCookieParams();
 
         foreach ($cookieParams as $name => $value) {
-            $cookies[] = new Cookie($name, $value);
+            $cookies[] = new $cookieClass($name, $value);
         }
 
         return new static($cookies);

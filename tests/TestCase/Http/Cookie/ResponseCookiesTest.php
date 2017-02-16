@@ -22,6 +22,7 @@ use Cake\TestSuite\TestCase;
  */
 class ResponseCookiesTest extends TestCase
 {
+
     /**
      * testAddToResponse
      *

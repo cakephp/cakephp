@@ -18,6 +18,7 @@ namespace Cake\Http\Cookie;
  */
 interface CookieInterface
 {
+
     /**
      * Returns the cookie as header value
      *

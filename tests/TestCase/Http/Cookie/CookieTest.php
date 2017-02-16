@@ -38,6 +38,7 @@ class CookieTest extends TestCase
      *
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The cookie name cannot be empty.
+     * @return void
      */
     public function testValidateNameEmptyName()
     {
