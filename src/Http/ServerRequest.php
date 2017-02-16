@@ -235,8 +235,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Create a new request object.
      *
-     * You can supply the data as either an array or as a string.  If you use
-     * a string you can only supply the URL for the request.  Using an array will
+     * You can supply the data as either an array or as a string. If you use
+     * a string you can only supply the URL for the request. Using an array will
      * let you provide the following keys:
      *
      * - `post` POST data or non query string data
