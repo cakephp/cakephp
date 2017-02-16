@@ -91,11 +91,13 @@ class SmtpTransportTest extends TestCase
     public function testConnectEhlo()
     {
         $this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
-        $this->socket->expects($this->at(0))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
-        $this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
-        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(4))->method('read')->will($this->returnValue("250 Accepted\r\n"));
+        $this->socket->expects($this->any())
+           ->method('read')
+           ->will($this->onConsecutiveCalls(
+               "220 Welcome message\r\n",
+               "250 Accepted\r\n"
+           ));
+        $this->socket->expects($this->once())->method('write')->with("EHLO localhost\r\n");
         $this->SmtpTransport->connect();
     }
 
@@ -108,18 +110,14 @@ class SmtpTransportTest extends TestCase
     {
         $this->SmtpTransport->config(['tls' => true]);
         $this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
-        $this->socket->expects($this->at(0))->method('read')->will($this->returnValue(false));
         $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
         $this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
-        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(4))->method('read')->will($this->returnValue("250 Accepted\r\n"));
-        $this->socket->expects($this->at(5))->method('write')->with("STARTTLS\r\n");
-        $this->socket->expects($this->at(6))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(7))->method('read')->will($this->returnValue("220 Server ready\r\n"));
-        $this->socket->expects($this->at(8))->method('enableCrypto')->with('tls')->will($this->returnValue(true));
-        $this->socket->expects($this->at(9))->method('write')->with("EHLO localhost\r\n");
-        $this->socket->expects($this->at(10))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(11))->method('read')->will($this->returnValue("250 Accepted\r\n"));
+        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("250 Accepted\r\n"));
+        $this->socket->expects($this->at(4))->method('write')->with("STARTTLS\r\n");
+        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("220 Server ready\r\n"));
+        $this->socket->expects($this->at(6))->method('enableCrypto')->with('tls')->will($this->returnValue(true));
+        $this->socket->expects($this->at(7))->method('write')->with("EHLO localhost\r\n");
+        $this->socket->expects($this->at(8))->method('read')->will($this->returnValue("250 Accepted\r\n"));
         $this->SmtpTransport->connect();
     }
 
@@ -134,14 +132,12 @@ class SmtpTransportTest extends TestCase
     {
         $this->SmtpTransport->config(['tls' => true]);
         $this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
-        $this->socket->expects($this->at(0))->method('read')->will($this->returnValue(false));
         $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
         $this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
-        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(4))->method('read')->will($this->returnValue("250 Accepted\r\n"));
-        $this->socket->expects($this->at(5))->method('write')->with("STARTTLS\r\n");
-        $this->socket->expects($this->at(6))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(7))->method('read')->will($this->returnValue("500 5.3.3 Unrecognized command\r\n"));
+        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("250 Accepted\r\n"));
+        $this->socket->expects($this->at(4))->method('write')->with("STARTTLS\r\n");
+        $this->socket->expects($this->at(5))->method('read')
+            ->will($this->returnValue("500 5.3.3 Unrecognized command\r\n"));
         $this->SmtpTransport->connect();
     }
 
@@ -156,14 +152,12 @@ class SmtpTransportTest extends TestCase
     {
         $this->SmtpTransport->config(['tls' => false, 'username' => 'user', 'password' => 'pass']);
         $this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
-        $this->socket->expects($this->at(0))->method('read')->will($this->returnValue(false));
         $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
         $this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
-        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(4))->method('read')->will($this->returnValue("250 Accepted\r\n"));
-        $this->socket->expects($this->at(5))->method('write')->with("AUTH LOGIN\r\n");
-        $this->socket->expects($this->at(6))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(7))->method('read')->will($this->returnValue("504 5.7.4 Unrecognized authentication type\r\n"));
+        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("250 Accepted\r\n"));
+        $this->socket->expects($this->at(4))->method('write')->with("AUTH LOGIN\r\n");
+        $this->socket->expects($this->at(5))->method('read')
+            ->will($this->returnValue("504 5.7.4 Unrecognized authentication type\r\n"));
         $this->SmtpTransport->connect();
     }
 
@@ -175,14 +169,11 @@ class SmtpTransportTest extends TestCase
     public function testConnectHelo()
     {
         $this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
-        $this->socket->expects($this->at(0))->method('read')->will($this->returnValue(false));
         $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
         $this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
-        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(4))->method('read')->will($this->returnValue("200 Not Accepted\r\n"));
-        $this->socket->expects($this->at(5))->method('write')->with("HELO localhost\r\n");
-        $this->socket->expects($this->at(6))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(7))->method('read')->will($this->returnValue("250 Accepted\r\n"));
+        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("200 Not Accepted\r\n"));
+        $this->socket->expects($this->at(4))->method('write')->with("HELO localhost\r\n");
+        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250 Accepted\r\n"));
         $this->SmtpTransport->connect();
     }
 
@@ -196,14 +187,11 @@ class SmtpTransportTest extends TestCase
     public function testConnectFail()
     {
         $this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
-        $this->socket->expects($this->at(0))->method('read')->will($this->returnValue(false));
         $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
         $this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
-        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(4))->method('read')->will($this->returnValue("200 Not Accepted\r\n"));
-        $this->socket->expects($this->at(5))->method('write')->with("HELO localhost\r\n");
-        $this->socket->expects($this->at(6))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(7))->method('read')->will($this->returnValue("200 Not Accepted\r\n"));
+        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("200 Not Accepted\r\n"));
+        $this->socket->expects($this->at(4))->method('write')->with("HELO localhost\r\n");
+        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("200 Not Accepted\r\n"));
         $this->SmtpTransport->connect();
     }
 
@@ -215,14 +203,11 @@ class SmtpTransportTest extends TestCase
     public function testAuth()
     {
         $this->socket->expects($this->at(0))->method('write')->with("AUTH LOGIN\r\n");
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(2))->method('read')->will($this->returnValue("334 Login\r\n"));
-        $this->socket->expects($this->at(3))->method('write')->with("bWFyaw==\r\n");
-        $this->socket->expects($this->at(4))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("334 Pass\r\n"));
-        $this->socket->expects($this->at(6))->method('write')->with("c3Rvcnk=\r\n");
-        $this->socket->expects($this->at(7))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(8))->method('read')->will($this->returnValue("235 OK\r\n"));
+        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("334 Login\r\n"));
+        $this->socket->expects($this->at(2))->method('write')->with("bWFyaw==\r\n");
+        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("334 Pass\r\n"));
+        $this->socket->expects($this->at(4))->method('write')->with("c3Rvcnk=\r\n");
+        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("235 OK\r\n"));
         $this->SmtpTransport->config(['username' => 'mark', 'password' => 'story']);
         $this->SmtpTransport->auth();
     }
@@ -237,8 +222,8 @@ class SmtpTransportTest extends TestCase
     public function testAuthNotRecognized()
     {
         $this->socket->expects($this->at(0))->method('write')->with("AUTH LOGIN\r\n");
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(2))->method('read')->will($this->returnValue("500 5.3.3 Unrecognized command\r\n"));
+        $this->socket->expects($this->at(1))->method('read')
+            ->will($this->returnValue("500 5.3.3 Unrecognized command\r\n"));
         $this->SmtpTransport->config(['username' => 'mark', 'password' => 'story']);
         $this->SmtpTransport->auth();
     }
@@ -253,8 +238,8 @@ class SmtpTransportTest extends TestCase
     public function testAuthNotImplemented()
     {
         $this->socket->expects($this->at(0))->method('write')->with("AUTH LOGIN\r\n");
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(2))->method('read')->will($this->returnValue("502 5.3.3 Command not implemented\r\n"));
+        $this->socket->expects($this->at(1))->method('read')
+            ->will($this->returnValue("502 5.3.3 Command not implemented\r\n"));
         $this->SmtpTransport->config(['username' => 'mark', 'password' => 'story']);
         $this->SmtpTransport->auth();
     }
@@ -269,8 +254,8 @@ class SmtpTransportTest extends TestCase
     public function testAuthBadSequence()
     {
         $this->socket->expects($this->at(0))->method('write')->with("AUTH LOGIN\r\n");
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(2))->method('read')->will($this->returnValue("503 5.5.1 Already authenticated\r\n"));
+        $this->socket->expects($this->at(1))
+            ->method('read')->will($this->returnValue("503 5.5.1 Already authenticated\r\n"));
         $this->SmtpTransport->config(['username' => 'mark', 'password' => 'story']);
         $this->SmtpTransport->auth();
     }
@@ -285,11 +270,10 @@ class SmtpTransportTest extends TestCase
     public function testAuthBadUsername()
     {
         $this->socket->expects($this->at(0))->method('write')->with("AUTH LOGIN\r\n");
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(2))->method('read')->will($this->returnValue("334 Login\r\n"));
-        $this->socket->expects($this->at(3))->method('write')->with("bWFyaw==\r\n");
-        $this->socket->expects($this->at(4))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("535 5.7.8 Authentication failed\r\n"));
+        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("334 Login\r\n"));
+        $this->socket->expects($this->at(2))->method('write')->with("bWFyaw==\r\n");
+        $this->socket->expects($this->at(3))->method('read')
+            ->will($this->returnValue("535 5.7.8 Authentication failed\r\n"));
         $this->SmtpTransport->config(['username' => 'mark', 'password' => 'story']);
         $this->SmtpTransport->auth();
     }
@@ -304,14 +288,11 @@ class SmtpTransportTest extends TestCase
     public function testAuthBadPassword()
     {
         $this->socket->expects($this->at(0))->method('write')->with("AUTH LOGIN\r\n");
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(2))->method('read')->will($this->returnValue("334 Login\r\n"));
-        $this->socket->expects($this->at(3))->method('write')->with("bWFyaw==\r\n");
-        $this->socket->expects($this->at(4))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("334 Pass\r\n"));
-        $this->socket->expects($this->at(6))->method('write')->with("c3Rvcnk=\r\n");
-        $this->socket->expects($this->at(7))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(8))->method('read')->will($this->returnValue("535 5.7.8 Authentication failed\r\n"));
+        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("334 Login\r\n"));
+        $this->socket->expects($this->at(2))->method('write')->with("bWFyaw==\r\n");
+        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("334 Pass\r\n"));
+        $this->socket->expects($this->at(4))->method('write')->with("c3Rvcnk=\r\n");
+        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("535 5.7.8 Authentication failed\r\n"));
         $this->SmtpTransport->config(['username' => 'mark', 'password' => 'story']);
         $this->SmtpTransport->auth();
     }
@@ -330,20 +311,15 @@ class SmtpTransportTest extends TestCase
         $email->cc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
 
         $this->socket->expects($this->at(0))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(2))->method('read')->will($this->returnValue("250 OK\r\n"));
-        $this->socket->expects($this->at(3))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
-        $this->socket->expects($this->at(4))->method('read')->will($this->returnValue(false));
+        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->at(2))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
+        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->at(4))->method('write')->with("RCPT TO:<mark@cakephp.org>\r\n");
         $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250 OK\r\n"));
-        $this->socket->expects($this->at(6))->method('write')->with("RCPT TO:<mark@cakephp.org>\r\n");
-        $this->socket->expects($this->at(7))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(8))->method('read')->will($this->returnValue("250 OK\r\n"));
-        $this->socket->expects($this->at(9))->method('write')->with("RCPT TO:<juan@cakephp.org>\r\n");
-        $this->socket->expects($this->at(10))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(11))->method('read')->will($this->returnValue("250 OK\r\n"));
-        $this->socket->expects($this->at(12))->method('write')->with("RCPT TO:<phpnut@cakephp.org>\r\n");
-        $this->socket->expects($this->at(13))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(14))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->at(6))->method('write')->with("RCPT TO:<juan@cakephp.org>\r\n");
+        $this->socket->expects($this->at(7))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->at(8))->method('write')->with("RCPT TO:<phpnut@cakephp.org>\r\n");
+        $this->socket->expects($this->at(9))->method('read')->will($this->returnValue("250 OK\r\n"));
 
         $this->SmtpTransport->sendRcpt($email);
     }
@@ -361,11 +337,9 @@ class SmtpTransportTest extends TestCase
         $email->returnPath('pleasereply@cakephp.org', 'CakePHP Return');
 
         $this->socket->expects($this->at(0))->method('write')->with("MAIL FROM:<pleasereply@cakephp.org>\r\n");
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(2))->method('read')->will($this->returnValue("250 OK\r\n"));
-        $this->socket->expects($this->at(3))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
-        $this->socket->expects($this->at(4))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->at(2))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
+        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("250 OK\r\n"));
 
         $this->SmtpTransport->sendRcpt($email);
     }
@@ -411,11 +385,9 @@ class SmtpTransportTest extends TestCase
         $data .= "\r\n\r\n.\r\n";
 
         $this->socket->expects($this->at(0))->method('write')->with("DATA\r\n");
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(2))->method('read')->will($this->returnValue("354 OK\r\n"));
-        $this->socket->expects($this->at(3))->method('write')->with($data);
-        $this->socket->expects($this->at(4))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("354 OK\r\n"));
+        $this->socket->expects($this->at(2))->method('write')->with($data);
+        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("250 OK\r\n"));
 
         $this->SmtpTransport->sendData($email);
     }
@@ -462,20 +434,22 @@ class SmtpTransportTest extends TestCase
         $this->assertEmpty($this->SmtpTransport->getLastResponse());
 
         $this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
-        $this->socket->expects($this->at(0))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
-        $this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
-        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(4))->method('read')->will($this->returnValue("250-PIPELINING\r\n"));
-        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250-SIZE 102400000\r\n"));
-        $this->socket->expects($this->at(6))->method('read')->will($this->returnValue("250-VRFY\r\n"));
-        $this->socket->expects($this->at(7))->method('read')->will($this->returnValue("250-ETRN\r\n"));
-        $this->socket->expects($this->at(8))->method('read')->will($this->returnValue("250-STARTTLS\r\n"));
-        $this->socket->expects($this->at(9))->method('read')->will($this->returnValue("250-AUTH PLAIN LOGIN\r\n"));
-        $this->socket->expects($this->at(10))->method('read')->will($this->returnValue("250-AUTH=PLAIN LOGIN\r\n"));
-        $this->socket->expects($this->at(11))->method('read')->will($this->returnValue("250-ENHANCEDSTATUSCODES\r\n"));
-        $this->socket->expects($this->at(12))->method('read')->will($this->returnValue("250-8BITMIME\r\n"));
-        $this->socket->expects($this->at(13))->method('read')->will($this->returnValue("250 DSN\r\n"));
+        $this->socket->expects($this->any())
+            ->method('read')
+            ->will($this->onConsecutiveCalls(
+                "220 Welcome message\r\n",
+                "250-PIPELINING\r\n",
+                "250-SIZE 102400000\r\n",
+                "250-VRFY\r\n",
+                "250-ETRN\r\n",
+                "250-STARTTLS\r\n",
+                "250-AUTH PLAIN LOGIN\r\n",
+                "250-AUTH=PLAIN LOGIN\r\n",
+                "250-ENHANCEDSTATUSCODES\r\n",
+                "250-8BITMIME\r\n",
+                "250 DSN\r\n"
+            ));
+        $this->socket->expects($this->once())->method('write')->with("EHLO localhost\r\n");
         $this->SmtpTransport->connect();
 
         $expected = [
@@ -492,17 +466,23 @@ class SmtpTransportTest extends TestCase
         ];
         $result = $this->SmtpTransport->getLastResponse();
         $this->assertEquals($expected, $result);
+    }
 
+    /**
+     * Test getLastResponse() with multiple operations
+     *
+     * @return void
+     */
+    public function testGetLastResponseMultipleOperations()
+    {
         $email = new Email();
         $email->from('noreply@cakephp.org', 'CakePHP Test');
         $email->to('cake@cakephp.org', 'CakePHP');
 
         $this->socket->expects($this->at(0))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(2))->method('read')->will($this->returnValue("250 OK\r\n"));
-        $this->socket->expects($this->at(3))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
-        $this->socket->expects($this->at(4))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->at(2))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
+        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("250 OK\r\n"));
 
         $this->SmtpTransport->sendRcpt($email);
 
@@ -632,43 +612,32 @@ class SmtpTransportTest extends TestCase
         $this->socket->expects($this->never())->method('disconnect');
 
         $this->socket->expects($this->at(0))->method('connect')->will($this->returnValue(true));
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(2))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
-        $this->socket->expects($this->at(3))->method('write')->with("EHLO localhost\r\n");
-        $this->socket->expects($this->at(4))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
+        $this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
+        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("250 OK\r\n"));
 
-        $this->socket->expects($this->at(6))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
-        $this->socket->expects($this->at(7))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(8))->method('read')->will($this->returnValue("250 OK\r\n"));
-        $this->socket->expects($this->at(9))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
-        $this->socket->expects($this->at(10))->method('read')->will($this->returnValue(false));
+        $this->socket->expects($this->at(4))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
+        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->at(6))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
+        $this->socket->expects($this->at(7))->method('read')->will($this->returnValue("250 OK\r\n"));
+
+        $this->socket->expects($this->at(8))->method('write')->with("DATA\r\n");
+        $this->socket->expects($this->at(9))->method('read')->will($this->returnValue("354 OK\r\n"));
+        $this->socket->expects($this->at(10))->method('write')->with($this->stringContains('First Line'));
         $this->socket->expects($this->at(11))->method('read')->will($this->returnValue("250 OK\r\n"));
 
-        $this->socket->expects($this->at(12))->method('write')->with("DATA\r\n");
-        $this->socket->expects($this->at(13))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(14))->method('read')->will($this->returnValue("354 OK\r\n"));
-        $this->socket->expects($this->at(15))->method('write')->with($this->stringContains('First Line'));
-        $this->socket->expects($this->at(16))->method('read')->will($this->returnValue(false));
+        $this->socket->expects($this->at(12))->method('write')->with("RSET\r\n");
+        $this->socket->expects($this->at(13))->method('read')->will($this->returnValue("250 OK\r\n"));
+
+        $this->socket->expects($this->at(14))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
+        $this->socket->expects($this->at(15))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->at(16))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
         $this->socket->expects($this->at(17))->method('read')->will($this->returnValue("250 OK\r\n"));
 
-        $this->socket->expects($this->at(18))->method('write')->with("RSET\r\n");
-        $this->socket->expects($this->at(19))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(20))->method('read')->will($this->returnValue("250 OK\r\n"));
-
-        $this->socket->expects($this->at(21))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
-        $this->socket->expects($this->at(22))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(23))->method('read')->will($this->returnValue("250 OK\r\n"));
-        $this->socket->expects($this->at(24))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
-        $this->socket->expects($this->at(25))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(26))->method('read')->will($this->returnValue("250 OK\r\n"));
-
-        $this->socket->expects($this->at(27))->method('write')->with("DATA\r\n");
-        $this->socket->expects($this->at(28))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(29))->method('read')->will($this->returnValue("354 OK\r\n"));
-        $this->socket->expects($this->at(15))->method('write')->with($this->stringContains('First Line'));
-        $this->socket->expects($this->at(31))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(32))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->at(18))->method('write')->with("DATA\r\n");
+        $this->socket->expects($this->at(19))->method('read')->will($this->returnValue("354 OK\r\n"));
+        $this->socket->expects($this->at(20))->method('write')->with($this->stringContains('First Line'));
+        $this->socket->expects($this->at(21))->method('read')->will($this->returnValue("250 OK\r\n"));
 
         $this->SmtpTransport->send($email);
         $this->socket->connected = true;
@@ -691,28 +660,22 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->at(0))->method('connect')->will($this->returnValue(true));
 
-        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(2))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
-        $this->socket->expects($this->at(3))->method('write')->with("EHLO localhost\r\n");
-        $this->socket->expects($this->at(4))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
+        $this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
+        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("250 OK\r\n"));
 
-        $this->socket->expects($this->at(6))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
-        $this->socket->expects($this->at(7))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(8))->method('read')->will($this->returnValue("250 OK\r\n"));
-        $this->socket->expects($this->at(9))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
-        $this->socket->expects($this->at(10))->method('read')->will($this->returnValue(false));
+        $this->socket->expects($this->at(4))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
+        $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->at(6))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
+        $this->socket->expects($this->at(7))->method('read')->will($this->returnValue("250 OK\r\n"));
+
+        $this->socket->expects($this->at(8))->method('write')->with("DATA\r\n");
+        $this->socket->expects($this->at(9))->method('read')->will($this->returnValue("354 OK\r\n"));
+        $this->socket->expects($this->at(10))->method('write')->with($this->stringContains('First Line'));
         $this->socket->expects($this->at(11))->method('read')->will($this->returnValue("250 OK\r\n"));
 
-        $this->socket->expects($this->at(12))->method('write')->with("DATA\r\n");
-        $this->socket->expects($this->at(13))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(14))->method('read')->will($this->returnValue("354 OK\r\n"));
-        $this->socket->expects($this->at(15))->method('write')->with($this->stringContains('First Line'));
-        $this->socket->expects($this->at(16))->method('read')->will($this->returnValue(false));
-        $this->socket->expects($this->at(17))->method('read')->will($this->returnValue("250 OK\r\n"));
-
-        $this->socket->expects($this->at(18))->method('write')->with("QUIT\r\n");
-        $this->socket->expects($this->at(19))->method('disconnect');
+        $this->socket->expects($this->at(12))->method('write')->with("QUIT\r\n");
+        $this->socket->expects($this->at(13))->method('disconnect');
 
         $this->SmtpTransport->send($email);
     }
