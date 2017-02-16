@@ -52,7 +52,7 @@ class Runner
     }
 
     /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request  The server request
+     * @param \Psr\Http\Message\ServerRequestInterface $request The server request
      * @param \Psr\Http\Message\ResponseInterface $response The response object
      * @return \Psr\Http\Message\ResponseInterface An updated response
      */

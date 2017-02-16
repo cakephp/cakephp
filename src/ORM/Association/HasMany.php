@@ -381,7 +381,7 @@ class HasMany extends Association
      *
      * This method does not check link uniqueness.
      *
-     * On success, the passed `$sourceEntity` will contain `$targetEntities` as  value
+     * On success, the passed `$sourceEntity` will contain `$targetEntities` as value
      * in the corresponding property for this association.
      *
      * Additional options for new links to be saved can be passed in the third argument,

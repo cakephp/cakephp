@@ -261,7 +261,7 @@ class Debugger
      * - `depth` - The number of stack frames to return. Defaults to 999
      * - `format` - The format you want the return. Defaults to the currently selected format. If
      *    format is 'array' or 'points' the return will be an array.
-     * - `args` - Should arguments for functions be shown?  If true, the arguments for each method call
+     * - `args` - Should arguments for functions be shown? If true, the arguments for each method call
      *   will be displayed.
      * - `start` - The stack frame to start generating a trace from. Defaults to 0
      *
@@ -282,7 +282,7 @@ class Debugger
      * - `depth` - The number of stack frames to return. Defaults to 999
      * - `format` - The format you want the return. Defaults to the currently selected format. If
      *    format is 'array' or 'points' the return will be an array.
-     * - `args` - Should arguments for functions be shown?  If true, the arguments for each method call
+     * - `args` - Should arguments for functions be shown? If true, the arguments for each method call
      *   will be displayed.
      * - `start` - The stack frame to start generating a trace from. Defaults to 0
      *

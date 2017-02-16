@@ -47,7 +47,7 @@ use RuntimeException;
  * There are 5 built-in caching engines:
  *
  * - `FileEngine` - Uses simple files to store content. Poor performance, but good for
- *    storing large objects, or things that are not IO sensitive.  Well suited to development
+ *    storing large objects, or things that are not IO sensitive. Well suited to development
  *    as it is an easy cache to inspect and manually flush.
  * - `ApcEngine` - Uses the APC object cache, one of the fastest caching engines.
  * - `MemcacheEngine` - Uses the PECL::Memcache extension and Memcached for storage.

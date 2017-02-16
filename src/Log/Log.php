@@ -18,8 +18,8 @@ use Cake\Log\Engine\BaseLog;
 use InvalidArgumentException;
 
 /**
- * Logs messages to configured Log adapters.  One or more adapters
- * can be configured using Cake Logs's methods.  If you don't
+ * Logs messages to configured Log adapters. One or more adapters
+ * can be configured using Cake Logs's methods. If you don't
  * configure any adapters, and write to Log, the messages will be
  * ignored.
  *
@@ -78,7 +78,7 @@ use InvalidArgumentException;
  *
  * ### Writing to the log
  *
- * You write to the logs using Log::write().  See its documentation for more information.
+ * You write to the logs using Log::write(). See its documentation for more information.
  *
  * ### Logging Levels
  *
@@ -94,11 +94,11 @@ use InvalidArgumentException;
  * ### Logging scopes
  *
  * When logging messages and configuring log adapters, you can specify
- * 'scopes' that the logger will handle.  You can think of scopes as subsystems
- * in your application that may require different logging setups.  For
+ * 'scopes' that the logger will handle. You can think of scopes as subsystems
+ * in your application that may require different logging setups. For
  * example in an e-commerce application you may want to handle logged errors
  * in the cart and ordering subsystems differently than the rest of the
- * application.  By using scopes you can control logging for each part
+ * application. By using scopes you can control logging for each part
  * of your application and also use standard log levels.
  */
 class Log
@@ -201,7 +201,7 @@ class Log
     }
 
     /**
-     * Reset all the connected loggers.  This is useful to do when changing the logging
+     * Reset all the connected loggers. This is useful to do when changing the logging
      * configuration or during testing when you want to reset the internal state of the
      * Log class.
      *

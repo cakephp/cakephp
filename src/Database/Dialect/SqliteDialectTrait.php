@@ -31,7 +31,7 @@ trait SqliteDialectTrait
     use TupleComparisonTranslatorTrait;
 
     /**
-     *  String used to start a database identifier quoting to make it safe
+     * String used to start a database identifier quoting to make it safe
      *
      * @var string
      */

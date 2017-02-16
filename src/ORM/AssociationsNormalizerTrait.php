@@ -16,7 +16,7 @@ namespace Cake\ORM;
 
 /**
  * Contains methods for parsing the associated tables array that is typically
- * passed to  a save operation
+ * passed to a save operation
  */
 trait AssociationsNormalizerTrait
 {

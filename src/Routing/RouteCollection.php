@@ -190,7 +190,7 @@ class RouteCollection
     }
 
     /**
-     * Get the set of names from the $url.  Accepts both older style array urls,
+     * Get the set of names from the $url. Accepts both older style array urls,
      * and newer style urls containing '_name'
      *
      * @param array $url The url to match.

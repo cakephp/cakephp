@@ -195,7 +195,7 @@ class Xml
      * ];
      * ```
      *
-     * Calling `Xml::fromArray($value, 'tags');`  Will generate:
+     * Calling `Xml::fromArray($value, 'tags');` Will generate:
      *
      * `<root><tag><id>1</id><value>defect</value>description</tag></root>`
      *
