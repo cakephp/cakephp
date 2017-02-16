@@ -448,7 +448,7 @@ class Router
 
 
     /**
-     * Pops a request off of the request stack.  Used when doing requestAction
+     * Pops a request off of the request stack. Used when doing requestAction
      *
      * @return \Cake\Http\ServerRequest The request removed from the stack.
      * @see \Cake\Routing\Router::pushRequest()
@@ -578,7 +578,7 @@ class Router
      *   cake relative URLs are required when using requestAction.
      * - `_scheme` - Set to create links on different schemes like `webcal` or `ftp`. Defaults
      *   to the current scheme.
-     * - `_host` - Set the host to use for the link.  Defaults to the current host.
+     * - `_host` - Set the host to use for the link. Defaults to the current host.
      * - `_port` - Set the port if you need to create links on non-standard ports.
      * - `_full` - If true output of `Router::fullBaseUrl()` will be prepended to generated URLs.
      * - `#` - Allows you to set URL hash fragments.
@@ -856,7 +856,7 @@ class Router
      *
      * ### Options
      *
-     * - `separator` The string to use as a separator.  Defaults to `:`.
+     * - `separator` The string to use as a separator. Defaults to `:`.
      *
      * @param \Cake\Http\ServerRequest $request The request object to modify.
      * @param array $options The array of options.
