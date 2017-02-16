@@ -31,7 +31,7 @@
         "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation."
     },
     "require-dev": {
-        "phpunit/phpunit": "<6.0",
+        "phpunit/phpunit": "^5.7|^6.0",
         "cakephp/cakephp-codesniffer": "~2.1"
     },
     "autoload": {
@@ -56,7 +56,10 @@
             "Company\\TestPluginThree\\": "tests/test_app/Plugin/Company/TestPluginThree/src",
             "Company\\TestPluginThree\\Test\\": "tests/test_app/Plugin/Company/TestPluginThree/tests",
             "PluginJs\\": "tests/test_app/Plugin/PluginJs/src"
-        }
+        },
+        "files": [
+            "src/TestSuite/phpunit-forward-compat.php"
+        ]
     },
     "replace": {
         "cakephp/cache": "self.version",

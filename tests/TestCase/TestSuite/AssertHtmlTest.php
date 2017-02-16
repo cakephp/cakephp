@@ -2,7 +2,7 @@
 namespace Cake\Test\Fixture;
 
 use Cake\TestSuite\TestCase;
-use PHPUnit_Framework_ExpectationFailedException;
+use PHPUnit\Framework\ExpectationFailedException;
 
 /**
  * This class helps in indirectly testing the functionality of TestCase::assertHtml
@@ -236,7 +236,7 @@ HTML;
         try {
             $this->assertHtml($pattern, $input);
             $this->fail('Assertion should fail');
-        } catch (PHPUnit_Framework_ExpectationFailedException $e) {
+        } catch (ExpectationFailedException $e) {
             $this->assertContains(
                 'Attribute did not match. Was expecting Attribute "clAss" == "active"',
                 $e->getMessage()
@@ -259,7 +259,7 @@ HTML;
         ];
         try {
             $this->assertHtml($pattern, $input);
-        } catch (PHPUnit_Framework_ExpectationFailedException $e) {
+        } catch (ExpectationFailedException $e) {
             $this->assertContains(
                 'Item #1 / regex #0 failed: Open <a tag',
                 $e->getMessage()

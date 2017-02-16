@@ -17,12 +17,12 @@
 namespace Cake\TestSuite;
 
 use Cake\Filesystem\Folder;
-use PHPUnit_Framework_TestSuite;
+use PHPUnit\Framework\TestSuite as BaseTestSuite;
 
 /**
  * A class to contain test cases and run them with shared fixtures
  */
-class TestSuite extends PHPUnit_Framework_TestSuite
+class TestSuite extends BaseTestSuite
 {
 
     /**

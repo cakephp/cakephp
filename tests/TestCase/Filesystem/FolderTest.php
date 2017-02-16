@@ -253,8 +253,8 @@ class FolderTest extends TestCase
             $Folder = new Folder($path);
             $result = $Folder->create($path . DS . 'two/three');
             $this->assertFalse($result);
-        } catch (\PHPUnit_Framework_Error $e) {
-            $this->assertTrue(true);
+        } catch (\Exception $e) {
+            $this->assertInstanceOf('PHPUnit\Framework\Error\Error', $e);
         }
 
         chmod($path, '0777');
