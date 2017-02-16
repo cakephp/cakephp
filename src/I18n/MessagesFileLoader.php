@@ -70,7 +70,7 @@ class MessagesFileLoader
      * $package = $loader();
      * ```
      *
-     * Load and parse  src/Locale/fr_FR/validation.mo
+     * Load and parse src/Locale/fr_FR/validation.mo
      *
      * ```
      * $loader = new MessagesFileLoader('validation', 'fr_FR', 'mo');
