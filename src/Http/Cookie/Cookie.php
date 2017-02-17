@@ -13,6 +13,7 @@
  */
 namespace Cake\Http\Cookie;
 
+use Cake\Chronos\Chronos;
 use Cake\Utility\Hash;
 use DateTimeInterface;
 use InvalidArgumentException;
@@ -99,7 +100,7 @@ class Cookie implements CookieInterface
      * @param string $name Cookie name
      * @param string|array $value Value of the cookie
      */
-    public function __construct($name, $value)
+    public function __construct($name, $value = '')
     {
         $this->validateName($name);
         $this->setName($name);
@@ -244,6 +245,26 @@ class Cookie implements CookieInterface
     }
 
     /**
+     * Check if the cookie is secure
+     *
+     * @return bool
+     */
+    public function isSecure()
+    {
+        return $this->secure;
+    }
+
+    /**
+     * Check if the cookie is HTTP only
+     *
+     * @return bool
+     */
+    public function isHttpOnly()
+    {
+        return $this->isHttpOnly();
+    }
+
+    /**
      * Sets the expiration date
      *
      * @param \DateTimeInterface $dateTime Date time object
@@ -302,6 +323,32 @@ class Cookie implements CookieInterface
         }
 
         return Hash::get($this->value, $path);
+    }
+
+    /**
+     * Sets the cookies date to a far future so it will virtually never expire
+     *
+     * @return $this
+     */
+    public function willNeverExpire()
+    {
+        $this->expiresAt = Chronos::now()->addYears(50)->format('U');
+
+        return $this;
+    }
+
+    /**
+     * Deletes the cookie from the browser
+     *
+     * This is done by setting the expiration time to "now"
+     *
+     * @return $this
+     */
+    public function willBeDeleted()
+    {
+        $this->expiresAt = Chronos::now()->format('U');
+
+        return $this;
     }
 
     /**

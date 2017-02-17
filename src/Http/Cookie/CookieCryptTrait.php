@@ -108,7 +108,7 @@ trait CookieCryptTrait
             return $value;
         }
         $this->checkCipher($encrypt);
-        $prefix = "Q2FrZQ==.";
+        $prefix = 'Q2FrZQ==.';
         $cipher = null;
         if ($key === null) {
             $key = $this->getCryptoKey();
