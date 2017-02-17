@@ -78,6 +78,22 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Tests that foreignKey() returns the correct configured value
+     *
+     * @return void
+     */
+    public function testForeignKey()
+    {
+        $assoc = new BelongsToMany('Test', [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag
+        ]);
+        $this->assertEquals('article_id', $assoc->foreignKey());
+        $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
+        $this->assertEquals('another_key', $assoc->foreignKey());
+    }
+
+    /**
      * Tests that the association reports it can be joined
      *
      * @return void
@@ -930,7 +946,7 @@ class BelongsToManyTest extends TestCase
             'targetTable' => $this->tag
         ]);
         $this->assertEquals('tag_id', $assoc->targetForeignKey());
-        $assoc->targetForeignKey('another_key');
+        $this->assertEquals('another_key', $assoc->targetForeignKey('another_key'));
         $this->assertEquals('another_key', $assoc->targetForeignKey());
 
         $assoc = new BelongsToMany('Test', [
