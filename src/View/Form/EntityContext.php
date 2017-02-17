@@ -500,8 +500,18 @@ class EntityContext implements ContextInterface
         }
 
         $table = $this->_tables[$this->_rootName];
+        $assoc = null;
         foreach ($normalized as $part) {
-            $assoc = $table->associations()->getByProperty($part);
+            if ($part === '_joinData') {
+                if ($assoc) {
+                    $table = $assoc->junction();
+                    $assoc = null;
+                    continue;
+                }
+            } else {
+                $assoc = $table->associations()->getByProperty($part);
+            }
+
             if (!$assoc && $rootFallback) {
                 break;
             }

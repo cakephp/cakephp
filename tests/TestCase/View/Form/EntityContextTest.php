@@ -23,6 +23,8 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use Cake\View\Form\EntityContext;
+use TestApp\Model\Entity\ArticlesTag;
+use TestApp\Model\Entity\Tag;
 
 /**
  * Test stub.
@@ -52,7 +54,7 @@ class EntityContextTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.comments'];
+    public $fixtures = ['core.articles', 'core.comments', 'core.articles_tags', 'core.tags'];
 
     /**
      * setup method.
@@ -112,6 +114,8 @@ class EntityContextTest extends TestCase
         $this->assertTrue($context->isPrimaryKey('1.comments.0.id'));
         $this->assertFalse($context->isPrimaryKey('1.comments.0.comment'));
         $this->assertFalse($context->isPrimaryKey('Articles.1.comments.0.comment'));
+        $this->assertTrue($context->isPrimaryKey('tags.0._joinData.article_id'));
+        $this->assertTrue($context->isPrimaryKey('tags.0._joinData.tag_id'));
     }
 
     /**
@@ -915,6 +919,38 @@ class EntityContextTest extends TestCase
     }
 
     /**
+     * Test isRequired on associated join table entities.
+     *
+     * @return void
+     */
+    public function testIsRequiredAssociatedJoinTable()
+    {
+        $this->_setupTables();
+
+        $row = new Article([
+            'tags' => [
+                new Tag([
+                    '_joinData' => new ArticlesTag([
+                        'article_id' => 1,
+                        'tag_id' => 2
+                    ])
+                ])
+            ],
+        ]);
+        $context = new EntityContext($this->request, [
+            'entity' => $row,
+            'table' => 'Articles',
+            'validator' => [
+                'Articles' => 'create',
+                'Users' => 'custom',
+            ]
+        ]);
+
+        $this->assertTrue($context->isRequired('tags.0._joinData.article_id'));
+        $this->assertTrue($context->isRequired('tags.0._joinData.tag_id'));
+    }
+
+    /**
      * Test type() basic
      *
      * @return void
@@ -962,6 +998,38 @@ class EntityContextTest extends TestCase
     }
 
     /**
+     * Test getting types for associated join data records.
+     *
+     * @return void
+     */
+    public function testTypeAssociatedJoinData()
+    {
+        $this->_setupTables();
+
+        $row = new Article([
+            'tags' => [
+                new Tag([
+                    '_joinData' => new ArticlesTag([
+                        'article_id' => 1,
+                        'tag_id' => 2
+                    ])
+                ])
+            ],
+        ]);
+        $context = new EntityContext($this->request, [
+            'entity' => $row,
+            'table' => 'Articles',
+        ]);
+
+        $this->assertEquals('integer', $context->type('tags.0._joinData.article_id'));
+        $this->assertNull($context->type('tags.0._joinData.non_existent'));
+
+        // tests the root fallback behavior
+        $this->assertEquals('integer', $context->type('tags.0._joinData._joinData.article_id'));
+        $this->assertNull($context->type('tags.0._joinData._joinData.non_existent'));
+    }
+
+    /**
      * Test attributes for fields.
      *
      * @return void
@@ -973,6 +1041,14 @@ class EntityContextTest extends TestCase
         $row = new Article([
             'title' => 'My title',
             'user' => new Entity(['username' => 'Mark']),
+            'tags' => [
+                new Tag([
+                    '_joinData' => new ArticlesTag([
+                        'article_id' => 1,
+                        'tag_id' => 2
+                    ])
+                ])
+            ],
         ]);
         $context = new EntityContext($this->request, [
             'entity' => $row,
@@ -993,6 +1069,11 @@ class EntityContextTest extends TestCase
             'length' => 10, 'precision' => 3
         ];
         $this->assertEquals($expected, $context->attributes('user.rating'));
+
+        $expected = [
+            'length' => null, 'precision' => null
+        ];
+        $this->assertEquals($expected, $context->attributes('tags.0._joinData.article_id'));
     }
 
     /**
@@ -1118,6 +1199,35 @@ class EntityContextTest extends TestCase
     }
 
     /**
+     * Test error on associated join table entities.
+     *
+     * @return void
+     */
+    public function testErrorAssociatedJoinTable()
+    {
+        $this->_setupTables();
+
+        $row = new Article([
+            'tags' => [
+                new Tag([
+                    '_joinData' => new ArticlesTag([
+                        'article_id' => 1
+                    ])
+                ])
+            ],
+        ]);
+        $row->tags[0]->_joinData->errors('tag_id', ['Is required']);
+
+        $context = new EntityContext($this->request, [
+            'entity' => $row,
+            'table' => 'Articles',
+        ]);
+
+        $this->assertEquals([], $context->error('tags.0._joinData.article_id'));
+        $this->assertEquals(['Is required'], $context->error('tags.0._joinData.tag_id'));
+    }
+
+    /**
      * Setup tables for tests.
      *
      * @return void
@@ -1126,9 +1236,11 @@ class EntityContextTest extends TestCase
     {
         $articles = TableRegistry::get('Articles');
         $articles->belongsTo('Users');
+        $articles->belongsToMany('Tags');
         $articles->hasMany('Comments');
         $articles->entityClass(__NAMESPACE__ . '\Article');
 
+        $articlesTags = TableRegistry::get('ArticlesTags');
         $comments = TableRegistry::get('Comments');
         $users = TableRegistry::get('Users');
         $users->hasMany('Articles');
@@ -1166,6 +1278,11 @@ class EntityContextTest extends TestCase
             'rule' => ['minlength', 10]
         ]);
         $comments->validator('custom', $validator);
+
+        $validator = new Validator();
+        $validator->requirePresence('article_id', 'create');
+        $validator->requirePresence('tag_id', 'create');
+        $articlesTags->validator('default', $validator);
     }
 
     /**
