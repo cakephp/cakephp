@@ -52,13 +52,8 @@ class CookieTest extends TestCase
      */
     public function testDecrypt()
     {
-        $encryptedCookieValue = 'Q2FrZQ==.N2Y1ODQ3ZDAzYzQzY2NkYTBlYTkwMmRkZjFmN'
-        . 'GI3Mjk4ZWY5ZmExYTA4YmM2ZThjOWFhZWY1Njc4ZDZlMjE4Y/fhI6zv+siabYg0Cnm2j'
-        . '2P51Sghk7WsVxZr94g5fhmkLJ4ve7j54v9r5/vHSIHtog==';
-
-        $expected = 'Q2FrZQ==.N2Y1ODQ3ZDAzYzQzY2NkYTBlYTkwMmRkZjFmNGI3Mjk4ZWY5Z'
-        . 'mExYTA4YmM2ZThjOWFhZWY1Njc4ZDZlMjE4Y/fhI6zv+siabYg0Cnm2j2P51Sghk7WsV'
-        . 'xZr94g5fhmkLJ4ve7j54v9r5/vHSIHtog==';
+        $encryptedCookieValue = 'Q2FrZQ==.N2Y1ODQ3ZDAzYzQzY2NkYTBlYTkwMmRkZjFmNGI3Mjk4ZWY5ZmExYTA4YmM2ZThjOWFhZWY1Njc4ZDZlMjE4Y/fhI6zv+siabYg0Cnm2j2P51Sghk7WsVxZr94g5fhmkLJ4ve7j54v9r5/vHSIHtog==';
+        $expected = 'Q2FrZQ==.N2Y1ODQ3ZDAzYzQzY2NkYTBlYTkwMmRkZjFmNGI3Mjk4ZWY5ZmExYTA4YmM2ZThjOWFhZWY1Njc4ZDZlMjE4Y/fhI6zv+siabYg0Cnm2j2P51Sghk7WsVxZr94g5fhmkLJ4ve7j54v9r5/vHSIHtog==';
 
         $cookie = new Cookie('cakephp', $encryptedCookieValue);
         $this->assertEquals($expected, $cookie->getValue());
@@ -99,8 +94,7 @@ class CookieTest extends TestCase
         $cookie->expiresAt($date);
         $result = $cookie->toHeaderValue();
 
-        $expected = 'cakephp=cakephp-rocks; expires=Wed, 01-Dec-2049 12:00:00 '
-        . 'GMT; domain=cakephp.org';
+        $expected = 'cakephp=cakephp-rocks; expires=Wed, 01-Dec-2049 12:00:00 GMT; domain=cakephp.org';
 
         $this->assertEquals($expected, $result);
     }

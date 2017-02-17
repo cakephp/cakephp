@@ -23,6 +23,7 @@ class RequestCookies extends CookieCollection
      * Create instance from a server request.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request Request object
+     * @param string $cookieClass Cookie class to use for the cookies
      * @return \Cake\Http\Client\RequestCookies
      */
     public static function createFromRequest(ServerRequestInterface $request, $cookieClass = Cookie::class)
