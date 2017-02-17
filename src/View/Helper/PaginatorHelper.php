@@ -1184,7 +1184,7 @@ class PaginatorHelper extends Helper
     {
         $out = $this->Form->create(null, ['type' => 'get']);
 
-        if (empty($limits)) {
+        if (empty($limits) || !is_array($limits)) {
             $limits = [
                 10 => 10,
                 25 => 25,
