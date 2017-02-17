@@ -1184,7 +1184,7 @@ class PaginatorHelper extends Helper
     {
         $out = $this->Form->create(null, ['type' => 'get']);
 
-        if (empty($default) || !is_integer($default)) {
+        if (empty($default) || !is_numeric($default)) {
             $default = $this->param('perPage');
         }
 
