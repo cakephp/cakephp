@@ -85,8 +85,3 @@ test_script:
   - sqlcmd -S ".\SQL2012SP1" -U sa -P Password12! -Q "create database cakephp;"
   - cd C:\projects\cakephp
   - vendor\bin\phpunit.bat
-
-coverage:
-  status:
-    project: off
-    patch: off
