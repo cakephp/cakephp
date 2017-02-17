@@ -126,7 +126,8 @@ class CookieTest extends TestCase
      *
      * @return void
      */
-    public function testInflateAndExpand() {
+    public function testInflateAndExpand()
+    {
         $data = [
             'username' => 'florian',
             'profile' => [
