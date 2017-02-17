@@ -14,13 +14,13 @@
 namespace Cake\Http\Cookie;
 
 use ArrayIterator;
-use Countable;
 use InvalidArgumentException;
+use IteratorAggregate;
 
 /**
  * Cookie Collection
  */
-class CookieCollection extends ArrayIterator implements Countable
+class CookieCollection implements IteratorAggregate
 {
 
     /**
@@ -43,8 +43,6 @@ class CookieCollection extends ArrayIterator implements Countable
             $key = mb_strtolower($name);
             $this->cookies[$key] = $cookie;
         }
-
-        parent::__construct($this->cookies);
     }
 
     /**
@@ -68,5 +66,15 @@ class CookieCollection extends ArrayIterator implements Countable
                 );
             }
         }
+    }
+
+    /**
+     * Gets the iterator
+     *
+     * @return \ArrayIterator
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->cookies);
     }
 }
