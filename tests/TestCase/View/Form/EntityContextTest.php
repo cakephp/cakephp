@@ -448,6 +448,21 @@ class EntityContextTest extends TestCase
     }
 
     /**
+     * Test default values when entity is an array.
+     * 
+     * @return void
+     */
+    public function testValDefaultArray()
+    {
+        $context = new EntityContext($this->request, [
+            'entity' => ['title' => 'foo'],
+            'table' => 'Articles',
+        ]);
+        $this->assertEquals('foo', $context->val('title', ['default' => 'bar']));
+        $this->assertEquals('bar', $context->val('nottitle', ['default' => 'bar']));
+    }
+
+    /**
      * Test reading array values from an entity.
      *
      * @return void
