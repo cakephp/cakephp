@@ -52,8 +52,16 @@ class CookieTest extends TestCase
      */
     public function testDecrypt()
     {
-        $cookie = new Cookie('cakephp', 'Q2FrZQ==.N2Y1ODQ3ZDAzYzQzY2NkYTBlYTkwMmRkZjFmNGI3Mjk4ZWY5ZmExYTA4YmM2ZThjOWFhZWY1Njc4ZDZlMjE4Y/fhI6zv+siabYg0Cnm2j2P51Sghk7WsVxZr94g5fhmkLJ4ve7j54v9r5/vHSIHtog==');
-        $this->assertEquals('Q2FrZQ==.N2Y1ODQ3ZDAzYzQzY2NkYTBlYTkwMmRkZjFmNGI3Mjk4ZWY5ZmExYTA4YmM2ZThjOWFhZWY1Njc4ZDZlMjE4Y/fhI6zv+siabYg0Cnm2j2P51Sghk7WsVxZr94g5fhmkLJ4ve7j54v9r5/vHSIHtog==', $cookie->getValue());
+        $encryptedCookieValue = 'Q2FrZQ==.N2Y1ODQ3ZDAzYzQzY2NkYTBlYTkwMmRkZjFmN'
+        . 'GI3Mjk4ZWY5ZmExYTA4YmM2ZThjOWFhZWY1Njc4ZDZlMjE4Y/fhI6zv+siabYg0Cnm2j'
+        . '2P51Sghk7WsVxZr94g5fhmkLJ4ve7j54v9r5/vHSIHtog==';
+
+        $expected = 'Q2FrZQ==.N2Y1ODQ3ZDAzYzQzY2NkYTBlYTkwMmRkZjFmNGI3Mjk4ZWY5Z'
+        . 'mExYTA4YmM2ZThjOWFhZWY1Njc4ZDZlMjE4Y/fhI6zv+siabYg0Cnm2j2P51Sghk7WsV'
+        . 'xZr94g5fhmkLJ4ve7j54v9r5/vHSIHtog==';
+
+        $cookie = new Cookie('cakephp', $encryptedCookieValue);
+        $this->assertEquals($expected, $cookie->getValue());
 
         $cookie->decrypt('someverysecretkeythatisatleast32charslong');
         $this->assertEquals('cakephp-rocks-and-is-awesome', $cookie->getValue());
@@ -68,7 +76,9 @@ class CookieTest extends TestCase
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks-and-is-awesome');
         $cookie->encrypt('someverysecretkeythatisatleast32charslong');
-        $this->assertNotEmpty('cakephp-rocks-and-is-awesome', $cookie->getValue());
+
+        $expected = 'cakephp-rocks-and-is-awesome';
+        $this->assertNotEmpty($expected, $cookie->getValue());
     }
 
     /**
@@ -88,7 +98,11 @@ class CookieTest extends TestCase
         $cookie->setDomain('cakephp.org');
         $cookie->expiresAt($date);
         $result = $cookie->toHeaderValue();
-        $this->assertEquals('cakephp=cakephp-rocks; expires=Wed, 01-Dec-2049 12:00:00 GMT; domain=cakephp.org', $result);
+
+        $expected = 'cakephp=cakephp-rocks; expires=Wed, 01-Dec-2049 12:00:00 '
+        . 'GMT; domain=cakephp.org';
+
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -105,5 +119,40 @@ class CookieTest extends TestCase
         $cookie = new Cookie('cakephp', '');
         $result = $cookie->getValue();
         $this->assertEquals('', $result);
+    }
+
+    /**
+     * testInflateAndExpand
+     *
+     * @return void
+     */
+    public function testInflateAndExpand() {
+        $data = [
+            'username' => 'florian',
+            'profile' => [
+                'profession' => 'developer'
+            ]
+        ];
+        $cookie = new Cookie('cakephp', $data);
+
+        $result = $cookie->getValue();
+        $this->assertEquals($data, $result);
+
+        $result = $cookie->read('foo');
+        $this->assertNull($result);
+
+        $result = $cookie->read();
+        $this->assertEquals($data, $result);
+
+        $result = $cookie->read('profile.profession');
+        $this->assertEquals('developer', $result);
+
+        $result = $cookie->flatten();
+        $this->assertInstanceOf(Cookie::class, $result);
+
+        $expected = '{"username":"florian","profile":{"profession":"developer"}}';
+        $result = $cookie->getValue();
+
+        $this->assertEquals($expected, $result);
     }
 }

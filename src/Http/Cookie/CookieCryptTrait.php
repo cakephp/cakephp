@@ -192,42 +192,4 @@ trait CookieCryptTrait
 
         return $this->_expand($value);
     }
-
-    /**
-     * Implode method to keep keys are multidimensional arrays
-     *
-     * @param array $array Map of key and values
-     * @return string A json encoded string.
-     */
-    protected function _flatten(array $array)
-    {
-        return json_encode($array);
-    }
-
-    /**
-     * Explode method to return array from string set in CookieComponent::_flatten()
-     * Maintains reading backwards compatibility with 1.x CookieComponent::_flatten().
-     *
-     * @param string $string A string containing JSON encoded data, or a bare string.
-     * @return string|array Map of key and values
-     */
-    protected function _expand($string)
-    {
-        $first = substr($string, 0, 1);
-        if ($first === '{' || $first === '[') {
-            $ret = json_decode($string, true);
-
-            return ($ret !== null) ? $ret : $string;
-        }
-        $array = [];
-        foreach (explode(',', $string) as $pair) {
-            $key = explode('|', $pair);
-            if (!isset($key[1])) {
-                return $key[0];
-            }
-            $array[$key[0]] = $key[1];
-        }
-
-        return $array;
-    }
 }

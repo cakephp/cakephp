@@ -54,16 +54,6 @@ class Cookie implements CookieInterface
     protected $value = '';
 
     /**
-     * Cookie data
-     *
-     * If the raw cookie data was a serialized array and was expanded
-     * this property will keep the data.
-     *
-     * @var array
-     */
-    protected $data = [];
-
-    /**
      * @var bool
      */
     protected $isExpanded = false;
@@ -107,7 +97,7 @@ class Cookie implements CookieInterface
      * Constructor
      *
      * @param string $name Cookie name
-     * @param string $value Value of the cookie
+     * @param string|array $value Value of the cookie
      */
     public function __construct($name, $value)
     {
@@ -213,11 +203,15 @@ class Cookie implements CookieInterface
     /**
      * Sets the raw cookie data
      *
-     * @param string $value Value of the cookie to set
+     * @param string|array $value Value of the cookie to set
      * @return $this
      */
     public function setValue($value)
     {
+        if (is_array($value)) {
+            $this->isExpanded = true;
+        }
+
         $this->value = $value;
 
         return $this;
@@ -300,14 +294,14 @@ class Cookie implements CookieInterface
     public function read($path = null)
     {
         if (!$this->isExpanded) {
-            throw new \RuntimeException('The Cookie data has not been expanded');
+            throw new RuntimeException('The Cookie data has not been expanded');
         }
 
         if ($path === null) {
-            return $this->data;
+            return $this->value;
         }
 
-        return Hash::get($this->data, $path);
+        return Hash::get($this->value, $path);
     }
 
     /**
@@ -384,5 +378,44 @@ class Cookie implements CookieInterface
     public function isExpanded()
     {
         return $this->isExpanded;
+    }
+
+    /**
+     * Implode method to keep keys are multidimensional arrays
+     *
+     * @param array $array Map of key and values
+     * @return string A json encoded string.
+     */
+    protected function _flatten(array $array)
+    {
+        return json_encode($array);
+    }
+
+    /**
+     * Explode method to return array from string set in CookieComponent::_flatten()
+     * Maintains reading backwards compatibility with 1.x CookieComponent::_flatten().
+     *
+     * @param string $string A string containing JSON encoded data, or a bare string.
+     * @return string|array Map of key and values
+     */
+    protected function _expand($string)
+    {
+        $first = substr($string, 0, 1);
+        if ($first === '{' || $first === '[') {
+            $ret = json_decode($string, true);
+
+            return ($ret !== null) ? $ret : $string;
+        }
+
+        $array = [];
+        foreach (explode(',', $string) as $pair) {
+            $key = explode('|', $pair);
+            if (!isset($key[1])) {
+                return $key[0];
+            }
+            $array[$key[0]] = $key[1];
+        }
+
+        return $array;
     }
 }
