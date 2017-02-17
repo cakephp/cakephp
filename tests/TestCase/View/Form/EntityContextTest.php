@@ -1073,7 +1073,7 @@ class EntityContextTest extends TestCase
         $this->assertEquals($expected, $context->attributes('user.rating'));
 
         $expected = [
-            'length' => null, 'precision' => null
+            'length' => 11, 'precision' => null
         ];
         $this->assertEquals($expected, $context->attributes('tags.0._joinData.article_id'));
     }
@@ -1253,6 +1253,11 @@ class EntityContextTest extends TestCase
             'user_id' => ['type' => 'integer', 'length' => 11, 'null' => false],
             'body' => ['type' => 'crazy_text', 'baseType' => 'text'],
             '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
+        ]);
+        $articles->Tags->junction()->schema([
+            'article_id' => ['type' => 'integer', 'length' => 11, 'null' => false],
+            'tag_id' => ['type' => 'integer', 'length' => 11, 'null' => false],
+            '_constraints' => ['unique_tag' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']]]
         ]);
         $users->schema([
             'id' => ['type' => 'integer', 'length' => 11],
