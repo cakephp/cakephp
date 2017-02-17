@@ -1186,10 +1186,10 @@ class PaginatorHelper extends Helper
 
         if (empty($limits) || !is_array($limits)) {
             $limits = [
-                10 => 10,
-                25 => 25,
-                50 => 50,
-                100 => 100
+                20 => '20',
+                25 => '25',
+                50 => '50',
+                100 => '100'
             ];
         }
 
