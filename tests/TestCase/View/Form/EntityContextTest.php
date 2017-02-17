@@ -102,6 +102,8 @@ class EntityContextTest extends TestCase
      */
     public function testIsPrimaryKey()
     {
+        $this->_setupTables();
+
         $row = new Article();
         $context = new EntityContext($this->request, [
             'entity' => $row,
@@ -1249,7 +1251,8 @@ class EntityContextTest extends TestCase
             'id' => ['type' => 'integer', 'length' => 11, 'null' => false],
             'title' => ['type' => 'string', 'length' => 255],
             'user_id' => ['type' => 'integer', 'length' => 11, 'null' => false],
-            'body' => ['type' => 'crazy_text', 'baseType' => 'text']
+            'body' => ['type' => 'crazy_text', 'baseType' => 'text'],
+            '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
         ]);
         $users->schema([
             'id' => ['type' => 'integer', 'length' => 11],
