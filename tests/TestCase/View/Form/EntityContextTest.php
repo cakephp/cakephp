@@ -942,10 +942,6 @@ class EntityContextTest extends TestCase
         $context = new EntityContext($this->request, [
             'entity' => $row,
             'table' => 'Articles',
-            'validator' => [
-                'Articles' => 'create',
-                'Users' => 'custom',
-            ]
         ]);
 
         $this->assertTrue($context->isRequired('tags.0._joinData.article_id'));
@@ -1026,9 +1022,11 @@ class EntityContextTest extends TestCase
         $this->assertEquals('integer', $context->type('tags.0._joinData.article_id'));
         $this->assertNull($context->type('tags.0._joinData.non_existent'));
 
-        // tests the root fallback behavior
+        // tests the fallback behavior
         $this->assertEquals('integer', $context->type('tags.0._joinData._joinData.article_id'));
+        $this->assertEquals('integer', $context->type('tags.0._joinData.non_existent.article_id'));
         $this->assertNull($context->type('tags.0._joinData._joinData.non_existent'));
+        $this->assertNull($context->type('tags.0._joinData.non_existent'));
     }
 
     /**
@@ -1254,7 +1252,7 @@ class EntityContextTest extends TestCase
             'body' => ['type' => 'crazy_text', 'baseType' => 'text'],
             '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
         ]);
-        $articles->Tags->junction()->schema([
+        $articlesTags->schema([
             'article_id' => ['type' => 'integer', 'length' => 11, 'null' => false],
             'tag_id' => ['type' => 'integer', 'length' => 11, 'null' => false],
             '_constraints' => ['unique_tag' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']]]
