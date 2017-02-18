@@ -42,7 +42,8 @@
             "src/Core/functions.php",
             "src/Collection/functions.php",
             "src/I18n/functions.php",
-            "src/Utility/bootstrap.php"
+            "src/Utility/bootstrap.php",
+            "src/TestSuite/phpunit-forward-compat.php"
         ]
     },
     "autoload-dev": {
@@ -56,10 +57,7 @@
             "Company\\TestPluginThree\\": "tests/test_app/Plugin/Company/TestPluginThree/src",
             "Company\\TestPluginThree\\Test\\": "tests/test_app/Plugin/Company/TestPluginThree/tests",
             "PluginJs\\": "tests/test_app/Plugin/PluginJs/src"
-        },
-        "files": [
-            "src/TestSuite/phpunit-forward-compat.php"
-        ]
+        }
     },
     "replace": {
         "cakephp/cache": "self.version",
