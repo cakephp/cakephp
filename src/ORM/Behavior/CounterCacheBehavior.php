@@ -87,6 +87,13 @@ use Cake\Utility\Inflector;
  *     ]
  * ]
  * ```
+ *
+ * You can disable counter updates entirely by sending the `ignoreCounterCache` option
+ * to your save operation:
+ *
+ * ```
+ * $this->Articles->save($article, ['ignoreCounterCache' => true]);
+ * ```
  */
 class CounterCacheBehavior extends Behavior
 {
