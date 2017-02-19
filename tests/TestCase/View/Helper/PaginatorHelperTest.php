@@ -2548,13 +2548,13 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
-     * test the limitSelect() method
+     * test the limitControl() method
      *
      * @return void
      */
-    public function testLimitSelect()
+    public function testLimitControl()
     {
-        $out = $this->Paginator->limitSelect([1 => 1]);
+        $out = $this->Paginator->limitControl([1 => 1]);
         $expected = [
             ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
             ['div' => ['class' => 'input select']],
@@ -2573,7 +2573,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $out);
 
-        $out = $this->Paginator->limitSelect([1 => 1, 5 => 5], null, ['class' => 'form-control']);
+        $out = $this->Paginator->limitControl([1 => 1, 5 => 5], null, ['class' => 'form-control']);
         $expected = [
             ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
             ['div' => ['class' => 'input select']],
