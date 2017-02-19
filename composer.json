@@ -73,6 +73,9 @@
         "cakephp/utility": "self.version",
         "cakephp/validation": "self.version"
     },
+    "conflict": {
+        "phpunit/phpunit": "<5.7"
+    },
     "scripts": {
         "check": [
             "@cs-check",
