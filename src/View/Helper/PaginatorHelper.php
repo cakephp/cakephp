@@ -1199,7 +1199,6 @@ class PaginatorHelper extends Helper
         ksort($limits);
 
         $out .= $this->Form->control('limit', ($options + ['type' => 'select', 'label' => __("View"), 'value' => $default, 'options' => $limits, 'onChange' => 'this.form.submit()']));
-
         $out .= $this->Form->end();
 
         return $out;
