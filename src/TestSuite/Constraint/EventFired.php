@@ -1,6 +1,13 @@
 <?php
 namespace Cake\TestSuite\Constraint;
 
+if (class_exists('PHPUnit_Runner_Version') && !class_exists('PHPUnit\Framework\Constraint\Constraint')) {
+    class_alias('PHPUnit_Framework_Constraint', 'PHPUnit\Framework\Constraint\Constraint');
+}
+if (class_exists('PHPUnit_Runner_Version') && !class_exists('PHPUnit\Framework\AssertionFailedError')) {
+    class_alias('PHPUnit_Framework_AssertionFailedError', 'PHPUnit\Framework\AssertionFailedError');
+}
+
 use Cake\Event\EventManager;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;

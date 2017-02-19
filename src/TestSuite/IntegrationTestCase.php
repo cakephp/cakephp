@@ -13,6 +13,10 @@
  */
 namespace Cake\TestSuite;
 
+if (class_exists('PHPUnit_Runner_Version') && !interface_exists('PHPUnit\Exception')) {
+    class_alias('PHPUnit_Exception', 'PHPUnit\Exception');
+}
+
 use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
 use Cake\Network\Session;

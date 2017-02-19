@@ -16,6 +16,10 @@
  */
 namespace Cake\TestSuite;
 
+if (class_exists('PHPUnit_Runner_Version') && !class_exists('PHPUnit\Framework\TestSuite')) {
+    class_alias('PHPUnit_Framework_TestSuite', 'PHPUnit\Framework\TestSuite');
+}
+
 use Cake\Filesystem\Folder;
 use PHPUnit\Framework\TestSuite as BaseTestSuite;
 
