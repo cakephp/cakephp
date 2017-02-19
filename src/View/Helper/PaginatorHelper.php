@@ -1175,7 +1175,7 @@ class PaginatorHelper extends Helper
      * Dropdown array for Select limit
      *
      * @param array $limits This is array of options.
-     * @param int|null $default Default limit for option selecting. Default is Paginator limit.
+     * @param int|null $default Default limit for option selecting. Default value is $this->param('perPage').
      * @param array $options Options for Select tag attributes like class, id or event
      *
      * @return string html output.
