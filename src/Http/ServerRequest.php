@@ -65,7 +65,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Array of querystring arguments
      *
      * @var array
-     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getQueryParams() instead.
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getQuery() or getQueryParams() instead.
      */
     public $query = [];
 
@@ -1396,7 +1396,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|null $name Query string variable name or null to read all.
      * @return string|array|null The value being read
-     * @deprecated 3.4.0 Use getQueryParams() and withQueryParams() instead.
+     * @deprecated 3.4.0 Use getQuery() or getQueryParams() and withQueryParams() instead.
      */
     public function query($name = null)
     {
