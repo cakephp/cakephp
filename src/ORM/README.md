@@ -26,7 +26,7 @@ specify a driver to use:
 ```php
 use Cake\Datasource\ConnectionManager;
 
-ConnectionManager::config('default', [
+ConnectionManager::setConfig('default', [
 	'className' => 'Cake\Database\Connection',
 	'driver' => 'Cake\Database\Driver\Mysql',
 	'database' => 'test',
