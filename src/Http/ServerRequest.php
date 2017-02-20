@@ -1423,7 +1423,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Read a specific query value or dotted path.
      *
      * Developers are encouraged to use getQueryParams() when possible as it is PSR-7 compliant, and this method
-     * is not. You can future proof your code by using the following example.
+     * is not.
      *
      * ### PSR-7 Alternative
      *
