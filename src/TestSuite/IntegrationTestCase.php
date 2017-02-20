@@ -14,6 +14,9 @@
 namespace Cake\TestSuite;
 
 if (class_exists('PHPUnit_Runner_Version') && !interface_exists('PHPUnit\Exception')) {
+    if (version_compare(\PHPUnit_Runner_Version::id(), '5.7', '<')) {
+        trigger_error(sprintf('Your PHPUnit Version must be at least 5.7.0 to use CakePHP Testsuite, found %s', \PHPUnit_Runner_Version::id()), E_USER_ERROR);
+    }
     class_alias('PHPUnit_Exception', 'PHPUnit\Exception');
 }
 
