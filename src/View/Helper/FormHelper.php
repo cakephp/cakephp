@@ -1801,7 +1801,7 @@ class FormHelper extends Helper
         $formName = str_replace('.', '', uniqid('post_', true));
         $formOptions = [
             'name' => $formName,
-            'style' => 'display:none;',
+            'class' => 'cake-core-hidden',
             'method' => 'post',
         ];
         if (isset($options['target'])) {
@@ -1849,13 +1849,21 @@ class FormHelper extends Helper
         unset($options['block']);
 
         $url = '#';
-        $onClick = 'document.' . $formName . '.submit();';
-        if ($confirmMessage) {
-            $options['onclick'] = $this->_confirm($confirmMessage, $onClick, '', $options);
+
+        if (!empty($options['class'])) {
+            $options['class'] .= ' cake-core-' . __FUNCTION__;
         } else {
-            $options['onclick'] = $onClick . ' ';
+            $options['class'] = 'cake-core-' . __FUNCTION__;
         }
-        $options['onclick'] .= 'event.returnValue = false; return false;';
+
+        $options['data-cake-core-form'] = $formName;
+
+        if ($confirmMessage) {
+            if (isset($options['escape']) && $options['escape'] === false) {
+                $confirmMessage = h($confirmMessage);
+            }
+            $options['data-cake-core-confirm'] = $confirmMessage;
+        }
 
         $out .= $this->Html->link($title, $url, $options);
 

@@ -7306,11 +7306,11 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
+                'name' => 'preg:/post_\w+/', 'class' => 'cake-core-hidden'
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
-            'a' => ['href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'],
+            'a' => ['href' => '#', 'class' => 'cake-core-postLink', 'data-cake-core-form' => 'preg:/post_\w+/'],
             'Delete',
             '/a'
         ];
@@ -7320,11 +7320,11 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
+                'name' => 'preg:/post_\w+/', 'class' => 'cake-core-hidden'
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'DELETE'],
             '/form',
-            'a' => ['href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'],
+            'a' => ['href' => '#', 'class' => 'cake-core-postLink', 'data-cake-core-form' => 'preg:/post_\w+/'],
             'Delete',
             '/a'
         ];
@@ -7338,11 +7338,11 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'target' => '_blank', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
+                'name' => 'preg:/post_\w+/', 'class' => 'cake-core-hidden'
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
-            'a' => ['class' => 'btn btn-danger', 'href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'],
+            'a' => ['class' => 'btn btn-danger cake-core-postLink', 'href' => '#', 'data-cake-core-form' => 'preg:/post_\w+/'],
             'Delete',
             '/a'
         ];
@@ -7362,11 +7362,11 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
+                'name' => 'preg:/post_\w+/', 'class' => 'cake-core-hidden'
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
-            'a' => ['href' => '#', 'onclick' => 'preg:/if \(confirm\(&quot;Confirm\?&quot;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/'],
+            'a' => ['href' => '#', 'class' => 'cake-core-postLink', 'data-cake-core-form' => 'preg:/post_\w+/', 'data-cake-core-confirm' => 'Confirm?'],
             'Delete',
             '/a'
         ];
@@ -7380,11 +7380,11 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
+                'name' => 'preg:/post_\w+/', 'class' => 'cake-core-hidden'
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
-            'a' => ['href' => '#', 'onclick' => "preg:/if \(confirm\(&quot;&#039;Confirm&#039;\\nthis \\\\&quot;deletion\\\\&quot;\?&quot;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/"],
+            'a' => ['href' => '#', 'class' => "cake-core-postLink", 'data-cake-core-form' => 'preg:/post_\w+/', 'data-cake-core-confirm' => "&#039;Confirm&#039;\nthis &quot;deletion&quot;?"],
             'Delete',
             '/a'
         ];
@@ -7407,11 +7407,11 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1?a=b&amp;c=d',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
+                'name' => 'preg:/post_\w+/', 'class' => 'cake-core-hidden'
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
-            'a' => ['href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'],
+            'a' => ['href' => '#', 'class' => 'cake-core-postLink', 'data-cake-core-form' => 'preg:/post_\w+/'],
             'Delete',
             '/a'
         ];
@@ -7474,7 +7474,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name', 'style' => 'display:none;'
+                'name', 'class' => 'cake-core-hidden'
             ],
             ['input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST']],
             ['input' => ['type' => 'hidden', 'name' => 'id', 'value' => '1']],
@@ -7487,7 +7487,7 @@ class FormHelperTest extends TestCase
             ]],
             '/div',
             '/form',
-            'a' => ['href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'],
+            'a' => ['href' => '#', 'class' => 'cake-core-postLink', 'data-cake-core-form' => 'preg:/post_\w+/'],
             'Delete',
             '/a'
         ];
@@ -7552,7 +7552,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name', 'style' => 'display:none;'
+                'name', 'class' => 'cake-core-hidden'
             ],
             ['input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST']],
             ['input' => ['type' => 'hidden', 'name' => 'id', 'value' => '1']],
@@ -7561,7 +7561,7 @@ class FormHelperTest extends TestCase
             ['input' => ['type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '']],
             '/div',
             '/form',
-            'a' => ['href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'],
+            'a' => ['href' => '#', 'class' => 'cake-core-postLink', 'data-cake-core-form' => 'preg:/post_\w+/'],
             'Delete',
             '/a'
         ];
@@ -7614,7 +7614,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
+                'name' => 'preg:/post_\w+/', 'class' => 'cake-core-hidden'
             ],
             ['input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST']],
             ['input' => ['type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testkey']],
@@ -7627,7 +7627,7 @@ class FormHelperTest extends TestCase
             ]],
             '/div',
             '/form',
-            'a' => ['href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'],
+            'a' => ['href' => '#', 'class' => 'cake-core-postLink', 'data-cake-core-form' => 'preg:/post_\w+/'],
             'Delete',
             '/a'
         ];
@@ -7645,7 +7645,7 @@ class FormHelperTest extends TestCase
     {
         $result = $this->Form->postLink('Delete', '/posts/delete/1', ['block' => true]);
         $expected = [
-            'a' => ['href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'],
+            'a' => ['href' => '#', 'class' => 'cake-core-postLink', 'data-cake-core-form' => 'preg:/post_\w+/'],
             'Delete',
             '/a'
         ];
@@ -7655,7 +7655,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
+                'name' => 'preg:/post_\w+/', 'class' => 'cake-core-hidden'
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form'
@@ -7668,7 +7668,7 @@ class FormHelperTest extends TestCase
             ['block' => true, 'method' => 'DELETE']
         );
         $expected = [
-            'a' => ['href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'],
+            'a' => ['href' => '#', 'class' => 'cake-core-postLink', 'data-cake-core-form' => 'preg:/post_\w+/'],
             'Delete',
             '/a'
         ];
@@ -7678,14 +7678,14 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
+                'name' => 'preg:/post_\w+/', 'class' => 'cake-core-hidden'
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
             [
                 'form' => [
                     'method' => 'post', 'action' => '/posts/delete/2',
-                    'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
+                    'name' => 'preg:/post_\w+/', 'class' => 'cake-core-hidden'
                 ],
             ],
             ['input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'DELETE']],
@@ -7695,7 +7695,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->postLink('Delete', '/posts/delete/1', ['block' => 'foobar']);
         $expected = [
-            'a' => ['href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'],
+            'a' => ['href' => '#', 'class' => 'cake-core-postLink', 'data-cake-core-form' => 'preg:/post_\w+/'],
             'Delete',
             '/a'
         ];
@@ -7705,7 +7705,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
+                'name' => 'preg:/post_\w+/', 'class' => 'cake-core-hidden'
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form'
