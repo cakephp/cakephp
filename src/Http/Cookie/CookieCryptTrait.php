@@ -104,12 +104,11 @@ trait CookieCryptTrait
         if (is_array($value)) {
             $value = $this->_flatten($value);
         }
-        if ($encrypt === false) {
-            return $value;
-        }
+
         $this->checkCipher($encrypt);
         $prefix = 'Q2FrZQ==.';
         $cipher = null;
+
         if ($key === null) {
             $key = $this->getCryptoKey();
         }

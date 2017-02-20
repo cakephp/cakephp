@@ -23,6 +23,13 @@ class CookieTest extends TestCase
 {
 
     /**
+     * Encryption key used in the tests
+     *
+     * @var string
+     */
+    protected $encryptionKey = 'someverysecretkeythatisatleast32charslong';
+
+    /**
      * Test invalid cookie name
      *
      * @expectedException \InvalidArgumentException
@@ -58,7 +65,7 @@ class CookieTest extends TestCase
         $cookie = new Cookie('cakephp', $encryptedCookieValue);
         $this->assertEquals($expected, $cookie->getValue());
 
-        $cookie->decrypt('someverysecretkeythatisatleast32charslong');
+        $cookie->decrypt($this->encryptionKey);
         $this->assertEquals('cakephp-rocks-and-is-awesome', $cookie->getValue());
     }
 
@@ -69,11 +76,13 @@ class CookieTest extends TestCase
      */
     public function testEncrypt()
     {
-        $cookie = new Cookie('cakephp', 'cakephp-rocks-and-is-awesome');
-        $cookie->encrypt('someverysecretkeythatisatleast32charslong');
+        $value = 'cakephp-rocks-and-is-awesome';
 
-        $expected = 'cakephp-rocks-and-is-awesome';
-        $this->assertNotEmpty($expected, $cookie->getValue());
+        $cookie = new Cookie('cakephp', $value);
+        $cookie->encrypt($this->encryptionKey);
+
+        $this->assertNotEquals($value, $cookie->getValue());
+        $this->assertNotEmpty($cookie->getValue());
     }
 
     /**
@@ -87,14 +96,14 @@ class CookieTest extends TestCase
         $result = $cookie->toHeaderValue();
         $this->assertEquals('cakephp=cakephp-rocks', $result);
 
-        $date = Chronos::createFromFormat('m/d/Y h:m:s', '12/1/2050 12:00:00');
+        $date = Chronos::createFromFormat('m/d/Y h:m:s', '12/1/2027 12:00:00');
 
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $cookie->setDomain('cakephp.org');
         $cookie->expiresAt($date);
         $result = $cookie->toHeaderValue();
 
-        $expected = 'cakephp=cakephp-rocks; expires=Wed, 01-Dec-2049 12:00:00 GMT; domain=cakephp.org';
+        $expected = 'cakephp=cakephp-rocks; expires=Tue, 01-Dec-2026 12:00:00 GMT; domain=cakephp.org';
 
         $this->assertEquals($expected, $result);
     }

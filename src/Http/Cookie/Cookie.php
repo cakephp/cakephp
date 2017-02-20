@@ -292,7 +292,7 @@ class Cookie implements CookieInterface
      * Writes data to the cookie
      *
      * @param string $path Path to write to
-     * @param mixer $value Value to write
+     * @param mixed $value Value to write
      * @return $this
      */
     public function write($path, $value)
@@ -332,7 +332,7 @@ class Cookie implements CookieInterface
      */
     public function willNeverExpire()
     {
-        $this->expiresAt = Chronos::now()->addYears(50)->format('U');
+        $this->expiresAt = Chronos::now()->setDate(2038, 1, 1)->format('U');
 
         return $this;
     }
