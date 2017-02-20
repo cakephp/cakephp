@@ -691,30 +691,43 @@ class EagerLoader
             return $map;
         }
 
-        $visitor = function ($level, $matching = false) use (&$visitor, &$map) {
-            /* @var \Cake\ORM\EagerLoadable $meta */
-            foreach ($level as $assoc => $meta) {
-                $canBeJoined = $meta->canBeJoined();
-                $instance = $meta->instance();
-                $associations = $meta->associations();
-                $forMatching = $meta->forMatching();
-                $map[] = [
-                    'alias' => $assoc,
-                    'instance' => $instance,
-                    'canBeJoined' => $canBeJoined,
-                    'entityClass' => $instance->getTarget()->getEntityClass(),
-                    'nestKey' => $canBeJoined ? $assoc : $meta->aliasPath(),
-                    'matching' => $forMatching !== null ? $forMatching : $matching,
-                    'targetProperty' => $meta->targetProperty()
-                ];
-                if ($canBeJoined && $associations) {
-                    $visitor($associations, $matching);
-                }
+        $map = $this->_buildAssociationsMap($map, $this->_matching->normalized($table), true);
+        $map = $this->_buildAssociationsMap($map, $this->normalized($table));
+        $map = $this->_buildAssociationsMap($map, $this->_joinsMap);
+
+        return $map;
+    }
+
+    /**
+     * An internal method to build a map which is used for the return value of the
+     * associationsMap() method.
+     *
+     * @param array $map An initial array for the map.
+     * @param array $level An array of EagerLoadable instances.
+     * @param bool $matching Whether or not it is an association loaded through `matching()`.
+     * @return array
+     */
+    protected function _buildAssociationsMap(array $map, array $level, $matching = false)
+    {
+        /* @var \Cake\ORM\EagerLoadable $meta */
+        foreach ($level as $assoc => $meta) {
+            $canBeJoined = $meta->canBeJoined();
+            $instance = $meta->instance();
+            $associations = $meta->associations();
+            $forMatching = $meta->forMatching();
+            $map[] = [
+                'alias' => $assoc,
+                'instance' => $instance,
+                'canBeJoined' => $canBeJoined,
+                'entityClass' => $instance->getTarget()->getEntityClass(),
+                'nestKey' => $canBeJoined ? $assoc : $meta->aliasPath(),
+                'matching' => $forMatching !== null ? $forMatching : $matching,
+                'targetProperty' => $meta->targetProperty()
+            ];
+            if ($canBeJoined && $associations) {
+                $map = $this->_buildAssociationsMap($map, $associations, $matching);
             }
-        };
-        $visitor($this->_matching->normalized($table), true);
-        $visitor($this->normalized($table));
-        $visitor($this->_joinsMap);
+        }
 
         return $map;
     }
