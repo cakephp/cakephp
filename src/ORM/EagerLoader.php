@@ -707,7 +707,7 @@ class EagerLoader
      * @param bool $matching Whether or not it is an association loaded through `matching()`.
      * @return array
      */
-    protected function _buildAssociationsMap(array $map, array $level, $matching = false)
+    protected function _buildAssociationsMap($map, $level, $matching = false)
     {
         /* @var \Cake\ORM\EagerLoadable $meta */
         foreach ($level as $assoc => $meta) {
