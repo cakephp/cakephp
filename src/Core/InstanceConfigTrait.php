@@ -180,19 +180,19 @@ trait InstanceConfigTrait
      * Setting a specific value:
      *
      * ```
-     * $this->config('key', $value);
+     * $this->configShallow('key', $value);
      * ```
      *
      * Setting a nested value:
      *
      * ```
-     * $this->config('some.nested.key', $value);
+     * $this->configShallow('some.nested.key', $value);
      * ```
      *
      * Updating multiple config settings at the same time:
      *
      * ```
-     * $this->config(['one' => 'value', 'another' => 'value']);
+     * $this->configShallow(['one' => 'value', 'another' => 'value']);
      * ```
      *
      * @param string|array $key The key to set, or a complete array of configs.
