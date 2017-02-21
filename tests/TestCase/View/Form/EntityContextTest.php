@@ -449,7 +449,7 @@ class EntityContextTest extends TestCase
 
     /**
      * Test default values when entity is an array.
-     * 
+     *
      * @return void
      */
     public function testValDefaultArray()
@@ -458,8 +458,8 @@ class EntityContextTest extends TestCase
             'entity' => ['title' => 'foo'],
             'table' => 'Articles',
         ]);
-        $this->assertEquals('foo', $context->val('title', ['default' => 'bar']));
-        $this->assertEquals('bar', $context->val('nottitle', ['default' => 'bar']));
+        $this->assertEquals('Articles.foo', $context->val('title', ['default' => 'bar']));
+        $this->assertEquals('Articles.bar', $context->val('nottitle', ['default' => 'bar']));
     }
 
     /**
