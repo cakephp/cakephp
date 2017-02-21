@@ -42,8 +42,7 @@
             "src/Core/functions.php",
             "src/Collection/functions.php",
             "src/I18n/functions.php",
-            "src/Utility/bootstrap.php",
-            "src/TestSuite/phpunit-forward-compat.php"
+            "src/Utility/bootstrap.php"
         ]
     },
     "autoload-dev": {
@@ -73,6 +72,9 @@
         "cakephp/orm": "self.version",
         "cakephp/utility": "self.version",
         "cakephp/validation": "self.version"
+    },
+    "conflict": {
+        "phpunit/phpunit": "<5.7"
     },
     "scripts": {
         "check": [
