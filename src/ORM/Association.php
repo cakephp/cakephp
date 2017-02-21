@@ -18,7 +18,9 @@ use Cake\Collection\Collection;
 use Cake\Core\App;
 use Cake\Core\ConventionsTrait;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Datasource\AssociationInterface;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
@@ -31,7 +33,7 @@ use RuntimeException;
  *
  * @mixin \Cake\ORM\Table
  */
-abstract class Association
+abstract class Association implements AssociationInterface
 {
 
     use ConventionsTrait;
@@ -57,34 +59,6 @@ abstract class Association
      * @var string
      */
     const STRATEGY_SELECT = 'select';
-
-    /**
-     * Association type for one to one associations.
-     *
-     * @var string
-     */
-    const ONE_TO_ONE = 'oneToOne';
-
-    /**
-     * Association type for one to many associations.
-     *
-     * @var string
-     */
-    const ONE_TO_MANY = 'oneToMany';
-
-    /**
-     * Association type for many to many associations.
-     *
-     * @var string
-     */
-    const MANY_TO_MANY = 'manyToMany';
-
-    /**
-     * Association type for many to one associations.
-     *
-     * @var string
-     */
-    const MANY_TO_ONE = 'manyToOne';
 
     /**
      * Name given to the association, it usually represents the alias
@@ -364,7 +338,7 @@ abstract class Association
      * @param \Cake\ORM\Table|null $table the instance to be assigned as source side
      * @return \Cake\ORM\Table
      */
-    public function source(Table $table = null)
+    public function source(RepositoryInterface $table = null)
     {
         if ($table === null) {
             return $this->_sourceTable;
@@ -435,7 +409,7 @@ abstract class Association
      * @param \Cake\ORM\Table|null $table the instance to be assigned as target side
      * @return \Cake\ORM\Table
      */
-    public function target(Table $table = null)
+    public function target(RepositoryInterface $table = null)
     {
         if ($table !== null) {
             $this->setTarget($table);
@@ -1415,7 +1389,7 @@ abstract class Association
      * @param \Cake\ORM\Table $side The potential Table with ownership
      * @return bool
      */
-    abstract public function isOwningSide(Table $side);
+    abstract public function isOwningSide(RepositoryInterface $side);
 
     /**
      * Extract the target's association data our from the passed entity and proxies

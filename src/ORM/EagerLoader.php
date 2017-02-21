@@ -16,6 +16,7 @@ namespace Cake\ORM;
 
 use Cake\Database\Statement\BufferedStatement;
 use Cake\Database\Statement\CallbackStatement;
+use Cake\Datasource\EagerLoadable;
 use Closure;
 use InvalidArgumentException;
 
@@ -569,7 +570,7 @@ class EagerLoader
      * Changes the association fetching strategy if required because of duplicate
      * under the same direct associations chain
      *
-     * @param \Cake\ORM\EagerLoadable $loadable The association config
+     * @param \Cake\Datasource\EagerLoadable $loadable The association config
      * @return void
      */
     protected function _correctStrategy($loadable)

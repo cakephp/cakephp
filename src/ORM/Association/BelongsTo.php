@@ -16,6 +16,7 @@ namespace Cake\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Association\Loader\SelectLoader;
 use Cake\ORM\Table;
@@ -106,7 +107,7 @@ class BelongsTo extends Association
      * @param \Cake\ORM\Table $side The potential Table with ownership
      * @return bool
      */
-    public function isOwningSide(Table $side)
+    public function isOwningSide(RepositoryInterface $side)
     {
         return $side === $this->getTarget();
     }
