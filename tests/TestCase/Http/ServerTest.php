@@ -26,7 +26,6 @@ use Zend\Diactoros\ServerRequestFactory;
 
 require_once __DIR__ . '/server_mocks.php';
 
-
 /**
  * Server test case
  */

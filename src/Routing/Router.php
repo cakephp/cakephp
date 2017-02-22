@@ -446,7 +446,6 @@ class Router
         throw new InvalidArgumentException('Unknown request type received.');
     }
 
-
     /**
      * Pops a request off of the request stack. Used when doing requestAction
      *

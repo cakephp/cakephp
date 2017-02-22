@@ -2498,7 +2498,6 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-
         $result = $this->Form->control('Article.content');
         $expected = [
             'div' => ['class' => 'input text error'],
@@ -8494,7 +8493,6 @@ class FormHelperTest extends TestCase
         $this->Form->setValueSources(['query', 'data', 'invalid', 'context', 'foo']);
         $result = $this->Form->getValueSources();
         $this->assertEquals($expected, $result);
-
 
         $this->Form->request->data['id'] = '1';
         $this->Form->request->query['id'] = '2';

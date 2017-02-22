@@ -111,7 +111,6 @@ class SelectLoader
         $this->sort = isset($options['sort']) ? $options['sort'] : null;
     }
 
-
     /**
      * Returns a callable that can be used for injecting association results into a given
      * iterator. The options accepted by this method are the same as `Association::eagerLoader()`

@@ -1239,7 +1239,6 @@ class QueryRegressionTest extends TestCase
         $this->assertNotEmpty($result);
         $this->assertInstanceOf('Cake\I18n\Time', $result->_matchingData['Comments']->updated);
 
-
         $query = $table->find()
             ->matching('Comments.Articles.Authors')
             ->where([

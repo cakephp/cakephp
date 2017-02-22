@@ -1816,7 +1816,6 @@ class HashTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-
     /**
      * test sorting with string ignoring case.
      *
