@@ -632,7 +632,7 @@ class HasMany extends Association
     public function find($type = null, array $options = [])
     {
         $query = parent::find($type, $options);
-        if($query->clause('order') === null) {
+        if ($query->clause('order') === null) {
             $query->order($this->getSort());
         }
         return $query;
