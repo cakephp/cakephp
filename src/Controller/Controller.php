@@ -437,7 +437,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         /* @var callable $callable */
         $callable = [$this, $request->getParam('action')];
 
-        return $callable(...$request->getParam('pass'));
+        return $callable(...array_values($request->getParam('pass')));
     }
 
     /**
