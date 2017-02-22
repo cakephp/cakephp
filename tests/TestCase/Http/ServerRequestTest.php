@@ -2421,6 +2421,14 @@ class ServerRequestTest extends TestCase
         ];
         $request = new ServerRequest($array);
 
+        $this->assertEquals([
+            'foo' => 'bar',
+            'zero' => '0',
+            'test' => [
+                'foo', 'bar'
+            ]
+        ], $request->getQuery());
+
         $this->assertSame('bar', $request->getQuery('foo'));
         $this->assertSame('0', $request->getQuery('zero'));
         $this->assertNull($request->getQuery('imaginary'));
