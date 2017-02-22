@@ -3377,7 +3377,7 @@ class QueryTest extends TestCase
     public function testIdentifierExpression()
     {
         $query = new Query($this->connection);
-        /* @var IdentifierExpression $expression */
+        /* @var \Cake\Database\Expression\IdentifierExpression $expression */
         $expression = $query->identifier('foo');
         $this->assertInstanceOf(IdentifierExpression::class, $expression);
         $this->assertEquals('foo', $expression->getIdentifier());
