@@ -563,7 +563,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         $base = Configure::read('App.fullBaseUrl') . $this->webroot;
         if (!empty($ref) && !empty($base)) {
             if ($local && strpos($ref, $base) === 0) {
-            $ref = substr($ref, strlen($base));
+                $ref = substr($ref, strlen($base));
                 if (!strlen($ref)) {
                     $ref = '/';
                 }
