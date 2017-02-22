@@ -3370,6 +3370,20 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that the identifier method creates an expression object.
+     *
+     * @return void
+     */
+    public function testIdentifierExpression()
+    {
+        $query = new Query($this->connection);
+        /** @var IdentifierExpression $expression */
+        $expression = $query->identifier('foo');
+        $this->assertInstanceOf(IdentifierExpression::class, $expression);
+        $this->assertEquals('foo', $expression->getIdentifier());
+    }
+
+    /**
      * Tests that functions are correctly transformed and their parameters are bound
      *
      * @group FunctionExpression
