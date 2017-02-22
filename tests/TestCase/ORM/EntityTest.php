@@ -1379,6 +1379,7 @@ class EntityTest extends TestCase
     {
         $entity = new Entity(['foo' => 'bar'], ['markClean' => true]);
         $entity->somethingElse = 'value';
+        $entity->accessible('id', false);
         $entity->accessible('name', true);
         $entity->virtualProperties(['baz']);
         $entity->dirty('foo', true);
@@ -1390,7 +1391,7 @@ class EntityTest extends TestCase
             'foo' => 'bar',
             'somethingElse' => 'value',
             '[new]' => true,
-            '[accessible]' => ['*' => true, 'name' => true],
+            '[accessible]' => ['*' => true, 'id' => false, 'name' => true],
             '[dirty]' => ['somethingElse' => true, 'foo' => true],
             '[original]' => [],
             '[virtual]' => ['baz'],
