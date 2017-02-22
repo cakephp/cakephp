@@ -228,8 +228,32 @@ class BelongsToMany extends Association
 
     /**
      * Sets the sort order in which target records should be returned.
+     *
+     * @param mixed $sort A find() compatible order clause
+     * @return $this
+     */
+    public function setSort($sort)
+    {
+        $this->_sort = $sort;
+
+        return $this;
+    }
+
+    /**
+     * Gets the sort order in which target records should be returned.
+     *
+     * @return mixed
+     */
+    public function getSort()
+    {
+        return $this->_sort;
+    }
+
+    /**
+     * Sets the sort order in which target records should be returned.
      * If no arguments are passed the currently configured value is returned
      *
+     * @deprecated 3.4.1 Use setSort()/getSort() instead.
      * @param mixed $sort A find() compatible order clause
      * @return mixed
      */
@@ -538,7 +562,8 @@ class BelongsToMany extends Association
             'bindingKey' => $this->getBindingKey(),
             'strategy' => $this->getStrategy(),
             'associationType' => $this->type(),
-            'sort' => $this->sort(),
+            'sort' => $this->getSort(),
+            'sortOverwrite' => true,
             'junctionAssociationName' => $name,
             'junctionProperty' => $this->_junctionProperty,
             'junctionAssoc' => $this->getTarget()->association($name),
@@ -1060,6 +1085,7 @@ class BelongsToMany extends Association
         $query = $this->getTarget()
             ->find($type, $options + $opts)
             ->where($this->targetConditions())
+            ->order($this->getSort())
             ->addDefaultTypes($this->getTarget());
 
         if (!$this->junctionConditions()) {

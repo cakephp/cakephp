@@ -1390,6 +1390,7 @@ abstract class Association
      * - foreignKey: The name of the field used to relate both tables
      * - conditions: List of conditions to be passed to the query where() method
      * - sort: The direction in which the records should be returned
+     * - sortOverwrite: (default true) True to replace configured sort order, false to merge.
      * - fields: List of fields to select from the target table
      * - contain: List of related tables to eager load associated to the target table
      * - strategy: The name of strategy to use for finding target table records

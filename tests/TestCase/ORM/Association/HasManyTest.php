@@ -19,6 +19,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\IdentifierQuoter;
 use Cake\Database\TypeMap;
+use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Association;
 use Cake\ORM\Association\HasMany;
@@ -142,9 +143,26 @@ class HasManyTest extends TestCase
     public function testSort()
     {
         $assoc = new HasMany('Test');
-        $this->assertNull($assoc->sort());
-        $assoc->sort(['id' => 'ASC']);
-        $this->assertEquals(['id' => 'ASC'], $assoc->sort());
+        $this->assertNull($assoc->getSort());
+        $assoc->setSort(['id' => 'ASC']);
+        $this->assertEquals(['id' => 'ASC'], $assoc->getSort());
+    }
+
+    /**
+     * Tests sort is added to find proxy.
+     *
+     * @return void
+     */
+    public function testFindWithSort()
+    {
+        $assoc = new HasMany('Articles');
+        $this->assertNull($assoc->getSort());
+        $this->assertNull($assoc->find()->clause('order'));
+
+        $assoc->setSort(['id'=>'DESC']);
+        $this->assertEquals(['id'=>'DESC'], $assoc->getSort());
+        $this->assertInstanceOf(OrderByExpression::class,$assoc->find()->clause('order'));
+        $this->assertEquals('ORDER BY id DESC', $assoc->find()->clause('order')->sql(new ValueBinder));
     }
 
     /**
@@ -626,7 +644,7 @@ class HasManyTest extends TestCase
     /**
      * Assertion method for order by clause contents.
      *
-     * @param \Cake\Database\QueryExpression $expected The expected where clause.
+     * @param \Cake\Database\Expression\QueryExpression $expected The expected where clause.
      * @param \Cake\ORM\Query $query The query to check.
      * @return void
      */

@@ -619,6 +619,26 @@ class HasMany extends Association
     }
 
     /**
+     * Proxies the finding operation to the target table's find method
+     * and modifies the query accordingly based of this association
+     * configuration
+     *
+     * @param string|array|null $type the type of query to perform, if an array is passed,
+     *   it will be interpreted as the `$options` parameter
+     * @param array $options The options to for the find
+     * @see \Cake\ORM\Table::find()
+     * @return \Cake\ORM\Query
+     */
+    public function find($type = null, array $options = [])
+    {
+        $query = parent::find($type, $options);
+        if($query->clause('order') === null) {
+            $query->order($this->getSort());
+        }
+        return $query;
+    }
+
+    /**
      * Parse extra options passed in the constructor.
      *
      * @param array $opts original list of options passed in constructor
@@ -650,6 +670,7 @@ class HasMany extends Association
             'strategy' => $this->getStrategy(),
             'associationType' => $this->type(),
             'sort' => $this->getSort(),
+            'sortOverwrite' => true,
             'finder' => [$this, 'find']
         ]);
 
