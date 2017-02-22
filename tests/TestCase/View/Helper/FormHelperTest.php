@@ -7384,7 +7384,7 @@ class FormHelperTest extends TestCase
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
-            'a' => ['href' => '#', 'onclick' => "preg:/if \(confirm\(&quot;&#039;Confirm&#039;\\nthis \\\\&quot;deletion\\\\&quot;\?&quot;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/"],
+            'a' => ['href' => '#', 'onclick' => "preg:/if \(confirm\(&quot;&#039;Confirm&#039;\\nthis \\&quot;deletion\\&quot;\?&quot;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/"],
             'Delete',
             '/a'
         ];
