@@ -3894,7 +3894,7 @@ class QueryTest extends TestCase
             ->set('name', 'mark')
             ->where(['id' => 1])
             ->executeAndClose();
-        $this->assertCount(1, $rowCount);
+        $this->assertEquals(1, $rowCount);
     }
 
     /**
