@@ -159,9 +159,9 @@ class HasManyTest extends TestCase
         $this->assertNull($assoc->getSort());
         $this->assertNull($assoc->find()->clause('order'));
 
-        $assoc->setSort(['id'=>'DESC']);
-        $this->assertEquals(['id'=>'DESC'], $assoc->getSort());
-        $this->assertInstanceOf(OrderByExpression::class,$assoc->find()->clause('order'));
+        $assoc->setSort(['id' => 'DESC']);
+        $this->assertEquals(['id' => 'DESC'], $assoc->getSort());
+        $this->assertInstanceOf(OrderByExpression::class, $assoc->find()->clause('order'));
         $this->assertEquals('ORDER BY id DESC', $assoc->find()->clause('order')->sql(new ValueBinder));
     }
 
