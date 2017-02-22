@@ -1126,11 +1126,11 @@ class BelongsToManyTest extends TestCase
     {
         $table = TableRegistry::get('Articles');
         $assoc = $table->belongsToMany('Tags');
-        $this->assertNull($assoc->getSort());
+        $this->assertNull($assoc->sort());
         $this->assertNull($assoc->find()->clause('order'));
 
-        $assoc->setSort(['id' => 'DESC']);
-        $this->assertEquals(['id' => 'DESC'], $assoc->getSort());
+        $assoc->sort(['id' => 'DESC']);
+        $this->assertEquals(['id' => 'DESC'], $assoc->sort());
         $this->assertInstanceOf(OrderByExpression::class, $assoc->find()->clause('order'));
         $this->assertEquals('ORDER BY id DESC', $assoc->find()->clause('order')->sql(new ValueBinder));
     }

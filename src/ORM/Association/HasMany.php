@@ -39,7 +39,7 @@ class HasMany extends Association
     /**
      * Order in which target records should be returned
      *
-     * @var mixed
+     * @var array|\Cake\Database\ExpressionInterface|string
      */
     protected $_sort;
 
@@ -568,7 +568,7 @@ class HasMany extends Association
     /**
      * Sets the sort order in which target records should be returned.
      *
-     * @param mixed $sort A find() compatible order clause
+     * @param array|\Cake\Database\ExpressionInterface|string $sort A find() compatible order clause
      * @return $this
      */
     public function setSort($sort)
@@ -581,7 +581,7 @@ class HasMany extends Association
     /**
      * Gets the sort order in which target records should be returned.
      *
-     * @return mixed
+     * @return array|\Cake\Database\ExpressionInterface|string
      */
     public function getSort()
     {
@@ -593,7 +593,7 @@ class HasMany extends Association
      * If no arguments are passed the currently configured value is returned
      *
      * @deprecated 3.4.0 Use setSort()/getSort() instead.
-     * @param mixed $sort A find() compatible order clause
+     * @param array|\Cake\Database\ExpressionInterface|string $sort A find() compatible order clause
      * @return mixed
      */
     public function sort($sort = null)
@@ -635,7 +635,7 @@ class HasMany extends Association
         if ($query->clause('order') === null) {
             $query->order($this->getSort());
         }
-        
+
         return $query;
     }
 

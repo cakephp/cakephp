@@ -152,7 +152,7 @@ class BelongsToMany extends Association
     /**
      * Order in which target records should be returned
      *
-     * @var mixed
+     * @var array|\Cake\Database\ExpressionInterface|string
      */
     protected $_sort;
 
@@ -228,34 +228,10 @@ class BelongsToMany extends Association
 
     /**
      * Sets the sort order in which target records should be returned.
-     *
-     * @param mixed $sort A find() compatible order clause
-     * @return $this
-     */
-    public function setSort($sort)
-    {
-        $this->_sort = $sort;
-
-        return $this;
-    }
-
-    /**
-     * Gets the sort order in which target records should be returned.
-     *
-     * @return mixed
-     */
-    public function getSort()
-    {
-        return $this->_sort;
-    }
-
-    /**
-     * Sets the sort order in which target records should be returned.
      * If no arguments are passed the currently configured value is returned
      *
-     * @deprecated 3.4.1 Use setSort()/getSort() instead.
-     * @param mixed $sort A find() compatible order clause
-     * @return mixed
+     * @param array|\Cake\Database\ExpressionInterface|string $sort A find() compatible order clause
+     * @return array|\Cake\Database\ExpressionInterface|string
      */
     public function sort($sort = null)
     {
@@ -562,7 +538,7 @@ class BelongsToMany extends Association
             'bindingKey' => $this->getBindingKey(),
             'strategy' => $this->getStrategy(),
             'associationType' => $this->type(),
-            'sort' => $this->getSort(),
+            'sort' => $this->sort(),
             'sortOverwrite' => true,
             'junctionAssociationName' => $name,
             'junctionProperty' => $this->_junctionProperty,
@@ -1085,7 +1061,7 @@ class BelongsToMany extends Association
         $query = $this->getTarget()
             ->find($type, $options + $opts)
             ->where($this->targetConditions())
-            ->order($this->getSort())
+            ->order($this->sort())
             ->addDefaultTypes($this->getTarget());
 
         if (!$this->junctionConditions()) {
