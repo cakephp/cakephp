@@ -310,6 +310,7 @@ class Session
 
         if ($this->_isCLI) {
             $_SESSION = [];
+            $this->id('cli');
 
             return $this->_started = true;
         }
