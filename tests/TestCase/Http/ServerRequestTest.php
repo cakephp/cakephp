@@ -12,12 +12,12 @@
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Network;
+namespace Cake\Test\TestCase\Http;
 
 use Cake\Core\Configure;
+use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Network\Exception\MethodNotAllowedException;
-use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\UploadedFile;
@@ -26,7 +26,7 @@ use Zend\Diactoros\Uri;
 /**
  * TestRequest
  */
-class RequestTest extends TestCase
+class ServerRequestTest extends TestCase
 {
 
     /**
@@ -66,7 +66,7 @@ class RequestTest extends TestCase
      */
     public function testCustomArgsDetector()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request->addDetector('controller', function ($request, $name) {
             return $request->param('controller') === $name;
         });
@@ -85,7 +85,7 @@ class RequestTest extends TestCase
      */
     public function testHeaderDetector()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request->addDetector('host', ['header' => ['host' => 'cakephp.org']]);
 
         $request->env('HTTP_HOST', 'cakephp.org');
@@ -102,11 +102,11 @@ class RequestTest extends TestCase
      */
     public function testExtensionDetector()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request->params['_ext'] = 'json';
         $this->assertTrue($request->is('json'));
 
-        $request = new Request();
+        $request = new ServerRequest();
         $request->params['_ext'] = 'xml';
         $this->assertFalse($request->is('json'));
     }
@@ -118,11 +118,11 @@ class RequestTest extends TestCase
      */
     public function testAcceptHeaderDetector()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request->env('HTTP_ACCEPT', 'application/json, text/plain, */*');
         $this->assertTrue($request->is('json'));
 
-        $request = new Request();
+        $request = new ServerRequest();
         $request->env('HTTP_ACCEPT', 'text/plain, */*');
         $this->assertFalse($request->is('json'));
     }
@@ -137,7 +137,7 @@ class RequestTest extends TestCase
         $_GET = [
             'one' => 'param'
         ];
-        $request = new Request();
+        $request = new ServerRequest();
         $this->assertFalse(isset($request->query['one']));
     }
 
@@ -155,7 +155,7 @@ class RequestTest extends TestCase
             ],
             'url' => 'some/path'
         ];
-        $request = new Request($data);
+        $request = new ServerRequest($data);
         $this->assertEquals($request->query, $data['query']);
         $this->assertEquals('some/path', $request->url);
     }
@@ -168,7 +168,7 @@ class RequestTest extends TestCase
     public function testQueryStringParsingFromInputUrl()
     {
         $_GET = [];
-        $request = new Request(['url' => 'some/path?one=something&two=else']);
+        $request = new ServerRequest(['url' => 'some/path?one=something&two=else']);
         $expected = ['one' => 'something', 'two' => 'else'];
         $this->assertEquals($expected, $request->query);
         $this->assertEquals('some/path', $request->url);
@@ -183,19 +183,19 @@ class RequestTest extends TestCase
     public function testQueryStringAndNamedParams()
     {
         $_SERVER['REQUEST_URI'] = '/tasks/index?ts=123456';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('tasks/index', $request->url);
 
         $_SERVER['REQUEST_URI'] = '/tasks/index/?ts=123456';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('tasks/index/', $request->url);
 
         $_SERVER['REQUEST_URI'] = '/some/path?url=http://cakephp.org';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('some/path', $request->url);
 
         $_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/other/path?url=http://cakephp.org';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('other/path', $request->url);
     }
 
@@ -205,11 +205,11 @@ class RequestTest extends TestCase
     public function testUrlInPath()
     {
         $_SERVER['REQUEST_URI'] = '/jump/http://cakephp.org';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('jump/http://cakephp.org', $request->url);
 
         $_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/jump/http://cakephp.org';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('jump/http://cakephp.org', $request->url);
     }
 
@@ -220,7 +220,7 @@ class RequestTest extends TestCase
      */
     public function testAddParams()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request->params = ['controller' => 'posts', 'action' => 'view'];
         $result = $request->addParams(['plugin' => null, 'action' => 'index']);
 
@@ -238,7 +238,7 @@ class RequestTest extends TestCase
      */
     public function testAddPaths()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request->webroot = '/some/path/going/here/';
         $result = $request->addPaths([
             'random' => '/something', 'webroot' => '/', 'here' => '/', 'base' => '/base_dir'
@@ -262,18 +262,18 @@ class RequestTest extends TestCase
         $post = [
             'Article' => ['title']
         ];
-        $request = new Request(compact('post'));
+        $request = new ServerRequest(compact('post'));
         $this->assertEquals($post, $request->data);
 
         $post = ['one' => 1, 'two' => 'three'];
-        $request = new Request(compact('post'));
+        $request = new ServerRequest(compact('post'));
         $this->assertEquals($post, $request->data);
 
         $post = [
             'Article' => ['title' => 'Testing'],
             'action' => 'update'
         ];
-        $request = new Request(compact('post'));
+        $request = new ServerRequest(compact('post'));
         $this->assertEquals($post, $request->data);
     }
 
@@ -287,7 +287,7 @@ class RequestTest extends TestCase
         $data = [
             'Article' => ['title']
         ];
-        $request = new Request([
+        $request = new ServerRequest([
             'input' => 'Article[]=title',
             'environment' => [
                 'REQUEST_METHOD' => 'PUT',
@@ -297,7 +297,7 @@ class RequestTest extends TestCase
         $this->assertEquals($data, $request->data);
 
         $data = ['one' => 1, 'two' => 'three'];
-        $request = new Request([
+        $request = new ServerRequest([
             'input' => 'one=1&two=three',
             'environment' => [
                 'REQUEST_METHOD' => 'PUT',
@@ -306,7 +306,7 @@ class RequestTest extends TestCase
         ]);
         $this->assertEquals($data, $request->data);
 
-        $request = new Request([
+        $request = new ServerRequest([
             'input' => 'Article[title]=Testing&action=update',
             'environment' => [
                 'REQUEST_METHOD' => 'DELETE',
@@ -323,7 +323,7 @@ class RequestTest extends TestCase
             'Article' => ['title'],
             'Tag' => ['Tag' => [1, 2]]
         ];
-        $request = new Request([
+        $request = new ServerRequest([
             'input' => 'Article[]=title&Tag[Tag][]=1&Tag[Tag][]=2',
             'environment' => [
                 'REQUEST_METHOD' => 'PATCH',
@@ -341,7 +341,7 @@ class RequestTest extends TestCase
     public function testPutParsingJSON()
     {
         $data = '{"Article":["title"]}';
-        $request = new Request([
+        $request = new ServerRequest([
             'input' => $data,
             'environment' => [
                 'REQUEST_METHOD' => 'PUT',
@@ -407,7 +407,7 @@ class RequestTest extends TestCase
                 'name' => 'A dog'
             ]
         ];
-        $request = new Request(compact('files', 'post'));
+        $request = new ServerRequest(compact('files', 'post'));
         $expected = [
             'image_main' => [
                 'file' => [
@@ -483,7 +483,7 @@ class RequestTest extends TestCase
             ]
         ];
 
-        $request = new Request(compact('files'));
+        $request = new ServerRequest(compact('files'));
         $expected = [
             'birth_cert' => [
                 'name' => 'born on.txt',
@@ -521,7 +521,7 @@ class RequestTest extends TestCase
             ],
         ];
 
-        $request = new Request([
+        $request = new ServerRequest([
             'files' => $files
         ]);
         $this->assertEquals($files, $request->data);
@@ -546,7 +546,7 @@ class RequestTest extends TestCase
             'test.php',
             'text/plain'
         );
-        $request = new Request(['files' => ['avatar' => $file]]);
+        $request = new ServerRequest(['files' => ['avatar' => $file]]);
         $this->assertSame(['avatar' => $file], $request->getUploadedFiles());
     }
 
@@ -564,7 +564,7 @@ class RequestTest extends TestCase
             'test.php',
             'text/plain'
         );
-        $request = new Request();
+        $request = new ServerRequest();
         $new = $request->withUploadedFiles(['picture' => $file]);
 
         $this->assertSame([], $request->getUploadedFiles());
@@ -586,7 +586,7 @@ class RequestTest extends TestCase
             'test.php',
             'text/plain'
         );
-        $request = new Request();
+        $request = new ServerRequest();
         $new = $request->withUploadedFiles(['picture' => $file]);
         $this->assertNull($new->getUploadedFile(''));
         $this->assertSame($file, $new->getUploadedFile('picture'));
@@ -613,7 +613,7 @@ class RequestTest extends TestCase
      */
     public function testWithUploadedFilesInvalidFile()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request->withUploadedFiles(['avatar' => 'not a file']);
     }
 
@@ -626,7 +626,7 @@ class RequestTest extends TestCase
      */
     public function testWithUploadedFilesInvalidFileNested()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request->withUploadedFiles(['user' => ['avatar' => 'not a file']]);
     }
 
@@ -638,17 +638,17 @@ class RequestTest extends TestCase
     public function testMethodOverrides()
     {
         $post = ['_method' => 'POST'];
-        $request = new Request(compact('post'));
+        $request = new ServerRequest(compact('post'));
         $this->assertEquals('POST', $request->env('REQUEST_METHOD'));
 
         $post = ['_method' => 'DELETE'];
-        $request = new Request(compact('post'));
+        $request = new ServerRequest(compact('post'));
         $this->assertEquals('DELETE', $request->env('REQUEST_METHOD'));
 
-        $request = new Request(['environment' => ['HTTP_X_HTTP_METHOD_OVERRIDE' => 'PUT']]);
+        $request = new ServerRequest(['environment' => ['HTTP_X_HTTP_METHOD_OVERRIDE' => 'PUT']]);
         $this->assertEquals('PUT', $request->env('REQUEST_METHOD'));
 
-        $request = new Request([
+        $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'POST'],
             'post' => ['_method' => 'PUT']
         ]);
@@ -662,22 +662,22 @@ class RequestTest extends TestCase
     public function testDefaultEnvValue()
     {
         $_ENV['DOES_NOT_EXIST'] = null;
-        $request = new Request();
+        $request = new ServerRequest();
         $this->assertNull($request->env('DOES_NOT_EXIST'));
         $this->assertEquals('default', $request->env('DOES_NOT_EXIST', null, 'default'));
 
         $_ENV['DOES_EXIST'] = 'some value';
-        $request = new Request();
+        $request = new ServerRequest();
         $this->assertEquals('some value', $request->env('DOES_EXIST'));
         $this->assertEquals('some value', $request->env('DOES_EXIST', null, 'default'));
 
         $_ENV['EMPTY_VALUE'] = '';
-        $request = new Request();
+        $request = new ServerRequest();
         $this->assertEquals('', $request->env('EMPTY_VALUE'));
         $this->assertEquals('', $request->env('EMPTY_VALUE', null, 'default'));
 
         $_ENV['ZERO'] = '0';
-        $request = new Request();
+        $request = new ServerRequest();
         $this->assertEquals('0', $request->env('ZERO'));
         $this->assertEquals('0', $request->env('ZERO', null, 'default'));
     }
@@ -689,7 +689,7 @@ class RequestTest extends TestCase
      */
     public function testClientIp()
     {
-        $request = new Request(['environment' => [
+        $request = new ServerRequest(['environment' => [
             'HTTP_X_FORWARDED_FOR' => '192.168.1.5, 10.0.1.1, proxy.com',
             'HTTP_CLIENT_IP' => '192.168.1.2',
             'REMOTE_ADDR' => '192.168.1.3'
@@ -718,7 +718,7 @@ class RequestTest extends TestCase
      */
     public function testReferer()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request->webroot = '/';
 
         $request->env('HTTP_REFERER', 'http://cakephp.org');
@@ -754,7 +754,7 @@ class RequestTest extends TestCase
      */
     public function testRefererBasePath()
     {
-        $request = new Request('some/path');
+        $request = new ServerRequest('some/path');
         $request->url = 'users/login';
         $request->webroot = '/waves/';
         $request->base = '/waves';
@@ -773,7 +773,7 @@ class RequestTest extends TestCase
      */
     public function testIsHttpMethods()
     {
-        $request = new Request();
+        $request = new ServerRequest();
 
         $this->assertFalse($request->is('undefined-behavior'));
 
@@ -802,15 +802,15 @@ class RequestTest extends TestCase
      */
     public function testIsJsonAndXml()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request->env('HTTP_ACCEPT', 'application/json, text/plain, */*');
         $this->assertTrue($request->is('json'));
 
-        $request = new Request();
+        $request = new ServerRequest();
         $request->env('HTTP_ACCEPT', 'application/xml, text/plain, */*');
         $this->assertTrue($request->is('xml'));
 
-        $request = new Request();
+        $request = new ServerRequest();
         $request->env('HTTP_ACCEPT', 'text/xml, */*');
         $this->assertTrue($request->is('xml'));
     }
@@ -822,7 +822,7 @@ class RequestTest extends TestCase
      */
     public function testIsMultiple()
     {
-        $request = new Request();
+        $request = new ServerRequest();
 
         $request->env('REQUEST_METHOD', 'GET');
         $this->assertTrue($request->is(['get', 'post']));
@@ -841,7 +841,7 @@ class RequestTest extends TestCase
      */
     public function testIsAll()
     {
-        $request = new Request();
+        $request = new ServerRequest();
 
         $request->env('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
         $request->env('REQUEST_METHOD', 'GET');
@@ -859,7 +859,7 @@ class RequestTest extends TestCase
      */
     public function testMethod()
     {
-        $request = new Request(['environment' => ['REQUEST_METHOD' => 'delete']]);
+        $request = new ServerRequest(['environment' => ['REQUEST_METHOD' => 'delete']]);
 
         $this->assertEquals('delete', $request->method());
     }
@@ -871,7 +871,7 @@ class RequestTest extends TestCase
      */
     public function testGetMethod()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'delete']
         ]);
         $this->assertEquals('delete', $request->getMethod());
@@ -884,7 +884,7 @@ class RequestTest extends TestCase
      */
     public function testWithMethod()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'delete']
         ]);
         $new = $request->withMethod('put');
@@ -902,7 +902,7 @@ class RequestTest extends TestCase
      */
     public function testWithMethodInvalid()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'delete']
         ]);
         $request->withMethod('no good');
@@ -915,11 +915,11 @@ class RequestTest extends TestCase
      */
     public function testGetProtocolVersion()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $this->assertEquals('1.1', $request->getProtocolVersion());
 
         // SERVER var.
-        $request = new Request([
+        $request = new ServerRequest([
             'environment' => ['SERVER_PROTOCOL' => 'HTTP/1.0']
         ]);
         $this->assertEquals('1.0', $request->getProtocolVersion());
@@ -932,7 +932,7 @@ class RequestTest extends TestCase
      */
     public function testWithProtocolVersion()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $new = $request->withProtocolVersion('1.0');
         $this->assertNotSame($new, $request);
         $this->assertEquals('1.1', $request->getProtocolVersion());
@@ -948,7 +948,7 @@ class RequestTest extends TestCase
      */
     public function testWithProtocolVersionInvalid()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request->withProtocolVersion('no good');
     }
 
@@ -959,7 +959,7 @@ class RequestTest extends TestCase
      */
     public function testHost()
     {
-        $request = new Request(['environment' => [
+        $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
             'HTTP_X_FORWARDED_HOST' => 'cakephp.org',
         ]]);
@@ -976,7 +976,7 @@ class RequestTest extends TestCase
      */
     public function testPort()
     {
-        $request = new Request(['environment' => ['SERVER_PORT' => '80']]);
+        $request = new ServerRequest(['environment' => ['SERVER_PORT' => '80']]);
 
         $this->assertEquals('80', $request->port());
 
@@ -995,7 +995,7 @@ class RequestTest extends TestCase
      */
     public function testDomain()
     {
-        $request = new Request(['environment' => ['HTTP_HOST' => 'something.example.com']]);
+        $request = new ServerRequest(['environment' => ['HTTP_HOST' => 'something.example.com']]);
 
         $this->assertEquals('example.com', $request->domain());
 
@@ -1010,7 +1010,7 @@ class RequestTest extends TestCase
      */
     public function testScheme()
     {
-        $request = new Request(['environment' => ['HTTPS' => 'on']]);
+        $request = new ServerRequest(['environment' => ['HTTPS' => 'on']]);
 
         $this->assertEquals('https', $request->scheme());
 
@@ -1029,7 +1029,7 @@ class RequestTest extends TestCase
      */
     public function testSubdomain()
     {
-        $request = new Request(['environment' => ['HTTP_HOST' => 'something.example.com']]);
+        $request = new ServerRequest(['environment' => ['HTTP_HOST' => 'something.example.com']]);
 
         $this->assertEquals(['something'], $request->subdomains());
 
@@ -1050,7 +1050,7 @@ class RequestTest extends TestCase
      */
     public function testisAjaxFlashAndFriends()
     {
-        $request = new Request();
+        $request = new ServerRequest();
 
         $request->env('HTTP_USER_AGENT', 'Shockwave Flash');
         $this->assertTrue($request->is('flash'));
@@ -1074,7 +1074,7 @@ class RequestTest extends TestCase
      */
     public function testMagicCallExceptionOnUnknownMethod()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request->IamABanana();
     }
 
@@ -1085,7 +1085,7 @@ class RequestTest extends TestCase
      */
     public function testIsSsl()
     {
-        $request = new Request();
+        $request = new ServerRequest();
 
         $request->env('HTTPS', 1);
         $this->assertTrue($request->is('ssl'));
@@ -1116,7 +1116,7 @@ class RequestTest extends TestCase
      */
     public function testMagicget()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request->params = ['controller' => 'posts', 'action' => 'view', 'plugin' => 'blogs'];
 
         $this->assertEquals('posts', $request->controller);
@@ -1132,7 +1132,7 @@ class RequestTest extends TestCase
      */
     public function testMagicisset()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request->params = [
             'controller' => 'posts',
             'action' => 'view',
@@ -1151,7 +1151,7 @@ class RequestTest extends TestCase
      */
     public function testArrayAccess()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request->params = ['controller' => 'posts', 'action' => 'view', 'plugin' => 'blogs'];
 
         $this->assertEquals('posts', $request['controller']);
@@ -1169,7 +1169,7 @@ class RequestTest extends TestCase
         $this->assertNull($request['plugin']);
         $this->assertNull($request->plugin);
 
-        $request = new Request(['url' => 'some/path?one=something&two=else']);
+        $request = new ServerRequest(['url' => 'some/path?one=something&two=else']);
         $this->assertTrue(isset($request['url']['one']));
 
         $request->data = ['Post' => ['title' => 'something']];
@@ -1183,20 +1183,20 @@ class RequestTest extends TestCase
      */
     public function testAddDetector()
     {
-        $request = new Request();
+        $request = new ServerRequest();
 
-        Request::addDetector('closure', function ($request) {
+        ServerRequest::addDetector('closure', function ($request) {
             return true;
         });
         $this->assertTrue($request->is('closure'));
 
-        Request::addDetector('get', function ($request) {
+        ServerRequest::addDetector('get', function ($request) {
             return $request->env('REQUEST_METHOD') === 'GET';
         });
         $request->env('REQUEST_METHOD', 'GET');
         $this->assertTrue($request->is('get'));
 
-        Request::addDetector('compare', ['env' => 'TEST_VAR', 'value' => 'something']);
+        ServerRequest::addDetector('compare', ['env' => 'TEST_VAR', 'value' => 'something']);
 
         $request->env('TEST_VAR', 'something');
         $this->assertTrue($request->is('compare'), 'Value match failed.');
@@ -1204,7 +1204,7 @@ class RequestTest extends TestCase
         $request->env('TEST_VAR', 'wrong');
         $this->assertFalse($request->is('compare'), 'Value mis-match failed.');
 
-        Request::addDetector('compareCamelCase', ['env' => 'TEST_VAR', 'value' => 'foo']);
+        ServerRequest::addDetector('compareCamelCase', ['env' => 'TEST_VAR', 'value' => 'foo']);
 
         $request->env('TEST_VAR', 'foo');
         $this->assertTrue($request->is('compareCamelCase'), 'Value match failed.');
@@ -1216,18 +1216,18 @@ class RequestTest extends TestCase
         $this->assertFalse($request->is('comparecamelcase'), 'detectors should be case insensitive');
         $this->assertFalse($request->is('COMPARECAMELCASE'), 'detectors should be case insensitive');
 
-        Request::addDetector('banana', ['env' => 'TEST_VAR', 'pattern' => '/^ban.*$/']);
+        ServerRequest::addDetector('banana', ['env' => 'TEST_VAR', 'pattern' => '/^ban.*$/']);
         $request->env('TEST_VAR', 'banana');
         $this->assertTrue($request->isBanana());
 
         $request->env('TEST_VAR', 'wrong value');
         $this->assertFalse($request->isBanana());
 
-        Request::addDetector('mobile', ['env' => 'HTTP_USER_AGENT', 'options' => ['Imagination']]);
+        ServerRequest::addDetector('mobile', ['env' => 'HTTP_USER_AGENT', 'options' => ['Imagination']]);
         $request->env('HTTP_USER_AGENT', 'Imagination land');
         $this->assertTrue($request->isMobile());
 
-        Request::addDetector('index', ['param' => 'action', 'value' => 'index']);
+        ServerRequest::addDetector('index', ['param' => 'action', 'value' => 'index']);
 
         $request->params['action'] = 'index';
         $request->clearDetectorCache();
@@ -1237,12 +1237,12 @@ class RequestTest extends TestCase
         $request->clearDetectorCache();
         $this->assertFalse($request->isIndex());
 
-        Request::addDetector('callme', [$this, 'detectCallback']);
+        ServerRequest::addDetector('callme', [$this, 'detectCallback']);
         $request->return = true;
         $request->clearDetectorCache();
         $this->assertTrue($request->isCallMe());
 
-        Request::addDetector('extension', ['param' => '_ext', 'options' => ['pdf', 'png', 'txt']]);
+        ServerRequest::addDetector('extension', ['param' => '_ext', 'options' => ['pdf', 'png', 'txt']]);
         $request->params['_ext'] = 'pdf';
         $request->clearDetectorCache();
         $this->assertTrue($request->is('extension'));
@@ -1270,7 +1270,7 @@ class RequestTest extends TestCase
      */
     public function testHeader()
     {
-        $request = new Request(['environment' => [
+        $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
             'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-ca) AppleWebKit/534.8+ (KHTML, like Gecko) Version/5.0 Safari/533.16',
             'CONTENT_TYPE' => 'application/json',
@@ -1292,7 +1292,7 @@ class RequestTest extends TestCase
      */
     public function testGetHeaders()
     {
-        $request = new Request(['environment' => [
+        $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
             'CONTENT_TYPE' => 'application/json',
             'CONTENT_LENGTH' => 1337,
@@ -1317,7 +1317,7 @@ class RequestTest extends TestCase
      */
     public function testHasHeader()
     {
-        $request = new Request(['environment' => [
+        $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
             'CONTENT_TYPE' => 'application/json',
             'CONTENT_LENGTH' => 1337,
@@ -1338,7 +1338,7 @@ class RequestTest extends TestCase
      */
     public function testGetHeader()
     {
-        $request = new Request(['environment' => [
+        $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
             'CONTENT_TYPE' => 'application/json',
             'CONTENT_LENGTH' => 1337,
@@ -1361,7 +1361,7 @@ class RequestTest extends TestCase
      */
     public function testGetHeaderLine()
     {
-        $request = new Request(['environment' => [
+        $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
             'CONTENT_TYPE' => 'application/json',
             'CONTENT_LENGTH' => 1337,
@@ -1384,7 +1384,7 @@ class RequestTest extends TestCase
      */
     public function testWithHeader()
     {
-        $request = new Request(['environment' => [
+        $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
             'CONTENT_TYPE' => 'application/json',
             'CONTENT_LENGTH' => 1337,
@@ -1410,7 +1410,7 @@ class RequestTest extends TestCase
      */
     public function testWithAddedHeader()
     {
-        $request = new Request(['environment' => [
+        $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
             'CONTENT_TYPE' => 'application/json',
             'CONTENT_LENGTH' => 1337,
@@ -1438,7 +1438,7 @@ class RequestTest extends TestCase
      */
     public function testWithoutHeader()
     {
-        $request = new Request(['environment' => [
+        $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
             'CONTENT_TYPE' => 'application/json',
             'CONTENT_LENGTH' => 1337,
@@ -1460,7 +1460,7 @@ class RequestTest extends TestCase
      */
     public function testAccepts()
     {
-        $request = new Request(['environment' => [
+        $request = new ServerRequest(['environment' => [
             'HTTP_ACCEPT' => 'text/xml,application/xml;q=0.9,application/xhtml+xml,text/html,text/plain,image/png'
         ]]);
 
@@ -1484,7 +1484,7 @@ class RequestTest extends TestCase
      */
     public function testAcceptWithWhitespace()
     {
-        $request = new Request(['environment' => [
+        $request = new ServerRequest(['environment' => [
             'HTTP_ACCEPT' => 'text/xml  ,  text/html ,  text/plain,image/png'
         ]]);
         $result = $request->accepts();
@@ -1503,7 +1503,7 @@ class RequestTest extends TestCase
      */
     public function testAcceptWithQvalueSorting()
     {
-        $request = new Request(['environment' => [
+        $request = new ServerRequest(['environment' => [
             'HTTP_ACCEPT' => 'text/html;q=0.8,application/json;q=0.7,application/xml;q=1.0'
         ]]);
         $result = $request->accepts();
@@ -1518,7 +1518,7 @@ class RequestTest extends TestCase
      */
     public function testParseAcceptWithQValue()
     {
-        $request = new Request(['environment' => [
+        $request = new ServerRequest(['environment' => [
             'HTTP_ACCEPT' => 'text/html;q=0.8,application/json;q=0.7,application/xml;q=1.0,image/png'
         ]]);
         $result = $request->parseAccept();
@@ -1537,7 +1537,7 @@ class RequestTest extends TestCase
      */
     public function testParseAcceptNoQValues()
     {
-        $request = new Request(['environment' => [
+        $request = new ServerRequest(['environment' => [
             'HTTP_ACCEPT' => 'application/json, text/plain, */*'
         ]]);
         $result = $request->parseAccept();
@@ -1554,7 +1554,7 @@ class RequestTest extends TestCase
      */
     public function testParseAcceptIgnoreAcceptExtensions()
     {
-        $request = new Request(['environment' => [
+        $request = new ServerRequest(['environment' => [
             'url' => '/',
             'HTTP_ACCEPT' => 'application/json;level=1, text/plain, */*'
         ]], false);
@@ -1575,7 +1575,7 @@ class RequestTest extends TestCase
      */
     public function testParseAcceptInvalidSyntax()
     {
-        $request = new Request(['environment' => [
+        $request = new ServerRequest(['environment' => [
             'url' => '/',
             'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;image/png,image/jpeg,image/*;q=0.9,*/*;q=0.8'
         ]], false);
@@ -1601,7 +1601,7 @@ class RequestTest extends TestCase
         $_SERVER['PHP_SELF'] = '/urlencode me/webroot/index.php';
         $_SERVER['PATH_INFO'] = '/posts/view/1';
 
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('/urlencode%20me', $request->base);
         $this->assertEquals('/urlencode%20me/', $request->webroot);
         $this->assertEquals('posts/view/1', $request->url);
@@ -1610,7 +1610,7 @@ class RequestTest extends TestCase
         $_SERVER['PHP_SELF'] = '/1.2.x.x/webroot/index.php';
         $_SERVER['PATH_INFO'] = '/posts/view/1';
 
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('/1.2.x.x', $request->base);
         $this->assertEquals('/1.2.x.x/', $request->webroot);
         $this->assertEquals('posts/view/1', $request->url);
@@ -1618,7 +1618,7 @@ class RequestTest extends TestCase
         $_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/webroot';
         $_SERVER['PHP_SELF'] = '/index.php';
         $_SERVER['PATH_INFO'] = '/posts/add';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
 
         $this->assertEquals('', $request->base);
         $this->assertEquals('/', $request->webroot);
@@ -1626,14 +1626,14 @@ class RequestTest extends TestCase
 
         $_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/test/';
         $_SERVER['PHP_SELF'] = '/webroot/index.php';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
 
         $this->assertEquals('', $request->base);
         $this->assertEquals('/', $request->webroot);
 
         $_SERVER['DOCUMENT_ROOT'] = '/some/apps/where';
         $_SERVER['PHP_SELF'] = '/webroot/index.php';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
 
         $this->assertEquals('', $request->base);
         $this->assertEquals('/', $request->webroot);
@@ -1643,7 +1643,7 @@ class RequestTest extends TestCase
         $_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
         $_SERVER['PHP_SELF'] = '/demos/webroot/index.php';
 
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
 
         $this->assertEquals('/demos', $request->base);
         $this->assertEquals('/demos/', $request->webroot);
@@ -1652,7 +1652,7 @@ class RequestTest extends TestCase
 
         $_SERVER['DOCUMENT_ROOT'] = '/Library/WebServer/Documents';
         $_SERVER['PHP_SELF'] = '/clients/PewterReport/webroot/index.php';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
 
         $this->assertEquals('/clients/PewterReport', $request->base);
         $this->assertEquals('/clients/PewterReport/', $request->webroot);
@@ -1670,7 +1670,7 @@ class RequestTest extends TestCase
 
         Configure::write('App.base', '/control');
 
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
 
         $this->assertEquals('/control', $request->base);
         $this->assertEquals('/control/', $request->webroot);
@@ -1681,7 +1681,7 @@ class RequestTest extends TestCase
 
         $_SERVER['DOCUMENT_ROOT'] = '/var/www/abtravaff/html';
         $_SERVER['PHP_SELF'] = '/newaffiliate/index.php';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
 
         $this->assertEquals('', $request->base);
         $this->assertEquals('/', $request->webroot);
@@ -1704,7 +1704,7 @@ class RequestTest extends TestCase
         $_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php';
         $_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php';
         unset($_SERVER['PATH_INFO']);
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
 
         $this->assertEquals('/cakephp', $request->base);
         $this->assertEquals('/cakephp/', $request->webroot);
@@ -1714,7 +1714,7 @@ class RequestTest extends TestCase
         $_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/';
         $_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/';
         $_SERVER['PATH_INFO'] = '/';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
 
         $this->assertEquals('/cakephp', $request->base);
         $this->assertEquals('/cakephp/', $request->webroot);
@@ -1724,7 +1724,7 @@ class RequestTest extends TestCase
         $_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/apples';
         $_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/apples';
         $_SERVER['PATH_INFO'] = '/apples';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
 
         $this->assertEquals('/cakephp', $request->base);
         $this->assertEquals('/cakephp/', $request->webroot);
@@ -1734,7 +1734,7 @@ class RequestTest extends TestCase
         $_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/melons/share/';
         $_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/melons/share/';
         $_SERVER['PATH_INFO'] = '/melons/share/';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
 
         $this->assertEquals('/cakephp', $request->base);
         $this->assertEquals('/cakephp/', $request->webroot);
@@ -1744,7 +1744,7 @@ class RequestTest extends TestCase
         $_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/bananas/eat/tasty_banana';
         $_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/bananas/eat/tasty_banana';
         $_SERVER['PATH_INFO'] = '/bananas/eat/tasty_banana';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
 
         $this->assertEquals('/cakephp', $request->base);
         $this->assertEquals('/cakephp/', $request->webroot);
@@ -1763,7 +1763,7 @@ class RequestTest extends TestCase
         $_SERVER['REQUEST_URI'] = '/cakephp/webroot///index.php/bananas/eat';
         $_SERVER['PHP_SELF'] = '/cakephp/webroot///index.php/bananas/eat';
         $_SERVER['PATH_INFO'] = '/bananas/eat';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
 
         $this->assertEquals('/cakephp', $request->base);
         $this->assertEquals('/cakephp/', $request->webroot);
@@ -1790,7 +1790,7 @@ class RequestTest extends TestCase
             'baseUrl' => '/cake/index.php'
         ]);
 
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('/cake/index.php', $request->base);
         $this->assertEquals('/cake/webroot/', $request->webroot);
         $this->assertEquals('posts/index', $request->url);
@@ -1806,33 +1806,33 @@ class RequestTest extends TestCase
         Configure::write('App.dir', 'App');
         Configure::write('App.baseUrl', '/App/webroot/index.php');
 
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('/App/webroot/index.php', $request->base);
         $this->assertEquals('/App/webroot/', $request->webroot);
 
         Configure::write('App.baseUrl', '/App/webroot/test.php');
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('/App/webroot/test.php', $request->base);
         $this->assertEquals('/App/webroot/', $request->webroot);
 
         Configure::write('App.baseUrl', '/App/index.php');
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('/App/index.php', $request->base);
         $this->assertEquals('/App/webroot/', $request->webroot);
 
         Configure::write('App.baseUrl', '/CakeBB/App/webroot/index.php');
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('/CakeBB/App/webroot/index.php', $request->base);
         $this->assertEquals('/CakeBB/App/webroot/', $request->webroot);
 
         Configure::write('App.baseUrl', '/CakeBB/App/index.php');
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
 
         $this->assertEquals('/CakeBB/App/index.php', $request->base);
         $this->assertEquals('/CakeBB/App/webroot/', $request->webroot);
 
         Configure::write('App.baseUrl', '/CakeBB/index.php');
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
 
         $this->assertEquals('/CakeBB/index.php', $request->base);
         $this->assertEquals('/CakeBB/webroot/', $request->webroot);
@@ -1840,7 +1840,7 @@ class RequestTest extends TestCase
         Configure::write('App.baseUrl', '/dbhauser/index.php');
         $_SERVER['DOCUMENT_ROOT'] = '/kunden/homepages/4/d181710652/htdocs/joomla';
         $_SERVER['SCRIPT_FILENAME'] = '/kunden/homepages/4/d181710652/htdocs/joomla/dbhauser/index.php';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
 
         $this->assertEquals('/dbhauser/index.php', $request->base);
         $this->assertEquals('/dbhauser/webroot/', $request->webroot);
@@ -1857,7 +1857,7 @@ class RequestTest extends TestCase
         $_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/cake_dev';
         $_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake_dev/index.php';
 
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('/index.php', $request->base);
         $this->assertEquals('/webroot/', $request->webroot);
     }
@@ -1873,7 +1873,7 @@ class RequestTest extends TestCase
         $_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/';
         $_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/approval/index.php';
 
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('/approval/index.php', $request->base);
         $this->assertEquals('/approval/webroot/', $request->webroot);
 
@@ -1881,7 +1881,7 @@ class RequestTest extends TestCase
         $_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/';
         $_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/webrootable/index.php';
 
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('/webrootable/index.php', $request->base);
         $this->assertEquals('/webrootable/webroot/', $request->webroot);
     }
@@ -1897,7 +1897,7 @@ class RequestTest extends TestCase
         $_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/cake_dev/webroot';
         $_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake_dev/webroot/index.php';
 
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('/index.php', $request->base);
         $this->assertEquals('/', $request->webroot);
     }
@@ -1914,7 +1914,7 @@ class RequestTest extends TestCase
         $_GET['/posts/index/add_add'] = '';
         $_SERVER['PHP_SELF'] = '/webroot/index.php';
         $_SERVER['REQUEST_URI'] = '/posts/index/add.add';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('', $request->base);
         $this->assertEquals([], $request->query);
 
@@ -1922,7 +1922,7 @@ class RequestTest extends TestCase
         $_GET['/cake_dev/posts/index/add_add'] = '';
         $_SERVER['PHP_SELF'] = '/cake_dev/webroot/index.php';
         $_SERVER['REQUEST_URI'] = '/cake_dev/posts/index/add.add';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('/cake_dev', $request->base);
         $this->assertEquals([], $request->query);
     }
@@ -1938,7 +1938,7 @@ class RequestTest extends TestCase
         $_GET['/posts/add/∂∂'] = '';
         $_SERVER['PHP_SELF'] = '/webroot/index.php';
         $_SERVER['REQUEST_URI'] = '/posts/add/%E2%88%82%E2%88%82';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('', $request->base);
         $this->assertEquals([], $request->query);
 
@@ -1946,7 +1946,7 @@ class RequestTest extends TestCase
         $_GET['/cake_dev/posts/add/∂∂'] = '';
         $_SERVER['PHP_SELF'] = '/cake_dev/webroot/index.php';
         $_SERVER['REQUEST_URI'] = '/cake_dev/posts/add/%E2%88%82%E2%88%82';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('/cake_dev', $request->base);
         $this->assertEquals([], $request->query);
     }
@@ -2395,7 +2395,7 @@ class RequestTest extends TestCase
         $array = [
             'query' => ['foo' => 'bar', 'zero' => '0']
         ];
-        $request = new Request($array);
+        $request = new ServerRequest($array);
 
         $this->assertSame('bar', $request->query('foo'));
         $this->assertSame('0', $request->query('zero'));
@@ -2419,7 +2419,7 @@ class RequestTest extends TestCase
                 ]
             ]
         ];
-        $request = new Request($array);
+        $request = new ServerRequest($array);
 
         $this->assertSame('bar', $request->getQuery('foo'));
         $this->assertSame('0', $request->getQuery('zero'));
@@ -2445,7 +2445,7 @@ class RequestTest extends TestCase
             'key' => 'value'
         ];
 
-        $request = new Request([
+        $request = new ServerRequest([
             'query' => $get
         ]);
         $this->assertSame($get, $request->getQueryParams());
@@ -2463,7 +2463,7 @@ class RequestTest extends TestCase
             'key' => 'value'
         ];
 
-        $request = new Request([
+        $request = new ServerRequest([
             'query' => $get
         ]);
         $new = $request->withQueryParams(['new' => 'data']);
@@ -2483,7 +2483,7 @@ class RequestTest extends TestCase
             'HTTPS' => 'on',
         ];
 
-        $request = new Request([
+        $request = new ServerRequest([
             'environment' => $vars
         ]);
         $expected = $vars + [
@@ -2501,7 +2501,7 @@ class RequestTest extends TestCase
      */
     public function testReadingParams()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request->addParams([
             'controller' => 'posts',
             'admin' => true,
@@ -2527,7 +2527,7 @@ class RequestTest extends TestCase
                 'field' => 'value'
             ]
         ];
-        $request = new Request(compact('post'));
+        $request = new ServerRequest(compact('post'));
         $this->assertEquals($post['Model'], $request->data('Model'));
         $this->assertEquals($post['Model'], $request->getData('Model'));
 
@@ -2549,7 +2549,7 @@ class RequestTest extends TestCase
     public function testGetDataOnStringData()
     {
         $post = 'strange, but could happen';
-        $request = new Request(compact('post'));
+        $request = new ServerRequest(compact('post'));
         $this->assertNull($request->getData('Model'));
         $this->assertNull($request->getData('Model.field'));
     }
@@ -2566,7 +2566,7 @@ class RequestTest extends TestCase
                 'field' => 'value'
             ]
         ];
-        $request = new Request();
+        $request = new ServerRequest();
         $result = $request->data('Model.new_value', 'new value');
         $this->assertSame($result, $request, 'Return was not $this');
 
@@ -2584,7 +2584,7 @@ class RequestTest extends TestCase
      */
     public function testDataWritingFalsey()
     {
-        $request = new Request();
+        $request = new ServerRequest();
 
         $request->data('Post.null', null);
         $this->assertNull($request->data['Post']['null']);
@@ -2606,7 +2606,7 @@ class RequestTest extends TestCase
      */
     public function testGetParam($toRead, $expected)
     {
-        $request = new Request('/');
+        $request = new ServerRequest('/');
         $request->addParams([
             'action' => 'index',
             'foo' => 'bar',
@@ -2630,7 +2630,7 @@ class RequestTest extends TestCase
      */
     public function testGetParamDefault()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'params' => [
                 'controller' => 'Articles',
                 'null' => null,
@@ -2643,7 +2643,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * Data provider for testing reading values with Request::param()
+     * Data provider for testing reading values with ServerRequestFactory::param()
      *
      * @return array
      */
@@ -2692,7 +2692,7 @@ class RequestTest extends TestCase
      */
     public function testParamWriting()
     {
-        $request = new Request('/');
+        $request = new ServerRequest('/');
         $request->addParams([
             'action' => 'index',
         ]);
@@ -2723,7 +2723,7 @@ class RequestTest extends TestCase
      */
     public function testAcceptLanguage()
     {
-        $request = new Request();
+        $request = new ServerRequest();
 
         // Weird language
         $request->env('HTTP_ACCEPT_LANGUAGE', 'inexistent,en-ca');
@@ -2771,7 +2771,7 @@ class RequestTest extends TestCase
     {
         Configure::write('App.base', '/base_path');
         $q = ['test' => 'value'];
-        $request = new Request([
+        $request = new ServerRequest([
             'query' => $q,
             'url' => '/posts/add/1/value',
             'base' => '/base_path'
@@ -2783,7 +2783,7 @@ class RequestTest extends TestCase
         $result = $request->here(false);
         $this->assertEquals('/posts/add/1/value?test=value', $result);
 
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => '/posts/base_path/1/value',
             'query' => ['test' => 'value'],
             'base' => '/base_path'
@@ -2804,7 +2804,7 @@ class RequestTest extends TestCase
     {
         Configure::write('App.base', '');
         $_GET = ['/admin/settings/settings/prefix/Access_Control' => ''];
-        $request = new Request('/admin/settings/settings/prefix/Access%20Control');
+        $request = new ServerRequest('/admin/settings/settings/prefix/Access%20Control');
 
         $result = $request->here();
         $this->assertEquals('/admin/settings/settings/prefix/Access%20Control', $result);
@@ -2817,7 +2817,7 @@ class RequestTest extends TestCase
      */
     public function testSetInput()
     {
-        $request = new Request();
+        $request = new ServerRequest();
 
         $request->setInput('I came from setInput');
         $result = $request->input();
@@ -2831,7 +2831,7 @@ class RequestTest extends TestCase
      */
     public function testInput()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'input' => 'I came from stdin'
         ]);
         $result = $request->input();
@@ -2845,7 +2845,7 @@ class RequestTest extends TestCase
      */
     public function testInputDecode()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'input' => '{"name":"value"}'
         ]);
 
@@ -2867,7 +2867,7 @@ class RequestTest extends TestCase
 </post>
 XML;
 
-        $request = new Request([
+        $request = new ServerRequest([
             'input' => $xml
         ]);
 
@@ -2886,7 +2886,7 @@ XML;
      */
     public function testGetBody()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'input' => 'key=val&some=data'
         ]);
         $result = $request->getBody();
@@ -2901,7 +2901,7 @@ XML;
      */
     public function testWithBody()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'input' => 'key=val&some=data'
         ]);
         $body = $this->getMockBuilder('Psr\Http\Message\StreamInterface')->getMock();
@@ -2918,7 +2918,7 @@ XML;
      */
     public function testGetUri()
     {
-        $request = new Request(['url' => 'articles/view/3']);
+        $request = new ServerRequest(['url' => 'articles/view/3']);
         $this->assertEquals('articles/view/3', $request->url);
 
         $result = $request->getUri();
@@ -2933,7 +2933,7 @@ XML;
      */
     public function testWithUri()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'example.com',
             ],
@@ -2956,7 +2956,7 @@ XML;
      */
     public function testWithUriPreserveHost()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'localhost'
             ],
@@ -2979,7 +2979,7 @@ XML;
      */
     public function testWithUriPreserveHostNoHostHeader()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'articles/view/3'
         ]);
         $uri = new Uri();
@@ -2998,7 +2998,7 @@ XML;
      */
     public function testIsRequested()
     {
-        $request = new Request();
+        $request = new ServerRequest();
         $request->addParams([
             'controller' => 'posts',
             'action' => 'index',
@@ -3008,7 +3008,7 @@ XML;
         $this->assertTrue($request->is('requested'));
         $this->assertTrue($request->isRequested());
 
-        $request = new Request();
+        $request = new ServerRequest();
         $request->addParams([
             'controller' => 'posts',
             'action' => 'index',
@@ -3025,7 +3025,7 @@ XML;
      */
     public function testGetCookie()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'cookies' => [
                 'testing' => 'A value in the cookie',
                 'user' => [
@@ -3055,7 +3055,7 @@ XML;
         $cookies = [
             'testing' => 'A value in the cookie'
         ];
-        $request = new Request(['cookies' => $cookies]);
+        $request = new ServerRequest(['cookies' => $cookies]);
         $this->assertSame($cookies, $request->getCookieParams());
     }
 
@@ -3069,7 +3069,7 @@ XML;
         $cookies = [
             'testing' => 'A value in the cookie'
         ];
-        $request = new Request(['cookies' => $cookies]);
+        $request = new ServerRequest(['cookies' => $cookies]);
         $new = $request->withCookieParams(['remember_me' => 1]);
         $this->assertNotSame($new, $request);
         $this->assertSame($cookies, $request->getCookieParams());
@@ -3083,7 +3083,7 @@ XML;
      */
     public function testAllowMethod()
     {
-        $request = new Request(['environment' => [
+        $request = new ServerRequest(['environment' => [
             'url' => '/posts/edit/1',
             'REQUEST_METHOD' => 'PUT'
         ]]);
@@ -3101,7 +3101,7 @@ XML;
      */
     public function testAllowMethodException()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => '/posts/edit/1',
             'environment' => ['REQUEST_METHOD' => 'PUT']
         ]);
@@ -3126,10 +3126,10 @@ XML;
     public function testSession()
     {
         $session = new Session;
-        $request = new Request(['session' => $session]);
+        $request = new ServerRequest(['session' => $session]);
         $this->assertSame($session, $request->session());
 
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals($session, $request->session());
     }
 
@@ -3141,11 +3141,11 @@ XML;
     public function testContentType()
     {
         $_SERVER['HTTP_CONTENT_TYPE'] = 'application/json';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('application/json', $request->contentType());
 
         $_SERVER['CONTENT_TYPE'] = 'application/xml';
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals('application/xml', $request->contentType(), 'prefer non http header.');
     }
 
@@ -3158,14 +3158,14 @@ XML;
     public function testMethodOverrideEmptyData()
     {
         $post = ['_method' => 'GET', 'foo' => 'bar'];
-        $request = new Request([
+        $request = new ServerRequest([
             'post' => $post,
             'environment' => ['REQUEST_METHOD' => 'POST']
         ]);
         $this->assertEmpty($request->data);
 
         $post = ['_method' => 'GET', 'foo' => 'bar'];
-        $request = new Request([
+        $request = new ServerRequest([
             'post' => ['foo' => 'bar'],
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
@@ -3182,7 +3182,7 @@ XML;
      */
     public function testWithParam()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'params' => ['controller' => 'Articles']
         ]);
         $result = $request->withParam('action', 'view');
@@ -3208,10 +3208,10 @@ XML;
     public function testGetParsedBody()
     {
         $data = ['title' => 'First', 'body' => 'Best Article!'];
-        $request = new Request(['post' => $data]);
+        $request = new ServerRequest(['post' => $data]);
         $this->assertSame($data, $request->getParsedBody());
 
-        $request = new Request();
+        $request = new ServerRequest();
         $this->assertSame([], $request->getParsedBody());
     }
 
@@ -3223,7 +3223,7 @@ XML;
     public function testWithParsedBody()
     {
         $data = ['title' => 'First', 'body' => 'Best Article!'];
-        $request = new Request([]);
+        $request = new ServerRequest([]);
         $new = $request->withParsedBody($data);
 
         $this->assertNotSame($request, $new);
@@ -3238,7 +3238,7 @@ XML;
      */
     public function testWithData()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'post' => [
                 'Model' => [
                     'field' => 'value'
@@ -3260,7 +3260,7 @@ XML;
      */
     public function testWithDataMissingIntermediaryKeys()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'post' => [
                 'Model' => [
                     'field' => 'value'
@@ -3285,7 +3285,7 @@ XML;
      */
     public function testWithDataFalseyValues()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'post' => []
         ]);
         $result = $request->withData('false', false)
@@ -3310,7 +3310,7 @@ XML;
      */
     public function testWithAttribute()
     {
-        $request = new Request([]);
+        $request = new ServerRequest([]);
         $this->assertNull($request->getAttribute('key'));
         $this->assertSame('default', $request->getAttribute('key', 'default'));
 
@@ -3331,7 +3331,7 @@ XML;
      */
     public function testWithAttributesCompatibility()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'params' => [
                 'controller' => 'Articles',
                 'action' => 'index'
@@ -3369,7 +3369,7 @@ XML;
      */
     public function testGetAttributesCompatibility($prop)
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'params' => [
                 'controller' => 'Articles',
                 'action' => 'index'
@@ -3392,7 +3392,7 @@ XML;
      */
     public function testGetAttributes()
     {
-        $request = new Request([]);
+        $request = new ServerRequest([]);
         $new = $request->withAttribute('key', 'value')
             ->withAttribute('nully', null)
             ->withAttribute('falsey', false);
@@ -3423,7 +3423,7 @@ XML;
      */
     public function testWithoutAttribute()
     {
-        $request = new Request([]);
+        $request = new ServerRequest([]);
         $new = $request->withAttribute('key', 'value');
         $update = $request->withoutAttribute('key');
 
@@ -3440,7 +3440,7 @@ XML;
      */
     public function testWithoutAttributesDenyEmulatedProperties($prop)
     {
-        $request = new Request([]);
+        $request = new ServerRequest([]);
         $request->withoutAttribute($prop);
     }
 
@@ -3451,7 +3451,7 @@ XML;
      */
     public function testWithRequestTarget()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'environment' => [
                 'REQUEST_URI' => '/articles/view/1',
                 'QUERY_STRING' => 'comments=1&open=0'
