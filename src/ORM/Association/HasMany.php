@@ -635,6 +635,7 @@ class HasMany extends Association
         if ($query->clause('order') === null) {
             $query->order($this->getSort());
         }
+        
         return $query;
     }
 
