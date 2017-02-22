@@ -53,7 +53,7 @@ class Event
      *
      * @var mixed
      */
-    protected $_result = null;
+    public $result = null;
 
     /**
      * Flags an event as stopped or not, default is false
@@ -99,7 +99,7 @@ class Event
             return $this->_data;
         }
         if ($attribute === 'result') {
-            return $this->_result;
+            return $this->result;
         }
     }
 
@@ -117,7 +117,7 @@ class Event
             $this->_data = (array)$value;
         }
         if ($attribute === 'result') {
-            $this->_result = $value;
+            $this->result = $value;
         }
     }
 
@@ -191,7 +191,7 @@ class Event
      */
     public function result()
     {
-        return $this->_result;
+        return $this->result;
     }
 
     /**
@@ -201,7 +201,7 @@ class Event
      */
     public function getResult()
     {
-        return $this->_result;
+        return $this->result;
     }
 
     /**
@@ -212,7 +212,7 @@ class Event
      */
     public function setResult($value = null)
     {
-        $this->_result = $value;
+        $this->result = $value;
 
         return $this;
     }
