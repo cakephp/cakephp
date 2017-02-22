@@ -455,7 +455,6 @@ class SecurityComponent extends Component
         return $fieldList;
     }
 
-
     /**
      * Get the unlocked string
      *

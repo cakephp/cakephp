@@ -97,7 +97,6 @@ class StringsTestsFixture extends TestFixture
     ];
 }
 
-
 /**
  * ImportsFixture class
  */

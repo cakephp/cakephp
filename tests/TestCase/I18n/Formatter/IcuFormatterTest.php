@@ -127,7 +127,6 @@ class IcuFormatterTest extends TestCase
     {
         $this->skipIf(version_compare(PHP_VERSION, '7', '<'));
 
-
         $formatter = new IcuFormatter();
         $formatter->format('en_US', '{crazy format', ['some', 'vars']);
     }

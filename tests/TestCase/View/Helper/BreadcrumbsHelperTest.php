@@ -72,7 +72,6 @@ class BreadcrumbsHelperTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-
     /**
      * Test adding multiple crumbs at once to the trail using add()
      *

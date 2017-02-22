@@ -276,7 +276,6 @@ class EagerLoaderTest extends TestCase
         $this->assertEquals($expected, $loader->contain());
     }
 
-
     /**
      * Tests setting containments using direct key value pairs works just as with key array.
      *

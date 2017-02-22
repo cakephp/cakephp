@@ -108,7 +108,6 @@ class CachedCollection extends Collection
         return $this->_cache;
     }
 
-
     /**
      * Sets the cache config name to use for caching table metadata, or
      * disables it if false is passed.

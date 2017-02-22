@@ -72,7 +72,6 @@ class BoolTypeTest extends TestCase
         $this->type->toDatabase([1, 2], $this->driver);
     }
 
-
     /**
      * Tests that passing an invalid value will throw an exception
      *
