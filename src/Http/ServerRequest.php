@@ -17,7 +17,6 @@ namespace Cake\Http;
 use ArrayAccess;
 use BadMethodCallException;
 use Cake\Core\Configure;
-use Cake\Http\ServerRequestFactory;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Network\Session;
 use Cake\Utility\Hash;
