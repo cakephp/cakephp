@@ -19,6 +19,12 @@ use Cake\ORM\Table;
  */
 class ArticlesTable extends Table
 {
+    /**
+     * Number of times finder method is executed.
+     *
+     * @var int
+     */
+    public $finderCount = 0;
 
     public function initialize(array $config)
     {
@@ -35,6 +41,7 @@ class ArticlesTable extends Table
      */
     public function findPublished($query)
     {
+        $this->finderCount++;
         return $query->where(['published' => 'Y']);
     }
 

@@ -985,12 +985,28 @@ class TableTest extends TestCase
      */
     public function testDeleteEach(array $options)
     {
-        $table = new Table([
-            'table' => 'users',
-            'connection' => $this->connection,
-        ]);
+        $table = new Table(['table' => 'users', 'connection' => $this->connection,]);
+
+        $beforeCount = 0;
+        $table->eventManager()->on('Model.beforeDeleteEach', function () use(&$beforeCount) {
+            $beforeCount++;
+        });
+
+        $afterCount = 0;
+        $table->eventManager()->on('Model.afterDeleteEach', function () use(&$afterCount) {
+            $afterCount++;
+        });
+
         $result = $table->deleteEach(['username !=' => 'mariano'], $options);
         $this->assertSame(3, $result);
+
+        if(isset($options['batch']) && $options['batch'] === 100) {
+            $this->assertSame(1, $beforeCount);
+            $this->assertSame(1, $afterCount);
+        } else {
+            $this->assertSame(3, $beforeCount);
+            $this->assertSame(3, $afterCount);
+        }
 
         $result = $table->find('all')->toArray();
         $this->assertCount(1, $result, 'Only one record should remain');
@@ -1016,10 +1032,7 @@ class TableTest extends TestCase
      */
     public function testDeleteEachInvalidArgument(array $invalidParams)
     {
-        $table = new Table([
-            'table' => 'users',
-            'connection' => $this->connection,
-        ]);
+        $table = new Table(['table' => 'users', 'connection' => $this->connection,]);
         $table->deleteEach(['username !=' => 'mariano'], $invalidParams);
     }
 
@@ -1028,10 +1041,15 @@ class TableTest extends TestCase
      */
     public function testDeleteEachFinder()
     {
-
-        $table = TableRegistry::get('articles');
-        $result = $table->deleteEach(['username !=' => 'mariano'], ['finder' => 'published']);
-        $this->assertSame(4, $result);
+        /**
+         * @var \TestApp\Model\Table\ArticlesTable $table
+         */
+        $table = TableRegistry::get('Articles');
+        $table->save(new Entity(['published' => 'N']));
+        $result = $table->deleteEach([1 => 1], ['finder' => 'published', 'batch' => 100]);
+        $this->assertSame(3, $result);
+        $this->assertSame(2, $table->finderCount);
+        $this->assertSame(1, $table->find()->count());
     }
 
     /**
@@ -1039,15 +1057,32 @@ class TableTest extends TestCase
      */
     public function testDeleteEachAtomic()
     {
+        $table = new Table(['table' => 'users', 'connection' => $this->connection,]);
 
+        $table->eventManager()->on('Model.afterDeleteEachCommit', function () {
+            $this->fail('afterDeleteEachCommit should not fire inside transaction');
+        });
+
+        $this->connection->begin();
+        $result = $table->deleteEach(['username !=' => 'mariano']);
+        $this->assertSame(4, $result);
+        $this->connection->commit();
     }
 
     /**
-     * Tests failure by having a rule block delete.
+     * Tests that event can stop deleting.
      */
-    public function testDeleteEachStopOnFailure()
+    public function testBeforeDeleteEachStopsDeleting()
     {
-
+        $table = new Table(['table' => 'users', 'connection' => $this->connection,]);
+        $called = false;
+        $table->eventManager()->on('Model.beforeDeleteEach', function (Event $event) use (&$called) {
+            $event->stopPropagation();
+            $called = true;
+        });
+        $result = $table->deleteEach([1 => 1]);
+        $this->assertSame(0, $result);
+        $this->assertTrue($called);
     }
 
     /**
@@ -1056,15 +1091,8 @@ class TableTest extends TestCase
      */
     public function testDeleteEachZeroBatch()
     {
-
-    }
-
-    /**
-     *
-     */
-    public function testDeleteEachCheckRules()
-    {
-
+        $table = new Table(['table' => 'users', 'connection' => $this->connection,]);
+        $table->deleteEach(['username !=' => 'mariano'], ['batch' => 0]);
     }
 
     /**
@@ -1788,6 +1816,10 @@ class TableTest extends TestCase
                 'afterSave',
                 'beforeDelete',
                 'afterDelete',
+                'afterDeleteCommit',
+                'beforeDeleteEach',
+                'afterDeleteEach',
+                'afterDeleteEachCommit',
                 'afterRules'
             ])
             ->getMock();
@@ -1799,6 +1831,10 @@ class TableTest extends TestCase
             'Model.beforeSave' => 'beforeSave',
             'Model.afterSave' => 'afterSave',
             'Model.beforeDelete' => 'beforeDelete',
+            'Model.afterDeleteCommit' => 'afterDeleteCommit',
+            'Model.beforeDeleteEach' => 'beforeDeleteEach',
+            'Model.afterDeleteEach' => 'afterDeleteEach',
+            'Model.afterDeleteEachCommit' => 'afterDeleteEachCommit',
             'Model.afterDelete' => 'afterDelete',
             'Model.afterRules' => 'afterRules',
         ];
