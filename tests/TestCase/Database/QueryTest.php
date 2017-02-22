@@ -3882,6 +3882,22 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Performs the simple update query and verifies the row count.
+     *
+     * @return void
+     */
+    public function testExecuteAndClose()
+    {
+        $this->loadFixtures('Authors');
+        $query = new Query($this->connection);
+        $rowCount = $query->update('authors')
+            ->set('name', 'mark')
+            ->where(['id' => 1])
+            ->executeAndClose();
+        $this->assertCount(1, $rowCount);
+    }
+
+    /**
      * Tests that case statements work correctly for various use-cases.
      *
      * @return void

@@ -226,6 +226,37 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
+     * Executes the SQL of this query and immediately closes the statement before returning the row count of records
+     * changed.
+     *
+     * This method can be used with UPDATE and DELETE queries, but is not recommended for SELECT queries and is not
+     * used to count records.
+     *
+     * ## Example
+     *
+     * ```
+     * $rowCount = $query->update('articles')
+     *                 ->set(['published'=>true])
+     *                 ->where(['published'=>false])
+     *                 ->executeAndClose();
+     * ```
+     *
+     * The above example will change the published column to true for all false records, and return the number of
+     * records that were updated.
+     *
+     * @return int
+     */
+    public function executeAndClose()
+    {
+        $statement = $this->execute();
+        try {
+            return $statement->rowCount();
+        } finally {
+            $statement->closeCursor();
+        }
+    }
+
+    /**
      * Returns the SQL representation of this object.
      *
      * This function will compile this query to make it compatible
