@@ -363,6 +363,36 @@ class BehaviorRegistryTest extends TestCase
     }
 
     /**
+     * Test that unloading a none existing behavior triggers an error.
+     *
+     * This should produce an "Behavior "Foo" was not loaded before." error
+     * which gets thrown as a \PHPUnit\Framework\Error\Error Exception by PHPUnit.
+     *
+     * @expectedException \PHPUnit\Framework\Error\Error
+     * @expectedExceptionMessage Object "Foo" was not loaded before.
+     * @return void
+     */
+    public function testUnloadUnknown()
+    {
+        $this->Behaviors->unload('Foo');
+    }
+
+    /**
+     * Test that unloading a none existing plugin behavior triggers an error.
+     *
+     * This should produce an "Behavior "Plugin.Foo" was not loaded before. Remember to omit plugin prefixes." error
+     * which gets thrown as a \PHPUnit\Framework\Error\Error Exception by PHPUnit.
+     *
+     * @expectedException \PHPUnit\Framework\Error\Error
+     * @expectedExceptionMessage Object "Plugin.Foo" was not loaded before. Remember to omit plugin prefixes.
+     * @return void
+     */
+    public function testUnloadUnknownPluginBehavior()
+    {
+        $this->Behaviors->unload('Plugin.Foo');
+    }
+
+    /**
      * Test setTable() method.
      *
      * @return void

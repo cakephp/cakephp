@@ -274,6 +274,36 @@ class HelperRegistryTest extends TestCase
     }
 
     /**
+     * Test that unloading a none existing helper triggers an error.
+     *
+     * This should produce an "Object "Foo" was not loaded before." error
+     * which gets thrown as a \PHPUnit\Framework\Error\Error Exception by PHPUnit.
+     *
+     * @expectedException \PHPUnit\Framework\Error\Error
+     * @expectedExceptionMessage Object "Foo" was not loaded before.
+     * @return void
+     */
+    public function testUnloadUnknown()
+    {
+        $this->Helpers->unload('Foo');
+    }
+
+    /**
+     * Test that unloading a none existing plugin helper triggers an error.
+     *
+     * This should produce an "Object "Plugin.Foo" was not loaded before. Remember to omit plugin prefixes." error
+     * which gets thrown as a \PHPUnit\Framework\Error\Error Exception by PHPUnit.
+     *
+     * @expectedException \PHPUnit\Framework\Error\Error
+     * @expectedExceptionMessage Object "Plugin.Foo" was not loaded before. Remember to omit plugin prefixes.
+     * @return void
+     */
+    public function testUnloadUnknownPluginHelper()
+    {
+        $this->Helpers->unload('Plugin.Foo');
+    }
+
+    /**
      * Loading a helper with no config should "just work"
      *
      * The addToAssertionCount call is to record that no exception was thrown
