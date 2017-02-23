@@ -184,11 +184,9 @@ class BelongsToMany extends Association
     public function getTargetBindingKey()
     {
         if ($this->_targetBindingKey === null) {
-            if ($this->_targetBindingKey === null) {
-                $this->_targetBindingKey = $this->isOwningSide($this->getSource()) ?
-                    $this->getSource()->getPrimaryKey() :
-                    $this->getTarget()->getPrimaryKey();
-            }
+            $this->_targetBindingKey = $this->isOwningSide($this->getSource()) ?
+                $this->getSource()->getPrimaryKey() :
+                $this->getTarget()->getPrimaryKey();
         }
 
         return $this->_targetBindingKey;
