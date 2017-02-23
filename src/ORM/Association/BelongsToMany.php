@@ -102,6 +102,13 @@ class BelongsToMany extends Association
     protected $_saveStrategy = self::SAVE_REPLACE;
 
     /**
+     * The name of the field representing the binding key to the target table
+     *
+     * @var string|array
+     */
+    protected $_targetBindingKey;
+
+    /**
      * The name of the field representing the foreign key to the target table
      *
      * @var string|array
@@ -155,6 +162,54 @@ class BelongsToMany extends Association
      * @var mixed
      */
     protected $_sort;
+
+    /**
+     * Sets the name of the field representing the binding key to the target table.
+     *
+     * @param string $key the key to be used to link both tables together
+     * @return $this
+     */
+    public function setTargetBindingKey($key)
+    {
+        $this->_targetBindingKey = $key;
+
+        return $this;
+    }
+
+    /**
+     * Gets the name of the field representing the binding key to the target table.
+     *
+     * @return string
+     */
+    public function getTargetBindingKey()
+    {
+        if ($this->_targetBindingKey === null) {
+            if ($this->_targetBindingKey === null) {
+                $this->_targetBindingKey = $this->isOwningSide($this->getSource()) ?
+                    $this->getSource()->getPrimaryKey() :
+                    $this->getTarget()->getPrimaryKey();
+            }
+        }
+
+        return $this->_targetBindingKey;
+    }
+
+    /**
+     * Sets the name of the field representing the binding key to the target table.
+     * If no parameters are passed current field is returned
+     *
+     * @deprecated 3.4.0 Use setTargetBindingKey()/getTargetBindingKey() instead.
+     * @param string|null $key the key to be used to link both tables together
+     * @return string
+     */
+    public function targetBindingKey($key = null)
+    {
+        if ($key !== null) {
+            return $this->setTargetBindingKey($key);
+        }
+
+        return $this->getTargetBindingKey();
+    }
 
     /**
      * Sets the name of the field representing the foreign key to the target table.
@@ -783,7 +838,8 @@ class BelongsToMany extends Association
         $belongsTo = $junction->association($target->getAlias());
         $foreignKey = (array)$this->getForeignKey();
         $assocForeignKey = (array)$belongsTo->getForeignKey();
-        $targetPrimaryKey = (array)$target->getPrimaryKey();
+        // $targetPrimaryKey = (array)$target->getPrimaryKey();
+        $targetBindingKey = (array)$this->getTargetBindingKey();
         $bindingKey = (array)$this->getBindingKey();
         $jointProperty = $this->_junctionProperty;
         $junctionAlias = $junction->getAlias();
@@ -794,7 +850,7 @@ class BelongsToMany extends Association
                 $joint = new $entityClass([], ['markNew' => true, 'source' => $junctionAlias]);
             }
             $sourceKeys = array_combine($foreignKey, $sourceEntity->extract($bindingKey));
-            $targetKeys = array_combine($assocForeignKey, $e->extract($targetPrimaryKey));
+            $targetKeys = array_combine($assocForeignKey, $e->extract($targetBindingKey));
 
             if ($sourceKeys !== $joint->extract($foreignKey)) {
                 $joint->set($sourceKeys, ['guard' => false]);
@@ -1408,6 +1464,9 @@ class BelongsToMany extends Association
      */
     protected function _options(array $opts)
     {
+        if (!empty($opts['targetBindingKey'])) {
+            $this->setTargetBindingKey($opts['targetBindingKey']);
+        }
         if (!empty($opts['targetForeignKey'])) {
             $this->setTargetForeignKey($opts['targetForeignKey']);
         }
