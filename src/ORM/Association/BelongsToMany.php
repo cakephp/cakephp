@@ -104,14 +104,14 @@ class BelongsToMany extends Association
     /**
      * The name of the field representing the binding key to the target table
      *
-     * @var string|array
+     * @var null|array|string
      */
     protected $_targetBindingKey;
 
     /**
      * The name of the field representing the foreign key to the target table
      *
-     * @var string|array
+     * @var null|array|string
      */
     protected $_targetForeignKey;
 
