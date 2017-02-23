@@ -873,6 +873,29 @@ class ControllerTest extends TestCase
     }
 
     /**
+     * test invoking controller methods with passed params
+     *
+     * @return void
+     */
+    public function testInvokeActionWithPassedParams()
+    {
+        $url = new Request('test/index/1/2');
+        $url->addParams([
+            'controller' => 'Test',
+            'action' => 'index',
+            'pass' => ['param1' => '1', 'param2' => '2']
+        ]);
+        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+
+        $Controller = new TestController($url, $response);
+        $result = $Controller->invokeAction();
+        $this->assertEquals(
+            ['testId' => '1', 'test2Id' => '2'],
+            $Controller->request->data
+        );
+    }
+
+    /**
      * test that a classes namespace is used in the viewPath.
      *
      * @return void
