@@ -321,21 +321,21 @@ class FormHelper extends Helper
      * - `valueSources` The sources that values should be read from. See FormHelper::setValueSources()
      * - `templateVars` Provide template variables for the formStart template.
      *
-     * @param mixed $model The context for which the form is being defined. Can
+     * @param mixed $context The context for which the form is being defined. Can
      *   be an ORM entity, ORM resultset, or an array of meta data. You can use false or null
-     *   to make a model-less form.
+     *   to make a context-less form.
      * @param array $options An array of html attributes and options.
      * @return string An formatted opening FORM tag.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#Cake\View\Helper\FormHelper::create
      */
-    public function create($model = null, array $options = [])
+    public function create($context = null, array $options = [])
     {
         $append = '';
 
         if (empty($options['context'])) {
             $options['context'] = [];
         }
-        $options['context']['entity'] = $model;
+        $options['context']['entity'] = $context;
         $context = $this->_getContext($options['context']);
         unset($options['context']);
 
