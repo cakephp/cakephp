@@ -179,7 +179,7 @@ class BelongsToMany extends Association
     /**
      * Gets the name of the field representing the binding key to the target table.
      *
-     * @return string
+     * @return array|string
      */
     public function getTargetBindingKey()
     {
@@ -196,9 +196,9 @@ class BelongsToMany extends Association
      * Sets the name of the field representing the binding key to the target table.
      * If no parameters are passed current field is returned
      *
-     * @deprecated 3.4.0 Use setTargetBindingKey()/getTargetBindingKey() instead.
+     * @deprecated 3.4.3 Use setTargetBindingKey()/getTargetBindingKey() instead.
      * @param string|null $key the key to be used to link both tables together
-     * @return string
+     * @return array|string|$this
      */
     public function targetBindingKey($key = null)
     {
@@ -225,7 +225,7 @@ class BelongsToMany extends Association
     /**
      * Gets the name of the field representing the foreign key to the target table.
      *
-     * @return string
+     * @return array|string
      */
     public function getTargetForeignKey()
     {
@@ -242,7 +242,7 @@ class BelongsToMany extends Association
      *
      * @deprecated 3.4.0 Use setTargetForeignKey()/getTargetForeignKey() instead.
      * @param string|null $key the key to be used to link both tables together
-     * @return string
+     * @return array|string|$this
      */
     public function targetForeignKey($key = null)
     {
