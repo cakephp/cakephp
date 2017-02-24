@@ -1923,8 +1923,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * value if possible. You can override this method if you have specific requirements
      * for id generation.
      *
+     * Note: The ORM will not generate primary key values for composite primary keys.
+     * You can overwrite _newId() in your table class.
+     *
      * @param array $primary The primary key columns to get a new ID for.
-     * @return mixed Either null or the new primary key value.
+     * @return null|string|array Either null or the primary key value or a list of primary key values.
      */
     protected function _newId($primary)
     {
@@ -2517,11 +2520,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * the same site_id. Scoping will only be used if the scoping field is present in
      * the data to be validated.
      *
-     * @param mixed $value The value of column to be checked for uniqueness
+     * @param mixed $value The value of column to be checked for uniqueness.
      * @param array $options The options array, optionally containing the 'scope' key.
-     *   May also be the validation context if there are no options.
+     *   May also be the validation context, if there are no options.
      * @param array|null $context Either the validation context or null.
-     * @return bool true if the value is unique
+     * @return bool True if the value is unique, or false if a non-scalar, non-unique value was given.
      */
     public function validateUnique($value, array $options, array $context = null)
     {

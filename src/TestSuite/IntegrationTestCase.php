@@ -701,7 +701,6 @@ abstract class IntegrationTestCase extends TestCase
         $result = $this->_response->header();
         if ($url === null) {
             $this->assertNotEmpty($result['Location'], $message);
-
             return;
         }
         if (empty($result['Location'])) {

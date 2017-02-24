@@ -9,6 +9,7 @@ use PHPUnit_Framework_ExpectationFailedException;
  */
 class AssertHtmlTest extends TestCase
 {
+
     /**
      * Test whitespace after HTML tags
      *
@@ -56,7 +57,6 @@ HTML;
         ];
         $this->assertHtml($expected, $input);
     }
-
     /**
      * test assertHtml works with single and double quotes
      *

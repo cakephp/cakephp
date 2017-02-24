@@ -771,12 +771,12 @@ class MemcachedEngineTest extends TestCase
     {
         Cache::config('long_memcached', [
             'engine' => 'Memcached',
-            'duration' => '+2 seconds',
+            'duration' => '+3 seconds',
             'servers' => ['127.0.0.1:11211'],
         ]);
         Cache::config('short_memcached', [
             'engine' => 'Memcached',
-            'duration' => '+1 seconds',
+            'duration' => '+2 seconds',
             'servers' => ['127.0.0.1:11211'],
         ]);
 
@@ -786,10 +786,10 @@ class MemcachedEngineTest extends TestCase
         $this->assertEquals('yay', Cache::read('duration_test', 'long_memcached'), 'Value was not read %s');
         $this->assertEquals('boo', Cache::read('short_duration_test', 'short_memcached'), 'Value was not read %s');
 
-        sleep(1);
+        usleep(500000);
         $this->assertEquals('yay', Cache::read('duration_test', 'long_memcached'), 'Value was not read %s');
 
-        sleep(2);
+        usleep(3000000);
         $this->assertFalse(Cache::read('short_duration_test', 'short_memcached'), 'Cache was not invalidated %s');
         $this->assertFalse(Cache::read('duration_test', 'long_memcached'), 'Value did not expire %s');
 
