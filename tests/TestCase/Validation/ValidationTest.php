@@ -2292,6 +2292,8 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::extension('extension.pdf', ['PDF']));
         $this->assertFalse(Validation::extension('extension.jpg', ['GIF']));
         $this->assertTrue(Validation::extension(['extension.JPG', 'extension.gif', 'extension.png']));
+        $this->assertFalse(Validation::extension(['extension.JPG', 'extension.gif', 'extension.png'], ['gif']));
+
         $this->assertTrue(Validation::extension(['file' => ['name' => 'file.jpg']]));
         $this->assertTrue(Validation::extension([
             'file1' => ['name' => 'file.jpg'],
@@ -2301,14 +2303,27 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::extension(
             [
                 'file1' => ['name' => 'file.jpg'],
-                'file2' => ['name' => 'file.jpg'],
-                'file3' => ['name' => 'file.jpg']
+                'file2' => ['name' => 'file.gif'],
             ],
             ['gif']
-        ));
+        ), 'Only the first element should be checked');
+        $this->assertTrue(Validation::extension(
+            [
+                'file1' => ['name' => 'file.gif'],
+                'file2' => ['name' => 'file.jpg'],
+            ],
+            ['gif']
+        ), 'Only the first element should be checked');
 
-        $this->assertFalse(Validation::extension(['noextension', 'extension.JPG', 'extension.gif', 'extension.png']));
-        $this->assertFalse(Validation::extension(['extension.pdf', 'extension.JPG', 'extension.gif', 'extension.png']));
+        $file = [
+            'tmp_name' => '/var/private/secret-file',
+            'name' => 'cats.gif'
+        ];
+        $this->assertTrue(Validation::extension($file), 'Uses filename if available.');
+        $this->assertTrue(Validation::extension(['file' => $file]), 'Walks through arrays.');
+
+        $this->assertFalse(Validation::extension(['noextension', 'extension.JPG']));
+        $this->assertFalse(Validation::extension(['extension.pdf', 'extension.JPG']));
     }
 
     /**
