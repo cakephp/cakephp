@@ -2778,6 +2778,57 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test with string body.
+     *
+     * @return void
+     */
+    public function testWithStringBody()
+    {
+        $response = new Response();
+        $newResponse = $response->withStringBody('Foo');
+        $body = $newResponse->getBody();
+        $this->assertSame('Foo', (string)$body);
+        $this->assertNotSame($response, $newResponse);
+
+        $response = new Response();
+        $newResponse = $response->withStringBody('');
+        $body = $newResponse->getBody();
+        $this->assertSame('', (string)$body);
+        $this->assertNotSame($response, $newResponse);
+
+        $response = new Response();
+        $newResponse = $response->withStringBody(null);
+        $body = $newResponse->getBody();
+        $this->assertSame('', (string)$body);
+        $this->assertNotSame($response, $newResponse);
+
+        $response = new Response();
+        $newResponse = $response->withStringBody(1337);
+        $body = $newResponse->getBody();
+        $this->assertSame('1337', (string)$body);
+        $this->assertNotSame($response, $newResponse);
+    }
+
+    /**
+     * Test with string body with passed array.
+     *
+     * This should produce an "Array to string conversion" error
+     * which gets thrown as a \PHPUnit\Framework\Error\Error Exception by PHPUnit.
+     *
+     * @expectedException \PHPUnit\Framework\Error\Error
+     * @expectedExceptionMessage Array to string conversion
+     * @return void
+     */
+    public function testWithStringBodyArray()
+    {
+        $response = new Response();
+        $newResponse = $response->withStringBody(['foo' => 'bar']);
+        $body = $newResponse->getBody();
+        $this->assertSame('', (string)$body);
+        $this->assertNotSame($response, $newResponse);
+    }
+
+    /**
      * Test get Body.
      *
      * @return void
