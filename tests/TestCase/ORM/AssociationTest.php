@@ -355,6 +355,16 @@ class AssociationTest extends TestCase
     }
 
     /**
+     * Tests that getRegistryAlias() returns the correct alias
+     *
+     * @return void
+     */
+    public function testGetRegistryAlias()
+    {
+        $this->assertEquals('Foo', $this->association->getRegistryAlias());
+    }
+
+    /**
      * Tests that source() returns the correct Table object
      *
      * @return void
@@ -534,5 +544,28 @@ class AssociationTest extends TestCase
             ->setConstructorArgs(['Foo', $config])
             ->getMock();
         $this->assertEquals($locator, $assoc->tableLocator());
+    }
+
+    /**
+     * Tests that getRegistryAlias() is used for locating the target table.
+     *
+     * @return void
+     */
+    public function testRegistryAliasInConstructor()
+    {
+        $config = [
+            'registryAlias' => 'Foo.Bar'
+        ];
+        $assoc = $this->getMockBuilder('\Cake\ORM\Association')
+            ->setMethods([
+                'type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated',
+                'requiresKeys'
+            ])
+            ->setConstructorArgs(['Foo', $config])
+            ->getMock();
+
+        $this->assertEquals('Foo.Bar', $assoc->getRegistryAlias());
+        $this->assertEquals('Foo.Bar', $assoc->getTarget()->registryAlias());
+        $this->assertEquals('Bar', $assoc->getTarget()->alias());
     }
 }
