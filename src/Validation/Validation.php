@@ -692,6 +692,7 @@ class Validation
     {
         if (is_array($check)) {
             $check = isset($check['name']) ? $check['name'] : array_shift($check);
+
             return static::extension($check, $extensions);
         }
         $extension = strtolower(pathinfo($check, PATHINFO_EXTENSION));
