@@ -82,8 +82,8 @@ class TimestampBehavior extends Behavior
      *
      * @param \Cake\Event\Event $event Event instance.
      * @param \Cake\Datasource\EntityInterface $entity Entity instance.
-     * @throws \UnexpectedValueException if a field's when value is misdefined
-     * @return bool Returns true irrespective of the behavior logic, the save will not be prevented.
+     * @throws \UnexpectedValueException if a field's value is incorrectly defined
+     * @return true (irrespective of the behavior logic, the save will not be prevented)
      * @throws \UnexpectedValueException When the value for an event is not 'always', 'new' or 'existing'
      */
     public function handleEvent(Event $event, EntityInterface $entity)
@@ -132,7 +132,7 @@ class TimestampBehavior extends Behavior
      *
      * @param \DateTime|null $ts Timestamp
      * @param bool $refreshTimestamp If true timestamp is refreshed.
-     * @return \DateTime
+     * @return \Cake\I18n\Time
      */
     public function timestamp(DateTime $ts = null, $refreshTimestamp = false)
     {

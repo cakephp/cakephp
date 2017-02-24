@@ -173,6 +173,11 @@ class RadioWidget implements WidgetInterface
         if (isset($data['val']) && (string)$data['val'] === (string)$radio['value']) {
             $radio['checked'] = true;
         }
+
+        if (!is_bool($data['label']) && isset($radio['checked']) && $radio['checked']) {
+            $data['label'] = $this->_templates->addClass($data['label'], 'selected');
+        }
+
         if ($this->_isDisabled($radio, $data['disabled'])) {
             $radio['disabled'] = true;
         }
@@ -222,7 +227,7 @@ class RadioWidget implements WidgetInterface
      * @param string $input The input widget.
      * @param \Cake\View\Form\ContextInterface $context The form context.
      * @param bool $escape Whether or not to HTML escape the label.
-     * @return string|bool Generated label.
+     * @return string Generated label.
      */
     protected function _renderLabel($radio, $label, $input, $context, $escape)
     {

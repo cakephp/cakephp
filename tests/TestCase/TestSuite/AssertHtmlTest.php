@@ -9,7 +9,13 @@ use PHPUnit_Framework_ExpectationFailedException;
  */
 class AssertHtmlTest extends TestCase
 {
-    public function testAssertHtmlWhitespace()
+
+    /**
+     * Test whitespace after HTML tags
+     *
+     * @return
+     */
+    public function testAssertHtmlWhitespaceAfter()
     {
         $input = <<<HTML
 <div class="wrapper">
@@ -26,6 +32,30 @@ HTML;
             '/div'
         ];
         $this->assertHtml($pattern, $input);
+    }
+
+    /**
+     * Test whitespace inside HTML tags
+     *
+     * @return void
+     */
+    public function testAssertHtmlInnerWhitespace()
+    {
+        $input = <<<HTML
+<div class="widget">
+    <div class="widget-content">
+        A custom widget
+    </div>
+</div>
+HTML;
+        $expected = [
+            ['div' => ['class' => 'widget']],
+            ['div' => ['class' => 'widget-content']],
+            'A custom widget',
+            '/div',
+            '/div',
+        ];
+        $this->assertHtml($expected, $input);
     }
     /**
      * test assertHtml works with single and double quotes

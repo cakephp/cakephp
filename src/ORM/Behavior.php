@@ -180,6 +180,16 @@ class Behavior implements EventListenerInterface
     }
 
     /**
+     * Get the table instance this behavior is bound to.
+     *
+     * @return \Cake\ORM\Table The bound table instance.
+     */
+    public function getTable()
+    {
+        return $this->_table;
+    }
+
+    /**
      * Removes aliased methods that would otherwise be duplicated by userland configuration.
      *
      * @param string $key The key to filter.

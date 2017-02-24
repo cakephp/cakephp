@@ -28,6 +28,7 @@ use Cake\View\View;
  * @property \Cake\View\Helper\UrlHelper $Url
  * @property \Cake\View\Helper\NumberHelper $Number
  * @property \Cake\View\Helper\HtmlHelper $Html
+ * @property \Cake\View\Helper\FormHelper $Form
  * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html
  */
 class PaginatorHelper extends Helper
@@ -40,7 +41,7 @@ class PaginatorHelper extends Helper
      *
      * @var array
      */
-    public $helpers = ['Url', 'Number', 'Html'];
+    public $helpers = ['Url', 'Number', 'Html', 'Form'];
 
     /**
      * Default config for this class
@@ -1168,5 +1169,38 @@ class PaginatorHelper extends Helper
     public function implementedEvents()
     {
         return [];
+    }
+
+    /**
+     * Dropdown array for Select limit
+     *
+     * @param array $limits This is array of options.
+     * @param int|null $default Default limit for option selecting. Default value is $this->param('perPage').
+     * @param array $options Options for Select tag attributes like class, id or event
+     *
+     * @return string html output.
+     */
+    public function limitControl(array $limits = [], $default = null, array $options = [])
+    {
+        $out = $this->Form->create(null, ['type' => 'get']);
+
+        if (empty($default) || !is_numeric($default)) {
+            $default = $this->param('perPage');
+        }
+
+        if (empty($limits)) {
+            $limits += [20 => '20', 25 => '25', 50 => '50', 100 => '100'];
+        }
+
+        if (!in_array($default, $limits)) {
+            $limits += [$default => $default];
+        }
+
+        ksort($limits);
+
+        $out .= $this->Form->control('limit', ($options + ['type' => 'select', 'label' => __("View"), 'value' => $default, 'options' => $limits, 'onChange' => 'this.form.submit()']));
+        $out .= $this->Form->end();
+
+        return $out;
     }
 }
