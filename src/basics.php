@@ -121,24 +121,20 @@ if (!function_exists('dd')) {
      *
      * @param mixed $var Variable to show debug information for.
      * @param bool|null $showHtml If set to true, the method prints the debug data in a browser-friendly way.
-     * @param bool $showFrom If set to true, the method prints from where the function was called.
      * @return void
      * @link http://book.cakephp.org/3.0/en/development/debugging.html#basic-debugging
      */
-    function dd($var, $showHtml = null, $showFrom = true)
+    function dd($var, $showHtml = null)
     {
         if (!Configure::read('debug')) {
             return;
         }
 
-        $location = [];
-        if ($showFrom) {
-            $trace = Debugger::trace(['start' => 1, 'depth' => 2, 'format' => 'array']);
-            $location = [
-                'line' => $trace[0]['line'],
-                'file' => $trace[0]['file']
-            ];
-        }
+        $trace = Debugger::trace(['start' => 1, 'depth' => 2, 'format' => 'array']);
+        $location = [
+            'line' => $trace[0]['line'],
+            'file' => $trace[0]['file']
+        ];
 
         Debugger::printVar($var, $location, $showHtml);
         die(1);
