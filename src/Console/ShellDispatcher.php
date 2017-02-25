@@ -186,6 +186,9 @@ class ShellDispatcher
         if ($result === null || $result === true) {
             return Shell::CODE_SUCCESS;
         }
+        if (is_int($result)) {
+            return $result;
+        }
 
         return Shell::CODE_ERROR;
     }
