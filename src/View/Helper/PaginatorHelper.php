@@ -1189,7 +1189,7 @@ class PaginatorHelper extends Helper
         }
 
         if (empty($limits)) {
-            $limits += array('0'=>__('All'), '20' => '20', '50' => '50', '100' => '100');
+            $limits += array('0' => __('All'), '20' => '20', '50' => '50', '100' => '100');
         }
 
         if (!in_array($default, $limits)) {
