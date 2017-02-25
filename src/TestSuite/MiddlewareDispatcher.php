@@ -63,7 +63,7 @@ class MiddlewareDispatcher
     {
         $this->_test = $test;
         $this->_class = $class ?: Configure::read('App.namespace') . '\Application';
-        $this->_constructorArgs = $constructorArgs ?: ['./config'];
+        $this->_constructorArgs = $constructorArgs ?: [CONFIG];
     }
 
     /**
