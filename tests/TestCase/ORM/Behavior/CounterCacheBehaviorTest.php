@@ -135,6 +135,30 @@ class CounterCacheBehaviorTest extends TestCase
      *
      * @return void
      */
+    public function testAddIgnore()
+    {
+        $this->post->belongsTo('Users');
+
+        $this->post->addBehavior('CounterCache', [
+            'Users' => [
+                'post_count'
+            ]
+        ]);
+
+        $before = $this->_getUser();
+        $entity = $this->_getEntity();
+        $this->post->save($entity, ['ignoreCounterCache' => true]);
+        $after = $this->_getUser();
+
+        $this->assertEquals(2, $before->get('post_count'));
+        $this->assertEquals(2, $after->get('post_count'));
+    }
+
+    /**
+     * Testing simple counter caching when adding a record
+     *
+     * @return void
+     */
     public function testAddScope()
     {
         $this->post->belongsTo('Users');
@@ -180,6 +204,31 @@ class CounterCacheBehaviorTest extends TestCase
 
         $this->assertEquals(2, $before->get('post_count'));
         $this->assertEquals(1, $after->get('post_count'));
+    }
+
+    /**
+     * Testing simple counter caching when deleting a record
+     *
+     * @return void
+     */
+    public function testDeleteIgnore()
+    {
+        $this->post->belongsTo('Users');
+
+        $this->post->addBehavior('CounterCache', [
+            'Users' => [
+                'post_count'
+            ]
+        ]);
+
+        $before = $this->_getUser();
+        $post = $this->post->find('all')
+            ->first();
+        $this->post->delete($post, ['ignoreCounterCache' => true]);
+        $after = $this->_getUser();
+
+        $this->assertEquals(2, $before->get('post_count'));
+        $this->assertEquals(2, $after->get('post_count'));
     }
 
     /**

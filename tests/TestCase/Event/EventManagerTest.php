@@ -422,6 +422,7 @@ class EventManagerTest extends TestCase
             ->with($event);
         $manager->dispatch($event);
         $this->assertEquals('something special', $event->result());
+        $this->assertEquals('something special', $event->result);
     }
 
     /**

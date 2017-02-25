@@ -1349,7 +1349,6 @@ class SecurityComponentTest extends TestCase
             []
         ]));
 
-
         $this->Controller->request->data = [
             'Model' => ['username' => '', 'password' => ''],
             '_Token' => compact('fields', 'unlocked', 'debug')

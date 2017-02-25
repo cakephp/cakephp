@@ -560,7 +560,6 @@ class Response extends Message implements ResponseInterface
         return $this->stream->getContents();
     }
 
-
     /**
      * Read values as properties.
      *

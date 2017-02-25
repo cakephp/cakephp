@@ -321,21 +321,21 @@ class FormHelper extends Helper
      * - `valueSources` The sources that values should be read from. See FormHelper::setValueSources()
      * - `templateVars` Provide template variables for the formStart template.
      *
-     * @param mixed $model The context for which the form is being defined. Can
+     * @param mixed $context The context for which the form is being defined. Can
      *   be an ORM entity, ORM resultset, or an array of meta data. You can use false or null
-     *   to make a model-less form.
+     *   to make a context-less form.
      * @param array $options An array of html attributes and options.
      * @return string An formatted opening FORM tag.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#Cake\View\Helper\FormHelper::create
      */
-    public function create($model = null, array $options = [])
+    public function create($context = null, array $options = [])
     {
         $append = '';
 
         if (empty($options['context'])) {
             $options['context'] = [];
         }
-        $options['context']['entity'] = $model;
+        $options['context']['entity'] = $context;
         $context = $this->_getContext($options['context']);
         unset($options['context']);
 
@@ -1051,6 +1051,9 @@ class FormHelper extends Helper
      * - `templates` - The templates you want to use for this input. Any templates will be merged on top of
      *   the already loaded templates. This option can either be a filename in /config that contains
      *   the templates you want to load, or an array of templates to use.
+     * - `labelOptions` - Either `false` to disable label around nestedWidgets e.g. radio, multicheckbox or an array
+     *   of attributes for the label tag. `selected` will be added to any classes e.g. `class => 'myclass'` where
+     *   widget is checked
      *
      * @param string $fieldName This should be "modelname.fieldname"
      * @param array $options Each type of input takes different options.
@@ -1066,7 +1069,8 @@ class FormHelper extends Helper
             'required' => null,
             'options' => null,
             'templates' => [],
-            'templateVars' => []
+            'templateVars' => [],
+            'labelOptions' => true
         ];
         $options = $this->_parseOptions($fieldName, $options);
         $options += ['id' => $this->_domId($fieldName)];
@@ -1096,6 +1100,9 @@ class FormHelper extends Helper
         $label = $options['label'];
         unset($options['label']);
 
+        $labelOptions = $options['labelOptions'];
+        unset($options['labelOptions']);
+
         $nestedInput = false;
         if ($options['type'] === 'checkbox') {
             $nestedInput = true;
@@ -1107,7 +1114,7 @@ class FormHelper extends Helper
             $options['hiddenField'] = '_split';
         }
 
-        $input = $this->_getInput($fieldName, $options);
+        $input = $this->_getInput($fieldName, $options + ['labelOptions' => $labelOptions]);
         if ($options['type'] === 'hidden' || $options['type'] === 'submit') {
             if ($newTemplates) {
                 $templater->pop();
@@ -1202,22 +1209,24 @@ class FormHelper extends Helper
      */
     protected function _getInput($fieldName, $options)
     {
+        $label = $options['labelOptions'];
+        unset($options['labelOptions']);
         switch (strtolower($options['type'])) {
             case 'select':
                 $opts = $options['options'];
                 unset($options['options']);
 
-                return $this->select($fieldName, $opts, $options);
+                return $this->select($fieldName, $opts, $options + ['label' => $label]);
             case 'radio':
                 $opts = $options['options'];
                 unset($options['options']);
 
-                return $this->radio($fieldName, $opts, $options);
+                return $this->radio($fieldName, $opts, $options + ['label' => $label]);
             case 'multicheckbox':
                 $opts = $options['options'];
                 unset($options['options']);
 
-                return $this->multiCheckbox($fieldName, $opts, $options);
+                return $this->multiCheckbox($fieldName, $opts, $options + ['label' => $label]);
             case 'input':
                 throw new RuntimeException("Invalid type 'input' used for field '$fieldName'");
 
@@ -1535,7 +1544,9 @@ class FormHelper extends Helper
      * ### Attributes:
      *
      * - `value` - Indicates the value when this radio button is checked.
-     * - `label` - boolean to indicate whether or not labels for widgets should be displayed.
+     * - `label` - Either `false` to disable label around the widget or an array of attributes for
+     *    the label tag. `selected` will be added to any classes e.g. `'class' => 'myclass'` where widget
+     *    is checked
      * - `hiddenField` - boolean to indicate if you want the results of radio() to include
      *    a hidden input with a value of ''. This is useful for creating radio sets that are non-continuous.
      * - `disabled` - Set to `true` or `disabled` to disable all the radio buttons.
@@ -2002,6 +2013,8 @@ class FormHelper extends Helper
             return $this->multiCheckbox($fieldName, $options, $attributes);
         }
 
+        unset($attributes['label']);
+
         // Secure the field if there are options, or it's a multi select.
         // Single selects with no options don't submit, but multiselects do.
         if ($attributes['secure'] &&
@@ -2042,6 +2055,9 @@ class FormHelper extends Helper
      *   You can also set disabled to a list of values you want to disable when creating checkboxes.
      * - `hiddenField` - Set to false to remove the hidden field that ensures a value
      *   is always submitted.
+     * - `label` - Either `false` to disable label around the widget or an array of attributes for
+     *   the label tag. `selected` will be added to any classes e.g. `'class' => 'myclass'` where
+     *   widget is checked
      *
      * Can be used in place of a select box with the multiple attribute.
      *
@@ -2074,6 +2090,7 @@ class FormHelper extends Helper
             ];
             $hidden = $this->hidden($fieldName, $hiddenAttributes);
         }
+        unset($attributes['hiddenField']);
 
         return $hidden . $this->widget('multicheckbox', $attributes);
     }

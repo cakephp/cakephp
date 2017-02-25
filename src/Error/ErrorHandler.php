@@ -61,7 +61,7 @@ use Exception;
  *
  * Error handler also provides the built in features for handling php errors (trigger_error).
  * While in debug mode, errors will be output to the screen using debugger. While in production mode,
- * errors will be logged to Log.  You can control which errors are logged by setting
+ * errors will be logged to Log. You can control which errors are logged by setting
  * `errorLevel` option in config/error.php.
  *
  * #### Logging errors

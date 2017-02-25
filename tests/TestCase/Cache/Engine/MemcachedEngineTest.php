@@ -192,10 +192,8 @@ class MemcachedEngineTest extends TestCase
             'serialize' => 'invalid_serializer'
         ];
 
-        $this->setExpectedException(
-            'InvalidArgumentException',
-            'invalid_serializer is not a valid serializer engine for Memcached'
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('invalid_serializer is not a valid serializer engine for Memcached');
         $Memcached->init($config);
     }
 
@@ -310,10 +308,8 @@ class MemcachedEngineTest extends TestCase
             'serialize' => 'json'
         ];
 
-        $this->setExpectedException(
-            'InvalidArgumentException',
-            'Memcached extension is not compiled with json support'
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Memcached extension is not compiled with json support');
         $Memcached->init($config);
     }
 
@@ -337,10 +333,8 @@ class MemcachedEngineTest extends TestCase
             'serialize' => 'msgpack'
         ];
 
-        $this->setExpectedException(
-            'InvalidArgumentException',
-            'msgpack is not a valid serializer engine for Memcached'
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('msgpack is not a valid serializer engine for Memcached');
         $Memcached->init($config);
     }
 
@@ -364,10 +358,8 @@ class MemcachedEngineTest extends TestCase
             'serialize' => 'igbinary'
         ];
 
-        $this->setExpectedException(
-            'InvalidArgumentException',
-            'Memcached extension is not compiled with igbinary support'
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Memcached extension is not compiled with igbinary support');
         $Memcached->init($config);
     }
 

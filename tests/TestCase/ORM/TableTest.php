@@ -1826,7 +1826,6 @@ class TableTest extends TestCase
         $this->assertTrue($authors->Articles->exists(['id' => $articleId]));
     }
 
-
     /**
      * Test that save works with replace saveStrategy, replacing the already persisted entities even if no new entities are passed
      *
@@ -2673,7 +2672,6 @@ class TableTest extends TestCase
         ]);
         $table->save($data);
     }
-
 
     /**
      * Tests that only the properties marked as dirty are actually saved
@@ -4330,7 +4328,6 @@ class TableTest extends TestCase
 
         $this->assertTrue($authors->Articles->link($author, $newArticles));
 
-
         $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
         $this->assertCount($sizeArticles, $author->articles);
         $this->assertFalse($author->dirty('articles'));
@@ -4557,7 +4554,6 @@ class TableTest extends TestCase
         $authors->Articles->unlink($author, [$article]);
     }
 
-
     /**
      * Integration test for replacing entities which depend on their source entity with HasMany and failing transaction. False should be returned when
      * unlinking fails while replacing even when cascadeCallbacks is enabled
@@ -4645,7 +4641,6 @@ class TableTest extends TestCase
         $this->assertFalse($authors->Articles->replace($author, $newArticles));
         $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
     }
-
 
     /**
      * Integration test for replacing entities with HasMany and an empty target list. The transaction must be successfull
@@ -4789,7 +4784,6 @@ class TableTest extends TestCase
         $this->assertCount(count($newArticles), $author->articles);
         $this->assertEquals((new Collection($newArticles))->extract('title'), (new Collection($author->articles))->extract('title'));
     }
-
 
     /**
      * Integration test to show how to unlink a single record from a belongsToMany
@@ -6397,6 +6391,81 @@ class TableTest extends TestCase
 
         $expected = $table->find()->contain($contain)->toList();
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests that saveOrFail triggers an exception on not successful save
+     *
+     * @return void
+     * @expectedException \Cake\ORM\Exception\PersistenceFailedException
+     * @expectedExceptionMessage Entity save failure.
+     */
+    public function testSaveOrFail()
+    {
+        $entity = new Entity([
+            'foo' => 'bar'
+        ]);
+        $table = TableRegistry::get('users');
+
+        $table->saveOrFail($entity);
+
+        $row = $table->find('all')->where(['foo' => 'bar'])->toArray();
+        $this->assertSame([], $row->toArray());
+    }
+
+    /**
+     * Tests that saveOrFail returns the right entity
+     *
+     * @return void
+     */
+    public function testSaveOrFailGetEntity()
+    {
+        $entity = new Entity([
+            'foo' => 'bar'
+        ]);
+        $table = TableRegistry::get('users');
+
+        try {
+            $table->saveOrFail($entity);
+        } catch (\Cake\ORM\Exception\PersistenceFailedException $e) {
+            $this->assertSame($entity, $e->getEntity());
+        }
+    }
+
+    /**
+     * Tests that deleteOrFail triggers an exception on not successful delete
+     *
+     * @return void
+     * @expectedException \Cake\ORM\Exception\PersistenceFailedException
+     * @expectedExceptionMessage Entity delete failure.
+     */
+    public function testDeleteOrFail()
+    {
+        $entity = new Entity([
+            'id' => 999
+        ]);
+        $table = TableRegistry::get('users');
+
+        $result = $table->deleteOrFail($entity);
+    }
+
+    /**
+     * Tests that deleteOrFail returns the right entity
+     *
+     * @return void
+     */
+    public function testDeleteOrFailGetEntity()
+    {
+        $entity = new Entity([
+            'id' => 999
+        ]);
+        $table = TableRegistry::get('users');
+
+        try {
+            $table->deleteOrFail($entity);
+        } catch (\Cake\ORM\Exception\PersistenceFailedException $e) {
+            $this->assertSame($entity, $e->getEntity());
+        }
     }
 
     /**

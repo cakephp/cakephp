@@ -79,6 +79,21 @@ class HasOneTest extends TestCase
     }
 
     /**
+     * Tests that foreignKey() returns the correct configured value
+     *
+     * @return void
+     */
+    public function testForeignKey()
+    {
+        $assoc = new HasOne('Profiles', [
+            'sourceTable' => $this->user
+        ]);
+        $this->assertEquals('user_id', $assoc->foreignKey());
+        $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
+        $this->assertEquals('another_key', $assoc->foreignKey());
+    }
+
+    /**
      * Tests that the association reports it can be joined
      *
      * @return void

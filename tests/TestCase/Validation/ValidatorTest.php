@@ -1431,7 +1431,6 @@ class ValidatorTest extends TestCase
         $this->assertNotEmpty($validator->errors(['username' => 'not a date']));
     }
 
-
     /**
      * Tests the dateTime proxy method
      *
@@ -1502,7 +1501,6 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'ip');
         $this->assertNotEmpty($validator->errors(['username' => 'not ip']));
-
 
         $this->assertProxyMethod($validator, 'ipv4', null, ['ipv4'], 'ip');
         $this->assertNotEmpty($validator->errors(['username' => 'not ip']));

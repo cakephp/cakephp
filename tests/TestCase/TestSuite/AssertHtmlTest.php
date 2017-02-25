@@ -2,14 +2,19 @@
 namespace Cake\Test\Fixture;
 
 use Cake\TestSuite\TestCase;
-use PHPUnit_Framework_ExpectationFailedException;
+use PHPUnit\Framework\ExpectationFailedException;
 
 /**
  * This class helps in indirectly testing the functionality of TestCase::assertHtml
  */
 class AssertHtmlTest extends TestCase
 {
-    public function testAssertHtmlWhitespace()
+    /**
+     * Test whitespace after HTML tags
+     *
+     * @return
+     */
+    public function testAssertHtmlWhitespaceAfter()
     {
         $input = <<<HTML
 <div class="wrapper">
@@ -27,6 +32,31 @@ HTML;
         ];
         $this->assertHtml($pattern, $input);
     }
+
+    /**
+     * Test whitespace inside HTML tags
+     *
+     * @return void
+     */
+    public function testAssertHtmlInnerWhitespace()
+    {
+        $input = <<<HTML
+<div class="widget">
+    <div class="widget-content">
+        A custom widget
+    </div>
+</div>
+HTML;
+        $expected = [
+            ['div' => ['class' => 'widget']],
+            ['div' => ['class' => 'widget-content']],
+            'A custom widget',
+            '/div',
+            '/div',
+        ];
+        $this->assertHtml($expected, $input);
+    }
+
     /**
      * test assertHtml works with single and double quotes
      *
@@ -106,7 +136,6 @@ HTML;
             '</div>';
         $this->assertHtml($pattern, $input);
     }
-
 
     /**
      * test that assertHtml knows how to handle correct quoting.
@@ -206,7 +235,7 @@ HTML;
         try {
             $this->assertHtml($pattern, $input);
             $this->fail('Assertion should fail');
-        } catch (PHPUnit_Framework_ExpectationFailedException $e) {
+        } catch (ExpectationFailedException $e) {
             $this->assertContains(
                 'Attribute did not match. Was expecting Attribute "clAss" == "active"',
                 $e->getMessage()
@@ -229,7 +258,7 @@ HTML;
         ];
         try {
             $this->assertHtml($pattern, $input);
-        } catch (PHPUnit_Framework_ExpectationFailedException $e) {
+        } catch (ExpectationFailedException $e) {
             $this->assertContains(
                 'Item #1 / regex #0 failed: Open <a tag',
                 $e->getMessage()

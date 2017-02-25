@@ -26,7 +26,6 @@ class TestCollection extends \IteratorIterator implements CollectionInterface
 {
     use CollectionTrait;
 
-
     public function __construct($items)
     {
         if (is_array($items)) {

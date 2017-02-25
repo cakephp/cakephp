@@ -1590,6 +1590,41 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test merge when an association has been replaced with null
+     *
+     * @return void
+     */
+    public function testMergeAssociationNullOut()
+    {
+        $user = new Entity([
+            'id' => 1,
+            'username' => 'user',
+        ]);
+        $article = new Entity([
+           'title' => 'title for post',
+           'user_id' => 1,
+           'user' => $user,
+        ]);
+
+        $user->accessible('*', true);
+        $article->accessible('*', true);
+
+        $data = [
+            'title' => 'Chelsea',
+            'user_id' => '',
+            'user' => ''
+        ];
+
+        $marshall = new Marshaller($this->articles);
+        $marshall->merge($article, $data, [
+            'associated' => ['Users']
+        ]);
+        $this->assertNull($article->user);
+        $this->assertSame('', $article->user_id);
+        $this->assertTrue($article->dirty('user'));
+    }
+
+    /**
      * Tests merging one to many associations
      *
      * @return void
@@ -3104,12 +3139,16 @@ class MarshallerTest extends TestCase
 
         $marshall = new Marshaller($this->articles);
 
-        $this->articles->eventManager()->attach(function ($e, $data, $options) {
-            $data['title'] = 'Modified title';
-            $data['user']['username'] = 'robert';
+        $this->articles->eventManager()->on(
+            'Model.beforeMarshal',
+            function ($e, $data, $options) {
+                $this->assertArrayHasKey('validate', $options);
+                $data['title'] = 'Modified title';
+                $data['user']['username'] = 'robert';
 
-            $options['associated'] = ['Users'];
-        }, 'Model.beforeMarshal');
+                $options['associated'] = ['Users'];
+            }
+        );
 
         $entity = $marshall->one($data);
 
@@ -3146,21 +3185,48 @@ class MarshallerTest extends TestCase
 
         $marshall = new Marshaller($this->articles);
 
-        $this->articles->users->eventManager()->attach(function ($e, $data) {
-            $data['secret'] = 'h45h3d';
-        }, 'Model.beforeMarshal');
+        // Assert event options are correct
+        $this->articles->users->eventManager()->on(
+            'Model.beforeMarshal',
+            function ($e, $data, $options) {
+                $this->assertArrayHasKey('validate', $options);
+                $this->assertTrue($options['validate']);
 
-        $this->articles->comments->eventManager()->attach(function ($e, $data) {
-            $data['comment'] .= ' (modified)';
-        }, 'Model.beforeMarshal');
+                $this->assertArrayHasKey('associated', $options);
+                $this->assertSame([], $options['associated']);
 
-        $this->articles->tags->eventManager()->attach(function ($e, $data) {
-            $data['tag'] .= ' (modified)';
-        }, 'Model.beforeMarshal');
+                $this->assertArrayHasKey('association', $options);
+                $this->assertInstanceOf('Cake\ORM\Association', $options['association']);
+            }
+        );
 
-        $this->articles->tags->junction()->eventManager()->attach(function ($e, $data) {
-            $data['modified_by'] = 1;
-        }, 'Model.beforeMarshal');
+        $this->articles->users->eventManager()->on(
+            'Model.beforeMarshal',
+            function ($e, $data, $options) {
+                $data['secret'] = 'h45h3d';
+            }
+        );
+
+        $this->articles->comments->eventManager()->on(
+            'Model.beforeMarshal',
+            function ($e, $data) {
+                $data['comment'] .= ' (modified)';
+            }
+        );
+
+        $this->articles->tags->eventManager()->on(
+            'Model.beforeMarshal',
+            function ($e, $data) {
+                $data['tag'] .= ' (modified)';
+            }
+        );
+
+        $this->articles->tags->junction()->eventManager()->on(
+            'Model.beforeMarshal',
+            function ($e, $data) {
+                $data['modified_by'] = 1;
+            }
+        );
 
         $entity = $marshall->one($data, [
             'associated' => ['Users', 'Comments', 'Tags']

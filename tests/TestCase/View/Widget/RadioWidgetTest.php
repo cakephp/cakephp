@@ -688,4 +688,53 @@ class RadioWidgetTest extends TestCase
         $this->assertContains('one x l-var wrap-var</label>', $result);
         $this->assertContains('two  wrap-var</label>', $result);
     }
+
+    /**
+     * testRenderCustomAttributes method
+     *
+     * Test render with custom attributes.
+     *
+     * @return void
+     */
+    public function testRenderCustomAttributes()
+    {
+        $label = new NestingLabelWidget($this->templates);
+        $radio = new RadioWidget($this->templates, $label);
+        $result = $radio->render([
+            'name' => 'Model[field]',
+            'label' => null,
+            'options' => ['option A', 'option B'],
+            'class' => 'my-class',
+            'data-ref' => 'custom-attr'
+        ], $this->context);
+        $expected = [
+            ['label' => ['for' => 'model-field-0']],
+            [
+                'input' => [
+                    'type' => 'radio',
+                    'name' => 'Model[field]',
+                    'value' => '0',
+                    'id' => 'model-field-0',
+                    'class' => 'my-class',
+                    'data-ref' => 'custom-attr'
+                ]
+            ],
+            'option A',
+            '/label',
+            ['label' => ['for' => 'model-field-1']],
+            [
+                'input' => [
+                    'type' => 'radio',
+                    'name' => 'Model[field]',
+                    'value' => '1',
+                    'id' => 'model-field-1',
+                    'class' => 'my-class',
+                    'data-ref' => 'custom-attr'
+                ]
+            ],
+            'option B',
+            '/label'
+        ];
+        $this->assertHtml($expected, $result);
+    }
 }

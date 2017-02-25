@@ -581,7 +581,6 @@ class Email implements JsonSerializable, Serializable
         return $this->setReturnPath($email, $name);
     }
 
-
     /**
      * Sets "to" address.
      *
@@ -1447,7 +1446,6 @@ class Email implements JsonSerializable, Serializable
         return $this->setEmailFormat($format);
     }
 
-
     /**
      * Sets the transport.
      *
@@ -1647,7 +1645,6 @@ class Email implements JsonSerializable, Serializable
 
         return $this->setDomain($domain);
     }
-
 
     /**
      * Add attachments to the email message

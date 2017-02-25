@@ -381,7 +381,7 @@ class HasMany extends Association
      *
      * This method does not check link uniqueness.
      *
-     * On success, the passed `$sourceEntity` will contain `$targetEntities` as  value
+     * On success, the passed `$sourceEntity` will contain `$targetEntities` as value
      * in the corresponding property for this association.
      *
      * Additional options for new links to be saved can be passed in the third argument,
@@ -563,23 +563,6 @@ class HasMany extends Association
         }
 
         return $this->_foreignKey;
-    }
-
-    /**
-     * Sets the name of the field representing the foreign key to the source table.
-     * If no parameters are passed current field is returned
-     *
-     * @deprecated 3.4.0 Use setForeignKey()/getForeignKey() instead.
-     * @param string|null $key the key to be used to link both tables together
-     * @return string
-     */
-    public function foreignKey($key = null)
-    {
-        if ($key !== null) {
-            return $this->setForeignKey($key);
-        }
-
-        return $this->getForeignKey();
     }
 
     /**

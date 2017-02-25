@@ -51,7 +51,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      *
      * ### Examples:
      *
-     *  `$f = new FunctionExpression('CONCAT', ['CakePHP', ' rules']);`
+     * `$f = new FunctionExpression('CONCAT', ['CakePHP', ' rules']);`
      *
      * Previous line will generate `CONCAT('CakePHP', ' rules')`
      *

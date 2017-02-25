@@ -344,7 +344,6 @@ class PaginatorComponentTest extends TestCase
         ];
         $this->assertEquals($expected, $result);
 
-
         $settings = [
             'page' => 1,
             'limit' => 20,

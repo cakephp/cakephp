@@ -510,7 +510,7 @@ class CacheTest extends TestCase
     /**
      * Test that failed writes cause errors to be triggered.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \PHPUnit\Framework\Error\Error
      * @return void
      */
     public function testWriteTriggerError()

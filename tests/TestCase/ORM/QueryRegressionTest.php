@@ -1239,7 +1239,6 @@ class QueryRegressionTest extends TestCase
         $this->assertNotEmpty($result);
         $this->assertInstanceOf('Cake\I18n\Time', $result->_matchingData['Comments']->updated);
 
-
         $query = $table->find()
             ->matching('Comments.Articles.Authors')
             ->where([
@@ -1560,5 +1559,43 @@ class QueryRegressionTest extends TestCase
         ];
 
         $this->assertEquals($expected, $result);
+    }
+    /**
+     * Tests deep formatters get the right object type when applied in a beforeFind
+     *
+     * @see https://github.com/cakephp/cakephp/issues/9787
+     * @return void
+     */
+    public function testFormatDeepDistantAssociationRecords2()
+    {
+        $this->loadFixtures('Authors', 'Articles', 'Tags', 'ArticlesTags');
+        $table = TableRegistry::get('authors');
+        $table->hasMany('articles');
+        $articles = $table->association('articles')->target();
+        $articles->hasMany('articlesTags');
+        $tags = $articles->association('articlesTags')->target()->belongsTo('tags');
+
+        $tags->target()->eventManager()->on('Model.beforeFind', function ($e, $query) {
+            return $query->formatResults(function ($results) {
+                return $results->map(function (\Cake\ORM\Entity $tag) {
+                    $tag->name .= ' - visited';
+
+                    return $tag;
+                });
+            });
+        });
+
+        $query = $table->find()->contain(['articles.articlesTags.tags']);
+
+        $query->mapReduce(function ($row, $key, $mr) {
+            foreach ((array)$row->articles as $article) {
+                foreach ((array)$article->articles_tags as $articleTag) {
+                    $mr->emit($articleTag->tag->name);
+                }
+            }
+        });
+
+        $expected = ['tag1 - visited', 'tag2 - visited', 'tag1 - visited', 'tag3 - visited'];
+        $this->assertEquals($expected, $query->toArray());
     }
 }

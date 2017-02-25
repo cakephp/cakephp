@@ -36,7 +36,6 @@ class MyUsersTable extends Table
     protected $_table = 'users';
 }
 
-
 /**
  * Test case for TableLocator
  */
@@ -49,7 +48,6 @@ class TableLocatorTest extends TestCase
      * @var \Cake\ORM\Locator\TableLocator
      */
     protected $_locator;
-
 
     /**
      * setup

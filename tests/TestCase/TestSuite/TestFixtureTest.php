@@ -97,7 +97,6 @@ class StringsTestsFixture extends TestFixture
     ];
 }
 
-
 /**
  * ImportsFixture class
  */
@@ -341,7 +340,7 @@ class TestFixtureTest extends TestCase
     /**
      * test create method, trigger error
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \PHPUnit\Framework\Error\Error
      * @return void
      */
     public function testCreateError()

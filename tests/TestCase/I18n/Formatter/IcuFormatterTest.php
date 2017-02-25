@@ -105,20 +105,27 @@ class IcuFormatterTest extends TestCase
      * Tests that passing a message in the wrong format will throw an exception
      *
      * @return void
+     * @expectedException \Exception
+     * @expectedExceptionMessage msgfmt_create: message formatter
      */
     public function testBadMessageFormat()
     {
-        if (version_compare(PHP_VERSION, '7', '<')) {
-            $this->setExpectedException(
-                'Exception',
-                'msgfmt_create: message formatter'
-            );
-        } else {
-            $this->setExpectedException(
-                'Exception',
-                'Constructor failed'
-            );
-        }
+        $this->skipIf(version_compare(PHP_VERSION, '7', '>='));
+
+        $formatter = new IcuFormatter();
+        $formatter->format('en_US', '{crazy format', ['some', 'vars']);
+    }
+
+    /**
+     * Tests that passing a message in the wrong format will throw an exception
+     *
+     * @return void
+     * @expectedException \Exception
+     * @expectedExceptionMessage Constructor failed
+     */
+    public function testBadMessageFormatPHP7()
+    {
+        $this->skipIf(version_compare(PHP_VERSION, '7', '<'));
 
         $formatter = new IcuFormatter();
         $formatter->format('en_US', '{crazy format', ['some', 'vars']);

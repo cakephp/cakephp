@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Plugin;
+use Cake\Database\Exception;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
@@ -83,7 +84,7 @@ class ResultSetTest extends TestCase
         foreach ($results as $result) {
             $first[] = $result;
         }
-        $this->setExpectedException('Cake\Database\Exception');
+        $this->expectException(Exception::class);
         foreach ($results as $result) {
             $second[] = $result;
         }
