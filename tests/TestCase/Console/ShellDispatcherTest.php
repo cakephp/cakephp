@@ -238,7 +238,7 @@ class ShellDispatcherTest extends TestCase
 
         $dispatcher->args = ['mock_without_main', 'initdb'];
         $result = $dispatcher->dispatch();
-        $this->assertEquals(Shell::CODE_SUCCESS, $result);
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
     }
 
     /**
@@ -248,6 +248,8 @@ class ShellDispatcherTest extends TestCase
      */
     public function testDispatchShellWithCustomIntegerCodes()
     {
+        $customErrorCode = 3;
+
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
             ->setMethods(['findShell'])
             ->getMock();
@@ -256,7 +258,7 @@ class ShellDispatcherTest extends TestCase
         $Shell->expects($this->once())->method('initialize');
         $Shell->expects($this->once())->method('runCommand')
             ->with(['initdb'])
-            ->will($this->returnValue(3));
+            ->will($this->returnValue($customErrorCode));
 
         $dispatcher->expects($this->any())
             ->method('findShell')
@@ -265,7 +267,7 @@ class ShellDispatcherTest extends TestCase
 
         $dispatcher->args = ['mock_without_main', 'initdb'];
         $result = $dispatcher->dispatch();
-        $this->assertEquals(3, $result);
+        $this->assertSame($customErrorCode, $result);
     }
 
     /**
@@ -292,7 +294,7 @@ class ShellDispatcherTest extends TestCase
 
         $dispatcher->args = ['mock_without_main', 'initdb'];
         $result = $dispatcher->dispatch();
-        $this->assertEquals(Shell::CODE_SUCCESS, $result);
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
     }
 
     /**
@@ -319,7 +321,7 @@ class ShellDispatcherTest extends TestCase
 
         $dispatcher->args = ['example'];
         $result = $dispatcher->dispatch();
-        $this->assertEquals(Shell::CODE_SUCCESS, $result);
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
     }
 
     /**
@@ -346,7 +348,7 @@ class ShellDispatcherTest extends TestCase
 
         $dispatcher->args = ['Example'];
         $result = $dispatcher->dispatch();
-        $this->assertEquals(Shell::CODE_SUCCESS, $result);
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
     }
 
     /**
@@ -373,7 +375,7 @@ class ShellDispatcherTest extends TestCase
 
         $dispatcher->args = ['sample'];
         $result = $dispatcher->dispatch();
-        $this->assertEquals(Shell::CODE_SUCCESS, $result);
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
     }
 
     /**
