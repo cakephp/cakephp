@@ -1189,7 +1189,7 @@ class PaginatorHelper extends Helper
         }
 
         if (empty($limits)) {
-            $limits += [20 => '20', 25 => '25', 50 => '50', 100 => '100'];
+            $limits += array(''=>__('All'), '20' => '20', '50' => '50', '100' => '100');
         }
 
         if (!in_array($default, $limits)) {
@@ -1198,7 +1198,7 @@ class PaginatorHelper extends Helper
 
         ksort($limits);
 
-        $out .= $this->Form->control('limit', ($options + ['type' => 'select', 'label' => __("View"), 'value' => $default, 'options' => $limits, 'onChange' => 'this.form.submit()']));
+        $out .= $this->Form->control('limit', ($options + ['type' => 'select', 'label' => __('View'), 'value' => $default, 'options' => $limits, 'onChange' => 'this.form.submit()']));
         $out .= $this->Form->end();
 
         return $out;
