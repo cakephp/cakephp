@@ -1685,6 +1685,25 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Returns whether or not a field matches against a regular expression.
+     *
+     * @param string $field Field name.
+     * @param string $regex Regular expression.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @return bool
+     */
+    public function regex($field, $regex, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'regex', $extra + [
+            'rule' => ['custom', $regex]
+        ]);
+    }
+
+    /**
      * Returns false if any validation for the passed rule set should be stopped
      * due to the field missing in the data array
      *

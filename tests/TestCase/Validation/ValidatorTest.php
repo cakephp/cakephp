@@ -1846,6 +1846,19 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the regex proxy method
+     *
+     * @return void
+     */
+    public function testRegex()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'regex', '/(?<!\\S)\\d++(?!\\S)/', ['/(?<!\\S)\\d++(?!\\S)/'], 'custom');
+        $this->assertEmpty($validator->errors(['username' => '123']));
+        $this->assertNotEmpty($validator->errors(['username' => 'Foo']));
+    }
+
+    /**
      * Tests that a rule in the Validator class exists and was configured as expected.
      *
      * @param Validator $validator
