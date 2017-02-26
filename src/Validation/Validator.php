@@ -461,7 +461,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
     /**
      * Sets whether a field is required to be present in data array.
-     * You can also pass array. Using an array will let you provide  the following
+     * You can also pass array. Using an array will let you provide the following
      * keys:
      *
      * - `mode` individual mode for field
@@ -1682,6 +1682,25 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $context = compact('data', 'newRecord', 'field', 'providers');
 
         return !$this->_checkPresence($this->field($field), $context);
+    }
+
+    /**
+     * Returns whether or not a field matches against a regular expression.
+     *
+     * @param string $field Field name.
+     * @param string $regex Regular expression.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @return bool
+     */
+    public function regex($field, $regex, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'regex', $extra + [
+            'rule' => ['custom', $regex]
+        ]);
     }
 
     /**

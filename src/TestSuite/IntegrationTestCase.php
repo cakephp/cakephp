@@ -13,6 +13,13 @@
  */
 namespace Cake\TestSuite;
 
+if (class_exists('PHPUnit_Runner_Version') && !interface_exists('PHPUnit\Exception')) {
+    if (version_compare(\PHPUnit_Runner_Version::id(), '5.7', '<')) {
+        trigger_error(sprintf('Your PHPUnit Version must be at least 5.7.0 to use CakePHP Testsuite, found %s', \PHPUnit_Runner_Version::id()), E_USER_ERROR);
+    }
+    class_alias('PHPUnit_Exception', 'PHPUnit\Exception');
+}
+
 use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
 use Cake\Network\Session;
@@ -24,7 +31,6 @@ use Cake\Utility\Text;
 use Cake\View\Helper\SecureFieldTokenTrait;
 use Exception;
 use LogicException;
-use PHPUnit_Exception;
 
 /**
  * A test case class intended to make integration tests of
@@ -420,7 +426,7 @@ abstract class IntegrationTestCase extends TestCase
             $response = $dispatcher->execute($request);
             $this->_requestSession = $request['session'];
             $this->_response = $response;
-        } catch (PHPUnit_Exception $e) {
+        } catch (\PHPUnit\Exception $e) {
             throw $e;
         } catch (DatabaseException $e) {
             throw $e;

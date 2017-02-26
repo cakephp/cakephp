@@ -50,7 +50,7 @@ class PaginatorHelper extends Helper
      * The values that may be specified are:
      *
      * - `url` Url of the action. See Router::url()
-     * - `url['sort']`  the key that the recordset is sorted.
+     * - `url['sort']` the key that the recordset is sorted.
      * - `url['direction']` Direction of the sorting (default: 'asc').
      * - `url['page']` Page number to use in links.
      * - `model` The name of the model.

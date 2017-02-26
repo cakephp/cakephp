@@ -24,12 +24,12 @@ use Cake\TestSuite\Constraint\EventFired;
 use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\Utility\Inflector;
 use Exception;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase as BaseTestCase;
 
 /**
  * Cake TestCase class
  */
-abstract class TestCase extends PHPUnit_Framework_TestCase
+abstract class TestCase extends BaseTestCase
 {
 
     /**
@@ -410,7 +410,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
                     $tags = $matches[1];
                     $type = 'Regex matches';
                 } else {
-                    $tags = preg_quote($tags, '/');
+                    $tags = '\s*' . preg_quote($tags, '/');
                     $type = 'Text equals';
                 }
                 $regex[] = [

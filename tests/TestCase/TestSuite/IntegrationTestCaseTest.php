@@ -39,6 +39,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
 
+        Router::connect('/get/:controller/:action', ['_method' => 'GET'], ['routeClass' => 'InflectedRoute']);
         Router::connect('/:controller/:action/*', [], ['routeClass' => 'InflectedRoute']);
         DispatcherFactory::clear();
         DispatcherFactory::add('Routing');
@@ -182,6 +183,23 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->get('/request_action/test_request_action');
         $this->assertNotEmpty($this->_response);
         $this->assertInstanceOf('Cake\Network\Response', $this->_response);
+        $this->assertEquals('This is a test', $this->_response->body());
+
+        $this->_response = null;
+        $this->get('/get/request_action/test_request_action');
+        $this->assertEquals('This is a test', $this->_response->body());
+    }
+
+    /**
+     * Test sending get requests sets the request method
+     *
+     * @return void
+     */
+    public function testGetSpecificRouteHttpServer()
+    {
+        $this->useHttpServer(true);
+        $this->get('/get/request_action/test_request_action');
+        $this->assertResponseOk();
         $this->assertEquals('This is a test', $this->_response->body());
     }
 
@@ -393,7 +411,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Tests the failure message for assertCookieNotSet
      *
-     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedException \PHPUnit\Framework\AssertionFailedError
      * @expectedExceptionMessage Cookie 'remember_me' has been set
      * @return void
      */
@@ -407,7 +425,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      * Tests the failure message for assertCookieNotSet when no
      * response whas generated
      *
-     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedException \PHPUnit\Framework\AssertionFailedError
      * @expectedExceptionMessage No response set, cannot assert cookies.
      * @return void
      */
@@ -526,7 +544,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Test that exceptions being thrown are handled correctly.
      *
-     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedException \PHPUnit\Framework\AssertionFailedError
      * @return void
      */
     public function testWithUnexpectedException()
@@ -765,7 +783,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Test the content regexp assertion failing
      *
-     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedException \PHPUnit\Framework\AssertionFailedError
      * @expectedExceptionMessage No response set
      * @return void
      */
@@ -790,7 +808,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Test negated content regexp assertion failing
      *
-     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedException \PHPUnit\Framework\AssertionFailedError
      * @expectedExceptionMessage No response set
      * @return void
      */
@@ -852,7 +870,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Test that assertFile requires a response
      *
-     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedException \PHPUnit\Framework\AssertionFailedError
      * @expectedExceptionMessage No response set, cannot assert file
      * @return void
      */
@@ -864,7 +882,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Test that assertFile requires a file
      *
-     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedException \PHPUnit\Framework\AssertionFailedError
      * @expectedExceptionMessage No file was sent in this response
      * @return void
      */

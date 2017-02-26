@@ -61,7 +61,7 @@ class SecurityComponent extends Component
      *   and hidden unlocked fields do not have their values checked.
      * - `unlockedActions` - Actions to exclude from POST validation checks.
      *   Other checks like requireAuth(), requireSecure() etc. will still be applied.
-     * - `validatePost` -  Whether to validate POST data. Set to false to disable
+     * - `validatePost` - Whether to validate POST data. Set to false to disable
      *   for data coming from 3rd party services, etc.
      *
      * @var array
@@ -454,7 +454,6 @@ class SecurityComponent extends Component
 
         return $fieldList;
     }
-
 
     /**
      * Get the unlocked string

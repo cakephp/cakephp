@@ -86,11 +86,11 @@ class TimeHelper extends Helper
     }
 
     /**
-     * Returns true if given datetime string is today.
+     * Returns true, if the given datetime string is today.
      *
      * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
-     * @return bool True if datetime string is today
+     * @return bool True if the given datetime string is today.
      */
     public function isToday($dateString, $timezone = null)
     {
@@ -98,11 +98,11 @@ class TimeHelper extends Helper
     }
 
     /**
-     * Returns true if given datetime string is in the future.
+     * Returns true, if the given datetime string is in the future.
      *
      * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
-     * @return bool True if datetime string is today
+     * @return bool True if the given datetime string lies in the future.
      */
     public function isFuture($dateString, $timezone = null)
     {
@@ -110,11 +110,11 @@ class TimeHelper extends Helper
     }
 
     /**
-     * Returns true if given datetime string is in the past.
+     * Returns true, if the given datetime string is in the past.
      *
      * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
-     * @return bool True if datetime string is today
+     * @return bool True if the given datetime string lies in the past.
      */
     public function isPast($dateString, $timezone = null)
     {

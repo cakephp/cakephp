@@ -196,6 +196,19 @@ class BehaviorTest extends TestCase
         $this->assertEquals($config, $behavior->config());
     }
 
+    /**
+     * Test getting table instance.
+     *
+     * @return void
+     */
+    public function testGetTable()
+    {
+        $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+
+        $behavior = new TestBehavior($table);
+        $this->assertSame($table, $behavior->getTable());
+    }
+
     public function testReflectionCache()
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();

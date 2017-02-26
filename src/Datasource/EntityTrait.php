@@ -800,7 +800,7 @@ trait EntityTrait
      * true means that the instance is not yet persisted in the database, false
      * that it already is.
      *
-     * @param bool|null $new true if it is known this instance was persisted
+     * @param bool|null $new true if it is known this instance was not yet persisted
      * @return bool Whether or not the entity has been persisted.
      */
     public function isNew($new = null)
@@ -1066,7 +1066,7 @@ trait EntityTrait
      * Stores whether or not a property value can be changed or set in this entity.
      * The special property `*` can also be marked as accessible or protected, meaning
      * that any other property specified before will take its value. For example
-     * `$entity->accessible('*', true)`  means that any property not specified already
+     * `$entity->accessible('*', true)` means that any property not specified already
      * will be accessible by default.
      *
      * You can also call this method with an array of properties, in which case they
@@ -1109,7 +1109,7 @@ trait EntityTrait
      * Stores whether or not a property value can be changed or set in this entity.
      * The special property `*` can also be marked as accessible or protected, meaning
      * that any other property specified before will take its value. For example
-     * `$entity->accessible('*', true)`  means that any property not specified already
+     * `$entity->accessible('*', true)` means that any property not specified already
      * will be accessible by default.
      *
      * You can also call this method with an array of properties, in which case they
@@ -1232,7 +1232,7 @@ trait EntityTrait
     {
         return $this->_properties + [
             '[new]' => $this->isNew(),
-            '[accessible]' => array_filter($this->_accessible),
+            '[accessible]' => $this->_accessible,
             '[dirty]' => $this->_dirty,
             '[original]' => $this->_original,
             '[virtual]' => $this->_virtual,

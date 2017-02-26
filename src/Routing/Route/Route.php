@@ -58,7 +58,7 @@ class Route
     public $template = null;
 
     /**
-     * Is this route a greedy route?  Greedy routes have a `/*` in their
+     * Is this route a greedy route? Greedy routes have a `/*` in their
      * template
      *
      * @var bool
@@ -73,7 +73,7 @@ class Route
     protected $_compiledRoute = null;
 
     /**
-     * The name for a route.  Fetch with Route::getName();
+     * The name for a route. Fetch with Route::getName();
      *
      * @var string|null
      */
@@ -327,7 +327,7 @@ class Route
             if (empty($method)) {
                 // Deprecated reading the global state is deprecated and will be removed in 4.x
                 $request = Router::getRequest(true) ?: ServerRequest::createFromGlobals();
-                $method = $request->env('REQUEST_METHOD');
+                $method = $request->getMethod();
             }
             if (!in_array($method, (array)$this->defaults['_method'], true)) {
                 return false;
@@ -422,7 +422,7 @@ class Route
      * Return true if a given named $param's $val matches a given $rule depending on $context.
      * Currently implemented rule types are controller, action and match that can be combined with each other.
      *
-     * @param string $args A string with the passed params.  eg. /1/foo
+     * @param string $args A string with the passed params. eg. /1/foo
      * @param string $context The current route context, which should contain controller/action keys.
      * @return array Array of passed args.
      */

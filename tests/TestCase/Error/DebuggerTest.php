@@ -280,6 +280,7 @@ class DebuggerTest extends TestCase
         $View = $Controller->createView();
         $View->int = 2;
         $View->float = 1.333;
+        $View->string = '  ';
 
         $result = Debugger::exportVar($View);
         $expected = <<<TEXT
@@ -310,6 +311,7 @@ object(Cake\View\View) {
 	Form => object(Cake\View\Helper\FormHelper) {}
 	int => (int) 2
 	float => (float) 1.333
+	string => '  '
 	[protected] _helpers => object(Cake\View\HelperRegistry) {}
 	[protected] _ext => '.ctp'
 	[protected] _passedVars => [

@@ -2297,10 +2297,10 @@ class RouterTest extends TestCase
         Router::reload();
         Router::connect('/:controller/:action/*');
         $result = Router::parse('/posts/view/something.', 'GET');
-        $this->assertEquals('something.', $result['pass'][0], 'Period was chopped off %s');
+        $this->assertEquals('something.', $result['pass'][0], 'Period was chopped off');
 
         $result = Router::parse('/posts/view/something. . .', 'GET');
-        $this->assertEquals('something. . .', $result['pass'][0], 'Period was chopped off %s');
+        $this->assertEquals('something. . .', $result['pass'][0], 'Period was chopped off');
     }
 
     /**
@@ -2315,10 +2315,10 @@ class RouterTest extends TestCase
         Router::extensions('json', false);
 
         $result = Router::parse('/posts/view/something.', 'GET');
-        $this->assertEquals('something.', $result['pass'][0], 'Period was chopped off %s');
+        $this->assertEquals('something.', $result['pass'][0], 'Period was chopped off');
 
         $result = Router::parse('/posts/view/something. . .', 'GET');
-        $this->assertEquals('something. . .', $result['pass'][0], 'Period was chopped off %s');
+        $this->assertEquals('something. . .', $result['pass'][0], 'Period was chopped off');
     }
 
     /**

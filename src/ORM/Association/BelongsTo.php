@@ -56,23 +56,6 @@ class BelongsTo extends Association
     }
 
     /**
-     * Sets the name of the field representing the foreign key to the target table.
-     * If no parameters are passed current field is returned
-     *
-     * @deprecated 3.4.0 Use setForeignKey()/getForeignKey() instead.
-     * @param string|null $key the key to be used to link both tables together
-     * @return string
-     */
-    public function foreignKey($key = null)
-    {
-        if ($key !== null) {
-            $this->setForeignKey($key);
-        }
-
-        return $this->getForeignKey();
-    }
-
-    /**
      * Handle cascading deletes.
      *
      * BelongsTo associations are never cleared in a cascading delete scenario.

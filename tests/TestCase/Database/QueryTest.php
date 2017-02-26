@@ -4077,7 +4077,6 @@ class QueryTest extends TestCase
         $this->assertInstanceOf('DateTime', $result[0]['the_date']);
     }
 
-
     /**
      * Tests that the json type can save and get data symmetrically
      *

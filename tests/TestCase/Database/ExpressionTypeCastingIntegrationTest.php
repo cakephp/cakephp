@@ -139,7 +139,6 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
         $this->assertEquals('4c2681c048298a29a7fb413140cf8569', $result[0]['id']);
     }
 
-
     /**
      * Tests Select using value object in conditions
      *

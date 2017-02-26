@@ -1431,7 +1431,6 @@ class ValidatorTest extends TestCase
         $this->assertNotEmpty($validator->errors(['username' => 'not a date']));
     }
 
-
     /**
      * Tests the dateTime proxy method
      *
@@ -1502,7 +1501,6 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'ip');
         $this->assertNotEmpty($validator->errors(['username' => 'not ip']));
-
 
         $this->assertProxyMethod($validator, 'ipv4', null, ['ipv4'], 'ip');
         $this->assertNotEmpty($validator->errors(['username' => 'not ip']));
@@ -1843,6 +1841,19 @@ class ValidatorTest extends TestCase
         $this->assertEmpty($validator->errors(['things' => ['_ids' => [1, 2, 3]]]));
         $this->assertEmpty($validator->errors(['things' => ['_ids' => [1, 2]]]));
         $this->assertNotEmpty($validator->errors(['things' => ['_ids' => [1, 2, 3, 4]]]));
+    }
+
+    /**
+     * Tests the regex proxy method
+     *
+     * @return void
+     */
+    public function testRegex()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'regex', '/(?<!\\S)\\d++(?!\\S)/', ['/(?<!\\S)\\d++(?!\\S)/'], 'custom');
+        $this->assertEmpty($validator->errors(['username' => '123']));
+        $this->assertNotEmpty($validator->errors(['username' => 'Foo']));
     }
 
     /**

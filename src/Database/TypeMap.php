@@ -85,7 +85,6 @@ class TypeMap
         return $this->_defaults;
     }
 
-
     /**
      * Configures a map of default fields and their associated types to be
      * used as the default list of types for every function in this class

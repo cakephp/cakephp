@@ -411,14 +411,19 @@ abstract class Association
             $this->_targetTable = $tableLocator->get($registryAlias, $config);
 
             if ($exists) {
-                $targetClassName = get_class($this->_targetTable);
                 $className = $this->_getClassName($registryAlias, ['className' => $this->_className]);
 
-                if ($targetClassName !== $className) {
+                if (!$this->_targetTable instanceof $className) {
+                    $errorMessage = '%s association "%s" of type "%s" to "%s" doesn\'t match the expected class "%s". ';
+                    $errorMessage .= 'You can\'t have an association of the same name with a different target "className" option anywhere in your app.';
+
                     throw new RuntimeException(sprintf(
-                        'Invalid Table retrieved from a registry. Requested: %s, got: %s',
-                        $className,
-                        $targetClassName
+                        $errorMessage,
+                        get_class($this->_sourceTable),
+                        $this->getName(),
+                        $this->type(),
+                        get_class($this->_targetTable),
+                        $className
                     ));
                 }
             }

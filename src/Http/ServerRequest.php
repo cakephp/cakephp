@@ -17,7 +17,6 @@ namespace Cake\Http;
 use ArrayAccess;
 use BadMethodCallException;
 use Cake\Core\Configure;
-use Cake\Http\ServerRequestFactory;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Network\Session;
 use Cake\Utility\Hash;
@@ -62,10 +61,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     public $data = [];
 
     /**
-     * Array of querystring arguments
+     * Array of query string arguments
      *
      * @var array
-     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getQuery() instead.
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getQuery() or getQueryParams() instead.
      */
     public $query = [];
 
@@ -235,8 +234,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Create a new request object.
      *
-     * You can supply the data as either an array or as a string.  If you use
-     * a string you can only supply the URL for the request.  Using an array will
+     * You can supply the data as either an array or as a string. If you use
+     * a string you can only supply the URL for the request. Using an array will
      * let you provide the following keys:
      *
      * - `post` POST data or non query string data
@@ -305,7 +304,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         }
 
         // Extract a query string from config[url] if present.
-        // This is required for backwards compatbility and keeping
+        // This is required for backwards compatibility and keeping
         // UriInterface implementations happy.
         $querystr = '';
         if (strpos($config['url'], '?') !== false) {
@@ -383,7 +382,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param array $query The array to which the parsed keys/values are being added.
      * @param string $queryString A query string from the URL if provided
-     * @return array An array containing the parsed querystring keys/values.
+     * @return array An array containing the parsed query string as keys/values.
      */
     protected function _processGet($query, $queryString = '')
     {
@@ -916,7 +915,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     }
 
     /**
-     * Get the value of the current requests URL. Will include querystring arguments.
+     * Get the value of the current requests URL. Will include the query string arguments.
      *
      * @param bool $base Include the base path, set to false to trim the base path off.
      * @return string The current request URL including query string args.
@@ -979,6 +978,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * the headers.
      *
      * @return array An associative array of headers and their values.
+     * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function getHeaders()
     {
@@ -1006,6 +1006,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name The header you want to get (case-insensitive)
      * @return bool Whether or not the header is defined.
+     * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function hasHeader($name)
     {
@@ -1023,6 +1024,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string $name The header you want to get (case-insensitive)
      * @return array An associative array of headers and their values.
      *   If the header doesn't exist, an empty array will be returned.
+     * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function getHeader($name)
     {
@@ -1039,6 +1041,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name The header you want to get (case-insensitive)
      * @return string Header values collapsed into a comma separated string.
+     * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function getHeaderLine($name)
     {
@@ -1053,6 +1056,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string $name The header name.
      * @param string|array $value The header value
      * @return static
+     * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function withHeader($name, $value)
     {
@@ -1072,6 +1076,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string $name The header name.
      * @param string|array $value The header value
      * @return static
+     * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function withAddedHeader($name, $value)
     {
@@ -1092,6 +1097,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name The header name to remove.
      * @return static
+     * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function withoutHeader($name)
     {
@@ -1125,6 +1131,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * by CakePHP internally, and will effect the result of this method.
      *
      * @return string The name of the HTTP method used.
+     * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function getMethod()
     {
@@ -1136,6 +1143,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $method The HTTP method to use.
      * @return static A new instance with the updated method.
+     * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function withMethod($method)
     {
@@ -1161,6 +1169,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * used to create this request.
      *
      * @return array
+     * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function getServerParams()
     {
@@ -1168,9 +1177,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     }
 
     /**
-     * Get all the query parameters.
+     * Get all the query parameters in accordance to the PSR-7 specifications. To read specific query values
+     * use the alternative getQuery() method.
      *
      * @return array
+     * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function getQueryParams()
     {
@@ -1182,6 +1193,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param array $query The query string data to use
      * @return static A new instance with the updated query string data.
+     * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function withQueryParams(array $query)
     {
@@ -1396,7 +1408,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|null $name Query string variable name or null to read all.
      * @return string|array|null The value being read
-     * @deprecated 3.4.0 Use getQuery() and withQueryParams() instead.
+     * @deprecated 3.4.0 Use getQuery() or the PSR-7 getQueryParams() and withQueryParams() methods instead.
      */
     public function query($name = null)
     {
@@ -1410,12 +1422,26 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Read a specific query value or dotted path.
      *
-     * @param string $name The name or dotted path to the query param.
-     * @param mixed $default The default value if the named parameter is not set.
+     * Developers are encouraged to use getQueryParams() when possible as it is PSR-7 compliant, and this method
+     * is not.
+     *
+     * ### PSR-7 Alternative
+     *
+     * ```
+     * $value = Hash::get($request->getQueryParams(), 'Post.id', null);
+     * ```
+     *
+     * @param string|null $name The name or dotted path to the query param or null to read all.
+     * @param mixed $default The default value if the named parameter is not set, and $name is not null.
      * @return null|string|array Query data.
+     * @see ServerRequest::getQueryParams()
      */
-    public function getQuery($name, $default = null)
+    public function getQuery($name = null, $default = null)
     {
+        if ($name === null) {
+            return $this->query;
+        }
+
         return Hash::get($this->query, $name, $default);
     }
 

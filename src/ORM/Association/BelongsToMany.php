@@ -194,7 +194,7 @@ class BelongsToMany extends Association
     public function targetForeignKey($key = null)
     {
         if ($key !== null) {
-            return $this->setTargetForeignKey($key);
+            $this->setTargetForeignKey($key);
         }
 
         return $this->getTargetForeignKey();
@@ -224,22 +224,6 @@ class BelongsToMany extends Association
         }
 
         return $this->_foreignKey;
-    }
-
-    /**
-     * Sets the name of the field representing the foreign key to the source table.
-     * If no parameters are passed current field is returned
-     *
-     * @param string|null $key the key to be used to link both tables together
-     * @return string
-     */
-    public function foreignKey($key = null)
-    {
-        if ($key !== null) {
-            $this->setForeignKey($key);
-        }
-
-        return $this->getForeignKey();
     }
 
     /**
@@ -993,19 +977,6 @@ class BelongsToMany extends Association
     }
 
     /**
-     * {@inheritDoc}
-     * @deprecated 3.4.0 Use setConditions()/getConditions() instead.
-     */
-    public function conditions($conditions = null)
-    {
-        if ($conditions !== null) {
-            $this->setConditions($conditions);
-        }
-
-        return $this->getConditions();
-    }
-
-    /**
      * Sets the current join table, either the name of the Table instance or the instance itself.
      *
      * @param string|\Cake\ORM\Table $through Name of the Table instance or the instance itself
@@ -1173,7 +1144,7 @@ class BelongsToMany extends Association
      * target entity contains the joint property with its primary key and any extra
      * information to be stored.
      *
-     * On success, the passed `$sourceEntity` will contain `$targetEntities` as  value
+     * On success, the passed `$sourceEntity` will contain `$targetEntities` as value
      * in the corresponding property for this association.
      *
      * This method assumes that links between both the source entity and each of the

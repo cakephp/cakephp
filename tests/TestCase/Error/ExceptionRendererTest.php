@@ -731,22 +731,20 @@ class ExceptionRendererTest extends TestCase
      */
     public function testMissingLayoutPathRenderSafe()
     {
+        $this->called = false;
         $exception = new NotFoundException();
         $ExceptionRenderer = new ExceptionRenderer($exception);
 
-        $ExceptionRenderer->controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->setMethods(['render'])
-            ->getMock();
+        $ExceptionRenderer->controller = new Controller();
         $ExceptionRenderer->controller->helpers = ['Fail', 'Boom'];
-        $ExceptionRenderer->controller->eventManager()->on('Controller.beforeRender', function (Event $event) {
-            $event->subject()->viewBuilder()->layoutPath('boom');
-        });
+        $ExceptionRenderer->controller->eventManager()->on(
+            'Controller.beforeRender',
+            function (Event $event) {
+                $this->called = true;
+                $event->subject()->viewBuilder()->setLayoutPath('boom');
+            }
+        );
         $ExceptionRenderer->controller->request = new Request;
-
-        $ExceptionRenderer->controller->expects($this->once())
-            ->method('render')
-            ->with('error400')
-            ->will($this->throwException($exception));
 
         $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
         $response->expects($this->once())
@@ -759,6 +757,7 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->controller->response = $response;
 
         $ExceptionRenderer->render();
+        $this->assertTrue($this->called, 'Listener added was not triggered.');
         $this->assertEquals('', $ExceptionRenderer->controller->viewBuilder()->layoutPath());
         $this->assertEquals('Error', $ExceptionRenderer->controller->viewBuilder()->templatePath());
     }

@@ -433,7 +433,11 @@ class SmtpTransport extends AbstractTransport
             $response = '';
             $startTime = time();
             while (substr($response, -2) !== "\r\n" && ((time() - $startTime) < $timeout)) {
-                $response .= $this->_socket->read();
+                $bytes = $this->_socket->read();
+                if ($bytes === false || $bytes === null) {
+                    break;
+                }
+                $response .= $bytes;
             }
             if (substr($response, -2) !== "\r\n") {
                 throw new SocketException('SMTP timeout.');

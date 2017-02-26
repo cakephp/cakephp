@@ -105,7 +105,7 @@ class Marshaller
             }
             if (isset($options['isMerge'])) {
                 $callback = function ($value, $entity) use ($assoc, $nested) {
-                    $options = $nested + ['associated' => []];
+                    $options = $nested + ['associated' => [], 'association' => $assoc];
 
                     return $this->_mergeAssociation($entity->get($assoc->getProperty()), $assoc, $value, $options);
                 };
@@ -708,6 +708,9 @@ class Marshaller
     {
         if (!$original) {
             return $this->_marshalAssociation($assoc, $value, $options);
+        }
+        if (!is_array($value)) {
+            return null;
         }
 
         $targetTable = $assoc->getTarget();

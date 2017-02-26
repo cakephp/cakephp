@@ -1621,7 +1621,6 @@ class ValidationTest extends TestCase
         I18N::locale($locale);
     }
 
-
     /**
      * testBoolean method
      *
