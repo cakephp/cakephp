@@ -59,14 +59,12 @@ class CookieTest extends TestCase
      */
     public function testDecrypt()
     {
-        $encryptedCookieValue = 'Q2FrZQ==.N2Y1ODQ3ZDAzYzQzY2NkYTBlYTkwMmRkZjFmNGI3Mjk4ZWY5ZmExYTA4YmM2ZThjOWFhZWY1Njc4ZDZlMjE4Y/fhI6zv+siabYg0Cnm2j2P51Sghk7WsVxZr94g5fhmkLJ4ve7j54v9r5/vHSIHtog==';
-        $expected = 'Q2FrZQ==.N2Y1ODQ3ZDAzYzQzY2NkYTBlYTkwMmRkZjFmNGI3Mjk4ZWY5ZmExYTA4YmM2ZThjOWFhZWY1Njc4ZDZlMjE4Y/fhI6zv+siabYg0Cnm2j2P51Sghk7WsVxZr94g5fhmkLJ4ve7j54v9r5/vHSIHtog==';
-
-        $cookie = new Cookie('cakephp', $encryptedCookieValue);
-        $this->assertEquals($expected, $cookie->getValue());
-
+        $value = 'cakephp-rocks-and-is-awesome';
+        $cookie = new Cookie('cakephp', $value);
+        $cookie->encrypt($this->encryptionKey);
+        $this->assertTextStartsWith('Q2FrZQ==.', $cookie->getValue());
         $cookie->decrypt($this->encryptionKey);
-        $this->assertEquals('cakephp-rocks-and-is-awesome', $cookie->getValue());
+        $this->assertSame($value, $cookie->getValue());
     }
 
     /**

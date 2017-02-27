@@ -110,7 +110,7 @@ trait CookieCryptTrait
         $cipher = null;
 
         if ($key === null) {
-            $key = $this->getCryptoKey();
+            $key = $this->getEncryptionKey();
         }
         if ($encrypt === 'rijndael') {
             $cipher = Security::rijndael($value, $key, 'encrypt');
@@ -143,7 +143,7 @@ trait CookieCryptTrait
     /**
      * Decrypts $value using public $type method in Security class
      *
-     * @param array $values Values to decrypt
+     * @param string|array $values Values to decrypt
      * @param string|bool $mode Encryption mode
      * @param string|null $key Used as the security salt if specified.
      * @return string|array Decrypted values
