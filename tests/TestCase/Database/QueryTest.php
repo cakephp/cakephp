@@ -3902,7 +3902,7 @@ class QueryTest extends TestCase
         $statementMock->expects($this->once())
             ->method('closeCursor');
 
-        /** @var \Cake\ORM\Query|\PHPUnit_Framework_MockObject_MockObject $queryMock */
+        /* @var \Cake\ORM\Query|\PHPUnit_Framework_MockObject_MockObject $queryMock */
         $queryMock = $this->getMockBuilder(Query::class)
             ->setMethods(['execute'])
             ->setConstructorArgs((array)$this->connection)
