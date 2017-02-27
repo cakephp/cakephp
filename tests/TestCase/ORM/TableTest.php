@@ -4166,15 +4166,20 @@ class TableTest extends TestCase
             ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
             ->getMock();
 
-        $articles->belongsTo('authors')
-            ->setForeignKey('author_id')
-            ->setName('Authors')
-            ->setTarget($authors)
-            ->setBindingKey('id')
-            ->setConditions([])
-            ->setFinder('list')
-            ->setProperty('authors')
-            ->setJoinType('inner');
+        try {
+            $articles->belongsTo('authors')
+                ->setForeignKey('author_id')
+                ->setName('Authors')
+                ->setTarget($authors)
+                ->setBindingKey('id')
+                ->setConditions([])
+                ->setFinder('list')
+                ->setProperty('authors')
+                ->setJoinType('inner');
+        } catch (\BadMethodCallException $e) {
+            $this->fail('Method chaining should be ok');
+        }
+        $this->assertSame('articles', $articles->getTable());
     }
 
     /**
@@ -4188,17 +4193,22 @@ class TableTest extends TestCase
             ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
             ->getMock();
 
-        $authors->hasOne('articles')
-            ->setForeignKey('author_id')
-            ->setName('Articles')
-            ->setDependent(true)
-            ->setBindingKey('id')
-            ->setConditions([])
-            ->setCascadeCallbacks(true)
-            ->setFinder('list')
-            ->setStrategy('select')
-            ->setProperty('authors')
-            ->setJoinType('inner');
+        try {
+            $authors->hasOne('articles')
+                ->setForeignKey('author_id')
+                ->setName('Articles')
+                ->setDependent(true)
+                ->setBindingKey('id')
+                ->setConditions([])
+                ->setCascadeCallbacks(true)
+                ->setFinder('list')
+                ->setStrategy('select')
+                ->setProperty('authors')
+                ->setJoinType('inner');
+        } catch (\BadMethodCallException $e) {
+            $this->fail('Method chaining should be ok');
+        }
+        $this->assertSame('authors', $authors->getTable());
     }
 
     /**
@@ -4212,19 +4222,24 @@ class TableTest extends TestCase
             ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
             ->getMock();
 
-        $authors->hasMany('articles')
-            ->setForeignKey('author_id')
-            ->setName('Articles')
-            ->setDependent(true)
-            ->setSort(['created' => 'DESC'])
-            ->setBindingKey('id')
-            ->setConditions([])
-            ->setCascadeCallbacks(true)
-            ->setFinder('list')
-            ->setStrategy('select')
-            ->setSaveStrategy('replace')
-            ->setProperty('authors')
-            ->setJoinType('inner');
+        try {
+            $authors->hasMany('articles')
+                ->setForeignKey('author_id')
+                ->setName('Articles')
+                ->setDependent(true)
+                ->setSort(['created' => 'DESC'])
+                ->setBindingKey('id')
+                ->setConditions([])
+                ->setCascadeCallbacks(true)
+                ->setFinder('list')
+                ->setStrategy('select')
+                ->setSaveStrategy('replace')
+                ->setProperty('authors')
+                ->setJoinType('inner');
+        } catch (\BadMethodCallException $e) {
+            $this->fail('Method chaining should be ok');
+        }
+        $this->assertSame('authors', $authors->getTable());
     }
 
     /**
@@ -4237,21 +4252,25 @@ class TableTest extends TestCase
             ->setMethods(['_insert'])
             ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
             ->getMock();
-
-        $authors->belongsToMany('articles')
-            ->setForeignKey('author_id')
-            ->setName('Articles')
-            ->setDependent(true)
-            ->setTargetForeignKey('article_id')
-            ->setBindingKey('id')
-            ->setConditions([])
-            ->setFinder('list')
-            ->setProperty('authors')
-            ->setSource($authors)
-            ->setStrategy('select')
-            ->setSaveStrategy('append')
-            ->setThrough('author_articles')
-            ->setJoinType('inner');
+        try {
+            $authors->belongsToMany('articles')
+                ->setForeignKey('author_id')
+                ->setName('Articles')
+                ->setDependent(true)
+                ->setTargetForeignKey('article_id')
+                ->setBindingKey('id')
+                ->setConditions([])
+                ->setFinder('list')
+                ->setProperty('authors')
+                ->setSource($authors)
+                ->setStrategy('select')
+                ->setSaveStrategy('append')
+                ->setThrough('author_articles')
+                ->setJoinType('inner');
+        } catch (\BadMethodCallException $e) {
+            $this->fail('Method chaining should be ok');
+        }
+        $this->assertSame('authors', $authors->getTable());
     }
 
     /**
@@ -4552,6 +4571,7 @@ class TableTest extends TestCase
         $article = $authors->Articles->get(1);
 
         $authors->Articles->unlink($author, [$article]);
+        $this->assertNotEmpty($authors);
     }
 
     /**
