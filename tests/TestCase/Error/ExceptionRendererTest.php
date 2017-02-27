@@ -416,6 +416,40 @@ class ExceptionRendererTest extends TestCase
     }
 
     /**
+     * testerror400 method when returning as json
+     *
+     * @return void
+     */
+    public function testError400AsJson()
+    {
+        Router::reload();
+
+        $request = new Request('posts/view/1000?sort=title&direction=desc');
+        $request = $request->withHeader('Accept', 'application/json');
+        $request = $request->withHeader('Content-Type', 'application/json');
+        Router::setRequestInfo($request);
+
+        $exception = new NotFoundException('Custom message');
+        $ExceptionRenderer = new ExceptionRenderer($exception);
+        $ExceptionRenderer->controller->response = $this->getMockBuilder('Cake\Network\Response')
+            ->setMethods(['statusCode', '_sendHeader'])
+            ->getMock();
+        $ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(404);
+
+        $result = $ExceptionRenderer->render()->body();
+
+        $expected = <<<JSON
+{
+    "message": "Custom message",
+    "url": "\\/posts\\/view\\/1000?sort=title\\u0026amp;direction=desc",
+    "code": 404
+}
+JSON;
+
+        $this->assertTextEquals($expected, $result);
+    }
+
+    /**
      * test that error400 only modifies the messages on Cake Exceptions.
      *
      * @return void
