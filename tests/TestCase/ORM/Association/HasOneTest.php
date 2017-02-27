@@ -35,6 +35,11 @@ class HasOneTest extends TestCase
     public $fixtures = ['core.users', 'core.profiles'];
 
     /**
+     * @var bool
+     */
+    protected $listenerCalled = false;
+
+    /**
      * Set up
      *
      * @return void
@@ -44,6 +49,7 @@ class HasOneTest extends TestCase
         parent::setUp();
         $this->user = TableRegistry::get('Users');
         $this->profile = TableRegistry::get('Profiles');
+        $this->listenerCalled = false;
     }
 
     /**
@@ -298,31 +304,28 @@ class HasOneTest extends TestCase
      */
     public function testAttachToBeforeFindExtraOptions()
     {
-        $query = $this->getMockBuilder('\Cake\ORM\Query')
-            ->setMethods(['join', 'select'])
-            ->setConstructorArgs([null, null])
-            ->getMock();
         $config = [
             'foreignKey' => 'user_id',
             'sourceTable' => $this->user,
             'targetTable' => $this->profile,
         ];
-        $listener = $this->getMockBuilder('stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
-        $this->profile->eventManager()->attach($listener, 'Model.beforeFind');
-        $association = new HasOne('Profiles', $config);
+        $this->listenerCalled = false;
         $opts = new \ArrayObject(['something' => 'more']);
-        $listener->expects($this->once())->method('__invoke')
-            ->with(
-                $this->isInstanceOf('\Cake\Event\Event'),
-                $this->isInstanceOf('\Cake\ORM\Query'),
-                $opts,
-                false
-            );
+        $this->profile->eventManager()->on(
+            'Model.beforeFind',
+            function ($event, $query, $options, $primary) use ($opts)  {
+                $this->listenerCalled = true;
+                $this->assertInstanceOf('\Cake\Event\Event', $event);
+                $this->assertInstanceOf('\Cake\ORM\Query', $query);
+                $this->assertEquals($options, $opts);
+                $this->assertFalse($primary);
+            });
+        $association = new HasOne('Profiles', $config);
+        $query = $this->user->find();
         $association->attachTo($query, ['queryBuilder' => function ($q) {
             return $q->applyOptions(['something' => 'more']);
         }]);
+        $this->assertTrue($this->listenerCalled, 'Event not fired');
     }
 
     /**
