@@ -473,7 +473,7 @@ class Text
             'format' => '<span class="highlight">\1</span>',
             'html' => false,
             'regex' => "|%s|iu",
-            'limit'=> -1,
+            'limit' => -1,
         ];
         $options += $defaults;
         extract($options);
