@@ -437,16 +437,13 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(404);
 
         $result = $ExceptionRenderer->render()->body();
+        $expected = [
+            'message' => 'Custom message',
+            'url' => '/posts/view/1000?sort=title&amp;direction=desc',
+            'code' => 404
+        ];
 
-        $expected = <<<JSON
-{
-    "message": "Custom message",
-    "url": "\\/posts\\/view\\/1000?sort=title\\u0026amp;direction=desc",
-    "code": 404
-}
-JSON;
-
-        $this->assertTextEquals($expected, $result);
+        $this->assertEquals($expected, json_decode($result, true));
     }
 
     /**
