@@ -15,16 +15,14 @@
 namespace Cake\ORM\Association;
 
 use Cake\Datasource\EntityInterface;
-use Cake\ORM\Association\DependentDeleteHelper;
+use Cake\ORM\Association;
 
 /**
- * Implements cascading deletes for dependent associations.
+ * Helper class for cascading deletes in associations.
  *
- * Included by HasOne and HasMany association classes.
- *
- * @deprected 3.5.0 Unused in CakePHP now. This class will be removed in 4.0.0
+ * @internal
  */
-trait DependentDeleteTrait
+class DependentDeleteHelper
 {
 
     /**
@@ -32,13 +30,30 @@ trait DependentDeleteTrait
      *
      * This method does nothing if the association is not dependent.
      *
+     * @param \Cake\ORM\Association $association The association callbacks are being cascaded on.
      * @param \Cake\Datasource\EntityInterface $entity The entity that started the cascaded delete.
      * @param array $options The options for the original delete.
      * @return bool Success.
      */
-    public function cascadeDelete(EntityInterface $entity, array $options = [])
+    public function cascadeDelete(Association $association, EntityInterface $entity, array $options = [])
     {
-        $helper = new DependentDeleteHelper();
-        return $helper->cascadeDelete($this, $entity, $options);
+        if (!$association->getDependent()) {
+            return true;
+        }
+        $table = $association->getTarget();
+        $foreignKey = (array)$association->getForeignKey();
+        $bindingKey = (array)$association->getBindingKey();
+        $conditions = array_combine($foreignKey, $entity->extract($bindingKey));
+
+        if ($association->getCascadeCallbacks()) {
+            foreach ($association->find()->where($conditions)->toList() as $related) {
+                $table->delete($related, $options);
+            }
+
+            return true;
+        }
+        $conditions = array_merge($conditions, $association->getConditions());
+
+        return (bool)$table->deleteAll($conditions);
     }
 }
