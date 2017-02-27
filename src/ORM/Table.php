@@ -1615,12 +1615,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * ### Options
      *
-     * - 'finder' string Defaults to 'all'. The custom finder to use when reading batches.
-     * - 'options' array Defaults to []. The options to pass to the finder when reading batches.
-     * - `atomic` boolean Defaults to true. When true the deletion happens within a transaction.
-     * - 'stopOnFailure' boolean Defaults to true. Stop deleting records when a record fails to be deleted.
-     * - 'batch' integer Defaults to 1. Number of records to read in batches, zero reads all records.
-     * - `checkRules` boolean Defaults to true. Check deletion rules before deleting the record.
+     * - finder: string Defaults to 'all'. The custom finder to use when reading batches.
+     * - options: array Defaults to []. The options to pass to the finder when reading batches.
+     * - atomic: boolean Defaults to true. When true the deletion happens within a transaction.
+     * - stopOnFailure: boolean Defaults to true. Stop deleting records when a record fails to be deleted.
+     * - batch: integer Defaults to 1. Number of records to read in batches, zero reads all records.
+     * - checkRules: boolean Defaults to true. Check deletion rules before deleting the record.
      *
      * ### Events
      *
@@ -1660,12 +1660,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw new InvalidArgumentException(sprintf('Option conflicts with batch deleting: %s', implode(', ', $invalid)));
         }
 
-        if((int)$options['batch'] <= 0) {
+        if ((int)$options['batch'] <= 0) {
             throw new InvalidArgumentException(sprintf('Invalid batch size: %s', (string)$options['batch']));
         }
 
         $count = 0;
 
+        // Closure function that deletes a batch of records one at a time. The size of a batch if configured via
+        // the options, and the default is 1. If this returns false (no more records or events stopped) then
+        // deleting will be stopped.
         $atomic = function () use ($conditions, $options, &$count) {
 
             $query = $this->find($options['finder'], $options['options'])
@@ -1698,6 +1701,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return !$event->isStopped();
         };
 
+        // Start of a loop that deletes batches of records until the above closure function returns false.
         do {
             $result = false;
             if ($options['atomic']) {

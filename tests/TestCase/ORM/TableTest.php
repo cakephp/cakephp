@@ -985,22 +985,22 @@ class TableTest extends TestCase
      */
     public function testDeleteEach(array $options)
     {
-        $table = new Table(['table' => 'users', 'connection' => $this->connection,]);
+        $table = new Table(['table' => 'users', 'connection' => $this->connection]);
 
         $beforeCount = 0;
-        $table->eventManager()->on('Model.beforeDeleteEach', function () use(&$beforeCount) {
+        $table->eventManager()->on('Model.beforeDeleteEach', function () use (&$beforeCount) {
             $beforeCount++;
         });
 
         $afterCount = 0;
-        $table->eventManager()->on('Model.afterDeleteEach', function () use(&$afterCount) {
+        $table->eventManager()->on('Model.afterDeleteEach', function () use (&$afterCount) {
             $afterCount++;
         });
 
         $result = $table->deleteEach(['username !=' => 'mariano'], $options);
         $this->assertSame(3, $result);
 
-        if(isset($options['batch']) && $options['batch'] === 100) {
+        if (isset($options['batch']) && $options['batch'] === 100) {
             $this->assertSame(1, $beforeCount);
             $this->assertSame(1, $afterCount);
         } else {
@@ -1032,18 +1032,17 @@ class TableTest extends TestCase
      */
     public function testDeleteEachInvalidArgument(array $invalidParams)
     {
-        $table = new Table(['table' => 'users', 'connection' => $this->connection,]);
+        $table = new Table(['table' => 'users', 'connection' => $this->connection]);
         $table->deleteEach(['username !=' => 'mariano'], $invalidParams);
     }
 
     /**
-     *
+     * @test
+     * @return void
      */
     public function testDeleteEachFinder()
     {
-        /**
-         * @var \TestApp\Model\Table\ArticlesTable $table
-         */
+        /* @var \TestApp\Model\Table\ArticlesTable $table */
         $table = TableRegistry::get('Articles');
         $table->save(new Entity(['published' => 'N']));
         $result = $table->deleteEach([1 => 1], ['finder' => 'published', 'batch' => 100]);
@@ -1053,11 +1052,12 @@ class TableTest extends TestCase
     }
 
     /**
-     *
+     * @test
+     * @return void
      */
     public function testDeleteEachAtomic()
     {
-        $table = new Table(['table' => 'users', 'connection' => $this->connection,]);
+        $table = new Table(['table' => 'users', 'connection' => $this->connection]);
 
         $table->eventManager()->on('Model.afterDeleteEachCommit', function () {
             $this->fail('afterDeleteEachCommit should not fire inside transaction');
