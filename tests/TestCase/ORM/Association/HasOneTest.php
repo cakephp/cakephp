@@ -28,6 +28,13 @@ use Cake\TestSuite\TestCase;
 class HasOneTest extends TestCase
 {
     /**
+     * Fixtures to load
+     *
+     * @var array
+     */
+    public $fixtures = ['core.users', 'core.profiles'];
+
+    /**
      * Set up
      *
      * @return void
@@ -35,36 +42,8 @@ class HasOneTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->user = TableRegistry::get('Users', [
-            'schema' => [
-                'id' => ['type' => 'integer'],
-                'username' => ['type' => 'string'],
-                '_constraints' => [
-                    'primary' => ['type' => 'primary', 'columns' => ['id']]
-                ]
-            ]
-        ]);
-        $this->profile = TableRegistry::get('Profiles', [
-            'schema' => [
-                'id' => ['type' => 'integer'],
-                'first_name' => ['type' => 'string'],
-                'user_id' => ['type' => 'integer'],
-                '_constraints' => [
-                    'primary' => ['type' => 'primary', 'columns' => ['id']]
-                ]
-            ]
-        ]);
-        $this->profilesTypeMap = new TypeMap([
-            'Profiles.id' => 'integer',
-            'id' => 'integer',
-            'Profiles.first_name' => 'string',
-            'first_name' => 'string',
-            'Profiles.user_id' => 'integer',
-            'user_id' => 'integer',
-            'Profiles__first_name' => 'string',
-            'Profiles__user_id' => 'integer',
-            'Profiles__id' => 'integer',
-        ]);
+        $this->user = TableRegistry::get('Users');
+        $this->profile = TableRegistry::get('Profiles');
     }
 
     /**
@@ -112,40 +91,21 @@ class HasOneTest extends TestCase
      */
     public function testAttachTo()
     {
-        $query = $this->getMockBuilder('\Cake\ORM\Query')
-            ->setMethods(['join', 'select'])
-            ->setConstructorArgs([null, null])
-            ->getMock();
         $config = [
             'foreignKey' => 'user_id',
             'sourceTable' => $this->user,
             'targetTable' => $this->profile,
+            'property' => 'profile',
+            'joinType' => 'INNER',
             'conditions' => ['Profiles.is_active' => true]
         ];
         $association = new HasOne('Profiles', $config);
-        $field = new IdentifierExpression('Profiles.user_id');
-        $query->expects($this->once())->method('join')->with([
-            'Profiles' => [
-                'conditions' => new QueryExpression([
-                    'Profiles.is_active' => true,
-                    ['Users.id' => $field],
-                ], $this->profilesTypeMap),
-                'type' => 'LEFT',
-                'table' => 'profiles'
-            ]
-        ]);
-        $query->expects($this->once())->method('select')->with([
-            'Profiles__id' => 'Profiles.id',
-            'Profiles__first_name' => 'Profiles.first_name',
-            'Profiles__user_id' => 'Profiles.user_id'
-        ]);
+        $query = $this->user->find();
         $association->attachTo($query);
 
-        $this->assertEquals(
-            'string',
-            $query->typeMap()->type('Profiles__first_name'),
-            'Associations should map types.'
-        );
+        $results = $query->order('Users.id')->toArray();
+        $this->assertCount(1, $results, 'Only one record because of conditions & join type');
+        $this->assertSame('masters', $results[0]->Profiles['last_name']);
     }
 
     /**
@@ -155,29 +115,15 @@ class HasOneTest extends TestCase
      */
     public function testAttachToNoFields()
     {
-        $query = $this->getMockBuilder('\Cake\ORM\Query')
-            ->setMethods(['join', 'select'])
-            ->setConstructorArgs([null, null])
-            ->getMock();
         $config = [
             'sourceTable' => $this->user,
             'targetTable' => $this->profile,
             'conditions' => ['Profiles.is_active' => true]
         ];
         $association = new HasOne('Profiles', $config);
-        $field = new IdentifierExpression('Profiles.user_id');
-        $query->expects($this->once())->method('join')->with([
-            'Profiles' => [
-                'conditions' => new QueryExpression([
-                    'Profiles.is_active' => true,
-                    ['Users.id' => $field],
-                ], $this->profilesTypeMap),
-                'type' => 'LEFT',
-                'table' => 'profiles'
-            ]
-        ]);
-        $query->expects($this->never())->method('select');
+        $query = $this->user->query();
         $association->attachTo($query, ['includeFields' => false]);
+        $this->assertEmpty($query->clause('select'));
     }
 
     /**
@@ -188,18 +134,37 @@ class HasOneTest extends TestCase
      */
     public function testAttachToMultiPrimaryKey()
     {
-        $query = $this->getMockBuilder('\Cake\ORM\Query')
-            ->setMethods(['join', 'select'])
-            ->setConstructorArgs([null, null])
-            ->getMock();
+        $selectTypeMap = new TypeMap([
+            'Profiles.id' => 'integer',
+            'id' => 'integer',
+            'Profiles.first_name' => 'string',
+            'first_name' => 'string',
+            'Profiles.user_id' => 'integer',
+            'user_id' => 'integer',
+            'Profiles__first_name' => 'string',
+            'Profiles__user_id' => 'integer',
+            'Profiles__id' => 'integer',
+            'Profiles__last_name' => 'string',
+            'Profiles.last_name' => 'string',
+            'last_name' => 'string',
+            'Profiles__is_active' => 'boolean',
+            'Profiles.is_active' => 'boolean',
+            'is_active' => 'boolean',
+        ]);
         $config = [
             'sourceTable' => $this->user,
             'targetTable' => $this->profile,
             'conditions' => ['Profiles.is_active' => true],
             'foreignKey' => ['user_id', 'user_site_id']
         ];
+
         $this->user->primaryKey(['id', 'site_id']);
         $association = new HasOne('Profiles', $config);
+
+        $query = $this->getMockBuilder('\Cake\ORM\Query')
+            ->setMethods(['join', 'select'])
+            ->setConstructorArgs([null, null])
+            ->getMock();
         $field1 = new IdentifierExpression('Profiles.user_id');
         $field2 = new IdentifierExpression('Profiles.user_site_id');
         $query->expects($this->once())->method('join')->with([
@@ -207,7 +172,7 @@ class HasOneTest extends TestCase
                 'conditions' => new QueryExpression([
                     'Profiles.is_active' => true,
                     ['Users.id' => $field1, 'Users.site_id' => $field2],
-                ], $this->profilesTypeMap),
+                ], $selectTypeMap),
                 'type' => 'LEFT',
                 'table' => 'profiles'
             ]
@@ -224,7 +189,7 @@ class HasOneTest extends TestCase
      * @expectedExceptionMessage Cannot match provided foreignKey for "Profiles", got "(user_id)" but expected foreign key for "(id, site_id)"
      * @return void
      */
-    public function testAttachToMultiPrimaryKeyMistmatch()
+    public function testAttachToMultiPrimaryKeyMismatch()
     {
         $query = $this->getMockBuilder('\Cake\ORM\Query')
             ->setMethods(['join', 'select'])
@@ -289,12 +254,9 @@ class HasOneTest extends TestCase
      */
     public function testPropertyNoPlugin()
     {
-        $mock = $this->getMockBuilder('Cake\ORM\Table')
-            ->disableOriginalConstructor()
-            ->getMock();
         $config = [
             'sourceTable' => $this->user,
-            'targetTable' => $mock,
+            'targetTable' => $this->profile,
         ];
         $association = new HasOne('Contacts.Profiles', $config);
         $this->assertEquals('profile', $association->property());
@@ -308,28 +270,24 @@ class HasOneTest extends TestCase
      */
     public function testAttachToBeforeFind()
     {
-        $query = $this->getMockBuilder('\Cake\ORM\Query')
-            ->setMethods(['join', 'select'])
-            ->setConstructorArgs([null, null])
-            ->getMock();
         $config = [
             'foreignKey' => 'user_id',
             'sourceTable' => $this->user,
             'targetTable' => $this->profile,
         ];
-        $listener = $this->getMockBuilder('stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
-        $this->profile->eventManager()->attach($listener, 'Model.beforeFind');
+        $query = $this->user->query();
+
+        $this->listenerCalled = false;
+        $this->profile->eventManager()->on('Model.beforeFind', function($event, $query, $options, $primary) {
+            $this->listenerCalled = true;
+            $this->assertInstanceOf('\Cake\Event\Event', $event);
+            $this->assertInstanceOf('\Cake\ORM\Query', $query);
+            $this->assertInstanceOf('\ArrayObject', $options);
+            $this->assertFalse($primary);
+        });
         $association = new HasOne('Profiles', $config);
-        $listener->expects($this->once())->method('__invoke')
-            ->with(
-                $this->isInstanceOf('\Cake\Event\Event'),
-                $this->isInstanceOf('\Cake\ORM\Query'),
-                $this->isInstanceOf('\ArrayObject'),
-                false
-            );
         $association->attachTo($query);
+        $this->assertTrue($this->listenerCalled, 'beforeFind event not fired.');
     }
 
     /**
@@ -365,5 +323,71 @@ class HasOneTest extends TestCase
         $association->attachTo($query, ['queryBuilder' => function ($q) {
             return $q->applyOptions(['something' => 'more']);
         }]);
+    }
+
+    /**
+     * Test cascading deletes.
+     *
+     * @return void
+     */
+    public function testCascadeDelete()
+    {
+        $config = [
+            'dependent' => true,
+            'sourceTable' => $this->user,
+            'targetTable' => $this->profile,
+            'conditions' => ['Profiles.is_active' => true],
+            'cascadeCallbacks' => false,
+        ];
+        $association = new HasOne('Profiles', $config);
+
+        $this->profile->eventManager()->on('Model.beforeDelete', function () {
+            $this->fail('Callbacks should not be triggered when callbacks do not cascade.');
+        });
+
+        $entity = new Entity(['id' => 1]);
+        $association->cascadeDelete($entity);
+
+        $query = $this->profile->query()->where(['user_id' => 1]);
+        $this->assertEquals(1, $query->count(), 'Left non-matching row behind');
+
+        $query = $this->profile->query()->where(['user_id' => 3]);
+        $this->assertEquals(1, $query->count(), 'other records left behind');
+
+        $user = new Entity(['id' => 3]);
+        $this->assertTrue($association->cascadeDelete($user));
+        $query = $this->profile->query()->where(['user_id' => 3]);
+        $this->assertEquals(0, $query->count(), 'Matching record was deleted.');
+    }
+
+    /**
+     * Test cascading delete with has many.
+     *
+     * @return void
+     */
+    public function testCascadeDeleteCallbacks()
+    {
+        $config = [
+            'dependent' => true,
+            'sourceTable' => $this->user,
+            'targetTable' => $this->profile,
+            'conditions' => ['Profiles.is_active' => true],
+            'cascadeCallbacks' => true,
+        ];
+        $association = new HasOne('Profiles', $config);
+
+        $user = new Entity(['id' => 1]);
+        $this->assertTrue($association->cascadeDelete($user));
+
+        $query = $this->profile->query()->where(['user_id' => 1]);
+        $this->assertEquals(1, $query->count(), 'Left non-matching row behind');
+
+        $query = $this->profile->query()->where(['user_id' => 3]);
+        $this->assertEquals(1, $query->count(), 'other records left behind');
+
+        $user = new Entity(['id' => 3]);
+        $this->assertTrue($association->cascadeDelete($user));
+        $query = $this->profile->query()->where(['user_id' => 3]);
+        $this->assertEquals(0, $query->count(), 'Matching record was deleted.');
     }
 }
