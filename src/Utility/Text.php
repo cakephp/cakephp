@@ -472,7 +472,8 @@ class Text
         $defaults = [
             'format' => '<span class="highlight">\1</span>',
             'html' => false,
-            'regex' => "|%s|iu"
+            'regex' => "|%s|iu",
+            'limit'=>-1,
         ];
         $options += $defaults;
         extract($options);
@@ -491,7 +492,7 @@ class Text
                 $replace[] = sprintf($options['regex'], $segment);
             }
 
-            return preg_replace($replace, $with, $text);
+            return preg_replace($replace, $with, $text,$limit);
         }
 
         $phrase = '(' . preg_quote($phrase, '|') . ')';
@@ -499,7 +500,7 @@ class Text
             $phrase = "(?![^<]+>)$phrase(?![^<]+>)";
         }
 
-        return preg_replace(sprintf($options['regex'], $phrase), $format, $text);
+        return preg_replace(sprintf($options['regex'], $phrase), $format, $text,$limit);
     }
 
     /**
