@@ -118,7 +118,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public $helpers = [];
 
     /**
-     * An instance of a Cake\Network\Request object that contains information about the current request.
+     * An instance of a \Cake\Http\ServerRequest object that contains information about the current request.
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
      *
