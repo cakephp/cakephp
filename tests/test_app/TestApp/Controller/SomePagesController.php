@@ -45,7 +45,7 @@ class SomePagesController extends Controller
     /**
      * Test method for returning responses.
      *
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     public function responseGenerator()
     {

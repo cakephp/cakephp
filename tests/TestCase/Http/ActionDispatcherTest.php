@@ -219,7 +219,7 @@ class ActionDispatcherTest extends TestCase
      * test invalid response from dispatch process.
      *
      * @expectedException \LogicException
-     * @expectedExceptionMessage Controller actions can only return Cake\Network\Response or null
+     * @expectedExceptionMessage Controller actions can only return Cake\Http\Response or null
      * @return void
      */
     public function testDispatchInvalidResponse()

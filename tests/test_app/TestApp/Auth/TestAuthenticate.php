@@ -38,7 +38,7 @@ class TestAuthenticate extends BaseAuthenticate
 
     /**
      * @param \Cake\Http\ServerRequest $request
-     * @param \Cake\Network\Response $response
+     * @param \Cake\Http\Response $response
      * @return array
      */
     public function authenticate(Request $request, Response $response)

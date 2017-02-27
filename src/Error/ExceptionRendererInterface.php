@@ -19,7 +19,7 @@ interface ExceptionRendererInterface
     /**
      * Renders the response for the exception.
      *
-     * @return \Cake\Network\Response The response to be sent.
+     * @return \Cake\Http\Response The response to be sent.
      */
     public function render();
 }

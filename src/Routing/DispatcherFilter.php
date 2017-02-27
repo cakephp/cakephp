@@ -182,7 +182,7 @@ class DispatcherFilter implements EventListenerInterface
      * If used with default priority, it will be called after the Router has parsed the
      * URL and set the routing params into the request object.
      *
-     * If a Cake\Network\Response object instance is returned, it will be served at the end of the
+     * If a Cake\Http\Response object instance is returned, it will be served at the end of the
      * event cycle, not calling any controller as a result. This will also have the effect of
      * not calling the after event in the dispatcher.
      *
