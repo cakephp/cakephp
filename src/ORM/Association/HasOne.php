@@ -150,6 +150,7 @@ class HasOne extends Association
     public function cascadeDelete(EntityInterface $entity, array $options = [])
     {
         $helper = new DependentDeleteHelper();
+
         return $helper->cascadeDelete($this, $entity, $options);
     }
 }
