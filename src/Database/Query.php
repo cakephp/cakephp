@@ -238,7 +238,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * $rowCount = $query->update('articles')
      *                 ->set(['published'=>true])
      *                 ->where(['published'=>false])
-     *                 ->executeAndClose();
+     *                 ->rowCountAndClose();
      * ```
      *
      * The above example will change the published column to true for all false records, and return the number of
@@ -246,7 +246,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @return int
      */
-    public function executeAndClose()
+    public function rowCountAndClose()
     {
         $statement = $this->execute();
         try {

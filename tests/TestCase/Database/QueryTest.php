@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Database;
 use Cake\Core\Configure;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Query;
+use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -3886,15 +3887,37 @@ class QueryTest extends TestCase
      *
      * @return void
      */
-    public function testExecuteAndClose()
+    public function testRowCountAndClose()
     {
         $this->loadFixtures('Authors');
-        $query = new Query($this->connection);
-        $rowCount = $query->update('authors')
+
+        $statementMock = $this->getMockBuilder(StatementInterface::class)
+            ->setMethods(['rowCount','closeCursor'])
+            ->getMockForAbstractClass();
+
+        $statementMock->expects($this->once())
+            ->method('rowCount')
+            ->willReturn(500);
+
+        $statementMock->expects($this->once())
+            ->method('closeCursor');
+
+        /** @var \Cake\ORM\Query|\PHPUnit_Framework_MockObject_MockObject $queryMock */
+        $queryMock = $this->getMockBuilder(Query::class)
+            ->setMethods(['execute'])
+            ->setConstructorArgs((array)$this->connection)
+            ->getMock();
+
+        $queryMock->expects($this->once())
+            ->method('execute')
+            ->willReturn($statementMock);
+
+        $rowCount = $queryMock->update('authors')
             ->set('name', 'mark')
             ->where(['id' => 1])
-            ->executeAndClose();
-        $this->assertEquals(1, $rowCount);
+            ->rowCountAndClose();
+
+        $this->assertEquals(500, $rowCount);
     }
 
     /**
