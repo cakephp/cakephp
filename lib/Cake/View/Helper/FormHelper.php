@@ -2832,7 +2832,7 @@ class FormHelper extends AppHelper {
 					} else {
 						$select[] = $this->Html->useTag('optiongroupend');
 					}
-					$parents[] = $name;
+					$parents[] = (string)$name;
 				}
 				$select = array_merge($select, $this->_selectOptions(
 					$title, $parents, $showParents, $attributes
