@@ -51,6 +51,8 @@ class Cookie implements CookieInterface
 
     /**
      * Raw Cookie value
+     *
+     * @var string|array
      */
     protected $value = '';
 
@@ -69,16 +71,16 @@ class Cookie implements CookieInterface
     /**
      * Path
      *
-     * @var string|null
+     * @var string
      */
-    protected $path = null;
+    protected $path = '';
 
     /**
      * Domain
      *
-     * @var string|null
+     * @var string
      */
-    protected $domain = null;
+    protected $domain = '';
 
     /**
      * Secure
@@ -97,14 +99,29 @@ class Cookie implements CookieInterface
     /**
      * Constructor
      *
+     * The constructors args are similar to the native php setcookie() method.
+     *
+     * @link http://php.net/manual/en/function.setcookie.php
      * @param string $name Cookie name
      * @param string|array $value Value of the cookie
+     * @param \DateTimeInterface|null $expiresAt Expiration time and date
+     * @param string $path Path
+     * @param string $domain Domain
+     * @param bool $secure Is secure
+     * @param bool $httpOnly HTTP Only
      */
-    public function __construct($name, $value = '')
+    public function __construct($name, $value = '', $expiresAt = null, $path = '', $domain = '', $secure = false, $httpOnly = false)
     {
         $this->validateName($name);
         $this->setName($name);
         $this->setValue($value);
+        $this->setDomain($domain);
+        $this->setHttpOnly($httpOnly);
+        $this->setPath($path);
+
+        if ($expiresAt !== null) {
+            $this->expiresAt($expiresAt);
+        }
     }
 
     /**
@@ -115,7 +132,7 @@ class Cookie implements CookieInterface
     protected function _buildExpirationValue()
     {
         return sprintf(
-            '; expires=%s',
+            'expires=%s',
             gmdate('D, d-M-Y H:i:s T', $this->expiresAt)
         );
     }
@@ -127,24 +144,25 @@ class Cookie implements CookieInterface
      */
     public function toHeaderValue()
     {
-        $headerValue = sprintf('%s=%s', $this->name, urlencode($this->value));
+        $headerValue[] = sprintf('%s=%s', $this->name, urlencode($this->value));
+
         if ($this->expiresAt !== 0) {
-            $headerValue .= $this->_buildExpirationValue();
+            $headerValue[] = $this->_buildExpirationValue();
         }
         if (!empty($this->path)) {
-            $headerValue .= sprintf('; path=%s', $this->path);
+            $headerValue[] = sprintf('path=%s', $this->path);
         }
         if (!empty($this->domain)) {
-            $headerValue .= sprintf('; domain=%s', $this->domain);
+            $headerValue[] = sprintf('domain=%s', $this->domain);
         }
         if ($this->secure) {
-            $headerValue .= '; secure';
+            $headerValue[] = 'secure';
         }
         if ($this->httpOnly) {
-            $headerValue .= '; httponly';
+            $headerValue[] = 'httponly';
         }
 
-        return $headerValue;
+        return implode('; ', $headerValue);
     }
 
     /**
@@ -252,6 +270,26 @@ class Cookie implements CookieInterface
     public function isSecure()
     {
         return $this->secure;
+    }
+
+    /**
+     * Set HTTP Only
+     *
+     * @param bool $httpOnly HTTP Only
+     * @return $this
+     */
+    public function setHttpOnly($httpOnly)
+    {
+        if (!is_bool($httpOnly)) {
+            throw new InvalidArgumentException(sprintf(
+                'The provided arg must be of type `bool` but `%s` given',
+                gettype($httpOnly)
+            ));
+        }
+
+        $this->httpOnly = $httpOnly;
+
+        return $this;
     }
 
     /**
