@@ -3892,7 +3892,7 @@ class QueryTest extends TestCase
         $this->loadFixtures('Authors');
 
         $statementMock = $this->getMockBuilder(StatementInterface::class)
-            ->setMethods(['rowCount','closeCursor'])
+            ->setMethods(['rowCount', 'closeCursor'])
             ->getMockForAbstractClass();
 
         $statementMock->expects($this->once())
