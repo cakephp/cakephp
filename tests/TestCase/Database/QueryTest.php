@@ -15,6 +15,8 @@
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\ExpressionInterface;
+use Cake\Database\IdentifierInterface;
 use Cake\Database\Query;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
@@ -3377,10 +3379,32 @@ class QueryTest extends TestCase
     public function testIdentifierExpression()
     {
         $query = new Query($this->connection);
-        /* @var \Cake\Database\Expression\IdentifierExpression $expression */
-        $expression = $query->identifier('foo');
-        $this->assertInstanceOf(IdentifierExpression::class, $expression);
-        $this->assertEquals('foo', $expression->getIdentifier());
+        /* @var \Cake\Database\Expression\IdentifierExpression $identifier */
+        $identifier = $query->identifier('foo');
+
+        $this->assertInstanceOf(IdentifierExpression::class, $identifier);
+        $this->assertEquals('foo', $identifier->getIdentifier());
+    }
+
+    /**
+     * Tests the interface contract of identifier
+     *
+     * @return void
+     */
+    public function testIdentifierInterface()
+    {
+        $query = new Query($this->connection);
+        /* @var \Cake\Database\IdentifierInterface $identifier */
+        $identifier = $query->identifier('description');
+
+        // should support these interfaces
+        $this->assertInstanceOf(IdentifierInterface::class, $identifier);
+        $this->assertInstanceOf(ExpressionInterface::class, $identifier);
+
+        $this->assertEquals('description', $identifier->getIdentifier());
+
+        $identifier->setIdentifier('title');
+        $this->assertEquals('title', $identifier->getIdentifier());
     }
 
     /**

@@ -14,13 +14,13 @@
  */
 namespace Cake\Database\Expression;
 
-use Cake\Database\ExpressionInterface;
+use Cake\Database\IdentifierInterface;
 use Cake\Database\ValueBinder;
 
 /**
  * Represents a single identifier name in the database
  */
-class IdentifierExpression implements ExpressionInterface
+class IdentifierExpression implements IdentifierInterface
 {
 
     /**
