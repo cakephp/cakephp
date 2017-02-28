@@ -373,7 +373,7 @@ class ResultSetTest extends TestCase
         $result = new ResultSet($query, $statement);
 
         $result->valid();
-        $data = $result->current();
+        $this->assertNotEmpty($result->current());
     }
 
     /**

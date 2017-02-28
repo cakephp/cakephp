@@ -691,7 +691,9 @@ class Validation
     public static function extension($check, $extensions = ['gif', 'jpeg', 'png', 'jpg'])
     {
         if (is_array($check)) {
-            return static::extension(array_shift($check), $extensions);
+            $check = isset($check['name']) ? $check['name'] : array_shift($check);
+
+            return static::extension($check, $extensions);
         }
         $extension = strtolower(pathinfo($check, PATHINFO_EXTENSION));
         foreach ($extensions as $value) {

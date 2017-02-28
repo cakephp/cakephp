@@ -828,7 +828,10 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      */
     public function testEventManagerReset1()
     {
-        return EventManager::instance();
+        $eventManager = EventManager::instance();
+        $this->assertInstanceOf('Cake\Event\EventManager', $eventManager);
+
+        return $eventManager;
     }
 
     /**
@@ -839,6 +842,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      */
     public function testEventManagerReset2($prevEventManager)
     {
+        $this->assertInstanceOf('Cake\Event\EventManager', $prevEventManager);
         $this->assertNotSame($prevEventManager, EventManager::instance());
     }
 
