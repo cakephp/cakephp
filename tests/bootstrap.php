@@ -82,7 +82,7 @@ Configure::write('App', [
     ]
 ]);
 
-Cache::config([
+Cache::setConfig([
     '_cake_core_' => [
         'engine' => 'File',
         'prefix' => 'cake_core_',
@@ -100,14 +100,14 @@ if (!getenv('db_dsn')) {
     putenv('db_dsn=sqlite:///:memory:');
 }
 
-ConnectionManager::config('test', ['url' => getenv('db_dsn')]);
-ConnectionManager::config('test_custom_i18n_datasource', ['url' => getenv('db_dsn')]);
+ConnectionManager::setConfig('test', ['url' => getenv('db_dsn')]);
+ConnectionManager::setConfig('test_custom_i18n_datasource', ['url' => getenv('db_dsn')]);
 
 Configure::write('Session', [
     'defaults' => 'php'
 ]);
 
-Log::config([
+Log::setConfig([
     // 'queries' => [
     //     'className' => 'Console',
     //     'stream' => 'php://stderr',

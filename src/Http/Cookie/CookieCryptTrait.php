@@ -182,7 +182,6 @@ trait CookieCryptTrait
      * Decodes and decrypts a single value.
      *
      * @param string $value The value to decode & decrypt.
-     * @param string|false $encrypt The encryption cipher to use.
      * @return string|array Decoded values.
      */
     protected function _decode($value)
