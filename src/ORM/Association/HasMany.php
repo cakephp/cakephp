@@ -20,6 +20,7 @@ use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
+use Cake\ORM\Association\DependentDeleteHelper;
 use Cake\ORM\Association\Loader\SelectLoader;
 use Cake\ORM\Table;
 use InvalidArgumentException;
@@ -33,8 +34,6 @@ use Traversable;
  */
 class HasMany extends Association
 {
-
-    use DependentDeleteTrait;
 
     /**
      * Order in which target records should be returned
@@ -654,5 +653,15 @@ class HasMany extends Association
         ]);
 
         return $loader->buildEagerLoader($options);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function cascadeDelete(EntityInterface $entity, array $options = [])
+    {
+        $helper = new DependentDeleteHelper();
+
+        return $helper->cascadeDelete($this, $entity, $options);
     }
 }

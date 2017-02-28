@@ -16,6 +16,7 @@ namespace Cake\ORM\Association;
 
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
+use Cake\ORM\Association\DependentDeleteHelper;
 use Cake\ORM\Association\Loader\SelectLoader;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
@@ -28,9 +29,6 @@ use Cake\Utility\Inflector;
  */
 class HasOne extends Association
 {
-
-    use DependentDeleteTrait;
-
     /**
      * Valid strategies for this type of association
      *
@@ -144,5 +142,15 @@ class HasOne extends Association
         ]);
 
         return $loader->buildEagerLoader($options);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function cascadeDelete(EntityInterface $entity, array $options = [])
+    {
+        $helper = new DependentDeleteHelper();
+
+        return $helper->cascadeDelete($this, $entity, $options);
     }
 }

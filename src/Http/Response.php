@@ -2233,6 +2233,21 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Convenience method to set a string into the response body
+     *
+     * @param string $string The string to be sent
+     * @return static
+     */
+    public function withStringBody($string)
+    {
+        $new = clone $this;
+        $new->_createStream();
+        $new->stream->write((string)$string);
+
+        return $new;
+    }
+
+    /**
      * Validate a file path is a valid response body.
      *
      * @param string $path The path to the file.
