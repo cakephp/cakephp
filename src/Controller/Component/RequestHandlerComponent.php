@@ -391,7 +391,7 @@ class RequestHandlerComponent extends Component
     /**
      * Determines which content types the client accepts. Acceptance is based on
      * the file extension parsed by the Router (if present), and by the HTTP_ACCEPT
-     * header. Unlike Cake\Network\Request::accepts() this method deals entirely with mapped content types.
+     * header. Unlike Cake\Http\ServerRequest::accepts() this method deals entirely with mapped content types.
      *
      * Usage:
      *

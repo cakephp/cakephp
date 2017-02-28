@@ -376,10 +376,10 @@ class Router
      * Nested requests will create a stack of requests. You can remove requests using
      * Router::popRequest(). This is done automatically when using Object::requestAction().
      *
-     * Will accept either a Cake\Network\Request object or an array of arrays. Support for
+     * Will accept either a Cake\Http\ServerRequest object or an array of arrays. Support for
      * accepting arrays may be removed in the future.
      *
-     * @param \Cake\Http\ServerRequest|array $request Parameters and path information or a Cake\Network\Request object.
+     * @param \Cake\Http\ServerRequest|array $request Parameters and path information or a Cake\Http\ServerRequest object.
      * @return void
      */
     public static function setRequestInfo($request)
@@ -734,7 +734,7 @@ class Router
      * are used for CakePHP internals and should not normally be part of an output URL.
      *
      * @param \Cake\Http\ServerRequest|array $params The params array or
-     *     Cake\Network\Request object that needs to be reversed.
+     *     Cake\Http\ServerRequest object that needs to be reversed.
      * @param bool $full Set to true to include the full URL including the
      *     protocol when reversing the URL.
      * @return string The string that is the reversed result of the array

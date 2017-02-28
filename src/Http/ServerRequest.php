@@ -638,7 +638,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Check whether or not a Request is a certain type.
      *
      * Uses the built in detection rules as well as additional rules
-     * defined with Cake\Network\CakeRequest::addDetector(). Any detector can be called
+     * defined with Cake\Http\ServerRequest::addDetector(). Any detector can be called
      * as `is($type)` or `is$Type()`.
      *
      * @param string|array $type The type of request you want to check. If an array
@@ -805,7 +805,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param array $types The types to check.
      * @return bool Success.
-     * @see \Cake\Network\Request::is()
+     * @see \Cake\Http\ServerRequest::is()
      */
     public function isAll(array $types)
     {
@@ -1317,7 +1317,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Parse the HTTP_ACCEPT header and return a sorted array with content types
      * as the keys, and pref values as the values.
      *
-     * Generally you want to use Cake\Network\Request::accept() to get a simple list
+     * Generally you want to use Cake\Http\ServerRequest::accept() to get a simple list
      * of the accepted content types.
      *
      * @return array An array of prefValue => [content/types]
@@ -1332,11 +1332,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * Get the list of accepted languages:
      *
-     * ``` \Cake\Network\Request::acceptLanguage(); ```
+     * ``` \Cake\Http\ServerRequest::acceptLanguage(); ```
      *
      * Check if a specific language is accepted:
      *
-     * ``` \Cake\Network\Request::acceptLanguage('es-es'); ```
+     * ``` \Cake\Http\ServerRequest::acceptLanguage('es-es'); ```
      *
      * @param string|null $language The language to test.
      * @return array|bool If a $language is provided, a boolean. Otherwise the array of accepted languages.
