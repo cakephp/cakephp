@@ -15,11 +15,14 @@
 namespace Cake\ORM\Association;
 
 use Cake\Datasource\EntityInterface;
+use Cake\ORM\Association\DependentDeleteHelper;
 
 /**
  * Implements cascading deletes for dependent associations.
  *
  * Included by HasOne and HasMany association classes.
+ *
+ * @deprected 3.5.0 Unused in CakePHP now. This class will be removed in 4.0.0
  */
 trait DependentDeleteTrait
 {
@@ -35,24 +38,8 @@ trait DependentDeleteTrait
      */
     public function cascadeDelete(EntityInterface $entity, array $options = [])
     {
-        if (!$this->getDependent()) {
-            return true;
-        }
-        $table = $this->getTarget();
-        $foreignKey = (array)$this->getForeignKey();
-        $bindingKey = (array)$this->getBindingKey();
-        $conditions = array_combine($foreignKey, $entity->extract($bindingKey));
+        $helper = new DependentDeleteHelper();
 
-        if ($this->_cascadeCallbacks) {
-            foreach ($this->find()->where($conditions)->toList() as $related) {
-                $table->delete($related, $options);
-            }
-
-            return true;
-        }
-
-        $conditions = array_merge($conditions, $this->getConditions());
-
-        return $table->deleteAll($conditions);
+        return $helper->cascadeDelete($this, $entity, $options);
     }
 }
