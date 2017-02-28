@@ -433,7 +433,7 @@ class Cookie implements CookieInterface
     public function expand()
     {
         if (!$this->isExpanded) {
-            $this->data = $this->_expand($this->value);
+            $this->value = $this->_expand($this->value);
             $this->isExpanded = true;
         }
 
