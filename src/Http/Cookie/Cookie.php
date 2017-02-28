@@ -149,10 +149,10 @@ class Cookie implements CookieInterface
         if ($this->expiresAt !== 0) {
             $headerValue[] = $this->_buildExpirationValue();
         }
-        if (!empty($this->path)) {
+        if ($this->path !== '') {
             $headerValue[] = sprintf('path=%s', $this->path);
         }
-        if (!empty($this->domain)) {
+        if ($this->domain !== '') {
             $headerValue[] = sprintf('domain=%s', $this->domain);
         }
         if ($this->secure) {
@@ -299,7 +299,7 @@ class Cookie implements CookieInterface
      */
     public function isHttpOnly()
     {
-        return $this->isHttpOnly();
+        return $this->httpOnly;
     }
 
     /**

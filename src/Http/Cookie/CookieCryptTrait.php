@@ -31,8 +31,7 @@ trait CookieCryptTrait
      * @var array
      */
     protected $_validCiphers = [
-        'aes',
-        'rijndael'
+        'aes'
     ];
 
     /**
@@ -68,7 +67,7 @@ trait CookieCryptTrait
      *
      * @return bool
      */
-    public function encryptionIsEnabled()
+    public function isEncryptionEnabled()
     {
         return is_string($this->encryptionCipher);
     }
@@ -105,7 +104,7 @@ trait CookieCryptTrait
      */
     public function getEncryptionKey()
     {
-        if (empty($this->encryptionKey)) {
+        if ($this->encryptionKey === null) {
             return Security::salt();
         }
 
@@ -115,7 +114,7 @@ trait CookieCryptTrait
     /**
      * Encrypts $value using public $type method in Security class
      *
-     * @param string $value Value to encrypt
+     * @param string|array $value Value to encrypt
      * @return string Encoded values
      */
     protected function _encrypt($value)
@@ -129,9 +128,6 @@ trait CookieCryptTrait
         $cipher = null;
         $key = $this->getEncryptionKey();
 
-        if ($encrypt === 'rijndael') {
-            $cipher = Security::rijndael($value, $key, 'encrypt');
-        }
         if ($encrypt === 'aes') {
             $cipher = Security::encrypt($value, $key);
         }
@@ -186,7 +182,7 @@ trait CookieCryptTrait
      */
     protected function _decode($value)
     {
-        if (!$this->encryptionIsEnabled()) {
+        if (!$this->isEncryptionEnabled()) {
             return $this->_expand($value);
         }
 
@@ -196,9 +192,6 @@ trait CookieCryptTrait
 
         $value = base64_decode(substr($value, strlen($prefix)));
 
-        if ($encrypt === 'rijndael') {
-            $value = Security::rijndael($value, $key, 'decrypt');
-        }
         if ($encrypt === 'aes') {
             $value = Security::decrypt($value, $key);
         }
