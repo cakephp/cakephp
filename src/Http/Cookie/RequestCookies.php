@@ -60,7 +60,7 @@ class RequestCookies extends CookieCollection
      */
     public function get($name)
     {
-        if (!$this->has($name)) {;
+        if (!$this->has($name)) {
             throw new InvalidArgumentException(sprintf('Cookie `%s` does not exist', $name));
         }
 
