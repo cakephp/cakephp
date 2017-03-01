@@ -50,7 +50,7 @@ supports 4 association types out of the box:
 * belongsToMany - E.g. An article belongsToMany tags.
 
 You define associations in your table's `initialize()` method. See the
-[documentation](http://book.cakephp.org/3.0/en/orm/associations.html) for
+[documentation](https://book.cakephp.org/3.0/en/orm/associations.html) for
 complete examples.
 
 ## Reading Data
@@ -66,8 +66,8 @@ foreach ($articles->find() as $article) {
 }
 ```
 
-You can use the [query builder](http://book.cakephp.org/3.0/en/orm/query-builder.html) to create
-complex queries, and a [variety of methods](http://book.cakephp.org/3.0/en/orm/retrieving-data-and-resultsets.html)
+You can use the [query builder](https://book.cakephp.org/3.0/en/orm/query-builder.html) to create
+complex queries, and a [variety of methods](https://book.cakephp.org/3.0/en/orm/retrieving-data-and-resultsets.html)
 to access your data.
 
 ## Saving Data
@@ -101,7 +101,7 @@ $articles->save($article, [
 ```
 
 The above shows how you can easily marshal and save an entity and its
-associations in a simple & powerful way. Consult the [ORM documentation](http://book.cakephp.org/3.0/en/orm/saving-data.html)
+associations in a simple & powerful way. Consult the [ORM documentation](https://book.cakephp.org/3.0/en/orm/saving-data.html)
 for more in-depth examples.
 
 ## Deleting Data
@@ -116,5 +116,5 @@ $articles->delete($article);
 
 ## Additional Documentation
 
-Consult [the CakePHP ORM documentation](http://book.cakephp.org/3.0/en/orm.html)
+Consult [the CakePHP ORM documentation](https://book.cakephp.org/3.0/en/orm.html)
 for more in-depth documentation.
