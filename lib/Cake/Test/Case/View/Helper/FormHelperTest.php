@@ -4980,6 +4980,60 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test that select() with numeric label of optiongroup.
+ *
+ * @return void
+ */
+	public function testSelectOptionGroupWithNumericLabel() {
+		$options = array(
+			1 => array(
+				1 => '1Foo',
+				2 => '2Bar',
+				3 => '3Baz',
+				4 => '1',
+				5 => '2',
+				6 => '3',
+				7 => 1,
+				8 => 2,
+				9 => 3,
+			),
+			2 => array(
+				11 => '1Foo',
+				12 => '2Bar',
+				13 => '3Baz',
+				14 => '1',
+				15 => '2',
+				16 => '3',
+				17 => 1,
+				18 => 2,
+				19 => 3,
+			),
+		);
+		$result = $this->Form->select('Model.field', $options, array('empty' => false));
+		$expected = array(
+			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			array('optgroup' => array('label' => '1')),
+			array('option' => array('value' => '1')), '1Foo', '/option',
+			array('option' => array('value' => '2')), '2Bar', '/option',
+			array('option' => array('value' => '3')), '3Baz', '/option',
+			array('option' => array('value' => '6')), '3', '/option',
+			array('option' => array('value' => '9')), '3', '/option',
+			'/optgroup',
+			array('optgroup' => array('label' => '2')),
+			array('option' => array('value' => '11')), '1Foo', '/option',
+			array('option' => array('value' => '12')), '2Bar', '/option',
+			array('option' => array('value' => '13')), '3Baz', '/option',
+			array('option' => array('value' => '14')), '1', '/option',
+			array('option' => array('value' => '16')), '3', '/option',
+			array('option' => array('value' => '17')), '1', '/option',
+			array('option' => array('value' => '19')), '3', '/option',
+			'/optgroup',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test that select() with optiongroups listens to the escape param.
  *
  * @return void
