@@ -54,7 +54,7 @@ Help us keep CakePHP open and inclusive. Please read and follow our [Code of Con
 
 ## Test cases and codesniffer
 
-CakePHP tests requires [PHPUnit](http://www.phpunit.de/manual/current/en/installation.html).
+CakePHP tests requires [PHPUnit](https://phpunit.de/manual/current/en/installation.html).
 To install PHPUnit use composer:
 
     php composer.phar require "phpunit/phpunit:*"
