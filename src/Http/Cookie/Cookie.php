@@ -381,6 +381,7 @@ class Cookie implements CookieInterface
      * Throws a \RuntimeException if the cookie value was not expanded
      *
      * @throws \RuntimeException
+     * @return void
      */
     protected function _isExpanded()
     {

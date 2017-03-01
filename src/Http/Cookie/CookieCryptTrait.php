@@ -49,6 +49,13 @@ trait CookieCryptTrait
     protected $encryptionKey = '';
 
     /**
+     * Prefix of the encrypted string
+     *
+     * @var string
+     */
+    protected $encryptedStringPrefix = 'Q2FrZQ==.';
+
+    /**
      * Sets the encryption cipher
      *
      * @param string $cipher Cipher
@@ -124,7 +131,6 @@ trait CookieCryptTrait
         }
 
         $encrypt = $this->encryptionCipher;
-        $prefix = 'Q2FrZQ==.';
         $cipher = null;
         $key = $this->getEncryptionKey();
 
@@ -132,7 +138,7 @@ trait CookieCryptTrait
             $cipher = Security::encrypt($value, $key);
         }
 
-        return $prefix . base64_encode($cipher);
+        return $this->encryptedStringPrefix . base64_encode($cipher);
     }
 
     /**
@@ -185,11 +191,10 @@ trait CookieCryptTrait
             return $this->_expand($value);
         }
 
-        $prefix = 'Q2FrZQ==.';
         $key = $this->getEncryptionKey();
         $encrypt = $this->encryptionCipher;
 
-        $value = base64_decode(substr($value, strlen($prefix)));
+        $value = base64_decode(substr($value, strlen($this->encryptedStringPrefix)));
 
         if ($encrypt === 'aes') {
             $value = Security::decrypt($value, $key);
