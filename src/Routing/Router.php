@@ -723,8 +723,9 @@ class Router
         return static::$_fullBaseUrl;
     }
 
+
     /**
-     * Reverses a parsed parameter array into a string.
+     * Reverses a parsed parameter array into an array.
      *
      * Works similarly to Router::url(), but since parsed URL's contain additional
      * 'pass' as well as 'url.url' keys. Those keys need to be specially
@@ -735,11 +736,9 @@ class Router
      *
      * @param \Cake\Http\ServerRequest|array $params The params array or
      *     Cake\Network\Request object that needs to be reversed.
-     * @param bool $full Set to true to include the full URL including the
-     *     protocol when reversing the URL.
-     * @return string The string that is the reversed result of the array
+     * @return array The URL array ready to be used for redirect or HTML link.
      */
-    public static function reverse($params, $full = false)
+    public static function reverseToArray($params)
     {
         $url = [];
         if ($params instanceof ServerRequest) {
@@ -767,6 +766,29 @@ class Router
         if (!empty($url)) {
             $params['?'] = $url;
         }
+
+        return $params;
+    }
+
+    /**
+     * Reverses a parsed parameter array into a string.
+     *
+     * Works similarly to Router::url(), but since parsed URL's contain additional
+     * 'pass' as well as 'url.url' keys. Those keys need to be specially
+     * handled in order to reverse a params array into a string URL.
+     *
+     * This will strip out 'autoRender', 'bare', 'requested', and 'return' param names as those
+     * are used for CakePHP internals and should not normally be part of an output URL.
+     *
+     * @param \Cake\Http\ServerRequest|array $params The params array or
+     *     Cake\Network\Request object that needs to be reversed.
+     * @param bool $full Set to true to include the full URL including the
+     *     protocol when reversing the URL.
+     * @return string The string that is the reversed result of the array
+     */
+    public static function reverse($params, $full = false)
+    {
+        $params = static::reverseToArray($params);
 
         return static::url($params, $full);
     }

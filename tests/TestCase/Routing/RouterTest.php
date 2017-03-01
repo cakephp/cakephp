@@ -2656,7 +2656,7 @@ class RouterTest extends TestCase
      *
      * @return void
      */
-    public function testReverse()
+    public function testReverseToken()
     {
         Router::connect('/:controller/:action/*');
         $params = [
@@ -2672,7 +2672,10 @@ class RouterTest extends TestCase
         ];
         $result = Router::reverse($params);
         $this->assertEquals('/posts/view/1', $result);
+    }
 
+    public function testReverseLocalized()
+    {
         Router::reload();
         Router::connect('/:lang/:controller/:action/*', [], ['lang' => '[a-z]{3}']);
         $params = [
@@ -2684,7 +2687,11 @@ class RouterTest extends TestCase
         ];
         $result = Router::reverse($params);
         $this->assertEquals('/eng/posts/view/1', $result);
+    }
 
+    public function testReverseArrayQuery()
+    {
+        Router::connect('/:lang/:controller/:action/*', [], ['lang' => '[a-z]{3}']);
         $params = [
             'lang' => 'eng',
             'controller' => 'posts',
@@ -2706,7 +2713,11 @@ class RouterTest extends TestCase
         ];
         $result = Router::reverse($params);
         $this->assertEquals('/eng/posts/view/1?foo=bar&baz=quu', $result);
+    }
 
+    public function testReverseCakeRequestQuery()
+    {
+        Router::connect('/:lang/:controller/:action/*', [], ['lang' => '[a-z]{3}']);
         $request = new Request('/eng/posts/view/1');
         $request->addParams([
             'lang' => 'eng',
@@ -2718,7 +2729,10 @@ class RouterTest extends TestCase
         $result = Router::reverse($request);
         $expected = '/eng/posts/view/1?test=value';
         $this->assertEquals($expected, $result);
+    }
 
+    public function testReverseFull()
+    {
         $params = [
             'lang' => 'eng',
             'controller' => 'posts',
@@ -2751,6 +2765,53 @@ class RouterTest extends TestCase
         $result = Router::reverse($request);
         $expected = '/posts/view/1.json';
         $this->assertEquals($expected, $result);
+    }
+
+    public function testReverseToArrayQuery()
+    {
+        Router::connect('/:lang/:controller/:action/*', [], ['lang' => '[a-z]{3}']);
+        $params = [
+            'lang' => 'eng',
+            'controller' => 'posts',
+            'action' => 'view',
+            123,
+            '?' => ['foo' => 'bar'],
+        ];
+        $actual = Router::reverseToArray($params);
+        $expected = [
+            'lang' => 'eng',
+            'controller' => 'posts',
+            'action' => 'view',
+            123,
+            '?' => ['foo' => 'bar'],
+        ];
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testReverseToArrayRequestQuery()
+    {
+        Router::connect('/:lang/:controller/:action/*', [], ['lang' => '[a-z]{3}']);
+        $request = new Request('/eng/posts/view/1');
+        $request->addParams([
+            'lang' => 'eng',
+            'controller' => 'posts',
+            'action' => 'view',
+            'pass' => [123],
+        ]);
+        $request->query = ['url' => 'eng/posts/view/1', 'test' => 'value'];
+        $actual = Router::reverseToArray($request);
+        $expected = [
+            'lang' => 'eng',
+            'plugin' => null,
+            'controller' => 'posts',
+            'action' => 'view',
+            123,
+            '_ext' => null,
+            '?' => [
+                'test' => 'value',
+            ],
+        ];
+        $this->assertEquals($expected, $actual);
     }
 
     /**
