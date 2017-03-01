@@ -100,6 +100,8 @@ class Cookie implements CookieInterface
      * Constructor
      *
      * The constructors args are similar to the native php setcookie() method.
+     * The only difference is the 3rd argument which excepts null or an object
+     * implementing \DateTimeInterface instead an integer.
      *
      * @link http://php.net/manual/en/function.setcookie.php
      * @param string $name Cookie name
@@ -239,11 +241,18 @@ class Cookie implements CookieInterface
     /**
      * Sets the path
      *
-     * @param string|null $path Sets the path
+     * @param string $path Sets the path
      * @return $this
      */
     public function setPath($path)
     {
+        if (!is_string($path)) {
+            throw new InvalidArgumentException(sprintf(
+                'The provided arg must be of type `string` but `%s` given',
+                gettype($path)
+            ));
+        }
+
         $this->path = $path;
 
         return $this;
@@ -257,6 +266,13 @@ class Cookie implements CookieInterface
      */
     public function setDomain($domain)
     {
+        if (!is_string($domain)) {
+            throw new InvalidArgumentException(sprintf(
+                'The provided arg must be of type `string` but `%s` given',
+                gettype($domain)
+            ));
+        }
+
         $this->domain = $domain;
 
         return $this;
@@ -323,6 +339,8 @@ class Cookie implements CookieInterface
      */
     public function check($path)
     {
+        $this->_isExpanded();
+
         return Hash::check($this->value, $path);
     }
 
@@ -335,9 +353,7 @@ class Cookie implements CookieInterface
      */
     public function write($path, $value)
     {
-        if (!$this->isExpanded) {
-            throw new RuntimeException('The Cookie data has not been expanded');
-        }
+        $this->_isExpanded();
 
         Hash::insert($this->value, $path, $value);
 
@@ -352,15 +368,25 @@ class Cookie implements CookieInterface
      */
     public function read($path = null)
     {
-        if (!$this->isExpanded) {
-            throw new RuntimeException('The Cookie data has not been expanded');
-        }
+        $this->_isExpanded();
 
         if ($path === null) {
             return $this->value;
         }
 
         return Hash::get($this->value, $path);
+    }
+
+    /**
+     * Throws a \RuntimeException if the cookie value was not expanded
+     *
+     * @throws \RuntimeException
+     */
+    protected function _isExpanded()
+    {
+        if (!$this->isExpanded) {
+            throw new RuntimeException('The Cookie data has not been expanded');
+        }
     }
 
     /**
@@ -392,17 +418,16 @@ class Cookie implements CookieInterface
     /**
      * Encrypts the cookie value
      *
-     * @param string $key Encryption key
+     * @param string|null $key Encryption key
      * @return $this
      */
-    public function encrypt($key)
+    public function encrypt($key = null)
     {
-        $this->encryptionKey = $key;
-        $this->value = $this->_encrypt(
-            $this->value,
-            $this->encryptionCipher,
-            $key
-        );
+        if ($key !== null) {
+            $this->setEncryptionKey($key);
+        }
+
+        $this->value = $this->_encrypt($this->value);
 
         return $this;
     }
@@ -410,17 +435,16 @@ class Cookie implements CookieInterface
     /**
      * Decrypts the cookie value
      *
-     * @param string $key Encryption key
+     * @param string|null $key Encryption key
      * @return $this
      */
-    public function decrypt($key)
+    public function decrypt($key = null)
     {
-        $this->encryptionKey = $key;
-        $this->value = $this->_decrypt(
-            $this->value,
-            $this->encryptionCipher,
-            $key
-        );
+        if ($key !== null) {
+            $this->setEncryptionKey($key);
+        }
+
+        $this->value = $this->_decrypt($this->value);
 
         return $this;
     }

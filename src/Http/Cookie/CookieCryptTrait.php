@@ -157,18 +157,17 @@ trait CookieCryptTrait
      * Decrypts $value using public $type method in Security class
      *
      * @param string|array $values Values to decrypt
-     * @param string|bool $mode Encryption mode
      * @return string|array Decrypted values
      */
-    protected function _decrypt($values, $mode)
+    protected function _decrypt($values)
     {
         if (is_string($values)) {
-            return $this->_decode($values, $mode);
+            return $this->_decode($values);
         }
 
         $decrypted = [];
         foreach ($values as $name => $value) {
-            $decrypted[$name] = $this->_decode($value, $mode);
+            $decrypted[$name] = $this->_decode($value);
         }
 
         return $decrypted;
