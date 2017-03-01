@@ -1172,12 +1172,11 @@ class PaginatorHelper extends Helper
     }
 
     /**
-     * dropdown array for Select limit
+     * Dropdown select for pagination limit
      *
-     * @param array $limits This is array of options.
-     * @param int|null $default Default limit for option selecting. Default value is $this->param('perPage').
+     * @param array $limits The options array.
+     * @param int|null $default Default option for pagination limit. Defaults to `$this->param('perPage')`.
      * @param array $options Options for Select tag attributes like class, id or event
-     *
      * @return string html output.
      */
     public function limitControl(array $limits = [], $default = null, array $options = [])
@@ -1196,13 +1195,13 @@ class PaginatorHelper extends Helper
             ];
         }
 
-        if (!in_array($default, $limits)) {
-            $limits += [$default => $default];
-        }
-
-        ksort($limits);
-
-        $out .= $this->Form->control('limit', ($options + ['type' => 'select', 'label' => __('View'), 'value' => $default, 'options' => $limits, 'onChange' => 'this.form.submit()']));
+        $out .= $this->Form->control('limit', $options + [
+                'type' => 'select',
+                'label' => __('View'),
+                'value' => $default,
+                'options' => $limits,
+                'onChange' => 'this.form.submit()'
+            ]);
         $out .= $this->Form->end();
 
         return $out;
