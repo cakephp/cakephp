@@ -356,6 +356,10 @@ class TextHelperTest extends TestCase
             [
                 'https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)',
                 '<a href="https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)">https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)</a>'
+            ],
+            [
+                'http://dev.local/threads/search?search_string=this+is+a+test',
+                '<a href="http://dev.local/threads/search?search_string=this+is+a+test">http://dev.local/threads/search?search_string=this+is+a+test</a>'
             ]
         ];
     }

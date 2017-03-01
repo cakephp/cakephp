@@ -123,7 +123,7 @@ class TextHelper extends Helper
                     (?<left>[\[<(]) # left paren,brace
                     (?>
                         # Lax match URL
-                        (?<url>(?:https?|ftp|nntp):\/\/[\p{L}0-9.\-_:]+(?:[\/?][\p{L}0-9.\-_:\/?=&>\[\]()#@]+)?)
+                        (?<url>(?:https?|ftp|nntp):\/\/[\p{L}0-9.\-_:]+(?:[\/?][\p{L}0-9.\-_:\/?=&>\[\]()#@\+]+)?)
                         (?<right>[\])>]) # right paren,brace
                     )
                 )
