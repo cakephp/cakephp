@@ -314,15 +314,15 @@ xml;
         $expected = <<<xml
 <?xml version="1.0"?>
 <shell>
-<name>mycommand</name>
-<description>Description text</description>
+<command>mycommand</command>
+<description />
 <subcommands />
 <options>
 	<option name="--help" short="-h" help="Display this help." boolean="1">
 		<default></default>
 		<choices></choices>
 	</option>
-	<option name="--test" short="" help="A test option." boolean="0">
+	<option name="--test" short="" help="A test option." boolean="">
 		<default></default>
 		<choices>
 			<choice>one</choice>
@@ -337,11 +337,14 @@ xml;
 			<choice>aro</choice>
 		</choices>
 	</argument>
+	<argument name="other_longer" help="Another argument." required="">
+		<choices></choices>
+	</argument>
 </arguments>
-<epilog>epilog text</epilog>
+<epilog />
 </shell>
 xml;
-        $this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
+        $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
     /**
@@ -362,7 +365,7 @@ xml;
         $expected = <<<xml
 <?xml version="1.0"?>
 <shell>
-<name>mycommand</name>
+<command>mycommand</command>
 <description>Description text</description>
 <subcommands />
 <options>
@@ -370,7 +373,7 @@ xml;
 		<default></default>
 		<choices></choices>
 	</option>
-	<option name="--test" short="" help="A test option." boolean="0">
+	<option name="--test" short="" help="A test option." boolean="">
 		<default></default>
 		<choices></choices>
 	</option>
@@ -383,7 +386,7 @@ xml;
 <epilog>epilog text</epilog>
 </shell>
 xml;
-        $this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
+        $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
     /**
@@ -402,7 +405,7 @@ xml;
         $expected = <<<xml
 <?xml version="1.0"?>
 <shell>
-<name>mycommand</name>
+<command>mycommand</command>
 <description/>
 <subcommands>
 	<command name="method" help="This is another command" />
@@ -412,7 +415,7 @@ xml;
 		<default></default>
 		<choices></choices>
 	</option>
-	<option name="--test" short="" help="A test option." boolean="0">
+	<option name="--test" short="" help="A test option." boolean="">
 		<default></default>
 		<choices></choices>
 	</option>
@@ -421,7 +424,7 @@ xml;
 <epilog/>
 </shell>
 xml;
-        $this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
+        $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
     /**
@@ -442,20 +445,20 @@ xml;
         $expected = <<<xml
 <?xml version="1.0"?>
 <shell>
-<name>mycommand</name>
+<command>mycommand</command>
 <description/>
 <subcommands/>
 <options>
+	<option name="--connection" short="-c" help="The connection to use." boolean="">
+		<default>default</default>
+		<choices></choices>
+	</option>
 	<option name="--help" short="-h" help="Display this help." boolean="1">
 		<default></default>
 		<choices></choices>
 	</option>
-	<option name="--test" short="" help="A test option." boolean="0">
+	<option name="--test" short="" help="A test option." boolean="">
 		<default></default>
-		<choices></choices>
-	</option>
-	<option name="--connection" short="-c" help="The connection to use." boolean="0">
-		<default>default</default>
 		<choices></choices>
 	</option>
 </options>
@@ -463,7 +466,7 @@ xml;
 <epilog/>
 </shell>
 xml;
-        $this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
+        $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
     /**
@@ -483,7 +486,7 @@ xml;
         $expected = <<<xml
 <?xml version="1.0"?>
 <shell>
-	<name>mycommand</name>
+	<command>mycommand</command>
 	<description/>
 	<subcommands/>
 	<options>
@@ -491,7 +494,7 @@ xml;
 			<default></default>
 			<choices></choices>
 		</option>
-		<option name="--test" short="" help="A test option." boolean="0">
+		<option name="--test" short="" help="A test option." boolean="">
 			<default></default>
 			<choices></choices>
 		</option>
@@ -500,14 +503,14 @@ xml;
 		<argument name="model" help="The model to make." required="1">
 			<choices></choices>
 		</argument>
-		<argument name="other_longer" help="Another argument." required="0">
+		<argument name="other_longer" help="Another argument." required="">
 			<choices></choices>
 		</argument>
 	</arguments>
 	<epilog/>
 </shell>
 xml;
-        $this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
+        $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
     /**

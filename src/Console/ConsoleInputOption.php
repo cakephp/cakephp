@@ -249,9 +249,10 @@ class ConsoleInputOption
         $option->addAttribute('name', '--' . $this->_name);
         $short = '';
         if (strlen($this->_short) > 0) {
-            $short = $this->_short;
+            $short = '-' . $this->_short;
         }
-        $option->addAttribute('short', '-' . $short);
+        $option->addAttribute('short', $short);
+        $option->addAttribute('help', $this->_help);
         $option->addAttribute('boolean', $this->_boolean);
         $option->addChild('default', $this->_default);
         $choices = $option->addChild('choices');
