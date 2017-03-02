@@ -229,27 +229,17 @@ class CookieComponent extends Component {
 		}
 
 		foreach ($key as $name => $value) {
-			$names = array($name);
-			if (strpos($name, '.') !== false) {
-				$names = explode('.', $name, 2);
-			}
-			$firstName = $names[0];
-			$isMultiValue = (is_array($value) || count($names) > 1);
-
-			if (!isset($this->_values[$this->name][$firstName]) && $isMultiValue) {
-				$this->_values[$this->name][$firstName] = array();
-			}
-
-			if (count($names) > 1) {
-				$this->_values[$this->name][$firstName] = Hash::insert(
-					$this->_values[$this->name][$firstName],
-					$names[1],
-					$value
-				);
+			if (strpos($name, '.') === false) {
+				$this->_values[$this->name][$name] = $value;
+				$this->_write("[$name]", $value);
 			} else {
-				$this->_values[$this->name][$firstName] = $value;
+				$names = explode('.', $name, 2);
+				if (!isset($this->_values[$this->name][$names[0]])) {
+					$this->_values[$this->name][$names[0]] = array();
+				}
+				$this->_values[$this->name][$names[0]] = Hash::insert($this->_values[$this->name][$names[0]], $names[1], $value);
+				$this->_write('[' . implode('][', $names) . ']', $value);
 			}
-			$this->_write('[' . $firstName . ']', $this->_values[$this->name][$firstName]);
 		}
 		$this->_encrypted = true;
 	}
