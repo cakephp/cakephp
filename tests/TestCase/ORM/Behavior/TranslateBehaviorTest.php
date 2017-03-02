@@ -788,6 +788,133 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
+     * Tests adding new translation to a record
+     *
+     * @return void
+     */
+    public function testAllowEmptyFalse()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title'], 'allowEmptyTranslations' => false]);
+
+        $article = $table->find()->first();
+        $this->assertEquals(1, $article->get('id'));
+
+        $article = $table->patchEntity($article, [
+            '_translations' => [
+                'fra' => [
+                    'title' => ''
+                ]
+            ]
+        ]);
+
+        $table->save($article);
+
+        // Remove the Behavior to unset the content != '' condition
+        $table->removeBehavior('Translate');
+
+        $noFra = $table->I18n->find()->where(['locale' => 'fra'])->first();
+        $this->assertEmpty($noFra);
+    }
+
+    /**
+     * Tests adding new translation to a record
+     *
+     * @return void
+     */
+    public function testMixedAllowEmptyFalse()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body'], 'allowEmptyTranslations' => false]);
+
+        $article = $table->find()->first();
+        $this->assertEquals(1, $article->get('id'));
+
+        $article = $table->patchEntity($article, [
+            '_translations' => [
+                'fra' => [
+                    'title' => '',
+                    'body' => 'Bonjour'
+                ]
+            ]
+        ]);
+
+        $table->save($article);
+
+        $fra = $table->I18n->find()
+            ->where([
+                'locale' => 'fra',
+                'field' => 'body'
+            ])
+            ->first();
+        $this->assertSame('Bonjour', $fra->content);
+
+        // Remove the Behavior to unset the content != '' condition
+        $table->removeBehavior('Translate');
+
+        $noTitle = $table->I18n->find()
+            ->where([
+                'locale' => 'fra',
+                'field' => 'title'
+            ])
+            ->first();
+        $this->assertEmpty($noTitle);
+    }
+
+    /**
+     * Tests adding new translation to a record
+     *
+     * @return void
+     */
+    public function testMultipleAllowEmptyFalse()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body'], 'allowEmptyTranslations' => false]);
+
+        $article = $table->find()->first();
+        $this->assertEquals(1, $article->get('id'));
+
+        $article = $table->patchEntity($article, [
+            '_translations' => [
+                'fra' => [
+                    'title' => '',
+                    'body' => 'Bonjour'
+                ],
+                'de' => [
+                    'title' => 'Titel',
+                    'body' => 'Hallo'
+                ]
+            ]
+        ]);
+
+        $table->save($article);
+
+        $fra = $table->I18n->find()
+            ->where([
+                'locale' => 'fra',
+                'field' => 'body'
+            ])
+            ->first();
+        $this->assertSame('Bonjour', $fra->content);
+
+        $deTitle = $table->I18n->find()
+            ->where([
+                'locale' => 'de',
+                'field' => 'title'
+            ])
+            ->first();
+        $this->assertSame('Titel', $deTitle->content);
+
+        $deBody = $table->I18n->find()
+            ->where([
+                'locale' => 'de',
+                'field' => 'body'
+            ])
+            ->first();
+        $this->assertSame('Hallo', $deBody->content);
+    }
+
+    /**
      * Tests that it is possible to use the _locale property to specify the language
      * to use for saving an entity
      *

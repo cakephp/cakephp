@@ -272,6 +272,43 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         $newOptions = [$this->_translationTable->getAlias() => ['validate' => false]];
         $options['associated'] = $newOptions + $options['associated'];
 
+        // Check early if empty transaltions are present in the entity.
+        // If this is the case, unset them to prevent persistence.
+        // This only applies if $this->_config['allowEmptyTranslations'] is false
+        if ($this->_config['allowEmptyTranslations'] === false) {
+            $translations = (array)$entity->get('_translations');
+            if (!empty($translations)) {
+                foreach ($translations as $locale => &$translation) {
+                    $fields = $translation->extract($this->_config['fields'], false);
+                    foreach ($fields as $field => $value) {
+                        if (empty($value)) {
+                            unset($translation->{$field});
+                        }
+                    }
+
+                    // Workaround to check the remaining properties
+                    $arrayEntity = $entity->toArray();
+
+                     // If now, the current locale property is empty,
+                     // unset it completely.
+                    if (empty($arrayEntity['_translations'][$locale])) {
+                        unset($entity->get('_translations')[$locale]);
+                    }
+                }
+
+                // Workaround to check the remaining properties
+                $arrayEntity = $entity->toArray();
+
+                 // If now, the whole _translations property is empty,
+                 // unset it completely and return
+                if (empty($arrayEntity['_translations'])) {
+                    $entity->unsetProperty("_translations");
+
+                    return;
+                }
+            }
+        }
+
         $this->_bundleTranslatedFields($entity);
         $bundled = $entity->get('_i18n') ?: [];
         $noBundled = count($bundled) === 0;
