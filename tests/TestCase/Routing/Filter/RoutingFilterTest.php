@@ -15,8 +15,8 @@
 namespace Cake\Test\TestCase\Routing\Filter;
 
 use Cake\Event\Event;
+use Cake\Http\Response;
 use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\Routing\Filter\RoutingFilter;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -87,7 +87,7 @@ class RoutingFilterTest extends TestCase
         $response = new Response();
         $event = new Event(__CLASS__, $this, compact('request', 'response'));
         $response = $filter->beforeDispatch($event);
-        $this->assertInstanceOf('Cake\Network\Response', $response);
+        $this->assertInstanceOf('Cake\Http\Response', $response);
         $this->assertSame('http://localhost/articles', $response->header()['Location']);
         $this->assertSame(301, $response->statusCode());
         $this->assertTrue($event->isStopped());

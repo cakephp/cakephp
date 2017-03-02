@@ -17,9 +17,9 @@ namespace Cake\Test\TestCase\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\CsrfComponent;
 use Cake\Event\Event;
+use Cake\Http\Response;
 use Cake\I18n\Time;
 use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 
 /**

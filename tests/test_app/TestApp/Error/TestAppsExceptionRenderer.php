@@ -6,7 +6,7 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Error\ExceptionRenderer;
 use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
 use Cake\Routing\Router;
 use TestApp\Controller\TestAppsErrorController;
 

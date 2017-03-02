@@ -16,8 +16,8 @@ namespace Cake\Test\TestCase\Routing\Filter;
 
 use Cake\Core\Configure;
 use Cake\Event\Event;
+use Cake\Http\Response;
 use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\Routing\Filter\ControllerFactoryFilter;
 use Cake\TestSuite\TestCase;
 

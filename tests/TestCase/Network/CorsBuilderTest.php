@@ -1,8 +1,8 @@
 <?php
 namespace Cake\Test\TestCase\Network;
 
+use Cake\Http\Response;
 use Cake\Network\CorsBuilder;
-use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 
 class CorsBuilderTest extends TestCase

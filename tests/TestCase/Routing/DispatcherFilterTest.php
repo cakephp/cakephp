@@ -15,8 +15,8 @@
 namespace Cake\Test\TestCase\Routing;
 
 use Cake\Event\Event;
+use Cake\Http\Response;
 use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\Routing\DispatcherFilter;
 use Cake\TestSuite\TestCase;
 
@@ -116,7 +116,7 @@ class DispatcherFilterTest extends TestCase
     {
         $matcher = function ($request, $response) {
             $this->assertInstanceOf('Cake\Network\Request', $request);
-            $this->assertInstanceOf('Cake\Network\Response', $response);
+            $this->assertInstanceOf('Cake\Http\Response', $response);
 
             return true;
         };

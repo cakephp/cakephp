@@ -20,8 +20,8 @@ use Cake\Controller\Component\AuthComponent;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
+use Cake\Http\Response;
 use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\Routing\Route\InflectedRoute;
@@ -69,7 +69,7 @@ class AuthComponentTest extends TestCase
         $request = new Request();
         $request->env('REQUEST_METHOD', 'GET');
 
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['stop'])
             ->getMock();
 
@@ -224,12 +224,12 @@ class AuthComponentTest extends TestCase
         $this->Controller->Auth->storage()->delete();
         $result = $this->Controller->Auth->startup($event);
         $this->assertTrue($event->isStopped());
-        $this->assertInstanceOf('Cake\Network\Response', $result);
+        $this->assertInstanceOf('Cake\Http\Response', $result);
         $this->assertTrue($this->Auth->session->check('Flash.flash'));
 
         $this->Controller->request->addParams(Router::parse('auth_test/camelCase'));
         $result = $this->Controller->Auth->startup($event);
-        $this->assertInstanceOf('Cake\Network\Response', $result);
+        $this->assertInstanceOf('Cake\Http\Response', $result);
     }
 
     /**
@@ -450,10 +450,10 @@ class AuthComponentTest extends TestCase
         $this->assertNull($this->Controller->Auth->startup($event));
 
         $this->Controller->request['action'] = 'add';
-        $this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
+        $this->assertInstanceOf('Cake\Http\Response', $this->Controller->Auth->startup($event));
 
         $this->Controller->request['action'] = 'camelCase';
-        $this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
+        $this->assertInstanceOf('Cake\Http\Response', $this->Controller->Auth->startup($event));
 
         $this->Controller->Auth->allow();
         $this->Controller->Auth->deny(['add', 'camelCase']);
@@ -462,25 +462,25 @@ class AuthComponentTest extends TestCase
         $this->assertNull($this->Controller->Auth->startup($event));
 
         $this->Controller->request['action'] = 'camelCase';
-        $this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
+        $this->assertInstanceOf('Cake\Http\Response', $this->Controller->Auth->startup($event));
 
         $this->Controller->Auth->allow();
         $this->Controller->Auth->deny();
 
         $this->Controller->request['action'] = 'camelCase';
-        $this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
+        $this->assertInstanceOf('Cake\Http\Response', $this->Controller->Auth->startup($event));
 
         $this->Controller->request['action'] = 'add';
-        $this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
+        $this->assertInstanceOf('Cake\Http\Response', $this->Controller->Auth->startup($event));
 
         $this->Controller->Auth->allow('camelCase');
         $this->Controller->Auth->deny();
 
         $this->Controller->request['action'] = 'camelCase';
-        $this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
+        $this->assertInstanceOf('Cake\Http\Response', $this->Controller->Auth->startup($event));
 
         $this->Controller->request['action'] = 'login';
-        $this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
+        $this->assertInstanceOf('Cake\Http\Response', $this->Controller->Auth->startup($event));
 
         $this->Controller->Auth->deny();
         $this->Controller->Auth->allow(null);
@@ -492,7 +492,7 @@ class AuthComponentTest extends TestCase
         $this->Controller->Auth->deny(null);
 
         $this->Controller->request['action'] = 'camelCase';
-        $this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
+        $this->assertInstanceOf('Cake\Http\Response', $this->Controller->Auth->startup($event));
     }
 
     /**
@@ -511,12 +511,12 @@ class AuthComponentTest extends TestCase
         $this->Controller->request->addParams(Router::parse($url));
         $this->Controller->request->query['url'] = Router::normalize($url);
 
-        $this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
+        $this->assertInstanceOf('Cake\Http\Response', $this->Controller->Auth->startup($event));
 
         $url = '/auth_test/CamelCase';
         $this->Controller->request->addParams(Router::parse($url));
         $this->Controller->request->query['url'] = Router::normalize($url);
-        $this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
+        $this->assertInstanceOf('Cake\Http\Response', $this->Controller->Auth->startup($event));
     }
 
     /**
@@ -547,7 +547,7 @@ class AuthComponentTest extends TestCase
         $this->assertNull($result, 'startup() should return null, as action is allowed. %s');
 
         $this->Controller->Auth->allowedActions = ['delete', 'add'];
-        $this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
+        $this->assertInstanceOf('Cake\Http\Response', $this->Controller->Auth->startup($event));
 
         $url = '/auth_test/delete';
         $this->Controller->request->addParams(Router::parse($url));
@@ -633,7 +633,7 @@ class AuthComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $response = $this->Auth->startup($event);
 
-        $this->assertInstanceOf('Cake\Network\Response', $response);
+        $this->assertInstanceOf('Cake\Http\Response', $response);
         $expected = Router::url(['controller' => 'AuthTest', 'action' => 'login', '?' => ['redirect' => '/posts/view/1']], true);
         $redirectHeader = $response->header()['Location'];
         $this->assertEquals($expected, $redirectHeader);
@@ -657,7 +657,7 @@ class AuthComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $response = $this->Auth->startup($event);
 
-        $this->assertInstanceOf('Cake\Network\Response', $response);
+        $this->assertInstanceOf('Cake\Http\Response', $response);
         $expected = Router::url(['controller' => 'AuthTest', 'action' => 'login', '?' => ['redirect' => '/foo/bar']], true);
         $redirectHeader = $response->header()['Location'];
         $this->assertEquals($expected, $redirectHeader);
@@ -680,7 +680,7 @@ class AuthComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $response = $this->Auth->startup($event);
 
-        $this->assertInstanceOf('Cake\Network\Response', $response);
+        $this->assertInstanceOf('Cake\Http\Response', $response);
         $expected = Router::url(['controller' => 'AuthTest', 'action' => 'login'], true);
         $redirectHeader = $response->header()['Location'];
         $this->assertEquals($expected, $redirectHeader);
@@ -1564,7 +1564,7 @@ class AuthComponentTest extends TestCase
      */
     public function testStatelessAuthRedirectToLogin()
     {
-        $this->Auth->response = $this->getMockBuilder('Cake\Network\Response')
+        $this->Auth->response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['stop', 'statusCode', 'send'])
             ->getMock();
         $event = new Event('Controller.startup', $this->Controller);
@@ -1574,7 +1574,7 @@ class AuthComponentTest extends TestCase
         $this->Auth->response->expects($this->never())->method('statusCode');
         $this->Auth->response->expects($this->never())->method('send');
 
-        $this->assertInstanceOf('Cake\Network\Response', $this->Auth->startup($event));
+        $this->assertInstanceOf('Cake\Http\Response', $this->Auth->startup($event));
 
         $this->assertEquals('/users/login?redirect=%2Fauth_test', $this->Controller->testUrl);
     }

@@ -16,9 +16,9 @@ namespace Cake\Test\TestCase\Error\Middleware;
 
 use Cake\Core\Configure;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
+use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\Log\Log;
-use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 use LogicException;
 use Psr\Log\LoggerInterface;
@@ -142,7 +142,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         };
         $result = $middleware($request, $response, $next);
         $this->assertInstanceOf('Psr\Http\Message\ResponseInterface', $result);
-        $this->assertInstanceOf('Cake\Network\Response', $result);
+        $this->assertInstanceOf('Cake\Http\Response', $result);
         $this->assertNotSame($result, $response);
         $this->assertEquals(404, $result->getStatusCode());
         $this->assertContains("was not found", '' . $result->getBody());
