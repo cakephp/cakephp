@@ -186,7 +186,7 @@ class ConsoleInputArgument
         $option = $parent->addChild('argument');
         $option->addAttribute('name', $this->_name);
         $option->addAttribute('help', $this->_help);
-        $option->addAttribute('required', $this->isRequired());
+        $option->addAttribute('required', (int)$this->isRequired());
         $choices = $option->addChild('choices');
         foreach ($this->_choices as $valid) {
             $choices->addChild('choice', $valid);

@@ -253,7 +253,7 @@ class ConsoleInputOption
         }
         $option->addAttribute('short', $short);
         $option->addAttribute('help', $this->_help);
-        $option->addAttribute('boolean', $this->_boolean);
+        $option->addAttribute('boolean', (int)$this->_boolean);
         $option->addChild('default', $this->_default);
         $choices = $option->addChild('choices');
         foreach ($this->_choices as $valid) {

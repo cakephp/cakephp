@@ -322,7 +322,7 @@ xml;
 		<default></default>
 		<choices></choices>
 	</option>
-	<option name="--test" short="" help="A test option." boolean="">
+	<option name="--test" short="" help="A test option." boolean="0">
 		<default></default>
 		<choices>
 			<choice>one</choice>
@@ -337,7 +337,7 @@ xml;
 			<choice>aro</choice>
 		</choices>
 	</argument>
-	<argument name="other_longer" help="Another argument." required="">
+	<argument name="other_longer" help="Another argument." required="0">
 		<choices></choices>
 	</argument>
 </arguments>
@@ -373,7 +373,7 @@ xml;
 		<default></default>
 		<choices></choices>
 	</option>
-	<option name="--test" short="" help="A test option." boolean="">
+	<option name="--test" short="" help="A test option." boolean="0">
 		<default></default>
 		<choices></choices>
 	</option>
@@ -415,7 +415,7 @@ xml;
 		<default></default>
 		<choices></choices>
 	</option>
-	<option name="--test" short="" help="A test option." boolean="">
+	<option name="--test" short="" help="A test option." boolean="0">
 		<default></default>
 		<choices></choices>
 	</option>
@@ -449,7 +449,7 @@ xml;
 <description/>
 <subcommands/>
 <options>
-	<option name="--connection" short="-c" help="The connection to use." boolean="">
+	<option name="--connection" short="-c" help="The connection to use." boolean="0">
 		<default>default</default>
 		<choices></choices>
 	</option>
@@ -457,7 +457,7 @@ xml;
 		<default></default>
 		<choices></choices>
 	</option>
-	<option name="--test" short="" help="A test option." boolean="">
+	<option name="--test" short="" help="A test option." boolean="0">
 		<default></default>
 		<choices></choices>
 	</option>
@@ -494,7 +494,7 @@ xml;
 			<default></default>
 			<choices></choices>
 		</option>
-		<option name="--test" short="" help="A test option." boolean="">
+		<option name="--test" short="" help="A test option." boolean="0">
 			<default></default>
 			<choices></choices>
 		</option>
@@ -503,7 +503,7 @@ xml;
 		<argument name="model" help="The model to make." required="1">
 			<choices></choices>
 		</argument>
-		<argument name="other_longer" help="Another argument." required="">
+		<argument name="other_longer" help="Another argument." required="0">
 			<choices></choices>
 		</argument>
 	</arguments>
