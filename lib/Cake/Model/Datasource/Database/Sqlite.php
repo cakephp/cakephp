@@ -593,10 +593,11 @@ class Sqlite extends DboSource {
 
 /**
  * Returns a locking hint for the given mode.
+ *
  * Sqlite Datasource doesn't support row-level locking.
  *
  * @param mixed $mode Lock mode
- * @return string|null
+ * @return string|null Null
  */
 	public function getLockingHint($mode) {
 		return null;

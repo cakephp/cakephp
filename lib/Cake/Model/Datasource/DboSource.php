@@ -3141,7 +3141,7 @@ class DboSource extends DataSource {
  * @param mixed $fields Array or string of conditions
  * @param bool $quoteValues If true, values should be quoted
  * @param Model $Model A reference to the Model instance making the query
- * @return string|null
+ * @return string|null HAVING clause or null
  */
 	public function having($fields, $quoteValues = true, Model $Model = null) {
 		if (!$fields) {
@@ -3152,10 +3152,11 @@ class DboSource extends DataSource {
 
 /**
  * Returns a locking hint for the given mode.
- * Currently, this method only returns FOR UPDATE when the mode is true.
+ *
+ * Currently, this method only returns FOR UPDATE when the mode is set to true.
  *
  * @param mixed $mode Lock mode
- * @return string|null
+ * @return string|null FOR UPDATE clause or null
  */
 	public function getLockingHint($mode) {
 		if ($mode !== true) {
