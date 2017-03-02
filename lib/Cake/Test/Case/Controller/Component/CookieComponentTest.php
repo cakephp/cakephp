@@ -790,9 +790,99 @@ class CookieComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Test that deleting a child entry of the cookie array works
+ *
+ * @return void
+ */
+	public function testDeleteChildEntry() {
+		$response = $this->Controller->response;
+
+		$this->Cookie->write('User.name', 'user', false);
+		$this->Cookie->write('User.email', 'user@example.com', false);
+
+		// Emulate the next request from the client.
+		$cookies = $response->cookie();
+		$_COOKIE = $this->_rebuildCookie($cookies);
+		$this->Cookie->startup($this->Controller);
+
+		$this->assertEquals('user', $this->Cookie->read('User.name'));
+		$this->assertEquals('user@example.com', $this->Cookie->read('User.email'));
+
+		// Delete a child entry
+		$this->Cookie->delete('User.name');
+
+		// Emulate another request from the client.
+		$cookies = $response->cookie() + $cookies; // The previous cookie should be merged.
+		$_COOKIE = $this->_rebuildCookie($cookies);
+		$this->Cookie->startup($this->Controller);
+
+		// The client shouldn't send the deleted entry
+		$this->assertNull($this->Cookie->read('User.name'));
+		$this->assertEquals('user@example.com', $this->Cookie->read('User.email'));
+	}
+
+/**
+ * Test that writing cookies with differnet expiration times works
+ *
+ * @return void
+ */
+	public function testWriteDifferentExpirationTimes() {
+		$response = $this->Controller->response;
+
+		$this->Cookie->write('Tracking.1', 'something', false, '2 seconds');
+
+		// Emulate the next request from the client.
+		$cookies = $response->cookie();
+		$_COOKIE = $this->_rebuildCookie($cookies);
+		$this->Cookie->startup($this->Controller);
+		$this->assertEquals('something', $this->Cookie->read('Tracking.1'));
+
+		// Write another entry
+		$this->Cookie->write('Tracking.2', 'something else', false, '5 seconds');
+
+		// Emulate another request from the client.
+		$cookies = $response->cookie() + $cookies; // The previous cookie should be merged.
+		$_COOKIE = $this->_rebuildCookie($cookies);
+		$this->Cookie->startup($this->Controller);
+
+		$this->assertEquals('something', $this->Cookie->read('Tracking.1'));
+		$this->assertEquals('something else', $this->Cookie->read('Tracking.2'));
+
+		sleep(2);
+
+		$_COOKIE = $this->_rebuildCookie($cookies);
+		$this->Cookie->startup($this->Controller);
+
+		$this->assertNull($this->Cookie->read('Tracking.1'));
+		$this->assertEquals('something else', $this->Cookie->read('Tracking.2'));
+	}
+
+/**
+ * Helper method for generating $_COOKIE array.
+ *
+ * @param array $cookies Cookie array of CakeResponse
+ * @return array $_COOKIE compatible array
+ */
+	protected function _rebuildCookie(array $cookies) {
+		$expire = time();
+
+		$query = array();
+		foreach ($cookies as $name => $cookie) {
+			if ($cookie['expire'] > $expire) {
+				$query[$name] = $cookie['value'];
+			}
+		}
+		$query = http_build_query($query, '', '&');
+		parse_str($query, $result);
+
+		return $result;
+	}
+
+/**
  * Helper method for generating old style encoded cookie values.
  *
- * @return string.
+ * @param array $array Associative array to implode
+ * @return string
  */
 	protected function _oldImplode(array $array) {
 		$string = '';
@@ -815,7 +905,7 @@ class CookieComponentTest extends CakeTestCase {
 /**
  * encrypt method
  *
- * @param array|string $value
+ * @param array|string $value Array or string value to encrypt
  * @return string
  */
 	protected function _encrypt($value) {
