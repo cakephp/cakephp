@@ -14,6 +14,8 @@
  */
 namespace Cake\Network;
 
+use Cake\Http\Response;
+
 /**
  * A builder object that assists in defining Cross Origin Request related
  * headers.
