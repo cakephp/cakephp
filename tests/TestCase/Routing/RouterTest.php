@@ -2774,8 +2774,10 @@ class RouterTest extends TestCase
             'lang' => 'eng',
             'controller' => 'posts',
             'action' => 'view',
-            123,
-            '?' => ['foo' => 'bar'],
+            'pass' => [123],
+            'url' => ['url' => 'eng/posts/view/123', 'foo' => 'bar', 'baz' => 'quu'],
+            'paging' => [],
+            'models' => [],
         ];
         $actual = Router::reverseToArray($params);
         $expected = [
@@ -2783,7 +2785,7 @@ class RouterTest extends TestCase
             'controller' => 'posts',
             'action' => 'view',
             123,
-            '?' => ['foo' => 'bar'],
+            '?' => ['foo' => 'bar', 'baz' => 'quu'],
         ];
         $this->assertEquals($expected, $actual);
     }
