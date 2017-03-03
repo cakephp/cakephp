@@ -707,4 +707,139 @@ SQL;
 		$this->assertEquals(2, $result['value']);
 	}
 
+/**
+ * Test build statement with having option
+ *
+ * @return void
+ */
+	public function testBuildStatementWithHaving() {
+		$db = $this->getMock('SqlserverTestDb', array('getVersion'), array($this->Dbo->config));
+
+		$db->expects($this->any())
+			->method('getVersion')
+			->will($this->returnValue('11.00.0000'));
+
+		$query = array(
+			'fields' => array('user_id', 'COUNT(*) AS count'),
+			'table' => 'articles',
+			'alias' => 'Article',
+			'group' => 'user_id',
+			'order' => array('COUNT(*)' => 'DESC'),
+			'limit' => 5,
+			'having' => array('COUNT(*) >' => 10),
+		);
+
+		$sql = $db->buildStatement($query, $this->model);
+		$expected = 'SELECT  TOP 5 user_id, COUNT(*) AS count FROM articles AS [Article]   WHERE 1 = 1  GROUP BY user_id  HAVING COUNT(*) > 10  ORDER BY COUNT(*) DESC';
+		$this->assertEquals($expected, $sql);
+
+		$sql = $db->buildStatement(array('offset' => 15) + $query, $this->model);
+		$expected = 'SELECT user_id, COUNT(*) AS count FROM articles AS [Article]   WHERE 1 = 1  GROUP BY user_id  HAVING COUNT(*) > 10  ORDER BY COUNT(*) DESC  OFFSET 15 ROWS FETCH FIRST 5 ROWS ONLY';
+		$this->assertEquals($expected, $sql);
+	}
+
+/**
+ * Test build statement with lock option
+ *
+ * @return void
+ */
+	public function testBuildStatementWithLockingHint() {
+		$db = $this->getMock('SqlserverTestDb', array('getVersion'), array($this->Dbo->config));
+
+		$db->expects($this->any())
+			->method('getVersion')
+			->will($this->returnValue('11.00.0000'));
+
+		$query = array(
+			'fields' => array('id'),
+			'table' => 'users',
+			'alias' => 'User',
+			'order' => array('id'),
+			'limit' => 1,
+			'lock' => true,
+		);
+
+		$sql = $db->buildStatement($query, $this->model);
+		$expected = 'SELECT  TOP 1 id FROM users AS [User]  WITH (UPDLOCK)   WHERE 1 = 1   ORDER BY [id] ASC';
+		$this->assertEquals($expected, $sql);
+
+		$sql = $db->buildStatement(array('offset' => 15) + $query, $this->model);
+		$expected = 'SELECT id FROM users AS [User]  WITH (UPDLOCK)   WHERE 1 = 1   ORDER BY [id] ASC  OFFSET 15 ROWS FETCH FIRST 1 ROWS ONLY';
+		$this->assertEquals($expected, $sql);
+	}
+
+/**
+ * Test build statement with having option for legacy version
+ *
+ * @return void
+ */
+	public function testBuildStatementWithHavingForLegacyVersion() {
+		$db = $this->getMock('SqlserverTestDb', array('getVersion'), array($this->Dbo->config));
+
+		$db->expects($this->any())
+			->method('getVersion')
+			->will($this->returnValue('10.00.0000'));
+
+		$query = array(
+			'fields' => array('user_id', 'COUNT(*) AS count'),
+			'table' => 'articles',
+			'alias' => 'Article',
+			'group' => 'user_id',
+			'order' => array('COUNT(*)' => 'DESC'),
+			'limit' => 5,
+			'having' => array('COUNT(*) >' => 10),
+		);
+
+		$sql = $db->buildStatement($query, $this->model);
+		$expected = 'SELECT  TOP 5 user_id, COUNT(*) AS count FROM articles AS [Article]   WHERE 1 = 1  GROUP BY user_id  HAVING COUNT(*) > 10  ORDER BY COUNT(*) DESC';
+		$this->assertEquals($expected, $sql);
+
+		$sql = $db->buildStatement(array('offset' => 15) + $query, $this->model);
+		$expected = <<<SQL
+SELECT TOP 5 * FROM (
+SELECT user_id, COUNT(*) AS count, ROW_NUMBER() OVER ( ORDER BY COUNT(*) DESC) AS _cake_page_rownum_
+FROM articles AS [Article]   WHERE 1 = 1  GROUP BY user_id  HAVING COUNT(*) > 10
+) AS _cake_paging_
+WHERE _cake_paging_._cake_page_rownum_ > 15
+ORDER BY _cake_paging_._cake_page_rownum_
+SQL;
+		$this->assertEquals($expected, preg_replace('/^\s+|\s+$/m', '', $sql));
+	}
+
+/**
+ * Test build statement with lock option for legacy version
+ *
+ * @return void
+ */
+	public function testBuildStatementWithLockingHintForLegacyVersion() {
+		$db = $this->getMock('SqlserverTestDb', array('getVersion'), array($this->Dbo->config));
+
+		$db->expects($this->any())
+			->method('getVersion')
+			->will($this->returnValue('10.00.0000'));
+
+		$query = array(
+			'fields' => array('id'),
+			'table' => 'users',
+			'alias' => 'User',
+			'order' => array('id'),
+			'limit' => 1,
+			'lock' => true,
+		);
+
+		$sql = $db->buildStatement($query, $this->model);
+		$expected = 'SELECT  TOP 1 id FROM users AS [User]  WITH (UPDLOCK)   WHERE 1 = 1   ORDER BY [id] ASC';
+		$this->assertEquals($expected, $sql);
+
+		$sql = $db->buildStatement(array('offset' => 15) + $query, $this->model);
+		$expected = <<<SQL
+SELECT TOP 1 * FROM (
+SELECT id, ROW_NUMBER() OVER ( ORDER BY [id] ASC) AS _cake_page_rownum_
+FROM users AS [User]  WITH (UPDLOCK)   WHERE 1 = 1
+) AS _cake_paging_
+WHERE _cake_paging_._cake_page_rownum_ > 15
+ORDER BY _cake_paging_._cake_page_rownum_
+SQL;
+		$this->assertEquals($expected, preg_replace('/^\s+|\s+$/m', '', $sql));
+	}
 }

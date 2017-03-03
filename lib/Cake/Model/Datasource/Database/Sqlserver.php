@@ -526,6 +526,9 @@ class Sqlserver extends DboSource {
 				extract($data);
 				$fields = trim($fields);
 
+				$having = !empty($having) ? " $having" : '';
+				$lock = !empty($lock) ? " $lock" : '';
+
 				if (strpos($limit, 'TOP') !== false && strpos($fields, 'DISTINCT ') === 0) {
 					$limit = 'DISTINCT ' . trim($limit);
 					$fields = substr($fields, 9);
@@ -547,7 +550,7 @@ class Sqlserver extends DboSource {
 					$rowCounter = static::ROW_COUNTER;
 					$sql = "SELECT {$limit} * FROM (
 							SELECT {$fields}, ROW_NUMBER() OVER ({$order}) AS {$rowCounter}
-							FROM {$table} {$alias} {$joins} {$conditions} {$group}
+							FROM {$table} {$alias}{$lock} {$joins} {$conditions} {$group}{$having}
 						) AS _cake_paging_
 						WHERE _cake_paging_.{$rowCounter} > {$offset}
 						ORDER BY _cake_paging_.{$rowCounter}
@@ -555,9 +558,9 @@ class Sqlserver extends DboSource {
 					return trim($sql);
 				}
 				if (strpos($limit, 'FETCH') !== false) {
-					return trim("SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order} {$limit}");
+					return trim("SELECT {$fields} FROM {$table} {$alias}{$lock} {$joins} {$conditions} {$group}{$having} {$order} {$limit}");
 				}
-				return trim("SELECT {$limit} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order}");
+				return trim("SELECT {$limit} {$fields} FROM {$table} {$alias}{$lock} {$joins} {$conditions} {$group}{$having} {$order}");
 			case "schema":
 				extract($data);
 
@@ -814,4 +817,18 @@ class Sqlserver extends DboSource {
 		return $this->config['schema'];
 	}
 
+/**
+ * Returns a locking hint for the given mode.
+ *
+ * Currently, this method only returns WITH (UPDLOCK) when the mode is set to true.
+ *
+ * @param mixed $mode Lock mode
+ * @return string|null WITH (UPDLOCK) clause or null
+ */
+	public function getLockingHint($mode) {
+		if ($mode !== true) {
+			return null;
+		}
+		return ' WITH (UPDLOCK)';
+	}
 }

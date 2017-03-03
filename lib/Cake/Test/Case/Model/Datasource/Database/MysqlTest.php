@@ -1277,6 +1277,8 @@ SQL;
 			'limit' => array(),
 			'offset' => array(),
 			'group' => array(),
+			'having' => null,
+			'lock' => null,
 			'callbacks' => null
 		);
 		$queryData['joins'][0]['table'] = $this->Dbo->fullTableName($queryData['joins'][0]['table']);

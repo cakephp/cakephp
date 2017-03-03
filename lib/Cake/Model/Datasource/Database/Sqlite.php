@@ -591,4 +591,15 @@ class Sqlite extends DboSource {
 		return $this->useNestedTransactions && version_compare($this->getVersion(), '3.6.8', '>=');
 	}
 
+/**
+ * Returns a locking hint for the given mode.
+ *
+ * Sqlite Datasource doesn't support row-level locking.
+ *
+ * @param mixed $mode Lock mode
+ * @return string|null Null
+ */
+	public function getLockingHint($mode) {
+		return null;
+	}
 }

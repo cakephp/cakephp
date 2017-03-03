@@ -353,6 +353,33 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
+ * Test find method with having clause
+ *
+ * @return void
+ */
+	public function testHaving() {
+		$this->loadFixtures('Comment');
+
+		$Comment = ClassRegistry::init('Comment');
+		$comments = $Comment->find('all', array(
+			'fields' => array('user_id', 'COUNT(*) AS count'),
+			'group' => array('user_id'),
+			'having' => array('COUNT(*) >' => 1),
+			'order' => array('COUNT(*)' => 'DESC'),
+			'recursive' => -1,
+		));
+
+		$results = Hash::combine($comments, '{n}.Comment.user_id', '{n}.0.count');
+
+		$expected = array(
+			1 => 3,
+			2 => 2,
+		);
+
+		$this->assertEquals($expected, $results);
+	}
+
+/**
  * testOldQuery method
  *
  * @return void
