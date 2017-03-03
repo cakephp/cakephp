@@ -14,7 +14,7 @@
  */
 namespace Cake\Network;
 
-use Cake\Http\Response;
+use Cake\Http\Response as HttpResponse;
 
 /**
  * A builder object that assists in defining Cross Origin Request related
@@ -66,7 +66,7 @@ class CorsBuilder
      * @param string $origin The request's Origin header.
      * @param bool $isSsl Whether or not the request was over SSL.
      */
-    public function __construct(Response $response, $origin, $isSsl = false)
+    public function __construct(HttpResponse $response, $origin, $isSsl = false)
     {
         $this->_origin = $origin;
         $this->_isSsl = $isSsl;
