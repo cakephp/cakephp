@@ -53,7 +53,7 @@ class ControllerFactoryFilter extends DispatcherFilter
      * Gets controller to use, either plugin or application controller.
      *
      * @param \Cake\Http\ServerRequest $request Request object
-     * @param \Cake\Network\Response $response Response for the controller.
+     * @param \Cake\Http\Response $response Response for the controller.
      * @return \Cake\Controller\Controller
      */
     protected function _getController($request, $response)

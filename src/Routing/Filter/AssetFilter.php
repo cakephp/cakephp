@@ -16,8 +16,8 @@ namespace Cake\Routing\Filter;
 
 use Cake\Core\Plugin;
 use Cake\Event\Event;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\Response;
 use Cake\Routing\DispatcherFilter;
 use Cake\Utility\Inflector;
 
@@ -61,7 +61,7 @@ class AssetFilter extends DispatcherFilter
      * Checks if a requested asset exists and sends it to the browser
      *
      * @param \Cake\Event\Event $event Event containing the request and response object
-     * @return \Cake\Network\Response|null If the client is requesting a recognized asset, null otherwise
+     * @return \Cake\Http\Response|null If the client is requesting a recognized asset, null otherwise
      * @throws \Cake\Network\Exception\NotFoundException When asset not found
      */
     public function beforeDispatch(Event $event)
@@ -78,7 +78,7 @@ class AssetFilter extends DispatcherFilter
         if ($assetFile === null || !file_exists($assetFile)) {
             return null;
         }
-        /* @var \Cake\Network\Response $response */
+        /* @var \Cake\Http\Response $response */
         $response = $event->getData('response');
         $event->stopPropagation();
 
@@ -123,10 +123,10 @@ class AssetFilter extends DispatcherFilter
      * Sends an asset file to the client
      *
      * @param \Cake\Http\ServerRequest $request The request object to use.
-     * @param \Cake\Network\Response $response The response object to use.
+     * @param \Cake\Http\Response $response The response object to use.
      * @param string $assetFile Path to the asset file in the file system
      * @param string $ext The extension of the file to determine its mime type
-     * @return \Cake\Network\Response The updated response.
+     * @return \Cake\Http\Response The updated response.
      */
     protected function _deliverAsset(ServerRequest $request, Response $response, $assetFile, $ext)
     {

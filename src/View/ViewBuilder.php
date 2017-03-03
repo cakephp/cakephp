@@ -16,8 +16,8 @@ namespace Cake\View;
 
 use Cake\Core\App;
 use Cake\Event\EventManager;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\Response;
 use Cake\View\Exception\MissingViewException;
 use JsonSerializable;
 use Serializable;
@@ -592,7 +592,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      *
      * @param array $vars The view variables/context to use.
      * @param \Cake\Http\ServerRequest|null $request The request to use.
-     * @param \Cake\Network\Response|null $response The response to use.
+     * @param \Cake\Http\Response|null $response The response to use.
      * @param \Cake\Event\EventManager|null $events The event manager to use.
      * @return \Cake\View\View
      * @throws \Cake\View\Exception\MissingViewException

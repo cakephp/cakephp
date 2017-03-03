@@ -817,7 +817,7 @@ class Router
      * component to automatically switch to alternate layouts and templates, and
      * load helpers corresponding to the given content, i.e. RssHelper. Switching
      * layouts and helpers requires that the chosen extension has a defined mime type
-     * in `Cake\Network\Response`.
+     * in `Cake\Http\Response`.
      *
      * A string or an array of valid extensions can be passed to this method.
      * If called without any parameters it will return current list of set extensions.

@@ -104,7 +104,7 @@ class ActionDispatcher
      * Invoke a controller's action and wrapping methods.
      *
      * @param \Cake\Controller\Controller $controller The controller to invoke.
-     * @return \Cake\Network\Response The response
+     * @return \Cake\Http\Response The response
      * @throws \LogicException If the controller action returns a non-response value.
      */
     protected function _invoke(Controller $controller)
@@ -118,7 +118,7 @@ class ActionDispatcher
 
         $response = $controller->invokeAction();
         if ($response !== null && !($response instanceof Response)) {
-            throw new LogicException('Controller actions can only return Cake\Network\Response or null.');
+            throw new LogicException('Controller actions can only return Cake\Http\Response or null.');
         }
 
         if (!$response && $controller->autoRender) {

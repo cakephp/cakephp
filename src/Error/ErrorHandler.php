@@ -167,7 +167,7 @@ class ErrorHandler extends BaseErrorHandler
     /**
      * Method that can be easily stubbed in testing.
      *
-     * @param string|\Cake\Network\Response $response Either the message or response object.
+     * @param string|\Cake\Http\Response $response Either the message or response object.
      * @return void
      */
     protected function _sendResponse($response)

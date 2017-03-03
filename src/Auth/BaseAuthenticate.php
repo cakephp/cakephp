@@ -16,8 +16,8 @@ namespace Cake\Auth;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListenerInterface;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\Response;
 use Cake\ORM\TableRegistry;
 
 /**
@@ -194,7 +194,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      * Authenticate a user based on the request information.
      *
      * @param \Cake\Http\ServerRequest $request Request to get authentication information from.
-     * @param \Cake\Network\Response $response A response object that can have headers added.
+     * @param \Cake\Http\Response $response A response object that can have headers added.
      * @return mixed Either false on failure, or an array of user data on success.
      */
     abstract public function authenticate(ServerRequest $request, Response $response);
@@ -216,11 +216,11 @@ abstract class BaseAuthenticate implements EventListenerInterface
      * can be:
      *
      * - Null - No action taken, AuthComponent should return appropriate response.
-     * - Cake\Network\Response - A response object, which will cause AuthComponent to
+     * - Cake\Http\Response - A response object, which will cause AuthComponent to
      *   simply return that response.
      *
      * @param \Cake\Http\ServerRequest $request A request object.
-     * @param \Cake\Network\Response $response A response object.
+     * @param \Cake\Http\Response $response A response object.
      * @return void
      */
     public function unauthenticated(ServerRequest $request, Response $response)
