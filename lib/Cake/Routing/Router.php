@@ -1088,6 +1088,40 @@ class Router {
 	}
 
 /**
+ * Reverses a parsed parameter array into an array.
+ *
+ * Works similarly to Router::url(), but since parsed URL's contain additional
+ * 'pass' and 'named' as well as 'url.url' keys. Those keys need to be specially
+ * handled in order to reverse a params array into a string URL.
+ *
+ * This will strip out 'autoRender', 'bare', 'requested', and 'return' param names as those
+ * are used for CakePHP internals and should not normally be part of an output URL.
+ *
+ * @param CakeRequest|array $params The params array or CakeRequest object that needs to be reversed.
+ * @return array The URL array ready to be used for redirect or HTML link.
+ */
+	public static function reverseToArray($params) {
+		if ($params instanceof CakeRequest) {
+			$url = $params->query;
+			$params = $params->params;
+		} else {
+			$url = $params['url'];
+		}
+		$pass = isset($params['pass']) ? $params['pass'] : array();
+		$named = isset($params['named']) ? $params['named'] : array();
+		unset(
+			$params['pass'], $params['named'], $params['paging'], $params['models'], $params['url'], $url['url'],
+			$params['autoRender'], $params['bare'], $params['requested'], $params['return'],
+			$params['_Token']
+		);
+		$params = array_merge($params, $pass, $named);
+		if (!empty($url)) {
+			$params['?'] = $url;
+		}
+		return $params;
+	}
+
+/**
  * Reverses a parsed parameter array into a string.
  *
  * Works similarly to Router::url(), but since parsed URL's contain additional
@@ -1103,24 +1137,7 @@ class Router {
  * @return string The string that is the reversed result of the array
  */
 	public static function reverse($params, $full = false) {
-		if ($params instanceof CakeRequest) {
-			$url = $params->query;
-			$params = $params->params;
-		} else {
-			$url = $params['url'];
-		}
-		$pass = isset($params['pass']) ? $params['pass'] : array();
-		$named = isset($params['named']) ? $params['named'] : array();
-
-		unset(
-			$params['pass'], $params['named'], $params['paging'], $params['models'], $params['url'], $url['url'],
-			$params['autoRender'], $params['bare'], $params['requested'], $params['return'],
-			$params['_Token']
-		);
-		$params = array_merge($params, $pass, $named);
-		if (!empty($url)) {
-			$params['?'] = $url;
-		}
+		$params = Router::reverseToArray($params, $full);
 		return Router::url($params, $full);
 	}
 
