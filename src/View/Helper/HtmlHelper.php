@@ -222,17 +222,16 @@ class HtmlHelper extends Helper
      * - `block` - Set to true to append output to view block "meta" or provide
      *   custom block name.
      *
-     * @param string|array $type The title of the external resource
+     * @param string|array $type The title of the external resource, Or an array of attributes for a
+     *   custom meta tag.
      * @param string|array|null $content The address of the external resource or string for content attribute
      * @param array $options Other attributes for the generated tag. If the type attribute is html,
      *    rss, atom, or icon, the mime-type is returned.
-     * @return string A completed `<link />` element.
+     * @return string|null A completed `<link />` element, or null if the element was sent to a block.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-meta-tags
      */
     public function meta($type, $content = null, array $options = [])
     {
-        $options += ['block' => null];
-
         if (!is_array($type)) {
             $types = [
                 'rss' => ['type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => $type, 'link' => $content],
@@ -269,7 +268,7 @@ class HtmlHelper extends Helper
             }
         }
 
-        $options += $type;
+        $options += $type + ['block' => null];
         $out = null;
 
         if (isset($options['link'])) {
