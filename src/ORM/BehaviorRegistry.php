@@ -100,6 +100,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * Throws an exception when a behavior is missing.
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
+     * and Cake\Core\ObjectRegistry::unload()
      *
      * @param string $class The classname that is missing.
      * @param string $plugin The plugin the behavior is missing in.

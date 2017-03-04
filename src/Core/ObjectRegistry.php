@@ -285,7 +285,7 @@ abstract class ObjectRegistry
     {
         list(, $name) = pluginSplit($objectName);
 
-        // Just call unload if the object was loaded before */
+        // Just call unload if the object was loaded before
         if (array_key_exists($objectName, $this->_loaded)) {
             $this->unload($objectName);
         }
@@ -306,17 +306,8 @@ abstract class ObjectRegistry
     public function unload($objectName)
     {
         if (empty($this->_loaded[$objectName])) {
-            $additionalInfo = '';
-            if (strpos($objectName, '.') !== false) {
-                $additionalInfo = ' Remember to omit plugin prefixes.';
-            }
-            trigger_error(sprintf(
-                'Object "%s" was not loaded before.%s',
-                $objectName,
-                $additionalInfo
-            ), E_USER_WARNING);
-
-            return;
+            list($plugin, $objectName) = pluginSplit($objectName);
+            $this->_throwMissingClassError($objectName, $plugin);
         }
 
         $object = $this->_loaded[$objectName];
