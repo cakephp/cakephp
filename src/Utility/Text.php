@@ -119,6 +119,7 @@ class Text
                             $open = true;
                         } else {
                             $depth--;
+                            $open = false;
                         }
                     }
                 }
