@@ -364,6 +364,39 @@ class SchemaCrossDatabaseFixture extends CakeTestFixture {
 }
 
 /**
+ * NonConventionalPrimaryKeyFixture class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class NonConventionalPrimaryKeyFixture extends CakeTestFixture {
+
+/**
+ * name property
+ *
+ * @var string
+ */
+	public $name = 'NonConventional';
+
+/**
+ * table property
+ *
+ * @var string
+ */
+	public $table = 'non_conventional';
+
+/**
+ * fields property
+ *
+ * @var array
+ */
+	public $fields = array(
+		'version_id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer'),
+		'name' => 'string'
+	);
+}
+
+/**
  * SchemaPrefixAuthUser class
  *
  * @package       Cake.Test.Case.Model
@@ -647,6 +680,36 @@ class CakeSchemaTest extends CakeTestCase {
 		$this->assertTrue(isset($read['tables']['cross_database']));
 
 		$fixture->drop($db);
+	}
+
+/**
+ * testSchemaRead method when a primary key is on a non-conventional column
+ *
+ * @return void
+ */
+	public function testSchemaReadWithNonConventionalPrimaryKey() {
+		$db = ConnectionManager::getDataSource('test');
+		$fixture = new NonConventionalPrimaryKeyFixture();
+		$fixture->create($db);
+
+		$read = $this->Schema->read(array(
+			'connection' => 'test',
+			'name' => 'TestApp',
+			'models' => false
+		));
+		$fixture->drop($db);
+
+		$has_table = isset($read['tables']['non_conventional']);
+		$this->assertTrue($has_table, 'non_conventional table should appear');
+		if ($has_table) {
+			$version_id_has_key = isset($read['tables']['non_conventional']['version_id']['key']);
+			$this->assertTrue($version_id_has_key, 'version_id key should be set');
+			if ($version_id_has_key) {
+				$version_id_key_is_primary = $read['tables']['non_conventional']['version_id']['key'] === 'primary';
+				$this->assertTrue($version_id_key_is_primary, 'version_id key should be primary');
+			}
+			$this->assertFalse(isset($read['tables']['non_conventional']['id']['key']), 'id key should not be set');
+		}
 	}
 
 /**
