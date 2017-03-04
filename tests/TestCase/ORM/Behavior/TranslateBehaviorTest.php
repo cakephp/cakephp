@@ -912,6 +912,17 @@ class TranslateBehaviorTest extends TestCase
             ])
             ->first();
         $this->assertSame('Hallo', $deBody->content);
+
+        // Remove the Behavior to unset the content != '' condition
+        $table->removeBehavior('Translate');
+
+        $noTitle = $table->I18n->find()
+            ->where([
+                'locale' => 'fra',
+                'field' => 'title'
+            ])
+            ->first();
+        $this->assertEmpty($noTitle);
     }
 
     /**
