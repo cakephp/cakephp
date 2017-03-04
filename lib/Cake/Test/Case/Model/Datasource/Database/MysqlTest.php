@@ -3139,7 +3139,7 @@ SQL;
  *
  * @return void
  */
-	public function testStorageRequirement () {
+	public function testStorageRequirement() {
 		$result = $this->Dbo->storageRequirement('varchar(255)');
 		$expected = null;
 		$this->assertSame($expected, $result);
