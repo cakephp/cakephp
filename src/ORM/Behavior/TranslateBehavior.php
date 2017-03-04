@@ -658,12 +658,11 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
                 }
             }
 
-            // Workaround to check the remaining properties
-            $arrayEntity = $entity->toArray();
+            $translation = $translation->extract($this->_config['fields']);
 
             // If now, the current locale property is empty,
             // unset it completely.
-            if (empty($arrayEntity['_translations'][$locale])) {
+            if (empty(array_filter($translation))) {
                 unset($entity->get('_translations')[$locale]);
             }
         }
