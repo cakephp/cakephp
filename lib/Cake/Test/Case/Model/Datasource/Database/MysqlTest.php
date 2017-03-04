@@ -389,6 +389,36 @@ class MysqlTest extends CakeTestCase {
 		$expected = '`testName`  CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL';
 		$this->assertEquals($expected, $result);
 		$this->Dbo->columns = $restore;
+
+		$data = array(
+			'name' => 'testName',
+			'type' => 'integer',
+			'storage' => 1
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '`testName` tinyint(4)';
+		$this->assertEquals($expected, $result);
+		$this->Dbo->columns = $restore;
+
+		$data = array(
+			'name' => 'testName',
+			'type' => 'integer',
+			'storage' => 2
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '`testName` smallint(6)';
+		$this->assertEquals($expected, $result);
+		$this->Dbo->columns = $restore;
+
+		$data = array(
+			'name' => 'testName',
+			'type' => 'integer',
+			'storage' => 3
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '`testName` mediumint(9)';
+		$this->assertEquals($expected, $result);
+		$this->Dbo->columns = $restore;
 	}
 
 /**
@@ -524,6 +554,18 @@ class MysqlTest extends CakeTestCase {
 
 		$result = $this->Dbo->column('tinyint(1)');
 		$expected = 'boolean';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Dbo->column('tinyint(4)');
+		$expected = 'integer';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Dbo->column('smallint');
+		$expected = 'integer';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Dbo->column('mediumint');
+		$expected = 'integer';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->column('boolean');
@@ -3089,6 +3131,29 @@ SQL;
 
 		$result = $this->Dbo->length('text');
 		$expected = null;
+		$this->assertSame($expected, $result);
+	}
+
+/**
+ * test storageRequirement method
+ *
+ * @return void
+ */
+	public function testStorageRequirement () {
+		$result = $this->Dbo->storageRequirement('varchar(255)');
+		$expected = null;
+		$this->assertSame($expected, $result);
+
+		$result = $this->Dbo->storageRequirement('mediumint');
+		$expected = 3;
+		$this->assertSame($expected, $result);
+
+		$result = $this->Dbo->storageRequirement('smallint');
+		$expected = 2;
+		$this->assertSame($expected, $result);
+
+		$result = $this->Dbo->storageRequirement('tinyint');
+		$expected = 1;
 		$this->assertSame($expected, $result);
 	}
 

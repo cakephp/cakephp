@@ -3247,6 +3247,16 @@ class DboSource extends DataSource {
 	}
 
 /**
+ * Gets the storage requirement of a database-native column description, or null if unknown or N/A
+ *
+ * @param string $real Real database-layer column type (i.e. "varchar(255)")
+ * @return mixed An integer representing the storage requirement of the column in bytes, or null if unknown or N/A.
+ */
+	public function storageRequirement($real) {
+		return null;
+	}
+
+/**
  * Translates between PHP boolean values and Database (faked) boolean values
  *
  * @param mixed $data Value to be translated
@@ -3459,12 +3469,16 @@ class DboSource extends DataSource {
 			return null;
 		}
 
-		if (!isset($this->columns[$type])) {
-			trigger_error(__d('cake_dev', 'Column type %s does not exist', $type), E_USER_WARNING);
-			return null;
+		// if a storage requirement in bytes was set, try it first (i.e. 'integer/4' before 'integer')
+		if (isset($storage) && isset($this->columns[$type . '/' . $storage])) {
+			$real = $this->columns[$type . '/' . $storage];
+		} else {
+			if (!isset($this->columns[$type])) {
+				trigger_error(__d('cake_dev', 'Column type %s does not exist', $type), E_USER_WARNING);
+				return null;
+			}
+			$real = $this->columns[$type];
 		}
-
-		$real = $this->columns[$type];
 		$out = $this->name($name) . ' ' . $real['name'];
 
 		if (isset($column['length'])) {

@@ -117,6 +117,10 @@ class Mysql extends DboSource {
 		'text' => array('name' => 'text'),
 		'biginteger' => array('name' => 'bigint', 'limit' => '20'),
 		'integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
+		'integer/4' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
+		'integer/3' => array('name' => 'mediumint', 'limit' => '9', 'formatter' => 'intval'),
+		'integer/2' => array('name' => 'smallint', 'limit' => '6', 'formatter' => 'intval'),
+		'integer/1' => array('name' => 'tinyint', 'limit' => '4', 'formatter' => 'intval'),
 		'float' => array('name' => 'float', 'formatter' => 'floatval'),
 		'decimal' => array('name' => 'decimal', 'formatter' => 'floatval'),
 		'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
@@ -368,6 +372,10 @@ class Mysql extends DboSource {
 				if ($charset) {
 					$fields[$column->Field]['charset'] = $charset;
 				}
+			}
+			$storage = $this->storageRequirement($column->Type);
+			if (is_numeric($storage)) {
+				$fields[$column->Field]['storage'] = $storage;
 			}
 		}
 		$this->_cacheDescription($key, $fields);
@@ -808,6 +816,36 @@ class Mysql extends DboSource {
 			return "set($vals)";
 		}
 		return 'text';
+	}
+
+/**
+ * Gets the storage requirement of a database-native column description, or null if unknown or N/A
+ *
+ * @param string $real Real database-layer column type (i.e. "varchar(255)")
+ * @return mixed An integer representing the storage requirement of the column in bytes, or null if unknown or N/A.
+ */
+	public function storageRequirement($real) {
+		if (is_array($real)) {
+			$col = $real['name'];
+		} else {
+			$col = $real;
+			if (strpos($col, '(') !== false) {
+				list($col, $vals) = explode('(', $col);
+			}
+		}
+
+		// Base on Storage Requirements for Numeric Types
+		// https://dev.mysql.com/doc/refman/5.7/en/storage-requirements.html
+		if ($col === 'tinyint') {
+			return 1;
+		}
+		if ($col === 'smallint') {
+			return 2;
+		}
+		if ($col === 'mediumint') {
+			return 3;
+		}
+		return null;
 	}
 
 /**
