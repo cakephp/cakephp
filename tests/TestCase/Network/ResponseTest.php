@@ -28,6 +28,35 @@ use Zend\Diactoros\Stream;
 class ResponseTest extends TestCase
 {
     /**
+     * SERVER variable backup.
+     *
+     * @var array
+     */
+    protected $server = [];
+
+    /**
+     * setup
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->server = $_SERVER;
+    }
+
+    /**
+     * teardown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        $_SERVER = $this->server;
+    }
+
+    /**
      * Tests the request object constructor
      *
      * @return void
