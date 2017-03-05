@@ -18,6 +18,35 @@ namespace Cake\Http\Cookie;
  */
 interface CookieInterface
 {
+    /**
+     * Sets the cookie name
+     *
+     * @param string $name Name of the cookie
+     * @return $this
+     */
+    public function setName($name);
+
+    /**
+     * Gets the cookie name
+     *
+     * @return string
+     */
+    public function getName();
+
+    /**
+     * Gets the cookie value
+     *
+     * @return string|array
+     */
+    public function getValue();
+
+    /**
+     * Sets the raw cookie data
+     *
+     * @param string|array $value Value of the cookie to set
+     * @return $this
+     */
+    public function setValue($value);
 
     /**
      * Returns the cookie as header value
