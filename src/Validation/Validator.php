@@ -53,6 +53,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     protected $_providers = [];
 
     /**
+     * An associative array of objects or classes used as a default provider list
+     *
+     * @var array
+     */
+    private static $_defaultProviders = [];
+
+    /**
      * Contains the validation messages associated with checking the presence
      * for each corresponding field.
      *
@@ -82,6 +89,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function __construct()
     {
         $this->_useI18n = function_exists('__d');
+        $this->_providers = self::$_defaultProviders;
     }
 
     /**
@@ -208,6 +216,43 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $this->_providers[$name] = new RulesProvider();
 
         return $this->_providers[$name];
+    }
+
+    /**
+     * Returns the default provider stored under that name if it exists.
+     *
+     * @param string $name The name under which the provider should be retrieved.
+     * @return object|string|null
+     */
+    public static function getDefaultProvider($name)
+    {
+        if (isset(self::$_defaultProviders[$name])) {
+            return self::$_defaultProviders[$name];
+        }
+
+        return null;
+    }
+
+    /**
+     * Associates an object to a name so it can be used as a default provider.
+     *
+     * @param string $name The name under which the provider should be set.
+     * @param object|string $object Provider object or class name.
+     * @return void
+     */
+    public static function addDefaultProvider($name, $object)
+    {
+        self::$_defaultProviders[$name] = $object;
+    }
+
+    /**
+     * Get the list of default providers.
+     *
+     * @return array
+     */
+    public static function getDefaultProviders()
+    {
+        return array_keys(self::$_defaultProviders);
     }
 
     /**
