@@ -212,9 +212,9 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Gets the raw cookie value
+     * Gets the cookie value
      *
-     * @return string
+     * @return string|array
      */
     public function getValue()
     {

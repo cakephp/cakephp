@@ -131,6 +131,12 @@ trait CookieCryptTrait
         }
 
         $encrypt = $this->encryptionCipher;
+        if ($encrypt === false) {
+            throw new RuntimeException(
+                'Encryption is disable, no cipher given.'
+            );
+        }
+
         $cipher = null;
         $key = $this->getEncryptionKey();
 
