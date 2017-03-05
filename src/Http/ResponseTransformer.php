@@ -34,7 +34,7 @@ class ResponseTransformer
      * Convert a PSR7 Response into a CakePHP one.
      *
      * @param \Psr\Http\Message\ResponseInterface $response The response to convert.
-     * @return \Cake\Network\Response The equivalent CakePHP response
+     * @return \Cake\Http\Response The equivalent CakePHP response
      */
     public static function toCake(PsrResponse $response)
     {
@@ -152,7 +152,7 @@ class ResponseTransformer
     /**
      * Convert a CakePHP response into a PSR7 one.
      *
-     * @param \Cake\Network\Response $response The CakePHP response to convert
+     * @param \Cake\Http\Response $response The CakePHP response to convert
      * @return \Psr\Http\Message\ResponseInterface $response The equivalent PSR7 response.
      */
     public static function toPsr(CakeResponse $response)
@@ -175,7 +175,7 @@ class ResponseTransformer
      * Add in the Content-Type header if necessary.
      *
      * @param array $headers The headers to update
-     * @param \Cake\Network\Response $response The CakePHP response to convert
+     * @param \Cake\Http\Response $response The CakePHP response to convert
      * @return array The updated headers.
      */
     protected static function setContentType($headers, $response)
@@ -245,7 +245,7 @@ class ResponseTransformer
     /**
      * Get the stream for the new response.
      *
-     * @param \Cake\Network\Response $response The cake response to extract the body from.
+     * @param \Cake\Http\Response $response The cake response to extract the body from.
      * @return \Psr\Http\Message\StreamInterface|string The stream.
      */
     protected static function getStream($response)

@@ -16,7 +16,7 @@ namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
-use Cake\Network\Response;
+use Cake\Http\Response;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestCase;
@@ -182,7 +182,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
 
         $this->get('/request_action/test_request_action');
         $this->assertNotEmpty($this->_response);
-        $this->assertInstanceOf('Cake\Network\Response', $this->_response);
+        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
         $this->assertEquals('This is a test', $this->_response->body());
 
         $this->_response = null;
@@ -231,7 +231,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
 
         $this->get('/request_action/test_request_action');
         $this->assertNotEmpty($this->_response);
-        $this->assertInstanceOf('Cake\Network\Response', $this->_response);
+        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
         $this->assertEquals('This is a test', $this->_response->body());
         $this->assertHeader('X-Middleware', 'true');
     }

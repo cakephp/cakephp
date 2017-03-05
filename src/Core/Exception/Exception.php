@@ -36,7 +36,7 @@ class Exception extends RuntimeException
     protected $_messageTemplate = '';
 
     /**
-     * Array of headers to be passed to Cake\Network\Response::header()
+     * Array of headers to be passed to Cake\Http\Response::header()
      *
      * @var array|null
      */
@@ -75,7 +75,7 @@ class Exception extends RuntimeException
     /**
      * Get/set the response header to be used
      *
-     * See also Cake\Network\Response::header()
+     * See also Cake\Http\Response::header()
      *
      * @param string|array|null $header An array of header strings or a single header string
      *  - an associative array of "header name" => "header value"

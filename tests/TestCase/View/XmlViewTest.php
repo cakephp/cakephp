@@ -18,8 +18,8 @@ namespace Cake\Test\TestCase\View;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Http\Response;
 use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Xml;
 

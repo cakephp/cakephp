@@ -15,7 +15,7 @@
 namespace Cake\View\Helper;
 
 use Cake\Core\Configure;
-use Cake\Network\Response;
+use Cake\Http\Response;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
@@ -43,7 +43,7 @@ class HtmlHelper extends Helper
     /**
      * Reference to the Response object
      *
-     * @var \Cake\Network\Response
+     * @var \Cake\Http\Response
      */
     public $response;
 

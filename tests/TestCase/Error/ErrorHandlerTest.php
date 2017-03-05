@@ -37,7 +37,7 @@ class TestErrorHandler extends ErrorHandler
     /**
      * Access the response used.
      *
-     * @var \Cake\Network\Response
+     * @var \Cake\Http\Response
      */
     public $response;
 

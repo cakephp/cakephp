@@ -16,10 +16,10 @@ namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\BasicAuthenticate;
 use Cake\Controller\ComponentRegistry;
+use Cake\Http\Response;
 use Cake\I18n\Time;
 use Cake\Network\Exception\UnauthorizedException;
 use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
