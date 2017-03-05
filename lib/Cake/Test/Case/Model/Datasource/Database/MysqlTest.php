@@ -201,7 +201,7 @@ class MysqlTest extends CakeTestCase {
 	public function testTinyintCasting() {
 		$this->Dbo->cacheSources = false;
 		$tableName = 'tinyint_' . uniqid();
-		$this->Dbo->rawQuery('CREATE TABLE ' . $this->Dbo->fullTableName($tableName) . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $this->Dbo->fullTableName($tableName) . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), tiny_int tinyint(2), primary key(id));');
 
 		$this->model = new CakeTestModel(array(
 			'name' => 'Tinyint', 'table' => $tableName, 'ds' => 'test'
@@ -209,24 +209,24 @@ class MysqlTest extends CakeTestCase {
 
 		$result = $this->model->schema();
 		$this->assertEquals('boolean', $result['bool']['type']);
-		$this->assertEquals('integer', $result['small_int']['type']);
+		$this->assertEquals('tinyint', $result['tiny_int']['type']);
 
-		$this->assertTrue((bool)$this->model->save(array('bool' => 5, 'small_int' => 5)));
+		$this->assertTrue((bool)$this->model->save(array('bool' => 5, 'tiny_int' => 5)));
 		$result = $this->model->find('first');
 		$this->assertTrue($result['Tinyint']['bool']);
-		$this->assertSame($result['Tinyint']['small_int'], '5');
+		$this->assertSame($result['Tinyint']['tiny_int'], '5');
 		$this->model->deleteAll(true);
 
-		$this->assertTrue((bool)$this->model->save(array('bool' => 0, 'small_int' => 100)));
+		$this->assertTrue((bool)$this->model->save(array('bool' => 0, 'tiny_int' => 100)));
 		$result = $this->model->find('first');
 		$this->assertFalse($result['Tinyint']['bool']);
-		$this->assertSame($result['Tinyint']['small_int'], '100');
+		$this->assertSame($result['Tinyint']['tiny_int'], '100');
 		$this->model->deleteAll(true);
 
-		$this->assertTrue((bool)$this->model->save(array('bool' => true, 'small_int' => 0)));
+		$this->assertTrue((bool)$this->model->save(array('bool' => true, 'tiny_int' => 0)));
 		$result = $this->model->find('first');
 		$this->assertTrue($result['Tinyint']['bool']);
-		$this->assertSame($result['Tinyint']['small_int'], '0');
+		$this->assertSame($result['Tinyint']['tiny_int'], '0');
 		$this->model->deleteAll(true);
 
 		$this->Dbo->rawQuery('DROP TABLE ' . $this->Dbo->fullTableName($tableName));
@@ -389,36 +389,6 @@ class MysqlTest extends CakeTestCase {
 		$expected = '`testName`  CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL';
 		$this->assertEquals($expected, $result);
 		$this->Dbo->columns = $restore;
-
-		$data = array(
-			'name' => 'testName',
-			'type' => 'integer',
-			'storage' => 1
-		);
-		$result = $this->Dbo->buildColumn($data);
-		$expected = '`testName` tinyint(4)';
-		$this->assertEquals($expected, $result);
-		$this->Dbo->columns = $restore;
-
-		$data = array(
-			'name' => 'testName',
-			'type' => 'integer',
-			'storage' => 2
-		);
-		$result = $this->Dbo->buildColumn($data);
-		$expected = '`testName` smallint(6)';
-		$this->assertEquals($expected, $result);
-		$this->Dbo->columns = $restore;
-
-		$data = array(
-			'name' => 'testName',
-			'type' => 'integer',
-			'storage' => 3
-		);
-		$result = $this->Dbo->buildColumn($data);
-		$expected = '`testName` mediumint(9)';
-		$this->assertEquals($expected, $result);
-		$this->Dbo->columns = $restore;
 	}
 
 /**
@@ -556,16 +526,12 @@ class MysqlTest extends CakeTestCase {
 		$expected = 'boolean';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Dbo->column('tinyint(4)');
-		$expected = 'integer';
+		$result = $this->Dbo->column('tinyint');
+		$expected = 'tinyint';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->column('smallint');
-		$expected = 'integer';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Dbo->column('mediumint');
-		$expected = 'integer';
+		$expected = 'smallint';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->column('boolean');
@@ -3131,29 +3097,6 @@ SQL;
 
 		$result = $this->Dbo->length('text');
 		$expected = null;
-		$this->assertSame($expected, $result);
-	}
-
-/**
- * test storageRequirement method
- *
- * @return void
- */
-	public function testStorageRequirement() {
-		$result = $this->Dbo->storageRequirement('varchar(255)');
-		$expected = null;
-		$this->assertSame($expected, $result);
-
-		$result = $this->Dbo->storageRequirement('mediumint');
-		$expected = 3;
-		$this->assertSame($expected, $result);
-
-		$result = $this->Dbo->storageRequirement('smallint');
-		$expected = 2;
-		$this->assertSame($expected, $result);
-
-		$result = $this->Dbo->storageRequirement('tinyint');
-		$expected = 1;
 		$this->assertSame($expected, $result);
 	}
 

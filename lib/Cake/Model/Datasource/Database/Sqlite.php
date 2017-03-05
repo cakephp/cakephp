@@ -63,6 +63,8 @@ class Sqlite extends DboSource {
 /**
  * SQLite3 column definition
  *
+ * @link https://www.sqlite.org/datatype3.html Datatypes In SQLite Version 3
+ *
  * @var array
  */
 	public $columns = array(
@@ -70,6 +72,8 @@ class Sqlite extends DboSource {
 		'string' => array('name' => 'varchar', 'limit' => '255'),
 		'text' => array('name' => 'text'),
 		'integer' => array('name' => 'integer', 'limit' => null, 'formatter' => 'intval'),
+		'smallint' => array('name' => 'integer', 'limit' => null, 'formatter' => 'intval'),
+		'tinyint' => array('name' => 'integer', 'limit' => null, 'formatter' => 'intval'),
 		'biginteger' => array('name' => 'bigint', 'limit' => 20),
 		'float' => array('name' => 'float', 'formatter' => 'floatval'),
 		'decimal' => array('name' => 'decimal', 'formatter' => 'floatval'),

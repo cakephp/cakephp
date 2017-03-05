@@ -304,9 +304,9 @@ class PostgresTest extends CakeTestCase {
 		$this->assertEquals('float', $this->Dbo2->column('double precision'));
 		$this->assertEquals('uuid', $this->Dbo2->column('uuid'));
 
-		$result = $this->Dbo2->column('bigint');
-		$expected = 'biginteger';
-		$this->assertEquals($expected, $result);
+		$this->assertEquals('biginteger', $this->Dbo2->column('bigint'));
+		$this->assertEquals('integer', $this->Dbo2->column('integer'));
+		$this->assertEquals('smallint', $this->Dbo2->column('smallint'));
 	}
 
 /**

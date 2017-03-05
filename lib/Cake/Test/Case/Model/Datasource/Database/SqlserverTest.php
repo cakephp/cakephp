@@ -532,6 +532,16 @@ class SqlserverTest extends CakeTestCase {
 		$expected = '[client_id] int NULL';
 		$this->assertEquals($expected, $result);
 
+		$column = array('type' => 'smallint', 'name' => 'client_id');
+		$result = $this->db->buildColumn($column);
+		$expected = '[client_id] smallint NULL';
+		$this->assertEquals($expected, $result);
+
+		$column = array('type' => 'tinyint', 'name' => 'client_id');
+		$result = $this->db->buildColumn($column);
+		$expected = '[client_id] tinyint NULL';
+		$this->assertEquals($expected, $result);
+
 		$column = array('type' => 'string', 'name' => 'name');
 		$result = $this->db->buildColumn($column);
 		$expected = '[name] nvarchar(255) NULL';

@@ -264,6 +264,28 @@ class SqliteTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$data = array(
+			'name' => 'testName',
+			'type' => 'smallint',
+			'length' => 6,
+			'default' => 6,
+			'null' => false,
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '"testName" integer(6) DEFAULT 6 NOT NULL';
+		$this->assertEquals($expected, $result);
+
+		$data = array(
+			'name' => 'testName',
+			'type' => 'tinyint',
+			'length' => 4,
+			'default' => 4,
+			'null' => false,
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '"testName" integer(4) DEFAULT 4 NOT NULL';
+		$this->assertEquals($expected, $result);
+
+		$data = array(
 			'name' => 'huge',
 			'type' => 'biginteger',
 			'length' => 20,
