@@ -1191,7 +1191,7 @@ class AuthComponentTest extends TestCase
 
         $result = $this->Auth->user('username');
         $this->assertEquals('mariano', $result);
-        $this->assertFalse(isset($_SESSION));
+        $this->assertFalse(isset($_SESSION['Auth']), 'No user data in session');
     }
 
     /**

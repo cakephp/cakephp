@@ -24,10 +24,16 @@ use Zend\Diactoros\UploadedFile;
 use Zend\Diactoros\Uri;
 
 /**
- * TestRequest
+ * ServerRequest Test
  */
 class ServerRequestTest extends TestCase
 {
+    /**
+     * SERVER variable backup.
+     *
+     * @var array
+     */
+    protected $server = [];
 
     /**
      * Setup callback
@@ -37,26 +43,16 @@ class ServerRequestTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->_case = null;
-        if (isset($_GET['case'])) {
-            $this->_case = $_GET['case'];
-            unset($_GET['case']);
-        }
+        $this->server = $_SERVER;
 
         Configure::write('App.baseUrl', false);
     }
 
-    /**
-     * TearDown
-     *
-     * @return void
-     */
     public function tearDown()
     {
         parent::tearDown();
-        if (!empty($this->_case)) {
-            $_GET['case'] = $this->_case;
-        }
+
+        $_SERVER = $this->server;
     }
 
     /**
