@@ -109,6 +109,8 @@ class Mysql extends DboSource {
 /**
  * MySQL column definition
  *
+ * @link https://dev.mysql.com/doc/refman/5.7/en/data-types.html MySQL Data Types
+ *
  * @var array
  */
 	public $columns = array(
