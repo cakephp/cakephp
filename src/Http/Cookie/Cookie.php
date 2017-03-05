@@ -50,13 +50,15 @@ class Cookie implements CookieInterface
     protected $name = '';
 
     /**
-     * Raw Cookie value
+     * Raw Cookie value.
      *
      * @var string|array
      */
     protected $value = '';
 
     /**
+     * Whether or not a JSON value has been expanded into an array.
+     *
      * @var bool
      */
     protected $isExpanded = false;
@@ -99,7 +101,7 @@ class Cookie implements CookieInterface
     /**
      * Constructor
      *
-     * The constructors args are similar to the native php setcookie() method.
+     * The constructors args are similar to the native PHP `setcookie()` method.
      * The only difference is the 3rd argument which excepts null or an object
      * implementing \DateTimeInterface instead an integer.
      *
