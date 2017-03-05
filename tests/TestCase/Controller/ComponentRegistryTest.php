@@ -209,6 +209,18 @@ class ComponentRegistryTest extends TestCase
     }
 
     /**
+     * Test that unloading a none existing component triggers an error.
+     *
+     * @expectedException \Cake\Controller\Exception\MissingComponentException
+     * @expectedExceptionMessage Component class FooComponent could not be found.
+     * @return void
+     */
+    public function testUnloadUnknown()
+    {
+        $this->Components->unload('Foo');
+    }
+
+    /**
      * Test set.
      *
      * @return void

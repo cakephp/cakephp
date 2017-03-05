@@ -274,6 +274,18 @@ class HelperRegistryTest extends TestCase
     }
 
     /**
+     * Test that unloading a none existing helper triggers an error.
+     *
+     * @expectedException \Cake\View\Exception\MissingHelperException
+     * @expectedExceptionMessage Helper class FooHelper could not be found.
+     * @return void
+     */
+    public function testUnloadUnknown()
+    {
+        $this->Helpers->unload('Foo');
+    }
+
+    /**
      * Loading a helper with no config should "just work"
      *
      * The addToAssertionCount call is to record that no exception was thrown

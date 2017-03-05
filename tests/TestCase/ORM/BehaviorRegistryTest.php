@@ -363,6 +363,32 @@ class BehaviorRegistryTest extends TestCase
     }
 
     /**
+     * Test that unloading a none existing behavior triggers an error.
+     *
+     * @return void
+     */
+    public function testUnload()
+    {
+        $this->Behaviors->load('Sluggable');
+        $this->Behaviors->unload('Sluggable');
+
+        $this->assertEmpty($this->Behaviors->loaded());
+        $this->assertCount(0, $this->EventManager->listeners('Model.beforeFind'));
+    }
+
+    /**
+     * Test that unloading a none existing behavior triggers an error.
+     *
+     * @expectedException \Cake\ORM\Exception\MissingBehaviorException
+     * @expectedExceptionMessage Behavior class FooBehavior could not be found.
+     * @return void
+     */
+    public function testUnloadUnknown()
+    {
+        $this->Behaviors->unload('Foo');
+    }
+
+    /**
      * Test setTable() method.
      *
      * @return void
