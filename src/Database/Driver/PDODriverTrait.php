@@ -14,6 +14,7 @@
  */
 namespace Cake\Database\Driver;
 
+use Cake\Database\Exception\TransactionIsolationLevelNotSupportedException;
 use Cake\Database\Query;
 use Cake\Database\Statement\PDOStatement;
 use PDO;
@@ -156,6 +157,23 @@ trait PDODriverTrait
         }
 
         return $this->_connection->rollback();
+    }
+
+    /**
+     * Returns the session isolationLevel
+     * Sets it, if a value is given
+     *
+     * @param string $isolationLevel Transaction Isolation Level
+     * @return string
+     * @throws TransactionIsolationLevelNotSupportedException
+     */
+    public function transactionIsolationLevel($isolationLevel = null)
+    {
+        if (!is_null($isolationLevel) && strlen($isolationLevel) > 0) {
+            //TODO: Check if the isolation level is supported
+            //TODO: Set the isolation level
+        }
+        return ''; //TODO: Return the results of an SQL query to get the current Isolation Level
     }
 
     /**

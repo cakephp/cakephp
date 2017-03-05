@@ -18,6 +18,7 @@ use Cake\Core\App;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
+use Cake\Database\Exception\TransactionIsolationLevelNotSupportedException;
 use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
@@ -643,11 +644,12 @@ class Connection implements ConnectionInterface
      * ```
      * $connection->transactional(function ($connection) {
      *   $connection->newQuery()->delete('users')->execute();
-     * });
+     * }, Connection::SERIALIZABLE);
      * ```
      */
-    public function transactional(callable $callback)
+    public function transactional(callable $callback, $isolationLevel = null)
     {
+        $this->isolationLevel($isolationLevel);
         $this->begin();
 
         try {
@@ -837,5 +839,18 @@ class Connection implements ConnectionInterface
             'logQueries' => $this->_logQueries,
             'logger' => $this->_logger
         ];
+    }
+
+    /**
+     * Returns the connection's isolationLevel
+     * Sets it, if a value is given
+     *
+     * @param string $isolationLevel Transaction Isolation Level
+     * @return string
+     * @throws TransactionIsolationLevelNotSupportedException
+     */
+    public function isolationLevel($isolationLevel = null)
+    {
+        return $this->_driver->transactionIsolationLevel($isolationLevel);
     }
 }
