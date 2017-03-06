@@ -1768,6 +1768,25 @@ class HtmlHelperTest extends TestCase
     }
 
     /**
+     * Test meta() with custom tag and block argument
+     */
+    public function testMetaCustomWithBlock()
+    {
+        $this->View->expects($this->at(0))
+            ->method('append')
+            ->with('meta', $this->stringContains('og:site_name'));
+        $this->View->expects($this->at(1))
+            ->method('append')
+            ->with('meta', $this->stringContains('og:description'));
+
+        $result = $this->Html->meta(['property' => 'og:site_name', 'content' => 'CakePHP', 'block' => true]);
+        $this->assertNull($result, 'compact style should work');
+
+        $result = $this->Html->meta(['property' => 'og:description', 'content' => 'CakePHP'], null, ['block' => true]);
+        $this->assertNull($result, 'backwards compat style should work.');
+    }
+
+    /**
      * testTableHeaders method
      *
      * @return void
