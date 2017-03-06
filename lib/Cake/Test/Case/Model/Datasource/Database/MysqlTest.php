@@ -3376,6 +3376,26 @@ SQL;
 					'default' => 1
 				),
 				'`testName` decimal UNSIGNED DEFAULT 1'
+			),
+			//set #9
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'smallint',
+					'length' => 6,
+					'unsigned' => true
+				),
+				'`testName` smallint(6) UNSIGNED'
+			),
+			//set #10
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'tinyint',
+					'length' => 4,
+					'unsigned' => true
+				),
+				'`testName` tinyint(4) UNSIGNED'
 			)
 		);
 	}
