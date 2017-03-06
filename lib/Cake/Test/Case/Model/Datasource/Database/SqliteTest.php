@@ -405,6 +405,24 @@ class SqliteTest extends CakeTestCase {
 				'default' => null,
 				'length' => 20,
 			),
+			'normal_int' => array(
+				'type' => 'integer',
+				'null' => true,
+				'default' => null,
+				'length' => null
+			),
+			'small_int' => array(
+				'type' => 'integer',
+				'null' => true,
+				'default' => null,
+				'length' => null
+			),
+			'tiny_int' => array(
+				'type' => 'integer',
+				'null' => true,
+				'default' => null,
+				'length' => null
+			),
 			'bool' => array(
 				'type' => 'boolean',
 				'null' => false,

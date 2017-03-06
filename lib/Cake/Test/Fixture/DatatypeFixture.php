@@ -33,6 +33,9 @@ class DatatypeFixture extends CakeTestFixture {
 		'float_field' => array('type' => 'float', 'length' => '5,2', 'null' => false, 'default' => null),
 		'decimal_field' => array('type' => 'decimal', 'length' => '6,3', 'default' => '0.000'),
 		'huge_int' => array('type' => 'biginteger'),
+		'normal_int' => array('type' => 'integer'),
+		'small_int' => array('type' => 'smallint'),
+		'tiny_int' => array('type' => 'tinyint'),
 		'bool' => array('type' => 'boolean', 'null' => false, 'default' => false),
 	);
 
@@ -42,6 +45,14 @@ class DatatypeFixture extends CakeTestFixture {
  * @var array
  */
 	public $records = array(
-		array('id' => 1, 'float_field' => 42.23, 'huge_int' => '1234567891234567891', 'bool' => 0),
+		array(
+			'id' => 1,
+			'float_field' => 42.23,
+			'huge_int' => '9223372036854775807',
+			'normal_int' => 2147483647,
+			'small_int' => 32767,
+			'tiny_int' => 127,
+			'bool' => 0
+		),
 	);
 }
