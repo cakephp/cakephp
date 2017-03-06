@@ -642,7 +642,8 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
     /**
      * Unset empty translations to avoid persistence.
-     * Should only be called if $this->_config['allowEmptyTranslations'] is false
+     *
+     * Should only be called if $this->_config['allowEmptyTranslations'] is false.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to check for empty translations fields inside.
      * @return void
