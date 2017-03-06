@@ -57,7 +57,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var array
      */
-    private static $_defaultProviders = [];
+    protected static $_defaultProviders = [];
 
     /**
      * Contains the validation messages associated with checking the presence

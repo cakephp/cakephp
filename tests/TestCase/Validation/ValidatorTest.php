@@ -1887,11 +1887,11 @@ class ValidatorTest extends TestCase
      */
     public function testAddingDefaultProvider()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $this->assertEmpty($validator->providers(), 'Providers should be empty');
 
-        Validator::addDefaultProvider('test-provider', '\MyNameSpace\Validation\MyProvider');
-        $validator = new Validator;
+        Validator::addDefaultProvider('test-provider', 'MyNameSpace\Validation\MyProvider');
+        $validator = new Validator();
         $this->assertEquals($validator->providers(), ['test-provider'], 'Default provider `test-provider` is missing');
     }
 
@@ -1902,13 +1902,13 @@ class ValidatorTest extends TestCase
      */
     public function testGetDefaultProvider()
     {
-        Validator::addDefaultProvider('test-provider', '\MyNameSpace\Validation\MyProvider');
-        $this->assertEquals(Validator::getDefaultProvider('test-provider'), '\MyNameSpace\Validation\MyProvider', 'Default provider `test-provider` is missing');
+        Validator::addDefaultProvider('test-provider', 'MyNameSpace\Validation\MyProvider');
+        $this->assertEquals(Validator::getDefaultProvider('test-provider'), 'MyNameSpace\Validation\MyProvider', 'Default provider `test-provider` is missing');
 
         $this->assertNull(Validator::getDefaultProvider('invalid-provider'), 'Default provider (`invalid-provider`) should be missing');
         $this->assertNull(Validator::getDefaultProvider(null), 'Default provider (null) should be missing');
-        
-        Validator::addDefaultProvider('test-provider2', '\MyNameSpace\Validation\MySecondProvider');
+
+        Validator::addDefaultProvider('test-provider2', 'MyNameSpace\Validation\MySecondProvider');
         $this->assertEquals(Validator::getDefaultProviders(), ['test-provider', 'test-provider2'], 'Default providers incorrect');
     }
 }
