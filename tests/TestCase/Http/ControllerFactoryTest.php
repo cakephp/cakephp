@@ -16,8 +16,8 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Core\Configure;
 use Cake\Http\ControllerFactory;
+use Cake\Http\Response;
 use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -35,7 +35,7 @@ class ControllerFactoryTest extends TestCase
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
         $this->factory = new ControllerFactory();
-        $this->response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $this->response = $this->getMockBuilder('Cake\Http\Response')->getMock();
     }
 
     /**

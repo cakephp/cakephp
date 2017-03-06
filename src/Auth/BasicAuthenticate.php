@@ -15,9 +15,9 @@
 namespace Cake\Auth;
 
 use Cake\Core\Configure;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Network\Exception\UnauthorizedException;
-use Cake\Network\Response;
 
 /**
  * Basic Authentication adapter for AuthComponent.
@@ -58,7 +58,7 @@ class BasicAuthenticate extends BaseAuthenticate
      * login using HTTP auth.
      *
      * @param \Cake\Http\ServerRequest $request The request to authenticate with.
-     * @param \Cake\Network\Response $response The response to add headers to.
+     * @param \Cake\Http\Response $response The response to add headers to.
      * @return mixed Either false on failure, or an array of user data on success.
      */
     public function authenticate(ServerRequest $request, Response $response)
@@ -94,7 +94,7 @@ class BasicAuthenticate extends BaseAuthenticate
      * Handles an unauthenticated access attempt by sending appropriate login headers
      *
      * @param \Cake\Http\ServerRequest $request A request object.
-     * @param \Cake\Network\Response $response A response object.
+     * @param \Cake\Http\Response $response A response object.
      * @return void
      * @throws \Cake\Network\Exception\UnauthorizedException
      */

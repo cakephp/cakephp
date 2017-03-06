@@ -16,10 +16,10 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Event\Event;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\Network\Exception\InvalidCsrfTokenException;
-use Cake\Network\Response;
 use Cake\Utility\Security;
 
 /**
@@ -81,7 +81,7 @@ class CsrfComponent extends Component
         $response = $controller->response;
         $cookieName = $this->_config['cookieName'];
 
-        /* @var \Cake\Network\Request $request */
+        /* @var \Cake\Http\ServerRequest $request */
         $cookieData = $request->getCookie($cookieName);
         if ($cookieData) {
             $request->params['_csrfToken'] = $cookieData;
@@ -119,7 +119,7 @@ class CsrfComponent extends Component
      * token is available in the request data.
      *
      * @param \Cake\Http\ServerRequest $request The request object.
-     * @param \Cake\Network\Response $response The response object.
+     * @param \Cake\Http\Response $response The response object.
      * @return void
      */
     protected function _setCookie(ServerRequest $request, Response $response)

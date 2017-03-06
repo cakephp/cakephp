@@ -341,7 +341,7 @@ class ViewTest extends TestCase
     public function testGetTemplate()
     {
         $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $viewOptions = [
             'plugin' => null,
@@ -417,7 +417,7 @@ class ViewTest extends TestCase
     public function testPluginGetTemplateAbsoluteFail()
     {
         $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $viewOptions = [
             'plugin' => null,
@@ -597,7 +597,7 @@ class ViewTest extends TestCase
             'viewPath' => 'Pages'
         ];
         $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $View = new TestView(null, null, null, $viewOptions);
 
@@ -643,7 +643,7 @@ class ViewTest extends TestCase
             'viewPath' => 'Pages',
         ];
         $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $view = new TestView(null, null, null, $viewOptions);
         $view->ext('.php');
@@ -763,7 +763,7 @@ class ViewTest extends TestCase
             'viewPath' => 'Pages',
         ];
         $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $view = new TestView(null, null, null, $viewOptions);
         $view->ext('.php');
@@ -783,7 +783,7 @@ class ViewTest extends TestCase
             'viewPath' => 'Pages'
         ];
         $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $View = new TestView($request, $response, null, $viewOptions);
         $View->getViewFileName('does_not_exist');

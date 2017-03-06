@@ -1,7 +1,7 @@
 <?php
 namespace Cake\Test\Fixture;
 
-use Cake\Network\Response;
+use Cake\Http\Response;
 use Cake\TestSuite\IntegrationTestCase;
 
 /**

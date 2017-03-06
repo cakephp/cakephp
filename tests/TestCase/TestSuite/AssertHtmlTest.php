@@ -137,7 +137,6 @@ HTML;
         $this->assertHtml($pattern, $input);
     }
 
-
     /**
      * test that assertHtml knows how to handle correct quoting.
      *

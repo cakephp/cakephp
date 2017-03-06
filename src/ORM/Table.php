@@ -405,7 +405,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         return $this->_alias;
     }
 
-
     /**
      * {@inheritDoc}
      * @deprecated 3.4.0 Use setAlias()/getAlias() instead.
@@ -448,7 +447,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         return $this;
     }
-
 
     /**
      * Returns the table registry key used to create this table instance.

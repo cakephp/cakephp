@@ -531,7 +531,7 @@ class Response implements ResponseInterface
     }
 
     /**
-     * Sets the cookies that have been added via Cake\Network\Response::cookie() before any
+     * Sets the cookies that have been added via Cake\Http\Response::cookie() before any
      * other output is sent to the client. Will set the cookies in the order they
      * have been set.
      *
@@ -2228,6 +2228,21 @@ class Response implements ResponseInterface
         }
         $new->_file = $file;
         $new->stream = new Stream($file->path, 'rb');
+
+        return $new;
+    }
+
+    /**
+     * Convenience method to set a string into the response body
+     *
+     * @param string $string The string to be sent
+     * @return static
+     */
+    public function withStringBody($string)
+    {
+        $new = clone $this;
+        $new->_createStream();
+        $new->stream->write((string)$string);
 
         return $new;
     }

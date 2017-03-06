@@ -1232,7 +1232,7 @@ trait EntityTrait
     {
         return $this->_properties + [
             '[new]' => $this->isNew(),
-            '[accessible]' => array_filter($this->_accessible),
+            '[accessible]' => $this->_accessible,
             '[dirty]' => $this->_dirty,
             '[original]' => $this->_original,
             '[virtual]' => $this->_virtual,

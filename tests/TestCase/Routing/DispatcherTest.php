@@ -16,8 +16,8 @@ namespace Cake\Test\TestCase\Routing;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Http\Response;
 use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\Network\Session;
 use Cake\Routing\Dispatcher;
 use Cake\Routing\Filter\ControllerFactoryFilter;
@@ -76,7 +76,7 @@ class DispatcherTest extends TestCase
                 'action' => 'home',
             ]
         ]);
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response, ['return' => 1]);
     }
 
@@ -97,7 +97,7 @@ class DispatcherTest extends TestCase
             ]
         ]);
         $url = new Request('dispatcher_test_interface/index');
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response, ['return' => 1]);
     }
 
@@ -117,7 +117,7 @@ class DispatcherTest extends TestCase
                 'action' => 'index',
             ]
         ]);
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response, ['return' => 1]);
     }
 
@@ -141,7 +141,7 @@ class DispatcherTest extends TestCase
                 'pass' => ['home'],
             ]
         ]);
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response, ['return' => 1]);
     }
 
@@ -160,7 +160,7 @@ class DispatcherTest extends TestCase
                 'pass' => ['extract'],
             ]
         ]);
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $response->expects($this->once())
             ->method('send');
 
@@ -183,7 +183,7 @@ class DispatcherTest extends TestCase
                 'pass' => []
             ]
         ]);
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_sendHeader'])
             ->getMock();
 
@@ -215,7 +215,7 @@ class DispatcherTest extends TestCase
                 'return' => 1
             ]
         ]);
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response);
     }
 
@@ -238,7 +238,7 @@ class DispatcherTest extends TestCase
                 'return' => 1
             ]
         ]);
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response);
     }
 
@@ -268,7 +268,7 @@ class DispatcherTest extends TestCase
                 'pass' => []
             ]
         ]);
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['send'])
             ->getMock();
         $this->dispatcher->dispatch($request, $response);
@@ -281,7 +281,7 @@ class DispatcherTest extends TestCase
      */
     public function testBeforeDispatchAbortDispatch()
     {
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['send'])
             ->getMock();
         $response->expects($this->once())
@@ -318,7 +318,7 @@ class DispatcherTest extends TestCase
      */
     public function testAfterDispatchReplaceResponse()
     {
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_sendHeader', 'send'])
             ->getMock();
         $response->expects($this->once())

@@ -196,7 +196,6 @@ class HelpFormatter
         $xml->addChild('command', $parser->getCommand());
         $xml->addChild('description', $parser->getDescription());
 
-        $xml->addChild('epilog', $parser->getEpilog());
         $subcommands = $xml->addChild('subcommands');
         foreach ($parser->subcommands() as $command) {
             $command->xml($subcommands);
@@ -209,6 +208,7 @@ class HelpFormatter
         foreach ($parser->arguments() as $argument) {
             $argument->xml($arguments);
         }
+        $xml->addChild('epilog', $parser->getEpilog());
 
         return $string ? $xml->asXML() : $xml;
     }

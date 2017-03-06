@@ -137,6 +137,9 @@ class RoutesShell extends Shell
         foreach ($args as $arg) {
             if (strpos($arg, ':') !== false) {
                 list($key, $value) = explode(':', $arg);
+                if (in_array($value, ['true', 'false'])) {
+                    $value = $value === 'true' ? true : false;
+                }
                 $out[$key] = $value;
             } else {
                 $out[] = $arg;

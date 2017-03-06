@@ -19,8 +19,8 @@ use Cake\Controller\Component\AuthComponent;
 use Cake\Controller\Component\CookieComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Plugin;
+use Cake\Http\Response;
 use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 
 /**

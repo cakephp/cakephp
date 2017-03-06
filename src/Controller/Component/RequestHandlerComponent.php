@@ -21,7 +21,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
-use Cake\Network\Response;
+use Cake\Http\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Inflector;
@@ -149,7 +149,7 @@ class RequestHandlerComponent extends Component
      * is to avoid issues with browsers that prefer HTML and several other content types.
      *
      * @param \Cake\Http\ServerRequest $request The request instance.
-     * @param \Cake\Network\Response $response The response instance.
+     * @param \Cake\Http\Response $response The response instance.
      * @return void
      */
     protected function _setExtension($request, $response)
@@ -247,8 +247,8 @@ class RequestHandlerComponent extends Component
      *
      * @param \Cake\Event\Event $event The Controller.beforeRedirect event.
      * @param string|array $url A string or array containing the redirect location
-     * @param \Cake\Network\Response $response The response object.
-     * @return \Cake\Network\Response|null The response object if the redirect is caught.
+     * @param \Cake\Http\Response $response The response object.
+     * @return \Cake\Http\Response|null The response object if the redirect is caught.
      * @deprecated 3.3.5 This functionality will be removed in 4.0.0. You can disable this function
      *   now by setting the `enableBeforeRedirect` config option to false.
      */
@@ -299,9 +299,9 @@ class RequestHandlerComponent extends Component
      *   `app/View/Controller/xml/action.ctp`. Also if `controller/action` is
      *   requested with `Accept: application/xml` in the headers the view
      *   path will become `app/View/Controller/xml/action.ctp`. Layout and template
-     *   types will only switch to mime-types recognized by Cake\Network\Response.
+     *   types will only switch to mime-types recognized by Cake\Http\Response.
      *   If you need to declare additional mime-types, you can do so using
-     *   Cake\Network\Response::type() in your controller's beforeFilter() method.
+     *   Cake\Http\Response::type() in your controller's beforeFilter() method.
      * - If a helper with the same name as the extension exists, it is added to
      *   the controller.
      * - If the extension is of a type that RequestHandler understands, it will
@@ -391,7 +391,7 @@ class RequestHandlerComponent extends Component
     /**
      * Determines which content types the client accepts. Acceptance is based on
      * the file extension parsed by the Router (if present), and by the HTTP_ACCEPT
-     * header. Unlike Cake\Network\Request::accepts() this method deals entirely with mapped content types.
+     * header. Unlike Cake\Http\ServerRequest::accepts() this method deals entirely with mapped content types.
      *
      * Usage:
      *
@@ -607,7 +607,7 @@ class RequestHandlerComponent extends Component
 
     /**
      * Sets the response header based on type map index name. This wraps several methods
-     * available on Cake\Network\Response. It also allows you to use Content-Type aliases.
+     * available on Cake\Http\Response. It also allows you to use Content-Type aliases.
      *
      * @param string|array $type Friendly type name, i.e. 'html' or 'xml', or a full content-type,
      *    like 'application/x-shockwave'.

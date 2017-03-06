@@ -27,7 +27,7 @@ $ composer require cakephp/cakephp:"~3.4"
 ## Running Tests
 
 Assuming you have PHPUnit installed system wide using one of the methods stated
-[here](http://phpunit.de/manual/current/en/installation.html), you can run the
+[here](https://phpunit.de/manual/current/en/installation.html), you can run the
 tests for CakePHP by doing the following:
 
 1. Copy `phpunit.xml.dist` to `phpunit.xml`.
@@ -52,7 +52,7 @@ tests for CakePHP by doing the following:
 
 * [Slack](http://cakesf.herokuapp.com/) - Join us on Slack.
 * [#cakephp](http://webchat.freenode.net/?channels=#cakephp) on irc.freenode.net - Come chat with us, we have cake.
-* [Forum](http://discourse.cakephp.org/) - Offical CakePHP forum.
+* [Forum](http://discourse.cakephp.org/) - Official CakePHP forum.
 * [GitHub Issues](https://github.com/cakephp/cakephp/issues) - Got issues? Please tell us!
 * [Roadmaps](https://github.com/cakephp/cakephp/wiki#roadmaps) - Want to contribute? Get involved!
 

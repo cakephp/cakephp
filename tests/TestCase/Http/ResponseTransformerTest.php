@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Http;
 
+use Cake\Http\Response as CakeResponse;
 use Cake\Http\ResponseTransformer;
-use Cake\Network\Response as CakeResponse;
 use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Response as PsrResponse;
@@ -64,7 +64,7 @@ class ResponseTransformerTest extends TestCase
     {
         $psr = new PsrResponse('php://memory', 401, []);
         $result = ResponseTransformer::toCake($psr);
-        $this->assertInstanceOf('Cake\Network\Response', $result);
+        $this->assertInstanceOf('Cake\Http\Response', $result);
     }
 
     /**
@@ -351,7 +351,7 @@ class ResponseTransformerTest extends TestCase
      */
     public function testToPsrBodyFileResponse()
     {
-        $cake = $this->getMockBuilder('Cake\Network\Response')
+        $cake = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_clearBuffer'])
             ->getMock();
         $cake->file(__FILE__, ['name' => 'some-file.php', 'download' => true]);
@@ -380,7 +380,7 @@ class ResponseTransformerTest extends TestCase
     public function testToPsrBodyFileResponseFileRange()
     {
         $_SERVER['HTTP_RANGE'] = 'bytes=10-20';
-        $cake = $this->getMockBuilder('Cake\Network\Response')
+        $cake = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_clearBuffer'])
             ->getMock();
         $path = TEST_APP . 'webroot/css/cake.generic.css';

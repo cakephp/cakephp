@@ -1209,6 +1209,7 @@ XML;
 </request>
 XML;
         $result = Xml::build($xml);
+        $this->assertEquals('', (string)$result->xxe);
     }
 
     /**

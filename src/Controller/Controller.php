@@ -20,9 +20,9 @@ use Cake\Event\Event;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
-use Cake\Network\Response;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
@@ -118,7 +118,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public $helpers = [];
 
     /**
-     * An instance of a Cake\Network\Request object that contains information about the current request.
+     * An instance of a \Cake\Http\ServerRequest object that contains information about the current request.
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
      *
@@ -130,7 +130,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * An instance of a Response object that contains information about the impending response
      *
-     * @var \Cake\Network\Response
+     * @var \Cake\Http\Response
      * @link http://book.cakephp.org/3.0/en/controllers/request-response.html#response
      */
     public $response;
@@ -140,7 +140,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var string
      */
-    protected $_responseClass = 'Cake\Network\Response';
+    protected $_responseClass = 'Cake\Http\Response';
 
     /**
      * Settings for pagination.
@@ -224,7 +224,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param \Cake\Http\ServerRequest|null $request Request object for this controller. Can be null for testing,
      *   but expect that features that use the request parameters will not work.
-     * @param \Cake\Network\Response|null $response Response object for this controller.
+     * @param \Cake\Http\Response|null $response Response object for this controller.
      * @param string|null $name Override the name useful in testing when using mocks.
      * @param \Cake\Event\EventManager|null $eventManager The event manager. Defaults to a new instance.
      * @param \Cake\Controller\ComponentRegistry|null $components The component registry. Defaults to a new instance.
@@ -437,7 +437,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         /* @var callable $callable */
         $callable = [$this, $request->getParam('action')];
 
-        return $callable(...$request->getParam('pass'));
+        return $callable(...array_values($request->getParam('pass')));
     }
 
     /**
@@ -495,7 +495,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * - Calls the controller `beforeFilter`.
      * - triggers Component `startup` methods.
      *
-     * @return \Cake\Network\Response|null
+     * @return \Cake\Http\Response|null
      */
     public function startupProcess()
     {
@@ -518,7 +518,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * - triggers the component `shutdown` callback.
      * - calls the Controller's `afterFilter` method.
      *
-     * @return \Cake\Network\Response|null
+     * @return \Cake\Http\Response|null
      */
     public function shutdownProcess()
     {
@@ -536,7 +536,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param string|array $url A string or array-based URL pointing to another location within the app,
      *     or an absolute URL
      * @param int $status HTTP status code (eg: 301)
-     * @return \Cake\Network\Response|null
+     * @return \Cake\Http\Response|null
      * @link http://book.cakephp.org/3.0/en/controllers.html#Controller::redirect
      */
     public function redirect($url, $status = 302)
@@ -590,7 +590,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param string|null $view View to use for rendering
      * @param string|null $layout Layout to use
-     * @return \Cake\Network\Response A response object containing the rendered view.
+     * @return \Cake\Http\Response A response object containing the rendered view.
      * @link http://book.cakephp.org/3.0/en/controllers.html#rendering-a-view
      */
     public function render($view = null, $layout = null)
@@ -747,7 +747,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * or perform logic that needs to happen before each controller action.
      *
      * @param \Cake\Event\Event $event An Event instance
-     * @return \Cake\Network\Response|null
+     * @return \Cake\Http\Response|null
      * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
     public function beforeFilter(Event $event)
@@ -760,7 +760,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * to perform logic or set view variables that are required on every request.
      *
      * @param \Cake\Event\Event $event An Event instance
-     * @return \Cake\Network\Response|null
+     * @return \Cake\Http\Response|null
      * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
     public function beforeRender(Event $event)
@@ -780,8 +780,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Cake\Event\Event $event An Event instance
      * @param string|array $url A string or array-based URL pointing to another location within the app,
      *     or an absolute URL
-     * @param \Cake\Network\Response $response The response object.
-     * @return \Cake\Network\Response|null
+     * @param \Cake\Http\Response $response The response object.
+     * @return \Cake\Http\Response|null
      * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
     public function beforeRedirect(Event $event, $url, Response $response)
@@ -793,7 +793,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Called after the controller action is run and rendered.
      *
      * @param \Cake\Event\Event $event An Event instance
-     * @return \Cake\Network\Response|null
+     * @return \Cake\Http\Response|null
      * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
     public function afterFilter(Event $event)

@@ -166,7 +166,6 @@ abstract class CacheEngine
      */
     abstract public function delete($key);
 
-
     /**
      * Delete all keys from the cache
      *
