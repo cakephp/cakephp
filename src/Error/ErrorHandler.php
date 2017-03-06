@@ -33,7 +33,6 @@ use Exception;
  * You can implement application specific exception handling in one of a few ways. Each approach
  * gives you different amounts of control over the exception handling process.
  *
- * - Modify config/error.php and setup custom exception handling.
  * - Use the `exceptionRenderer` option to inject an Exception renderer. This will
  *   let you keep the existing handling logic but override the rendering logic.
  *
