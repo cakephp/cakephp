@@ -51,7 +51,7 @@ use Cake\Network\Exception\UnauthorizedException;
  * false, a ForbiddenException exception is thrown instead of redirecting.
  */
 class BasicAuthenticate extends BaseAuthenticate
-{    
+{
     const DEFAULT_BASIC_AUTH_ENCODING = 'ISO-8859-1';
 
     /**
