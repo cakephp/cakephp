@@ -98,7 +98,7 @@ class Connection implements ConnectionInterface
      *
      * @var \Cake\Database\Exception\NestedTransactionRollbackException|null
      */
-    protected $_nestedTransactionRollbackException = null;
+    protected $nestedTransactionRollbackException = null;
 
     /**
      * Constructor.
@@ -450,7 +450,7 @@ class Connection implements ConnectionInterface
             $this->_driver->beginTransaction();
             $this->_transactionLevel = 0;
             $this->_transactionStarted = true;
-            $this->_nestedTransactionRollbackException = null;
+            $this->nestedTransactionRollbackException = null;
 
             return;
         }
@@ -474,11 +474,13 @@ class Connection implements ConnectionInterface
 
         if ($this->_transactionLevel === 0) {
             if ($this->wasNestedTransactionRolledback()) {
-                throw $this->_nestedTransactionRollbackException;
+                $e = $this->nestedTransactionRollbackException;
+                $this->nestedTransactionRollbackException = null;
+                throw $e;
             }
 
             $this->_transactionStarted = false;
-            $this->_nestedTransactionRollbackException = null;
+            $this->nestedTransactionRollbackException = null;
             if ($this->_logQueries) {
                 $this->log('COMMIT');
             }
@@ -514,7 +516,7 @@ class Connection implements ConnectionInterface
         if ($this->_transactionLevel === 0 || $toBeginning) {
             $this->_transactionLevel = 0;
             $this->_transactionStarted = false;
-            $this->_nestedTransactionRollbackException = null;
+            $this->nestedTransactionRollbackException = null;
             if ($this->_logQueries) {
                 $this->log('ROLLBACK');
             }
@@ -526,8 +528,8 @@ class Connection implements ConnectionInterface
         $savePoint = $this->_transactionLevel--;
         if ($useSavePoint) {
             $this->rollbackSavepoint($savePoint);
-        } elseif ($this->_nestedTransactionRollbackException === null) {
-            $this->_nestedTransactionRollbackException = new NestedTransactionRollbackException();
+        } elseif ($this->nestedTransactionRollbackException === null) {
+            $this->nestedTransactionRollbackException = new NestedTransactionRollbackException();
         }
 
         return true;
@@ -702,9 +704,9 @@ class Connection implements ConnectionInterface
      *
      * @return bool
      */
-    public function wasNestedTransactionRolledback()
+    protected function wasNestedTransactionRolledback()
     {
-        return $this->_nestedTransactionRollbackException instanceof NestedTransactionRollbackException;
+        return $this->nestedTransactionRollbackException instanceof NestedTransactionRollbackException;
     }
 
     /**

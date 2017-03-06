@@ -20,6 +20,7 @@ use Cake\Database\Driver\Mysql;
 use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use ReflectionMethod;
 
 /**
  * Tests Connection class
@@ -28,6 +29,21 @@ class ConnectionTest extends TestCase
 {
 
     public $fixtures = ['core.things'];
+
+    /**
+     * Where the NestedTransactionRollbackException was created.
+     *
+     * @var int
+     */
+    protected $rollbackSourceLine = -1;
+
+    /**
+     * Internal states of nested transaction.
+     *
+     * @var array
+     */
+    protected $nestedTransactionStates = [];
+
 
     public function setUp()
     {
@@ -1030,50 +1046,60 @@ class ConnectionTest extends TestCase
      * a NestedTransactionRollbackException.
      *
      * @return void
-     * @expectedException \Cake\Database\Exception\NestedTransactionRollbackException
-     * @expectedExceptionMessage Cannot commit transaction - rollback() has been already called in the nested transaction
      */
     public function testNestedTransactionRollbackExceptionThrown()
     {
-        // ROLLBACK -> COMMIT
-        $this->connection->transactional(function () {
-            $this->connection->transactional(function () {
-                return false;
-            });
-
-            return true;
-        });
-    }
-
-    /**
-     * Tests mor detail about that not allowed nesting of rollback/commit
-     * operations throws a NestedTransactionRollbackException by trace.
-     *
-     * @return void
-     */
-    public function testNestedTransactionRollbackExceptionByTrace()
-    {
-        $rollbackSourceLine = -1;
-        $nestedTransactionStates = [];
+        $this->rollbackSourceLine = -1;
 
         $e = null;
         try {
-            $this->connection->transactional(function () use (&$rollbackSourceLine, &$nestedTransactionStates) {
-                $nestedTransactionStates[] = $this->connection->wasNestedTransactionRolledback();
+            $this->connection->transactional(function () {
+                $this->connection->transactional(function () {
+                    return false;
+                });
+                $this->rollbackSourceLine = __LINE__ - 1;
+
+                return true;
+            });
+
+            $this->fail('NestedTransactionRollbackException should be thrown');
+        } catch (NestedTransactionRollbackException $e) {
+        }
+
+        $trace = $e->getTrace();
+        $this->assertEquals(__FILE__, $trace[1]['file']);
+        $this->assertEquals($this->rollbackSourceLine, $trace[1]['line']);
+    }
+
+    /**
+     * Tests more detail about that not allowed nesting of rollback/commit
+     * operations throws a NestedTransactionRollbackException.
+     *
+     * @return void
+     */
+    public function testNestedTransactionStates()
+    {
+        $this->rollbackSourceLine = -1;
+        $this->nestedTransactionStates = [];
+
+        $e = null;
+        try {
+            $this->connection->transactional(function () {
+                $this->pushNestedTransactionState();
 
                 $this->connection->transactional(function () {
                     return true;
                 });
 
-                $this->connection->transactional(function () use (&$rollbackSourceLine, &$nestedTransactionStates) {
-                    $nestedTransactionStates[] = $this->connection->wasNestedTransactionRolledback();
+                $this->connection->transactional(function () {
+                    $this->pushNestedTransactionState();
 
                     $this->connection->transactional(function () {
                         return false;
                     });
-                    $rollbackSourceLine = __LINE__ - 1;
+                    $this->rollbackSourceLine = __LINE__ - 1;
 
-                    $nestedTransactionStates[] = $this->connection->wasNestedTransactionRolledback();
+                    $this->pushNestedTransactionState();
 
                     return true;
                 });
@@ -1082,22 +1108,34 @@ class ConnectionTest extends TestCase
                     return false;
                 });
 
-                $nestedTransactionStates[] = $this->connection->wasNestedTransactionRolledback();
+                $this->pushNestedTransactionState();
 
                 return true;
             });
+
+            $this->fail('NestedTransactionRollbackException should be thrown');
         } catch (NestedTransactionRollbackException $e) {
         }
 
-        $nestedTransactionStates[] = $this->connection->wasNestedTransactionRolledback();
+        $this->pushNestedTransactionState();
 
-        $this->assertInstanceOf(NestedTransactionRollbackException::class, $e);
-
-        $this->assertSame([false, false, true, true, false], $nestedTransactionStates);
+        $this->assertSame([false, false, true, true, false], $this->nestedTransactionStates);
         $this->assertFalse($this->connection->inTransaction());
 
         $trace = $e->getTrace();
         $this->assertEquals(__FILE__, $trace[1]['file']);
-        $this->assertEquals($rollbackSourceLine, $trace[1]['line']);
+        $this->assertEquals($this->rollbackSourceLine, $trace[1]['line']);
+    }
+
+    /**
+     * Helper method to trace nested transaction states.
+     *
+     * @return void
+     */
+    public function pushNestedTransactionState()
+    {
+        $method = new ReflectionMethod($this->connection, 'wasNestedTransactionRolledback');
+        $method->setAccessible(true);
+        $this->nestedTransactionStates[] = $method->invoke($this->connection);
     }
 }
