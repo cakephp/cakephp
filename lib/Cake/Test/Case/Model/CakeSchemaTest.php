@@ -688,6 +688,7 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	public function testSchemaReadWithNonConventionalPrimaryKey() {
+		$this->skipIf($this->db instanceof Postgres, 'Cannot test on Postgres');
 		$db = ConnectionManager::getDataSource('test');
 		$fixture = new NonConventionalPrimaryKeyFixture();
 		$fixture->create($db);
@@ -699,17 +700,14 @@ class CakeSchemaTest extends CakeTestCase {
 		));
 		$fixture->drop($db);
 
-		$has_table = isset($read['tables']['non_conventional']);
-		$this->assertTrue($has_table, 'non_conventional table should appear');
-		if ($has_table) {
-			$version_id_has_key = isset($read['tables']['non_conventional']['version_id']['key']);
-			$this->assertTrue($version_id_has_key, 'version_id key should be set');
-			if ($version_id_has_key) {
-				$version_id_key_is_primary = $read['tables']['non_conventional']['version_id']['key'] === 'primary';
-				$this->assertTrue($version_id_key_is_primary, 'version_id key should be primary');
-			}
-			$this->assertFalse(isset($read['tables']['non_conventional']['id']['key']), 'id key should not be set');
-		}
+		$hasTable = isset($read['tables']['non_conventional']);
+		$this->assertTrue($hasTable, 'non_conventional table should appear');
+		$versionIdHasKey = $hasTable && isset($read['tables']['non_conventional']['version_id']['key']);
+		$this->assertTrue($versionIdHasKey, 'version_id key should be set');
+		$versionIdKeyIsPrimary = $versionIdHasKey && $read['tables']['non_conventional']['version_id']['key'] === 'primary';
+		$this->assertTrue($versionIdKeyIsPrimary, 'version_id key should be primary');
+		$idHasNoKey = $hasTable && !isset($read['tables']['non_conventional']['id']['key']);
+		$this->assertTrue($idHasNoKey, 'id key should not be set');
 	}
 
 /**
