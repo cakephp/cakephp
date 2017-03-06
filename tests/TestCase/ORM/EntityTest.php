@@ -1031,6 +1031,49 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Tests setting hidden properties.
+     *
+     * @return void
+     */
+    public function testSetHidden()
+    {
+        $data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
+        $entity = new Entity($data);
+        $entity->setVirtual(['secret']);
+
+        $result = $entity->getVirtual();
+        $this->assertSame(['secret'], $result);
+
+        $entity->setVirtual(['name']);
+
+        $result = $entity->getVirtual();
+        $this->assertSame(['name'], $result);
+    }
+
+    /**
+     * Tests setting hidden properties with merging.
+     *
+     * @return void
+     */
+    public function testSetHiddenWithMerge()
+    {
+        $data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
+        $entity = new Entity($data);
+        $entity->setVirtual(['secret']);
+
+        $result = $entity->getVirtual();
+        $this->assertSame(['secret'], $result);
+
+        $entity->setVirtual(['name'], true);
+
+        $result = $entity->getVirtual();
+        $this->assertSame(['secret', 'name'], $result);
+
+        $entity->setVirtual(['name'], true);
+        $this->assertSame(['secret', 'name'], $result);
+    }
+
+    /**
      * Test toArray includes 'virtual' properties.
      *
      * @return void

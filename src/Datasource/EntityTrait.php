@@ -433,7 +433,7 @@ trait EntityTrait
             return $this;
         }
 
-        $this->_hidden += $properties;
+        $this->_hidden = array_merge($this->_hidden, $properties);
 
         return $this;
     }
@@ -482,7 +482,7 @@ trait EntityTrait
             return $this;
         }
 
-        $this->_virtual += $properties;
+        $this->_virtual = array_merge($this->_virtual, $properties);
 
         return $this;
     }
