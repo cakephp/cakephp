@@ -21,9 +21,9 @@ use Cake\Core\App;
 use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Network\Exception\ForbiddenException;
-use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 
@@ -214,7 +214,7 @@ class AuthComponent extends Component
     /**
      * Response object
      *
-     * @var \Cake\Network\Response
+     * @var \Cake\Http\Response
      */
     public $response;
 
@@ -261,7 +261,7 @@ class AuthComponent extends Component
      * Callback for Controller.startup event.
      *
      * @param \Cake\Event\Event $event Event instance.
-     * @return \Cake\Network\Response|null
+     * @return \Cake\Http\Response|null
      */
     public function startup(Event $event)
     {
@@ -276,7 +276,7 @@ class AuthComponent extends Component
      * `checkAuthIn` config.
      *
      * @param \Cake\Event\Event $event Event instance.
-     * @return \Cake\Network\Response|null
+     * @return \Cake\Http\Response|null
      */
     public function authCheck(Event $event)
     {
@@ -361,7 +361,7 @@ class AuthComponent extends Component
      * is returned.
      *
      * @param \Cake\Controller\Controller $controller A reference to the controller object.
-     * @return \Cake\Network\Response|null Null if current action is login action
+     * @return \Cake\Http\Response|null Null if current action is login action
      *   else response object returned by authenticate object or Controller::redirect().
      * @throws \Cake\Core\Exception\Exception
      */
@@ -447,7 +447,7 @@ class AuthComponent extends Component
      * Handle unauthorized access attempt
      *
      * @param \Cake\Controller\Controller $controller A reference to the controller object
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      * @throws \Cake\Network\Exception\ForbiddenException
      */
     protected function _unauthorized(Controller $controller)

@@ -17,8 +17,8 @@ namespace Cake\Routing;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Http\ActionDispatcher;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\Response;
 
 /**
  * Dispatcher converts Requests into controller actions. It uses the dispatched Request

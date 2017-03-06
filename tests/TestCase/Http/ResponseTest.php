@@ -12,13 +12,13 @@
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Network;
+namespace Cake\Test\TestCase\Http;
 
 include_once CORE_TEST_CASES . DS . 'Http' . DS . 'server_mocks.php';
 
+use Cake\Http\Response;
 use Cake\Network\Exception\NotFoundException;
 use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Stream;
 
@@ -1677,7 +1677,7 @@ class ResponseTest extends TestCase
      */
     public function testFile()
     {
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods([
                 'header',
                 'type',
@@ -1757,7 +1757,7 @@ class ResponseTest extends TestCase
      */
     public function testFileWithDownloadAndName()
     {
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods([
                 'header',
                 'type',
@@ -1814,7 +1814,7 @@ class ResponseTest extends TestCase
         $currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
         $_SERVER['HTTP_USER_AGENT'] = 'Some generic browser';
 
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods([
                 'header',
                 'type',
@@ -1888,7 +1888,7 @@ class ResponseTest extends TestCase
         $currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
         $_SERVER['HTTP_USER_AGENT'] = 'Opera/9.80 (Windows NT 6.0; U; en) Presto/2.8.99 Version/11.10';
 
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods([
                 'header',
                 'type',
@@ -1968,7 +1968,7 @@ class ResponseTest extends TestCase
         $currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
         $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; Media Center PC 4.0; SLCC1; .NET CLR 3.0.04320)';
 
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods([
                 'header',
                 'type',
@@ -2046,7 +2046,7 @@ class ResponseTest extends TestCase
         $currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
         $_SERVER['HTTP_USER_AGENT'] = 'Some generic browser';
 
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods([
                 'header',
                 'type',
@@ -2120,7 +2120,7 @@ class ResponseTest extends TestCase
      */
     public function testConnectionAbortedOnBuffering()
     {
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods([
                 'header',
                 'type',
@@ -2153,7 +2153,7 @@ class ResponseTest extends TestCase
      */
     public function testFileUpperExtension()
     {
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods([
                 'header',
                 'type',
@@ -2195,7 +2195,7 @@ class ResponseTest extends TestCase
      */
     public function testFileExtensionNotSet()
     {
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods([
                 'header',
                 'type',
@@ -2259,7 +2259,7 @@ class ResponseTest extends TestCase
     public function testFileRangeOffsets($range, $length, $offsetResponse)
     {
         $_SERVER['HTTP_RANGE'] = $range;
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods([
                 'header',
                 'type',
@@ -2334,7 +2334,7 @@ class ResponseTest extends TestCase
     public function testFileRange()
     {
         $_SERVER['HTTP_RANGE'] = 'bytes=8-25';
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods([
                 'header',
                 'type',
@@ -2439,7 +2439,7 @@ class ResponseTest extends TestCase
     public function testFileRangeInvalid($range)
     {
         $_SERVER['HTTP_RANGE'] = $range;
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods([
                 '_sendHeader',
                 '_isActive',
@@ -2496,7 +2496,7 @@ class ResponseTest extends TestCase
     public function testFileRangeReversed()
     {
         $_SERVER['HTTP_RANGE'] = 'bytes=30-2';
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods([
                 'header',
                 'type',
@@ -2565,7 +2565,7 @@ class ResponseTest extends TestCase
     public function testFileRangeOffsetsNoDownload($range, $length, $offsetResponse)
     {
         $_SERVER['HTTP_RANGE'] = $range;
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods([
                 'header',
                 'type',
@@ -2607,7 +2607,7 @@ class ResponseTest extends TestCase
     public function testFileRangeNoDownload()
     {
         $_SERVER['HTTP_RANGE'] = 'bytes=8-25';
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods([
                 'header',
                 'type',
@@ -2657,7 +2657,7 @@ class ResponseTest extends TestCase
     public function testFileRangeInvalidNoDownload()
     {
         $_SERVER['HTTP_RANGE'] = 'bytes=30-2';
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods([
                 'header',
                 'type',

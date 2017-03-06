@@ -15,8 +15,8 @@ namespace TestApp\Auth;
 
 use Cake\Auth\BaseAuthenticate;
 use Cake\Event\Event;
+use Cake\Http\Response;
 use Cake\Network\Request;
-use Cake\Network\Response;
 
 /**
  * TestAuthenticate class
@@ -38,7 +38,7 @@ class TestAuthenticate extends BaseAuthenticate
 
     /**
      * @param \Cake\Http\ServerRequest $request
-     * @param \Cake\Network\Response $response
+     * @param \Cake\Http\Response $response
      * @return array
      */
     public function authenticate(Request $request, Response $response)
