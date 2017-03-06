@@ -75,10 +75,9 @@ class BasicAuthenticate extends BaseAuthenticate
     public function getUser(ServerRequest $request)
     {
         $username = $request->env('PHP_AUTH_USER');
-        $pass = $request->env('PHP_AUTH_PW');        
-        $encoding = Configure::read('App.encoding');        
-        if ($encoding and in_array($encoding, mb_list_encodings()) and $encoding != 'ISO-8859-1')
-        {
+        $pass = $request->env('PHP_AUTH_PW');
+        $encoding = Configure::read('App.encoding');
+        if ($encoding && in_array($encoding, mb_list_encodings()) && $encoding != 'ISO-8859-1') {
             $username = mb_convert_encoding($username, $encoding, 'ISO-8859-1');
             $pass = mb_convert_encoding($pass, $encoding, 'ISO-8859-1');
         }
