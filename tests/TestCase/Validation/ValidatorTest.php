@@ -1879,4 +1879,19 @@ class ValidatorTest extends TestCase
         $this->assertEquals('the message', $rule->get('message'), 'Error messages are not the same');
         $this->assertEquals('create', $rule->get('on'), 'On clause is wrong');
     }
+
+    /**
+     * Testing adding DefaultProvider
+     *
+     * @return void
+     */
+    public function testAddingDefaultProvider()
+    {
+        $validator = new Validator;
+        $this->assertEmpty($validator->providers(), 'Providers should be empty');
+
+        Validator::addDefaultProvider('test-provider', '\MyNameSpace\Validation\MyProvider');
+        $validator = new Validator;
+        $this->assertEquals($validator->providers(), ['test-provider'], 'Default provider `test-provider` is missing');
+    }
 }
