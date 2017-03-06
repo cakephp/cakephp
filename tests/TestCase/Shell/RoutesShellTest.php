@@ -174,6 +174,23 @@ class RoutesShellTest extends TestCase
     }
 
     /**
+     * Test generating URLs with bool params
+     *
+     * @return void
+     */
+    public function testGenerateBoolParams()
+    {
+        $this->io->expects($this->never())
+            ->method('err');
+        $this->io->expects($this->at(0))
+            ->method('out')
+            ->with($this->stringContains('> https://example.com/articles/index'));
+
+        $this->shell->args = ['_ssl:true', '_host:example.com', 'controller:Articles', 'action:index'];
+        $this->shell->generate();
+    }
+
+    /**
      * Test generating URLs
      *
      * @return void

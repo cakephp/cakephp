@@ -45,6 +45,13 @@ class RequestHandlerComponentTest extends TestCase
     public $RequestHandler;
 
     /**
+     * Backup of $_SERVER
+     *
+     * @var array
+     */
+    protected $server = [];
+
+    /**
      * setUp method
      *
      * @return void
@@ -52,6 +59,7 @@ class RequestHandlerComponentTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        $this->server = $_SERVER;
         Configure::write('App.namespace', 'TestApp');
         DispatcherFactory::add('Routing');
         DispatcherFactory::add('ControllerFactory');
@@ -90,6 +98,7 @@ class RequestHandlerComponentTest extends TestCase
         DispatcherFactory::clear();
         Router::reload();
         Router::$initialized = false;
+        $_SERVER = $this->server;
         unset($this->RequestHandler, $this->Controller);
     }
 

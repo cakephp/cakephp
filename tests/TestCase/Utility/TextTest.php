@@ -315,6 +315,10 @@ class TextTest extends TestCase
         $expected = ['tagA', '"single tag"', 'tagB'];
         $this->assertEquals($expected, $result);
 
+        $result = Text::tokenize('tagA "first tag" tagB "second tag" tagC', ' ', '"', '"');
+        $expected = ['tagA', '"first tag"', 'tagB', '"second tag"', 'tagC'];
+        $this->assertEquals($expected, $result);
+
         // Ideographic width space.
         $result = Text::tokenize("tagA\xe3\x80\x80\"single\xe3\x80\x80tag\"\xe3\x80\x80tagB", "\xe3\x80\x80", '"', '"');
         $expected = ['tagA', '"single　tag"', 'tagB'];
