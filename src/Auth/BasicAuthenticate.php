@@ -17,6 +17,7 @@ namespace Cake\Auth;
 use Cake\Http\ServerRequest;
 use Cake\Network\Exception\UnauthorizedException;
 use Cake\Network\Response;
+use Cake\Core\Configure;
 
 /**
  * Basic Authentication adapter for AuthComponent.
@@ -75,6 +76,14 @@ class BasicAuthenticate extends BaseAuthenticate
     {
         $username = $request->env('PHP_AUTH_USER');
         $pass = $request->env('PHP_AUTH_PW');
+        
+        $encoding = Configure::read('App.encoding');
+        
+        if ($encoding and in_array($encoding,mb_list_encodings()))
+        {
+            $username = mb_convert_encoding($username, $encoding,'ISO-8859-1');
+            $pass = mb_convert_encoding($pass, $encoding,'ISO-8859-1');
+        }
 
         if (!is_string($username) || $username === '' || !is_string($pass) || $pass === '') {
             return false;
