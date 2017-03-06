@@ -79,8 +79,8 @@ class BasicAuthenticate extends BaseAuthenticate
         $pass = $request->env('PHP_AUTH_PW');
         $encoding = Configure::read('App.encoding');
         if ($encoding && in_array($encoding, mb_list_encodings())) {
-            $username = mb_convert_encoding($username, $encoding, self::ENCODING_SOURCES);
-            $pass = mb_convert_encoding($pass, $encoding, self::ENCODING_SOURCES);
+            $username = mb_convert_encoding($username, $encoding, static::ENCODING_SOURCES);
+            $pass = mb_convert_encoding($pass, $encoding, static::ENCODING_SOURCES);
         }
 
         if (!is_string($username) || $username === '' || !is_string($pass) || $pass === '') {
