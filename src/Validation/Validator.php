@@ -226,11 +226,11 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public static function getDefaultProvider($name)
     {
-        if (isset(self::$_defaultProviders[$name])) {
-            return self::$_defaultProviders[$name];
+        if (!isset(self::$_defaultProviders[$name])) {
+            return null;
         }
 
-        return null;
+        return self::$_defaultProviders[$name];
     }
 
     /**
