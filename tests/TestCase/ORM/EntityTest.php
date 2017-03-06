@@ -1039,14 +1039,14 @@ class EntityTest extends TestCase
     {
         $data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
         $entity = new Entity($data);
-        $entity->setVirtual(['secret']);
+        $entity->setHidden(['secret']);
 
-        $result = $entity->getVirtual();
+        $result = $entity->getHidden();
         $this->assertSame(['secret'], $result);
 
-        $entity->setVirtual(['name']);
+        $entity->setHidden(['name']);
 
-        $result = $entity->getVirtual();
+        $result = $entity->getHidden();
         $this->assertSame(['name'], $result);
     }
 
@@ -1059,17 +1059,17 @@ class EntityTest extends TestCase
     {
         $data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
         $entity = new Entity($data);
-        $entity->setVirtual(['secret']);
+        $entity->setHidden(['secret'], true);
 
-        $result = $entity->getVirtual();
+        $result = $entity->getHidden();
         $this->assertSame(['secret'], $result);
 
-        $entity->setVirtual(['name'], true);
+        $entity->setHidden(['name'], true);
 
-        $result = $entity->getVirtual();
+        $result = $entity->getHidden();
         $this->assertSame(['secret', 'name'], $result);
 
-        $entity->setVirtual(['name'], true);
+        $entity->setHidden(['name'], true);
         $this->assertSame(['secret', 'name'], $result);
     }
 
@@ -1100,6 +1100,29 @@ class EntityTest extends TestCase
         $expected = ['email' => 'mark@example.com'];
         $this->assertEquals($expected, $entity->toArray());
         $this->assertEquals(['name'], $entity->hiddenProperties());
+    }
+
+    /**
+     * Tests setting virtual properties with merging.
+     *
+     * @return void
+     */
+    public function testSetVirtualWithMerge()
+    {
+        $data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
+        $entity = new Entity($data);
+        $entity->setVirtual(['secret']);
+
+        $result = $entity->getVirtual();
+        $this->assertSame(['secret'], $result);
+
+        $entity->setVirtual(['name'], true);
+
+        $result = $entity->getVirtual();
+        $this->assertSame(['secret', 'name'], $result);
+
+        $entity->setVirtual(['name'], true);
+        $this->assertSame(['secret', 'name'], $result);
     }
 
     /**
