@@ -14,10 +14,10 @@
  */
 namespace Cake\Auth;
 
+use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\Network\Exception\UnauthorizedException;
 use Cake\Network\Response;
-use Cake\Core\Configure;
 
 /**
  * Basic Authentication adapter for AuthComponent.
@@ -79,10 +79,10 @@ class BasicAuthenticate extends BaseAuthenticate
         
         $encoding = Configure::read('App.encoding');
         
-        if ($encoding and in_array($encoding,mb_list_encodings()) and $encoding!='ISO-8859-1')
+        if ($encoding and in_array($encoding, mb_list_encodings()) and $encoding != 'ISO-8859-1')
         {
-            $username = mb_convert_encoding($username, $encoding,'ISO-8859-1');
-            $pass = mb_convert_encoding($pass, $encoding,'ISO-8859-1');
+            $username = mb_convert_encoding($username, $encoding, 'ISO-8859-1');
+            $pass = mb_convert_encoding($pass, $encoding, 'ISO-8859-1');
         }
 
         if (!is_string($username) || $username === '' || !is_string($pass) || $pass === '') {
