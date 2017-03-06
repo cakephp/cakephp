@@ -40,6 +40,10 @@ class UnsignedFixture extends CakeTestFixture {
 	public $fields = array(
 		'uinteger' => array('type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key' => 'primary', 'unsigned' => true),
 		'integer' => array('type' => 'integer', 'length' => '8', 'unsigned' => false),
+		'usmallint' => array('type' => 'smallint', 'unsigned' => true),
+		'smallint' => array('type' => 'smallint', 'unsigned' => false),
+		'utinyint' => array('type' => 'tinyint', 'unsigned' => true),
+		'tinyint' => array('type' => 'tinyint', 'unsigned' => false),
 		'udecimal' => array('type' => 'decimal', 'length' => '4', 'unsigned' => true),
 		'decimal' => array('type' => 'decimal', 'length' => '4'),
 		'biginteger' => array('type' => 'biginteger', 'length' => '20', 'default' => 3),
