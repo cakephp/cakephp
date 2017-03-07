@@ -20,8 +20,6 @@ use Cake\Database\ValueBinder;
 
 /**
  * An expression object that represents a SQL BETWEEN snippet
- *
- * @internal
  */
 class BetweenExpression implements ExpressionInterface, FieldInterface
 {

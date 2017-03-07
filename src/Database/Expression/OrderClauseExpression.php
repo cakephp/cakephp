@@ -19,8 +19,6 @@ use Cake\Database\ValueBinder;
 
 /**
  * An expression object for complex ORDER BY clauses
- *
- * @internal
  */
 class OrderClauseExpression implements ExpressionInterface, FieldInterface
 {
