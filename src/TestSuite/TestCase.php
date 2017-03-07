@@ -485,6 +485,7 @@ abstract class TestCase extends BaseTestCase
             }
 
             list($description, $expressions, $itemNum) = $assertion;
+            $expression = null;
             foreach ((array)$expressions as $expression) {
                 $expression = sprintf('/^%s/s', $expression);
                 if (preg_match($expression, $string, $match)) {
@@ -524,6 +525,7 @@ abstract class TestCase extends BaseTestCase
         $explains = $assertions['explains'];
         do {
             $matches = false;
+            $j = null;
             foreach ($asserts as $j => $assert) {
                 if (preg_match(sprintf('/^%s/s', $assert), $string, $match)) {
                     $matches = true;

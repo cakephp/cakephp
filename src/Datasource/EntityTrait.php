@@ -985,6 +985,7 @@ trait EntityTrait
         while ($len) {
             $part = array_shift($path);
             $len = count($path);
+            $val = null;
             if ($entity instanceof EntityInterface) {
                 $val = $entity->get($part);
             } elseif (is_array($entity)) {

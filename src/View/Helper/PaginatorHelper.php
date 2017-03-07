@@ -869,13 +869,15 @@ class PaginatorHelper extends Helper
         ]);
 
         $start = $params['page'] + 1;
-        for ($i = $start; $i < $end; $i++) {
+        $i = $start;
+        while ($i < $end) {
             $out .= $this->_formatNumber($templater, [
                 'text' => $this->Number->format($i),
                 'page' => $i,
                 'model' => $options['model'],
                 'url' => $options['url'],
             ]);
+            $i++;
         }
 
         if ($end != $params['page']) {

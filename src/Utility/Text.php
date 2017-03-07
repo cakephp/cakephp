@@ -478,6 +478,7 @@ class Text
             'limit' => -1,
         ];
         $options += $defaults;
+        $html = $format = $ellipsis = $exact = $limit = null;
         extract($options);
 
         if (is_array($phrase)) {
@@ -546,6 +547,7 @@ class Text
             'ellipsis' => '...', 'exact' => true
         ];
         $options += $default;
+        $exact = $ellipsis = null;
         extract($options);
 
         if (mb_strlen($text) <= $length) {

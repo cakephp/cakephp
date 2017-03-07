@@ -323,11 +323,13 @@ class Socket
             }
         }
         $totalBytes = strlen($data);
-        for ($written = 0; $written < $totalBytes; $written += $rv) {
+        $written = 0;
+        while ($written < $totalBytes) {
             $rv = fwrite($this->connection, substr($data, $written));
             if ($rv === false || $rv === 0) {
                 return $written;
             }
+            $written += $rv;
         }
 
         return $written;

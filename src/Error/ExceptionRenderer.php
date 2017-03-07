@@ -118,6 +118,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
             $request = ServerRequest::createFromGlobals();
         }
         $response = new Response();
+        $controller = null;
 
         try {
             $class = App::className('Error', 'Controller', 'Controller');

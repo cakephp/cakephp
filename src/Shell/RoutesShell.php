@@ -53,6 +53,7 @@ class RoutesShell extends Shell
     {
         try {
             $route = Router::parse($url);
+            $name = null;
             foreach (Router::routes() as $r) {
                 if ($r->match($route)) {
                     $name = isset($r->options['_name']) ? $r->options['_name'] : $r->getName();

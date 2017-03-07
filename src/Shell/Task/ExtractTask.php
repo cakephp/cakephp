@@ -439,6 +439,7 @@ class ExtractTask extends Shell
                 $strings = $this->_getStrings($position, $mapCount);
 
                 if ($mapCount === count($strings)) {
+                    $singular = null;
                     extract(array_combine($map, $strings));
                     $domain = isset($domain) ? $domain : 'default';
                     $details = [
