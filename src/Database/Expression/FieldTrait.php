@@ -16,8 +16,6 @@ namespace Cake\Database\Expression;
 
 /**
  * Contains the field property with a getter and a setter for it
- *
- * @internal
  */
 trait FieldTrait
 {
