@@ -711,7 +711,7 @@ HTML;
     }
 
     /**
-     * testHighlight method
+     * Tests highlight() method.
      *
      * @return void
      */
@@ -742,6 +742,24 @@ HTML;
         $expected = 'Ich <b>saß</b> in einem <b>Café</b> am <b>Übergang</b>';
         $phrases = ['saß', 'café', 'übergang'];
         $result = $this->Text->highlight($text, $phrases, ['format' => '<b>\1</b>']);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests highlight() method with limit.
+     *
+     * @return void
+     */
+    public function testHighlightLimit()
+    {
+        $text = 'This is a test text with some more text';
+        $phrases = ['This', 'text'];
+        $result = $this->Text->highlight($text, $phrases, ['format' => '<b>\1</b>']);
+        $expected = '<b>This</b> is a test <b>text</b> with some more <b>text</b>';
+        $this->assertEquals($expected, $result);
+
+        $result = $this->Text->highlight($text, $phrases, ['format' => '<b>\1</b>', 'limit' => 1]);
+        $expected = '<b>This</b> is a test <b>text</b> with some more text';
         $this->assertEquals($expected, $result);
     }
 
