@@ -840,6 +840,28 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Tests the getDirty method
+     *
+     * @return void
+     */
+    public function testGetDirty()
+    {
+        $entity = new Entity([
+            'id' => 1,
+            'title' => 'Foo',
+            'author_id' => 3
+        ]);
+
+        $expected = [
+            'id',
+            'title',
+            'author_id'
+        ];
+        $result = $entity->getDirty();
+        $this->assertSame($expected, $entity->getDirty());
+    }
+
+    /**
      * Tests the clean method
      *
      * @return void

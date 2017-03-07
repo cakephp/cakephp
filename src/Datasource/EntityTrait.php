@@ -777,6 +777,16 @@ trait EntityTrait
     }
 
     /**
+     * Gets the dirty properties.
+     *
+     * @return array
+     */
+    public function getDirty()
+    {
+        return array_keys($this->_dirty);
+    }
+
+    /**
      * Sets the entire entity as clean, which means that it will appear as
      * no properties being modified or added at all. This is an useful call
      * for an initial object hydration
