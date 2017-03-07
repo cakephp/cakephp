@@ -15,7 +15,6 @@
 namespace Cake\Http;
 
 use Cake\Core\Configure;
-use Cake\Http\ServerRequest;
 use Cake\Network\Session;
 use Cake\Utility\Hash;
 use Zend\Diactoros\ServerRequestFactory as BaseFactory;

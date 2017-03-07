@@ -19,7 +19,6 @@ use Aura\Intl\FormatterLocator;
 use Aura\Intl\PackageLocator;
 use Aura\Intl\TranslatorLocator;
 use Cake\Cache\CacheEngine;
-use Cake\I18n\TranslatorFactory;
 
 /**
  * Constructs and stores instances of translators that can be

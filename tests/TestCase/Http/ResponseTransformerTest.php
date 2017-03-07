@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\Response as CakeResponse;
 use Cake\Http\ResponseTransformer;
-use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Response as PsrResponse;
 use Zend\Diactoros\Stream;

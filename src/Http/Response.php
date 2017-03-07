@@ -16,7 +16,6 @@ namespace Cake\Http;
 
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
-use Cake\Http\CallbackStream;
 use Cake\Log\Log;
 use Cake\Network\CorsBuilder;
 use Cake\Network\Exception\NotFoundException;
