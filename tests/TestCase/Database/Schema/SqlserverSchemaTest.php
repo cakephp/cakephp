@@ -110,11 +110,18 @@ SQL;
                 ['type' => 'time', 'length' => null]
             ],
             [
+                'TINYINT',
+                null,
+                4,
+                null,
+                ['type' => 'tinyint', 'length' => 4]
+            ],
+            [
                 'SMALLINT',
                 null,
                 4,
                 null,
-                ['type' => 'integer', 'length' => 4]
+                ['type' => 'smallint', 'length' => 4]
             ],
             [
                 'INTEGER',
@@ -553,6 +560,16 @@ SQL;
                 '[body] NVARCHAR(MAX) COLLATE Japanese_Unicode_CI_AI NOT NULL'
             ],
             // Integers
+            [
+                'post_id',
+                ['type' => 'smallint', 'length' => 11],
+                '[post_id] SMALLINT'
+            ],
+            [
+                'post_id',
+                ['type' => 'tinyint', 'length' => 11],
+                '[post_id] TINYINT'
+            ],
             [
                 'post_id',
                 ['type' => 'integer', 'length' => 11],
