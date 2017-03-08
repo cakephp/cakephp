@@ -117,6 +117,7 @@ class Digest
         $path = $request->getUri()->getPath();
         $a1 = md5($credentials['username'] . ':' . $credentials['realm'] . ':' . $credentials['password']);
         $a2 = md5($request->method() . ':' . $path);
+        $nc = null;
 
         if (empty($credentials['qop'])) {
             $response = md5($a1 . ':' . $credentials['nonce'] . ':' . $a2);

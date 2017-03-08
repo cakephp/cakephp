@@ -432,6 +432,7 @@ class BelongsToMany extends Association
         $cond = $belongsTo->_joinCondition(['foreignKey' => $belongsTo->getForeignKey()]);
         $cond += $this->junctionConditions();
 
+        $includeFields = null;
         if (isset($options['includeFields'])) {
             $includeFields = $options['includeFields'];
         }

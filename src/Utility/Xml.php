@@ -328,6 +328,7 @@ class Xml
      */
     protected static function _createChild($data)
     {
+        $value = $dom = $key = $format = $node = null;
         extract($data);
         $childNS = $childValue = null;
         if (is_object($value) && method_exists($value, 'toArray') && is_callable([$value, 'toArray'])) {

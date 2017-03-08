@@ -583,6 +583,7 @@ class View implements EventDispatcherInterface
             return null;
         }
 
+        $defaultLayout = null;
         if ($layout !== null) {
             $defaultLayout = $this->layout;
             $this->layout = $layout;

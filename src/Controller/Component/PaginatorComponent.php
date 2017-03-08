@@ -165,6 +165,7 @@ class PaginatorComponent extends Component
      */
     public function paginate($object, array $settings = [])
     {
+        $query = null;
         if ($object instanceof QueryInterface) {
             $query = $object;
             $object = $query->repository();

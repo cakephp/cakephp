@@ -210,6 +210,7 @@ class RssHelper extends Helper
                     break;
                 case 'category':
                     if (is_array($val) && !empty($val[0])) {
+                        $categories = [];
                         foreach ($val as $category) {
                             $attrib = [];
                             if (is_array($category) && isset($category['domain'])) {

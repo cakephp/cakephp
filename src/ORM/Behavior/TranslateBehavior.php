@@ -607,6 +607,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         $primaryKey = (array)$this->_table->getPrimaryKey();
         $key = $entity->get(current($primaryKey));
         $find = [];
+        $contents = [];
 
         foreach ($translations as $lang => $translation) {
             foreach ($fields as $field) {
