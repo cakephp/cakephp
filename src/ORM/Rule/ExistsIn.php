@@ -92,8 +92,8 @@ class ExistsIn
 
         $source = $target = $this->_repository;
         $isAssociation = $target instanceof Association;
-        $bindingKey = $isAssociation ? (array)$target->bindingKey() : (array)$target->getPrimaryKey();
-        $realTarget = $isAssociation ? $target->target() : $target;
+        $bindingKey = $isAssociation ? (array)$target->getBindingKey() : (array)$target->getPrimaryKey();
+        $realTarget = $isAssociation ? $target->getTarget() : $target;
 
         if (!empty($options['_sourceTable']) && $realTarget === $options['_sourceTable']) {
             return true;
