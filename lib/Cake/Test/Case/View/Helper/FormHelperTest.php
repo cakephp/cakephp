@@ -10781,7 +10781,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-    $result = $this->Form->input('Contact.field', array(
+		$result = $this->Form->input('Contact.field', array(
 			'type' => 'text',
 			'div' => array('errorClass' => 'has-error'),
 			'error' => array('attributes' => array('class' => 'form-control-feedback'))
