@@ -282,7 +282,7 @@ class RssHelper extends Helper
      */
     public function time($time)
     {
-        return $this->Time->toRSS($time);
+        return $this->Time->toRss($time);
     }
 
     /**

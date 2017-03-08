@@ -193,9 +193,7 @@ class FileEngine extends CacheEngine
         $time = time();
         $cachetime = (int)$this->_File->current();
 
-        if ($cachetime !== false &&
-            ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime)
-        ) {
+        if ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime) {
             if ($this->_config['lock']) {
                 $this->_File->flock(LOCK_UN);
             }

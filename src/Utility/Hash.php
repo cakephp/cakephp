@@ -641,7 +641,7 @@ class Hash
     /**
      * Callback function for filtering.
      *
-     * @param array $var Array to filter.
+     * @param mixed $var Array to filter.
      * @return bool
      */
     protected static function _filter($var)
