@@ -84,10 +84,20 @@ class FormHelper extends Helper
         'idPrefix' => null,
         'errorClass' => 'form-error',
         'typeMap' => [
-            'string' => 'text', 'datetime' => 'datetime', 'boolean' => 'checkbox',
-            'timestamp' => 'datetime', 'text' => 'textarea', 'time' => 'time',
-            'date' => 'date', 'float' => 'number', 'integer' => 'number',
-            'decimal' => 'number', 'binary' => 'file', 'uuid' => 'string'
+            'string' => 'text',
+            'datetime' => 'datetime',
+            'boolean' => 'checkbox',
+            'timestamp' => 'datetime',
+            'text' => 'textarea',
+            'time' => 'time',
+            'date' => 'date',
+            'float' => 'number',
+            'integer' => 'number',
+            'tinyint' => 'number',
+            'smallint' => 'number',
+            'decimal' => 'number',
+            'binary' => 'file',
+            'uuid' => 'string'
         ],
         'templates' => [
             'button' => '<button{{attrs}}>{{text}}</button>',

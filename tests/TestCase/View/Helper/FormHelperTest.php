@@ -1219,6 +1219,50 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Tests correct generation of number fields for smallint
+     *
+     * @return void
+     */
+    public function testTextFieldGenerationForSmallint()
+    {
+        $this->article['schema'] = [
+            'foo' => [
+                'type' => 'smallint',
+                'null' => false,
+                'default' => null,
+                'length' => 10
+            ]
+        ];
+
+        $this->Form->create($this->article);
+        $result = $this->Form->control('foo');
+        $this->assertContains('class="input number"', $result);
+        $this->assertContains('type="number"', $result);
+    }
+
+    /**
+     * Tests correct generation of number fields for tinyint
+     *
+     * @return void
+     */
+    public function testTextFieldGenerationForTinyint()
+    {
+        $this->article['schema'] = [
+            'foo' => [
+                'type' => 'tinyint',
+                'null' => false,
+                'default' => null,
+                'length' => 10
+            ]
+        ];
+
+        $this->Form->create($this->article);
+        $result = $this->Form->control('foo');
+        $this->assertContains('class="input number"', $result);
+        $this->assertContains('type="number"', $result);
+    }
+
+    /**
      * Tests correct generation of number fields for double and float fields
      *
      * @return void
