@@ -103,6 +103,12 @@ class MysqlSchema extends BaseSchema
         if (strpos($col, 'bigint') !== false || $col === 'bigint') {
             return ['type' => 'biginteger', 'length' => $length, 'unsigned' => $unsigned];
         }
+        if ($col === 'tinyint') {
+            return ['type' => 'tinyint', 'length' => $length, 'unsigned' => $unsigned];
+        }
+        if ($col === 'smallint') {
+            return ['type' => 'smallint', 'length' => $length, 'unsigned' => $unsigned];
+        }
         if (in_array($col, ['int', 'integer', 'tinyint', 'smallint', 'mediumint'])) {
             return ['type' => 'integer', 'length' => $length, 'unsigned' => $unsigned];
         }
@@ -297,6 +303,8 @@ class MysqlSchema extends BaseSchema
         $nativeJson = $this->_driver->supportsNativeJson();
 
         $typeMap = [
+            'tinyint' => ' TINYINT',
+            'smallint' => ' SMALLINT',
             'integer' => ' INTEGER',
             'biginteger' => ' BIGINT',
             'boolean' => ' BOOLEAN',
@@ -353,7 +361,7 @@ class MysqlSchema extends BaseSchema
                     break;
             }
         }
-        $hasLength = ['integer', 'string'];
+        $hasLength = ['integer', 'smallint', 'tinyint', 'string'];
         if (in_array($data['type'], $hasLength, true) && isset($data['length'])) {
             $out .= '(' . (int)$data['length'] . ')';
         }
@@ -365,7 +373,7 @@ class MysqlSchema extends BaseSchema
             $out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
         }
 
-        $hasUnsigned = ['float', 'decimal', 'integer', 'biginteger'];
+        $hasUnsigned = ['float', 'decimal', 'tinyint', 'smallint', 'integer', 'biginteger'];
         if (in_array($data['type'], $hasUnsigned, true) &&
             isset($data['unsigned']) && $data['unsigned'] === true
         ) {
