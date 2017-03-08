@@ -1088,8 +1088,7 @@ class FormHelper extends AppHelper {
 
 		if (!empty($divOptions['tag'])) {
 			$tag = $divOptions['tag'];
-			unset($divOptions['tag']);
-			unset($divOptions['errorClass']);
+			unset($divOptions['tag'], $divOptions['errorClass']);
 			$output = $this->Html->tag($tag, $output, $divOptions);
 		}
 		return $output;
