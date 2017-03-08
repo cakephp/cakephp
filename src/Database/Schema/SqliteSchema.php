@@ -68,11 +68,17 @@ class SqliteSchema extends BaseSchema
         if ($col === 'bigint') {
             return ['type' => 'biginteger', 'length' => $length, 'unsigned' => $unsigned];
         }
-        if (strpos($col, 'decimal') !== false) {
-            return ['type' => 'decimal', 'length' => null, 'unsigned' => $unsigned];
+        if ($col == 'smallint') {
+            return ['type' => 'smallint', 'length' => $length, 'unsigned' => $unsigned];
+        }
+        if ($col == 'tinyint') {
+            return ['type' => 'tinyint', 'length' => $length, 'unsigned' => $unsigned];
         }
         if (strpos($col, 'int') !== false) {
             return ['type' => 'integer', 'length' => $length, 'unsigned' => $unsigned];
+        }
+        if (strpos($col, 'decimal') !== false) {
+            return ['type' => 'decimal', 'length' => null, 'unsigned' => $unsigned];
         }
         if (in_array($col, ['float', 'real', 'double'])) {
             return ['type' => 'float', 'length' => null, 'unsigned' => $unsigned];
@@ -278,6 +284,9 @@ class SqliteSchema extends BaseSchema
         $data = $schema->column($name);
         $typeMap = [
             'uuid' => ' CHAR(36)',
+            'smallint' => ' SMALLINT',
+            'tinyint' => ' TINYINT',
+            'integer' => ' INTEGER',
             'biginteger' => ' BIGINT',
             'boolean' => ' BOOLEAN',
             'binary' => ' BLOB',
@@ -291,7 +300,7 @@ class SqliteSchema extends BaseSchema
         ];
 
         $out = $this->_driver->quoteIdentifier($name);
-        $hasUnsigned = ['biginteger', 'integer', 'float', 'decimal'];
+        $hasUnsigned = ['smallint', 'tinyint', 'biginteger', 'integer', 'float', 'decimal'];
 
         if (in_array($data['type'], $hasUnsigned, true) &&
             isset($data['unsigned']) && $data['unsigned'] === true
@@ -317,11 +326,11 @@ class SqliteSchema extends BaseSchema
             }
         }
 
-        if ($data['type'] === 'integer') {
-            $out .= ' INTEGER';
-            if (isset($data['length']) && [$name] !== (array)$schema->primaryKey()) {
+        $integerTypes = ['integer', 'smallint', 'tinyint'];
+        if (in_array($data['type'], $integerTypes, true) &&
+            isset($data['length']) && [$name] !== (array)$schema->primaryKey()
+        ) {
                 $out .= '(' . (int)$data['length'] . ')';
-            }
         }
 
         $hasPrecision = ['float', 'decimal'];
