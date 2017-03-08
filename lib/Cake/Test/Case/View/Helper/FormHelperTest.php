@@ -10740,13 +10740,34 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testInputErrorClass() {
+		$Contact = ClassRegistry::getObject('Contact');
+		$Contact->validationErrors['field'] = array('Badness!');
+
 		$result = $this->Form->input('Contact.field', array(
 			'type' => 'text',
-			'div' => array('errorClass' => 'has-error'),
-			'error' => true
+			'div' => array('errorClass' => 'has-error')
 		));
 		$expected = array(
 			'div' => array('class' => 'input text has-error'),
+			'label' => array('for' => 'ContactField'),
+			'Field',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][field]',
+				'id' => 'ContactField', 'class' => 'form-error'
+			),
+			array('div' => array('class' => 'error-message')),
+			'Badness!',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.field', array(
+			'type' => 'text',
+			'error' => array('attributes' => array('class' => 'error'))
+		));
+		$expected = array(
+			'div' => array('class' => 'input text error'),
 			'label' => array('for' => 'ContactField'),
 			'Field',
 			'/label',
@@ -10760,38 +10781,19 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Contact.second', array(
-			'type' => 'text',
-			'error' => array('attributes' => array('class' => 'error'))
-		));
-		$expected = array(
-			'div' => array('class' => 'input text error'),
-			'label' => array('for' => 'ContactSecond'),
-			'Field',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][second]',
-				'id' => 'ContactSecond', 'class' => 'form-error'
-			),
-			array('div' => array('class' => 'error')),
-			'Badness!',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-    $result = $this->Form->input('Contact.third', array(
+    $result = $this->Form->input('Contact.field', array(
 			'type' => 'text',
 			'div' => array('errorClass' => 'has-error'),
 			'error' => array('attributes' => array('class' => 'form-control-feedback'))
 		));
 		$expected = array(
 			'div' => array('class' => 'input text has-error'),
-			'label' => array('for' => 'ContactThird'),
+			'label' => array('for' => 'ContactField'),
 			'Field',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[Contact][third]',
-				'id' => 'ContactThird', 'class' => 'form-error'
+				'type' => 'text', 'name' => 'data[Contact][field]',
+				'id' => 'ContactField', 'class' => 'form-error'
 			),
 			array('div' => array('class' => 'form-control-feedback')),
 			'Badness!',
