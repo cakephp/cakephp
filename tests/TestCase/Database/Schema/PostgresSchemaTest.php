@@ -121,7 +121,7 @@ SQL;
             // Integer
             [
                 'SMALLINT',
-                ['type' => 'integer', 'length' => 5]
+                ['type' => 'smallint', 'length' => 5]
             ],
             [
                 'INTEGER',
@@ -707,6 +707,16 @@ SQL;
                 '"body" TEXT COLLATE "C" NOT NULL'
             ],
             // Integers
+            [
+                'post_id',
+                ['type' => 'tinyint', 'length' => 11],
+                '"post_id" SMALLINT'
+            ],
+            [
+                'post_id',
+                ['type' => 'smallint', 'length' => 11],
+                '"post_id" SMALLINT'
+            ],
             [
                 'post_id',
                 ['type' => 'integer', 'length' => 11],
