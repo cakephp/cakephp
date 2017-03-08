@@ -1172,7 +1172,8 @@ class PaginatorHelper extends Helper
     }
 
     /**
-     * Dropdown select for pagination limit
+     * Dropdown select for pagination limit.
+     * This will generate a wrapping form.
      *
      * @param array $limits The options array.
      * @param int|null $default Default option for pagination limit. Defaults to `$this->param('perPage')`.
