@@ -1070,6 +1070,7 @@ class EntityTest extends TestCase
         $this->assertSame(['secret', 'name'], $result);
 
         $entity->setHidden(['name'], true);
+        $result = $entity->getHidden();
         $this->assertSame(['secret', 'name'], $result);
     }
 
