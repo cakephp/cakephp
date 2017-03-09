@@ -2927,7 +2927,6 @@ class QueryTest extends TestCase
         $this->assertEquals(2, $result->_matchingData['tags']->id);
     }
 
-
     /**
      * Tests that it is possible to find large numeric values.
      *
