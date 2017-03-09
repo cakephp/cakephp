@@ -53,11 +53,10 @@ class OpenSsl
      *
      * @param string $plain The value to encrypt.
      * @param string $key The 256 bit/32 byte key to use as a cipher key.
-     * @param string|null $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
      * @return string Encrypted data.
      * @throws \InvalidArgumentException On invalid data or key.
      */
-    public static function encrypt($plain, $key, $hmacSalt = null)
+    public static function encrypt($plain, $key)
     {
         $method = 'AES-256-CBC';
         $ivSize = openssl_cipher_iv_length($method);
