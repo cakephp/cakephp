@@ -1110,20 +1110,21 @@ class EntityTest extends TestCase
      */
     public function testSetVirtualWithMerge()
     {
-        $data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
+        $data = ['virtual' => 'sauce', 'name' => 'mark', 'id' => 1];
         $entity = new Entity($data);
-        $entity->setVirtual(['secret']);
+        $entity->setVirtual(['virtual']);
 
         $result = $entity->getVirtual();
-        $this->assertSame(['secret'], $result);
+        $this->assertSame(['virtual'], $result);
 
         $entity->setVirtual(['name'], true);
 
         $result = $entity->getVirtual();
-        $this->assertSame(['secret', 'name'], $result);
+        $this->assertSame(['virtual', 'name'], $result);
 
         $entity->setVirtual(['name'], true);
-        $this->assertSame(['secret', 'name'], $result);
+        $result = $entity->getVirtual();
+        $this->assertSame(['virtual', 'name'], $result);
     }
 
     /**
