@@ -44,7 +44,6 @@ class ConnectionTest extends TestCase
      */
     protected $nestedTransactionStates = [];
 
-
     public function setUp()
     {
         parent::setUp();
