@@ -63,9 +63,8 @@ class Sqlite extends DboSource {
 /**
  * SQLite3 column definition
  *
- * @link https://www.sqlite.org/datatype3.html Datatypes In SQLite Version 3
- *
  * @var array
+ * @link https://www.sqlite.org/datatype3.html Datatypes In SQLite Version 3
  */
 	public $columns = array(
 		'primary_key' => array('name' => 'integer primary key autoincrement'),

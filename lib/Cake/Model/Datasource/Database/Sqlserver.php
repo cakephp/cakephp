@@ -84,9 +84,8 @@ class Sqlserver extends DboSource {
 /**
  * MS SQL column definition
  *
- * @link https://msdn.microsoft.com/en-us/library/ms187752.aspx SQL Server Data Types
- *
  * @var array
+ * @link https://msdn.microsoft.com/en-us/library/ms187752.aspx SQL Server Data Types
  */
 	public $columns = array(
 		'primary_key' => array('name' => 'IDENTITY (1, 1) NOT NULL'),

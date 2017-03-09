@@ -51,9 +51,8 @@ class Postgres extends DboSource {
 /**
  * Columns
  *
- * @link https://www.postgresql.org/docs/9.6/static/datatype.html PostgreSQL Data Types
- *
  * @var array
+ * @link https://www.postgresql.org/docs/9.6/static/datatype.html PostgreSQL Data Types
  */
 	public $columns = array(
 		'primary_key' => array('name' => 'serial NOT NULL'),

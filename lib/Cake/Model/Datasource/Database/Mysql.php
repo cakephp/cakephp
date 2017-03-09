@@ -113,9 +113,8 @@ class Mysql extends DboSource {
 /**
  * MySQL column definition
  *
- * @link https://dev.mysql.com/doc/refman/5.7/en/data-types.html MySQL Data Types
- *
  * @var array
+ * @link https://dev.mysql.com/doc/refman/5.7/en/data-types.html MySQL Data Types
  */
 	public $columns = array(
 		'primary_key' => array('name' => 'NOT NULL AUTO_INCREMENT'),
