@@ -702,11 +702,11 @@ class CakeSchemaTest extends CakeTestCase {
 
 		$hasTable = isset($read['tables']['non_conventional']);
 		$this->assertTrue($hasTable, 'non_conventional table should appear');
-		$versionIdHasKey = $hasTable && isset($read['tables']['non_conventional']['version_id']['key']);
+		$versionIdHasKey = isset($read['tables']['non_conventional']['version_id']['key']);
 		$this->assertTrue($versionIdHasKey, 'version_id key should be set');
-		$versionIdKeyIsPrimary = $versionIdHasKey && $read['tables']['non_conventional']['version_id']['key'] === 'primary';
+		$versionIdKeyIsPrimary = $read['tables']['non_conventional']['version_id']['key'] === 'primary';
 		$this->assertTrue($versionIdKeyIsPrimary, 'version_id key should be primary');
-		$idHasNoKey = $hasTable && !isset($read['tables']['non_conventional']['id']['key']);
+		$idHasNoKey = !isset($read['tables']['non_conventional']['id']['key']);
 		$this->assertTrue($idHasNoKey, 'id key should not be set');
 	}
 
