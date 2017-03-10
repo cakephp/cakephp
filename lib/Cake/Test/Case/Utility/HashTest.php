@@ -655,8 +655,21 @@ class HashTest extends CakeTestCase {
  * @return void
  */
 	public function testFilter() {
-		$result = Hash::filter(array('0', false, true, 0, array('one thing', 'I can tell you', 'is you got to be', false)));
-		$expected = array('0', 2 => true, 3 => 0, 4 => array('one thing', 'I can tell you', 'is you got to be'));
+		$result = Hash::filter(array(
+			'0',
+			false,
+			true,
+			0,
+			0.0,
+			array('one thing', 'I can tell you', 'is you got to be', false)
+		));
+		$expected = array(
+			'0',
+			2 => true,
+			3 => 0,
+			4 => 0.0,
+			5 => array('one thing', 'I can tell you', 'is you got to be')
+		);
 		$this->assertSame($expected, $result);
 
 		$result = Hash::filter(array(1, array(false)));

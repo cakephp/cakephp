@@ -573,7 +573,7 @@ class Hash {
  * @return bool
  */
 	protected static function _filter($var) {
-		if ($var === 0 || $var === '0' || !empty($var)) {
+		if ($var === 0 || $var === 0.0 || $var === '0' || !empty($var)) {
 			return true;
 		}
 		return false;
