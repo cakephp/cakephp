@@ -41,7 +41,8 @@ class PHP7ErrorException extends Exception
         $this->code = $error->getCode();
         $this->file = $error->getFile();
         $this->line = $error->getLine();
-        $msg = sprintf('(%s) - %s in %s on %s',
+        $msg = sprintf(
+            '(%s) - %s in %s on %s',
             get_class($error),
             $this->message,
             $this->file ?: "null",
