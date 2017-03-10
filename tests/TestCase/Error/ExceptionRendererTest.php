@@ -430,7 +430,7 @@ class ExceptionRendererTest extends TestCase
         Router::setRequestInfo($request);
 
         $exception = new NotFoundException('Custom message');
-        $execptionLine = __LINE__ - 1;
+        $exceptionLine = __LINE__ - 1;
         $ExceptionRenderer = new ExceptionRenderer($exception);
         $ExceptionRenderer->controller->response = $this->getMockBuilder('Cake\Network\Response')
             ->setMethods(['statusCode', '_sendHeader'])
@@ -443,7 +443,7 @@ class ExceptionRendererTest extends TestCase
             'url' => '/posts/view/1000?sort=title&amp;direction=desc',
             'code' => 404,
             'file' => __FILE__,
-            'line' => $execptionLine
+            'line' => $exceptionLine
         ];
 
         $this->assertEquals($expected, json_decode($result, true));
