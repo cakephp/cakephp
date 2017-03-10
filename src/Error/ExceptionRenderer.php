@@ -186,6 +186,10 @@ class ExceptionRenderer implements ExceptionRendererInterface
                 'format' => 'array',
                 'args' => false
             ]);
+            $viewVars['file'] = $exception->getFile();
+            $viewVars['line'] = $exception->getLine();
+            $viewVars['_serialize'][] = 'file';
+            $viewVars['_serialize'][] = 'line';
         }
         $this->controller->set($viewVars);
 
