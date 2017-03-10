@@ -112,16 +112,30 @@ SQL;
             [
                 'TINYINT',
                 null,
-                4,
+                2,
                 null,
-                ['type' => 'tinyint', 'length' => 4]
+                ['type' => 'tinyint', 'length' => 2]
+            ],
+            [
+                'TINYINT',
+                null,
+                null,
+                null,
+                ['type' => 'tinyint', 'length' => 3]
             ],
             [
                 'SMALLINT',
                 null,
-                4,
+                3,
                 null,
-                ['type' => 'smallint', 'length' => 4]
+                ['type' => 'smallint', 'length' => 3]
+            ],
+            [
+                'SMALLINT',
+                null,
+                null,
+                null,
+                ['type' => 'smallint', 'length' => 5]
             ],
             [
                 'INTEGER',

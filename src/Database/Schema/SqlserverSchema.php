@@ -89,7 +89,7 @@ class SqlserverSchema extends BaseSchema
         }
 
         if ($col === 'tinyint') {
-            return ['type' => 'smallint', 'length' => $precision ?: 3];
+            return ['type' => 'tinyint', 'length' => $precision ?: 3];
         }
         if ($col === 'smallint') {
             return ['type' => 'smallint', 'length' => $precision ?: 5];
