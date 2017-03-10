@@ -646,7 +646,7 @@ class Hash
      */
     protected static function _filter($var)
     {
-        return $var === 0 || $var === '0' || !empty($var);
+        return $var === 0 || $var === 0.0 || $var === '0' || !empty($var);
     }
 
     /**
