@@ -299,8 +299,8 @@ TEXT;
 		$expected = <<<TEXT
 <?xml version="1.0"?>
 <shell>
-<name>mycommand</name>
-<description>Description text</description>
+<command>mycommand</command>
+<description />
 <subcommands />
 <options>
 	<option name="--help" short="-h" help="Display this help." boolean="1">
@@ -322,11 +322,14 @@ TEXT;
 			<choice>aro</choice>
 		</choices>
 	</argument>
+	<argument help="Another argument." name="other_longer" required="0">
+		<choices/>
+	</argument>
 </arguments>
-<epilog>epilog text</epilog>
+<epilog />
 </shell>
 TEXT;
-		$this->assertEquals(new DomDocument($expected), new DomDocument($result), 'Help does not match');
+		$this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
 	}
 
 /**
@@ -346,7 +349,7 @@ TEXT;
 		$expected = <<<TEXT
 <?xml version="1.0"?>
 <shell>
-<name>mycommand</name>
+<command>mycommand</command>
 <description>Description text</description>
 <subcommands />
 <options>
@@ -367,7 +370,7 @@ TEXT;
 <epilog>epilog text</epilog>
 </shell>
 TEXT;
-		$this->assertEquals(new DomDocument($expected), new DomDocument($result), 'Help does not match');
+		$this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
 	}
 
 /**
@@ -385,7 +388,7 @@ TEXT;
 		$expected = <<<TEXT
 <?xml version="1.0"?>
 <shell>
-<name>mycommand</name>
+<command>mycommand</command>
 <description/>
 <subcommands>
 	<command name="method" help="This is another command" />
@@ -404,7 +407,7 @@ TEXT;
 <epilog/>
 </shell>
 TEXT;
-		$this->assertEquals(new DomDocument($expected), new DomDocument($result), 'Help does not match');
+		$this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
 	}
 
 /**
@@ -424,7 +427,7 @@ TEXT;
 		$expected = <<<TEXT
 <?xml version="1.0"?>
 <shell>
-<name>mycommand</name>
+<command>mycommand</command>
 <description/>
 <subcommands/>
 <options>
@@ -445,7 +448,7 @@ TEXT;
 <epilog/>
 </shell>
 TEXT;
-		$this->assertEquals(new DomDocument($expected), new DomDocument($result), 'Help does not match');
+		$this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
 	}
 
 /**
@@ -464,7 +467,7 @@ TEXT;
 		$expected = <<<TEXT
 <?xml version="1.0"?>
 <shell>
-	<name>mycommand</name>
+	<command>mycommand</command>
 	<description/>
 	<subcommands/>
 	<options>
@@ -488,7 +491,7 @@ TEXT;
 	<epilog/>
 </shell>
 TEXT;
-		$this->assertEquals(new DomDocument($expected), new DomDocument($result), 'Help does not match');
+		$this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
 	}
 
 /**
