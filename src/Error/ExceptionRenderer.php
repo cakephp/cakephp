@@ -186,8 +186,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
                 'format' => 'array',
                 'args' => false
             ]);
-            $viewVars['file'] = $exception->getFile();
-            $viewVars['line'] = $exception->getLine();
+            $viewVars['file'] = $exception->getFile() ?: "null";
+            $viewVars['line'] = $exception->getLine() ?: "null";
             $viewVars['_serialize'][] = 'file';
             $viewVars['_serialize'][] = 'line';
         }
