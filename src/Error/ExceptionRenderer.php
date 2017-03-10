@@ -179,7 +179,9 @@ class ExceptionRenderer implements ExceptionRendererInterface
             'url' => h($url),
             'error' => $unwrapped,
             'code' => $code,
-            '_serialize' => ['message', 'url', 'code']
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
+            '_serialize' => ['message', 'url', 'code', 'file', 'line']
         ];
         if ($isDebug) {
             $viewVars['trace'] = Debugger::formatTrace($unwrapped->getTrace(), [
