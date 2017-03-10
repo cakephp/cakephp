@@ -45,7 +45,8 @@ class PHP7ErrorException extends Exception
             get_class($error),
             $this->message,
             $this->file ?: "null",
-            $this->line ?: "null");
+            $this->line ?: "null"
+        );
         parent::__construct($msg, $code);
     }
 
