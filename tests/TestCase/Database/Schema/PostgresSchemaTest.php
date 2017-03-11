@@ -352,14 +352,13 @@ SQL;
                 'comment' => null,
             ],
             'views' => [
-                'type' => 'integer',
+                'type' => 'smallint',
                 'null' => true,
                 'default' => 0,
                 'length' => 5,
                 'precision' => null,
                 'unsigned' => null,
                 'comment' => null,
-                'autoIncrement' => null,
             ],
             'readingtime' => [
                 'type' => 'time',
