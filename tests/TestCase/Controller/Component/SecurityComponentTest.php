@@ -125,6 +125,12 @@ class SecurityTestController extends Controller
  */
 class SecurityComponentTest extends TestCase
 {
+    /**
+     * SERVER variable backup.
+     *
+     * @var array
+     */
+    protected $server = [];
 
     /**
      * Controller property
@@ -151,6 +157,7 @@ class SecurityComponentTest extends TestCase
     {
         parent::setUp();
 
+        $this->server = $_SERVER;
         $session = new Session();
         $request = $this->getMockBuilder('Cake\Network\Request')
             ->setMethods(['here'])
@@ -180,6 +187,7 @@ class SecurityComponentTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
+        $_SERVER = $this->server;
         $this->Security->session->delete('_Token');
         unset($this->Controller->Security);
         unset($this->Controller->Component);

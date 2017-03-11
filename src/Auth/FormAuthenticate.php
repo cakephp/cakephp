@@ -15,8 +15,8 @@
  */
 namespace Cake\Auth;
 
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\Response;
 
 /**
  * An authentication adapter for AuthComponent. Provides the ability to authenticate using POST
@@ -63,7 +63,7 @@ class FormAuthenticate extends BaseAuthenticate
      * there is no post data, either username or password is missing, or if the scope conditions have not been met.
      *
      * @param \Cake\Http\ServerRequest $request The request that contains login information.
-     * @param \Cake\Network\Response $response Unused response object.
+     * @param \Cake\Http\Response $response Unused response object.
      * @return mixed False on login failure. An array of User data on success.
      */
     public function authenticate(ServerRequest $request, Response $response)

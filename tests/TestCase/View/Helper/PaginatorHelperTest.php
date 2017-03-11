@@ -1533,6 +1533,226 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
+     * testNumbersPages method
+     *
+     * @return void
+     */
+    public function testNumbersMulti()
+    {
+        $expected = [
+            1 => '*1 2 3 4 5 6 7 ',
+            2 => '1 *2 3 4 5 6 7 ',
+            3 => '1 2 *3 4 5 6 7 ',
+            4 => '1 2 3 *4 5 6 7 ',
+            5 => '1 2 3 4 *5 6 7 ',
+            6 => '1 2 3 4 5 *6 7 ',
+            7 => '1 2 3 4 5 6 *7 ',
+        ];
+        $result = $this->getNumbersForMultiplePages(array_keys($expected), 7);
+        $this->assertEquals($expected, $result);
+
+        $result = $this->getNumbersForMultiplePages(array_keys($expected), 7, ['first' => 'F', 'last' => 'L']);
+        $this->assertEquals($expected, $result);
+
+        $expected = [
+            1 => '*1 2 3 4 5 6 7 8 9 ',
+            2 => '1 *2 3 4 5 6 7 8 9 ',
+            3 => '1 2 *3 4 5 6 7 8 9 ',
+            4 => '1 2 3 *4 5 6 7 8 9 ',
+            5 => '1 2 3 4 *5 6 7 8 9 ',
+            6 => '2 3 4 5 *6 7 8 9 10 ',
+            7 => '3 4 5 6 *7 8 9 10 11 ',
+            10 => '6 7 8 9 *10 11 12 13 14 ',
+            15 => '11 12 13 14 *15 16 17 18 19 ',
+            16 => '12 13 14 15 *16 17 18 19 20 ',
+            17 => '12 13 14 15 16 *17 18 19 20 ',
+            18 => '12 13 14 15 16 17 *18 19 20 ',
+            19 => '12 13 14 15 16 17 18 *19 20 ',
+            20 => '12 13 14 15 16 17 18 19 *20 ',
+        ];
+        $result = $this->getNumbersForMultiplePages(array_keys($expected), 20);
+        $this->assertEquals($expected, $result);
+
+        $expected = [
+            1 => '*1 2 3 4 5 6 7 8 9 ',
+            2 => '1 *2 3 4 5 6 7 8 9 ',
+            3 => '1 2 *3 4 5 6 7 8 9 ',
+            4 => '1 2 3 *4 5 6 7 8 9 ',
+            5 => '1 2 3 4 *5 6 7 8 9 ',
+            6 => '1 2 3 4 5 *6 7 8 9 10 ',
+            7 => '1 2 3 4 5 6 *7 8 9 10 11 ',
+            8 => '<F ... 4 5 6 7 *8 9 10 11 12 ',
+            9 => '<F ... 5 6 7 8 *9 10 11 12 13 ',
+            10 => '<F ... 6 7 8 9 *10 11 12 13 14 ',
+            15 => '<F ... 11 12 13 14 *15 16 17 18 19 ',
+            16 => '<F ... 12 13 14 15 *16 17 18 19 20 ',
+            17 => '<F ... 12 13 14 15 16 *17 18 19 20 ',
+            18 => '<F ... 12 13 14 15 16 17 *18 19 20 ',
+            19 => '<F ... 12 13 14 15 16 17 18 *19 20 ',
+            20 => '<F ... 12 13 14 15 16 17 18 19 *20 ',
+        ];
+        $result = $this->getNumbersForMultiplePages(array_keys($expected), 20, ['first' => 'F']);
+        $this->assertEquals($expected, $result);
+
+        $expected = [
+            1 => '*1 2 3 4 5 6 7 8 9 ',
+            2 => '1 *2 3 4 5 6 7 8 9 ',
+            3 => '1 2 *3 4 5 6 7 8 9 ',
+            4 => '1 2 3 *4 5 6 7 8 9 ',
+            5 => '1 2 3 4 *5 6 7 8 9 ',
+            6 => '1 2 3 4 5 *6 7 8 9 10 ',
+            7 => '1 2 3 4 5 6 *7 8 9 10 11 ',
+            8 => '1 2 3 4 5 6 7 *8 9 10 11 12 ',
+            9 => '1 2 ... 5 6 7 8 *9 10 11 12 13 ',
+            10 => '1 2 ... 6 7 8 9 *10 11 12 13 14 ',
+            15 => '1 2 ... 11 12 13 14 *15 16 17 18 19 ',
+            16 => '1 2 ... 12 13 14 15 *16 17 18 19 20 ',
+            17 => '1 2 ... 12 13 14 15 16 *17 18 19 20 ',
+            18 => '1 2 ... 12 13 14 15 16 17 *18 19 20 ',
+            19 => '1 2 ... 12 13 14 15 16 17 18 *19 20 ',
+            20 => '1 2 ... 12 13 14 15 16 17 18 19 *20 ',
+        ];
+        $result = $this->getNumbersForMultiplePages(array_keys($expected), 20, ['first' => 2]);
+        $this->assertEquals($expected, $result);
+
+        $expected = [
+            1 => '*1 2 3 4 5 6 7 8 9 ... L> ',
+            2 => '1 *2 3 4 5 6 7 8 9 ... L> ',
+            3 => '1 2 *3 4 5 6 7 8 9 ... L> ',
+            4 => '1 2 3 *4 5 6 7 8 9 ... L> ',
+            5 => '1 2 3 4 *5 6 7 8 9 ... L> ',
+            6 => '2 3 4 5 *6 7 8 9 10 ... L> ',
+            7 => '3 4 5 6 *7 8 9 10 11 ... L> ',
+            8 => '4 5 6 7 *8 9 10 11 12 ... L> ',
+            9 => '5 6 7 8 *9 10 11 12 13 ... L> ',
+            10 => '6 7 8 9 *10 11 12 13 14 ... L> ',
+            11 => '7 8 9 10 *11 12 13 14 15 ... L> ',
+            12 => '8 9 10 11 *12 13 14 15 16 ... L> ',
+            13 => '9 10 11 12 *13 14 15 16 17 ... L> ',
+            14 => '10 11 12 13 *14 15 16 17 18 19 20 ',
+            15 => '11 12 13 14 *15 16 17 18 19 20 ',
+            16 => '12 13 14 15 *16 17 18 19 20 ',
+            17 => '12 13 14 15 16 *17 18 19 20 ',
+            18 => '12 13 14 15 16 17 *18 19 20 ',
+            19 => '12 13 14 15 16 17 18 *19 20 ',
+            20 => '12 13 14 15 16 17 18 19 *20 ',
+        ];
+        $result = $this->getNumbersForMultiplePages(array_keys($expected), 20, ['last' => 'L']);
+        $this->assertEquals($expected, $result);
+
+        $expected = [
+            1 => '*1 2 3 4 5 6 7 8 9 ... L> ',
+            2 => '1 *2 3 4 5 6 7 8 9 ... L> ',
+            3 => '1 2 *3 4 5 6 7 8 9 ... L> ',
+            4 => '1 2 3 *4 5 6 7 8 9 ... L> ',
+            5 => '1 2 3 4 *5 6 7 8 9 ... L> ',
+            6 => '1 2 3 4 5 *6 7 8 9 10 ... L> ',
+            7 => '1 2 3 4 5 6 *7 8 9 10 11 ... L> ',
+            8 => '<F ... 4 5 6 7 *8 9 10 11 12 ... L> ',
+            9 => '<F ... 5 6 7 8 *9 10 11 12 13 ... L> ',
+            10 => '<F ... 6 7 8 9 *10 11 12 13 14 ... L> ',
+            11 => '<F ... 7 8 9 10 *11 12 13 14 15 ... L> ',
+            12 => '<F ... 8 9 10 11 *12 13 14 15 16 ... L> ',
+            13 => '<F ... 9 10 11 12 *13 14 15 16 17 ... L> ',
+            14 => '<F ... 10 11 12 13 *14 15 16 17 18 19 20 ',
+            15 => '<F ... 11 12 13 14 *15 16 17 18 19 20 ',
+            16 => '<F ... 12 13 14 15 *16 17 18 19 20 ',
+            17 => '<F ... 12 13 14 15 16 *17 18 19 20 ',
+            18 => '<F ... 12 13 14 15 16 17 *18 19 20 ',
+            19 => '<F ... 12 13 14 15 16 17 18 *19 20 ',
+            20 => '<F ... 12 13 14 15 16 17 18 19 *20 ',
+        ];
+        $result = $this->getNumbersForMultiplePages(array_keys($expected), 20, ['first' => 'F', 'last' => 'L']);
+        $this->assertEquals($expected, $result);
+
+        $expected = [
+            1 => '*1 2 3 4 5 6 7 8 9 ... 19 20 ',
+            2 => '1 *2 3 4 5 6 7 8 9 ... 19 20 ',
+            3 => '1 2 *3 4 5 6 7 8 9 ... 19 20 ',
+            4 => '1 2 3 *4 5 6 7 8 9 ... 19 20 ',
+            5 => '1 2 3 4 *5 6 7 8 9 ... 19 20 ',
+            6 => '1 2 3 4 5 *6 7 8 9 10 ... 19 20 ',
+            7 => '1 2 3 4 5 6 *7 8 9 10 11 ... 19 20 ',
+            8 => '1 2 3 4 5 6 7 *8 9 10 11 12 ... 19 20 ',
+            9 => '1 2 ... 5 6 7 8 *9 10 11 12 13 ... 19 20 ',
+            10 => '1 2 ... 6 7 8 9 *10 11 12 13 14 ... 19 20 ',
+            11 => '1 2 ... 7 8 9 10 *11 12 13 14 15 ... 19 20 ',
+            12 => '1 2 ... 8 9 10 11 *12 13 14 15 16 ... 19 20 ',
+            13 => '1 2 ... 9 10 11 12 *13 14 15 16 17 18 19 20 ',
+            14 => '1 2 ... 10 11 12 13 *14 15 16 17 18 19 20 ',
+            15 => '1 2 ... 11 12 13 14 *15 16 17 18 19 20 ',
+            16 => '1 2 ... 12 13 14 15 *16 17 18 19 20 ',
+            17 => '1 2 ... 12 13 14 15 16 *17 18 19 20 ',
+            18 => '1 2 ... 12 13 14 15 16 17 *18 19 20 ',
+            19 => '1 2 ... 12 13 14 15 16 17 18 *19 20 ',
+            20 => '1 2 ... 12 13 14 15 16 17 18 19 *20 ',
+        ];
+        $result = $this->getNumbersForMultiplePages(array_keys($expected), 20, ['first' => 2, 'last' => 2]);
+        $this->assertEquals($expected, $result);
+
+        $expected = [
+            1 => '*1 2 3 4 5 6 7 8 9 ... 19 20 ',
+            2 => '1 *2 3 4 5 6 7 8 9 ... 19 20 ',
+            3 => '1 2 *3 4 5 6 7 8 9 ... 19 20 ',
+            4 => '1 2 3 *4 5 6 7 8 9 ... 19 20 ',
+            5 => '1 2 3 4 *5 6 7 8 9 ... 19 20 ',
+            6 => '2 3 4 5 *6 7 8 9 10 ... 19 20 ',
+            7 => '3 4 5 6 *7 8 9 10 11 ... 19 20 ',
+            8 => '4 5 6 7 *8 9 10 11 12 ... 19 20 ',
+            9 => '5 6 7 8 *9 10 11 12 13 ... 19 20 ',
+            10 => '6 7 8 9 *10 11 12 13 14 ... 19 20 ',
+            11 => '7 8 9 10 *11 12 13 14 15 ... 19 20 ',
+            12 => '8 9 10 11 *12 13 14 15 16 ... 19 20 ',
+            13 => '9 10 11 12 *13 14 15 16 17 18 19 20 ',
+            14 => '10 11 12 13 *14 15 16 17 18 19 20 ',
+            15 => '11 12 13 14 *15 16 17 18 19 20 ',
+            16 => '12 13 14 15 *16 17 18 19 20 ',
+            17 => '12 13 14 15 16 *17 18 19 20 ',
+            18 => '12 13 14 15 16 17 *18 19 20 ',
+            19 => '12 13 14 15 16 17 18 *19 20 ',
+            20 => '12 13 14 15 16 17 18 19 *20 ',
+        ];
+        $result = $this->getNumbersForMultiplePages(array_keys($expected), 20, ['last' => 2]);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Retrieves result of PaginatorHelper::numbers for multiple pages
+     *
+     * @param int[] $pagesToCheck Pages to get result for
+     * @param int $pageCount Number of total pages
+     * @param array $options Options for PaginatorHelper::numbers
+     * @return string[]
+     */
+    protected function getNumbersForMultiplePages($pagesToCheck, $pageCount, $options = [])
+    {
+        $options['templates'] = [
+            'first' => '<{{text}} ',
+            'last' => '{{text}}> ',
+            'number' => '{{text}} ',
+            'current' => '*{{text}} ',
+            'ellipsis' => '... ',
+        ];
+
+        $this->Paginator->request->params['paging'] = [
+            'Client' => [
+                'page' => 1,
+                'pageCount' => $pageCount,
+            ]
+        ];
+
+        $result = [];
+
+        foreach ($pagesToCheck as $page) {
+            $this->Paginator->request->params['paging']['Client']['page'] = $page;
+
+            $result[$page] = $this->Paginator->numbers($options);
+        }
+
+        return $result;
+    }
+
+    /**
      * Test that numbers() lets you overwrite templates.
      *
      * The templates file has no li elements.
@@ -1630,18 +1850,6 @@ class PaginatorHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $this->Paginator->request->params['paging']['Client']['page'] = 3;
-
-        $result = $this->Paginator->numbers(['first' => 2, 'modulus' => 2, 'last' => 2]);
-        $expected = [
-            ['li' => []], ['a' => ['href' => '/index']], '1', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=2']], '2', '/a', '/li',
-            ['li' => ['class' => 'active']], '<a href=""', '3', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4']], '4', '/a', '/li',
-            ['li' => ['class' => 'ellipsis']], '&hellip;', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4,896', '/a', '/li',
-            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4,897', '/a', '/li',
-        ];
-        $this->assertHtml($expected, $result);
 
         $result = $this->Paginator->numbers(['first' => 2, 'modulus' => 2, 'last' => 2]);
         $expected = [
@@ -1757,6 +1965,81 @@ class PaginatorHelperTest extends TestCase
             ['li' => []], ['a' => ['href' => '/index?page=4897']], '4,897', '/a', '/li',
         ];
         $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test modulus option for numbers()
+     *
+     * @return void
+     */
+    public function testNumbersModulusMulti()
+    {
+        $expected = [
+            1 => '*1 2 3 4 ',
+            2 => '1 *2 3 4 ',
+            3 => '1 2 *3 4 ',
+            4 => '2 3 *4 5 ',
+            5 => '3 4 *5 6 ',
+            6 => '4 5 *6 7 ',
+            7 => '4 5 6 *7 ',
+        ];
+        $result = $this->getNumbersForMultiplePages(array_keys($expected), 7, ['modulus' => 3]);
+        $this->assertEquals($expected, $result);
+
+        $expected = [
+            1 => '*1 2 3 4 ... L> ',
+            2 => '1 *2 3 4 ... L> ',
+            3 => '1 2 *3 4 ... L> ',
+            4 => '1 2 3 *4 5 6 7 ',
+            5 => '1 2 3 4 *5 6 7 ',
+            6 => '<F ... 4 5 *6 7 ',
+            7 => '<F ... 4 5 6 *7 ',
+        ];
+
+        $result = $this->getNumbersForMultiplePages(array_keys($expected), 7, ['modulus' => 3, 'first' => 'F', 'last' => 'L']);
+        $this->assertEquals($expected, $result);
+
+        $expected = [
+            1 => '*1 2 3 ... 19 20 ',
+            2 => '1 *2 3 ... 19 20 ',
+            3 => '1 2 *3 4 ... 19 20 ',
+            4 => '1 2 3 *4 5 ... 19 20 ',
+            5 => '1 2 3 4 *5 6 ... 19 20 ',
+            6 => '1 2 ... 5 *6 7 ... 19 20 ',
+            15 => '1 2 ... 14 *15 16 ... 19 20 ',
+            16 => '1 2 ... 15 *16 17 18 19 20 ',
+            17 => '1 2 ... 16 *17 18 19 20 ',
+            18 => '1 2 ... 17 *18 19 20 ',
+            19 => '1 2 ... 18 *19 20 ',
+            20 => '1 2 ... 18 19 *20 ',
+        ];
+        $result = $this->getNumbersForMultiplePages(array_keys($expected), 20, ['first' => 2, 'modulus' => 2, 'last' => 2]);
+        $this->assertEquals($expected, $result);
+
+        $expected = [
+            1 => '*1 2 3 4 5 ... 16 17 18 19 20 ',
+            2 => '1 *2 3 4 5 ... 16 17 18 19 20 ',
+            3 => '1 2 *3 4 5 ... 16 17 18 19 20 ',
+            4 => '1 2 3 *4 5 6 ... 16 17 18 19 20 ',
+            5 => '1 2 3 4 *5 6 7 ... 16 17 18 19 20 ',
+            6 => '1 2 3 4 5 *6 7 8 ... 16 17 18 19 20 ',
+            7 => '1 2 3 4 5 6 *7 8 9 ... 16 17 18 19 20 ',
+            8 => '1 2 3 4 5 6 7 *8 9 10 ... 16 17 18 19 20 ',
+            9 => '1 2 3 4 5 6 7 8 *9 10 11 ... 16 17 18 19 20 ',
+            10 => '1 2 3 4 5 ... 8 9 *10 11 12 ... 16 17 18 19 20 ',
+            11 => '1 2 3 4 5 ... 9 10 *11 12 13 ... 16 17 18 19 20 ',
+            12 => '1 2 3 4 5 ... 10 11 *12 13 14 15 16 17 18 19 20 ',
+            13 => '1 2 3 4 5 ... 11 12 *13 14 15 16 17 18 19 20 ',
+            14 => '1 2 3 4 5 ... 12 13 *14 15 16 17 18 19 20 ',
+            15 => '1 2 3 4 5 ... 13 14 *15 16 17 18 19 20 ',
+            16 => '1 2 3 4 5 ... 14 15 *16 17 18 19 20 ',
+            17 => '1 2 3 4 5 ... 15 16 *17 18 19 20 ',
+            18 => '1 2 3 4 5 ... 16 17 *18 19 20 ',
+            19 => '1 2 3 4 5 ... 16 17 18 *19 20 ',
+            20 => '1 2 3 4 5 ... 16 17 18 19 *20 ',
+        ];
+        $result = $this->getNumbersForMultiplePages(array_keys($expected), 20, ['first' => 5, 'modulus' => 4, 'last' => 5]);
+        $this->assertEquals($expected, $result);
     }
 
     /**

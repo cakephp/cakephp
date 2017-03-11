@@ -346,6 +346,21 @@ class TableSchema
     }
 
     /**
+     * Remove a column from the table schema.
+     *
+     * If the column is not defined in the table, no error will be raised.
+     *
+     * @param string $name The name of the column
+     * @return $this
+     */
+    public function removeColumn($name)
+    {
+        unset($this->_columns[$name], $this->_typeMap[$name]);
+
+        return $this;
+    }
+
+    /**
      * Get the column names in the table.
      *
      * @return array

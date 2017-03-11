@@ -105,6 +105,27 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test removing columns.
+     *
+     * @return void
+     */
+    public function testRemoveColumn()
+    {
+        $table = new Table('articles');
+        $result = $table->addColumn('title', [
+            'type' => 'string',
+            'length' => 25,
+            'null' => false
+        ])->removeColumn('title')
+        ->removeColumn('unknown');
+
+        $this->assertSame($table, $result);
+        $this->assertEquals([], $table->columns());
+        $this->assertNull($table->column('title'));
+        $this->assertSame([], $table->typeMap());
+    }
+
+    /**
      * Test isNullable method
      *
      * @return void

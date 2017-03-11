@@ -257,16 +257,7 @@ class Oauth
      */
     protected function _normalizedUrl($uri)
     {
-        $scheme = $uri->getScheme();
-        $defaultPorts = [
-            'http' => 80,
-            'https' => 443
-        ];
-        $port = $uri->getPort();
-        if ($port && $port != $defaultPorts[$scheme]) {
-            $parts['host'] .= ':' . $port;
-        }
-        $out = $scheme . '://';
+        $out = $uri->getScheme() . '://';
         $out .= strtolower($uri->getHost());
         $out .= $uri->getPath();
 

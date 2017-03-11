@@ -19,8 +19,6 @@ use Cake\Database\ValueBinder;
 
 /**
  * An expression object that represents an expression with only a single operand.
- *
- * @internal
  */
 class UnaryExpression implements ExpressionInterface
 {

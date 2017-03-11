@@ -665,7 +665,7 @@ class Debugger
             return $self->_outputFormat;
         }
 
-        if ($format !== false && !isset($self->_templates[$format])) {
+        if (!isset($self->_templates[$format])) {
             throw new InvalidArgumentException('Invalid Debugger output format.');
         }
         $self->_outputFormat = $format;

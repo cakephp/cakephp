@@ -18,6 +18,7 @@ use Cake\Core\App;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
+use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
@@ -90,6 +91,14 @@ class Connection implements ConnectionInterface
      * @var \Cake\Database\Schema\Collection|null
      */
     protected $_schemaCollection = null;
+
+    /**
+     * NestedTransactionRollbackException object instance, will be stored if
+     * the rollback method is called in some nested transaction.
+     *
+     * @var \Cake\Database\Exception\NestedTransactionRollbackException|null
+     */
+    protected $nestedTransactionRollbackException = null;
 
     /**
      * Constructor.
@@ -441,6 +450,7 @@ class Connection implements ConnectionInterface
             $this->_driver->beginTransaction();
             $this->_transactionLevel = 0;
             $this->_transactionStarted = true;
+            $this->nestedTransactionRollbackException = null;
 
             return;
         }
@@ -463,7 +473,14 @@ class Connection implements ConnectionInterface
         }
 
         if ($this->_transactionLevel === 0) {
+            if ($this->wasNestedTransactionRolledback()) {
+                $e = $this->nestedTransactionRollbackException;
+                $this->nestedTransactionRollbackException = null;
+                throw $e;
+            }
+
             $this->_transactionStarted = false;
+            $this->nestedTransactionRollbackException = null;
             if ($this->_logQueries) {
                 $this->log('COMMIT');
             }
@@ -482,18 +499,24 @@ class Connection implements ConnectionInterface
     /**
      * Rollback current transaction.
      *
+     * @param bool|null $toBeginning Whether or not the transaction should be rolled back to the
+     * beginning of it. Defaults to false if using savepoints, or true if not.
      * @return bool
      */
-    public function rollback()
+    public function rollback($toBeginning = null)
     {
         if (!$this->_transactionStarted) {
             return false;
         }
 
         $useSavePoint = $this->isSavePointsEnabled();
-        if ($this->_transactionLevel === 0 || !$useSavePoint) {
+        if ($toBeginning === null) {
+            $toBeginning = !$useSavePoint;
+        }
+        if ($this->_transactionLevel === 0 || $toBeginning) {
             $this->_transactionLevel = 0;
             $this->_transactionStarted = false;
+            $this->nestedTransactionRollbackException = null;
             if ($this->_logQueries) {
                 $this->log('ROLLBACK');
             }
@@ -502,8 +525,11 @@ class Connection implements ConnectionInterface
             return true;
         }
 
+        $savePoint = $this->_transactionLevel--;
         if ($useSavePoint) {
-            $this->rollbackSavepoint($this->_transactionLevel--);
+            $this->rollbackSavepoint($savePoint);
+        } elseif ($this->nestedTransactionRollbackException === null) {
+            $this->nestedTransactionRollbackException = new NestedTransactionRollbackException();
         }
 
         return true;
@@ -653,19 +679,34 @@ class Connection implements ConnectionInterface
         try {
             $result = $callback($this);
         } catch (\Exception $e) {
-            $this->rollback();
+            $this->rollback(false);
             throw $e;
         }
 
         if ($result === false) {
-            $this->rollback();
+            $this->rollback(false);
 
             return false;
         }
 
-        $this->commit();
+        try {
+            $this->commit();
+        } catch (NestedTransactionRollbackException $e) {
+            $this->rollback(false);
+            throw $e;
+        }
 
         return $result;
+    }
+
+    /**
+     * Returns whether some nested transaction has been already rolled back.
+     *
+     * @return bool
+     */
+    protected function wasNestedTransactionRolledback()
+    {
+        return $this->nestedTransactionRollbackException instanceof NestedTransactionRollbackException;
     }
 
     /**

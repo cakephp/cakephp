@@ -14,6 +14,8 @@
  */
 namespace Cake\Network;
 
+use Cake\Http\Response as HttpResponse;
+
 /**
  * A builder object that assists in defining Cross Origin Request related
  * headers.
@@ -24,7 +26,7 @@ namespace Cake\Network;
  *
  * It is most convenient to get this object via `Request::cors()`.
  *
- * @see \Cake\Network\Response::cors()
+ * @see \Cake\Http\Response::cors()
  */
 class CorsBuilder
 {
@@ -32,7 +34,7 @@ class CorsBuilder
     /**
      * The response object this builder is attached to.
      *
-     * @var \Cake\Network\Response
+     * @var \Cake\Http\Response
      */
     protected $_response;
 
@@ -60,11 +62,11 @@ class CorsBuilder
     /**
      * Constructor.
      *
-     * @param \Cake\Network\Response $response The response object to add headers onto.
+     * @param \Cake\Http\Response $response The response object to add headers onto.
      * @param string $origin The request's Origin header.
      * @param bool $isSsl Whether or not the request was over SSL.
      */
-    public function __construct(Response $response, $origin, $isSsl = false)
+    public function __construct(HttpResponse $response, $origin, $isSsl = false)
     {
         $this->_origin = $origin;
         $this->_isSsl = $isSsl;
@@ -77,7 +79,7 @@ class CorsBuilder
      * If the builder has no Origin, or if there are no allowed domains,
      * or if the allowed domains do not match the Origin header no headers will be applied.
      *
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     public function build()
     {

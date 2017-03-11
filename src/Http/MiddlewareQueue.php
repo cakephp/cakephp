@@ -164,6 +164,7 @@ class MiddlewareQueue implements Countable
     public function insertBefore($class, $middleware)
     {
         $found = false;
+        $i = null;
         foreach ($this->queue as $i => $object) {
             if ((is_string($object) && $object === $class)
                 || is_a($object, $class)
@@ -192,6 +193,7 @@ class MiddlewareQueue implements Countable
     public function insertAfter($class, $middleware)
     {
         $found = false;
+        $i = null;
         foreach ($this->queue as $i => $object) {
             if ((is_string($object) && $object === $class)
                 || is_a($object, $class)

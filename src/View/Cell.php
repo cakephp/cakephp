@@ -19,8 +19,8 @@ use Cake\Cache\Cache;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\Response;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingCellViewException;
@@ -66,7 +66,7 @@ abstract class Cell
     public $plugin = null;
 
     /**
-     * An instance of a Cake\Network\Request object that contains information about the current request.
+     * An instance of a Cake\Http\ServerRequest object that contains information about the current request.
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
      *
@@ -77,7 +77,7 @@ abstract class Cell
     /**
      * An instance of a Response object that contains information about the impending response
      *
-     * @var \Cake\Network\Response
+     * @var \Cake\Http\Response
      */
     public $response;
 
@@ -134,7 +134,7 @@ abstract class Cell
      * Constructor.
      *
      * @param \Cake\Http\ServerRequest|null $request The request to use in the cell.
-     * @param \Cake\Network\Response|null $response The response to use in the cell.
+     * @param \Cake\Http\Response|null $response The response to use in the cell.
      * @param \Cake\Event\EventManager|null $eventManager The eventManager to bind events to.
      * @param array $cellOptions Cell options to apply.
      */

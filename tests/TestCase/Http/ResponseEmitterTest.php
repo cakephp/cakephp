@@ -18,8 +18,6 @@ use Cake\Http\CallbackStream;
 use Cake\Http\Response;
 use Cake\Http\ResponseEmitter;
 use Cake\TestSuite\TestCase;
-use Zend\Diactoros\ServerRequestFactory;
-use Zend\Diactoros\Stream;
 
 require_once __DIR__ . '/server_mocks.php';
 

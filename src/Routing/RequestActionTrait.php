@@ -14,8 +14,8 @@
 namespace Cake\Routing;
 
 use Cake\Core\Configure;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\Response;
 use Cake\Network\Session;
 use Cake\Routing\Filter\ControllerFactoryFilter;
 use Cake\Routing\Filter\RoutingFilter;

@@ -857,8 +857,21 @@ class HashTest extends TestCase
      */
     public function testFilter()
     {
-        $result = Hash::filter(['0', false, true, 0, ['one thing', 'I can tell you', 'is you got to be', false]]);
-        $expected = ['0', 2 => true, 3 => 0, 4 => ['one thing', 'I can tell you', 'is you got to be']];
+        $result = Hash::filter([
+            '0',
+            false,
+            true,
+            0,
+            0.0,
+            ['one thing', 'I can tell you', 'is you got to be', false]
+        ]);
+        $expected = [
+            0 => '0',
+            2 => true,
+            3 => 0,
+            4 => 0.0,
+            5 => ['one thing', 'I can tell you', 'is you got to be']
+        ];
         $this->assertSame($expected, $result);
 
         $result = Hash::filter([1, [false]]);

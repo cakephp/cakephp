@@ -28,7 +28,7 @@ class TestAuthComponent extends AuthComponent
 
     /**
      * @param Event $event
-     * @return \Cake\Network\Response|null
+     * @return \Cake\Http\Response|null
      */
     public function authCheck(Event $event)
     {

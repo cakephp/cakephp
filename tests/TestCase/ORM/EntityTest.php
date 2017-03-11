@@ -840,6 +840,28 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Tests the getDirty method
+     *
+     * @return void
+     */
+    public function testGetDirty()
+    {
+        $entity = new Entity([
+            'id' => 1,
+            'title' => 'Foo',
+            'author_id' => 3
+        ]);
+
+        $expected = [
+            'id',
+            'title',
+            'author_id'
+        ];
+        $result = $entity->getDirty();
+        $this->assertSame($expected, $entity->getDirty());
+    }
+
+    /**
      * Tests the clean method
      *
      * @return void
@@ -1031,6 +1053,50 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Tests setting hidden properties.
+     *
+     * @return void
+     */
+    public function testSetHidden()
+    {
+        $data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
+        $entity = new Entity($data);
+        $entity->setHidden(['secret']);
+
+        $result = $entity->getHidden();
+        $this->assertSame(['secret'], $result);
+
+        $entity->setHidden(['name']);
+
+        $result = $entity->getHidden();
+        $this->assertSame(['name'], $result);
+    }
+
+    /**
+     * Tests setting hidden properties with merging.
+     *
+     * @return void
+     */
+    public function testSetHiddenWithMerge()
+    {
+        $data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
+        $entity = new Entity($data);
+        $entity->setHidden(['secret'], true);
+
+        $result = $entity->getHidden();
+        $this->assertSame(['secret'], $result);
+
+        $entity->setHidden(['name'], true);
+
+        $result = $entity->getHidden();
+        $this->assertSame(['secret', 'name'], $result);
+
+        $entity->setHidden(['name'], true);
+        $result = $entity->getHidden();
+        $this->assertSame(['secret', 'name'], $result);
+    }
+
+    /**
      * Test toArray includes 'virtual' properties.
      *
      * @return void
@@ -1057,6 +1123,30 @@ class EntityTest extends TestCase
         $expected = ['email' => 'mark@example.com'];
         $this->assertEquals($expected, $entity->toArray());
         $this->assertEquals(['name'], $entity->hiddenProperties());
+    }
+
+    /**
+     * Tests setting virtual properties with merging.
+     *
+     * @return void
+     */
+    public function testSetVirtualWithMerge()
+    {
+        $data = ['virtual' => 'sauce', 'name' => 'mark', 'id' => 1];
+        $entity = new Entity($data);
+        $entity->setVirtual(['virtual']);
+
+        $result = $entity->getVirtual();
+        $this->assertSame(['virtual'], $result);
+
+        $entity->setVirtual(['name'], true);
+
+        $result = $entity->getVirtual();
+        $this->assertSame(['virtual', 'name'], $result);
+
+        $entity->setVirtual(['name'], true);
+        $result = $entity->getVirtual();
+        $this->assertSame(['virtual', 'name'], $result);
     }
 
     /**

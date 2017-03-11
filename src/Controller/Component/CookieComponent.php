@@ -15,9 +15,9 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
-use Cake\Network\Response;
 use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -26,7 +26,7 @@ use Cake\Utility\Security;
  * Cookie Component.
  *
  * Provides enhanced cookie handling features for use in the controller layer.
- * In addition to the basic features offered be Cake\Network\Response, this class lets you:
+ * In addition to the basic features offered be Cake\Http\Response, this class lets you:
  *
  * - Create and read encrypted cookies.
  * - Store non-scalar data.
@@ -101,10 +101,10 @@ class CookieComponent extends Component
     protected $_loaded = [];
 
     /**
-     * A reference to the Controller's Cake\Network\Response object.
+     * A reference to the Controller's Cake\Http\Response object.
      * Currently unused.
      *
-     * @var \Cake\Network\Response|null
+     * @var \Cake\Http\Response|null
      * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     protected $_response = null;

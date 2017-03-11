@@ -53,6 +53,7 @@ class RoutesShell extends Shell
     {
         try {
             $route = Router::parse($url);
+            $name = null;
             foreach (Router::routes() as $r) {
                 if ($r->match($route)) {
                     $name = isset($r->options['_name']) ? $r->options['_name'] : $r->getName();
@@ -137,6 +138,9 @@ class RoutesShell extends Shell
         foreach ($args as $arg) {
             if (strpos($arg, ':') !== false) {
                 list($key, $value) = explode(':', $arg);
+                if (in_array($value, ['true', 'false'])) {
+                    $value = $value === 'true' ? true : false;
+                }
                 $out[$key] = $value;
             } else {
                 $out[] = $arg;

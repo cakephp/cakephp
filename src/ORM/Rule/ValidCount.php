@@ -27,7 +27,7 @@ class ValidCount
     /**
      * The field to check
      *
-     * @var array
+     * @var string
      */
     protected $_field;
 

@@ -177,11 +177,11 @@ class ResultSet implements ResultSetInterface
     {
         $repository = $query->repository();
         $this->_statement = $statement;
-        $this->_driver = $query->getConnection()->driver();
+        $this->_driver = $query->getConnection()->getDriver();
         $this->_defaultTable = $query->repository();
         $this->_calculateAssociationMap($query);
         $this->_hydrate = $query->isHydrationEnabled();
-        $this->_entityClass = $repository->entityClass();
+        $this->_entityClass = $repository->getEntityClass();
         $this->_useBuffering = $query->isBufferedResultsEnabled();
         $this->_defaultAlias = $this->_defaultTable->alias();
         $this->_calculateColumnMap($query);

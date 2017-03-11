@@ -272,6 +272,13 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         $newOptions = [$this->_translationTable->getAlias() => ['validate' => false]];
         $options['associated'] = $newOptions + $options['associated'];
 
+        // Check early if empty translations are present in the entity.
+        // If this is the case, unset them to prevent persistence.
+        // This only applies if $this->_config['allowEmptyTranslations'] is false
+        if ($this->_config['allowEmptyTranslations'] === false) {
+            $this->_unsetEmptyFields($entity);
+        }
+
         $this->_bundleTranslatedFields($entity);
         $bundled = $entity->get('_i18n') ?: [];
         $noBundled = count($bundled) === 0;
@@ -600,6 +607,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         $primaryKey = (array)$this->_table->getPrimaryKey();
         $key = $entity->get(current($primaryKey));
         $find = [];
+        $contents = [];
 
         foreach ($translations as $lang => $translation) {
             foreach ($fields as $field) {
@@ -631,6 +639,41 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         }
 
         $entity->set('_i18n', $contents);
+    }
+
+    /**
+     * Unset empty translations to avoid persistence.
+     *
+     * Should only be called if $this->_config['allowEmptyTranslations'] is false.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The entity to check for empty translations fields inside.
+     * @return void
+     */
+    protected function _unsetEmptyFields(EntityInterface $entity)
+    {
+        $translations = (array)$entity->get('_translations');
+        foreach ($translations as $locale => $translation) {
+            $fields = $translation->extract($this->_config['fields'], false);
+            foreach ($fields as $field => $value) {
+                if (strlen($value) === 0) {
+                    $translation->unsetProperty($field);
+                }
+            }
+
+            $translation = $translation->extract($this->_config['fields']);
+
+            // If now, the current locale property is empty,
+            // unset it completely.
+            if (empty(array_filter($translation))) {
+                unset($entity->get('_translations')[$locale]);
+            }
+        }
+
+        // If now, the whole _translations property is empty,
+        // unset it completely and return
+        if (empty($entity->get('_translations'))) {
+            $entity->unsetProperty("_translations");
+        }
     }
 
     /**

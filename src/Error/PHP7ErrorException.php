@@ -37,9 +37,18 @@ class PHP7ErrorException extends Exception
     public function __construct($error)
     {
         $this->_error = $error;
-        $message = $error->getMessage();
-        $code = $error->getCode();
-        parent::__construct(sprintf('(%s) - %s', get_class($error), $message), $code);
+        $this->message = $error->getMessage();
+        $this->code = $error->getCode();
+        $this->file = $error->getFile();
+        $this->line = $error->getLine();
+        $msg = sprintf(
+            '(%s) - %s in %s on %s',
+            get_class($error),
+            $this->message,
+            $this->file ?: "null",
+            $this->line ?: "null"
+        );
+        parent::__construct($msg, $this->code);
     }
 
     /**
