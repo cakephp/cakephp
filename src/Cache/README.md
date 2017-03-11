@@ -52,6 +52,6 @@ the callback will be executed and the returned data will be cached for future ca
 
 ## Documentation
 
-Please make sure you check the [official documentation](http://book.cakephp.org/3.0/en/core-libraries/caching.html)
+Please make sure you check the [official documentation](https://book.cakephp.org/3.0/en/core-libraries/caching.html)
 
 

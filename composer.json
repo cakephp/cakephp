@@ -3,7 +3,7 @@
     "description": "The CakePHP framework",
     "type": "library",
     "keywords": ["framework"],
-    "homepage": "http://cakephp.org",
+    "homepage": "https://cakephp.org",
     "license": "MIT",
     "authors": [
         {
@@ -13,7 +13,7 @@
     ],
     "support": {
         "issues": "https://github.com/cakephp/cakephp/issues",
-        "forum": "http://stackoverflow.com/tags/cakephp",
+        "forum": "https://stackoverflow.com/tags/cakephp",
         "irc": "irc://irc.freenode.org/cakephp",
         "source": "https://github.com/cakephp/cakephp"
     },
