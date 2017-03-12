@@ -1227,7 +1227,7 @@ class FormHelperTest extends TestCase
     {
         $this->article['schema'] = [
             'foo' => [
-                'type' => 'smallint',
+                'type' => 'smallinteger',
                 'null' => false,
                 'default' => null,
                 'length' => 10
@@ -1249,7 +1249,7 @@ class FormHelperTest extends TestCase
     {
         $this->article['schema'] = [
             'foo' => [
-                'type' => 'tinyint',
+                'type' => 'tinyinteger',
                 'null' => false,
                 'default' => null,
                 'length' => 10

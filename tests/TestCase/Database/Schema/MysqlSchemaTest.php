@@ -69,23 +69,23 @@ class MysqlSchemaTest extends TestCase
             ],
             [
                 'TINYINT(2)',
-                ['type' => 'tinyint', 'length' => 2, 'unsigned' => false]
+                ['type' => 'tinyinteger', 'length' => 2, 'unsigned' => false]
             ],
             [
                 'TINYINT(3)',
-                ['type' => 'tinyint', 'length' => 3, 'unsigned' => false]
+                ['type' => 'tinyinteger', 'length' => 3, 'unsigned' => false]
             ],
             [
                 'TINYINT(3) UNSIGNED',
-                ['type' => 'tinyint', 'length' => 3, 'unsigned' => true]
+                ['type' => 'tinyinteger', 'length' => 3, 'unsigned' => true]
             ],
             [
                 'SMALLINT(4)',
-                ['type' => 'smallint', 'length' => 4, 'unsigned' => false]
+                ['type' => 'smallinteger', 'length' => 4, 'unsigned' => false]
             ],
             [
                 'SMALLINT(4) UNSIGNED',
-                ['type' => 'smallint', 'length' => 4, 'unsigned' => true]
+                ['type' => 'smallinteger', 'length' => 4, 'unsigned' => true]
             ],
             [
                 'INTEGER(11)',
@@ -585,22 +585,22 @@ SQL;
             // Integers
             [
                 'post_id',
-                ['type' => 'tinyint', 'length' => 2],
+                ['type' => 'tinyinteger', 'length' => 2],
                 '`post_id` TINYINT(2)'
             ],
             [
                 'post_id',
-                ['type' => 'tinyint', 'length' => 2, 'unsigned' => true],
+                ['type' => 'tinyinteger', 'length' => 2, 'unsigned' => true],
                 '`post_id` TINYINT(2) UNSIGNED'
             ],
             [
                 'post_id',
-                ['type' => 'smallint', 'length' => 4],
+                ['type' => 'smallinteger', 'length' => 4],
                 '`post_id` SMALLINT(4)'
             ],
             [
                 'post_id',
-                ['type' => 'smallint', 'length' => 4, 'unsigned' => true],
+                ['type' => 'smallinteger', 'length' => 4, 'unsigned' => true],
                 '`post_id` SMALLINT(4) UNSIGNED'
             ],
             [

@@ -142,10 +142,10 @@ class TableSchema
         'text' => [
             'collate' => null,
         ],
-        'tinyint' => [
+        'tinyinteger' => [
             'unsigned' => null,
         ],
-        'smallint' => [
+        'smallinteger' => [
             'unsigned' => null,
         ],
         'integer' => [

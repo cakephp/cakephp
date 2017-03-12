@@ -121,7 +121,7 @@ SQL;
             // Integer
             [
                 'SMALLINT',
-                ['type' => 'smallint', 'length' => 5]
+                ['type' => 'smallinteger', 'length' => 5]
             ],
             [
                 'INTEGER',
@@ -352,7 +352,7 @@ SQL;
                 'comment' => null,
             ],
             'views' => [
-                'type' => 'smallint',
+                'type' => 'smallinteger',
                 'null' => true,
                 'default' => 0,
                 'length' => 5,
@@ -708,12 +708,12 @@ SQL;
             // Integers
             [
                 'post_id',
-                ['type' => 'tinyint', 'length' => 11],
+                ['type' => 'tinyinteger', 'length' => 11],
                 '"post_id" SMALLINT'
             ],
             [
                 'post_id',
-                ['type' => 'smallint', 'length' => 11],
+                ['type' => 'smallinteger', 'length' => 11],
                 '"post_id" SMALLINT'
             ],
             [

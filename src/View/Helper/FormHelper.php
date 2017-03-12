@@ -93,8 +93,8 @@ class FormHelper extends Helper
             'date' => 'date',
             'float' => 'number',
             'integer' => 'number',
-            'tinyint' => 'number',
-            'smallint' => 'number',
+            'tinyinteger' => 'number',
+            'smallinteger' => 'number',
             'decimal' => 'number',
             'binary' => 'file',
             'uuid' => 'string'

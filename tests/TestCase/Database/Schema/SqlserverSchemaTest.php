@@ -114,28 +114,28 @@ SQL;
                 null,
                 2,
                 null,
-                ['type' => 'tinyint', 'length' => 2]
+                ['type' => 'tinyinteger', 'length' => 2]
             ],
             [
                 'TINYINT',
                 null,
                 null,
                 null,
-                ['type' => 'tinyint', 'length' => 3]
+                ['type' => 'tinyinteger', 'length' => 3]
             ],
             [
                 'SMALLINT',
                 null,
                 3,
                 null,
-                ['type' => 'smallint', 'length' => 3]
+                ['type' => 'smallinteger', 'length' => 3]
             ],
             [
                 'SMALLINT',
                 null,
                 null,
                 null,
-                ['type' => 'smallint', 'length' => 5]
+                ['type' => 'smallinteger', 'length' => 5]
             ],
             [
                 'INTEGER',
@@ -576,12 +576,12 @@ SQL;
             // Integers
             [
                 'post_id',
-                ['type' => 'smallint', 'length' => 11],
+                ['type' => 'smallinteger', 'length' => 11],
                 '[post_id] SMALLINT'
             ],
             [
                 'post_id',
-                ['type' => 'tinyint', 'length' => 11],
+                ['type' => 'tinyinteger', 'length' => 11],
                 '[post_id] TINYINT'
             ],
             [

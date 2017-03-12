@@ -102,7 +102,7 @@ class PostgresSchema extends BaseSchema
             return ['type' => 'biginteger', 'length' => 20];
         }
         if ($col === 'smallint') {
-            return ['type' => 'smallint', 'length' => 5];
+            return ['type' => 'smallinteger', 'length' => 5];
         }
         if ($col === 'inet') {
             return ['type' => 'string', 'length' => 39];
@@ -351,8 +351,8 @@ class PostgresSchema extends BaseSchema
         $data = $schema->column($name);
         $out = $this->_driver->quoteIdentifier($name);
         $typeMap = [
-            'tinyint' => ' SMALLINT',
-            'smallint' => ' SMALLINT',
+            'tinyinteger' => ' SMALLINT',
+            'smallinteger' => ' SMALLINT',
             'boolean' => ' BOOLEAN',
             'binary' => ' BYTEA',
             'float' => ' FLOAT',

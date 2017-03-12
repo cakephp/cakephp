@@ -104,12 +104,12 @@ class MysqlSchema extends BaseSchema
             return ['type' => 'biginteger', 'length' => $length, 'unsigned' => $unsigned];
         }
         if ($col === 'tinyint') {
-            return ['type' => 'tinyint', 'length' => $length, 'unsigned' => $unsigned];
+            return ['type' => 'tinyinteger', 'length' => $length, 'unsigned' => $unsigned];
         }
         if ($col === 'smallint') {
-            return ['type' => 'smallint', 'length' => $length, 'unsigned' => $unsigned];
+            return ['type' => 'smallinteger', 'length' => $length, 'unsigned' => $unsigned];
         }
-        if (in_array($col, ['int', 'integer', 'tinyint', 'smallint', 'mediumint'])) {
+        if (in_array($col, ['int', 'integer', 'mediumint'])) {
             return ['type' => 'integer', 'length' => $length, 'unsigned' => $unsigned];
         }
         if ($col === 'char' && $length === 36) {
@@ -303,8 +303,8 @@ class MysqlSchema extends BaseSchema
         $nativeJson = $this->_driver->supportsNativeJson();
 
         $typeMap = [
-            'tinyint' => ' TINYINT',
-            'smallint' => ' SMALLINT',
+            'tinyinteger' => ' TINYINT',
+            'smallinteger' => ' SMALLINT',
             'integer' => ' INTEGER',
             'biginteger' => ' BIGINT',
             'boolean' => ' BOOLEAN',
@@ -361,7 +361,7 @@ class MysqlSchema extends BaseSchema
                     break;
             }
         }
-        $hasLength = ['integer', 'smallint', 'tinyint', 'string'];
+        $hasLength = ['integer', 'smallinteger', 'tinyinteger', 'string'];
         if (in_array($data['type'], $hasLength, true) && isset($data['length'])) {
             $out .= '(' . (int)$data['length'] . ')';
         }
@@ -373,7 +373,7 @@ class MysqlSchema extends BaseSchema
             $out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
         }
 
-        $hasUnsigned = ['float', 'decimal', 'tinyint', 'smallint', 'integer', 'biginteger'];
+        $hasUnsigned = ['float', 'decimal', 'tinyinteger', 'smallinteger', 'integer', 'biginteger'];
         if (in_array($data['type'], $hasUnsigned, true) &&
             isset($data['unsigned']) && $data['unsigned'] === true
         ) {

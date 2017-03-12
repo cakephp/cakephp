@@ -97,19 +97,19 @@ class SqliteSchemaTest extends TestCase
             ],
             [
                 'TINYINT(3)',
-                ['type' => 'tinyint', 'length' => 3, 'unsigned' => false]
+                ['type' => 'tinyinteger', 'length' => 3, 'unsigned' => false]
             ],
             [
                 'UNSIGNED TINYINT(3)',
-                ['type' => 'tinyint', 'length' => 3, 'unsigned' => true]
+                ['type' => 'tinyinteger', 'length' => 3, 'unsigned' => true]
             ],
             [
                 'SMALLINT(5)',
-                ['type' => 'smallint', 'length' => 5, 'unsigned' => false]
+                ['type' => 'smallinteger', 'length' => 5, 'unsigned' => false]
             ],
             [
                 'UNSIGNED SMALLINT(5)',
-                ['type' => 'smallint', 'length' => 5, 'unsigned' => true]
+                ['type' => 'smallinteger', 'length' => 5, 'unsigned' => true]
             ],
             [
                 'MEDIUMINT(10)',
@@ -511,22 +511,22 @@ SQL;
             // Integers
             [
                 'post_id',
-                ['type' => 'smallint', 'length' => 5, 'unsigned' => false],
+                ['type' => 'smallinteger', 'length' => 5, 'unsigned' => false],
                 '"post_id" SMALLINT(5)'
             ],
             [
                 'post_id',
-                ['type' => 'smallint', 'length' => 5, 'unsigned' => true],
+                ['type' => 'smallinteger', 'length' => 5, 'unsigned' => true],
                 '"post_id" UNSIGNED SMALLINT(5)'
             ],
             [
                 'post_id',
-                ['type' => 'tinyint', 'length' => 3, 'unsigned' => false],
+                ['type' => 'tinyinteger', 'length' => 3, 'unsigned' => false],
                 '"post_id" TINYINT(3)'
             ],
             [
                 'post_id',
-                ['type' => 'tinyint', 'length' => 3, 'unsigned' => true],
+                ['type' => 'tinyinteger', 'length' => 3, 'unsigned' => true],
                 '"post_id" UNSIGNED TINYINT(3)'
             ],
             [

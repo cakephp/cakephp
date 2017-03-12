@@ -69,10 +69,10 @@ class SqliteSchema extends BaseSchema
             return ['type' => 'biginteger', 'length' => $length, 'unsigned' => $unsigned];
         }
         if ($col == 'smallint') {
-            return ['type' => 'smallint', 'length' => $length, 'unsigned' => $unsigned];
+            return ['type' => 'smallinteger', 'length' => $length, 'unsigned' => $unsigned];
         }
         if ($col == 'tinyint') {
-            return ['type' => 'tinyint', 'length' => $length, 'unsigned' => $unsigned];
+            return ['type' => 'tinyinteger', 'length' => $length, 'unsigned' => $unsigned];
         }
         if (strpos($col, 'int') !== false) {
             return ['type' => 'integer', 'length' => $length, 'unsigned' => $unsigned];
@@ -284,8 +284,8 @@ class SqliteSchema extends BaseSchema
         $data = $schema->column($name);
         $typeMap = [
             'uuid' => ' CHAR(36)',
-            'smallint' => ' SMALLINT',
-            'tinyint' => ' TINYINT',
+            'smallinteger' => ' SMALLINT',
+            'tinyinteger' => ' TINYINT',
             'integer' => ' INTEGER',
             'biginteger' => ' BIGINT',
             'boolean' => ' BOOLEAN',
@@ -300,7 +300,7 @@ class SqliteSchema extends BaseSchema
         ];
 
         $out = $this->_driver->quoteIdentifier($name);
-        $hasUnsigned = ['smallint', 'tinyint', 'biginteger', 'integer', 'float', 'decimal'];
+        $hasUnsigned = ['smallinteger', 'tinyinteger', 'biginteger', 'integer', 'float', 'decimal'];
 
         if (in_array($data['type'], $hasUnsigned, true) &&
             isset($data['unsigned']) && $data['unsigned'] === true
@@ -326,7 +326,7 @@ class SqliteSchema extends BaseSchema
             }
         }
 
-        $integerTypes = ['integer', 'smallint', 'tinyint'];
+        $integerTypes = ['integer', 'smallinteger', 'tinyinteger'];
         if (in_array($data['type'], $integerTypes, true) &&
             isset($data['length']) && [$name] !== (array)$schema->primaryKey()
         ) {
