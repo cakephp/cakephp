@@ -209,7 +209,7 @@ class MysqlTest extends CakeTestCase {
 
 		$result = $this->model->schema();
 		$this->assertEquals('boolean', $result['bool']['type']);
-		$this->assertEquals('tinyint', $result['tiny_int']['type']);
+		$this->assertEquals('tinyinteger', $result['tiny_int']['type']);
 
 		$this->assertTrue((bool)$this->model->save(array('bool' => 5, 'tiny_int' => 5)));
 		$result = $this->model->find('first');
@@ -527,11 +527,11 @@ class MysqlTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->column('tinyint');
-		$expected = 'tinyint';
+		$expected = 'tinyinteger';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->column('smallint');
-		$expected = 'smallint';
+		$expected = 'smallinteger';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->column('boolean');
@@ -3291,7 +3291,7 @@ SQL;
  */
 	public function buildColumnUnsignedProvider() {
 		return array(
-			//set #0
+			// unsigned int
 			array(
 				array(
 					'name' => 'testName',
@@ -3301,7 +3301,7 @@ SQL;
 				),
 				'`testName` int(11) UNSIGNED'
 			),
-			//set #1
+			// unsigned bigint
 			array(
 				array(
 					'name' => 'testName',
@@ -3311,7 +3311,7 @@ SQL;
 				),
 				'`testName` bigint(20) UNSIGNED'
 			),
-			//set #2
+			// unsigned float
 			array(
 				array(
 					'name' => 'testName',
@@ -3320,7 +3320,7 @@ SQL;
 				),
 				'`testName` float UNSIGNED'
 			),
-			//set #3
+			// varchar
 			array(
 				array(
 					'name' => 'testName',
@@ -3330,7 +3330,7 @@ SQL;
 				),
 				'`testName` varchar(255)'
 			),
-			//set #4
+			// date unsigned
 			array(
 				array(
 					'name' => 'testName',
@@ -3339,7 +3339,7 @@ SQL;
 				),
 				'`testName` date'
 			),
-			//set #5
+			// date
 			array(
 				array(
 					'name' => 'testName',
@@ -3348,7 +3348,7 @@ SQL;
 				),
 				'`testName` date'
 			),
-			//set #6
+			// integer with length
 			array(
 				array(
 					'name' => 'testName',
@@ -3358,7 +3358,7 @@ SQL;
 				),
 				'`testName` int(11)'
 			),
-			//set #7
+			// unsigned decimal
 			array(
 				array(
 					'name' => 'testName',
@@ -3367,7 +3367,7 @@ SQL;
 				),
 				'`testName` decimal UNSIGNED'
 			),
-			//set #8
+			// decimal with default
 			array(
 				array(
 					'name' => 'testName',
@@ -3377,21 +3377,21 @@ SQL;
 				),
 				'`testName` decimal UNSIGNED DEFAULT 1'
 			),
-			//set #9
+			// smallinteger
 			array(
 				array(
 					'name' => 'testName',
-					'type' => 'smallint',
+					'type' => 'smallinteger',
 					'length' => 6,
 					'unsigned' => true
 				),
 				'`testName` smallint(6) UNSIGNED'
 			),
-			//set #10
+			// tinyinteger
 			array(
 				array(
 					'name' => 'testName',
-					'type' => 'tinyint',
+					'type' => 'tinyinteger',
 					'length' => 4,
 					'unsigned' => true
 				),

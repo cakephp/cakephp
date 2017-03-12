@@ -450,9 +450,9 @@ class ModelTask extends BakeTask {
 					$guess = $methods['notBlank'];
 				} elseif ($metaData['type'] === 'integer') {
 					$guess = $methods['numeric'];
-				} elseif ($metaData['type'] === 'smallint') {
+				} elseif ($metaData['type'] === 'smallinteger') {
 					$guess = $methods['numeric'];
-				} elseif ($metaData['type'] === 'tinyint') {
+				} elseif ($metaData['type'] === 'tinyinteger') {
 					$guess = $methods['numeric'];
 				} elseif ($metaData['type'] === 'float') {
 					$guess = $methods['numeric'];

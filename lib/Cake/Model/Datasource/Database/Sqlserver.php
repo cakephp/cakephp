@@ -92,8 +92,8 @@ class Sqlserver extends DboSource {
 		'string' => array('name' => 'nvarchar', 'limit' => '255'),
 		'text' => array('name' => 'nvarchar', 'limit' => 'MAX'),
 		'integer' => array('name' => 'int', 'formatter' => 'intval'),
-		'smallint' => array('name' => 'smallint', 'formatter' => 'intval'),
-		'tinyint' => array('name' => 'tinyint', 'formatter' => 'intval'),
+		'smallinteger' => array('name' => 'smallint', 'formatter' => 'intval'),
+		'tinyinteger' => array('name' => 'tinyint', 'formatter' => 'intval'),
 		'biginteger' => array('name' => 'bigint'),
 		'numeric' => array('name' => 'decimal', 'formatter' => 'floatval'),
 		'decimal' => array('name' => 'decimal', 'formatter' => 'floatval'),
@@ -439,10 +439,10 @@ class Sqlserver extends DboSource {
 			return 'biginteger';
 		}
 		if (strpos($col, 'smallint') !== false) {
-			return 'smallint';
+			return 'smallinteger';
 		}
 		if (strpos($col, 'tinyint') !== false) {
-			return 'tinyint';
+			return 'tinyinteger';
 		}
 		if (strpos($col, 'int') !== false) {
 			return 'integer';

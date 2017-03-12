@@ -94,7 +94,7 @@ class Mysql extends DboSource {
 			'position' => 'beforeDefault',
 			'noVal' => true,
 			'options' => array(true),
-			'types' => array('integer', 'smallint', 'tinyint', 'float', 'decimal', 'biginteger')
+			'types' => array('integer', 'smallinteger', 'tinyinteger', 'float', 'decimal', 'biginteger')
 		)
 	);
 
@@ -122,8 +122,8 @@ class Mysql extends DboSource {
 		'text' => array('name' => 'text'),
 		'biginteger' => array('name' => 'bigint', 'limit' => '20'),
 		'integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
-		'smallint' => array('name' => 'smallint', 'limit' => '6', 'formatter' => 'intval'),
-		'tinyint' => array('name' => 'tinyint', 'limit' => '4', 'formatter' => 'intval'),
+		'smallinteger' => array('name' => 'smallint', 'limit' => '6', 'formatter' => 'intval'),
+		'tinyinteger' => array('name' => 'tinyint', 'limit' => '4', 'formatter' => 'intval'),
 		'float' => array('name' => 'float', 'formatter' => 'floatval'),
 		'decimal' => array('name' => 'decimal', 'formatter' => 'floatval'),
 		'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
@@ -791,10 +791,10 @@ class Mysql extends DboSource {
 			return 'biginteger';
 		}
 		if (strpos($col, 'tinyint') !== false) {
-			return 'tinyint';
+			return 'tinyinteger';
 		}
 		if (strpos($col, 'smallint') !== false) {
-			return 'smallint';
+			return 'smallinteger';
 		}
 		if (strpos($col, 'int') !== false) {
 			return 'integer';
