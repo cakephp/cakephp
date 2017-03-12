@@ -723,7 +723,6 @@ class Router
         return static::$_fullBaseUrl;
     }
 
-
     /**
      * Reverses a parsed parameter array into an array.
      *
