@@ -792,16 +792,27 @@ class PaginatorHelper extends Helper
     protected function _getNumbersStartAndEnd($params, $options)
     {
         $half = (int)($options['modulus'] / 2);
-        $end = $params['page'] + $half;
+        $end = max(1 + $options['modulus'], $params['page'] + $half);
+        $start = min($params['pageCount'] - $options['modulus'], $params['page'] - $half - $options['modulus'] % 2);
 
-        if ($end > $params['pageCount']) {
-            $end = $params['pageCount'];
+        if ($options['first']) {
+            $first = is_int($options['first']) ? $options['first'] : 1;
+
+            if ($start <= $first + 2) {
+                $start = 1;
+            }
         }
-        $start = $params['page'] - ($options['modulus'] - ($end - $params['page']));
-        if ($start <= 1) {
-            $start = 1;
-            $end = $params['page'] + ($options['modulus'] - $params['page']) + 1;
+
+        if ($options['last']) {
+            $last = is_int($options['last']) ? $options['last'] : 1;
+
+            if ($end >= $params['pageCount'] - $last - 1) {
+                $end = $params['pageCount'];
+            }
         }
+
+        $end = min($params['pageCount'], $end);
+        $start = max(1, $start);
 
         return [$start, $end];
     }
@@ -858,13 +869,15 @@ class PaginatorHelper extends Helper
         ]);
 
         $start = $params['page'] + 1;
-        for ($i = $start; $i < $end; $i++) {
+        $i = $start;
+        while ($i < $end) {
             $out .= $this->_formatNumber($templater, [
                 'text' => $this->Number->format($i),
                 'page' => $i,
                 'model' => $options['model'],
                 'url' => $options['url'],
             ]);
+            $i++;
         }
 
         if ($end != $params['page']) {

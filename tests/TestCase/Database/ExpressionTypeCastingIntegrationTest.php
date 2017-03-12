@@ -17,7 +17,6 @@ use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Type;
-use Cake\Database\Type\BinaryType;
 use Cake\Database\Type\ExpressionTypeInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;

@@ -18,8 +18,6 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\ORM\Association;
 use Cake\ORM\Behavior;
-use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
 
 /**
  * CounterCache behavior

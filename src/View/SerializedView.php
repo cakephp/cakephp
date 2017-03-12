@@ -15,8 +15,8 @@
 namespace Cake\View;
 
 use Cake\Event\EventManager;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\Response;
 use RuntimeException;
 
 /**
@@ -36,7 +36,7 @@ abstract class SerializedView extends View
      * Constructor
      *
      * @param \Cake\Http\ServerRequest|null $request Request instance.
-     * @param \Cake\Network\Response|null $response Response instance.
+     * @param \Cake\Http\Response|null $response Response instance.
      * @param \Cake\Event\EventManager|null $eventManager EventManager instance.
      * @param array $viewOptions An array of view options
      */

@@ -20,7 +20,6 @@ use Cake\Filesystem\File;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
-use Cake\Validation\Validator;
 use Locale;
 use stdClass;
 use Zend\Diactoros\UploadedFile;

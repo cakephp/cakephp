@@ -48,7 +48,7 @@ class Date extends MutableDate implements JsonSerializable
      * The format to use when formatting a time using `Cake\I18n\Date::timeAgoInWords()`
      * and the difference is more than `Cake\I18n\Date::$wordEnd`
      *
-     * @var string
+     * @var string|array|int
      * @see \Cake\I18n\DateFormatTrait::parseDate()
      */
     public static $wordFormat = [IntlDateFormatter::SHORT, -1];

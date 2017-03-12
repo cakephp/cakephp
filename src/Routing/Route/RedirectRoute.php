@@ -31,7 +31,7 @@ class RedirectRoute extends Route
     /**
      * A Response object
      *
-     * @var \Cake\Network\Response
+     * @var \Cake\Http\Response
      * @deprecated 3.2.0 This property is unused.
      */
     public $response = null;

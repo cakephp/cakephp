@@ -14,7 +14,6 @@
  */
 namespace Cake\ORM\Association\Loader;
 
-use InvalidArgumentException;
 use RuntimeException;
 
 /**

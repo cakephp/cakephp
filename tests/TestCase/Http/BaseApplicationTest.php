@@ -2,9 +2,8 @@
 namespace Cake\Test\TestCase;
 
 use Cake\Core\Configure;
-use Cake\Http\BaseApplication;
+use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
-use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 
 /**

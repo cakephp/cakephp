@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Database;
 
-use Cake\Core\Configure;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Query;
 use Cake\Database\StatementInterface;

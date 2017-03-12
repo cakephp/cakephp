@@ -491,6 +491,7 @@ class MysqlSchema extends BaseSchema
     public function indexSql(TableSchema $schema, $name)
     {
         $data = $schema->index($name);
+        $out = '';
         if ($data['type'] === Table::INDEX_INDEX) {
             $out = 'KEY ';
         }

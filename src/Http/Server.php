@@ -15,11 +15,9 @@
 namespace Cake\Http;
 
 use Cake\Event\EventDispatcherTrait;
-use Cake\Http\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
-use UnexpectedValueException;
 use Zend\Diactoros\Response\EmitterInterface;
 
 /**

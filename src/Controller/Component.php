@@ -74,7 +74,7 @@ class Component implements EventListenerInterface
     /**
      * Response object
      *
-     * @var \Cake\Network\Response
+     * @var \Cake\Http\Response
      * @deprecated 3.4.0 Storing references to the response is deprecated. Use Component::getController()
      *   or callback $event->getSubject() to access the controller & response instead.
      */

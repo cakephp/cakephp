@@ -61,7 +61,7 @@ class AssetFilterTest extends TestCase
         $time = filemtime(Plugin::path('TestTheme') . 'webroot/img/cake.power.gif');
         $time = new \DateTime('@' . $time);
 
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['send', 'checkNotModified'])
             ->getMock();
         $request = new Request('test_theme/img/cake.power.gif');
@@ -77,7 +77,7 @@ class AssetFilterTest extends TestCase
         $this->assertEquals(200, $response->statusCode());
         $this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
 
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_sendHeader', 'checkNotModified', 'send'])
             ->getMock();
         $request = new Request('test_theme/img/cake.power.gif');
@@ -102,7 +102,7 @@ class AssetFilterTest extends TestCase
     {
         $filter = new AssetFilter();
 
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_sendHeader'])
             ->getMock();
         $request = new Request('//index.php');
@@ -123,7 +123,7 @@ class AssetFilterTest extends TestCase
     {
         $filter = new AssetFilter();
 
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_sendHeader'])
             ->getMock();
         $request = new Request('test_theme/../webroot/css/test_asset.css');
@@ -239,7 +239,7 @@ class AssetFilterTest extends TestCase
         Plugin::load(['Company/TestPluginThree', 'TestPlugin', 'PluginJs']);
 
         $filter = new AssetFilter();
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_sendHeader'])
             ->getMock();
         $request = new Request($url);

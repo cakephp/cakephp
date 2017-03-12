@@ -375,6 +375,7 @@ class SqliteSchema extends BaseSchema
             return '';
         }
         $clause = '';
+        $type = '';
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $type = 'PRIMARY KEY';
         }

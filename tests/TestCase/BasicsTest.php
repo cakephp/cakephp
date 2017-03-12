@@ -16,9 +16,8 @@
  */
 namespace Cake\Test\TestCase;
 
-use Cake\Core\Configure;
 use Cake\Event\EventManager;
-use Cake\Network\Response;
+use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
 
 require_once CAKE . 'basics.php';

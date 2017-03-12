@@ -376,10 +376,10 @@ class Router
      * Nested requests will create a stack of requests. You can remove requests using
      * Router::popRequest(). This is done automatically when using Object::requestAction().
      *
-     * Will accept either a Cake\Network\Request object or an array of arrays. Support for
+     * Will accept either a Cake\Http\ServerRequest object or an array of arrays. Support for
      * accepting arrays may be removed in the future.
      *
-     * @param \Cake\Http\ServerRequest|array $request Parameters and path information or a Cake\Network\Request object.
+     * @param \Cake\Http\ServerRequest|array $request Parameters and path information or a Cake\Http\ServerRequest object.
      * @return void
      */
     public static function setRequestInfo($request)
@@ -734,7 +734,7 @@ class Router
      * are used for CakePHP internals and should not normally be part of an output URL.
      *
      * @param \Cake\Http\ServerRequest|array $params The params array or
-     *     Cake\Network\Request object that needs to be reversed.
+     *     Cake\Http\ServerRequest object that needs to be reversed.
      * @return array The URL array ready to be used for redirect or HTML link.
      */
     public static function reverseToArray($params)
@@ -838,7 +838,7 @@ class Router
      * component to automatically switch to alternate layouts and templates, and
      * load helpers corresponding to the given content, i.e. RssHelper. Switching
      * layouts and helpers requires that the chosen extension has a defined mime type
-     * in `Cake\Network\Response`.
+     * in `Cake\Http\Response`.
      *
      * A string or an array of valid extensions can be passed to this method.
      * If called without any parameters it will return current list of set extensions.

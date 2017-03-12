@@ -20,9 +20,9 @@ use Cake\Core\Plugin;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
-use Cake\Network\Response;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
@@ -211,7 +211,7 @@ class View implements EventDispatcherInterface
     /**
      * Reference to the Response object
      *
-     * @var \Cake\Network\Response
+     * @var \Cake\Http\Response
      */
     public $response;
 
@@ -311,7 +311,7 @@ class View implements EventDispatcherInterface
      * Constructor
      *
      * @param \Cake\Http\ServerRequest|null $request Request instance.
-     * @param \Cake\Network\Response|null $response Response instance.
+     * @param \Cake\Http\Response|null $response Response instance.
      * @param \Cake\Event\EventManager|null $eventManager Event manager instance.
      * @param array $viewOptions View options. See View::$_passedVars for list of
      *   options which get set as class properties.
@@ -583,6 +583,7 @@ class View implements EventDispatcherInterface
             return null;
         }
 
+        $defaultLayout = null;
         if ($layout !== null) {
             $defaultLayout = $this->layout;
             $this->layout = $layout;

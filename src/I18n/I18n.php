@@ -19,7 +19,6 @@ use Aura\Intl\PackageLocator;
 use Cake\Cache\Cache;
 use Cake\I18n\Formatter\IcuFormatter;
 use Cake\I18n\Formatter\SprintfFormatter;
-use Cake\I18n\TranslatorFactory;
 use Locale;
 
 /**
