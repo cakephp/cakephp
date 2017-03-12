@@ -359,13 +359,12 @@ SQL;
                 'comment' => null,
             ],
             'views' => [
-                'type' => 'integer',
+                'type' => 'smallinteger',
                 'null' => true,
                 'default' => 0,
                 'length' => 5,
                 'precision' => null,
                 'unsigned' => null,
-                'autoIncrement' => null,
                 'comment' => null,
             ],
             'created' => [
