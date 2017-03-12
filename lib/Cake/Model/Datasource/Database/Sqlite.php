@@ -64,12 +64,15 @@ class Sqlite extends DboSource {
  * SQLite3 column definition
  *
  * @var array
+ * @link https://www.sqlite.org/datatype3.html Datatypes In SQLite Version 3
  */
 	public $columns = array(
 		'primary_key' => array('name' => 'integer primary key autoincrement'),
 		'string' => array('name' => 'varchar', 'limit' => '255'),
 		'text' => array('name' => 'text'),
 		'integer' => array('name' => 'integer', 'limit' => null, 'formatter' => 'intval'),
+		'smallinteger' => array('name' => 'smallint', 'limit' => null, 'formatter' => 'intval'),
+		'tinyinteger' => array('name' => 'tinyint', 'limit' => null, 'formatter' => 'intval'),
 		'biginteger' => array('name' => 'bigint', 'limit' => 20),
 		'float' => array('name' => 'float', 'formatter' => 'floatval'),
 		'decimal' => array('name' => 'decimal', 'formatter' => 'floatval'),
@@ -271,6 +274,12 @@ class Sqlite extends DboSource {
 		);
 		if (in_array($col, $standard)) {
 			return $col;
+		}
+		if ($col === 'tinyint') {
+			return 'tinyinteger';
+		}
+		if ($col === 'smallint') {
+			return 'smallinteger';
 		}
 		if ($col === 'bigint') {
 			return 'biginteger';

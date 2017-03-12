@@ -52,12 +52,15 @@ class Postgres extends DboSource {
  * Columns
  *
  * @var array
+ * @link https://www.postgresql.org/docs/9.6/static/datatype.html PostgreSQL Data Types
  */
 	public $columns = array(
 		'primary_key' => array('name' => 'serial NOT NULL'),
 		'string' => array('name' => 'varchar', 'limit' => '255'),
 		'text' => array('name' => 'text'),
 		'integer' => array('name' => 'integer', 'formatter' => 'intval'),
+		'smallinteger' => array('name' => 'smallint', 'formatter' => 'intval'),
+		'tinyinteger' => array('name' => 'smallint', 'formatter' => 'intval'),
 		'biginteger' => array('name' => 'bigint', 'limit' => '20'),
 		'float' => array('name' => 'float', 'formatter' => 'floatval'),
 		'decimal' => array('name' => 'decimal', 'formatter' => 'floatval'),
@@ -701,6 +704,8 @@ class Postgres extends DboSource {
 				return 'time';
 			case ($col === 'bigint'):
 				return 'biginteger';
+			case ($col === 'smallint'):
+				return 'smallinteger';
 			case (strpos($col, 'int') !== false && $col !== 'interval'):
 				return 'integer';
 			case (strpos($col, 'char') !== false):

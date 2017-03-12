@@ -1236,11 +1236,18 @@ class FormHelper extends AppHelper {
 			$type = $fieldDef['type'];
 			$primaryKey = $this->fieldset[$modelKey]['key'];
 			$map = array(
-				'string' => 'text', 'datetime' => 'datetime',
-				'boolean' => 'checkbox', 'timestamp' => 'datetime',
-				'text' => 'textarea', 'time' => 'time',
-				'date' => 'date', 'float' => 'number',
-				'integer' => 'number', 'decimal' => 'number',
+				'string' => 'text',
+				'datetime' => 'datetime',
+				'boolean' => 'checkbox',
+				'timestamp' => 'datetime',
+				'text' => 'textarea',
+				'time' => 'time',
+				'date' => 'date',
+				'float' => 'number',
+				'integer' => 'number',
+				'smallinteger' => 'number',
+				'tinyinteger' => 'number',
+				'decimal' => 'number',
 				'binary' => 'file'
 			);
 

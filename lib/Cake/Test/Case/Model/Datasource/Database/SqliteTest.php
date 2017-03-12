@@ -264,6 +264,28 @@ class SqliteTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$data = array(
+			'name' => 'testName',
+			'type' => 'smallinteger',
+			'length' => 6,
+			'default' => 6,
+			'null' => false,
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '"testName" smallint(6) DEFAULT 6 NOT NULL';
+		$this->assertEquals($expected, $result);
+
+		$data = array(
+			'name' => 'testName',
+			'type' => 'tinyinteger',
+			'length' => 4,
+			'default' => 4,
+			'null' => false,
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '"testName" tinyint(4) DEFAULT 4 NOT NULL';
+		$this->assertEquals($expected, $result);
+
+		$data = array(
 			'name' => 'huge',
 			'type' => 'biginteger',
 			'length' => 20,
@@ -382,6 +404,24 @@ class SqliteTest extends CakeTestCase {
 				'null' => true,
 				'default' => null,
 				'length' => 20,
+			),
+			'normal_int' => array(
+				'type' => 'integer',
+				'null' => true,
+				'default' => null,
+				'length' => null
+			),
+			'small_int' => array(
+				'type' => 'smallinteger',
+				'null' => true,
+				'default' => null,
+				'length' => null
+			),
+			'tiny_int' => array(
+				'type' => 'tinyinteger',
+				'null' => true,
+				'default' => null,
+				'length' => null
 			),
 			'bool' => array(
 				'type' => 'boolean',

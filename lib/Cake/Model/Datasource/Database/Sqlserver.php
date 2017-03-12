@@ -85,12 +85,15 @@ class Sqlserver extends DboSource {
  * MS SQL column definition
  *
  * @var array
+ * @link https://msdn.microsoft.com/en-us/library/ms187752.aspx SQL Server Data Types
  */
 	public $columns = array(
 		'primary_key' => array('name' => 'IDENTITY (1, 1) NOT NULL'),
 		'string' => array('name' => 'nvarchar', 'limit' => '255'),
 		'text' => array('name' => 'nvarchar', 'limit' => 'MAX'),
 		'integer' => array('name' => 'int', 'formatter' => 'intval'),
+		'smallinteger' => array('name' => 'smallint', 'formatter' => 'intval'),
+		'tinyinteger' => array('name' => 'tinyint', 'formatter' => 'intval'),
 		'biginteger' => array('name' => 'bigint'),
 		'numeric' => array('name' => 'decimal', 'formatter' => 'floatval'),
 		'decimal' => array('name' => 'decimal', 'formatter' => 'floatval'),
@@ -434,6 +437,12 @@ class Sqlserver extends DboSource {
 		}
 		if (strpos($col, 'bigint') !== false) {
 			return 'biginteger';
+		}
+		if (strpos($col, 'smallint') !== false) {
+			return 'smallinteger';
+		}
+		if (strpos($col, 'tinyint') !== false) {
+			return 'tinyinteger';
 		}
 		if (strpos($col, 'int') !== false) {
 			return 'integer';

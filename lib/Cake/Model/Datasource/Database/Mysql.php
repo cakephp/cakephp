@@ -87,10 +87,14 @@ class Mysql extends DboSource {
 		'collate' => array('value' => 'COLLATE', 'quote' => false, 'join' => ' ', 'column' => 'Collation', 'position' => 'beforeDefault'),
 		'comment' => array('value' => 'COMMENT', 'quote' => true, 'join' => ' ', 'column' => 'Comment', 'position' => 'afterDefault'),
 		'unsigned' => array(
-			'value' => 'UNSIGNED', 'quote' => false, 'join' => ' ', 'column' => false, 'position' => 'beforeDefault',
+			'value' => 'UNSIGNED',
+			'quote' => false,
+			'join' => ' ',
+			'column' => false,
+			'position' => 'beforeDefault',
 			'noVal' => true,
 			'options' => array(true),
-			'types' => array('integer', 'float', 'decimal', 'biginteger')
+			'types' => array('integer', 'smallinteger', 'tinyinteger', 'float', 'decimal', 'biginteger')
 		)
 	);
 
@@ -110,6 +114,7 @@ class Mysql extends DboSource {
  * MySQL column definition
  *
  * @var array
+ * @link https://dev.mysql.com/doc/refman/5.7/en/data-types.html MySQL Data Types
  */
 	public $columns = array(
 		'primary_key' => array('name' => 'NOT NULL AUTO_INCREMENT'),
@@ -117,6 +122,8 @@ class Mysql extends DboSource {
 		'text' => array('name' => 'text'),
 		'biginteger' => array('name' => 'bigint', 'limit' => '20'),
 		'integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
+		'smallinteger' => array('name' => 'smallint', 'limit' => '6', 'formatter' => 'intval'),
+		'tinyinteger' => array('name' => 'tinyint', 'limit' => '4', 'formatter' => 'intval'),
 		'float' => array('name' => 'float', 'formatter' => 'floatval'),
 		'decimal' => array('name' => 'decimal', 'formatter' => 'floatval'),
 		'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
@@ -782,6 +789,12 @@ class Mysql extends DboSource {
 		}
 		if (strpos($col, 'bigint') !== false || $col === 'bigint') {
 			return 'biginteger';
+		}
+		if (strpos($col, 'tinyint') !== false) {
+			return 'tinyinteger';
+		}
+		if (strpos($col, 'smallint') !== false) {
+			return 'smallinteger';
 		}
 		if (strpos($col, 'int') !== false) {
 			return 'integer';

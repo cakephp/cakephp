@@ -201,7 +201,7 @@ class MysqlTest extends CakeTestCase {
 	public function testTinyintCasting() {
 		$this->Dbo->cacheSources = false;
 		$tableName = 'tinyint_' . uniqid();
-		$this->Dbo->rawQuery('CREATE TABLE ' . $this->Dbo->fullTableName($tableName) . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $this->Dbo->fullTableName($tableName) . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), tiny_int tinyint(2), primary key(id));');
 
 		$this->model = new CakeTestModel(array(
 			'name' => 'Tinyint', 'table' => $tableName, 'ds' => 'test'
@@ -209,24 +209,24 @@ class MysqlTest extends CakeTestCase {
 
 		$result = $this->model->schema();
 		$this->assertEquals('boolean', $result['bool']['type']);
-		$this->assertEquals('integer', $result['small_int']['type']);
+		$this->assertEquals('tinyinteger', $result['tiny_int']['type']);
 
-		$this->assertTrue((bool)$this->model->save(array('bool' => 5, 'small_int' => 5)));
+		$this->assertTrue((bool)$this->model->save(array('bool' => 5, 'tiny_int' => 5)));
 		$result = $this->model->find('first');
 		$this->assertTrue($result['Tinyint']['bool']);
-		$this->assertSame($result['Tinyint']['small_int'], '5');
+		$this->assertSame($result['Tinyint']['tiny_int'], '5');
 		$this->model->deleteAll(true);
 
-		$this->assertTrue((bool)$this->model->save(array('bool' => 0, 'small_int' => 100)));
+		$this->assertTrue((bool)$this->model->save(array('bool' => 0, 'tiny_int' => 100)));
 		$result = $this->model->find('first');
 		$this->assertFalse($result['Tinyint']['bool']);
-		$this->assertSame($result['Tinyint']['small_int'], '100');
+		$this->assertSame($result['Tinyint']['tiny_int'], '100');
 		$this->model->deleteAll(true);
 
-		$this->assertTrue((bool)$this->model->save(array('bool' => true, 'small_int' => 0)));
+		$this->assertTrue((bool)$this->model->save(array('bool' => true, 'tiny_int' => 0)));
 		$result = $this->model->find('first');
 		$this->assertTrue($result['Tinyint']['bool']);
-		$this->assertSame($result['Tinyint']['small_int'], '0');
+		$this->assertSame($result['Tinyint']['tiny_int'], '0');
 		$this->model->deleteAll(true);
 
 		$this->Dbo->rawQuery('DROP TABLE ' . $this->Dbo->fullTableName($tableName));
@@ -524,6 +524,14 @@ class MysqlTest extends CakeTestCase {
 
 		$result = $this->Dbo->column('tinyint(1)');
 		$expected = 'boolean';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Dbo->column('tinyint');
+		$expected = 'tinyinteger';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Dbo->column('smallint');
+		$expected = 'smallinteger';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->column('boolean');
@@ -3283,7 +3291,7 @@ SQL;
  */
 	public function buildColumnUnsignedProvider() {
 		return array(
-			//set #0
+			// unsigned int
 			array(
 				array(
 					'name' => 'testName',
@@ -3293,7 +3301,7 @@ SQL;
 				),
 				'`testName` int(11) UNSIGNED'
 			),
-			//set #1
+			// unsigned bigint
 			array(
 				array(
 					'name' => 'testName',
@@ -3303,7 +3311,7 @@ SQL;
 				),
 				'`testName` bigint(20) UNSIGNED'
 			),
-			//set #2
+			// unsigned float
 			array(
 				array(
 					'name' => 'testName',
@@ -3312,7 +3320,7 @@ SQL;
 				),
 				'`testName` float UNSIGNED'
 			),
-			//set #3
+			// varchar
 			array(
 				array(
 					'name' => 'testName',
@@ -3322,7 +3330,7 @@ SQL;
 				),
 				'`testName` varchar(255)'
 			),
-			//set #4
+			// date unsigned
 			array(
 				array(
 					'name' => 'testName',
@@ -3331,7 +3339,7 @@ SQL;
 				),
 				'`testName` date'
 			),
-			//set #5
+			// date
 			array(
 				array(
 					'name' => 'testName',
@@ -3340,7 +3348,7 @@ SQL;
 				),
 				'`testName` date'
 			),
-			//set #6
+			// integer with length
 			array(
 				array(
 					'name' => 'testName',
@@ -3350,7 +3358,7 @@ SQL;
 				),
 				'`testName` int(11)'
 			),
-			//set #7
+			// unsigned decimal
 			array(
 				array(
 					'name' => 'testName',
@@ -3359,7 +3367,7 @@ SQL;
 				),
 				'`testName` decimal UNSIGNED'
 			),
-			//set #8
+			// decimal with default
 			array(
 				array(
 					'name' => 'testName',
@@ -3368,6 +3376,26 @@ SQL;
 					'default' => 1
 				),
 				'`testName` decimal UNSIGNED DEFAULT 1'
+			),
+			// smallinteger
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'smallinteger',
+					'length' => 6,
+					'unsigned' => true
+				),
+				'`testName` smallint(6) UNSIGNED'
+			),
+			// tinyinteger
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'tinyinteger',
+					'length' => 4,
+					'unsigned' => true
+				),
+				'`testName` tinyint(4) UNSIGNED'
 			)
 		);
 	}
