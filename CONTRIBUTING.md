@@ -37,7 +37,7 @@ Help us keep CakePHP open and inclusive. Please read and follow our [Code of Con
 * Core test cases should continue to pass. You can run tests locally or enable
   [travis-ci](https://travis-ci.org/) for your fork, so all tests and codesniffs
   will be executed.
-* Your work should apply the [CakePHP coding standards](http://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html).
+* Your work should apply the [CakePHP coding standards](https://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html).
 
 ## Which branch to base the work
 
@@ -54,7 +54,7 @@ Help us keep CakePHP open and inclusive. Please read and follow our [Code of Con
 
 ## Test cases and codesniffer
 
-CakePHP tests requires [PHPUnit](http://www.phpunit.de/manual/current/en/installation.html)
+CakePHP tests requires [PHPUnit](https://phpunit.de/manual/current/en/installation.html)
 3.7, version 4 is not compatible. To run the test cases locally use the following command:
 
     ./lib/Cake/Console/cake test core AllTests --stderr
@@ -69,11 +69,11 @@ for the sniff and phpcs.
 
 ## Reporting a Security Issue
 
-If you've found a security related issue in CakePHP, please don't open an issue in GitHub. Instead contact us at security@cakephp.org. For more information on how we handle security issues, [see the CakePHP Security Issue Process](http://book.cakephp.org/2.0/en/contributing/tickets.html#reporting-security-issues).
+If you've found a security related issue in CakePHP, please don't open an issue in GitHub. Instead contact us at security@cakephp.org. For more information on how we handle security issues, [see the CakePHP Security Issue Process](https://book.cakephp.org/2.0/en/contributing/tickets.html#reporting-security-issues).
 
 # Additional Resources
 
-* [CakePHP coding standards](http://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html)
+* [CakePHP coding standards](https://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html)
 * [Existing issues](https://github.com/cakephp/cakephp/issues)
 * [Development Roadmaps](https://github.com/cakephp/cakephp/wiki#roadmaps)
 * [General GitHub documentation](https://help.github.com/)
