@@ -335,6 +335,9 @@ class FixtureTask extends BakeTask {
 				}
 				$insert = '';
 				switch ($fieldInfo['type']) {
+					case 'tinyinteger':
+					case 'smallinteger':
+					case 'biginteger':
 					case 'integer':
 					case 'float':
 						$insert = $i + 1;
