@@ -59,8 +59,8 @@ class Postgres extends DboSource {
 		'string' => array('name' => 'varchar', 'limit' => '255'),
 		'text' => array('name' => 'text'),
 		'integer' => array('name' => 'integer', 'formatter' => 'intval'),
-		'smallint' => array('name' => 'smallint', 'formatter' => 'intval'),
-		'tinyint' => array('name' => 'smallint', 'formatter' => 'intval'),
+		'smallinteger' => array('name' => 'smallint', 'formatter' => 'intval'),
+		'tinyinteger' => array('name' => 'smallint', 'formatter' => 'intval'),
 		'biginteger' => array('name' => 'bigint', 'limit' => '20'),
 		'float' => array('name' => 'float', 'formatter' => 'floatval'),
 		'decimal' => array('name' => 'decimal', 'formatter' => 'floatval'),
@@ -705,7 +705,7 @@ class Postgres extends DboSource {
 			case ($col === 'bigint'):
 				return 'biginteger';
 			case ($col === 'smallint'):
-				return 'smallint';
+				return 'smallinteger';
 			case (strpos($col, 'int') !== false && $col !== 'interval'):
 				return 'integer';
 			case (strpos($col, 'char') !== false):

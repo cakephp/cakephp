@@ -1245,8 +1245,8 @@ class FormHelper extends AppHelper {
 				'date' => 'date',
 				'float' => 'number',
 				'integer' => 'number',
-				'smallint' => 'number',
-				'tinyint' => 'number',
+				'smallinteger' => 'number',
+				'tinyinteger' => 'number',
 				'decimal' => 'number',
 				'binary' => 'file'
 			);

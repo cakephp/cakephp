@@ -174,8 +174,8 @@ class TestAppSchema extends CakeSchema {
 		'decimal_field' => array('type' => 'decimal', 'length' => '6,3', 'default' => '0.000'),
 		'huge_int' => array('type' => 'biginteger'),
 		'normal_int' => array('type' => 'integer'),
-		'small_int' => array('type' => 'smallint'),
-		'tiny_int' => array('type' => 'tinyint'),
+		'small_int' => array('type' => 'smallinteger'),
+		'tiny_int' => array('type' => 'tinyinteger'),
 		'bool' => array('type' => 'boolean', 'null' => false, 'default' => false),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 		'tableParameters' => array()

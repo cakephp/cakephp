@@ -470,17 +470,20 @@ class FixtureTaskTest extends CakeTestCase {
 	}
 
 /**
- * test record generation with float and binary types
+ * test record generation with various integer, float and binary types
  *
  * @return void
  */
-	public function testRecordGenerationForBinaryAndFloat() {
+	public function testRecordGenerationForBinaryFloatAndIntegerTypes() {
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 
 		$result = $this->Task->bake('Article', 'datatypes');
 		$this->assertContains("'float_field' => 1", $result);
 		$this->assertContains("'bool' => 1", $result);
+		$this->assertContains("'tiny_int' => 1", $result);
+		$this->assertContains("'small_int' => 1", $result);
+		$this->assertContains("'huge_int' => 1", $result);
 
 		$result = $this->Task->bake('Article', 'binary_tests');
 		$this->assertContains("'data' => 'Lorem ipsum dolor sit amet'", $result);
