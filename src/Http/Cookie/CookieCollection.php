@@ -78,6 +78,20 @@ class CookieCollection implements IteratorAggregate
     }
 
     /**
+     * Remove a cookie from the collection
+     *
+     * If the cookie is not in the collection, this method will do nothing.
+     *
+     * @param string $name The name of the cookie to remove.
+     * @return void
+     */
+    public function remove($name)
+    {
+        $key = mb_strtolower($name);
+        unset($this->cookies[$key]);
+    }
+
+    /**
      * Checks if only valid cookie objects are in the array
      *
      * @param array $cookies Array of cookie objects

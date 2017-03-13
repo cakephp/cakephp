@@ -88,6 +88,26 @@ class CookieCollectionTest extends TestCase
         $this->assertTrue($collection->has('REMEMBER_me'), 'case insensitive cookie names');
     }
 
+
+    /**
+     * Test removing cookies
+     *
+     * @return void
+     */
+    public function testRemove()
+    {
+        $cookies = [
+            new Cookie('remember_me', 'a'),
+            new Cookie('gtm', 'b')
+        ];
+
+        $collection = new CookieCollection($cookies);
+        $this->assertInstanceOf(Cookie::class, $collection->get('REMEMBER_me'), 'case insensitive cookie names');
+        $this->assertNull($collection->remove('remember_me'));
+        $this->assertFalse($collection->has('remember_me'));
+        $this->assertNull($collection->get('remember_me'));
+    }
+
     /**
      * Test getting cookies by name
      *
