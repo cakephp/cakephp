@@ -46,6 +46,38 @@ class CookieCollection implements IteratorAggregate
     }
 
     /**
+     * Get a cookie by name
+     *
+     * If the provided name matches a URL (matches `#^https?://#`) this method
+     * will assume you want a list of cookies that match that URL. This is
+     * backwards compatible behavior that will be removed in 4.0.0
+     *
+     * @param string $name The name of the cookie. If the name looks like a URL,
+     *  backwards compatible behavior will be used.
+     * @return \Cake\Http\Cookie\Cookie|null|array
+     */
+    public function get($name)
+    {
+        $key = mb_strtolower($name);
+        if (isset($this->cookies[$key])) {
+            return $this->cookies[$key];
+        }
+        return null;
+    }
+
+    /**
+     * Check if a cookie with the given name exists
+     *
+     * @param string $name The cookie name to check.
+     * @return bool True if the cookie exists, otherwise false.
+     */
+    public function has($name)
+    {
+        $key = mb_strtolower($name);
+        return isset($this->cookies[$key]);
+    }
+
+    /**
      * Checks if only valid cookie objects are in the array
      *
      * @param array $cookies Array of cookie objects

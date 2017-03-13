@@ -50,6 +50,64 @@ class CookieCollectionTest extends TestCase
     }
 
     /**
+     * Test iteration
+     *
+     * @return void
+     */
+    public function testIteration()
+    {
+        $cookies = [
+            new Cookie('remember_me', 'a'),
+            new Cookie('gtm', 'b'),
+            new Cookie('three', 'tree')
+        ];
+
+        $collection = new CookieCollection($cookies);
+        $names = [];
+        foreach ($collection as $cookie) {
+            $names[] = $cookie->getName();
+        }
+        $this->assertSame(['remember_me', 'gtm', 'three'], $names);
+    }
+
+    /**
+     * Test has()
+     *
+     * @return void
+     */
+    public function testHas()
+    {
+        $cookies = [
+            new Cookie('remember_me', 'a'),
+            new Cookie('gtm', 'b')
+        ];
+
+        $collection = new CookieCollection($cookies);
+        $this->assertFalse($collection->has('nope'));
+        $this->assertTrue($collection->has('remember_me'));
+        $this->assertTrue($collection->has('REMEMBER_me'), 'case insensitive cookie names');
+    }
+
+    /**
+     * Test getting cookies by name
+     *
+     * @return void
+     */
+    public function testGetByName()
+    {
+        $cookies = [
+            new Cookie('remember_me', 'a'),
+            new Cookie('gtm', 'b')
+        ];
+
+        $collection = new CookieCollection($cookies);
+        $this->assertNull($collection->get('nope'));
+        $this->assertInstanceOf(Cookie::class, $collection->get('REMEMBER_me'), 'case insensitive cookie names');
+        $this->assertInstanceOf(Cookie::class, $collection->get('remember_me'));
+        $this->assertSame($cookies[0], $collection->get('remember_me'));
+    }
+
+    /**
      * Test that the constructor takes only an array of objects implementing
      * the CookieInterface
      *
