@@ -87,6 +87,7 @@ class CookieCollection implements IteratorAggregate, Countable
         if (isset($this->cookies[$key])) {
             return $this->cookies[$key];
         }
+
         return null;
     }
 
