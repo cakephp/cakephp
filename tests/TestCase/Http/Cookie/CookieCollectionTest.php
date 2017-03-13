@@ -91,7 +91,6 @@ class CookieCollectionTest extends TestCase
         $rememberNo = new Cookie('remember_me', 'no');
         $this->assertSame($collection, $collection->add($remember)->add($rememberNo));
         $this->assertSame($rememberNo, $collection->get('remember_me'));
-
     }
 
     /**

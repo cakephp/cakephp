@@ -98,8 +98,7 @@ class CookieCollection implements IteratorAggregate, Countable
      */
     public function has($name)
     {
-        $key = mb_strtolower($name);
-        return isset($this->cookies[$key]);
+        return isset($this->cookies[mb_strtolower($name)]);
     }
 
     /**
@@ -112,8 +111,7 @@ class CookieCollection implements IteratorAggregate, Countable
      */
     public function remove($name)
     {
-        $key = mb_strtolower($name);
-        unset($this->cookies[$key]);
+        unset($this->cookies[mb_strtolower($name)]);
 
         return $this;
     }
