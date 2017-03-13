@@ -14,13 +14,14 @@
 namespace Cake\Http\Cookie;
 
 use ArrayIterator;
+use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
 
 /**
  * Cookie Collection
  */
-class CookieCollection implements IteratorAggregate
+class CookieCollection implements IteratorAggregate, Countable
 {
 
     /**
@@ -46,6 +47,30 @@ class CookieCollection implements IteratorAggregate
     }
 
     /**
+     * Get the number of cookies in the collection.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->cookies);
+    }
+
+    /**
+     * Add a cookie to the collection
+     *
+     * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie instance to add.
+     * @return $this
+     */
+    public function add(CookieInterface $cookie)
+    {
+        $key = mb_strtolower($cookie->getName());
+        $this->cookies[$key] = $cookie;
+
+        return $this;
+    }
+
+    /**
      * Get a cookie by name
      *
      * If the provided name matches a URL (matches `#^https?://#`) this method
@@ -54,7 +79,7 @@ class CookieCollection implements IteratorAggregate
      *
      * @param string $name The name of the cookie. If the name looks like a URL,
      *  backwards compatible behavior will be used.
-     * @return \Cake\Http\Cookie\Cookie|null|array
+     * @return \Cake\Http\Cookie\CookieInterface|null|array
      */
     public function get($name)
     {
@@ -83,12 +108,14 @@ class CookieCollection implements IteratorAggregate
      * If the cookie is not in the collection, this method will do nothing.
      *
      * @param string $name The name of the cookie to remove.
-     * @return void
+     * @return $this
      */
     public function remove($name)
     {
         $key = mb_strtolower($name);
         unset($this->cookies[$key]);
+
+        return $this;
     }
 
     /**
