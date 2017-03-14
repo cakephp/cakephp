@@ -431,7 +431,7 @@ class LogTest extends TestCase
 
         $this->_deleteLogs();
 
-        Log::write('error', 'error message', 'orders');
+        Log::write('error', 'error message', ['scope' => 'orders']);
         $this->assertFileExists(LOGS . 'error.log');
         $this->assertFileNotExists(LOGS . 'debug.log');
         $this->assertFileNotExists(LOGS . 'shops.log');
@@ -558,7 +558,7 @@ class LogTest extends TestCase
 
         $this->_deleteLogs();
 
-        Log::write('debug', 'eggs message', 'eggs');
+        Log::write('debug', 'eggs message', ['scope' => ['eggs']]);
         $this->assertFileExists(LOGS . 'eggs.log');
         $this->assertFileNotExists(LOGS . 'shops.log');
     }
