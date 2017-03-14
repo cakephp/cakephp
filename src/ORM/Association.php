@@ -1144,7 +1144,7 @@ abstract class Association
         }
 
         if ($fields) {
-            $query->select($query->aliasFields($fields, $target->getAlias()));
+            $query->select($query->aliasFields($fields, $this->_name));
         }
         $query->addDefaultTypes($target);
     }
@@ -1245,7 +1245,7 @@ abstract class Association
     protected function _joinCondition($options)
     {
         $conditions = [];
-        $tAlias = $this->getTarget()->getAlias();
+        $tAlias = $this->_name;
         $sAlias = $this->getSource()->getAlias();
         $foreignKey = (array)$options['foreignKey'];
         $bindingKey = (array)$this->getBindingKey();
