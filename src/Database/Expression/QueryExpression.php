@@ -73,10 +73,8 @@ class QueryExpression implements ExpressionInterface, Countable
 
     /**
      * Changes the conjunction for the conditions at this level of the expression tree.
-     * If called with no arguments it will return the currently configured value.
      *
-     * @param string $conjunction Value to be used for joining conditions. If null it
-     * will not set any value, but return the currently stored one
+     * @param string $conjunction Value to be used for joining conditions
      * @return $this
      */
     public function setConjunction($conjunction)
