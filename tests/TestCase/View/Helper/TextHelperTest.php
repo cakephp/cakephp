@@ -364,6 +364,10 @@ class TextHelperTest extends TestCase
             [
                 'http://www.ad.nl/show/giel-beelen-heeft-weinig-moeite-met-rijontzegging~acd8b6ed',
                 '<a href="http://www.ad.nl/show/giel-beelen-heeft-weinig-moeite-met-rijontzegging~acd8b6ed">http://www.ad.nl/show/giel-beelen-heeft-weinig-moeite-met-rijontzegging~acd8b6ed</a>'
+            ],
+            [
+                'https://sevvlor.com/page%20not%20found',
+                '<a href="https://sevvlor.com/page%20not%20found">https://sevvlor.com/page%20not%20found</a>'
             ]
         ];
     }

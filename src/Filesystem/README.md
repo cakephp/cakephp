@@ -32,4 +32,4 @@ foreach ($files as $file) {
 ## Documentation
 
 Please make sure you check the [official
-documentation](http://book.cakephp.org/3.0/en/core-libraries/file-folder.html)
+documentation](https://book.cakephp.org/3.0/en/core-libraries/file-folder.html)

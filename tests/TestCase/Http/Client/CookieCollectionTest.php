@@ -226,6 +226,42 @@ class CookieCollectionTest extends TestCase
     {
         $headers = [
             'HTTP/1.0 200 Ok',
+            'Set-Cookie: first=1; Domain=example.com',
+            'Set-Cookie: second=2;',
+        ];
+        $response = new Response($headers, '');
+        $this->cookies->store($response, 'http://foo.example.com/');
+
+        $result = $this->cookies->get('http://example.com');
+        $expected = ['first' => 1];
+        $this->assertEquals($expected, $result);
+
+        $result = $this->cookies->get('http://foo.example.com');
+        $expected = ['first' => 1, 'second' => '2'];
+        $this->assertEquals($expected, $result);
+
+        $result = $this->cookies->get('http://bar.foo.example.com');
+        $expected = ['first' => 1, 'second' => '2'];
+        $this->assertEquals($expected, $result);
+
+        $result = $this->cookies->get('http://api.example.com');
+        $expected = ['first' => 1];
+        $this->assertEquals($expected, $result);
+
+        $result = $this->cookies->get('http://google.com');
+        $expected = [];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test getting cookies matching on paths exactly
+     *
+     * @return void
+     */
+    public function testGetMatchingDomainWithDot()
+    {
+        $headers = [
+            'HTTP/1.0 200 Ok',
             'Set-Cookie: first=1; Domain=.example.com',
             'Set-Cookie: second=2;',
         ];
@@ -241,7 +277,7 @@ class CookieCollectionTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = $this->cookies->get('http://bar.foo.example.com');
-        $expected = ['first' => 1];
+        $expected = ['first' => 1, 'second' => '2'];
         $this->assertEquals($expected, $result);
 
         $result = $this->cookies->get('http://api.example.com');

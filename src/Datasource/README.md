@@ -79,4 +79,4 @@ $conn = ConnectionManager::config('other', $connectionInstance);
 
 ## Documentation
 
-Please make sure you check the [official API documentation](http://api.cakephp.org/3.2/namespace-Cake.Datasource.html)
+Please make sure you check the [official API documentation](https://api.cakephp.org/3.x/namespace-Cake.Datasource.html)

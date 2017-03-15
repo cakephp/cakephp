@@ -34,4 +34,4 @@ if (!empty($errors)) {
 
 ## Documentation
 
-Please make sure you check the [official documentation](http://book.cakephp.org/3.0/en/core-libraries/validation.html)
+Please make sure you check the [official documentation](https://book.cakephp.org/3.0/en/core-libraries/validation.html)
