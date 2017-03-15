@@ -609,7 +609,8 @@ class HtmlHelper extends Helper
      *
      * ### Options
      *
-     * - `safe` Whether the code block should contain a CDATA
+     * - `safe` (boolean) Whether or not the $script should be wrapped in `<![CDATA[ ]]>`.
+     *   See scriptBlock().
      * - `block` Set to true to append output to view block "script" or provide
      *   custom block name.
      *
@@ -619,7 +620,6 @@ class HtmlHelper extends Helper
      */
     public function scriptStart(array $options = [])
     {
-        $options += ['safe' => true, 'block' => null];
         $this->_scriptBlockOptions = $options;
         ob_start();
     }

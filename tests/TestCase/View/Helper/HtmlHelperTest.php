@@ -1148,16 +1148,14 @@ class HtmlHelperTest extends TestCase
      */
     public function testScriptStartAndScriptEnd()
     {
-        $result = $this->Html->scriptStart(['safe' => true]);
+        $result = $this->Html->scriptStart();
         $this->assertNull($result);
         echo 'this is some javascript';
 
         $result = $this->Html->scriptEnd();
         $expected = [
             '<script',
-            $this->cDataStart,
             'this is some javascript',
-            $this->cDataEnd,
             '/script'
         ];
         $this->assertHtml($expected, $result);
@@ -1170,6 +1168,20 @@ class HtmlHelperTest extends TestCase
         $expected = [
             '<script',
             'this is some javascript',
+            '/script'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->scriptStart(['safe' => true]);
+        $this->assertNull($result);
+        echo 'this is some javascript';
+
+        $result = $this->Html->scriptEnd();
+        $expected = [
+            '<script',
+            $this->cDataStart,
+            'this is some javascript',
+            $this->cDataEnd,
             '/script'
         ];
         $this->assertHtml($expected, $result);
