@@ -83,8 +83,8 @@ class BasicAuthenticate extends BaseAuthenticate {
  */
 	public function getUser(CakeRequest $request) {
 		if(!isset($_SERVER['PHP_AUTH_USER'])) {
-		    if (isset($_SERVER['HTTP_AUTHORIZATION']) && strlen($_SERVER['HTTP_AUTHORIZATION']) > 0 && strpos($_SERVER['HTTP_AUTHORIZATION'], 'basic') !== false) {
-		        list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
+			if ($request->header('Authorization') !== false && strlen($request->header('Authorization')) > 0 && strpos($request->header('Authorization'), 'basic') !== false) {
+		        list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', base64_decode(substr($request->header('Authorization'), 6)));
 		        if(strlen($_SERVER['PHP_AUTH_USER']) === 0 || strlen($_SERVER['PHP_AUTH_PW']) === 0) {
 		            unset($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
 		        }
