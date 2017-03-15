@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Core\Plugin;
 use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\ORM\TableRegistry;
@@ -88,6 +89,48 @@ class QueryRegressionTest extends TestCase
         $table->belongsToMany('ArticlesTags');
         $results = $table->find()->where(['id >' => 100])->contain('ArticlesTags')->toArray();
         $this->assertEmpty($results);
+    }
+
+    /**
+     * Tests that eagerloading and hydration works for associations that have
+     * different aliases in the association and targetTable
+     *
+     * @return void
+     */
+    public function testEagerLoadingMismatchingAliasInBelongsTo()
+    {
+        $this->loadFixtures('Articles', 'Users');
+        $table = TableRegistry::get('Articles');
+        $users = TableRegistry::get('Users');
+        $table->belongsTo('Authors', [
+            'targetTable' => $users,
+            'foreignKey' => 'author_id'
+        ]);
+        $result = $table->find()->where(['Articles.id' => 1])->contain('Authors')->first();
+        $this->assertInstanceOf(EntityInterface::class, $result);
+        $this->assertInstanceOf(EntityInterface::class, $result->author);
+        $this->assertSame('mariano', $result->author->username);
+    }
+
+    /**
+     * Tests that eagerloading and hydration works for associations that have
+     * different aliases in the association and targetTable
+     *
+     * @return void
+     */
+    public function testEagerLoadingMismatchingAliasInHasOne()
+    {
+        $this->loadFixtures('Articles', 'Users');
+        $articles = TableRegistry::get('Articles');
+        $users = TableRegistry::get('Users');
+        $users->hasOne('Posts', [
+            'targetTable' => $articles,
+            'foreignKey' => 'author_id'
+        ]);
+        $result = $users->find()->where(['Users.id' => 1])->contain('Posts')->first();
+        $this->assertInstanceOf(EntityInterface::class, $result);
+        $this->assertInstanceOf(EntityInterface::class, $result->post);
+        $this->assertSame('First Article', $result->post->title);
     }
 
     /**
