@@ -6965,7 +6965,7 @@ class ModelReadTest extends BaseModelTest {
  *
  * @return void
  */
-	public function testFindListZeroId() {
+	public function testFindListZeroValue() {
 		$this->loadFixtures('Article');
 
 		$model = new Article();
@@ -6977,12 +6977,13 @@ class ModelReadTest extends BaseModelTest {
 		));
 
 		$result = $model->find('list', array(
-			'fields' => array('user_id', 'title')
+			'fields' => array('title', 'user_id')
 		));
 		$expected = array(
-			0 => 'Zeroth Article',
-			1 => 'Third Article',
-			3 => 'Second Article'
+			'Zeroth Article' => 0,
+			'First Article' => 1,
+			'Second Article' => 3,
+			'Third Article' => 1,
 		);
 		$this->assertEquals($expected, $result);
 	}
