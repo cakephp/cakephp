@@ -41,6 +41,7 @@ class AnotherArticleFixture extends CakeTestFixture {
  * @var array
  */
 	public $records = array(
+		array('id' => '0', 'title' => 'Zeroth Article', 'created' => '2017-03-17 00:48:23', 'updated' => '2017-03-17 00:48:23'),
 		array('title' => 'First Article', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
 		array('title' => 'Second Article', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
 		array('title' => 'Third Article', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')

@@ -43,6 +43,7 @@ class BookFixture extends CakeTestFixture {
  * @var array
  */
 	public $records = array(
+		array('id' => 0, 'isbn' => '0000000001', 'title' => 'Bible', 'author' => 'Twelve Apostles'),
 		array('id' => 1, 'isbn' => '1234567890', 'title' => 'Faust', 'author' => 'Johann Wolfgang von Goethe')
 	);
 }
