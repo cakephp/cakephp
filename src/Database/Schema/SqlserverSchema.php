@@ -88,17 +88,17 @@ class SqlserverSchema extends BaseSchema
             return ['type' => 'timestamp', 'length' => null];
         }
 
+        if ($col === 'tinyint') {
+            return ['type' => 'tinyinteger', 'length' => $precision ?: 3];
+        }
+        if ($col === 'smallint') {
+            return ['type' => 'smallinteger', 'length' => $precision ?: 5];
+        }
         if ($col === 'int' || $col === 'integer') {
             return ['type' => 'integer', 'length' => $precision ?: 10];
         }
         if ($col === 'bigint') {
             return ['type' => 'biginteger', 'length' => $precision ?: 20];
-        }
-        if ($col === 'smallint') {
-            return ['type' => 'integer', 'length' => $precision ?: 5];
-        }
-        if ($col === 'tinyint') {
-            return ['type' => 'integer', 'length' => $precision ?: 3];
         }
         if ($col === 'bit') {
             return ['type' => 'boolean', 'length' => null];
@@ -331,6 +331,8 @@ class SqlserverSchema extends BaseSchema
         $data = $schema->column($name);
         $out = $this->_driver->quoteIdentifier($name);
         $typeMap = [
+            'tinyinteger' => ' TINYINT',
+            'smallinteger' => ' SMALLINT',
             'integer' => ' INTEGER',
             'biginteger' => ' BIGINT',
             'boolean' => ' BIT',

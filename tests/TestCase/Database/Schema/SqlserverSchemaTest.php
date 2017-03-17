@@ -110,11 +110,32 @@ SQL;
                 ['type' => 'time', 'length' => null]
             ],
             [
+                'TINYINT',
+                null,
+                2,
+                null,
+                ['type' => 'tinyinteger', 'length' => 2]
+            ],
+            [
+                'TINYINT',
+                null,
+                null,
+                null,
+                ['type' => 'tinyinteger', 'length' => 3]
+            ],
+            [
                 'SMALLINT',
                 null,
-                4,
+                3,
                 null,
-                ['type' => 'integer', 'length' => 4]
+                ['type' => 'smallinteger', 'length' => 3]
+            ],
+            [
+                'SMALLINT',
+                null,
+                null,
+                null,
+                ['type' => 'smallinteger', 'length' => 5]
             ],
             [
                 'INTEGER',
@@ -338,13 +359,12 @@ SQL;
                 'comment' => null,
             ],
             'views' => [
-                'type' => 'integer',
+                'type' => 'smallinteger',
                 'null' => true,
                 'default' => 0,
                 'length' => 5,
                 'precision' => null,
                 'unsigned' => null,
-                'autoIncrement' => null,
                 'comment' => null,
             ],
             'created' => [
@@ -553,6 +573,16 @@ SQL;
                 '[body] NVARCHAR(MAX) COLLATE Japanese_Unicode_CI_AI NOT NULL'
             ],
             // Integers
+            [
+                'post_id',
+                ['type' => 'smallinteger', 'length' => 11],
+                '[post_id] SMALLINT'
+            ],
+            [
+                'post_id',
+                ['type' => 'tinyinteger', 'length' => 11],
+                '[post_id] TINYINT'
+            ],
             [
                 'post_id',
                 ['type' => 'integer', 'length' => 11],

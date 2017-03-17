@@ -121,7 +121,7 @@ SQL;
             // Integer
             [
                 'SMALLINT',
-                ['type' => 'integer', 'length' => 5]
+                ['type' => 'smallinteger', 'length' => 5]
             ],
             [
                 'INTEGER',
@@ -352,14 +352,13 @@ SQL;
                 'comment' => null,
             ],
             'views' => [
-                'type' => 'integer',
+                'type' => 'smallinteger',
                 'null' => true,
                 'default' => 0,
                 'length' => 5,
                 'precision' => null,
                 'unsigned' => null,
                 'comment' => null,
-                'autoIncrement' => null,
             ],
             'readingtime' => [
                 'type' => 'time',
@@ -707,6 +706,16 @@ SQL;
                 '"body" TEXT COLLATE "C" NOT NULL'
             ],
             // Integers
+            [
+                'post_id',
+                ['type' => 'tinyinteger', 'length' => 11],
+                '"post_id" SMALLINT'
+            ],
+            [
+                'post_id',
+                ['type' => 'smallinteger', 'length' => 11],
+                '"post_id" SMALLINT'
+            ],
             [
                 'post_id',
                 ['type' => 'integer', 'length' => 11],

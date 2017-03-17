@@ -142,6 +142,12 @@ class TableSchema
         'text' => [
             'collate' => null,
         ],
+        'tinyinteger' => [
+            'unsigned' => null,
+        ],
+        'smallinteger' => [
+            'unsigned' => null,
+        ],
         'integer' => [
             'unsigned' => null,
             'autoIncrement' => null,
