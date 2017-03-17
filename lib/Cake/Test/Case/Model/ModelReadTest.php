@@ -6690,7 +6690,7 @@ class ModelReadTest extends BaseModelTest {
 		$TestModel = new AnotherArticle();
 		$result = $TestModel->find('list', array(
 			'fields' => array('title', 'id'),
-			'order' => 'Article.title ASC',
+			'order' => 'title ASC',
 		));
 		$expected = array(
 			'First Article' => 1,
