@@ -1736,29 +1736,4 @@ class TranslateBehaviorTest extends TestCase
         ];
         $this->assertEquals($expected, $entity->errors('es'));
     }
-
-//    /**
-//     * Test that translationField method returns the standard column name
-//     * while using the default locale, and the i18n table alias when
-//     * using other language
-//     *
-//     * @return void
-//     */
-//    public function testTranslationFieldErrors()
-//    {
-//        $table = TableRegistry::get('Articles');
-//        $table->addBehavior('Translate', [
-//            'fields' => ['title'],
-//            'defaultLocale' => 'en_US'
-//        ]);
-//
-////        I18n::locale('en_US');
-////        $this->assertEquals('Articles.title', $table->translationField('title'));
-//
-////        I18n::locale('de_DE');
-////        $this->assertEquals($table->translationField('title'), 'Articles_title_translation.content');
-//
-////        I18n::locale('en');
-////        $this->assertEquals($table->translationField('title'), 'Articles_title_translation.content');
-//    }
 }
