@@ -328,11 +328,47 @@ class TranslateBehaviorTest extends TestCase
     public function testTranslationFieldForTranslatedFields()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $table->addBehavior('Translate', [
+            'fields' => ['title', 'body'],
+            'defaultLocale' => 'en_US'
+        ]);
 
-        $expected = 'Articles_title_translation.content';
+        $expectedSameLocale = 'Articles.title';
+        $expectedOtherLocale = 'Articles_title_translation.content';
+
         $field = $table->translationField('title');
-        $this->assertSame($expected, $field);
+        $this->assertSame($expectedSameLocale, $field);
+
+        I18n::locale('es_ES');
+        $field = $table->translationField('title');
+        $this->assertSame($expectedOtherLocale, $field);
+
+        I18n::locale('en');
+        $field = $table->translationField('title');
+        $this->assertSame($expectedOtherLocale, $field);
+
+        $table->removeBehavior('Translate');
+
+        $table->addBehavior('Translate', [
+            'fields' => ['title', 'body'],
+            'defaultLocale' => 'de_DE'
+        ]);
+
+        I18n::locale('de_DE');
+        $field = $table->translationField('title');
+        $this->assertSame($expectedSameLocale, $field);
+
+        I18n::locale('en_US');
+        $field = $table->translationField('title');
+        $this->assertSame($expectedOtherLocale, $field);
+
+        $table->locale('de_DE');
+        $field = $table->translationField('title');
+        $this->assertSame($expectedSameLocale, $field);
+
+        $table->locale('es');
+        $field = $table->translationField('title');
+        $this->assertSame($expectedOtherLocale, $field);
     }
 
     /**
@@ -1700,4 +1736,29 @@ class TranslateBehaviorTest extends TestCase
         ];
         $this->assertEquals($expected, $entity->errors('es'));
     }
+
+//    /**
+//     * Test that translationField method returns the standard column name
+//     * while using the default locale, and the i18n table alias when
+//     * using other language
+//     *
+//     * @return void
+//     */
+//    public function testTranslationFieldErrors()
+//    {
+//        $table = TableRegistry::get('Articles');
+//        $table->addBehavior('Translate', [
+//            'fields' => ['title'],
+//            'defaultLocale' => 'en_US'
+//        ]);
+//
+////        I18n::locale('en_US');
+////        $this->assertEquals('Articles.title', $table->translationField('title'));
+//
+////        I18n::locale('de_DE');
+////        $this->assertEquals($table->translationField('title'), 'Articles_title_translation.content');
+//
+////        I18n::locale('en');
+////        $this->assertEquals($table->translationField('title'), 'Articles_title_translation.content');
+//    }
 }
