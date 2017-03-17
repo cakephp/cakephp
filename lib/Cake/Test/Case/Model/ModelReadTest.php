@@ -6685,6 +6685,22 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 	}
 
+	public function testFindListZeroIndex() {
+		$this->loadFixtures('AnotherArticle');
+		$TestModel = new AnotherArticle();
+		$result = $TestModel->find('list', array(
+			'fields' => array('title', 'id'),
+			'order' => 'Article.title ASC',
+		));
+		$expected = array(
+			'First Article' => 1,
+			'Second Article' => 2,
+			'Third Article' => 3,
+			'Zeroth Article' => 0,
+		);
+		$this->assertEquals($expected, $result);
+	}
+
 /**
  * test find('list') method
  *
