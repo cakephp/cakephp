@@ -83,14 +83,19 @@ class CookieCollectionTest extends TestCase
         $this->assertCount(0, $collection);
 
         $remember = new Cookie('remember_me', 'a');
-        $this->assertSame($collection, $collection->add($remember));
-        $this->assertCount(1, $collection);
-        $this->assertTrue($collection->has('remember_me'));
-        $this->assertSame($remember, $collection->get('remember_me'));
+        $new = $collection->add($remember);
+        $this->assertNotSame($new, $collection->add($remember));
+        $this->assertCount(0, $collection, 'Original instance not modified');
+        $this->assertCount(1, $new);
+        $this->assertFalse($collection->has('remember_me'), 'Original instance not modified');
+        $this->assertTrue($new->has('remember_me'));
+        $this->assertSame($remember, $new->get('remember_me'));
 
         $rememberNo = new Cookie('remember_me', 'no');
-        $this->assertSame($collection, $collection->add($remember)->add($rememberNo));
-        $this->assertSame($rememberNo, $collection->get('remember_me'));
+        $second = $new->add($remember)->add($rememberNo);
+        $this->assertCount(1, $second);
+        $this->assertNotSame($second, $new);
+        $this->assertSame($rememberNo, $second->get('remember_me'));
     }
 
     /**
@@ -125,9 +130,12 @@ class CookieCollectionTest extends TestCase
 
         $collection = new CookieCollection($cookies);
         $this->assertInstanceOf(Cookie::class, $collection->get('REMEMBER_me'), 'case insensitive cookie names');
-        $this->assertSame($collection, $collection->remove('remember_me'));
-        $this->assertFalse($collection->has('remember_me'));
-        $this->assertNull($collection->get('remember_me'));
+        $new = $collection->remove('remember_me');
+        $this->assertTrue($collection->has('remember_me'), 'old instance not modified');
+
+        $this->assertNotSame($new, $collection);
+        $this->assertFalse($new->has('remember_me'), 'should be removed');
+        $this->assertNull($new->get('remember_me'), 'should be removed');
     }
 
     /**

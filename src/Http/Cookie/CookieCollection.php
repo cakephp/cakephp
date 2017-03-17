@@ -20,6 +20,9 @@ use IteratorAggregate;
 
 /**
  * Cookie Collection
+ *
+ * Provides an immutable collection of cookies objects. Adding or removing
+ * to a collection returns a *new* collection that you must retain.
  */
 class CookieCollection implements IteratorAggregate, Countable
 {
@@ -57,17 +60,18 @@ class CookieCollection implements IteratorAggregate, Countable
     }
 
     /**
-     * Add a cookie to the collection
+     * Add a cookie and get an updated collection.
      *
      * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie instance to add.
-     * @return $this
+     * @return static
      */
     public function add(CookieInterface $cookie)
     {
         $key = mb_strtolower($cookie->getName());
-        $this->cookies[$key] = $cookie;
+        $new = clone $this;
+        $new->cookies[$key] = $cookie;
 
-        return $this;
+        return $new;
     }
 
     /**
@@ -103,18 +107,19 @@ class CookieCollection implements IteratorAggregate, Countable
     }
 
     /**
-     * Remove a cookie from the collection
+     * Remove a cookie from the collection and get a new collection
      *
      * If the cookie is not in the collection, this method will do nothing.
      *
      * @param string $name The name of the cookie to remove.
-     * @return $this
+     * @return static
      */
     public function remove($name)
     {
-        unset($this->cookies[mb_strtolower($name)]);
+        $new = clone $this;
+        unset($new->cookies[mb_strtolower($name)]);
 
-        return $this;
+        return $new;
     }
 
     /**
