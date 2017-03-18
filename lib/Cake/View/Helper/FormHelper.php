@@ -1068,7 +1068,7 @@ class FormHelper extends AppHelper {
 		if ($type !== 'hidden' && $error !== false) {
 			$errMsg = $this->error($fieldName, $error);
 			if ($errMsg) {
-				$divOptions = $this->addClass($divOptions, 'error');
+				$divOptions = $this->addClass($divOptions, Hash::get($divOptions, 'errorClass', 'error'));
 				if ($errorMessage) {
 					$out['error'] = $errMsg;
 				}
@@ -1088,7 +1088,7 @@ class FormHelper extends AppHelper {
 
 		if (!empty($divOptions['tag'])) {
 			$tag = $divOptions['tag'];
-			unset($divOptions['tag']);
+			unset($divOptions['tag'], $divOptions['errorClass']);
 			$output = $this->Html->tag($tag, $output, $divOptions);
 		}
 		return $output;
