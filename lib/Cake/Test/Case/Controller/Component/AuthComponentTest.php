@@ -1429,6 +1429,23 @@ class AuthComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test that logout removes the active user data as well for stateless auth
+ *
+ * @return void
+ */
+	public function testLogoutRemoveUser() {
+		$oldKey = AuthComponent::$sessionKey;
+		AuthComponent::$sessionKey = false;
+		$this->Auth->login(array('id' => 1, 'username' => 'mariano'));
+		$this->assertSame('mariano', $this->Auth->user('username'));
+
+		$this->Auth->logout();
+		AuthComponent::$sessionKey = $oldKey;
+
+		$this->assertNull($this->Auth->user('username'));
+	}
+
+/**
  * Logout should trigger a logout method on authentication objects.
  *
  * @return void
