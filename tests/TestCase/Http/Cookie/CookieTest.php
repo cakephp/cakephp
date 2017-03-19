@@ -98,9 +98,9 @@ class CookieTest extends TestCase
 
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $cookie = $cookie->withDomain('cakephp.org')
+            ->withExpiry($date)
             ->withHttpOnly(true)
             ->withSecure(true);
-        $cookie->expiresAt($date);
         $result = $cookie->toHeaderValue();
 
         $expected = 'cakephp=cakephp-rocks; expires=Tue, 01-Dec-2026 12:00:00 GMT; domain=cakephp.org; secure; httponly';
@@ -308,9 +308,74 @@ class CookieTest extends TestCase
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $new = $cookie->withExpired();
         $this->assertNotSame($new, $cookie, 'Should clone');
+        $this->assertNotContains('expiry', $cookie->toHeaderValue());
 
         $now = Chronos::parse('-1 year');
         $this->assertContains($now->format('Y'), $new->toHeaderValue());
+    }
+
+    /**
+     * Test the withExpiry method
+     *
+     * @return void
+     */
+    public function testWithExpiry()
+    {
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $new = $cookie->withExpiry(Chronos::createFromDate(2022, 6, 15));
+        $this->assertNotSame($new, $cookie, 'Should clone');
+        $this->assertNotContains('expires', $cookie->toHeaderValue());
+
+        $this->assertContains('expires=Wed, 15-Jun-2022', $new->toHeaderValue());
+    }
+
+    /**
+     * Test the withName method
+     *
+     * @return void
+     */
+    public function testWithName()
+    {
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $new = $cookie->withName('user');
+        $this->assertNotSame($new, $cookie, 'Should clone');
+        $this->assertNotSame('user', $cookie->getName());
+        $this->assertSame('user', $new->getName());
+    }
+
+    /**
+     * Test the withAddedValue method
+     *
+     * @return void
+     */
+    public function testWithAddedValue()
+    {
+        $cookie = new Cookie('cakephp', '{"type":"mvc", "icing": true}');
+        $cookie->expand();
+        $new = $cookie->withAddedValue('type', 'mvc')
+            ->withAddedValue('user.name', 'mark');
+        $this->assertNotSame($new, $cookie, 'Should clone');
+        $this->assertNull($cookie->read('user.name'));
+        $this->assertSame('mvc', $new->read('type'));
+        $this->assertSame('mark', $new->read('user.name'));
+    }
+
+    /**
+     * Test the withoutAddedValue method
+     *
+     * @return void
+     */
+    public function testWithoutAddedValue()
+    {
+        $cookie = new Cookie('cakephp', '{"type":"mvc", "user": {"name":"mark"}}');
+        $cookie->expand();
+        $new = $cookie->withoutAddedValue('type', 'mvc')
+            ->withoutAddedValue('user.name');
+        $this->assertNotSame($new, $cookie, 'Should clone');
+
+        $this->assertNotNull($cookie->read('type'));
+        $this->assertNull($new->read('type'));
+        $this->assertNull($new->read('user.name'));
     }
 
     /**

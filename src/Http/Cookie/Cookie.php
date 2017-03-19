@@ -120,8 +120,15 @@ class Cookie implements CookieInterface
      * @param bool $secure Is secure
      * @param bool $httpOnly HTTP Only
      */
-    public function __construct($name, $value = '', $expiresAt = null, $path = '', $domain = '', $secure = false, $httpOnly = false)
-    {
+    public function __construct(
+        $name,
+        $value = '',
+        DateTimeInterface $expiresAt = null,
+        $path = '',
+        $domain = '',
+        $secure = false,
+        $httpOnly = false
+    ) {
         $this->validateName($name);
         $this->name = $name;
 
@@ -140,7 +147,7 @@ class Cookie implements CookieInterface
         $this->secure = $secure;
 
         if ($expiresAt !== null) {
-            $this->expiresAt($expiresAt);
+            $this->expiresAt = (int)$expiresAt->format('U');
         }
     }
 
@@ -186,17 +193,18 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Sets the cookie name
+     * Create a cookie with an updated name
      *
      * @param string $name Name of the cookie
-     * @return $this
+     * @return static
      */
-    public function setName($name)
+    public function withName($name)
     {
         $this->validateName($name);
-        $this->name = $name;
+        $new = clone $this;
+        $new->name = $name;
 
-        return $this;
+        return $new;
     }
 
     /**
@@ -383,16 +391,17 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Sets the expiration date
+     * Create a cookie with an updated expiration date
      *
      * @param \DateTimeInterface $dateTime Date time object
-     * @return $this
+     * @return static
      */
-    public function expiresAt(DateTimeInterface $dateTime)
+    public function withExpiry(DateTimeInterface $dateTime)
     {
-        $this->expiresAt = (int)$dateTime->format('U');
+        $new = clone $this;
+        $new->expiresAt = (int)$dateTime->format('U');
 
-        return $this;
+        return $new;
     }
 
     /**
@@ -437,19 +446,34 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Writes data to the cookie
+     * Create a new cookie with updated data.
      *
      * @param string $path Path to write to
      * @param mixed $value Value to write
-     * @return $this
+     * @return static
      */
-    public function write($path, $value)
+    public function withAddedValue($path, $value)
     {
         $this->_isExpanded();
+        $new = clone $this;
+        $new->value = Hash::insert($new->value, $path, $value);
 
-        Hash::insert($this->value, $path, $value);
+        return $new;
+    }
 
-        return $this;
+    /**
+     * Create a new cookie without a specific path
+     *
+     * @param string $path Path to remove
+     * @return static
+     */
+    public function withoutAddedValue($path)
+    {
+        $this->_isExpanded();
+        $new = clone $this;
+        $new->value = Hash::remove($new->value, $path);
+
+        return $new;
     }
 
     /**

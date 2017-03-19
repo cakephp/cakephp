@@ -22,9 +22,9 @@ interface CookieInterface
      * Sets the cookie name
      *
      * @param string $name Name of the cookie
-     * @return $this
+     * @return static
      */
-    public function setName($name);
+    public function withName($name);
 
     /**
      * Gets the cookie name
