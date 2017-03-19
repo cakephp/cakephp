@@ -396,6 +396,34 @@ class Cookie implements CookieInterface
     }
 
     /**
+     * Create a new cookie that will virtually never expire.
+     *
+     * @return static
+     */
+    public function withNeverExpire()
+    {
+        $new = clone $this;
+        $new->expiresAt = Chronos::createFromDate(2038, 1, 1)->format('U');
+
+        return $new;
+    }
+
+    /**
+     * Create a new cookie that wil deletes the cookie from the browser
+     *
+     * This is done by setting the expiration time to 1 year ago
+     *
+     * @return static
+     */
+    public function withExpired()
+    {
+        $new = clone $this;
+        $new->expiresAt = Chronos::parse('-1 year')->format('U');
+
+        return $new;
+    }
+
+    /**
      * Checks if a value exists in the cookie data
      *
      * @param string $path Path to check
@@ -452,32 +480,6 @@ class Cookie implements CookieInterface
         if (!$this->isExpanded) {
             throw new RuntimeException('The Cookie data has not been expanded');
         }
-    }
-
-    /**
-     * Sets the cookies date to a far future so it will virtually never expire
-     *
-     * @return $this
-     */
-    public function willNeverExpire()
-    {
-        $this->expiresAt = Chronos::now()->setDate(2038, 1, 1)->format('U');
-
-        return $this;
-    }
-
-    /**
-     * Deletes the cookie from the browser
-     *
-     * This is done by setting the expiration time to "now"
-     *
-     * @return $this
-     */
-    public function willBeDeleted()
-    {
-        $this->expiresAt = Chronos::now()->format('U');
-
-        return $this;
     }
 
     /**

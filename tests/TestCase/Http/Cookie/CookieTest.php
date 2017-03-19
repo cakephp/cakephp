@@ -286,6 +286,34 @@ class CookieTest extends TestCase
     }
 
     /**
+     * Test the never expiry method
+     *
+     * @return void
+     */
+    public function testWithNeverExpire()
+    {
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $new = $cookie->withNeverExpire();
+        $this->assertNotSame($new, $cookie, 'Should clone');
+        $this->assertContains('01-Jan-2038', $new->toHeaderValue());
+    }
+
+    /**
+     * Test the expired method
+     *
+     * @return void
+     */
+    public function testWithExpired()
+    {
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $new = $cookie->withExpired();
+        $this->assertNotSame($new, $cookie, 'Should clone');
+
+        $now = Chronos::parse('-1 year');
+        $this->assertContains($now->format('Y'), $new->toHeaderValue());
+    }
+
+    /**
      * testInflateAndExpand
      *
      * @return void
