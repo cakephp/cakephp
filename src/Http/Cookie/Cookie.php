@@ -125,10 +125,12 @@ class Cookie implements CookieInterface
         $this->validateName($name);
         $this->name = $name;
         $this->_setValue($value);
-        $this->validateDomain($domain);
+        $this->validateString($domain);
         $this->domain = $domain;
-        $this->setHttpOnly($httpOnly);
-        $this->setPath($path);
+        $this->validateBool($httpOnly);
+        $this->httpOnly = $httpOnly;
+        $this->validateString($path);
+        $this->path = $path;
 
         if ($expiresAt !== null) {
             $this->expiresAt($expiresAt);
@@ -260,23 +262,18 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Sets the path
+     * Create a new cookie with an updated path
      *
      * @param string $path Sets the path
-     * @return $this
+     * @return static
      */
-    public function setPath($path)
+    public function withPath($path)
     {
-        if (!is_string($path)) {
-            throw new InvalidArgumentException(sprintf(
-                'The provided arg must be of type `string` but `%s` given',
-                gettype($path)
-            ));
-        }
+        $this->validateString($path);
+        $new = clone $this;
+        $new->path = $path;
 
-        $this->path = $path;
-
-        return $this;
+        return $new;
     }
 
     /**
@@ -287,7 +284,7 @@ class Cookie implements CookieInterface
      */
     public function withDomain($domain)
     {
-        $this->validateDomain($domain);
+        $this->validateString($domain);
         $new = clone $this;
         $new->domain = $domain;
 
@@ -295,18 +292,18 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Validate that domains are strings.
+     * Validate that an argument is a string
      *
-     * @param string $domain The domain to validate.
+     * @param string $value The value to validate.
      * @return void
      * @throws \InvalidArgumentException
      */
-    protected function validateDomain($domain)
+    protected function validateString($value)
     {
-        if (!is_string($domain)) {
+        if (!is_string($value)) {
             throw new InvalidArgumentException(sprintf(
                 'The provided arg must be of type `string` but `%s` given',
-                gettype($domain)
+                gettype($value)
             ));
         }
     }
@@ -322,23 +319,35 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Set HTTP Only
+     * Create a cookie with HTTP Only updated
      *
      * @param bool $httpOnly HTTP Only
-     * @return $this
+     * @return static
      */
-    public function setHttpOnly($httpOnly)
+    public function withHttpOnly($httpOnly)
     {
-        if (!is_bool($httpOnly)) {
+        $this->validateBool($httpOnly);
+        $new = clone $this;
+        $new->httpOnly = $httpOnly;
+
+        return $new;
+    }
+
+    /**
+     * Validate that an argument is a boolean
+     *
+     * @param bool $value The value to validate.
+     * @return void
+     * @throws \InvalidArgumentException
+     */
+    protected function validateBool($value)
+    {
+        if (!is_bool($value)) {
             throw new InvalidArgumentException(sprintf(
                 'The provided arg must be of type `bool` but `%s` given',
-                gettype($httpOnly)
+                gettype($value)
             ));
         }
-
-        $this->httpOnly = $httpOnly;
-
-        return $this;
     }
 
     /**

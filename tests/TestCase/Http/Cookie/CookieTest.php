@@ -141,6 +141,17 @@ class CookieTest extends TestCase
      * @return void
      * @expectedException \InvalidArgumentException
      */
+    public function testWithDomainInvalidConstructor()
+    {
+        new Cookie('cakephp', 'rocks', null, '', 1234);
+    }
+
+    /**
+     * Test setting domain in cookies
+     *
+     * @return void
+     * @expectedException \InvalidArgumentException
+     */
     public function testWithDomainInvalid()
     {
         $cookie = new Cookie('cakephp', 'rocks');
@@ -158,7 +169,81 @@ class CookieTest extends TestCase
         $new = $cookie->withDomain('example.com');
         $this->assertNotSame($new, $cookie, 'Should make a clone');
         $this->assertNotContains('example.com', $cookie->toHeaderValue(), 'old instance not modified');
-        $this->assertContains('example.com', $new->toHeaderValue());
+        $this->assertContains('domain=example.com', $new->toHeaderValue());
+    }
+
+    /**
+     * Test setting path in cookies
+     *
+     * @return void
+     * @expectedException \InvalidArgumentException
+     */
+    public function testWithPathInvalid()
+    {
+        $cookie = new Cookie('cakephp', 'rocks');
+        $cookie->withPath(['oops']);
+    }
+
+    /**
+     * Test setting path in cookies
+     *
+     * @return void
+     * @expectedException \InvalidArgumentException
+     */
+    public function testWithPathInvalidConstructor()
+    {
+        new Cookie('cakephp', 'rocks', null, 123);
+    }
+
+    /**
+     * Test setting path in cookies
+     *
+     * @return void
+     */
+    public function testWithPath()
+    {
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $new = $cookie->withPath('/api');
+        $this->assertNotSame($new, $cookie, 'Should make a clone');
+        $this->assertNotContains('path=/api', $cookie->toHeaderValue(), 'old instance not modified');
+        $this->assertContains('path=/api', $new->toHeaderValue());
+    }
+
+    /**
+     * Test setting httponly in cookies
+     *
+     * @return void
+     * @expectedException \InvalidArgumentException
+     */
+    public function testWithHttpOnlyInvalidConstructor()
+    {
+        new Cookie('cakephp', 'cakephp-rocks', null, '', '', false, 'invalid');
+    }
+
+    /**
+     * Test setting httponly in cookies
+     *
+     * @return void
+     * @expectedException \InvalidArgumentException
+     */
+    public function testWithHttpOnlyInvalid()
+    {
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $cookie->withHttpOnly('no');
+    }
+
+    /**
+     * Test setting httponly in cookies
+     *
+     * @return void
+     */
+    public function testWithHttpOnly()
+    {
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $new = $cookie->withHttpOnly(true);
+        $this->assertNotSame($new, $cookie, 'Should clone');
+        $this->assertFalse($cookie->isHttpOnly());
+        $this->assertTrue($new->isHttpOnly());
     }
 
     /**
