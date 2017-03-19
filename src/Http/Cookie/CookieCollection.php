@@ -14,13 +14,17 @@
 namespace Cake\Http\Cookie;
 
 use ArrayIterator;
+use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
 
 /**
  * Cookie Collection
+ *
+ * Provides an immutable collection of cookies objects. Adding or removing
+ * to a collection returns a *new* collection that you must retain.
  */
-class CookieCollection implements IteratorAggregate
+class CookieCollection implements IteratorAggregate, Countable
 {
 
     /**
@@ -43,6 +47,79 @@ class CookieCollection implements IteratorAggregate
             $key = mb_strtolower($name);
             $this->cookies[$key] = $cookie;
         }
+    }
+
+    /**
+     * Get the number of cookies in the collection.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->cookies);
+    }
+
+    /**
+     * Add a cookie and get an updated collection.
+     *
+     * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie instance to add.
+     * @return static
+     */
+    public function add(CookieInterface $cookie)
+    {
+        $key = mb_strtolower($cookie->getName());
+        $new = clone $this;
+        $new->cookies[$key] = $cookie;
+
+        return $new;
+    }
+
+    /**
+     * Get a cookie by name
+     *
+     * If the provided name matches a URL (matches `#^https?://#`) this method
+     * will assume you want a list of cookies that match that URL. This is
+     * backwards compatible behavior that will be removed in 4.0.0
+     *
+     * @param string $name The name of the cookie. If the name looks like a URL,
+     *  backwards compatible behavior will be used.
+     * @return \Cake\Http\Cookie\CookieInterface|null|array
+     */
+    public function get($name)
+    {
+        $key = mb_strtolower($name);
+        if (isset($this->cookies[$key])) {
+            return $this->cookies[$key];
+        }
+
+        return null;
+    }
+
+    /**
+     * Check if a cookie with the given name exists
+     *
+     * @param string $name The cookie name to check.
+     * @return bool True if the cookie exists, otherwise false.
+     */
+    public function has($name)
+    {
+        return isset($this->cookies[mb_strtolower($name)]);
+    }
+
+    /**
+     * Remove a cookie from the collection and get a new collection
+     *
+     * If the cookie is not in the collection, this method will do nothing.
+     *
+     * @param string $name The name of the cookie to remove.
+     * @return static
+     */
+    public function remove($name)
+    {
+        $new = clone $this;
+        unset($new->cookies[mb_strtolower($name)]);
+
+        return $new;
     }
 
     /**
