@@ -895,8 +895,10 @@ class Mysql extends DboSource {
 				$i++;
 			}
 		}
+		$this->_connection->query('SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE="NO_AUTO_VALUE_ON_ZERO"');
 		$result = $statement->execute();
 		$statement->closeCursor();
+		$this->_connection->query('SET SQL_MODE=@OLD_SQL_MODE');
 		if ($this->fullDebug) {
 			$this->logQuery($sql, $valuesList);
 		}
