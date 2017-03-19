@@ -247,6 +247,43 @@ class CookieTest extends TestCase
     }
 
     /**
+     * Test setting secure in cookies
+     *
+     * @return void
+     * @expectedException \InvalidArgumentException
+     */
+    public function testWithSecureInvalidConstructor()
+    {
+        new Cookie('cakephp', 'cakephp-rocks', null, '', '', 'invalid');
+    }
+
+    /**
+     * Test setting secure in cookies
+     *
+     * @return void
+     * @expectedException \InvalidArgumentException
+     */
+    public function testWithSecureInvalid()
+    {
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $cookie->withSecure('no');
+    }
+
+    /**
+     * Test setting httponly in cookies
+     *
+     * @return void
+     */
+    public function testWithSecure()
+    {
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $new = $cookie->withSecure(true);
+        $this->assertNotSame($new, $cookie, 'Should clone');
+        $this->assertFalse($cookie->isSecure());
+        $this->assertTrue($new->isSecure());
+    }
+
+    /**
      * testInflateAndExpand
      *
      * @return void

@@ -124,13 +124,20 @@ class Cookie implements CookieInterface
     {
         $this->validateName($name);
         $this->name = $name;
+
         $this->_setValue($value);
+
         $this->validateString($domain);
         $this->domain = $domain;
+
         $this->validateBool($httpOnly);
         $this->httpOnly = $httpOnly;
+
         $this->validateString($path);
         $this->path = $path;
+
+        $this->validateBool($secure);
+        $this->secure = $secure;
 
         if ($expiresAt !== null) {
             $this->expiresAt($expiresAt);
@@ -316,6 +323,21 @@ class Cookie implements CookieInterface
     public function isSecure()
     {
         return $this->secure;
+    }
+
+    /**
+     * Create a cookie with Secure updated
+     *
+     * @param bool $httpOnly HTTP Only
+     * @return static
+     */
+    public function withSecure($secure)
+    {
+        $this->validateBool($secure);
+        $new = clone $this;
+        $new->secure = $secure;
+
+        return $new;
     }
 
     /**
