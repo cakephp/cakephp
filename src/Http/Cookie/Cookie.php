@@ -31,8 +31,7 @@ use RuntimeException;
  * store) or to record the user's browsing activity (including clicking
  * particular buttons, logging in, or recording which pages were visited in
  * the past). They can also be used to remember arbitrary pieces of information
- * that the user previously entered into form fields such as names, addresses,
- * passwords, and credit card numbers.
+ * that the user previously entered into form fields such as names, and preferences.
  *
  * @link https://tools.ietf.org/html/rfc6265
  * @link https://en.wikipedia.org/wiki/HTTP_cookie
