@@ -125,7 +125,8 @@ class Cookie implements CookieInterface
         $this->validateName($name);
         $this->name = $name;
         $this->_setValue($value);
-        $this->setDomain($domain);
+        $this->validateDomain($domain);
+        $this->domain = $domain;
         $this->setHttpOnly($httpOnly);
         $this->setPath($path);
 
@@ -279,12 +280,28 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Sets the domain
+     * Create a cookie with an updated domain
      *
      * @param string $domain Domain to set
-     * @return $this
+     * @return static
      */
-    public function setDomain($domain)
+    public function withDomain($domain)
+    {
+        $this->validateDomain($domain);
+        $new = clone $this;
+        $new->domain = $domain;
+
+        return $new;
+    }
+
+    /**
+     * Validate that domains are strings.
+     *
+     * @param string $domain The domain to validate.
+     * @return void
+     * @throws \InvalidArgumentException
+     */
+    protected function validateDomain($domain)
     {
         if (!is_string($domain)) {
             throw new InvalidArgumentException(sprintf(
@@ -292,10 +309,6 @@ class Cookie implements CookieInterface
                 gettype($domain)
             ));
         }
-
-        $this->domain = $domain;
-
-        return $this;
     }
 
     /**

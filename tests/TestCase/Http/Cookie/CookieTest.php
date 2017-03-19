@@ -97,12 +97,11 @@ class CookieTest extends TestCase
         $date = Chronos::createFromFormat('m/d/Y h:m:s', '12/1/2027 12:00:00');
 
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
-        $cookie->setDomain('cakephp.org');
+        $cookie = $cookie->withDomain('cakephp.org');
         $cookie->expiresAt($date);
         $result = $cookie->toHeaderValue();
 
         $expected = 'cakephp=cakephp-rocks; expires=Tue, 01-Dec-2026 12:00:00 GMT; domain=cakephp.org';
-
         $this->assertEquals($expected, $result);
     }
 
@@ -134,6 +133,32 @@ class CookieTest extends TestCase
         $this->assertNotSame($new, $cookie, 'Should make a clone');
         $this->assertSame('cakephp-rocks', $cookie->getValue(), 'old instance not modified');
         $this->assertSame('new', $new->getValue());
+    }
+
+    /**
+     * Test setting domain in cookies
+     *
+     * @return void
+     * @expectedException \InvalidArgumentException
+     */
+    public function testWithDomainInvalid()
+    {
+        $cookie = new Cookie('cakephp', 'rocks');
+        $cookie->withDomain(['oops']);
+    }
+
+    /**
+     * Test setting domain in cookies
+     *
+     * @return void
+     */
+    public function testWithDomain()
+    {
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $new = $cookie->withDomain('example.com');
+        $this->assertNotSame($new, $cookie, 'Should make a clone');
+        $this->assertNotContains('example.com', $cookie->toHeaderValue(), 'old instance not modified');
+        $this->assertContains('example.com', $new->toHeaderValue());
     }
 
     /**
