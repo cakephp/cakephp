@@ -41,12 +41,12 @@ interface CookieInterface
     public function getValue();
 
     /**
-     * Sets the raw cookie data
+     * Create a cookie with an updated value.
      *
      * @param string|array $value Value of the cookie to set
-     * @return $this
+     * @return static
      */
-    public function setValue($value);
+    public function withValue($value);
 
     /**
      * Returns the cookie as header value

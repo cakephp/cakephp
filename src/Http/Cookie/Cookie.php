@@ -33,6 +33,13 @@ use RuntimeException;
  * the past). They can also be used to remember arbitrary pieces of information
  * that the user previously entered into form fields such as names, and preferences.
  *
+ * Cookie objects are immutable, and you must re-assign variables when modifying
+ * cookie objects:
+ *
+ * ```
+ * $cookie = $cookie->withValue('0');
+ * ```
+ *
  * @link https://tools.ietf.org/html/rfc6265
  * @link https://en.wikipedia.org/wiki/HTTP_cookie
  */
@@ -116,8 +123,8 @@ class Cookie implements CookieInterface
     public function __construct($name, $value = '', $expiresAt = null, $path = '', $domain = '', $secure = false, $httpOnly = false)
     {
         $this->validateName($name);
-        $this->setName($name);
-        $this->setValue($value);
+        $this->name = $name;
+        $this->_setValue($value);
         $this->setDomain($domain);
         $this->setHttpOnly($httpOnly);
         $this->setPath($path);
@@ -223,20 +230,32 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Sets the raw cookie data
+     * Create a cookie with an updated value.
      *
      * @param string|array $value Value of the cookie to set
-     * @return $this
+     * @return static
      */
-    public function setValue($value)
+    public function withValue($value)
+    {
+        $new = clone $this;
+        $new->_setValue($value);
+
+        return $new;
+    }
+
+    /**
+     * Setter for the value attribute.
+     *
+     * @param mixed $value The value to store.
+     * @return void
+     */
+    protected function _setValue($value)
     {
         if (is_array($value)) {
             $this->isExpanded = true;
         }
 
         $this->value = $value;
-
-        return $this;
     }
 
     /**

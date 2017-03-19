@@ -123,6 +123,20 @@ class CookieTest extends TestCase
     }
 
     /**
+     * Test setting values in cookies
+     *
+     * @return void
+     */
+    public function testWithValue()
+    {
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $new = $cookie->withValue('new');
+        $this->assertNotSame($new, $cookie, 'Should make a clone');
+        $this->assertSame('cakephp-rocks', $cookie->getValue(), 'old instance not modified');
+        $this->assertSame('new', $new->getValue());
+    }
+
+    /**
      * testInflateAndExpand
      *
      * @return void
