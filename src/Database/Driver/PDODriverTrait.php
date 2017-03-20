@@ -89,8 +89,8 @@ trait PDODriverTrait
             $connected = false;
         } else {
             try {
-                $connected = $this->_connection->query('SELECT 1');
-            } catch (\PDOException $e) {
+                $connected = $this->_connection->query('SELECT 1')->fetchAll();
+            } catch (\Exception $e) {
                 $connected = false;
             }
         }
