@@ -336,7 +336,7 @@ class Cookie implements CookieInterface
     /**
      * Create a cookie with Secure updated
      *
-     * @param bool $httpOnly HTTP Only
+     * @param bool $secure Secure attribute value
      * @return static
      */
     public function withSecure($secure)
