@@ -418,7 +418,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Create a new cookie that wil deletes the cookie from the browser
+     * Create a new cookie that will expire/delete the cookie from the browser.
      *
      * This is done by setting the expiration time to 1 year ago
      *
@@ -433,7 +433,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Checks if a value exists in the cookie data
+     * Checks if a value exists in the cookie data.
      *
      * @param string $path Path to check
      * @return bool
