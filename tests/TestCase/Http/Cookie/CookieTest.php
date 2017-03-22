@@ -142,6 +142,7 @@ class CookieTest extends TestCase
      *
      * @return void
      * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The provided arg must be of type `string` but `integer` given
      */
     public function testWithDomainInvalidConstructor()
     {
@@ -153,6 +154,7 @@ class CookieTest extends TestCase
      *
      * @return void
      * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The provided arg must be of type `string` but `array` given
      */
     public function testWithDomainInvalid()
     {
@@ -179,6 +181,7 @@ class CookieTest extends TestCase
      *
      * @return void
      * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The provided arg must be of type `string` but `array` given
      */
     public function testWithPathInvalid()
     {
@@ -191,6 +194,7 @@ class CookieTest extends TestCase
      *
      * @return void
      * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The provided arg must be of type `string` but `integer` given
      */
     public function testWithPathInvalidConstructor()
     {
@@ -216,6 +220,7 @@ class CookieTest extends TestCase
      *
      * @return void
      * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The provided arg must be of type `bool` but `string` given
      */
     public function testWithHttpOnlyInvalidConstructor()
     {
@@ -227,6 +232,7 @@ class CookieTest extends TestCase
      *
      * @return void
      * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The provided arg must be of type `bool` but `string` given
      */
     public function testWithHttpOnlyInvalid()
     {
@@ -253,6 +259,7 @@ class CookieTest extends TestCase
      *
      * @return void
      * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The provided arg must be of type `bool` but `string` given
      */
     public function testWithSecureInvalidConstructor()
     {
@@ -264,6 +271,7 @@ class CookieTest extends TestCase
      *
      * @return void
      * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The provided arg must be of type `bool` but `string` given
      */
     public function testWithSecureInvalid()
     {
@@ -272,7 +280,7 @@ class CookieTest extends TestCase
     }
 
     /**
-     * Test setting httponly in cookies
+     * Test setting secure in cookies
      *
      * @return void
      */
