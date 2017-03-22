@@ -31,8 +31,14 @@ use RuntimeException;
  * store) or to record the user's browsing activity (including clicking
  * particular buttons, logging in, or recording which pages were visited in
  * the past). They can also be used to remember arbitrary pieces of information
- * that the user previously entered into form fields such as names, addresses,
- * passwords, and credit card numbers.
+ * that the user previously entered into form fields such as names, and preferences.
+ *
+ * Cookie objects are immutable, and you must re-assign variables when modifying
+ * cookie objects:
+ *
+ * ```
+ * $cookie = $cookie->withValue('0');
+ * ```
  *
  * @link https://tools.ietf.org/html/rfc6265
  * @link https://en.wikipedia.org/wiki/HTTP_cookie
@@ -114,17 +120,34 @@ class Cookie implements CookieInterface
      * @param bool $secure Is secure
      * @param bool $httpOnly HTTP Only
      */
-    public function __construct($name, $value = '', $expiresAt = null, $path = '', $domain = '', $secure = false, $httpOnly = false)
-    {
+    public function __construct(
+        $name,
+        $value = '',
+        DateTimeInterface $expiresAt = null,
+        $path = '',
+        $domain = '',
+        $secure = false,
+        $httpOnly = false
+    ) {
         $this->validateName($name);
-        $this->setName($name);
-        $this->setValue($value);
-        $this->setDomain($domain);
-        $this->setHttpOnly($httpOnly);
-        $this->setPath($path);
+        $this->name = $name;
+
+        $this->_setValue($value);
+
+        $this->validateString($domain);
+        $this->domain = $domain;
+
+        $this->validateBool($httpOnly);
+        $this->httpOnly = $httpOnly;
+
+        $this->validateString($path);
+        $this->path = $path;
+
+        $this->validateBool($secure);
+        $this->secure = $secure;
 
         if ($expiresAt !== null) {
-            $this->expiresAt($expiresAt);
+            $this->expiresAt = (int)$expiresAt->format('U');
         }
     }
 
@@ -170,17 +193,18 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Sets the cookie name
+     * Create a cookie with an updated name
      *
      * @param string $name Name of the cookie
-     * @return $this
+     * @return static
      */
-    public function setName($name)
+    public function withName($name)
     {
         $this->validateName($name);
-        $this->name = $name;
+        $new = clone $this;
+        $new->name = $name;
 
-        return $this;
+        return $new;
     }
 
     /**
@@ -224,60 +248,79 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Sets the raw cookie data
+     * Create a cookie with an updated value.
      *
      * @param string|array $value Value of the cookie to set
-     * @return $this
+     * @return static
      */
-    public function setValue($value)
+    public function withValue($value)
+    {
+        $new = clone $this;
+        $new->_setValue($value);
+
+        return $new;
+    }
+
+    /**
+     * Setter for the value attribute.
+     *
+     * @param mixed $value The value to store.
+     * @return void
+     */
+    protected function _setValue($value)
     {
         if (is_array($value)) {
             $this->isExpanded = true;
         }
 
         $this->value = $value;
-
-        return $this;
     }
 
     /**
-     * Sets the path
+     * Create a new cookie with an updated path
      *
      * @param string $path Sets the path
-     * @return $this
+     * @return static
      */
-    public function setPath($path)
+    public function withPath($path)
     {
-        if (!is_string($path)) {
-            throw new InvalidArgumentException(sprintf(
-                'The provided arg must be of type `string` but `%s` given',
-                gettype($path)
-            ));
-        }
+        $this->validateString($path);
+        $new = clone $this;
+        $new->path = $path;
 
-        $this->path = $path;
-
-        return $this;
+        return $new;
     }
 
     /**
-     * Sets the domain
+     * Create a cookie with an updated domain
      *
      * @param string $domain Domain to set
-     * @return $this
+     * @return static
      */
-    public function setDomain($domain)
+    public function withDomain($domain)
     {
-        if (!is_string($domain)) {
+        $this->validateString($domain);
+        $new = clone $this;
+        $new->domain = $domain;
+
+        return $new;
+    }
+
+    /**
+     * Validate that an argument is a string
+     *
+     * @param string $value The value to validate.
+     * @return void
+     * @throws \InvalidArgumentException
+     */
+    protected function validateString($value)
+    {
+        if (!is_string($value)) {
             throw new InvalidArgumentException(sprintf(
                 'The provided arg must be of type `string` but `%s` given',
-                gettype($domain)
+                gettype($value)
             ));
         }
-
-        $this->domain = $domain;
-
-        return $this;
     }
 
     /**
@@ -291,23 +334,50 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Set HTTP Only
+     * Create a cookie with Secure updated
+     *
+     * @param bool $secure Secure attribute value
+     * @return static
+     */
+    public function withSecure($secure)
+    {
+        $this->validateBool($secure);
+        $new = clone $this;
+        $new->secure = $secure;
+
+        return $new;
+    }
+
+    /**
+     * Create a cookie with HTTP Only updated
      *
      * @param bool $httpOnly HTTP Only
-     * @return $this
+     * @return static
      */
-    public function setHttpOnly($httpOnly)
+    public function withHttpOnly($httpOnly)
     {
-        if (!is_bool($httpOnly)) {
+        $this->validateBool($httpOnly);
+        $new = clone $this;
+        $new->httpOnly = $httpOnly;
+
+        return $new;
+    }
+
+    /**
+     * Validate that an argument is a boolean
+     *
+     * @param bool $value The value to validate.
+     * @return void
+     * @throws \InvalidArgumentException
+     */
+    protected function validateBool($value)
+    {
+        if (!is_bool($value)) {
             throw new InvalidArgumentException(sprintf(
                 'The provided arg must be of type `bool` but `%s` given',
-                gettype($httpOnly)
+                gettype($value)
             ));
         }
-
-        $this->httpOnly = $httpOnly;
-
-        return $this;
     }
 
     /**
@@ -321,20 +391,49 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Sets the expiration date
+     * Create a cookie with an updated expiration date
      *
      * @param \DateTimeInterface $dateTime Date time object
-     * @return $this
+     * @return static
      */
-    public function expiresAt(DateTimeInterface $dateTime)
+    public function withExpiry(DateTimeInterface $dateTime)
     {
-        $this->expiresAt = (int)$dateTime->format('U');
+        $new = clone $this;
+        $new->expiresAt = (int)$dateTime->format('U');
 
-        return $this;
+        return $new;
     }
 
     /**
-     * Checks if a value exists in the cookie data
+     * Create a new cookie that will virtually never expire.
+     *
+     * @return static
+     */
+    public function withNeverExpire()
+    {
+        $new = clone $this;
+        $new->expiresAt = Chronos::createFromDate(2038, 1, 1)->format('U');
+
+        return $new;
+    }
+
+    /**
+     * Create a new cookie that will expire/delete the cookie from the browser.
+     *
+     * This is done by setting the expiration time to 1 year ago
+     *
+     * @return static
+     */
+    public function withExpired()
+    {
+        $new = clone $this;
+        $new->expiresAt = Chronos::parse('-1 year')->format('U');
+
+        return $new;
+    }
+
+    /**
+     * Checks if a value exists in the cookie data.
      *
      * @param string $path Path to check
      * @return bool
@@ -347,19 +446,34 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Writes data to the cookie
+     * Create a new cookie with updated data.
      *
      * @param string $path Path to write to
      * @param mixed $value Value to write
-     * @return $this
+     * @return static
      */
-    public function write($path, $value)
+    public function withAddedValue($path, $value)
     {
         $this->_isExpanded();
+        $new = clone $this;
+        $new->value = Hash::insert($new->value, $path, $value);
 
-        Hash::insert($this->value, $path, $value);
+        return $new;
+    }
 
-        return $this;
+    /**
+     * Create a new cookie without a specific path
+     *
+     * @param string $path Path to remove
+     * @return static
+     */
+    public function withoutAddedValue($path)
+    {
+        $this->_isExpanded();
+        $new = clone $this;
+        $new->value = Hash::remove($new->value, $path);
+
+        return $new;
     }
 
     /**
@@ -390,32 +504,6 @@ class Cookie implements CookieInterface
         if (!$this->isExpanded) {
             throw new RuntimeException('The Cookie data has not been expanded');
         }
-    }
-
-    /**
-     * Sets the cookies date to a far future so it will virtually never expire
-     *
-     * @return $this
-     */
-    public function willNeverExpire()
-    {
-        $this->expiresAt = Chronos::now()->setDate(2038, 1, 1)->format('U');
-
-        return $this;
-    }
-
-    /**
-     * Deletes the cookie from the browser
-     *
-     * This is done by setting the expiration time to "now"
-     *
-     * @return $this
-     */
-    public function willBeDeleted()
-    {
-        $this->expiresAt = Chronos::now()->format('U');
-
-        return $this;
     }
 
     /**
