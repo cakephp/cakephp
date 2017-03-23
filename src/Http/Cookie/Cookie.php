@@ -542,36 +542,6 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Expands a serialized cookie value
-     *
-     * @return $this
-     */
-    public function expand()
-    {
-        if (!$this->isExpanded) {
-            $this->value = $this->_expand($this->value);
-            $this->isExpanded = true;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Serializes the cookie value to a string
-     *
-     * @return $this
-     */
-    public function flatten()
-    {
-        if ($this->isExpanded) {
-            $this->value = $this->_flatten($this->value);
-            $this->isExpanded = false;
-        }
-
-        return $this;
-    }
-
-    /**
      * Checks if the cookie value was expanded
      *
      * @return bool
