@@ -45,9 +45,6 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         DispatcherFactory::add('Routing');
         DispatcherFactory::add('ControllerFactory');
         $this->useHttpServer(false);
-
-        // Load aliases, or tests fail in isolation.
-        class_exists('Cake\Network\Request');
     }
 
     /**

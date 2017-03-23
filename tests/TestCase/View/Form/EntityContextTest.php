@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\View\Form;
 use ArrayIterator;
 use ArrayObject;
 use Cake\Collection\Collection;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -62,7 +62,7 @@ class EntityContextTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->request = new Request();
+        $this->request = new ServerRequest();
     }
 
     /**

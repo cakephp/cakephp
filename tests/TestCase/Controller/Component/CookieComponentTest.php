@@ -17,8 +17,8 @@ namespace Cake\Test\TestCase\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\CookieComponent;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
-use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 
@@ -43,7 +43,7 @@ class CookieComponentTest extends TestCase
         parent::setUp();
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['redirect'])
-            ->setConstructorArgs([new Request(), new Response()])
+            ->setConstructorArgs([new ServerRequest(), new Response()])
             ->getMock();
         $controller->loadComponent('Cookie');
         $this->Controller = $controller;

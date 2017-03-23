@@ -18,7 +18,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 use Exception;
@@ -38,7 +38,7 @@ class FlashComponentTest extends TestCase
     {
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
-        $this->Controller = new Controller(new Request(['session' => new Session()]));
+        $this->Controller = new Controller(new ServerRequest(['session' => new Session()]));
         $this->ComponentRegistry = new ComponentRegistry($this->Controller);
         $this->Flash = new FlashComponent($this->ComponentRegistry);
         $this->Session = new Session();

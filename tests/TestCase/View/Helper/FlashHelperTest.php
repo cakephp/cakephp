@@ -15,7 +15,7 @@
 namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Plugin;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\FlashHelper;
@@ -39,7 +39,7 @@ class FlashHelperTest extends TestCase
         parent::setUp();
         $this->View = new View();
         $session = new Session();
-        $this->View->request = new Request(['session' => $session]);
+        $this->View->request = new ServerRequest(['session' => $session]);
         $this->Flash = new FlashHelper($this->View);
 
         $session->write([

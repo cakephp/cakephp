@@ -40,12 +40,12 @@ class MoveToHttpTest extends TestCase
         $this->assertInstanceOf('Cake\Http\Response', $response);
         $this->assertInstanceOf('Cake\Network\Response', $response);
     }
+
     /**
      * Tests the Cake\Http\ServerRequest loaded from Cake\Network\Request correctly
      *
      * @return void
      */
-
     public function testRequest()
     {
         $request = new NetworkRequest();

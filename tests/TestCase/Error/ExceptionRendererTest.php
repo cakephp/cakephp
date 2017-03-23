@@ -27,12 +27,12 @@ use Cake\Datasource\Exception\MissingDatasourceException;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
+use Cake\Http\ServerRequest;
 use Cake\Mailer\Exception\MissingActionException as MissingMailerActionException;
 use Cake\Network\Exception\InternalErrorException;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Network\Exception\NotFoundException;
 use Cake\Network\Exception\SocketException;
-use Cake\Network\Request;
 use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Exception\MissingControllerException;
@@ -165,7 +165,7 @@ class ExceptionRendererTest extends TestCase
         Configure::write('Config.language', 'eng');
         Router::reload();
 
-        $request = new Request();
+        $request = new ServerRequest();
         $request->base = '';
         Router::setRequestInfo($request);
         Configure::write('debug', true);
@@ -399,7 +399,7 @@ class ExceptionRendererTest extends TestCase
     {
         Router::reload();
 
-        $request = new Request('posts/view/1000');
+        $request = new ServerRequest('posts/view/1000');
         Router::setRequestInfo($request);
 
         $exception = new NotFoundException('Custom message');
@@ -424,7 +424,7 @@ class ExceptionRendererTest extends TestCase
     {
         Router::reload();
 
-        $request = new Request('posts/view/1000?sort=title&direction=desc');
+        $request = new ServerRequest('posts/view/1000?sort=title&direction=desc');
         $request = $request->withHeader('Accept', 'application/json');
         $request = $request->withHeader('Content-Type', 'application/json');
         Router::setRequestInfo($request);
@@ -480,7 +480,7 @@ class ExceptionRendererTest extends TestCase
     {
         Router::reload();
 
-        $request = new Request('pages/<span id=333>pink</span></id><script>document.body.style.background = t=document.getElementById(333).innerHTML;window.alert(t);</script>');
+        $request = new ServerRequest('pages/<span id=333>pink</span></id><script>document.body.style.background = t=document.getElementById(333).innerHTML;window.alert(t);</script>');
         Router::setRequestInfo($request);
 
         $exception = new NotFoundException('Custom message');
@@ -714,7 +714,7 @@ class ExceptionRendererTest extends TestCase
             ->setMethods(['render'])
             ->getMock();
         $ExceptionRenderer->controller->helpers = ['Fail', 'Boom'];
-        $ExceptionRenderer->controller->request = new Request;
+        $ExceptionRenderer->controller->request = new ServerRequest;
         $ExceptionRenderer->controller->expects($this->at(0))
             ->method('render')
             ->with('missingHelper')
@@ -744,7 +744,7 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['beforeRender'])
             ->getMock();
-        $ExceptionRenderer->controller->request = new Request;
+        $ExceptionRenderer->controller->request = new ServerRequest;
         $ExceptionRenderer->controller->expects($this->any())
             ->method('beforeRender')
             ->will($this->throwException($exception));
@@ -778,7 +778,7 @@ class ExceptionRendererTest extends TestCase
                 $event->subject()->viewBuilder()->setLayoutPath('boom');
             }
         );
-        $ExceptionRenderer->controller->request = new Request;
+        $ExceptionRenderer->controller->request = new ServerRequest;
 
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $response->expects($this->once())
@@ -810,7 +810,7 @@ class ExceptionRendererTest extends TestCase
             ->setMethods(['render'])
             ->getMock();
         $ExceptionRenderer->controller->plugin = 'TestPlugin';
-        $ExceptionRenderer->controller->request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $ExceptionRenderer->controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
 
         $exception = new MissingPluginException(['plugin' => 'TestPlugin']);
         $ExceptionRenderer->controller->expects($this->once())
@@ -845,7 +845,7 @@ class ExceptionRendererTest extends TestCase
             ->setMethods(['render'])
             ->getMock();
         $ExceptionRenderer->controller->plugin = 'TestPlugin';
-        $ExceptionRenderer->controller->request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $ExceptionRenderer->controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
 
         $exception = new MissingPluginException(['plugin' => 'TestPluginTwo']);
         $ExceptionRenderer->controller->expects($this->once())

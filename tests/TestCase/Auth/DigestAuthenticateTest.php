@@ -20,9 +20,9 @@ use Cake\Auth\DigestAuthenticate;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\Network\Exception\UnauthorizedException;
-use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -87,7 +87,7 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateNoData()
     {
-        $request = new Request('posts/index');
+        $request = new ServerRequest('posts/index');
 
         $this->response->expects($this->never())
             ->method('header');
@@ -104,7 +104,7 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateWrongUsername()
     {
-        $request = new Request('posts/index');
+        $request = new ServerRequest('posts/index');
         $request->addParams(['pass' => []]);
 
         $data = [
@@ -129,7 +129,7 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateChallenge()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
@@ -156,7 +156,7 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateChallengeIncludesStaleAttributeOnStaleNonce()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
@@ -188,7 +188,7 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateFailsOnStaleNonce()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
@@ -214,7 +214,7 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateValidUsernamePasswordNoNonce()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
@@ -242,7 +242,7 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateSuccess()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
@@ -275,7 +275,7 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateSuccessSimulatedRequestMethod()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'posts/index',
             'post' => ['_method' => 'PUT'],
             'environment' => ['REQUEST_METHOD' => 'GET']
@@ -313,7 +313,7 @@ class DigestAuthenticateTest extends TestCase
     public function testAuthenticateFailReChallenge()
     {
         $this->auth->config('scope.username', 'nate');
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
@@ -339,7 +339,7 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testLoginHeaders()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'environment' => ['SERVER_NAME' => 'localhost']
         ]);
         $this->auth = new DigestAuthenticate($this->Collection, [

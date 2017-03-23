@@ -18,7 +18,7 @@ use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Http\ActionDispatcher;
 use Cake\Http\Response;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Filter\ControllerFactoryFilter;
@@ -123,7 +123,7 @@ class ActionDispatcherTest extends TestCase
             ->method('beforeDispatch')
             ->will($this->returnValue($response));
 
-        $req = new Request();
+        $req = new ServerRequest();
         $res = new Response();
         $dispatcher->addFilter($filter);
         $result = $dispatcher->dispatch($req, $res);
@@ -146,7 +146,7 @@ class ActionDispatcherTest extends TestCase
                 $event->data('response')->body('Filter body');
             }));
 
-        $req = new Request([
+        $req = new ServerRequest([
             'url' => '/cakes',
             'params' => [
                 'plugin' => null,
@@ -176,7 +176,7 @@ class ActionDispatcherTest extends TestCase
         $filter->expects($this->never())
             ->method('afterDispatch');
 
-        $req = new Request([
+        $req = new ServerRequest([
             'url' => '/cakes',
             'params' => [
                 'plugin' => null,
@@ -200,7 +200,7 @@ class ActionDispatcherTest extends TestCase
     public function testDispatchSetsRequestContext()
     {
         $this->assertNull(Router::getRequest());
-        $req = new Request([
+        $req = new ServerRequest([
             'url' => '/cakes',
             'params' => [
                 'plugin' => null,
@@ -224,7 +224,7 @@ class ActionDispatcherTest extends TestCase
      */
     public function testDispatchInvalidResponse()
     {
-        $req = new Request([
+        $req = new ServerRequest([
             'url' => '/cakes',
             'params' => [
                 'plugin' => null,
@@ -244,7 +244,7 @@ class ActionDispatcherTest extends TestCase
      */
     public function testDispatchAutoRender()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'posts',
             'params' => [
                 'controller' => 'Posts',
@@ -265,7 +265,7 @@ class ActionDispatcherTest extends TestCase
      */
     public function testDispatchAutoRenderFalse()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'posts',
             'params' => [
                 'controller' => 'Cakes',
@@ -288,7 +288,7 @@ class ActionDispatcherTest extends TestCase
      */
     public function testMissingController()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'some_controller/home',
             'params' => [
                 'controller' => 'SomeController',
@@ -308,7 +308,7 @@ class ActionDispatcherTest extends TestCase
      */
     public function testMissingControllerInterface()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'interface/index',
             'params' => [
                 'controller' => 'Interface',
@@ -328,7 +328,7 @@ class ActionDispatcherTest extends TestCase
      */
     public function testMissingControllerAbstract()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'abstract/index',
             'params' => [
                 'controller' => 'Abstract',
@@ -351,7 +351,7 @@ class ActionDispatcherTest extends TestCase
      */
     public function testMissingControllerLowercase()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'pages/home',
             'params' => [
                 'plugin' => null,
@@ -371,7 +371,7 @@ class ActionDispatcherTest extends TestCase
      */
     public function testStartupProcessAbort()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'cakes/index',
             'params' => [
                 'plugin' => null,
@@ -393,7 +393,7 @@ class ActionDispatcherTest extends TestCase
      */
     public function testShutdownProcessResponse()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'cakes/index',
             'params' => [
                 'plugin' => null,
