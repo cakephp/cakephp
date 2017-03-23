@@ -385,6 +385,38 @@ class CookieTest extends TestCase
     }
 
     /**
+     * Test check() with serialized source data.
+     *
+     * @return void
+     */
+    public function testCheckStringSourceData()
+    {
+        $cookie = new Cookie('cakephp', '{"type":"mvc", "user": {"name":"mark"}}');
+        $this->assertTrue($cookie->check('type'));
+        $this->assertTrue($cookie->check('user.name'));
+        $this->assertFalse($cookie->check('nope'));
+        $this->assertFalse($cookie->check('user.nope'));
+    }
+
+    /**
+     * Test check() with array source data.
+     *
+     * @return void
+     */
+    public function testCheckArraySourceData()
+    {
+        $data = [
+            'type' => 'mvc',
+            'user' => ['name' => 'mark']
+        ];
+        $cookie = new Cookie('cakephp', $data);
+        $this->assertTrue($cookie->check('type'));
+        $this->assertTrue($cookie->check('user.name'));
+        $this->assertFalse($cookie->check('nope'));
+        $this->assertFalse($cookie->check('user.nope'));
+    }
+
+    /**
      * test read() and set on different types
      *
      * @return void

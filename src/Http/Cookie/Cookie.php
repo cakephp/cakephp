@@ -273,12 +273,7 @@ class Cookie implements CookieInterface
      */
     protected function _setValue($value)
     {
-        if (is_array($value)) {
-            $this->isExpanded = true;
-        } else {
-            $this->isExpanded = false;
-        }
-
+        $this->isExpanded = is_array($value);
         $this->value = $value;
     }
 
@@ -441,16 +436,19 @@ class Cookie implements CookieInterface
     /**
      * Checks if a value exists in the cookie data.
      *
+     * This method will expand serialized complex data,
+     * on first use.
+     *
      * @param string $path Path to check
      * @return bool
      */
     public function check($path)
     {
         if ($this->isExpanded === false) {
-            $value = $this->_expand($this->value);
+            $this->value = $this->_expand($this->value);
         }
 
-        return Hash::check($value, $path);
+        return Hash::check($this->value, $path);
     }
 
     /**
@@ -490,6 +488,9 @@ class Cookie implements CookieInterface
 
     /**
      * Read data from the cookie
+     *
+     * This method will expand serialized complex data,
+     * on first use.
      *
      * @param string $path Path to read the data from
      * @return mixed
