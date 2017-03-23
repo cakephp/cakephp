@@ -359,7 +359,6 @@ class CookieTest extends TestCase
     public function testWithAddedValue()
     {
         $cookie = new Cookie('cakephp', '{"type":"mvc", "icing": true}');
-        $cookie->expand();
         $new = $cookie->withAddedValue('type', 'mvc')
             ->withAddedValue('user.name', 'mark');
         $this->assertNotSame($new, $cookie, 'Should clone');
@@ -376,7 +375,6 @@ class CookieTest extends TestCase
     public function testWithoutAddedValue()
     {
         $cookie = new Cookie('cakephp', '{"type":"mvc", "user": {"name":"mark"}}');
-        $cookie->expand();
         $new = $cookie->withoutAddedValue('type', 'mvc')
             ->withoutAddedValue('user.name');
         $this->assertNotSame($new, $cookie, 'Should clone');
@@ -387,11 +385,11 @@ class CookieTest extends TestCase
     }
 
     /**
-     * testInflateAndExpand
+     * test read() on structured data.
      *
      * @return void
      */
-    public function testInflateAndExpand()
+    public function testReadComplexData()
     {
         $data = [
             'username' => 'florian',
@@ -412,13 +410,25 @@ class CookieTest extends TestCase
 
         $result = $cookie->read('profile.profession');
         $this->assertEquals('developer', $result);
+    }
 
-        $result = $cookie->flatten();
-        $this->assertInstanceOf(Cookie::class, $result);
+    /**
+     * Test that toHeaderValue() collapses data.
+     *
+     * @return void
+     */
+    public function testToHeaderValueCollapsesComplexData()
+    {
+        $data = [
+            'username' => 'florian',
+            'profile' => [
+                'profession' => 'developer'
+            ]
+        ];
+        $cookie = new Cookie('cakephp', $data);
+        $this->assertEquals('developer', $cookie->read('profile.profession'));
 
         $expected = '{"username":"florian","profile":{"profession":"developer"}}';
-        $result = $cookie->getValue();
-
-        $this->assertEquals($expected, $result);
+        $this->assertContains(urlencode($expected), $cookie->toHeaderValue());
     }
 }
