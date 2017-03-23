@@ -385,6 +385,34 @@ class CookieTest extends TestCase
     }
 
     /**
+     * test read() and set on different types
+     *
+     * @return void
+     */
+    public function testReadExpandsOnDemand()
+    {
+        $data = [
+            'username' => 'florian',
+            'profile' => [
+                'profession' => 'developer'
+            ]
+        ];
+        $cookie = new Cookie('cakephp', json_encode($data));
+        $this->assertFalse($cookie->isExpanded());
+        $this->assertEquals('developer', $cookie->read('profile.profession'));
+        $this->assertTrue($cookie->isExpanded(), 'Cookies expand when read.');
+
+        $cookie = $cookie->withValue(json_encode($data));
+        $this->assertTrue($cookie->check('profile.profession'), 'Cookies expand when read.');
+        $this->assertTrue($cookie->isExpanded());
+
+        $cookie = $cookie->withValue(json_encode($data))
+            ->withAddedValue('face', 'punch');
+        $this->assertTrue($cookie->isExpanded());
+        $this->assertSame('punch', $cookie->read('face'));
+    }
+
+    /**
      * test read() on structured data.
      *
      * @return void
