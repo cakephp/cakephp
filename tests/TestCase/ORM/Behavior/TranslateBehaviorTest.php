@@ -328,11 +328,47 @@ class TranslateBehaviorTest extends TestCase
     public function testTranslationFieldForTranslatedFields()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $table->addBehavior('Translate', [
+            'fields' => ['title', 'body'],
+            'defaultLocale' => 'en_US'
+        ]);
 
-        $expected = 'Articles_title_translation.content';
+        $expectedSameLocale = 'Articles.title';
+        $expectedOtherLocale = 'Articles_title_translation.content';
+
         $field = $table->translationField('title');
-        $this->assertSame($expected, $field);
+        $this->assertSame($expectedSameLocale, $field);
+
+        I18n::locale('es_ES');
+        $field = $table->translationField('title');
+        $this->assertSame($expectedOtherLocale, $field);
+
+        I18n::locale('en');
+        $field = $table->translationField('title');
+        $this->assertSame($expectedOtherLocale, $field);
+
+        $table->removeBehavior('Translate');
+
+        $table->addBehavior('Translate', [
+            'fields' => ['title', 'body'],
+            'defaultLocale' => 'de_DE'
+        ]);
+
+        I18n::locale('de_DE');
+        $field = $table->translationField('title');
+        $this->assertSame($expectedSameLocale, $field);
+
+        I18n::locale('en_US');
+        $field = $table->translationField('title');
+        $this->assertSame($expectedOtherLocale, $field);
+
+        $table->locale('de_DE');
+        $field = $table->translationField('title');
+        $this->assertSame($expectedSameLocale, $field);
+
+        $table->locale('es');
+        $field = $table->translationField('title');
+        $this->assertSame($expectedOtherLocale, $field);
     }
 
     /**
