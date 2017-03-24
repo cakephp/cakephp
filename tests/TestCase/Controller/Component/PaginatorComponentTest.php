@@ -19,8 +19,8 @@ use Cake\Controller\Component\PaginatorComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\Http\ServerRequest;
 use Cake\Network\Exception\NotFoundException;
-use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -67,7 +67,7 @@ class PaginatorComponentTest extends TestCase
 
         Configure::write('App.namespace', 'TestApp');
 
-        $this->request = new Request('controller_posts/index');
+        $this->request = new ServerRequest('controller_posts/index');
         $this->request->params['pass'] = [];
         $controller = new Controller($this->request);
         $registry = new ComponentRegistry($controller);

@@ -19,10 +19,10 @@ use Cake\Core\Plugin;
 use Cake\Error;
 use Cake\Error\ErrorHandler;
 use Cake\Error\PHP7ErrorException;
+use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Exception\NotFoundException;
-use Cake\Network\Request;
 use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -80,7 +80,7 @@ class ErrorHandlerTest extends TestCase
         parent::setUp();
         Router::reload();
 
-        $request = new Request();
+        $request = new ServerRequest();
         $request->base = '';
         $request->env('HTTP_REFERER', '/referer');
 

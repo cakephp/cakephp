@@ -19,7 +19,7 @@ use Cake\Controller\Controller;
 use Cake\Controller\Exception\SecurityException;
 use Cake\Core\Configure;
 use Cake\Event\Event;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
@@ -159,7 +159,7 @@ class SecurityComponentTest extends TestCase
 
         $this->server = $_SERVER;
         $session = new Session();
-        $request = $this->getMockBuilder('Cake\Network\Request')
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')
             ->setMethods(['here'])
             ->setConstructorArgs(['posts/index'])
             ->getMock();
@@ -218,7 +218,7 @@ class SecurityComponentTest extends TestCase
      */
     public function testBlackholeWithBrokenCallback()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'posts/index',
             'session' => $this->Security->session
         ]);
@@ -1363,7 +1363,7 @@ class SecurityComponentTest extends TestCase
         ];
         $this->assertTrue($this->validatePost());
 
-        $request = $this->getMockBuilder('Cake\Network\Request')
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')
             ->setMethods(['here'])
             ->getMock();
         $request->expects($this->at(0))

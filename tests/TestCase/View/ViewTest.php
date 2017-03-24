@@ -21,7 +21,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper;
@@ -298,14 +298,14 @@ class ViewTest extends TestCase
     {
         parent::setUp();
 
-        $request = new Request();
+        $request = new ServerRequest();
         $this->Controller = new Controller($request);
         $this->PostsController = new ViewPostsController($request);
         $this->PostsController->index();
         $this->View = $this->PostsController->createView();
         $this->View->viewPath = 'Posts';
 
-        $themeRequest = new Request('posts/index');
+        $themeRequest = new ServerRequest('posts/index');
         $this->ThemeController = new Controller($themeRequest);
         $this->ThemePostsController = new ThemePostsController($themeRequest);
         $this->ThemePostsController->index();
@@ -340,7 +340,7 @@ class ViewTest extends TestCase
      */
     public function testGetTemplate()
     {
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $viewOptions = [
@@ -416,7 +416,7 @@ class ViewTest extends TestCase
      */
     public function testPluginGetTemplateAbsoluteFail()
     {
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $viewOptions = [
@@ -596,7 +596,7 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages'
         ];
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $View = new TestView(null, null, null, $viewOptions);
@@ -642,7 +642,7 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages',
         ];
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $view = new TestView(null, null, null, $viewOptions);
@@ -762,7 +762,7 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages',
         ];
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $view = new TestView(null, null, null, $viewOptions);
@@ -782,7 +782,7 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages'
         ];
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $View = new TestView($request, $response, null, $viewOptions);

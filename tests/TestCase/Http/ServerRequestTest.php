@@ -2701,7 +2701,7 @@ class ServerRequestTest extends TestCase
             'action' => 'index',
         ]);
 
-        $this->assertInstanceOf('Cake\Network\Request', $request->param('some', 'thing'), 'Method has not returned $this');
+        $this->assertInstanceOf('Cake\Http\ServerRequest', $request->param('some', 'thing'), 'Method has not returned $this');
 
         $request->param('Post.null', null);
         $this->assertNull($request->params['Post']['null']);

@@ -15,7 +15,7 @@
 namespace Cake\Test\TestCase\View\Form;
 
 use Cake\Form\Form;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use Cake\View\Form\FormContext;
@@ -34,7 +34,7 @@ class FormContextTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->request = new Request();
+        $this->request = new ServerRequest();
     }
 
     /**

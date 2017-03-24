@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\View\Helper;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Form\Form;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -142,7 +142,7 @@ class FormHelperTest extends TestCase
         $this->View = new View();
 
         $this->Form = new FormHelper($this->View);
-        $request = new Request([
+        $request = new ServerRequest([
             'webroot' => '',
             'base' => '',
             'url' => '/articles/add',
@@ -330,7 +330,7 @@ class FormHelperTest extends TestCase
         $context = 'My data';
         $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
         $this->Form->addContextProvider('test', function ($request, $data) use ($context, $stub) {
-            $this->assertInstanceOf('Cake\Network\Request', $request);
+            $this->assertInstanceOf('Cake\Http\ServerRequest', $request);
             $this->assertEquals($context, $data['entity']);
 
             return $stub;

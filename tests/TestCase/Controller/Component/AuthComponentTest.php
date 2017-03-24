@@ -21,7 +21,7 @@ use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\Routing\Route\InflectedRoute;
@@ -66,7 +66,7 @@ class AuthComponentTest extends TestCase
             $routes->fallbacks(InflectedRoute::class);
         });
 
-        $request = new Request();
+        $request = new ServerRequest();
         $request->env('REQUEST_METHOD', 'GET');
 
         $response = $this->getMockBuilder('Cake\Http\Response')
@@ -751,7 +751,7 @@ class AuthComponentTest extends TestCase
         $this->Auth->session->delete('Auth');
 
         $url = '/posts/add';
-        $this->Auth->request = $this->Controller->request = new Request($url);
+        $this->Auth->request = $this->Controller->request = new ServerRequest($url);
         $this->Auth->request->env('REQUEST_METHOD', 'GET');
         $this->Auth->request->addParams(Router::parse($url));
         $this->Auth->request->url = Router::normalize($url);
@@ -806,7 +806,7 @@ class AuthComponentTest extends TestCase
     public function testDefaultToLoginRedirect()
     {
         $url = '/party/on';
-        $this->Auth->request = $request = new Request($url);
+        $this->Auth->request = $request = new ServerRequest($url);
         $request->env('HTTP_REFERER', false);
         $request->addParams(Router::parse($url));
         $request->addPaths([
@@ -850,7 +850,7 @@ class AuthComponentTest extends TestCase
             ->setMethods(['set'])
             ->setConstructorArgs([$this->Controller->components()])
             ->getMock();
-        $this->Auth->request = $request = new Request([
+        $this->Auth->request = $request = new ServerRequest([
             'url' => $url,
             'session' => $this->Auth->session
         ]);
@@ -891,7 +891,7 @@ class AuthComponentTest extends TestCase
             ->setMethods(['set'])
             ->setConstructorArgs([$this->Controller->components()])
             ->getMock();
-        $this->Auth->request = $request = new Request([
+        $this->Auth->request = $request = new ServerRequest([
             'url' => $url,
             'session' => $this->Auth->session
         ]);
@@ -929,7 +929,7 @@ class AuthComponentTest extends TestCase
         $this->Auth->session = $this->getMockBuilder('Cake\Network\Session')
             ->setMethods(['flash'])
             ->getMock();
-        $this->Auth->request = $Request = new Request($url);
+        $this->Auth->request = $Request = new ServerRequest($url);
         $this->Auth->request->addParams(Router::parse($url));
         $this->Auth->config('authorize', ['Controller']);
         $this->Auth->setUser(['username' => 'admad', 'password' => 'cake']);
@@ -964,7 +964,7 @@ class AuthComponentTest extends TestCase
     public function testForbiddenException()
     {
         $url = '/party/on';
-        $this->Auth->request = $request = new Request($url);
+        $this->Auth->request = $request = new ServerRequest($url);
         $this->Auth->request->addParams(Router::parse($url));
         $this->Auth->config([
             'authorize' => ['Controller'],
@@ -997,7 +997,7 @@ class AuthComponentTest extends TestCase
         $controller->methods = ['login'];
 
         $url = '/AuthTest/login';
-        $this->Auth->request = $controller->request = new Request($url);
+        $this->Auth->request = $controller->request = new ServerRequest($url);
         $this->Auth->request->addParams(Router::parse($url));
         $this->Auth->config([
             'loginAction', ['controller' => 'AuthTest', 'action' => 'login'],
@@ -1075,7 +1075,7 @@ class AuthComponentTest extends TestCase
      */
     public function testAjaxLogin()
     {
-        $this->Controller->request = new Request([
+        $this->Controller->request = new ServerRequest([
             'url' => '/ajax_auth/add',
             'environment' => ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
         ]);
@@ -1103,7 +1103,7 @@ class AuthComponentTest extends TestCase
      */
     public function testAjaxUnauthenticated()
     {
-        $this->Controller->request = new Request([
+        $this->Controller->request = new ServerRequest([
             'url' => '/ajax_auth/add',
             'environment' => ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
         ]);
@@ -1482,7 +1482,7 @@ class AuthComponentTest extends TestCase
         ]);
 
         $url = '/users/login';
-        $this->Auth->request = $this->Controller->request = new Request($url);
+        $this->Auth->request = $this->Controller->request = new ServerRequest($url);
         $this->Auth->request->addParams(Router::parse($url));
         $this->Auth->request->url = Router::normalize($url);
 
