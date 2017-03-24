@@ -14,6 +14,8 @@ namespace Cake\Test\TestCase\Http\Cookie;
 
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
+use Cake\Http\ServerRequest;
+use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -173,5 +175,41 @@ class CookieCollectionTest extends TestCase
         ];
 
         new CookieCollection($array);
+    }
+
+    /**
+     * Test adding cookies from a response.
+     *
+     * @return void
+     */
+    public function testAddFromResponse()
+    {
+        $collection = new CookieCollection();
+        $request = new ServerRequest([
+            'url' => '/app'
+        ]);
+        $response = (new Response())
+            ->withAddedHeader('Set-Cookie', 'test=value')
+            ->withAddedHeader('Set-Cookie', 'expiring=soon; Expires=Wed, 09-Jun-2021 10:18:14 GMT; Path=/; HttpOnly; Secure;')
+            ->withAddedHeader('Set-Cookie', 'session=123abc');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertNotSame($new, $collection, 'Should clone collection');
+
+        $this->assertTrue($new->has('test'));
+        $this->assertTrue($new->has('session'));
+        $this->assertTrue($new->has('expiring'));
+        $this->assertSame('value', $new->get('test')->getValue());
+        $this->assertSame('123abc', $new->get('session')->getValue());
+        $this->assertSame('soon', $new->get('expiring')->getValue());
+
+        $this->assertSame('/app', $new->get('test')->getPath(), 'cookies should inherit request path');
+        $this->assertSame('/', $new->get('expiring')->getPath(), 'path attribute should be used.');
+
+        $this->assertSame(0, $new->get('session')->getExpiry(), 'No expiry');
+        $this->assertSame(
+            '2021-06-09 10:18:14',
+            date('Y-m-d H:i:s', $new->get('expiring')->getExpiry()),
+            'Has expiry'
+        );
     }
 }

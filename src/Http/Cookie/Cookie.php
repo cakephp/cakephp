@@ -293,6 +293,16 @@ class Cookie implements CookieInterface
     }
 
     /**
+     * Get the path attribute.
+     *
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
      * Create a cookie with an updated domain
      *
      * @param string $domain Domain to set
@@ -305,6 +315,16 @@ class Cookie implements CookieInterface
         $new->domain = $domain;
 
         return $new;
+    }
+
+    /**
+     * Get the domain attribute.
+     *
+     * @return string
+     */
+    public function getDomain()
+    {
+        return $this->domain;
     }
 
     /**
@@ -403,6 +423,16 @@ class Cookie implements CookieInterface
         $new->expiresAt = (int)$dateTime->format('U');
 
         return $new;
+    }
+
+    /**
+     * Get the current expiry time
+     *
+     * @return int|null Timestamp of expiry or null
+     */
+    public function getExpiry()
+    {
+        return $this->expiresAt;
     }
 
     /**
