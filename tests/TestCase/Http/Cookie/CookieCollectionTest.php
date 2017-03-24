@@ -225,4 +225,22 @@ class CookieCollectionTest extends TestCase
             'Has expiry'
         );
     }
+
+    /**
+     * Test adding cookies from a response ignores expired cookies
+     *
+     * @return void
+     */
+    public function testAddFromResponseIgnoreExpired()
+    {
+        $collection = new CookieCollection();
+        $request = new ServerRequest([
+            'url' => '/app'
+        ]);
+        $response = (new Response())
+            ->withAddedHeader('Set-Cookie', 'test=value')
+            ->withAddedHeader('Set-Cookie', 'expired=soon; Expires=Wed, 09-Jun-2012 10:18:14 GMT; Path=/; HttpOnly; Secure;');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertFalse($new->has('expired'),'Should drop expired cookies');
+    }
 }
