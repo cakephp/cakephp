@@ -473,6 +473,19 @@ class CookieTest extends TestCase
     }
 
     /**
+     * Test reading complex data serialized in 1.x and early 2.x
+     *
+     * @return void
+     */
+    public function testReadLegacyComplexData()
+    {
+        $data = 'key|value,key2|value2';
+        $cookie = new Cookie('cakephp', $data);
+        $this->assertEquals('value', $cookie->read('key'));
+        $this->assertNull($cookie->read('nope'));
+    }
+
+    /**
      * Test that toHeaderValue() collapses data.
      *
      * @return void
