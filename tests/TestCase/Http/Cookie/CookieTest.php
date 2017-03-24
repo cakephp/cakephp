@@ -359,7 +359,6 @@ class CookieTest extends TestCase
     public function testWithAddedValue()
     {
         $cookie = new Cookie('cakephp', '{"type":"mvc", "icing": true}');
-        $cookie->expand();
         $new = $cookie->withAddedValue('type', 'mvc')
             ->withAddedValue('user.name', 'mark');
         $this->assertNotSame($new, $cookie, 'Should clone');
@@ -376,7 +375,6 @@ class CookieTest extends TestCase
     public function testWithoutAddedValue()
     {
         $cookie = new Cookie('cakephp', '{"type":"mvc", "user": {"name":"mark"}}');
-        $cookie->expand();
         $new = $cookie->withoutAddedValue('type', 'mvc')
             ->withoutAddedValue('user.name');
         $this->assertNotSame($new, $cookie, 'Should clone');
@@ -387,11 +385,71 @@ class CookieTest extends TestCase
     }
 
     /**
-     * testInflateAndExpand
+     * Test check() with serialized source data.
      *
      * @return void
      */
-    public function testInflateAndExpand()
+    public function testCheckStringSourceData()
+    {
+        $cookie = new Cookie('cakephp', '{"type":"mvc", "user": {"name":"mark"}}');
+        $this->assertTrue($cookie->check('type'));
+        $this->assertTrue($cookie->check('user.name'));
+        $this->assertFalse($cookie->check('nope'));
+        $this->assertFalse($cookie->check('user.nope'));
+    }
+
+    /**
+     * Test check() with array source data.
+     *
+     * @return void
+     */
+    public function testCheckArraySourceData()
+    {
+        $data = [
+            'type' => 'mvc',
+            'user' => ['name' => 'mark']
+        ];
+        $cookie = new Cookie('cakephp', $data);
+        $this->assertTrue($cookie->check('type'));
+        $this->assertTrue($cookie->check('user.name'));
+        $this->assertFalse($cookie->check('nope'));
+        $this->assertFalse($cookie->check('user.nope'));
+    }
+
+    /**
+     * test read() and set on different types
+     *
+     * @return void
+     */
+    public function testReadExpandsOnDemand()
+    {
+        $data = [
+            'username' => 'florian',
+            'profile' => [
+                'profession' => 'developer'
+            ]
+        ];
+        $cookie = new Cookie('cakephp', json_encode($data));
+        $this->assertFalse($cookie->isExpanded());
+        $this->assertEquals('developer', $cookie->read('profile.profession'));
+        $this->assertTrue($cookie->isExpanded(), 'Cookies expand when read.');
+
+        $cookie = $cookie->withValue(json_encode($data));
+        $this->assertTrue($cookie->check('profile.profession'), 'Cookies expand when read.');
+        $this->assertTrue($cookie->isExpanded());
+
+        $cookie = $cookie->withValue(json_encode($data))
+            ->withAddedValue('face', 'punch');
+        $this->assertTrue($cookie->isExpanded());
+        $this->assertSame('punch', $cookie->read('face'));
+    }
+
+    /**
+     * test read() on structured data.
+     *
+     * @return void
+     */
+    public function testReadComplexData()
     {
         $data = [
             'username' => 'florian',
@@ -412,13 +470,38 @@ class CookieTest extends TestCase
 
         $result = $cookie->read('profile.profession');
         $this->assertEquals('developer', $result);
+    }
 
-        $result = $cookie->flatten();
-        $this->assertInstanceOf(Cookie::class, $result);
+    /**
+     * Test reading complex data serialized in 1.x and early 2.x
+     *
+     * @return void
+     */
+    public function testReadLegacyComplexData()
+    {
+        $data = 'key|value,key2|value2';
+        $cookie = new Cookie('cakephp', $data);
+        $this->assertEquals('value', $cookie->read('key'));
+        $this->assertNull($cookie->read('nope'));
+    }
+
+    /**
+     * Test that toHeaderValue() collapses data.
+     *
+     * @return void
+     */
+    public function testToHeaderValueCollapsesComplexData()
+    {
+        $data = [
+            'username' => 'florian',
+            'profile' => [
+                'profession' => 'developer'
+            ]
+        ];
+        $cookie = new Cookie('cakephp', $data);
+        $this->assertEquals('developer', $cookie->read('profile.profession'));
 
         $expected = '{"username":"florian","profile":{"profession":"developer"}}';
-        $result = $cookie->getValue();
-
-        $this->assertEquals($expected, $result);
+        $this->assertContains(urlencode($expected), $cookie->toHeaderValue());
     }
 }

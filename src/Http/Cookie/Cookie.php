@@ -171,7 +171,11 @@ class Cookie implements CookieInterface
      */
     public function toHeaderValue()
     {
-        $headerValue[] = sprintf('%s=%s', $this->name, urlencode($this->value));
+        $value = $this->value;
+        if ($this->isExpanded) {
+            $value = $this->_flatten($this->value);
+        }
+        $headerValue[] = sprintf('%s=%s', $this->name, urlencode($value));
 
         if ($this->expiresAt !== 0) {
             $headerValue[] = $this->_buildExpirationValue();
@@ -269,10 +273,7 @@ class Cookie implements CookieInterface
      */
     protected function _setValue($value)
     {
-        if (is_array($value)) {
-            $this->isExpanded = true;
-        }
-
+        $this->isExpanded = is_array($value);
         $this->value = $value;
     }
 
@@ -435,12 +436,17 @@ class Cookie implements CookieInterface
     /**
      * Checks if a value exists in the cookie data.
      *
+     * This method will expand serialized complex data,
+     * on first use.
+     *
      * @param string $path Path to check
      * @return bool
      */
     public function check($path)
     {
-        $this->_isExpanded();
+        if ($this->isExpanded === false) {
+            $this->value = $this->_expand($this->value);
+        }
 
         return Hash::check($this->value, $path);
     }
@@ -454,8 +460,10 @@ class Cookie implements CookieInterface
      */
     public function withAddedValue($path, $value)
     {
-        $this->_isExpanded();
         $new = clone $this;
+        if ($new->isExpanded === false) {
+            $new->value = $new->_expand($new->value);
+        }
         $new->value = Hash::insert($new->value, $path, $value);
 
         return $new;
@@ -469,8 +477,10 @@ class Cookie implements CookieInterface
      */
     public function withoutAddedValue($path)
     {
-        $this->_isExpanded();
         $new = clone $this;
+        if ($new->isExpanded === false) {
+            $new->value = $new->_expand($new->value);
+        }
         $new->value = Hash::remove($new->value, $path);
 
         return $new;
@@ -479,31 +489,23 @@ class Cookie implements CookieInterface
     /**
      * Read data from the cookie
      *
+     * This method will expand serialized complex data,
+     * on first use.
+     *
      * @param string $path Path to read the data from
      * @return mixed
      */
     public function read($path = null)
     {
-        $this->_isExpanded();
+        if ($this->isExpanded === false) {
+            $this->value = $this->_expand($this->value);
+        }
 
         if ($path === null) {
             return $this->value;
         }
 
         return Hash::get($this->value, $path);
-    }
-
-    /**
-     * Throws a \RuntimeException if the cookie value was not expanded
-     *
-     * @throws \RuntimeException
-     * @return void
-     */
-    protected function _isExpanded()
-    {
-        if (!$this->isExpanded) {
-            throw new RuntimeException('The Cookie data has not been expanded');
-        }
     }
 
     /**
@@ -541,36 +543,6 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Expands a serialized cookie value
-     *
-     * @return $this
-     */
-    public function expand()
-    {
-        if (!$this->isExpanded) {
-            $this->value = $this->_expand($this->value);
-            $this->isExpanded = true;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Serializes the cookie value to a string
-     *
-     * @return $this
-     */
-    public function flatten()
-    {
-        if ($this->isExpanded) {
-            $this->value = $this->_flatten($this->value);
-            $this->isExpanded = false;
-        }
-
-        return $this;
-    }
-
-    /**
      * Checks if the cookie value was expanded
      *
      * @return bool
@@ -600,6 +572,7 @@ class Cookie implements CookieInterface
      */
     protected function _expand($string)
     {
+        $this->isExpanded = true;
         $first = substr($string, 0, 1);
         if ($first === '{' || $first === '[') {
             $ret = json_decode($string, true);
