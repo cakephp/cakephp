@@ -92,12 +92,24 @@ class CookieCollectionTest extends TestCase
         $this->assertFalse($collection->has('remember_me'), 'Original instance not modified');
         $this->assertTrue($new->has('remember_me'));
         $this->assertSame($remember, $new->get('remember_me'));
+    }
 
+    /**
+     * Cookie collections need to support duplicate cookie names because
+     * of use cases in Http\Client
+     *
+     * @return void
+     */
+    public function testAddDuplicates()
+    {
+        $remember = new Cookie('remember_me', 'yes');
         $rememberNo = new Cookie('remember_me', 'no');
-        $second = $new->add($remember)->add($rememberNo);
-        $this->assertCount(1, $second);
-        $this->assertNotSame($second, $new);
-        $this->assertSame($rememberNo, $second->get('remember_me'));
+        $collection = new CookieCollection([]);
+        $new = $collection->add($remember)->add($rememberNo);
+
+        $this->assertCount(2, $new);
+        $this->assertNotSame($new, $collection);
+        $this->assertSame($remember, $new->get('remember_me'), 'get() fetches first cookie');
     }
 
     /**
@@ -205,6 +217,7 @@ class CookieCollectionTest extends TestCase
         $this->assertSame('/app', $new->get('test')->getPath(), 'cookies should inherit request path');
         $this->assertSame('/', $new->get('expiring')->getPath(), 'path attribute should be used.');
 
+        $this->assertSame(0, $new->get('test')->getExpiry(), 'No expiry');
         $this->assertSame(0, $new->get('session')->getExpiry(), 'No expiry');
         $this->assertSame(
             '2021-06-09 10:18:14',

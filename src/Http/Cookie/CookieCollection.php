@@ -65,20 +65,22 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Add a cookie and get an updated collection.
      *
+     * Cookie names do not have to be unique in a collection, but
+     * having duplicate cookie names will change how get() behaves.
+     *
      * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie instance to add.
      * @return static
      */
     public function add(CookieInterface $cookie)
     {
-        $key = mb_strtolower($cookie->getName());
         $new = clone $this;
-        $new->cookies[$key] = $cookie;
+        $new->cookies[] = $cookie;
 
         return $new;
     }
 
     /**
-     * Get a cookie by name
+     * Get the first cookie by name.
      *
      * If the provided name matches a URL (matches `#^https?://#`) this method
      * will assume you want a list of cookies that match that URL. This is
@@ -91,8 +93,10 @@ class CookieCollection implements IteratorAggregate, Countable
     public function get($name)
     {
         $key = mb_strtolower($name);
-        if (isset($this->cookies[$key])) {
-            return $this->cookies[$key];
+        foreach ($this->cookies as $cookie) {
+            if (mb_strtolower($cookie->getName()) === $key) {
+                return $cookie;
+            }
         }
 
         return null;
@@ -106,11 +110,18 @@ class CookieCollection implements IteratorAggregate, Countable
      */
     public function has($name)
     {
-        return isset($this->cookies[mb_strtolower($name)]);
+        $key = mb_strtolower($name);
+        foreach ($this->cookies as $cookie) {
+            if (mb_strtolower($cookie->getName()) === $key) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
-     * Remove a cookie from the collection and get a new collection
+     * Create a new collection with all cookies matching $name removed.
      *
      * If the cookie is not in the collection, this method will do nothing.
      *
@@ -120,7 +131,12 @@ class CookieCollection implements IteratorAggregate, Countable
     public function remove($name)
     {
         $new = clone $this;
-        unset($new->cookies[mb_strtolower($name)]);
+        $key = mb_strtolower($name);
+        foreach ($new->cookies as $i => $cookie) {
+            if (mb_strtolower($cookie->getName()) === $key) {
+                unset($new->cookies[$i]);
+            }
+        }
 
         return $new;
     }
@@ -189,8 +205,7 @@ class CookieCollection implements IteratorAggregate, Countable
             if ($expires && $expires <= time()) {
                 continue;
             }
-            $key = mb_strtolower($cookie->getName());
-            $new->cookies[$key] = $cookie;
+            $new->cookies[] = $cookie;
         }
 
         return $new;
