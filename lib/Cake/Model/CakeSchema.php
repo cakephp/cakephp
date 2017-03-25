@@ -617,6 +617,7 @@ class CakeSchema extends CakeObject {
 		foreach ($fields as $value) {
 			if (isset($value['key']) && $value['key'] === 'primary') {
 				$hasPrimaryAlready = true;
+				break;
 			}
 		}
 
