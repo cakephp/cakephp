@@ -110,7 +110,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * The full address to the current request
      *
      * @var string
-     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getRequestTarget() instead.
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getUri()->getPath() instead.
      */
     public $here;
 
