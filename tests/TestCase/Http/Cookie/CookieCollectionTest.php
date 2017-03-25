@@ -14,8 +14,8 @@ namespace Cake\Test\TestCase\Http\Cookie;
 
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
-use Cake\Http\ServerRequest;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use DateTime;
 
@@ -265,7 +265,7 @@ class CookieCollectionTest extends TestCase
             ->withAddedHeader('Set-Cookie', 'test=value')
             ->withAddedHeader('Set-Cookie', 'expired=soon; Expires=Wed, 09-Jun-2012 10:18:14 GMT; Path=/;');
         $new = $collection->addFromResponse($response, $request);
-        $this->assertFalse($new->has('expired'),'Should drop expired cookies');
+        $this->assertFalse($new->has('expired'), 'Should drop expired cookies');
     }
 
     /**
