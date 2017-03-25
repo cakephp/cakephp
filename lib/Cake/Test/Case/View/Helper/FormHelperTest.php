@@ -10734,4 +10734,72 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertAttributeEquals($here, '_lastAction', $this->Form, "_lastAction shouldn't be empty.");
 	}
 
+/**
+ * Tests the 'errorClass' option when error is returned.
+ *
+ * @return void
+ */
+	public function testInputErrorClass() {
+		$Contact = ClassRegistry::getObject('Contact');
+		$Contact->validationErrors['field'] = array('Badness!');
+
+		$result = $this->Form->input('Contact.field', array(
+			'type' => 'text',
+			'div' => array('errorClass' => 'has-error')
+		));
+		$expected = array(
+			'div' => array('class' => 'input text has-error'),
+			'label' => array('for' => 'ContactField'),
+			'Field',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][field]',
+				'id' => 'ContactField', 'class' => 'form-error'
+			),
+			array('div' => array('class' => 'error-message')),
+			'Badness!',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.field', array(
+			'type' => 'text',
+			'error' => array('attributes' => array('class' => 'error'))
+		));
+		$expected = array(
+			'div' => array('class' => 'input text error'),
+			'label' => array('for' => 'ContactField'),
+			'Field',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][field]',
+				'id' => 'ContactField', 'class' => 'form-error'
+			),
+			array('div' => array('class' => 'error')),
+			'Badness!',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.field', array(
+			'type' => 'text',
+			'div' => array('errorClass' => 'has-error'),
+			'error' => array('attributes' => array('class' => 'form-control-feedback'))
+		));
+		$expected = array(
+			'div' => array('class' => 'input text has-error'),
+			'label' => array('for' => 'ContactField'),
+			'Field',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][field]',
+				'id' => 'ContactField', 'class' => 'form-error'
+			),
+			array('div' => array('class' => 'form-control-feedback')),
+			'Badness!',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
 }

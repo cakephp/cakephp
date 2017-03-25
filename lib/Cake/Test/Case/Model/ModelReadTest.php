@@ -6961,6 +6961,34 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
+ * test find('list') method
+ *
+ * @return void
+ */
+	public function testFindListZeroValue() {
+		$this->loadFixtures('Article');
+
+		$model = new Article();
+		$model->displayField = 'title';
+		$model->save(array(
+			'title' => 'Zeroth Article',
+			'user_id' => 0,
+			'published' => 'Y'
+		));
+
+		$result = $model->find('list', array(
+			'fields' => array('title', 'user_id')
+		));
+		$expected = array(
+			'Zeroth Article' => 0,
+			'First Article' => 1,
+			'Second Article' => 3,
+			'Third Article' => 1,
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Test that find(list) works with array conditions that have only one element.
  *
  * @return void
