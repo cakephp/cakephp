@@ -227,6 +227,27 @@ class CookieCollectionTest extends TestCase
     }
 
     /**
+     * Test adding cookies that contain URL encoded data
+     *
+     * @return void
+     */
+    public function testAddFromResponseValueUrldecodeData()
+    {
+        $collection = new CookieCollection();
+        $request = new ServerRequest([
+            'url' => '/app'
+        ]);
+        $response = (new Response())
+            ->withAddedHeader('Set-Cookie', 'test=val%3Bue; Path=/example; Secure;');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertTrue($new->has('test'));
+
+        $test = $new->get('test');
+        $this->assertSame('val;ue', $test->getValue());
+        $this->assertSame('/example', $test->getPath());
+    }
+
+    /**
      * Test adding cookies from a response ignores expired cookies
      *
      * @return void
@@ -239,7 +260,7 @@ class CookieCollectionTest extends TestCase
         ]);
         $response = (new Response())
             ->withAddedHeader('Set-Cookie', 'test=value')
-            ->withAddedHeader('Set-Cookie', 'expired=soon; Expires=Wed, 09-Jun-2012 10:18:14 GMT; Path=/; HttpOnly; Secure;');
+            ->withAddedHeader('Set-Cookie', 'expired=soon; Expires=Wed, 09-Jun-2012 10:18:14 GMT; Path=/;');
         $new = $collection->addFromResponse($response, $request);
         $this->assertFalse($new->has('expired'),'Should drop expired cookies');
     }

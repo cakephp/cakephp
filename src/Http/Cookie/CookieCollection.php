@@ -222,14 +222,7 @@ class CookieCollection implements IteratorAggregate, Countable
         $cookies = [];
         foreach ($values as $value) {
             $value = rtrim($value, ';');
-            $nestedSemi = '";"';
-            if (strpos($value, $nestedSemi) !== false) {
-                $value = str_replace($nestedSemi, "{__cookie_replace__}", $value);
-                $parts = explode(';', $value);
-                $parts = str_replace("{__cookie_replace__}", $nestedSemi, $parts);
-            } else {
-                $parts = preg_split('/\;[ \t]*/', $value);
-            }
+            $parts = preg_split('/\;[ \t]*/', $value);
 
             $name = false;
             $cookie = [
@@ -249,7 +242,7 @@ class CookieCollection implements IteratorAggregate, Countable
                 }
                 if ($i === 0) {
                     $name = $key;
-                    $cookie['value'] = $value;
+                    $cookie['value'] = urldecode($value);
                     continue;
                 }
                 $key = strtolower($key);
