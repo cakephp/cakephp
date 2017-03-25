@@ -198,7 +198,6 @@ class ThemeViewTest extends CakeTestCase {
 /**
  * testMissingView method
  *
- * @expectedException MissingViewException
  * @return void
  */
 	public function testMissingView() {
@@ -211,17 +210,18 @@ class ThemeViewTest extends CakeTestCase {
 		$this->Controller->params['pass'] = array('home');
 
 		$View = new TestTheme2View($this->Controller);
-		ob_start();
-		$View->getViewFileName('does_not_exist');
-		$expected = ob_get_clean();
-		$this->assertRegExp("/PagesController::/", $expected);
-		$this->assertRegExp("/views(\/|\\\)themed(\/|\\\)my_theme(\/|\\\)pages(\/|\\\)does_not_exist.ctp/", $expected);
+
+		try {
+			$View->getViewFileName('does_not_exist');
+			$this->fail('No exception');
+		} catch (MissingViewException $e) {
+			$this->assertContains('Pages' . DS . 'does_not_exist.ctp', $e->getMessage());
+		}
 	}
 
 /**
  * testMissingLayout method
  *
- * @expectedException MissingLayoutException
  * @return void
  */
 	public function testMissingLayout() {
@@ -232,11 +232,13 @@ class ThemeViewTest extends CakeTestCase {
 		$this->Controller->theme = 'my_theme';
 
 		$View = new TestTheme2View($this->Controller);
-		ob_start();
-		$View->getLayoutFileName();
-		$expected = ob_get_clean();
-		$this->assertRegExp("/Missing Layout/", $expected);
-		$this->assertRegExp("/views(\/|\\\)themed(\/|\\\)my_theme(\/|\\\)layouts(\/|\\\)whatever.ctp/", $expected);
+
+		try {
+			$View->getLayoutFileName();
+			$this->fail('No exception');
+		} catch (MissingLayoutException $e) {
+			$this->assertContains('Layouts' . DS . 'whatever.ctp', $e->getMessage());
+		}
 	}
 
 /**

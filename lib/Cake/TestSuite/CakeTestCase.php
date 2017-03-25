@@ -76,6 +76,8 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @throws InvalidArgumentException
  */
 	public function run(PHPUnit_Framework_TestResult $result = null) {
+		$level = ob_get_level();
+
 		if (!empty($this->fixtureManager)) {
 			$this->fixtureManager->load($this);
 		}
@@ -83,6 +85,11 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		if (!empty($this->fixtureManager)) {
 			$this->fixtureManager->unload($this);
 		}
+
+		for ($i = ob_get_level(); $i < $level; ++$i) {
+			ob_start();
+		}
+
 		return $result;
 	}
 
