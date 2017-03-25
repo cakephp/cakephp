@@ -1826,6 +1826,7 @@ TEXT;
         try {
             $this->View->layout = false;
             $this->View->render('extend_loop');
+            $this->fail('No exception');
         } catch (\LogicException $e) {
             ob_end_clean();
             $this->assertContains('cannot have views extend in a loop', $e->getMessage());
