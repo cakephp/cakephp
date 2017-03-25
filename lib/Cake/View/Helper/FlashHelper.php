@@ -88,6 +88,9 @@ class FlashHelper extends AppHelper {
 		foreach ($flash as $message) {
 			$message['key'] = $key;
 			$message = $options + $message;
+			if ($message['element'] === 'default') {
+				$message['element'] = 'Flash/default';
+			}
 			$out .= $this->_View->element($message['element'], $message);
 		}
 

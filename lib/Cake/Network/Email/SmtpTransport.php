@@ -352,7 +352,11 @@ class SmtpTransport extends AbstractTransport {
 			$response = '';
 			$startTime = time();
 			while (substr($response, -2) !== "\r\n" && ((time() - $startTime) < $this->_config['timeout'])) {
-				$response .= $this->_socket->read();
+				$bytes = $this->_socket->read();
+				if ($bytes === false || $bytes === null) {
+					break;
+				}
+				$response .= $bytes;
 			}
 			if (substr($response, -2) !== "\r\n") {
 				throw new SocketException(__d('cake_dev', 'SMTP timeout.'));

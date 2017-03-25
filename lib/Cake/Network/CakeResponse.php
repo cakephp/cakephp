@@ -806,8 +806,8 @@ class CakeResponse {
 /**
  * Sets the correct headers to instruct the client to cache the response.
  *
- * @param string $since a valid time since the response text has not been modified
- * @param string $time a valid time for cache expiry
+ * @param string|int $since a valid time since the response text has not been modified
+ * @param string|int $time a valid time for cache expiry
  * @return void
  */
 	public function cache($since, $time = '+1 day') {
@@ -1067,7 +1067,7 @@ class CakeResponse {
  * Returns a DateTime object initialized at the $time param and using UTC
  * as timezone
  *
- * @param string|DateTime $time Valid time string or unix timestamp or DateTime object.
+ * @param DateTime|int|string $time Valid time string or unix timestamp or DateTime object.
  * @return DateTime
  */
 	protected function _getUTCDate($time = null) {

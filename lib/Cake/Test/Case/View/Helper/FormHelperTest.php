@@ -5292,6 +5292,60 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test that select() with numeric label of optiongroup.
+ *
+ * @return void
+ */
+	public function testSelectOptionGroupWithNumericLabel() {
+		$options = array(
+			1 => array(
+				1 => '1Foo',
+				2 => '2Bar',
+				3 => '3Baz',
+				4 => '1',
+				5 => '2',
+				6 => '3',
+				7 => 1,
+				8 => 2,
+				9 => 3,
+			),
+			2 => array(
+				11 => '1Foo',
+				12 => '2Bar',
+				13 => '3Baz',
+				14 => '1',
+				15 => '2',
+				16 => '3',
+				17 => 1,
+				18 => 2,
+				19 => 3,
+			),
+		);
+		$result = $this->Form->select('Model.field', $options, array('empty' => false));
+		$expected = array(
+			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			array('optgroup' => array('label' => '1')),
+			array('option' => array('value' => '1')), '1Foo', '/option',
+			array('option' => array('value' => '2')), '2Bar', '/option',
+			array('option' => array('value' => '3')), '3Baz', '/option',
+			array('option' => array('value' => '6')), '3', '/option',
+			array('option' => array('value' => '9')), '3', '/option',
+			'/optgroup',
+			array('optgroup' => array('label' => '2')),
+			array('option' => array('value' => '11')), '1Foo', '/option',
+			array('option' => array('value' => '12')), '2Bar', '/option',
+			array('option' => array('value' => '13')), '3Baz', '/option',
+			array('option' => array('value' => '14')), '1', '/option',
+			array('option' => array('value' => '16')), '3', '/option',
+			array('option' => array('value' => '17')), '1', '/option',
+			array('option' => array('value' => '19')), '3', '/option',
+			'/optgroup',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test that select() with optiongroups listens to the escape param.
  *
  * @return void
@@ -11027,6 +11081,74 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->create('User');
 
 		$this->assertAttributeEquals($here, '_lastAction', $this->Form, "_lastAction shouldn't be empty.");
+	}
+
+/**
+ * Tests the 'errorClass' option when error is returned.
+ *
+ * @return void
+ */
+	public function testInputErrorClass() {
+		$Contact = ClassRegistry::getObject('Contact');
+		$Contact->validationErrors['field'] = array('Badness!');
+
+		$result = $this->Form->input('Contact.field', array(
+			'type' => 'text',
+			'div' => array('errorClass' => 'has-error')
+		));
+		$expected = array(
+			'div' => array('class' => 'input text has-error'),
+			'label' => array('for' => 'ContactField'),
+			'Field',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][field]',
+				'id' => 'ContactField', 'class' => 'form-error'
+			),
+			array('div' => array('class' => 'error-message')),
+			'Badness!',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.field', array(
+			'type' => 'text',
+			'error' => array('attributes' => array('class' => 'error'))
+		));
+		$expected = array(
+			'div' => array('class' => 'input text error'),
+			'label' => array('for' => 'ContactField'),
+			'Field',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][field]',
+				'id' => 'ContactField', 'class' => 'form-error'
+			),
+			array('div' => array('class' => 'error')),
+			'Badness!',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.field', array(
+			'type' => 'text',
+			'div' => array('errorClass' => 'has-error'),
+			'error' => array('attributes' => array('class' => 'form-control-feedback'))
+		));
+		$expected = array(
+			'div' => array('class' => 'input text has-error'),
+			'label' => array('for' => 'ContactField'),
+			'Field',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][field]',
+				'id' => 'ContactField', 'class' => 'form-error'
+			),
+			array('div' => array('class' => 'form-control-feedback')),
+			'Badness!',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 }

@@ -64,7 +64,7 @@ class TaskCollection extends ObjectCollection {
  *
  * @param string $task Task name to load
  * @param array $settings Settings for the task.
- * @return Task A task object, Either the existing loaded task or a new one.
+ * @return AppShell A task object, Either the existing loaded task or a new one.
  * @throws MissingTaskException when the task could not be found
  */
 	public function load($task, $settings = array()) {

@@ -86,7 +86,7 @@ class RequestActionController extends Controller {
  * @return string $this->here.
  */
 	public function return_here() {
-		return $this->here;
+		return $this->request->here();
 	}
 
 /**
@@ -481,6 +481,17 @@ class ObjectTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$this->assertNull(Router::getRequest(), 'requests were not popped off the stack, this will break url generation');
+	}
+
+/**
+ * Test that here() is calculated correctly in requestAction
+ *
+ * @return void
+ */
+	public function testRequestActionHere() {
+		$url = '/request_action/return_here?key=value';
+		$result = $this->object->requestAction($url);
+		$this->assertStringEndsWith($url, $result);
 	}
 
 /**
