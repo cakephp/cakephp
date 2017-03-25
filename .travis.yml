@@ -9,7 +9,10 @@ php:
   - 7.1
 
 env:
-  - DB=mysql
+  matrix:
+    - DB=mysql
+  global:
+    - PHPUNIT=3.7.33
 
 services:
   - memcached
@@ -17,6 +20,9 @@ services:
 matrix:
   fast_finish: true
   include:
+    - php: 5.3
+      env: DB=mysql PHPUNIT=4.8.35
+
     - php: 5.4
       env: DB=pgsql
 
@@ -28,8 +34,8 @@ matrix:
 
 
 before_script:
-  - sh -c "composer global require 'phpunit/phpunit=3.7.33'"
-  - sh -c "ln -s ~/.composer/vendor/phpunit/phpunit/PHPUnit ./vendors/PHPUnit"
+  - composer global require "phpunit/phpunit=$PHPUNIT"
+  - echo "require_once '$HOME/.composer/vendor/autoload.php';" >> app/Config/bootstrap.php
   - sudo locale-gen de_DE
   - sudo locale-gen es_ES
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"

@@ -15,7 +15,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-if (!defined('__PHPUNIT_PHAR__')) {
+if (!class_exists('PHPUnit_TextUI_TestRunner')) {
 	require_once 'PHPUnit/TextUI/TestRunner.php';
 }
 
@@ -52,7 +52,11 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
 		}
 
 		$fixture = $this->_getFixtureManager($arguments);
-		foreach ($suite->getIterator() as $test) {
+		$iterator = $suite->getIterator();
+		if ($iterator instanceof RecursiveIterator) {
+			$iterator = new RecursiveIteratorIterator($iterator);
+		}
+		foreach ($iterator as $test) {
 			if ($test instanceof CakeTestCase) {
 				$fixture->fixturize($test);
 				$test->fixtureManager = $fixture;

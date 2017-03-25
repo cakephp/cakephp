@@ -27,7 +27,7 @@ $pluginDot = empty($plugin) ? null : $plugin . '.';
 </p>
 <pre>
 &lt;?php
-class <?php echo h($class . ' extends ' . $plugin); ?>AppController {
+class <?php echo h($class . ' extends ' . (empty($plugin) ? '' : $plugin)); ?>AppController {
 
 }
 </pre>
