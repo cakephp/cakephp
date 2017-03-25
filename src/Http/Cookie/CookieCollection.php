@@ -175,6 +175,53 @@ class CookieCollection implements IteratorAggregate, Countable
     }
 
     /**
+     * Add cookies that match the path/domain/expiration to the request.
+     *
+     * This allows CookieCollections to be used a 'cookie jar' in an HTTP client
+     * situation. Cookies that match the request's domain + path that are not expired
+     * when this method is called will be applied to the request.
+     *
+     * @param \Psr\Http\Message\RequestInterface $request The request to update.
+     * @return \Psr\Http\Message\RequestInterface An updated request.
+     */
+    public function addToRequest(RequestInterface $request)
+    {
+        $uri = $request->getUri();
+        $path = $uri->getPath();
+        $host = $uri->getHost();
+        $scheme = $uri->getScheme();
+
+        $out = [];
+        foreach ($this->cookies as $cookie) {
+            if ($scheme === 'http' && $cookie->isSecure()) {
+                continue;
+            }
+            if (strpos($path, $cookie->getPath()) !== 0) {
+                continue;
+            }
+            $domain = $cookie->getDomain();
+            $leadingDot = substr($domain, 0, 1) === '.';
+            if ($leadingDot) {
+                $domain = ltrim($domain, '.');
+            }
+
+            if ($cookie->getExpiry() && time() > $cookie->getExpiry()) {
+                continue;
+            }
+
+            $pattern = '/' . preg_quote($domain, '/') . '$/';
+            if (!preg_match($pattern, $host)) {
+                continue;
+            }
+
+            $out[$cookie->getName()] = $cookie->getValue();
+        }
+        $cookies = array_merge($request->getCookieParams(), $out);
+
+        return $request->withCookieParams($cookies);
+    }
+
+    /**
      * Create a new collection that includes cookies from the response.
      *
      * @param \Psr\Http\Message\ResponseInterface $response Response to extract cookies from.
