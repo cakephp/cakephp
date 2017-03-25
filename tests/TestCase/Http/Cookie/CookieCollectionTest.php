@@ -320,6 +320,26 @@ class CookieCollectionTest extends TestCase
     }
 
     /**
+     * Test adding cookies ignores leading dot
+     *
+     * @return void
+     */
+    public function testAddToRequestLeadingDot()
+    {
+        $collection = new CookieCollection();
+        $collection = $collection
+            ->add(new Cookie('public', 'b', null, '/', '.example.com'));
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'example.com',
+                'REQUEST_URI' => '/blog'
+            ]
+        ]);
+        $request = $collection->addToRequest($request);
+        $this->assertSame(['public' => 'b'], $request->getCookieParams());
+    }
+
+    /**
      * Test adding cookies checks the secure crumb
      *
      * @return void
@@ -329,7 +349,7 @@ class CookieCollectionTest extends TestCase
         $collection = new CookieCollection();
         $collection = $collection
             ->add(new Cookie('secret', 'A', null, '/', 'example.com', true))
-            ->add(new Cookie('public', 'b', null, '/', 'example.com', false));
+            ->add(new Cookie('public', 'b', null, '/', '.example.com', false));
         $request = new ServerRequest([
             'environment' => [
                 'HTTPS' => 'on',
