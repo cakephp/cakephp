@@ -177,7 +177,7 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Add cookies that match the path/domain/expiration to the request.
      *
-     * This allows CookieCollections to be used a 'cookie jar' in an HTTP client
+     * This allows CookieCollections to be used as a 'cookie jar' in an HTTP client
      * situation. Cookies that match the request's domain + path that are not expired
      * when this method is called will be applied to the request.
      *
