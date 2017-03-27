@@ -176,6 +176,34 @@ class CookieCollectionTest extends TestCase
     }
 
     /**
+     * Test that get() provides backwards compat behavior.
+     *
+     * When the parameter is a string that looks like a URL
+     *
+     * @return void
+     */
+    public function testGetBackwardsCompatibility()
+    {
+        $cookies = [
+            new Cookie('test', 'value', null, '/api', 'example.com', true),
+            new Cookie('test_two', 'value2', null, '/blog', 'blog.example.com', true),
+            new Cookie('test3', 'value3', null, '/blog', 'blog.example.com', false),
+        ];
+        $collection = new CookieCollection($cookies);
+        $result = $collection->get('http://example.com/api');
+        $this->assertSame([], $result);
+
+        $result = $collection->get('https://example.com/api');
+        $this->assertSame(['test' => 'value'], $result);
+
+        $result = $collection->get('http://foo.blog.example.com/blog/path');
+        $this->assertSame(['test3' => 'value3'], $result);
+
+        $result = $collection->get('https://foo.blog.example.com/blog/path');
+        $this->assertSame(['test_two' => 'value2', 'test3' => 'value3'], $result);
+    }
+
+    /**
      * Test that the constructor takes only an array of objects implementing
      * the CookieInterface
      *
@@ -437,18 +465,6 @@ class CookieCollectionTest extends TestCase
         $this->assertCount(1, $collection, 'Should store 1 cookie');
         $this->assertTrue($collection->has('test'));
         $this->assertFalse($collection->has('expired'));
-    }
-
-    /**
-     * Test that get() provides backwards compat behavior.
-     *
-     * When the parameter is a string that looks like a URL
-     *
-     * @return void
-     */
-    public function testGetBackwardsCompatibility()
-    {
-        $this->markTestIncomplete();
     }
 
     /**

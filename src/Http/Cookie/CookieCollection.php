@@ -82,7 +82,7 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Get the first cookie by name.
      *
-     * If the provided name matches a URL (matches `#^https?://#`) this method
+     * If the provided name matches a URL (starts with `http:`) this method
      * will assume you want a list of cookies that match that URL. This is
      * backwards compatible behavior that will be removed in 4.0.0
      *
@@ -92,6 +92,9 @@ class CookieCollection implements IteratorAggregate, Countable
      */
     public function get($name)
     {
+        if (substr($name, 0, 4) === 'http') {
+            return $this->getByUrl($name);
+        }
         $key = mb_strtolower($name);
         foreach ($this->cookies as $cookie) {
             if (mb_strtolower($cookie->getName()) === $key) {
@@ -100,6 +103,22 @@ class CookieCollection implements IteratorAggregate, Countable
         }
 
         return null;
+    }
+
+    /**
+     * Backwards compatibility helper for consumers of Client\CookieCollection
+     *
+     * @param string $url The url to get cookies for.
+     * @return array An array of matching cookies.
+     * @deprecated 3.5.0 Will be removed in 4.0.0. Use addToRequest() instead.
+     */
+    protected function getByUrl($url)
+    {
+        $path = parse_url($url, PHP_URL_PATH) ?: '/';
+        $host = parse_url($url, PHP_URL_HOST);
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+
+        return $this->findMatchingCookies($scheme, $host, $path);
     }
 
     /**
@@ -190,7 +209,22 @@ class CookieCollection implements IteratorAggregate, Countable
         $path = $uri->getPath();
         $host = $uri->getHost();
         $scheme = $uri->getScheme();
+        $cookies = $this->findMatchingCookies($scheme, $host, $path);
+        $cookies = array_merge($request->getCookieParams(), $cookies);
 
+        return $request->withCookieParams($cookies);
+    }
+
+    /**
+     * Find cookies matching the scheme, host, and path
+     *
+     * @param string $scheme The http scheme to match
+     * @param string $host The host to match.
+     * @param string $path The path to match
+     * @return array An array of cookie name/value pairs
+     */
+    protected function findMatchingCookies($scheme, $host, $path)
+    {
         $out = [];
         foreach ($this->cookies as $cookie) {
             if ($scheme === 'http' && $cookie->isSecure()) {
@@ -205,7 +239,8 @@ class CookieCollection implements IteratorAggregate, Countable
                 $domain = ltrim($domain, '.');
             }
 
-            if ($cookie->getExpiry() && time() > $cookie->getExpiry()) {
+            $expires = $cookie->getExpiry();
+            if ($expires && time() > $expires) {
                 continue;
             }
 
@@ -216,9 +251,8 @@ class CookieCollection implements IteratorAggregate, Countable
 
             $out[$cookie->getName()] = $cookie->getValue();
         }
-        $cookies = array_merge($request->getCookieParams(), $out);
 
-        return $request->withCookieParams($cookies);
+        return $out;
     }
 
     /**
