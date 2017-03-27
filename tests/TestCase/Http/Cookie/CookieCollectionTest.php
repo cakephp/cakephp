@@ -12,6 +12,7 @@
  */
 namespace Cake\Test\TestCase\Http\Cookie;
 
+use Cake\Http\Client\Response as ClientResponse;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Response;
@@ -104,11 +105,13 @@ class CookieCollectionTest extends TestCase
     public function testAddDuplicates()
     {
         $remember = new Cookie('remember_me', 'yes');
-        $rememberNo = new Cookie('remember_me', 'no');
+        $rememberNo = new Cookie('remember_me', 'no', null, '/path2');
+        $this->assertNotEquals($remember->getId(), $rememberNo->getId(), 'Cookies should have different ids');
+
         $collection = new CookieCollection([]);
         $new = $collection->add($remember)->add($rememberNo);
 
-        $this->assertCount(2, $new);
+        $this->assertCount(2, $new, 'Cookies with different ids create duplicates.');
         $this->assertNotSame($new, $collection);
         $this->assertSame($remember, $new->get('remember_me'), 'get() fetches first cookie');
     }
@@ -269,6 +272,52 @@ class CookieCollectionTest extends TestCase
     }
 
     /**
+     * Test adding cookies from a response removes existing cookies if
+     * the new response marks them as expired.
+     *
+     * @return void
+     */
+    public function testAddFromResponseRemoveExpired()
+    {
+        $collection = new CookieCollection([
+            new Cookie('expired', 'not yet', null, '/', 'example.com')
+        ]);
+        $request = new ServerRequest([
+            'url' => '/app',
+            'environment' => [
+                'HTTP_HOST' => 'example.com'
+            ]
+        ]);
+        $response = (new Response())
+            ->withAddedHeader('Set-Cookie', 'test=value')
+            ->withAddedHeader('Set-Cookie', 'expired=soon; Expires=Wed, 09-Jun-2012 10:18:14 GMT; Path=/;');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertFalse($new->has('expired'), 'Should drop expired cookies');
+    }
+
+    /**
+     * Test adding cookies from responses updates cookie values.
+     *
+     * @return void
+     */
+    public function testAddFromResponseUpdateExisting()
+    {
+        $collection = new CookieCollection([
+            new Cookie('key', 'old value', null, '/', 'example.com')
+        ]);
+        $request = new ServerRequest([
+            'url' => '/',
+            'environment' => [
+                'HTTP_HOST' => 'example.com'
+            ]
+        ]);
+        $response = (new Response())->withAddedHeader('Set-Cookie', 'key=new value');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertTrue($new->has('key'));
+        $this->assertSame('new value', $new->get('key')->getValue());
+    }
+
+    /**
      * Test adding cookies from the collection to request.
      *
      * @return void
@@ -369,5 +418,72 @@ class CookieCollectionTest extends TestCase
         ]);
         $request = $collection->addToRequest($request);
         $this->assertSame(['public' => 'b'], $request->getCookieParams());
+    }
+
+    /**
+     * Test that store() provides backwards compat behavior.
+     *
+     * @return void
+     */
+    public function testStoreCompatibility()
+    {
+        $collection = new CookieCollection();
+        $response = (new ClientResponse())
+            ->withAddedHeader('Set-Cookie', 'test=value')
+            ->withAddedHeader('Set-Cookie', 'expired=soon; Expires=Wed, 09-Jun-2012 10:18:14 GMT; Path=/;');
+        $result = $collection->store($response, 'http://example.com/blog');
+
+        $this->assertNull($result);
+        $this->assertCount(1, $collection, 'Should store 1 cookie');
+        $this->assertTrue($collection->has('test'));
+        $this->assertFalse($collection->has('expired'));
+    }
+
+    /**
+     * Test that get() provides backwards compat behavior.
+     *
+     * When the parameter is a string that looks like a URL
+     *
+     * @return void
+     */
+    public function testGetBackwardsCompatibility()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * Test that getAll() provides backwards compat behavior.
+     *
+     * @return void
+     */
+    public function testGetAllBackwardsCompatibility()
+    {
+        $expires = new DateTime('-2 seconds');
+        $cookies = [
+            new Cookie('test', 'value', $expires, '/api', 'example.com', true, true),
+            new Cookie('test_two', 'value_two', null, '/blog', 'blog.example.com', true, true),
+        ];
+        $collection = new CookieCollection($cookies);
+        $expected = [
+            [
+                'name' => 'test',
+                'value' => 'value',
+                'path' => '/api',
+                'domain' => 'example.com',
+                'secure' => true,
+                'httponly' => true,
+                'expires' => $expires->format('U'),
+            ],
+            [
+                'name' => 'test_two',
+                'value' => 'value_two',
+                'path' => '/blog',
+                'domain' => 'blog.example.com',
+                'secure' => true,
+                'httponly' => true,
+                'expires' => 0
+            ],
+        ];
+        $this->assertEquals($expected, $collection->getAll());
     }
 }

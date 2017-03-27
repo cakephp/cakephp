@@ -14,6 +14,7 @@
 namespace Cake\Http\Cookie;
 
 use ArrayIterator;
+use Cake\Http\Client\Response as ClientResponse;
 use Countable;
 use DateTime;
 use InvalidArgumentException;
@@ -46,9 +47,7 @@ class CookieCollection implements IteratorAggregate, Countable
     {
         $this->checkCookies($cookies);
         foreach ($cookies as $cookie) {
-            $name = $cookie->getName();
-            $key = mb_strtolower($name);
-            $this->cookies[$key] = $cookie;
+            $this->cookies[$cookie->getId()] = $cookie;
         }
     }
 
@@ -65,8 +64,9 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Add a cookie and get an updated collection.
      *
-     * Cookie names do not have to be unique in a collection, but
-     * having duplicate cookie names will change how get() behaves.
+     * Cookies are stored by id. This means that there can be duplicate
+     * cookies if a cookie collection is used for cookies across multiple
+     * domains. This can impact how get(), has() and remove() behave.
      *
      * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie instance to add.
      * @return static
@@ -74,7 +74,7 @@ class CookieCollection implements IteratorAggregate, Countable
     public function add(CookieInterface $cookie)
     {
         $new = clone $this;
-        $new->cookies[] = $cookie;
+        $new->cookies[$cookie->getId()] = $cookie;
 
         return $new;
     }
@@ -236,26 +236,38 @@ class CookieCollection implements IteratorAggregate, Countable
 
         $header = $response->getHeader('Set-Cookie');
         $cookies = $this->parseSetCookieHeader($header);
+        $cookies = $this->setRequestDefaults($cookies, $host, $path);
         $new = clone $this;
+        foreach ($cookies as $cookie) {
+            $new->cookies[$cookie->getId()] = $cookie;
+        }
+        $new->removeExpiredCookies($host, $path);
+
+        return $new;
+    }
+
+    /**
+     * Apply path and host to the set of cookies if they are not set.
+     *
+     * @param array $cookies An array of cookies to update.
+     * @param string $host The host to set.
+     * @param string $path The path to set.
+     * @return array An array of updated cookies.
+     */
+    protected function setRequestDefaults(array $cookies, $host, $path)
+    {
+        $out = [];
         foreach ($cookies as $name => $cookie) {
-            // Apply path/domain from request if the cookie
-            // didn't have one.
             if (!$cookie->getDomain()) {
                 $cookie = $cookie->withDomain($host);
             }
             if (!$cookie->getPath()) {
                 $cookie = $cookie->withPath($path);
             }
-
-            $expires = $cookie->getExpiry();
-            // Don't store expired cookies
-            if ($expires && $expires <= time()) {
-                continue;
-            }
-            $new->cookies[] = $cookie;
+            $out[] = $cookie;
         }
 
-        return $new;
+        return $out;
     }
 
     /**
@@ -314,5 +326,82 @@ class CookieCollection implements IteratorAggregate, Countable
         }
 
         return $cookies;
+    }
+
+    /**
+     * Remove expired cookies from the collection.
+     *
+     * @param string $host The host to check for expired cookies on.
+     * @param string $path The path to check for expired cookies on.
+     * @return void
+     */
+    private function removeExpiredCookies($host, $path)
+    {
+        $time = time();
+        $hostPattern = '/' . preg_quote($host, '/') . '$/';
+
+        foreach ($this->cookies as $i => $cookie) {
+            $expires = $cookie->getExpiry();
+            $expired = ($expires > 0 && $expires < $time);
+
+            $pathMatches = strpos($path, $cookie->getPath()) === 0;
+            $hostMatches = preg_match($hostPattern, $cookie->getDomain());
+            if ($pathMatches && $hostMatches && $expired) {
+                unset($this->cookies[$i]);
+            }
+        }
+    }
+
+    /**
+     * Store the cookies contained in a response
+     *
+     * This method operates on the collection in a mutable way for backwards
+     * compatibility reasons. This method should not be used and is only
+     * provided for backwards compatibility.
+     *
+     * @param \Cake\Http\Client\Response $response The response to read cookies from
+     * @param string $url The request URL used for default host/path values.
+     * @return void
+     * @deprecated 3.5.0 Will be removed in 4.0.0. Use `addFromResponse()` instead.
+     */
+    public function store(ClientResponse $response, $url)
+    {
+        $host = parse_url($url, PHP_URL_HOST);
+        $path = parse_url($url, PHP_URL_PATH);
+        $path = $path ?: '/';
+
+        $header = $response->getHeader('Set-Cookie');
+        $cookies = $this->parseSetCookieHeader($header);
+        $cookies = $this->setRequestDefaults($cookies, $host, $path);
+        foreach ($cookies as $cookie) {
+            $this->cookies[] = $cookie;
+        }
+        $this->removeExpiredCookies($host, $path);
+    }
+
+    /**
+     * Get all cookie data as arrays.
+     *
+     * This method should not be used and is only provided for backwards compatibility.
+     *
+     * @return array
+     * @deprecated 3.5.0 Will be removed in 4.0.0
+     */
+    public function getAll()
+    {
+        $out = [];
+        foreach ($this->cookies as $cookie) {
+            $out[] = [
+                'name' => $cookie->getName(),
+                'value' => $cookie->getValue(),
+                'path' => $cookie->getPath(),
+                'domain' => $cookie->getDomain(),
+                'secure' => $cookie->isSecure(),
+                'httponly' => $cookie->isHttpOnly(),
+                'expires' => $cookie->getExpiry()
+            ];
+        }
+
+        return $out;
     }
 }
