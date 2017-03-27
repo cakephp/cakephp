@@ -688,7 +688,6 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	public function testSchemaReadWithNonConventionalPrimaryKey() {
-		$this->skipIf($this->db instanceof Postgres, 'Cannot test on Postgres');
 		$db = ConnectionManager::getDataSource('test');
 		$fixture = new NonConventionalPrimaryKeyFixture();
 		$fixture->create($db);
@@ -700,14 +699,14 @@ class CakeSchemaTest extends CakeTestCase {
 		));
 		$fixture->drop($db);
 
-		$hasTable = isset($read['tables']['non_conventional']);
-		$this->assertTrue($hasTable, 'non_conventional table should appear');
+		$this->assertArrayHasKey('non_conventional', $read['tables']);
 		$versionIdHasKey = isset($read['tables']['non_conventional']['version_id']['key']);
 		$this->assertTrue($versionIdHasKey, 'version_id key should be set');
 		$versionIdKeyIsPrimary = $read['tables']['non_conventional']['version_id']['key'] === 'primary';
 		$this->assertTrue($versionIdKeyIsPrimary, 'version_id key should be primary');
-		$idHasNoKey = !isset($read['tables']['non_conventional']['id']['key']);
-		$this->assertTrue($idHasNoKey, 'id key should not be set');
+
+		$idHasKey = isset($read['tables']['non_conventional']['id']['key']);
+		$this->assertFalse($idHasKey, 'id key should not be set');
 	}
 
 /**
