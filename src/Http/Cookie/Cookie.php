@@ -212,6 +212,18 @@ class Cookie implements CookieInterface
     }
 
     /**
+     * Get the id for a cookie
+     *
+     * Cookies are unique across name, domain, path tuples.
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return "{$this->name};{$this->domain};{$this->path}";
+    }
+
+    /**
      * Gets the cookie name
      *
      * @return string
