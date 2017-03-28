@@ -110,7 +110,6 @@ class CookieCollection implements IteratorAggregate, Countable
      *
      * @param string $url The url to get cookies for.
      * @return array An array of matching cookies.
-     * @deprecated 3.5.0 Will be removed in 4.0.0. Use addToRequest() instead.
      */
     protected function getByUrl($url)
     {

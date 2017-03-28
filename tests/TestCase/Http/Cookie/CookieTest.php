@@ -515,6 +515,9 @@ class CookieTest extends TestCase
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $this->assertEquals('cakephp;;', $cookie->getId());
 
+        $cookie = new Cookie('CAKEPHP', 'cakephp-rocks');
+        $this->assertEquals('cakephp;;', $cookie->getId());
+
         $cookie = new Cookie('test', 'val', null, '/path', 'example.com');
         $this->assertEquals('test;example.com;/path', $cookie->getId());
     }
