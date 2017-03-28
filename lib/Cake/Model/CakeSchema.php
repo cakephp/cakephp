@@ -613,9 +613,17 @@ class CakeSchema extends CakeObject {
 		$db = $Obj->getDataSource();
 		$fields = $Obj->schema(true);
 
+		$hasPrimaryAlready = false;
+		foreach ($fields as $value) {
+			if (isset($value['key']) && $value['key'] === 'primary') {
+				$hasPrimaryAlready = true;
+				break;
+			}
+		}
+
 		$columns = array();
 		foreach ($fields as $name => $value) {
-			if ($Obj->primaryKey === $name) {
+			if ($Obj->primaryKey === $name && !$hasPrimaryAlready && !isset($value['key'])) {
 				$value['key'] = 'primary';
 			}
 			if (!isset($db->columns[$value['type']])) {
