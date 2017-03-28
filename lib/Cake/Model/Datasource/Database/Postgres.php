@@ -198,14 +198,26 @@ class Postgres extends DboSource {
 		$fields = parent::describe($table);
 		$this->_sequenceMap[$table] = array();
 		$cols = null;
+		$hasPrimary = false;
 
 		if ($fields === null) {
 			$cols = $this->_execute(
-				"SELECT DISTINCT table_schema AS schema, column_name AS name, data_type AS type, is_nullable AS null,
-					column_default AS default, ordinal_position AS position, character_maximum_length AS char_length,
-					character_octet_length AS oct_length FROM information_schema.columns
-				WHERE table_name = ? AND table_schema = ?  ORDER BY position",
-				array($table, $this->config['schema'])
+				'SELECT DISTINCT table_schema AS schema,
+					column_name AS name,
+					data_type AS type,
+					is_nullable AS null,
+					column_default AS default,
+					ordinal_position AS position,
+					character_maximum_length AS char_length,
+					character_octet_length AS oct_length,
+					pg_get_serial_sequence(attr.attrelid::regclass::text, attr.attname) IS NOT NULL AS has_serial
+				FROM information_schema.columns c
+				INNER JOIN pg_catalog.pg_namespace ns ON (ns.nspname = table_schema)
+				INNER JOIN pg_catalog.pg_class cl ON (cl.relnamespace = ns.oid AND cl.relname = table_name)
+				LEFT JOIN pg_catalog.pg_attribute attr ON (cl.oid = attr.attrelid AND column_name = attr.attname)
+				WHERE table_name = ? AND table_schema = ? AND table_catalog = ?
+				ORDER BY ordinal_position',
+				array($table, $this->config['schema'], $this->config['database'])
 			);
 
 			// @codingStandardsIgnoreStart
@@ -238,17 +250,25 @@ class Postgres extends DboSource {
 						"$1",
 						preg_replace('/::.*/', '', $c->default)
 					),
-					'length' => $length
+					'length' => $length,
 				);
-				if ($model instanceof Model) {
-					if ($c->name === $model->primaryKey) {
-						$fields[$c->name]['key'] = 'primary';
-						if (
-							$fields[$c->name]['type'] !== 'string' &&
-							$fields[$c->name]['type'] !== 'uuid'
-						) {
-							$fields[$c->name]['length'] = 11;
-						}
+
+				// Serial columns are primary integer keys
+				if ($c->has_serial) {
+					$fields[$c->name]['key'] = 'primary';
+					$fields[$c->name]['length'] = 11;
+					$hasPrimary = true;
+				}
+				if ($hasPrimary === false &&
+					$model instanceof Model &&
+					$c->name === $model->primaryKey
+				) {
+					$fields[$c->name]['key'] = 'primary';
+					if (
+						$fields[$c->name]['type'] !== 'string' &&
+						$fields[$c->name]['type'] !== 'uuid'
+					) {
+						$fields[$c->name]['length'] = 11;
 					}
 				}
 				if (
