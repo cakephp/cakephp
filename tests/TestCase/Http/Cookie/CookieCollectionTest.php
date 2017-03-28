@@ -176,34 +176,6 @@ class CookieCollectionTest extends TestCase
     }
 
     /**
-     * Test that get() provides backwards compat behavior.
-     *
-     * When the parameter is a string that looks like a URL
-     *
-     * @return void
-     */
-    public function testGetBackwardsCompatibility()
-    {
-        $cookies = [
-            new Cookie('test', 'value', null, '/api', 'example.com', true),
-            new Cookie('test_two', 'value2', null, '/blog', 'blog.example.com', true),
-            new Cookie('test3', 'value3', null, '/blog', 'blog.example.com', false),
-        ];
-        $collection = new CookieCollection($cookies);
-        $result = $collection->get('http://example.com/api');
-        $this->assertSame([], $result);
-
-        $result = $collection->get('https://example.com/api');
-        $this->assertSame(['test' => 'value'], $result);
-
-        $result = $collection->get('http://foo.blog.example.com/blog/path');
-        $this->assertSame(['test3' => 'value3'], $result);
-
-        $result = $collection->get('https://foo.blog.example.com/blog/path');
-        $this->assertSame(['test_two' => 'value2', 'test3' => 'value3'], $result);
-    }
-
-    /**
      * Test that the constructor takes only an array of objects implementing
      * the CookieInterface
      *
@@ -446,60 +418,5 @@ class CookieCollectionTest extends TestCase
         ]);
         $request = $collection->addToRequest($request);
         $this->assertSame(['public' => 'b'], $request->getCookieParams());
-    }
-
-    /**
-     * Test that store() provides backwards compat behavior.
-     *
-     * @return void
-     */
-    public function testStoreCompatibility()
-    {
-        $collection = new CookieCollection();
-        $response = (new ClientResponse())
-            ->withAddedHeader('Set-Cookie', 'test=value')
-            ->withAddedHeader('Set-Cookie', 'expired=soon; Expires=Wed, 09-Jun-2012 10:18:14 GMT; Path=/;');
-        $result = $collection->store($response, 'http://example.com/blog');
-
-        $this->assertNull($result);
-        $this->assertCount(1, $collection, 'Should store 1 cookie');
-        $this->assertTrue($collection->has('test'));
-        $this->assertFalse($collection->has('expired'));
-    }
-
-    /**
-     * Test that getAll() provides backwards compat behavior.
-     *
-     * @return void
-     */
-    public function testGetAllBackwardsCompatibility()
-    {
-        $expires = new DateTime('-2 seconds');
-        $cookies = [
-            new Cookie('test', 'value', $expires, '/api', 'example.com', true, true),
-            new Cookie('test_two', 'value_two', null, '/blog', 'blog.example.com', true, true),
-        ];
-        $collection = new CookieCollection($cookies);
-        $expected = [
-            [
-                'name' => 'test',
-                'value' => 'value',
-                'path' => '/api',
-                'domain' => 'example.com',
-                'secure' => true,
-                'httponly' => true,
-                'expires' => $expires->format('U'),
-            ],
-            [
-                'name' => 'test_two',
-                'value' => 'value_two',
-                'path' => '/blog',
-                'domain' => 'blog.example.com',
-                'secure' => true,
-                'httponly' => true,
-                'expires' => 0
-            ],
-        ];
-        $this->assertEquals($expected, $collection->getAll());
     }
 }

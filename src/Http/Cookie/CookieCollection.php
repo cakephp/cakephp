@@ -82,19 +82,11 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Get the first cookie by name.
      *
-     * If the provided name matches a URL (starts with `http:`) this method
-     * will assume you want a list of cookies that match that URL. This is
-     * backwards compatible behavior that will be removed in 4.0.0
-     *
-     * @param string $name The name of the cookie. If the name looks like a URL,
-     *  backwards compatible behavior will be used.
-     * @return \Cake\Http\Cookie\CookieInterface|null|array
+     * @param string $name The name of the cookie.
+     * @return \Cake\Http\Cookie\CookieInterface|null
      */
     public function get($name)
     {
-        if (substr($name, 0, 4) === 'http') {
-            return $this->getByUrl($name);
-        }
         $key = mb_strtolower($name);
         foreach ($this->cookies as $cookie) {
             if (mb_strtolower($cookie->getName()) === $key) {
@@ -103,21 +95,6 @@ class CookieCollection implements IteratorAggregate, Countable
         }
 
         return null;
-    }
-
-    /**
-     * Backwards compatibility helper for consumers of Client\CookieCollection
-     *
-     * @param string $url The url to get cookies for.
-     * @return array An array of matching cookies.
-     */
-    protected function getByUrl($url)
-    {
-        $path = parse_url($url, PHP_URL_PATH) ?: '/';
-        $host = parse_url($url, PHP_URL_HOST);
-        $scheme = parse_url($url, PHP_URL_SCHEME);
-
-        return $this->findMatchingCookies($scheme, $host, $path);
     }
 
     /**
@@ -344,7 +321,8 @@ class CookieCollection implements IteratorAggregate, Countable
             }
             $expires = null;
             if ($cookie['expires']) {
-                $expires = new DateTime($cookie['expires']);
+                $expires = new DateTime();
+                $expires->setTimestamp(strtotime($cookie['expires']));
             }
 
             $cookies[] = new Cookie(
@@ -368,7 +346,7 @@ class CookieCollection implements IteratorAggregate, Countable
      * @param string $path The path to check for expired cookies on.
      * @return void
      */
-    private function removeExpiredCookies($host, $path)
+    protected function removeExpiredCookies($host, $path)
     {
         $time = time();
         $hostPattern = '/' . preg_quote($host, '/') . '$/';
@@ -383,58 +361,5 @@ class CookieCollection implements IteratorAggregate, Countable
                 unset($this->cookies[$i]);
             }
         }
-    }
-
-    /**
-     * Store the cookies contained in a response
-     *
-     * This method operates on the collection in a mutable way for backwards
-     * compatibility reasons. This method should not be used and is only
-     * provided for backwards compatibility.
-     *
-     * @param \Cake\Http\Client\Response $response The response to read cookies from
-     * @param string $url The request URL used for default host/path values.
-     * @return void
-     * @deprecated 3.5.0 Will be removed in 4.0.0. Use `addFromResponse()` instead.
-     */
-    public function store(ClientResponse $response, $url)
-    {
-        $host = parse_url($url, PHP_URL_HOST);
-        $path = parse_url($url, PHP_URL_PATH);
-        $path = $path ?: '/';
-
-        $header = $response->getHeader('Set-Cookie');
-        $cookies = $this->parseSetCookieHeader($header);
-        $cookies = $this->setRequestDefaults($cookies, $host, $path);
-        foreach ($cookies as $cookie) {
-            $this->cookies[] = $cookie;
-        }
-        $this->removeExpiredCookies($host, $path);
-    }
-
-    /**
-     * Get all cookie data as arrays.
-     *
-     * This method should not be used and is only provided for backwards compatibility.
-     *
-     * @return array
-     * @deprecated 3.5.0 Will be removed in 4.0.0
-     */
-    public function getAll()
-    {
-        $out = [];
-        foreach ($this->cookies as $cookie) {
-            $out[] = [
-                'name' => $cookie->getName(),
-                'value' => $cookie->getValue(),
-                'path' => $cookie->getPath(),
-                'domain' => $cookie->getDomain(),
-                'secure' => $cookie->isSecure(),
-                'httponly' => $cookie->isHttpOnly(),
-                'expires' => $cookie->getExpiry()
-            ];
-        }
-
-        return $out;
     }
 }
