@@ -221,6 +221,7 @@ class Cookie implements CookieInterface
     public function getId()
     {
         $name = mb_strtolower($this->name);
+
         return "{$name};{$this->domain};{$this->path}";
     }
 
