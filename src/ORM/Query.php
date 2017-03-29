@@ -377,20 +377,156 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function contain($associations = null, $override = false)
     {
+        if ($associations === null) {
+            if ($override === true) {
+                $this->clearContain();
+            }
+
+            return $this->getContain();
+        }
+
+        return $this->setContain($associations, $override);
+    }
+
+    /**
+     * Sets the list of associations that should be eagerly loaded along with this
+     * query. The list of associated tables passed must have been previously set as
+     * associations using the Table API.
+     *
+     * ### Example:
+     *
+     * ```
+     * // Bring articles' author information
+     * $query->contain('Author');
+     *
+     * // Also bring the category and tags associated to each article
+     * $query->contain(['Category', 'Tag']);
+     * ```
+     *
+     * Associations can be arbitrarily nested using dot notation or nested arrays,
+     * this allows this object to calculate joins or any additional queries that
+     * must be executed to bring the required associated data.
+     *
+     * ### Example:
+     *
+     * ```
+     * // Eager load the product info, and for each product load other 2 associations
+     * $query->contain(['Product' => ['Manufacturer', 'Distributor']);
+     *
+     * // Which is equivalent to calling
+     * $query->contain(['Products.Manufactures', 'Products.Distributors']);
+     *
+     * // For an author query, load his region, state and country
+     * $query->contain('Regions.States.Countries');
+     * ```
+     *
+     * It is possible to control the conditions and fields selected for each of the
+     * contained associations:
+     *
+     * ### Example:
+     *
+     * ```
+     * $query->contain(['Tags' => function ($q) {
+     *     return $q->where(['Tags.is_popular' => true]);
+     * }]);
+     *
+     * $query->contain(['Products.Manufactures' => function ($q) {
+     *     return $q->select(['name'])->where(['Manufactures.active' => true]);
+     * }]);
+     * ```
+     *
+     * Each association might define special options when eager loaded, the allowed
+     * options that can be set per association are:
+     *
+     * - `foreignKey`: Used to set a different field to match both tables, if set to false
+     *   no join conditions will be generated automatically. `false` can only be used on
+     *   joinable associations and cannot be used with hasMany or belongsToMany associations.
+     * - `fields`: An array with the fields that should be fetched from the association.
+     * - `finder`: The finder to use when loading associated records. Either the name of the
+     *   finder as a string, or an array to define options to pass to the finder.
+     * - `queryBuilder`: Equivalent to passing a callable instead of an options array.
+     *
+     * ### Example:
+     *
+     * ```
+     * // Set options for the hasMany articles that will be eagerly loaded for an author
+     * $query->contain([
+     *     'Articles' => [
+     *         'fields' => ['title', 'author_id']
+     *     ]
+     * ]);
+     * ```
+     *
+     * Finders can be configured to use options.
+     *
+     * ```
+     * // Retrieve translations for the articles, but only those for the `en` and `es` locales
+     * $query->contain([
+     *     'Articles' => [
+     *         'finder' => [
+     *             'translations' => [
+     *                 'locales' => ['en', 'es']
+     *             ]
+     *         ]
+     *     ]
+     * ]);
+     * ```
+     *
+     * When containing associations, it is important to include foreign key columns.
+     * Failing to do so will trigger exceptions.
+     *
+     * ```
+     * // Use special join conditions for getting an Articles's belongsTo 'authors'
+     * $query->contain([
+     *     'Authors' => [
+     *         'foreignKey' => false,
+     *         'queryBuilder' => function ($q) {
+     *             return $q->where(...); // Add full filtering conditions
+     *         }
+     *     ]
+     * ]);
+     * ```
+     *
+     * @param array|string $associations List of table aliases to be queried.
+     * @param bool $override Whether override previous list with the one passed
+     * defaults to merging previous list with the new one.
+     * @return $this
+     */
+    public function setContain($associations, $override = false)
+    {
         $loader = $this->getEagerLoader();
         if ($override === true) {
             $loader->clearContain();
             $this->_dirty();
         }
 
-        if ($associations === null) {
-            return $loader->contain();
-        }
-
         $result = $loader->contain($associations);
         $this->_addAssociationsToTypeMap($this->repository(), $this->getTypeMap(), $result);
 
         return $this;
+    }
+
+    /**
+     * Clears the contained assocations form the current query.
+     *
+     * @return $this
+     */
+    public function clearContain()
+    {
+        $this->getEagerLoader()->clearContain();
+        $this->_dirty();
+
+        return $this;
+    }
+
+    /**
+     * Gets the contained associations
+     *
+     * @return array
+     */
+    public function getContain()
+    {
+        return $this->getEagerLoader()->contain();
     }
 
     /**
