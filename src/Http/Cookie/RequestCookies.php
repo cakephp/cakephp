@@ -37,33 +37,4 @@ class RequestCookies extends CookieCollection
 
         return new static($cookies);
     }
-
-    /**
-     * Checks if the collection has a cookie with the given name
-     *
-     * @param string $name Name of the cookie
-     * @return bool
-     */
-    public function has($name)
-    {
-        $key = mb_strtolower($name);
-
-        return isset($this->cookies[$key]);
-    }
-
-    /**
-     * Get a cookie from the collection by name.
-     *
-     * @param string $name Name of the cookie to get
-     * @throws \InvalidArgumentException
-     * @return Cookie
-     */
-    public function get($name)
-    {
-        if (!$this->has($name)) {
-            throw new InvalidArgumentException(sprintf('Cookie `%s` does not exist', $name));
-        }
-
-        return $this->cookies[mb_strtolower($name)];
-    }
 }

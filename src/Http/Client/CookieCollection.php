@@ -13,21 +13,18 @@
  */
 namespace Cake\Http\Client;
 
+use Cake\Http\Cookie\CookieCollection as BaseCollection;
+
 /**
  * Container class for cookies used in Http\Client.
  *
  * Provides cookie jar like features for storing cookies between
  * requests, as well as appending cookies to new requests.
+ *
+ * @deprecated 3.5.0 Use Cake\Http\Cookie\CookieCollection instead.
  */
-class CookieCollection
+class CookieCollection extends BaseCollection
 {
-
-    /**
-     * The cookies stored in this jar.
-     *
-     * @var array
-     */
-    protected $_cookies = [];
 
     /**
      * Store the cookies from a response.
@@ -45,27 +42,13 @@ class CookieCollection
         $path = parse_url($url, PHP_URL_PATH);
         $path = $path ?: '/';
 
-        $cookies = $response->cookies();
-        foreach ($cookies as $name => $cookie) {
-            if (empty($cookie['domain'])) {
-                $cookie['domain'] = $host;
-            }
-            if (empty($cookie['path'])) {
-                $cookie['path'] = $path;
-            }
-            $key = implode(';', [$cookie['name'], $cookie['domain'], $cookie['path']]);
-
-            $expires = isset($cookie['expires']) ? $cookie['expires'] : false;
-            $expiresTime = false;
-            if ($expires) {
-                $expiresTime = strtotime($expires);
-            }
-            if ($expiresTime && $expiresTime <= time()) {
-                unset($this->_cookies[$key]);
-                continue;
-            }
-            $this->_cookies[$key] = $cookie;
+        $header = $response->getHeader('Set-Cookie');
+        $cookies = $this->parseSetCookieHeader($header);
+        $cookies = $this->setRequestDefaults($cookies, $host, $path);
+        foreach ($cookies as $cookie) {
+            $this->cookies[$cookie->getId()] = $cookie;
         }
+        $this->removeExpiredCookies($host, $path);
     }
 
     /**
@@ -83,28 +66,7 @@ class CookieCollection
         $host = parse_url($url, PHP_URL_HOST);
         $scheme = parse_url($url, PHP_URL_SCHEME);
 
-        $out = [];
-        foreach ($this->_cookies as $cookie) {
-            if ($scheme === 'http' && !empty($cookie['secure'])) {
-                continue;
-            }
-            if (strpos($path, $cookie['path']) !== 0) {
-                continue;
-            }
-            $leadingDot = $cookie['domain'][0] === '.';
-            if ($leadingDot) {
-                $cookie['domain'] = ltrim($cookie['domain'], '.');
-            }
-
-            $pattern = '/' . preg_quote(substr($cookie['domain'], 1), '/') . '$/';
-            if (!preg_match($pattern, $host)) {
-                continue;
-            }
-
-            $out[$cookie['name']] = $cookie['value'];
-        }
-
-        return $out;
+        return $this->findMatchingCookies($scheme, $host, $path);
     }
 
     /**
@@ -114,7 +76,20 @@ class CookieCollection
      */
     public function getAll()
     {
-        return array_values($this->_cookies);
+        $out = [];
+        foreach ($this->cookies as $cookie) {
+            $out[] = [
+                'name' => $cookie->getName(),
+                'value' => $cookie->getValue(),
+                'path' => $cookie->getPath(),
+                'domain' => $cookie->getDomain(),
+                'secure' => $cookie->isSecure(),
+                'httponly' => $cookie->isHttpOnly(),
+                'expires' => $cookie->getExpiry()
+            ];
+        }
+
+        return $out;
     }
 }
 

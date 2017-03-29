@@ -12,6 +12,7 @@
  */
 namespace Cake\Test\TestCase\Http\Cookie;
 
+use Cake\Http\Client\Response as ClientResponse;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Response;
@@ -104,11 +105,13 @@ class CookieCollectionTest extends TestCase
     public function testAddDuplicates()
     {
         $remember = new Cookie('remember_me', 'yes');
-        $rememberNo = new Cookie('remember_me', 'no');
+        $rememberNo = new Cookie('remember_me', 'no', null, '/path2');
+        $this->assertNotEquals($remember->getId(), $rememberNo->getId(), 'Cookies should have different ids');
+
         $collection = new CookieCollection([]);
         $new = $collection->add($remember)->add($rememberNo);
 
-        $this->assertCount(2, $new);
+        $this->assertCount(2, $new, 'Cookies with different ids create duplicates.');
         $this->assertNotSame($new, $collection);
         $this->assertSame($remember, $new->get('remember_me'), 'get() fetches first cookie');
     }
@@ -266,6 +269,52 @@ class CookieCollectionTest extends TestCase
             ->withAddedHeader('Set-Cookie', 'expired=soon; Expires=Wed, 09-Jun-2012 10:18:14 GMT; Path=/;');
         $new = $collection->addFromResponse($response, $request);
         $this->assertFalse($new->has('expired'), 'Should drop expired cookies');
+    }
+
+    /**
+     * Test adding cookies from a response removes existing cookies if
+     * the new response marks them as expired.
+     *
+     * @return void
+     */
+    public function testAddFromResponseRemoveExpired()
+    {
+        $collection = new CookieCollection([
+            new Cookie('expired', 'not yet', null, '/', 'example.com')
+        ]);
+        $request = new ServerRequest([
+            'url' => '/app',
+            'environment' => [
+                'HTTP_HOST' => 'example.com'
+            ]
+        ]);
+        $response = (new Response())
+            ->withAddedHeader('Set-Cookie', 'test=value')
+            ->withAddedHeader('Set-Cookie', 'expired=soon; Expires=Wed, 09-Jun-2012 10:18:14 GMT; Path=/;');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertFalse($new->has('expired'), 'Should drop expired cookies');
+    }
+
+    /**
+     * Test adding cookies from responses updates cookie values.
+     *
+     * @return void
+     */
+    public function testAddFromResponseUpdateExisting()
+    {
+        $collection = new CookieCollection([
+            new Cookie('key', 'old value', null, '/', 'example.com')
+        ]);
+        $request = new ServerRequest([
+            'url' => '/',
+            'environment' => [
+                'HTTP_HOST' => 'example.com'
+            ]
+        ]);
+        $response = (new Response())->withAddedHeader('Set-Cookie', 'key=new value');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertTrue($new->has('key'));
+        $this->assertSame('new value', $new->get('key')->getValue());
     }
 
     /**

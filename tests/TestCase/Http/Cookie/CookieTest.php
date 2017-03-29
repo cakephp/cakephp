@@ -504,4 +504,21 @@ class CookieTest extends TestCase
         $expected = '{"username":"florian","profile":{"profession":"developer"}}';
         $this->assertContains(urlencode($expected), $cookie->toHeaderValue());
     }
+
+    /**
+     * Tests getting the id
+     *
+     * @return void
+     */
+    public function testGetId()
+    {
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $this->assertEquals('cakephp;;', $cookie->getId());
+
+        $cookie = new Cookie('CAKEPHP', 'cakephp-rocks');
+        $this->assertEquals('cakephp;;', $cookie->getId());
+
+        $cookie = new Cookie('test', 'val', null, '/path', 'example.com');
+        $this->assertEquals('test;example.com;/path', $cookie->getId());
+    }
 }

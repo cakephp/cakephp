@@ -212,6 +212,20 @@ class Cookie implements CookieInterface
     }
 
     /**
+     * Get the id for a cookie
+     *
+     * Cookies are unique across name, domain, path tuples.
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        $name = mb_strtolower($this->name);
+
+        return "{$name};{$this->domain};{$this->path}";
+    }
+
+    /**
      * Gets the cookie name
      *
      * @return string
