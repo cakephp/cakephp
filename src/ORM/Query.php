@@ -370,6 +370,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * If called with an empty first argument and `$override` is set to true, the
      * previous list will be emptied.
      *
+     * @deprecated Use setContain(), getContain() and clearContain() instead.
      * @param array|string|null $associations List of table aliases to be queried.
      * @param bool $override Whether override previous list with the one passed
      * defaults to merging previous list with the new one.
@@ -397,10 +398,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * ```
      * // Bring articles' author information
-     * $query->contain('Author');
+     * $query->setContain('Author');
      *
      * // Also bring the category and tags associated to each article
-     * $query->contain(['Category', 'Tag']);
+     * $query->setContain(['Category', 'Tag']);
      * ```
      *
      * Associations can be arbitrarily nested using dot notation or nested arrays,
@@ -411,13 +412,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * ```
      * // Eager load the product info, and for each product load other 2 associations
-     * $query->contain(['Product' => ['Manufacturer', 'Distributor']);
+     * $query->setContain(['Product' => ['Manufacturer', 'Distributor']);
      *
      * // Which is equivalent to calling
-     * $query->contain(['Products.Manufactures', 'Products.Distributors']);
+     * $query->setContain(['Products.Manufactures', 'Products.Distributors']);
      *
      * // For an author query, load his region, state and country
-     * $query->contain('Regions.States.Countries');
+     * $query->setContain('Regions.States.Countries');
      * ```
      *
      * It is possible to control the conditions and fields selected for each of the
@@ -426,11 +427,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * ### Example:
      *
      * ```
-     * $query->contain(['Tags' => function ($q) {
+     * $query->setContain(['Tags' => function ($q) {
      *     return $q->where(['Tags.is_popular' => true]);
      * }]);
      *
-     * $query->contain(['Products.Manufactures' => function ($q) {
+     * $query->setContain(['Products.Manufactures' => function ($q) {
      *     return $q->select(['name'])->where(['Manufactures.active' => true]);
      * }]);
      * ```
@@ -450,7 +451,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * ```
      * // Set options for the hasMany articles that will be eagerly loaded for an author
-     * $query->contain([
+     * $query->setContain([
      *     'Articles' => [
      *         'fields' => ['title', 'author_id']
      *     ]
@@ -461,7 +462,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * ```
      * // Retrieve translations for the articles, but only those for the `en` and `es` locales
-     * $query->contain([
+     * $query->setContain([
      *     'Articles' => [
      *         'finder' => [
      *             'translations' => [
@@ -477,7 +478,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * ```
      * // Use special join conditions for getting an Articles's belongsTo 'authors'
-     * $query->contain([
+     * $query->setContain([
      *     'Authors' => [
      *         'foreignKey' => false,
      *         'queryBuilder' => function ($q) {
@@ -507,7 +508,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Clears the contained assocations form the current query.
+     * Clears the contained associations from the current query.
      *
      * @return $this
      */
@@ -929,6 +930,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function count()
     {
+        return $this->getCount();
+    }
+
+    public function getCount() {
         if ($this->_resultsCount === null) {
             $this->_resultsCount = $this->_performCount();
         }
