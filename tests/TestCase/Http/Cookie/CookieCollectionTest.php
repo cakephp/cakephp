@@ -348,6 +348,27 @@ class CookieCollectionTest extends TestCase
     }
 
     /**
+     * Test adding cookies from the collection to request.
+     *
+     * @return void
+     */
+    public function testAddToRequestExtraCookies()
+    {
+        $collection = new CookieCollection();
+        $collection = $collection
+            ->add(new Cookie('api', 'A', null, '/api', 'example.com'))
+            ->add(new Cookie('blog', 'b', null, '/blog', 'blog.example.com'))
+            ->add(new Cookie('expired', 'ex', new DateTime('-2 seconds'), '/', 'example.com'));
+        $request = new ClientRequest('http://example.com/api');
+        $request = $collection->addToRequest($request, ['b' => 'B']);
+        $this->assertSame('api=A; b=B', $request->getHeaderLine('Cookie'));
+
+        $request = new ClientRequest('http://example.com/api');
+        $request = $collection->addToRequest($request, ['api' => 'custom']);
+        $this->assertSame('api=custom', $request->getHeaderLine('Cookie'), 'Extra cookies overwrite values in jar');
+    }
+
+    /**
      * Test adding cookies ignores leading dot
      *
      * @return void

@@ -177,9 +177,11 @@ class CookieCollection implements IteratorAggregate, Countable
      * when this method is called will be applied to the request.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to update.
+     * @param array $extraCookies Associative array of additional cookies to add into the request. This
+     *   is useful when you have cookie data from outside the collection you want to send.
      * @return \Psr\Http\Message\RequestInterface An updated request.
      */
-    public function addToRequest(RequestInterface $request)
+    public function addToRequest(RequestInterface $request, array $extraCookies = [])
     {
         $uri = $request->getUri();
         $cookies = $this->findMatchingCookies(
@@ -187,12 +189,13 @@ class CookieCollection implements IteratorAggregate, Countable
             $uri->getHost(),
             $uri->getPath()
         );
+        $cookies = array_merge($cookies, $extraCookies);
         $cookiePairs = [];
         foreach ($cookies as $key => $value) {
-            $cookiePairs[] = sprintf("%s=%s", urlencode($key), urlencode($value));
+            $cookiePairs[] = sprintf("%s=%s", rawurlencode($key), rawurlencode($value));
         }
 
-        return $request->withAddedHeader('Cookie', implode('; ', $cookiePairs));
+        return $request->withHeader('Cookie', implode('; ', $cookiePairs));
     }
 
     /**
