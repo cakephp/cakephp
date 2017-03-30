@@ -12,6 +12,7 @@
  */
 namespace Cake\Test\TestCase\Http\Cookie;
 
+use Cake\Http\Client\Request as ClientRequest;
 use Cake\Http\Client\Response as ClientResponse;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
@@ -329,43 +330,21 @@ class CookieCollectionTest extends TestCase
             ->add(new Cookie('api', 'A', null, '/api', 'example.com'))
             ->add(new Cookie('blog', 'b', null, '/blog', 'blog.example.com'))
             ->add(new Cookie('expired', 'ex', new DateTime('-2 seconds'), '/', 'example.com'));
-        $request = new ServerRequest([
-            'environment' => [
-                'HTTP_HOST' => 'example.com',
-                'REQUEST_URI' => '/api'
-            ]
-        ]);
+        $request = new ClientRequest('http://example.com/api');
         $request = $collection->addToRequest($request);
-        $this->assertCount(1, $request->getCookieParams());
-        $this->assertSame(['api' => 'A'], $request->getCookieParams());
+        $this->assertSame('api=A', $request->getHeaderLine('Cookie'));
 
-        $request = new ServerRequest([
-            'environment' => [
-                'HTTP_HOST' => 'example.com',
-                'REQUEST_URI' => '/'
-            ]
-        ]);
+        $request = new ClientRequest('http://example.com/');
         $request = $collection->addToRequest($request);
-        $this->assertCount(0, $request->getCookieParams());
+        $this->assertSame('', $request->getHeaderLine(''));
 
-        $request = new ServerRequest([
-            'environment' => [
-                'HTTP_HOST' => 'example.com',
-                'REQUEST_URI' => '/blog'
-            ]
-        ]);
+        $request = new ClientRequest('http://example.com/blog');
         $request = $collection->addToRequest($request);
-        $this->assertCount(0, $request->getCookieParams(), 'domain matching should apply');
+        $this->assertSame('', $request->getHeaderLine('Cookie'), 'domain matching should apply');
 
-        $request = new ServerRequest([
-            'environment' => [
-                'HTTP_HOST' => 'foo.blog.example.com',
-                'REQUEST_URI' => '/blog'
-            ]
-        ]);
+        $request = new ClientRequest('http://foo.blog.example.com/blog');
         $request = $collection->addToRequest($request);
-        $this->assertCount(1, $request->getCookieParams(), 'domain matching should apply');
-        $this->assertSame(['blog' => 'b'], $request->getCookieParams());
+        $this->assertSame('blog=b', $request->getHeaderLine('Cookie'));
     }
 
     /**
@@ -378,14 +357,9 @@ class CookieCollectionTest extends TestCase
         $collection = new CookieCollection();
         $collection = $collection
             ->add(new Cookie('public', 'b', null, '/', '.example.com'));
-        $request = new ServerRequest([
-            'environment' => [
-                'HTTP_HOST' => 'example.com',
-                'REQUEST_URI' => '/blog'
-            ]
-        ]);
+        $request = new ClientRequest('http://example.com/blog');
         $request = $collection->addToRequest($request);
-        $this->assertSame(['public' => 'b'], $request->getCookieParams());
+        $this->assertSame('public=b', $request->getHeaderLine('Cookie'));
     }
 
     /**
@@ -399,24 +373,13 @@ class CookieCollectionTest extends TestCase
         $collection = $collection
             ->add(new Cookie('secret', 'A', null, '/', 'example.com', true))
             ->add(new Cookie('public', 'b', null, '/', '.example.com', false));
-        $request = new ServerRequest([
-            'environment' => [
-                'HTTPS' => 'on',
-                'HTTP_HOST' => 'example.com',
-                'REQUEST_URI' => '/api'
-            ]
-        ]);
+        $request = new ClientRequest('https://example.com/api');
         $request = $collection->addToRequest($request);
-        $this->assertSame(['secret' => 'A', 'public' => 'b'], $request->getCookieParams());
+        $this->assertSame('secret=A; public=b', $request->getHeaderLine('Cookie'));
 
         // no HTTPS set.
-        $request = new ServerRequest([
-            'environment' => [
-                'HTTP_HOST' => 'example.com',
-                'REQUEST_URI' => '/api'
-            ]
-        ]);
+        $request = new ClientRequest('http://example.com/api');
         $request = $collection->addToRequest($request);
-        $this->assertSame(['public' => 'b'], $request->getCookieParams());
+        $this->assertSame('public=b', $request->getHeaderLine('Cookie'));
     }
 }

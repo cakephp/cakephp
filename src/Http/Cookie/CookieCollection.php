@@ -182,13 +182,16 @@ class CookieCollection implements IteratorAggregate, Countable
     public function addToRequest(RequestInterface $request)
     {
         $uri = $request->getUri();
-        $path = $uri->getPath();
-        $host = $uri->getHost();
-        $scheme = $uri->getScheme();
-        $cookies = $this->findMatchingCookies($scheme, $host, $path);
-        $cookies = array_merge($request->getCookieParams(), $cookies);
-
-        return $request->withCookieParams($cookies);
+        $cookies = $this->findMatchingCookies(
+            $uri->getScheme(),
+            $uri->getHost(),
+            $uri->getPath()
+        );
+        $cookiePairs = [];
+        foreach ($cookies as $key => $value) {
+            $cookiePairs[] = sprintf("%s=%s", urlencode($key), urlencode($value));
+        }
+        return $request->withAddedHeader('Cookie', implode('; ', $cookiePairs));
     }
 
     /**
