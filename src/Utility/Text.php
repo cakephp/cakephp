@@ -195,8 +195,6 @@ class Text
             return ($options['clean']) ? static::cleanInsert($str, $options) : $str;
         }
 
-        asort($data);
-
         $dataKeys = array_keys($data);
         $hashKeys = array_map('crc32', $dataKeys);
         $tempData = array_combine($dataKeys, $hashKeys);
