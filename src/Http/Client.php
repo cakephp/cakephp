@@ -45,8 +45,8 @@ use Cake\Utility\Hash;
  * Client will maintain cookies from the responses done with
  * a client instance. These cookies will be automatically added
  * to future requests to matching hosts. Cookies will respect the
- * `Expires`, `Path` and `Domain` attributes. You can get the list of
- * currently stored cookies using the cookies() method.
+ * `Expires`, `Path` and `Domain` attributes. You can get the client's
+ * CookieCollection using cookies()
  *
  * You can use the 'cookieJar' constructor option to provide a custom
  * cookie jar instance you've restored from cache/disk. By default
@@ -440,11 +440,8 @@ class Client
         }
 
         $request = new Request($url, $method, $headers, $data);
-        $request = $this->_cookies->addToRequest($request);
-        $request->cookie($this->_cookies->get($url));
-        if (isset($options['cookies'])) {
-            $request->cookie($options['cookies']);
-        }
+        $cookies = isset($options['cookies']) ? $option['cookies'] : [];
+        $request = $this->_cookies->addToRequest($request, $cookies);
         if (isset($options['auth'])) {
             $request = $this->_addAuthentication($request, $options);
         }

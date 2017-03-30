@@ -164,11 +164,7 @@ class StreamTest extends TestCase
             ->header([
                 'User-Agent' => 'CakePHP TestSuite',
                 'Content-Type' => 'application/json',
-                'Cookie' => 'a=b; c=d',
-            ])
-            ->cookie([
-                'testing' => 'value',
-                'utm_src' => 'awesome',
+                'Cookie' => 'a=b; c=do%20it'
             ]);
 
         $options = [
@@ -180,7 +176,7 @@ class StreamTest extends TestCase
             'Connection: close',
             'User-Agent: CakePHP TestSuite',
             'Content-Type: application/json',
-            'Cookie: a=b; c=d; testing=value; utm_src=awesome',
+            'Cookie: a=b; c=do%20it',
         ];
         $this->assertEquals(implode("\r\n", $expected), $result['header']);
         $this->assertEquals($options['redirect'], $result['max_redirects']);
