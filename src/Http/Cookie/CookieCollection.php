@@ -191,6 +191,7 @@ class CookieCollection implements IteratorAggregate, Countable
         foreach ($cookies as $key => $value) {
             $cookiePairs[] = sprintf("%s=%s", urlencode($key), urlencode($value));
         }
+
         return $request->withAddedHeader('Cookie', implode('; ', $cookiePairs));
     }
 
