@@ -440,7 +440,7 @@ class Client
         }
 
         $request = new Request($url, $method, $headers, $data);
-        $cookies = isset($options['cookies']) ? $option['cookies'] : [];
+        $cookies = isset($options['cookies']) ? $options['cookies'] : [];
         $request = $this->_cookies->addToRequest($request, $cookies);
         if (isset($options['auth'])) {
             $request = $this->_addAuthentication($request, $options);
