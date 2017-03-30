@@ -374,7 +374,7 @@ class Client
         $responses = $this->_adapter->send($request, $options);
         $url = $request->getUri();
         foreach ($responses as $response) {
-            $this->_cookies->store($response, $url);
+            $this->_cookies = $this->_cookies->addFromResponse($response, $request);
         }
 
         return array_pop($responses);
