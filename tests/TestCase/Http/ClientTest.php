@@ -611,7 +611,6 @@ class ClientTest extends TestCase
         $http = new Client([
             'host' => 'cakephp.org',
             'adapter' => $adapter,
-            'cookieJar' => $cookieJar
         ]);
 
         $http->get('/projects');
