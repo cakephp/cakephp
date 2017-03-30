@@ -177,7 +177,7 @@ class ClientTest extends TestCase
                 $this->assertInstanceOf('Cake\Http\Client\Request', $request);
                 $this->assertEquals(Request::METHOD_GET, $request->getMethod());
                 $this->assertEquals('http://cakephp.org/test.html', $request->getUri() . '');
-                $this->assertEquals($cookies, $request->cookies());
+                $this->assertEquals('split=value', $request->getHeaderLine('Cookie'));
                 $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('content-type'));
                 $this->assertEquals($headers['Connection'], $request->getHeaderLine('connection'));
 
