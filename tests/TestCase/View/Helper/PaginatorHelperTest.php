@@ -457,13 +457,32 @@ class PaginatorHelperTest extends TestCase
                 'direction' => 'asc',
                 'page' => 1,
                 'scope' => 'article',
+            ],
+            'Tags' => [
+                'current' => 1,
+                'count' => 100,
+                'prevPage' => false,
+                'nextPage' => true,
+                'pageCount' => 5,
+                'sort' => 'tag',
+                'direction' => 'asc',
+                'page' => 1,
+                'scope' => 'tags',
             ]
         ];
 
-        $result = $this->Paginator->sort('title');
+        $result = $this->Paginator->sort('title', 'Title', ['model' => 'Articles']);
         $expected = [
             'a' => ['href' => '/accounts/index?article%5Bsort%5D=title&amp;article%5Bdirection%5D=asc'],
             'Title',
+            '/a'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Paginator->sort('tag', 'Tag', ['model' => 'Tags']);
+        $expected = [
+            'a' => ['class' => 'asc', 'href' => '/accounts/index?tags%5Bsort%5D=tag&amp;tags%5Bdirection%5D=desc'],
+            'Tag',
             '/a'
         ];
         $this->assertHtml($expected, $result);
