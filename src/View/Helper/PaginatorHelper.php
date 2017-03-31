@@ -451,8 +451,8 @@ class PaginatorHelper extends Helper
         }
         $isSorted = (
             $sortKey === $table . '.' . $field ||
-            $sortKey === $defaultModel . '.' . $key ||
-            $table . '.' . $field === $defaultModel . '.' . $sortKey
+            $sortKey === $model . '.' . $key ||
+            $table . '.' . $field === $model . '.' . $sortKey
         );
 
         $template = 'sort';

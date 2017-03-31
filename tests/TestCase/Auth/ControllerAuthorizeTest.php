@@ -19,7 +19,7 @@ namespace Cake\Test\TestCase\Auth;
 use Cake\Auth\ControllerAuthorize;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -65,7 +65,7 @@ class ControllerAuthorizeTest extends TestCase
     public function testAuthorizeFailure()
     {
         $user = [];
-        $request = new Request('/posts/index');
+        $request = new ServerRequest('/posts/index');
         $this->assertFalse($this->auth->authorize($user, $request));
     }
 
@@ -77,7 +77,7 @@ class ControllerAuthorizeTest extends TestCase
     public function testAuthorizeSuccess()
     {
         $user = ['User' => ['username' => 'mark']];
-        $request = new Request('/posts/index');
+        $request = new ServerRequest('/posts/index');
 
         $this->controller->expects($this->once())
             ->method('isAuthorized')

@@ -273,6 +273,16 @@ class DateTimeType extends Type implements TypeInterface
     }
 
     /**
+     * Get the classname used for building objects.
+     *
+     * @return string
+     */
+    public function getDateTimeClassName()
+    {
+        return $this->_className;
+    }
+
+    /**
      * Change the preferred class name to the mutable Time implementation.
      *
      * @return $this

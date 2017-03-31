@@ -15,7 +15,7 @@ namespace Cake\Test\TestCase\Routing;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -250,7 +250,7 @@ class RequestActionTraitTest extends TestCase
      */
     public function testRequestActionBaseAndWebroot()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'base' => '/subdir',
             'webroot' => '/subdir/'
         ]);

@@ -45,7 +45,7 @@ class CellTest extends TestCase
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
         Plugin::load(['TestPlugin', 'TestTheme']);
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->View = new View($request, $response);
     }
@@ -351,7 +351,7 @@ class CellTest extends TestCase
      */
     public function testCellInheritsCustomViewClass()
     {
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $view = new CustomJsonView($request, $response);
         $view->theme = 'Pretty';
@@ -368,7 +368,7 @@ class CellTest extends TestCase
      */
     public function testCellInheritsController()
     {
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $controller = new CellTraitTestController($request, $response);
         $controller->viewBuilder()->setTheme('Pretty');

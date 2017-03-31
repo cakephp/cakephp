@@ -14,6 +14,8 @@
         }
     },
     "require": {
-        "cakephp/utility": "~3.0"
+        "cakephp/utility": "~3.0",
+        "cakephp/i18n": "~3.0",
+        "psr/http-message": "~1.0"
     }
 }

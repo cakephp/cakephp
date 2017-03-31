@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\Routing\Filter;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Http\Response;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Filter\ControllerFactoryFilter;
 use Cake\TestSuite\TestCase;
 
@@ -38,7 +38,7 @@ class ControllerFactoryFilterTest extends TestCase
 
         $filter = new ControllerFactoryFilter();
 
-        $request = new Request();
+        $request = new ServerRequest();
         $response = new Response();
         $request->addParams(['prefix' => 'admin', 'controller' => 'Posts', 'action' => 'index']);
         $event = new Event(__CLASS__, $this, compact('request', 'response'));

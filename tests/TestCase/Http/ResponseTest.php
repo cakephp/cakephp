@@ -17,8 +17,8 @@ namespace Cake\Test\TestCase\Http;
 include_once CORE_TEST_CASES . DS . 'Http' . DS . 'server_mocks.php';
 
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\Network\Exception\NotFoundException;
-use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Stream;
 
@@ -1208,7 +1208,7 @@ class ResponseTest extends TestCase
             ->getMock();
         $response->etag('something');
         $response->expects($this->once())->method('notModified');
-        $response->checkNotModified(new Request);
+        $response->checkNotModified(new ServerRequest);
     }
 
     /**
@@ -1224,7 +1224,7 @@ class ResponseTest extends TestCase
             ->getMock();
         $response->etag('something', true);
         $response->expects($this->once())->method('notModified');
-        $this->assertTrue($response->checkNotModified(new Request));
+        $this->assertTrue($response->checkNotModified(new ServerRequest));
     }
 
     /**
@@ -1242,7 +1242,7 @@ class ResponseTest extends TestCase
         $response->etag('something', true);
         $response->modified('2012-01-01 00:00:00');
         $response->expects($this->once())->method('notModified');
-        $this->assertTrue($response->checkNotModified(new Request));
+        $this->assertTrue($response->checkNotModified(new ServerRequest));
     }
 
     /**
@@ -1260,7 +1260,7 @@ class ResponseTest extends TestCase
         $response->etag('something', true);
         $response->modified('2012-01-01 00:00:01');
         $response->expects($this->never())->method('notModified');
-        $this->assertFalse($response->checkNotModified(new Request));
+        $this->assertFalse($response->checkNotModified(new ServerRequest));
     }
 
     /**
@@ -1278,7 +1278,7 @@ class ResponseTest extends TestCase
         $response->etag('something', true);
         $response->modified('2012-01-01 00:00:00');
         $response->expects($this->never())->method('notModified');
-        $this->assertFalse($response->checkNotModified(new Request));
+        $this->assertFalse($response->checkNotModified(new ServerRequest));
     }
 
     /**
@@ -1294,7 +1294,7 @@ class ResponseTest extends TestCase
             ->getMock();
         $response->modified('2012-01-01 00:00:00');
         $response->expects($this->once())->method('notModified');
-        $this->assertTrue($response->checkNotModified(new Request));
+        $this->assertTrue($response->checkNotModified(new ServerRequest));
     }
 
     /**
@@ -1310,7 +1310,7 @@ class ResponseTest extends TestCase
             ->setMethods(['notModified'])
             ->getMock();
         $response->expects($this->never())->method('notModified');
-        $this->assertFalse($response->checkNotModified(new Request));
+        $this->assertFalse($response->checkNotModified(new ServerRequest));
     }
 
     /**
@@ -1555,10 +1555,10 @@ class ResponseTest extends TestCase
      */
     public function corsData()
     {
-        $fooRequest = new Request();
+        $fooRequest = new ServerRequest();
 
         $secureRequest = function () {
-            $secureRequest = $this->getMockBuilder('Cake\Network\Request')
+            $secureRequest = $this->getMockBuilder('Cake\Http\ServerRequest')
                 ->setMethods(['is'])
                 ->getMock();
             $secureRequest->expects($this->any())

@@ -15,8 +15,8 @@
 namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
+use Cake\Http\ServerRequest;
 use Cake\I18n\I18n;
-use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\PaginatorHelper;
@@ -54,7 +54,7 @@ class PaginatorHelperTest extends TestCase
         Configure::write('Config.language', 'eng');
         $this->View = new View();
         $this->Paginator = new PaginatorHelper($this->View);
-        $this->Paginator->request = new Request();
+        $this->Paginator->request = new ServerRequest();
         $this->Paginator->request->addParams([
             'paging' => [
                 'Article' => [
@@ -457,13 +457,32 @@ class PaginatorHelperTest extends TestCase
                 'direction' => 'asc',
                 'page' => 1,
                 'scope' => 'article',
+            ],
+            'Tags' => [
+                'current' => 1,
+                'count' => 100,
+                'prevPage' => false,
+                'nextPage' => true,
+                'pageCount' => 5,
+                'sort' => 'tag',
+                'direction' => 'asc',
+                'page' => 1,
+                'scope' => 'tags',
             ]
         ];
 
-        $result = $this->Paginator->sort('title');
+        $result = $this->Paginator->sort('title', 'Title', ['model' => 'Articles']);
         $expected = [
             'a' => ['href' => '/accounts/index?article%5Bsort%5D=title&amp;article%5Bdirection%5D=asc'],
             'Title',
+            '/a'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Paginator->sort('tag', 'Tag', ['model' => 'Tags']);
+        $expected = [
+            'a' => ['class' => 'asc', 'href' => '/accounts/index?tags%5Bsort%5D=tag&amp;tags%5Bdirection%5D=desc'],
+            'Tag',
             '/a'
         ];
         $this->assertHtml($expected, $result);
@@ -2148,7 +2167,7 @@ class PaginatorHelperTest extends TestCase
             ]
         ];
 
-        $request = new Request();
+        $request = new ServerRequest();
         $request->addParams([
             'controller' => 'clients', 'action' => 'index', 'plugin' => null
         ]);
@@ -2696,7 +2715,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testNoDefaultModel()
     {
-        $this->Paginator->request = new Request();
+        $this->Paginator->request = new ServerRequest();
         $this->assertNull($this->Paginator->defaultModel());
 
         $this->Paginator->defaultModel('Article');

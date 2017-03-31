@@ -158,7 +158,7 @@ class Marshaller
      *
      * @param array $data The data to hydrate.
      * @param array $options List of options
-     * @return \Cake\ORM\Entity
+     * @return \Cake\Datasource\EntityInterface
      * @see \Cake\ORM\Table::newEntity()
      * @see \Cake\ORM\Entity::$_accessible
      */
@@ -168,7 +168,7 @@ class Marshaller
 
         $primaryKey = (array)$this->_table->getPrimaryKey();
         $entityClass = $this->_table->getEntityClass();
-        /* @var Entity $entity */
+        /* @var \Cake\Datasource\EntityInterface $entity */
         $entity = new $entityClass();
         $entity->setSource($this->_table->getRegistryAlias());
 
