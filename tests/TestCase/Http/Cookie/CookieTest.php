@@ -547,4 +547,30 @@ class CookieTest extends TestCase
         ];
         $this->assertEquals($expected, $cookie->toArray());
     }
+
+    /**
+     * Test toArrayCompat
+     *
+     * @return void
+     */
+    public function testToArrayCompat()
+    {
+        $date = Chronos::parse('2017-03-31 12:34:56');
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $cookie = $cookie->withDomain('cakephp.org')
+            ->withPath('/api')
+            ->withExpiry($date)
+            ->withHttpOnly(true)
+            ->withSecure(true);
+        $expected = [
+            'name' => 'cakephp',
+            'value' => 'cakephp-rocks',
+            'path' => '/api',
+            'domain' => 'cakephp.org',
+            'expires' => $date->format(DATE_COOKIE),
+            'secure' => true,
+            'httponly' => true
+        ];
+        $this->assertEquals($expected, $cookie->toArrayCompat());
+    }
 }

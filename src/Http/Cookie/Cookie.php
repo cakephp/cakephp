@@ -49,6 +49,13 @@ class Cookie implements CookieInterface
     use CookieCryptTrait;
 
     /**
+     * Expires attribute format.
+     *
+     * @var string
+     */
+    const EXPIRES_FORMAT = 'D, d-M-Y H:i:s T';
+
+    /**
      * Cookie name
      *
      * @var string
@@ -160,7 +167,7 @@ class Cookie implements CookieInterface
     {
         return sprintf(
             'expires=%s',
-            gmdate('D, d-M-Y H:i:s T', $this->expiresAt)
+            gmdate(static::EXPIRES_FORMAT, $this->expiresAt)
         );
     }
 
@@ -613,6 +620,27 @@ class Cookie implements CookieInterface
             'secure' => $this->isSecure(),
             'httponly' => $this->isHttpOnly(),
             'expires' => $this->getExpiry()
+        ];
+    }
+
+    /**
+     * Convert the cookie into an array of its properties.
+     *
+     * This method is compatible with older client code that
+     * expects date strings instead of timestamps.
+     *
+     * @return array
+     */
+    public function toArrayCompat()
+    {
+        return [
+            'name' => $this->getName(),
+            'value' => $this->getValue(),
+            'path' => $this->getPath(),
+            'domain' => $this->getDomain(),
+            'secure' => $this->isSecure(),
+            'httponly' => $this->isHttpOnly(),
+            'expires' => gmdate(static::EXPIRES_FORMAT, $this->expiresAt)
         ];
     }
 
