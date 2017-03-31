@@ -149,14 +149,6 @@ class Stream
         foreach ($request->getHeaders() as $name => $values) {
             $headers[] = sprintf('%s: %s', $name, implode(", ", $values));
         }
-
-        $cookies = [];
-        foreach ($request->cookies() as $name => $value) {
-            $cookies[] = "$name=$value";
-        }
-        if ($cookies) {
-            $headers[] = 'Cookie: ' . implode('; ', $cookies);
-        }
         $this->_contextOptions['header'] = implode("\r\n", $headers);
     }
 
