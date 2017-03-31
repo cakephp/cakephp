@@ -52,6 +52,19 @@ class CookieCollection implements IteratorAggregate, Countable
     }
 
     /**
+     * Create a Cookie Collection from an array of Set-Cookie Headers
+     *
+     * @param array $header The array of set-cookie header values.
+     * @return static
+     */
+    public static function createFromHeader(array $header)
+    {
+        $cookies = static::parseSetCookieHeader($header);
+
+        return new CookieCollection($cookies);
+    }
+
+    /**
      * Get the number of cookies in the collection.
      *
      * @return int
@@ -251,8 +264,7 @@ class CookieCollection implements IteratorAggregate, Countable
         $host = $uri->getHost();
         $path = $uri->getPath() ?: '/';
 
-        $header = $response->getHeader('Set-Cookie');
-        $cookies = $this->parseSetCookieHeader($header);
+        $cookies = static::parseSetCookieHeader($response->getHeader('Set-Cookie'));
         $cookies = $this->setRequestDefaults($cookies, $host, $path);
         $new = clone $this;
         foreach ($cookies as $cookie) {
@@ -293,7 +305,7 @@ class CookieCollection implements IteratorAggregate, Countable
      * @param array $values List of Set-Cookie Header values.
      * @return \Cake\Http\Cookie\Cookie[] An array of cookie objects
      */
-    protected function parseSetCookieHeader($values)
+    protected static function parseSetCookieHeader($values)
     {
         $cookies = [];
         foreach ($values as $value) {
