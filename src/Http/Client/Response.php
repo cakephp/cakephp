@@ -13,6 +13,7 @@
  */
 namespace Cake\Http\Client;
 
+use Cake\Http\Cookie\CookieCollection;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use Zend\Diactoros\MessageTrait;
@@ -103,6 +104,13 @@ class Response extends Message implements ResponseInterface
     protected $code;
 
     /**
+     * Cookie Collection instance
+     *
+     * @var \Cake\Http\Cookie\CookieCollection
+     */
+    protected $cookies;
+
+    /**
      * The reason phrase for the status code
      *
      * @var string
@@ -129,7 +137,7 @@ class Response extends Message implements ResponseInterface
      * @var array
      */
     protected $_exposedProperties = [
-        'cookies' => '_cookies',
+        'cookies' => '_getCookies',
         'body' => '_getBody',
         'code' => 'code',
         'json' => '_getJson',
@@ -204,9 +212,6 @@ class Response extends Message implements ResponseInterface
             $name = trim($name);
 
             $normalized = strtolower($name);
-            if ($normalized === 'set-cookie') {
-                $this->_parseCookie($value);
-            }
 
             if (isset($this->headers[$name])) {
                 $this->headers[$name][] = $value;
@@ -215,46 +220,6 @@ class Response extends Message implements ResponseInterface
                 $this->headerNames[$normalized] = $name;
             }
         }
-    }
-
-    /**
-     * Parse a cookie header into data.
-     *
-     * @param string $value The cookie value to parse.
-     * @return void
-     */
-    protected function _parseCookie($value)
-    {
-        $value = rtrim($value, ';');
-        $nestedSemi = '";"';
-        if (strpos($value, $nestedSemi) !== false) {
-            $value = str_replace($nestedSemi, "{__cookie_replace__}", $value);
-            $parts = explode(';', $value);
-            $parts = str_replace("{__cookie_replace__}", $nestedSemi, $parts);
-        } else {
-            $parts = preg_split('/\;[ \t]*/', $value);
-        }
-
-        $name = false;
-        foreach ($parts as $i => $part) {
-            if (strpos($part, '=') !== false) {
-                list($key, $value) = explode('=', $part, 2);
-            } else {
-                $key = $part;
-                $value = true;
-            }
-            if ($i === 0) {
-                $name = $key;
-                $cookie['value'] = $value;
-                continue;
-            }
-            $key = strtolower($key);
-            if (!isset($cookie[$key])) {
-                $cookie[$key] = $value;
-            }
-        }
-        $cookie['name'] = $name;
-        $this->_cookies[$name] = $cookie;
     }
 
     /**
@@ -427,7 +392,7 @@ class Response extends Message implements ResponseInterface
      */
     public function getCookies()
     {
-        return $this->_cookies;
+        return $this->_getCookies();
     }
 
     /**
@@ -438,11 +403,12 @@ class Response extends Message implements ResponseInterface
      */
     public function getCookie($name)
     {
-        if (!isset($this->_cookies[$name])) {
+        $this->buildCookieCollection();
+        if (!$this->cookies->has($name)) {
             return null;
         }
 
-        return $this->_cookies[$name]['value'];
+        return $this->cookies->get($name)->getValue();
     }
 
     /**
@@ -453,11 +419,43 @@ class Response extends Message implements ResponseInterface
      */
     public function getCookieData($name)
     {
-        if (!isset($this->_cookies[$name])) {
+        $this->buildCookieCollection();
+
+        if (!$this->cookies->has($name)) {
             return null;
         }
 
-        return $this->_cookies[$name];
+        return $this->cookies->get($name)->toArrayCompat();
+    }
+
+    /**
+     * Lazily build the CookieCollection and cookie objects from the response header
+     *
+     * @return void
+     */
+    protected function buildCookieCollection()
+    {
+        if ($this->cookies) {
+            return;
+        }
+        $this->cookies = CookieCollection::createFromHeader($this->getHeader('Set-Cookie'));
+    }
+
+    /**
+     * Property accessor for `$this->cookies`
+     *
+     * @return array Array of Cookie data.
+     */
+    protected function _getCookies()
+    {
+        $this->buildCookieCollection();
+
+        $cookies = [];
+        foreach ($this->cookies as $cookie) {
+            $cookies[$cookie->getName()] = $cookie->toArrayCompat();
+        }
+
+        return $cookies;
     }
 
     /**
