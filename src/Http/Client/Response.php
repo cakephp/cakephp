@@ -396,6 +396,21 @@ class Response extends Message implements ResponseInterface
     }
 
     /**
+     * Get the cookie collection from this response.
+     *
+     * This method exposes the response's CookieCollection
+     * instance allowing you to interact with cookie objects directly.
+     *
+     * @return \Cake\Http\Cookie\CookieCollection
+     */
+    public function getCookieCollection()
+    {
+        $this->buildCookieCollection();
+
+        return $this->cookies;
+    }
+
+    /**
      * Get the value of a single cookie.
      *
      * @param string $name The name of the cookie value.
