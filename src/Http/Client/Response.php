@@ -13,7 +13,9 @@
  */
 namespace Cake\Http\Client;
 
-use Cake\Http\Cookie\CookieCollection;
+// This alias is necessary to avoid class name conflicts
+// with the deprecated class in this namespace.
+use Cake\Http\Cookie\CookieCollection as CookiesCollection;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use Zend\Diactoros\MessageTrait;
@@ -453,7 +455,7 @@ class Response extends Message implements ResponseInterface
         if ($this->cookies) {
             return;
         }
-        $this->cookies = CookieCollection::createFromHeader($this->getHeader('Set-Cookie'));
+        $this->cookies = CookiesCollection::createFromHeader($this->getHeader('Set-Cookie'));
     }
 
     /**
