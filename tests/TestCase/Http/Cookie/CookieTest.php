@@ -567,7 +567,7 @@ class CookieTest extends TestCase
             'value' => 'cakephp-rocks',
             'path' => '/api',
             'domain' => 'cakephp.org',
-            'expires' => $date->format(DATE_COOKIE),
+            'expires' => 'Fri, 31-Mar-2017 12:34:56 GMT',
             'secure' => true,
             'httponly' => true
         ];
