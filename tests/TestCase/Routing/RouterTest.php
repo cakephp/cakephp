@@ -2793,7 +2793,7 @@ class RouterTest extends TestCase
     public function testReverseToArrayRequestQuery()
     {
         Router::connect('/:lang/:controller/:action/*', [], ['lang' => '[a-z]{3}']);
-        $request = new Request('/eng/posts/view/1');
+        $request = new ServerRequest('/eng/posts/view/1');
         $request->addParams([
             'lang' => 'eng',
             'controller' => 'posts',
