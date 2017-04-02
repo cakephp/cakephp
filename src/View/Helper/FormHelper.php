@@ -1396,6 +1396,10 @@ class FormHelper extends Helper
             $options += ['empty' => false];
         }
 
+        if (array_key_exists('null', $fieldDef) && $fieldDef['null'] === false) {
+            $options['required'] = true;
+        }
+
         return $options;
     }
 
