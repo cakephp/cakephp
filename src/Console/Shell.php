@@ -433,7 +433,7 @@ class Shell
             $this->params = array_merge($this->params, $extra);
         }
         $this->_setOutputLevel();
-        if (!empty($this->params['plugin'])) {
+        if (!empty($this->params['plugin']) && !Plugin::loaded($this->params['plugin'])) {
             Plugin::load($this->params['plugin']);
         }
         $this->command = $command;
