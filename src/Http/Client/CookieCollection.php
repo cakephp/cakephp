@@ -78,15 +78,7 @@ class CookieCollection extends BaseCollection
     {
         $out = [];
         foreach ($this->cookies as $cookie) {
-            $out[] = [
-                'name' => $cookie->getName(),
-                'value' => $cookie->getValue(),
-                'path' => $cookie->getPath(),
-                'domain' => $cookie->getDomain(),
-                'secure' => $cookie->isSecure(),
-                'httponly' => $cookie->isHttpOnly(),
-                'expires' => $cookie->getExpiry()
-            ];
+            $out[] = $cookie->toArray();
         }
 
         return $out;

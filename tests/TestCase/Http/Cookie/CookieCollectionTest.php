@@ -403,4 +403,23 @@ class CookieCollectionTest extends TestCase
         $request = $collection->addToRequest($request);
         $this->assertSame('public=b', $request->getHeaderLine('Cookie'));
     }
+
+    /**
+     * test createFromHeader() building cookies from a header string.
+     *
+     * @return void
+     */
+    public function testCreateFromHeader()
+    {
+        $header = [
+            'http=name; HttpOnly; Secure;',
+            'expires=expiring; Expires=Wed, 15-Jun-2022 10:22:22; Path=/api; HttpOnly; Secure;',
+            'expired=expired; Expires=Wed, 15-Jun-2015 10:22:22;',
+        ];
+        $cookies = CookieCollection::createFromHeader($header);
+        $this->assertCount(3, $cookies);
+        $this->assertTrue($cookies->has('http'));
+        $this->assertTrue($cookies->has('expires'));
+        $this->assertTrue($cookies->has('expired'), 'Expired cookies should be present');
+    }
 }
