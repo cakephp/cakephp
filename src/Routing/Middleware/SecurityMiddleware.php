@@ -96,7 +96,7 @@ class SecurityMiddleware
      *
      * Available Value: 'deny', 'sameorigin', 'allow-from <uri>'
      *
-     * @param string $mode Mode value
+     * @param string $option Option value
      * @param string $url URL if mode is `allow-from`
      * @return $this
      */
@@ -126,13 +126,15 @@ class SecurityMiddleware
      * @param string $mode Mode value
      * @return $this
      */
-    public function setXssProtection($mode = '1; mode=block')
+    public function setXssProtection($mode = 'block')
     {
+        $mode = (string)$mode;
+
         if ($mode === 'block') {
             $mode = '1; mode=block';
         }
 
-        $this->checkValues($mode, ['all', 'none', 'master-only', 'by-content-type', 'by-ftp-filename']);
+        $this->checkValues($mode, ['1', '0', '1; mode=block']);
         $this->headers['x-permitted-cross-domain-policies'] = $mode;
 
         return $this;
@@ -159,7 +161,7 @@ class SecurityMiddleware
     /**
      * Convenience method to check if a value is in the list of allowed args
      *
-     * @throws \InvalidArgumentException Thown when a value is invalid.
+     * @throws \InvalidArgumentException Thrown when a value is invalid.
      * @param string $value
      * @param array $allowed
      * @return void
@@ -167,8 +169,8 @@ class SecurityMiddleware
     protected function checkValues($value, array $allowed)
     {
         if (!in_array($value, $allowed)) {
-            throw new InvalidArgumentException(
-                sprintf('Invalid arg `%s`, use one of these: %s',
+            throw new InvalidArgumentException(sprintf(
+                'Invalid arg `%s`, use one of these: %s',
                     $value,
                     implode(', ', $allowed)
                 )
