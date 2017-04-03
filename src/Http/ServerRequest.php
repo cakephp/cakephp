@@ -17,6 +17,7 @@ namespace Cake\Http;
 use ArrayAccess;
 use BadMethodCallException;
 use Cake\Core\Configure;
+use Cake\Http\Cookie\CookieCollection;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Network\Session;
 use Cake\Utility\Hash;
@@ -1603,6 +1604,45 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     public function getCookie($key, $default = null)
     {
         return Hash::get($this->cookies, $key, $default);
+    }
+
+    /**
+     * Get a cookie collection based on the request's cookies
+     *
+     * The CookieCollection lets you interact with request cookies using
+     * `\Cake\Http\Cookie\Cookie` objects and can make converting request cookies
+     * into response cookies easier.
+     *
+     * This method will create a new cookie collection each time it is called.
+     * This is an optimization that allows fewer objects to be allocated until
+     * the more complex CookieCollection is needed. In general you should prefer
+     * `getCookie()` and `getCookieParams()` over this method. Using a CookieCollection
+     * is ideal if your cookies contain complex JSON encoded data.
+     *
+     * @return \Cake\Http\Cookie\CookieCollection
+     */
+    public function getCookieCollection()
+    {
+        return CookieCollection::createFromServerRequest($this);
+    }
+
+    /**
+     * Replace the cookies in the request with those contained in
+     * the provided CookieCollection.
+     *
+     * @param \Cake\Http\Cookie\CookieCollection $cookies The cookie collection
+     * @return static
+     */
+    public function withCookieCollection(CookieCollection $cookies)
+    {
+        $new = clone $this;
+        $values = [];
+        foreach ($cookies as $cookie) {
+            $values[$cookie->getName()] = $cookie->getValue();
+        }
+        $new->cookies = $values;
+
+        return $new;
     }
 
     /**
