@@ -162,15 +162,15 @@ class SecurityMiddleware
      * Convenience method to check if a value is in the list of allowed args
      *
      * @throws \InvalidArgumentException Thrown when a value is invalid.
-     * @param string $value
-     * @param array $allowed
+     * @param string $value Value to check
+     * @param array $allowed List of allowed values
      * @return void
      */
     protected function checkValues($value, array $allowed)
     {
         if (!in_array($value, $allowed)) {
             throw new InvalidArgumentException(sprintf(
-                'Invalid arg `%s`, use one of these: %s',
+                    'Invalid arg `%s`, use one of these: %s',
                     $value,
                     implode(', ', $allowed)
                 )
