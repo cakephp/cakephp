@@ -124,6 +124,7 @@ class CakePlugin {
 
 /**
  * Will load all the plugins located in the configured plugins folders
+ *
  * If passed an options array, it will be used as a common default for all plugins to be loaded
  * It is possible to set specific defaults for each plugins in the options array. Examples:
  *
@@ -155,12 +156,12 @@ class CakePlugin {
  */
 	public static function loadAll($options = array()) {
 		$plugins = App::objects('plugins');
-		foreach ($plugins as $p) {
-			$opts = isset($options[$p]) ? (array)$options[$p] : array();
+		foreach ($plugins as $plugin) {
+			$pluginOptions = isset($options[$plugin]) ? (array)$options[$plugin] : array();
 			if (isset($options[0])) {
-				$opts += $options[0];
+				$pluginOptions += $options[0];
 			}
-			static::load($p, $opts);
+			static::load($plugin, $pluginOptions);
 		}
 	}
 
