@@ -21,6 +21,7 @@ use InvalidArgumentException;
 use IteratorAggregate;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Cookie Collection
@@ -61,7 +62,24 @@ class CookieCollection implements IteratorAggregate, Countable
     {
         $cookies = static::parseSetCookieHeader($header);
 
-        return new CookieCollection($cookies);
+        return new static($cookies);
+    }
+
+    /**
+     * Create a new collection from the cookies in a ServerRequest
+     *
+     * @param array $header The array of set-cookie header values.
+     * @return static
+     */
+    public static function createFromServerRequest(ServerRequestInterface $request)
+    {
+        $data = $request->getCookieParams();
+        $cookies = [];
+        foreach ($data as $name => $value) {
+            $cookies[] = new Cookie($name, $value);
+        }
+
+        return new static($cookies);
     }
 
     /**
