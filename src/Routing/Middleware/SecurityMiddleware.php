@@ -36,7 +36,7 @@ class SecurityMiddleware
      *
      * Sets the header value for it to 'nosniff'
      *
-     * @link Reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+     * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
      * @return $this
      */
     public function noSniff()
