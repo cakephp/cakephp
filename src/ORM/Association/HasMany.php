@@ -164,63 +164,94 @@ class HasMany extends Association
     public function saveAssociated(EntityInterface $entity, array $options = [])
     {
         $targetEntities = $entity->get($this->getProperty());
-        if (empty($targetEntities) && $this->_saveStrategy !== self::SAVE_REPLACE) {
-            return $entity;
+
+        $isEmpty = in_array($targetEntities, [null, [], '', false], true);
+        if ($isEmpty) {
+            if ($entity->isNew() ||
+                $this->getSaveStrategy() !== self::SAVE_REPLACE
+            ) {
+                return $entity;
+            }
+
+            $targetEntities = [];
         }
 
-        if (!is_array($targetEntities) && !($targetEntities instanceof Traversable)) {
+        if (!is_array($targetEntities) &&
+            !($targetEntities instanceof Traversable)
+        ) {
             $name = $this->getProperty();
             $message = sprintf('Could not save %s, it cannot be traversed', $name);
             throw new InvalidArgumentException($message);
         }
 
-        $foreignKey = (array)$this->getForeignKey();
-        $properties = array_combine(
-            $foreignKey,
+        $foreignKeyReference = array_combine(
+            (array)$this->getForeignKey(),
             $entity->extract((array)$this->getBindingKey())
         );
-        $target = $this->getTarget();
-        $original = $targetEntities;
+
         $options['_sourceTable'] = $this->getSource();
 
-        $unlinkSuccessful = null;
-        if ($this->_saveStrategy === self::SAVE_REPLACE) {
-            $unlinkSuccessful = $this->_unlinkAssociated($properties, $entity, $target, $targetEntities, $options);
-        }
-
-        if ($unlinkSuccessful === false) {
+        if ($this->_saveStrategy === self::SAVE_REPLACE &&
+            !$this->_unlinkAssociated($foreignKeyReference, $entity, $this->getTarget(), $targetEntities, $options)
+        ) {
             return false;
         }
 
-        foreach ($targetEntities as $k => $targetEntity) {
-            if (!($targetEntity instanceof EntityInterface)) {
+        if (!$this->_saveTarget($foreignKeyReference, $entity, $targetEntities, $options)) {
+            return false;
+        }
+
+        return $entity;
+    }
+
+    /**
+     * Persists each of the entities into the target table and creates links between
+     * the parent entity and each one of the saved target entities.
+     *
+     * @param array $foreignKeyReference The foreign key reference defining the link between the
+     * target entity, and the parent entity.
+     * @param \Cake\Datasource\EntityInterface $parentEntity The source entity containing the target
+     * entities to be saved.
+     * @param array|\Traversable $entities list of entities to persist in target table and to
+     * link to the parent entity
+     * @param array $options list of options accepted by `Table::save()`.
+     * @return bool `true` on success, `false` otherwise.
+     */
+    protected function _saveTarget(array $foreignKeyReference, EntityInterface $parentEntity, $entities, array $options)
+    {
+        $foreignKey = array_keys($foreignKeyReference);
+        $table = $this->getTarget();
+        $original = $entities;
+
+        foreach ($entities as $k => $entity) {
+            if (!($entity instanceof EntityInterface)) {
                 break;
             }
 
             if (!empty($options['atomic'])) {
-                $targetEntity = clone $targetEntity;
+                $entity = clone $entity;
             }
 
-            if ($properties !== $targetEntity->extract($foreignKey)) {
-                $targetEntity->set($properties, ['guard' => false]);
+            if ($foreignKeyReference !== $entity->extract($foreignKey)) {
+                $entity->set($foreignKeyReference, ['guard' => false]);
             }
 
-            if ($target->save($targetEntity, $options)) {
-                $targetEntities[$k] = $targetEntity;
+            if ($table->save($entity, $options)) {
+                $entities[$k] = $entity;
                 continue;
             }
 
             if (!empty($options['atomic'])) {
-                $original[$k]->errors($targetEntity->errors());
+                $original[$k]->errors($entity->errors());
                 $entity->set($this->getProperty(), $original);
 
                 return false;
             }
         }
 
-        $entity->set($this->getProperty(), $targetEntities);
+        $parentEntity->set($this->getProperty(), $entities);
 
-        return $entity;
+        return true;
     }
 
     /**
@@ -427,14 +458,15 @@ class HasMany extends Association
      * Deletes/sets null the related objects according to the dependency between source and targets and foreign key nullability
      * Skips deleting records present in $remainingEntities
      *
-     * @param array $properties array of foreignKey properties
+     * @param array $foreignKeyReference The foreign key reference defining the link between the
+     * target entity, and the parent entity.
      * @param \Cake\Datasource\EntityInterface $entity the entity which should have its associated entities unassigned
      * @param \Cake\ORM\Table $target The associated table
      * @param array $remainingEntities Entities that should not be deleted
      * @param array $options list of options accepted by `Table::delete()`
      * @return bool success
      */
-    protected function _unlinkAssociated(array $properties, EntityInterface $entity, Table $target, array $remainingEntities = [], array $options = [])
+    protected function _unlinkAssociated(array $foreignKeyReference, EntityInterface $entity, Table $target, array $remainingEntities = [], array $options = [])
     {
         $primaryKey = (array)$target->getPrimaryKey();
         $exclusions = new Collection($remainingEntities);
@@ -450,18 +482,18 @@ class HasMany extends Association
         )
         ->toArray();
 
-        $conditions = $properties;
+        $conditions = $foreignKeyReference;
 
         if (count($exclusions) > 0) {
             $conditions = [
                 'NOT' => [
                     'OR' => $exclusions
                 ],
-                $properties
+                $foreignKeyReference
             ];
         }
 
-        return $this->_unlink(array_keys($properties), $target, $conditions, $options);
+        return $this->_unlink(array_keys($foreignKeyReference), $target, $conditions, $options);
     }
 
     /**

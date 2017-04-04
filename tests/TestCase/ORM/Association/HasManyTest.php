@@ -740,4 +740,216 @@ class HasManyTest extends TestCase
         $new = $this->author->get(2, ['contain' => 'Articles']);
         $this->assertCount(3, $new->articles);
     }
+
+    /**
+     * Test that saveAssociated() fails on non-empty, non-iterable value
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Could not save comments, it cannot be traversed
+     * @return void
+     */
+    public function testSaveAssociatedNotEmptyNotIterable()
+    {
+        $articles = TableRegistry::get('Articles');
+        $assoc = $articles->hasMany('Comments', [
+            'saveStrategy' => HasMany::SAVE_APPEND
+        ]);
+
+        $entity = new Entity(
+            [
+                'id' => 1,
+                'comments' => 'oh noes',
+            ],
+            ['markNew' => true]
+        );
+
+        $assoc->saveAssociated($entity);
+    }
+
+    /**
+     * Provider for empty values
+     *
+     * @return array
+     */
+    public function emptyProvider()
+    {
+        return [
+            [''],
+            [false],
+            [null],
+            [[]]
+        ];
+    }
+
+    /**
+     * Test that saving an empty set with the `append` strategy on create works.
+     *
+     * @dataProvider emptyProvider
+     * @return void
+     */
+    public function testSaveAssociatedAppendEmptySetCreateSuccess($value)
+    {
+        /* @var $table \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject */
+        $table = $this
+            ->getMockBuilder('Cake\ORM\Table')
+            ->setMethods(['table'])
+            ->getMock();
+        $table->setSchema([]);
+
+        /* @var $assoc \Cake\ORM\Association\HasMany|\PHPUnit_Framework_MockObject_MockObject */
+        $assoc = $this
+            ->getMockBuilder('\Cake\ORM\Association\HasMany')
+            ->setMethods(['_unlinkAssociated', '_saveTarget'])
+            ->setConstructorArgs(['comments', ['sourceTable' => $table]])
+            ->getMock();
+        $assoc->setSaveStrategy(HasMany::SAVE_APPEND);
+
+        $assoc
+            ->expects($this->never())
+            ->method('_unlinkAssociated');
+        $assoc
+            ->expects($this->never())
+            ->method('_saveTarget');
+
+        $entity = new Entity(
+            [
+                'id' => 1,
+                'comments' => $value,
+            ],
+            ['markNew' => true]
+        );
+
+        $this->assertSame($entity, $assoc->saveAssociated($entity));
+    }
+
+    /**
+     * Test that saving an empty set with the `append` strategy on update works.
+     *
+     * @dataProvider emptyProvider
+     * @return void
+     */
+    public function testSaveAssociatedAppendEmptySetUpdateSuccess($value)
+    {
+        /* @var $table \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject */
+        $table = $this
+            ->getMockBuilder('Cake\ORM\Table')
+            ->setMethods(['table'])
+            ->getMock();
+        $table->setSchema([]);
+
+        /* @var $assoc \Cake\ORM\Association\HasMany|\PHPUnit_Framework_MockObject_MockObject */
+        $assoc = $this
+            ->getMockBuilder('\Cake\ORM\Association\HasMany')
+            ->setMethods(['_unlinkAssociated', '_saveTarget'])
+            ->setConstructorArgs(['comments', ['sourceTable' => $table]])
+            ->getMock();
+        $assoc->setSaveStrategy(HasMany::SAVE_APPEND);
+
+        $assoc
+            ->expects($this->never())
+            ->method('_unlinkAssociated');
+        $assoc
+            ->expects($this->never())
+            ->method('_saveTarget');
+
+        $entity = new Entity(
+            [
+                'id' => 1,
+                'comments' => $value,
+            ],
+            ['markNew' => false]
+        );
+
+        $this->assertSame($entity, $assoc->saveAssociated($entity));
+    }
+
+    /**
+     * Test that saving an empty set with the `replace` strategy on create works.
+     *
+     * @dataProvider emptyProvider
+     * @return void
+     */
+    public function testSaveAssociatedReplaceEmptySetCreateSuccess($value)
+    {
+        /* @var $table \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject */
+        $table = $this
+            ->getMockBuilder('Cake\ORM\Table')
+            ->setMethods(['table'])
+            ->getMock();
+        $table->setSchema([]);
+
+        /* @var $assoc \Cake\ORM\Association\HasMany|\PHPUnit_Framework_MockObject_MockObject */
+        $assoc = $this->getMockBuilder('\Cake\ORM\Association\HasMany')
+            ->setMethods(['_unlinkAssociated', '_saveTarget'])
+            ->setConstructorArgs(['comments', ['sourceTable' => $table]])
+            ->getMock();
+        $assoc->setSaveStrategy(HasMany::SAVE_REPLACE);
+
+        $assoc
+            ->expects($this->never())
+            ->method('_unlinkAssociated');
+        $assoc
+            ->expects($this->never())
+            ->method('_saveTarget');
+
+        $entity = new Entity(
+            [
+                'id' => 1,
+                'comments' => $value,
+            ],
+            ['markNew' => true]
+        );
+
+        $this->assertSame($entity, $assoc->saveAssociated($entity));
+    }
+
+    /**
+     * Test that saving an empty set with the `replace` strategy on update works.
+     *
+     * @dataProvider emptyProvider
+     * @return void
+     */
+    public function testSaveAssociatedReplaceEmptySetUpdateSuccess($value)
+    {
+        /* @var $table \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject */
+        $table = $this
+            ->getMockBuilder('Cake\ORM\Table')
+            ->setMethods(['table'])
+            ->getMock();
+        $table->setSchema([]);
+
+        /* @var $assoc \Cake\ORM\Association\HasMany|\PHPUnit_Framework_MockObject_MockObject */
+        $assoc = $this
+            ->getMockBuilder('\Cake\ORM\Association\HasMany')
+            ->setMethods(['_unlinkAssociated', '_saveTarget'])
+            ->setConstructorArgs(['comments', [
+                'sourceTable' => $table,
+                'foreignKey' => 'article_id',
+                'bindingKey' => 'id'
+            ]])
+            ->getMock();
+        $assoc->setSaveStrategy(HasMany::SAVE_REPLACE);
+
+        $entity = new Entity(
+            [
+                'id' => 1,
+                'comments' => $value,
+            ],
+            ['markNew' => false]
+        );
+
+        $assoc
+            ->expects($this->once())
+            ->method('_unlinkAssociated')
+            ->with(['article_id' => 1], $entity, $assoc->getTarget(), [], ['_sourceTable' => $table])
+            ->will($this->returnValue(true));
+
+        $assoc
+            ->expects($this->once())
+            ->method('_saveTarget')
+            ->with(['article_id' => 1], $entity, [], ['_sourceTable' => $table])
+            ->will($this->returnValue(true));
+
+        $this->assertSame($entity, $assoc->saveAssociated($entity));
+    }
 }
