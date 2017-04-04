@@ -34,10 +34,9 @@ class SecurityMiddleware
     /**
      * X-Content-Type-Options
      *
-     * Reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+     * Sets the header value for it to 'nosniff'
      *
-     * Available Value: 'nosniff'
-     *
+     * @link Reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
      * @return $this
      */
     public function noSniff()
@@ -50,10 +49,9 @@ class SecurityMiddleware
     /**
      * X-Download-Options
      *
-     * Reference: https://msdn.microsoft.com/en-us/library/jj542450(v=vs.85).aspx
+     * Sets the header value for it to 'noopen'
      *
-     * Available Value: 'noopen'
-     *
+     * @link https://msdn.microsoft.com/en-us/library/jj542450(v=vs.85).aspx
      * @return $this
      */
     public function noOpen()
@@ -66,12 +64,9 @@ class SecurityMiddleware
     /**
      * Referrer-Policy
      *
-     * Reference: https://w3c.github.io/webappsec-referrer-policy
-     *
-     * Available Value: 'no-referrer', 'no-referrer-when-downgrade', 'origin', 'origin-when-cross-origin',
-     *                  'same-origin', 'strict-origin', 'strict-origin-when-cross-origin', 'unsafe-url'
-     *
-     * @param string $policy Policy value
+     * @link https://w3c.github.io/webappsec-referrer-policy
+     * @param string $policy Policy value. Available Value: 'no-referrer', 'no-referrer-when-downgrade', 'origin', 'origin-when-cross-origin',
+     *        'same-origin', 'strict-origin', 'strict-origin-when-cross-origin', 'unsafe-url'
      * @return $this
      */
     public function setReferrerPolicy($policy = 'same-origin')
@@ -92,11 +87,8 @@ class SecurityMiddleware
     /**
      * X-Frame-Options
      *
-     * Reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
-     *
-     * Available Value: 'deny', 'sameorigin', 'allow-from <uri>'
-     *
-     * @param string $option Option value
+     * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+     * @param string $option Option value. Available Values: 'deny', 'sameorigin', 'allow-from <uri>'
      * @param string $url URL if mode is `allow-from`
      * @return $this
      */
@@ -119,11 +111,8 @@ class SecurityMiddleware
     /**
      * X-XSS-Protection
      *
-     * Reference: https://blogs.msdn.microsoft.com/ieinternals/2011/01/31/controlling-the-xss-filter
-     *
-     * Available Value: '1', '0', '1; mode=block'
-     *
-     * @param string $mode Mode value
+     * @link https://blogs.msdn.microsoft.com/ieinternals/2011/01/31/controlling-the-xss-filter
+     * @param string $mode Mode value. Available Values: '1', '0', 'block'
      * @return $this
      */
     public function setXssProtection($mode = 'block')
@@ -143,11 +132,8 @@ class SecurityMiddleware
     /**
      * X-Permitted-Cross-Domain-Policies
      *
-     * Reference: https://www.adobe.com/devnet/adobe-media-server/articles/cross-domain-xml-for-streaming.html
-     *
-     * Available Value: 'all', 'none', 'master-only', 'by-content-type', 'by-ftp-filename'
-     *
-     * @param string $policy Policy value
+     * @link https://www.adobe.com/devnet/adobe-media-server/articles/cross-domain-xml-for-streaming.html
+     * @param string $policy Policy value. Available Values: 'all', 'none', 'master-only', 'by-content-type', 'by-ftp-filename'
      * @return $this
      */
     public function setCrossDomainPolicy($policy = 'all')
