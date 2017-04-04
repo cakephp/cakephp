@@ -71,4 +71,31 @@ class SecurityMiddlewareTest extends TestCase
         $result = $middleware($request, $response, $next);
         $this->assertEquals($expected, $result->getHeaders());
     }
+
+    /**
+     * Testing that the URL is required when option is `allow-from`
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The 2nd arg $url can not be empty when `allow-from` is used
+     * @return void
+     */
+    public function testInvalidArgumentExceptionForsetXFrameOptionsUrl()
+    {
+        $middleware = new SecurityMiddleware();
+        $middleware->setXFrameOptions('allow-from');
+    }
+
+    /**
+     * Testing the protected checkValues() method that is used by most of the
+     * methods in the test to avoid passing an invalid argument.
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid arg `INVALID-VALUE!`, use one of these: all, none, master-only, by-content-type, by-ftp-filename
+     * @return void
+     */
+    public function testCheckValues()
+    {
+        $middleware = new SecurityMiddleware();
+        $middleware->setCrossDomainPolicy('INVALID-VALUE!');
+    }
 }
