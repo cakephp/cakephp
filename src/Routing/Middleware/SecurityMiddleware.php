@@ -170,11 +170,10 @@ class SecurityMiddleware
     {
         if (!in_array($value, $allowed)) {
             throw new InvalidArgumentException(sprintf(
-                    'Invalid arg `%s`, use one of these: %s',
-                    $value,
-                    implode(', ', $allowed)
-                )
-            );
+                'Invalid arg `%s`, use one of these: %s',
+                $value,
+                implode(', ', $allowed)
+            ));
         }
     }
 
@@ -188,10 +187,11 @@ class SecurityMiddleware
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
+        $response = $next($request, $response);
         foreach ($this->headers as $header => $value) {
             $response = $response->withHeader($header, $value);
         }
 
-        return $next($request, $response);
+        return $response;
     }
 }

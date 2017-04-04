@@ -22,7 +22,8 @@ use Zend\Diactoros\Response;
 /**
  * Test for SecurityMiddleware
  */
-class SecurityMiddlewareTest extends TestCase {
+class SecurityMiddlewareTest extends TestCase
+{
 
     /**
      * Test adding the security headers
