@@ -751,27 +751,22 @@ class HasManyTest extends TestCase
     public function testSaveAssociatedNotEmptyNotIterable()
     {
         $articles = TableRegistry::get('Articles');
-        $assoc = $articles->hasMany('Comments', [
+        $association = $articles->hasMany('Comments', [
             'saveStrategy' => HasMany::SAVE_APPEND
         ]);
 
-        $entity = new Entity(
-            [
-                'id' => 1,
-                'comments' => 'oh noes',
-            ],
-            ['markNew' => true]
-        );
+        $entity = $articles->newEntity();
+        $entity->set('comments', 'oh noes');
 
-        $assoc->saveAssociated($entity);
+        $association->saveAssociated($entity);
     }
 
     /**
-     * Provider for empty values
+     * Data provider for empty values.
      *
      * @return array
      */
-    public function emptyProvider()
+    public function emptySetDataProvider()
     {
         return [
             [''],
@@ -782,174 +777,116 @@ class HasManyTest extends TestCase
     }
 
     /**
-     * Test that saving an empty set with the `append` strategy on create works.
+     * Test that saving empty sets with the `append` strategy does not
+     * affect the associated records for not yet persisted parent entities.
      *
-     * @dataProvider emptyProvider
+     * @dataProvider emptySetDataProvider
+     * @param mixed $value Empty value.
      * @return void
      */
-    public function testSaveAssociatedAppendEmptySetCreateSuccess($value)
+    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnCreate($value)
     {
-        /* @var $table \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject */
-        $table = $this
-            ->getMockBuilder('Cake\ORM\Table')
-            ->setMethods(['table'])
-            ->getMock();
-        $table->setSchema([]);
+        $articles = TableRegistry::get('Articles');
+        $association = $articles->hasMany('Comments', [
+            'saveStrategy' => HasMany::SAVE_APPEND
+        ]);
 
-        /* @var $assoc \Cake\ORM\Association\HasMany|\PHPUnit_Framework_MockObject_MockObject */
-        $assoc = $this
-            ->getMockBuilder('\Cake\ORM\Association\HasMany')
-            ->setMethods(['_unlinkAssociated', '_saveTarget'])
-            ->setConstructorArgs(['comments', ['sourceTable' => $table]])
-            ->getMock();
-        $assoc->setSaveStrategy(HasMany::SAVE_APPEND);
+        $comments = $association->find();
+        $this->assertNotEmpty($comments);
 
-        $assoc
-            ->expects($this->never())
-            ->method('_unlinkAssociated');
-        $assoc
-            ->expects($this->never())
-            ->method('_saveTarget');
+        $entity = $articles->newEntity();
+        $entity->set('comments', $value);
 
-        $entity = new Entity(
-            [
-                'id' => 1,
-                'comments' => $value,
-            ],
-            ['markNew' => true]
-        );
-
-        $this->assertSame($entity, $assoc->saveAssociated($entity));
+        $this->assertSame($entity, $association->saveAssociated($entity));
+        $this->assertEquals($value, $entity->get('comments'));
+        $this->assertEquals($comments, $association->find());
     }
 
     /**
-     * Test that saving an empty set with the `append` strategy on update works.
+     * Test that saving empty sets with the `append` strategy does not
+     * affect the associated records for already persisted parent entities.
      *
-     * @dataProvider emptyProvider
+     * @dataProvider emptySetDataProvider
+     * @param mixed $value Empty value.
      * @return void
      */
-    public function testSaveAssociatedAppendEmptySetUpdateSuccess($value)
+    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnUpdate($value)
     {
-        /* @var $table \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject */
-        $table = $this
-            ->getMockBuilder('Cake\ORM\Table')
-            ->setMethods(['table'])
-            ->getMock();
-        $table->setSchema([]);
+        $articles = TableRegistry::get('Articles');
+        $association = $articles->hasMany('Comments', [
+            'saveStrategy' => HasMany::SAVE_APPEND
+        ]);
 
-        /* @var $assoc \Cake\ORM\Association\HasMany|\PHPUnit_Framework_MockObject_MockObject */
-        $assoc = $this
-            ->getMockBuilder('\Cake\ORM\Association\HasMany')
-            ->setMethods(['_unlinkAssociated', '_saveTarget'])
-            ->setConstructorArgs(['comments', ['sourceTable' => $table]])
-            ->getMock();
-        $assoc->setSaveStrategy(HasMany::SAVE_APPEND);
+        $entity = $articles->get(1, [
+            'contain' => ['Comments']
+        ]);
+        $comments = $entity->get('comments');
+        $this->assertNotEmpty($comments);
 
-        $assoc
-            ->expects($this->never())
-            ->method('_unlinkAssociated');
-        $assoc
-            ->expects($this->never())
-            ->method('_saveTarget');
+        $entity->set('comments', $value);
+        $this->assertSame($entity, $association->saveAssociated($entity));
+        $this->assertEquals($value, $entity->get('comments'));
 
-        $entity = new Entity(
-            [
-                'id' => 1,
-                'comments' => $value,
-            ],
-            ['markNew' => false]
-        );
-
-        $this->assertSame($entity, $assoc->saveAssociated($entity));
+        $entity = $articles->get(1, [
+            'contain' => ['Comments']
+        ]);
+        $this->assertEquals($comments, $entity->get('comments'));
     }
 
     /**
-     * Test that saving an empty set with the `replace` strategy on create works.
+     * Test that saving empty sets with the `replace` strategy does not
+     * affect the associated records for not yet persisted parent entities.
      *
-     * @dataProvider emptyProvider
+     * @dataProvider emptySetDataProvider
+     * @param mixed $value Empty value.
      * @return void
      */
-    public function testSaveAssociatedReplaceEmptySetCreateSuccess($value)
+    public function testSaveAssociatedEmptySetWithReplaceStrategyDoesNotAffectAssociatedRecordsOnCreate($value)
     {
-        /* @var $table \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject */
-        $table = $this
-            ->getMockBuilder('Cake\ORM\Table')
-            ->setMethods(['table'])
-            ->getMock();
-        $table->setSchema([]);
+        $articles = TableRegistry::get('Articles');
+        $association = $articles->hasMany('Comments', [
+            'saveStrategy' => HasMany::SAVE_REPLACE
+        ]);
 
-        /* @var $assoc \Cake\ORM\Association\HasMany|\PHPUnit_Framework_MockObject_MockObject */
-        $assoc = $this->getMockBuilder('\Cake\ORM\Association\HasMany')
-            ->setMethods(['_unlinkAssociated', '_saveTarget'])
-            ->setConstructorArgs(['comments', ['sourceTable' => $table]])
-            ->getMock();
-        $assoc->setSaveStrategy(HasMany::SAVE_REPLACE);
+        $comments = $association->find();
+        $this->assertNotEmpty($comments);
 
-        $assoc
-            ->expects($this->never())
-            ->method('_unlinkAssociated');
-        $assoc
-            ->expects($this->never())
-            ->method('_saveTarget');
+        $entity = $articles->newEntity();
+        $entity->set('comments', $value);
 
-        $entity = new Entity(
-            [
-                'id' => 1,
-                'comments' => $value,
-            ],
-            ['markNew' => true]
-        );
-
-        $this->assertSame($entity, $assoc->saveAssociated($entity));
+        $this->assertSame($entity, $association->saveAssociated($entity));
+        $this->assertEquals($value, $entity->get('comments'));
+        $this->assertEquals($comments, $association->find());
     }
 
     /**
-     * Test that saving an empty set with the `replace` strategy on update works.
+     * Test that saving empty sets with the `replace` strategy does remove
+     * the associated records for already persisted parent entities.
      *
-     * @dataProvider emptyProvider
+     * @dataProvider emptySetDataProvider
+     * @param mixed $value Empty value.
      * @return void
      */
-    public function testSaveAssociatedReplaceEmptySetUpdateSuccess($value)
+    public function testSaveAssociatedEmptySetWithReplaceStrategyRemovesAssociatedRecordsOnUpdate($value)
     {
-        /* @var $table \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject */
-        $table = $this
-            ->getMockBuilder('Cake\ORM\Table')
-            ->setMethods(['table'])
-            ->getMock();
-        $table->setSchema([]);
+        $articles = TableRegistry::get('Articles');
+        $association = $articles->hasMany('Comments', [
+            'saveStrategy' => HasMany::SAVE_REPLACE
+        ]);
 
-        /* @var $assoc \Cake\ORM\Association\HasMany|\PHPUnit_Framework_MockObject_MockObject */
-        $assoc = $this
-            ->getMockBuilder('\Cake\ORM\Association\HasMany')
-            ->setMethods(['_unlinkAssociated', '_saveTarget'])
-            ->setConstructorArgs(['comments', [
-                'sourceTable' => $table,
-                'foreignKey' => 'article_id',
-                'bindingKey' => 'id'
-            ]])
-            ->getMock();
-        $assoc->setSaveStrategy(HasMany::SAVE_REPLACE);
+        $entity = $articles->get(1, [
+            'contain' => ['Comments']
+        ]);
+        $comments = $entity->get('comments');
+        $this->assertNotEmpty($comments);
 
-        $entity = new Entity(
-            [
-                'id' => 1,
-                'comments' => $value,
-            ],
-            ['markNew' => false]
-        );
+        $entity->set('comments', $value);
+        $this->assertSame($entity, $association->saveAssociated($entity));
+        $this->assertEquals([], $entity->get('comments'));
 
-        $assoc
-            ->expects($this->once())
-            ->method('_unlinkAssociated')
-            ->with(['article_id' => 1], $entity, $assoc->getTarget(), [], ['_sourceTable' => $table])
-            ->will($this->returnValue(true));
-
-        $assoc
-            ->expects($this->once())
-            ->method('_saveTarget')
-            ->with(['article_id' => 1], $entity, [], ['_sourceTable' => $table])
-            ->will($this->returnValue(true));
-
-        $this->assertSame($entity, $assoc->saveAssociated($entity));
+        $entity = $articles->get(1, [
+            'contain' => ['Comments']
+        ]);
+        $this->assertEmpty($entity->get('comments'));
     }
 }
