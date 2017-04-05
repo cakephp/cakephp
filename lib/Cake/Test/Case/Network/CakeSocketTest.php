@@ -54,11 +54,12 @@ class CakeSocketTest extends CakeTestCase {
 		$this->Socket = new CakeSocket();
 		$config = $this->Socket->config;
 		$this->assertSame($config, array(
-			'persistent'	=> false,
-			'host'			=> 'localhost',
-			'protocol'		=> 'tcp',
-			'port'			=> 80,
-			'timeout'		=> 30
+			'persistent' => false,
+			'host' => 'localhost',
+			'protocol' => 'tcp',
+			'port' => 80,
+			'timeout' => 30,
+			'cryptoType' => 'tls',
 		));
 
 		$this->Socket->reset();
@@ -321,6 +322,20 @@ class CakeSocketTest extends CakeTestCase {
 		// testing on tls server
 		$this->_connectSocketToSslTls();
 		$this->assertTrue($this->Socket->enableCrypto('tls', 'client'));
+		$this->Socket->disconnect();
+	}
+
+/**
+ * testEnableCrypto tlsv1_1
+ *
+ * @return void
+ */
+	public function testEnableCryptoTlsV11() {
+		$this->skipIf(!defined('STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT'), 'TLS1.1 is not supported on this system');
+
+		// testing on tls server
+		$this->_connectSocketToSslTls();
+		$this->assertTrue($this->Socket->enableCrypto('tlsv1_1', 'client'));
 		$this->Socket->disconnect();
 	}
 
