@@ -1068,7 +1068,10 @@ class FormHelperTest extends TestCase
             'div' => ['style' => 'display:none;'],
             ['input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST']],
             ['input' => [
-                'type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testKey'
+                'type' => 'hidden',
+                'name' => '_csrfToken',
+                'value' => 'testKey',
+                'autocomplete' => 'off',
             ]],
             '/div'
         ];
@@ -1166,17 +1169,20 @@ class FormHelperTest extends TestCase
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
-                'value' => $hash
+                'value' => $hash,
+                'autocomplete' => 'off',
             ]],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[unlocked]',
                 'value' => '',
+                'autocomplete' => 'off',
             ]],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[debug]',
-                'value' => $tokenDebug
+                'value' => $tokenDebug,
+                'autocomplete' => 'off',
             ]],
             '/div'
         ];
@@ -1206,11 +1212,13 @@ class FormHelperTest extends TestCase
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
+                'autocomplete' => 'off',
                 'value' => $hash
             ]],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[unlocked]',
+                'autocomplete' => 'off',
                 'value' => '',
             ]],
             '/div'
@@ -1356,16 +1364,22 @@ class FormHelperTest extends TestCase
         $expected = [
             'div' => ['style' => 'display:none;'],
             ['input' => [
-                'type' => 'hidden', 'name' => '_Token[fields]',
-                'value' => $hash
+                'type' => 'hidden',
+                'name' => '_Token[fields]',
+                'value' => $hash,
+                'autocomplete' => 'off',
             ]],
             ['input' => [
-                'type' => 'hidden', 'name' => '_Token[unlocked]',
+                'type' => 'hidden',
+                'name' => '_Token[unlocked]',
+                'autocomplete' => 'off',
                 'value' => ''
             ]],
             ['input' => [
-                'type' => 'hidden', 'name' => '_Token[debug]',
+                'type' => 'hidden',
+                'name' => '_Token[debug]',
                 'value' => $tokenDebug,
+                'autocomplete' => 'off',
             ]],
             '/div'
         ];
@@ -1418,16 +1432,20 @@ class FormHelperTest extends TestCase
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
+                'autocomplete',
                 'value'
             ]],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[unlocked]',
-                'value' => 'cancel%7Csave'
+                'value' => 'cancel%7Csave',
+                'autocomplete' => 'off',
             ]],
             ['input' => [
-                'type' => 'hidden', 'name' => '_Token[debug]',
+                'type' => 'hidden',
+                'name' => '_Token[debug]',
                 'value' => $tokenDebug,
+                'autocomplete' => 'off',
             ]],
             '/div'
         ];
@@ -1563,16 +1581,22 @@ class FormHelperTest extends TestCase
         $expected = [
             'div' => ['style' => 'display:none;'],
             ['input' => [
-                'type' => 'hidden', 'name' => '_Token[fields]',
-                'value' => $hash
+                'type' => 'hidden',
+                'name' => '_Token[fields]',
+                'value' => $hash,
+                'autocomplete' => 'off',
             ]],
             ['input' => [
-                'type' => 'hidden', 'name' => '_Token[unlocked]',
+                'type' => 'hidden',
+                'name' => '_Token[unlocked]',
+                'autocomplete' => 'off',
                 'value' => ''
             ]],
             ['input' => [
-                'type' => 'hidden', 'name' => '_Token[debug]',
+                'type' => 'hidden',
+                'name' => '_Token[debug]',
                 'value' => $tokenDebug,
+                'autocomplete' => 'off',
             ]],
             '/div'
         ];
@@ -1654,15 +1678,19 @@ class FormHelperTest extends TestCase
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
+                'autocomplete' => 'off',
                 'value' => $hash
             ]],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[unlocked]',
+                'autocomplete' => 'off',
                 'value' => 'address%7Cfirst_name',
             ]],
             ['input' => [
-                'type' => 'hidden', 'name' => '_Token[debug]',
+                'type' => 'hidden',
+                'name' => '_Token[debug]',
+                'autocomplete' => 'off',
                 'value' => $tokenDebug,
             ]],
             '/div'
@@ -1724,17 +1752,20 @@ class FormHelperTest extends TestCase
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
                 'value' => $hash,
+                'autocomplete' => 'off',
                 'data-foo' => 'bar',
             ]],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[unlocked]',
                 'value' => 'address%7Cfirst_name',
+                'autocomplete' => 'off',
                 'data-foo' => 'bar',
             ]],
             ['input' => [
                 'type' => 'hidden', 'name' => '_Token[debug]',
                 'value' => $tokenDebug,
+                'autocomplete' => 'off',
                 'data-foo' => 'bar'
             ]],
             '/div'
@@ -1795,17 +1826,20 @@ class FormHelperTest extends TestCase
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
                 'value' => $hash,
+                'autocomplete' => 'off',
                 'data-foo' => 'bar',
             ]],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[unlocked]',
                 'value' => 'address%7Cfirst_name',
+                'autocomplete' => 'off',
                 'data-foo' => 'bar',
             ]],
             ['input' => [
                 'type' => 'hidden', 'name' => '_Token[debug]',
                 'value' => $tokenDebug,
+                'autocomplete' => 'off',
                 'data-foo' => 'bar'
             ]],
             '/div'
@@ -1852,12 +1886,14 @@ class FormHelperTest extends TestCase
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
                 'value' => $hash,
+                'autocomplete' => 'off',
                 'data-foo' => 'bar',
             ]],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[unlocked]',
                 'value' => 'address%7Cfirst_name',
+                'autocomplete' => 'off',
                 'data-foo' => 'bar',
             ]],
             '/div'
@@ -1905,12 +1941,14 @@ class FormHelperTest extends TestCase
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
                 'value' => $hash,
+                'autocomplete' => 'off',
                 'data-foo' => 'bar',
             ]],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[unlocked]',
                 'value' => 'address%7Cfirst_name',
+                'autocomplete' => 'off',
                 'data-foo' => 'bar',
             ]],
             '/div'
@@ -1962,7 +2000,8 @@ class FormHelperTest extends TestCase
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_csrfToken',
-                'value' => 'testKey'
+                'value' => 'testKey',
+                'autocomplete' => 'off'
             ]],
             '/div'
         ];
@@ -2083,16 +2122,19 @@ class FormHelperTest extends TestCase
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
-                'value'
+                'value',
+                'autocomplete'
             ]],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[unlocked]',
-                'value' => ''
+                'value' => '',
+                'autocomplete' => 'off'
             ]],
             ['input' => [
                 'type' => 'hidden', 'name' => '_Token[debug]',
                 'value' => $tokenDebug,
+                'autocomplete' => 'off'
             ]],
             '/div'
         ];
@@ -7276,17 +7318,19 @@ class FormHelperTest extends TestCase
             ],
             ['div' => ['style' => 'display:none;']],
             ['input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST']],
-            ['input' => ['type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testkey']],
+            ['input' => ['type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testkey', 'autocomplete' => 'off']],
             '/div',
             'button' => ['type' => 'submit'],
             'Delete',
             '/button',
             ['div' => ['style' => 'display:none;']],
-            ['input' => ['type' => 'hidden', 'name' => '_Token[fields]', 'value' => 'preg:/[\w\d%]+/']],
-            ['input' => ['type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '']],
+            ['input' => ['type' => 'hidden', 'name' => '_Token[fields]', 'value' => 'preg:/[\w\d%]+/', 'autocomplete' => 'off']],
+            ['input' => ['type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '', 'autocomplete' => 'off']],
             ['input' => [
-                'type' => 'hidden', 'name' => '_Token[debug]',
+                'type' => 'hidden',
+                'name' => '_Token[debug]',
                 'value' => $tokenDebug,
+                'autocomplete' => 'off',
             ]],
             '/div',
             '/form',
@@ -7478,11 +7522,13 @@ class FormHelperTest extends TestCase
             ['input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST']],
             ['input' => ['type' => 'hidden', 'name' => 'id', 'value' => '1']],
             'div' => ['style' => 'display:none;'],
-            ['input' => ['type' => 'hidden', 'name' => '_Token[fields]', 'value' => $hash]],
-            ['input' => ['type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '']],
+            ['input' => ['type' => 'hidden', 'name' => '_Token[fields]', 'value' => $hash, 'autocomplete' => 'off']],
+            ['input' => ['type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '', 'autocomplete' => 'off']],
             ['input' => [
-                'type' => 'hidden', 'name' => '_Token[debug]',
+                'type' => 'hidden',
+                'name' => '_Token[debug]',
                 'value' => $tokenDebug,
+                'autocomplete' => 'off',
             ]],
             '/div',
             '/form',
@@ -7556,8 +7602,8 @@ class FormHelperTest extends TestCase
             ['input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST']],
             ['input' => ['type' => 'hidden', 'name' => 'id', 'value' => '1']],
             'div' => ['style' => 'display:none;'],
-            ['input' => ['type' => 'hidden', 'name' => '_Token[fields]', 'value' => $hash]],
-            ['input' => ['type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '']],
+            ['input' => ['type' => 'hidden', 'name' => '_Token[fields]', 'value' => $hash, 'autocomplete' => 'off']],
+            ['input' => ['type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '', 'autocomplete' => 'off']],
             '/div',
             '/form',
             'a' => ['href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'],
@@ -7616,13 +7662,14 @@ class FormHelperTest extends TestCase
                 'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
             ],
             ['input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST']],
-            ['input' => ['type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testkey']],
+            ['input' => ['type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testkey', 'autocomplete' => 'off']],
             'div' => ['style' => 'display:none;'],
-            ['input' => ['type' => 'hidden', 'name' => '_Token[fields]', 'value' => 'preg:/[\w\d%]+/']],
-            ['input' => ['type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '']],
+            ['input' => ['type' => 'hidden', 'name' => '_Token[fields]', 'value' => 'preg:/[\w\d%]+/', 'autocomplete' => 'off']],
+            ['input' => ['type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '', 'autocomplete' => 'off']],
             ['input' => [
                 'type' => 'hidden', 'name' => '_Token[debug]',
                 'value' => $tokenDebug,
+                'autocomplete' => 'off'
             ]],
             '/div',
             '/form',
