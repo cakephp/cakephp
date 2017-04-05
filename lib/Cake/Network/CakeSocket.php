@@ -131,6 +131,18 @@ class CakeSocket {
 				$this->_encryptMethods[$key] = constant($const);
 			}
 		}
+
+		// As of PHP5.6.6, STREAM_CRYPTO_METHOD_TLS_CLIENT does not include
+		// TLS1.1 or 1.2. If we have TLS1.2 support we need to update the method map.
+		//
+		// See https://bugs.php.net/bug.php?id=69195 &
+		// https://github.com/php/php-src/commit/10bc5fd4c4c8e1dd57bd911b086e9872a56300a0
+		if (isset($this->_encryptMethods['tlsv1_2_client'])) {
+			$this->_encryptMethods['tls_client'] = STREAM_CRYPTO_METHOD_TLS_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
+		}
+		if (isset($this->_encryptMethods['tlsv1_2_server'])) {
+			$this->_encryptMethods['tls_server'] = STREAM_CRYPTO_METHOD_TLS_SERVER | STREAM_CRYPTO_METHOD_TLSv1_1_SERVER | STREAM_CRYPTO_METHOD_TLSv1_2_SERVER;
+		}
 	}
 
 /**
