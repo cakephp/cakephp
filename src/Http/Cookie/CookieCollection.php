@@ -68,7 +68,7 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Create a new collection from the cookies in a ServerRequest
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request The array of set-cookie header values.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request to extract cookie data from
      * @return static
      */
     public static function createFromServerRequest(ServerRequestInterface $request)
