@@ -15,14 +15,14 @@
 namespace Cake\Test\TestCase\Routing\Middleware;
 
 use Cake\Http\ServerRequestFactory;
-use Cake\Routing\Middleware\SecurityMiddleware;
+use Cake\Routing\Middleware\SecurityHeadersMiddleware;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Response;
 
 /**
  * Test for SecurityMiddleware
  */
-class SecurityMiddlewareTest extends TestCase
+class SecurityHeadersMiddlewareTest extends TestCase
 {
 
     /**
@@ -40,7 +40,7 @@ class SecurityMiddlewareTest extends TestCase
             return $res;
         };
 
-        $middleware = new SecurityMiddleware();
+        $middleware = new SecurityHeadersMiddleware();
         $middleware
             ->setCrossDomainPolicy()
             ->setReferrerPolicy()
@@ -81,7 +81,7 @@ class SecurityMiddlewareTest extends TestCase
      */
     public function testInvalidArgumentExceptionForsetXFrameOptionsUrl()
     {
-        $middleware = new SecurityMiddleware();
+        $middleware = new SecurityHeadersMiddleware();
         $middleware->setXFrameOptions('allow-from');
     }
 
@@ -95,7 +95,7 @@ class SecurityMiddlewareTest extends TestCase
      */
     public function testCheckValues()
     {
-        $middleware = new SecurityMiddleware();
+        $middleware = new SecurityHeadersMiddleware();
         $middleware->setCrossDomainPolicy('INVALID-VALUE!');
     }
 }

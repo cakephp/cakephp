@@ -21,7 +21,7 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * Handles common security headers in a convenient way
  */
-class SecurityMiddleware
+class SecurityHeadersMiddleware
 {
 
     /**
