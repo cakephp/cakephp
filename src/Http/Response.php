@@ -16,6 +16,8 @@ namespace Cake\Http;
 
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
+use Cake\Http\Cookie\Cookie;
+use Cake\Http\Cookie\CookieCollection;
 use Cake\Log\Log;
 use Cake\Network\CorsBuilder;
 use Cake\Network\Exception\NotFoundException;
@@ -389,11 +391,11 @@ class Response implements ResponseInterface
     protected $_cacheDirectives = [];
 
     /**
-     * Holds cookies to be sent to the client
+     * Collection of cookies to send to the client
      *
-     * @var array
+     * @var Cake\Http\Cookie\CookieCollection
      */
-    protected $_cookies = [];
+    protected $_cookies = null;
 
     /**
      * Reason Phrase
@@ -459,6 +461,7 @@ class Response implements ResponseInterface
             $this->_contentType = $this->resolveType($options['type']);
         }
         $this->_setContentType();
+        $this->_cookies = new CookieCollection();
     }
 
     /**
@@ -1928,15 +1931,15 @@ class Response implements ResponseInterface
     public function cookie($options = null)
     {
         if ($options === null) {
-            return $this->_cookies;
+            return $this->getCookies();
         }
 
         if (is_string($options)) {
-            if (!isset($this->_cookies[$options])) {
+            if (!$this->_cookies->has($options)) {
                 return null;
             }
 
-            return $this->_cookies[$options];
+            return $this->_cookies->get($options)->toArrayResponse();
         }
 
         $defaults = [
@@ -1949,8 +1952,16 @@ class Response implements ResponseInterface
             'httpOnly' => false
         ];
         $options += $defaults;
-
-        $this->_cookies[$options['name']] = $options;
+        $cookie = new Cookie(
+            $options['name'],
+            $options['value'],
+            $options['expire'],
+            $options['path'],
+            $options['domain'],
+            $options['secure'],
+            $options['httpOnly']
+        );
+        $this->_cookies = $this->_cookies->add($cookie);
     }
 
     /**
@@ -1994,10 +2005,18 @@ class Response implements ResponseInterface
             'httpOnly' => false
         ];
         $data += $defaults;
-        $data['name'] = $name;
+        $cookie = new Cookie(
+            $name,
+            $data['value'],
+            $data['expire'],
+            $data['path'],
+            $data['domain'],
+            $data['secure'],
+            $data['httpOnly']
+        );
 
         $new = clone $this;
-        $new->_cookies[$name] = $data;
+        $new->_cookies = $new->_cookies->add($cookie);
 
         return $new;
     }
@@ -2013,11 +2032,11 @@ class Response implements ResponseInterface
      */
     public function getCookie($name)
     {
-        if (isset($this->_cookies[$name])) {
-            return $this->_cookies[$name];
+        if (!$this->_cookies->has($name)) {
+            return null;
         }
 
-        return null;
+        return $this->_cookies->get($name)->toArrayResponse();
     }
 
     /**
@@ -2028,6 +2047,21 @@ class Response implements ResponseInterface
      * @return array
      */
     public function getCookies()
+    {
+        $out = [];
+        foreach ($this->_cookies as $cookie) {
+            $out[$cookie->getName()] = $cookie->toArrayResponse();
+        }
+
+        return $out;
+    }
+
+    /**
+     * Get the CookieCollection from the response
+     *
+     * @return \Cake\Http\Cookie\CookieCollection
+     */
+    public function getCookieCollection()
     {
         return $this->_cookies;
     }
