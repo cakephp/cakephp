@@ -27,7 +27,6 @@ use Zend\Diactoros\Stream;
  */
 class Request extends Message implements RequestInterface
 {
-    use MessageTrait;
     use RequestTrait;
 
     /**
