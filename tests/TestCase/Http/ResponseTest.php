@@ -1474,6 +1474,22 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test withCookie() and a cookie instance
+     *
+     * @return void
+     */
+    public function testWithCookieObject()
+    {
+        $response = new Response();
+        $cookie = new Cookie('yay', 'a value');
+        $new = $response->withCookie($cookie);
+        $this->assertNull($response->getCookie('yay'), 'withCookie does not mutate');
+
+        $this->assertNotEmpty($new->getCookie('yay'));
+        $this->assertSame($cookie, $new->getCookieCollection()->get('yay'));
+    }
+
+    /**
      * Test getCookies() and array data.
      *
      * @return void

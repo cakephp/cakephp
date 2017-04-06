@@ -1985,35 +1985,41 @@ class Response implements ResponseInterface
      *
      * // customize cookie attributes
      * $response = $response->withCookie('remember_me', ['path' => '/login']);
+     *
+     * // add a cookie object
+     * $response = $response->withCookie(new Cookie('remember_me', 1));
      * ```
      *
-     * @param string $name The name of the cookie to set.
+     * @param string|\Cake\Http\Cookie\Cookie $name The name of the cookie to set, or a cookie object
      * @param array|string $data Either a string value, or an array of cookie options.
      * @return static
      */
     public function withCookie($name, $data = '')
     {
-        if (!is_array($data)) {
-            $data = ['value' => $data];
+        if ($name instanceof Cookie) {
+            $cookie = $name;
+        } else {
+            if (!is_array($data)) {
+                $data = ['value' => $data];
+            }
+            $data += [
+                'value' => '',
+                'expire' => 0,
+                'path' => '/',
+                'domain' => '',
+                'secure' => false,
+                'httpOnly' => false
+            ];
+            $cookie = new Cookie(
+                $name,
+                $data['value'],
+                $data['expire'],
+                $data['path'],
+                $data['domain'],
+                $data['secure'],
+                $data['httpOnly']
+            );
         }
-        $defaults = [
-            'value' => '',
-            'expire' => 0,
-            'path' => '/',
-            'domain' => '',
-            'secure' => false,
-            'httpOnly' => false
-        ];
-        $data += $defaults;
-        $cookie = new Cookie(
-            $name,
-            $data['value'],
-            $data['expire'],
-            $data['path'],
-            $data['domain'],
-            $data['secure'],
-            $data['httpOnly']
-        );
 
         $new = clone $this;
         $new->_cookies = $new->_cookies->add($cookie);
