@@ -42,5 +42,4 @@ phpunit.xml.dist export-ignore
 .stickler.yml export-ignore
 tests/test_app export-ignore
 tests/TestCase export-ignore
-tests/PHPStan export-ignore
 .github export-ignore
