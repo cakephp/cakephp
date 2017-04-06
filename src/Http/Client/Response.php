@@ -442,7 +442,7 @@ class Response extends Message implements ResponseInterface
             return null;
         }
 
-        return $this->cookies->get($name)->toArrayCompat();
+        return $this->cookies->get($name)->toArrayClient();
     }
 
     /**
@@ -469,7 +469,7 @@ class Response extends Message implements ResponseInterface
 
         $cookies = [];
         foreach ($this->cookies as $cookie) {
-            $cookies[$cookie->getName()] = $cookie->toArrayCompat();
+            $cookies[$cookie->getName()] = $cookie->toArrayClient();
         }
 
         return $cookies;

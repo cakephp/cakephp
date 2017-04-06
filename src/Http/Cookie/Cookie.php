@@ -121,7 +121,7 @@ class Cookie implements CookieInterface
      * @link http://php.net/manual/en/function.setcookie.php
      * @param string $name Cookie name
      * @param string|array $value Value of the cookie
-     * @param \DateTimeInterface|null $expiresAt Expiration time and date
+     * @param \DateTimeInterface|int|null $expiresAt Expiration time and date
      * @param string $path Path
      * @param string $domain Domain
      * @param bool $secure Is secure
@@ -130,7 +130,7 @@ class Cookie implements CookieInterface
     public function __construct(
         $name,
         $value = '',
-        DateTimeInterface $expiresAt = null,
+        $expiresAt = null,
         $path = '',
         $domain = '',
         $secure = false,
@@ -153,7 +153,10 @@ class Cookie implements CookieInterface
         $this->validateBool($secure);
         $this->secure = $secure;
 
-        if ($expiresAt !== null) {
+        if (is_int($expiresAt)) {
+            $this->expiresAt = $expiresAt;
+        }
+        if ($expiresAt instanceof DateTimeInterface) {
             $this->expiresAt = (int)$expiresAt->format('U');
         }
     }
@@ -631,7 +634,7 @@ class Cookie implements CookieInterface
      *
      * @return array
      */
-    public function toArrayCompat()
+    public function toArrayClient()
     {
         return [
             'name' => $this->getName(),
@@ -641,6 +644,27 @@ class Cookie implements CookieInterface
             'secure' => $this->isSecure(),
             'httponly' => $this->isHttpOnly(),
             'expires' => gmdate(static::EXPIRES_FORMAT, $this->expiresAt)
+        ];
+    }
+
+    /**
+     * Convert the cookie into an array of its properties.
+     *
+     * This method is compatible with the historical behavior of Cake\Http\Response,
+     * where `httponly` is `httpOnly` and `expires` is `expire`
+     *
+     * @return array
+     */
+    public function toArrayResponse()
+    {
+        return [
+            'name' => $this->getName(),
+            'value' => $this->getValue(),
+            'path' => $this->getPath(),
+            'domain' => $this->getDomain(),
+            'secure' => $this->isSecure(),
+            'httpOnly' => $this->isHttpOnly(),
+            'expire' => $this->expiresAt
         ];
     }
 
