@@ -76,19 +76,19 @@ class Sqlserver extends Driver
 
         $dsn = "sqlsrv:Server={$config['host']};Database={$config['database']};MultipleActiveResultSets=false";
         if ($config['app'] !== null) {
-            $dsn .= ";APP={$config['app']}"
+            $dsn .= ";APP={$config['app']}";
         }
         if ($config['connectionPooling'] !== null) {
-            $dsn .= ";ConnectionPooling={$config['connectionPooling']}"
+            $dsn .= ";ConnectionPooling={$config['connectionPooling']}";
         }
         if ($config['failoverPartner'] !== null) {
-            $dsn .= ";Failover_Partner={$config['failoverPartner']}"
+            $dsn .= ";Failover_Partner={$config['failoverPartner']}";
         }
         if ($config['loginTimeout'] !== null) {
-            $dsn .= ";LoginTimeout={$config['loginTimeout']}"
+            $dsn .= ";LoginTimeout={$config['loginTimeout']}";
         }
         if ($config['multiSubnetFailover'] !== null) {
-            $dsn .= ";MultiSubnetFailover={$config['multiSubnetFailover']}"
+            $dsn .= ";MultiSubnetFailover={$config['multiSubnetFailover']}";
         }
         $this->_connect($dsn, $config);
 
