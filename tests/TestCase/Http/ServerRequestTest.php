@@ -15,6 +15,8 @@
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Core\Configure;
+use Cake\Http\Cookie\Cookie;
+use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Network\Exception\MethodNotAllowedException;
@@ -3078,6 +3080,45 @@ XML;
         $this->assertNotSame($new, $request);
         $this->assertSame($cookies, $request->getCookieParams());
         $this->assertSame(['remember_me' => 1], $new->getCookieParams());
+    }
+
+    /**
+     * Test getting a cookie collection from a request.
+     *
+     * @return void
+     */
+    public function testGetCookieCollection()
+    {
+        $cookies = [
+            'remember_me' => '1',
+            'color' => 'blue'
+        ];
+        $request = new ServerRequest(['cookies' => $cookies]);
+
+        $cookies = $request->getCookieCollection();
+        $this->assertInstanceOf(CookieCollection::class, $cookies);
+        $this->assertCount(2, $cookies);
+        $this->assertSame('1', $cookies->get('remember_me')->getValue());
+        $this->assertSame('blue', $cookies->get('color')->getValue());
+    }
+
+    /**
+     * Test replacing cookies from a collection
+     *
+     * @return void
+     */
+    public function testWithCookieCollection()
+    {
+        $cookies = new CookieCollection([new Cookie('remember_me', 1), new Cookie('color', 'red')]);
+        $request = new ServerRequest(['cookies' => ['bad' => 'goaway']]);
+        $new = $request->withCookieCollection($cookies);
+        $this->assertNotSame($new, $request, 'Should clone');
+
+        $this->assertSame(['bad' => 'goaway'], $request->getCookieParams());
+        $this->assertSame(['remember_me' => 1, 'color' => 'red'], $new->getCookieParams());
+        $cookies = $new->getCookieCollection();
+        $this->assertCount(2, $cookies);
+        $this->assertSame('red', $cookies->get('color')->getValue());
     }
 
     /**

@@ -422,4 +422,23 @@ class CookieCollectionTest extends TestCase
         $this->assertTrue($cookies->has('expires'));
         $this->assertTrue($cookies->has('expired'), 'Expired cookies should be present');
     }
+
+    /**
+     * test createFromServerRequest() building cookies from a header string.
+     *
+     * @return void
+     */
+    public function testCreateFromServerRequest()
+    {
+        $request = new ServerRequest(['cookies' => ['name' => 'val', 'cakephp' => 'rocks']]);
+        $cookies = CookieCollection::createFromServerRequest($request);
+        $this->assertCount(2, $cookies);
+        $this->assertTrue($cookies->has('name'));
+        $this->assertTrue($cookies->has('cakephp'));
+
+        $cookie = $cookies->get('name');
+        $this->assertSame('val', $cookie->getValue());
+        $this->assertSame('', $cookie->getPath(), 'No path on request cookies');
+        $this->assertSame('', $cookie->getDomain(), 'No domain on request cookies');
+    }
 }
