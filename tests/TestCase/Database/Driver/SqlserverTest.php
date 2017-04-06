@@ -67,6 +67,12 @@ class SqlserverTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::SQLSRV_ATTR_ENCODING => 'a-language'
         ];
+        $expected['attributes'] = [];
+        $expected['app'] = null;
+        $expected['connectionPooling'] = null;
+        $expected['failoverPartner'] = null;
+        $expected['loginTimeout'] = null;
+        $expected['multiSubnetFailover'] = null;
 
         $connection = $this->getMockBuilder('stdClass')
             ->setMethods(['exec', 'quote'])
