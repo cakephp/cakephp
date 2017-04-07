@@ -1942,7 +1942,7 @@ class Response implements ResponseInterface
             return $this->_cookies->get($options)->toArrayResponse();
         }
 
-        $defaults = [
+        $options += [
             'name' => 'CakeCookie[default]',
             'value' => '',
             'expire' => 0,
@@ -1951,11 +1951,10 @@ class Response implements ResponseInterface
             'secure' => false,
             'httpOnly' => false
         ];
-        $options += $defaults;
         $cookie = new Cookie(
             $options['name'],
             $options['value'],
-            $options['expire'],
+            (int)$options['expire'],
             $options['path'],
             $options['domain'],
             $options['secure'],
@@ -2013,7 +2012,7 @@ class Response implements ResponseInterface
             $cookie = new Cookie(
                 $name,
                 $data['value'],
-                $data['expire'],
+                (int)$data['expire'],
                 $data['path'],
                 $data['domain'],
                 $data['secure'],
