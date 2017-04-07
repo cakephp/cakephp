@@ -393,7 +393,7 @@ class Response implements ResponseInterface
     /**
      * Collection of cookies to send to the client
      *
-     * @var Cake\Http\Cookie\CookieCollection
+     * @var \Cake\Http\Cookie\CookieCollection
      */
     protected $_cookies = null;
 
