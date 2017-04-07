@@ -254,7 +254,7 @@ class Cookie implements CookieInterface
      */
     protected function validateName($name)
     {
-        if (preg_match("/[=,; \t\r\n\013\014]/", $name)) {
+        if (preg_match("/[=,;\t\r\n\013\014]/", $name)) {
             throw new InvalidArgumentException(
                 sprintf('The cookie name `%s` contains invalid characters.', $name)
             );

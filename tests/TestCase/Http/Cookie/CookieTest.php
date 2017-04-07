@@ -30,14 +30,32 @@ class CookieTest extends TestCase
     protected $encryptionKey = 'someverysecretkeythatisatleast32charslong';
 
     /**
+     * Generate invalid cookie names.
+     *
+     * @return array
+     */
+    public function invalidNameProvider()
+    {
+        return [
+            ['no='],
+            ["no\rnewline"],
+            ["no\nnewline"],
+            ["no\ttab"],
+            ["no,comma"],
+            ["no;semi"],
+        ];
+    }
+
+    /**
      * Test invalid cookie name
      *
+     * @dataProvider invalidNameProvider
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The cookie name `no, this wont, work` contains invalid characters.
+     * @expectedExceptionMessage contains invalid characters.
      */
-    public function testValidateNameInvalidChars()
+    public function testValidateNameInvalidChars($name)
     {
-        new Cookie('no, this wont, work', '');
+        new Cookie($name, 'value');
     }
 
     /**
