@@ -37,7 +37,7 @@ help:
 	@echo "CakePHP Makefile"
 	@echo "================"
 	@echo ""
-	@echo "release"
+	@echo "release VERSION=x.y.z"
 	@echo "  Create a new release of CakePHP. Requires the VERSION and GITHUB_USER, or GITHUB_TOKEN parameter."
 	@echo "  Packages up a new app skeleton tarball and uploads it to github."
 	@echo ""
@@ -49,6 +49,9 @@ help:
 	@echo ""
 	@echo "components"
 	@echo "  Split each of the public namespaces into separate repos and push the to Github."
+	@echo ""
+	@echo "clean-components CURRENT_BRANCH=xx"
+	@echo "  Delete branch xx from each subsplit. Useful when cleaning up after a security release."
 	@echo ""
 	@echo "test"
 	@echo "  Run the tests for CakePHP."
@@ -187,6 +190,13 @@ tag-component-%: component-% guard-VERSION guard-GITHUB_USER
 	git checkout $(CURRENT_BRANCH) > /dev/null
 	git branch -D $*
 	git remote rm $*
+
+# Tasks for cleaning up branches created by security fixes to old branches.
+components-clean: $(foreach component, $(COMPONENTS), clean-component-$(component))
+clean-component-%:
+	- (git remote add $* git@github.com:$(OWNER)/$*.git -f 2> /dev/null)
+	- (git branch -D $* 2> /dev/null)
+	- git push -f $* :$(CURRENT_BRANCH)
 
 # Top level alias for doing a release.
 release: guard-VERSION guard-GITHUB_USER tag-release components-tag package publish
