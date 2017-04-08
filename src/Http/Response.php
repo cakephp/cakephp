@@ -1951,10 +1951,11 @@ class Response implements ResponseInterface
             'secure' => false,
             'httpOnly' => false
         ];
+        $expires = $options['expire'] ? new DateTime('@' . $options['expire']) : null;
         $cookie = new Cookie(
             $options['name'],
             $options['value'],
-            (int)$options['expire'],
+            $expires,
             $options['path'],
             $options['domain'],
             $options['secure'],
@@ -2009,10 +2010,11 @@ class Response implements ResponseInterface
                 'secure' => false,
                 'httpOnly' => false
             ];
+            $expires = $data['expire'] ? new DateTime('@' . $data['expire']) : null;
             $cookie = new Cookie(
                 $name,
                 $data['value'],
-                (int)$data['expire'],
+                $expires,
                 $data['path'],
                 $data['domain'],
                 $data['secure'],

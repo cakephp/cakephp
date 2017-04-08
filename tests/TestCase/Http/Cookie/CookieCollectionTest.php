@@ -222,14 +222,14 @@ class CookieCollectionTest extends TestCase
         $this->assertSame('/app', $new->get('test')->getPath(), 'cookies should inherit request path');
         $this->assertSame('/', $new->get('expiring')->getPath(), 'path attribute should be used.');
 
-        $this->assertSame(0, $new->get('test')->getExpiry(), 'No expiry');
+        $this->assertNull($new->get('test')->getExpiry(), 'No expiry');
         $this->assertSame(
             '2021-06-09 10:18:14',
-            date('Y-m-d H:i:s', $new->get('expiring')->getExpiry()),
+            $new->get('expiring')->getExpiry()->format('Y-m-d H:i:s'),
             'Has expiry'
         );
         $session = $new->get('session');
-        $this->assertSame(0, $session->getExpiry(), 'No expiry');
+        $this->assertNull($session->getExpiry(), 'No expiry');
         $this->assertSame('www.example.com', $session->getDomain(), 'Has domain');
     }
 

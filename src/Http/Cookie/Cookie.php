@@ -16,6 +16,8 @@ namespace Cake\Http\Cookie;
 use Cake\Chronos\Chronos;
 use Cake\Utility\Hash;
 use DateTimeInterface;
+use DateTimeImmutable;
+use DateTimezone;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -79,9 +81,9 @@ class Cookie implements CookieInterface
     /**
      * Expiration time
      *
-     * @var int
+     * @var DateTimeInterface
      */
-    protected $expiresAt = 0;
+    protected $expiresAt;
 
     /**
      * Path
@@ -121,7 +123,7 @@ class Cookie implements CookieInterface
      * @link http://php.net/manual/en/function.setcookie.php
      * @param string $name Cookie name
      * @param string|array $value Value of the cookie
-     * @param \DateTimeInterface|int|null $expiresAt Expiration time and date
+     * @param \DateTimeInterface|null $expiresAt Expiration time and date
      * @param string $path Path
      * @param string $domain Domain
      * @param bool $secure Is secure
@@ -130,7 +132,7 @@ class Cookie implements CookieInterface
     public function __construct(
         $name,
         $value = '',
-        $expiresAt = null,
+        DateTimeInterface $expiresAt = null,
         $path = '',
         $domain = '',
         $secure = false,
@@ -152,13 +154,10 @@ class Cookie implements CookieInterface
 
         $this->validateBool($secure);
         $this->secure = $secure;
-
-        if (is_int($expiresAt)) {
-            $this->expiresAt = $expiresAt;
+        if ($expiresAt) {
+            $expiresAt = $expiresAt->setTimezone(new DateTimezone('GMT'));
         }
-        if ($expiresAt instanceof DateTimeInterface) {
-            $this->expiresAt = (int)$expiresAt->format('U');
-        }
+        $this->expiresAt = $expiresAt;
     }
 
     /**
@@ -166,12 +165,27 @@ class Cookie implements CookieInterface
      *
      * @return string
      */
-    protected function _buildExpirationValue()
+    protected function getFormattedExpires()
     {
-        return sprintf(
-            'expires=%s',
-            gmdate(static::EXPIRES_FORMAT, $this->expiresAt)
-        );
+        if (!$this->expiresAt) {
+            return '';
+        }
+
+        return $this->expiresAt->format(static::EXPIRES_FORMAT);
+    }
+
+    /**
+     * Get the timestamp from the expiration time
+     *
+     * @return int
+     */
+    public function getExpiresTimestamp()
+    {
+        if (!$this->expiresAt) {
+            return 0;
+        }
+
+        return (int)$this->expiresAt->format('U');
     }
 
     /**
@@ -187,8 +201,8 @@ class Cookie implements CookieInterface
         }
         $headerValue[] = sprintf('%s=%s', $this->name, urlencode($value));
 
-        if ($this->expiresAt !== 0) {
-            $headerValue[] = $this->_buildExpirationValue();
+        if ($this->expiresAt) {
+            $headerValue[] = sprintf('expires=%s', $this->getFormattedExpires());
         }
         if ($this->path !== '') {
             $headerValue[] = sprintf('path=%s', $this->path);
@@ -444,7 +458,7 @@ class Cookie implements CookieInterface
     public function withExpiry(DateTimeInterface $dateTime)
     {
         $new = clone $this;
-        $new->expiresAt = (int)$dateTime->format('U');
+        $new->expiresAt = $dateTime->setTimezone(new DateTimezone('GMT'));
 
         return $new;
     }
@@ -452,7 +466,7 @@ class Cookie implements CookieInterface
     /**
      * Get the current expiry time
      *
-     * @return int|null Timestamp of expiry or null
+     * @return DateTimeInterface|null Timestamp of expiry or null
      */
     public function getExpiry()
     {
@@ -467,7 +481,7 @@ class Cookie implements CookieInterface
     public function withNeverExpire()
     {
         $new = clone $this;
-        $new->expiresAt = Chronos::createFromDate(2038, 1, 1)->format('U');
+        $new->expiresAt = Chronos::createFromDate(2038, 1, 1);
 
         return $new;
     }
@@ -482,7 +496,7 @@ class Cookie implements CookieInterface
     public function withExpired()
     {
         $new = clone $this;
-        $new->expiresAt = Chronos::parse('-1 year')->format('U');
+        $new->expiresAt = Chronos::parse('-1 year');
 
         return $new;
     }
@@ -622,7 +636,7 @@ class Cookie implements CookieInterface
             'domain' => $this->getDomain(),
             'secure' => $this->isSecure(),
             'httponly' => $this->isHttpOnly(),
-            'expires' => $this->getExpiry()
+            'expires' => $this->getExpiresTimestamp()
         ];
     }
 
@@ -643,7 +657,7 @@ class Cookie implements CookieInterface
             'domain' => $this->getDomain(),
             'secure' => $this->isSecure(),
             'httponly' => $this->isHttpOnly(),
-            'expires' => gmdate(static::EXPIRES_FORMAT, $this->expiresAt)
+            'expires' => $this->getFormattedExpires()
         ];
     }
 
@@ -664,7 +678,7 @@ class Cookie implements CookieInterface
             'domain' => $this->getDomain(),
             'secure' => $this->isSecure(),
             'httpOnly' => $this->isHttpOnly(),
-            'expire' => $this->expiresAt
+            'expire' => $this->getExpiresTimestamp()
         ];
     }
 

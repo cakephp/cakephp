@@ -356,6 +356,25 @@ class CookieTest extends TestCase
     }
 
     /**
+     * Test the withExpiry method changes timezone
+     *
+     * @return void
+     */
+    public function testWithExpiryChangesTimezone()
+    {
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $date = Chronos::createFromDate(2022, 6, 15);
+        $date = $date->setTimezone('America/New_York');
+
+        $new = $cookie->withExpiry($date);
+        $this->assertNotSame($new, $cookie, 'Should clone');
+        $this->assertNotContains('expires', $cookie->toHeaderValue());
+
+        $this->assertContains('expires=Wed, 15-Jun-2022', $new->toHeaderValue());
+        $this->assertContains('GMT', $new->toHeaderValue());
+    }
+
+    /**
      * Test the withName method
      *
      * @return void
@@ -559,7 +578,7 @@ class CookieTest extends TestCase
             'value' => 'cakephp-rocks',
             'path' => '/api',
             'domain' => 'cakephp.org',
-            'expires' => (int)$date->format('U'),
+            'expires' => $date->format('U'),
             'secure' => true,
             'httponly' => true
         ];
