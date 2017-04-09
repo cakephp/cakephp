@@ -15,8 +15,8 @@ namespace Cake\Http\Cookie;
 
 use Cake\Chronos\Chronos;
 use Cake\Utility\Hash;
-use DateTimeInterface;
 use DateTimeImmutable;
+use DateTimeInterface;
 use DateTimezone;
 use InvalidArgumentException;
 use RuntimeException;
