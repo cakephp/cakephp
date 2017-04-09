@@ -177,15 +177,18 @@ class Cookie implements CookieInterface
     /**
      * Get the timestamp from the expiration time
      *
-     * @return int
+     * Timestamps are strings as large timestamps can overflow MAX_INT
+     * in 32bit systems.
+     *
+     * @return string|null The expiry time as a string timestamp.
      */
     public function getExpiresTimestamp()
     {
         if (!$this->expiresAt) {
-            return 0;
+            return null;
         }
 
-        return (int)$this->expiresAt->format('U');
+        return $this->expiresAt->format('U');
     }
 
     /**

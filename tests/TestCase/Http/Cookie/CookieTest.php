@@ -372,6 +372,7 @@ class CookieTest extends TestCase
 
         $this->assertContains('expires=Wed, 15-Jun-2022', $new->toHeaderValue());
         $this->assertContains('GMT', $new->toHeaderValue());
+        $this->assertSame($date->format('U'), $new->getExpiresTimestamp());
     }
 
     /**
