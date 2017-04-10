@@ -329,7 +329,7 @@ abstract class BaseErrorHandler
     {
         $message = "\nRequest URL: " . $request->getRequestTarget();
 
-        $referer = $request->env('HTTP_REFERER');
+        $referer = $request->getEnv('HTTP_REFERER');
         if ($referer) {
             $message .= "\nReferer URL: " . $referer;
         }

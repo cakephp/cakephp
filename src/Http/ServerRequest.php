@@ -351,7 +351,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     protected function _processPost($data)
     {
-        $method = $this->env('REQUEST_METHOD');
+        $method = $this->getEnv('REQUEST_METHOD');
         $override = false;
 
         if (in_array($method, ['PUT', 'DELETE', 'PATCH']) &&
@@ -506,12 +506,12 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function contentType()
     {
-        $type = $this->env('CONTENT_TYPE');
+        $type = $this->getEnv('CONTENT_TYPE');
         if ($type) {
             return $type;
         }
 
-        return $this->env('HTTP_CONTENT_TYPE');
+        return $this->getEnv('HTTP_CONTENT_TYPE');
     }
 
     /**
@@ -539,12 +539,12 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function clientIp()
     {
-        if ($this->trustProxy && $this->env('HTTP_X_FORWARDED_FOR')) {
-            $ipaddr = preg_replace('/(?:,.*)/', '', $this->env('HTTP_X_FORWARDED_FOR'));
-        } elseif ($this->trustProxy && $this->env('HTTP_CLIENT_IP')) {
-            $ipaddr = $this->env('HTTP_CLIENT_IP');
+        if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_FOR')) {
+            $ipaddr = preg_replace('/(?:,.*)/', '', $this->getEnv('HTTP_X_FORWARDED_FOR'));
+        } elseif ($this->trustProxy && $this->getEnv('HTTP_CLIENT_IP')) {
+            $ipaddr = $this->getEnv('HTTP_CLIENT_IP');
         } else {
-            $ipaddr = $this->env('REMOTE_ADDR');
+            $ipaddr = $this->getEnv('REMOTE_ADDR');
         }
 
         return trim($ipaddr);
@@ -559,7 +559,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function referer($local = false)
     {
-        $ref = $this->env('HTTP_REFERER');
+        $ref = $this->getEnv('HTTP_REFERER');
 
         $base = Configure::read('App.fullBaseUrl') . $this->webroot;
         if (!empty($ref) && !empty($base)) {
@@ -719,7 +719,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     protected function _acceptHeaderDetector($detect)
     {
-        $acceptHeaders = explode(',', $this->env('HTTP_ACCEPT'));
+        $acceptHeaders = explode(',', $this->getEnv('HTTP_ACCEPT'));
         foreach ($detect['accept'] as $header) {
             if (in_array($header, $acceptHeaders)) {
                 return true;
@@ -738,7 +738,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     protected function _headerDetector($detect)
     {
         foreach ($detect['header'] as $header => $value) {
-            $header = $this->env('http_' . $header);
+            $header = $this->getEnv('http_' . $header);
             if ($header !== null) {
                 if (!is_string($value) && !is_bool($value) && is_callable($value)) {
                     return call_user_func($value, $header);
@@ -782,15 +782,15 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     {
         if (isset($detect['env'])) {
             if (isset($detect['value'])) {
-                return $this->env($detect['env']) == $detect['value'];
+                return $this->getEnv($detect['env']) == $detect['value'];
             }
             if (isset($detect['pattern'])) {
-                return (bool)preg_match($detect['pattern'], $this->env($detect['env']));
+                return (bool)preg_match($detect['pattern'], $this->getEnv($detect['env']));
             }
             if (isset($detect['options'])) {
                 $pattern = '/' . implode('|', $detect['options']) . '/i';
 
-                return (bool)preg_match($pattern, $this->env($detect['env']));
+                return (bool)preg_match($pattern, $this->getEnv($detect['env']));
             }
         }
 
@@ -966,7 +966,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     {
         $name = $this->normalizeHeaderName($name);
 
-        return $this->env($name);
+        return $this->getEnv($name);
     }
 
     /**
@@ -1117,7 +1117,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function method()
     {
-        return $this->env('REQUEST_METHOD');
+        return $this->getEnv('REQUEST_METHOD');
     }
 
     /**
@@ -1136,7 +1136,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function getMethod()
     {
-        return $this->env('REQUEST_METHOD');
+        return $this->getEnv('REQUEST_METHOD');
     }
 
     /**
@@ -1211,11 +1211,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function host()
     {
-        if ($this->trustProxy && $this->env('HTTP_X_FORWARDED_HOST')) {
-            return $this->env('HTTP_X_FORWARDED_HOST');
+        if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_HOST')) {
+            return $this->getEnv('HTTP_X_FORWARDED_HOST');
         }
 
-        return $this->env('HTTP_HOST');
+        return $this->getEnv('HTTP_HOST');
     }
 
     /**
@@ -1225,11 +1225,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function port()
     {
-        if ($this->trustProxy && $this->env('HTTP_X_FORWARDED_PORT')) {
-            return $this->env('HTTP_X_FORWARDED_PORT');
+        if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_PORT')) {
+            return $this->getEnv('HTTP_X_FORWARDED_PORT');
         }
 
-        return $this->env('SERVER_PORT');
+        return $this->getEnv('SERVER_PORT');
     }
 
     /**
@@ -1241,11 +1241,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function scheme()
     {
-        if ($this->trustProxy && $this->env('HTTP_X_FORWARDED_PROTO')) {
-            return $this->env('HTTP_X_FORWARDED_PROTO');
+        if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_PROTO')) {
+            return $this->getEnv('HTTP_X_FORWARDED_PROTO');
         }
 
-        return $this->env('HTTPS') ? 'https' : 'http';
+        return $this->getEnv('HTTPS') ? 'https' : 'http';
     }
 
     /**
@@ -1712,7 +1712,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         }
 
         // Lazily populate this data as it is generally not used.
-        preg_match('/^HTTP\/([\d.]+)$/', $this->env('SERVER_PROTOCOL'), $match);
+        preg_match('/^HTTP\/([\d.]+)$/', $this->getEnv('SERVER_PROTOCOL'), $match);
         $protocol = '1.1';
         if (isset($match[1])) {
             $protocol = $match[1];
@@ -1743,9 +1743,44 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     }
 
     /**
+     * Get a value from the request's environment data.
+     * Fallback to using env() if the key is not set in the $environment property.
+     *
+     * @param string $key The key you want to read from.
+     * @param string|null $default Default value when trying to retrieve an environment
+     *   variable's value that does not exist.
+     * @return string|null Either the environment value, or null if the value doesn't exist.
+     */
+    public function getEnv($key, $default = null)
+    {
+        $key = strtoupper($key);
+        if (!array_key_exists($key, $this->_environment)) {
+            $this->_environment[$key] = env($key);
+        }
+
+        return $this->_environment[$key] !== null ? $this->_environment[$key] : $default;
+    }
+
+    /**
+     * Set a value to the request's environment data.
+     *
+     * @param string $key The key you want to write to.
+     * @param string|null $value Value to set. Default null.
+     * @return $this
+     */
+    public function setEnv($key, $value = null)
+    {
+        $this->_environment[$key] = $value;
+        $this->clearDetectorCache();
+
+        return $this;
+    }
+
+    /**
      * Get/Set value from the request's environment data.
      * Fallback to using env() if key not set in $environment property.
      *
+     * @deprecated 3.5.0 Use getEnv()/setEnv() instead.
      * @param string $key The key you want to read/write from/to.
      * @param string|null $value Value to set. Default null.
      * @param string|null $default Default value when trying to retrieve an environment
