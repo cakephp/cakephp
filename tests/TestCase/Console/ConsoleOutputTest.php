@@ -250,6 +250,20 @@ class ConsoleOutputTest extends TestCase
     }
 
     /**
+     * test set plain output.
+     *
+     * @return void
+     */
+    public function testSetOutputAsPlain()
+    {
+        $this->output->setOutputAs(ConsoleOutput::PLAIN);
+        $this->output->expects($this->once())->method('_write')
+            ->with('Bad Regular');
+
+        $this->output->write('<error>Bad</error> Regular', false);
+    }
+
+    /**
      * test plain output only strips tags used for formatting.
      *
      * @return void

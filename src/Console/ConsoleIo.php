@@ -266,7 +266,7 @@ class ConsoleIo
      */
     public function outputAs($mode)
     {
-        $this->_out->outputAs($mode);
+        $this->_out->setOutputAs($mode);
     }
 
     /**

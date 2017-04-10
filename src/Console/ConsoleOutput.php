@@ -303,8 +303,30 @@ class ConsoleOutput
     }
 
     /**
+     * Get the output type on how formatting tags are treated.
+     *
+     * @return int
+     */
+    public function getOutputAs()
+    {
+        return $this->_outputAs;
+    }
+
+    /**
+     * Set the output type on how formatting tags are treated.
+     *
+     * @param int $type The output type to use. Should be one of the class constants.
+     * @return void
+     */
+    public function setOutputAs($type)
+    {
+        $this->_outputAs = $type;
+    }
+
+    /**
      * Get/Set the output type to use. The output type how formatting tags are treated.
      *
+     * @deprecated 3.5.0 Use getOutputAs()/setOutputAs() instead.
      * @param int|null $type The output type to use. Should be one of the class constants.
      * @return int|null Either null or the value if getting.
      */

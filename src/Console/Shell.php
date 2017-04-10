@@ -509,7 +509,7 @@ class Shell
         $format = 'text';
         if (!empty($this->args[0]) && $this->args[0] === 'xml') {
             $format = 'xml';
-            $this->_io->outputAs(ConsoleOutput::RAW);
+            $this->_io->setOutputAs(ConsoleOutput::RAW);
         } else {
             $this->_welcome();
         }
