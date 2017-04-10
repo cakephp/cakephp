@@ -1765,10 +1765,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Set a value to the request's environment data.
      *
      * @param string $key The key you want to write to.
-     * @param string|null $value Value to set. Default null.
+     * @param string $value Value to set
      * @return $this
      */
-    public function setEnv($key, $value = null)
+    public function setEnv($key, $value)
     {
         $this->_environment[$key] = $value;
         $this->clearDetectorCache();
