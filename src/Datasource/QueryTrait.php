@@ -194,7 +194,7 @@ trait QueryTrait
      * Sets the query instance to be an eager loaded query.
      *
      * @param bool $value Whether or not to eager load.
-     * @return $this|\Cake\ORM\Query
+     * @return $this
      */
     public function setEagerLoaded($value)
     {
