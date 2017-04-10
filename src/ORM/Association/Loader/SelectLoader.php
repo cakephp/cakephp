@@ -167,7 +167,7 @@ class SelectLoader
         $fetchQuery = $finder()
             ->select($options['fields'])
             ->where($options['conditions'])
-            ->setEagerLoaded(true)
+            ->eagerLoaded(true)
             ->enableHydration($options['query']->isHydrationEnabled());
 
         if ($useSubquery) {

@@ -916,7 +916,7 @@ abstract class Association
         list($finder, $opts) = $this->_extractFinder($options['finder']);
         $dummy = $this
             ->find($finder, $opts)
-            ->setEagerLoaded(true);
+            ->eagerLoaded(true);
 
         if (!empty($options['queryBuilder'])) {
             $dummy = $options['queryBuilder']($dummy);
