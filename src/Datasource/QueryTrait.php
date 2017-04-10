@@ -181,9 +181,33 @@ trait QueryTrait
     }
 
     /**
+     * Returns the current configured query `_eagerLoaded` value
+     *
+     * @return bool
+     */
+    public function getEagerLoaded()
+    {
+        return $this->_eagerLoaded;
+    }
+
+    /**
+     * Sets the query instance to be an eager loaded query.
+     *
+     * @param bool $value Whether or not to eager load.
+     * @return $this|\Cake\ORM\Query
+     */
+    public function setEagerLoaded($value)
+    {
+        $this->_eagerLoaded = $value;
+
+        return $this;
+    }
+
+    /**
      * Sets the query instance to be an eager loaded query. If no argument is
      * passed, the current configured query `_eagerLoaded` value is returned.
      *
+     * @deprecated 3.5.0 Use getEagerLoaded()/setEagerLoaded() instead.
      * @param bool|null $value Whether or not to eager load.
      * @return $this|\Cake\ORM\Query
      */
