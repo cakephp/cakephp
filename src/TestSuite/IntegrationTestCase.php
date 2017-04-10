@@ -306,7 +306,7 @@ abstract class IntegrationTestCase extends TestCase
             return $this->_cookieEncryptionKey;
         }
 
-        return Security::salt();
+        return Security::getSalt();
     }
 
     /**

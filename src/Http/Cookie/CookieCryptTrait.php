@@ -112,7 +112,7 @@ trait CookieCryptTrait
     public function getEncryptionKey()
     {
         if ($this->encryptionKey === null) {
-            return Security::salt();
+            return Security::getSalt();
         }
 
         return $this->encryptionKey;
