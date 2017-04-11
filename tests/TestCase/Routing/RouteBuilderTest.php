@@ -409,6 +409,19 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Test connecting resources with a controller
+     *
+     * @return void
+     */
+    public function testResourcesController()
+    {
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->resources('Articles', ['controller' => 'Posts']);
+        $all = $this->collection->routes();
+        $this->assertEquals('Posts', $all[0]->defaults['controller']);
+    }
+
+    /**
      * Test connecting resources with a prefix
      *
      * @return void

@@ -324,6 +324,7 @@ class RouteBuilder
             'actions' => [],
             'map' => [],
             'prefix' => null,
+            'controller' => $name
         ];
 
         foreach ($options['map'] as $k => $mapped) {
@@ -365,7 +366,7 @@ class RouteBuilder
 
             $url = '/' . implode('/', array_filter([$urlName, $params['path']]));
             $params = [
-                'controller' => $name,
+                'controller' => $options['controller'],
                 'action' => $action,
                 '_method' => $params['method'],
             ];
