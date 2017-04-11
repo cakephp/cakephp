@@ -268,6 +268,7 @@ class Cookie implements CookieInterface
      * @param string $name Name of the cookie
      * @return void
      * @throws \InvalidArgumentException
+     * @link https://tools.ietf.org/html/rfc2616#section-2.2 Rules for naming cookies.
      */
     protected function validateName($name)
     {
