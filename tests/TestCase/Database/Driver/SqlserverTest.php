@@ -1,5 +1,4 @@
 <?php
-
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -91,8 +90,8 @@ class SqlserverTest extends TestCase
             ->with($this->callback(
                 function ($dns) use ($dnsString) {
                     return $dns === $dnsString;
-                })
-            )
+                }
+            ))
             ->will($this->returnValue([]));
         $driver->connect();
     }
@@ -142,8 +141,10 @@ class SqlserverTest extends TestCase
         $connection->expects($this->any())
                 ->method('quote')
                 ->will($this->onConsecutiveCalls(
-                                $this->returnArgument(0), $this->returnArgument(0), $this->returnArgument(0)
-        ));
+                    $this->returnArgument(0),
+                    $this->returnArgument(0),
+                    $this->returnArgument(0)
+                ));
 
         $connection->expects($this->at(0))->method('exec')->with('Execute this');
         $connection->expects($this->at(1))->method('exec')->with('this too');
@@ -303,5 +304,4 @@ class SqlserverTest extends TestCase
         $expected = 'INSERT INTO articles (title) OUTPUT INSERTED.* VALUES (:c0)';
         $this->assertEquals($expected, $query->sql());
     }
-
 }
