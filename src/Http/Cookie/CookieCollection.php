@@ -253,7 +253,7 @@ class CookieCollection implements IteratorAggregate, Countable
                 $domain = ltrim($domain, '.');
             }
 
-            $expires = $cookie->getExpiry();
+            $expires = $cookie->getExpiresTimestamp();
             if ($expires && time() > $expires) {
                 continue;
             }
@@ -389,7 +389,7 @@ class CookieCollection implements IteratorAggregate, Countable
         $hostPattern = '/' . preg_quote($host, '/') . '$/';
 
         foreach ($this->cookies as $i => $cookie) {
-            $expires = $cookie->getExpiry();
+            $expires = $cookie->getExpiresTimestamp();
             $expired = ($expires > 0 && $expires < $time);
 
             $pathMatches = strpos($path, $cookie->getPath()) === 0;

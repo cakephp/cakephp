@@ -15,7 +15,9 @@ namespace Cake\Http\Cookie;
 
 use Cake\Chronos\Chronos;
 use Cake\Utility\Hash;
+use DateTimeImmutable;
 use DateTimeInterface;
+use DateTimezone;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -79,9 +81,9 @@ class Cookie implements CookieInterface
     /**
      * Expiration time
      *
-     * @var int
+     * @var DateTimeInterface
      */
-    protected $expiresAt = 0;
+    protected $expiresAt;
 
     /**
      * Path
@@ -152,10 +154,10 @@ class Cookie implements CookieInterface
 
         $this->validateBool($secure);
         $this->secure = $secure;
-
-        if ($expiresAt !== null) {
-            $this->expiresAt = (int)$expiresAt->format('U');
+        if ($expiresAt) {
+            $expiresAt = $expiresAt->setTimezone(new DateTimezone('GMT'));
         }
+        $this->expiresAt = $expiresAt;
     }
 
     /**
@@ -163,12 +165,30 @@ class Cookie implements CookieInterface
      *
      * @return string
      */
-    protected function _buildExpirationValue()
+    protected function getFormattedExpires()
     {
-        return sprintf(
-            'expires=%s',
-            gmdate(static::EXPIRES_FORMAT, $this->expiresAt)
-        );
+        if (!$this->expiresAt) {
+            return '';
+        }
+
+        return $this->expiresAt->format(static::EXPIRES_FORMAT);
+    }
+
+    /**
+     * Get the timestamp from the expiration time
+     *
+     * Timestamps are strings as large timestamps can overflow MAX_INT
+     * in 32bit systems.
+     *
+     * @return string|null The expiry time as a string timestamp.
+     */
+    public function getExpiresTimestamp()
+    {
+        if (!$this->expiresAt) {
+            return null;
+        }
+
+        return $this->expiresAt->format('U');
     }
 
     /**
@@ -184,8 +204,8 @@ class Cookie implements CookieInterface
         }
         $headerValue[] = sprintf('%s=%s', $this->name, urlencode($value));
 
-        if ($this->expiresAt !== 0) {
-            $headerValue[] = $this->_buildExpirationValue();
+        if ($this->expiresAt) {
+            $headerValue[] = sprintf('expires=%s', $this->getFormattedExpires());
         }
         if ($this->path !== '') {
             $headerValue[] = sprintf('path=%s', $this->path);
@@ -248,10 +268,11 @@ class Cookie implements CookieInterface
      * @param string $name Name of the cookie
      * @return void
      * @throws \InvalidArgumentException
+     * @link https://tools.ietf.org/html/rfc2616#section-2.2 Rules for naming cookies.
      */
     protected function validateName($name)
     {
-        if (preg_match("/[=,; \t\r\n\013\014]/", $name)) {
+        if (preg_match("/[=,;\t\r\n\013\014]/", $name)) {
             throw new InvalidArgumentException(
                 sprintf('The cookie name `%s` contains invalid characters.', $name)
             );
@@ -441,7 +462,7 @@ class Cookie implements CookieInterface
     public function withExpiry(DateTimeInterface $dateTime)
     {
         $new = clone $this;
-        $new->expiresAt = (int)$dateTime->format('U');
+        $new->expiresAt = $dateTime->setTimezone(new DateTimezone('GMT'));
 
         return $new;
     }
@@ -449,7 +470,7 @@ class Cookie implements CookieInterface
     /**
      * Get the current expiry time
      *
-     * @return int|null Timestamp of expiry or null
+     * @return DateTimeInterface|null Timestamp of expiry or null
      */
     public function getExpiry()
     {
@@ -464,7 +485,7 @@ class Cookie implements CookieInterface
     public function withNeverExpire()
     {
         $new = clone $this;
-        $new->expiresAt = Chronos::createFromDate(2038, 1, 1)->format('U');
+        $new->expiresAt = Chronos::createFromDate(2038, 1, 1);
 
         return $new;
     }
@@ -479,7 +500,7 @@ class Cookie implements CookieInterface
     public function withExpired()
     {
         $new = clone $this;
-        $new->expiresAt = Chronos::parse('-1 year')->format('U');
+        $new->expiresAt = Chronos::parse('-1 year');
 
         return $new;
     }
@@ -619,7 +640,7 @@ class Cookie implements CookieInterface
             'domain' => $this->getDomain(),
             'secure' => $this->isSecure(),
             'httponly' => $this->isHttpOnly(),
-            'expires' => $this->getExpiry()
+            'expires' => $this->getExpiresTimestamp()
         ];
     }
 
@@ -631,7 +652,7 @@ class Cookie implements CookieInterface
      *
      * @return array
      */
-    public function toArrayCompat()
+    public function toArrayClient()
     {
         return [
             'name' => $this->getName(),
@@ -640,7 +661,28 @@ class Cookie implements CookieInterface
             'domain' => $this->getDomain(),
             'secure' => $this->isSecure(),
             'httponly' => $this->isHttpOnly(),
-            'expires' => gmdate(static::EXPIRES_FORMAT, $this->expiresAt)
+            'expires' => $this->getFormattedExpires()
+        ];
+    }
+
+    /**
+     * Convert the cookie into an array of its properties.
+     *
+     * This method is compatible with the historical behavior of Cake\Http\Response,
+     * where `httponly` is `httpOnly` and `expires` is `expire`
+     *
+     * @return array
+     */
+    public function toArrayResponse()
+    {
+        return [
+            'name' => $this->getName(),
+            'value' => $this->getValue(),
+            'path' => $this->getPath(),
+            'domain' => $this->getDomain(),
+            'secure' => $this->isSecure(),
+            'httpOnly' => $this->isHttpOnly(),
+            'expire' => $this->getExpiresTimestamp()
         ];
     }
 
