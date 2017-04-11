@@ -191,8 +191,30 @@ class Shell
     }
 
     /**
+     * Get the io object for this shell.
+     *
+     * @return \Cake\Console\ConsoleIo The current ConsoleIo object.
+     */
+    public function getIo()
+    {
+        return $this->_io;
+    }
+
+    /**
+     * Set the io object for this shell.
+     *
+     * @param \Cake\Console\ConsoleIo $io The ConsoleIo object to use.
+     * @return void
+     */
+    public function setIo(ConsoleIo $io)
+    {
+        $this->_io = $io;
+    }
+
+    /**
      * Get/Set the io object for this shell.
      *
+     * @deprecated 3.5.0 Use getIo()/setIo() instead.
      * @param \Cake\Console\ConsoleIo|null $io The ConsoleIo object to use.
      * @return \Cake\Console\ConsoleIo The current ConsoleIo object.
      */

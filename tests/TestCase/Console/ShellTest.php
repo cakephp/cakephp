@@ -1330,6 +1330,17 @@ TEXT;
     }
 
     /**
+     * Test getIo() and setIo() methods
+     *
+     * @return void
+     */
+    public function testGetSetIo()
+    {
+        $this->Shell->setIo($this->io);
+        $this->assertSame($this->Shell->getIo(), $this->io);
+    }
+
+    /**
      * Tests __debugInfo
      *
      * @return void
