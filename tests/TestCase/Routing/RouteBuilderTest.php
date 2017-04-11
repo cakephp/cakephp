@@ -409,16 +409,25 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
-     * Test connecting resources with a controller
+     * Test connecting resources with a path
      *
      * @return void
      */
-    public function testResourcesController()
+    public function testResourcesPathOption()
     {
         $routes = new RouteBuilder($this->collection, '/api');
-        $routes->resources('Articles', ['controller' => 'Posts']);
+        $routes->resources('Articles', ['path' => 'posts'], function ($routes) {
+            $routes->resources('Comments');
+        });
         $all = $this->collection->routes();
-        $this->assertEquals('Posts', $all[0]->defaults['controller']);
+        $this->assertEquals('Articles', $all[0]->defaults['controller']);
+        $this->assertEquals('/api/posts', $all[0]->template);
+        $this->assertEquals('/api/posts/:id', $all[2]->template);
+        $this->assertEquals(
+            '/api/posts/:article_id/comments',
+            $all[6]->template,
+            'parameter name should reflect resource name'
+        );
     }
 
     /**
