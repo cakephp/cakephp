@@ -1766,21 +1766,22 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $key The key you want to write to.
      * @param string $value Value to set
-     * @return $this
+     * @return static
      */
-    public function setEnv($key, $value)
+    public function withEnv($key, $value)
     {
-        $this->_environment[$key] = $value;
-        $this->clearDetectorCache();
+        $new = clone $this;
+        $new->_environment[$key] = $value;
+        $new->clearDetectorCache();
 
-        return $this;
+        return $new;
     }
 
     /**
      * Get/Set value from the request's environment data.
      * Fallback to using env() if key not set in $environment property.
      *
-     * @deprecated 3.5.0 Use getEnv()/setEnv() instead.
+     * @deprecated 3.5.0 Use getEnv()/withEnv() instead.
      * @param string $key The key you want to read/write from/to.
      * @param string|null $value Value to set. Default null.
      * @param string|null $default Default value when trying to retrieve an environment

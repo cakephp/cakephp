@@ -3520,20 +3520,30 @@ XML;
     }
 
     /**
-     * Test setEnv() and getEnv()
+     * Test withEnv()
      *
      * @return void
      */
-    public function testGetSetEnv()
+    public function testWithEnv()
     {
         $request = new ServerRequest();
 
-        $request->setEnv('HTTP_HOST', 'cakephp.org');
-        $this->assertSame($request->getEnv('HTTP_HOST'), 'cakephp.org');
+        $newRequest = $request->withEnv('HTTP_HOST', 'cakephp.org');
+        $this->assertNotSame($request, $newRequest);
+        $this->assertSame($newRequest->getEnv('HTTP_HOST'), 'cakephp.org');
+    }
+
+    /**
+     * Test getEnv()
+     *
+     * @return void
+     */
+    public function testGetEnv()
+    {
+        $request = new ServerRequest();
 
         //Test default null
-        $request->setEnv('HTTP_HOST');
-        $this->assertSame($request->getEnv('HTTP_HOST'), null);
+        $this->assertSame($request->getEnv('Foo'), null);
 
         //Test default set
         $this->assertSame($request->getEnv('Foo', 'Bar'), 'Bar');
