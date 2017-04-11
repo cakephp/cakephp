@@ -1762,7 +1762,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     }
 
     /**
-     * Set a value to the request's environment data.
+     * Update the request with a new environment data element.
+     *
+     * Returns an updated request object. This method returns
+     * a *new* request object and does not mutate the request in-place.
      *
      * @param string $key The key you want to write to.
      * @param string $value Value to set
