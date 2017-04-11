@@ -3179,6 +3179,35 @@ XML;
     }
 
     /**
+     * Tests getting the session from the request
+     *
+     * @return void
+     */
+    public function testGetSession()
+    {
+        $session = new Session;
+        $request = new ServerRequest(['session' => $session]);
+        $this->assertSame($session, $request->getSession());
+
+        $request = ServerRequestFactory::fromGlobals();
+        $this->assertEquals($session, $request->getSession());
+    }
+
+    /**
+     * Tests setting the session to the request
+     *
+     * @return void
+     */
+    public function testWithtSession()
+    {
+        $session = new Session;
+        $request = new ServerRequest();
+        $newRequest = $request->withSession($session);
+        $this->assertNotSame($newRequest, $request);
+        $this->assertSame($session, $newRequest->getSession());
+    }
+
+    /**
      * Test the content type method.
      *
      * @return void

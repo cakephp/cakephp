@@ -100,7 +100,7 @@ class SecurityComponent extends Component
     public function startup(Event $event)
     {
         $controller = $event->getSubject();
-        $this->session = $controller->request->session();
+        $this->session = $controller->request->getSession();
         $this->_action = $controller->request->getParam('action');
         $hasData = (bool)$controller->request->getData();
         try {
