@@ -27,12 +27,12 @@ use Cake\Datasource\Exception\MissingDatasourceException;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
+use Cake\Http\ServerRequest;
 use Cake\Mailer\Exception\MissingActionException as MissingMailerActionException;
 use Cake\Network\Exception\InternalErrorException;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Network\Exception\NotFoundException;
 use Cake\Network\Exception\SocketException;
-use Cake\Network\Request;
 use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Exception\MissingControllerException;
@@ -165,7 +165,7 @@ class ExceptionRendererTest extends TestCase
         Configure::write('Config.language', 'eng');
         Router::reload();
 
-        $request = new Request();
+        $request = new ServerRequest();
         $request->base = '';
         Router::setRequestInfo($request);
         Configure::write('debug', true);
@@ -191,7 +191,7 @@ class ExceptionRendererTest extends TestCase
      */
     protected function _mockResponse($error)
     {
-        $error->controller->response = $this->getMockBuilder('Cake\Network\Response')
+        $error->controller->response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_sendHeader'])
             ->getMock();
 
@@ -315,7 +315,7 @@ class ExceptionRendererTest extends TestCase
     {
         $exception = new MissingWidgetThingException('coding fail.');
         $ExceptionRenderer = new ExceptionRenderer($exception);
-        $ExceptionRenderer->controller->response = $this->getMockBuilder('Cake\Network\Response')
+        $ExceptionRenderer->controller->response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['statusCode', '_sendHeader'])
             ->getMock();
         $ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(404);
@@ -335,7 +335,7 @@ class ExceptionRendererTest extends TestCase
     {
         $exception = new \OutOfBoundsException('foul ball.');
         $ExceptionRenderer = new ExceptionRenderer($exception);
-        $ExceptionRenderer->controller->response = $this->getMockBuilder('Cake\Network\Response')
+        $ExceptionRenderer->controller->response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['statusCode', '_sendHeader'])
             ->getMock();
         $ExceptionRenderer->controller->response->expects($this->once())
@@ -358,7 +358,7 @@ class ExceptionRendererTest extends TestCase
 
         $exception = new \OutOfBoundsException('foul ball.');
         $ExceptionRenderer = new ExceptionRenderer($exception);
-        $ExceptionRenderer->controller->response = $this->getMockBuilder('Cake\Network\Response')
+        $ExceptionRenderer->controller->response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['statusCode', '_sendHeader'])
             ->getMock();
         $ExceptionRenderer->controller->response->expects($this->once())
@@ -380,7 +380,7 @@ class ExceptionRendererTest extends TestCase
     {
         $exception = new \OutOfBoundsException('foul ball.', 501);
         $ExceptionRenderer = new ExceptionRenderer($exception);
-        $ExceptionRenderer->controller->response = $this->getMockBuilder('Cake\Network\Response')
+        $ExceptionRenderer->controller->response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['statusCode', '_sendHeader'])
             ->getMock();
         $ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(501);
@@ -399,12 +399,12 @@ class ExceptionRendererTest extends TestCase
     {
         Router::reload();
 
-        $request = new Request('posts/view/1000');
+        $request = new ServerRequest('posts/view/1000');
         Router::setRequestInfo($request);
 
         $exception = new NotFoundException('Custom message');
         $ExceptionRenderer = new ExceptionRenderer($exception);
-        $ExceptionRenderer->controller->response = $this->getMockBuilder('Cake\Network\Response')
+        $ExceptionRenderer->controller->response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['statusCode', '_sendHeader'])
             ->getMock();
         $ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(404);
@@ -413,6 +413,40 @@ class ExceptionRendererTest extends TestCase
 
         $this->assertContains('<h2>Custom message</h2>', $result);
         $this->assertRegExp("/<strong>'.*?\/posts\/view\/1000'<\/strong>/", $result);
+    }
+
+    /**
+     * testerror400 method when returning as json
+     *
+     * @return void
+     */
+    public function testError400AsJson()
+    {
+        Router::reload();
+
+        $request = new ServerRequest('posts/view/1000?sort=title&direction=desc');
+        $request = $request->withHeader('Accept', 'application/json');
+        $request = $request->withHeader('Content-Type', 'application/json');
+        Router::setRequestInfo($request);
+
+        $exception = new NotFoundException('Custom message');
+        $exceptionLine = __LINE__ - 1;
+        $ExceptionRenderer = new ExceptionRenderer($exception);
+        $ExceptionRenderer->controller->response = $this->getMockBuilder('Cake\Network\Response')
+            ->setMethods(['statusCode', '_sendHeader'])
+            ->getMock();
+        $ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(404);
+
+        $result = $ExceptionRenderer->render()->body();
+        $expected = [
+            'message' => 'Custom message',
+            'url' => '/posts/view/1000?sort=title&amp;direction=desc',
+            'code' => 404,
+            'file' => __FILE__,
+            'line' => $exceptionLine
+        ];
+
+        $this->assertEquals($expected, json_decode($result, true));
     }
 
     /**
@@ -446,7 +480,7 @@ class ExceptionRendererTest extends TestCase
     {
         Router::reload();
 
-        $request = new Request('pages/<span id=333>pink</span></id><script>document.body.style.background = t=document.getElementById(333).innerHTML;window.alert(t);</script>');
+        $request = new ServerRequest('pages/<span id=333>pink</span></id><script>document.body.style.background = t=document.getElementById(333).innerHTML;window.alert(t);</script>');
         Router::setRequestInfo($request);
 
         $exception = new NotFoundException('Custom message');
@@ -467,7 +501,7 @@ class ExceptionRendererTest extends TestCase
     {
         $exception = new InternalErrorException('An Internal Error Has Occurred.');
         $ExceptionRenderer = new ExceptionRenderer($exception);
-        $ExceptionRenderer->controller->response = $this->getMockBuilder('Cake\Network\Response')
+        $ExceptionRenderer->controller->response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['statusCode', '_sendHeader'])
             ->getMock();
         $ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(500);
@@ -639,7 +673,7 @@ class ExceptionRendererTest extends TestCase
     public function testCakeExceptionHandling($exception, $patterns, $code)
     {
         $ExceptionRenderer = new ExceptionRenderer($exception);
-        $ExceptionRenderer->controller->response = $this->getMockBuilder('Cake\Network\Response')
+        $ExceptionRenderer->controller->response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['statusCode', '_sendHeader'])
             ->getMock();
         $ExceptionRenderer->controller->response->expects($this->once())
@@ -680,13 +714,13 @@ class ExceptionRendererTest extends TestCase
             ->setMethods(['render'])
             ->getMock();
         $ExceptionRenderer->controller->helpers = ['Fail', 'Boom'];
-        $ExceptionRenderer->controller->request = new Request;
+        $ExceptionRenderer->controller->request = new ServerRequest;
         $ExceptionRenderer->controller->expects($this->at(0))
             ->method('render')
             ->with('missingHelper')
             ->will($this->throwException($exception));
 
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $response->expects($this->once())
             ->method('body')
             ->with($this->stringContains('Helper class Fail'));
@@ -710,12 +744,12 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['beforeRender'])
             ->getMock();
-        $ExceptionRenderer->controller->request = new Request;
+        $ExceptionRenderer->controller->request = new ServerRequest;
         $ExceptionRenderer->controller->expects($this->any())
             ->method('beforeRender')
             ->will($this->throwException($exception));
 
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $response->expects($this->once())
             ->method('body')
             ->with($this->stringContains('Not there, sorry'));
@@ -731,24 +765,22 @@ class ExceptionRendererTest extends TestCase
      */
     public function testMissingLayoutPathRenderSafe()
     {
+        $this->called = false;
         $exception = new NotFoundException();
         $ExceptionRenderer = new ExceptionRenderer($exception);
 
-        $ExceptionRenderer->controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->setMethods(['render'])
-            ->getMock();
+        $ExceptionRenderer->controller = new Controller();
         $ExceptionRenderer->controller->helpers = ['Fail', 'Boom'];
-        $ExceptionRenderer->controller->eventManager()->on('Controller.beforeRender', function (Event $event) {
-            $event->subject()->viewBuilder()->layoutPath('boom');
-        });
-        $ExceptionRenderer->controller->request = new Request;
+        $ExceptionRenderer->controller->eventManager()->on(
+            'Controller.beforeRender',
+            function (Event $event) {
+                $this->called = true;
+                $event->subject()->viewBuilder()->setLayoutPath('boom');
+            }
+        );
+        $ExceptionRenderer->controller->request = new ServerRequest;
 
-        $ExceptionRenderer->controller->expects($this->once())
-            ->method('render')
-            ->with('error400')
-            ->will($this->throwException($exception));
-
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $response->expects($this->once())
             ->method('body')
             ->with($this->stringContains('Not Found'));
@@ -759,6 +791,7 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->controller->response = $response;
 
         $ExceptionRenderer->render();
+        $this->assertTrue($this->called, 'Listener added was not triggered.');
         $this->assertEquals('', $ExceptionRenderer->controller->viewBuilder()->layoutPath());
         $this->assertEquals('Error', $ExceptionRenderer->controller->viewBuilder()->templatePath());
     }
@@ -777,7 +810,7 @@ class ExceptionRendererTest extends TestCase
             ->setMethods(['render'])
             ->getMock();
         $ExceptionRenderer->controller->plugin = 'TestPlugin';
-        $ExceptionRenderer->controller->request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $ExceptionRenderer->controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
 
         $exception = new MissingPluginException(['plugin' => 'TestPlugin']);
         $ExceptionRenderer->controller->expects($this->once())
@@ -785,7 +818,7 @@ class ExceptionRendererTest extends TestCase
             ->with('error400')
             ->will($this->throwException($exception));
 
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $response->expects($this->once())
             ->method('body')
             ->with($this->logicalAnd(
@@ -812,7 +845,7 @@ class ExceptionRendererTest extends TestCase
             ->setMethods(['render'])
             ->getMock();
         $ExceptionRenderer->controller->plugin = 'TestPlugin';
-        $ExceptionRenderer->controller->request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $ExceptionRenderer->controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
 
         $exception = new MissingPluginException(['plugin' => 'TestPluginTwo']);
         $ExceptionRenderer->controller->expects($this->once())
@@ -820,7 +853,7 @@ class ExceptionRendererTest extends TestCase
             ->with('error400')
             ->will($this->throwException($exception));
 
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $response->expects($this->once())
             ->method('body')
             ->with($this->logicalAnd(
@@ -860,7 +893,7 @@ class ExceptionRendererTest extends TestCase
     public function testRenderShutdownEvents()
     {
         $fired = [];
-        $listener = function ($event) use (&$fired) {
+        $listener = function (Event $event) use (&$fired) {
             $fired[] = $event->name();
         };
         $events = EventManager::instance();
@@ -881,7 +914,7 @@ class ExceptionRendererTest extends TestCase
      *
      * @return void
      */
-    public function testRenderShutdownEventsOnDispatcherFacotry()
+    public function testRenderShutdownEventsOnDispatcherFactory()
     {
         $filter = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
             ->setMethods(['afterDispatch'])
@@ -905,7 +938,7 @@ class ExceptionRendererTest extends TestCase
     public function testSubclassTriggerShutdownEvents()
     {
         $fired = [];
-        $listener = function ($event) use (&$fired) {
+        $listener = function (Event $event) use (&$fired) {
             $fired[] = $event->name();
         };
         $events = EventManager::instance();
@@ -931,7 +964,7 @@ class ExceptionRendererTest extends TestCase
         $exception->queryString = 'SELECT * from poo_query < 5 and :seven';
         $exception->params = ['seven' => 7];
         $ExceptionRenderer = new ExceptionRenderer($exception);
-        $ExceptionRenderer->controller->response = $this->getMockBuilder('Cake\Network\Response')
+        $ExceptionRenderer->controller->response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['statusCode', '_sendHeader'])
             ->getMock();
         $ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(500);

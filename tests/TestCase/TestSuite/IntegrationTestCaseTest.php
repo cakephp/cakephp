@@ -16,7 +16,7 @@ namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
-use Cake\Network\Response;
+use Cake\Http\Response;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestCase;
@@ -39,6 +39,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
 
+        Router::connect('/get/:controller/:action', ['_method' => 'GET'], ['routeClass' => 'InflectedRoute']);
         Router::connect('/:controller/:action/*', [], ['routeClass' => 'InflectedRoute']);
         DispatcherFactory::clear();
         DispatcherFactory::add('Routing');
@@ -178,7 +179,24 @@ class IntegrationTestCaseTest extends IntegrationTestCase
 
         $this->get('/request_action/test_request_action');
         $this->assertNotEmpty($this->_response);
-        $this->assertInstanceOf('Cake\Network\Response', $this->_response);
+        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
+        $this->assertEquals('This is a test', $this->_response->body());
+
+        $this->_response = null;
+        $this->get('/get/request_action/test_request_action');
+        $this->assertEquals('This is a test', $this->_response->body());
+    }
+
+    /**
+     * Test sending get requests sets the request method
+     *
+     * @return void
+     */
+    public function testGetSpecificRouteHttpServer()
+    {
+        $this->useHttpServer(true);
+        $this->get('/get/request_action/test_request_action');
+        $this->assertResponseOk();
         $this->assertEquals('This is a test', $this->_response->body());
     }
 
@@ -210,7 +228,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
 
         $this->get('/request_action/test_request_action');
         $this->assertNotEmpty($this->_response);
-        $this->assertInstanceOf('Cake\Network\Response', $this->_response);
+        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
         $this->assertEquals('This is a test', $this->_response->body());
         $this->assertHeader('X-Middleware', 'true');
     }
@@ -390,7 +408,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Tests the failure message for assertCookieNotSet
      *
-     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedException \PHPUnit\Framework\AssertionFailedError
      * @expectedExceptionMessage Cookie 'remember_me' has been set
      * @return void
      */
@@ -404,7 +422,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      * Tests the failure message for assertCookieNotSet when no
      * response whas generated
      *
-     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedException \PHPUnit\Framework\AssertionFailedError
      * @expectedExceptionMessage No response set, cannot assert cookies.
      * @return void
      */
@@ -523,7 +541,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Test that exceptions being thrown are handled correctly.
      *
-     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedException \PHPUnit\Framework\AssertionFailedError
      * @return void
      */
     public function testWithUnexpectedException()
@@ -747,6 +765,56 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test the content regexp assertion.
+     *
+     * @return void
+     */
+    public function testAssertResponseRegExp()
+    {
+        $this->_response = new Response();
+        $this->_response->body('Some content');
+
+        $this->assertResponseRegExp('/cont/');
+    }
+
+    /**
+     * Test the content regexp assertion failing
+     *
+     * @expectedException \PHPUnit\Framework\AssertionFailedError
+     * @expectedExceptionMessage No response set
+     * @return void
+     */
+    public function testAssertResponseRegExpNoResponse()
+    {
+        $this->assertResponseRegExp('/cont/');
+    }
+
+    /**
+     * Test the negated content regexp assertion.
+     *
+     * @return void
+     */
+    public function testAssertResponseNotRegExp()
+    {
+        $this->_response = new Response();
+        $this->_response->body('Some content');
+
+        $this->assertResponseNotRegExp('/cant/');
+    }
+
+    /**
+     * Test negated content regexp assertion failing
+     *
+     * @expectedException \PHPUnit\Framework\AssertionFailedError
+     * @expectedExceptionMessage No response set
+     * @return void
+     */
+    public function testAssertResponseNotRegExpNoResponse()
+    {
+        $this->assertResponseNotRegExp('/cont/');
+    }
+
+    /**
      * Test that works in tandem with testEventManagerReset2 to
      * test the EventManager reset.
      *
@@ -757,7 +825,10 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      */
     public function testEventManagerReset1()
     {
-        return EventManager::instance();
+        $eventManager = EventManager::instance();
+        $this->assertInstanceOf('Cake\Event\EventManager', $eventManager);
+
+        return $eventManager;
     }
 
     /**
@@ -768,6 +839,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      */
     public function testEventManagerReset2($prevEventManager)
     {
+        $this->assertInstanceOf('Cake\Event\EventManager', $prevEventManager);
         $this->assertNotSame($prevEventManager, EventManager::instance());
     }
 
@@ -799,11 +871,11 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Test that assertFile requires a response
      *
-     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedException \PHPUnit\Framework\AssertionFailedError
      * @expectedExceptionMessage No response set, cannot assert file
      * @return void
      */
-    public function testAssertFileNoReponse()
+    public function testAssertFileNoResponse()
     {
         $this->assertFileResponse('foo');
     }
@@ -811,7 +883,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Test that assertFile requires a file
      *
-     * @expectedException \PHPUnit_Framework_AssertionFailedError
+     * @expectedException \PHPUnit\Framework\AssertionFailedError
      * @expectedExceptionMessage No file was sent in this response
      * @return void
      */

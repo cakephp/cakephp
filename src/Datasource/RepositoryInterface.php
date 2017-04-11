@@ -96,8 +96,6 @@ interface RepositoryInterface
     public function updateAll($fields, $conditions);
 
     /**
-     * Delete all matching records.
-     *
      * Deletes all records matching the provided conditions.
      *
      * This method will *not* trigger beforeDelete/afterDelete events. If you
@@ -109,7 +107,7 @@ interface RepositoryInterface
      *
      * @param mixed $conditions Conditions to be used, accepts anything Query::where()
      * can take.
-     * @return int Count Returns the affected rows.
+     * @return int Returns the number of affected rows.
      * @see \Cake\Datasource\RepositoryInterface::delete()
      */
     public function deleteAll($conditions);
@@ -153,7 +151,7 @@ interface RepositoryInterface
      * For example, in your controller code:
      *
      * ```
-     * $article = $this->Articles->newEntity($this->request->data());
+     * $article = $this->Articles->newEntity($this->request->getData());
      * ```
      *
      * The hydrated entity will correctly do an insert/update based
@@ -173,7 +171,7 @@ interface RepositoryInterface
      * For example, in your controller code:
      *
      * ```
-     * $articles = $this->Articles->newEntities($this->request->data());
+     * $articles = $this->Articles->newEntities($this->request->getData());
      * ```
      *
      * The hydrated entities can then be iterated and saved.
@@ -192,7 +190,7 @@ interface RepositoryInterface
      * This is most useful when editing an existing entity using request data:
      *
      * ```
-     * $article = $this->Articles->patchEntity($article, $this->request->data());
+     * $article = $this->Articles->patchEntity($article, $this->request->getData());
      * ```
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity that will get the
@@ -212,7 +210,7 @@ interface RepositoryInterface
      * This is most useful when editing a list of existing entities using request data:
      *
      * ```
-     * $article = $this->Articles->patchEntities($articles, $this->request->data());
+     * $article = $this->Articles->patchEntities($articles, $this->request->getData());
      * ```
      *
      * @param array|\Traversable $entities the entities that will get the

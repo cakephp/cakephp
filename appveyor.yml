@@ -27,20 +27,24 @@ init:
 
 install:
   - cd c:\
-  - appveyor DownloadFile http://windows.php.net/downloads/releases/archives/php-5.5.10-nts-Win32-VC11-x86.zip -FileName php.zip
-  - 7z x php.zip -oc:\php
+  - appveyor DownloadFile http://windows.php.net/downloads/releases/archives/php-5.6.0-nts-Win32-VC11-x86.zip -FileName php.zip
+  - 7z x php.zip -oc:\php > nul
   - appveyor DownloadFile https://dl.dropboxusercontent.com/s/euip490d9183jkr/SQLSRV32.cab -FileName sqlsrv.cab
-  - 7z x sqlsrv.cab -oc:\php\ext php*_55_nts.dll
+  - 7z x sqlsrv.cab -oc:\php\ext php*_56_nts.dll > nul
   - cd c:\php
   - copy php.ini-production php.ini
   - echo date.timezone="UTC" >> php.ini
   - echo extension_dir=ext >> php.ini
   - echo extension=php_openssl.dll >> php.ini
-  - echo extension=php_sqlsrv_55_nts.dll >> php.ini
-  - echo extension=php_pdo_sqlsrv_55_nts.dll >> php.ini
+  - echo extension=php_sqlsrv_56_nts.dll >> php.ini
+  - echo extension=php_pdo_sqlsrv_56_nts.dll >> php.ini
   - echo extension=php_intl.dll >> php.ini
   - echo extension=php_mbstring.dll >> php.ini
   - echo extension=php_fileinfo.dll >> php.ini
+  - appveyor DownloadFile http://windows.php.net/downloads/pecl/releases/wincache/1.3.7.12/php_wincache-1.3.7.12-5.6-nts-vc11-x86.zip -FileName wincache.zip
+  - 7z x wincache.zip -oc:\php\ext php_wincache.dll > nul
+  - echo extension=php_wincache.dll >> php.ini
+  - echo wincache.enablecli = 1 >> php.ini
   - cd C:\projects\cakephp
   - appveyor DownloadFile https://getcomposer.org/composer.phar
   - php composer.phar install --prefer-dist --no-interaction --ansi --no-progress

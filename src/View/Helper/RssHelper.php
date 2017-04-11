@@ -20,8 +20,8 @@ use Cake\View\Helper;
 /**
  * RSS Helper class for easy output RSS structures.
  *
- * @property UrlHelper $Url
- * @property TimeHelper $Time
+ * @property \Cake\View\Helper\UrlHelper $Url
+ * @property \Cake\View\Helper\TimeHelper $Time
  * @link http://book.cakephp.org/3.0/en/views/helpers/rss.html
  */
 class RssHelper extends Helper
@@ -210,6 +210,7 @@ class RssHelper extends Helper
                     break;
                 case 'category':
                     if (is_array($val) && !empty($val[0])) {
+                        $categories = [];
                         foreach ($val as $category) {
                             $attrib = [];
                             if (is_array($category) && isset($category['domain'])) {
@@ -281,7 +282,7 @@ class RssHelper extends Helper
      */
     public function time($time)
     {
-        return $this->Time->toRSS($time);
+        return $this->Time->toRss($time);
     }
 
     /**

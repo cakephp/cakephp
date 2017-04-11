@@ -28,7 +28,7 @@ class LoggingStatement extends StatementDecorator
     /**
      * Logger instance responsible for actually doing the logging task
      *
-     * @var \Cake\Database\Log\QueryLogger
+     * @var \Cake\Database\Log\QueryLogger|null
      */
     protected $_logger;
 
@@ -110,7 +110,7 @@ class LoggingStatement extends StatementDecorator
      * it returns the currently setup logger instance
      *
      * @param object|null $instance Logger object instance.
-     * @return object Logger instance
+     * @return object|null Logger instance
      */
     public function logger($instance = null)
     {

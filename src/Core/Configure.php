@@ -45,15 +45,15 @@ class Configure
     /**
      * Configured engine classes, used to load config files from resources
      *
-     * @var array
      * @see \Cake\Core\Configure::load()
+     * @var \Cake\Core\Configure\ConfigEngineInterface[]
      */
     protected static $_engines = [];
 
     /**
      * Flag to track whether or not ini_set exists.
      *
-     * @return void
+     * @var bool|null
      */
     protected static $_hasIniSet = null;
 
@@ -238,7 +238,7 @@ class Configure
      * Gets the names of the configured Engine objects.
      *
      * @param string|null $name Engine name.
-     * @return array Array of the configured Engine objects.
+     * @return array|bool Array of the configured Engine objects, bool for specific name.
      */
     public static function configured($name = null)
     {

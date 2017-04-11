@@ -28,16 +28,21 @@ use RuntimeException;
  */
 class DecimalType extends Type implements TypeInterface
 {
-
     /**
-     * Identifier name for this type
+     * Identifier name for this type.
+     *
+     * (This property is declared here again so that the inheritance from
+     * Cake\Database\Type can be removed in the future.)
      *
      * @var string|null
      */
     protected $_name = null;
 
     /**
-     * Constructor
+     * Constructor.
+     *
+     * (This method is declared here again so that the inheritance from
+     * Cake\Database\Type can be removed in the future.)
      *
      * @param string|null $name The name identifying this type
      */
@@ -89,7 +94,7 @@ class DecimalType extends Type implements TypeInterface
      *
      * @param null|string|resource $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return resource
+     * @return float|null
      * @throws \Cake\Core\Exception\Exception
      */
     public function toPHP($value, Driver $driver)
@@ -164,7 +169,7 @@ class DecimalType extends Type implements TypeInterface
     }
 
     /**
-     * Converts a string into a float point after parseing it using the locale
+     * Converts a string into a float point after parsing it using the locale
      * aware parser.
      *
      * @param string $value The value to parse and convert to an float.
@@ -172,6 +177,7 @@ class DecimalType extends Type implements TypeInterface
      */
     protected function _parseValue($value)
     {
+        /* @var \Cake\I18n\Number $class */
         $class = static::$numberClass;
 
         return $class::parseFloat($value);

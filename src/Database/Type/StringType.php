@@ -101,7 +101,7 @@ class StringType extends Type implements OptionalConvertInterface, TypeInterface
     /**
      * {@inheritDoc}
      *
-     * @return boolean False as databse results are returned already as strings
+     * @return boolean False as database results are returned already as strings
      */
     public function requiresToPhpCast()
     {

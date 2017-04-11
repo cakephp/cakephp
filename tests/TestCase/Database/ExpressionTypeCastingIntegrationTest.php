@@ -17,7 +17,6 @@ use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Type;
-use Cake\Database\Type\BinaryType;
 use Cake\Database\Type\ExpressionTypeInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -138,7 +137,6 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
         $this->assertCount(1, $result);
         $this->assertEquals('4c2681c048298a29a7fb413140cf8569', $result[0]['id']);
     }
-
 
     /**
      * Tests Select using value object in conditions

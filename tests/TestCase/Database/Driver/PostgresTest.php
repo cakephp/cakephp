@@ -94,7 +94,7 @@ class PostgresTest extends TestCase
             'port' => 3440,
             'flags' => [1 => true, 2 => false],
             'encoding' => 'a-language',
-            'timezone' => 'Antartica',
+            'timezone' => 'Antarctica',
             'schema' => 'fooblic',
             'init' => ['Execute this', 'this too']
         ];
@@ -126,7 +126,7 @@ class PostgresTest extends TestCase
         $connection->expects($this->at(3))->method('exec')->with('SET search_path TO fooblic');
         $connection->expects($this->at(5))->method('exec')->with('Execute this');
         $connection->expects($this->at(6))->method('exec')->with('this too');
-        $connection->expects($this->at(7))->method('exec')->with('SET timezone = Antartica');
+        $connection->expects($this->at(7))->method('exec')->with('SET timezone = Antarctica');
         $connection->expects($this->exactly(5))->method('exec');
 
         $driver->connection($connection);

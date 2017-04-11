@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\Console\Shell;
 use Cake\Console\ShellDispatcher;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -204,13 +205,69 @@ class ShellDispatcherTest extends TestCase
 
         $dispatcher->args = ['mock_with_main'];
         $result = $dispatcher->dispatch();
-        $this->assertSame(0, $result);
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
         $this->assertEquals([], $dispatcher->args);
 
         $dispatcher->args = ['mock_with_main'];
         $result = $dispatcher->dispatch();
-        $this->assertSame(0, $result);
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
         $this->assertEquals([], $dispatcher->args);
+    }
+
+    /**
+     * Verifies correct dispatch of Shell subclasses with integer exit codes.
+     *
+     * @return void
+     */
+    public function testDispatchShellWithIntegerSuccessCode()
+    {
+        $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
+            ->setMethods(['findShell'])
+            ->getMock();
+        $Shell = $this->getMockBuilder('Cake\Console\Shell')->getMock();
+
+        $Shell->expects($this->once())->method('initialize');
+        $Shell->expects($this->once())->method('runCommand')
+            ->with(['initdb'])
+            ->will($this->returnValue(Shell::CODE_SUCCESS));
+
+        $dispatcher->expects($this->any())
+            ->method('findShell')
+            ->with('mock_without_main')
+            ->will($this->returnValue($Shell));
+
+        $dispatcher->args = ['mock_without_main', 'initdb'];
+        $result = $dispatcher->dispatch();
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
+    }
+
+    /**
+     * Verifies correct dispatch of Shell subclasses with custom integer exit codes.
+     *
+     * @return void
+     */
+    public function testDispatchShellWithCustomIntegerCodes()
+    {
+        $customErrorCode = 3;
+
+        $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
+            ->setMethods(['findShell'])
+            ->getMock();
+        $Shell = $this->getMockBuilder('Cake\Console\Shell')->getMock();
+
+        $Shell->expects($this->once())->method('initialize');
+        $Shell->expects($this->once())->method('runCommand')
+            ->with(['initdb'])
+            ->will($this->returnValue($customErrorCode));
+
+        $dispatcher->expects($this->any())
+            ->method('findShell')
+            ->with('mock_without_main')
+            ->will($this->returnValue($Shell));
+
+        $dispatcher->args = ['mock_without_main', 'initdb'];
+        $result = $dispatcher->dispatch();
+        $this->assertSame($customErrorCode, $result);
     }
 
     /**
@@ -237,7 +294,7 @@ class ShellDispatcherTest extends TestCase
 
         $dispatcher->args = ['mock_without_main', 'initdb'];
         $result = $dispatcher->dispatch();
-        $this->assertEquals(0, $result);
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
     }
 
     /**
@@ -264,7 +321,7 @@ class ShellDispatcherTest extends TestCase
 
         $dispatcher->args = ['example'];
         $result = $dispatcher->dispatch();
-        $this->assertEquals(0, $result);
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
     }
 
     /**
@@ -291,7 +348,7 @@ class ShellDispatcherTest extends TestCase
 
         $dispatcher->args = ['Example'];
         $result = $dispatcher->dispatch();
-        $this->assertEquals(0, $result);
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
     }
 
     /**
@@ -318,7 +375,7 @@ class ShellDispatcherTest extends TestCase
 
         $dispatcher->args = ['sample'];
         $result = $dispatcher->dispatch();
-        $this->assertEquals(0, $result);
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
     }
 
     /**

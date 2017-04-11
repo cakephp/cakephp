@@ -233,7 +233,7 @@ class IniConfigTest extends TestCase
     {
         $engine = new IniConfig(TMP);
         $result = $engine->dump('test', $this->testData);
-        $this->assertTrue($result > 0);
+        $this->assertGreaterThan(0, $result);
 
         $expected = <<<INI
 [One]
@@ -253,7 +253,7 @@ INI;
         $this->assertTextEquals($expected, $result);
 
         $result = $engine->dump('test', $this->testData);
-        $this->assertTrue($result > 0);
+        $this->assertGreaterThan(0, $result);
 
         $contents = file_get_contents($file);
         $this->assertTextEquals($expected, $contents);

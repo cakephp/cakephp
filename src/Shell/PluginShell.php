@@ -19,6 +19,10 @@ use Cake\Core\Plugin;
 
 /**
  * Shell for tasks related to plugins.
+ *
+ * @property \Cake\Shell\Task\AssetsTask $Assets
+ * @property \Cake\Shell\Task\LoadTask $Load
+ * @property \Cake\Shell\Task\UnloadTask $Unload
  */
 class PluginShell extends Shell
 {
@@ -54,7 +58,7 @@ class PluginShell extends Shell
     {
         $parser = parent::getOptionParser();
 
-        $parser->description('Plugin Shell perform various tasks related to plugin.')
+        $parser->setDescription('Plugin Shell perform various tasks related to plugin.')
             ->addSubcommand('assets', [
                 'help' => 'Symlink / copy plugin assets to app\'s webroot',
                 'parser' => $this->Assets->getOptionParser()

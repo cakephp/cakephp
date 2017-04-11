@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\Routing\Middleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 

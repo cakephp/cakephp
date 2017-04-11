@@ -95,11 +95,26 @@ class HasManyTest extends TestCase
     }
 
     /**
-     * Test that foreignKey generation ignores database names in target table.
+     * Tests that foreignKey() returns the correct configured value
      *
      * @return void
      */
     public function testForeignKey()
+    {
+        $assoc = new HasMany('Articles', [
+            'sourceTable' => $this->author
+        ]);
+        $this->assertEquals('author_id', $assoc->foreignKey());
+        $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
+        $this->assertEquals('another_key', $assoc->foreignKey());
+    }
+
+    /**
+     * Test that foreignKey generation ignores database names in target table.
+     *
+     * @return void
+     */
+    public function testForeignKeyIgnoreDatabaseName()
     {
         $this->author->table('schema.authors');
         $assoc = new HasMany('Articles', [
@@ -692,5 +707,37 @@ class HasManyTest extends TestCase
         $this->assertCount(2, $new->articles, 'Articles should remain linked');
         $this->assertSame(4, $this->author->find()->count(), 'Authors should still exist');
         $this->assertSame(3, $articles->find()->count(), 'Articles should still exist');
+    }
+
+    /**
+     * Tests that link only uses a single database transaction
+     *
+     * @return void
+     */
+    public function testLinkUsesSingleTransaction()
+    {
+        $articles = TableRegistry::get('Articles');
+        $assoc = $this->author->hasMany('Articles', [
+            'sourceTable' => $this->author,
+            'targetTable' => $articles
+        ]);
+
+        // Ensure author in fixture has zero associated articles
+        $entity = $this->author->get(2, ['contain' => 'Articles']);
+        $initial = $entity->articles;
+        $this->assertCount(0, $initial);
+
+        // Ensure that after each model is saved, we are still within a transaction.
+        $listenerAfterSave = function ($e, $entity, $options) use ($articles) {
+            $this->assertTrue($articles->connection()->inTransaction(), 'Multiple transactions used to save associated models.');
+        };
+        $articles->eventManager()->on('Model.afterSave', $listenerAfterSave);
+
+        $options = ['atomic' => false];
+        $assoc->link($entity, $articles->find('all')->toArray(), $options);
+
+        // Ensure that link was successful.
+        $new = $this->author->get(2, ['contain' => 'Articles']);
+        $this->assertCount(3, $new->articles);
     }
 }

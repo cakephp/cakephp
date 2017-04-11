@@ -36,7 +36,7 @@ class FileEngine extends CacheEngine
     /**
      * Instance of SplFileObject class
      *
-     * @var \SplFileObject
+     * @var \SplFileObject|null
      */
     protected $_File = null;
 
@@ -98,7 +98,7 @@ class FileEngine extends CacheEngine
         if (substr($this->_config['path'], -1) !== DIRECTORY_SEPARATOR) {
             $this->_config['path'] .= DIRECTORY_SEPARATOR;
         }
-        if (!empty($this->_groupPrefix)) {
+        if ($this->_groupPrefix) {
             $this->_groupPrefix = str_replace('_', DIRECTORY_SEPARATOR, $this->_groupPrefix);
         }
 
@@ -193,9 +193,7 @@ class FileEngine extends CacheEngine
         $time = time();
         $cachetime = (int)$this->_File->current();
 
-        if ($cachetime !== false &&
-            ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime)
-        ) {
+        if ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime) {
             if ($this->_config['lock']) {
                 $this->_File->flock(LOCK_UN);
             }
@@ -377,7 +375,7 @@ class FileEngine extends CacheEngine
     protected function _setKey($key, $createKey = false)
     {
         $groups = null;
-        if (!empty($this->_groupPrefix)) {
+        if ($this->_groupPrefix) {
             $groups = vsprintf($this->_groupPrefix, $this->groups());
         }
         $dir = $this->_config['path'] . $groups;

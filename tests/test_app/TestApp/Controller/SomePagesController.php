@@ -14,7 +14,7 @@
 namespace TestApp\Controller;
 
 use Cake\Controller\Controller;
-use Cake\Network\Response;
+use Cake\Http\Response;
 
 /**
  * SomePagesController class
@@ -45,7 +45,7 @@ class SomePagesController extends Controller
     /**
      * Test method for returning responses.
      *
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     public function responseGenerator()
     {

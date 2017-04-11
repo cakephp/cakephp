@@ -434,14 +434,14 @@ class FileTest extends TestCase
         }
 
         $TmpFile = new File($tmpFile);
-        $this->assertFalse(file_exists($tmpFile));
+        $this->assertFileNotExists($tmpFile);
         $this->assertFalse(is_resource($TmpFile->handle));
 
         $testData = ['CakePHP\'s', ' test suite', ' was here ...', ''];
         foreach ($testData as $data) {
             $r = $TmpFile->write($data);
             $this->assertTrue($r);
-            $this->assertTrue(file_exists($tmpFile));
+            $this->assertFileExists($tmpFile);
             $this->assertEquals($data, file_get_contents($tmpFile));
             $this->assertTrue(is_resource($TmpFile->handle));
             $TmpFile->close();
@@ -464,7 +464,7 @@ class FileTest extends TestCase
         }
 
         $TmpFile = new File($tmpFile);
-        $this->assertFalse(file_exists($tmpFile));
+        $this->assertFileNotExists($tmpFile);
 
         $fragments = ['CakePHP\'s', ' test suite', ' was here ...'];
         $data = null;
@@ -472,7 +472,7 @@ class FileTest extends TestCase
         foreach ($fragments as $fragment) {
             $r = $TmpFile->append($fragment);
             $this->assertTrue($r);
-            $this->assertTrue(file_exists($tmpFile));
+            $this->assertFileExists($tmpFile);
             $data = $data . $fragment;
             $this->assertEquals($data, file_get_contents($tmpFile));
             $newSize = $TmpFile->size();
@@ -501,10 +501,10 @@ class FileTest extends TestCase
             touch($tmpFile);
         }
         $TmpFile = new File($tmpFile);
-        $this->assertTrue(file_exists($tmpFile));
+        $this->assertFileExists($tmpFile);
         $result = $TmpFile->delete();
         $this->assertTrue($result);
-        $this->assertFalse(file_exists($tmpFile));
+        $this->assertFileNotExists($tmpFile);
 
         $TmpFile = new File('/this/does/not/exist');
         $result = $TmpFile->delete();

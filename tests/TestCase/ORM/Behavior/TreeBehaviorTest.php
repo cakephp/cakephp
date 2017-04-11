@@ -227,7 +227,7 @@ class TreeBehaviorTest extends TestCase
         // leaf
         $nodeIds = [];
         $nodes = $table->find('children', ['for' => 5])->all();
-        $this->assertEquals(0, count($nodes->extract('id')->toArray()));
+        $this->assertCount(0, $nodes->extract('id')->toArray());
 
         // direct children
         $nodes = $table->find('children', ['for' => 1, 'direct' => true])->all();
@@ -792,7 +792,7 @@ class TreeBehaviorTest extends TestCase
     }
 
     /**
-     * Tests that adding a child node as a decendant of one of the roots works
+     * Tests that adding a child node as a descendant of one of the roots works
      *
      * @return void
      */
@@ -1415,7 +1415,7 @@ class TreeBehaviorTest extends TestCase
         $entity = $this->table->get(4);
         $this->assertEquals(2, $entity->depth);
 
-        // Non leaf node so depth of descendents will also change
+        // Non leaf node so depth of descendants will also change
         $entity = $this->table->get(6);
         $this->assertEquals(1, $entity->depth);
 

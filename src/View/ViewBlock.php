@@ -107,7 +107,7 @@ class ViewBlock
 
             return;
         }
-        if (!empty($this->_active)) {
+        if ($this->_active) {
             $mode = end($this->_active);
             $active = key($this->_active);
             $content = ob_get_clean();

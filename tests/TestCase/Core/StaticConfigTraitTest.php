@@ -453,4 +453,16 @@ class StaticConfigTraitTest extends TestCase
         $result = TestLogStaticConfig::dsnClassMap(['my' => 'Special\OtherLog']);
         $this->assertEquals($expected, $result, "Should be possible to add to the map");
     }
+
+    /**
+     * Tests that former handling of integer keys coming in from PHP internal conversions
+     * won't break in 3.4.
+     *
+     * @return void
+     */
+    public function testConfigBC()
+    {
+        $result = TestLogStaticConfig::config(404);
+        $this->assertNull($result);
+    }
 }

@@ -315,6 +315,10 @@ class TextTest extends TestCase
         $expected = ['tagA', '"single tag"', 'tagB'];
         $this->assertEquals($expected, $result);
 
+        $result = Text::tokenize('tagA "first tag" tagB "second tag" tagC', ' ', '"', '"');
+        $expected = ['tagA', '"first tag"', 'tagB', '"second tag"', 'tagC'];
+        $this->assertEquals($expected, $result);
+
         // Ideographic width space.
         $result = Text::tokenize("tagA\xe3\x80\x80\"single\xe3\x80\x80tag\"\xe3\x80\x80tagB", "\xe3\x80\x80", '"', '"');
         $expected = ['tagA', '"single　tag"', 'tagB'];
@@ -707,7 +711,7 @@ HTML;
     }
 
     /**
-     * testHighlight method
+     * Tests highlight() method.
      *
      * @return void
      */
@@ -738,6 +742,24 @@ HTML;
         $expected = 'Ich <b>saß</b> in einem <b>Café</b> am <b>Übergang</b>';
         $phrases = ['saß', 'café', 'übergang'];
         $result = $this->Text->highlight($text, $phrases, ['format' => '<b>\1</b>']);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests highlight() method with limit.
+     *
+     * @return void
+     */
+    public function testHighlightLimit()
+    {
+        $text = 'This is a test text with some more text';
+        $phrases = ['This', 'text'];
+        $result = $this->Text->highlight($text, $phrases, ['format' => '<b>\1</b>']);
+        $expected = '<b>This</b> is a test <b>text</b> with some more <b>text</b>';
+        $this->assertEquals($expected, $result);
+
+        $result = $this->Text->highlight($text, $phrases, ['format' => '<b>\1</b>', 'limit' => 1]);
+        $expected = '<b>This</b> is a test <b>text</b> with some more text';
         $this->assertEquals($expected, $result);
     }
 

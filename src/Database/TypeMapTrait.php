@@ -26,38 +26,85 @@ trait TypeMapTrait
     protected $_typeMap;
 
     /**
-     * Creates a new TypeMap if $typeMap is an array, otherwise returns the existing type map
-     * or exchanges it for the given one.
+     * Creates a new TypeMap if $typeMap is an array, otherwise exchanges it for the given one.
      *
-     * @param array|\Cake\Database\TypeMap|null $typeMap Creates a TypeMap if array, otherwise sets the given TypeMap
-     * @return $this|\Cake\Database\TypeMap
+     * @param array|\Cake\Database\TypeMap $typeMap Creates a TypeMap if array, otherwise sets the given TypeMap
+     * @return $this
      */
-    public function typeMap($typeMap = null)
+    public function setTypeMap($typeMap)
     {
-        if ($this->_typeMap === null) {
-            $this->_typeMap = new TypeMap();
-        }
-        if ($typeMap === null) {
-            return $this->_typeMap;
-        }
         $this->_typeMap = is_array($typeMap) ? new TypeMap($typeMap) : $typeMap;
 
         return $this;
     }
 
     /**
+     * Returns the existing type map.
+     *
+     * @return \Cake\Database\TypeMap
+     */
+    public function getTypeMap()
+    {
+        if ($this->_typeMap === null) {
+            $this->_typeMap = new TypeMap();
+        }
+
+        return $this->_typeMap;
+    }
+
+    /**
+     * Creates a new TypeMap if $typeMap is an array, otherwise returns the existing type map
+     * or exchanges it for the given one.
+     *
+     * @deprecated 3.4.0 Use setTypeMap()/getTypeMap() instead.
+     * @param array|\Cake\Database\TypeMap|null $typeMap Creates a TypeMap if array, otherwise sets the given TypeMap
+     * @return $this|\Cake\Database\TypeMap
+     */
+    public function typeMap($typeMap = null)
+    {
+        if ($typeMap !== null) {
+            return $this->setTypeMap($typeMap);
+        }
+
+        return $this->getTypeMap();
+    }
+
+    /**
+     * Allows setting default types when chaining query.
+     *
+     * @param array $types The array of types to set.
+     * @return $this
+     */
+    public function setDefaultTypes(array $types)
+    {
+        $this->getTypeMap()->setDefaults($types);
+
+        return $this;
+    }
+
+    /**
+     * Gets default types of current type map.
+     *
+     * @return array
+     */
+    public function getDefaultTypes()
+    {
+        return $this->getTypeMap()->getDefaults();
+    }
+
+    /**
      * Allows setting default types when chaining query
      *
+     * @deprecated 3.4.0 Use setDefaultTypes()/getDefaultTypes() instead.
      * @param array|null $types The array of types to set.
      * @return $this|array
      */
     public function defaultTypes(array $types = null)
     {
-        if ($types === null) {
-            return $this->typeMap()->defaults();
+        if ($types !== null) {
+            return $this->setDefaultTypes($types);
         }
-        $this->typeMap()->defaults($types);
 
-        return $this;
+        return $this->getDefaultTypes();
     }
 }

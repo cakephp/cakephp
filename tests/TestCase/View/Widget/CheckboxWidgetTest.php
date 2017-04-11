@@ -262,4 +262,35 @@ class CheckboxWidgetTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
     }
+
+    /**
+     * testRenderCustomAttributes method
+     *
+     * Test render with custom attributes.
+     *
+     * @return void
+     */
+    public function testRenderCustomAttributes()
+    {
+        $checkbox = new CheckboxWidget($this->templates);
+
+        $result = $checkbox->render([
+            'name' => 'Model[field]',
+            'class' => 'my-class',
+            'data-ref' => 'custom-attr',
+            'value' => 1
+
+        ], $this->context);
+
+        $expected = [
+            'input' => [
+                'type' => 'checkbox',
+                'name' => 'Model[field]',
+                'value' => '1',
+                'class' => 'my-class',
+                'data-ref' => 'custom-attr'
+            ]
+        ];
+        $this->assertHtml($expected, $result);
+    }
 }

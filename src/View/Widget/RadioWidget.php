@@ -173,9 +173,12 @@ class RadioWidget implements WidgetInterface
         if (isset($data['val']) && (string)$data['val'] === (string)$radio['value']) {
             $radio['checked'] = true;
         }
-        if ($this->_isDisabled($radio, $data['disabled'])) {
-            $radio['disabled'] = true;
+
+        if (!is_bool($data['label']) && isset($radio['checked']) && $radio['checked']) {
+            $data['label'] = $this->_templates->addClass($data['label'], 'selected');
         }
+
+        $radio['disabled'] = $this->_isDisabled($radio, $data['disabled']);
         if (!empty($data['required'])) {
             $radio['required'] = true;
         }
@@ -187,7 +190,7 @@ class RadioWidget implements WidgetInterface
             'name' => $radio['name'],
             'value' => $escape ? h($radio['value']) : $radio['value'],
             'templateVars' => $radio['templateVars'],
-            'attrs' => $this->_templates->formatAttributes($radio, ['name', 'value', 'text']),
+            'attrs' => $this->_templates->formatAttributes($radio + $data, ['name', 'value', 'text', 'options', 'label', 'val', 'type']),
         ]);
 
         $label = $this->_renderLabel(
@@ -222,7 +225,7 @@ class RadioWidget implements WidgetInterface
      * @param string $input The input widget.
      * @param \Cake\View\Form\ContextInterface $context The form context.
      * @param bool $escape Whether or not to HTML escape the label.
-     * @return string Generated label.
+     * @return string|bool Generated label.
      */
     protected function _renderLabel($radio, $label, $input, $context, $escape)
     {

@@ -261,7 +261,7 @@ class DriverTest extends TestCase
             [null, 'NULL'],
             [false, 'FALSE'],
             [true, 'TRUE'],
-            [1, 1],
+            [1, '1'],
             ['0', '0'],
             ['42', '42']
         ];

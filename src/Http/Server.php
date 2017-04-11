@@ -18,11 +18,7 @@ use Cake\Event\EventDispatcherTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
-use UnexpectedValueException;
-use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\EmitterInterface;
-use Zend\Diactoros\Response\SapiEmitter;
-use Zend\Diactoros\Response\SapiStreamEmitter;
 
 /**
  * Runs an application invoking all the PSR7 middleware and the registered application.
@@ -73,15 +69,7 @@ class Server
     {
         $this->app->bootstrap();
         $response = $response ?: new Response();
-        try {
-            $request = $request ?: ServerRequestFactory::fromGlobals();
-        } catch (UnexpectedValueException $e) {
-            $response->getBody()->write('Bad Request');
-
-            return $response
-                ->withHeader('Content-Type', 'text/plain')
-                ->withStatus(400);
-        }
+        $request = $request ?: ServerRequestFactory::fromGlobals();
 
         $middleware = $this->app->middleware(new MiddlewareQueue());
         if (!($middleware instanceof MiddlewareQueue)) {
@@ -134,7 +122,7 @@ class Server
     /**
      * Get the current application.
      *
-     * @return BaseApplication The application that will be run.
+     * @return \Cake\Http\BaseApplication The application that will be run.
      */
     public function getApp()
     {

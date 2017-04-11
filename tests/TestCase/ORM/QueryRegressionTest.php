@@ -17,6 +17,8 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Core\Plugin;
 use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Datasource\EntityInterface;
+use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -87,6 +89,48 @@ class QueryRegressionTest extends TestCase
         $table->belongsToMany('ArticlesTags');
         $results = $table->find()->where(['id >' => 100])->contain('ArticlesTags')->toArray();
         $this->assertEmpty($results);
+    }
+
+    /**
+     * Tests that eagerloading and hydration works for associations that have
+     * different aliases in the association and targetTable
+     *
+     * @return void
+     */
+    public function testEagerLoadingMismatchingAliasInBelongsTo()
+    {
+        $this->loadFixtures('Articles', 'Users');
+        $table = TableRegistry::get('Articles');
+        $users = TableRegistry::get('Users');
+        $table->belongsTo('Authors', [
+            'targetTable' => $users,
+            'foreignKey' => 'author_id'
+        ]);
+        $result = $table->find()->where(['Articles.id' => 1])->contain('Authors')->first();
+        $this->assertInstanceOf(EntityInterface::class, $result);
+        $this->assertInstanceOf(EntityInterface::class, $result->author);
+        $this->assertSame('mariano', $result->author->username);
+    }
+
+    /**
+     * Tests that eagerloading and hydration works for associations that have
+     * different aliases in the association and targetTable
+     *
+     * @return void
+     */
+    public function testEagerLoadingMismatchingAliasInHasOne()
+    {
+        $this->loadFixtures('Articles', 'Users');
+        $articles = TableRegistry::get('Articles');
+        $users = TableRegistry::get('Users');
+        $users->hasOne('Posts', [
+            'targetTable' => $articles,
+            'foreignKey' => 'author_id'
+        ]);
+        $result = $users->find()->where(['Users.id' => 1])->contain('Posts')->first();
+        $this->assertInstanceOf(EntityInterface::class, $result);
+        $this->assertInstanceOf(EntityInterface::class, $result->post);
+        $this->assertSame('First Article', $result->post->title);
     }
 
     /**
@@ -317,7 +361,7 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
-     * Tests that no exceptions are generated becuase of ambiguous column names in queries
+     * Tests that no exceptions are generated because of ambiguous column names in queries
      * during a  save operation
      *
      * @see https://github.com/cakephp/cakephp/issues/3803
@@ -329,9 +373,9 @@ class QueryRegressionTest extends TestCase
         $articles = TableRegistry::get('Articles');
         $articles->belongsTo('Authors');
 
-        $articles->eventManager()->attach(function ($event, $query) {
+        $articles->eventManager()->on('Model.beforeFind', function (Event $event, $query) {
             return $query->contain('Authors');
-        }, 'Model.beforeFind');
+        });
 
         $article = $articles->newEntity();
         $article->title = 'Foo';
@@ -356,7 +400,7 @@ class QueryRegressionTest extends TestCase
 
     /**
      * Tests that whe saving deep associations for a belongsToMany property,
-     * data is not removed becuase of excesive associations filtering.
+     * data is not removed because of excessive associations filtering.
      *
      * @see https://github.com/cakephp/cakephp/issues/4009
      * @return void
@@ -1238,7 +1282,6 @@ class QueryRegressionTest extends TestCase
         $this->assertNotEmpty($result);
         $this->assertInstanceOf('Cake\I18n\Time', $result->_matchingData['Comments']->updated);
 
-
         $query = $table->find()
             ->matching('Comments.Articles.Authors')
             ->where([
@@ -1559,5 +1602,43 @@ class QueryRegressionTest extends TestCase
         ];
 
         $this->assertEquals($expected, $result);
+    }
+    /**
+     * Tests deep formatters get the right object type when applied in a beforeFind
+     *
+     * @see https://github.com/cakephp/cakephp/issues/9787
+     * @return void
+     */
+    public function testFormatDeepDistantAssociationRecords2()
+    {
+        $this->loadFixtures('Authors', 'Articles', 'Tags', 'ArticlesTags');
+        $table = TableRegistry::get('authors');
+        $table->hasMany('articles');
+        $articles = $table->association('articles')->target();
+        $articles->hasMany('articlesTags');
+        $tags = $articles->association('articlesTags')->target()->belongsTo('tags');
+
+        $tags->target()->eventManager()->on('Model.beforeFind', function ($e, $query) {
+            return $query->formatResults(function ($results) {
+                return $results->map(function (\Cake\ORM\Entity $tag) {
+                    $tag->name .= ' - visited';
+
+                    return $tag;
+                });
+            });
+        });
+
+        $query = $table->find()->contain(['articles.articlesTags.tags']);
+
+        $query->mapReduce(function ($row, $key, $mr) {
+            foreach ((array)$row->articles as $article) {
+                foreach ((array)$article->articles_tags as $articleTag) {
+                    $mr->emit($articleTag->tag->name);
+                }
+            }
+        });
+
+        $expected = ['tag1 - visited', 'tag2 - visited', 'tag1 - visited', 'tag3 - visited'];
+        $this->assertEquals($expected, $query->toArray());
     }
 }

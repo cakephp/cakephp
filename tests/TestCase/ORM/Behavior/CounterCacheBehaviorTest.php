@@ -49,6 +49,7 @@ class CounterCacheBehaviorTest extends TestCase
     public $fixtures = [
         'core.counter_cache_categories',
         'core.counter_cache_posts',
+        'core.counter_cache_comments',
         'core.counter_cache_users',
         'core.counter_cache_user_category_posts'
     ];
@@ -70,6 +71,12 @@ class CounterCacheBehaviorTest extends TestCase
 
         $this->category = TableRegistry::get('Categories', [
             'table' => 'counter_cache_categories',
+            'connection' => $this->connection
+        ]);
+
+        $this->comment = TableRegistry::get('Comments', [
+            'alias' => 'Comment',
+            'table' => 'counter_cache_comments',
             'connection' => $this->connection
         ]);
 
@@ -128,6 +135,30 @@ class CounterCacheBehaviorTest extends TestCase
      *
      * @return void
      */
+    public function testAddIgnore()
+    {
+        $this->post->belongsTo('Users');
+
+        $this->post->addBehavior('CounterCache', [
+            'Users' => [
+                'post_count'
+            ]
+        ]);
+
+        $before = $this->_getUser();
+        $entity = $this->_getEntity();
+        $this->post->save($entity, ['ignoreCounterCache' => true]);
+        $after = $this->_getUser();
+
+        $this->assertEquals(2, $before->get('post_count'));
+        $this->assertEquals(2, $after->get('post_count'));
+    }
+
+    /**
+     * Testing simple counter caching when adding a record
+     *
+     * @return void
+     */
     public function testAddScope()
     {
         $this->post->belongsTo('Users');
@@ -173,6 +204,31 @@ class CounterCacheBehaviorTest extends TestCase
 
         $this->assertEquals(2, $before->get('post_count'));
         $this->assertEquals(1, $after->get('post_count'));
+    }
+
+    /**
+     * Testing simple counter caching when deleting a record
+     *
+     * @return void
+     */
+    public function testDeleteIgnore()
+    {
+        $this->post->belongsTo('Users');
+
+        $this->post->addBehavior('CounterCache', [
+            'Users' => [
+                'post_count'
+            ]
+        ]);
+
+        $before = $this->_getUser();
+        $post = $this->post->find('all')
+            ->first();
+        $this->post->delete($post, ['ignoreCounterCache' => true]);
+        $after = $this->_getUser();
+
+        $this->assertEquals(2, $before->get('post_count'));
+        $this->assertEquals(2, $after->get('post_count'));
     }
 
     /**
@@ -314,7 +370,7 @@ class CounterCacheBehaviorTest extends TestCase
     }
 
     /**
-     * Testing counter cache with lambda returning subqueryn
+     * Testing counter cache with lambda returning a subquery
      *
      * @return void
      */
@@ -400,6 +456,94 @@ class CounterCacheBehaviorTest extends TestCase
 
         $this->assertEquals(1, $before->get('post_count'));
         $this->assertEquals(2, $after->get('post_count'));
+    }
+
+    /**
+     * Testing the ignore if dirty option
+     *
+     * @return void
+     */
+    public function testIgnoreDirty()
+    {
+        $this->post->belongsTo('Users');
+        $this->comment->belongsTo('Users');
+
+        $this->post->addBehavior('CounterCache', [
+            'Users' => [
+                'post_count' => [
+                    'ignoreDirty' => true
+                ],
+                'comment_count' => [
+                    'ignoreDirty' => true
+                ],
+            ]
+        ]);
+
+        $user = $this->_getUser(1);
+        $this->assertSame(2, $user->get('post_count'));
+        $this->assertSame(2, $user->get('comment_count'));
+        $this->assertSame(1, $user->get('posts_published'));
+
+        $post = $this->post->find('all')
+            ->contain('Users')
+            ->where(['title' => 'Rock and Roll'])
+            ->first();
+        $post = $this->post->patchEntity($post, [
+            'posts_published' => true,
+            'user' => [
+                'id' => 1,
+                'post_count' => 10,
+                'comment_count' => 10
+            ]
+        ]);
+        $save = $this->post->save($post);
+
+        $user = $this->_getUser(1);
+        $this->assertSame(10, $user->get('post_count'));
+        $this->assertSame(10, $user->get('comment_count'));
+        $this->assertSame(1, $user->get('posts_published'));
+    }
+
+    /**
+     * Testing the ignore if dirty option with just one field set to ignoreDirty
+     *
+     * @return void
+     */
+    public function testIgnoreDirtyMixed()
+    {
+        $this->post->belongsTo('Users');
+        $this->comment->belongsTo('Users');
+
+        $this->post->addBehavior('CounterCache', [
+            'Users' => [
+                'post_count' => [
+                    'ignoreDirty' => true
+                ]
+            ]
+        ]);
+
+        $user = $this->_getUser(1);
+        $this->assertSame(2, $user->get('post_count'));
+        $this->assertSame(2, $user->get('comment_count'));
+        $this->assertSame(1, $user->get('posts_published'));
+
+        $post = $this->post->find('all')
+            ->contain('Users')
+            ->where(['title' => 'Rock and Roll'])
+            ->first();
+        $post = $this->post->patchEntity($post, [
+            'posts_published' => true,
+            'user' => [
+                'id' => 1,
+                'post_count' => 10
+            ]
+        ]);
+        $save = $this->post->save($post);
+
+        $user = $this->_getUser(1);
+        $this->assertSame(10, $user->get('post_count'));
+        $this->assertSame(2, $user->get('comment_count'));
+        $this->assertSame(1, $user->get('posts_published'));
     }
 
     /**

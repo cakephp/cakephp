@@ -287,14 +287,15 @@ class SessionTest extends TestCase
         $session = new Session();
         $result = $session->id();
         $expected = session_id();
-        $this->assertEquals($expected, $result);
+        $this->assertNotEmpty($result);
+        $this->assertSame($expected, $result);
 
         $session->id('MySessionId');
-        $this->assertEquals('MySessionId', $session->id());
-        $this->assertEquals('MySessionId', session_id());
+        $this->assertSame('MySessionId', $session->id());
+        $this->assertSame('MySessionId', session_id());
 
         $session->id('');
-        $this->assertEquals('', session_id());
+        $this->assertSame('', session_id());
     }
 
     /**

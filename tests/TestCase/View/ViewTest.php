@@ -21,7 +21,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper;
@@ -280,6 +280,16 @@ class ViewTest extends TestCase
     public $fixtures = ['core.posts', 'core.users'];
 
     /**
+     * @var \Cake\View\View
+     */
+    public $View;
+
+    /**
+     * @var ViewPostsController
+     */
+    public $PostsController;
+
+    /**
      * setUp method
      *
      * @return void
@@ -288,14 +298,14 @@ class ViewTest extends TestCase
     {
         parent::setUp();
 
-        $request = new Request();
+        $request = new ServerRequest();
         $this->Controller = new Controller($request);
         $this->PostsController = new ViewPostsController($request);
         $this->PostsController->index();
         $this->View = $this->PostsController->createView();
         $this->View->viewPath = 'Posts';
 
-        $themeRequest = new Request('posts/index');
+        $themeRequest = new ServerRequest('posts/index');
         $this->ThemeController = new Controller($themeRequest);
         $this->ThemePostsController = new ThemePostsController($themeRequest);
         $this->ThemePostsController->index();
@@ -330,8 +340,8 @@ class ViewTest extends TestCase
      */
     public function testGetTemplate()
     {
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $viewOptions = [
             'plugin' => null,
@@ -406,8 +416,8 @@ class ViewTest extends TestCase
      */
     public function testPluginGetTemplateAbsoluteFail()
     {
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $viewOptions = [
             'plugin' => null,
@@ -586,8 +596,8 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages'
         ];
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $View = new TestView(null, null, null, $viewOptions);
 
@@ -632,8 +642,8 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages',
         ];
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $view = new TestView(null, null, null, $viewOptions);
         $view->ext('.php');
@@ -752,8 +762,8 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages',
         ];
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $view = new TestView(null, null, null, $viewOptions);
         $view->ext('.php');
@@ -772,8 +782,8 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages'
         ];
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $View = new TestView($request, $response, null, $viewOptions);
         $View->getViewFileName('does_not_exist');
@@ -897,23 +907,25 @@ class ViewTest extends TestCase
     }
 
     /**
-     * Test elementInexistent method
+     * Test loading non-existent view element
      *
      * @expectedException \Cake\View\Exception\MissingElementException
+     * @expectedExceptionMessageRegExp $Element file \"Element[\\|/]non_existent_element\.ctp\" is missing$
      * @return void
      */
-    public function testElementInexistent()
+    public function testElementNonExistent()
     {
         $this->View->element('non_existent_element');
     }
 
     /**
-     * Test elementInexistent3 method
+     * Test loading non-existent plugin view element
      *
      * @expectedException \Cake\View\Exception\MissingElementException
+     * @expectedExceptionMessageRegExp $Element file "test_plugin\.Element[\\|/]plugin_element\.ctp\" is missing$
      * @return void
      */
-    public function testElementInexistent3()
+    public function testElementInexistentPluginElement()
     {
         $this->View->element('test_plugin.plugin_element');
     }
@@ -926,7 +938,7 @@ class ViewTest extends TestCase
     public function testElementCallbacks()
     {
         $count = 0;
-        $callback = function ($event, $file) use (&$count) {
+        $callback = function (Event $event, $file) use (&$count) {
             $count++;
         };
         $events = $this->View->eventManager();
@@ -1538,7 +1550,7 @@ class ViewTest extends TestCase
     }
 
     /**
-     * Test checking a block's existance.
+     * Test checking a block's existence.
      *
      * @return void
      */
@@ -1578,9 +1590,9 @@ class ViewTest extends TestCase
      * Test setting a block's content to an object without __toString magic method
      *
      * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
-     * which gets thrown as a PHPUnit_Framework_Error Exception by PHPUnit.
+     * which gets thrown as a \PHPUnit\Framework\Error\Error Exception by PHPUnit.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \PHPUnit\Framework\Error\Error
      * @return void
      */
     public function testBlockSetObjectWithoutToString()
@@ -1635,9 +1647,9 @@ class ViewTest extends TestCase
      * Test appending an object without __toString magic method to a block with append.
      *
      * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
-     * which gets thrown as a PHPUnit_Framework_Error Exception by PHPUnit.
+     * which gets thrown as a \PHPUnit\Framework\Error\Error     Exception by PHPUnit.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \PHPUnit\Framework\Error\Error
      * @return void
      */
     public function testBlockAppendObjectWithoutToString()
@@ -1667,9 +1679,9 @@ class ViewTest extends TestCase
      * Test prepending an object without __toString magic method to a block with prepend.
      *
      * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
-     * which gets thrown as a PHPUnit_Framework_Error Exception by PHPUnit.
+     * which gets thrown as a \PHPUnit\Framework\Error\Error Exception by PHPUnit.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \PHPUnit\Framework\Error\Error
      * @return void
      */
     public function testBlockPrependObjectWithoutToString()
@@ -1814,6 +1826,7 @@ TEXT;
         try {
             $this->View->layout = false;
             $this->View->render('extend_loop');
+            $this->fail('No exception');
         } catch (\LogicException $e) {
             ob_end_clean();
             $this->assertContains('cannot have views extend in a loop', $e->getMessage());

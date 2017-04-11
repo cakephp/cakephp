@@ -16,8 +16,8 @@ namespace Cake\Test\TestCase\Routing\Filter;
 
 use Cake\Core\Configure;
 use Cake\Event\Event;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Filter\ControllerFactoryFilter;
 use Cake\TestSuite\TestCase;
 
@@ -38,7 +38,7 @@ class ControllerFactoryFilterTest extends TestCase
 
         $filter = new ControllerFactoryFilter();
 
-        $request = new Request();
+        $request = new ServerRequest();
         $response = new Response();
         $request->addParams(['prefix' => 'admin', 'controller' => 'Posts', 'action' => 'index']);
         $event = new Event(__CLASS__, $this, compact('request', 'response'));
@@ -46,7 +46,7 @@ class ControllerFactoryFilterTest extends TestCase
 
         $this->assertEquals(
             'TestApp\Controller\Admin\PostsController',
-            get_class($event->data['controller'])
+            get_class($event->data('controller'))
         );
 
         $request->addParams(['prefix' => 'admin/sub', 'controller' => 'Posts', 'action' => 'index']);
@@ -55,7 +55,7 @@ class ControllerFactoryFilterTest extends TestCase
 
         $this->assertEquals(
             'TestApp\Controller\Admin\Sub\PostsController',
-            get_class($event->data['controller'])
+            get_class($event->data('controller'))
         );
     }
 }

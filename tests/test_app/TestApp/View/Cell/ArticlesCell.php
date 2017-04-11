@@ -29,7 +29,7 @@ class ArticlesCell extends \Cake\View\Cell
     /**
      * Counter used to test the cache cell feature
      *
-     * @return void
+     * @var int
      */
     public $counter = 0;
 

@@ -76,7 +76,7 @@ class EventManager
      * If called with the first parameter, it will be set as the globally available instance
      *
      * @param \Cake\Event\EventManager|null $manager Event manager instance.
-     * @return \Cake\Event\EventManager the global event manager
+     * @return static The global event manager
      */
     public static function instance($manager = null)
     {
@@ -84,7 +84,7 @@ class EventManager
             static::$_generalManager = $manager;
         }
         if (empty(static::$_generalManager)) {
-            static::$_generalManager = new EventManager();
+            static::$_generalManager = new static();
         }
 
         static::$_generalManager->_isGlobal = true;
@@ -370,7 +370,7 @@ class EventManager
             $event = new Event($event);
         }
 
-        $listeners = $this->listeners($event->name());
+        $listeners = $this->listeners($event->getName());
 
         if ($this->_trackEvents) {
             $this->addEventToList($event);
@@ -393,7 +393,7 @@ class EventManager
                 $event->stopPropagation();
             }
             if ($result !== null) {
-                $event->result = $result;
+                $event->setResult($result);
             }
         }
 
@@ -403,34 +403,15 @@ class EventManager
     /**
      * Calls a listener.
      *
-     * Direct callback invocation is up to 30% faster than using call_user_func_array.
-     * Optimize the common cases to provide improved performance.
-     *
      * @param callable $listener The listener to trigger.
      * @param \Cake\Event\Event $event Event instance.
      * @return mixed The result of the $listener function.
      */
     protected function _callListener(callable $listener, Event $event)
     {
-        $data = $event->data();
-        $length = count($data);
-        if ($length) {
-            $data = array_values($data);
-        }
-        switch ($length) {
-            case 0:
-                return $listener($event);
-            case 1:
-                return $listener($event, $data[0]);
-            case 2:
-                return $listener($event, $data[0], $data[1]);
-            case 3:
-                return $listener($event, $data[0], $data[1], $data[2]);
-            default:
-                array_unshift($data, $event);
+        $data = $event->getData();
 
-                return call_user_func_array($listener, $data);
-        }
+        return $listener($event, ...array_values($data));
     }
 
     /**
@@ -586,7 +567,7 @@ class EventManager
         }
         if ($this->_eventList) {
             foreach ($this->_eventList as $event) {
-                $properties['_dispatchedEvents'][] = $event->name() . ' with subject ' . get_class($event->subject());
+                $properties['_dispatchedEvents'][] = $event->getName() . ' with subject ' . get_class($event->getSubject());
             }
         }
 

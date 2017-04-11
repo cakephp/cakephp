@@ -50,7 +50,7 @@ class FormData implements Countable
     /**
      * The parts in the form data.
      *
-     * @var array
+     * @var \Cake\Http\Client\FormDataPart[]
      */
     protected $_parts = [];
 
@@ -268,3 +268,6 @@ class FormData implements Countable
         return http_build_query($data);
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Http\Client\FormData', 'Cake\Network\Http\FormData');

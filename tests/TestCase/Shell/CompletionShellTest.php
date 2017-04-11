@@ -79,7 +79,7 @@ class CompletionShellTest extends TestCase
     }
 
     /**
-     * test that the startup method supresses the shell header
+     * test that the startup method suppresses the shell header
      *
      * @return void
      */
@@ -136,7 +136,7 @@ class CompletionShellTest extends TestCase
     }
 
     /**
-     * test that options with a nonexisting command returns nothing
+     * test that options with a non-existing command returns nothing
      *
      * @return void
      */
@@ -291,7 +291,7 @@ class CompletionShellTest extends TestCase
     }
 
     /**
-     * test that subcommands with a nonexisting command returns nothing
+     * test that subcommands with a non-existing command returns nothing
      *
      * @return void
      */

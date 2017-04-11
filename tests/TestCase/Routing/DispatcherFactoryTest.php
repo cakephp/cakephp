@@ -15,7 +15,7 @@
 namespace Cake\Test\TestCase\Routing;
 
 use Cake\Core\Configure;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Routing\DispatcherFactory;
 use Cake\TestSuite\TestCase;
 
@@ -110,7 +110,7 @@ class DispatcherFactoryTest extends TestCase
      */
     public function testCreateDispatchWithFilters()
     {
-        $url = new Request([
+        $url = new ServerRequest([
             'url' => 'posts',
             'params' => [
                 'controller' => 'Posts',
@@ -119,7 +119,7 @@ class DispatcherFactoryTest extends TestCase
                 'bare' => true,
             ]
         ]);
-        $response = $this->getMockBuilder('Cake\Network\Response')
+        $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['send'])
             ->getMock();
         DispatcherFactory::add('ControllerFactory');

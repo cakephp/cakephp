@@ -15,7 +15,7 @@
 namespace Cake\View\Helper;
 
 use Cake\Core\Configure;
-use Cake\Network\Response;
+use Cake\Http\Response;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
@@ -25,7 +25,7 @@ use Cake\View\View;
  *
  * HtmlHelper encloses all methods needed while working with HTML pages.
  *
- * @property UrlHelper $Url
+ * @property \Cake\View\Helper\UrlHelper $Url
  * @link http://book.cakephp.org/3.0/en/views/helpers/html.html
  */
 class HtmlHelper extends Helper
@@ -43,7 +43,7 @@ class HtmlHelper extends Helper
     /**
      * Reference to the Response object
      *
-     * @var \Cake\Network\Response
+     * @var \Cake\Http\Response
      */
     public $response;
 
@@ -195,7 +195,9 @@ class HtmlHelper extends Helper
      *
      * Create a meta tag that is output inline:
      *
-     * `$this->Html->meta('icon', 'favicon.ico');
+     * ```
+     * $this->Html->meta('icon', 'favicon.ico');
+     * ```
      *
      * Append the meta tag to custom view block "meta":
      *
@@ -220,17 +222,16 @@ class HtmlHelper extends Helper
      * - `block` - Set to true to append output to view block "meta" or provide
      *   custom block name.
      *
-     * @param string|array $type The title of the external resource
+     * @param string|array $type The title of the external resource, Or an array of attributes for a
+     *   custom meta tag.
      * @param string|array|null $content The address of the external resource or string for content attribute
      * @param array $options Other attributes for the generated tag. If the type attribute is html,
      *    rss, atom, or icon, the mime-type is returned.
-     * @return string A completed `<link />` element.
+     * @return string|null A completed `<link />` element, or null if the element was sent to a block.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-meta-tags
      */
     public function meta($type, $content = null, array $options = [])
     {
-        $options += ['block' => null];
-
         if (!is_array($type)) {
             $types = [
                 'rss' => ['type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => $type, 'link' => $content],
@@ -267,7 +268,7 @@ class HtmlHelper extends Helper
             }
         }
 
-        $options += $type;
+        $options += $type + ['block' => null];
         $out = null;
 
         if (isset($options['link'])) {
@@ -568,7 +569,8 @@ class HtmlHelper extends Helper
      *
      * ### Options
      *
-     * - `safe` (boolean) Whether or not the $script should be wrapped in `<![CDATA[ ]]>`
+     * - `safe` (boolean) Whether or not the $script should be wrapped in `<![CDATA[ ]]>`.
+     *   Defaults to `false`.
      * - `block` Set to true to append output to view block "script" or provide
      *   custom block name.
      *
@@ -580,7 +582,7 @@ class HtmlHelper extends Helper
      */
     public function scriptBlock($script, array $options = [])
     {
-        $options += ['safe' => true, 'block' => null];
+        $options += ['safe' => false, 'block' => null];
         if ($options['safe']) {
             $script = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
         }
@@ -607,7 +609,8 @@ class HtmlHelper extends Helper
      *
      * ### Options
      *
-     * - `safe` Whether the code block should contain a CDATA
+     * - `safe` (boolean) Whether or not the $script should be wrapped in `<![CDATA[ ]]>`.
+     *   See scriptBlock().
      * - `block` Set to true to append output to view block "script" or provide
      *   custom block name.
      *
@@ -617,7 +620,6 @@ class HtmlHelper extends Helper
      */
     public function scriptStart(array $options = [])
     {
-        $options += ['safe' => true, 'block' => null];
         $this->_scriptBlockOptions = $options;
         ob_start();
     }
@@ -924,6 +926,7 @@ class HtmlHelper extends Helper
             $count = 0;
         }
 
+        $out = [];
         foreach ($data as $line) {
             $count++;
             $cellsOut = $this->_renderCells($line, $useCount);
@@ -942,7 +945,7 @@ class HtmlHelper extends Helper
      *
      * @param array $line Line data to render.
      * @param bool $useCount Renders the count into the row. Default is false.
-     * @return string
+     * @return string[]
      */
     protected function _renderCells($line, $useCount = false)
     {
@@ -1101,7 +1104,9 @@ class HtmlHelper extends Helper
      *
      * Outputs:
      *
-     * `<video src="http://www.somehost.com/files/audio.mp3">Fallback text</video>`
+     * ```
+     * <video src="http://www.somehost.com/files/audio.mp3">Fallback text</video>
+     * ```
      *
      * Using a video file:
      *
@@ -1111,7 +1116,9 @@ class HtmlHelper extends Helper
      *
      * Outputs:
      *
-     * `<video src="/files/video.mp4">Fallback text</video>`
+     * ```
+     * <video src="/files/video.mp4">Fallback text</video>
+     * ```
      *
      * Using multiple video files:
      *

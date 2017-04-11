@@ -135,7 +135,7 @@ class RulesCheckerTest extends TestCase
     }
 
     /**
-     * Test that returnned error messages work.
+     * Test that returned error messages work.
      *
      * @return void
      */
@@ -158,7 +158,7 @@ class RulesCheckerTest extends TestCase
     }
 
     /**
-     * Test that returnned error messages work.
+     * Test that returned error messages work.
      *
      * @return void
      */
@@ -181,7 +181,7 @@ class RulesCheckerTest extends TestCase
     }
 
     /**
-     * Test that returnned error messages work.
+     * Test that returned error messages work.
      *
      * @return void
      */

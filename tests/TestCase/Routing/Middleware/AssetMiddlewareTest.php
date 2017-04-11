@@ -18,7 +18,6 @@ use Cake\Core\Plugin;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\TestSuite\TestCase;
-use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 
 /**

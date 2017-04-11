@@ -14,9 +14,8 @@
  */
 namespace Cake\Test\TestCase\Http;
 
+use Cake\Http\Response as CakeResponse;
 use Cake\Http\ResponseTransformer;
-use Cake\Network\Response as CakeResponse;
-use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Response as PsrResponse;
 use Zend\Diactoros\Stream;
@@ -64,7 +63,7 @@ class ResponseTransformerTest extends TestCase
     {
         $psr = new PsrResponse('php://memory', 401, []);
         $result = ResponseTransformer::toCake($psr);
-        $this->assertInstanceOf('Cake\Network\Response', $result);
+        $this->assertInstanceOf('Cake\Http\Response', $result);
     }
 
     /**
@@ -92,7 +91,11 @@ class ResponseTransformerTest extends TestCase
     {
         $psr = new PsrResponse('php://memory', 200, ['X-testing' => 'value']);
         $result = ResponseTransformer::toCake($psr);
-        $this->assertSame(['X-testing' => 'value'], $result->header());
+        $expected = [
+            'Content-Type' => 'text/html; charset=UTF-8',
+            'X-testing' => 'value'
+        ];
+        $this->assertSame($expected, $result->header());
     }
 
     /**
@@ -104,7 +107,11 @@ class ResponseTransformerTest extends TestCase
     {
         $psr = new PsrResponse('php://memory', 200, ['X-testing' => ['value', 'value2']]);
         $result = ResponseTransformer::toCake($psr);
-        $this->assertSame(['X-testing' => ['value', 'value2']], $result->header());
+        $expected = [
+            'Content-Type' => 'text/html; charset=UTF-8',
+            'X-testing' => ['value', 'value2'],
+        ];
+        $this->assertSame($expected, $result->header());
     }
 
     /**
@@ -270,24 +277,6 @@ class ResponseTransformerTest extends TestCase
      *
      * @return void
      */
-    public function testToPsrContentTypeStatusOmission()
-    {
-        $cake = new CakeResponse();
-        $cake->type('html');
-        $cake->statusCode(304);
-        $result = ResponseTransformer::toPsr($cake);
-        $this->assertSame('', $result->getHeaderLine('Content-Type'));
-
-        $cake->statusCode(204);
-        $result = ResponseTransformer::toPsr($cake);
-        $this->assertSame('', $result->getHeaderLine('Content-Type'));
-    }
-
-    /**
-     * Test conversion omitting content-type on 304 and 204 status codes
-     *
-     * @return void
-     */
     public function testToPsrContentTypeCharsetIsTypeSpecific()
     {
         $cake = new CakeResponse();
@@ -320,9 +309,9 @@ class ResponseTransformerTest extends TestCase
         ]);
         $result = ResponseTransformer::toPsr($cake);
         $expected = [
+            'Content-Type' => ['text/html; charset=UTF-8'],
             'X-testing' => ['one', 'two'],
             'Location' => ['http://example.com/testing'],
-            'Content-Type' => ['text/html; charset=UTF-8'],
         ];
         $this->assertSame($expected, $result->getHeaders());
     }
@@ -361,7 +350,7 @@ class ResponseTransformerTest extends TestCase
      */
     public function testToPsrBodyFileResponse()
     {
-        $cake = $this->getMockBuilder('Cake\Network\Response')
+        $cake = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_clearBuffer'])
             ->getMock();
         $cake->file(__FILE__, ['name' => 'some-file.php', 'download' => true]);
@@ -390,7 +379,7 @@ class ResponseTransformerTest extends TestCase
     public function testToPsrBodyFileResponseFileRange()
     {
         $_SERVER['HTTP_RANGE'] = 'bytes=10-20';
-        $cake = $this->getMockBuilder('Cake\Network\Response')
+        $cake = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_clearBuffer'])
             ->getMock();
         $path = TEST_APP . 'webroot/css/cake.generic.css';

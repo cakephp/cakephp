@@ -20,6 +20,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
+use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
@@ -1310,7 +1311,7 @@ class QueryTest extends TestCase
 
         $articlesTags
             ->eventManager()
-            ->attach(function ($event, $query) {
+            ->on('Model.beforeFind', function (Event $event, $query) {
                 $query->formatResults(function ($results) {
                     foreach ($results as $result) {
                         $result->beforeFind = true;
@@ -1318,7 +1319,7 @@ class QueryTest extends TestCase
 
                     return $results;
                 });
-            }, 'Model.beforeFind');
+            });
 
         $query = new Query($this->connection, $table);
 
@@ -1614,11 +1615,11 @@ class QueryTest extends TestCase
         $table = TableRegistry::get('Articles');
         $table->hasMany('Comments');
         $table->eventManager()
-            ->attach(function ($event, $query) {
+            ->on('Model.beforeFind', function (Event $event, $query) {
                 $query
                     ->limit(1)
                     ->order(['Articles.title' => 'DESC']);
-            }, 'Model.beforeFind');
+            });
 
         $query = $table->find();
         $result = $query->count();
@@ -1635,11 +1636,11 @@ class QueryTest extends TestCase
         $callCount = 0;
         $table = TableRegistry::get('Articles');
         $table->eventManager()
-            ->attach(function ($event, $query) use (&$callCount) {
+            ->on('Model.beforeFind', function (Event $event, $query) use (&$callCount) {
                 $valueBinder = new ValueBinder();
                 $query->sql($valueBinder);
                 $callCount++;
-            }, 'Model.beforeFind');
+            });
 
         $query = $table->find();
         $valueBinder = new ValueBinder();
@@ -1701,7 +1702,7 @@ class QueryTest extends TestCase
             ->execute();
 
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-        $this->assertTrue($result->rowCount() > 0);
+        $this->assertGreaterThan(0, $result->rowCount());
     }
 
     /**
@@ -1722,7 +1723,7 @@ class QueryTest extends TestCase
             ->execute();
 
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-        $this->assertTrue($result->rowCount() > 0);
+        $this->assertGreaterThan(0, $result->rowCount());
     }
 
     /**
@@ -1766,7 +1767,7 @@ class QueryTest extends TestCase
             ->execute();
 
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-        $this->assertTrue($result->rowCount() > 0);
+        $this->assertGreaterThan(0, $result->rowCount());
     }
 
     /**
@@ -1833,7 +1834,7 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests that calling an inexistent method in query throws an
+     * Tests that calling an non-existent method in query throws an
      * exception
      *
      * @expectedException \BadMethodCallException
@@ -1917,7 +1918,7 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Integration test for query caching usigna  real cache engine and
+     * Integration test for query caching using a real cache engine and
      * a formatResults callback
      *
      * @return void
@@ -2215,7 +2216,7 @@ class QueryTest extends TestCase
         $query->where(['dirty' => 'cache']);
 
         $secondResult = $query->count();
-        $this->assertSame(2, $secondResult, 'The query cache should be droppped with any modification');
+        $this->assertSame(2, $secondResult, 'The query cache should be dropped with any modification');
 
         $thirdResult = $query->count();
         $this->assertSame(2, $thirdResult, 'The query has not been modified, the cached value is valid');
@@ -2754,11 +2755,11 @@ class QueryTest extends TestCase
         $table = TableRegistry::get('Articles');
         $table->hasMany('Comments');
         $table->eventManager()
-            ->attach(function ($event, $query) {
+            ->on('Model.beforeFind', function (Event $event, $query) {
                 $query
                     ->limit(5)
                     ->order(['Articles.title' => 'DESC']);
-            }, 'Model.beforeFind');
+            });
 
         $query = $table->find();
         $query->offset(10)
@@ -2926,7 +2927,6 @@ class QueryTest extends TestCase
         $this->assertEquals(2, $result->_matchingData['tags']->id);
     }
 
-
     /**
      * Tests that it is possible to find large numeric values.
      *
@@ -2979,6 +2979,22 @@ class QueryTest extends TestCase
 
         $this->assertNotEmpty($result);
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test that simple aliased field have results typecast.
+     *
+     * @return void
+     */
+    public function testSelectTypeInferSimpleAliases()
+    {
+        $table = TableRegistry::get('comments');
+        $result = $table
+            ->find()
+            ->select(['created', 'updated_time' => 'updated'])
+            ->first();
+        $this->assertInstanceOf(Time::class, $result->created);
+        $this->assertInstanceOf(Time::class, $result->updated_time);
     }
 
     /**

@@ -69,7 +69,7 @@ class LazyEagerLoader
      */
     protected function _getQuery($objects, $contain, $source)
     {
-        $primaryKey = $source->primaryKey();
+        $primaryKey = $source->getPrimaryKey();
         $method = is_string($primaryKey) ? 'get' : 'extract';
 
         $keys = $objects->map(function ($entity) use ($primaryKey, $method) {
@@ -95,10 +95,10 @@ class LazyEagerLoader
             })
             ->contain($contain);
 
-        foreach ($query->eagerLoader()->attachableAssociations($source) as $loadable) {
-            $config = $loadable->config();
+        foreach ($query->getEagerLoader()->attachableAssociations($source) as $loadable) {
+            $config = $loadable->getConfig();
             $config['includeFields'] = true;
-            $loadable->config($config);
+            $loadable->setConfig($config);
         }
 
         return $query;
@@ -117,7 +117,7 @@ class LazyEagerLoader
         $map = [];
         $container = $source->associations();
         foreach ($associations as $assoc) {
-            $map[$assoc] = $container->get($assoc)->property();
+            $map[$assoc] = $container->get($assoc)->getProperty();
         }
 
         return $map;
@@ -137,7 +137,7 @@ class LazyEagerLoader
     {
         $injected = [];
         $properties = $this->_getPropertyMap($source, $associations);
-        $primaryKey = (array)$source->primaryKey();
+        $primaryKey = (array)$source->getPrimaryKey();
         $results = $results
             ->indexBy(function ($e) use ($primaryKey) {
                 return implode(';', $e->extract($primaryKey));

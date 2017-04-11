@@ -16,6 +16,7 @@ namespace Cake\ORM\Association;
 
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
+use Cake\ORM\Association\Loader\SelectLoader;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
@@ -29,33 +30,29 @@ class HasOne extends Association
 {
 
     use DependentDeleteTrait;
-    use SelectableAssociationTrait;
 
     /**
      * Valid strategies for this type of association
      *
      * @var array
      */
-    protected $_validStrategies = [self::STRATEGY_JOIN, self::STRATEGY_SELECT];
+    protected $_validStrategies = [
+        self::STRATEGY_JOIN,
+        self::STRATEGY_SELECT
+    ];
 
     /**
-     * Sets the name of the field representing the foreign key to the target table.
-     * If no parameters are passed current field is returned
+     * Gets the name of the field representing the foreign key to the target table.
      *
-     * @param string|null $key the key to be used to link both tables together
      * @return string
      */
-    public function foreignKey($key = null)
+    public function getForeignKey()
     {
-        if ($key === null) {
-            if ($this->_foreignKey === null) {
-                $this->_foreignKey = $this->_modelKey($this->source()->alias());
-            }
-
-            return $this->_foreignKey;
+        if ($this->_foreignKey === null) {
+            $this->_foreignKey = $this->_modelKey($this->getSource()->getAlias());
         }
 
-        return parent::foreignKey($key);
+        return $this->_foreignKey;
     }
 
     /**
@@ -80,7 +77,7 @@ class HasOne extends Association
      */
     public function isOwningSide(Table $side)
     {
-        return $side === $this->source();
+        return $side === $this->getSource();
     }
 
     /**
@@ -108,18 +105,18 @@ class HasOne extends Association
      */
     public function saveAssociated(EntityInterface $entity, array $options = [])
     {
-        $targetEntity = $entity->get($this->property());
+        $targetEntity = $entity->get($this->getProperty());
         if (empty($targetEntity) || !($targetEntity instanceof EntityInterface)) {
             return $entity;
         }
 
         $properties = array_combine(
-            (array)$this->foreignKey(),
-            $entity->extract((array)$this->bindingKey())
+            (array)$this->getForeignKey(),
+            $entity->extract((array)$this->getBindingKey())
         );
         $targetEntity->set($properties, ['guard' => false]);
 
-        if (!$this->target()->save($targetEntity, $options)) {
+        if (!$this->getTarget()->save($targetEntity, $options)) {
             $targetEntity->unsetProperty(array_keys($properties));
 
             return false;
@@ -130,39 +127,22 @@ class HasOne extends Association
 
     /**
      * {@inheritDoc}
+     *
+     * @return callable
      */
-    protected function _linkField($options)
+    public function eagerLoader(array $options)
     {
-        $links = [];
-        $name = $this->alias();
+        $loader = new SelectLoader([
+            'alias' => $this->getAlias(),
+            'sourceAlias' => $this->getSource()->getAlias(),
+            'targetAlias' => $this->getTarget()->getAlias(),
+            'foreignKey' => $this->getForeignKey(),
+            'bindingKey' => $this->getBindingKey(),
+            'strategy' => $this->getStrategy(),
+            'associationType' => $this->type(),
+            'finder' => [$this, 'find']
+        ]);
 
-        foreach ((array)$options['foreignKey'] as $key) {
-            $links[] = sprintf('%s.%s', $name, $key);
-        }
-
-        if (count($links) === 1) {
-            return $links[0];
-        }
-
-        return $links;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function _buildResultMap($fetchQuery, $options)
-    {
-        $resultMap = [];
-        $key = (array)$options['foreignKey'];
-
-        foreach ($fetchQuery->all() as $result) {
-            $values = [];
-            foreach ($key as $k) {
-                $values[] = $result[$k];
-            }
-            $resultMap[implode(';', $values)] = $result;
-        }
-
-        return $resultMap;
+        return $loader->buildEagerLoader($options);
     }
 }

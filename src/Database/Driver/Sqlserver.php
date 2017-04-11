@@ -107,7 +107,7 @@ class Sqlserver extends Driver
         $this->connect();
         $options = [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL];
         $isObject = $query instanceof Query;
-        if ($isObject && $query->bufferResults() === false) {
+        if ($isObject && $query->isBufferedResultsEnabled() === false) {
             $options = [];
         }
         $statement = $this->_connection->prepare($isObject ? $query->sql() : $query, $options);

@@ -40,7 +40,7 @@ class SaveOptionsBuilder extends ArrayObject
     /**
      * Table object.
      *
-     * @var \Cake\ORM\Table;
+     * @var \Cake\ORM\Table
      */
     protected $_table;
 
@@ -54,6 +54,8 @@ class SaveOptionsBuilder extends ArrayObject
     {
         $this->_table = $table;
         $this->parseArrayOptions($options);
+
+        parent::__construct();
     }
 
     /**
@@ -105,7 +107,7 @@ class SaveOptionsBuilder extends ArrayObject
             }
             $this->_checkAssociation($table, $key);
             if (isset($associated['associated'])) {
-                $this->_associated($table->association($key)->target(), $associated['associated']);
+                $this->_associated($table->association($key)->getTarget(), $associated['associated']);
                 continue;
             }
         }

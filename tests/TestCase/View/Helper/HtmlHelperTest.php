@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\View\Helper;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\HtmlHelper;
@@ -68,12 +68,13 @@ class HtmlHelperTest extends TestCase
             ->setMethods(['append'])
             ->getMock();
         $this->Html = new HtmlHelper($this->View);
-        $this->Html->request = new Request();
-        $this->Html->request->webroot = '';
+        $this->Html->request = new ServerRequest([
+            'webroot' => '',
+        ]);
         $this->Html->Url->request = $this->Html->request;
 
-        Configure::write('App.namespace', 'TestApp');
         Plugin::load(['TestTheme']);
+        Configure::write('App.namespace', 'TestApp');
         Configure::write('Asset.timestamp', false);
     }
 
@@ -579,7 +580,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result[0]);
         $expected['link']['href'] = 'preg:/.*css\/vendor\.generic\.css/';
         $this->assertHtml($expected, $result[1]);
-        $this->assertEquals(2, count($result));
+        $this->assertCount(2, $result);
 
         $this->View->expects($this->at(0))
             ->method('append')
@@ -679,7 +680,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result[0]);
         $expected['link']['href'] = 'preg:/.*test_plugin\/css\/vendor\.generic\.css/';
         $this->assertHtml($expected, $result[1]);
-        $this->assertEquals(2, count($result));
+        $this->assertCount(2, $result);
 
         Plugin::unload('TestPlugin');
     }
@@ -1086,9 +1087,7 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->scriptBlock('window.foo = 2;');
         $expected = [
             '<script',
-            $this->cDataStart,
             'window.foo = 2;',
-            $this->cDataEnd,
             '/script',
         ];
         $this->assertHtml($expected, $result);
@@ -1096,9 +1095,7 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->scriptBlock('window.foo = 2;', ['type' => 'text/x-handlebars-template']);
         $expected = [
             'script' => ['type' => 'text/x-handlebars-template'],
-            $this->cDataStart,
             'window.foo = 2;',
-            $this->cDataEnd,
             '/script',
         ];
         $this->assertHtml($expected, $result);
@@ -1151,16 +1148,14 @@ class HtmlHelperTest extends TestCase
      */
     public function testScriptStartAndScriptEnd()
     {
-        $result = $this->Html->scriptStart(['safe' => true]);
+        $result = $this->Html->scriptStart();
         $this->assertNull($result);
         echo 'this is some javascript';
 
         $result = $this->Html->scriptEnd();
         $expected = [
             '<script',
-            $this->cDataStart,
             'this is some javascript',
-            $this->cDataEnd,
             '/script'
         ];
         $this->assertHtml($expected, $result);
@@ -1173,6 +1168,20 @@ class HtmlHelperTest extends TestCase
         $expected = [
             '<script',
             'this is some javascript',
+            '/script'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->scriptStart(['safe' => true]);
+        $this->assertNull($result);
+        echo 'this is some javascript';
+
+        $result = $this->Html->scriptEnd();
+        $expected = [
+            '<script',
+            $this->cDataStart,
+            'this is some javascript',
+            $this->cDataEnd,
             '/script'
         ];
         $this->assertHtml($expected, $result);
@@ -1768,6 +1777,25 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->meta('icon', 'favicon.ico', ['block' => 'metaTags']);
         $this->assertNull($result);
+    }
+
+    /**
+     * Test meta() with custom tag and block argument
+     */
+    public function testMetaCustomWithBlock()
+    {
+        $this->View->expects($this->at(0))
+            ->method('append')
+            ->with('meta', $this->stringContains('og:site_name'));
+        $this->View->expects($this->at(1))
+            ->method('append')
+            ->with('meta', $this->stringContains('og:description'));
+
+        $result = $this->Html->meta(['property' => 'og:site_name', 'content' => 'CakePHP', 'block' => true]);
+        $this->assertNull($result, 'compact style should work');
+
+        $result = $this->Html->meta(['property' => 'og:description', 'content' => 'CakePHP'], null, ['block' => true]);
+        $this->assertNull($result, 'backwards compat style should work.');
     }
 
     /**

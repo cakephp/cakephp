@@ -81,7 +81,7 @@ class TableRegistryTest extends TestCase
     }
 
     /**
-     * Test that locator() method is returing TableLocator by default.
+     * Test that locator() method is returning TableLocator by default.
      *
      * @return void
      */

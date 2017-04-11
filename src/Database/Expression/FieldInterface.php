@@ -17,8 +17,6 @@ namespace Cake\Database\Expression;
 /**
  * Describes a getter and a setter for the a field property. Useful for expressions
  * that contain an identifier to compare against.
- *
- * @internal
  */
 interface FieldInterface
 {
@@ -26,7 +24,7 @@ interface FieldInterface
     /**
      * Sets the field name
      *
-     * @param string $field The field to compare with.
+     * @param string|\Cake\Database\ExpressionInterface $field The field to compare with.
      * @return void
      */
     public function setField($field);

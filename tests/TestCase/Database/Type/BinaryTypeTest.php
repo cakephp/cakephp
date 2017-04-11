@@ -64,7 +64,7 @@ class BinaryTypeTest extends TestCase
     }
 
     /**
-     * SQLServer returns binary fields as hexidecimal
+     * SQLServer returns binary fields as hexadecimal
      * Ensure decoding happens for SQLServer drivers
      *
      * @return void

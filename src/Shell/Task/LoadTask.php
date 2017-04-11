@@ -38,9 +38,14 @@ class LoadTask extends Shell
      */
     public function main($plugin = null)
     {
-        $this->bootstrap = ROOT . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'bootstrap.php';
+        $filename = 'bootstrap';
+        if ($this->params['cli']) {
+            $filename .= '_cli';
+        }
 
-        if (empty($plugin)) {
+        $this->bootstrap = ROOT . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . $filename . '.php';
+
+        if (!$plugin) {
             $this->err('You must provide a plugin name in CamelCase format.');
             $this->err('To load an "Example" plugin, run `cake plugin load Example`.');
 
@@ -109,8 +114,13 @@ class LoadTask extends Shell
                     'default' => false,
                 ])
                 ->addOption('autoload', [
-                    'help' => 'Will autoload the plugin using CakePHP. ' .
+                    'help' => 'Will autoload the plugin using CakePHP.' .
                         'Set to true if you are not using composer to autoload your plugin.',
+                    'boolean' => true,
+                    'default' => false,
+                ])
+                ->addOption('cli', [
+                    'help' => 'Use the bootstrap_cli file.',
                     'boolean' => true,
                     'default' => false,
                 ])

@@ -195,7 +195,7 @@ class Response extends Message implements ResponseInterface
             if (substr($value, 0, 5) === 'HTTP/') {
                 preg_match('/HTTP\/([\d.]+) ([0-9]+)(.*)/i', $value, $matches);
                 $this->protocol = $matches[1];
-                $this->code = $matches[2];
+                $this->code = (int)$matches[2];
                 $this->reasonPhrase = trim($matches[3]);
                 continue;
             }
@@ -319,7 +319,7 @@ class Response extends Message implements ResponseInterface
      *
      * @param int $code The status code to set.
      * @param string $reasonPhrase The status reason phrase.
-     * @return self A copy of the current object with an updated status code.
+     * @return $this A copy of the current object with an updated status code.
      */
     public function withStatus($code, $reasonPhrase = '')
     {
@@ -501,11 +501,11 @@ class Response extends Message implements ResponseInterface
     /**
      * Get the response body as JSON decoded data.
      *
-     * @return mixed
+     * @return array|null
      */
     protected function _getJson()
     {
-        if (!empty($this->_json)) {
+        if ($this->_json) {
             return $this->_json;
         }
 
@@ -519,7 +519,7 @@ class Response extends Message implements ResponseInterface
      */
     protected function _getXml()
     {
-        if (!empty($this->_xml)) {
+        if ($this->_xml) {
             return $this->_xml;
         }
         libxml_use_internal_errors();
@@ -560,7 +560,6 @@ class Response extends Message implements ResponseInterface
         return $this->stream->getContents();
     }
 
-
     /**
      * Read values as properties.
      *
@@ -598,6 +597,9 @@ class Response extends Message implements ResponseInterface
             return $val !== null;
         }
 
-        return isset($this->$key);
+        return isset($this->{$key});
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Http\Client\Response', 'Cake\Network\Http\Response');

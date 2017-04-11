@@ -29,7 +29,7 @@ class SessionHelper extends Helper
 {
 
     /**
-     *  Constructor
+     * Constructor
      *
      * @param \Cake\View\View $View The View this helper is being attached to.
      * @param array $config Configuration settings for the helper.

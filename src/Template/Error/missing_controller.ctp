@@ -44,6 +44,9 @@ $this->start('subheading');
 ?>
 <strong>Error: </strong>
 <em><?= h($pluginDot . $class) ?>Controller</em> could not be found.
+<p>
+    In the case you tried to access a plugin controller make sure you added it to your composer file or you use the autoload option for the plugin.
+</p>
 <?php $this->end() ?>
 
 <?php $this->start('file') ?>

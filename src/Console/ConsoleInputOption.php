@@ -62,6 +62,13 @@ class ConsoleInputOption
     protected $_default;
 
     /**
+     * Can the option accept multiple value definition.
+     *
+     * @var bool
+     */
+    protected $_multiple;
+
+    /**
      * An array of choices for the option.
      *
      * @var array
@@ -77,10 +84,18 @@ class ConsoleInputOption
      * @param bool $boolean Whether this option is a boolean option. Boolean options don't consume extra tokens
      * @param string $default The default value for this option.
      * @param array $choices Valid choices for this option.
+     * @param bool $multiple Whether this option can accept multiple value definition.
      * @throws \Cake\Console\Exception\ConsoleException
      */
-    public function __construct($name, $short = '', $help = '', $boolean = false, $default = '', $choices = [])
-    {
+    public function __construct(
+        $name,
+        $short = '',
+        $help = '',
+        $boolean = false,
+        $default = '',
+        $choices = [],
+        $multiple = false
+    ) {
         if (is_array($name) && isset($name['name'])) {
             foreach ($name as $key => $value) {
                 $this->{'_' . $key} = $value;
@@ -92,6 +107,7 @@ class ConsoleInputOption
             $this->_boolean = $boolean;
             $this->_default = $default;
             $this->_choices = $choices;
+            $this->_multiple = $multiple;
         }
         if (strlen($this->_short) > 1) {
             throw new ConsoleException(
@@ -129,13 +145,13 @@ class ConsoleInputOption
     public function help($width = 0)
     {
         $default = $short = '';
-        if (!empty($this->_default) && $this->_default !== true) {
+        if ($this->_default && $this->_default !== true) {
             $default = sprintf(' <comment>(default: %s)</comment>', $this->_default);
         }
-        if (!empty($this->_choices)) {
+        if ($this->_choices) {
             $default .= sprintf(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
         }
-        if (!empty($this->_short)) {
+        if (strlen($this->_short) > 0) {
             $short = ', -' . $this->_short;
         }
         $name = sprintf('--%s%s', $this->_name, $short);
@@ -158,7 +174,7 @@ class ConsoleInputOption
         if (strlen($this->_default) > 0 && $this->_default !== true) {
             $default = ' ' . $this->_default;
         }
-        if (!empty($this->_choices)) {
+        if ($this->_choices) {
             $default = ' ' . implode('|', $this->_choices);
         }
 
@@ -183,6 +199,16 @@ class ConsoleInputOption
     public function isBoolean()
     {
         return (bool)$this->_boolean;
+    }
+
+    /**
+     * Check if this option accepts multiple values.
+     *
+     * @return bool
+     */
+    public function acceptsMultiple()
+    {
+        return (bool)$this->_multiple;
     }
 
     /**
@@ -223,10 +249,11 @@ class ConsoleInputOption
         $option->addAttribute('name', '--' . $this->_name);
         $short = '';
         if (strlen($this->_short) > 0) {
-            $short = $this->_short;
+            $short = '-' . $this->_short;
         }
-        $option->addAttribute('short', '-' . $short);
-        $option->addAttribute('boolean', $this->_boolean);
+        $option->addAttribute('short', $short);
+        $option->addAttribute('help', $this->_help);
+        $option->addAttribute('boolean', (int)$this->_boolean);
         $option->addChild('default', $this->_default);
         $choices = $option->addChild('choices');
         foreach ($this->_choices as $valid) {

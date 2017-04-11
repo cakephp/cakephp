@@ -277,14 +277,14 @@ xml;
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser
-            ->addArgument('test', ['help' => 'A test option.'])
-            ->addArgument('test2', ['help' => 'A test option.'])
+            ->addArgument('test', ['help' => 'A test option.', 'required' => true])
+            ->addArgument('test2', ['help' => 'A test option.', 'required' => true])
             ->addArgument('test3', ['help' => 'A test option.'])
             ->addArgument('test4', ['help' => 'A test option.'])
             ->addArgument('test5', ['help' => 'A test option.'])
             ->addArgument('test6', ['help' => 'A test option.'])
             ->addArgument('test7', ['help' => 'A test option.'])
-            ->addArgument('model', ['help' => 'The model to make.', 'required' => true])
+            ->addArgument('model', ['help' => 'The model to make.'])
             ->addArgument('other_longer', ['help' => 'Another argument.']);
 
         $formatter = new HelpFormatter($parser);
@@ -314,8 +314,8 @@ xml;
         $expected = <<<xml
 <?xml version="1.0"?>
 <shell>
-<name>mycommand</name>
-<description>Description text</description>
+<command>mycommand</command>
+<description />
 <subcommands />
 <options>
 	<option name="--help" short="-h" help="Display this help." boolean="1">
@@ -337,11 +337,14 @@ xml;
 			<choice>aro</choice>
 		</choices>
 	</argument>
+	<argument name="other_longer" help="Another argument." required="0">
+		<choices></choices>
+	</argument>
 </arguments>
-<epilog>epilog text</epilog>
+<epilog />
 </shell>
 xml;
-        $this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
+        $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
     /**
@@ -362,7 +365,7 @@ xml;
         $expected = <<<xml
 <?xml version="1.0"?>
 <shell>
-<name>mycommand</name>
+<command>mycommand</command>
 <description>Description text</description>
 <subcommands />
 <options>
@@ -383,7 +386,7 @@ xml;
 <epilog>epilog text</epilog>
 </shell>
 xml;
-        $this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
+        $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
     /**
@@ -402,7 +405,7 @@ xml;
         $expected = <<<xml
 <?xml version="1.0"?>
 <shell>
-<name>mycommand</name>
+<command>mycommand</command>
 <description/>
 <subcommands>
 	<command name="method" help="This is another command" />
@@ -421,7 +424,7 @@ xml;
 <epilog/>
 </shell>
 xml;
-        $this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
+        $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
     /**
@@ -442,10 +445,14 @@ xml;
         $expected = <<<xml
 <?xml version="1.0"?>
 <shell>
-<name>mycommand</name>
+<command>mycommand</command>
 <description/>
 <subcommands/>
 <options>
+	<option name="--connection" short="-c" help="The connection to use." boolean="0">
+		<default>default</default>
+		<choices></choices>
+	</option>
 	<option name="--help" short="-h" help="Display this help." boolean="1">
 		<default></default>
 		<choices></choices>
@@ -454,16 +461,12 @@ xml;
 		<default></default>
 		<choices></choices>
 	</option>
-	<option name="--connection" short="-c" help="The connection to use." boolean="0">
-		<default>default</default>
-		<choices></choices>
-	</option>
 </options>
 <arguments/>
 <epilog/>
 </shell>
 xml;
-        $this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
+        $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
     /**
@@ -483,7 +486,7 @@ xml;
         $expected = <<<xml
 <?xml version="1.0"?>
 <shell>
-	<name>mycommand</name>
+	<command>mycommand</command>
 	<description/>
 	<subcommands/>
 	<options>
@@ -507,7 +510,7 @@ xml;
 	<epilog/>
 </shell>
 xml;
-        $this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
+        $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
     /**

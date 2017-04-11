@@ -70,7 +70,7 @@ class HelpFormatter
     {
         $parser = $this->_parser;
         $out = [];
-        $description = $parser->description();
+        $description = $parser->getDescription();
         if (!empty($description)) {
             $out[] = Text::wrap($description, $width);
             $out[] = '';
@@ -91,7 +91,7 @@ class HelpFormatter
                 ]);
             }
             $out[] = '';
-            $out[] = sprintf('To see help on a subcommand use <info>`cake %s [subcommand] --help`</info>', $parser->command());
+            $out[] = sprintf('To see help on a subcommand use <info>`cake %s [subcommand] --help`</info>', $parser->getCommand());
             $out[] = '';
         }
 
@@ -124,7 +124,7 @@ class HelpFormatter
             }
             $out[] = '';
         }
-        $epilog = $parser->epilog();
+        $epilog = $parser->getEpilog();
         if (!empty($epilog)) {
             $out[] = Text::wrap($epilog, $width);
             $out[] = '';
@@ -142,7 +142,7 @@ class HelpFormatter
      */
     protected function _generateUsage()
     {
-        $usage = ['cake ' . $this->_parser->command()];
+        $usage = ['cake ' . $this->_parser->getCommand()];
         $subcommands = $this->_parser->subcommands();
         if (!empty($subcommands)) {
             $usage[] = '[subcommand]';
@@ -193,10 +193,9 @@ class HelpFormatter
     {
         $parser = $this->_parser;
         $xml = new SimpleXmlElement('<shell></shell>');
-        $xml->addChild('command', $parser->command());
-        $xml->addChild('description', $parser->description());
+        $xml->addChild('command', $parser->getCommand());
+        $xml->addChild('description', $parser->getDescription());
 
-        $xml->addChild('epilog', $parser->epilog());
         $subcommands = $xml->addChild('subcommands');
         foreach ($parser->subcommands() as $command) {
             $command->xml($subcommands);
@@ -209,7 +208,8 @@ class HelpFormatter
         foreach ($parser->arguments() as $argument) {
             $argument->xml($arguments);
         }
+        $xml->addChild('epilog', $parser->getEpilog());
 
-        return $string ? $xml->asXml() : $xml;
+        return $string ? $xml->asXML() : $xml;
     }
 }

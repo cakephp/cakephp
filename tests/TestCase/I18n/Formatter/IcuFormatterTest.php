@@ -105,72 +105,30 @@ class IcuFormatterTest extends TestCase
      * Tests that passing a message in the wrong format will throw an exception
      *
      * @return void
+     * @expectedException \Exception
+     * @expectedExceptionMessage msgfmt_create: message formatter
      */
     public function testBadMessageFormat()
     {
-        if (version_compare(PHP_VERSION, '7', '<')) {
-            $this->setExpectedException(
-                'Exception',
-                'msgfmt_create: message formatter'
-            );
-        } else {
-            $this->setExpectedException(
-                'Exception',
-                'Constructor failed'
-            );
-        }
+        $this->skipIf(version_compare(PHP_VERSION, '7', '>='));
 
         $formatter = new IcuFormatter();
         $formatter->format('en_US', '{crazy format', ['some', 'vars']);
     }
 
     /**
-     * Tests that strings stored inside context namespaces can also be formatted
+     * Tests that passing a message in the wrong format will throw an exception
      *
      * @return void
+     * @expectedException \Exception
+     * @expectedExceptionMessage Constructor failed
      */
-    public function testFormatWithContext()
+    public function testBadMessageFormatPHP7()
     {
-        $messages = [
-            'simple' => [
-                '_context' => [
-                    'context a' => 'Text "a" {0}',
-                    'context b' => 'Text "b" {0}'
-                ]
-            ],
-            'complex' => [
-                '_context' => [
-                    'context b' => [
-                        0 => 'Only one',
-                        1 => 'there are {0}'
-                    ]
-                ]
-            ]
-        ];
+        $this->skipIf(version_compare(PHP_VERSION, '7', '<'));
 
         $formatter = new IcuFormatter();
-        $this->assertEquals(
-            'Text "a" is good',
-            $formatter->format('en', $messages['simple'], ['_context' => 'context a', 'is good'])
-        );
-        $this->assertEquals(
-            'Text "b" is good',
-            $formatter->format('en', $messages['simple'], ['_context' => 'context b', 'is good'])
-        );
-        $this->assertEquals(
-            'Text "a" is good',
-            $formatter->format('en', $messages['simple'], ['is good'])
-        );
-
-        $this->assertEquals(
-            'Only one',
-            $formatter->format('en', $messages['complex'], ['_context' => 'context b', '_count' => 1])
-        );
-
-        $this->assertEquals(
-            'there are 2',
-            $formatter->format('en', $messages['complex'], ['_context' => 'context b', '_count' => 2, 2])
-        );
+        $formatter->format('en_US', '{crazy format', ['some', 'vars']);
     }
 
     /**

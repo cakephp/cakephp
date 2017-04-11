@@ -83,10 +83,10 @@ class ExtractTaskTest extends TestCase
         $this->Task->expects($this->never())->method('_stop');
 
         $this->Task->main();
-        $this->assertTrue(file_exists($this->path . DS . 'default.pot'));
+        $this->assertFileExists($this->path . DS . 'default.pot');
         $result = file_get_contents($this->path . DS . 'default.pot');
 
-        $this->assertFalse(file_exists($this->path . DS . 'cake.pot'));
+        $this->assertFileNotExists($this->path . DS . 'cake.pot');
 
         // extract.ctp
         $pattern = '/\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+;\d+\n';
@@ -176,7 +176,7 @@ class ExtractTaskTest extends TestCase
             ->will($this->returnValue('y'));
 
         $this->Task->main();
-        $this->assertTrue(file_exists($this->path . DS . 'default.pot'));
+        $this->assertFileExists($this->path . DS . 'default.pot');
         $result = file_get_contents($this->path . DS . 'default.pot');
 
         $pattern = '/\#: .*extract\.ctp:\d+\n/';
@@ -203,7 +203,7 @@ class ExtractTaskTest extends TestCase
             ->will($this->returnValue('y'));
 
         $this->Task->main();
-        $this->assertTrue(file_exists($this->path . DS . 'default.pot'));
+        $this->assertFileExists($this->path . DS . 'default.pot');
 
         $result = file_get_contents($this->path . DS . 'default.pot');
 
@@ -325,7 +325,7 @@ class ExtractTaskTest extends TestCase
         $this->Task->params['overwrite'] = true;
 
         file_put_contents($this->path . DS . 'default.pot', 'will be overwritten');
-        $this->assertTrue(file_exists($this->path . DS . 'default.pot'));
+        $this->assertFileExists($this->path . DS . 'default.pot');
         $original = file_get_contents($this->path . DS . 'default.pot');
 
         $this->Task->main();
@@ -348,7 +348,7 @@ class ExtractTaskTest extends TestCase
         $this->Task->params['extract-core'] = 'yes';
 
         $this->Task->main();
-        $this->assertTrue(file_exists($this->path . DS . 'cake.pot'));
+        $this->assertFileExists($this->path . DS . 'cake.pot');
         $result = file_get_contents($this->path . DS . 'cake.pot');
 
         $pattern = '/#: Console\/Templates\//';

@@ -92,7 +92,9 @@ class Xml
      * - `readFile` Set to false to disable file reading. This is important to disable when
      *   putting user data into Xml::build(). If enabled local files will be read if they exist.
      *   Defaults to true for backwards compatibility reasons.
-     * - If using array as input, you can pass `options` from Xml::fromArray.
+     * - `parseHuge` Enable the `LIBXML_PARSEHUGE` flag.
+     *
+     * If using array as input, you can pass `options` from Xml::fromArray.
      *
      * @param string|array $input XML string, a path to a file, a URL or an array
      * @param string|array $options The options to use
@@ -104,7 +106,8 @@ class Xml
         $defaults = [
             'return' => 'simplexml',
             'loadEntities' => false,
-            'readFile' => true
+            'readFile' => true,
+            'parseHuge' => true,
         ];
         $options += $defaults;
 
@@ -142,9 +145,13 @@ class Xml
         if ($hasDisable && !$options['loadEntities']) {
             libxml_disable_entity_loader(true);
         }
+        $flags = LIBXML_NOCDATA;
+        if (!empty($options['parseHuge'])) {
+            $flags |= LIBXML_PARSEHUGE;
+        }
         try {
             if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
-                $xml = new SimpleXMLElement($input, LIBXML_NOCDATA);
+                $xml = new SimpleXMLElement($input, $flags);
             } else {
                 $xml = new DOMDocument();
                 $xml->loadXML($input);
@@ -188,7 +195,7 @@ class Xml
      * ];
      * ```
      *
-     * Calling `Xml::fromArray($value, 'tags');`  Will generate:
+     * Calling `Xml::fromArray($value, 'tags');` Will generate:
      *
      * `<root><tag><id>1</id><value>defect</value>description</tag></root>`
      *
@@ -316,11 +323,12 @@ class Xml
     /**
      * Helper to _fromArray(). It will create childs of arrays
      *
-     * @param array $data Array with informations to create childs
+     * @param array $data Array with information to create childs
      * @return void
      */
     protected static function _createChild($data)
     {
+        $value = $dom = $key = $format = $node = null;
         extract($data);
         $childNS = $childValue = null;
         if (is_object($value) && method_exists($value, 'toArray') && is_callable([$value, 'toArray'])) {
@@ -335,7 +343,7 @@ class Xml
                 $childNS = $value['xmlns:'];
                 unset($value['xmlns:']);
             }
-        } elseif (!empty($value) || $value === 0) {
+        } elseif (!empty($value) || $value === 0 || $value === '0') {
             $childValue = (string)$value;
         }
 

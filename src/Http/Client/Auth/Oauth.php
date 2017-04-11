@@ -252,21 +252,12 @@ class Oauth
      *
      * Section 9.1.2. of the Oauth spec
      *
-     * @param Psr\Http\Message\UriInterface $uri Uri object to build a normalized version of.
+     * @param \Psr\Http\Message\UriInterface $uri Uri object to build a normalized version of.
      * @return string Normalized URL
      */
     protected function _normalizedUrl($uri)
     {
-        $scheme = $uri->getScheme();
-        $defaultPorts = [
-            'http' => 80,
-            'https' => 443
-        ];
-        $port = $uri->getPort();
-        if ($port && $port != $defaultPorts[$scheme]) {
-            $parts['host'] .= ':' . $port;
-        }
-        $out = $scheme . '://';
+        $out = $uri->getScheme() . '://';
         $out .= strtolower($uri->getHost());
         $out .= $uri->getPath();
 
@@ -350,3 +341,6 @@ class Oauth
         );
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Http\Client\Auth\Oauth', 'Cake\Network\Http\Auth\Oauth');
