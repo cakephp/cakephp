@@ -81,6 +81,7 @@ class SqlserverTest extends TestCase
      */
     public function testDnsString($constructorArgs, $dnsString)
     {
+        $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
                 ->setMethods(['_connect'])
                 ->setConstructorArgs([$constructorArgs])
