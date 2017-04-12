@@ -382,7 +382,7 @@ class SecurityComponent extends Component
             $controller->request->here(),
             serialize($fieldList),
             $unlocked,
-            Security::salt()
+            Security::getSalt()
         ];
     }
 
