@@ -175,23 +175,6 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Get the timestamp from the expiration time
-     *
-     * Timestamps are strings as large timestamps can overflow MAX_INT
-     * in 32bit systems.
-     *
-     * @return string|null The expiry time as a string timestamp.
-     */
-    public function getExpiresTimestamp()
-    {
-        if (!$this->expiresAt) {
-            return null;
-        }
-
-        return $this->expiresAt->format('U');
-    }
-
-    /**
      * Returns a header value as string
      *
      * @return string
@@ -475,6 +458,41 @@ class Cookie implements CookieInterface
     public function getExpiry()
     {
         return $this->expiresAt;
+    }
+
+    /**
+     * Get the timestamp from the expiration time
+     *
+     * Timestamps are strings as large timestamps can overflow MAX_INT
+     * in 32bit systems.
+     *
+     * @return string|null The expiry time as a string timestamp.
+     */
+    public function getExpiresTimestamp()
+    {
+        if (!$this->expiresAt) {
+            return null;
+        }
+
+        return $this->expiresAt->format('U');
+    }
+
+    /**
+     * Check if a cookie is expired when compared to $time
+     *
+     * Cookies without an expiration date always return false.
+     *
+     * @param \DatetimeInterface $time The time to test against. Defaults to 'now' in UTC.
+     * @return bool
+     */
+    public function isExpired(DatetimeInterface $time = null)
+    {
+        $time = $time ?: new DateTimeImmutable('now', new DateTimezone('UTC'));
+        if (!$this->expiresAt) {
+            return false;
+        }
+
+        return $this->expiresAt < $time;
     }
 
     /**

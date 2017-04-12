@@ -16,7 +16,8 @@ namespace Cake\Http\Cookie;
 use ArrayIterator;
 use Cake\Http\Client\Response as ClientResponse;
 use Countable;
-use DateTime;
+use DateTimeImmutable;
+use DateTimeZone;
 use InvalidArgumentException;
 use IteratorAggregate;
 use Psr\Http\Message\RequestInterface;
@@ -240,6 +241,7 @@ class CookieCollection implements IteratorAggregate, Countable
     protected function findMatchingCookies($scheme, $host, $path)
     {
         $out = [];
+        $now = new DateTimeImmutable('now', new DateTimeZone('UTC'));
         foreach ($this->cookies as $cookie) {
             if ($scheme === 'http' && $cookie->isSecure()) {
                 continue;
@@ -253,8 +255,7 @@ class CookieCollection implements IteratorAggregate, Countable
                 $domain = ltrim($domain, '.');
             }
 
-            $expires = $cookie->getExpiresTimestamp();
-            if ($expires && time() > $expires) {
+            if ($cookie->isExpired($now)) {
                 continue;
             }
 
@@ -358,8 +359,7 @@ class CookieCollection implements IteratorAggregate, Countable
             }
             $expires = null;
             if ($cookie['expires']) {
-                $expires = new DateTime();
-                $expires->setTimestamp(strtotime($cookie['expires']));
+                $expires = new DateTimeImmutable('@' . strtotime($cookie['expires']));
             }
 
             $cookies[] = new Cookie(
@@ -385,13 +385,11 @@ class CookieCollection implements IteratorAggregate, Countable
      */
     protected function removeExpiredCookies($host, $path)
     {
-        $time = time();
+        $time = new DateTimeImmutable('now', new DateTimeZone('UTC'));
         $hostPattern = '/' . preg_quote($host, '/') . '$/';
 
         foreach ($this->cookies as $i => $cookie) {
-            $expires = $cookie->getExpiresTimestamp();
-            $expired = ($expires > 0 && $expires < $time);
-
+            $expired = $cookie->isExpired($time);
             $pathMatches = strpos($path, $cookie->getPath()) === 0;
             $hostMatches = preg_match($hostPattern, $cookie->getDomain());
             if ($pathMatches && $hostMatches && $expired) {

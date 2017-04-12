@@ -376,6 +376,27 @@ class CookieTest extends TestCase
     }
 
     /**
+     * Test the isExpired method
+     *
+     * @return void
+     */
+    public function testIsExpired()
+    {
+        $date = Chronos::now();
+        $cookie = new Cookie('cakephp', 'yay');
+        $this->assertFalse($cookie->isExpired($date));
+
+        $cookie = new Cookie('cakephp', 'yay', $date);
+        $this->assertFalse($cookie->isExpired($date), 'same time, not expired');
+
+        $date = $date->modify('+10 seconds');
+        $this->assertTrue($cookie->isExpired($date), 'future now');
+
+        $date = $date->modify('-1 minute');
+        $this->assertFalse($cookie->isExpired($date), 'expires later');
+    }
+
+    /**
      * Test the withName method
      *
      * @return void
