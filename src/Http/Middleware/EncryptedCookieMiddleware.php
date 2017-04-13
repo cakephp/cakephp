@@ -93,7 +93,7 @@ class EncryptedCookieMiddleware
         $cookies = $response->getCookieCollection();
         foreach ($cookies as $cookie) {
             if (in_array($cookie->getName(), $this->cookieNames, true)) {
-                $value = $this->_encrypt($cookie->getValue(), $this->cipherType, $this->key);
+                $value = $this->_encrypt($cookie->getValue(), $this->cipherType);
                 $response = $response->withCookie($cookie->withValue($value));
             }
         }
@@ -107,12 +107,12 @@ class EncryptedCookieMiddleware
         $header = [];
         foreach ($cookies as $cookie) {
             if (in_array($cookie->getName(), $this->cookieNames, true)) {
-                $value = $this->_encrypt($cookie->getValue(), $this->cipherType, $this->key);
+                $value = $this->_encrypt($cookie->getValue(), $this->cipherType);
                 $cookie = $cookie->withValue($value);
             }
             $header[] = $cookie->toHeaderValue();
         }
 
-        return $request->withHeader('Set-Cookie', $header);
+        return $response->withHeader('Set-Cookie', $header);
     }
 }
