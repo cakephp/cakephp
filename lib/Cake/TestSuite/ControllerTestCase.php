@@ -248,7 +248,8 @@ abstract class ControllerTestCase extends CakeTestCase {
 				$_GET = array();
 			}
 		}
-		$request = $this->getMock('CakeRequest', array('_readInput'), array($url));
+		$_SERVER['REQUEST_URI'] = $url;
+		$request = $this->getMock('CakeRequest', array('_readInput'));
 
 		if (is_string($options['data'])) {
 			$request->expects($this->any())

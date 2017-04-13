@@ -624,4 +624,30 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$this->assertEquals($restored, $_POST);
 	}
 
+/**
+ * Tests that the `App.base` path is properly stripped from the URL generated from the
+ * given URL array, and that consequently the correct controller/action is being matched.
+ *
+ * @return void
+ */
+	public function testAppBaseConfigCompatibilityWithArrayUrls() {
+		Configure::write('App.base', '/cakephp');
+
+		$this->Case->generate('TestsApps');
+		$this->Case->testAction(array('controller' => 'tests_apps', 'action' => 'index'));
+
+		$this->assertEquals('/cakephp', $this->Case->controller->request->base);
+		$this->assertEquals('/cakephp/', $this->Case->controller->request->webroot);
+		$this->assertEquals('/cakephp/tests_apps', $this->Case->controller->request->here);
+		$this->assertEquals('tests_apps', $this->Case->controller->request->url);
+
+		$expected = array(
+			'plugin' => null,
+			'controller' => 'tests_apps',
+			'action' => 'index',
+			'named' => array(),
+			'pass' => array(),
+		);
+		$this->assertEquals($expected, array_intersect_key($expected, $this->Case->controller->request->params));
+	}
 }
