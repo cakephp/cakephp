@@ -12,9 +12,11 @@
  */
 namespace Cake\Mailer;
 
+use Cake\Core\App;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Mailer\Exception\MissingActionException;
+use Cake\Mailer\Exception\MissingMailerException;
 
 /**
  * Mailer base class.
@@ -136,6 +138,29 @@ abstract class Mailer implements EventListenerInterface
      * @var string
      */
     protected $_clonedEmail;
+
+    /**
+     * Returns a mailer instance.
+     *
+     * @param string $name Mailer's name.
+     * @param \Cake\Mailer\Email|null $email Email instance.
+     * @return \Cake\Mailer\Mailer
+     * @throws \Cake\Mailer\Exception\MissingMailerException if undefined mailer class.
+     */
+    public static function getMailer($name, Email $email = null)
+    {
+        if ($email === null) {
+            $email = new Email();
+        }
+
+        $className = App::className($name, 'Mailer', 'Mailer');
+
+        if (empty($className)) {
+            throw new MissingMailerException(compact('name'));
+        }
+
+        return (new $className($email));
+    }
 
     /**
      * Constructor.
