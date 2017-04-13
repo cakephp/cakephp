@@ -113,7 +113,7 @@ class Plugin
     {
         if (is_array($plugin)) {
             foreach ($plugin as $name => $conf) {
-                list($name, $conf) = (is_numeric($name)) ? [$conf, $config] : [$name, $conf];
+                list($name, $conf) = is_numeric($name) ? [$conf, $config] : [$name, $conf];
                 static::load($name, $conf);
             }
 
