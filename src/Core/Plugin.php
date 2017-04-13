@@ -220,6 +220,7 @@ class Plugin
      *
      * @param array $options Options.
      * @return void
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     public static function loadAll(array $options = [])
     {
