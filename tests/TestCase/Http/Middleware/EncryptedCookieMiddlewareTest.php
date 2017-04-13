@@ -16,8 +16,8 @@ namespace Cake\Test\TestCase\Http\Middleware;
 
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Middleware\EncryptedCookieMiddleware;
-use Cake\Http\ServerRequest;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\CookieCryptTrait;
 

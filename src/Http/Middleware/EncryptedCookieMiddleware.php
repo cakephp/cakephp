@@ -14,8 +14,8 @@
  */
 namespace Cake\Http\Middleware;
 
-use Cake\Http\Response;
 use Cake\Http\Cookie\CookieCollection;
+use Cake\Http\Response;
 use Cake\Utility\CookieCryptTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
