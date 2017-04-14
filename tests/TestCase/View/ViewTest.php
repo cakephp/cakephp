@@ -2022,18 +2022,18 @@ TEXT;
     }
 
     /**
-     * Test getAutoLayout() and setAutoLayout().
+     * Test isAutoLayoutEnabled() and enableAutoLayout().
      *
      * @return void
      */
-    public function testGetSetAutoLayout()
+    public function testAutoLayout()
     {
-        $this->View->setAutoLayout(false);
-        $autoLayout = $this->View->getAutoLayout();
+        $this->View->enableAutoLayout(false);
+        $autoLayout = $this->View->isAutoLayoutEnabled();
         $this->assertSame($autoLayout, false);
 
-        $this->View->setAutoLayout(true);
-        $autoLayout = $this->View->getAutoLayout();
+        $this->View->enableAutoLayout();
+        $autoLayout = $this->View->isAutoLayoutEnabled();
         $this->assertSame($autoLayout, true);
     }
 

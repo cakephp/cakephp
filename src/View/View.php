@@ -437,11 +437,12 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Get the current state of auto layout.
+     * Returns if CakePHP's conventional mode of applying layout files is enabled.
+     * Disabled means that layouts will not be automatically applied to rendered views.
      *
      * @return bool
      */
-    public function getAutoLayout()
+    public function isAutoLayoutEnabled()
     {
         return $this->autoLayout;
     }
@@ -449,14 +450,14 @@ class View implements EventDispatcherInterface
     /**
      * Turns on or off CakePHP's conventional mode of applying layout files.
      * On by default. Setting to off means that layouts will not be
-     * automatically applied to rendered templates.
+     * automatically applied to rendered views.
      *
-     * @param bool $autoLayout Boolean to turn on/off.
+     * @param bool $enable Boolean to turn on/off.
      * @return void
      */
-    public function setAutoLayout($autoLayout)
+    public function enableAutoLayout($enable = true)
     {
-        $this->autoLayout = $autoLayout;
+        $this->autoLayout = (bool)$enable;
     }
 
     /**
@@ -464,7 +465,7 @@ class View implements EventDispatcherInterface
      * On by default. Setting to off means that layouts will not be
      * automatically applied to rendered templates.
      *
-     * @deprecated 3.5.0 Use getAutoLayout()/setAutoLayout() instead.
+     * @deprecated 3.5.0 Use isAutoLayoutEnabled()/enableAutoLayout() instead.
      * @param bool|null $autoLayout Boolean to turn on/off. If null returns current value.
      * @return bool|null
      */
