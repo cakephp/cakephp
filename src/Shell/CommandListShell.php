@@ -126,7 +126,7 @@ class CommandListShell extends Shell
                 $shell->addAttribute('help', $callable . ' -h');
             }
         }
-        $this->_io->outputAs(ConsoleOutput::RAW);
+        $this->_io->setOutputAs(ConsoleOutput::RAW);
         $this->out($shells->saveXML());
     }
 
