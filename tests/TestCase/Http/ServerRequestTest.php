@@ -3543,7 +3543,7 @@ XML;
         $request = new ServerRequest();
 
         //Test default null
-        $this->assertSame($request->getEnv('Foo'), null);
+        $this->assertNull($request->getEnv('Foo'), null);
 
         //Test default set
         $this->assertSame($request->getEnv('Foo', 'Bar'), 'Bar');
