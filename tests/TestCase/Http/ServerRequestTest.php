@@ -3194,20 +3194,6 @@ XML;
     }
 
     /**
-     * Tests setting the session to the request
-     *
-     * @return void
-     */
-    public function testWithtSession()
-    {
-        $session = new Session;
-        $request = new ServerRequest();
-        $newRequest = $request->withSession($session);
-        $this->assertNotSame($newRequest, $request);
-        $this->assertSame($session, $newRequest->getSession());
-    }
-
-    /**
      * Test the content type method.
      *
      * @return void
