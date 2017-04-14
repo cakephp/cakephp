@@ -3530,7 +3530,7 @@ XML;
 
         $newRequest = $request->withEnv('HTTP_HOST', 'cakephp.org');
         $this->assertNotSame($request, $newRequest);
-        $this->assertSame($newRequest->getEnv('HTTP_HOST'), 'cakephp.org');
+        $this->assertSame('cakephp.org', $newRequest->getEnv('HTTP_HOST'));
     }
 
     /**
@@ -3543,14 +3543,14 @@ XML;
         $request = new ServerRequest();
 
         //Test default null
-        $this->assertNull($request->getEnv('Foo'), null);
+        $this->assertNull($request->getEnv('Foo'));
 
         //Test default set
-        $this->assertSame($request->getEnv('Foo', 'Bar'), 'Bar');
+        $this->assertSame('Bar', $request->getEnv('Foo', 'Bar'));
 
         //Test env() fallback
         $_SERVER['TEST'] = 'ing';
-        $this->assertSame($request->getEnv('test'), 'ing');
+        $this->assertSame('ing', $request->getEnv('test'));
     }
 
     /**
