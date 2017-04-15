@@ -137,7 +137,6 @@ class TimestampBehavior extends Behavior
     public function timestamp(DateTime $ts = null, $refreshTimestamp = false)
     {
         if ($ts instanceof DateTime) {
-
             if ($this->_config['refreshTimestamp'] === true) {
                 $this->_config['refreshTimestamp'] = false;
             }
