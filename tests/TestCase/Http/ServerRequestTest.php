@@ -3535,6 +3535,40 @@ XML;
     }
 
     /**
+     * Test withEnv()
+     *
+     * @return void
+     */
+    public function testWithEnv()
+    {
+        $request = new ServerRequest();
+
+        $newRequest = $request->withEnv('HTTP_HOST', 'cakephp.org');
+        $this->assertNotSame($request, $newRequest);
+        $this->assertSame('cakephp.org', $newRequest->getEnv('HTTP_HOST'));
+    }
+
+    /**
+     * Test getEnv()
+     *
+     * @return void
+     */
+    public function testGetEnv()
+    {
+        $request = new ServerRequest();
+
+        //Test default null
+        $this->assertNull($request->getEnv('Foo'));
+
+        //Test default set
+        $this->assertSame('Bar', $request->getEnv('Foo', 'Bar'));
+
+        //Test env() fallback
+        $_SERVER['TEST'] = 'ing';
+        $this->assertSame('ing', $request->getEnv('test'));
+    }
+
+    /**
      * Data provider for emulated property tests.
      *
      * @return array
