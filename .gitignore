@@ -5,6 +5,7 @@
 /tags
 /composer.lock
 /phpunit.xml
+/phpunit.xml.dist
 /phpcs.xml
 /vendor
 *.mo
