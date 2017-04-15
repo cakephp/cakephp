@@ -130,8 +130,8 @@ class EncryptedCookieMiddleware
     /**
      * Encode cookies from a response's CookieCollection.
      *
-     * @param \Psr\Http\Message\ResponseInterface $respons The response to encode cookies in.
-     * @return \Psr\Http\Message\ResponseInterface Updated response with encoded cookies.
+     * @param \Cake\Http\Response $response The response to encode cookies in.
+     * @return \Cake\Http\Response Updated response with encoded cookies.
      */
     protected function encodeCookies(Response $response)
     {
@@ -149,7 +149,7 @@ class EncryptedCookieMiddleware
     /**
      * Encode cookies from a response's Set-Cookie header
      *
-     * @param \Psr\Http\Message\ResponseInterface $respons The response to encode cookies in.
+     * @param \Psr\Http\Message\ResponseInterface $response The response to encode cookies in.
      * @return \Psr\Http\Message\ResponseInterface Updated response with encoded cookies.
      */
     protected function encodeSetCookieHeader(ResponseInterface $response)
