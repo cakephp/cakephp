@@ -21,7 +21,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Encrypt/Decrypt cookie data.
+ * Middlware for encrypting & decrypting cookies.
  *
  * This middleware layer will encrypt/decrypt the named cookies with the given key
  * and cipher type. To support multiple keys/cipher types use this middleware multiple
@@ -38,10 +38,34 @@ class EncryptedCookieMiddleware
 {
     use CookieCryptTrait;
 
+    /**
+     * The list of cookies to encrypt/decrypt
+     * @var array
+     */
     protected $cookieNames;
+
+    /**
+     * Encrpytion key to use.
+     *
+     * @var string
+     */
     protected $key;
+
+    /**
+     * Encryption type.
+     *
+     * @var string
+     */
     protected $cipherType;
 
+    /**
+     * Constructor
+     *
+     * @param array $cookieNames The list of cookie names that should have their values encrypted.
+     * @param string $key The encryption key to use.
+     * @param string $cipherType The cipher type to use. Defaults to 'aes', but can also be 'rijndael' for
+     *   backwards compatibility.
+     */
     public function __construct(array $cookieNames = [], $key, $cipherType = 'aes')
     {
         $this->cookieNames = $cookieNames;
@@ -50,6 +74,8 @@ class EncryptedCookieMiddleware
     }
 
     /**
+     * Apply cookie encryption/decryption.
+     *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @param \Psr\Http\Message\ResponseInterface $response The response.
      * @param callable $next The next middleware to call.
@@ -71,11 +97,24 @@ class EncryptedCookieMiddleware
         return $response;
     }
 
+    /**
+     * Fetch the cookie encryption key.
+     *
+     * Part of the CookieCryptTrait implementation.
+     *
+     * @return string
+     */
     protected function _getCookieEncryptionKey()
     {
         return $this->key;
     }
 
+    /**
+     * Decode cookies from the request.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request to decode cookies from.
+     * @return \Psr\Http\Message\ServerRequestInterface Updated request with decoded cookies.
+     */
     protected function decodeCookies(ServerRequestInterface $request)
     {
         $cookies = $request->getCookieParams();
@@ -88,6 +127,12 @@ class EncryptedCookieMiddleware
         return $request->withCookieParams($cookies);
     }
 
+    /**
+     * Encode cookies from a response's CookieCollection.
+     *
+     * @param \Psr\Http\Message\ResponseInterface $respons The response to encode cookies in.
+     * @return \Psr\Http\Message\ResponseInterface Updated response with encoded cookies.
+     */
     protected function encodeCookies(Response $response)
     {
         $cookies = $response->getCookieCollection();
@@ -101,6 +146,12 @@ class EncryptedCookieMiddleware
         return $response;
     }
 
+    /**
+     * Encode cookies from a response's Set-Cookie header
+     *
+     * @param \Psr\Http\Message\ResponseInterface $respons The response to encode cookies in.
+     * @return \Psr\Http\Message\ResponseInterface Updated response with encoded cookies.
+     */
     protected function encodeSetCookieHeader(ResponseInterface $response)
     {
         $cookies = CookieCollection::createFromHeader($response->getHeader('Set-Cookie'));
