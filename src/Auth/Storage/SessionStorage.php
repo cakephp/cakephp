@@ -67,7 +67,7 @@ class SessionStorage implements StorageInterface
      */
     public function __construct(ServerRequest $request, Response $response, array $config = [])
     {
-        $this->_session = $request->session();
+        $this->_session = $request->getSession();
         $this->setConfig($config);
     }
 

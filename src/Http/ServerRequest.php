@@ -517,9 +517,20 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Returns the instance of the Session object for this request
      *
+     * @return \Cake\Network\Session
+     */
+    public function getSession()
+    {
+        return $this->session;
+    }
+
+    /**
+     * Returns the instance of the Session object for this request
+     *
      * If a session object is passed as first argument it will be set as
      * the session to use for this request
      *
+     * @deprecated 3.5.0 Use getSession() instead. The setter part will be removed.
      * @param \Cake\Network\Session|null $session the session object to use
      * @return \Cake\Network\Session
      */
