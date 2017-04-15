@@ -359,6 +359,9 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $builder->setHelpers($helpers, false)
             ->setLayoutPath('')
             ->setTemplatePath('Error');
+        $builder->helpers($helpers, false)
+            ->layoutPath('')
+            ->templatePath('Error');
         $view = $this->controller->createView('View');
 
         $this->controller->response->body($view->render($template, 'error'));

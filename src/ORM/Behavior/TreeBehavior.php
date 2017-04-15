@@ -490,7 +490,7 @@ class TreeBehavior extends Behavior
 
         $results = $this->_scope($query)
             ->find('threaded', [
-                'parentField' => $this->getConfig('parent'),
+                'parentField' => $this->config('parent'),
                 'order' => [$left => 'ASC'],
             ]);
 
