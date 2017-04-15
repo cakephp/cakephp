@@ -17,7 +17,7 @@ namespace TestApp\Model\Behavior;
 use Cake\ORM\Behavior;
 
 /**
- * Test class for trigging duplicate method errors.
+ * Test class for triggering duplicate method errors.
  */
 class DuplicateBehavior extends Behavior
 {

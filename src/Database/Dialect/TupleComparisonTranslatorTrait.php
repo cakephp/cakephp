@@ -70,7 +70,7 @@ trait TupleComparisonTranslatorTrait
             return;
         }
 
-        $surrogate = $query->connection()
+        $surrogate = $query->getConnection()
             ->newQuery()
             ->select($true);
 

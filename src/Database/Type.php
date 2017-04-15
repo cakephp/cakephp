@@ -269,7 +269,7 @@ class Type implements TypeInterface
      * Will convert values into strings
      *
      * @param mixed $value The value to convert to a string.
-     * @return bool
+     * @return string
      * @deprecated 3.1.8 This method is now unused.
      */
     public static function strval($value)

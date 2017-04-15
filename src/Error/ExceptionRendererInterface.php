@@ -9,21 +9,17 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.4.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Error;
 
-namespace Cake\Network {
-
+interface ExceptionRendererInterface
+{
     /**
-     * Mocks the headers_sent() function when invoked from the Cake\Network
-     * namespace so that it always returns false
+     * Renders the response for the exception.
      *
-     * @return bool
+     * @return \Cake\Http\Response The response to be sent.
      */
-    function headers_sent()
-    {
-        return false;
-    }
-
+    public function render();
 }

@@ -15,8 +15,8 @@
 namespace Cake\View;
 
 use Cake\Event\EventManager;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 
 /**
  * A view class that is used for AJAX responses.
@@ -35,13 +35,13 @@ class AjaxView extends View
     /**
      * Constructor
      *
-     * @param \Cake\Network\Request|null $request The request object.
-     * @param \Cake\Network\Response|null $response The response object.
+     * @param \Cake\Http\ServerRequest|null $request The request object.
+     * @param \Cake\Http\Response|null $response The response object.
      * @param \Cake\Event\EventManager|null $eventManager Event manager object.
      * @param array $viewOptions View options.
      */
     public function __construct(
-        Request $request = null,
+        ServerRequest $request = null,
         Response $response = null,
         EventManager $eventManager = null,
         array $viewOptions = []

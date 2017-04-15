@@ -58,8 +58,9 @@ class LocaleSelectorFilter extends DispatcherFilter
      */
     public function beforeDispatch(Event $event)
     {
-        $request = $event->data['request'];
-        $locale = Locale::acceptFromHttp($request->header('Accept-Language'));
+        /* @var \Cake\Http\ServerRequest $request */
+        $request = $event->getData('request');
+        $locale = Locale::acceptFromHttp($request->getHeaderLine('Accept-Language'));
 
         if (!$locale || (!empty($this->_locales) && !in_array($locale, $this->_locales))) {
             return;

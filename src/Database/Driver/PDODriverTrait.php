@@ -27,9 +27,9 @@ trait PDODriverTrait
     /**
      * Instance of PDO.
      *
-     * @var \PDO
+     * @var \PDO|null
      */
-    protected $_connection;
+    protected $_connection = null;
 
     /**
      * Establishes a connection to the database server
@@ -79,7 +79,7 @@ trait PDODriverTrait
     }
 
     /**
-     * Check whether or not the driver is connected.
+     * Checks whether or not the driver is connected.
      *
      * @return bool
      */
@@ -94,9 +94,8 @@ trait PDODriverTrait
                 $connected = false;
             }
         }
-        $this->connected = !empty($connected);
 
-        return $this->connected;
+        return (bool)$connected;
     }
 
     /**

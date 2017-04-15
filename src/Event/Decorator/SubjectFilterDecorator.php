@@ -50,7 +50,7 @@ class SubjectFilterDecorator extends AbstractDecorator
      */
     public function canTrigger(Event $event)
     {
-        $class = get_class($event->subject());
+        $class = get_class($event->getSubject());
         if (!isset($this->_options['allowedSubject'])) {
             throw new RuntimeException(self::class . ' Missing subject filter options!');
         }

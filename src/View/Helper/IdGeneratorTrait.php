@@ -14,7 +14,7 @@
  */
 namespace Cake\View\Helper;
 
-use Cake\Utility\Inflector;
+use Cake\Utility\Text;
 
 /**
  * A trait that provides id generating methods to be
@@ -26,7 +26,7 @@ trait IdGeneratorTrait
     /**
      * Prefix for id attribute.
      *
-     * @var string
+     * @var string|null
      */
     protected $_idPrefix = null;
 
@@ -79,8 +79,8 @@ trait IdGeneratorTrait
      */
     protected function _domId($value)
     {
-        $domId = mb_strtolower(Inflector::slug($value, '-'));
-        if (!empty($this->_idPrefix)) {
+        $domId = mb_strtolower(Text::slug($value, '-'));
+        if ($this->_idPrefix) {
             $domId = $this->_idPrefix . '-' . $domId;
         }
 

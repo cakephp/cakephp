@@ -45,7 +45,7 @@ class MailTransport extends AbstractTransport
             $headers[$key] = str_replace(["\r", "\n"], '', $header);
         }
         $headers = $this->_headersToString($headers, $eol);
-        $subject = str_replace(["\r", "\n"], '', $email->subject());
+        $subject = str_replace(["\r", "\n"], '', $email->getSubject());
         $to = str_replace(["\r", "\n"], '', $to);
 
         $message = implode($eol, $email->message());

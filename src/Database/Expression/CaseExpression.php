@@ -20,8 +20,6 @@ use Cake\Database\ValueBinder;
 
 /**
  * This class represents a SQL Case statement
- *
- * @internal
  */
 class CaseExpression implements ExpressionInterface
 {

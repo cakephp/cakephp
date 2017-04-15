@@ -28,7 +28,7 @@ trait ViewVarsTrait
      * The name of default View class.
      *
      * @var string
-     * @deprecated 3.1.0 Use `$this->viewBuilder()->className()` instead.
+     * @deprecated 3.1.0 Use `$this->viewBuilder()->getClassName()`/`$this->viewBuilder()->setClassName()` instead.
      */
     public $viewClass = null;
 
@@ -70,11 +70,11 @@ trait ViewVarsTrait
     public function createView($viewClass = null)
     {
         $builder = $this->viewBuilder();
-        if ($viewClass === null && $builder->className() === null) {
-            $builder->className($this->viewClass);
+        if ($viewClass === null && $builder->getClassName() === null) {
+            $builder->setClassName($this->viewClass);
         }
         if ($viewClass) {
-            $builder->className($viewClass);
+            $builder->setClassName($viewClass);
         }
 
         $validViewOptions = $this->viewOptions();
@@ -109,7 +109,7 @@ trait ViewVarsTrait
                 $builder->{$prop}($this->{$prop});
             }
         }
-        $builder->options($viewOptions);
+        $builder->setOptions($viewOptions);
 
         return $builder->build(
             $this->viewVars,

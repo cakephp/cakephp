@@ -15,9 +15,10 @@
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Core\Configure;
+use Cake\Event\Event;
 use Cake\Http\ActionDispatcher;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Filter\ControllerFactoryFilter;
@@ -122,7 +123,7 @@ class ActionDispatcherTest extends TestCase
             ->method('beforeDispatch')
             ->will($this->returnValue($response));
 
-        $req = new Request();
+        $req = new ServerRequest();
         $res = new Response();
         $dispatcher->addFilter($filter);
         $result = $dispatcher->dispatch($req, $res);
@@ -141,11 +142,11 @@ class ActionDispatcherTest extends TestCase
             ->getMock();
         $filter->expects($this->once())
             ->method('afterDispatch')
-            ->will($this->returnCallback(function ($event) {
-                $event->data['response']->body('Filter body');
+            ->will($this->returnCallback(function (Event $event) {
+                $event->data('response')->body('Filter body');
             }));
 
-        $req = new Request([
+        $req = new ServerRequest([
             'url' => '/cakes',
             'params' => [
                 'plugin' => null,
@@ -175,7 +176,7 @@ class ActionDispatcherTest extends TestCase
         $filter->expects($this->never())
             ->method('afterDispatch');
 
-        $req = new Request([
+        $req = new ServerRequest([
             'url' => '/cakes',
             'params' => [
                 'plugin' => null,
@@ -199,7 +200,7 @@ class ActionDispatcherTest extends TestCase
     public function testDispatchSetsRequestContext()
     {
         $this->assertNull(Router::getRequest());
-        $req = new Request([
+        $req = new ServerRequest([
             'url' => '/cakes',
             'params' => [
                 'plugin' => null,
@@ -218,12 +219,12 @@ class ActionDispatcherTest extends TestCase
      * test invalid response from dispatch process.
      *
      * @expectedException \LogicException
-     * @expectedExceptionMessage Controller actions can only return Cake\Network\Response or null
+     * @expectedExceptionMessage Controller actions can only return Cake\Http\Response or null
      * @return void
      */
     public function testDispatchInvalidResponse()
     {
-        $req = new Request([
+        $req = new ServerRequest([
             'url' => '/cakes',
             'params' => [
                 'plugin' => null,
@@ -243,7 +244,7 @@ class ActionDispatcherTest extends TestCase
      */
     public function testDispatchAutoRender()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'posts',
             'params' => [
                 'controller' => 'Posts',
@@ -253,7 +254,7 @@ class ActionDispatcherTest extends TestCase
         ]);
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);
-        $this->assertInstanceOf('Cake\Network\Response', $result);
+        $this->assertInstanceOf('Cake\Http\Response', $result);
         $this->assertContains('posts index', $result->body());
     }
 
@@ -264,7 +265,7 @@ class ActionDispatcherTest extends TestCase
      */
     public function testDispatchAutoRenderFalse()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'posts',
             'params' => [
                 'controller' => 'Cakes',
@@ -274,7 +275,7 @@ class ActionDispatcherTest extends TestCase
         ]);
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);
-        $this->assertInstanceOf('Cake\Network\Response', $result);
+        $this->assertInstanceOf('Cake\Http\Response', $result);
         $this->assertContains('autoRender false body', $result->body());
     }
 
@@ -287,14 +288,14 @@ class ActionDispatcherTest extends TestCase
      */
     public function testMissingController()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'some_controller/home',
             'params' => [
                 'controller' => 'SomeController',
                 'action' => 'home',
             ]
         ]);
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response);
     }
 
@@ -307,14 +308,14 @@ class ActionDispatcherTest extends TestCase
      */
     public function testMissingControllerInterface()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'interface/index',
             'params' => [
                 'controller' => 'Interface',
                 'action' => 'index',
             ]
         ]);
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response);
     }
 
@@ -327,14 +328,14 @@ class ActionDispatcherTest extends TestCase
      */
     public function testMissingControllerAbstract()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'abstract/index',
             'params' => [
                 'controller' => 'Abstract',
                 'action' => 'index',
             ]
         ]);
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response);
     }
 
@@ -350,7 +351,7 @@ class ActionDispatcherTest extends TestCase
      */
     public function testMissingControllerLowercase()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'pages/home',
             'params' => [
                 'plugin' => null,
@@ -359,7 +360,7 @@ class ActionDispatcherTest extends TestCase
                 'pass' => ['home'],
             ]
         ]);
-        $response = $this->getMockBuilder('Cake\Network\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response);
     }
 
@@ -370,7 +371,7 @@ class ActionDispatcherTest extends TestCase
      */
     public function testStartupProcessAbort()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'cakes/index',
             'params' => [
                 'plugin' => null,
@@ -392,7 +393,7 @@ class ActionDispatcherTest extends TestCase
      */
     public function testShutdownProcessResponse()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'url' => 'cakes/index',
             'params' => [
                 'plugin' => null,

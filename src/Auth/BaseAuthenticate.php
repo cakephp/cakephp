@@ -16,8 +16,8 @@ namespace Cake\Auth;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListenerInterface;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\ORM\TableRegistry;
 
 /**
@@ -88,7 +88,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
         $this->_registry = $registry;
-        $this->config($config);
+        $this->setConfig($config);
     }
 
     /**
@@ -193,20 +193,20 @@ abstract class BaseAuthenticate implements EventListenerInterface
     /**
      * Authenticate a user based on the request information.
      *
-     * @param \Cake\Network\Request $request Request to get authentication information from.
-     * @param \Cake\Network\Response $response A response object that can have headers added.
+     * @param \Cake\Http\ServerRequest $request Request to get authentication information from.
+     * @param \Cake\Http\Response $response A response object that can have headers added.
      * @return mixed Either false on failure, or an array of user data on success.
      */
-    abstract public function authenticate(Request $request, Response $response);
+    abstract public function authenticate(ServerRequest $request, Response $response);
 
     /**
      * Get a user based on information in the request. Primarily used by stateless authentication
      * systems like basic and digest auth.
      *
-     * @param \Cake\Network\Request $request Request object.
+     * @param \Cake\Http\ServerRequest $request Request object.
      * @return mixed Either false or an array of user information
      */
-    public function getUser(Request $request)
+    public function getUser(ServerRequest $request)
     {
         return false;
     }
@@ -216,14 +216,14 @@ abstract class BaseAuthenticate implements EventListenerInterface
      * can be:
      *
      * - Null - No action taken, AuthComponent should return appropriate response.
-     * - Cake\Network\Response - A response object, which will cause AuthComponent to
+     * - Cake\Http\Response - A response object, which will cause AuthComponent to
      *   simply return that response.
      *
-     * @param \Cake\Network\Request $request A request object.
-     * @param \Cake\Network\Response $response A response object.
+     * @param \Cake\Http\ServerRequest $request A request object.
+     * @param \Cake\Http\Response $response A response object.
      * @return void
      */
-    public function unauthenticated(Request $request, Response $response)
+    public function unauthenticated(ServerRequest $request, Response $response)
     {
     }
 

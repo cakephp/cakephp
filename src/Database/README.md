@@ -345,7 +345,7 @@ SELECT CONCAT(title, :c0) ...;
 
 ### Other SQL Clauses
 
-Read of all other SQL clauses that the builder is capable of generating in the [official API docs](http://api.cakephp.org/3.2/class-Cake.Database.Query.html)
+Read of all other SQL clauses that the builder is capable of generating in the [official API docs](https://api.cakephp.org/3.x/class-Cake.Database.Query.html)
 
 ### Getting Results out of a Query
 
@@ -363,5 +363,5 @@ $results = $query->execute()->fetchAll('assoc');
 
 ## Official API
 
-You can read the official [official API docs](http://api.cakephp.org/3.2/namespace-Cake.Database.html) to learn more of what this library
+You can read the official [official API docs](https://api.cakephp.org/3.x/namespace-Cake.Database.html) to learn more of what this library
 has to offer.

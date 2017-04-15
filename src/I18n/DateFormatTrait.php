@@ -147,7 +147,7 @@ trait DateFormatTrait
      * ```
      *
      * You can control the default locale to be used by setting the static variable
-     * `Time::$defaultLocale` to a  valid locale string. If empty, the default will be
+     * `Time::$defaultLocale` to a valid locale string. If empty, the default will be
      * taken from the `intl.default_locale` ini config.
      *
      * @param string|int|null $format Format string.

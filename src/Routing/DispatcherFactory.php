@@ -27,7 +27,7 @@ class DispatcherFactory
     /**
      * Stack of middleware to apply to dispatchers.
      *
-     * @var array
+     * @var \Cake\Routing\DispatcherFilter[]
      */
     protected static $_stack = [];
 
@@ -91,7 +91,7 @@ class DispatcherFactory
     /**
      * Get the connected dispatcher filters.
      *
-     * @return array
+     * @return \Cake\Routing\DispatcherFilter[]
      */
     public static function filters()
     {

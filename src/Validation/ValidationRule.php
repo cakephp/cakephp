@@ -135,7 +135,7 @@ class ValidationRule
 
         if ($this->_pass) {
             $args = array_merge([$value], $this->_pass, [$context]);
-            $result = call_user_func_array($callable, $args);
+            $result = $callable(...$args);
         } else {
             $result = $callable($value, $context);
         }

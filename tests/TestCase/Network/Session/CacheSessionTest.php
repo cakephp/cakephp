@@ -17,8 +17,6 @@
 namespace Cake\Test\TestCase\Network\Session;
 
 use Cake\Cache\Cache;
-use Cake\Core\Configure;
-use Cake\Network\Session;
 use Cake\Network\Session\CacheSession;
 use Cake\TestSuite\TestCase;
 

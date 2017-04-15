@@ -32,8 +32,7 @@ class PDOStatement extends StatementDecorator
      */
     public function __construct(Statement $statement = null, $driver = null)
     {
-        $this->_statement = $statement;
-        $this->_driver = $driver;
+        parent::__construct($statement, $driver);
     }
 
     /**

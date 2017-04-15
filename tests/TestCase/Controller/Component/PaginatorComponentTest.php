@@ -19,8 +19,8 @@ use Cake\Controller\Component\PaginatorComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\Http\ServerRequest;
 use Cake\Network\Exception\NotFoundException;
-use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -67,7 +67,7 @@ class PaginatorComponentTest extends TestCase
 
         Configure::write('App.namespace', 'TestApp');
 
-        $this->request = new Request('controller_posts/index');
+        $this->request = new ServerRequest('controller_posts/index');
         $this->request->params['pass'] = [];
         $controller = new Controller($this->request);
         $registry = new ComponentRegistry($controller);
@@ -344,7 +344,6 @@ class PaginatorComponentTest extends TestCase
         ];
         $this->assertEquals($expected, $result);
 
-
         $settings = [
             'page' => 1,
             'limit' => 20,
@@ -480,8 +479,8 @@ class PaginatorComponentTest extends TestCase
         $result = $this->Paginator->mergeOptions('Post', $settings);
         $expected = [
             'page' => 1,
-            'limit' => 200,
-            'maxLimit' => 200,
+            'limit' => 100,
+            'maxLimit' => 100,
             'paramType' => 'named',
             'whitelist' => ['limit', 'sort', 'page', 'direction']
         ];
@@ -494,9 +493,57 @@ class PaginatorComponentTest extends TestCase
         $result = $this->Paginator->mergeOptions('Post', $settings);
         $expected = [
             'page' => 1,
-            'limit' => 20,
+            'limit' => 10,
             'maxLimit' => 10,
             'paramType' => 'named',
+            'whitelist' => ['limit', 'sort', 'page', 'direction']
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * test getDefaults with limit > maxLimit in code.
+     *
+     * @return void
+     */
+    public function testGetDefaultMaxLimit()
+    {
+        $settings = [
+            'page' => 1,
+            'limit' => 2,
+            'maxLimit' => 10,
+            'order' => [
+                'Users.username' => 'asc'
+            ],
+        ];
+        $result = $this->Paginator->mergeOptions('Post', $settings);
+        $expected = [
+            'page' => 1,
+            'limit' => 2,
+            'maxLimit' => 10,
+            'order' => [
+                'Users.username' => 'asc'
+            ],
+            'whitelist' => ['limit', 'sort', 'page', 'direction']
+        ];
+        $this->assertEquals($expected, $result);
+
+        $settings = [
+            'page' => 1,
+            'limit' => 100,
+            'maxLimit' => 10,
+            'order' => [
+                'Users.username' => 'asc'
+            ],
+        ];
+        $result = $this->Paginator->mergeOptions('Post', $settings);
+        $expected = [
+            'page' => 1,
+            'limit' => 10,
+            'maxLimit' => 10,
+            'order' => [
+                'Users.username' => 'asc'
+            ],
             'whitelist' => ['limit', 'sort', 'page', 'direction']
         ];
         $this->assertEquals($expected, $result);

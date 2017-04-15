@@ -14,7 +14,6 @@
  */
 namespace Cake\Http;
 
-use Cake\Network\Request as CakeRequest;
 use Cake\Utility\Hash;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 
@@ -28,6 +27,7 @@ use Psr\Http\Message\ServerRequestInterface as PsrRequest;
  * request object.
  *
  * @internal
+ * @deprecated 3.4.0 No longer used. Will be removed in 4.0.0
  */
 class RequestTransformer
 {
@@ -35,12 +35,17 @@ class RequestTransformer
      * Transform a PSR7 request into a CakePHP one.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The PSR7 request.
-     * @return \Cake\Network\Request The transformed request.
+     * @return \Cake\Http\ServerRequest The transformed request.
      */
     public static function toCake(PsrRequest $request)
     {
         $post = $request->getParsedBody();
-        $server = $request->getServerParams();
+        $headers = [];
+        foreach ($request->getHeaders() as $k => $value) {
+            $name = sprintf('HTTP_%s', strtoupper(str_replace('-', '_', $k)));
+            $headers[$name] = implode(',', $value);
+        }
+        $server = $headers + $request->getServerParams();
 
         $files = static::getFiles($request);
         if (!empty($files)) {
@@ -50,7 +55,7 @@ class RequestTransformer
         $input = $request->getBody()->getContents();
         $input = $input === '' ? null : $input;
 
-        return new CakeRequest([
+        return new ServerRequest([
             'query' => $request->getQueryParams(),
             'post' => $post,
             'cookies' => $request->getCookieParams(),

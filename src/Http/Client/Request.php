@@ -27,7 +27,6 @@ use Zend\Diactoros\Stream;
  */
 class Request extends Message implements RequestInterface
 {
-    use MessageTrait;
     use RequestTrait;
 
     /**
@@ -254,3 +253,6 @@ class Request extends Message implements RequestInterface
         return $this;
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Http\Client\Request', 'Cake\Network\Http\Request');

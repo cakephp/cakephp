@@ -15,14 +15,14 @@
 namespace Cake\View;
 
 use Cake\Event\EventManager;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use RuntimeException;
 
 /**
  * Parent class for view classes generating serialized outputs like JsonView and XmlView.
  */
-class SerializedView extends View
+abstract class SerializedView extends View
 {
 
     /**
@@ -35,13 +35,13 @@ class SerializedView extends View
     /**
      * Constructor
      *
-     * @param \Cake\Network\Request|null $request Request instance.
-     * @param \Cake\Network\Response|null $response Response instance.
+     * @param \Cake\Http\ServerRequest|null $request Request instance.
+     * @param \Cake\Http\Response|null $response Response instance.
      * @param \Cake\Event\EventManager|null $eventManager EventManager instance.
      * @param array $viewOptions An array of view options
      */
     public function __construct(
-        Request $request = null,
+        ServerRequest $request = null,
         Response $response = null,
         EventManager $eventManager = null,
         array $viewOptions = []
@@ -66,6 +66,15 @@ class SerializedView extends View
     }
 
     /**
+     * Serialize view vars.
+     *
+     * @param array|string $serialize The name(s) of the view variable(s) that
+     *   need(s) to be serialized
+     * @return string The serialized data
+     */
+    abstract protected function _serialize($serialize);
+
+    /**
      * Render view template or return serialized data.
      *
      * ### Special parameters
@@ -74,7 +83,7 @@ class SerializedView extends View
      *   names. If true all view variables will be serialized. If unset normal
      *   view template will be rendered.
      *
-     * @param string|null $view The view being rendered.
+     * @param string|bool|null $view The view being rendered.
      * @param string|null $layout The layout being rendered.
      * @return string|null The rendered view.
      */

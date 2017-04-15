@@ -68,8 +68,8 @@ class ComponentTest extends TestCase
 
         $this->assertInstanceOf(OrangeComponent::class, $Apple->Orange, 'class is wrong');
         $this->assertInstanceOf(BananaComponent::class, $Apple->Orange->Banana, 'class is wrong');
-        $this->assertTrue(empty($Apple->Session));
-        $this->assertTrue(empty($Apple->Orange->Session));
+        $this->assertEmpty($Apple->Session);
+        $this->assertEmpty($Apple->Orange->Session);
     }
 
     /**

@@ -67,8 +67,8 @@ class ValueBinder
     public function placeholder($token)
     {
         $number = $this->_bindingsCount++;
-        if ($token[0] !== ':' || $token !== '?') {
-            $token = sprintf(':c%s', $number);
+        if ($token[0] !== ':' && $token !== '?') {
+            $token = sprintf(':%s%s', $token, $number);
         }
 
         return $token;
@@ -86,14 +86,13 @@ class ValueBinder
     {
         $placeholders = [];
         foreach ($values as $k => $value) {
-            $param = ":c" . $this->_bindingsCount;
+            $param = $this->placeholder('c');
             $this->_bindings[$param] = [
                 'value' => $value,
                 'type' => $type,
                 'placeholder' => substr($param, 1),
             ];
             $placeholders[$k] = $param;
-            $this->_bindingsCount++;
         }
 
         return $placeholders;
@@ -143,7 +142,7 @@ class ValueBinder
         if (empty($bindings)) {
             return;
         }
-        $params = $types = [];
+
         foreach ($bindings as $b) {
             $statement->bindValue($b['placeholder'], $b['value'], $b['type']);
         }

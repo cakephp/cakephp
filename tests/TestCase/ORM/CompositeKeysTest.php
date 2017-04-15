@@ -34,7 +34,7 @@ class OpenArticleEntity extends Entity
 }
 
 /**
- * Integration tetss for table operations involving composite keys
+ * Integration tests for table operations involving composite keys
  */
 class CompositeKeyTest extends TestCase
 {
@@ -302,7 +302,7 @@ class CompositeKeyTest extends TestCase
     }
 
     /**
-     * Tests loding belongsTo with composite keys
+     * Tests loading belongsTo with composite keys
      *
      * @dataProvider strategiesProviderBelongsTo
      * @return void
@@ -672,7 +672,7 @@ class CompositeKeyTest extends TestCase
     }
 
     /**
-     * Tets that loadInto() is capable of handling composite primary keys
+     * Tests that loadInto() is capable of handling composite primary keys
      *
      * @return void
      */
@@ -694,8 +694,8 @@ class CompositeKeyTest extends TestCase
     }
 
     /**
-     * Tets that loadInto() is capable of handling composite primary keys
-     * when loading belongsTo assocaitions
+     * Tests that loadInto() is capable of handling composite primary keys
+     * when loading belongsTo associations
      *
      * @return void
      */
@@ -716,7 +716,7 @@ class CompositeKeyTest extends TestCase
     }
 
     /**
-     * Tets that loadInto() is capable of handling composite primary keys
+     * Tests that loadInto() is capable of handling composite primary keys
      * when loading into multiple entities
      *
      * @return void
@@ -749,7 +749,7 @@ class CompositeKeyTest extends TestCase
     {
         $this->skipIf(
             $this->connection->driver() instanceof \Cake\Database\Driver\Sqlite,
-            'SQLite does not support the requrirements of this test.'
+            'SQLite does not support the requirements of this test.'
         );
     }
 }

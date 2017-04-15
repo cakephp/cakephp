@@ -19,7 +19,7 @@ class CakesController extends Controller
     /**
      * index method
      *
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     public function index()
     {
@@ -42,7 +42,7 @@ class CakesController extends Controller
     /**
      * invalid method
      *
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     public function invalid()
     {

@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\ConnectionManager;
+use Cake\Event\Event;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
@@ -74,6 +75,22 @@ class BelongsToManyTest extends TestCase
     {
         parent::tearDown();
         TableRegistry::clear();
+    }
+
+    /**
+     * Tests that foreignKey() returns the correct configured value
+     *
+     * @return void
+     */
+    public function testForeignKey()
+    {
+        $assoc = new BelongsToMany('Test', [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag
+        ]);
+        $this->assertEquals('article_id', $assoc->foreignKey());
+        $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
+        $this->assertEquals('another_key', $assoc->foreignKey());
     }
 
     /**
@@ -180,7 +197,7 @@ class BelongsToManyTest extends TestCase
     public function testJunctionConnection()
     {
         $mock = $this->getMockBuilder('Cake\Database\Connection')
-                ->setMethods(['driver'])
+                ->setMethods(['setDriver'])
                 ->setConstructorArgs(['name' => 'other_source'])
                 ->getMock();
         ConnectionManager::config('other_source', $mock);
@@ -191,7 +208,7 @@ class BelongsToManyTest extends TestCase
             'targetTable' => $this->tag
         ]);
         $junction = $assoc->junction();
-        $this->assertSame($mock, $junction->connection());
+        $this->assertSame($mock, $junction->getConnection());
         ConnectionManager::drop('other_source');
     }
 
@@ -390,7 +407,7 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
-     * Test liking entities having a non persited target entity
+     * Test liking entities having a non persisted target entity
      *
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Cannot link not persisted entities
@@ -462,7 +479,7 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
-     * Test liking entities having a non persited source entity
+     * Test liking entities having a non persisted source entity
      *
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Source entity needs to be persisted before proceeding
@@ -482,7 +499,7 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
-     * Test liking entities having a non persited target entity
+     * Test liking entities having a non persisted target entity
      *
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Cannot link not persisted entities
@@ -695,7 +712,7 @@ class BelongsToManyTest extends TestCase
     {
         $articles = TableRegistry::get('Articles');
         $tags = TableRegistry::get('Tags');
-        $tags->eventManager()->on('Model.buildRules', function ($event, $rules) {
+        $tags->eventManager()->on('Model.buildRules', function (Event $event, $rules) {
             $rules->add(function () {
                 return false;
             }, 'rule', ['errorField' => 'name', 'message' => 'Bad data']);
@@ -929,7 +946,7 @@ class BelongsToManyTest extends TestCase
             'targetTable' => $this->tag
         ]);
         $this->assertEquals('tag_id', $assoc->targetForeignKey());
-        $assoc->targetForeignKey('another_key');
+        $this->assertEquals('another_key', $assoc->targetForeignKey('another_key'));
         $this->assertEquals('another_key', $assoc->targetForeignKey());
 
         $assoc = new BelongsToMany('Test', [
@@ -941,7 +958,7 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
-     * Tests that custom foreignKeys are properly trasmitted to involved associations
+     * Tests that custom foreignKeys are properly transmitted to involved associations
      * when they are customized
      *
      * @return void
@@ -1039,8 +1056,25 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Tests that eager loading requires association keys
+     *
+     * @expectedException RuntimeException
+     * @expectedExceptionMessage The "tags" table does not define a primary key
+     * @return void
+     */
+    public function testEagerLoadingRequiresPrimaryKey()
+    {
+        $table = TableRegistry::get('Articles');
+        $tags = TableRegistry::get('Tags');
+        $tags->schema()->dropConstraint('primary');
+
+        $table->belongsToMany('Tags');
+        $table->find()->contain('Tags')->first();
+    }
+
+    /**
      * Tests that fetching belongsToMany association will not force
-     * all fields being returned, but intead will honor the select() clause
+     * all fields being returned, but instead will honor the select() clause
      *
      * @see https://github.com/cakephp/cakephp/issues/7916
      * @return void

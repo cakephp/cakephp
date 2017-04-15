@@ -1086,7 +1086,7 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests it is possible to check for validation sets for a field using an array inteface
+     * Tests it is possible to check for validation sets for a field using an array interface
      *
      * @return void
      */
@@ -1102,7 +1102,7 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests it is possible to set validation rules for a field using an array inteface
+     * Tests it is possible to set validation rules for a field using an array interface
      *
      * @return void
      */
@@ -1123,7 +1123,7 @@ class ValidatorTest extends TestCase
      *
      * @return void
      */
-    public function testArrayAccessUset()
+    public function testArrayAccessUnset()
     {
         $validator = new Validator;
         $validator
@@ -1153,7 +1153,7 @@ class ValidatorTest extends TestCase
      *
      * @return void
      */
-    public function testAddMulitple()
+    public function testAddMultiple()
     {
         $validator = new Validator;
         $validator->add('title', [
@@ -1431,7 +1431,6 @@ class ValidatorTest extends TestCase
         $this->assertNotEmpty($validator->errors(['username' => 'not a date']));
     }
 
-
     /**
      * Tests the dateTime proxy method
      *
@@ -1503,7 +1502,6 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'ip');
         $this->assertNotEmpty($validator->errors(['username' => 'not ip']));
 
-
         $this->assertProxyMethod($validator, 'ipv4', null, ['ipv4'], 'ip');
         $this->assertNotEmpty($validator->errors(['username' => 'not ip']));
 
@@ -1524,6 +1522,18 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the minLengthBytes proxy method
+     *
+     * @return void
+     */
+    public function testMinLengthBytes()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'minLengthBytes', 11, [11]);
+        $this->assertNotEmpty($validator->errors(['username' => 'ÆΔΩЖÇ']));
+    }
+
+    /**
      * Tests the maxLength proxy method
      *
      * @return void
@@ -1533,6 +1543,18 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'maxLength', 2, [2]);
         $this->assertNotEmpty($validator->errors(['username' => 'aaa']));
+    }
+
+    /**
+     * Tests the maxLengthBytes proxy method
+     *
+     * @return void
+     */
+    public function testMaxLengthBytes()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'maxLengthBytes', 9, [9]);
+        $this->assertNotEmpty($validator->errors(['username' => 'ÆΔΩЖÇ']));
     }
 
     /**
@@ -1766,9 +1788,18 @@ class ValidatorTest extends TestCase
             $validator,
             'multipleOptions',
             ['min' => 1, 'caseInsensitive' => true],
+            [['min' => 1], true],
+            'multiple'
+        );
+
+        $this->assertProxyMethod(
+            $validator,
+            'multipleOptions',
+            ['min' => 1, 'caseInsensitive' => false],
             [['min' => 1], false],
             'multiple'
         );
+
         $this->assertNotEmpty($validator->errors(['username' => '']));
     }
 

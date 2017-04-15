@@ -470,19 +470,19 @@ class HashTest extends TestCase
     {
         $data = [];
         $result = Hash::maxDimensions($data);
-        $this->assertEquals(0, $result);
+        $this->assertSame(0, $result);
 
         $data = ['a', 'b'];
         $result = Hash::maxDimensions($data);
-        $this->assertEquals(1, $result);
+        $this->assertSame(1, $result);
 
         $data = ['1' => '1.1', '2', '3' => ['3.1' => '3.1.1']];
         $result = Hash::maxDimensions($data);
-        $this->assertEquals($result, 2);
+        $this->assertSame(2, $result);
 
         $data = ['1' => ['1.1' => '1.1.1'], '2', '3' => ['3.1' => ['3.1.1' => '3.1.1.1']]];
         $result = Hash::maxDimensions($data);
-        $this->assertEquals($result, 3);
+        $this->assertSame(3, $result);
 
         $data = [
             '1' => ['1.1' => '1.1.1'],
@@ -490,7 +490,7 @@ class HashTest extends TestCase
             '3' => ['3.1' => ['3.1.1' => '3.1.1.1']]
         ];
         $result = Hash::maxDimensions($data);
-        $this->assertEquals($result, 4);
+        $this->assertSame(4, $result);
 
         $data = [
            '1' => [
@@ -505,7 +505,14 @@ class HashTest extends TestCase
            '2' => ['2.1' => '2.1.1']
         ];
         $result = Hash::maxDimensions($data);
-        $this->assertEquals($result, 5);
+        $this->assertSame(5, $result);
+
+        $data = [
+           '1' => false,
+           '2' => ['2.1' => '2.1.1']
+        ];
+        $result = Hash::maxDimensions($data);
+        $this->assertSame(2, $result);
     }
 
     /**
@@ -850,8 +857,21 @@ class HashTest extends TestCase
      */
     public function testFilter()
     {
-        $result = Hash::filter(['0', false, true, 0, ['one thing', 'I can tell you', 'is you got to be', false]]);
-        $expected = ['0', 2 => true, 3 => 0, 4 => ['one thing', 'I can tell you', 'is you got to be']];
+        $result = Hash::filter([
+            '0',
+            false,
+            true,
+            0,
+            0.0,
+            ['one thing', 'I can tell you', 'is you got to be', false]
+        ]);
+        $expected = [
+            0 => '0',
+            2 => true,
+            3 => 0,
+            4 => 0.0,
+            5 => ['one thing', 'I can tell you', 'is you got to be']
+        ];
         $this->assertSame($expected, $result);
 
         $result = Hash::filter([1, [false]]);
@@ -1809,7 +1829,6 @@ class HashTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-
     /**
      * test sorting with string ignoring case.
      *
@@ -2168,7 +2187,7 @@ class HashTest extends TestCase
     public function testCombine()
     {
         $result = Hash::combine([], '{n}.User.id', '{n}.User.Data');
-        $this->assertTrue(empty($result));
+        $this->assertEmpty($result);
 
         $a = static::userData();
 

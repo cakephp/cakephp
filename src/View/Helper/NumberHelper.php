@@ -89,7 +89,7 @@ class NumberHelper extends Helper
      *
      * @param float $number A floating point number.
      * @param int $precision The precision of the returned number.
-     * @return float Formatted float.
+     * @return string Formatted float.
      * @see \Cake\I18n\Number::precision()
      * @link http://book.cakephp.org/3.0/en/views/helpers/number.html#formatting-floating-point-numbers
      */

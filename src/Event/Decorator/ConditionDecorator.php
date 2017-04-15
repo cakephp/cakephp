@@ -57,7 +57,7 @@ class ConditionDecorator extends AbstractDecorator
      * Evaluates the filter conditions
      *
      * @param string $condition Condition type
-     * @param \Cake\Event\Event $event Event objekt
+     * @param \Cake\Event\Event $event Event object
      * @return bool
      */
     protected function _evaluateCondition($condition, Event $event)

@@ -92,8 +92,8 @@ class ExistsIn
 
         $source = $target = $this->_repository;
         $isAssociation = $target instanceof Association;
-        $bindingKey = $isAssociation ? (array)$target->bindingKey() : (array)$target->primaryKey();
-        $realTarget = $isAssociation ? $target->target() : $target;
+        $bindingKey = $isAssociation ? (array)$target->getBindingKey() : (array)$target->getPrimaryKey();
+        $realTarget = $isAssociation ? $target->getTarget() : $target;
 
         if (!empty($options['_sourceTable']) && $realTarget === $options['_sourceTable']) {
             return true;
@@ -103,7 +103,7 @@ class ExistsIn
             $source = $options['repository'];
         }
         if ($source instanceof Association) {
-            $source = $source->source();
+            $source = $source->getSource();
         }
 
         if (!$entity->extract($this->_fields, true)) {
@@ -115,7 +115,7 @@ class ExistsIn
         }
 
         if ($this->_options['allowNullableNulls']) {
-            $schema = $source->schema();
+            $schema = $source->getSchema();
             foreach ($this->_fields as $i => $field) {
                 if ($schema->column($field) && $schema->isNullable($field) && $entity->get($field) === null) {
                     unset($bindingKey[$i]);
@@ -146,7 +146,7 @@ class ExistsIn
     protected function _fieldsAreNull($entity, $source)
     {
         $nulls = 0;
-        $schema = $source->schema();
+        $schema = $source->getSchema();
         foreach ($this->_fields as $field) {
             if ($schema->column($field) && $schema->isNullable($field) && $entity->get($field) === null) {
                 $nulls++;

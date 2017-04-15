@@ -193,6 +193,21 @@ class InflectedRouteTest extends TestCase
     }
 
     /**
+     * Test that parse() checks methods.
+     *
+     * @return void
+     */
+    public function testParseMethodMatch()
+    {
+        $route = new InflectedRoute('/:controller/:action', ['_method' => 'POST']);
+        $this->assertFalse($route->parse('/blog_posts/add_new', 'GET'));
+
+        $result = $route->parse('/blog_posts/add_new', 'POST');
+        $this->assertEquals('BlogPosts', $result['controller']);
+        $this->assertEquals('add_new', $result['action']);
+    }
+
+    /**
      * @return void
      */
     public function testMatchThenParse()

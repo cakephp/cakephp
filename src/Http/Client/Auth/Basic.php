@@ -72,3 +72,6 @@ class Basic
         return 'Basic ' . base64_encode($user . ':' . $pass);
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Http\Client\Auth\Basic', 'Cake\Network\Http\Auth\Basic');

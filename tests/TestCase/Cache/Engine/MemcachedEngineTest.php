@@ -192,10 +192,8 @@ class MemcachedEngineTest extends TestCase
             'serialize' => 'invalid_serializer'
         ];
 
-        $this->setExpectedException(
-            'InvalidArgumentException',
-            'invalid_serializer is not a valid serializer engine for Memcached'
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('invalid_serializer is not a valid serializer engine for Memcached');
         $Memcached->init($config);
     }
 
@@ -310,10 +308,8 @@ class MemcachedEngineTest extends TestCase
             'serialize' => 'json'
         ];
 
-        $this->setExpectedException(
-            'InvalidArgumentException',
-            'Memcached extension is not compiled with json support'
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Memcached extension is not compiled with json support');
         $Memcached->init($config);
     }
 
@@ -337,10 +333,8 @@ class MemcachedEngineTest extends TestCase
             'serialize' => 'msgpack'
         ];
 
-        $this->setExpectedException(
-            'InvalidArgumentException',
-            'msgpack is not a valid serializer engine for Memcached'
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('msgpack is not a valid serializer engine for Memcached');
         $Memcached->init($config);
     }
 
@@ -364,10 +358,8 @@ class MemcachedEngineTest extends TestCase
             'serialize' => 'igbinary'
         ];
 
-        $this->setExpectedException(
-            'InvalidArgumentException',
-            'Memcached extension is not compiled with igbinary support'
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Memcached extension is not compiled with igbinary support');
         $Memcached->init($config);
     }
 
@@ -771,12 +763,12 @@ class MemcachedEngineTest extends TestCase
     {
         Cache::config('long_memcached', [
             'engine' => 'Memcached',
-            'duration' => '+2 seconds',
+            'duration' => '+3 seconds',
             'servers' => ['127.0.0.1:11211'],
         ]);
         Cache::config('short_memcached', [
             'engine' => 'Memcached',
-            'duration' => '+1 seconds',
+            'duration' => '+2 seconds',
             'servers' => ['127.0.0.1:11211'],
         ]);
 
@@ -786,10 +778,10 @@ class MemcachedEngineTest extends TestCase
         $this->assertEquals('yay', Cache::read('duration_test', 'long_memcached'), 'Value was not read %s');
         $this->assertEquals('boo', Cache::read('short_duration_test', 'short_memcached'), 'Value was not read %s');
 
-        sleep(1);
+        usleep(500000);
         $this->assertEquals('yay', Cache::read('duration_test', 'long_memcached'), 'Value was not read %s');
 
-        sleep(2);
+        usleep(3000000);
         $this->assertFalse(Cache::read('short_duration_test', 'short_memcached'), 'Cache was not invalidated %s');
         $this->assertFalse(Cache::read('duration_test', 'long_memcached'), 'Value did not expire %s');
 
@@ -874,7 +866,7 @@ class MemcachedEngineTest extends TestCase
     }
 
     /**
-     * Tests that deleteing from a groups-enabled config is possible
+     * Tests that deleting from a groups-enabled config is possible
      *
      * @return void
      */

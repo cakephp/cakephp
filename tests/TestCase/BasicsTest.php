@@ -16,9 +16,8 @@
  */
 namespace Cake\Test\TestCase;
 
-use Cake\Core\Configure;
 use Cake\Event\EventManager;
-use Cake\Network\Response;
+use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
 
 require_once CAKE . 'basics.php';
@@ -576,7 +575,10 @@ EXPECTED;
      */
     public function testEventManagerReset1()
     {
-        return EventManager::instance();
+        $eventManager = EventManager::instance();
+        $this->assertInstanceOf('Cake\Event\EventManager', $eventManager);
+
+        return $eventManager;
     }
 
     /**
@@ -587,6 +589,7 @@ EXPECTED;
      */
     public function testEventManagerReset2($prevEventManager)
     {
+        $this->assertInstanceOf('Cake\Event\EventManager', $prevEventManager);
         $this->assertNotSame($prevEventManager, EventManager::instance());
     }
 }

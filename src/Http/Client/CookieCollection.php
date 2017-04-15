@@ -92,15 +92,15 @@ class CookieCollection
                 continue;
             }
             $leadingDot = $cookie['domain'][0] === '.';
-            if (!$leadingDot && $host !== $cookie['domain']) {
+            if ($leadingDot) {
+                $cookie['domain'] = ltrim($cookie['domain'], '.');
+            }
+
+            $pattern = '/' . preg_quote(substr($cookie['domain'], 1), '/') . '$/';
+            if (!preg_match($pattern, $host)) {
                 continue;
             }
-            if ($leadingDot) {
-                $pattern = '/' . preg_quote(substr($cookie['domain'], 1), '/') . '$/';
-                if (!preg_match($pattern, $host)) {
-                    continue;
-                }
-            }
+
             $out[$cookie['name']] = $cookie['value'];
         }
 
@@ -117,3 +117,6 @@ class CookieCollection
         return array_values($this->_cookies);
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Http\Client\CookieCollection', 'Cake\Network\Http\CookieCollection');

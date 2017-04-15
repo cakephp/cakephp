@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\Http;
 use Cake\Core\Configure;
 use Cake\Http\RequestTransformer;
 use Cake\Http\ServerRequestFactory;
-use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Stream;
@@ -87,12 +86,18 @@ class RequestTransformerTest extends TestCase
             'SERVER_PORT' => 443,
         ];
         $psr = ServerRequestFactory::fromGlobals($server);
+        $psr = $psr->withHeader('Api-Token', 'abc123')
+            ->withAddedHeader('X-thing', 'one')
+            ->withAddedHeader('X-thing', 'two');
+
         $cake = RequestTransformer::toCake($psr);
         $this->assertEmpty($cake->query);
         $this->assertEmpty($cake->data);
         $this->assertEmpty($cake->cookie);
 
         $this->assertSame('application/json', $cake->header('accept'));
+        $this->assertSame('abc123', $cake->header('Api-Token'));
+        $this->assertSame('one,two', $cake->header('X-thing'));
         $this->assertSame('PATCH', $cake->method());
         $this->assertSame('https', $cake->scheme());
         $this->assertSame(443, $cake->port());

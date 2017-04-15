@@ -2,7 +2,6 @@ language: php
 
 php:
   - 7.0
-  - 5.5
   - 5.6
   - 7.1
 
@@ -10,7 +9,7 @@ dist: trusty
 
 env:
   matrix:
-    - DB=mysql db_dsn='mysql://root@0.0.0.0/cakephp_test'
+    - DB=mysql db_dsn='mysql://root@127.0.0.1/cakephp_test'
     - DB=pgsql db_dsn='postgres://postgres@127.0.0.1/cakephp_test'
     - DB=sqlite db_dsn='sqlite:///:memory:'
   global:
@@ -20,6 +19,7 @@ services:
   - memcached
   - redis-server
   - postgresql
+  - mysql
 
 addons:
   postgresql: "9.4"
@@ -36,21 +36,24 @@ matrix:
     - php: 7.0
       env: PHPCS=1 DEFAULT=0
 
-    - php: hhvm
-      env: HHVM=1 DB=sqlite db_dsn='sqlite:///:memory:'
+    - php: 7.0
+      env: PHPCS=3 DEFAULT=0
 
-    - php: hhvm
-      env: HHVM=1 DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
+    - php: 7.0
+      env: PHPSTAN=1 DEFAULT=0
+
+    - php: 7.1
+      env: PHPSTAN=1 DEFAULT=0
 
   allow_failures:
-    - php: hhvm
+    - php: 7.0
+      env: PHPCS=3 DEFAULT=0
 
 before_install:
-  - if [ $HHVM != 1 && $TRAVIS_PHP_VERSION != 7.* ]; then phpenv config-rm xdebug.ini; fi
+  - if [ $TRAVIS_PHP_VERSION != 7.0 ]; then phpenv config-rm xdebug.ini; fi
 
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
 
-  - if [ $DB = 'mysql' ]; then sudo apt-get -y install mysql-server; fi
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test2;'; fi
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test3;'; fi
@@ -59,26 +62,28 @@ before_install:
   - if [ $DB = 'pgsql' ]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi
   - if [ $DB = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi
 
-  - if [[ $TRAVIS_PHP_VERSION != 'hhvm' ]] ; then pecl channel-update pecl.php.net; fi;
+  - if [[ $DEFAULT = 1 || $PHPSTAN = 1 ]] ; then pecl channel-update pecl.php.net; fi;
 
-  - if [[ $TRAVIS_PHP_VERSION != 'hhvm' ]] ; then echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
-  - if [[ $TRAVIS_PHP_VERSION != 'hhvm' ]] ; then echo 'extension = redis.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
-  - if [[ $TRAVIS_PHP_VERSION != 'hhvm' && $TRAVIS_PHP_VERSION != 7.1 ]] ; then echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
-  - if [[ $TRAVIS_PHP_VERSION != 'hhvm' && $TRAVIS_PHP_VERSION != 7.1 ]] ; then echo 'apc.enable_cli = 1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
-  - if [[ $TRAVIS_PHP_VERSION =~ 5.[56] ]] ; then echo yes | pecl install apcu-4.0.10; fi
+  - if [[ $DEFAULT = 1 || $PHPSTAN = 1 ]] ; then echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
+  - if [[ $DEFAULT = 1 || $PHPSTAN = 1 ]] ; then echo 'extension = redis.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
+  - if [[ $DEFAULT = 1 || $PHPSTAN = 1 ]] ; then echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
+  - if [[ $DEFAULT = 1 || $PHPSTAN = 1 ]] ; then echo 'apc.enable_cli = 1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
+  - if [[ $TRAVIS_PHP_VERSION = 5.6 ]] ; then echo yes | pecl install apcu-4.0.10; fi
   - if [[ $TRAVIS_PHP_VERSION = 7.0 ]] ; then echo yes | pecl install channel://pecl.php.net/apcu-5.1.5; fi
-
-  - phpenv rehash
-  - set +H
+  - if [[ $TRAVIS_PHP_VERSION = 5.6 && $DB = 'mysql' ]] ; then wget http://xcache.lighttpd.net/pub/Releases/3.2.0/xcache-3.2.0.tar.gz; tar xf xcache-3.2.0.tar.gz; pushd xcache-3.2.0; phpize; ./configure; make; NO_INTERACTION=1 make test; make install; popd;printf "extension=xcache.so\nxcache.size=64M\nxcache.var_size=16M\nxcache.test=On" > ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
 
 before_script:
   - composer install --prefer-dist --no-interaction
+  - if [[ $PHPCS = 3 ]]; then composer remove --dev cakephp/cakephp-codesniffer; fi
+  - if [[ $PHPCS = 3 ]]; then composer require --dev squizlabs/php_codesniffer='^3.0@dev' cakephp/cakephp-codesniffer='^3.0@dev'; fi
 
 script:
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.0 ]]; then export CODECOVERAGE=1; vendor/bin/phpunit --coverage-clover=clover.xml; fi
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.0 ]]; then vendor/bin/phpunit; fi
 
-  - if [[ $PHPCS = 1 ]]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi
+  - if [[ $PHPCS = 1 ]]; then composer cs-check; fi
+  - if [[ $PHPCS = 3 ]]; then vendor/bin/phpcs -p -s --extensions=php ./src ./tests; fi
+  - if [[ $PHPSTAN = 1 ]]; then composer require --dev phpstan/phpstan:^0.6 && vendor/bin/phpstan analyse -c phpstan.neon -l 1 src; fi
 
 after_success:
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.0 ]]; then bash <(curl -s https://codecov.io/bash); fi

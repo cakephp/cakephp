@@ -72,7 +72,6 @@ class BoolTypeTest extends TestCase
         $this->type->toDatabase([1, 2], $this->driver);
     }
 
-
     /**
      * Tests that passing an invalid value will throw an exception
      *
@@ -85,7 +84,7 @@ class BoolTypeTest extends TestCase
     }
 
     /**
-     * Test convertring string booleans to PHP values.
+     * Test converting string booleans to PHP values.
      *
      * @return void
      */
@@ -128,7 +127,7 @@ class BoolTypeTest extends TestCase
     }
 
     /**
-     * Test convertring booleans to PDO types.
+     * Test converting booleans to PDO types.
      *
      * @return void
      */

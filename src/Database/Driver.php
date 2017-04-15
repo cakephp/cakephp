@@ -63,7 +63,7 @@ abstract class Driver
         $config += $this->_baseConfig;
         $this->_config = $config;
         if (!empty($config['quoteIdentifiers'])) {
-            $this->autoQuoting(true);
+            $this->enableAutoQuoting();
         }
     }
 
@@ -86,7 +86,7 @@ abstract class Driver
      * If first argument is passed,
      *
      * @param null|\PDO $connection The connection object
-     * @return void
+     * @return \Cake\Database\Connection
      */
     abstract public function connection($connection = null);
 
@@ -258,7 +258,7 @@ abstract class Driver
             is_numeric($value) && strpos($value, ',') === false &&
             $value[0] !== '0' && strpos($value, 'e') === false)
         ) {
-            return $value;
+            return (string)$value;
         }
 
         return $this->_connection->quote($value, PDO::PARAM_STR);
@@ -297,22 +297,48 @@ abstract class Driver
     }
 
     /**
+     * Sets whether or not this driver should automatically quote identifiers
+     * in queries.
+     *
+     * @param bool $enable Whether to enable auto quoting
+     * @return $this
+     */
+    public function enableAutoQuoting($enable = true)
+    {
+        $this->_autoQuoting = (bool)$enable;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether or not this driver should automatically quote identifiers
+     * in queries
+     *
+     * @return bool
+     */
+    public function isAutoQuotingEnabled()
+    {
+        return $this->_autoQuoting;
+    }
+
+    /**
      * Returns whether or not this driver should automatically quote identifiers
      * in queries
      *
      * If called with a boolean argument, it will toggle the auto quoting setting
      * to the passed value
      *
-     * @param bool|null $enable whether to enable auto quoting
+     * @deprecated 3.4.0 use enableAutoQuoting()/isAutoQuotingEnabled() instead.
+     * @param bool|null $enable Whether to enable auto quoting
      * @return bool
      */
     public function autoQuoting($enable = null)
     {
-        if ($enable === null) {
-            return $this->_autoQuoting;
+        if ($enable !== null) {
+            $this->enableAutoQuoting($enable);
         }
 
-        return $this->_autoQuoting = (bool)$enable;
+        return $this->isAutoQuotingEnabled();
     }
 
     /**

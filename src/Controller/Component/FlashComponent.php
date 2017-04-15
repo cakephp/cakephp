@@ -47,7 +47,8 @@ class FlashComponent extends Component
         'key' => 'flash',
         'element' => 'default',
         'params' => [],
-        'clear' => false
+        'clear' => false,
+        'duplicate' => true
     ];
 
     /**
@@ -85,7 +86,7 @@ class FlashComponent extends Component
      */
     public function set($message, array $options = [])
     {
-        $options += $this->config();
+        $options += $this->getConfig();
 
         if ($message instanceof Exception) {
             if (!isset($options['params']['code'])) {
@@ -107,8 +108,16 @@ class FlashComponent extends Component
         }
 
         $messages = [];
-        if ($options['clear'] === false) {
+        if (!$options['clear']) {
             $messages = (array)$this->_session->read('Flash.' . $options['key']);
+        }
+
+        if (!$options['duplicate']) {
+            foreach ($messages as $existingMessage) {
+                if ($existingMessage['message'] === $message) {
+                    return;
+                }
+            }
         }
 
         $messages[] = [

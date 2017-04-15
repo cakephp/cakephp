@@ -30,7 +30,7 @@ trait TranslateTrait
      * it.
      *
      * @param string $language Language to return entity for.
-     * @return $this|\Cake\ORM\Entity
+     * @return $this|\Cake\Datasource\EntityInterface
      */
     public function translation($language)
     {
@@ -58,7 +58,7 @@ trait TranslateTrait
         }
 
         // Assume the user will modify any of the internal translations, helps with saving
-        $this->dirty('_translations', true);
+        $this->setDirty('_translations', true);
 
         return $i18n[$language];
     }

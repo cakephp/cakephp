@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\WeakPasswordHasher;
-use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 

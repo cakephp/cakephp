@@ -50,9 +50,9 @@ class Number
     /**
      * Default currency used by Number::currency()
      *
-     * @var string
+     * @var string|null
      */
-    protected static $_defaultCurrency;
+    protected static $_defaultCurrency = null;
 
     /**
      * Formats a number with a level of precision.

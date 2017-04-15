@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\View;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper;
@@ -43,20 +42,6 @@ class TestHelper extends Helper
      * @var array
      */
     public $helpers = ['Html', 'TestPlugin.OtherHelper'];
-
-    /**
-     * expose a method as public
-     *
-     * @param string $options
-     * @param string $exclude
-     * @param string $insertBefore
-     * @param string $insertAfter
-     * @return void
-     */
-    public function parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null)
-    {
-        return $this->_parseAttributes($options, $exclude, $insertBefore, $insertAfter);
-    }
 }
 
 /**
@@ -64,6 +49,11 @@ class TestHelper extends Helper
  */
 class HelperTest extends TestCase
 {
+
+    /**
+     * @var \Cake\View\View
+     */
+    public $View;
 
     /**
      * setUp method
@@ -76,8 +66,6 @@ class HelperTest extends TestCase
 
         Router::reload();
         $this->View = new View();
-        $this->Helper = new Helper($this->View);
-        $this->Helper->request = new Request();
     }
 
     /**
@@ -91,7 +79,7 @@ class HelperTest extends TestCase
         Configure::delete('Asset');
 
         Plugin::unload();
-        unset($this->Helper, $this->View);
+        unset($this->View);
     }
 
     /**
@@ -159,6 +147,17 @@ class HelperTest extends TestCase
 
         $resultA->testprop = 1;
         $this->assertEquals($resultA->testprop, $resultB->testprop);
+    }
+
+    /**
+     * test getting view instance
+     *
+     * @return void
+     */
+    public function testGetView()
+    {
+        $Helper = new TestHelper($this->View);
+        $this->assertSame($this->View, $Helper->getView());
     }
 
     /**

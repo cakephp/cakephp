@@ -44,7 +44,7 @@ class LocaleSelectorMiddleware
     }
 
     /**
-     * @param ServerRequestInterface $request  The request.
+     * @param ServerRequestInterface $request The request.
      * @param ResponseInterface $response The response.
      * @param callable $next The next middleware to call.
      * @return \Psr\Http\Message\ResponseInterface A response.

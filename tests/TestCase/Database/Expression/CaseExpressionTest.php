@@ -37,19 +37,19 @@ class CaseExpressionTest extends TestCase
         $expr2->eq('test2', 'false');
 
         $caseExpression = new CaseExpression($expr, 'foobar');
-        $expected = 'CASE WHEN test = :c0 THEN :c1 END';
+        $expected = 'CASE WHEN test = :c0 THEN :param1 END';
         $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
 
         $caseExpression->add($expr2);
-        $expected = 'CASE WHEN test = :c0 THEN :c1 WHEN test2 = :c2 THEN :c3 END';
+        $expected = 'CASE WHEN test = :c0 THEN :param1 WHEN test2 = :c2 THEN :param3 END';
         $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
 
         $caseExpression = new CaseExpression([$expr], ['foobar', 'else']);
-        $expected = 'CASE WHEN test = :c0 THEN :c1 ELSE :c2 END';
+        $expected = 'CASE WHEN test = :c0 THEN :param1 ELSE :param2 END';
         $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
 
         $caseExpression = new CaseExpression([$expr], ['foobar' => 'literal', 'else']);
-        $expected = 'CASE WHEN test = :c0 THEN foobar ELSE :c1 END';
+        $expected = 'CASE WHEN test = :c0 THEN foobar ELSE :param1 END';
         $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
     }
 
@@ -63,12 +63,12 @@ class CaseExpressionTest extends TestCase
         $expression = new QueryExpression();
         $expression->add(['id' => 'test']);
         $caseExpression = new CaseExpression([$expression], [0], ['integer']);
-        $expected = 'CASE WHEN id = :c0 THEN :c1 END';
+        $expected = 'CASE WHEN id = :c0 THEN :param1 END';
         $binder = new ValueBinder();
         $this->assertSame($expected, $caseExpression->sql($binder));
         $expected = [
             ':c0' => ['value' => 'test', 'type' => null, 'placeholder' => 'c0'],
-            ':c1' => ['value' => 0, 'type' => 'integer', 'placeholder' => 'c1'],
+            ':param1' => ['value' => 0, 'type' => 'integer', 'placeholder' => 'param1'],
         ];
         $this->assertEquals($expected, $binder->bindings());
     }

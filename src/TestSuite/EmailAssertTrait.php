@@ -46,14 +46,14 @@ trait EmailAssertTrait
     /**
      * Creates an email instance overriding its transport for testing purposes.
      *
-     * @param bool $new Tells if new instance should forcebly be created.
+     * @param bool $new Tells if new instance should forcibly be created.
      * @return \Cake\Mailer\Email
      */
     public function email($new = false)
     {
         if ($new || !$this->_email) {
             $this->_email = new Email();
-            $this->_email->profile(['transport' => 'debug'] + $this->_email->profile());
+            $this->_email->setProfile(['transport' => 'debug'] + $this->_email->getProfile());
         }
 
         return $this->_email;
@@ -135,7 +135,7 @@ trait EmailAssertTrait
      */
     public function assertEmailSubject($expected, $message = null)
     {
-        $result = $this->email()->subject();
+        $result = $this->email()->getSubject();
         $this->assertSame($expected, $result, $message);
     }
 
@@ -154,7 +154,7 @@ trait EmailAssertTrait
         }
 
         $expected = [$email => $name];
-        $result = $this->email()->from();
+        $result = $this->email()->getFrom();
         $this->assertSame($expected, $result, $message);
     }
 
@@ -173,7 +173,7 @@ trait EmailAssertTrait
         }
 
         $expected = [$email => $name];
-        $result = $this->email()->cc();
+        $result = $this->email()->getCc();
         $this->assertSame($expected, $result, $message);
     }
 
@@ -188,7 +188,7 @@ trait EmailAssertTrait
      */
     public function assertEmailCcContains($email, $name = null, $message = null)
     {
-        $result = $this->email()->cc();
+        $result = $this->email()->getCc();
         $this->assertNotEmpty($result[$email], $message);
         if ($name !== null) {
             $this->assertEquals($result[$email], $name, $message);
@@ -210,7 +210,7 @@ trait EmailAssertTrait
         }
 
         $expected = [$email => $name];
-        $result = $this->email()->bcc();
+        $result = $this->email()->getBcc();
         $this->assertSame($expected, $result, $message);
     }
 
@@ -225,7 +225,7 @@ trait EmailAssertTrait
      */
     public function assertEmailBccContains($email, $name = null, $message = null)
     {
-        $result = $this->email()->bcc();
+        $result = $this->email()->getBcc();
         $this->assertNotEmpty($result[$email], $message);
         if ($name !== null) {
             $this->assertEquals($result[$email], $name, $message);
@@ -248,7 +248,7 @@ trait EmailAssertTrait
         }
 
         $expected = [$email => $name];
-        $result = $this->email()->to();
+        $result = $this->email()->getTo();
         $this->assertSame($expected, $result, $message);
     }
 
@@ -263,7 +263,7 @@ trait EmailAssertTrait
      */
     public function assertEmailToContains($email, $name = null, $message = null)
     {
-        $result = $this->email()->to();
+        $result = $this->email()->getTo();
         $this->assertNotEmpty($result[$email], $message);
         if ($name !== null) {
             $this->assertEquals($result[$email], $name, $message);
@@ -281,7 +281,7 @@ trait EmailAssertTrait
      */
     public function assertEmailAttachmentsContains($filename, array $file = null, $message = null)
     {
-        $result = $this->email()->attachments();
+        $result = $this->email()->getAttachments();
         $this->assertNotEmpty($result[$filename], $message);
         if ($file === null) {
             return;

@@ -405,10 +405,6 @@ class EventManagerTest extends TestCase
      */
     public function testDispatchReturnValue()
     {
-        $this->skipIf(
-            version_compare(\PHPUnit_Runner_Version::id(), '3.7', '<'),
-            'These tests fail in PHPUnit 3.6'
-        );
         $manager = new EventManager;
         $listener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
             ->getMock();
@@ -425,6 +421,7 @@ class EventManagerTest extends TestCase
             ->method('listenerFunction')
             ->with($event);
         $manager->dispatch($event);
+        $this->assertEquals('something special', $event->result());
         $this->assertEquals('something special', $event->result);
     }
 
@@ -436,11 +433,6 @@ class EventManagerTest extends TestCase
      */
     public function testDispatchFalseStopsEvent()
     {
-        $this->skipIf(
-            version_compare(\PHPUnit_Runner_Version::id(), '3.7', '<'),
-            'These tests fail in PHPUnit 3.6'
-        );
-
         $manager = new EventManager();
         $listener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
             ->getMock();
@@ -684,10 +676,12 @@ class EventManagerTest extends TestCase
 
     /**
      * test callback
+     *
+     * @param Event $event
      */
-    public function onMyEvent($event)
+    public function onMyEvent(Event $event)
     {
-        $event->data['callback'] = 'ok';
+        $event->setData('callback', 'ok');
     }
 
     /**
@@ -698,11 +692,11 @@ class EventManagerTest extends TestCase
     public function testDispatchLocalHandledByGlobal()
     {
         $callback = [$this, 'onMyEvent'];
-        EventManager::instance()->attach($callback, 'my_event');
+        EventManager::instance()->on('my_event', $callback);
         $manager = new EventManager();
         $event = new Event('my_event', $manager);
         $manager->dispatch($event);
-        $this->assertEquals('ok', $event->data['callback']);
+        $this->assertEquals('ok', $event->data('callback'));
     }
 
     /**
@@ -715,10 +709,10 @@ class EventManagerTest extends TestCase
     public function testDispatchWithGlobalAndLocalEvents()
     {
         $listener = new CustomTestEventListenerInterface();
-        EventManager::instance()->attach($listener);
+        EventManager::instance()->on($listener);
         $listener2 = new EventTestListener();
         $manager = new EventManager();
-        $manager->attach([$listener2, 'listenerFunction'], 'fake.event');
+        $manager->on('fake.event', [$listener2, 'listenerFunction']);
 
         $manager->dispatch(new Event('fake.event', $this));
         $this->assertEquals(['listenerFunction'], $listener->callList);

@@ -24,18 +24,18 @@ use Cake\TestSuite\Constraint\EventFired;
 use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\Utility\Inflector;
 use Exception;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase as BaseTestCase;
 
 /**
  * Cake TestCase class
  */
-abstract class TestCase extends PHPUnit_Framework_TestCase
+abstract class TestCase extends BaseTestCase
 {
 
     /**
      * The class responsible for managing the creation, loading and removing of fixtures
      *
-     * @var \Cake\TestSuite\Fixture\FixtureManager
+     * @var \Cake\TestSuite\Fixture\FixtureManager|null
      */
     public $fixtureManager = null;
 
@@ -98,7 +98,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        if (empty($this->_configure)) {
+        if (!$this->_configure) {
             $this->_configure = Configure::read();
         }
         if (class_exists('Cake\Routing\Router', false)) {
@@ -116,7 +116,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     public function tearDown()
     {
         parent::tearDown();
-        if (!empty($this->_configure)) {
+        if ($this->_configure) {
             Configure::clear();
             Configure::write($this->_configure);
         }
@@ -134,7 +134,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
      */
     public function loadFixtures()
     {
-        if (empty($this->fixtureManager)) {
+        if ($this->fixtureManager === null) {
             throw new Exception('No fixture manager to load the test fixture');
         }
         $args = func_get_args();
@@ -324,7 +324,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             'assertTags() is deprecated, use assertHtml() instead.',
             E_USER_DEPRECATED
         );
-        static::assertHtml($expected, $string, $fullDebug);
+        $this->assertHtml($expected, $string, $fullDebug);
     }
 
     /**
@@ -401,7 +401,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
                     }
                     $regex[] = [
                         sprintf('%sClose %s tag', $prefix[0], substr($tags, strlen($match[0]))),
-                        sprintf('%s<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], substr($tags, strlen($match[0]))),
+                        sprintf('%s\s*<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], substr($tags, strlen($match[0]))),
                         $i,
                     ];
                     continue;
@@ -410,7 +410,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
                     $tags = $matches[1];
                     $type = 'Regex matches';
                 } else {
-                    $tags = preg_quote($tags, '/');
+                    $tags = '\s*' . preg_quote($tags, '/');
                     $type = 'Text equals';
                 }
                 $regex[] = [
@@ -485,6 +485,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
             }
 
             list($description, $expressions, $itemNum) = $assertion;
+            $expression = null;
             foreach ((array)$expressions as $expression) {
                 $expression = sprintf('/^%s/s', $expression);
                 if (preg_match($expression, $string, $match)) {
@@ -516,7 +517,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
      * @param string $string The HTML string to check.
      * @param bool $fullDebug Whether or not more verbose output should be used.
      * @param array|string $regex Full regexp from `assertHtml`
-     * @return string
+     * @return string|bool
      */
     protected function _assertAttributes($assertions, $string, $fullDebug = false, $regex = '')
     {
@@ -524,6 +525,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         $explains = $assertions['explains'];
         do {
             $matches = false;
+            $j = null;
             foreach ($asserts as $j => $assert) {
                 if (preg_match(sprintf('/^%s/s', $assert), $string, $match)) {
                     $matches = true;

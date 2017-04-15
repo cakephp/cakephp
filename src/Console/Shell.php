@@ -49,6 +49,13 @@ class Shell
     const CODE_ERROR = 1;
 
     /**
+     * Default success code
+     *
+     * @var int
+     */
+    const CODE_SUCCESS = 0;
+
+    /**
      * Output constant making verbose shells.
      *
      * @var int
@@ -122,7 +129,7 @@ class Shell
     /**
      * Contains tasks to load and instantiate
      *
-     * @var array
+     * @var array|bool
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::$tasks
      */
     public $tasks = [];
@@ -177,7 +184,6 @@ class Shell
             ['tasks'],
             ['associative' => ['tasks']]
         );
-        $this->_io->setLoggers(true);
 
         if (isset($this->modelClass)) {
             $this->loadModel();
@@ -333,7 +339,7 @@ class Shell
      *      'extra' => ['param' => 'value']
      * ]);`
      *
-     * @return mixed The return of the other shell.
+     * @return int The cli command exit code. 0 is success.
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#invoking-other-shells-from-your-shell
      */
     public function dispatchShell()
@@ -427,7 +433,7 @@ class Shell
             $this->params = array_merge($this->params, $extra);
         }
         $this->_setOutputLevel();
-        if (!empty($this->params['plugin'])) {
+        if (!empty($this->params['plugin']) && !Plugin::loaded($this->params['plugin'])) {
             Plugin::load($this->params['plugin']);
         }
         $this->command = $command;
@@ -443,13 +449,13 @@ class Shell
             array_shift($this->args);
             $this->startup();
 
-            return call_user_func_array([$this, $method], $this->args);
+            return $this->$method(...$this->args);
         }
 
         if ($isMethod && isset($subcommands[$command])) {
             $this->startup();
 
-            return call_user_func_array([$this, $method], $this->args);
+            return $this->$method(...$this->args);
         }
 
         if ($this->hasTask($command) && isset($subcommands[$command])) {
@@ -463,7 +469,7 @@ class Shell
             $this->command = 'main';
             $this->startup();
 
-            return call_user_func_array([$this, 'main'], $this->args);
+            return $this->main(...$this->args);
         }
 
         $this->out($this->OptionParser->help($command));
@@ -881,7 +887,7 @@ class Shell
      * @throws \Cake\Console\Exception\StopException
      * @return void
      */
-    protected function _stop($status = 0)
+    protected function _stop($status = self::CODE_SUCCESS)
     {
         throw new StopException('Halting error reached', $status);
     }

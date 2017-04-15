@@ -75,7 +75,7 @@ class WidgetRegistryTestCase extends TestCase
      *
      * @return void
      */
-    public function testAddWidgetsFromConfigInConstuctor()
+    public function testAddWidgetsFromConfigInConstructor()
     {
         $widgets = [
             'text' => ['Cake\View\Widget\BasicWidget'],
@@ -90,7 +90,7 @@ class WidgetRegistryTestCase extends TestCase
      *
      * @return void
      */
-    public function testAddPluginWidgetsFromConfigInConstuctor()
+    public function testAddPluginWidgetsFromConfigInConstructor()
     {
         Plugin::load('TestPlugin');
         $widgets = [

@@ -95,7 +95,7 @@ class IntegerTypeTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @return void
      */
-    public function testToDatabseInvalid()
+    public function testToDatabaseInvalid()
     {
         $this->type->toDatabase(['3', '4'], $this->driver);
     }

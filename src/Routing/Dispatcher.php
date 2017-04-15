@@ -17,8 +17,8 @@ namespace Cake\Routing;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Http\ActionDispatcher;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 
 /**
  * Dispatcher converts Requests into controller actions. It uses the dispatched Request
@@ -33,7 +33,7 @@ class Dispatcher
     /**
      * Connected filter objects
      *
-     * @var array
+     * @var \Cake\Event\EventListenerInterface[]
      */
     protected $_filters = [];
 
@@ -49,12 +49,12 @@ class Dispatcher
      * If no controller of given name can be found, invoke() will throw an exception.
      * If the controller is found, and the action is not found an exception will be thrown.
      *
-     * @param \Cake\Network\Request $request Request object to dispatch.
-     * @param \Cake\Network\Response $response Response object to put the results of the dispatch into.
+     * @param \Cake\Http\ServerRequest $request Request object to dispatch.
+     * @param \Cake\Http\Response $response Response object to put the results of the dispatch into.
      * @return string|null if `$request['return']` is set then it returns response body, null otherwise
      * @throws \LogicException When the controller did not get created in the Dispatcher.beforeDispatch event.
      */
-    public function dispatch(Request $request, Response $response)
+    public function dispatch(ServerRequest $request, Response $response)
     {
         $actionDispatcher = new ActionDispatcher(null, $this->eventManager(), $this->_filters);
         $response = $actionDispatcher->dispatch($request, $response);
@@ -83,7 +83,7 @@ class Dispatcher
     /**
      * Get the list of connected filters.
      *
-     * @return array
+     * @return \Cake\Event\EventListenerInterface[]
      */
     public function filters()
     {

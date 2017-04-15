@@ -72,7 +72,6 @@ class BreadcrumbsHelperTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-
     /**
      * Test adding multiple crumbs at once to the trail using add()
      *
@@ -198,6 +197,24 @@ class BreadcrumbsHelperTest extends TestCase
             ]
         ];
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test ability to empty crumbs list.
+     *
+     * @return void
+     */
+    public function testReset()
+    {
+        $this->breadcrumbs->add('Home', '/');
+        $this->breadcrumbs->add('Products', '/products');
+
+        $crumbs = $this->breadcrumbs->getCrumbs();
+        $this->assertEquals(count($crumbs), 2);
+
+        $this->breadcrumbs->reset();
+        $actual = $this->breadcrumbs->getCrumbs();
+        $this->assertEquals($actual, []);
     }
 
     /**

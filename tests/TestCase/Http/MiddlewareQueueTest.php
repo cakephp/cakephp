@@ -234,7 +234,7 @@ class MiddlewareQueueTest extends TestCase
         };
         $two = function () {
         };
-        $three = new SampleMiddleWare();
+        $three = new SampleMiddleware();
 
         $queue = new MiddlewareQueue();
         $queue->add($one)->insertAt(-1, $two)->insertAt(-1, $three);

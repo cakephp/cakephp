@@ -59,7 +59,7 @@ trait RulesAwareTrait
                 compact('entity', 'options', 'operation')
             );
             if ($event->isStopped()) {
-                return $event->result;
+                return $event->getResult();
             }
         }
 
@@ -72,7 +72,7 @@ trait RulesAwareTrait
             );
 
             if ($event->isStopped()) {
-                return $event->result;
+                return $event->getResult();
             }
         }
 

@@ -16,7 +16,7 @@ namespace Cake\Test\TestCase;
 
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestSuite;
-use PHPUnit_Framework_TestResult;
+use PHPUnit\Framework\TestResult;
 
 /**
  * All tests related to database
@@ -48,10 +48,10 @@ class DatabaseSuite extends TestSuite
     /**
      * Runs the tests and collects their result in a TestResult.
      *
-     * @param \PHPUnit_Framework_TestResult $result
-     * @return \PHPUnit_Framework_TestResult
+     * @param \PHPUnit\Framework\TestResult $result
+     * @return \PHPUnit\Framework\TestResult
      */
-    public function run(PHPUnit_Framework_TestResult $result = null)
+    public function run(TestResult $result = null)
     {
         $permutations = [
             'Identifier Quoting' => function () {

@@ -89,6 +89,11 @@ class MemcachedEngine extends CacheEngine
     protected $_serializers = [];
 
     /**
+     * @var string[]
+     */
+    protected $_compiledGroupNames = [];
+
+    /**
      * Initialize the Cache Engine
      *
      * Called automatically by the cache frontend
@@ -124,7 +129,7 @@ class MemcachedEngine extends CacheEngine
         }
 
         if (isset($config['servers'])) {
-            $this->config('servers', $config['servers'], false);
+            $this->setConfig('servers', $config['servers'], false);
         }
 
         if (!is_array($this->_config['servers'])) {

@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\Database\Schema;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqlserverSchema;
-use Cake\Database\Schema\Table;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -499,7 +499,7 @@ SQL;
             [
                 'title',
                 ['type' => 'string', 'length' => 25, 'null' => true, 'default' => 'ignored'],
-                '[title] NVARCHAR(25) DEFAULT NULL'
+                "[title] NVARCHAR(25) DEFAULT 'ignored'"
             ],
             [
                 'id',
@@ -534,17 +534,17 @@ SQL;
             ],
             [
                 'body',
-                ['type' => 'text', 'length' => Table::LENGTH_TINY, 'null' => false],
-                sprintf('[body] NVARCHAR(%s) NOT NULL', Table::LENGTH_TINY)
+                ['type' => 'text', 'length' => TableSchema::LENGTH_TINY, 'null' => false],
+                sprintf('[body] NVARCHAR(%s) NOT NULL', TableSchema::LENGTH_TINY)
             ],
             [
                 'body',
-                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM, 'null' => false],
+                ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM, 'null' => false],
                 '[body] NVARCHAR(MAX) NOT NULL'
             ],
             [
                 'body',
-                ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
+                ['type' => 'text', 'length' => TableSchema::LENGTH_LONG, 'null' => false],
                 '[body] NVARCHAR(MAX) NOT NULL'
             ],
             [
@@ -598,17 +598,17 @@ SQL;
             ],
             [
                 'img',
-                ['type' => 'binary', 'length' => Table::LENGTH_TINY],
-                sprintf('[img] VARBINARY(%s)', Table::LENGTH_TINY)
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_TINY],
+                sprintf('[img] VARBINARY(%s)', TableSchema::LENGTH_TINY)
             ],
             [
                 'img',
-                ['type' => 'binary', 'length' => Table::LENGTH_MEDIUM],
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_MEDIUM],
                 '[img] VARBINARY(MAX)'
             ],
             [
                 'img',
-                ['type' => 'binary', 'length' => Table::LENGTH_LONG],
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG],
                 '[img] VARBINARY(MAX)'
             ],
             // Boolean
@@ -622,11 +622,31 @@ SQL;
                 ['type' => 'boolean', 'default' => true, 'null' => false],
                 '[checked] BIT NOT NULL DEFAULT 1'
             ],
-            // datetimes
+            // Datetime
             [
                 'created',
                 ['type' => 'datetime'],
                 '[created] DATETIME'
+            ],
+            [
+                'open_date',
+                ['type' => 'datetime', 'null' => false, 'default' => '2016-12-07 23:04:00'],
+                '[open_date] DATETIME NOT NULL DEFAULT \'2016-12-07 23:04:00\''
+            ],
+            [
+                'open_date',
+                ['type' => 'datetime', 'null' => false, 'default' => 'current_timestamp'],
+                '[open_date] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP'
+            ],
+            [
+                'null_date',
+                ['type' => 'datetime', 'null' => true, 'default' => 'current_timestamp'],
+                '[null_date] DATETIME DEFAULT CURRENT_TIMESTAMP'
+            ],
+            [
+                'null_date',
+                ['type' => 'datetime', 'null' => true],
+                '[null_date] DATETIME DEFAULT NULL'
             ],
             // Date & Time
             [
@@ -639,7 +659,7 @@ SQL;
                 ['type' => 'time'],
                 '[start_time] TIME'
             ],
-            // timestamps
+            // Timestamp
             [
                 'created',
                 ['type' => 'timestamp', 'null' => true],
@@ -659,7 +679,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new SqlserverSchema($driver);
 
-        $table = (new Table('schema_articles'))->addColumn($name, $data);
+        $table = (new TableSchema('schema_articles'))->addColumn($name, $data);
         $this->assertEquals($expected, $schema->columnSql($table, $name));
     }
 
@@ -724,7 +744,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new SqlserverSchema($driver);
 
-        $table = (new Table('schema_articles'))->addColumn('title', [
+        $table = (new TableSchema('schema_articles'))->addColumn('title', [
             'type' => 'string',
             'length' => 255
         ])->addColumn('author_id', [
@@ -748,7 +768,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('posts'))
+        $table = (new TableSchema('posts'))
             ->addColumn('author_id', [
                 'type' => 'integer',
                 'null' => false
@@ -799,7 +819,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('posts'))
+        $table = (new TableSchema('posts'))
             ->addColumn('author_id', [
                 'type' => 'integer',
                 'null' => false
@@ -850,7 +870,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('schema_articles'))->addColumn('id', [
+        $table = (new TableSchema('schema_articles'))->addColumn('id', [
                 'type' => 'integer',
                 'null' => false
             ])
@@ -912,7 +932,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = new Table('schema_articles');
+        $table = new TableSchema('schema_articles');
         $result = $table->dropSql($connection);
         $this->assertCount(1, $result);
         $this->assertEquals('DROP TABLE [schema_articles]', $result[0]);
@@ -932,7 +952,7 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = new Table('schema_articles');
+        $table = new TableSchema('schema_articles');
         $table->addColumn('id', 'integer')
             ->addConstraint('primary', [
                 'type' => 'primary',
@@ -952,11 +972,7 @@ SQL;
     protected function _getMockedDriver()
     {
         $driver = new Sqlserver();
-        $pdo = PDO::class;
-        if (version_compare(PHP_VERSION, '5.6', '<')) {
-            $pdo = 'FakePdo';
-        }
-        $mock = $this->getMockBuilder($pdo)
+        $mock = $this->getMockBuilder(PDO::class)
             ->setMethods(['quote'])
             ->disableOriginalConstructor()
             ->getMock();

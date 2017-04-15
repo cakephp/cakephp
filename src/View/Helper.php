@@ -74,7 +74,7 @@ class Helper implements EventListenerInterface
     /**
      * Request object
      *
-     * @var \Cake\Network\Request
+     * @var \Cake\Http\ServerRequest
      */
     public $request = null;
 
@@ -118,7 +118,7 @@ class Helper implements EventListenerInterface
         $this->_View = $View;
         $this->request = $View->request;
 
-        $this->config($config);
+        $this->setConfig($config);
 
         if (!empty($this->helpers)) {
             $this->_helperMap = $View->helpers()->normalizeArray($this->helpers);
@@ -156,6 +156,16 @@ class Helper implements EventListenerInterface
     }
 
     /**
+     * Get the view instance this helper is bound to.
+     *
+     * @return \Cake\View\View The bound view instance.
+     */
+    public function getView()
+    {
+        return $this->_View;
+    }
+
+    /**
      * Returns a string to be used as onclick handler for confirm dialogs.
      *
      * @param string $message Message to be displayed
@@ -166,7 +176,7 @@ class Helper implements EventListenerInterface
      */
     protected function _confirm($message, $okCode, $cancelCode = '', $options = [])
     {
-        $message = str_replace('\n', "\n", json_encode($message));
+        $message = str_replace('\\\n', '\n', json_encode($message));
         $confirm = "if (confirm({$message})) { {$okCode} } {$cancelCode}";
         // We cannot change the key here in 3.x, but the behavior is inverted in this case
         $escape = isset($options['escape']) && $options['escape'] === false;
@@ -254,7 +264,7 @@ class Helper implements EventListenerInterface
             'fieldset' => $this->fieldset,
             'tags' => $this->tags,
             'implementedEvents' => $this->implementedEvents(),
-            '_config' => $this->config(),
+            '_config' => $this->getConfig(),
         ];
     }
 }

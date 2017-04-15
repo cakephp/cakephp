@@ -1,2 +1,2 @@
 <?php $this->extend('extend_self'); ?>
-To infinifty and beyond.
+To infinity and beyond.

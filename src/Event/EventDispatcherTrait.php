@@ -48,7 +48,7 @@ trait EventDispatcherTrait
     {
         if ($eventManager !== null) {
             $this->_eventManager = $eventManager;
-        } elseif (empty($this->_eventManager)) {
+        } elseif ($this->_eventManager === null) {
             $this->_eventManager = new EventManager();
         }
 

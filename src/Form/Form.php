@@ -39,7 +39,7 @@ class Form
     /**
      * The schema used by this form.
      *
-     * @var \Cake\Form\Schema;
+     * @var \Cake\Form\Schema
      */
     protected $_schema;
 
@@ -53,7 +53,7 @@ class Form
     /**
      * The validator used by this form.
      *
-     * @var \Cake\Validation\Validator;
+     * @var \Cake\Validation\Validator
      */
     protected $_validator;
 

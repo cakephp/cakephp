@@ -48,4 +48,4 @@ in separate objects that focus on those concerns.
 
 ## Documentation
 
-Please make sure you check the [official documentation](http://book.cakephp.org/3.0/en/core-libraries/events.html)
+Please make sure you check the [official documentation](https://book.cakephp.org/3.0/en/core-libraries/events.html)

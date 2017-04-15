@@ -16,7 +16,7 @@ namespace Cake\Test\TestCase\View;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\UrlHelper;
@@ -27,6 +27,11 @@ use Cake\View\View;
  */
 class UrlHelperTest extends TestCase
 {
+
+    /**
+     * @var \Cake\View\Helper\UrlHelper
+     */
+    public $Helper;
 
     /**
      * setUp method
@@ -40,7 +45,7 @@ class UrlHelperTest extends TestCase
         Router::reload();
         $this->View = new View();
         $this->Helper = new UrlHelper($this->View);
-        $this->Helper->request = new Request();
+        $this->Helper->request = new ServerRequest();
 
         Configure::write('App.namespace', 'TestApp');
         Plugin::load(['TestTheme']);

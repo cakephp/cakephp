@@ -1,0 +1,19 @@
+{
+    "name": "cakephp/form",
+    "description": "CakePHP Form library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "CakePHP Community",
+            "homepage": "https://cakephp.org"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Cake\\Form\\": "."
+        }
+    },
+    "require": {
+        "cakephp/validation": "~3.0"
+    }
+}

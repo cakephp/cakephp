@@ -189,7 +189,7 @@ class RouteBuilder
     /**
      * Get the parameter names/values for this scope.
      *
-     * @return string
+     * @return array
      */
     public function params()
     {
@@ -566,7 +566,7 @@ class RouteBuilder
      *   routes that end in `*` are greedy. As you can remap URLs and not loose any passed args.
      *
      * @param string $route A string describing the template of the route
-     * @param array $url An URL to redirect to. Can be a string or a Cake array-based URL
+     * @param array|string $url An URL to redirect to. Can be a string or a Cake array-based URL
      * @param array $options An array matching the named elements in the route to regular expressions which that
      *   element should match. Also contains additional parameters such as which routed parameters should be
      *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
@@ -596,17 +596,27 @@ class RouteBuilder
      * to the `Controller\Admin\Api\` namespace.
      *
      * @param string $name The prefix name to use.
-     * @param callable $callback The callback to invoke that builds the prefixed routes.
+     * @param array|callable $params An array of routing defaults to add to each connected route.
+     *   If you have no parameters, this argument can be a callable.
+     * @param callable|null $callback The callback to invoke that builds the prefixed routes.
      * @return void
+     * @throws \InvalidArgumentException If a valid callback is not passed
      */
-    public function prefix($name, callable $callback)
+    public function prefix($name, $params = [], callable $callback = null)
     {
+        if ($callback === null) {
+            if (!is_callable($params)) {
+                throw new InvalidArgumentException('A valid callback is expected');
+            }
+            $callback = $params;
+            $params = [];
+        }
         $name = Inflector::underscore($name);
         $path = '/' . $name;
         if (isset($this->_params['prefix'])) {
             $name = $this->_params['prefix'] . '/' . $name;
         }
-        $params = ['prefix' => $name];
+        $params = array_merge($params, ['prefix' => $name]);
         $this->scope($path, $params, $callback);
     }
 

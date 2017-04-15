@@ -184,10 +184,13 @@ class ShellDispatcher
             return $e->getCode();
         }
         if ($result === null || $result === true) {
-            return 0;
+            return Shell::CODE_SUCCESS;
+        }
+        if (is_int($result)) {
+            return $result;
         }
 
-        return 1;
+        return Shell::CODE_ERROR;
     }
 
     /**

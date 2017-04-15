@@ -70,7 +70,7 @@ class MessagesFileLoader
      * $package = $loader();
      * ```
      *
-     * Load and parse  src/Locale/fr_FR/validation.mo
+     * Load and parse src/Locale/fr_FR/validation.mo
      *
      * ```
      * $loader = new MessagesFileLoader('validation', 'fr_FR', 'mo');
@@ -130,7 +130,7 @@ class MessagesFileLoader
         }
 
         $name = ucfirst($ext);
-        $class = App::classname($name, 'I18n\Parser', 'FileParser');
+        $class = App::className($name, 'I18n\Parser', 'FileParser');
 
         if (!$class) {
             throw new RuntimeException(sprintf('Could not find class %s', "{$name}FileParser"));

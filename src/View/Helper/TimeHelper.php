@@ -55,7 +55,7 @@ class TimeHelper extends Helper
             return $timezone;
         }
 
-        return $this->config('outputTimezone');
+        return $this->getConfig('outputTimezone');
     }
 
     /**
@@ -86,11 +86,11 @@ class TimeHelper extends Helper
     }
 
     /**
-     * Returns true if given datetime string is today.
+     * Returns true, if the given datetime string is today.
      *
      * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
-     * @return bool True if datetime string is today
+     * @return bool True if the given datetime string is today.
      */
     public function isToday($dateString, $timezone = null)
     {
@@ -98,11 +98,11 @@ class TimeHelper extends Helper
     }
 
     /**
-     * Returns true if given datetime string is in the future.
+     * Returns true, if the given datetime string is in the future.
      *
      * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
-     * @return bool True if datetime string is today
+     * @return bool True if the given datetime string lies in the future.
      */
     public function isFuture($dateString, $timezone = null)
     {
@@ -110,11 +110,11 @@ class TimeHelper extends Helper
     }
 
     /**
-     * Returns true if given datetime string is in the past.
+     * Returns true, if the given datetime string is in the past.
      *
      * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
-     * @return bool True if datetime string is today
+     * @return bool True if the given datetime string lies in the past.
      */
     public function isPast($dateString, $timezone = null)
     {
@@ -200,7 +200,7 @@ class TimeHelper extends Helper
      *
      * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
-     * @return int Unix timestamp
+     * @return string UNIX timestamp
      * @see \Cake\I18n\Time::toUnix()
      */
     public function toUnix($dateString, $timezone = null)
@@ -329,7 +329,7 @@ class TimeHelper extends Helper
      * Returns gmt as a UNIX timestamp.
      *
      * @param int|string|\DateTime|null $string UNIX timestamp, strtotime() valid string or DateTime object
-     * @return int UNIX timestamp
+     * @return string UNIX timestamp
      * @see \Cake\I18n\Time::gmt()
      */
     public function gmt($string = null)

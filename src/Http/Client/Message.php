@@ -135,6 +135,13 @@ class Message
     protected $_cookies = [];
 
     /**
+     * Body for the message.
+     *
+     * @var string|null
+     */
+    protected $_body;
+
+    /**
      * Get all headers
      *
      * @return array
@@ -171,3 +178,6 @@ class Message
         return $this;
     }
 }
+
+// @deprecated Add backwards compat alias.
+class_alias('Cake\Http\Client\Message', 'Cake\Network\Http\Message');

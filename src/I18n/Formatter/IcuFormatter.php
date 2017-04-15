@@ -52,21 +52,11 @@ class IcuFormatter implements FormatterInterface
             return $this->_formatMessage($locale, $message, $vars);
         }
 
-        if (isset($vars['_context'], $message['_context'])) {
-            $message = $message['_context'][$vars['_context']];
-            unset($vars['_context']);
-        }
-
-        // Assume first context when no context key was passed
-        if (isset($message['_context'])) {
-            $message = current($message['_context']);
-        }
-
         if (!is_string($message)) {
             $count = isset($vars['_count']) ? $vars['_count'] : 0;
             unset($vars['_count'], $vars['_singular']);
             $form = PluralRules::calculate($locale, $count);
-            $message = isset($message[$form]) ? $message[$form] : end($message);
+            $message = isset($message[$form]) ? $message[$form] : (string)end($message);
         }
 
         return $this->_formatMessage($locale, $message, $vars);

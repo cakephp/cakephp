@@ -23,8 +23,6 @@ use Cake\Database\ValueBinder;
  * A Comparison is a type of query expression that represents an operation
  * involving a field an operator and a value. In its most common form the
  * string representation of a comparison is `field = value`
- *
- * @internal
  */
 class Comparison implements ExpressionInterface, FieldInterface
 {
@@ -42,7 +40,7 @@ class Comparison implements ExpressionInterface, FieldInterface
     /**
      * The type to be used for casting the value to a database representation
      *
-     * @var string
+     * @var string|array
      */
     protected $_type;
 
@@ -64,14 +62,14 @@ class Comparison implements ExpressionInterface, FieldInterface
      * A cached list of ExpressionInterface objects that were
      * found in the value for this expression.
      *
-     * @var array
+     * @var \Cake\Database\ExpressionInterface[]
      */
     protected $_valueExpressions = [];
 
     /**
      * Constructor
      *
-     * @param string $field the field name to compare to a value
+     * @param string|\Cake\Database\ExpressionInterface $field the field name to compare to a value
      * @param mixed $value The value to be used in comparison
      * @param string $type the type name used to cast the value
      * @param string $operator the operator used for comparing field and value

@@ -135,7 +135,7 @@ class Mysql extends Driver
         $isObject = $query instanceof Query;
         $statement = $this->_connection->prepare($isObject ? $query->sql() : $query);
         $result = new MysqlStatement($statement, $this);
-        if ($isObject && $query->bufferResults() === false) {
+        if ($isObject && $query->isBufferedResultsEnabled() === false) {
             $result->bufferResults(false);
         }
 

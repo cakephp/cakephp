@@ -119,6 +119,7 @@ class Text
                             $open = true;
                         } else {
                             $depth--;
+                            $open = false;
                         }
                     }
                 }
@@ -455,7 +456,8 @@ class Text
      *
      * - `format` The piece of HTML with that the phrase will be highlighted
      * - `html` If true, will ignore any HTML tags, ensuring that only the correct text is highlighted
-     * - `regex` a custom regex rule that is used to match words, default is '|$tag|iu'
+     * - `regex` A custom regex rule that is used to match words, default is '|$tag|iu'
+     * - `limit` A limit, optional, defaults to -1 (none)
      *
      * @param string $text Text to search the phrase in.
      * @param string|array $phrase The phrase or phrases that will be searched.
@@ -472,9 +474,11 @@ class Text
         $defaults = [
             'format' => '<span class="highlight">\1</span>',
             'html' => false,
-            'regex' => "|%s|iu"
+            'regex' => '|%s|iu',
+            'limit' => -1,
         ];
         $options += $defaults;
+        $html = $format = $ellipsis = $exact = $limit = null;
         extract($options);
 
         if (is_array($phrase)) {
@@ -491,7 +495,7 @@ class Text
                 $replace[] = sprintf($options['regex'], $segment);
             }
 
-            return preg_replace($replace, $with, $text);
+            return preg_replace($replace, $with, $text, $limit);
         }
 
         $phrase = '(' . preg_quote($phrase, '|') . ')';
@@ -499,7 +503,7 @@ class Text
             $phrase = "(?![^<]+>)$phrase(?![^<]+>)";
         }
 
-        return preg_replace(sprintf($options['regex'], $phrase), $format, $text);
+        return preg_replace(sprintf($options['regex'], $phrase), $format, $text, $limit);
     }
 
     /**
@@ -543,6 +547,7 @@ class Text
             'ellipsis' => '...', 'exact' => true
         ];
         $options += $default;
+        $exact = $ellipsis = null;
         extract($options);
 
         if (mb_strlen($text) <= $length) {

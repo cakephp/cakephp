@@ -16,7 +16,6 @@
 namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\Cache\Cache;
-use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -240,7 +239,7 @@ class ApcEngineTest extends TestCase
     }
 
     /**
-     * Tests that deleteing from a groups-enabled config is possible
+     * Tests that deleting from a groups-enabled config is possible
      *
      * @return void
      */
