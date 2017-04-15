@@ -648,6 +648,6 @@ class ControllerTestCaseTest extends CakeTestCase {
 			'named' => array(),
 			'pass' => array(),
 		);
-		$this->assertEquals($expected, array_intersect_key($expected, $this->Case->controller->request->params));
+		$this->assertEquals($expected, array_intersect_key($this->Case->controller->request->params, $expected));
 	}
 }
