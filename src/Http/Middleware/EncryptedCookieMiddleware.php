@@ -66,7 +66,7 @@ class EncryptedCookieMiddleware
      * @param string $cipherType The cipher type to use. Defaults to 'aes', but can also be 'rijndael' for
      *   backwards compatibility.
      */
-    public function __construct(array $cookieNames = [], $key, $cipherType = 'aes')
+    public function __construct(array $cookieNames, $key, $cipherType = 'aes')
     {
         $this->cookieNames = $cookieNames;
         $this->key = $key;
