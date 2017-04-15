@@ -48,8 +48,6 @@ use RuntimeException;
 class Cookie implements CookieInterface
 {
 
-    use CookieCryptTrait;
-
     /**
      * Expires attribute format.
      *
@@ -596,40 +594,6 @@ class Cookie implements CookieInterface
         }
 
         return Hash::get($this->value, $path);
-    }
-
-    /**
-     * Encrypts the cookie value
-     *
-     * @param string|null $key Encryption key
-     * @return $this
-     */
-    public function encrypt($key = null)
-    {
-        if ($key !== null) {
-            $this->setEncryptionKey($key);
-        }
-
-        $this->value = $this->_encrypt($this->value);
-
-        return $this;
-    }
-
-    /**
-     * Decrypts the cookie value
-     *
-     * @param string|null $key Encryption key
-     * @return $this
-     */
-    public function decrypt($key = null)
-    {
-        if ($key !== null) {
-            $this->setEncryptionKey($key);
-        }
-
-        $this->value = $this->_decrypt($this->value);
-
-        return $this;
     }
 
     /**
