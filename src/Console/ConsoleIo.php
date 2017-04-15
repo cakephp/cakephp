@@ -262,7 +262,7 @@ class ConsoleIo
      *
      * @param int $mode The output mode.
      * @return void
-     * @see \Cake\Console\ConsoleOutput::outputAs()
+     * @see \Cake\Console\ConsoleOutput::setOutputAs()
      */
     public function setOutputAs($mode)
     {
