@@ -47,6 +47,7 @@ class ReplaceIterator extends Collection
      *
      * @param array|\Traversable $items The items to be filtered.
      * @param callable $callback Callback.
+     * @throws \InvalidArgumentException
      */
     public function __construct($items, callable $callback)
     {

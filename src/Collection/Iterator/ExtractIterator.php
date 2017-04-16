@@ -50,6 +50,7 @@ class ExtractIterator extends Collection
      * @param array|\Traversable $items The list of values to iterate
      * @param string $path a dot separated string symbolizing the path to follow
      * inside the hierarchy of each value so that the column can be extracted.
+     * @throws \InvalidArgumentException
      */
     public function __construct($items, $path)
     {

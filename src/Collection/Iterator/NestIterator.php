@@ -38,6 +38,7 @@ class NestIterator extends Collection implements RecursiveIterator
      * @param array|\Traversable $items Collection items.
      * @param string|callable $nestKey the property that contains the nested items
      * If a callable is passed, it should return the childrens for the passed item
+     * @throws \InvalidArgumentException
      */
     public function __construct($items, $nestKey)
     {
@@ -49,6 +50,7 @@ class NestIterator extends Collection implements RecursiveIterator
      * Returns a traversable containing the children for the current item
      *
      * @return \Traversable
+     * @throws \InvalidArgumentException
      */
     public function getChildren()
     {
