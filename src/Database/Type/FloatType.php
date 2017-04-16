@@ -143,6 +143,7 @@ class FloatType extends Type implements TypeInterface
      *
      * @param bool $enable Whether or not to enable
      * @return $this
+     * @throws \RuntimeException
      */
     public function useLocaleParser($enable = true)
     {

@@ -174,6 +174,7 @@ class IdentifierQuoter
      *
      * @param \Cake\Database\Query $query The insert query to quote.
      * @return void
+     * @throws \RuntimeException
      */
     protected function _quoteInsert($query)
     {

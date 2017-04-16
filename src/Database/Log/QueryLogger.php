@@ -45,6 +45,7 @@ class QueryLogger
      *
      * @param \Cake\Database\Log\LoggedQuery $query to be written in log
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _log($query)
     {
