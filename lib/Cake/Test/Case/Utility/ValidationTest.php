@@ -148,6 +148,10 @@ class ValidationTest extends CakeTestCase {
  * @return void
  */
 	public function testNotBlank() {
+		$this->assertTrue(Validation::notBlank(0));
+		$this->assertTrue(Validation::notBlank(0.0));
+		$this->assertTrue(Validation::notBlank(-0));
+		$this->assertTrue(Validation::notBlank(-0.0));
 		$this->assertTrue(Validation::notBlank('abcdefg'));
 		$this->assertTrue(Validation::notBlank('fasdf '));
 		$this->assertTrue(Validation::notBlank('fooo' . chr(243) . 'blabla'));
