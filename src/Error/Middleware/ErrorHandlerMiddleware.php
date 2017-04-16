@@ -102,6 +102,8 @@ class ErrorHandlerMiddleware
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @param \Psr\Http\Message\ResponseInterface $response The response.
      * @return \Psr\Http\Message\ResponseInterface A response
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function handleException($exception, $request, $response)
     {
@@ -183,6 +185,7 @@ class ErrorHandlerMiddleware
      * @param \Psr\Http\Message\ServerRequestInterface $request The current request.
      * @param \Exception $exception The exception to log a message for.
      * @return string Error message
+     * @throws \InvalidArgumentException
      */
     protected function getMessage($request, $exception)
     {
