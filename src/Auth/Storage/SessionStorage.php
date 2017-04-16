@@ -64,6 +64,7 @@ class SessionStorage implements StorageInterface
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @param \Cake\Http\Response $response Response instance.
      * @param array $config Configuration list.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(ServerRequest $request, Response $response, array $config = [])
     {

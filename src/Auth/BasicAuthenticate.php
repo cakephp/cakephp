@@ -70,6 +70,7 @@ class BasicAuthenticate extends BaseAuthenticate
      *
      * @param \Cake\Http\ServerRequest $request Request object.
      * @return mixed Either false or an array of user information
+     * @throws \RuntimeException
      */
     public function getUser(ServerRequest $request)
     {

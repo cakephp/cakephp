@@ -80,6 +80,7 @@ class DigestAuthenticate extends BasicAuthenticate
      * @param \Cake\Controller\ComponentRegistry $registry The Component registry
      *   used on this request.
      * @param array $config Array of config to use.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
@@ -99,6 +100,7 @@ class DigestAuthenticate extends BasicAuthenticate
      *
      * @param \Cake\Http\ServerRequest $request Request object.
      * @return mixed Either false or an array of user information
+     * @throws \RuntimeException
      */
     public function getUser(ServerRequest $request)
     {

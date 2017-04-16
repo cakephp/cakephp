@@ -44,6 +44,8 @@ class FallbackPasswordHasher extends AbstractPasswordHasher
      * @param array $config configuration options for this object. Requires the
      * `hashers` key to be present in the array with a list of other hashers to be
      * used
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \RuntimeException
      */
     public function __construct(array $config = [])
     {

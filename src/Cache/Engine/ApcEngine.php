@@ -56,6 +56,7 @@ class ApcEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
      * @return bool True if the data was successfully cached, false on failure
+     * @throws \InvalidArgumentException
      */
     public function write($key, $value)
     {
@@ -76,6 +77,7 @@ class ApcEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @return mixed The cached data, or false if the data doesn't exist,
+     * @throws \InvalidArgumentException
      *   has expired, or if there was an error fetching it
      */
     public function read($key)
@@ -97,6 +99,7 @@ class ApcEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @param int $offset How much to increment
      * @return bool|int New incremented value, false otherwise
+     * @throws \InvalidArgumentException
      */
     public function increment($key, $offset = 1)
     {
@@ -111,6 +114,7 @@ class ApcEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @param int $offset How much to subtract
      * @return bool|int New decremented value, false otherwise
+     * @throws \InvalidArgumentException
      */
     public function decrement($key, $offset = 1)
     {
@@ -124,6 +128,7 @@ class ApcEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+     * @throws \InvalidArgumentException
      */
     public function delete($key)
     {
@@ -170,6 +175,7 @@ class ApcEngine extends CacheEngine
      * @param string $key Identifier for the data.
      * @param mixed $value Data to be cached.
      * @return bool True if the data was successfully cached, false on failure.
+     * @throws \InvalidArgumentException
      * @link http://php.net/manual/en/function.apc-add.php
      */
     public function add($key, $value)
