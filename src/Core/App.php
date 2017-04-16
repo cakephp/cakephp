@@ -173,6 +173,7 @@ class App
      * @param string $type type of path
      * @param string|null $plugin name of plugin
      * @return array
+     * @throws \Cake\Core\Exception\MissingPluginException
      * @link http://book.cakephp.org/3.0/en/core-libraries/app.html#finding-paths-to-namespaces
      */
     public static function path($type, $plugin = null)

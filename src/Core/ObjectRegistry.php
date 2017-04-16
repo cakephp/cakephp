@@ -67,6 +67,8 @@ abstract class ObjectRegistry
      * @param string $objectName The name/class of the object to load.
      * @param array $config Additional settings to use when loading the object.
      * @return mixed
+     * @throws \Exception
+     * @throws \RuntimeException
      */
     public function load($objectName, $config = [])
     {
@@ -280,6 +282,7 @@ abstract class ObjectRegistry
      * @param string $objectName The name of the object to set in the registry.
      * @param object $object instance to store in the registry
      * @return void
+     * @throws \InvalidArgumentException
      */
     public function set($objectName, $object)
     {

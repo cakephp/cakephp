@@ -151,6 +151,7 @@ class IniConfig implements ConfigEngineInterface
      *  as a plugin prefix.
      * @param array $data The data to convert to ini file.
      * @return bool Success.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function dump($key, array $data)
     {

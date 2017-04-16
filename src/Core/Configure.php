@@ -115,6 +115,7 @@ class Configure
      *
      * @param string|null $var Variable to obtain. Use '.' to access array elements.
      * @return mixed Value stored in configure, or null.
+     * @throws \InvalidArgumentException
      * @link http://book.cakephp.org/3.0/en/development/configuration.html#reading-configuration-data
      */
     public static function read($var = null)
@@ -131,6 +132,7 @@ class Configure
      *
      * @param string $var Variable name to check for
      * @return bool True if variable is there
+     * @throws \InvalidArgumentException
      */
     public static function check($var)
     {
@@ -157,6 +159,7 @@ class Configure
      *
      * @param string $var Variable to obtain. Use '.' to access array elements.
      * @return mixed Value stored in configure.
+     * @throws \InvalidArgumentException
      * @throws \RuntimeException if the requested configuration is not set.
      * @link http://book.cakephp.org/3.0/en/development/configuration.html#reading-configuration-data
      */
@@ -195,6 +198,7 @@ class Configure
      *
      * @param string $var The key to read and remove.
      * @return array|null
+     * @throws \InvalidArgumentException
      */
     public static function consume($var)
     {
@@ -398,6 +402,7 @@ class Configure
      * @param string $cacheConfig The cache configuration to save into. Defaults to 'default'
      * @param array|null $data Either an array of data to store, or leave empty to store all values.
      * @return bool Success
+     * @throws \InvalidArgumentException
      */
     public static function store($name, $cacheConfig = 'default', $data = null)
     {
@@ -415,6 +420,7 @@ class Configure
      * @param string $name Name of the stored config file to load.
      * @param string $cacheConfig Name of the Cache configuration to read from.
      * @return bool Success.
+     * @throws \InvalidArgumentException
      */
     public static function restore($name, $cacheConfig = 'default')
     {
