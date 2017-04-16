@@ -360,6 +360,8 @@ class ConsoleIo
      *   to control logging levels. VERBOSE enables debug logs, NORMAL does not include debug logs,
      *   QUIET disables notice, info and debug logs.
      * @return void
+     * @throws \BadMethodCallException
+     * @throws \InvalidArgumentException
      */
     public function setLoggers($enable)
     {
