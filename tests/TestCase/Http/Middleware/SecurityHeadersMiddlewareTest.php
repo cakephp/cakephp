@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Http\Middleware;
 
-use Cake\Http\ServerRequestFactory;
 use Cake\Http\Middleware\SecurityHeadersMiddleware;
+use Cake\Http\ServerRequestFactory;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Response;
 
