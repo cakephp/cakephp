@@ -368,7 +368,7 @@ class Folder
      */
     public static function correctSlashFor($path)
     {
-        return (Folder::isWindowsPath($path)) ? '\\' : '/';
+        return Folder::isWindowsPath($path) ? '\\' : '/';
     }
 
     /**
