@@ -225,10 +225,8 @@ class DigestAuthenticate extends BasicAuthenticate
         ];
 
         $digest = $this->_getDigest($request);
-        if ($digest && isset($digest['nonce'])) {
-            if (!$this->validNonce($digest['nonce'])) {
-                $options['stale'] = true;
-            }
+        if ($digest && isset($digest['nonce']) && !$this->validNonce($digest['nonce'])) {
+            $options['stale'] = true;
         }
 
         $opts = [];
