@@ -46,6 +46,7 @@ class CachedCollection extends Collection
     /**
      * {@inheritDoc}
      *
+     * @throws \InvalidArgumentException
      */
     public function describe($name, array $options = [])
     {

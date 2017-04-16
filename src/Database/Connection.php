@@ -104,6 +104,8 @@ class Connection implements ConnectionInterface
      * Constructor.
      *
      * @param array $config configuration for connecting to database
+     * @throws \Cake\Database\Exception\MissingDriverException
+     * @throws \Cake\Database\Exception\MissingExtensionException
      */
     public function __construct($config)
     {
@@ -393,6 +395,7 @@ class Connection implements ConnectionInterface
      * @param array $data values to be inserted
      * @param array $types list of associative array containing the types to be used for casting
      * @return \Cake\Database\StatementInterface
+     * @throws \RuntimeException
      */
     public function insert($table, array $data, array $types = [])
     {

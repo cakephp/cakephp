@@ -207,6 +207,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      *
      * @param \Cake\Database\ValueBinder $generator The value binder to use.
      * @return array First position containing the template and the second a placeholder
+     * @throws \Cake\Database\Exception
      */
     protected function _stringExpression($generator)
     {
