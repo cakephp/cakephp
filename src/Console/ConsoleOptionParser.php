@@ -422,6 +422,7 @@ class ConsoleOptionParser
      *   Will also accept an instance of ConsoleInputOption
      * @param array $options An array of parameters that define the behavior of the option
      * @return $this
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     public function addOption($name, array $options = [])
     {
@@ -480,6 +481,7 @@ class ConsoleOptionParser
      *   Will also accept an instance of ConsoleInputArgument.
      * @param array $params Parameters for the argument, see above.
      * @return $this
+     * @throws \LogicException
      */
     public function addArgument($name, array $params = [])
     {
@@ -520,6 +522,7 @@ class ConsoleOptionParser
      * @param array $args Array of arguments to add.
      * @see \Cake\Console\ConsoleOptionParser::addArgument()
      * @return $this
+     * @throws \LogicException
      */
     public function addArguments(array $args)
     {
@@ -541,6 +544,7 @@ class ConsoleOptionParser
      * @param array $options Array of options to add.
      * @see \Cake\Console\ConsoleOptionParser::addOption()
      * @return $this
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     public function addOptions(array $options)
     {
@@ -751,6 +755,7 @@ class ConsoleOptionParser
      * @param string $option The option to parse.
      * @param array $params The params to append the parsed value into
      * @return array Params with $option added in.
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     protected function _parseLongOption($option, $params)
     {

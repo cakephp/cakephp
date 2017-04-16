@@ -167,6 +167,9 @@ class Shell
      *
      * @param \Cake\Console\ConsoleIo|null $io An io instance.
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell
+     * @throws \Cake\Datasource\Exception\MissingModelException
+     * @throws \InvalidArgumentException
+     * @throws \UnexpectedValueException
      */
     public function __construct(ConsoleIo $io = null)
     {
@@ -414,6 +417,7 @@ class Shell
      * Built-in extra parameter is :
      * - `requested` : if used, will prevent the Shell welcome message to be displayed
      * @return int|bool|null
+     * @throws \Cake\Core\Exception\MissingPluginException
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#the-cakephp-console
      */
     public function runCommand($argv, $autoMethod = false, $extra = [])
@@ -484,6 +488,8 @@ class Shell
      * and the configured stdout/stderr logging
      *
      * @return void
+     * @throws \InvalidArgumentException
+     * @throws \BadMethodCallException
      */
     protected function _setOutputLevel()
     {
