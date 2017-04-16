@@ -125,10 +125,8 @@ class File
         if (!$force && is_resource($this->handle)) {
             return true;
         }
-        if ($this->exists() === false) {
-            if ($this->create() === false) {
-                return false;
-            }
+        if ($this->exists() === false && $this->create() === false) {
+            return false;
         }
 
         $this->handle = fopen($this->path, $mode);
