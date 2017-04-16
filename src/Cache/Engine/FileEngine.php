@@ -122,6 +122,7 @@ class FileEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @param mixed $data Data to be cached
      * @return bool True if the data was successfully cached, false on failure
+     * @throws \InvalidArgumentException
      */
     public function write($key, $data)
     {
@@ -175,6 +176,7 @@ class FileEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @return mixed The cached data, or false if the data doesn't exist, has
+     * @throws \InvalidArgumentException
      *   expired, or if there was an error fetching it
      */
     public function read($key)
@@ -229,6 +231,7 @@ class FileEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't
+     * @throws \InvalidArgumentException
      *   exist or couldn't be removed
      */
     public function delete($key)

@@ -84,6 +84,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      *
      * @param \Cake\Controller\ComponentRegistry $registry The Component registry used on this request.
      * @param array $config Array of config to use.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
@@ -101,6 +102,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      * @param string|null $password The password, if not provided password checking is skipped
      *   and result of find is returned.
      * @return bool|array Either false on failure, or an array of user data.
+     * @throws \RuntimeException
      */
     protected function _findUser($username, $password = null)
     {

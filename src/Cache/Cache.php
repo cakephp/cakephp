@@ -167,6 +167,7 @@ class Cache
      *
      * @param string $config The configuration name you want an engine for.
      * @return \Cake\Cache\CacheEngine When caching is disabled a null engine will be returned.
+     * @throws \InvalidArgumentException
      */
     public static function engine($config)
     {
@@ -193,6 +194,7 @@ class Cache
      * @param string $config [optional] The config name you wish to have garbage collected. Defaults to 'default'
      * @param int|null $expires [optional] An expires timestamp. Defaults to NULL
      * @return void
+     * @throws \InvalidArgumentException
      */
     public static function gc($config = 'default', $expires = null)
     {
@@ -221,6 +223,7 @@ class Cache
      * @param mixed $value Data to be cached - anything except a resource
      * @param string $config Optional string configuration name to write to. Defaults to 'default'
      * @return bool True if the data was successfully cached, false on failure
+     * @throws \InvalidArgumentException
      */
     public static function write($key, $value, $config = 'default')
     {
@@ -266,6 +269,7 @@ class Cache
      * @param string $config Optional string configuration name to write to. Defaults to 'default'
      * @return array of bools for each key provided, indicating true for success or false for fail
      * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public static function writeMany($data, $config = 'default')
     {
@@ -305,6 +309,7 @@ class Cache
      * @param string $key Identifier for the data
      * @param string $config optional name of the configuration to use. Defaults to 'default'
      * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
+     * @throws \InvalidArgumentException
      */
     public static function read($key, $config = 'default')
     {
@@ -334,6 +339,7 @@ class Cache
      * @param string $config optional name of the configuration to use. Defaults to 'default'
      * @return array An array containing, for each of the given $keys, the cached data or false if cached data could not be
      * retrieved.
+     * @throws \InvalidArgumentException
      */
     public static function readMany($keys, $config = 'default')
     {
@@ -350,6 +356,7 @@ class Cache
      * @param string $config Optional string configuration name. Defaults to 'default'
      * @return mixed new value, or false if the data doesn't exist, is not integer,
      *    or if there was an error fetching it.
+     * @throws \InvalidArgumentException
      */
     public static function increment($key, $offset = 1, $config = 'default')
     {
@@ -369,6 +376,7 @@ class Cache
      * @param string $config Optional string configuration name. Defaults to 'default'
      * @return mixed new value, or false if the data doesn't exist, is not integer,
      *   or if there was an error fetching it
+     * @throws \InvalidArgumentException
      */
     public static function decrement($key, $offset = 1, $config = 'default')
     {
@@ -400,6 +408,7 @@ class Cache
      * @param string $key Identifier for the data
      * @param string $config name of the configuration to use. Defaults to 'default'
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+     * @throws \InvalidArgumentException
      */
     public static function delete($key, $config = 'default')
     {
@@ -429,6 +438,7 @@ class Cache
      * @param string $config name of the configuration to use. Defaults to 'default'
      * @return array of boolean values that are true if the value was successfully deleted, false if it didn't exist or
      * couldn't be removed
+     * @throws \InvalidArgumentException
      */
     public static function deleteMany($keys, $config = 'default')
     {
@@ -443,6 +453,7 @@ class Cache
      * @param bool $check if true will check expiration, otherwise delete all
      * @param string $config name of the configuration to use. Defaults to 'default'
      * @return bool True if the cache was successfully cleared, false otherwise
+     * @throws \InvalidArgumentException
      */
     public static function clear($check = false, $config = 'default')
     {
@@ -456,6 +467,7 @@ class Cache
      *
      * @param bool $check if true will check expiration, otherwise delete all
      * @return array Status code. For each configuration, it reports the status of the operation
+     * @throws \InvalidArgumentException
      */
     public static function clearAll($check = false)
     {
@@ -474,6 +486,7 @@ class Cache
      * @param string $group name of the group to be cleared
      * @param string $config name of the configuration to use. Defaults to 'default'
      * @return bool True if the cache group was successfully cleared, false otherwise
+     * @throws \InvalidArgumentException
      */
     public static function clearGroup($group, $config = 'default')
     {
@@ -573,6 +586,7 @@ class Cache
      * @return mixed If the key is found: the cached data, false if the data
      *   missing/expired, or an error. If the key is not found: boolean of the
      *   success of the write
+     * @throws \InvalidArgumentException
      */
     public static function remember($key, $callable, $config = 'default')
     {
@@ -608,6 +622,7 @@ class Cache
      * @param string $config Optional string configuration name to write to. Defaults to 'default'.
      * @return bool True if the data was successfully cached, false on failure.
      *   Or if the key existed already.
+     * @throws \InvalidArgumentException
      */
     public static function add($key, $value, $config = 'default')
     {
