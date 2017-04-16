@@ -64,6 +64,7 @@ class InsertIterator extends Collection
      * to insert the value into the target collection.
      * @param array|\Traversable $values The source collection from which the values will
      * be inserted at the specified path.
+     * @throws \InvalidArgumentException
      */
     public function __construct($into, $path, $values)
     {
