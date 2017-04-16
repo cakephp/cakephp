@@ -277,6 +277,7 @@ class AuthComponent extends Component
      *
      * @param \Cake\Event\Event $event Event instance.
      * @return \Cake\Http\Response|null
+     * @throws \Cake\Core\Exception\Exception
      */
     public function authCheck(Event $event)
     {
@@ -362,6 +363,7 @@ class AuthComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller A reference to the controller object.
      * @return \Cake\Http\Response|null Null if current action is login action
+     * @throws \InvalidArgumentException
      *   else response object returned by authenticate object or Controller::redirect().
      * @throws \Cake\Core\Exception\Exception
      */
@@ -477,6 +479,7 @@ class AuthComponent extends Component
      * Sets defaults for configs.
      *
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      */
     protected function _setDefaults()
     {
@@ -517,6 +520,7 @@ class AuthComponent extends Component
      * @param \Cake\Http\ServerRequest|null $request The request to authenticate for.
      *   If empty, the current request will be used.
      * @return bool True if $user is authorized, otherwise false
+     * @throws \Cake\Core\Exception\Exception
      */
     public function isAuthorized($user = null, ServerRequest $request = null)
     {
@@ -587,6 +591,7 @@ class AuthComponent extends Component
      *
      * @param string $alias Alias for the authorize object
      * @return \Cake\Auth\BaseAuthorize|null
+     * @throws \Cake\Core\Exception\Exception
      */
     public function getAuthorize($alias)
     {
@@ -685,6 +690,7 @@ class AuthComponent extends Component
      * which the authenticate classes can listen for and perform custom logout logic.
      *
      * @return string Normalized config `logoutRedirect`
+     * @throws \Cake\Core\Exception\Exception
      * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#logging-users-out
      */
     public function logout()
@@ -705,6 +711,7 @@ class AuthComponent extends Component
      *
      * @param string|null $key Field to retrieve. Leave null to get entire User record.
      * @return mixed|null Either User record or null if no user is logged in, or retrieved field if key is specified.
+     * @throws \InvalidArgumentException
      * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#accessing-the-logged-in-user
      */
     public function user($key = null)
@@ -729,6 +736,8 @@ class AuthComponent extends Component
      * This lets stateless authentication methods function correctly.
      *
      * @return bool true If a user can be found, false if one cannot.
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \InvalidArgumentException
      */
     protected function _getUser()
     {
@@ -774,6 +783,7 @@ class AuthComponent extends Component
      *
      * @param string|array|null $url Optional URL to write as the login redirect URL.
      * @return string Redirect URL
+     * @throws \Cake\Core\Exception\Exception
      */
     public function redirectUrl($url = null)
     {
@@ -808,6 +818,7 @@ class AuthComponent extends Component
      * to.
      *
      * @return array|bool User record data, or false, if the user could not be identified.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function identify()
     {
@@ -836,6 +847,7 @@ class AuthComponent extends Component
      * Loads the configured authentication objects.
      *
      * @return array|null The loaded authorization objects, or null on empty authenticate value.
+     * @throws \InvalidArgumentException
      * @throws \Cake\Core\Exception\Exception
      */
     public function constructAuthenticate()
@@ -878,6 +890,7 @@ class AuthComponent extends Component
      * @param \Cake\Auth\Storage\StorageInterface|null $storage Sets provided
      *   object as storage or if null returns configured storage object.
      * @return \Cake\Auth\Storage\StorageInterface|null
+     * @throws \Cake\Core\Exception\Exception
      */
     public function storage(StorageInterface $storage = null)
     {
@@ -913,6 +926,7 @@ class AuthComponent extends Component
      *
      * @param string $name Property name
      * @return mixed
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __get($name)
     {
@@ -929,6 +943,7 @@ class AuthComponent extends Component
      * @param string $name Property name.
      * @param mixed $value Value to set.
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __set($name, $value)
     {
@@ -956,6 +971,8 @@ class AuthComponent extends Component
      * @param string $alias Alias for the authenticate object
      *
      * @return \Cake\Auth\BaseAuthenticate|null
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
      */
     public function getAuthenticate($alias)
     {

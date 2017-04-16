@@ -96,6 +96,7 @@ class SecurityComponent extends Component
      *
      * @param \Cake\Event\Event $event An Event instance
      * @return mixed
+     * @throws \Cake\Network\Exception\BadRequestException
      */
     public function startup(Event $event)
     {
@@ -214,6 +215,7 @@ class SecurityComponent extends Component
      * @param string $method The HTTP method to assign controller actions to
      * @param array $actions Controller actions to set the required HTTP method to.
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      */
     protected function _requireMethod($method, $actions = [])
     {
@@ -228,6 +230,7 @@ class SecurityComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @return bool true if secure connection required
+     * @throws \Cake\Controller\Exception\SecurityException
      */
     protected function _secureRequired(Controller $controller)
     {
@@ -253,6 +256,7 @@ class SecurityComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @return bool true if authentication required
+     * @throws \Cake\Controller\Exception\AuthSecurityException
      * @deprecated 3.2.2 This feature is confusing and not useful.
      */
     protected function _authRequired(Controller $controller)
@@ -309,6 +313,7 @@ class SecurityComponent extends Component
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @throws \Cake\Controller\Exception\AuthSecurityException
      * @return bool true if submitted form is valid
+     * @throws \Cake\Controller\Exception\SecurityException
      */
     protected function _validatePost(Controller $controller)
     {
@@ -487,6 +492,7 @@ class SecurityComponent extends Component
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @param array $hashParts Elements used to generate the Token hash
      * @return string Message explaining why the tokens are not matching
+     * @throws \InvalidArgumentException
      */
     protected function _debugPostTokenNotMatching(Controller $controller, $hashParts)
     {

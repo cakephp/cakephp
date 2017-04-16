@@ -272,6 +272,7 @@ class PaginatorComponent extends Component
      *   that key's settings will be used for pagination instead of the general ones.
      * @param array $settings The settings to merge with the request data.
      * @return array Array of merged options.
+     * @throws \InvalidArgumentException
      */
     public function mergeOptions($alias, $settings)
     {

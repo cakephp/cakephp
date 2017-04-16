@@ -186,6 +186,7 @@ class RequestHandlerComponent extends Component
      *
      * @param \Cake\Event\Event $event The startup event that was fired.
      * @return void
+     * @throws \RuntimeException
      */
     public function startup(Event $event)
     {
@@ -249,6 +250,8 @@ class RequestHandlerComponent extends Component
      * @param string|array $url A string or array containing the redirect location
      * @param \Cake\Http\Response $response The response object.
      * @return \Cake\Http\Response|null The response object if the redirect is caught.
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
      * @deprecated 3.3.5 This functionality will be removed in 4.0.0. You can disable this function
      *   now by setting the `enableBeforeRedirect` config option to false.
      */
@@ -727,6 +730,7 @@ class RequestHandlerComponent extends Component
      * @param array|string|null $type The type string or array with format `['type' => 'viewClass']` to map one or more
      * @param array|null $viewClass The viewClass to be used for the type without `View` appended
      * @return array|string Returns viewClass when only string $type is set, else array with viewClassMap
+     * @throws \Cake\Core\Exception\Exception
      * @deprecated 3.1.0 Use setConfig('viewClassMap', ...) instead.
      */
     public function viewClassMap($type = null, $viewClass = null)

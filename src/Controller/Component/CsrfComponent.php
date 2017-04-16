@@ -73,6 +73,7 @@ class CsrfComponent extends Component
      *
      * @param \Cake\Event\Event $event Event instance.
      * @return void
+     * @throws \Cake\Network\Exception\InvalidCsrfTokenException
      */
     public function startup(Event $event)
     {
