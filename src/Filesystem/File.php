@@ -106,10 +106,8 @@ class File
     public function create()
     {
         $dir = $this->Folder->pwd();
-        if (is_dir($dir) && is_writable($dir) && !$this->exists()) {
-            if (touch($this->path)) {
-                return true;
-            }
+        if (is_dir($dir) && is_writable($dir) && !$this->exists() && touch($this->path)) {
+            return true;
         }
 
         return false;
