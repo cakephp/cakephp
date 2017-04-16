@@ -12,10 +12,10 @@
  * @since         3.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Routing\Middleware;
+namespace Cake\Test\TestCase\Http\Middleware;
 
 use Cake\Http\ServerRequestFactory;
-use Cake\Routing\Middleware\SecurityHeadersMiddleware;
+use Cake\Http\Middleware\SecurityHeadersMiddleware;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Response;
 
