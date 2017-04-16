@@ -129,6 +129,7 @@ trait EntityTrait
      *
      * @param string $property Name of the property to access
      * @return mixed
+     * @throws \InvalidArgumentException
      */
     public function &__get($property)
     {
@@ -141,6 +142,7 @@ trait EntityTrait
      * @param string $property The name of the property to set
      * @param mixed $value The value to set to the property
      * @return void
+     * @throws \InvalidArgumentException
      */
     public function __set($property, $value)
     {
@@ -362,6 +364,7 @@ trait EntityTrait
      *
      * @param string|array $property The property or properties to check.
      * @return bool
+     * @throws \InvalidArgumentException
      */
     public function has($property)
     {
@@ -524,6 +527,7 @@ trait EntityTrait
      * into arrays as well.
      *
      * @return array
+     * @throws \InvalidArgumentException
      */
     public function toArray()
     {
@@ -564,6 +568,7 @@ trait EntityTrait
      *
      * @param mixed $offset The offset to check.
      * @return bool Success
+     * @throws \InvalidArgumentException
      */
     public function offsetExists($offset)
     {
@@ -575,6 +580,7 @@ trait EntityTrait
      *
      * @param mixed $offset The offset to get.
      * @return mixed
+     * @throws \InvalidArgumentException
      */
     public function &offsetGet($offset)
     {
@@ -587,6 +593,7 @@ trait EntityTrait
      * @param mixed $offset The offset to set.
      * @param mixed $value The value to set.
      * @return void
+     * @throws \InvalidArgumentException
      */
     public function offsetSet($offset, $value)
     {
@@ -655,6 +662,7 @@ trait EntityTrait
      * @param array $properties list of properties to be returned
      * @param bool $onlyDirty Return the requested property only if it is dirty
      * @return array
+     * @throws \InvalidArgumentException
      */
     public function extract(array $properties, $onlyDirty = false)
     {
@@ -677,6 +685,7 @@ trait EntityTrait
      *
      * @param array $properties List of properties to be returned
      * @return array
+     * @throws \InvalidArgumentException
      */
     public function extractOriginal(array $properties)
     {
@@ -697,6 +706,7 @@ trait EntityTrait
      *
      * @param array $properties List of properties to be returned
      * @return array
+     * @throws \InvalidArgumentException
      */
     public function extractOriginalChanged(array $properties)
     {
@@ -836,6 +846,7 @@ trait EntityTrait
      * Returns all validation errors.
      *
      * @return array
+     * @throws \InvalidArgumentException
      */
     public function getErrors()
     {
@@ -948,7 +959,8 @@ trait EntityTrait
      * @param string|array|null $field The field to get errors for, or the array of errors to set.
      * @param string|array|null $errors The errors to be set for $field
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
-     * @return array|$this
+     * @return array|EntityTrait
+     * @throws \InvalidArgumentException
      */
     public function errors($field = null, $errors = null, $overwrite = false)
     {
@@ -972,6 +984,7 @@ trait EntityTrait
      *
      * @param string $field the field in this entity to check for errors
      * @return array errors in nested entity if any
+     * @throws \InvalidArgumentException
      */
     protected function _nestedErrors($field)
     {
