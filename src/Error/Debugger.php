@@ -202,6 +202,7 @@ class Debugger
      * Reads the current output masking.
      *
      * @return array
+     * @throws \Cake\Core\Exception\Exception
      */
     public static function outputMask()
     {
@@ -218,6 +219,7 @@ class Debugger
      * @param array $value An array where keys are replaced by their values in output.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      */
     public static function setOutputMask(array $value, $merge = true)
     {
@@ -246,6 +248,7 @@ class Debugger
      * @param int|string $level Type of log to use. Defaults to 'debug'.
      * @param int $depth The depth to output to. Defaults to 3.
      * @return void
+     * @throws \InvalidArgumentException
      */
     public static function log($var, $level = 'debug', $depth = 3)
     {
@@ -548,6 +551,7 @@ class Debugger
      * @param int $depth The current depth, used for recursion tracking.
      * @param int $indent The current indentation level.
      * @return string Exported array.
+     * @throws \Cake\Core\Exception\Exception
      */
     protected static function _array(array $var, $depth, $indent)
     {
@@ -588,6 +592,7 @@ class Debugger
      * @param int $depth The current depth, used for tracking recursion.
      * @param int $indent The current indentation level.
      * @return string
+     * @throws \Cake\Core\Exception\Exception
      * @see \Cake\Error\Debugger::exportVar()
      */
     protected static function _object($var, $depth, $indent)
