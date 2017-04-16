@@ -667,8 +667,8 @@ abstract class TestCase extends BaseTestCase
             }
         }
 
-        if (stripos($mock->table(), 'mock') === 0) {
-            $mock->table(Inflector::tableize($baseClass));
+        if (stripos($mock->getTable(), 'mock') === 0) {
+            $mock->setTable(Inflector::tableize($baseClass));
         }
 
         TableRegistry::set($baseClass, $mock);
