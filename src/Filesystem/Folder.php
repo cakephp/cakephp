@@ -880,10 +880,8 @@ class Folder
         }
         $options += ['to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => [], 'recursive' => true];
 
-        if ($this->copy($options)) {
-            if ($this->delete($options['from'])) {
-                return (bool)$this->cd($options['to']);
-            }
+        if ($this->copy($options) && $this->delete($options['from'])) {
+            return (bool)$this->cd($options['to']);
         }
 
         return false;
