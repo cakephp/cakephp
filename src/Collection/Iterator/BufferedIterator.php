@@ -23,7 +23,7 @@ use SplDoublyLinkedList;
  * Creates an iterator from another iterator that will keep the results of the inner
  * iterator in memory, so that results don't have to be re-calculated.
  */
-class BufferedIterator extends Collection implements Countable, Serializable
+class BufferedIterator extends Collection implements Countable
 {
 
     /**
