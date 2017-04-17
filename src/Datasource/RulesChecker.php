@@ -293,7 +293,7 @@ class RulesChecker
     protected function _checkRules(EntityInterface $entity, array $options = [], array $rules = [])
     {
         $success = true;
-        $options = $options + $this->_options;
+        $options += $this->_options;
         foreach ($rules as $rule) {
             $success = $rule($entity, $options) && $success;
         }

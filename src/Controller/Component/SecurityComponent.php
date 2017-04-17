@@ -82,7 +82,7 @@ class SecurityComponent extends Component
      *
      * @var string
      */
-    protected $_action = null;
+    protected $_action;
 
     /**
      * The Session object
@@ -96,6 +96,7 @@ class SecurityComponent extends Component
      *
      * @param \Cake\Event\Event $event An Event instance
      * @return mixed
+     * @throws \Cake\Network\Exception\BadRequestException
      */
     public function startup(Event $event)
     {
@@ -146,6 +147,7 @@ class SecurityComponent extends Component
      *
      * @param string|array|null $actions Actions list
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      */
     public function requireSecure($actions = null)
     {
@@ -161,6 +163,7 @@ class SecurityComponent extends Component
      *
      * @param string|array $actions Actions list
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      * @deprecated 3.2.2 This feature is confusing and not useful.
      */
     public function requireAuth($actions)
@@ -195,6 +198,7 @@ class SecurityComponent extends Component
      * @param \Cake\Controller\Exception\SecurityException|null $exception Additional debug info describing the cause
      * @throws \Cake\Network\Exception\BadRequestException
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _throwException($exception = null)
     {
@@ -214,13 +218,14 @@ class SecurityComponent extends Component
      * @param string $method The HTTP method to assign controller actions to
      * @param array $actions Controller actions to set the required HTTP method to.
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      */
     protected function _requireMethod($method, $actions = [])
     {
         if (isset($actions[0]) && is_array($actions[0])) {
             $actions = $actions[0];
         }
-        $this->setConfig('require' . $method, (empty($actions)) ? ['*'] : $actions);
+        $this->setConfig('require' . $method, empty($actions) ? ['*'] : $actions);
     }
 
     /**
@@ -228,6 +233,7 @@ class SecurityComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @return bool true if secure connection required
+     * @throws \Cake\Controller\Exception\SecurityException
      */
     protected function _secureRequired(Controller $controller)
     {
@@ -253,6 +259,9 @@ class SecurityComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @return bool true if authentication required
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Controller\Exception\AuthSecurityException
      * @deprecated 3.2.2 This feature is confusing and not useful.
      */
     protected function _authRequired(Controller $controller)
@@ -309,6 +318,8 @@ class SecurityComponent extends Component
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @throws \Cake\Controller\Exception\AuthSecurityException
      * @return bool true if submitted form is valid
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Controller\Exception\SecurityException
      */
     protected function _validatePost(Controller $controller)
     {
@@ -337,6 +348,7 @@ class SecurityComponent extends Component
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @throws \Cake\Controller\Exception\SecurityException
      * @return string fields token
+     * @throws \InvalidArgumentException
      */
     protected function _validToken(Controller $controller)
     {
@@ -372,6 +384,7 @@ class SecurityComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @return array
+     * @throws \InvalidArgumentException
      */
     protected function _hashParts(Controller $controller)
     {
@@ -487,6 +500,7 @@ class SecurityComponent extends Component
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @param array $hashParts Elements used to generate the Token hash
      * @return string Message explaining why the tokens are not matching
+     * @throws \InvalidArgumentException
      */
     protected function _debugPostTokenNotMatching(Controller $controller, $hashParts)
     {
@@ -557,6 +571,8 @@ class SecurityComponent extends Component
      *
      * @param \Cake\Http\ServerRequest $request The request object to add into.
      * @return bool
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function generateToken(ServerRequest $request)
     {

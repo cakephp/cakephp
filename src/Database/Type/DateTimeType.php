@@ -27,7 +27,7 @@ use RuntimeException;
  *
  * Use to convert datetime instances to strings & back.
  */
-class DateTimeType extends Type implements TypeInterface
+class DateTimeType extends Type
 {
     /**
      * Identifier name for this type.
@@ -37,7 +37,7 @@ class DateTimeType extends Type implements TypeInterface
      *
      * @var string|null
      */
-    protected $_name = null;
+    protected $_name;
 
     /**
      * The class to use for representing date objects
@@ -143,7 +143,7 @@ class DateTimeType extends Type implements TypeInterface
      * Convert request data into a datetime object.
      *
      * @param mixed $value Request data
-     * @return \Cake\I18n\Time|\DateTime
+     * @return bool|\Cake\I18n\Time|\DateTime
      */
     public function marshal($value)
     {
@@ -156,7 +156,8 @@ class DateTimeType extends Type implements TypeInterface
             $compare = $date = false;
             if ($value === '' || $value === null || $value === false || $value === true) {
                 return null;
-            } elseif (is_numeric($value)) {
+            }
+            if (is_numeric($value)) {
                 $date = new $class('@' . $value);
             } elseif (is_string($value) && $this->_useLocaleParser) {
                 return $this->_parseValue($value);
@@ -210,6 +211,7 @@ class DateTimeType extends Type implements TypeInterface
      *
      * @param bool $enable Whether or not to enable
      * @return $this
+     * @throws \RuntimeException
      */
     public function useLocaleParser($enable = true)
     {

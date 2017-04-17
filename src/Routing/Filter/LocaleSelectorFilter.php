@@ -39,6 +39,7 @@ class LocaleSelectorFilter extends DispatcherFilter
      *
      * @param array $config Settings for the filter.
      * @throws \Cake\Core\Exception\Exception When 'when' conditions are not callable.
+     * @throws \InvalidArgumentException
      */
     public function __construct($config = [])
     {
@@ -55,6 +56,7 @@ class LocaleSelectorFilter extends DispatcherFilter
      *
      * @param \Cake\Event\Event $event The event instance.
      * @return void
+     * @throws \InvalidArgumentException
      */
     public function beforeDispatch(Event $event)
     {

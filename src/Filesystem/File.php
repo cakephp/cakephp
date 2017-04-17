@@ -28,7 +28,7 @@ class File
      * @var \Cake\Filesystem\Folder
      * @link http://book.cakephp.org/3.0/en/core-libraries/file-folder.html
      */
-    public $Folder = null;
+    public $Folder;
 
     /**
      * File name
@@ -36,7 +36,7 @@ class File
      * @var string
      * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$name
      */
-    public $name = null;
+    public $name;
 
     /**
      * File info
@@ -52,7 +52,7 @@ class File
      * @var resource
      * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$handle
      */
-    public $handle = null;
+    public $handle;
 
     /**
      * Enable locking for file reading and writing
@@ -60,7 +60,7 @@ class File
      * @var bool
      * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$lock
      */
-    public $lock = null;
+    public $lock;
 
     /**
      * Path property
@@ -70,7 +70,7 @@ class File
      * @var mixed
      * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$path
      */
-    public $path = null;
+    public $path;
 
     /**
      * Constructor
@@ -106,13 +106,8 @@ class File
     public function create()
     {
         $dir = $this->Folder->pwd();
-        if (is_dir($dir) && is_writable($dir) && !$this->exists()) {
-            if (touch($this->path)) {
-                return true;
-            }
-        }
 
-        return false;
+        return is_dir($dir) && is_writable($dir) && !$this->exists() && touch($this->path);
     }
 
     /**
@@ -127,10 +122,8 @@ class File
         if (!$force && is_resource($this->handle)) {
             return true;
         }
-        if ($this->exists() === false) {
-            if ($this->create() === false) {
-                return false;
-            }
+        if ($this->exists() === false && $this->create() === false) {
+            return false;
         }
 
         $this->handle = fopen($this->path, $mode);
@@ -227,10 +220,8 @@ class File
     {
         $success = false;
         if ($this->open($mode, $force) === true) {
-            if ($this->lock !== null) {
-                if (flock($this->handle, LOCK_EX) === false) {
-                    return false;
-                }
+            if ($this->lock !== null && flock($this->handle, LOCK_EX) === false) {
+                return false;
             }
 
             if (fwrite($this->handle, $data) !== false) {
@@ -371,7 +362,7 @@ class File
             $ext = $this->ext();
         }
 
-        return preg_replace("/(?:[^\w\.-]+)/", "_", basename($name, $ext));
+        return preg_replace("/(?:[^\w\.-]+)/", '_', basename($name, $ext));
     }
 
     /**
@@ -620,10 +611,8 @@ class File
             return false;
         }
 
-        if ($this->lock !== null) {
-            if (flock($this->handle, LOCK_EX) === false) {
-                return false;
-            }
+        if ($this->lock !== null && flock($this->handle, LOCK_EX) === false) {
+            return false;
         }
 
         $replaced = $this->write(str_replace($search, $replace, $this->read()), 'w', true);

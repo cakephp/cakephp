@@ -15,7 +15,6 @@ namespace Cake\Http\Client;
 
 use Cake\Core\Exception\Exception;
 use Psr\Http\Message\RequestInterface;
-use Zend\Diactoros\MessageTrait;
 use Zend\Diactoros\RequestTrait;
 use Zend\Diactoros\Stream;
 
@@ -38,6 +37,7 @@ class Request extends Message implements RequestInterface
      * @param string $method The HTTP method to use.
      * @param array $headers The HTTP headers to set.
      * @param array|string|null $data The request body to use.
+     * @throws \InvalidArgumentException
      */
     public function __construct($url = '', $method = self::METHOD_GET, array $headers = [], $data = null)
     {
@@ -84,7 +84,8 @@ class Request extends Message implements RequestInterface
      * compatibility reasons, and is not part of the PSR7 interface.
      *
      * @param string|null $url The url for the request. Leave null for get
-     * @return $this|string Either $this or the url value.
+     * @return Request|string Either $this or the url value.
+     * @throws \InvalidArgumentException
      * @deprecated 3.3.0 Use getUri() and withUri() instead.
      */
     public function url($url = null)
@@ -210,7 +211,7 @@ class Request extends Message implements RequestInterface
      * compatibility reasons, and is not part of the PSR7 interface.
      *
      * @param string|null $version The HTTP version.
-     * @return $this|string Either $this or the HTTP version.
+     * @return Request|string Either $this or the HTTP version.
      * @deprecated 3.3.0 Use getProtocolVersion() and withProtocolVersion() instead.
      */
     public function version($version = null)
@@ -232,6 +233,8 @@ class Request extends Message implements RequestInterface
      *
      * @param string|array|null $body The body for the request. Leave null for get
      * @return mixed Either $this or the body value.
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function body($body = null)
     {

@@ -43,6 +43,7 @@ class TranslatorFactory extends BaseTranslatorFactory
      * @param \Aura\Intl\TranslatorInterface $fallback A fallback translator to use, if any.
      * @throws \Cake\Core\Exception\Exception If fallback class does not match Cake\I18n\Translator
      * @return \Cake\I18n\Translator
+     * @throws \RuntimeException
      */
     public function newInstance(
         $locale,

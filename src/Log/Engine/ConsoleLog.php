@@ -40,7 +40,7 @@ class ConsoleLog extends BaseLog
      *
      * @var \Cake\Console\ConsoleOutput
      */
-    protected $_output = null;
+    protected $_output;
 
     /**
      * Constructs a new Console Logger.
@@ -54,6 +54,7 @@ class ConsoleLog extends BaseLog
      *
      * @param array $config Options for the FileLog, see above.
      * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(array $config = [])
     {

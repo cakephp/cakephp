@@ -132,6 +132,7 @@ trait ConventionsTrait
      *
      * @param string $pluginName Name of the plugin you want ie. DebugKit
      * @return string path path to the correct plugin.
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     protected function _pluginPath($pluginName)
     {

@@ -28,7 +28,7 @@ class LoadTask extends Shell
      *
      * @var string
      */
-    public $bootstrap = null;
+    public $bootstrap;
 
     /**
      * Execution method always used for tasks.
@@ -96,6 +96,8 @@ class LoadTask extends Shell
      * GetOptionParser method.
      *
      * @return \Cake\Console\ConsoleOptionParser
+     * @throws \LogicException
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     public function getOptionParser()
     {

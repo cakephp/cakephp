@@ -26,7 +26,7 @@ class UnavailableForLegalReasonsException extends HttpException
      */
     public function __construct($message = null, $code = 451)
     {
-        if (empty($message)) {
+        if (null === $message) {
             $message = 'Unavailable For Legal Reasons';
         }
         parent::__construct($message, $code);

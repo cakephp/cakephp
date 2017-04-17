@@ -25,7 +25,7 @@ use PDO;
  *
  * Use to convert integer data between PHP and the database types.
  */
-class IntegerType extends Type implements TypeInterface
+class IntegerType extends Type
 {
     /**
      * Identifier name for this type.
@@ -35,7 +35,7 @@ class IntegerType extends Type implements TypeInterface
      *
      * @var string|null
      */
-    protected $_name = null;
+    protected $_name;
 
     /**
      * Constructor.
@@ -56,6 +56,7 @@ class IntegerType extends Type implements TypeInterface
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return int|null
+     * @throws \InvalidArgumentException
      */
     public function toDatabase($value, Driver $driver)
     {

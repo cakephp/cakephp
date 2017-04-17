@@ -138,6 +138,8 @@ class HtmlHelper extends Helper
      *
      * @param \Cake\View\View $View The View this helper is being attached to.
      * @param array $config Configuration settings for the helper.
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(View $View, array $config = [])
     {
@@ -228,6 +230,9 @@ class HtmlHelper extends Helper
      * @param array $options Other attributes for the generated tag. If the type attribute is html,
      *    rss, atom, or icon, the mime-type is returned.
      * @return string|null A completed `<link />` element, or null if the element was sent to a block.
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\Exception
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-meta-tags
      */
     public function meta($type, $content = null, array $options = [])
@@ -305,16 +310,18 @@ class HtmlHelper extends Helper
      * @param string|null $charset The character set to be used in the meta tag. If empty,
      *  The App.encoding value will be used. Example: "utf-8".
      * @return string A meta tag containing the specified character set.
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-charset-tags
      */
     public function charset($charset = null)
     {
-        if (empty($charset)) {
+        if (null === $charset) {
             $charset = strtolower(Configure::read('App.encoding'));
         }
 
         return $this->formatTemplate('charset', [
-            'charset' => (!empty($charset) ? $charset : 'utf-8')
+            'charset' => !empty($charset) ? $charset : 'utf-8'
         ]);
     }
 
@@ -339,6 +346,8 @@ class HtmlHelper extends Helper
      *   external URL (starts with http://)
      * @param array $options Array of options and HTML attributes.
      * @return string An `<a />` element.
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \RuntimeException
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-links
      */
     public function link($title, $url = null, array $options = [])
@@ -429,6 +438,9 @@ class HtmlHelper extends Helper
      *   of your application. Otherwise, the path will be relative to your CSS path, usually webroot/css.
      * @param array $options Array of options and HTML arguments.
      * @return string|null CSS `<link />` or `<style />` tag, depending on the type of link.
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \RuntimeException
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#linking-to-css-files
      */
     public function css($path, array $options = [])
@@ -521,6 +533,9 @@ class HtmlHelper extends Helper
      * @param string|array $url String or array of javascript files to include
      * @param array $options Array of options, and html attributes see above.
      * @return string|null String of `<script />` tags or null if block is specified in options
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\Exception
      *   or if $once is true and the file has been included before.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#linking-to-javascript-files
      */
@@ -578,6 +593,8 @@ class HtmlHelper extends Helper
      * @param array $options The options to use. Options not listed above will be
      *    treated as HTML attributes.
      * @return string|null String or null depending on the value of `$options['block']`
+     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\Exception
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-inline-javascript-blocks
      */
     public function scriptBlock($script, array $options = [])
@@ -724,6 +741,8 @@ class HtmlHelper extends Helper
      * @param string|array|bool $startText This will be the first crumb, if false it defaults to first crumb in array. Can
      *   also be an array, see `HtmlHelper::getCrumbs` for details.
      * @return string|null Breadcrumbs HTML list.
+     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\Exception
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
      * @deprecated 3.3.6 Use the BreadcrumbsHelper instead
      */
@@ -828,6 +847,9 @@ class HtmlHelper extends Helper
      * @param string $path Path to the image file, relative to the app/webroot/img/ directory.
      * @param array $options Array of HTML attributes. See above for special options.
      * @return string completed img tag
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \RuntimeException
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#linking-to-images
      */
     public function image($path, array $options = [])
@@ -870,6 +892,8 @@ class HtmlHelper extends Helper
      * @param array|null $trOptions HTML options for TR elements.
      * @param array|null $thOptions HTML options for TH elements.
      * @return string Completed table headers
+     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\Exception
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-table-headings
      */
     public function tableHeaders(array $names, array $trOptions = null, array $thOptions = null)
@@ -979,6 +1003,8 @@ class HtmlHelper extends Helper
      * @param string $content The content of the row.
      * @param array $options HTML attributes.
      * @return string
+     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\Exception
      */
     public function tableRow($content, array $options = [])
     {
@@ -994,6 +1020,8 @@ class HtmlHelper extends Helper
      * @param string $content The content of the cell.
      * @param array $options HTML attributes.
      * @return string
+     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\Exception
      */
     public function tableCell($content, array $options = [])
     {
@@ -1015,6 +1043,8 @@ class HtmlHelper extends Helper
      *   If null, only a start tag will be printed
      * @param array $options Additional HTML attributes of the DIV tag, see above.
      * @return string The formatted tag element
+     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\Exception
      */
     public function tag($name, $text = null, array $options = [])
     {
@@ -1053,7 +1083,7 @@ class HtmlHelper extends Helper
      */
     public function div($class = null, $text = null, array $options = [])
     {
-        if (!empty($class)) {
+        if (null !== $class) {
             $options['class'] = $class;
         }
 
@@ -1071,6 +1101,8 @@ class HtmlHelper extends Helper
      * @param string $text String content that will appear inside the p element.
      * @param array $options Additional HTML attributes of the P tag
      * @return string The formatted P element
+     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\Exception
      */
     public function para($class, $text, array $options = [])
     {
@@ -1150,6 +1182,9 @@ class HtmlHelper extends Helper
      *  Or an array where each item itself can be a path string or an associate array containing keys `src` and `type`
      * @param array $options Array of HTML attributes, and special options above.
      * @return string Generated media element
+     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \InvalidArgumentException
      */
     public function media($path, array $options = [])
     {
@@ -1237,6 +1272,8 @@ class HtmlHelper extends Helper
      * @param array $options Options and additional HTML attributes of the list (ol/ul) tag.
      * @param array $itemOptions Options and additional HTML attributes of the list item (LI) tag.
      * @return string The nested list
+     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\Exception
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-nested-lists
      */
     public function nestedList(array $list, array $options = [], array $itemOptions = [])
@@ -1257,6 +1294,8 @@ class HtmlHelper extends Helper
      * @param array $options Additional HTML attributes of the list (ol/ul) tag.
      * @param array $itemOptions Options and additional HTML attributes of the list item (LI) tag.
      * @return string The nested list element
+     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\Exception
      * @see \Cake\View\Helper\HtmlHelper::nestedList()
      */
     protected function _nestedListItem($items, $options, $itemOptions)

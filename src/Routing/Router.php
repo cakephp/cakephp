@@ -197,6 +197,7 @@ class Router
      *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
      *   custom routing class.
      * @return void
+     * @throws \InvalidArgumentException
      * @throws \Cake\Core\Exception\Exception
      * @see \Cake\Routing\RouteBuilder::connect()
      * @see \Cake\Routing\Router::scope()
@@ -220,6 +221,8 @@ class Router
      *   element should match. Also contains additional parameters such as which routed parameters should be
      *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
      * @return void
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
      * @see \Cake\Routing\RouteBuilder::redirect()
      * @deprecated 3.3.0 Use Router::scope() and RouteBuilder::redirect() instead.
      */
@@ -286,6 +289,7 @@ class Router
      * @see \Cake\Routing\RouteBuilder::resources()
      * @deprecated 3.3.0 Use Router::scope() and RouteBuilder::resources() instead.
      * @return void
+     * @throws \InvalidArgumentException
      */
     public static function mapResources($controller, $options = [])
     {
@@ -381,6 +385,7 @@ class Router
      *
      * @param \Cake\Http\ServerRequest|array $request Parameters and path information or a Cake\Http\ServerRequest object.
      * @return void
+     * @throws \InvalidArgumentException
      */
     public static function setRequestInfo($request)
     {
@@ -406,6 +411,7 @@ class Router
      *
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @return void
+     * @throws \InvalidArgumentException
      */
     public static function pushRequest(ServerRequest $request)
     {
@@ -450,6 +456,7 @@ class Router
      * Pops a request off of the request stack. Used when doing requestAction
      *
      * @return \Cake\Http\ServerRequest The request removed from the stack.
+     * @throws \InvalidArgumentException
      * @see \Cake\Routing\Router::pushRequest()
      * @see \Cake\Routing\RequestActionTrait::requestAction()
      */
@@ -592,6 +599,8 @@ class Router
      * @param bool $full If true, the full base URL will be prepended to the result.
      *   Default is false.
      * @return string Full translated URL with base path.
+     * @throws \Cake\Routing\Exception\MissingRouteException
+     * @throws \InvalidArgumentException
      * @throws \Cake\Core\Exception\Exception When the route name is not found
      */
     public static function url($url = null, $full = false)
@@ -709,6 +718,7 @@ class Router
      * @param string|null $base the prefix for URLs generated containing the domain.
      * For example: `http://example.com`
      * @return string
+     * @throws \InvalidArgumentException
      */
     public static function fullBaseUrl($base = null)
     {
@@ -738,6 +748,9 @@ class Router
      * @param bool $full Set to true to include the full URL including the
      *     protocol when reversing the URL.
      * @return string The string that is the reversed result of the array
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \Cake\Routing\Exception\MissingRouteException
      */
     public static function reverse($params, $full = false)
     {
@@ -779,6 +792,9 @@ class Router
      *
      * @param array|string $url URL to normalize Either an array or a string URL.
      * @return string Normalized URL
+     * @throws \Cake\Routing\Exception\MissingRouteException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
      */
     public static function normalize($url = '/')
     {
@@ -860,6 +876,7 @@ class Router
      * @param \Cake\Http\ServerRequest $request The request object to modify.
      * @param array $options The array of options.
      * @return \Cake\Http\ServerRequest The modified request
+     * @throws \InvalidArgumentException
      * @deprecated 3.3.0 Named parameter backwards compatibility will be removed in 4.0.
      */
     public static function parseNamedParams(ServerRequest $request, array $options = [])
@@ -982,6 +999,7 @@ class Router
      *   If you have no parameters, this argument can be a callable.
      * @param callable|null $callback The callback to invoke that builds the prefixed routes.
      * @return void
+     * @throws \InvalidArgumentException
      */
     public static function prefix($name, $params = [], $callback = null)
     {
@@ -1019,6 +1037,7 @@ class Router
      * @param callable|null $callback The callback to invoke that builds the plugin routes.
      *   Only required when $options is defined
      * @return void
+     * @throws \InvalidArgumentException
      */
     public static function plugin($name, $options = [], $callback = null)
     {

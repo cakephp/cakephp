@@ -63,7 +63,7 @@ abstract class Cell
      *
      * @var string
      */
-    public $plugin = null;
+    public $plugin;
 
     /**
      * An instance of a Cake\Http\ServerRequest object that contains information about the current request.
@@ -166,6 +166,10 @@ abstract class Cell
      * @param string|null $template Custom template name to render. If not provided (null), the last
      * value will be used. This value is automatically set by `CellTrait::cell()`.
      * @return string The rendered cell.
+     * @throws \Cake\View\Exception\MissingViewException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \BadMethodCallException
      * @throws \Cake\View\Exception\MissingCellViewException When a MissingTemplateException is raised during rendering.
      */
     public function render($template = null)
@@ -238,7 +242,7 @@ abstract class Cell
         if (empty($this->_cache)) {
             return [];
         }
-        $template = $template ?: "default";
+        $template = $template ?: 'default';
         $key = 'cell_' . Inflector::underscore(get_class($this)) . '_' . $action . '_' . $template;
         $key = str_replace('\\', '_', $key);
         $default = [

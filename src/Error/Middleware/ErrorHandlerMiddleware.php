@@ -67,6 +67,8 @@ class ErrorHandlerMiddleware
      *   will be used.
      * @param array $config Configuration options to use. If empty, `Configure::read('Error')`
      *   will be used.
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \InvalidArgumentException
      */
     public function __construct($exceptionRenderer = null, array $config = [])
     {
@@ -85,6 +87,8 @@ class ErrorHandlerMiddleware
      * @param \Psr\Http\Message\ResponseInterface $response The response.
      * @param callable $next Callback to invoke the next middleware.
      * @return \Psr\Http\Message\ResponseInterface A response
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function __invoke($request, $response, $next)
     {
@@ -102,6 +106,8 @@ class ErrorHandlerMiddleware
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @param \Psr\Http\Message\ResponseInterface $response The response.
      * @return \Psr\Http\Message\ResponseInterface A response
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function handleException($exception, $request, $response)
     {
@@ -158,6 +164,7 @@ class ErrorHandlerMiddleware
      * @param \Psr\Http\Message\ServerRequestInterface $request The current request.
      * @param \Exception $exception The exception to log a message for.
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function logException($request, $exception)
     {
@@ -183,11 +190,12 @@ class ErrorHandlerMiddleware
      * @param \Psr\Http\Message\ServerRequestInterface $request The current request.
      * @param \Exception $exception The exception to log a message for.
      * @return string Error message
+     * @throws \InvalidArgumentException
      */
     protected function getMessage($request, $exception)
     {
         $message = sprintf(
-            "[%s] %s",
+            '[%s] %s',
             get_class($exception),
             $exception->getMessage()
         );

@@ -36,6 +36,7 @@ class RequestTransformer
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The PSR7 request.
      * @return \Cake\Http\ServerRequest The transformed request.
+     * @throws \RuntimeException
      */
     public static function toCake(PsrRequest $request)
     {
@@ -110,6 +111,7 @@ class RequestTransformer
      * @param array $files The file objects to convert.
      * @param string $path The current array path.
      * @return array Converted file data
+     * @throws \RuntimeException
      */
     protected static function convertFiles($data, $files, $path = '')
     {
@@ -137,6 +139,7 @@ class RequestTransformer
      *
      * @param \Psr\Http\Message\UploadedFileInterface $file The file to convert.
      * @return array
+     * @throws \RuntimeException
      */
     protected static function convertFile($file)
     {

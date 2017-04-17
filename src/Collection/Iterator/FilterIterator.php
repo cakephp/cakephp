@@ -36,6 +36,7 @@ class FilterIterator extends Collection
      *
      * @param \Iterator $items The items to be filtered.
      * @param callable $callback Callback.
+     * @throws \InvalidArgumentException
      */
     public function __construct(Iterator $items, callable $callback)
     {

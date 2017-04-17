@@ -52,7 +52,7 @@ class ValuesExpression implements ExpressionInterface
      *
      * @var \Cake\Database\Query|null
      */
-    protected $_query = null;
+    protected $_query;
 
     /**
      * Whether or not values have been casted to expressions
@@ -130,7 +130,7 @@ class ValuesExpression implements ExpressionInterface
      *
      * @deprecated 3.4.0 Use setColumns()/getColumns() instead.
      * @param array|null $cols Array with columns to be inserted.
-     * @return array|$this
+     * @return array|ValuesExpression
      */
     public function columns($cols = null)
     {
@@ -196,7 +196,7 @@ class ValuesExpression implements ExpressionInterface
      *
      * @deprecated 3.4.0 Use setValues()/getValues() instead.
      * @param array|null $values Array with values to be inserted.
-     * @return array|$this
+     * @return array|ValuesExpression
      */
     public function values($values = null)
     {
@@ -239,7 +239,7 @@ class ValuesExpression implements ExpressionInterface
      *
      * @deprecated 3.4.0 Use setQuery()/getQuery() instead.
      * @param \Cake\Database\Query|null $query The query to set
-     * @return \Cake\Database\Query|null|$this
+     * @return ValuesExpression|Query
      */
     public function query(Query $query = null)
     {
@@ -258,7 +258,7 @@ class ValuesExpression implements ExpressionInterface
      */
     public function sql(ValueBinder $generator)
     {
-        if (empty($this->_values) && empty($this->_query)) {
+        if (empty($this->_values) && null === $this->_query) {
             return '';
         }
 

@@ -28,7 +28,7 @@ class UnloadTask extends Shell
      *
      * @var string
      */
-    public $bootstrap = null;
+    public $bootstrap;
 
     /**
      * Execution method always used for tasks.
@@ -69,7 +69,7 @@ class UnloadTask extends Shell
         $content = $bootstrap->read();
 
         if (!preg_match("@\n\s*Plugin::loadAll@", $content)) {
-            $newContent = preg_replace($finder, "", $content);
+            $newContent = preg_replace($finder, '', $content);
 
             if ($newContent === $content) {
                 return false;
@@ -90,6 +90,8 @@ class UnloadTask extends Shell
      * GetOptionParser method.
      *
      * @return \Cake\Console\ConsoleOptionParser
+     * @throws \LogicException
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     public function getOptionParser()
     {

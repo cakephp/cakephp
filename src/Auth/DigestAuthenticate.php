@@ -80,6 +80,8 @@ class DigestAuthenticate extends BasicAuthenticate
      * @param \Cake\Controller\ComponentRegistry $registry The Component registry
      *   used on this request.
      * @param array $config Array of config to use.
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \InvalidArgumentException
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
@@ -99,6 +101,7 @@ class DigestAuthenticate extends BasicAuthenticate
      *
      * @param \Cake\Http\ServerRequest $request Request object.
      * @return mixed Either false or an array of user information
+     * @throws \RuntimeException
      */
     public function getUser(ServerRequest $request)
     {
@@ -225,10 +228,8 @@ class DigestAuthenticate extends BasicAuthenticate
         ];
 
         $digest = $this->_getDigest($request);
-        if ($digest && isset($digest['nonce'])) {
-            if (!$this->validNonce($digest['nonce'])) {
-                $options['stale'] = true;
-            }
+        if ($digest && isset($digest['nonce']) && !$this->validNonce($digest['nonce'])) {
+            $options['stale'] = true;
         }
 
         $opts = [];

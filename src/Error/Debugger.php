@@ -67,7 +67,7 @@ class Debugger
     protected $_templates = [
         'log' => [
             'trace' => '{:reference} - {:path}, line {:line}',
-            'error' => "{:error} ({:code}): {:description} in [{:file}, line {:line}]"
+            'error' => '{:error} ({:code}): {:description} in [{:file}, line {:line}]'
         ],
         'js' => [
             'error' => '',
@@ -168,7 +168,7 @@ class Debugger
     public static function getInstance($class = null)
     {
         static $instance = [];
-        if (!empty($class)) {
+        if (null !== $class) {
             if (!$instance || strtolower($class) !== strtolower(get_class($instance[0]))) {
                 $instance[0] = new $class();
             }
@@ -202,6 +202,7 @@ class Debugger
      * Reads the current output masking.
      *
      * @return array
+     * @throws \Cake\Core\Exception\Exception
      */
     public static function outputMask()
     {
@@ -218,6 +219,7 @@ class Debugger
      * @param array $value An array where keys are replaced by their values in output.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      */
     public static function setOutputMask(array $value, $merge = true)
     {
@@ -246,6 +248,7 @@ class Debugger
      * @param int|string $level Type of log to use. Defaults to 'debug'.
      * @param int $depth The depth to output to. Defaults to 3.
      * @return void
+     * @throws \InvalidArgumentException
      */
     public static function log($var, $level = 'debug', $depth = 3)
     {
@@ -424,12 +427,12 @@ class Debugger
         if (!isset($data[$line])) {
             return $lines;
         }
-        $line = $line - 1;
+        --$line;
         for ($i = $line - $context; $i < $line + $context + 1; $i++) {
             if (!isset($data[$i])) {
                 continue;
             }
-            $string = str_replace(["\r\n", "\n"], "", static::_highlight($data[$i]));
+            $string = str_replace(["\r\n", "\n"], '', static::_highlight($data[$i]));
             if ($i == $line) {
                 $lines[] = '<span class="code-highlight">' . $string . '</span>';
             } else {
@@ -502,12 +505,13 @@ class Debugger
      * @param int $depth The remaining depth.
      * @param int $indent The current indentation level.
      * @return string The dumped variable.
+     * @throws \Cake\Core\Exception\Exception
      */
     protected static function _export($var, $depth, $indent)
     {
         switch (static::getType($var)) {
             case 'boolean':
-                return ($var) ? 'true' : 'false';
+                return $var ? 'true' : 'false';
             case 'integer':
                 return '(int) ' . $var;
             case 'float':
@@ -548,10 +552,11 @@ class Debugger
      * @param int $depth The current depth, used for recursion tracking.
      * @param int $indent The current indentation level.
      * @return string Exported array.
+     * @throws \Cake\Core\Exception\Exception
      */
     protected static function _array(array $var, $depth, $indent)
     {
-        $out = "[";
+        $out = '[';
         $break = $end = null;
         if (!empty($var)) {
             $break = "\n" . str_repeat("\t", $indent);
@@ -588,6 +593,7 @@ class Debugger
      * @param int $depth The current depth, used for tracking recursion.
      * @param int $indent The current indentation level.
      * @return string
+     * @throws \Cake\Core\Exception\Exception
      * @see \Cake\Error\Debugger::exportVar()
      */
     protected static function _object($var, $depth, $indent)
@@ -740,6 +746,7 @@ class Debugger
      *
      * @param string $data Data to output.
      * @return void
+     * @throws \InvalidArgumentException
      */
     public function outputError($data)
     {
@@ -755,7 +762,7 @@ class Debugger
         ];
         $data += $defaults;
 
-        $files = $this->trace(['start' => $data['start'], 'format' => 'points']);
+        $files = static::trace(['start' => $data['start'], 'format' => 'points']);
         $code = '';
         $file = null;
         if (isset($files[0]['file'])) {
@@ -764,16 +771,16 @@ class Debugger
             $file = $files[1];
         }
         if ($file) {
-            $code = $this->excerpt($file['file'], $file['line'] - 1, 1);
+            $code = static::excerpt($file['file'], $file['line'] - 1, 1);
         }
-        $trace = $this->trace(['start' => $data['start'], 'depth' => '20']);
+        $trace = static::trace(['start' => $data['start'], 'depth' => '20']);
         $insertOpts = ['before' => '{:', 'after' => '}'];
         $context = [];
         $links = [];
         $info = '';
 
         foreach ((array)$data['context'] as $var => $value) {
-            $context[] = "\${$var} = " . $this->exportVar($value, 3);
+            $context[] = "\${$var} = " . static::exportVar($value, 3);
         }
 
         switch ($this->_outputFormat) {
@@ -782,7 +789,7 @@ class Debugger
 
                 return;
             case 'log':
-                $this->log(compact('context', 'trace') + $data);
+                static::log(compact('context', 'trace') + $data);
 
                 return;
         }

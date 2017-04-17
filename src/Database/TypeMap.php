@@ -104,7 +104,7 @@ class TypeMap
      * @deprecated 3.4.0 Use setDefaults()/getDefaults() instead.
      * @param array|null $defaults associative array where keys are field names and values
      * are the correspondent type.
-     * @return $this|array
+     * @return array|TypeMap
      */
     public function defaults(array $defaults = null)
     {
@@ -125,7 +125,7 @@ class TypeMap
      */
     public function addDefaults(array $types)
     {
-        $this->_defaults = $this->_defaults + $types;
+        $this->_defaults += $types;
     }
 
     /**
@@ -176,7 +176,7 @@ class TypeMap
      * @deprecated 3.4.0 Use setTypes()/getTypes() instead.
      * @param array|null $types associative array where keys are field names and values
      * are the correspondent type.
-     * @return $this|array
+     * @return array|TypeMap
      */
     public function types(array $types = null)
     {

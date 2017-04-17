@@ -153,12 +153,13 @@ class MysqlSchema extends BaseSchema
 
     /**
      * {@inheritDoc}
+     * @throws \Cake\Database\Exception
      */
     public function convertColumnDescription(TableSchema $schema, $row)
     {
         $field = $this->_convertColumn($row['Type']);
         $field += [
-            'null' => $row['Null'] === 'YES' ? true : false,
+            'null' => $row['Null'] === 'YES',
             'default' => $row['Default'],
             'collate' => $row['Collation'],
             'comment' => $row['Comment'],
@@ -171,6 +172,7 @@ class MysqlSchema extends BaseSchema
 
     /**
      * {@inheritDoc}
+     * @throws \Cake\Database\Exception
      */
     public function convertIndexDescription(TableSchema $schema, $row)
     {
@@ -243,6 +245,7 @@ class MysqlSchema extends BaseSchema
 
     /**
      * {@inheritDoc}
+     * @throws \Cake\Database\Exception
      */
     public function convertForeignKeyDescription(TableSchema $schema, $row)
     {

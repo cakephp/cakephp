@@ -26,7 +26,7 @@ class BadRequestException extends HttpException
      */
     public function __construct($message = null, $code = 400)
     {
-        if (empty($message)) {
+        if (null === $message) {
             $message = 'Bad Request';
         }
         parent::__construct($message, $code);

@@ -31,6 +31,7 @@ class MailTransport extends AbstractTransport
      *
      * @param \Cake\Mailer\Email $email Cake Email
      * @return array
+     * @throws \Cake\Network\Exception\SocketException
      */
     public function send(Email $email)
     {

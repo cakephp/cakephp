@@ -37,7 +37,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @var \Cake\TestSuite\Fixture\FixtureManager|null
      */
-    public $fixtureManager = null;
+    public $fixtureManager;
 
     /**
      * By default, all fixtures attached to this class will be truncated and reloaded after each test.
@@ -77,6 +77,7 @@ abstract class TestCase extends BaseTestCase
      * @param bool $shouldSkip Whether or not the test should be skipped.
      * @param string $message The message to display.
      * @return bool
+     * @throws \PHPUnit_Framework_SkippedTestError
      */
     public function skipIf($shouldSkip, $message = '')
     {
@@ -93,6 +94,7 @@ abstract class TestCase extends BaseTestCase
      * not already been backed up.
      *
      * @return void
+     * @throws \InvalidArgumentException
      */
     public function setUp()
     {
@@ -370,6 +372,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $string An HTML/XHTML/XML string
      * @param bool $fullDebug Whether or not more verbose output should be used.
      * @return bool
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertHtml($expected, $string, $fullDebug = false)
     {
@@ -518,6 +521,7 @@ abstract class TestCase extends BaseTestCase
      * @param bool $fullDebug Whether or not more verbose output should be used.
      * @param array|string $regex Full regexp from `assertHtml`
      * @return string|bool
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     protected function _assertAttributes($assertions, $string, $fullDebug = false, $regex = '')
     {
@@ -569,12 +573,13 @@ abstract class TestCase extends BaseTestCase
      * @param float $margin the rage of acceptation
      * @param string $message the text to display if the assertion is not correct
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     protected static function assertWithinRange($expected, $result, $margin, $message = '')
     {
         $upper = $result + $margin;
         $lower = $result - $margin;
-        static::assertTrue((($expected <= $upper) && ($expected >= $lower)), $message);
+        static::assertTrue(($expected <= $upper) && ($expected >= $lower), $message);
     }
 
     /**
@@ -585,12 +590,13 @@ abstract class TestCase extends BaseTestCase
      * @param float $margin the rage of acceptation
      * @param string $message the text to display if the assertion is not correct
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     protected static function assertNotWithinRange($expected, $result, $margin, $message = '')
     {
         $upper = $result + $margin;
         $lower = $result - $margin;
-        static::assertTrue((($expected > $upper) || ($expected < $lower)), $message);
+        static::assertTrue(($expected > $upper) || ($expected < $lower), $message);
     }
 
     /**
@@ -614,6 +620,7 @@ abstract class TestCase extends BaseTestCase
      * @param bool $condition Condition to trigger skipping
      * @param string $message Message for skip
      * @return bool
+     * @throws \PHPUnit_Framework_SkippedTestError
      */
     protected function skipUnless($condition, $message = '')
     {
@@ -634,6 +641,7 @@ abstract class TestCase extends BaseTestCase
      * @param array $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
      * @return \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject
+     * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException
      */
     public function getMockForModel($alias, array $methods = [], array $options = [])
     {

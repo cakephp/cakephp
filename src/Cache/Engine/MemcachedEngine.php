@@ -36,7 +36,7 @@ class MemcachedEngine extends CacheEngine
      *
      * @var \Memcached
      */
-    protected $_Memcached = null;
+    protected $_Memcached;
 
     /**
      * The default config used unless overridden by runtime configuration
@@ -100,6 +100,7 @@ class MemcachedEngine extends CacheEngine
      *
      * @param array $config array of setting for the engine
      * @return bool True if the engine has been successfully initialized, false if not
+     * @throws \Cake\Core\Exception\Exception
      * @throws \InvalidArgumentException When you try use authentication without
      *   Memcached compiled with SASL support
      */
@@ -276,6 +277,7 @@ class MemcachedEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
      * @return bool True if the data was successfully cached, false on failure
+     * @throws \InvalidArgumentException
      * @see http://php.net/manual/en/memcache.set.php
      */
     public function write($key, $value)
@@ -296,6 +298,7 @@ class MemcachedEngine extends CacheEngine
      * @param array $data An array of data to be stored in the cache
      * @return array of bools for each key provided, true if the data was
      *   successfully cached, false on failure
+     * @throws \InvalidArgumentException
      */
     public function writeMany($data)
     {
@@ -319,7 +322,8 @@ class MemcachedEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @return mixed The cached data, or false if the data doesn't exist, has
-     * expired, or if there was an error fetching it.
+     *   expired, or if there was an error fetching it.
+     * @throws \InvalidArgumentException
      */
     public function read($key)
     {
@@ -334,6 +338,7 @@ class MemcachedEngine extends CacheEngine
      * @param array $keys An array of identifiers for the data
      * @return array An array containing, for each of the given $keys, the cached data or
      *   false if cached data could not be retrieved.
+     * @throws \InvalidArgumentException
      */
     public function readMany($keys)
     {
@@ -358,6 +363,7 @@ class MemcachedEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @param int $offset How much to increment
      * @return bool|int New incremented value, false otherwise
+     * @throws \InvalidArgumentException
      */
     public function increment($key, $offset = 1)
     {
@@ -372,6 +378,7 @@ class MemcachedEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @param int $offset How much to subtract
      * @return bool|int New decremented value, false otherwise
+     * @throws \InvalidArgumentException
      */
     public function decrement($key, $offset = 1)
     {
@@ -385,6 +392,7 @@ class MemcachedEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't
+     * @throws \InvalidArgumentException
      *   exist or couldn't be removed.
      */
     public function delete($key)
@@ -400,6 +408,7 @@ class MemcachedEngine extends CacheEngine
      * @param array $keys An array of identifiers for the data
      * @return array of boolean values that are true if the key was successfully
      *   deleted, false if it didn't exist or couldn't be removed.
+     * @throws \InvalidArgumentException
      */
     public function deleteMany($keys)
     {
@@ -450,6 +459,7 @@ class MemcachedEngine extends CacheEngine
      * @param string $key Identifier for the data.
      * @param mixed $value Data to be cached.
      * @return bool True if the data was successfully cached, false on failure.
+     * @throws \InvalidArgumentException
      */
     public function add($key, $value)
     {

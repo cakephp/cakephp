@@ -59,6 +59,7 @@ class PDOStatement extends StatementDecorator
      * @param mixed $value The value to bind to variable in query
      * @param string|int $type PDO type or name of configured Type class
      * @return void
+     * @throws \InvalidArgumentException
      */
     public function bindValue($column, $value, $type = 'string')
     {

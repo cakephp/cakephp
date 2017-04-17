@@ -93,6 +93,7 @@ class EntityContext implements ContextInterface
      *
      * @param \Cake\Http\ServerRequest $request The request object.
      * @param array $context Context info.
+     * @throws \RuntimeException
      */
     public function __construct(ServerRequest $request, array $context)
     {
@@ -222,6 +223,9 @@ class EntityContext implements ContextInterface
      *   - `schemaDefault`: Boolean indicating whether default value from table
      *     schema should be used if it's not explicitly provided.
      * @return mixed The value of the field or null on a miss.
+     * @throws \Cake\ORM\Exception\MissingEntityException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function val($field, $options = [])
     {
@@ -240,7 +244,7 @@ class EntityContext implements ContextInterface
         $parts = explode('.', $field);
         $entity = $this->entity($parts);
 
-        if (end($parts) === '_ids' && !empty($entity)) {
+        if (end($parts) === '_ids' && null !== $entity) {
             return $this->_extractMultiple($entity, $parts);
         }
 
@@ -296,6 +300,7 @@ class EntityContext implements ContextInterface
      * @param array|\Traversable $values The list from which to extract primary keys from
      * @param array $path Each one of the parts in a path for a field name
      * @return array|null
+     * @throws \InvalidArgumentException
      */
     protected function _extractMultiple($values, $path)
     {
@@ -318,6 +323,8 @@ class EntityContext implements ContextInterface
      * @param array|null $path Each one of the parts in a path for a field name
      *  or null to get the entity passed in constructor context.
      * @return \Cake\Datasource\EntityInterface|\Traversable|array|bool
+     * @throws \Cake\ORM\Exception\MissingEntityException
+     * @throws \InvalidArgumentException
      * @throws \RuntimeException When properties cannot be read.
      */
     public function entity($path = null)
@@ -364,7 +371,7 @@ class EntityContext implements ContextInterface
         }
         throw new RuntimeException(sprintf(
             'Unable to fetch property "%s"',
-            implode(".", $path)
+            implode('.', $path)
         ));
     }
 
@@ -399,6 +406,9 @@ class EntityContext implements ContextInterface
      *
      * @param string $field The dot separated path to the field you want to check.
      * @return bool
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\ORM\Exception\MissingEntityException
      */
     public function isRequired($field)
     {
@@ -442,6 +452,9 @@ class EntityContext implements ContextInterface
      *
      * @param array $parts Each one of the parts in a path for a field name
      * @return \Cake\Validation\Validator
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\ORM\Exception\MissingEntityException
      */
     protected function _getValidator($parts)
     {
@@ -551,6 +564,9 @@ class EntityContext implements ContextInterface
      *
      * @param string $field A dot separated path to check errors on.
      * @return bool Returns true if the errors for the field are not empty.
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\ORM\Exception\MissingEntityException
      */
     public function hasError($field)
     {
@@ -562,6 +578,9 @@ class EntityContext implements ContextInterface
      *
      * @param string $field A dot separated path to check errors on.
      * @return array An array of errors.
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\ORM\Exception\MissingEntityException
      */
     public function error($field)
     {

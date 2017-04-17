@@ -158,6 +158,7 @@ class ArrayContext implements ContextInterface
      *   - `schemaDefault`: Boolean indicating whether default value from
      *      context's schema should be used if it's not explicitly provided.
      * @return mixed
+     * @throws \InvalidArgumentException
      */
     public function val($field, $options = [])
     {
@@ -187,6 +188,7 @@ class ArrayContext implements ContextInterface
      *
      * @param string $field A dot separated path to check required-ness for.
      * @return bool
+     * @throws \InvalidArgumentException
      */
     public function isRequired($field)
     {
@@ -214,6 +216,7 @@ class ArrayContext implements ContextInterface
      *
      * @param string $field A dot separated path to get a schema type for.
      * @return null|string An abstract data type or null.
+     * @throws \InvalidArgumentException
      * @see \Cake\Database\Type
      */
     public function type($field)
@@ -231,6 +234,7 @@ class ArrayContext implements ContextInterface
      *
      * @param string $field A dot separated path to get additional data on.
      * @return array An array of data describing the additional attributes on a field.
+     * @throws \InvalidArgumentException
      */
     public function attributes($field)
     {
@@ -248,6 +252,7 @@ class ArrayContext implements ContextInterface
      *
      * @param string $field A dot separated path to check errors on.
      * @return bool Returns true if the errors for the field are not empty.
+     * @throws \InvalidArgumentException
      */
     public function hasError($field)
     {
@@ -264,6 +269,7 @@ class ArrayContext implements ContextInterface
      * @param string $field A dot separated path to check errors on.
      * @return array An array of errors, an empty array will be returned when the
      *    context has no errors.
+     * @throws \InvalidArgumentException
      */
     public function error($field)
     {

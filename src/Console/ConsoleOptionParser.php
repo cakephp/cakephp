@@ -79,7 +79,7 @@ class ConsoleOptionParser
      * @see \Cake\Console\ConsoleOptionParser::description()
      * @var string
      */
-    protected $_description = null;
+    protected $_description;
 
     /**
      * Epilog text - displays after options when help is generated
@@ -87,7 +87,7 @@ class ConsoleOptionParser
      * @see \Cake\Console\ConsoleOptionParser::epilog()
      * @var string
      */
-    protected $_epilog = null;
+    protected $_epilog;
 
     /**
      * Option definitions.
@@ -140,6 +140,7 @@ class ConsoleOptionParser
      * @param string|null $command The command name this parser is for. The command name is used for generating help.
      * @param bool $defaultOptions Whether you want the verbose and quiet options set. Setting
      *  this to false will prevent the addition of `--verbose` & `--quiet` options.
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     public function __construct($command = null, $defaultOptions = true)
     {
@@ -198,6 +199,8 @@ class ConsoleOptionParser
      * @param array $spec The spec to build the OptionParser with.
      * @param bool $defaultOptions Whether you want the verbose and quiet options set.
      * @return static
+     * @throws \LogicException
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     public static function buildFromArray($spec, $defaultOptions = true)
     {
@@ -245,6 +248,8 @@ class ConsoleOptionParser
      *
      * @param array|\Cake\Console\ConsoleOptionParser $spec ConsoleOptionParser or spec to merge with.
      * @return $this
+     * @throws \LogicException
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     public function merge($spec)
     {
@@ -298,7 +303,7 @@ class ConsoleOptionParser
      *
      * @deprecated 3.4.0 Use setCommand()/getCommand() instead.
      * @param string|null $text The text to set, or null if you want to read
-     * @return string|$this If reading, the value of the command. If setting $this will be returned.
+     * @return ConsoleOptionParser|string If reading, the value of the command. If setting $this will be returned.
      */
     public function command($text = null)
     {
@@ -342,7 +347,7 @@ class ConsoleOptionParser
      * @deprecated 3.4.0 Use setDescription()/getDescription() instead.
      * @param string|array|null $text The text to set, or null if you want to read. If an array the
      *   text will be imploded with "\n".
-     * @return string|$this If reading, the value of the description. If setting $this will be returned.
+     * @return ConsoleOptionParser|string If reading, the value of the description. If setting $this will be returned.
      */
     public function description($text = null)
     {
@@ -388,7 +393,7 @@ class ConsoleOptionParser
      * @deprecated 3.4.0 Use setEpilog()/getEpilog() instead.
      * @param string|array|null $text Text when setting or null when reading. If an array the text will
      *   be imploded with "\n".
-     * @return string|$this If reading, the value of the epilog. If setting $this will be returned.
+     * @return ConsoleOptionParser|string If reading, the value of the epilog. If setting $this will be returned.
      */
     public function epilog($text = null)
     {
@@ -422,6 +427,7 @@ class ConsoleOptionParser
      *   Will also accept an instance of ConsoleInputOption
      * @param array $options An array of parameters that define the behavior of the option
      * @return $this
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     public function addOption($name, array $options = [])
     {
@@ -480,6 +486,7 @@ class ConsoleOptionParser
      *   Will also accept an instance of ConsoleInputArgument.
      * @param array $params Parameters for the argument, see above.
      * @return $this
+     * @throws \LogicException
      */
     public function addArgument($name, array $params = [])
     {
@@ -520,6 +527,7 @@ class ConsoleOptionParser
      * @param array $args Array of arguments to add.
      * @see \Cake\Console\ConsoleOptionParser::addArgument()
      * @return $this
+     * @throws \LogicException
      */
     public function addArguments(array $args)
     {
@@ -541,6 +549,7 @@ class ConsoleOptionParser
      * @param array $options Array of options to add.
      * @see \Cake\Console\ConsoleOptionParser::addOption()
      * @return $this
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     public function addOptions(array $options)
     {
@@ -751,6 +760,7 @@ class ConsoleOptionParser
      * @param string $option The option to parse.
      * @param array $params The params to append the parsed value into
      * @return array Params with $option added in.
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     protected function _parseLongOption($option, $params)
     {

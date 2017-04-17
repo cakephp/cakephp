@@ -44,6 +44,8 @@ class RoutingFilter extends DispatcherFilter
      *
      * @param \Cake\Event\Event $event containing the request, response and additional params
      * @return \Cake\Http\Response|null A response will be returned when a redirect route is encountered.
+     * @throws \Cake\Routing\Exception\MissingRouteException
+     * @throws \InvalidArgumentException
      */
     public function beforeDispatch(Event $event)
     {

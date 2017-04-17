@@ -72,7 +72,7 @@ class Folder
      *
      * @var string
      */
-    public $path = null;
+    public $path;
 
     /**
      * Sortedness. Whether or not list results
@@ -135,7 +135,7 @@ class Folder
      */
     public function __construct($path = null, $create = false, $mode = false)
     {
-        if (empty($path)) {
+        if (null === $path) {
             $path = TMP;
         }
         if ($mode) {
@@ -148,7 +148,7 @@ class Folder
         if (!Folder::isAbsolute($path)) {
             $path = realpath($path);
         }
-        if (!empty($path)) {
+        if (null !== $path) {
             $this->cd($path);
         }
     }
@@ -368,7 +368,7 @@ class Folder
      */
     public static function correctSlashFor($path)
     {
-        return (Folder::isWindowsPath($path)) ? '\\' : '/';
+        return Folder::isWindowsPath($path) ? '\\' : '/';
     }
 
     /**
@@ -406,6 +406,7 @@ class Folder
      *
      * @param string $path The path to check.
      * @return bool
+     * @throws \InvalidArgumentException
      * @deprecated 3.2.12 This method will be removed in 4.0.0. Use inPath() instead.
      */
     public function inCakePath($path = '')
@@ -631,20 +632,18 @@ class Folder
         $pathname = rtrim($pathname, DIRECTORY_SEPARATOR);
         $nextPathname = substr($pathname, 0, strrpos($pathname, DIRECTORY_SEPARATOR));
 
-        if ($this->create($nextPathname, $mode)) {
-            if (!file_exists($pathname)) {
-                $old = umask(0);
-                if (mkdir($pathname, $mode, true)) {
-                    umask($old);
-                    $this->_messages[] = sprintf('%s created', $pathname);
-
-                    return true;
-                }
+        if ($this->create($nextPathname, $mode) && !file_exists($pathname)) {
+            $old = umask(0);
+            if (mkdir($pathname, $mode, true)) {
                 umask($old);
-                $this->_errors[] = sprintf('%s NOT created', $pathname);
+                $this->_messages[] = sprintf('%s created', $pathname);
 
-                return false;
+                return true;
             }
+            umask($old);
+            $this->_errors[] = sprintf('%s NOT created', $pathname);
+
+            return false;
         }
 
         return false;
@@ -879,10 +878,8 @@ class Folder
         }
         $options += ['to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => [], 'recursive' => true];
 
-        if ($this->copy($options)) {
-            if ($this->delete($options['from'])) {
-                return (bool)$this->cd($options['to']);
-            }
+        if ($this->copy($options) && $this->delete($options['from'])) {
+            return (bool)$this->cd($options['to']);
         }
 
         return false;

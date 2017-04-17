@@ -25,7 +25,7 @@ use RuntimeException;
  *
  * Use to convert float/decimal data between PHP and the database types.
  */
-class FloatType extends Type implements TypeInterface
+class FloatType extends Type
 {
     /**
      * Identifier name for this type.
@@ -35,7 +35,7 @@ class FloatType extends Type implements TypeInterface
      *
      * @var string|null
      */
-    protected $_name = null;
+    protected $_name;
 
     /**
      * Constructor.
@@ -143,6 +143,7 @@ class FloatType extends Type implements TypeInterface
      *
      * @param bool $enable Whether or not to enable
      * @return $this
+     * @throws \RuntimeException
      */
     public function useLocaleParser($enable = true)
     {

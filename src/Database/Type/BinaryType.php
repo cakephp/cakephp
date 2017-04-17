@@ -26,7 +26,7 @@ use PDO;
  *
  * Use to convert binary data between PHP and the database types.
  */
-class BinaryType extends Type implements TypeInterface
+class BinaryType extends Type
 {
     /**
      * Identifier name for this type.
@@ -36,7 +36,7 @@ class BinaryType extends Type implements TypeInterface
      *
      * @var string|null
      */
-    protected $_name = null;
+    protected $_name;
 
     /**
      * Constructor.

@@ -35,7 +35,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      *
      * @var \Cake\Controller\Controller
      */
-    protected $_Controller = null;
+    protected $_Controller;
 
     /**
      * Constructor.
@@ -112,6 +112,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * @param string $alias The alias of the component.
      * @param array $config An array of config to use for the component.
      * @return \Cake\Controller\Component The constructed component class.
+     * @throws \InvalidArgumentException
      */
     protected function _create($class, $alias, $config)
     {

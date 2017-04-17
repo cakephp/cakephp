@@ -39,6 +39,7 @@ class LazyEagerLoader
      * @see \Cake\ORM\Query\contain()
      * @param \Cake\ORM\Table $source The table to use for fetching the top level entities
      * @return \Cake\Datasource\EntityInterface|array
+     * @throws \InvalidArgumentException
      */
     public function loadInto($entities, array $contain, Table $source)
     {
@@ -66,6 +67,9 @@ class LazyEagerLoader
      * @param array $contain The associations to be loaded
      * @param \Cake\ORM\Table $source The table to use for fetching the top level entities
      * @return \Cake\ORM\Query
+     * @throws \RuntimeException
+     * @throws \BadMethodCallException
+     * @throws \InvalidArgumentException
      */
     protected function _getQuery($objects, $contain, $source)
     {

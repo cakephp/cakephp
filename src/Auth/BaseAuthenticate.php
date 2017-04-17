@@ -84,6 +84,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      *
      * @param \Cake\Controller\ComponentRegistry $registry The Component registry used on this request.
      * @param array $config Array of config to use.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
@@ -101,6 +102,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      * @param string|null $password The password, if not provided password checking is skipped
      *   and result of find is returned.
      * @return bool|array Either false on failure, or an array of user data.
+     * @throws \RuntimeException
      */
     protected function _findUser($username, $password = null)
     {
@@ -129,6 +131,8 @@ abstract class BaseAuthenticate implements EventListenerInterface
      *
      * @param string $username The username/identifier.
      * @return \Cake\ORM\Query
+     * @throws \RuntimeException
+     * @throws \BadMethodCallException
      */
     protected function _query($username)
     {
@@ -156,9 +160,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
             $options['username'] = $username;
         }
 
-        $query = $table->find($finder, $options);
-
-        return $query;
+        return $table->find($finder, $options);
     }
 
     /**

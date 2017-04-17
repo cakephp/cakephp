@@ -44,6 +44,7 @@ class ConditionDecorator extends AbstractDecorator
      *
      * @param \Cake\Event\Event $event Event object.
      * @return bool
+     * @throws \RuntimeException
      */
     public function canTrigger(Event $event)
     {
@@ -59,15 +60,12 @@ class ConditionDecorator extends AbstractDecorator
      * @param string $condition Condition type
      * @param \Cake\Event\Event $event Event object
      * @return bool
+     * @throws \RuntimeException
      */
     protected function _evaluateCondition($condition, Event $event)
     {
         if (!isset($this->_options[$condition])) {
-            if ($condition === 'unless') {
-                return false;
-            }
-
-            return true;
+            return !($condition === 'unless');
         }
         if (!is_callable($this->_options[$condition])) {
             throw new RuntimeException(self::class . ' the `' . $condition . '` condition is not a callable!');

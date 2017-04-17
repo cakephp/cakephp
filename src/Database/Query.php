@@ -97,7 +97,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @var \Cake\Database\StatementInterface|null
      */
-    protected $_iterator = null;
+    protected $_iterator;
 
     /**
      * The object responsible for generating query placeholders and temporarily store values
@@ -105,14 +105,14 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @var \Cake\Database\ValueBinder|null
      */
-    protected $_valueBinder = null;
+    protected $_valueBinder;
 
     /**
      * Instance of functions builder object used for generating arbitrary SQL functions.
      *
      * @var \Cake\Database\FunctionsBuilder|null
      */
-    protected $_functionsBuilder = null;
+    protected $_functionsBuilder;
 
     /**
      * Boolean for tracking whether or not buffered results
@@ -177,7 +177,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @deprecated 3.4.0 Use setConnection()/getConnection() instead.
      * @param \Cake\Datasource\ConnectionInterface|null $connection Connection instance
-     * @return $this|\Cake\Datasource\ConnectionInterface
+     * @return Query|\Cake\Datasource\ConnectionInterface
      */
     public function connection($connection = null)
     {
@@ -412,7 +412,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             if (is_array($this->_parts['distinct'])) {
                 $merge = $this->_parts['distinct'];
             }
-            $on = ($overwrite) ? array_values($on) : array_merge($merge, array_values($on));
+            $on = $overwrite ? array_values($on) : array_merge($merge, array_values($on));
         }
 
         $this->_parts['distinct'] = $on;
@@ -1467,6 +1467,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param string|\Cake\Database\ExpressionInterface $table The table you want to update.
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function update($table)
     {
@@ -1816,7 +1817,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param \Cake\Database\ValueBinder|null $binder new instance to be set. If no value is passed the
      *   default one will be returned
-     * @return $this|\Cake\Database\ValueBinder
+     * @return Query|ValueBinder
      */
     public function valueBinder($binder = null)
     {
@@ -1885,7 +1886,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @deprecated 3.4.0 Use enableBufferedResults()/isBufferedResultsEnabled() instead.
      * @param bool|null $enable Whether or not to enable buffering
-     * @return bool|$this
+     * @return bool|Query
      */
     public function bufferResults($enable = null)
     {
@@ -1932,7 +1933,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @deprecated 3.4.0 Use setSelectTypeMap()/getSelectTypeMap() instead.
      * @param \Cake\Database\TypeMap|null $typeMap The map object to use
-     * @return $this|\Cake\Database\TypeMap
+     * @return Query|TypeMap
      */
     public function selectTypeMap(TypeMap $typeMap = null)
     {
@@ -1971,7 +1972,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     protected function _conjugate($part, $append, $conjunction, $types)
     {
         $expression = $this->_parts[$part] ?: $this->newExpr();
-        if (empty($append)) {
+        if (null === $append) {
             $this->_parts[$part] = $expression;
 
             return;
@@ -2061,7 +2062,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function __debugInfo()
     {
         try {
-            $restore = set_error_handler(function ($errno, $errstr) {
+            set_error_handler(function ($errno, $errstr) {
                 throw new RuntimeException($errstr, $errno);
             }, E_ALL);
             $sql = $this->sql();

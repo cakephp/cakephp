@@ -26,7 +26,7 @@ use RuntimeException;
  *
  * Use to convert decimal data between PHP and the database types.
  */
-class DecimalType extends Type implements TypeInterface
+class DecimalType extends Type
 {
     /**
      * Identifier name for this type.
@@ -36,7 +36,7 @@ class DecimalType extends Type implements TypeInterface
      *
      * @var string|null
      */
-    protected $_name = null;
+    protected $_name;
 
     /**
      * Constructor.
@@ -148,6 +148,7 @@ class DecimalType extends Type implements TypeInterface
      *
      * @param bool $enable Whether or not to enable
      * @return $this
+     * @throws \RuntimeException
      */
     public function useLocaleParser($enable = true)
     {

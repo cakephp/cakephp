@@ -26,7 +26,7 @@ class NotFoundException extends HttpException
      */
     public function __construct($message = null, $code = 404)
     {
-        if (empty($message)) {
+        if (null === $message) {
             $message = 'Not Found';
         }
         parent::__construct($message, $code);

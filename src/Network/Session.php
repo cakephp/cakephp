@@ -89,6 +89,8 @@ class Session
      *
      * @param array $sessionConfig Session config.
      * @return static
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @see \Cake\Network\Session::__construct()
      */
     public static function create($sessionConfig = [])
@@ -100,7 +102,7 @@ class Session
             }
         }
 
-        if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS') && ini_get("session.cookie_secure") != 1) {
+        if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS') && ini_get('session.cookie_secure') != 1) {
             $sessionConfig['ini']['session.cookie_secure'] = 1;
         }
 
@@ -112,7 +114,7 @@ class Session
             $sessionConfig['ini']['session.save_handler'] = 'user';
         }
 
-        if (!isset($sessionConfig['ini']['session.cookie_httponly']) && ini_get("session.cookie_httponly") != 1) {
+        if (!isset($sessionConfig['ini']['session.cookie_httponly']) && ini_get('session.cookie_httponly') != 1) {
             $sessionConfig['ini']['session.cookie_httponly'] = 1;
         }
 
@@ -192,6 +194,8 @@ class Session
      *   instantiated session handler object.
      *
      * @param array $config The Configuration to apply to this session object
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function __construct(array $config = [])
     {
@@ -300,6 +304,7 @@ class Session
      * Starts the Session.
      *
      * @return bool True if session was started
+     * @throws \InvalidArgumentException
      * @throws \RuntimeException if the session was already started
      */
     public function start()
@@ -353,6 +358,8 @@ class Session
      *
      * @param string|null $name Variable name to check for
      * @return bool True if variable is there
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function check($name = null)
     {
@@ -372,6 +379,8 @@ class Session
      *
      * @param string|null $name The name of the session variable (or a path as sent to Hash.extract)
      * @return string|null The value of the session variable, null if session not available,
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      *   session not started, or provided name not found in the session.
      */
     public function read($name = null)
@@ -396,6 +405,8 @@ class Session
      *
      * @param string $name The key to read and remove (or a path as sent to Hash.extract).
      * @return mixed The value of the session variable, null if session not available,
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      *   session not started, or provided name not found in the session.
      */
     public function consume($name)
@@ -417,6 +428,7 @@ class Session
      * @param string|array $name Name of variable
      * @param mixed $value Value to write
      * @return void
+     * @throws \RuntimeException
      */
     public function write($name, $value = null)
     {
@@ -465,6 +477,8 @@ class Session
      *
      * @param string $name Session variable to remove
      * @return void
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function delete($name)
     {
@@ -498,6 +512,7 @@ class Session
      * Helper method to destroy invalid sessions.
      *
      * @return void
+     * @throws \RuntimeException
      */
     public function destroy()
     {
@@ -520,6 +535,7 @@ class Session
      *
      * @param bool $renew If session should be renewed, as well. Defaults to false.
      * @return void
+     * @throws \RuntimeException
      */
     public function clear($renew = false)
     {
@@ -545,6 +561,7 @@ class Session
      * Restarts this session.
      *
      * @return void
+     * @throws \RuntimeException
      */
     public function renew()
     {
@@ -574,6 +591,8 @@ class Session
      * accessed was after the configured timeout.
      *
      * @return bool
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     protected function _timedOut()
     {

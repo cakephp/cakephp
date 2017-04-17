@@ -60,14 +60,14 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @var string|null
      */
-    protected $_appClass = null;
+    protected $_appClass;
 
     /**
      * The customized application constructor arguments.
      *
      * @var array|null
      */
-    protected $_appArgs = null;
+    protected $_appArgs;
 
     /**
      * The data used to build the next request.
@@ -81,14 +81,14 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @var \Cake\Http\Response|null
      */
-    protected $_response = null;
+    protected $_response;
 
     /**
      * The exception being thrown if the case.
      *
      * @var \Exception|null
      */
-    protected $_exception = null;
+    protected $_exception;
 
     /**
      * Session data to use in the next request.
@@ -109,28 +109,28 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @var \Cake\Controller\Controller|null
      */
-    protected $_controller = null;
+    protected $_controller;
 
     /**
      * The last rendered view
      *
      * @var string|null
      */
-    protected $_viewName = null;
+    protected $_viewName;
 
     /**
      * The last rendered layout
      *
      * @var string|null
      */
-    protected $_layoutName = null;
+    protected $_layoutName;
 
     /**
      * The session instance from the last request
      *
      * @var \Cake\Network\Session|null
      */
-    protected $_requestSession = null;
+    protected $_requestSession;
 
     /**
      * Boolean flag for whether or not the request should have
@@ -152,12 +152,13 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @var null|string
      */
-    protected $_cookieEncryptionKey = null;
+    protected $_cookieEncryptionKey;
 
     /**
      * Auto-detect if the HTTP middleware stack should be used.
      *
      * @return void
+     * @throws \InvalidArgumentException
      */
     public function setUp()
     {
@@ -321,6 +322,8 @@ abstract class IntegrationTestCase extends TestCase
      * @param string|null $key Encryption key used. Defaults
      *   to Security.salt.
      * @return void
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @see \Cake\Utility\CookieCryptTrait::_encrypt()
      */
     public function cookieEncrypted($name, $value, $encrypt = 'aes', $key = null)
@@ -338,6 +341,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @param string|array $url The URL to request.
      * @return void
+     * @throws \Exception
      */
     public function get($url)
     {
@@ -354,6 +358,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string|array $url The URL to request.
      * @param array $data The data for the request.
      * @return void
+     * @throws \Exception
      */
     public function post($url, $data = [])
     {
@@ -370,6 +375,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string|array $url The URL to request.
      * @param array $data The data for the request.
      * @return void
+     * @throws \Exception
      */
     public function patch($url, $data = [])
     {
@@ -386,6 +392,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string|array $url The URL to request.
      * @param array $data The data for the request.
      * @return void
+     * @throws \Exception
      */
     public function put($url, $data = [])
     {
@@ -401,6 +408,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @param string|array $url The URL to request.
      * @return void
+     * @throws \Exception
      */
     public function delete($url)
     {
@@ -416,6 +424,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string $method The HTTP method
      * @param array|null $data The request data.
      * @return void
+     * @throws \PHPUnit\Exception
      * @throws \Exception
      */
     protected function _sendRequest($url, $method, $data = [])
@@ -458,6 +467,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param \Cake\Event\Event $event A dispatcher event.
      * @param \Cake\Controller\Controller|null $controller Controller instance.
      * @return void
+     * @throws \InvalidArgumentException
      */
     public function controllerSpy($event, $controller = null)
     {
@@ -503,6 +513,8 @@ abstract class IntegrationTestCase extends TestCase
      * @param string $method The HTTP method
      * @param array|null $data The request data.
      * @return array The request context
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     protected function _buildRequest($url, $method, $data)
     {
@@ -581,6 +593,9 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @param string|array $url The URL
      * @return array Qualified URL and the query parameters
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Routing\Exception\MissingRouteException
+     * @throws \Cake\Core\Exception\Exception
      */
     protected function _url($url)
     {
@@ -612,6 +627,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @param string $name The view variable to get.
      * @return mixed The view variable if set.
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function viewVariable($name)
     {
@@ -684,6 +700,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param int $max Max status code.
      * @param string $message The error message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     protected function _assertStatus($min, $max, $message)
     {
@@ -708,6 +725,10 @@ abstract class IntegrationTestCase extends TestCase
      *   simply check for the existence of this header.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Routing\Exception\MissingRouteException
+     * @throws \Cake\Core\Exception\Exception
      */
     public function assertRedirect($url = null, $message = '')
     {
@@ -732,6 +753,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string $url The URL you expected the client to go to.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertRedirectContains($url, $message = '')
     {
@@ -750,6 +772,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertNoRedirect($message = '')
     {
@@ -763,7 +786,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!empty($result)) {
             $message .= ': ' . $result;
         }
-        $this->assertTrue(empty($result), $message);
+        $this->assertEmpty($result, $message);
     }
 
     /**
@@ -773,6 +796,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string $content The content to check for.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertHeader($header, $content, $message = '')
     {
@@ -793,6 +817,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string $content The content to check for.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertHeaderContains($header, $content, $message = '')
     {
@@ -812,6 +837,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string $type The content-type to check for.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertContentType($type, $message = '')
     {
@@ -832,6 +858,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param mixed $content The content to check for.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertResponseEquals($content, $message = '')
     {
@@ -847,6 +874,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string $content The content to check for.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertResponseContains($content, $message = '')
     {
@@ -862,6 +890,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string $content The content to check for.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertResponseNotContains($content, $message = '')
     {
@@ -877,6 +906,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string $pattern The pattern to compare against.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertResponseRegExp($pattern, $message = '')
     {
@@ -892,6 +922,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string $pattern The pattern to compare against.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertResponseNotRegExp($pattern, $message = '')
     {
@@ -906,6 +937,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertResponseNotEmpty($message = '')
     {
@@ -914,11 +946,13 @@ abstract class IntegrationTestCase extends TestCase
         }
         $this->assertNotEmpty($this->_getBodyAsString(), $message);
     }
+
     /**
      * Assert response content is empty.
      *
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertResponseEmpty($message = '')
     {
@@ -934,6 +968,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string $content The content to check for.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertTemplate($content, $message = '')
     {
@@ -949,6 +984,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string $content The content to check for.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertLayout($content, $message = '')
     {
@@ -965,10 +1001,13 @@ abstract class IntegrationTestCase extends TestCase
      * @param string $path The session data path. Uses Hash::get() compatible notation
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function assertSession($expected, $path, $message = '')
     {
-        if (empty($this->_requestSession)) {
+        if (null === $this->_requestSession) {
             $this->fail('There is no stored session data. Perhaps you need to run a request?');
         }
         $result = $this->_requestSession->read($path);
@@ -986,6 +1025,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string $name The cookie name.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertCookie($expected, $name, $message = '')
     {
@@ -1006,6 +1046,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string $cookie The cookie name to check
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertCookieNotSet($cookie, $message = '')
     {
@@ -1030,6 +1071,7 @@ abstract class IntegrationTestCase extends TestCase
      *   to Security.salt.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      * @see \Cake\Utility\CookieCryptTrait::_encrypt()
      */
     public function assertCookieEncrypted($expected, $name, $encrypt = 'aes', $key = null, $message = '')
@@ -1049,6 +1091,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string $expected The file name that should be sent in the response
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertFileResponse($expected, $message = '')
     {

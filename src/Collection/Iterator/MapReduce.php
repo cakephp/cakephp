@@ -125,6 +125,7 @@ class MapReduce implements IteratorAggregate
      * phases on the original data
      *
      * @return \ArrayIterator
+     * @throws \LogicException
      */
     public function getIterator()
     {

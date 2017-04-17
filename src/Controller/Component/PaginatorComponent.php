@@ -161,6 +161,7 @@ class PaginatorComponent extends Component
      * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface $object The table or query to paginate.
      * @param array $settings The settings/configuration used for pagination.
      * @return \Cake\Datasource\ResultSetInterface Query results
+     * @throws \InvalidArgumentException
      * @throws \Cake\Network\Exception\NotFoundException
      */
     public function paginate($object, array $settings = [])
@@ -181,7 +182,7 @@ class PaginatorComponent extends Component
         list($finder, $options) = $this->_extractFinder($options);
 
         /* @var \Cake\Datasource\RepositoryInterface $object */
-        if (empty($query)) {
+        if (null === $query) {
             $query = $object->find($finder, $options);
         } else {
             $query->applyOptions($options);
@@ -214,8 +215,8 @@ class PaginatorComponent extends Component
             'current' => $numResults,
             'count' => $count,
             'perPage' => $limit,
-            'prevPage' => ($page > 1),
-            'nextPage' => ($count > ($page * $limit)),
+            'prevPage' => $page > 1,
+            'nextPage' => $count > ($page * $limit),
             'pageCount' => $pageCount,
             'sort' => key($order),
             'direction' => current($order),
@@ -272,6 +273,7 @@ class PaginatorComponent extends Component
      *   that key's settings will be used for pagination instead of the general ones.
      * @param array $settings The settings to merge with the request data.
      * @return array Array of merged options.
+     * @throws \InvalidArgumentException
      */
     public function mergeOptions($alias, $settings)
     {

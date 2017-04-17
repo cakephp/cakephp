@@ -85,6 +85,8 @@ class SmtpTransport extends AbstractTransport
      * connection available already.
      *
      * @return void
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Network\Exception\SocketException
      */
     public function connect()
     {
@@ -111,6 +113,7 @@ class SmtpTransport extends AbstractTransport
      * connection available.
      *
      * @return void
+     * @throws \Cake\Network\Exception\SocketException
      */
     public function disconnect()
     {
@@ -154,6 +157,7 @@ class SmtpTransport extends AbstractTransport
      *
      * @param \Cake\Mailer\Email $email Email instance
      * @return array
+     * @throws \InvalidArgumentException
      * @throws \Cake\Network\Exception\SocketException
      */
     public function send(Email $email)
@@ -199,6 +203,7 @@ class SmtpTransport extends AbstractTransport
      * Connect to SMTP Server
      *
      * @return void
+     * @throws \InvalidArgumentException
      * @throws \Cake\Network\Exception\SocketException
      */
     protected function _connect()
@@ -222,7 +227,7 @@ class SmtpTransport extends AbstractTransport
         try {
             $this->_smtpSend("EHLO {$host}", '250');
             if ($config['tls']) {
-                $this->_smtpSend("STARTTLS", '220');
+                $this->_smtpSend('STARTTLS', '220');
                 $this->_socket->enableCrypto('tls');
                 $this->_smtpSend("EHLO {$host}", '250');
             }
@@ -404,6 +409,7 @@ class SmtpTransport extends AbstractTransport
      * Helper method to generate socket
      *
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      * @throws \Cake\Network\Exception\SocketException
      */
     protected function _generateSocket()

@@ -56,6 +56,7 @@ class SortIterator extends Collection
      * @param int $dir either SORT_DESC or SORT_ASC
      * @param int $type the type of comparison to perform, either SORT_STRING
      * SORT_NUMERIC or SORT_NATURAL
+     * @throws \InvalidArgumentException
      */
     public function __construct($items, $callback, $dir = SORT_DESC, $type = SORT_NUMERIC)
     {

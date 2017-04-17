@@ -26,7 +26,7 @@ class ConflictException extends HttpException
      */
     public function __construct($message = null, $code = 409)
     {
-        if (empty($message)) {
+        if (null === $message) {
             $message = 'Conflict';
         }
         parent::__construct($message, $code);

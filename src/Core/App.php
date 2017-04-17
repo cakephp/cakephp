@@ -49,6 +49,7 @@ class App
      * @param string $type Type of class
      * @param string $suffix Class name suffix
      * @return bool|string False if the class is not found or namespaced class name
+     * @throws \InvalidArgumentException
      */
     public static function className($class, $type = '', $suffix = '')
     {
@@ -113,6 +114,7 @@ class App
      * @param string $type Type of class
      * @param string $suffix Class name suffix
      * @return string Plugin split name of class
+     * @throws \InvalidArgumentException
      */
     public static function shortName($class, $type, $suffix = '')
     {
@@ -173,6 +175,8 @@ class App
      * @param string $type type of path
      * @param string|null $plugin name of plugin
      * @return array
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\MissingPluginException
      * @link http://book.cakephp.org/3.0/en/core-libraries/app.html#finding-paths-to-namespaces
      */
     public static function path($type, $plugin = null)
@@ -180,13 +184,13 @@ class App
         if ($type === 'Plugin') {
             return (array)Configure::read('App.paths.plugins');
         }
-        if (empty($plugin) && $type === 'Locale') {
+        if (null === $plugin && $type === 'Locale') {
             return (array)Configure::read('App.paths.locales');
         }
-        if (empty($plugin) && $type === 'Template') {
+        if (null === $plugin && $type === 'Template') {
             return (array)Configure::read('App.paths.templates');
         }
-        if (!empty($plugin)) {
+        if (null !== $plugin) {
             return [Plugin::classPath($plugin) . $type . DIRECTORY_SEPARATOR];
         }
 

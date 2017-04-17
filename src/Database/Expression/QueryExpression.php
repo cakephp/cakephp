@@ -66,7 +66,7 @@ class QueryExpression implements ExpressionInterface, Countable
     {
         $this->setTypeMap($types);
         $this->setConjunction(strtoupper($conjunction));
-        if (!empty($conditions)) {
+        if (null !== $conditions) {
             $this->add($conditions, $this->getTypeMap()->getTypes());
         }
     }
@@ -101,7 +101,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @deprecated 3.4.0 Use setConjunction()/getConjunction() instead.
      * @param string|null $conjunction value to be used for joining conditions. If null it
      * will not set any value, but return the currently stored one
-     * @return string|$this
+     * @return QueryExpression|string
      */
     public function tieWith($conjunction = null)
     {

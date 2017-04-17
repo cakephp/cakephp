@@ -38,6 +38,8 @@ class ResponseEmitter implements EmitterInterface
 {
     /**
      * {@inheritDoc}
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function emit(ResponseInterface $response, $maxBufferLength = 8192)
     {
@@ -73,6 +75,7 @@ class ResponseEmitter implements EmitterInterface
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
      * @param int $maxBufferLength The chunk size to emit
      * @return void
+     * @throws \RuntimeException
      */
     protected function emitBody(ResponseInterface $response, $maxBufferLength)
     {
@@ -100,6 +103,7 @@ class ResponseEmitter implements EmitterInterface
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
      * @param int $maxBufferLength The chunk size to emit
      * @return void
+     * @throws \RuntimeException
      */
     protected function emitBodyRange(array $range, ResponseInterface $response, $maxBufferLength)
     {
@@ -209,8 +213,8 @@ class ResponseEmitter implements EmitterInterface
             }
 
             if (strpos($cookie, '";"') !== false) {
-                $cookie = str_replace('";"', "{__cookie_replace__}", $cookie);
-                $parts = str_replace("{__cookie_replace__}", '";"', explode(';', $cookie));
+                $cookie = str_replace('";"', '{__cookie_replace__}', $cookie);
+                $parts = str_replace('{__cookie_replace__}', '";"', explode(';', $cookie));
             } else {
                 $parts = preg_split('/\;[ \t]*/', $cookie);
             }

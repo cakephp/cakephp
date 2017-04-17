@@ -52,7 +52,7 @@ abstract class CacheEngine
      *
      * @var string
      */
-    protected $_groupPrefix = null;
+    protected $_groupPrefix;
 
     /**
      * Initialize the cache engine
@@ -62,6 +62,7 @@ abstract class CacheEngine
      *
      * @param array $config Associative array of parameters for the engine
      * @return bool True if the engine has been successfully initialized, false if not
+     * @throws \Cake\Core\Exception\Exception
      */
     public function init(array $config = [])
     {
@@ -261,7 +262,7 @@ abstract class CacheEngine
     /**
      * Generates a safe key, taking account of the configured key prefix
      *
-     * @param string $key the key passed over
+     * @param bool|string $key the key passed over
      * @return mixed string $key or false
      * @throws \InvalidArgumentException If key's value is empty
      */

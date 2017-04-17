@@ -367,7 +367,7 @@ class Response implements ResponseInterface
      *
      * @var \Cake\Filesystem\File
      */
-    protected $_file = null;
+    protected $_file;
 
     /**
      * File range. Used for requesting ranges of files.
@@ -428,6 +428,8 @@ class Response implements ResponseInterface
      *  - status: the HTTP status code to respond with
      *  - type: a complete mime-type string or an extension mapped in this class
      *  - charset: the charset for the response body
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function __construct(array $options = [])
     {
@@ -468,6 +470,7 @@ class Response implements ResponseInterface
      * Creates the stream object.
      *
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _createStream()
     {
@@ -479,6 +482,8 @@ class Response implements ResponseInterface
      * Will echo out the content in the response body.
      *
      * @return void
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     public function send()
@@ -506,6 +511,7 @@ class Response implements ResponseInterface
      * Sends the HTTP headers and cookies.
      *
      * @return void
+     * @throws \InvalidArgumentException
      * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     public function sendHeaders()
@@ -587,6 +593,8 @@ class Response implements ResponseInterface
      * Sets the response body to an empty text if the status code is 204 or 304
      *
      * @return void
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     protected function _setContent()
@@ -762,6 +770,7 @@ class Response implements ResponseInterface
      *
      * @param string $url The location to redirect to.
      * @return static A new response with the Location header set.
+     * @throws \InvalidArgumentException
      */
     public function withLocation($url)
     {
@@ -809,6 +818,8 @@ class Response implements ResponseInterface
      *
      * @param string|callable|null $content the string or callable message to be sent
      * @return string Current message buffer if $content param is passed as null
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      * @deprecated 3.4.0 Mutable response methods are deprecated. Use `withBody()` and `getBody()` instead.
      */
     public function body($content = null)
@@ -1075,6 +1086,7 @@ class Response implements ResponseInterface
      *
      * @param string $contentType Either a file extension which will be mapped to a mime-type or a concrete mime-type.
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withType($contentType)
     {
@@ -1189,7 +1201,7 @@ class Response implements ResponseInterface
     public function disableCache()
     {
         $this->_setHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
-        $this->_setHeader('Last-Modified', gmdate("D, d M Y H:i:s") . " GMT");
+        $this->_setHeader('Last-Modified', gmdate('D, d M Y H:i:s') . ' GMT');
         $this->_setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
     }
 
@@ -1197,11 +1209,12 @@ class Response implements ResponseInterface
      * Create a new instance with headers to instruct the client to not cache the response
      *
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withDisabledCache()
     {
         return $this->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT')
-            ->withHeader('Last-Modified', gmdate("D, d M Y H:i:s") . " GMT")
+            ->withHeader('Last-Modified', gmdate('D, d M Y H:i:s') . ' GMT')
             ->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
     }
 
@@ -1219,7 +1232,7 @@ class Response implements ResponseInterface
             $time = strtotime($time);
         }
 
-        $this->_setHeader('Date', gmdate("D, j M Y G:i:s ", time()) . 'GMT');
+        $this->_setHeader('Date', gmdate('D, j M Y G:i:s ', time()) . 'GMT');
 
         $this->modified($since);
         $this->expires($time);
@@ -1233,6 +1246,7 @@ class Response implements ResponseInterface
      * @param string $since a valid time since the response text has not been modified
      * @param string $time a valid time for cache expiry
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withCache($since, $time = '+1 day')
     {
@@ -1240,7 +1254,7 @@ class Response implements ResponseInterface
             $time = strtotime($time);
         }
 
-        return $this->withHeader('Date', gmdate("D, j M Y G:i:s ", time()) . 'GMT')
+        return $this->withHeader('Date', gmdate('D, j M Y G:i:s ', time()) . 'GMT')
             ->withModified($since)
             ->withExpires($time)
             ->withSharable(true)
@@ -1267,9 +1281,8 @@ class Response implements ResponseInterface
             if (!$public && !$private && !$noCache) {
                 return null;
             }
-            $sharable = $public || !($private || $noCache);
 
-            return $sharable;
+            return $public || !($private || $noCache);
         }
         if ($public) {
             $this->_cacheDirectives['public'] = true;
@@ -1502,6 +1515,7 @@ class Response implements ResponseInterface
      *
      * @param string|\DateTime $time Valid time string or \DateTime instance.
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withExpires($time)
     {
@@ -1553,6 +1567,7 @@ class Response implements ResponseInterface
      *
      * @param string|\DateTime $time Valid time string or \DateTime instance.
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withModified($time)
     {
@@ -1567,6 +1582,8 @@ class Response implements ResponseInterface
      * conflicting headers
      *
      * @return void
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function notModified()
     {
@@ -1595,6 +1612,7 @@ class Response implements ResponseInterface
      * a response body.
      *
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withNotModified()
     {
@@ -1651,6 +1669,7 @@ class Response implements ResponseInterface
      * @param string|array $cacheVariances A single Vary string or an array
      *   containing the list for variances.
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withVary($cacheVariances)
     {
@@ -1682,7 +1701,7 @@ class Response implements ResponseInterface
     public function etag($hash = null, $weak = false)
     {
         if ($hash !== null) {
-            $this->_setHeader('Etag', sprintf('%s"%s"', ($weak) ? 'W/' : null, $hash));
+            $this->_setHeader('Etag', sprintf('%s"%s"', $weak ? 'W/' : null, $hash));
         }
 
         if ($this->hasHeader('Etag')) {
@@ -1712,10 +1731,11 @@ class Response implements ResponseInterface
      * @param bool $weak Whether the response is semantically the same as
      *   other with the same hash or not. Defaults to false
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withEtag($hash, $weak = false)
     {
-        $hash = sprintf('%s"%s"', ($weak) ? 'W/' : null, $hash);
+        $hash = sprintf('%s"%s"', $weak ? 'W/' : null, $hash);
 
         return $this->withHeader('Etag', $hash);
     }
@@ -1736,7 +1756,7 @@ class Response implements ResponseInterface
         } else {
             $result = new DateTime($time);
         }
-        $result->setTimeZone(new DateTimeZone('UTC'));
+        $result->setTimezone(new DateTimeZone('UTC'));
 
         return $result;
     }
@@ -1749,8 +1769,8 @@ class Response implements ResponseInterface
      */
     public function compress()
     {
-        $compressionEnabled = ini_get("zlib.output_compression") !== '1' &&
-            extension_loaded("zlib") &&
+        $compressionEnabled = ini_get('zlib.output_compression') !== '1' &&
+            extension_loaded('zlib') &&
             (strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
 
         return $compressionEnabled && ob_start('ob_gzhandler');
@@ -1764,7 +1784,7 @@ class Response implements ResponseInterface
     public function outputCompressed()
     {
         return strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false
-            && (ini_get("zlib.output_compression") === '1' || in_array('ob_gzhandler', ob_list_handlers()));
+            && (ini_get('zlib.output_compression') === '1' || in_array('ob_gzhandler', ob_list_handlers()));
     }
 
     /**
@@ -1784,6 +1804,7 @@ class Response implements ResponseInterface
      *
      * @param string $filename The name of the file as the browser will download the response
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withDownload($filename)
     {
@@ -1833,6 +1854,7 @@ class Response implements ResponseInterface
      *
      * @param int|string $bytes Number of bytes
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withLength($bytes)
     {
@@ -2110,6 +2132,7 @@ class Response implements ResponseInterface
      *   to a file, `APP` will be prepended to the path.
      * @param array $options Options See above.
      * @return void
+     * @throws \InvalidArgumentException
      * @throws \Cake\Network\Exception\NotFoundException
      * @deprecated 3.4.0 Use withFile() instead.
      */
@@ -2179,6 +2202,7 @@ class Response implements ResponseInterface
      *   to a file, `APP` will be prepended to the path.
      * @param array $options Options See above.
      * @return static
+     * @throws \InvalidArgumentException
      * @throws \Cake\Network\Exception\NotFoundException
      */
     public function withFile($path, array $options = [])
@@ -2236,6 +2260,8 @@ class Response implements ResponseInterface
      *
      * @param string $string The string to be sent
      * @return static
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function withStringBody($string)
     {
@@ -2252,6 +2278,7 @@ class Response implements ResponseInterface
      * @param string $path The path to the file.
      * @throws \Cake\Network\Exception\NotFoundException
      * @return \Cake\Filesystem\File
+     * @throws \InvalidArgumentException
      */
     protected function validateFile($path)
     {
@@ -2292,6 +2319,7 @@ class Response implements ResponseInterface
      * @param \Cake\Filesystem\File $file The file to set a range on.
      * @param string $httpRange The range to use.
      * @return void
+     * @throws \InvalidArgumentException
      * @deprecated 3.4.0 Long term this needs to be refactored to follow immutable paradigms.
      *   However for now, it is simpler to leave this alone.
      */
@@ -2344,7 +2372,6 @@ class Response implements ResponseInterface
      */
     protected function _sendFile($file, $range)
     {
-        $compress = $this->outputCompressed();
         ob_implicit_flush(true);
 
         $file->open('rb');
@@ -2438,6 +2465,7 @@ class Response implements ResponseInterface
      * object.
      *
      * @return array
+     * @throws \RuntimeException
      */
     public function __debugInfo()
     {

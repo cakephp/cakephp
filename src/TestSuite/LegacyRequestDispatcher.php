@@ -46,6 +46,9 @@ class LegacyRequestDispatcher
      *
      * @param array $request The request context to execute.
      * @return string|null The generated response.
+     * @throws \RuntimeException
+     * @throws \LogicException
+     * @throws \InvalidArgumentException
      */
     public function execute($request)
     {

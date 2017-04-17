@@ -55,7 +55,7 @@ class Socket
      *
      * @var resource|null
      */
-    public $connection = null;
+    public $connection;
 
     /**
      * This boolean contains the current state of the Socket class
@@ -109,6 +109,7 @@ class Socket
      *
      * @param array $config Socket configuration, which will be merged with the base configuration
      * @see \Cake\Network\Socket::$_baseConfig
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(array $config = [])
     {
@@ -314,13 +315,12 @@ class Socket
      *
      * @param string $data The data to write to the socket.
      * @return int Bytes written.
+     * @throws \Cake\Network\Exception\SocketException
      */
     public function write($data)
     {
-        if (!$this->connected) {
-            if (!$this->connect()) {
-                return false;
-            }
+        if (!$this->connected && !$this->connect()) {
+            return false;
         }
         $totalBytes = strlen($data);
         $written = 0;
@@ -341,13 +341,12 @@ class Socket
      *
      * @param int $length Optional buffer length to read; defaults to 1024
      * @return mixed Socket data
+     * @throws \Cake\Network\Exception\SocketException
      */
     public function read($length = 1024)
     {
-        if (!$this->connected) {
-            if (!$this->connect()) {
-                return false;
-            }
+        if (!$this->connected && !$this->connect()) {
+            return false;
         }
 
         if (!feof($this->connection)) {

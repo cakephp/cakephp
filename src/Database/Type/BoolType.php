@@ -25,7 +25,7 @@ use PDO;
  *
  * Use to convert bool data between PHP and the database types.
  */
-class BoolType extends Type implements TypeInterface
+class BoolType extends Type
 {
     /**
      * Identifier name for this type.
@@ -35,7 +35,7 @@ class BoolType extends Type implements TypeInterface
      *
      * @var string|null
      */
-    protected $_name = null;
+    protected $_name;
 
     /**
      * Constructor.
@@ -56,6 +56,7 @@ class BoolType extends Type implements TypeInterface
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return bool|null
+     * @throws \InvalidArgumentException
      */
     public function toDatabase($value, Driver $driver)
     {
@@ -83,7 +84,7 @@ class BoolType extends Type implements TypeInterface
             return null;
         }
         if (is_string($value) && !is_numeric($value)) {
-            return strtolower($value) === 'true' ? true : false;
+            return strtolower($value) === 'true';
         }
 
         return !empty($value);

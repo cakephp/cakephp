@@ -58,6 +58,7 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      * @return \Cake\Collection\Iterator\FilterIterator
+     * @throws \InvalidArgumentException
      */
     public function filter(callable $c = null)
     {
@@ -74,6 +75,7 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      * @return \Cake\Collection\Iterator\FilterIterator
+     * @throws \InvalidArgumentException
      */
     public function reject(callable $c)
     {
@@ -128,6 +130,7 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      * @return \Cake\Collection\Iterator\ReplaceIterator
+     * @throws \InvalidArgumentException
      */
     public function map(callable $c)
     {
@@ -159,6 +162,7 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function extract($matcher)
     {
@@ -176,6 +180,7 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function max($callback, $type = SORT_NUMERIC)
     {
@@ -184,6 +189,7 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function min($callback, $type = SORT_NUMERIC)
     {
@@ -192,6 +198,7 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function sortBy($callback, $dir = SORT_DESC, $type = SORT_NUMERIC)
     {
@@ -200,6 +207,7 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function groupBy($callback)
     {
@@ -214,6 +222,7 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function indexBy($callback)
     {
@@ -228,6 +237,7 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function countBy($callback)
     {
@@ -264,6 +274,7 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function shuffle()
     {
@@ -275,6 +286,7 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function sample($size = 10)
     {
@@ -283,6 +295,7 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function take($size = 1, $from = 0)
     {
@@ -291,6 +304,7 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function skip($howMany)
     {
@@ -344,6 +358,7 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function append($items)
     {
@@ -356,6 +371,7 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function combine($keyPath, $valuePath, $groupPath = null)
     {
@@ -369,7 +385,7 @@ trait CollectionTrait
             $rowKey = $options['keyPath'];
             $rowVal = $options['valuePath'];
 
-            if (!($options['groupPath'])) {
+            if (!$options['groupPath']) {
                 $mapReduce->emit($rowVal($value, $key), $rowKey($value, $key));
 
                 return null;
@@ -395,6 +411,7 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function nest($idPath, $parentPath, $nestingKey = 'children')
     {
@@ -443,6 +460,7 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      * @return \Cake\Collection\Iterator\InsertIterator
+     * @throws \InvalidArgumentException
      */
     public function insert($path, $values)
     {
@@ -487,6 +505,7 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function compile($preserveKeys = true)
     {
@@ -497,6 +516,7 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      * @return \Cake\Collection\Iterator\BufferedIterator
+     * @throws \InvalidArgumentException
      */
     public function buffered()
     {
@@ -507,6 +527,7 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      * @return \Cake\Collection\Iterator\TreeIterator
+     * @throws \InvalidArgumentException
      */
     public function listNested($dir = 'desc', $nestingKey = 'children')
     {
@@ -527,6 +548,7 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      * @return \Cake\Collection\Iterator\StoppableIterator
+     * @throws \InvalidArgumentException
      */
     public function stopWhen($condition)
     {
@@ -539,6 +561,7 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function unfold(callable $transformer = null)
     {
@@ -558,6 +581,7 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function through(callable $handler)
     {
@@ -676,6 +700,8 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      * @return \Cake\Collection\CollectionInterface
+     * @throws \LogicException
+     * @throws \InvalidArgumentException
      */
     public function cartesianProduct(callable $operation = null, callable $filter = null)
     {
@@ -729,6 +755,8 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      * @return \Cake\Collection\CollectionInterface
+     * @throws \LogicException
+     * @throws \InvalidArgumentException
      */
     public function transpose()
     {

@@ -25,7 +25,7 @@ use PDO;
  *
  * Use to convert json data between PHP and the database types.
  */
-class JsonType extends Type implements TypeInterface
+class JsonType extends Type
 {
     /**
      * Identifier name for this type.
@@ -35,7 +35,7 @@ class JsonType extends Type implements TypeInterface
      *
      * @var string|null
      */
-    protected $_name = null;
+    protected $_name;
 
     /**
      * Constructor.
@@ -56,6 +56,7 @@ class JsonType extends Type implements TypeInterface
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
+     * @throws \InvalidArgumentException
      */
     public function toDatabase($value, Driver $driver)
     {

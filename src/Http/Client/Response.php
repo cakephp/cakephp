@@ -142,6 +142,8 @@ class Response extends Message implements ResponseInterface
      *
      * @param array $headers Unparsed headers.
      * @param string $body The response body.
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function __construct($headers = [], $body = '')
     {
@@ -228,9 +230,9 @@ class Response extends Message implements ResponseInterface
         $value = rtrim($value, ';');
         $nestedSemi = '";"';
         if (strpos($value, $nestedSemi) !== false) {
-            $value = str_replace($nestedSemi, "{__cookie_replace__}", $value);
+            $value = str_replace($nestedSemi, '{__cookie_replace__}', $value);
             $parts = explode(';', $value);
-            $parts = str_replace("{__cookie_replace__}", $nestedSemi, $parts);
+            $parts = str_replace('{__cookie_replace__}', $nestedSemi, $parts);
         } else {
             $parts = preg_split('/\;[ \t]*/', $value);
         }
@@ -486,6 +488,7 @@ class Response extends Message implements ResponseInterface
      * @param callable|null $parser The callback to use to decode
      *   the response body.
      * @return mixed The response body.
+     * @throws \RuntimeException
      */
     public function body($parser = null)
     {
@@ -552,6 +555,7 @@ class Response extends Message implements ResponseInterface
      * Provides magic __get() support.
      *
      * @return array
+     * @throws \RuntimeException
      */
     protected function _getBody()
     {

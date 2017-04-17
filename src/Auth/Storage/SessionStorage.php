@@ -64,6 +64,7 @@ class SessionStorage implements StorageInterface
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @param \Cake\Http\Response $response Response instance.
      * @param array $config Configuration list.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(ServerRequest $request, Response $response, array $config = [])
     {
@@ -75,6 +76,8 @@ class SessionStorage implements StorageInterface
      * Read user record from session.
      *
      * @return array|null User record if available else null.
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function read()
     {
@@ -94,6 +97,7 @@ class SessionStorage implements StorageInterface
      *
      * @param array|\ArrayAccess $user User record.
      * @return void
+     * @throws \RuntimeException
      */
     public function write($user)
     {
@@ -109,6 +113,8 @@ class SessionStorage implements StorageInterface
      * The session id is also renewed to help mitigate issues with session replays.
      *
      * @return void
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function delete()
     {
@@ -120,6 +126,8 @@ class SessionStorage implements StorageInterface
 
     /**
      * {@inheritDoc}
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function redirectUrl($url = null)
     {

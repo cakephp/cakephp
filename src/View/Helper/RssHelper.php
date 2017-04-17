@@ -39,14 +39,14 @@ class RssHelper extends Helper
      *
      * @var string
      */
-    public $base = null;
+    public $base;
 
     /**
      * URL to current action.
      *
      * @var string
      */
-    public $here = null;
+    public $here;
 
     /**
      * Parameter array.
@@ -60,28 +60,28 @@ class RssHelper extends Helper
      *
      * @var string
      */
-    public $action = null;
+    public $action;
 
     /**
      * POSTed model data
      *
      * @var array
      */
-    public $data = null;
+    public $data;
 
     /**
      * Name of the current model
      *
      * @var string
      */
-    public $model = null;
+    public $model;
 
     /**
      * Name of the current field
      *
      * @var string
      */
-    public $field = null;
+    public $field;
 
     /**
      * Default spec version of generated RSS
@@ -96,6 +96,7 @@ class RssHelper extends Helper
      * @param array $attrib `<rss />` tag attributes
      * @param string|null $content Tag content.
      * @return string An RSS document
+     * @throws \Cake\Utility\Exception\XmlException
      */
     public function document($attrib = [], $content = null)
     {
@@ -117,6 +118,7 @@ class RssHelper extends Helper
      * @param array $elements Named array elements which are converted to tags
      * @param string|null $content Content (`<item />`'s belonging to this channel
      * @return string An RSS `<channel />`
+     * @throws \Cake\Utility\Exception\XmlException
      */
     public function channel($attrib = [], $elements = [], $content = null)
     {
@@ -186,6 +188,7 @@ class RssHelper extends Helper
      * @param array $att The attributes of the `<item />` element
      * @param array $elements The list of elements contained in this `<item />`
      * @return string An RSS `<item />` element
+     * @throws \Cake\Utility\Exception\XmlException
      */
     public function item($att = [], $elements = [])
     {
@@ -248,7 +251,7 @@ class RssHelper extends Helper
                 case 'enclosure':
                     if (is_string($val['url']) && is_file(WWW_ROOT . $val['url']) && file_exists(WWW_ROOT . $val['url'])) {
                         if (!isset($val['length']) && strpos($val['url'], '://') === false) {
-                            $val['length'] = sprintf("%u", filesize(WWW_ROOT . $val['url']));
+                            $val['length'] = sprintf('%u', filesize(WWW_ROOT . $val['url']));
                         }
                         if (!isset($val['type']) && function_exists('mime_content_type')) {
                             $val['type'] = mime_content_type(WWW_ROOT . $val['url']);
@@ -293,6 +296,7 @@ class RssHelper extends Helper
      * @param string|array|null $content XML element content
      * @param bool $endTag Whether the end tag of the element should be printed
      * @return string XML
+     * @throws \Cake\Utility\Exception\XmlException
      */
     public function elem($name, $attrib = [], $content = null, $endTag = true)
     {

@@ -67,6 +67,7 @@ class Stream
      * @param \Cake\Http\Client\Request $request The request object to send.
      * @param array $options Array of options for the stream.
      * @return array Array of populated Response objects
+     * @throws \Cake\Core\Exception\Exception
      */
     public function send(Request $request, array $options)
     {
@@ -90,6 +91,8 @@ class Stream
      * @param array $headers The list of headers from the request(s)
      * @param string $content The response content.
      * @return array The list of responses from the request(s)
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function createResponses($headers, $content)
     {
@@ -116,6 +119,8 @@ class Stream
      * @param \Cake\Http\Client\Request $request The request to build context from.
      * @param array $options Additional request options.
      * @return void
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     protected function _buildContext(Request $request, $options)
     {
@@ -147,7 +152,7 @@ class Stream
     {
         $headers = [];
         foreach ($request->getHeaders() as $name => $values) {
-            $headers[] = sprintf('%s: %s', $name, implode(", ", $values));
+            $headers[] = sprintf('%s: %s', $name, implode(', ', $values));
         }
 
         $cookies = [];
@@ -169,11 +174,12 @@ class Stream
      * @param \Cake\Http\Client\Request $request The request being sent.
      * @param array $options Array of options to use.
      * @return void
+     * @throws \RuntimeException
      */
     protected function _buildContent(Request $request, $options)
     {
         $body = $request->getBody();
-        if (empty($body)) {
+        if (null === $body) {
             $this->_contextOptions['content'] = '';
 
             return;
@@ -188,6 +194,7 @@ class Stream
      * @param \Cake\Http\Client\Request $request The request being sent.
      * @param array $options Array of options to use.
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      */
     protected function _buildOptions(Request $request, $options)
     {
@@ -213,6 +220,7 @@ class Stream
      * @param \Cake\Http\Client\Request $request The request being sent.
      * @param array $options Array of options to use.
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _buildSslContext(Request $request, $options)
     {
@@ -246,6 +254,7 @@ class Stream
      *
      * @param \Cake\Http\Client\Request $request The request object.
      * @return array Array of populated Response objects
+     * @throws \InvalidArgumentException
      * @throws \Cake\Core\Exception\Exception
      */
     protected function _send(Request $request)

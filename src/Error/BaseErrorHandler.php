@@ -64,6 +64,8 @@ abstract class BaseErrorHandler
      * Register the error and exception handlers.
      *
      * @return void
+     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public function register()
     {
@@ -75,7 +77,7 @@ abstract class BaseErrorHandler
         set_error_handler([$this, 'handleError'], $level);
         set_exception_handler([$this, 'wrapAndHandleException']);
         register_shutdown_function(function () {
-            if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
+            if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
                 return;
             }
             $megabytes = Configure::read('Error.extraFatalErrorMemory');
@@ -122,13 +124,15 @@ abstract class BaseErrorHandler
      * @param int|null $line Line that triggered the error
      * @param array|null $context Context
      * @return bool True if error was handled
+     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public function handleError($code, $description, $file = null, $line = null, $context = null)
     {
         if (error_reporting() === 0) {
             return false;
         }
-        list($error, $log) = $this->mapErrorCode($code);
+        list($error, $log) = static::mapErrorCode($code);
         if ($log === LOG_ERR) {
             return $this->handleFatalError($code, $description, $file, $line);
         }
@@ -210,6 +214,7 @@ abstract class BaseErrorHandler
      * @param string $file File on which error occurred
      * @param int $line Line that triggered the error
      * @return bool
+     * @throws \Exception
      */
     public function handleFatalError($code, $description, $file, $line)
     {
@@ -244,7 +249,7 @@ abstract class BaseErrorHandler
         $units = strtoupper(substr($limit, -1));
         $current = (int)substr($limit, 0, strlen($limit) - 1);
         if ($units === 'M') {
-            $current = $current * 1024;
+            $current *= 1024;
             $units = 'K';
         }
         if ($units === 'G') {
@@ -263,6 +268,7 @@ abstract class BaseErrorHandler
      * @param string $level The level name of the log.
      * @param array $data Array of error data.
      * @return bool
+     * @throws \InvalidArgumentException
      */
     protected function _logError($level, $data)
     {
@@ -296,6 +302,7 @@ abstract class BaseErrorHandler
      *
      * @param \Exception $exception Exception instance.
      * @return bool
+     * @throws \InvalidArgumentException
      */
     protected function _logException(Exception $exception)
     {
@@ -346,6 +353,7 @@ abstract class BaseErrorHandler
      *
      * @param \Exception $exception Exception instance
      * @return string Formatted message
+     * @throws \InvalidArgumentException
      */
     protected function _getMessage(Exception $exception)
     {
@@ -354,7 +362,7 @@ abstract class BaseErrorHandler
             $exception;
         $config = $this->_options;
         $message = sprintf(
-            "[%s] %s in %s on line %s",
+            '[%s] %s in %s on line %s',
             get_class($exception),
             $exception->getMessage(),
             $exception->getFile(),

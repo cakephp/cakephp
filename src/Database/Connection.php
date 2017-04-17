@@ -83,14 +83,14 @@ class Connection implements ConnectionInterface
      *
      * @var \Cake\Database\Log\QueryLogger|null
      */
-    protected $_logger = null;
+    protected $_logger;
 
     /**
      * The schema collection object
      *
      * @var \Cake\Database\Schema\Collection|null
      */
-    protected $_schemaCollection = null;
+    protected $_schemaCollection;
 
     /**
      * NestedTransactionRollbackException object instance, will be stored if
@@ -98,12 +98,14 @@ class Connection implements ConnectionInterface
      *
      * @var \Cake\Database\Exception\NestedTransactionRollbackException|null
      */
-    protected $nestedTransactionRollbackException = null;
+    protected $nestedTransactionRollbackException;
 
     /**
      * Constructor.
      *
      * @param array $config configuration for connecting to database
+     * @throws \Cake\Database\Exception\MissingDriverException
+     * @throws \Cake\Database\Exception\MissingExtensionException
      */
     public function __construct($config)
     {
@@ -393,6 +395,7 @@ class Connection implements ConnectionInterface
      * @param array $data values to be inserted
      * @param array $types list of associative array containing the types to be used for casting
      * @return \Cake\Database\StatementInterface
+     * @throws \RuntimeException
      */
     public function insert($table, array $data, array $types = [])
     {
@@ -465,6 +468,7 @@ class Connection implements ConnectionInterface
      * Commits current transaction.
      *
      * @return bool true on success, false otherwise
+     * @throws \Cake\Database\Exception\NestedTransactionRollbackException
      */
     public function commit()
     {
@@ -752,6 +756,7 @@ class Connection implements ConnectionInterface
      * @param mixed $value The value to quote.
      * @param string|null $type Type to be used for determining kind of quoting to perform
      * @return string Quoted value
+     * @throws \InvalidArgumentException
      */
     public function quote($value, $type = null)
     {

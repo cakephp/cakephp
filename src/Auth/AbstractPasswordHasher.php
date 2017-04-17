@@ -37,6 +37,7 @@ abstract class AbstractPasswordHasher
      * Constructor
      *
      * @param array $config Array of config.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(array $config = [])
     {

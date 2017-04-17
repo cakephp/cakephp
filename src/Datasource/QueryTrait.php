@@ -88,7 +88,7 @@ trait QueryTrait
      * and this query object will be returned for chaining.
      *
      * @param \Cake\Datasource\RepositoryInterface|null $table The default table object to use
-     * @return \Cake\Datasource\RepositoryInterface|$this
+     * @return QueryTrait|RepositoryInterface
      */
     public function repository(RepositoryInterface $table = null)
     {
@@ -167,6 +167,7 @@ trait QueryTrait
      * @param string|\Cake\Cache\CacheEngine $config Either the name of the cache config to use, or
      *   a cache config instance.
      * @return $this
+     * @throws \RuntimeException
      */
     public function cache($key, $config = 'default')
     {
@@ -185,7 +186,7 @@ trait QueryTrait
      * passed, the current configured query `_eagerLoaded` value is returned.
      *
      * @param bool|null $value Whether or not to eager load.
-     * @return $this|\Cake\ORM\Query
+     * @return bool|QueryTrait
      */
     public function eagerLoaded($value = null)
     {
@@ -262,6 +263,7 @@ trait QueryTrait
      * on Cake\Collection\Collection.
      *
      * @return \Cake\Datasource\ResultSetInterface
+     * @throws \RuntimeException
      */
     public function all()
     {
@@ -309,7 +311,7 @@ trait QueryTrait
      * @param callable|null $mapper The mapper callable.
      * @param callable|null $reducer The reducing function.
      * @param bool $overwrite Set to true to overwrite existing map + reduce functions.
-     * @return $this|array
+     * @return array|QueryTrait
      * @see \Cake\Collection\Iterator\MapReduce for details on how to use emit data to the map reducer.
      */
     public function mapReduce(callable $mapper = null, callable $reducer = null, $overwrite = false)
@@ -361,7 +363,7 @@ trait QueryTrait
      *
      * @param callable|null $formatter The formatting callable.
      * @param bool|int $mode Whether or not to overwrite, append or prepend the formatter.
-     * @return $this|array
+     * @return array|QueryTrait|\callable[]
      */
     public function formatResults(callable $formatter = null, $mode = 0)
     {

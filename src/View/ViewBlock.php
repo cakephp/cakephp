@@ -86,7 +86,7 @@ class ViewBlock
      */
     public function start($name, $mode = ViewBlock::OVERRIDE)
     {
-        if (in_array($name, array_keys($this->_active))) {
+        if (array_key_exists($name, $this->_active)) {
             throw new Exception(sprintf("A view block with the name '%s' is already/still open.", $name));
         }
         $this->_active[$name] = $mode;
@@ -97,6 +97,7 @@ class ViewBlock
      * End a capturing block. The compliment to ViewBlock::start()
      *
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      * @see \Cake\View\ViewBlock::start()
      */
     public function end()
@@ -134,6 +135,7 @@ class ViewBlock
      * @param string $mode If ViewBlock::APPEND content will be appended to existing content.
      *   If ViewBlock::PREPEND it will be prepended.
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      */
     public function concat($name, $value = null, $mode = ViewBlock::APPEND)
     {

@@ -37,7 +37,7 @@ class EventManager
      *
      * @var \Cake\Event\EventManager
      */
-    protected static $_generalManager = null;
+    protected static $_generalManager;
 
     /**
      * List of listener callbacks associated to
@@ -83,7 +83,7 @@ class EventManager
         if ($manager instanceof EventManager) {
             static::$_generalManager = $manager;
         }
-        if (empty(static::$_generalManager)) {
+        if (null === static::$_generalManager) {
             static::$_generalManager = new static();
         }
 
@@ -197,6 +197,7 @@ class EventManager
      *
      * @param \Cake\Event\EventListenerInterface $subscriber Event listener.
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _attachSubscriber(EventListenerInterface $subscriber)
     {
@@ -336,10 +337,10 @@ class EventManager
     protected function _detachSubscriber(EventListenerInterface $subscriber, $eventKey = null)
     {
         $events = (array)$subscriber->implementedEvents();
-        if (!empty($eventKey) && empty($events[$eventKey])) {
+        if (null !== $eventKey && empty($events[$eventKey])) {
             return;
         }
-        if (!empty($eventKey)) {
+        if (null !== $eventKey) {
             $events = [$eventKey => $events[$eventKey]];
         }
         foreach ($events as $key => $function) {
@@ -470,7 +471,7 @@ class EventManager
      */
     public function matchingListeners($eventKeyPattern)
     {
-        $matchPattern = '/' . preg_quote($eventKeyPattern, "/") . '/';
+        $matchPattern = '/' . preg_quote($eventKeyPattern, '/') . '/';
         $matches = array_intersect_key(
             $this->_listeners,
             array_flip(

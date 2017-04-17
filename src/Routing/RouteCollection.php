@@ -72,6 +72,7 @@ class RouteCollection
      * @param array $options Additional options for the route. Primarily for the
      *   `_name` option, which enables named routes.
      * @return void
+     * @throws \Cake\Routing\Exception\DuplicateNamedRouteException
      */
     public function add(Route $route, array $options = [])
     {
@@ -117,6 +118,7 @@ class RouteCollection
      * @param string $url URL to parse.
      * @param string $method The HTTP method to use.
      * @return array An array of request parameters parsed from the URL.
+     * @throws \InvalidArgumentException
      * @throws \Cake\Routing\Exception\MissingRouteException When a URL has no matching route.
      */
     public function parse($url, $method = '')
@@ -213,7 +215,7 @@ class RouteCollection
             "${controller}:${action}",
             "${controller}:_action",
             "_controller:${action}",
-            "_controller:_action",
+            '_controller:_action',
         ];
 
         // No prefix, no plugin
@@ -231,7 +233,7 @@ class RouteCollection
                 "_plugin.${controller}:${action}",
                 "_plugin.${controller}:_action",
                 "_plugin._controller:${action}",
-                "_plugin._controller:_action",
+                '_plugin._controller:_action',
             ];
         }
 
@@ -245,7 +247,7 @@ class RouteCollection
                 "_prefix:${controller}:${action}",
                 "_prefix:${controller}:_action",
                 "_prefix:_controller:${action}",
-                "_prefix:_controller:_action",
+                '_prefix:_controller:_action',
             ];
         }
 
@@ -267,7 +269,7 @@ class RouteCollection
             "_prefix:_plugin.${controller}:${action}",
             "_prefix:_plugin.${controller}:_action",
             "_prefix:_plugin._controller:${action}",
-            "_prefix:_plugin._controller:_action",
+            '_prefix:_plugin._controller:_action',
         ];
     }
 

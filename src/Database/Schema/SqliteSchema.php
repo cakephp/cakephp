@@ -129,6 +129,7 @@ class SqliteSchema extends BaseSchema
 
     /**
      * {@inheritDoc}
+     * @throws \Cake\Database\Exception
      */
     public function convertColumnDescription(TableSchema $schema, $row)
     {
@@ -205,6 +206,7 @@ class SqliteSchema extends BaseSchema
      * stable, and the names for constraints will not match those used to create
      * the table. This is a limitation in Sqlite's metadata features.
      *
+     * @throws \Cake\Database\Exception
      */
     public function convertIndexDescription(TableSchema $schema, $row)
     {
@@ -244,6 +246,7 @@ class SqliteSchema extends BaseSchema
 
     /**
      * {@inheritDoc}
+     * @throws \Cake\Database\Exception
      */
     public function convertForeignKeyDescription(TableSchema $schema, $row)
     {

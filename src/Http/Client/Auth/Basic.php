@@ -30,6 +30,7 @@ class Basic
      * @param \Cake\Http\Client\Request $request Request instance.
      * @param array $credentials Credentials.
      * @return \Cake\Http\Client\Request The updated request.
+     * @throws \InvalidArgumentException
      * @see http://www.ietf.org/rfc/rfc2617.txt
      */
     public function authentication(Request $request, array $credentials)
@@ -48,6 +49,7 @@ class Basic
      * @param \Cake\Http\Client\Request $request Request instance.
      * @param array $credentials Credentials.
      * @return \Cake\Http\Client\Request The updated request.
+     * @throws \InvalidArgumentException
      * @see http://www.ietf.org/rfc/rfc2617.txt
      */
     public function proxyAuthentication(Request $request, array $credentials)

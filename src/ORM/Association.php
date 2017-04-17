@@ -200,6 +200,7 @@ abstract class Association
      *
      * @param string $alias The name given to the association
      * @param array $options A list of properties to be set on this object
+     * @throws \InvalidArgumentException
      */
     public function __construct($alias, array $options = [])
     {
@@ -242,6 +243,7 @@ abstract class Association
      *
      * @param string $name Name to be assigned
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function setName($name)
     {
@@ -273,6 +275,7 @@ abstract class Association
      * @deprecated 3.4.0 Use setName()/getName() instead.
      * @param string|null $name Name to be assigned
      * @return string
+     * @throws \InvalidArgumentException
      */
     public function name($name = null)
     {
@@ -390,6 +393,7 @@ abstract class Association
      * Gets the table instance for the target side of the association.
      *
      * @return \Cake\ORM\Table
+     * @throws \RuntimeException
      */
     public function getTarget()
     {
@@ -439,6 +443,7 @@ abstract class Association
      * @deprecated 3.4.0 Use setTarget()/getTarget() instead.
      * @param \Cake\ORM\Table|null $table the instance to be assigned as target side
      * @return \Cake\ORM\Table
+     * @throws \RuntimeException
      */
     public function target(Table $table = null)
     {
@@ -513,6 +518,7 @@ abstract class Association
      * When not manually specified the primary key of the owning side table is used.
      *
      * @return string|array
+     * @throws \RuntimeException
      */
     public function getBindingKey()
     {
@@ -534,6 +540,7 @@ abstract class Association
      * @deprecated 3.4.0 Use setBindingKey()/getBindingKey() instead.
      * @param string|null $key the table field to be used to link both tables together
      * @return string|array
+     * @throws \RuntimeException
      */
     public function bindingKey($key = null)
     {
@@ -887,6 +894,7 @@ abstract class Association
      * @param \Cake\ORM\Query $query the query to be altered to include the target table data
      * @param array $options Any extra options or overrides to be taken in account
      * @return void
+     * @throws \InvalidArgumentException
      * @throws \RuntimeException if the query builder passed does not return a query
      * object
      */
@@ -1018,6 +1026,8 @@ abstract class Association
      * @param array $options The options to for the find
      * @see \Cake\ORM\Table::find()
      * @return \Cake\ORM\Query
+     * @throws \BadMethodCallException
+     * @throws \RuntimeException
      */
     public function find($type = null, array $options = [])
     {
@@ -1037,6 +1047,7 @@ abstract class Association
      * for checking if any record matches.
      * @see \Cake\ORM\Table::exists()
      * @return bool
+     * @throws \RuntimeException
      */
     public function exists($conditions)
     {
@@ -1057,6 +1068,7 @@ abstract class Association
      * can take.
      * @see \Cake\ORM\Table::updateAll()
      * @return bool Success Returns true if one or more rows are affected.
+     * @throws \RuntimeException
      */
     public function updateAll($fields, $conditions)
     {
@@ -1075,6 +1087,7 @@ abstract class Association
      * @param mixed $conditions Conditions to be used, accepts anything Query::where()
      * can take.
      * @return int Returns the number of affected rows.
+     * @throws \RuntimeException
      * @see \Cake\ORM\Table::deleteAll()
      */
     public function deleteAll($conditions)
@@ -1122,6 +1135,7 @@ abstract class Association
      * @param \Cake\ORM\Query $surrogate the query having the fields to be copied from
      * @param array $options options passed to the method `attachTo`
      * @return void
+     * @throws \RuntimeException
      */
     protected function _appendFields($query, $surrogate, $options)
     {
@@ -1133,10 +1147,8 @@ abstract class Association
         $target = $this->_targetTable;
         $autoFields = $surrogate->isAutoFieldsEnabled();
 
-        if (empty($fields) && !$autoFields) {
-            if ($options['includeFields'] && ($fields === null || $fields !== false)) {
-                $fields = $target->getSchema()->columns();
-            }
+        if (empty($fields) && !$autoFields && $options['includeFields'] && ($fields === null || $fields !== false)) {
+            $fields = $target->getSchema()->columns();
         }
 
         if ($autoFields === true) {
@@ -1161,6 +1173,7 @@ abstract class Association
      * target table.
      * @param array $options options passed to the method `attachTo`
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _formatAssociationResults($query, $surrogate, $options)
     {
@@ -1342,6 +1355,7 @@ abstract class Association
      *
      * @param string $property the property name
      * @return bool true if the property exists
+     * @throws \RuntimeException
      */
     public function __isset($property)
     {
@@ -1354,6 +1368,7 @@ abstract class Association
      * @param string $method name of the method to be invoked
      * @param array $argument List of arguments passed to the function
      * @return mixed
+     * @throws \RuntimeException
      * @throws \BadMethodCallException
      */
     public function __call($method, $argument)

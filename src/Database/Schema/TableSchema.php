@@ -415,6 +415,7 @@ class TableSchema
      *
      * @param string $column The column name to get the base type from
      * @return string|null The base type name
+     * @throws \InvalidArgumentException
      */
     public function baseColumnType($column)
     {
@@ -506,7 +507,7 @@ class TableSchema
             $attrs = ['type' => $attrs];
         }
         $attrs = array_intersect_key($attrs, static::$_indexKeys);
-        $attrs = $attrs + static::$_indexKeys;
+        $attrs += static::$_indexKeys;
         unset($attrs['references'], $attrs['update'], $attrs['delete']);
 
         if (!in_array($attrs['type'], static::$_validIndexTypes, true)) {
@@ -602,7 +603,7 @@ class TableSchema
             $attrs = ['type' => $attrs];
         }
         $attrs = array_intersect_key($attrs, static::$_indexKeys);
-        $attrs = $attrs + static::$_indexKeys;
+        $attrs += static::$_indexKeys;
         if (!in_array($attrs['type'], static::$_validConstraintTypes, true)) {
             throw new Exception(sprintf('Invalid constraint type "%s" in table "%s".', $attrs['type'], $this->_table));
         }
@@ -762,7 +763,7 @@ class TableSchema
      *
      * @deprecated 3.4.0 Use setOptions()/getOptions() instead.
      * @param array|null $options The options to set, or null to read options.
-     * @return $this|array Either the TableSchema instance, or an array of options when reading.
+     * @return array|TableSchema Either the TableSchema instance, or an array of options when reading.
      */
     public function options($options = null)
     {
@@ -801,7 +802,7 @@ class TableSchema
      *
      * @deprecated 3.4.0 Use setTemporary()/isTemporary() instead.
      * @param bool|null $temporary whether or not the table is to be temporary
-     * @return $this|bool Either the TableSchema instance, the current temporary setting
+     * @return bool|TableSchema Either the TableSchema instance, the current temporary setting
      */
     public function temporary($temporary = null)
     {

@@ -23,7 +23,7 @@ use SplDoublyLinkedList;
  * Creates an iterator from another iterator that will keep the results of the inner
  * iterator in memory, so that results don't have to be re-calculated.
  */
-class BufferedIterator extends Collection implements Countable, Serializable
+class BufferedIterator extends Collection implements Countable
 {
 
     /**
@@ -74,6 +74,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
      * iterator.
      *
      * @param array|\Traversable $items The items to be filtered.
+     * @throws \InvalidArgumentException
      */
     public function __construct($items)
     {
@@ -201,6 +202,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
      *
      * @param string $buffer The serialized buffer iterator
      * @return void
+     * @throws \InvalidArgumentException
      */
     public function unserialize($buffer)
     {

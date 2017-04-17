@@ -30,6 +30,7 @@ trait LogTrait
      * @param int|string $level Error level.
      * @param string|array $context Additional log data relevant to this message.
      * @return bool Success of log write.
+     * @throws \InvalidArgumentException
      */
     public function log($msg, $level = LogLevel::ERROR, $context = [])
     {

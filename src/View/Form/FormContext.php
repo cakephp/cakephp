@@ -81,6 +81,7 @@ class FormContext implements ContextInterface
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function val($field, $options = [])
     {
@@ -142,6 +143,7 @@ class FormContext implements ContextInterface
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function hasError($field)
     {
@@ -152,6 +154,7 @@ class FormContext implements ContextInterface
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function error($field)
     {

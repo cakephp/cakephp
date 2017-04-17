@@ -116,7 +116,7 @@ class Shell
      *
      * @var string
      */
-    public $name = null;
+    public $name;
 
     /**
      * The name of the plugin the shell belongs to.
@@ -124,7 +124,7 @@ class Shell
      *
      * @var string
      */
-    public $plugin = null;
+    public $plugin;
 
     /**
      * Contains tasks to load and instantiate
@@ -167,6 +167,9 @@ class Shell
      *
      * @param \Cake\Console\ConsoleIo|null $io An io instance.
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell
+     * @throws \Cake\Datasource\Exception\MissingModelException
+     * @throws \InvalidArgumentException
+     * @throws \UnexpectedValueException
      */
     public function __construct(ConsoleIo $io = null)
     {
@@ -258,7 +261,7 @@ class Shell
      */
     public function loadTasks()
     {
-        if ($this->tasks === true || empty($this->tasks) || empty($this->Tasks)) {
+        if ($this->tasks === true || empty($this->tasks) || null === $this->Tasks) {
             return true;
         }
         $this->_taskMap = $this->Tasks->normalizeArray((array)$this->tasks);
@@ -340,6 +343,8 @@ class Shell
      * ]);`
      *
      * @return int The cli command exit code. 0 is success.
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \Cake\Console\Exception\MissingShellMethodException
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#invoking-other-shells-from-your-shell
      */
     public function dispatchShell()
@@ -414,6 +419,9 @@ class Shell
      * Built-in extra parameter is :
      * - `requested` : if used, will prevent the Shell welcome message to be displayed
      * @return int|bool|null
+     * @throws \BadMethodCallException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\MissingPluginException
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#the-cakephp-console
      */
     public function runCommand($argv, $autoMethod = false, $extra = [])
@@ -484,6 +492,8 @@ class Shell
      * and the configured stdout/stderr logging
      *
      * @return void
+     * @throws \InvalidArgumentException
+     * @throws \BadMethodCallException
      */
     protected function _setOutputLevel()
     {
@@ -528,9 +538,8 @@ class Shell
     public function getOptionParser()
     {
         $name = ($this->plugin ? $this->plugin . '.' : '') . $this->name;
-        $parser = new ConsoleOptionParser($name);
 
-        return $parser;
+        return new ConsoleOptionParser($name);
     }
 
     /**
@@ -538,6 +547,8 @@ class Shell
      *
      * @param string $name The task to get.
      * @return \Cake\Console\Shell Object of Task
+     * @throws \RuntimeException
+     * @throws \Exception
      */
     public function __get($name)
     {
@@ -767,7 +778,7 @@ class Shell
     {
         $this->_io->err(sprintf('<error>Error:</error> %s', $title));
 
-        if (!empty($message)) {
+        if (null !== $message) {
             $this->_io->err($message);
         }
 
@@ -799,6 +810,7 @@ class Shell
      * @param string $path Where to put the file.
      * @param string $contents Content to put in the file.
      * @return bool Success
+     * @throws \Cake\Console\Exception\StopException
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#creating-files
      */
     public function createFile($path, $contents)

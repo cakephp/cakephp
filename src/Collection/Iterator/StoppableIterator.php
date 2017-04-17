@@ -52,6 +52,7 @@ class StoppableIterator extends Collection
      * @param callable $condition A function that will be called for each item in
      * the collection, if the result evaluates to false, no more items will be
      * yielded from this iterator.
+     * @throws \InvalidArgumentException
      */
     public function __construct($items, callable $condition)
     {

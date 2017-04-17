@@ -74,6 +74,7 @@ class UnfoldIterator extends IteratorIterator implements RecursiveIterator
      * the current value with the callable function.
      *
      * @return \RecursiveIterator
+     * @throws \InvalidArgumentException
      */
     public function getChildren()
     {

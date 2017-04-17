@@ -33,6 +33,7 @@ class SessionHelper extends Helper
      *
      * @param \Cake\View\View $View The View this helper is being attached to.
      * @param array $config Configuration settings for the helper.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(View $View, array $config = [])
     {
@@ -51,6 +52,8 @@ class SessionHelper extends Helper
      *
      * @param string|null $name The name of the session key you want to read
      * @return mixed Values from the session vars
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function read($name = null)
     {
@@ -67,6 +70,8 @@ class SessionHelper extends Helper
      *
      * @param string $name Session key to check.
      * @return bool
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function check($name)
     {

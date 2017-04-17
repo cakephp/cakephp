@@ -55,7 +55,7 @@ class Route
      *
      * @var string|null
      */
-    public $template = null;
+    public $template;
 
     /**
      * Is this route a greedy route? Greedy routes have a `/*` in their
@@ -70,14 +70,14 @@ class Route
      *
      * @var string|null
      */
-    protected $_compiledRoute = null;
+    protected $_compiledRoute;
 
     /**
      * The name for a route. Fetch with Route::getName();
      *
      * @var string|null
      */
-    protected $_name = null;
+    protected $_name;
 
     /**
      * List of connected extensions for this route.
@@ -158,7 +158,7 @@ class Route
      */
     public function compiled()
     {
-        return !empty($this->_compiledRoute);
+        return null !== $this->_compiledRoute;
     }
 
     /**
@@ -189,7 +189,7 @@ class Route
      */
     protected function _writeRoute()
     {
-        if (empty($this->template) || ($this->template === '/')) {
+        if (null === $this->template || ($this->template === '/')) {
             $this->_compiledRoute = '#^/*$#';
             $this->keys = [];
 
@@ -252,7 +252,7 @@ class Route
      */
     public function getName()
     {
-        if (!empty($this->_name)) {
+        if (null !== $this->_name) {
             return $this->_name;
         }
         $name = '';
@@ -290,6 +290,7 @@ class Route
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The URL to attempt to parse.
      * @return array|false An array of request parameters, or false on failure.
+     * @throws \InvalidArgumentException
      */
     public function parseRequest(ServerRequestInterface $request)
     {
@@ -310,11 +311,12 @@ class Route
      * @param string $url The URL to attempt to parse.
      * @param string $method The HTTP method of the request being parsed.
      * @return array|false An array of request parameters, or false on failure.
+     * @throws \InvalidArgumentException
      * @deprecated 3.4.0 Use/implement parseRequest() instead as it provides more flexibility/control.
      */
     public function parse($url, $method = '')
     {
-        if (empty($this->_compiledRoute)) {
+        if (null === $this->_compiledRoute) {
             $this->compile();
         }
         list($url, $ext) = $this->_parseExtension($url);
@@ -476,7 +478,7 @@ class Route
      */
     public function match(array $url, array $context = [])
     {
-        if (empty($this->_compiledRoute)) {
+        if (null === $this->_compiledRoute) {
             $this->compile();
         }
         $defaults = $this->defaults;

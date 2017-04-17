@@ -76,7 +76,7 @@ class Type implements TypeInterface
      *
      * @var string
      */
-    protected $_name = null;
+    protected $_name;
 
     /**
      * Constructor
@@ -114,6 +114,7 @@ class Type implements TypeInterface
      * Returns an arrays with all the mapped type objects, indexed by name
      *
      * @return array
+     * @throws \InvalidArgumentException
      */
     public static function buildAll()
     {
@@ -257,7 +258,7 @@ class Type implements TypeInterface
     public static function boolval($value)
     {
         if (is_string($value) && !is_numeric($value)) {
-            return strtolower($value) === 'true' ? true : false;
+            return strtolower($value) === 'true';
         }
 
         return !empty($value);

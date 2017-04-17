@@ -67,7 +67,7 @@ class JsonConfig implements ConfigEngineInterface
         $values = json_decode(file_get_contents($file), true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new Exception(sprintf(
-                "Error parsing JSON string fetched from config file \"%s.json\": %s",
+                'Error parsing JSON string fetched from config file "%s.json": %s',
                 $key,
                 json_last_error_msg()
             ));
@@ -90,6 +90,7 @@ class JsonConfig implements ConfigEngineInterface
      *  be treated as a plugin prefix.
      * @param array $data Data to dump.
      * @return bool Success
+     * @throws \Cake\Core\Exception\Exception
      */
     public function dump($key, array $data)
     {

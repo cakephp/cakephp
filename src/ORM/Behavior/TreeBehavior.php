@@ -176,6 +176,8 @@ class TreeBehavior extends Behavior
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity whose descendants need to be updated.
      * @return void
+     * @throws \RuntimeException
+     * @throws \BadMethodCallException
      */
     protected function _setChildrenLevel($entity)
     {
@@ -214,6 +216,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\Event\Event $event The beforeDelete event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @return void
+     * @throws \Cake\Datasource\Exception\InvalidPrimaryKeyException
      */
     public function beforeDelete(Event $event, EntityInterface $entity)
     {
@@ -304,6 +307,7 @@ class TreeBehavior extends Behavior
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to set as a new root
      * @return void
+     * @throws \Cake\Datasource\Exception\InvalidPrimaryKeyException
      */
     protected function _setAsRoot($entity)
     {
@@ -367,6 +371,10 @@ class TreeBehavior extends Behavior
      * @param \Cake\ORM\Query $query The constructed query to modify
      * @param array $options the list of options for the query
      * @return \Cake\ORM\Query
+     * @throws \RuntimeException
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException
+     * @throws \Cake\Datasource\Exception\InvalidPrimaryKeyException
+     * @throws \BadMethodCallException
      * @throws \InvalidArgumentException If the 'for' key is missing in options
      */
     public function findPath(Query $query, array $options)
@@ -400,6 +408,9 @@ class TreeBehavior extends Behavior
      * @param bool $direct whether to count all nodes in the subtree or just
      * direct children
      * @return int Number of children nodes.
+     * @throws \RuntimeException
+     * @throws \BadMethodCallException
+     * @throws \Cake\Datasource\Exception\InvalidPrimaryKeyException
      */
     public function childCount(EntityInterface $node, $direct = false)
     {
@@ -431,6 +442,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\ORM\Query $query Query.
      * @param array $options Array of options as described above
      * @return \Cake\ORM\Query
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException
      * @throws \InvalidArgumentException When the 'for' key is not passed in $options
      */
     public function findChildren(Query $query, array $options)
@@ -540,6 +552,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $node The node to remove from the tree
      * @return \Cake\Datasource\EntityInterface|false the node after being removed from the tree or
      * false on error
+     * @throws \Exception
      */
     public function removeFromTree(EntityInterface $node)
     {
@@ -555,7 +568,9 @@ class TreeBehavior extends Behavior
      *
      * @param \Cake\Datasource\EntityInterface $node The node to remove from the tree
      * @return \Cake\Datasource\EntityInterface|false the node after being removed from the tree or
+     * @throws \RuntimeException
      * false on error
+     * @throws \Cake\ORM\Exception\RolledbackTransactionException
      */
     protected function _removeFromTree($node)
     {
@@ -601,6 +616,7 @@ class TreeBehavior extends Behavior
      * @param int|bool $number How many places to move the node, or true to move to first position
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\Datasource\EntityInterface|bool $node The node after being moved or false on failure
+     * @throws \Cake\Datasource\Exception\InvalidPrimaryKeyException
      */
     public function moveUp(EntityInterface $node, $number = 1)
     {
@@ -622,6 +638,8 @@ class TreeBehavior extends Behavior
      * @param int|bool $number How many places to move the node, or true to move to first position
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\Datasource\EntityInterface|bool $node The node after being moved or false on failure
+     * @throws \RuntimeException
+     * @throws \BadMethodCallException
      */
     protected function _moveUp($node, $number)
     {
@@ -691,6 +709,7 @@ class TreeBehavior extends Behavior
      * @param int|bool $number How many places to move the node or true to move to last position
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\Datasource\EntityInterface|bool the entity after being moved or false on failure
+     * @throws \Cake\Datasource\Exception\InvalidPrimaryKeyException
      */
     public function moveDown(EntityInterface $node, $number = 1)
     {
@@ -712,6 +731,8 @@ class TreeBehavior extends Behavior
      * @param int|bool $number How many places to move the node, or true to move to last position
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\Datasource\EntityInterface|bool $node The node after being moved or false on failure
+     * @throws \RuntimeException
+     * @throws \BadMethodCallException
      */
     protected function _moveDown($node, $number)
     {
@@ -776,6 +797,8 @@ class TreeBehavior extends Behavior
      *
      * @param mixed $id Record id.
      * @return \Cake\Datasource\EntityInterface
+     * @throws \RuntimeException
+     * @throws \BadMethodCallException
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      */
     protected function _getNode($id)
@@ -805,6 +828,7 @@ class TreeBehavior extends Behavior
      * parent column.
      *
      * @return void
+     * @throws \Exception
      */
     public function recover()
     {
@@ -820,6 +844,7 @@ class TreeBehavior extends Behavior
      * @param mixed $parentId the parent id of the level to be recovered
      * @param int $level Node level
      * @return int The next value to use for the left column
+     * @throws \RuntimeException
      */
     protected function _recoverTree($counter = 0, $parentId = null, $level = -1)
     {
@@ -863,6 +888,8 @@ class TreeBehavior extends Behavior
      * Returns the maximum index value in the table.
      *
      * @return int
+     * @throws \RuntimeException
+     * @throws \BadMethodCallException
      */
     protected function _getMax()
     {
@@ -946,6 +973,10 @@ class TreeBehavior extends Behavior
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to ensure fields for
      * @return void
+     * @throws \RuntimeException
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException
+     * @throws \BadMethodCallException
+     * @throws \Cake\Datasource\Exception\InvalidPrimaryKeyException
      */
     protected function _ensureFields($entity)
     {
@@ -984,6 +1015,8 @@ class TreeBehavior extends Behavior
      *
      * @param int|string|\Cake\Datasource\EntityInterface $entity The entity or primary key get the level of.
      * @return int|bool Integer of the level or false if the node does not exist.
+     * @throws \RuntimeException
+     * @throws \BadMethodCallException
      */
     public function getLevel($entity)
     {

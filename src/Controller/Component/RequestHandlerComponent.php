@@ -52,14 +52,14 @@ class RequestHandlerComponent extends Component
      * @var string|null
      * @see \Cake\Routing\Router::extensions()
      */
-    public $ext = null;
+    public $ext;
 
     /**
      * The template to use when rendering the given content type.
      *
      * @var string|null
      */
-    protected $_renderType = null;
+    protected $_renderType;
 
     /**
      * Default config
@@ -97,6 +97,7 @@ class RequestHandlerComponent extends Component
      *
      * @param \Cake\Controller\ComponentRegistry $registry ComponentRegistry object.
      * @param array $config Array of config.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
@@ -186,6 +187,7 @@ class RequestHandlerComponent extends Component
      *
      * @param \Cake\Event\Event $event The startup event that was fired.
      * @return void
+     * @throws \RuntimeException
      */
     public function startup(Event $event)
     {
@@ -249,6 +251,11 @@ class RequestHandlerComponent extends Component
      * @param string|array $url A string or array containing the redirect location
      * @param \Cake\Http\Response $response The response object.
      * @return \Cake\Http\Response|null The response object if the redirect is caught.
+     * @throws \Cake\Routing\Exception\MissingRouteException
+     * @throws \RuntimeException
+     * @throws \LogicException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
      * @deprecated 3.3.5 This functionality will be removed in 4.0.0. You can disable this function
      *   now by setting the `enableBeforeRedirect` config option to false.
      */
@@ -309,6 +316,7 @@ class RequestHandlerComponent extends Component
      *
      * @param \Cake\Event\Event $event The Controller.beforeRender event.
      * @return bool false if the render process should be aborted
+     * @throws \InvalidArgumentException
      */
     public function beforeRender(Event $event)
     {
@@ -510,7 +518,7 @@ class RequestHandlerComponent extends Component
         $accepts = $response->mapType(array_shift($acceptRaw));
 
         if (!$type) {
-            if (empty($this->ext) && !empty($accepts)) {
+            if (null === $this->ext && !empty($accepts)) {
                 return $accepts[0];
             }
 
@@ -557,6 +565,7 @@ class RequestHandlerComponent extends Component
      * @param string $type Type of response to send (e.g: 'ajax')
      * @param array $options Array of options to use
      * @return void
+     * @throws \InvalidArgumentException
      * @see \Cake\Controller\Component\RequestHandlerComponent::respondAs()
      */
     public function renderAs(Controller $controller, $type, array $options = [])
@@ -614,6 +623,7 @@ class RequestHandlerComponent extends Component
      * @param array $options If $type is a friendly type name that is associated with
      *    more than one type of content, $index is used to select which content-type to use.
      * @return bool Returns false if the friendly type name given in $type does
+     * @throws \InvalidArgumentException
      *    not exist in the type map, or if the Content-type header has
      *    already been set by this method.
      */
@@ -727,6 +737,7 @@ class RequestHandlerComponent extends Component
      * @param array|string|null $type The type string or array with format `['type' => 'viewClass']` to map one or more
      * @param array|null $viewClass The viewClass to be used for the type without `View` appended
      * @return array|string Returns viewClass when only string $type is set, else array with viewClassMap
+     * @throws \Cake\Core\Exception\Exception
      * @deprecated 3.1.0 Use setConfig('viewClassMap', ...) instead.
      */
     public function viewClassMap($type = null, $viewClass = null)

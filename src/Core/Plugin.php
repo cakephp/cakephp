@@ -108,6 +108,7 @@ class Plugin
      * @param array $config configuration options for the plugin
      * @throws \Cake\Core\Exception\MissingPluginException if the folder for the plugin to be loaded is not found
      * @return void
+     * @throws \InvalidArgumentException
      */
     public static function load($plugin, array $config = [])
     {
@@ -157,7 +158,7 @@ class Plugin
         static::$_plugins[$plugin] = $config;
 
         if ($config['autoload'] === true) {
-            if (empty(static::$_loader)) {
+            if (null === static::$_loader) {
                 static::$_loader = new ClassLoader();
                 static::$_loader->register();
             }
@@ -180,6 +181,7 @@ class Plugin
      * Load the plugin path configuration file.
      *
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected static function _loadConfig()
     {
@@ -220,6 +222,7 @@ class Plugin
      *
      * @param array $options Options.
      * @return void
+     * @throws \InvalidArgumentException
      * @throws \Cake\Core\Exception\MissingPluginException
      */
     public static function loadAll(array $options = [])

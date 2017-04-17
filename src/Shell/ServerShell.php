@@ -43,21 +43,21 @@ class ServerShell extends Shell
      *
      * @var string
      */
-    protected $_host = null;
+    protected $_host;
 
     /**
      * listen port
      *
      * @var int
      */
-    protected $_port = null;
+    protected $_port;
 
     /**
      * document root
      *
      * @var string
      */
-    protected $_documentRoot = null;
+    protected $_documentRoot;
 
     /**
      * Override initialize of the Shell
@@ -128,7 +128,7 @@ class ServerShell extends Shell
     public function main()
     {
         $command = sprintf(
-            "php -S %s:%d -t %s %s",
+            'php -S %s:%d -t %s %s',
             $this->_host,
             $this->_port,
             escapeshellarg($this->_documentRoot),
@@ -145,6 +145,7 @@ class ServerShell extends Shell
      * Gets the option parser instance and configures it.
      *
      * @return \Cake\Console\ConsoleOptionParser
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     public function getOptionParser()
     {

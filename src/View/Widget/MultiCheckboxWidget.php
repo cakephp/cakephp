@@ -127,6 +127,7 @@ class MultiCheckboxWidget implements WidgetInterface
      * @param array $data The data array defining the checkboxes.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return array An array of rendered inputs.
+     * @throws \RuntimeException
      */
     protected function _renderInputs($data, $context)
     {
@@ -178,6 +179,8 @@ class MultiCheckboxWidget implements WidgetInterface
      * @param array $checkbox An array containing checkbox key/value option pairs
      * @param \Cake\View\Form\ContextInterface $context Context object.
      * @return string
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     protected function _renderInput($checkbox, $context)
     {

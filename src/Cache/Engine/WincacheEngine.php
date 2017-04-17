@@ -39,6 +39,7 @@ class WincacheEngine extends CacheEngine
      *
      * @param array $config array of setting for the engine
      * @return bool True if the engine has been successfully initialized, false if not
+     * @throws \Cake\Core\Exception\Exception
      */
     public function init(array $config = [])
     {
@@ -57,6 +58,7 @@ class WincacheEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
      * @return bool True if the data was successfully cached, false on failure
+     * @throws \InvalidArgumentException
      */
     public function write($key, $value)
     {
@@ -80,6 +82,7 @@ class WincacheEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @return mixed The cached data, or false if the data doesn't exist,
      *   has expired, or if there was an error fetching it
+     * @throws \InvalidArgumentException
      */
     public function read($key)
     {
@@ -100,6 +103,7 @@ class WincacheEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @param int $offset How much to increment
      * @return bool|int New incremented value, false otherwise
+     * @throws \InvalidArgumentException
      */
     public function increment($key, $offset = 1)
     {
@@ -114,6 +118,7 @@ class WincacheEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @param int $offset How much to subtract
      * @return bool|int New decremented value, false otherwise
+     * @throws \InvalidArgumentException
      */
     public function decrement($key, $offset = 1)
     {
@@ -127,6 +132,7 @@ class WincacheEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+     * @throws \InvalidArgumentException
      */
     public function delete($key)
     {
