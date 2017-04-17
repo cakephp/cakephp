@@ -100,14 +100,14 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    public $plugin = null;
+    public $plugin;
 
     /**
      * Name of the controller that created the View if any.
      *
      * @var string
      */
-    public $name = null;
+    public $name;
 
     /**
      * Current passed params. Passed to View from the creating Controller for convenience.
@@ -129,7 +129,7 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    public $templatePath = null;
+    public $templatePath;
 
     /**
      * The name of the template file to render. The name specified
@@ -137,7 +137,7 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    public $template = null;
+    public $template;
 
     /**
      * The name of the layout file to render the template inside of. The name specified
@@ -153,7 +153,7 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    public $layoutPath = null;
+    public $layoutPath;
 
     /**
      * Turns on or off CakePHP's conventional mode of applying layout files. On by default.
@@ -176,14 +176,14 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    public $subDir = null;
+    public $subDir;
 
     /**
      * The view theme to use.
      *
      * @var string
      */
-    public $theme = null;
+    public $theme;
 
     /**
      * True when the view has been rendered.
@@ -261,7 +261,7 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    protected $_current = null;
+    protected $_current;
 
     /**
      * Currently rendering an element. Used for finding parent fragments
@@ -488,7 +488,7 @@ class View implements EventDispatcherInterface
             $options['cache'] = $this->_elementCache($name, $data, $options);
         }
 
-        $pluginCheck = $options['plugin'] === false ? false : true;
+        $pluginCheck = $options['plugin'] !== false;
         $file = $this->_getElementFileName($name, $pluginCheck);
         if ($file && $options['cache']) {
             return $this->cache(function () use ($file, $data, $options) {

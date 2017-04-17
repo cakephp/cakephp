@@ -8,6 +8,8 @@
 /phpcs.xml
 /vendor
 *.mo
+debug.log
+error.log
 
 # IDE and editor specific files #
 #################################

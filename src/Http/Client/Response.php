@@ -228,9 +228,9 @@ class Response extends Message implements ResponseInterface
         $value = rtrim($value, ';');
         $nestedSemi = '";"';
         if (strpos($value, $nestedSemi) !== false) {
-            $value = str_replace($nestedSemi, "{__cookie_replace__}", $value);
+            $value = str_replace($nestedSemi, '{__cookie_replace__}', $value);
             $parts = explode(';', $value);
-            $parts = str_replace("{__cookie_replace__}", $nestedSemi, $parts);
+            $parts = str_replace('{__cookie_replace__}', $nestedSemi, $parts);
         } else {
             $parts = preg_split('/\;[ \t]*/', $value);
         }

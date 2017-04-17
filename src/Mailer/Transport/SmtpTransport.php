@@ -222,7 +222,7 @@ class SmtpTransport extends AbstractTransport
         try {
             $this->_smtpSend("EHLO {$host}", '250');
             if ($config['tls']) {
-                $this->_smtpSend("STARTTLS", '220');
+                $this->_smtpSend('STARTTLS', '220');
                 $this->_socket->enableCrypto('tls');
                 $this->_smtpSend("EHLO {$host}", '250');
             }

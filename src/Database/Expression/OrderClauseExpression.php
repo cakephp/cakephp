@@ -53,7 +53,7 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
             $field = $field->sql($generator);
         }
 
-        return sprintf("%s %s", $field, $this->_direction);
+        return sprintf('%s %s', $field, $this->_direction);
     }
 
     /**

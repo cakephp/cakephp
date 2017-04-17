@@ -260,7 +260,7 @@ trait EntityTrait
                 continue;
             }
 
-            $setter = $this->_accessor($p, 'set');
+            $setter = static::_accessor($p, 'set');
             if ($setter) {
                 $value = $this->{$setter}($value);
             }
@@ -284,7 +284,7 @@ trait EntityTrait
         }
 
         $value = null;
-        $method = $this->_accessor($property, 'get');
+        $method = static::_accessor($property, 'get');
 
         if (isset($this->_properties[$property])) {
             $value =& $this->_properties[$property];
@@ -391,8 +391,7 @@ trait EntityTrait
     {
         $property = (array)$property;
         foreach ($property as $p) {
-            unset($this->_properties[$p]);
-            unset($this->_dirty[$p]);
+            unset($this->_properties[$p], $this->_dirty[$p]);
         }
 
         return $this;
