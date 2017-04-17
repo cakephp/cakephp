@@ -314,7 +314,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param string $name The name of the component to load.
      * @param array $config The config for the component.
-     * @return \Cake\Controller\Component
+     * @return bool|Component|object
+     * @throws \RuntimeException
+     * @throws \Exception
      */
     public function loadComponent($name, array $config = [])
     {

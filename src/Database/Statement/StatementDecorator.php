@@ -246,7 +246,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * }
      * ```
      *
-     * @return \Iterator
+     * @return StatementInterface|\Iterator
      */
     public function getIterator()
     {

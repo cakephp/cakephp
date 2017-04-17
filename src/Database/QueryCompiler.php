@@ -88,7 +88,7 @@ class QueryCompiler
      *
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
-     * @return \Closure
+     * @return \Closure|string
      */
     public function compile(Query $query, ValueBinder $generator)
     {
