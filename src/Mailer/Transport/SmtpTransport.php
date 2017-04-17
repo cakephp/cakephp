@@ -85,6 +85,7 @@ class SmtpTransport extends AbstractTransport
      * connection available already.
      *
      * @return void
+     * @throws \Cake\Network\Exception\SocketException
      */
     public function connect()
     {
@@ -111,6 +112,7 @@ class SmtpTransport extends AbstractTransport
      * connection available.
      *
      * @return void
+     * @throws \Cake\Network\Exception\SocketException
      */
     public function disconnect()
     {
@@ -199,6 +201,7 @@ class SmtpTransport extends AbstractTransport
      * Connect to SMTP Server
      *
      * @return void
+     * @throws \InvalidArgumentException
      * @throws \Cake\Network\Exception\SocketException
      */
     protected function _connect()
