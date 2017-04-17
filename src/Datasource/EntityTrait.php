@@ -391,8 +391,7 @@ trait EntityTrait
     {
         $property = (array)$property;
         foreach ($property as $p) {
-            unset($this->_properties[$p]);
-            unset($this->_dirty[$p]);
+            unset($this->_properties[$p], $this->_dirty[$p]);
         }
 
         return $this;

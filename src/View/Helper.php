@@ -69,21 +69,21 @@ class Helper implements EventListenerInterface
      *
      * @var string
      */
-    public $theme = null;
+    public $theme;
 
     /**
      * Request object
      *
      * @var \Cake\Http\ServerRequest
      */
-    public $request = null;
+    public $request;
 
     /**
      * Plugin path
      *
      * @var string
      */
-    public $plugin = null;
+    public $plugin;
 
     /**
      * Holds the fields ['field_name' => ['type' => 'string', 'length' => 100]],

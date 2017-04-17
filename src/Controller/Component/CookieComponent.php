@@ -107,7 +107,7 @@ class CookieComponent extends Component
      * @var \Cake\Http\Response|null
      * @deprecated 3.4.0 Will be removed in 4.0.0
      */
-    protected $_response = null;
+    protected $_response;
 
     /**
      * Initialize config data and properties.

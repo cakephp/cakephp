@@ -40,11 +40,11 @@ class NumberHelper extends Helper
     ];
 
     /**
-     * Cake\I18n\LocalizedNumber instance
+     * Cake\I18n\Number instance
      *
      * @var \Cake\I18n\Number
      */
-    protected $_engine = null;
+    protected $_engine;
 
     /**
      * Default Constructor

@@ -38,7 +38,7 @@ class FileEngine extends CacheEngine
      *
      * @var \SplFileObject|null
      */
-    protected $_File = null;
+    protected $_File;
 
     /**
      * The default config used unless overridden by runtime configuration

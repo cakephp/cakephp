@@ -41,7 +41,7 @@ trait StringCompareTrait
      *
      * @var bool
      */
-    protected $_updateComparisons = null;
+    protected $_updateComparisons;
 
     /**
      * Compare the result to the contents of the file

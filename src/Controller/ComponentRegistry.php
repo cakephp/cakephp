@@ -35,7 +35,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      *
      * @var \Cake\Controller\Controller
      */
-    protected $_Controller = null;
+    protected $_Controller;
 
     /**
      * Constructor.

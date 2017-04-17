@@ -39,14 +39,14 @@ class RssHelper extends Helper
      *
      * @var string
      */
-    public $base = null;
+    public $base;
 
     /**
      * URL to current action.
      *
      * @var string
      */
-    public $here = null;
+    public $here;
 
     /**
      * Parameter array.
@@ -60,28 +60,28 @@ class RssHelper extends Helper
      *
      * @var string
      */
-    public $action = null;
+    public $action;
 
     /**
      * POSTed model data
      *
      * @var array
      */
-    public $data = null;
+    public $data;
 
     /**
      * Name of the current model
      *
      * @var string
      */
-    public $model = null;
+    public $model;
 
     /**
      * Name of the current field
      *
      * @var string
      */
-    public $field = null;
+    public $field;
 
     /**
      * Default spec version of generated RSS
@@ -248,7 +248,7 @@ class RssHelper extends Helper
                 case 'enclosure':
                     if (is_string($val['url']) && is_file(WWW_ROOT . $val['url']) && file_exists(WWW_ROOT . $val['url'])) {
                         if (!isset($val['length']) && strpos($val['url'], '://') === false) {
-                            $val['length'] = sprintf("%u", filesize(WWW_ROOT . $val['url']));
+                            $val['length'] = sprintf('%u', filesize(WWW_ROOT . $val['url']));
                         }
                         if (!isset($val['type']) && function_exists('mime_content_type')) {
                             $val['type'] = mime_content_type(WWW_ROOT . $val['url']);

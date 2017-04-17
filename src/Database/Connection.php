@@ -83,14 +83,14 @@ class Connection implements ConnectionInterface
      *
      * @var \Cake\Database\Log\QueryLogger|null
      */
-    protected $_logger = null;
+    protected $_logger;
 
     /**
      * The schema collection object
      *
      * @var \Cake\Database\Schema\Collection|null
      */
-    protected $_schemaCollection = null;
+    protected $_schemaCollection;
 
     /**
      * NestedTransactionRollbackException object instance, will be stored if
@@ -98,7 +98,7 @@ class Connection implements ConnectionInterface
      *
      * @var \Cake\Database\Exception\NestedTransactionRollbackException|null
      */
-    protected $nestedTransactionRollbackException = null;
+    protected $nestedTransactionRollbackException;
 
     /**
      * Constructor.

@@ -173,7 +173,7 @@ class FormHelper extends Helper
      *
      * @var string|null
      */
-    public $requestType = null;
+    public $requestType;
 
     /**
      * An array of field names that have been excluded from
@@ -401,7 +401,7 @@ class FormHelper extends Helper
             // Set enctype for form
             case 'file':
                 $htmlAttributes['enctype'] = 'multipart/form-data';
-                $options['type'] = ($isCreate) ? 'post' : 'put';
+                $options['type'] = $isCreate ? 'post' : 'put';
             // Move on
             case 'post':
             // Move on
@@ -528,7 +528,8 @@ class FormHelper extends Helper
 
         return $this->hidden('_csrfToken', [
             'value' => $this->request->getParam('_csrfToken'),
-            'secure' => static::SECURE_SKIP
+            'secure' => static::SECURE_SKIP,
+            'autocomplete' => 'off',
         ]);
     }
 
@@ -589,6 +590,7 @@ class FormHelper extends Helper
             unset($secureAttributes['debugSecurity']);
         }
         $secureAttributes['secure'] = static::SECURE_SKIP;
+        $secureAttributes['autocomplete'] = 'off';
 
         $tokenData = $this->_buildFieldToken(
             $this->_lastAction,
@@ -1528,7 +1530,7 @@ class FormHelper extends Helper
         if ($options['hiddenField']) {
             $hiddenOptions = [
                 'name' => $options['name'],
-                'value' => ($options['hiddenField'] !== true && $options['hiddenField'] !== '_split' ? $options['hiddenField'] : '0'),
+                'value' => $options['hiddenField'] !== true && $options['hiddenField'] !== '_split' ? $options['hiddenField'] : '0',
                 'form' => isset($options['form']) ? $options['form'] : null,
                 'secure' => false
             ];
@@ -2096,7 +2098,7 @@ class FormHelper extends Helper
                 'name' => $attributes['name'],
                 'value' => '',
                 'secure' => false,
-                'disabled' => ($attributes['disabled'] === true || $attributes['disabled'] === 'disabled'),
+                'disabled' => $attributes['disabled'] === true || $attributes['disabled'] === 'disabled',
             ];
             $hidden = $this->hidden($fieldName, $hiddenAttributes);
         }

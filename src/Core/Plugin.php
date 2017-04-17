@@ -113,7 +113,7 @@ class Plugin
     {
         if (is_array($plugin)) {
             foreach ($plugin as $name => $conf) {
-                list($name, $conf) = (is_numeric($name)) ? [$conf, $config] : [$name, $conf];
+                list($name, $conf) = is_numeric($name) ? [$conf, $config] : [$name, $conf];
                 static::load($name, $conf);
             }
 
@@ -220,6 +220,7 @@ class Plugin
      *
      * @param array $options Options.
      * @return void
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     public static function loadAll(array $options = [])
     {
@@ -230,9 +231,9 @@ class Plugin
                 continue;
             }
             $dir = new DirectoryIterator($path);
-            foreach ($dir as $path) {
-                if ($path->isDir() && !$path->isDot()) {
-                    $plugins[] = $path->getBasename();
+            foreach ($dir as $dirPath) {
+                if ($dirPath->isDir() && !$dirPath->isDot()) {
+                    $plugins[] = $dirPath->getBasename();
                 }
             }
         }

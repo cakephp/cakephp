@@ -39,7 +39,7 @@ class ValidationRule
      *
      * @var string
      */
-    protected $_on = null;
+    protected $_on;
 
     /**
      * The 'last' key
@@ -53,7 +53,7 @@ class ValidationRule
      *
      * @var string
      */
-    protected $_message = null;
+    protected $_message;
 
     /**
      * Key under which the object or class where the method to be used for
