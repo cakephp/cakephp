@@ -77,7 +77,7 @@ abstract class BaseErrorHandler
         set_error_handler([$this, 'handleError'], $level);
         set_exception_handler([$this, 'wrapAndHandleException']);
         register_shutdown_function(function () {
-            if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
+            if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
                 return;
             }
             $megabytes = Configure::read('Error.extraFatalErrorMemory');

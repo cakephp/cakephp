@@ -511,7 +511,7 @@ class Debugger
     {
         switch (static::getType($var)) {
             case 'boolean':
-                return ($var) ? 'true' : 'false';
+                return $var ? 'true' : 'false';
             case 'integer':
                 return '(int) ' . $var;
             case 'float':

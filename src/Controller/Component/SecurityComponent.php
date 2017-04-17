@@ -225,7 +225,7 @@ class SecurityComponent extends Component
         if (isset($actions[0]) && is_array($actions[0])) {
             $actions = $actions[0];
         }
-        $this->setConfig('require' . $method, (empty($actions)) ? ['*'] : $actions);
+        $this->setConfig('require' . $method, empty($actions) ? ['*'] : $actions);
     }
 
     /**

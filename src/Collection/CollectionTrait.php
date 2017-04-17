@@ -385,7 +385,7 @@ trait CollectionTrait
             $rowKey = $options['keyPath'];
             $rowVal = $options['valuePath'];
 
-            if (!($options['groupPath'])) {
+            if (!$options['groupPath']) {
                 $mapReduce->emit($rowVal($value, $key), $rowKey($value, $key));
 
                 return null;

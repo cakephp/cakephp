@@ -579,7 +579,7 @@ abstract class TestCase extends BaseTestCase
     {
         $upper = $result + $margin;
         $lower = $result - $margin;
-        static::assertTrue((($expected <= $upper) && ($expected >= $lower)), $message);
+        static::assertTrue(($expected <= $upper) && ($expected >= $lower), $message);
     }
 
     /**
@@ -596,7 +596,7 @@ abstract class TestCase extends BaseTestCase
     {
         $upper = $result + $margin;
         $lower = $result - $margin;
-        static::assertTrue((($expected > $upper) || ($expected < $lower)), $message);
+        static::assertTrue(($expected > $upper) || ($expected < $lower), $message);
     }
 
     /**
