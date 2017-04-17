@@ -72,6 +72,7 @@ class RouteCollection
      * @param array $options Additional options for the route. Primarily for the
      *   `_name` option, which enables named routes.
      * @return void
+     * @throws \Cake\Routing\Exception\DuplicateNamedRouteException
      */
     public function add(Route $route, array $options = [])
     {

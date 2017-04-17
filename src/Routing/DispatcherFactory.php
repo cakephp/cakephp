@@ -43,6 +43,7 @@ class DispatcherFactory
      * @param array $options Constructor arguments/options for the filter if you are using a string name.
      *   If you are passing an instance, this argument will be ignored.
      * @return \Cake\Routing\DispatcherFilter
+     * @throws \Cake\Routing\Exception\MissingDispatcherFilterException
      */
     public static function add($filter, array $options = [])
     {

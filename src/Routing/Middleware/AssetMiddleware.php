@@ -80,6 +80,7 @@ class AssetMiddleware
      * @param \Psr\Http\Message\ResponseInterface $response The response.
      * @param callable $next Callback to invoke the next middleware.
      * @return \Psr\Http\Message\ResponseInterface A response
+     * @throws \InvalidArgumentException
      */
     public function __invoke($request, $response, $next)
     {
@@ -127,6 +128,7 @@ class AssetMiddleware
      *
      * @param string $url Asset URL
      * @return string Absolute path for asset file
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     protected function _getAssetFile($url)
     {
@@ -157,6 +159,7 @@ class AssetMiddleware
      * @param \Psr\Http\Message\ResponseInterface $response The response object to use.
      * @param \Cake\Filesystem\File $file The file wrapper for the file.
      * @return \Psr\Http\Message\ResponseInterface The response with the file & headers.
+     * @throws \InvalidArgumentException
      */
     protected function deliverAsset(ServerRequestInterface $request, ResponseInterface $response, $file)
     {

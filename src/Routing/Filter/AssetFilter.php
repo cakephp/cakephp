@@ -48,6 +48,7 @@ class AssetFilter extends DispatcherFilter
      * Constructor.
      *
      * @param array $config Array of config.
+     * @throws \InvalidArgumentException
      */
     public function __construct($config = [])
     {
@@ -98,6 +99,7 @@ class AssetFilter extends DispatcherFilter
      *
      * @param string $url Asset URL
      * @return string Absolute path for asset file
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     protected function _getAssetFile($url)
     {

@@ -95,6 +95,7 @@ class DispatcherFilter implements EventListenerInterface
      *
      * @param array $config Settings for the filter.
      * @throws \InvalidArgumentException When 'when' conditions are not callable.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct($config = [])
     {
