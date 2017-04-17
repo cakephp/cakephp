@@ -51,6 +51,8 @@ class SessionHelper extends Helper
      *
      * @param string|null $name The name of the session key you want to read
      * @return mixed Values from the session vars
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function read($name = null)
     {
@@ -67,6 +69,8 @@ class SessionHelper extends Helper
      *
      * @param string $name Session key to check.
      * @return bool
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function check($name)
     {

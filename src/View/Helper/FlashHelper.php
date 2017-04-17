@@ -65,6 +65,9 @@ class FlashHelper extends Helper
      * @param array $options Additional options to use for the creation of this flash message.
      *    Supports the 'params', and 'element' keys that are used in the helper.
      * @return string|null Rendered flash message or null if flash key does not exist
+     * @throws \Cake\View\Exception\MissingElementException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      *   in session.
      * @throws \UnexpectedValueException If value for flash settings key is not an array.
      */
