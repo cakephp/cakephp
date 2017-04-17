@@ -43,6 +43,9 @@ class I18nShell extends Shell
      * Override main() for help message hook
      *
      * @return void
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\MissingPluginException
+     * @throws \Cake\Console\Exception\StopException
      */
     public function main()
     {
@@ -80,6 +83,7 @@ class I18nShell extends Shell
      *
      * @param string|null $language Language code to use.
      * @return void
+     * @throws \Cake\Console\Exception\StopException
      */
     public function init($language = null)
     {
@@ -111,7 +115,7 @@ class I18nShell extends Shell
             }
             $filename = $fileinfo->getFilename();
             $newFilename = $fileinfo->getBasename('.pot');
-            $newFilename = $newFilename . '.po';
+            $newFilename .= '.po';
 
             $this->createFile($targetFolder . $newFilename, file_get_contents($sourceFolder . $filename));
             $count++;
@@ -124,6 +128,7 @@ class I18nShell extends Shell
      * Gets the option parser instance and configures it.
      *
      * @return \Cake\Console\ConsoleOptionParser
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     public function getOptionParser()
     {
