@@ -412,7 +412,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             if (is_array($this->_parts['distinct'])) {
                 $merge = $this->_parts['distinct'];
             }
-            $on = ($overwrite) ? array_values($on) : array_merge($merge, array_values($on));
+            $on = $overwrite ? array_values($on) : array_merge($merge, array_values($on));
         }
 
         $this->_parts['distinct'] = $on;
