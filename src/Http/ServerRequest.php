@@ -1769,7 +1769,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     protected function _readInput()
     {
         if (empty($this->_input)) {
-            $fh = fopen('php://input', 'r');
+            $fh = fopen('php://input', 'rb');
             $content = stream_get_contents($fh);
             fclose($fh);
             $this->_input = $content;
