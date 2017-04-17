@@ -391,7 +391,7 @@ class FormHelper extends Helper
             // Set enctype for form
             case 'file':
                 $htmlAttributes['enctype'] = 'multipart/form-data';
-                $options['type'] = ($isCreate) ? 'post' : 'put';
+                $options['type'] = $isCreate ? 'post' : 'put';
             // Move on
             case 'post':
             // Move on
@@ -1520,7 +1520,7 @@ class FormHelper extends Helper
         if ($options['hiddenField']) {
             $hiddenOptions = [
                 'name' => $options['name'],
-                'value' => ($options['hiddenField'] !== true && $options['hiddenField'] !== '_split' ? $options['hiddenField'] : '0'),
+                'value' => $options['hiddenField'] !== true && $options['hiddenField'] !== '_split' ? $options['hiddenField'] : '0',
                 'form' => isset($options['form']) ? $options['form'] : null,
                 'secure' => false
             ];
@@ -2088,7 +2088,7 @@ class FormHelper extends Helper
                 'name' => $attributes['name'],
                 'value' => '',
                 'secure' => false,
-                'disabled' => ($attributes['disabled'] === true || $attributes['disabled'] === 'disabled'),
+                'disabled' => $attributes['disabled'] === true || $attributes['disabled'] === 'disabled',
             ];
             $hidden = $this->hidden($fieldName, $hiddenAttributes);
         }

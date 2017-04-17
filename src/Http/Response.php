@@ -1682,7 +1682,7 @@ class Response implements ResponseInterface
     public function etag($hash = null, $weak = false)
     {
         if ($hash !== null) {
-            $this->_setHeader('Etag', sprintf('%s"%s"', ($weak) ? 'W/' : null, $hash));
+            $this->_setHeader('Etag', sprintf('%s"%s"', $weak ? 'W/' : null, $hash));
         }
 
         if ($this->hasHeader('Etag')) {
@@ -1715,7 +1715,7 @@ class Response implements ResponseInterface
      */
     public function withEtag($hash, $weak = false)
     {
-        $hash = sprintf('%s"%s"', ($weak) ? 'W/' : null, $hash);
+        $hash = sprintf('%s"%s"', $weak ? 'W/' : null, $hash);
 
         return $this->withHeader('Etag', $hash);
     }
