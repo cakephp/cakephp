@@ -25,7 +25,7 @@ use PDO;
  *
  * Use to convert bool data between PHP and the database types.
  */
-class BoolType extends Type implements TypeInterface
+class BoolType extends Type
 {
     /**
      * Identifier name for this type.

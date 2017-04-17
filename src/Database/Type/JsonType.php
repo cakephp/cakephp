@@ -25,7 +25,7 @@ use PDO;
  *
  * Use to convert json data between PHP and the database types.
  */
-class JsonType extends Type implements TypeInterface
+class JsonType extends Type
 {
     /**
      * Identifier name for this type.

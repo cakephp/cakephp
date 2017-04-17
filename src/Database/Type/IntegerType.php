@@ -25,7 +25,7 @@ use PDO;
  *
  * Use to convert integer data between PHP and the database types.
  */
-class IntegerType extends Type implements TypeInterface
+class IntegerType extends Type
 {
     /**
      * Identifier name for this type.

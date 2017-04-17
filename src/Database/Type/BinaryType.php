@@ -26,7 +26,7 @@ use PDO;
  *
  * Use to convert binary data between PHP and the database types.
  */
-class BinaryType extends Type implements TypeInterface
+class BinaryType extends Type
 {
     /**
      * Identifier name for this type.

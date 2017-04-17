@@ -27,7 +27,7 @@ use RuntimeException;
  *
  * Use to convert datetime instances to strings & back.
  */
-class DateTimeType extends Type implements TypeInterface
+class DateTimeType extends Type
 {
     /**
      * Identifier name for this type.

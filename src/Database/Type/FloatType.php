@@ -25,7 +25,7 @@ use RuntimeException;
  *
  * Use to convert float/decimal data between PHP and the database types.
  */
-class FloatType extends Type implements TypeInterface
+class FloatType extends Type
 {
     /**
      * Identifier name for this type.

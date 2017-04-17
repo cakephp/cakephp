@@ -26,7 +26,7 @@ use RuntimeException;
  *
  * Use to convert decimal data between PHP and the database types.
  */
-class DecimalType extends Type implements TypeInterface
+class DecimalType extends Type
 {
     /**
      * Identifier name for this type.
