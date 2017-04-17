@@ -348,7 +348,7 @@ class SqlserverSchema extends BaseSchema
             $out .= $typeMap[$data['type']];
         }
 
-        if ($data['type'] === 'integer' || ($data['type'] === 'biginteger') {
+        if ($data['type'] === 'integer' || $data['type'] === 'biginteger') {
             if ([$name] === $schema->primaryKey() || $data['autoIncrement'] === true) {
                 unset($data['null'], $data['default']);
                 $out .= ' IDENTITY(1, 1)';
