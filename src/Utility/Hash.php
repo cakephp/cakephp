@@ -1077,8 +1077,7 @@ class Hash
         $intersection = array_intersect_key($data, $compare);
         while (($key = key($intersection)) !== null) {
             if ($data[$key] == $compare[$key]) {
-                unset($data[$key]);
-                unset($compare[$key]);
+                unset($data[$key], $compare[$key]);
             }
             next($intersection);
         }
