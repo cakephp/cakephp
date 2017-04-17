@@ -122,6 +122,7 @@ class DatabaseSession implements SessionHandlerInterface
      * @param int $id ID that uniquely identifies session in database
      * @param mixed $data The value of the data to be saved.
      * @return bool True for successful write, false otherwise.
+     * @throws \Cake\ORM\Exception\RolledbackTransactionException
      */
     public function write($id, $data)
     {
