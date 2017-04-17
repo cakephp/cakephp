@@ -49,6 +49,7 @@ class Digest
      * @param \Cake\Http\Client\Request $request The request object.
      * @param array $credentials Authentication credentials.
      * @return \Cake\Http\Client\Request The updated request.
+     * @throws \InvalidArgumentException
      * @see http://www.ietf.org/rfc/rfc2617.txt
      */
     public function authentication(Request $request, array $credentials)
@@ -77,6 +78,7 @@ class Digest
      * @param \Cake\Http\Client\Request $request The request object.
      * @param array $credentials Authentication credentials.
      * @return array modified credentials.
+     * @throws \InvalidArgumentException
      */
     protected function _getServerInfo(Request $request, $credentials)
     {
@@ -111,6 +113,7 @@ class Digest
      * @param \Cake\Http\Client\Request $request The request object.
      * @param array $credentials Authentication credentials.
      * @return string
+     * @throws \Cake\Core\Exception\Exception
      */
     protected function _generateHeader(Request $request, $credentials)
     {

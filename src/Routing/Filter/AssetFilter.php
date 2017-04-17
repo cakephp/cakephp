@@ -49,6 +49,7 @@ class AssetFilter extends DispatcherFilter
      *
      * @param array $config Array of config.
      * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct($config = [])
     {
@@ -63,6 +64,7 @@ class AssetFilter extends DispatcherFilter
      *
      * @param \Cake\Event\Event $event Event containing the request and response object
      * @return \Cake\Http\Response|null If the client is requesting a recognized asset, null otherwise
+     * @throws \Cake\Core\Exception\MissingPluginException
      * @throws \Cake\Network\Exception\NotFoundException When asset not found
      */
     public function beforeDispatch(Event $event)
@@ -129,6 +131,8 @@ class AssetFilter extends DispatcherFilter
      * @param string $assetFile Path to the asset file in the file system
      * @param string $ext The extension of the file to determine its mime type
      * @return \Cake\Http\Response The updated response.
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Network\Exception\NotFoundException
      */
     protected function _deliverAsset(ServerRequest $request, Response $response, $assetFile, $ext)
     {

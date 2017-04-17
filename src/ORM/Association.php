@@ -443,6 +443,7 @@ abstract class Association
      * @deprecated 3.4.0 Use setTarget()/getTarget() instead.
      * @param \Cake\ORM\Table|null $table the instance to be assigned as target side
      * @return \Cake\ORM\Table
+     * @throws \RuntimeException
      */
     public function target(Table $table = null)
     {
@@ -893,6 +894,7 @@ abstract class Association
      * @param \Cake\ORM\Query $query the query to be altered to include the target table data
      * @param array $options Any extra options or overrides to be taken in account
      * @return void
+     * @throws \InvalidArgumentException
      * @throws \RuntimeException if the query builder passed does not return a query
      * object
      */
@@ -1024,6 +1026,7 @@ abstract class Association
      * @param array $options The options to for the find
      * @see \Cake\ORM\Table::find()
      * @return \Cake\ORM\Query
+     * @throws \BadMethodCallException
      * @throws \RuntimeException
      */
     public function find($type = null, array $options = [])
@@ -1132,6 +1135,7 @@ abstract class Association
      * @param \Cake\ORM\Query $surrogate the query having the fields to be copied from
      * @param array $options options passed to the method `attachTo`
      * @return void
+     * @throws \RuntimeException
      */
     protected function _appendFields($query, $surrogate, $options)
     {

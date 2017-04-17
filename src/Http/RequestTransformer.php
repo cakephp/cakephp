@@ -111,6 +111,7 @@ class RequestTransformer
      * @param array $files The file objects to convert.
      * @param string $path The current array path.
      * @return array Converted file data
+     * @throws \RuntimeException
      */
     protected static function convertFiles($data, $files, $path = '')
     {

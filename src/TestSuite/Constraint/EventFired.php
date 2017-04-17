@@ -28,6 +28,7 @@ class EventFired extends Constraint
      * Constructor
      *
      * @param EventManager $eventManager Event manager to check
+     * @throws \PHPUnit\Framework\AssertionFailedError
      */
     public function __construct($eventManager)
     {

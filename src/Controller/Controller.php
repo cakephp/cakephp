@@ -316,6 +316,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param string $name The name of the component to load.
      * @param array $config The config for the component.
      * @return \Cake\Controller\Component
+     * @throws \RuntimeException
+     * @throws \Exception
      */
     public function loadComponent($name, array $config = [])
     {
@@ -405,6 +407,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @return void
+     * @throws \InvalidArgumentException
      */
     public function setRequest(ServerRequest $request)
     {
@@ -421,6 +424,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * exists and isn't private.
      *
      * @return mixed The resulting response.
+     * @throws \InvalidArgumentException
      * @throws \LogicException When request is not set.
      * @throws \Cake\Controller\Exception\MissingActionException When actions are not defined or inaccessible.
      */
@@ -541,6 +545,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *     or an absolute URL
      * @param int $status HTTP status code (eg: 301)
      * @return \Cake\Http\Response|null
+     * @throws \Cake\Routing\Exception\MissingRouteException
      * @throws \Cake\Core\Exception\Exception
      * @throws \InvalidArgumentException
      * @link http://book.cakephp.org/3.0/en/controllers.html#Controller::redirect
@@ -597,6 +602,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param string|null $view View to use for rendering
      * @param string|null $layout Layout to use
      * @return \Cake\Http\Response A response object containing the rendered view.
+     * @throws \Cake\View\Exception\MissingViewException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
      * @link http://book.cakephp.org/3.0/en/controllers.html#rendering-a-view
      */
     public function render($view = null, $layout = null)
@@ -635,6 +644,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Get the viewPath based on controller name and request prefix.
      *
      * @return string
+     * @throws \InvalidArgumentException
      */
     protected function _viewPath()
     {
@@ -656,6 +666,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param string|array|null $default Default URL to use if HTTP_REFERER cannot be read from headers
      * @param bool $local If true, restrict referring URLs to local server
      * @return string Referring URL
+     * @throws \InvalidArgumentException
      * @throws \Cake\Core\Exception\Exception
      */
     public function referer($default = null, $local = false)

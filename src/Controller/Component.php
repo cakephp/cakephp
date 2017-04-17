@@ -162,6 +162,8 @@ class Component implements EventListenerInterface
      *
      * @param string $name Name of component to get.
      * @return mixed A Component object or null.
+     * @throws \RuntimeException
+     * @throws \Exception
      */
     public function __get($name)
     {

@@ -140,6 +140,7 @@ class ConsoleOptionParser
      * @param string|null $command The command name this parser is for. The command name is used for generating help.
      * @param bool $defaultOptions Whether you want the verbose and quiet options set. Setting
      *  this to false will prevent the addition of `--verbose` & `--quiet` options.
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     public function __construct($command = null, $defaultOptions = true)
     {
@@ -198,6 +199,8 @@ class ConsoleOptionParser
      * @param array $spec The spec to build the OptionParser with.
      * @param bool $defaultOptions Whether you want the verbose and quiet options set.
      * @return static
+     * @throws \LogicException
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     public static function buildFromArray($spec, $defaultOptions = true)
     {
@@ -245,6 +248,8 @@ class ConsoleOptionParser
      *
      * @param array|\Cake\Console\ConsoleOptionParser $spec ConsoleOptionParser or spec to merge with.
      * @return $this
+     * @throws \LogicException
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     public function merge($spec)
     {

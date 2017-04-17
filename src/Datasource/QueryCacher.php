@@ -68,6 +68,7 @@ class QueryCacher
      *
      * @param object $query The query the cache read is for.
      * @return \Cake\ORM\ResultSet|null Either the cached results or null.
+     * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
     public function fetch($query)
@@ -88,6 +89,7 @@ class QueryCacher
      * @param object $query The query the cache read is for.
      * @param \Traversable $results The result set to store.
      * @return bool True if the data was successfully cached, false on failure
+     * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
     public function store($query, Traversable $results)

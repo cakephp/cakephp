@@ -44,6 +44,7 @@ class ConditionDecorator extends AbstractDecorator
      *
      * @param \Cake\Event\Event $event Event object.
      * @return bool
+     * @throws \RuntimeException
      */
     public function canTrigger(Event $event)
     {

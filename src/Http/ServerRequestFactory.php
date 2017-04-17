@@ -66,6 +66,7 @@ abstract class ServerRequestFactory extends BaseFactory
      * @param array $server Array of server data to build the Uri from.
      *   $_SERVER will be added into the $server parameter.
      * @return \Psr\Http\Message\UriInterface New instance.
+     * @throws \InvalidArgumentException
      */
     public static function createUri(array $server = [])
     {

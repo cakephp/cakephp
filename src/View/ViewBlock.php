@@ -97,6 +97,7 @@ class ViewBlock
      * End a capturing block. The compliment to ViewBlock::start()
      *
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      * @see \Cake\View\ViewBlock::start()
      */
     public function end()

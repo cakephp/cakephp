@@ -429,6 +429,7 @@ class Response implements ResponseInterface
      *  - type: a complete mime-type string or an extension mapped in this class
      *  - charset: the charset for the response body
      * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function __construct(array $options = [])
     {
@@ -481,6 +482,8 @@ class Response implements ResponseInterface
      * Will echo out the content in the response body.
      *
      * @return void
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     public function send()
@@ -508,6 +511,7 @@ class Response implements ResponseInterface
      * Sends the HTTP headers and cookies.
      *
      * @return void
+     * @throws \InvalidArgumentException
      * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     public function sendHeaders()
@@ -589,6 +593,8 @@ class Response implements ResponseInterface
      * Sets the response body to an empty text if the status code is 204 or 304
      *
      * @return void
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @deprecated 3.4.0 Will be removed in 4.0.0
      */
     protected function _setContent()
@@ -1577,6 +1583,8 @@ class Response implements ResponseInterface
      * conflicting headers
      *
      * @return void
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function notModified()
     {
@@ -2312,6 +2320,7 @@ class Response implements ResponseInterface
      * @param \Cake\Filesystem\File $file The file to set a range on.
      * @param string $httpRange The range to use.
      * @return void
+     * @throws \InvalidArgumentException
      * @deprecated 3.4.0 Long term this needs to be refactored to follow immutable paradigms.
      *   However for now, it is simpler to leave this alone.
      */

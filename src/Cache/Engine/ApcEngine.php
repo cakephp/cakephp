@@ -38,6 +38,7 @@ class ApcEngine extends CacheEngine
      *
      * @param array $config array of setting for the engine
      * @return bool True if the engine has been successfully initialized, false if not
+     * @throws \Cake\Core\Exception\Exception
      */
     public function init(array $config = [])
     {

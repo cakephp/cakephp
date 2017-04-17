@@ -327,6 +327,7 @@ class Email implements JsonSerializable, Serializable
      * Constructor
      *
      * @param array|string|null $config Array of configs, or string to load configs from email.php
+     * @throws \InvalidArgumentException
      */
     public function __construct($config = null)
     {
@@ -670,6 +671,7 @@ class Email implements JsonSerializable, Serializable
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
      * @return array|$this
+     * @throws \InvalidArgumentException
      */
     public function cc($email = null, $name = null)
     {
@@ -2021,6 +2023,7 @@ class Email implements JsonSerializable, Serializable
      * @param null|string|array $config String with configuration name, or
      *    an array with config or null to return current config.
      * @return string|array|$this
+     * @throws \InvalidArgumentException
      */
     public function profile($config = null)
     {
@@ -2036,6 +2039,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @param string|array|null $content String with message or array with messages
      * @return array
+     * @throws \InvalidArgumentException
      * @throws \BadMethodCallException
      */
     public function send($content = null)
@@ -2495,6 +2499,9 @@ class Email implements JsonSerializable, Serializable
      *
      * @param array $content Content to render
      * @return array Email body ready to be sent
+     * @throws \Cake\View\Exception\MissingViewException
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \InvalidArgumentException
      */
     protected function _render($content)
     {

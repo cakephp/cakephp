@@ -44,6 +44,7 @@ class MiddlewareQueue implements Countable
      *
      * @param int $index The index to fetch.
      * @return callable|null Either the callable middleware or null
+     * @throws \RuntimeException
      *   if the index is undefined.
      */
     public function get($index)

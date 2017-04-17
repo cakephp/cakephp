@@ -172,6 +172,7 @@ class ResultSet implements ResultSetInterface
      *
      * @param \Cake\ORM\Query $query Query from where results come
      * @param \Cake\Database\StatementInterface $statement The statement to fetch from
+     * @throws \InvalidArgumentException
      */
     public function __construct($query, $statement)
     {
@@ -476,6 +477,7 @@ class ResultSet implements ResultSetInterface
      * seeded results.
      *
      * @return mixed
+     * @throws \RuntimeException
      */
     protected function _fetchResult()
     {

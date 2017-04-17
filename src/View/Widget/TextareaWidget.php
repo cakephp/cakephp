@@ -38,6 +38,7 @@ class TextareaWidget extends BasicWidget
      * @param array $data The data to build a textarea with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string HTML elements.
+     * @throws \RuntimeException
      */
     public function render(array $data, ContextInterface $context)
     {

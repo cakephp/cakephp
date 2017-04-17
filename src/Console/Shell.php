@@ -343,6 +343,8 @@ class Shell
      * ]);`
      *
      * @return int The cli command exit code. 0 is success.
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \Cake\Console\Exception\MissingShellMethodException
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#invoking-other-shells-from-your-shell
      */
     public function dispatchShell()
@@ -417,6 +419,8 @@ class Shell
      * Built-in extra parameter is :
      * - `requested` : if used, will prevent the Shell welcome message to be displayed
      * @return int|bool|null
+     * @throws \BadMethodCallException
+     * @throws \InvalidArgumentException
      * @throws \Cake\Core\Exception\MissingPluginException
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#the-cakephp-console
      */
@@ -544,6 +548,8 @@ class Shell
      *
      * @param string $name The task to get.
      * @return \Cake\Console\Shell Object of Task
+     * @throws \RuntimeException
+     * @throws \Exception
      */
     public function __get($name)
     {
@@ -805,6 +811,7 @@ class Shell
      * @param string $path Where to put the file.
      * @param string $contents Content to put in the file.
      * @return bool Success
+     * @throws \Cake\Console\Exception\StopException
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#creating-files
      */
     public function createFile($path, $contents)

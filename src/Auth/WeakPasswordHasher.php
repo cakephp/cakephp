@@ -37,6 +37,7 @@ class WeakPasswordHasher extends AbstractPasswordHasher
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function __construct(array $config = [])
     {

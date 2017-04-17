@@ -45,6 +45,7 @@ class BelongsTo extends Association
      * Gets the name of the field representing the foreign key to the target table.
      *
      * @return string
+     * @throws \RuntimeException
      */
     public function getForeignKey()
     {
@@ -88,6 +89,7 @@ class BelongsTo extends Association
      *
      * @param \Cake\ORM\Table $side The potential Table with ownership
      * @return bool
+     * @throws \RuntimeException
      */
     public function isOwningSide(Table $side)
     {
@@ -114,6 +116,7 @@ class BelongsTo extends Association
      * @param array|\ArrayObject $options options to be passed to the save method in
      * the target table
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
+     * @throws \RuntimeException
      * @throws \Cake\ORM\Exception\RolledbackTransactionException
      * the saved entity
      * @see \Cake\ORM\Table::save()
@@ -185,6 +188,7 @@ class BelongsTo extends Association
      * {@inheritDoc}
      *
      * @return callable
+     * @throws \RuntimeException
      * @throws \InvalidArgumentException
      */
     public function eagerLoader(array $options)

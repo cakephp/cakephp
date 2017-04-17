@@ -464,6 +464,7 @@ class RouteBuilder
      *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
      *   custom routing class.
      * @return void
+     * @throws \Cake\Routing\Exception\DuplicateNamedRouteException
      * @throws \InvalidArgumentException
      * @throws \BadMethodCallException
      */

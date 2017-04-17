@@ -81,6 +81,7 @@ class DigestAuthenticate extends BasicAuthenticate
      *   used on this request.
      * @param array $config Array of config to use.
      * @throws \Cake\Core\Exception\Exception
+     * @throws \InvalidArgumentException
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {

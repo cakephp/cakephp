@@ -84,6 +84,7 @@ class RoutesShell extends Shell
      *
      * Takes variadic arguments of key/value pairs.
      * @return bool Success
+     * @throws \InvalidArgumentException
      * @throws \Cake\Core\Exception\Exception
      */
     public function generate()

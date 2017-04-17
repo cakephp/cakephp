@@ -505,6 +505,7 @@ class Debugger
      * @param int $depth The remaining depth.
      * @param int $indent The current indentation level.
      * @return string The dumped variable.
+     * @throws \Cake\Core\Exception\Exception
      */
     protected static function _export($var, $depth, $indent)
     {
@@ -745,6 +746,7 @@ class Debugger
      *
      * @param string $data Data to output.
      * @return void
+     * @throws \InvalidArgumentException
      */
     public function outputError($data)
     {

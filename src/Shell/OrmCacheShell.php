@@ -35,6 +35,8 @@ class OrmCacheShell extends Shell
      *
      * @param string|null $name The name of the table to build cache data for.
      * @return bool
+     * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException
+     * @throws \Cake\Console\Exception\StopException
      */
     public function build($name = null)
     {
@@ -60,6 +62,8 @@ class OrmCacheShell extends Shell
      *
      * @param string|null $name The name of the table to clear cache data for.
      * @return bool
+     * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException
+     * @throws \Cake\Console\Exception\StopException
      * @throws \InvalidArgumentException
      */
     public function clear($name = null)

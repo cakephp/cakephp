@@ -35,6 +35,9 @@ class ResponseTransformer
      *
      * @param \Psr\Http\Message\ResponseInterface $response The response to convert.
      * @return \Cake\Http\Response The equivalent CakePHP response
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Network\Exception\NotFoundException
      */
     public static function toCake(PsrResponse $response)
     {
@@ -179,6 +182,7 @@ class ResponseTransformer
      * @param array $headers The headers to update
      * @param \Cake\Http\Response $response The CakePHP response to convert
      * @return array The updated headers.
+     * @throws \InvalidArgumentException
      */
     protected static function setContentType($headers, $response)
     {
@@ -249,6 +253,7 @@ class ResponseTransformer
      *
      * @param \Cake\Http\Response $response The cake response to extract the body from.
      * @return \Psr\Http\Message\StreamInterface|string The stream.
+     * @throws \RuntimeException
      * @throws \InvalidArgumentException
      */
     protected static function getStream($response)

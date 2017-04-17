@@ -44,6 +44,7 @@ class FormAuthenticate extends BaseAuthenticate
      * @param \Cake\Http\ServerRequest $request The request that contains login information.
      * @param array $fields The fields to be checked.
      * @return bool False if the fields have not been supplied. True if they exist.
+     * @throws \InvalidArgumentException
      */
     protected function _checkFields(ServerRequest $request, array $fields)
     {
@@ -65,6 +66,7 @@ class FormAuthenticate extends BaseAuthenticate
      * @param \Cake\Http\ServerRequest $request The request that contains login information.
      * @param \Cake\Http\Response $response Unused response object.
      * @return mixed False on login failure. An array of User data on success.
+     * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
     public function authenticate(ServerRequest $request, Response $response)

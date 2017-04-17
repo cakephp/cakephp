@@ -85,6 +85,7 @@ class SmtpTransport extends AbstractTransport
      * connection available already.
      *
      * @return void
+     * @throws \InvalidArgumentException
      * @throws \Cake\Network\Exception\SocketException
      */
     public function connect()
@@ -156,6 +157,7 @@ class SmtpTransport extends AbstractTransport
      *
      * @param \Cake\Mailer\Email $email Email instance
      * @return array
+     * @throws \InvalidArgumentException
      * @throws \Cake\Network\Exception\SocketException
      */
     public function send(Email $email)
@@ -407,6 +409,7 @@ class SmtpTransport extends AbstractTransport
      * Helper method to generate socket
      *
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      * @throws \Cake\Network\Exception\SocketException
      */
     protected function _generateSocket()

@@ -219,6 +219,7 @@ class SqlserverSchema extends BaseSchema
 
     /**
      * {@inheritDoc}
+     * @throws \Cake\Database\Exception
      */
     public function convertIndexDescription(TableSchema $schema, $row)
     {
@@ -280,6 +281,7 @@ class SqlserverSchema extends BaseSchema
 
     /**
      * {@inheritDoc}
+     * @throws \Cake\Database\Exception
      */
     public function convertForeignKeyDescription(TableSchema $schema, $row)
     {

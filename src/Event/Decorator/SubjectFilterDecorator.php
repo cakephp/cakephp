@@ -31,6 +31,7 @@ class SubjectFilterDecorator extends AbstractDecorator
 
     /**
      * {@inheritDoc}
+     * @throws \RuntimeException
      */
     public function __invoke()
     {

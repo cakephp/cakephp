@@ -25,6 +25,7 @@ class Response extends Base
      * Stub the send() method so headers and output are not sent.
      *
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function send()
     {

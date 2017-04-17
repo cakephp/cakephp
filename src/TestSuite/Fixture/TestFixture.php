@@ -129,6 +129,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
      * Initialize the fixture.
      *
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      * @throws \Cake\ORM\Exception\MissingTableClassException When importing from a table that does not exist.
      */
     public function init()
@@ -172,6 +173,8 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
      * Build the fixtures table schema from the fields property.
      *
      * @return void
+     * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException
+     * @throws \Cake\Database\Exception
      */
     protected function _schemaFromFields()
     {
@@ -278,6 +281,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function create(ConnectionInterface $db)
     {
@@ -361,6 +365,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
 
     /**
      * {@inheritDoc}
+     * @throws \Cake\Database\Exception
      */
     public function createConstraints(ConnectionInterface $db)
     {

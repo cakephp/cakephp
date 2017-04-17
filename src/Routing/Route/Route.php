@@ -290,6 +290,7 @@ class Route
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The URL to attempt to parse.
      * @return array|false An array of request parameters, or false on failure.
+     * @throws \InvalidArgumentException
      */
     public function parseRequest(ServerRequestInterface $request)
     {

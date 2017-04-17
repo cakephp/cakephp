@@ -248,6 +248,8 @@ class BreadcrumbsHelper extends Helper
      * All other properties will be converted as HTML attributes and will replace the *attrs* key in the template.
      * If you use the default for this option (empty), it will not render a separator.
      * @return string The breadcrumbs trail
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \RuntimeException
      */
     public function render(array $attributes = [], array $separator = [])
     {

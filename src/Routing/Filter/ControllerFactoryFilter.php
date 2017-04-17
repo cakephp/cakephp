@@ -41,6 +41,7 @@ class ControllerFactoryFilter extends DispatcherFilter
      *
      * @param \Cake\Event\Event $event The event instance.
      * @return void
+     * @throws \Cake\Routing\Exception\MissingControllerException
      */
     public function beforeDispatch(Event $event)
     {

@@ -58,6 +58,7 @@ class MiddlewareDispatcher
      * @param string|null $class The application class name. Defaults to App\Application.
      * @param array|null $constructorArgs The constructor arguments for your application class.
      *   Defaults to `['./config']`
+     * @throws \InvalidArgumentException
      */
     public function __construct($test, $class = null, $constructorArgs = null)
     {
@@ -71,6 +72,9 @@ class MiddlewareDispatcher
      *
      * @param \Cake\Http\ServerRequest $request The request to execute.
      * @return \Psr\Http\Message\ResponseInterface The generated response.
+     * @throws \LogicException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function execute($request)
     {
@@ -102,6 +106,8 @@ class MiddlewareDispatcher
      *
      * @param array $spec The request spec.
      * @return \Psr\Http\Message\RequestInterface
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     protected function _createRequest($spec)
     {

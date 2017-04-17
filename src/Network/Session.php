@@ -89,6 +89,8 @@ class Session
      *
      * @param array $sessionConfig Session config.
      * @return static
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @see \Cake\Network\Session::__construct()
      */
     public static function create($sessionConfig = [])
@@ -302,6 +304,7 @@ class Session
      * Starts the Session.
      *
      * @return bool True if session was started
+     * @throws \InvalidArgumentException
      * @throws \RuntimeException if the session was already started
      */
     public function start()
@@ -532,6 +535,7 @@ class Session
      *
      * @param bool $renew If session should be renewed, as well. Defaults to false.
      * @return void
+     * @throws \RuntimeException
      */
     public function clear($renew = false)
     {

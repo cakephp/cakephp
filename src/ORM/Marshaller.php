@@ -61,6 +61,7 @@ class Marshaller
      * @param array $options List of options containing the 'associated' key.
      * @throws \InvalidArgumentException When associations do not exist.
      * @return array
+     * @throws \RuntimeException
      */
     protected function _buildPropertyMap($data, $options)
     {
@@ -159,6 +160,7 @@ class Marshaller
      * @param array $data The data to hydrate.
      * @param array $options List of options
      * @return \Cake\Datasource\EntityInterface
+     * @throws \Cake\ORM\Exception\MissingEntityException
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      * @see \Cake\ORM\Table::newEntity()
@@ -282,6 +284,7 @@ class Marshaller
      * @param array $value The data to hydrate
      * @param array $options List of options.
      * @return mixed
+     * @throws \BadMethodCallException
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
@@ -455,6 +458,7 @@ class Marshaller
      * @param \Cake\ORM\Association $assoc The association class for the belongsToMany association.
      * @param array $ids The list of ids to load.
      * @return array An array of entities.
+     * @throws \BadMethodCallException
      * @throws \RuntimeException
      */
     protected function _loadAssociatedByIds($assoc, $ids)
@@ -637,6 +641,7 @@ class Marshaller
      * @param array $data list of arrays to be merged into the entities
      * @param array $options List of options.
      * @return array
+     * @throws \BadMethodCallException
      * @throws \RuntimeException
      * @throws \InvalidArgumentException
      * @see \Cake\ORM\Entity::$_accessible

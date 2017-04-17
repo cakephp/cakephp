@@ -144,6 +144,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      *
      * @param \Cake\Database\ValueBinder $generator Placeholder generator object
      * @return string
+     * @throws \Cake\Database\Exception
      */
     public function sql(ValueBinder $generator)
     {

@@ -155,6 +155,7 @@ trait EntityTrait
      *
      * @param string $property The property to check.
      * @return bool
+     * @throws \InvalidArgumentException
      * @see \Cake\ORM\Entity::has()
      */
     public function __isset($property)
@@ -557,6 +558,7 @@ trait EntityTrait
      * Returns the properties that will be serialized as JSON
      *
      * @return array
+     * @throws \InvalidArgumentException
      */
     public function jsonSerialize()
     {
@@ -868,6 +870,7 @@ trait EntityTrait
      *
      * @param string $field Field name to get the errors from
      * @return array
+     * @throws \InvalidArgumentException
      */
     public function getError($field)
     {

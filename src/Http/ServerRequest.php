@@ -254,6 +254,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|array $config An array of request data to create a request with.
      *   The string version of this argument is *deprecated* and will be removed in 4.0.0
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function __construct($config = [])
     {
@@ -350,6 +352,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param array $data Array of post data.
      * @return array
+     * @throws \RuntimeException
      */
     protected function _processPost($data)
     {
@@ -1416,6 +1419,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|null $name Query string variable name or null to read all.
      * @return string|array|null The value being read
+     * @throws \InvalidArgumentException
      * @deprecated 3.4.0 Use getQuery() or the PSR-7 getQueryParams() and withQueryParams() methods instead.
      */
     public function query($name = null)
@@ -1537,6 +1541,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string $name The name of the parameter to get.
      * @param mixed ...$args Value to set (deprecated).
      * @return mixed|$this The value of the provided parameter. Will
+     * @throws \InvalidArgumentException
      *   return false if the parameter doesn't exist or is falsey.
      * @deprecated 3.4.0 Use getParam() and withParam() instead.
      */
@@ -1611,6 +1616,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string $key The key or dotted path you want to read.
      * @param string $default The default value if the cookie is not set.
      * @return null|array|string Either the cookie value, or null if the value doesn't exist.
+     * @throws \InvalidArgumentException
      */
     public function getCookie($key, $default = null)
     {

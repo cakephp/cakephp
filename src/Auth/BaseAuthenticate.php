@@ -131,6 +131,8 @@ abstract class BaseAuthenticate implements EventListenerInterface
      *
      * @param string $username The username/identifier.
      * @return \Cake\ORM\Query
+     * @throws \RuntimeException
+     * @throws \BadMethodCallException
      */
     protected function _query($username)
     {
