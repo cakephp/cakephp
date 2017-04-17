@@ -29,5 +29,3 @@ else:
         '<a href="http://book.cakephp.org/3.0/en/plugins.html#autoloading-plugin-classes">Plugins - autoloading plugin classes</a>'
     );
 endif;
-
-?>
