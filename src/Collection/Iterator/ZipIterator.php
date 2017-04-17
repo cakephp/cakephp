@@ -67,6 +67,7 @@ class ZipIterator extends MultipleIterator implements CollectionInterface, Seria
      *
      * @param array $sets The list of array or iterators to be zipped.
      * @param callable|null $callable The function to use for zipping the elements of each iterator.
+     * @throws \InvalidArgumentException
      */
     public function __construct(array $sets, $callable = null)
     {
