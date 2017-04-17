@@ -632,20 +632,18 @@ class Folder
         $pathname = rtrim($pathname, DIRECTORY_SEPARATOR);
         $nextPathname = substr($pathname, 0, strrpos($pathname, DIRECTORY_SEPARATOR));
 
-        if ($this->create($nextPathname, $mode)) {
-            if (!file_exists($pathname)) {
-                $old = umask(0);
-                if (mkdir($pathname, $mode, true)) {
-                    umask($old);
-                    $this->_messages[] = sprintf('%s created', $pathname);
-
-                    return true;
-                }
+        if ($this->create($nextPathname, $mode) && !file_exists($pathname)) {
+            $old = umask(0);
+            if (mkdir($pathname, $mode, true)) {
                 umask($old);
-                $this->_errors[] = sprintf('%s NOT created', $pathname);
+                $this->_messages[] = sprintf('%s created', $pathname);
 
-                return false;
+                return true;
             }
+            umask($old);
+            $this->_errors[] = sprintf('%s NOT created', $pathname);
+
+            return false;
         }
 
         return false;
