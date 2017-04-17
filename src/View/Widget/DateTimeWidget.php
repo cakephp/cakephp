@@ -313,6 +313,7 @@ class DateTimeWidget implements WidgetInterface
      * @param array $options Options list.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
+     * @throws \RuntimeException
      */
     protected function _yearSelect($options, $context)
     {
@@ -347,6 +348,7 @@ class DateTimeWidget implements WidgetInterface
      * @param array $options The options to build the month select with
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
+     * @throws \RuntimeException
      */
     protected function _monthSelect($options, $context)
     {
@@ -380,6 +382,7 @@ class DateTimeWidget implements WidgetInterface
      * @param array $options The options to generate a day select with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
+     * @throws \RuntimeException
      */
     protected function _daySelect($options, $context)
     {
@@ -403,6 +406,7 @@ class DateTimeWidget implements WidgetInterface
      * @param array $options The options to generate an hour select with
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
+     * @throws \RuntimeException
      */
     protected function _hourSelect($options, $context)
     {
@@ -459,6 +463,7 @@ class DateTimeWidget implements WidgetInterface
      * @param array $options The options to generate a minute select with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
+     * @throws \RuntimeException
      */
     protected function _minuteSelect($options, $context)
     {
@@ -492,6 +497,7 @@ class DateTimeWidget implements WidgetInterface
      * @param array $options The options to generate a second select with
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
+     * @throws \RuntimeException
      */
     protected function _secondSelect($options, $context)
     {
@@ -515,6 +521,7 @@ class DateTimeWidget implements WidgetInterface
      * @param array $options The options to generate a meridian select with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
+     * @throws \RuntimeException
      */
     protected function _meridianSelect($options, $context)
     {

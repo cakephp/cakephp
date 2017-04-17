@@ -305,6 +305,7 @@ class HtmlHelper extends Helper
      * @param string|null $charset The character set to be used in the meta tag. If empty,
      *  The App.encoding value will be used. Example: "utf-8".
      * @return string A meta tag containing the specified character set.
+     * @throws \InvalidArgumentException
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-charset-tags
      */
     public function charset($charset = null)
@@ -1150,6 +1151,7 @@ class HtmlHelper extends Helper
      *  Or an array where each item itself can be a path string or an associate array containing keys `src` and `type`
      * @param array $options Array of HTML attributes, and special options above.
      * @return string Generated media element
+     * @throws \InvalidArgumentException
      */
     public function media($path, array $options = [])
     {

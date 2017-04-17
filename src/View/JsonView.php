@@ -101,6 +101,7 @@ class JsonView extends SerializedView
      * @param string|null $view The view being rendered.
      * @param string|null $layout The layout being rendered.
      * @return string|null The rendered view.
+     * @throws \InvalidArgumentException
      */
     public function render($view = null, $layout = null)
     {
@@ -130,6 +131,7 @@ class JsonView extends SerializedView
      * @param array|string|bool $serialize The name(s) of the view variable(s)
      *   that need(s) to be serialized. If true all available view variables.
      * @return string|false The serialized data, or boolean false if not serializable.
+     * @throws \InvalidArgumentException
      */
     protected function _serialize($serialize)
     {

@@ -153,6 +153,7 @@ class StringTemplate
      *
      * @param array $templates An associative list of named templates.
      * @return $this
+     * @throws \Cake\Core\Exception\Exception
      */
     public function add(array $templates)
     {
@@ -197,6 +198,7 @@ class StringTemplate
      *
      * @param string $file The file to load
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      */
     public function load($file)
     {
@@ -210,6 +212,7 @@ class StringTemplate
      *
      * @param string $name The template to remove.
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      */
     public function remove($name)
     {
@@ -223,6 +226,7 @@ class StringTemplate
      * @param string $name The template name.
      * @param array $data The data to insert.
      * @return string|null Formatted string or null if template not found.
+     * @throws \RuntimeException
      */
     public function format($name, array $data)
     {
@@ -332,6 +336,7 @@ class StringTemplate
      * @param array|string $newClass the new class or classes to add
      * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
      * @return array|string
+     * @throws \InvalidArgumentException
      */
     public function addClass($input, $newClass, $useIndex = 'class')
     {
