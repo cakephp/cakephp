@@ -264,6 +264,17 @@ class ConsoleOutputTest extends TestCase
     }
 
     /**
+     * test set wrong type.
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid output type "Foo".
+     */
+    public function testSetOutputWrongType()
+    {
+        $this->output->setOutputAs('Foo');
+    }
+
+    /**
      * test plain output only strips tags used for formatting.
      *
      * @return void

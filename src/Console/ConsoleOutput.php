@@ -14,6 +14,8 @@
  */
 namespace Cake\Console;
 
+use InvalidArgumentException;
+
 /**
  * Object wrapper for outputting information from a shell application.
  * Can be connected to any stream resource that can be used with fopen()
@@ -317,9 +319,14 @@ class ConsoleOutput
      *
      * @param int $type The output type to use. Should be one of the class constants.
      * @return void
+     * @throws InvalidArgumentException in case of a not supported output type.
      */
     public function setOutputAs($type)
     {
+        if (in_array($type, [self::RAW, self::PLAIN, self::COLOR], true) === false) {
+            throw new InvalidArgumentException(sprintf('Invalid output type "%s".', $type));
+        }
+
         $this->_outputAs = $type;
     }
 
