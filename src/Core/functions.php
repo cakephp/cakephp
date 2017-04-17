@@ -67,7 +67,6 @@ if (!function_exists('h')) {
         }
 
         return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, $charset ?: $defaultCharset, $double);
-
     }
 
 }
