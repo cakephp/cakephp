@@ -190,7 +190,7 @@ class ErrorHandlerMiddleware
     protected function getMessage($request, $exception)
     {
         $message = sprintf(
-            "[%s] %s",
+            '[%s] %s',
             get_class($exception),
             $exception->getMessage()
         );

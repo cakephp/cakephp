@@ -214,7 +214,7 @@ class RouteCollection
             "${controller}:${action}",
             "${controller}:_action",
             "_controller:${action}",
-            "_controller:_action",
+            '_controller:_action',
         ];
 
         // No prefix, no plugin
@@ -232,7 +232,7 @@ class RouteCollection
                 "_plugin.${controller}:${action}",
                 "_plugin.${controller}:_action",
                 "_plugin._controller:${action}",
-                "_plugin._controller:_action",
+                '_plugin._controller:_action',
             ];
         }
 
@@ -246,7 +246,7 @@ class RouteCollection
                 "_prefix:${controller}:${action}",
                 "_prefix:${controller}:_action",
                 "_prefix:_controller:${action}",
-                "_prefix:_controller:_action",
+                '_prefix:_controller:_action',
             ];
         }
 
@@ -268,7 +268,7 @@ class RouteCollection
             "_prefix:_plugin.${controller}:${action}",
             "_prefix:_plugin.${controller}:_action",
             "_prefix:_plugin._controller:${action}",
-            "_prefix:_plugin._controller:_action",
+            '_prefix:_plugin._controller:_action',
         ];
     }
 

@@ -241,7 +241,7 @@ abstract class Cell
         if (empty($this->_cache)) {
             return [];
         }
-        $template = $template ?: "default";
+        $template = $template ?: 'default';
         $key = 'cell_' . Inflector::underscore(get_class($this)) . '_' . $action . '_' . $template;
         $key = str_replace('\\', '_', $key);
         $default = [

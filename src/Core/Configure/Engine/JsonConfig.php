@@ -67,7 +67,7 @@ class JsonConfig implements ConfigEngineInterface
         $values = json_decode(file_get_contents($file), true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new Exception(sprintf(
-                "Error parsing JSON string fetched from config file \"%s.json\": %s",
+                'Error parsing JSON string fetched from config file "%s.json": %s',
                 $key,
                 json_last_error_msg()
             ));

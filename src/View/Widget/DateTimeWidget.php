@@ -141,7 +141,7 @@ class DateTimeWidget implements WidgetInterface
                 ));
             }
             $method = "_{$select}Select";
-            $data[$select]['name'] = $data['name'] . "[" . $select . "]";
+            $data[$select]['name'] = $data['name'] . '[' . $select . ']';
             $data[$select]['val'] = $selected[$select];
 
             if (!isset($data[$select]['empty'])) {

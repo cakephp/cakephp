@@ -211,8 +211,8 @@ class ResponseEmitter implements EmitterInterface
             }
 
             if (strpos($cookie, '";"') !== false) {
-                $cookie = str_replace('";"', "{__cookie_replace__}", $cookie);
-                $parts = str_replace("{__cookie_replace__}", '";"', explode(';', $cookie));
+                $cookie = str_replace('";"', '{__cookie_replace__}', $cookie);
+                $parts = str_replace('{__cookie_replace__}', '";"', explode(';', $cookie));
             } else {
                 $parts = preg_split('/\;[ \t]*/', $cookie);
             }

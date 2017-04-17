@@ -608,7 +608,7 @@ class Validation
                 $regex = "/^{$sign}(?:{$lnum}|{$dnum}){$exp}$/";
             } elseif ($places === true) {
                 if (is_float($check) && floor($check) === $check) {
-                    $check = sprintf("%.1f", $check);
+                    $check = sprintf('%.1f', $check);
                 }
                 $regex = "/^{$sign}{$dnum}{$exp}$/";
             } elseif (is_numeric($places)) {

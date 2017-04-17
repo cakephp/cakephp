@@ -365,7 +365,7 @@ class File
             $ext = $this->ext();
         }
 
-        return preg_replace("/(?:[^\w\.-]+)/", "_", basename($name, $ext));
+        return preg_replace("/(?:[^\w\.-]+)/", '_', basename($name, $ext));
     }
 
     /**
