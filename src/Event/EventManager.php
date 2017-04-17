@@ -37,7 +37,7 @@ class EventManager
      *
      * @var \Cake\Event\EventManager
      */
-    protected static $_generalManager = null;
+    protected static $_generalManager;
 
     /**
      * List of listener callbacks associated to

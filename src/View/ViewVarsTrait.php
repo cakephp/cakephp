@@ -30,7 +30,7 @@ trait ViewVarsTrait
      * @var string
      * @deprecated 3.1.0 Use `$this->viewBuilder()->getClassName()`/`$this->viewBuilder()->setClassName()` instead.
      */
-    public $viewClass = null;
+    public $viewClass;
 
     /**
      * Variables for the view

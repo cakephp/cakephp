@@ -163,7 +163,7 @@ class FormHelper extends Helper
      *
      * @var string|null
      */
-    public $requestType = null;
+    public $requestType;
 
     /**
      * An array of field names that have been excluded from

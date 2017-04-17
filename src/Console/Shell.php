@@ -116,7 +116,7 @@ class Shell
      *
      * @var string
      */
-    public $name = null;
+    public $name;
 
     /**
      * The name of the plugin the shell belongs to.
@@ -124,7 +124,7 @@ class Shell
      *
      * @var string
      */
-    public $plugin = null;
+    public $plugin;
 
     /**
      * Contains tasks to load and instantiate

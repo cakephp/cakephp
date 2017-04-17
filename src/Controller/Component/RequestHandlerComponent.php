@@ -52,14 +52,14 @@ class RequestHandlerComponent extends Component
      * @var string|null
      * @see \Cake\Routing\Router::extensions()
      */
-    public $ext = null;
+    public $ext;
 
     /**
      * The template to use when rendering the given content type.
      *
      * @var string|null
      */
-    protected $_renderType = null;
+    protected $_renderType;
 
     /**
      * Default config

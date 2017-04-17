@@ -53,7 +53,7 @@ class ExtractTask extends Shell
      *
      * @var string|null
      */
-    protected $_file = null;
+    protected $_file;
 
     /**
      * Contains all content waiting to be write
@@ -81,7 +81,7 @@ class ExtractTask extends Shell
      *
      * @var string|null
      */
-    protected $_output = null;
+    protected $_output;
 
     /**
      * An array of directories to exclude.
