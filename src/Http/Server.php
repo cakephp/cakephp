@@ -100,7 +100,6 @@ class Server
      */
     public function emit(ResponseInterface $response, EmitterInterface $emitter = null)
     {
-        $stream = $response->getBody();
         if (!$emitter) {
             $emitter = new ResponseEmitter();
         }
