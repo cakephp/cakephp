@@ -54,6 +54,7 @@ class CompletionShell extends Shell
      * list commands
      *
      * @return int|bool|null Returns the number of bytes returned from writing to stdout.
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     public function commands()
     {
@@ -66,6 +67,7 @@ class CompletionShell extends Shell
      * list options for the named command
      *
      * @return int|bool|null Returns the number of bytes returned from writing to stdout.
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     public function options()
     {

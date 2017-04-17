@@ -56,6 +56,7 @@ class ProgressHelper extends Helper
      *
      * @param array $args The arguments/options to use when outputing the progress bar.
      * @return void
+     * @throws \RuntimeException
      */
     public function output($args)
     {

@@ -58,6 +58,7 @@ class AssetsTask extends Shell
      * @param string|null $name Name of plugin for which to symlink assets.
      *   If null all plugins will be processed.
      * @return array List of plugins with meta data.
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     protected function _list($name = null)
     {
@@ -229,6 +230,7 @@ class AssetsTask extends Shell
      * Gets the option parser instance and configures it.
      *
      * @return \Cake\Console\ConsoleOptionParser
+     * @throws \LogicException
      */
     public function getOptionParser()
     {

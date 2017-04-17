@@ -33,6 +33,7 @@ class CommandTask extends Shell
      * Gets the shell command listing.
      *
      * @return array
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     public function getShellList()
     {
@@ -106,6 +107,7 @@ class CommandTask extends Shell
      * Return a list of all commands
      *
      * @return array
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     public function commands()
     {
@@ -175,6 +177,7 @@ class CommandTask extends Shell
      *
      * @param string $commandName The command you want.
      * @return \Cake\Console\Shell|bool Shell instance if the command can be found, false otherwise.
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     public function getShell($commandName)
     {
@@ -225,6 +228,7 @@ class CommandTask extends Shell
      * @param string $subCommandName The subcommand to get options for. Can be empty to get options for the command.
      * If this parameter is used, the subcommand must be a valid subcommand of the command passed
      * @return array Options list for the given command or subcommand
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     public function options($commandName, $subCommandName = '')
     {

@@ -53,6 +53,8 @@ class PluginShell extends Shell
      * Gets the option parser instance and configures it.
      *
      * @return \Cake\Console\ConsoleOptionParser
+     * @throws \Cake\Console\Exception\ConsoleException
+     * @throws \LogicException
      */
     public function getOptionParser()
     {
