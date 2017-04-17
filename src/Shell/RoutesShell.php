@@ -139,7 +139,7 @@ class RoutesShell extends Shell
             if (strpos($arg, ':') !== false) {
                 list($key, $value) = explode(':', $arg);
                 if (in_array($value, ['true', 'false'])) {
-                    $value = $value === 'true' ? true : false;
+                    $value = $value === 'true';
                 }
                 $out[$key] = $value;
             } else {

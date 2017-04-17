@@ -158,7 +158,7 @@ class MysqlSchema extends BaseSchema
     {
         $field = $this->_convertColumn($row['Type']);
         $field += [
-            'null' => $row['Null'] === 'YES' ? true : false,
+            'null' => $row['Null'] === 'YES',
             'default' => $row['Default'],
             'collate' => $row['Collation'],
             'comment' => $row['Comment'],
