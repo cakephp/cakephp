@@ -48,6 +48,8 @@ trait CookieCryptTrait
      *   disabled encryption.
      * @param string|null $key Used as the security salt if specified.
      * @return string Encoded values
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     protected function _encrypt($value, $encrypt, $key = null)
     {
@@ -120,6 +122,8 @@ trait CookieCryptTrait
      * @param string|false $encrypt The encryption cipher to use.
      * @param string|null $key Used as the security salt if specified.
      * @return string|array Decoded values.
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     protected function _decode($value, $encrypt, $key)
     {
