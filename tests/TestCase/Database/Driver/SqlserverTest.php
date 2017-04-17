@@ -12,6 +12,7 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Database\Query;
@@ -33,6 +34,64 @@ class SqlserverTest extends TestCase
     {
         parent::setUp();
         $this->missingExtension = !defined('PDO::SQLSRV_ENCODING_UTF8');
+    }
+
+    /**
+     * data provider for testDnsString
+     *
+     * @return array
+     */
+    public function dnsStringDataProvider()
+    {
+        return [
+            [
+                [
+                    'app' => 'CakePHP-Testapp',
+                    'connectionPooling' => true,
+                    'failoverPartner' => 'failover.local',
+                    'loginTimeout' => 10,
+                    'multiSubnetFailover' => 'failover.local',
+                ],
+                'sqlsrv:Server=localhost\SQLEXPRESS;Database=cake;MultipleActiveResultSets=false;APP=CakePHP-Testapp;ConnectionPooling=1;Failover_Partner=failover.local;LoginTimeout=10;MultiSubnetFailover=failover.local',
+            ],
+            [
+                [
+                    'app' => 'CakePHP-Testapp',
+                    'failoverPartner' => 'failover.local',
+                    'multiSubnetFailover' => 'failover.local',
+                ],
+                'sqlsrv:Server=localhost\SQLEXPRESS;Database=cake;MultipleActiveResultSets=false;APP=CakePHP-Testapp;Failover_Partner=failover.local;MultiSubnetFailover=failover.local',
+            ],
+            [
+                [
+                ],
+                'sqlsrv:Server=localhost\SQLEXPRESS;Database=cake;MultipleActiveResultSets=false',
+            ]
+        ];
+    }
+
+    /**
+     * Test if all options in dns string are set
+     *
+     * @dataProvider dnsStringDataProvider
+     * @param array $constructorArgs
+     * @param string $dnsString
+     * @return void
+     */
+    public function testDnsString($constructorArgs, $dnsString)
+    {
+        $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+            ->setMethods(['_connect'])
+            ->setConstructorArgs([$constructorArgs])
+            ->getMock();
+
+        $driver->method('_connect')
+            ->with($this->callback(function ($dns) use ($dnsString) {
+                return $dns === $dnsString;
+            }))
+            ->will($this->returnValue([]));
+        $driver->connect();
     }
 
     /**
@@ -67,6 +126,12 @@ class SqlserverTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::SQLSRV_ATTR_ENCODING => 'a-language'
         ];
+        $expected['attributes'] = [];
+        $expected['app'] = null;
+        $expected['connectionPooling'] = null;
+        $expected['failoverPartner'] = null;
+        $expected['loginTimeout'] = null;
+        $expected['multiSubnetFailover'] = null;
 
         $connection = $this->getMockBuilder('stdClass')
             ->setMethods(['exec', 'quote'])
@@ -105,8 +170,7 @@ class SqlserverTest extends TestCase
             ->setMethods(['_connect', 'getConnection', '_version'])
             ->setConstructorArgs([[]])
             ->getMock();
-        $driver
-            ->expects($this->any())
+        $driver->expects($this->any())
             ->method('_version')
             ->will($this->returnValue(12));
 
@@ -114,8 +178,7 @@ class SqlserverTest extends TestCase
             ->setMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();
-        $connection
-            ->expects($this->any())
+        $connection->expects($this->any())
             ->method('getDriver')
             ->will($this->returnValue($driver));
 
@@ -158,8 +221,7 @@ class SqlserverTest extends TestCase
             ->setMethods(['_connect', 'getConnection', '_version'])
             ->setConstructorArgs([[]])
             ->getMock();
-        $driver
-            ->expects($this->any())
+        $driver->expects($this->any())
             ->method('_version')
             ->will($this->returnValue(8));
 
@@ -167,8 +229,7 @@ class SqlserverTest extends TestCase
             ->setMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();
-        $connection
-            ->expects($this->any())
+        $connection->expects($this->any())
             ->method('getDriver')
             ->will($this->returnValue($driver));
 
@@ -226,8 +287,7 @@ class SqlserverTest extends TestCase
             ->setMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();
-        $connection
-            ->expects($this->any())
+        $connection->expects($this->any())
             ->method('getDriver')
             ->will($this->returnValue($driver));
         $query = new Query($connection);

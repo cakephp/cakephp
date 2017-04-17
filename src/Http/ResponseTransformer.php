@@ -93,9 +93,9 @@ class ResponseTransformer
         $cookies = [];
         foreach ($cookieHeader as $cookie) {
             if (strpos($cookie, '";"') !== false) {
-                $cookie = str_replace('";"', "{__cookie_replace__}", $cookie);
+                $cookie = str_replace('";"', '{__cookie_replace__}', $cookie);
                 $parts = preg_split('/\;[ \t]*/', $cookie);
-                $parts = str_replace("{__cookie_replace__}", '";"', $parts);
+                $parts = str_replace('{__cookie_replace__}', '";"', $parts);
             } else {
                 $parts = preg_split('/\;[ \t]*/', $cookie);
             }

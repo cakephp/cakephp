@@ -58,7 +58,7 @@ class ConnectionManager
      *
      * @var \Cake\Datasource\ConnectionRegistry
      */
-    protected static $_registry = null;
+    protected static $_registry;
 
     /**
      * Configure a new connection object.

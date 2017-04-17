@@ -156,13 +156,13 @@ class ResponseTransformerTest extends TestCase
     public function testToCakeCookies()
     {
         $cookies = [
-            'remember me=1";"1',
+            'remember_me=1";"1',
             'forever=yes; Expires=Wed, 13 Jan 2021 12:30:40 GMT; Path=/some/path; Domain=example.com; HttpOnly; Secure'
         ];
         $psr = new PsrResponse('php://memory', 200, ['Set-Cookie' => $cookies]);
         $result = ResponseTransformer::toCake($psr);
         $expected = [
-            'name' => 'remember me',
+            'name' => 'remember_me',
             'value' => '1";"1',
             'path' => '/',
             'domain' => '',
@@ -170,7 +170,7 @@ class ResponseTransformerTest extends TestCase
             'secure' => false,
             'httpOnly' => false,
         ];
-        $this->assertEquals($expected, $result->cookie('remember me'));
+        $this->assertEquals($expected, $result->cookie('remember_me'));
 
         $expected = [
             'name' => 'forever',
@@ -242,7 +242,7 @@ class ResponseTransformerTest extends TestCase
     {
         $cake = new CakeResponse(['status' => 200]);
         $cake->cookie([
-            'name' => 'remember me',
+            'name' => 'remember_me',
             'value' => '1 1',
             'path' => '/some/path',
             'domain' => 'example.com',
@@ -252,7 +252,7 @@ class ResponseTransformerTest extends TestCase
         ]);
         $result = ResponseTransformer::toPsr($cake);
         $this->assertEquals(
-            'remember+me=1+1; Expires=Wed, 13 Jan 2021 12:30:40 GMT; Path=/some/path; Domain=example.com; HttpOnly; Secure',
+            'remember_me=1+1; Expires=Wed, 13 Jan 2021 12:30:40 GMT; Path=/some/path; Domain=example.com; HttpOnly; Secure',
             $result->getHeader('Set-Cookie')[0],
             'Cookie attributes should exist, and name/value should be encoded'
         );

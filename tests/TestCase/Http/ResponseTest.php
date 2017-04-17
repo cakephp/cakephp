@@ -16,9 +16,11 @@ namespace Cake\Test\TestCase\Http;
 
 include_once CORE_TEST_CASES . DS . 'Http' . DS . 'server_mocks.php';
 
+use Cake\Http\Cookie\Cookie;
+use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\Network\Exception\NotFoundException;
-use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Stream;
 
@@ -1208,7 +1210,7 @@ class ResponseTest extends TestCase
             ->getMock();
         $response->etag('something');
         $response->expects($this->once())->method('notModified');
-        $response->checkNotModified(new Request);
+        $response->checkNotModified(new ServerRequest);
     }
 
     /**
@@ -1224,7 +1226,7 @@ class ResponseTest extends TestCase
             ->getMock();
         $response->etag('something', true);
         $response->expects($this->once())->method('notModified');
-        $this->assertTrue($response->checkNotModified(new Request));
+        $this->assertTrue($response->checkNotModified(new ServerRequest));
     }
 
     /**
@@ -1242,7 +1244,7 @@ class ResponseTest extends TestCase
         $response->etag('something', true);
         $response->modified('2012-01-01 00:00:00');
         $response->expects($this->once())->method('notModified');
-        $this->assertTrue($response->checkNotModified(new Request));
+        $this->assertTrue($response->checkNotModified(new ServerRequest));
     }
 
     /**
@@ -1260,7 +1262,7 @@ class ResponseTest extends TestCase
         $response->etag('something', true);
         $response->modified('2012-01-01 00:00:01');
         $response->expects($this->never())->method('notModified');
-        $this->assertFalse($response->checkNotModified(new Request));
+        $this->assertFalse($response->checkNotModified(new ServerRequest));
     }
 
     /**
@@ -1278,7 +1280,7 @@ class ResponseTest extends TestCase
         $response->etag('something', true);
         $response->modified('2012-01-01 00:00:00');
         $response->expects($this->never())->method('notModified');
-        $this->assertFalse($response->checkNotModified(new Request));
+        $this->assertFalse($response->checkNotModified(new ServerRequest));
     }
 
     /**
@@ -1294,7 +1296,7 @@ class ResponseTest extends TestCase
             ->getMock();
         $response->modified('2012-01-01 00:00:00');
         $response->expects($this->once())->method('notModified');
-        $this->assertTrue($response->checkNotModified(new Request));
+        $this->assertTrue($response->checkNotModified(new ServerRequest));
     }
 
     /**
@@ -1310,7 +1312,7 @@ class ResponseTest extends TestCase
             ->setMethods(['notModified'])
             ->getMock();
         $response->expects($this->never())->method('notModified');
-        $this->assertFalse($response->checkNotModified(new Request));
+        $this->assertFalse($response->checkNotModified(new ServerRequest));
     }
 
     /**
@@ -1332,7 +1334,8 @@ class ResponseTest extends TestCase
             'path' => '/',
             'domain' => '',
             'secure' => false,
-            'httpOnly' => false];
+            'httpOnly' => false
+        ];
         $result = $response->cookie('CakeTestCookie[Testing]');
         $this->assertEquals($expected, $result);
 
@@ -1471,6 +1474,22 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test withCookie() and a cookie instance
+     *
+     * @return void
+     */
+    public function testWithCookieObject()
+    {
+        $response = new Response();
+        $cookie = new Cookie('yay', 'a value');
+        $new = $response->withCookie($cookie);
+        $this->assertNull($response->getCookie('yay'), 'withCookie does not mutate');
+
+        $this->assertNotEmpty($new->getCookie('yay'));
+        $this->assertSame($cookie, $new->getCookieCollection()->get('yay'));
+    }
+
+    /**
      * Test getCookies() and array data.
      *
      * @return void
@@ -1478,13 +1497,6 @@ class ResponseTest extends TestCase
     public function testGetCookies()
     {
         $response = new Response();
-        $cookie = [
-            'name' => 'ignored key',
-            'value' => '[a,b,c]',
-            'expire' => 1000,
-            'path' => '/test',
-            'secure' => true
-        ];
         $new = $response->withCookie('testing', 'a')
             ->withCookie('test2', ['value' => 'b', 'path' => '/test', 'secure' => true]);
         $expected = [
@@ -1508,6 +1520,28 @@ class ResponseTest extends TestCase
             ]
         ];
         $this->assertEquals($expected, $new->getCookies());
+    }
+
+    /**
+     * Test getCookieCollection() as array data
+     *
+     * @return void
+     */
+    public function testGetCookieCollection()
+    {
+        $response = new Response();
+        $new = $response->withCookie('testing', 'a')
+            ->withCookie('test2', ['value' => 'b', 'path' => '/test', 'secure' => true]);
+        $cookies = $response->getCookieCollection();
+        $this->assertInstanceOf(CookieCollection::class, $cookies);
+        $this->assertCount(0, $cookies, 'Original response not mutated');
+
+        $cookies = $new->getCookieCollection();
+        $this->assertInstanceOf(CookieCollection::class, $cookies);
+        $this->assertCount(2, $cookies);
+
+        $this->assertTrue($cookies->has('testing'));
+        $this->assertTrue($cookies->has('test2'));
     }
 
     /**
@@ -1555,10 +1589,10 @@ class ResponseTest extends TestCase
      */
     public function corsData()
     {
-        $fooRequest = new Request();
+        $fooRequest = new ServerRequest();
 
         $secureRequest = function () {
-            $secureRequest = $this->getMockBuilder('Cake\Network\Request')
+            $secureRequest = $this->getMockBuilder('Cake\Http\ServerRequest')
                 ->setMethods(['is'])
                 ->getMock();
             $secureRequest->expects($this->any())
@@ -3010,7 +3044,7 @@ class ResponseTest extends TestCase
             ],
             'file' => null,
             'fileRange' => [],
-            'cookies' => [],
+            'cookies' => new CookieCollection(),
             'cacheDirectives' => [],
             'body' => ''
         ];

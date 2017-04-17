@@ -12,6 +12,8 @@
  */
 namespace Cake\Test\TestCase\Http\Cookie;
 
+use Cake\Http\Client\Request as ClientRequest;
+use Cake\Http\Client\Response as ClientResponse;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Response;
@@ -104,11 +106,13 @@ class CookieCollectionTest extends TestCase
     public function testAddDuplicates()
     {
         $remember = new Cookie('remember_me', 'yes');
-        $rememberNo = new Cookie('remember_me', 'no');
+        $rememberNo = new Cookie('remember_me', 'no', null, '/path2');
+        $this->assertNotEquals($remember->getId(), $rememberNo->getId(), 'Cookies should have different ids');
+
         $collection = new CookieCollection([]);
         $new = $collection->add($remember)->add($rememberNo);
 
-        $this->assertCount(2, $new);
+        $this->assertCount(2, $new, 'Cookies with different ids create duplicates.');
         $this->assertNotSame($new, $collection);
         $this->assertSame($remember, $new->get('remember_me'), 'get() fetches first cookie');
     }
@@ -218,14 +222,14 @@ class CookieCollectionTest extends TestCase
         $this->assertSame('/app', $new->get('test')->getPath(), 'cookies should inherit request path');
         $this->assertSame('/', $new->get('expiring')->getPath(), 'path attribute should be used.');
 
-        $this->assertSame(0, $new->get('test')->getExpiry(), 'No expiry');
+        $this->assertNull($new->get('test')->getExpiry(), 'No expiry');
         $this->assertSame(
             '2021-06-09 10:18:14',
-            date('Y-m-d H:i:s', $new->get('expiring')->getExpiry()),
+            $new->get('expiring')->getExpiry()->format('Y-m-d H:i:s'),
             'Has expiry'
         );
         $session = $new->get('session');
-        $this->assertSame(0, $session->getExpiry(), 'No expiry');
+        $this->assertNull($session->getExpiry(), 'No expiry');
         $this->assertSame('www.example.com', $session->getDomain(), 'Has domain');
     }
 
@@ -269,6 +273,52 @@ class CookieCollectionTest extends TestCase
     }
 
     /**
+     * Test adding cookies from a response removes existing cookies if
+     * the new response marks them as expired.
+     *
+     * @return void
+     */
+    public function testAddFromResponseRemoveExpired()
+    {
+        $collection = new CookieCollection([
+            new Cookie('expired', 'not yet', null, '/', 'example.com')
+        ]);
+        $request = new ServerRequest([
+            'url' => '/app',
+            'environment' => [
+                'HTTP_HOST' => 'example.com'
+            ]
+        ]);
+        $response = (new Response())
+            ->withAddedHeader('Set-Cookie', 'test=value')
+            ->withAddedHeader('Set-Cookie', 'expired=soon; Expires=Wed, 09-Jun-2012 10:18:14 GMT; Path=/;');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertFalse($new->has('expired'), 'Should drop expired cookies');
+    }
+
+    /**
+     * Test adding cookies from responses updates cookie values.
+     *
+     * @return void
+     */
+    public function testAddFromResponseUpdateExisting()
+    {
+        $collection = new CookieCollection([
+            new Cookie('key', 'old value', null, '/', 'example.com')
+        ]);
+        $request = new ServerRequest([
+            'url' => '/',
+            'environment' => [
+                'HTTP_HOST' => 'example.com'
+            ]
+        ]);
+        $response = (new Response())->withAddedHeader('Set-Cookie', 'key=new value');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertTrue($new->has('key'));
+        $this->assertSame('new value', $new->get('key')->getValue());
+    }
+
+    /**
      * Test adding cookies from the collection to request.
      *
      * @return void
@@ -280,43 +330,42 @@ class CookieCollectionTest extends TestCase
             ->add(new Cookie('api', 'A', null, '/api', 'example.com'))
             ->add(new Cookie('blog', 'b', null, '/blog', 'blog.example.com'))
             ->add(new Cookie('expired', 'ex', new DateTime('-2 seconds'), '/', 'example.com'));
-        $request = new ServerRequest([
-            'environment' => [
-                'HTTP_HOST' => 'example.com',
-                'REQUEST_URI' => '/api'
-            ]
-        ]);
+        $request = new ClientRequest('http://example.com/api');
         $request = $collection->addToRequest($request);
-        $this->assertCount(1, $request->getCookieParams());
-        $this->assertSame(['api' => 'A'], $request->getCookieParams());
+        $this->assertSame('api=A', $request->getHeaderLine('Cookie'));
 
-        $request = new ServerRequest([
-            'environment' => [
-                'HTTP_HOST' => 'example.com',
-                'REQUEST_URI' => '/'
-            ]
-        ]);
+        $request = new ClientRequest('http://example.com/');
         $request = $collection->addToRequest($request);
-        $this->assertCount(0, $request->getCookieParams());
+        $this->assertSame('', $request->getHeaderLine(''));
 
-        $request = new ServerRequest([
-            'environment' => [
-                'HTTP_HOST' => 'example.com',
-                'REQUEST_URI' => '/blog'
-            ]
-        ]);
+        $request = new ClientRequest('http://example.com/blog');
         $request = $collection->addToRequest($request);
-        $this->assertCount(0, $request->getCookieParams(), 'domain matching should apply');
+        $this->assertSame('', $request->getHeaderLine('Cookie'), 'domain matching should apply');
 
-        $request = new ServerRequest([
-            'environment' => [
-                'HTTP_HOST' => 'foo.blog.example.com',
-                'REQUEST_URI' => '/blog'
-            ]
-        ]);
+        $request = new ClientRequest('http://foo.blog.example.com/blog');
         $request = $collection->addToRequest($request);
-        $this->assertCount(1, $request->getCookieParams(), 'domain matching should apply');
-        $this->assertSame(['blog' => 'b'], $request->getCookieParams());
+        $this->assertSame('blog=b', $request->getHeaderLine('Cookie'));
+    }
+
+    /**
+     * Test adding cookies from the collection to request.
+     *
+     * @return void
+     */
+    public function testAddToRequestExtraCookies()
+    {
+        $collection = new CookieCollection();
+        $collection = $collection
+            ->add(new Cookie('api', 'A', null, '/api', 'example.com'))
+            ->add(new Cookie('blog', 'b', null, '/blog', 'blog.example.com'))
+            ->add(new Cookie('expired', 'ex', new DateTime('-2 seconds'), '/', 'example.com'));
+        $request = new ClientRequest('http://example.com/api');
+        $request = $collection->addToRequest($request, ['b' => 'B']);
+        $this->assertSame('api=A; b=B', $request->getHeaderLine('Cookie'));
+
+        $request = new ClientRequest('http://example.com/api');
+        $request = $collection->addToRequest($request, ['api' => 'custom']);
+        $this->assertSame('api=custom', $request->getHeaderLine('Cookie'), 'Extra cookies overwrite values in jar');
     }
 
     /**
@@ -329,14 +378,9 @@ class CookieCollectionTest extends TestCase
         $collection = new CookieCollection();
         $collection = $collection
             ->add(new Cookie('public', 'b', null, '/', '.example.com'));
-        $request = new ServerRequest([
-            'environment' => [
-                'HTTP_HOST' => 'example.com',
-                'REQUEST_URI' => '/blog'
-            ]
-        ]);
+        $request = new ClientRequest('http://example.com/blog');
         $request = $collection->addToRequest($request);
-        $this->assertSame(['public' => 'b'], $request->getCookieParams());
+        $this->assertSame('public=b', $request->getHeaderLine('Cookie'));
     }
 
     /**
@@ -350,24 +394,51 @@ class CookieCollectionTest extends TestCase
         $collection = $collection
             ->add(new Cookie('secret', 'A', null, '/', 'example.com', true))
             ->add(new Cookie('public', 'b', null, '/', '.example.com', false));
-        $request = new ServerRequest([
-            'environment' => [
-                'HTTPS' => 'on',
-                'HTTP_HOST' => 'example.com',
-                'REQUEST_URI' => '/api'
-            ]
-        ]);
+        $request = new ClientRequest('https://example.com/api');
         $request = $collection->addToRequest($request);
-        $this->assertSame(['secret' => 'A', 'public' => 'b'], $request->getCookieParams());
+        $this->assertSame('secret=A; public=b', $request->getHeaderLine('Cookie'));
 
         // no HTTPS set.
-        $request = new ServerRequest([
-            'environment' => [
-                'HTTP_HOST' => 'example.com',
-                'REQUEST_URI' => '/api'
-            ]
-        ]);
+        $request = new ClientRequest('http://example.com/api');
         $request = $collection->addToRequest($request);
-        $this->assertSame(['public' => 'b'], $request->getCookieParams());
+        $this->assertSame('public=b', $request->getHeaderLine('Cookie'));
+    }
+
+    /**
+     * test createFromHeader() building cookies from a header string.
+     *
+     * @return void
+     */
+    public function testCreateFromHeader()
+    {
+        $header = [
+            'http=name; HttpOnly; Secure;',
+            'expires=expiring; Expires=Wed, 15-Jun-2022 10:22:22; Path=/api; HttpOnly; Secure;',
+            'expired=expired; Expires=Wed, 15-Jun-2015 10:22:22;',
+        ];
+        $cookies = CookieCollection::createFromHeader($header);
+        $this->assertCount(3, $cookies);
+        $this->assertTrue($cookies->has('http'));
+        $this->assertTrue($cookies->has('expires'));
+        $this->assertTrue($cookies->has('expired'), 'Expired cookies should be present');
+    }
+
+    /**
+     * test createFromServerRequest() building cookies from a header string.
+     *
+     * @return void
+     */
+    public function testCreateFromServerRequest()
+    {
+        $request = new ServerRequest(['cookies' => ['name' => 'val', 'cakephp' => 'rocks']]);
+        $cookies = CookieCollection::createFromServerRequest($request);
+        $this->assertCount(2, $cookies);
+        $this->assertTrue($cookies->has('name'));
+        $this->assertTrue($cookies->has('cakephp'));
+
+        $cookie = $cookies->get('name');
+        $this->assertSame('val', $cookie->getValue());
+        $this->assertSame('', $cookie->getPath(), 'No path on request cookies');
+        $this->assertSame('', $cookie->getDomain(), 'No domain on request cookies');
     }
 }

@@ -27,7 +27,6 @@ use Zend\Diactoros\Stream;
  */
 class Request extends Message implements RequestInterface
 {
-    use MessageTrait;
     use RequestTrait;
 
     /**
@@ -188,6 +187,9 @@ class Request extends Message implements RequestInterface
      * @param string $name The name of the cookie to get/set
      * @param string|null $value Either the value or null when getting values.
      * @return mixed Either $this or the cookie value.
+     * @deprected 3.5.0 No longer used. CookieCollections now add `Cookie` header to the request
+     *   before sending. Use Cake\Http\Cookie\CookieCollection::addToRequest() to make adding cookies
+     *   to a request easier.
      */
     public function cookie($name, $value = null)
     {

@@ -79,13 +79,13 @@ class FrozenDate extends ChronosDate implements JsonSerializable
      * @see \Cake\I18n\Date::timeAgoInWords()
      */
     public static $wordAccuracy = [
-        'year' => "day",
-        'month' => "day",
-        'week' => "day",
-        'day' => "day",
-        'hour' => "day",
-        'minute' => "day",
-        'second' => "day",
+        'year' => 'day',
+        'month' => 'day',
+        'week' => 'day',
+        'day' => 'day',
+        'hour' => 'day',
+        'minute' => 'day',
+        'second' => 'day',
     ];
 
     /**

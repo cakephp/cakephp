@@ -30,7 +30,7 @@ class SecurityException extends BadRequestException
      *
      * @var string
      */
-    protected $_reason = null;
+    protected $_reason;
 
     /**
      * Getter for type

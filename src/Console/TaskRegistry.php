@@ -86,6 +86,6 @@ class TaskRegistry extends ObjectRegistry
      */
     protected function _create($class, $alias, $settings)
     {
-        return new $class($this->_Shell->io());
+        return new $class($this->_Shell->getIo());
     }
 }

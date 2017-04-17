@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\View\Helper;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\HtmlHelper;
@@ -68,7 +68,7 @@ class HtmlHelperTest extends TestCase
             ->setMethods(['append'])
             ->getMock();
         $this->Html = new HtmlHelper($this->View);
-        $this->Html->request = new Request([
+        $this->Html->request = new ServerRequest([
             'webroot' => '',
         ]);
         $this->Html->Url->request = $this->Html->request;

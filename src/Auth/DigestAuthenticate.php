@@ -120,7 +120,7 @@ class DigestAuthenticate extends BasicAuthenticate
         $password = $user[$field];
         unset($user[$field]);
 
-        $hash = $this->generateResponseHash($digest, $password, $request->env('ORIGINAL_REQUEST_METHOD'));
+        $hash = $this->generateResponseHash($digest, $password, $request->getEnv('ORIGINAL_REQUEST_METHOD'));
         if ($digest['response'] === $hash) {
             return $user;
         }
@@ -136,7 +136,7 @@ class DigestAuthenticate extends BasicAuthenticate
      */
     protected function _getDigest(ServerRequest $request)
     {
-        $digest = $request->env('PHP_AUTH_DIGEST');
+        $digest = $request->getEnv('PHP_AUTH_DIGEST');
         if (empty($digest) && function_exists('apache_request_headers')) {
             $headers = apache_request_headers();
             if (!empty($headers['Authorization']) && substr($headers['Authorization'], 0, 7) === 'Digest ') {
@@ -215,7 +215,7 @@ class DigestAuthenticate extends BasicAuthenticate
      */
     public function loginHeaders(ServerRequest $request)
     {
-        $realm = $this->_config['realm'] ?: $request->env('SERVER_NAME');
+        $realm = $this->_config['realm'] ?: $request->getEnv('SERVER_NAME');
 
         $options = [
             'realm' => $realm,

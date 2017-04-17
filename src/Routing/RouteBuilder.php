@@ -302,7 +302,9 @@ class RouteBuilder
      *   make sure that your mapped methods are also in the 'only' list.
      * - 'prefix' - Define a routing prefix for the resource controller. If the current scope
      *   defines a prefix, this prefix will be appended to it.
-     * - 'connectOptions' – Custom options for connecting the routes.
+     * - 'connectOptions' - Custom options for connecting the routes.
+     * - 'path' - Change the path so it doesn't match the resource name. E.g ArticlesController
+     *   is available at `/posts`
      *
      * @param string $name A controller name to connect resource routes for.
      * @param array|callable $options Options to use when generating REST routes, or a callback.
@@ -324,6 +326,7 @@ class RouteBuilder
             'actions' => [],
             'map' => [],
             'prefix' => null,
+            'path' => null,
         ];
 
         foreach ($options['map'] as $k => $mapped) {
@@ -336,8 +339,10 @@ class RouteBuilder
         }
 
         $connectOptions = $options['connectOptions'];
-        $method = $options['inflect'];
-        $urlName = Inflector::$method($name);
+        if (empty($options['path'])) {
+            $method = $options['inflect'];
+            $options['path'] = Inflector::$method($name);
+        }
         $resourceMap = array_merge(static::$_resourceMap, $options['map']);
 
         $only = (array)$options['only'];
@@ -363,7 +368,7 @@ class RouteBuilder
                 $action = $options['actions'][$method];
             }
 
-            $url = '/' . implode('/', array_filter([$urlName, $params['path']]));
+            $url = '/' . implode('/', array_filter([$options['path'], $params['path']]));
             $params = [
                 'controller' => $name,
                 'action' => $action,
@@ -381,8 +386,8 @@ class RouteBuilder
         }
 
         if (is_callable($callback)) {
-            $idName = Inflector::singularize(str_replace('-', '_', $urlName)) . '_id';
-            $path = '/' . $urlName . '/:' . $idName;
+            $idName = Inflector::singularize(Inflector::underscore($name)) . '_id';
+            $path = '/' . $options['path'] . '/:' . $idName;
             $this->scope($path, [], $callback);
         }
     }

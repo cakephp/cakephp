@@ -436,6 +436,9 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     public function translationField($field)
     {
         $table = $this->_table;
+        if ($this->locale() === $this->getConfig('defaultLocale')) {
+            return $table->aliasField($field);
+        }
         $associationName = $table->getAlias() . '_' . $field . '_translation';
 
         if ($table->associations()->has($associationName)) {
@@ -672,7 +675,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         // If now, the whole _translations property is empty,
         // unset it completely and return
         if (empty($entity->get('_translations'))) {
-            $entity->unsetProperty("_translations");
+            $entity->unsetProperty('_translations');
         }
     }
 

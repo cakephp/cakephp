@@ -70,7 +70,7 @@ class FlashHelper extends Helper
      */
     public function render($key = 'flash', array $options = [])
     {
-        if (!$this->request->session()->check("Flash.$key")) {
+        if (!$this->request->getSession()->check("Flash.$key")) {
             return null;
         }
 
@@ -81,7 +81,7 @@ class FlashHelper extends Helper
                 $key
             ));
         }
-        $this->request->session()->delete("Flash.$key");
+        $this->request->getSession()->delete("Flash.$key");
 
         $out = '';
         foreach ($flash as $message) {

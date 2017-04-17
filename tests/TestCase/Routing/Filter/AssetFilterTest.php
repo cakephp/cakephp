@@ -15,7 +15,7 @@ namespace Cake\Test\TestCase\Routing\Filter;
 
 use Cake\Core\Plugin;
 use Cake\Event\Event;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Filter\AssetFilter;
 use Cake\TestSuite\TestCase;
 
@@ -64,7 +64,7 @@ class AssetFilterTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['send', 'checkNotModified'])
             ->getMock();
-        $request = new Request('test_theme/img/cake.power.gif');
+        $request = new ServerRequest('test_theme/img/cake.power.gif');
 
         $response->expects($this->once())->method('checkNotModified')
             ->with($request)
@@ -80,7 +80,7 @@ class AssetFilterTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_sendHeader', 'checkNotModified', 'send'])
             ->getMock();
-        $request = new Request('test_theme/img/cake.power.gif');
+        $request = new ServerRequest('test_theme/img/cake.power.gif');
 
         $response->expects($this->once())->method('checkNotModified')
             ->with($request)
@@ -105,7 +105,7 @@ class AssetFilterTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_sendHeader'])
             ->getMock();
-        $request = new Request('//index.php');
+        $request = new ServerRequest('//index.php');
         $event = new Event('Dispatcher.beforeRequest', $this, compact('request', 'response'));
 
         $this->assertNull($filter->beforeDispatch($event));
@@ -126,13 +126,13 @@ class AssetFilterTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_sendHeader'])
             ->getMock();
-        $request = new Request('test_theme/../webroot/css/test_asset.css');
+        $request = new ServerRequest('test_theme/../webroot/css/test_asset.css');
         $event = new Event('Dispatcher.beforeRequest', $this, compact('request', 'response'));
 
         $this->assertNull($filter->beforeDispatch($event));
         $this->assertFalse($event->isStopped());
 
-        $request = new Request('test_theme/%3e./webroot/css/test_asset.css');
+        $request = new ServerRequest('test_theme/%3e./webroot/css/test_asset.css');
         $event = new Event('Dispatcher.beforeRequest', $this, compact('request', 'response'));
 
         $this->assertNull($filter->beforeDispatch($event));
@@ -242,7 +242,7 @@ class AssetFilterTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_sendHeader'])
             ->getMock();
-        $request = new Request($url);
+        $request = new ServerRequest($url);
         $event = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response'));
 
         $response = $filter->beforeDispatch($event);

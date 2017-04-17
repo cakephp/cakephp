@@ -30,14 +30,32 @@ class CookieTest extends TestCase
     protected $encryptionKey = 'someverysecretkeythatisatleast32charslong';
 
     /**
+     * Generate invalid cookie names.
+     *
+     * @return array
+     */
+    public function invalidNameProvider()
+    {
+        return [
+            ['no='],
+            ["no\rnewline"],
+            ["no\nnewline"],
+            ["no\ttab"],
+            ["no,comma"],
+            ["no;semi"],
+        ];
+    }
+
+    /**
      * Test invalid cookie name
      *
+     * @dataProvider invalidNameProvider
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The cookie name `no, this wont, work` contains invalid characters.
+     * @expectedExceptionMessage contains invalid characters.
      */
-    public function testValidateNameInvalidChars()
+    public function testValidateNameInvalidChars($name)
     {
-        new Cookie('no, this wont, work', '');
+        new Cookie($name, 'value');
     }
 
     /**
@@ -338,6 +356,47 @@ class CookieTest extends TestCase
     }
 
     /**
+     * Test the withExpiry method changes timezone
+     *
+     * @return void
+     */
+    public function testWithExpiryChangesTimezone()
+    {
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $date = Chronos::createFromDate(2022, 6, 15);
+        $date = $date->setTimezone('America/New_York');
+
+        $new = $cookie->withExpiry($date);
+        $this->assertNotSame($new, $cookie, 'Should clone');
+        $this->assertNotContains('expires', $cookie->toHeaderValue());
+
+        $this->assertContains('expires=Wed, 15-Jun-2022', $new->toHeaderValue());
+        $this->assertContains('GMT', $new->toHeaderValue());
+        $this->assertSame($date->format('U'), $new->getExpiresTimestamp());
+    }
+
+    /**
+     * Test the isExpired method
+     *
+     * @return void
+     */
+    public function testIsExpired()
+    {
+        $date = Chronos::now();
+        $cookie = new Cookie('cakephp', 'yay');
+        $this->assertFalse($cookie->isExpired($date));
+
+        $cookie = new Cookie('cakephp', 'yay', $date);
+        $this->assertFalse($cookie->isExpired($date), 'same time, not expired');
+
+        $date = $date->modify('+10 seconds');
+        $this->assertTrue($cookie->isExpired($date), 'future now');
+
+        $date = $date->modify('-1 minute');
+        $this->assertFalse($cookie->isExpired($date), 'expires later');
+    }
+
+    /**
      * Test the withName method
      *
      * @return void
@@ -503,5 +562,100 @@ class CookieTest extends TestCase
 
         $expected = '{"username":"florian","profile":{"profession":"developer"}}';
         $this->assertContains(urlencode($expected), $cookie->toHeaderValue());
+    }
+
+    /**
+     * Tests getting the id
+     *
+     * @return void
+     */
+    public function testGetId()
+    {
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $this->assertEquals('cakephp;;', $cookie->getId());
+
+        $cookie = new Cookie('CAKEPHP', 'cakephp-rocks');
+        $this->assertEquals('cakephp;;', $cookie->getId());
+
+        $cookie = new Cookie('test', 'val', null, '/path', 'example.com');
+        $this->assertEquals('test;example.com;/path', $cookie->getId());
+    }
+
+    /**
+     * Test toArray
+     *
+     * @return void
+     */
+    public function testToArray()
+    {
+        $date = Chronos::parse('2017-03-31 12:34:56');
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $cookie = $cookie->withDomain('cakephp.org')
+            ->withPath('/api')
+            ->withExpiry($date)
+            ->withHttpOnly(true)
+            ->withSecure(true);
+        $expected = [
+            'name' => 'cakephp',
+            'value' => 'cakephp-rocks',
+            'path' => '/api',
+            'domain' => 'cakephp.org',
+            'expires' => $date->format('U'),
+            'secure' => true,
+            'httponly' => true
+        ];
+        $this->assertEquals($expected, $cookie->toArray());
+    }
+
+    /**
+     * Test toArrayClient
+     *
+     * @return void
+     */
+    public function testToArrayClient()
+    {
+        $date = Chronos::parse('2017-03-31 12:34:56');
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $cookie = $cookie->withDomain('cakephp.org')
+            ->withPath('/api')
+            ->withExpiry($date)
+            ->withHttpOnly(true)
+            ->withSecure(true);
+        $expected = [
+            'name' => 'cakephp',
+            'value' => 'cakephp-rocks',
+            'path' => '/api',
+            'domain' => 'cakephp.org',
+            'expires' => 'Fri, 31-Mar-2017 12:34:56 GMT',
+            'secure' => true,
+            'httponly' => true
+        ];
+        $this->assertEquals($expected, $cookie->toArrayClient());
+    }
+
+    /**
+     * Test toArrayResponse
+     *
+     * @return void
+     */
+    public function testToArrayResponse()
+    {
+        $date = Chronos::parse('2017-03-31 12:34:56');
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $cookie = $cookie->withDomain('cakephp.org')
+            ->withPath('/api')
+            ->withExpiry($date)
+            ->withHttpOnly(true)
+            ->withSecure(true);
+        $expected = [
+            'name' => 'cakephp',
+            'value' => 'cakephp-rocks',
+            'path' => '/api',
+            'domain' => 'cakephp.org',
+            'expire' => $date->format('U'),
+            'secure' => true,
+            'httpOnly' => true
+        ];
+        $this->assertEquals($expected, $cookie->toArrayResponse());
     }
 }

@@ -19,7 +19,7 @@ namespace Cake\Test\TestCase\View;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Http\Response;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Xml;
 
@@ -42,7 +42,7 @@ class XmlViewTest extends TestCase
      */
     public function testRenderWithoutView()
     {
-        $Request = new Request();
+        $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
         $data = ['users' => ['user' => ['user1', 'user2']]];
@@ -90,7 +90,7 @@ class XmlViewTest extends TestCase
      */
     public function testRenderSerializeNoHelpers()
     {
-        $Request = new Request();
+        $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
         $Controller->helpers = ['Html'];
@@ -111,7 +111,7 @@ class XmlViewTest extends TestCase
      */
     public function testRenderSerializeWithOptions()
     {
-        $Request = new Request();
+        $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
         $data = [
@@ -146,7 +146,7 @@ class XmlViewTest extends TestCase
      */
     public function testRenderSerializeWithString()
     {
-        $Request = new Request();
+        $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
         $data = [
@@ -183,7 +183,7 @@ class XmlViewTest extends TestCase
      */
     public function testRenderWithoutViewMultiple()
     {
-        $Request = new Request();
+        $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
         $data = ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']];
@@ -215,7 +215,7 @@ class XmlViewTest extends TestCase
      */
     public function testRenderWithoutViewMultipleAndAlias()
     {
-        $Request = new Request();
+        $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
         $data = ['original_name' => 'my epic name', 'user' => 'fake', 'list' => ['item1', 'item2']];
@@ -247,7 +247,7 @@ class XmlViewTest extends TestCase
      */
     public function testRenderWithSerializeTrue()
     {
-        $Request = new Request();
+        $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
         $data = ['users' => ['user' => ['user1', 'user2']]];
@@ -278,7 +278,7 @@ class XmlViewTest extends TestCase
      */
     public function testRenderWithView()
     {
-        $Request = new Request();
+        $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
         $Controller->name = 'Posts';

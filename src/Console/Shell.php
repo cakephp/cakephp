@@ -116,7 +116,7 @@ class Shell
      *
      * @var string
      */
-    public $name = null;
+    public $name;
 
     /**
      * The name of the plugin the shell belongs to.
@@ -124,7 +124,7 @@ class Shell
      *
      * @var string
      */
-    public $plugin = null;
+    public $plugin;
 
     /**
      * Contains tasks to load and instantiate
@@ -191,8 +191,30 @@ class Shell
     }
 
     /**
+     * Get the io object for this shell.
+     *
+     * @return \Cake\Console\ConsoleIo The current ConsoleIo object.
+     */
+    public function getIo()
+    {
+        return $this->_io;
+    }
+
+    /**
+     * Set the io object for this shell.
+     *
+     * @param \Cake\Console\ConsoleIo $io The ConsoleIo object to use.
+     * @return void
+     */
+    public function setIo(ConsoleIo $io)
+    {
+        $this->_io = $io;
+    }
+
+    /**
      * Get/Set the io object for this shell.
      *
+     * @deprecated 3.5.0 Use getIo()/setIo() instead.
      * @param \Cake\Console\ConsoleIo|null $io The ConsoleIo object to use.
      * @return \Cake\Console\ConsoleIo The current ConsoleIo object.
      */
@@ -433,7 +455,7 @@ class Shell
             $this->params = array_merge($this->params, $extra);
         }
         $this->_setOutputLevel();
-        if (!empty($this->params['plugin'])) {
+        if (!empty($this->params['plugin']) && !Plugin::loaded($this->params['plugin'])) {
             Plugin::load($this->params['plugin']);
         }
         $this->command = $command;
@@ -528,9 +550,8 @@ class Shell
     public function getOptionParser()
     {
         $name = ($this->plugin ? $this->plugin . '.' : '') . $this->name;
-        $parser = new ConsoleOptionParser($name);
 
-        return $parser;
+        return new ConsoleOptionParser($name);
     }
 
     /**

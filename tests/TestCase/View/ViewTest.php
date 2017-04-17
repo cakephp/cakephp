@@ -21,7 +21,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper;
@@ -298,14 +298,14 @@ class ViewTest extends TestCase
     {
         parent::setUp();
 
-        $request = new Request();
+        $request = new ServerRequest();
         $this->Controller = new Controller($request);
         $this->PostsController = new ViewPostsController($request);
         $this->PostsController->index();
         $this->View = $this->PostsController->createView();
         $this->View->viewPath = 'Posts';
 
-        $themeRequest = new Request('posts/index');
+        $themeRequest = new ServerRequest('posts/index');
         $this->ThemeController = new Controller($themeRequest);
         $this->ThemePostsController = new ThemePostsController($themeRequest);
         $this->ThemePostsController->index();
@@ -340,7 +340,7 @@ class ViewTest extends TestCase
      */
     public function testGetTemplate()
     {
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $viewOptions = [
@@ -416,7 +416,7 @@ class ViewTest extends TestCase
      */
     public function testPluginGetTemplateAbsoluteFail()
     {
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $viewOptions = [
@@ -596,7 +596,7 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages'
         ];
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $View = new TestView(null, null, null, $viewOptions);
@@ -642,7 +642,7 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages',
         ];
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $view = new TestView(null, null, null, $viewOptions);
@@ -762,7 +762,7 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages',
         ];
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $view = new TestView(null, null, null, $viewOptions);
@@ -782,7 +782,7 @@ class ViewTest extends TestCase
             'name' => 'Pages',
             'viewPath' => 'Pages'
         ];
-        $request = $this->getMockBuilder('Cake\Network\Request')->getMock();
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $View = new TestView($request, $response, null, $viewOptions);
@@ -1826,6 +1826,7 @@ TEXT;
         try {
             $this->View->layout = false;
             $this->View->render('extend_loop');
+            $this->fail('No exception');
         } catch (\LogicException $e) {
             ob_end_clean();
             $this->assertContains('cannot have views extend in a loop', $e->getMessage());
@@ -1994,6 +1995,82 @@ TEXT;
 
         $result = $this->View->helpers();
         $this->assertSame($result, $this->View->helpers());
+    }
+
+    /**
+     * Test getTemplatePath() and setTemplatePath().
+     *
+     * @return void
+     */
+    public function testGetSetTemplatePath()
+    {
+        $this->View->setTemplatePath('foo');
+        $templatePath = $this->View->getTemplatePath();
+        $this->assertSame($templatePath, 'foo');
+    }
+
+    /**
+     * Test getLayoutPath() and setLayoutPath().
+     *
+     * @return void
+     */
+    public function testGetSetLayoutPath()
+    {
+        $this->View->setLayoutPath('foo');
+        $layoutPath = $this->View->getLayoutPath();
+        $this->assertSame($layoutPath, 'foo');
+    }
+
+    /**
+     * Test isAutoLayoutEnabled() and enableAutoLayout().
+     *
+     * @return void
+     */
+    public function testAutoLayout()
+    {
+        $this->View->enableAutoLayout(false);
+        $autoLayout = $this->View->isAutoLayoutEnabled();
+        $this->assertSame($autoLayout, false);
+
+        $this->View->enableAutoLayout();
+        $autoLayout = $this->View->isAutoLayoutEnabled();
+        $this->assertSame($autoLayout, true);
+    }
+
+    /**
+     * Test getTheme() and setTheme().
+     *
+     * @return void
+     */
+    public function testGetSetTheme()
+    {
+        $this->View->setTheme('foo');
+        $theme = $this->View->getTheme();
+        $this->assertSame($theme, 'foo');
+    }
+
+    /**
+     * Test getTemplate() and setTemplate().
+     *
+     * @return void
+     */
+    public function testGetSetTemplate()
+    {
+        $this->View->setTemplate('foo');
+        $template = $this->View->getTemplate();
+        $this->assertSame($template, 'foo');
+    }
+
+    /**
+     * Test setLayout() and getLayout().
+     *
+     * @return void
+     */
+    public function testGetSetLayout()
+    {
+        $this->View->setLayout('foo');
+        $layout = $this->View->getLayout();
+        $this->assertSame($layout, 'foo');
     }
 
     /**

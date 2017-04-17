@@ -75,7 +75,7 @@ abstract class BaseErrorHandler
         set_error_handler([$this, 'handleError'], $level);
         set_exception_handler([$this, 'wrapAndHandleException']);
         register_shutdown_function(function () {
-            if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
+            if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
                 return;
             }
             $megabytes = Configure::read('Error.extraFatalErrorMemory');
@@ -329,7 +329,7 @@ abstract class BaseErrorHandler
     {
         $message = "\nRequest URL: " . $request->getRequestTarget();
 
-        $referer = $request->env('HTTP_REFERER');
+        $referer = $request->getEnv('HTTP_REFERER');
         if ($referer) {
             $message .= "\nReferer URL: " . $referer;
         }
@@ -354,7 +354,7 @@ abstract class BaseErrorHandler
             $exception;
         $config = $this->_options;
         $message = sprintf(
-            "[%s] %s in %s on line %s",
+            '[%s] %s in %s on line %s',
             get_class($exception),
             $exception->getMessage(),
             $exception->getFile(),

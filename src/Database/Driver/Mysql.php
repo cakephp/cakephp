@@ -78,7 +78,7 @@ class Mysql extends Driver
             $config['init'][] = sprintf("SET time_zone = '%s'", $config['timezone']);
         }
         if (!empty($config['encoding'])) {
-            $config['init'][] = sprintf("SET NAMES %s", $config['encoding']);
+            $config['init'][] = sprintf('SET NAMES %s', $config['encoding']);
         }
 
         $config['flags'] += [

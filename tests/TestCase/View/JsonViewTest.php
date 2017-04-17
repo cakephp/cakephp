@@ -19,7 +19,7 @@ namespace Cake\Test\TestCase\View;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Http\Response;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -234,7 +234,7 @@ class JsonViewTest extends TestCase
      */
     public function testRenderWithoutView($data, $serialize, $jsonOptions, $expected)
     {
-        $Request = new Request();
+        $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
 
@@ -255,7 +255,7 @@ class JsonViewTest extends TestCase
      */
     public function testRenderSerializeNoHelpers()
     {
-        $Request = new Request();
+        $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
 
@@ -278,7 +278,7 @@ class JsonViewTest extends TestCase
      */
     public function testJsonpResponse()
     {
-        $Request = new Request();
+        $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
 
@@ -315,7 +315,7 @@ class JsonViewTest extends TestCase
      */
     public function testRenderWithView()
     {
-        $Request = new Request();
+        $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
         $Controller->name = 'Posts';

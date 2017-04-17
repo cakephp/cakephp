@@ -18,8 +18,8 @@ use Cake\Auth\FormAuthenticate;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Plugin;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
-use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -86,7 +86,7 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateNoData()
     {
-        $request = new Request('posts/index');
+        $request = new ServerRequest('posts/index');
         $request->data = [];
         $this->assertFalse($this->auth->authenticate($request, $this->response));
     }
@@ -98,7 +98,7 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateNoUsername()
     {
-        $request = new Request('posts/index');
+        $request = new ServerRequest('posts/index');
         $request->data = ['password' => 'foobar'];
         $this->assertFalse($this->auth->authenticate($request, $this->response));
     }
@@ -110,7 +110,7 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateNoPassword()
     {
-        $request = new Request('posts/index');
+        $request = new ServerRequest('posts/index');
         $request->data = ['username' => 'mariano'];
         $this->assertFalse($this->auth->authenticate($request, $this->response));
     }
@@ -122,7 +122,7 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticatePasswordIsFalse()
     {
-        $request = new Request('posts/index', false);
+        $request = new ServerRequest('posts/index', false);
         $request->data = [
             'username' => 'mariano',
             'password' => null
@@ -138,7 +138,7 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticatePasswordIsEmptyString()
     {
-        $request = new Request('posts/index', false);
+        $request = new ServerRequest('posts/index', false);
         $request->data = [
             'username' => 'mariano',
             'password' => ''
@@ -167,7 +167,7 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateFieldsAreNotString()
     {
-        $request = new Request('posts/index', false);
+        $request = new ServerRequest('posts/index', false);
         $request->data = [
             'username' => ['mariano', 'phpnut'],
             'password' => 'my password'
@@ -188,7 +188,7 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateInjection()
     {
-        $request = new Request('posts/index');
+        $request = new ServerRequest('posts/index');
         $request->data = [
             'username' => '> 1',
             'password' => "' OR 1 = 1"
@@ -203,7 +203,7 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateSuccess()
     {
-        $request = new Request('posts/index');
+        $request = new ServerRequest('posts/index');
         $request->data = [
             'username' => 'mariano',
             'password' => 'password'
@@ -228,7 +228,7 @@ class FormAuthenticateTest extends TestCase
         $users = TableRegistry::get('Users');
         $users->entityClass('TestApp\Model\Entity\VirtualUser');
 
-        $request = new Request('posts/index');
+        $request = new ServerRequest('posts/index');
         $request->data = [
             'username' => 'mariano',
             'password' => 'password'
@@ -261,7 +261,7 @@ class FormAuthenticateTest extends TestCase
 
         $this->auth->config('userModel', 'TestPlugin.AuthUsers');
 
-        $request = new Request('posts/index');
+        $request = new ServerRequest('posts/index');
         $request->data = [
             'username' => 'gwoo',
             'password' => 'cake'
@@ -285,7 +285,7 @@ class FormAuthenticateTest extends TestCase
      */
     public function testFinder()
     {
-        $request = new Request('posts/index');
+        $request = new ServerRequest('posts/index');
         $request->data = [
             'username' => 'mariano',
             'password' => 'password'
@@ -323,7 +323,7 @@ class FormAuthenticateTest extends TestCase
      */
     public function testFinderOptions()
     {
-        $request = new Request('posts/index');
+        $request = new ServerRequest('posts/index');
         $request->data = [
             'username' => 'mariano',
             'password' => 'password'
@@ -376,7 +376,7 @@ class FormAuthenticateTest extends TestCase
             ['username' => 'mariano']
         );
 
-        $request = new Request('posts/index');
+        $request = new ServerRequest('posts/index');
         $request->data = [
             'username' => 'mariano',
             'password' => 'mypass'
@@ -414,7 +414,7 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateNoRehash()
     {
-        $request = new Request('posts/index');
+        $request = new ServerRequest('posts/index');
         $request->data = [
             'username' => 'mariano',
             'password' => 'password'
@@ -439,7 +439,7 @@ class FormAuthenticateTest extends TestCase
         $password = $this->auth->passwordHasher()->hash('password');
         TableRegistry::get('Users')->updateAll(['password' => $password], []);
 
-        $request = new Request('posts/index');
+        $request = new ServerRequest('posts/index');
         $request->data = [
             'username' => 'mariano',
             'password' => 'password'

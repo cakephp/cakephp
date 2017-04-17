@@ -740,4 +740,153 @@ class HasManyTest extends TestCase
         $new = $this->author->get(2, ['contain' => 'Articles']);
         $this->assertCount(3, $new->articles);
     }
+
+    /**
+     * Test that saveAssociated() fails on non-empty, non-iterable value
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Could not save comments, it cannot be traversed
+     * @return void
+     */
+    public function testSaveAssociatedNotEmptyNotIterable()
+    {
+        $articles = TableRegistry::get('Articles');
+        $association = $articles->hasMany('Comments', [
+            'saveStrategy' => HasMany::SAVE_APPEND
+        ]);
+
+        $entity = $articles->newEntity();
+        $entity->set('comments', 'oh noes');
+
+        $association->saveAssociated($entity);
+    }
+
+    /**
+     * Data provider for empty values.
+     *
+     * @return array
+     */
+    public function emptySetDataProvider()
+    {
+        return [
+            [''],
+            [false],
+            [null],
+            [[]]
+        ];
+    }
+
+    /**
+     * Test that saving empty sets with the `append` strategy does not
+     * affect the associated records for not yet persisted parent entities.
+     *
+     * @dataProvider emptySetDataProvider
+     * @param mixed $value Empty value.
+     * @return void
+     */
+    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnCreate($value)
+    {
+        $articles = TableRegistry::get('Articles');
+        $association = $articles->hasMany('Comments', [
+            'saveStrategy' => HasMany::SAVE_APPEND
+        ]);
+
+        $comments = $association->find();
+        $this->assertNotEmpty($comments);
+
+        $entity = $articles->newEntity();
+        $entity->set('comments', $value);
+
+        $this->assertSame($entity, $association->saveAssociated($entity));
+        $this->assertEquals($value, $entity->get('comments'));
+        $this->assertEquals($comments, $association->find());
+    }
+
+    /**
+     * Test that saving empty sets with the `append` strategy does not
+     * affect the associated records for already persisted parent entities.
+     *
+     * @dataProvider emptySetDataProvider
+     * @param mixed $value Empty value.
+     * @return void
+     */
+    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnUpdate($value)
+    {
+        $articles = TableRegistry::get('Articles');
+        $association = $articles->hasMany('Comments', [
+            'saveStrategy' => HasMany::SAVE_APPEND
+        ]);
+
+        $entity = $articles->get(1, [
+            'contain' => ['Comments']
+        ]);
+        $comments = $entity->get('comments');
+        $this->assertNotEmpty($comments);
+
+        $entity->set('comments', $value);
+        $this->assertSame($entity, $association->saveAssociated($entity));
+        $this->assertEquals($value, $entity->get('comments'));
+
+        $entity = $articles->get(1, [
+            'contain' => ['Comments']
+        ]);
+        $this->assertEquals($comments, $entity->get('comments'));
+    }
+
+    /**
+     * Test that saving empty sets with the `replace` strategy does not
+     * affect the associated records for not yet persisted parent entities.
+     *
+     * @dataProvider emptySetDataProvider
+     * @param mixed $value Empty value.
+     * @return void
+     */
+    public function testSaveAssociatedEmptySetWithReplaceStrategyDoesNotAffectAssociatedRecordsOnCreate($value)
+    {
+        $articles = TableRegistry::get('Articles');
+        $association = $articles->hasMany('Comments', [
+            'saveStrategy' => HasMany::SAVE_REPLACE
+        ]);
+
+        $comments = $association->find();
+        $this->assertNotEmpty($comments);
+
+        $entity = $articles->newEntity();
+        $entity->set('comments', $value);
+
+        $this->assertSame($entity, $association->saveAssociated($entity));
+        $this->assertEquals($value, $entity->get('comments'));
+        $this->assertEquals($comments, $association->find());
+    }
+
+    /**
+     * Test that saving empty sets with the `replace` strategy does remove
+     * the associated records for already persisted parent entities.
+     *
+     * @dataProvider emptySetDataProvider
+     * @param mixed $value Empty value.
+     * @return void
+     */
+    public function testSaveAssociatedEmptySetWithReplaceStrategyRemovesAssociatedRecordsOnUpdate($value)
+    {
+        $articles = TableRegistry::get('Articles');
+        $association = $articles->hasMany('Comments', [
+            'saveStrategy' => HasMany::SAVE_REPLACE
+        ]);
+
+        $entity = $articles->get(1, [
+            'contain' => ['Comments']
+        ]);
+        $comments = $entity->get('comments');
+        $this->assertNotEmpty($comments);
+
+        $entity->set('comments', $value);
+        $this->assertSame($entity, $association->saveAssociated($entity));
+        $this->assertEquals([], $entity->get('comments'));
+
+        $entity = $articles->get(1, [
+            'contain' => ['Comments']
+        ]);
+        $this->assertEmpty($entity->get('comments'));
+    }
 }

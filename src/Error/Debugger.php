@@ -67,7 +67,7 @@ class Debugger
     protected $_templates = [
         'log' => [
             'trace' => '{:reference} - {:path}, line {:line}',
-            'error' => "{:error} ({:code}): {:description} in [{:file}, line {:line}]"
+            'error' => '{:error} ({:code}): {:description} in [{:file}, line {:line}]'
         ],
         'js' => [
             'error' => '',
@@ -429,7 +429,7 @@ class Debugger
             if (!isset($data[$i])) {
                 continue;
             }
-            $string = str_replace(["\r\n", "\n"], "", static::_highlight($data[$i]));
+            $string = str_replace(["\r\n", "\n"], '', static::_highlight($data[$i]));
             if ($i == $line) {
                 $lines[] = '<span class="code-highlight">' . $string . '</span>';
             } else {
@@ -507,7 +507,7 @@ class Debugger
     {
         switch (static::getType($var)) {
             case 'boolean':
-                return ($var) ? 'true' : 'false';
+                return $var ? 'true' : 'false';
             case 'integer':
                 return '(int) ' . $var;
             case 'float':
@@ -551,7 +551,7 @@ class Debugger
      */
     protected static function _array(array $var, $depth, $indent)
     {
-        $out = "[";
+        $out = '[';
         $break = $end = null;
         if (!empty($var)) {
             $break = "\n" . str_repeat("\t", $indent);
@@ -928,7 +928,7 @@ TEXT;
      */
     public static function checkSecurityKeys()
     {
-        if (Security::salt() === '__SALT__') {
+        if (Security::getSalt() === '__SALT__') {
             trigger_error(sprintf('Please change the value of %s in %s to a salt value specific to your application.', '\'Security.salt\'', 'ROOT/config/app.php'), E_USER_NOTICE);
         }
     }

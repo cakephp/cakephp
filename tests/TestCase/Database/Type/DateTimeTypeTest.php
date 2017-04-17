@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\Type\DateTimeType;
+use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 
@@ -50,6 +51,19 @@ class DateTimeTypeTest extends TestCase
         parent::setUp();
         $this->type = new DateTimeType();
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+    }
+
+    /**
+     * Test getDateTimeClassName
+     *
+     * @return void
+     */
+    public function testGetDateTimeClassName()
+    {
+        $this->assertSame(Time::class, $this->type->getDateTimeClassName());
+
+        $this->type->useImmutable();
+        $this->assertSame(FrozenTime::class, $this->type->getDateTimeClassName());
     }
 
     /**

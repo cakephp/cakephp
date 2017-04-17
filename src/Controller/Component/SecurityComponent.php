@@ -82,7 +82,7 @@ class SecurityComponent extends Component
      *
      * @var string
      */
-    protected $_action = null;
+    protected $_action;
 
     /**
      * The Session object
@@ -100,7 +100,7 @@ class SecurityComponent extends Component
     public function startup(Event $event)
     {
         $controller = $event->getSubject();
-        $this->session = $controller->request->session();
+        $this->session = $controller->request->getSession();
         $this->_action = $controller->request->getParam('action');
         $hasData = (bool)$controller->request->getData();
         try {
@@ -220,7 +220,7 @@ class SecurityComponent extends Component
         if (isset($actions[0]) && is_array($actions[0])) {
             $actions = $actions[0];
         }
-        $this->setConfig('require' . $method, (empty($actions)) ? ['*'] : $actions);
+        $this->setConfig('require' . $method, empty($actions) ? ['*'] : $actions);
     }
 
     /**
@@ -382,7 +382,7 @@ class SecurityComponent extends Component
             $controller->request->here(),
             serialize($fieldList),
             $unlocked,
-            Security::salt()
+            Security::getSalt()
         ];
     }
 
