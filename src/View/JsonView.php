@@ -150,7 +150,7 @@ class JsonView extends SerializedView
         }
 
         if (Configure::read('debug')) {
-            $jsonOptions = $jsonOptions | JSON_PRETTY_PRINT;
+            $jsonOptions |= JSON_PRETTY_PRINT;
         }
 
         return json_encode($data, $jsonOptions);

@@ -249,7 +249,7 @@ abstract class BaseErrorHandler
         $units = strtoupper(substr($limit, -1));
         $current = (int)substr($limit, 0, strlen($limit) - 1);
         if ($units === 'M') {
-            $current = $current * 1024;
+            $current *= 1024;
             $units = 'K';
         }
         if ($units === 'G') {

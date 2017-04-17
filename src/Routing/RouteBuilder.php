@@ -691,7 +691,7 @@ class RouteBuilder
         }
         unset($params['_namePrefix']);
 
-        $params = $params + $this->_params;
+        $params += $this->_params;
         $builder = new static($this->_collection, $path, $params, [
             'routeClass' => $this->_routeClass,
             'extensions' => $this->_extensions,
