@@ -82,7 +82,7 @@ class SecurityComponent extends Component
      *
      * @var string
      */
-    protected $_action = null;
+    protected $_action;
 
     /**
      * The Session object

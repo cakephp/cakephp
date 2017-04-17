@@ -37,7 +37,7 @@ class DateTimeType extends Type implements TypeInterface
      *
      * @var string|null
      */
-    protected $_name = null;
+    protected $_name;
 
     /**
      * The class to use for representing date objects

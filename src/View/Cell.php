@@ -63,7 +63,7 @@ abstract class Cell
      *
      * @var string
      */
-    public $plugin = null;
+    public $plugin;
 
     /**
      * An instance of a Cake\Http\ServerRequest object that contains information about the current request.

@@ -367,7 +367,7 @@ class Response implements ResponseInterface
      *
      * @var \Cake\Filesystem\File
      */
-    protected $_file = null;
+    protected $_file;
 
     /**
      * File range. Used for requesting ranges of files.

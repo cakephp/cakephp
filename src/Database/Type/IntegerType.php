@@ -35,7 +35,7 @@ class IntegerType extends Type implements TypeInterface
      *
      * @var string|null
      */
-    protected $_name = null;
+    protected $_name;
 
     /**
      * Constructor.

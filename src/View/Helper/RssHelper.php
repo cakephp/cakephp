@@ -39,14 +39,14 @@ class RssHelper extends Helper
      *
      * @var string
      */
-    public $base = null;
+    public $base;
 
     /**
      * URL to current action.
      *
      * @var string
      */
-    public $here = null;
+    public $here;
 
     /**
      * Parameter array.
@@ -60,28 +60,28 @@ class RssHelper extends Helper
      *
      * @var string
      */
-    public $action = null;
+    public $action;
 
     /**
      * POSTed model data
      *
      * @var array
      */
-    public $data = null;
+    public $data;
 
     /**
      * Name of the current model
      *
      * @var string
      */
-    public $model = null;
+    public $model;
 
     /**
      * Name of the current field
      *
      * @var string
      */
-    public $field = null;
+    public $field;
 
     /**
      * Default spec version of generated RSS

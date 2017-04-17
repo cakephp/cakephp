@@ -28,7 +28,7 @@ class File
      * @var \Cake\Filesystem\Folder
      * @link http://book.cakephp.org/3.0/en/core-libraries/file-folder.html
      */
-    public $Folder = null;
+    public $Folder;
 
     /**
      * File name
@@ -36,7 +36,7 @@ class File
      * @var string
      * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$name
      */
-    public $name = null;
+    public $name;
 
     /**
      * File info
@@ -52,7 +52,7 @@ class File
      * @var resource
      * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$handle
      */
-    public $handle = null;
+    public $handle;
 
     /**
      * Enable locking for file reading and writing
@@ -60,7 +60,7 @@ class File
      * @var bool
      * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$lock
      */
-    public $lock = null;
+    public $lock;
 
     /**
      * Path property
@@ -70,7 +70,7 @@ class File
      * @var mixed
      * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$path
      */
-    public $path = null;
+    public $path;
 
     /**
      * Constructor

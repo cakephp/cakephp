@@ -43,21 +43,21 @@ class ServerShell extends Shell
      *
      * @var string
      */
-    protected $_host = null;
+    protected $_host;
 
     /**
      * listen port
      *
      * @var int
      */
-    protected $_port = null;
+    protected $_port;
 
     /**
      * document root
      *
      * @var string
      */
-    protected $_documentRoot = null;
+    protected $_documentRoot;
 
     /**
      * Override initialize of the Shell

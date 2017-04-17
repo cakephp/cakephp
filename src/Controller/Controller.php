@@ -101,7 +101,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var string
      */
-    public $name = null;
+    public $name;
 
     /**
      * An array containing the names of helpers this controller uses. The array elements should
@@ -166,7 +166,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var \Cake\Controller\ComponentRegistry
      */
-    protected $_components = null;
+    protected $_components;
 
     /**
      * Array containing the names of components this controller uses. Component names
@@ -206,7 +206,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var string
      */
-    public $plugin = null;
+    public $plugin;
 
     /**
      * Holds all passed params.

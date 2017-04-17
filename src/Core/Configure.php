@@ -55,7 +55,7 @@ class Configure
      *
      * @var bool|null
      */
-    protected static $_hasIniSet = null;
+    protected static $_hasIniSet;
 
     /**
      * Used to store a dynamic variable in Configure.

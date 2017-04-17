@@ -76,7 +76,7 @@ class Type implements TypeInterface
      *
      * @var string
      */
-    protected $_name = null;
+    protected $_name;
 
     /**
      * Constructor
