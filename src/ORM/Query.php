@@ -383,7 +383,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         if ($associations === null) {
-            return $this->getContain();
+            return $this->getEagerLoader()->contain();
         }
 
         $result = $loader->contain($associations);
@@ -403,16 +403,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $this->_dirty();
 
         return $this;
-    }
-
-    /**
-     * Gets the contained associations
-     *
-     * @return array
-     */
-    public function getContain()
-    {
-        return $this->getEagerLoader()->contain();
     }
 
     /**
