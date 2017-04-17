@@ -193,7 +193,8 @@ class Marshaller
             if ($value === '' && in_array($key, $primaryKey, true)) {
                 // Skip marshalling '' for pk fields.
                 continue;
-            } elseif (isset($propertyMap[$key])) {
+            }
+            if (isset($propertyMap[$key])) {
                 $properties[$key] = $propertyMap[$key]($value, $entity);
             } else {
                 $properties[$key] = $value;
