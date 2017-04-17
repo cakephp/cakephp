@@ -60,6 +60,7 @@ class OrmCacheShell extends Shell
      *
      * @param string|null $name The name of the table to clear cache data for.
      * @return bool
+     * @throws \InvalidArgumentException
      */
     public function clear($name = null)
     {
@@ -91,6 +92,8 @@ class OrmCacheShell extends Shell
      * Helper method to get the schema collection.
      *
      * @return false|\Cake\Database\Schema\Collection|\Cake\Database\Schema\CachedCollection
+     * @throws \Cake\Console\Exception\StopException
+     * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException
      */
     protected function _getSchema()
     {
@@ -119,6 +122,8 @@ class OrmCacheShell extends Shell
      * Get the option parser for this shell.
      *
      * @return \Cake\Console\ConsoleOptionParser
+     * @throws \LogicException
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     public function getOptionParser()
     {

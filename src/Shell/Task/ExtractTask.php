@@ -117,6 +117,7 @@ class ExtractTask extends Shell
      * Method to interact with the User and get path selections.
      *
      * @return void
+     * @throws \Cake\Console\Exception\StopException
      */
     protected function _getPaths()
     {
@@ -155,6 +156,9 @@ class ExtractTask extends Shell
      * Execution method always used for tasks
      *
      * @return void
+     * @throws \Cake\Console\Exception\StopException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     public function main()
     {
@@ -307,6 +311,7 @@ class ExtractTask extends Shell
      * Gets the option parser instance and configures it.
      *
      * @return \Cake\Console\ConsoleOptionParser
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     public function getOptionParser()
     {

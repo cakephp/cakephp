@@ -96,6 +96,8 @@ class LoadTask extends Shell
      * GetOptionParser method.
      *
      * @return \Cake\Console\ConsoleOptionParser
+     * @throws \LogicException
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     public function getOptionParser()
     {
