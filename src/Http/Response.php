@@ -428,6 +428,7 @@ class Response implements ResponseInterface
      *  - status: the HTTP status code to respond with
      *  - type: a complete mime-type string or an extension mapped in this class
      *  - charset: the charset for the response body
+     * @throws \InvalidArgumentException
      */
     public function __construct(array $options = [])
     {
@@ -468,6 +469,7 @@ class Response implements ResponseInterface
      * Creates the stream object.
      *
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _createStream()
     {
@@ -762,6 +764,7 @@ class Response implements ResponseInterface
      *
      * @param string $url The location to redirect to.
      * @return static A new response with the Location header set.
+     * @throws \InvalidArgumentException
      */
     public function withLocation($url)
     {
@@ -809,6 +812,8 @@ class Response implements ResponseInterface
      *
      * @param string|callable|null $content the string or callable message to be sent
      * @return string Current message buffer if $content param is passed as null
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      * @deprecated 3.4.0 Mutable response methods are deprecated. Use `withBody()` and `getBody()` instead.
      */
     public function body($content = null)
@@ -1075,6 +1080,7 @@ class Response implements ResponseInterface
      *
      * @param string $contentType Either a file extension which will be mapped to a mime-type or a concrete mime-type.
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withType($contentType)
     {
@@ -1197,6 +1203,7 @@ class Response implements ResponseInterface
      * Create a new instance with headers to instruct the client to not cache the response
      *
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withDisabledCache()
     {
@@ -1233,6 +1240,7 @@ class Response implements ResponseInterface
      * @param string $since a valid time since the response text has not been modified
      * @param string $time a valid time for cache expiry
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withCache($since, $time = '+1 day')
     {
@@ -1502,6 +1510,7 @@ class Response implements ResponseInterface
      *
      * @param string|\DateTime $time Valid time string or \DateTime instance.
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withExpires($time)
     {
@@ -1553,6 +1562,7 @@ class Response implements ResponseInterface
      *
      * @param string|\DateTime $time Valid time string or \DateTime instance.
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withModified($time)
     {
@@ -1595,6 +1605,7 @@ class Response implements ResponseInterface
      * a response body.
      *
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withNotModified()
     {
@@ -1651,6 +1662,7 @@ class Response implements ResponseInterface
      * @param string|array $cacheVariances A single Vary string or an array
      *   containing the list for variances.
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withVary($cacheVariances)
     {
@@ -1712,6 +1724,7 @@ class Response implements ResponseInterface
      * @param bool $weak Whether the response is semantically the same as
      *   other with the same hash or not. Defaults to false
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withEtag($hash, $weak = false)
     {
@@ -1784,6 +1797,7 @@ class Response implements ResponseInterface
      *
      * @param string $filename The name of the file as the browser will download the response
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withDownload($filename)
     {
@@ -1833,6 +1847,7 @@ class Response implements ResponseInterface
      *
      * @param int|string $bytes Number of bytes
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withLength($bytes)
     {
@@ -2110,6 +2125,7 @@ class Response implements ResponseInterface
      *   to a file, `APP` will be prepended to the path.
      * @param array $options Options See above.
      * @return void
+     * @throws \InvalidArgumentException
      * @throws \Cake\Network\Exception\NotFoundException
      * @deprecated 3.4.0 Use withFile() instead.
      */
@@ -2179,6 +2195,7 @@ class Response implements ResponseInterface
      *   to a file, `APP` will be prepended to the path.
      * @param array $options Options See above.
      * @return static
+     * @throws \InvalidArgumentException
      * @throws \Cake\Network\Exception\NotFoundException
      */
     public function withFile($path, array $options = [])
@@ -2236,6 +2253,8 @@ class Response implements ResponseInterface
      *
      * @param string $string The string to be sent
      * @return static
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function withStringBody($string)
     {
@@ -2252,6 +2271,7 @@ class Response implements ResponseInterface
      * @param string $path The path to the file.
      * @throws \Cake\Network\Exception\NotFoundException
      * @return \Cake\Filesystem\File
+     * @throws \InvalidArgumentException
      */
     protected function validateFile($path)
     {
@@ -2438,6 +2458,7 @@ class Response implements ResponseInterface
      * object.
      *
      * @return array
+     * @throws \RuntimeException
      */
     public function __debugInfo()
     {

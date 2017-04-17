@@ -142,6 +142,8 @@ class Response extends Message implements ResponseInterface
      *
      * @param array $headers Unparsed headers.
      * @param string $body The response body.
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function __construct($headers = [], $body = '')
     {

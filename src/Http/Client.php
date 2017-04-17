@@ -152,6 +152,7 @@ class Client
      * - redirect - Number of redirects to follow. Defaults to false.
      *
      * @param array $config Config options for scoped clients.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct($config = [])
     {
@@ -368,6 +369,7 @@ class Client
      * @param \Cake\Http\Client\Request $request The request to send.
      * @param array $options Additional options to use.
      * @return \Cake\Http\Client\Response
+     * @throws \Cake\Core\Exception\Exception
      */
     public function send(Request $request, $options = [])
     {
@@ -428,6 +430,8 @@ class Client
      * @param mixed $data The request body.
      * @param array $options The options to use. Contains auth, proxy etc.
      * @return \Cake\Http\Client\Request
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
      */
     protected function _createRequest($method, $url, $data, $options)
     {
@@ -493,6 +497,7 @@ class Client
      * @param \Cake\Http\Client\Request $request The request to modify.
      * @param array $options Array of options containing the 'auth' key.
      * @return \Cake\Http\Client\Request The updated request object.
+     * @throws \Cake\Core\Exception\Exception
      */
     protected function _addAuthentication(Request $request, $options)
     {
@@ -512,6 +517,7 @@ class Client
      * @param \Cake\Http\Client\Request $request The request to modify.
      * @param array $options Array of options containing the 'proxy' key.
      * @return \Cake\Http\Client\Request The updated request object.
+     * @throws \Cake\Core\Exception\Exception
      */
     protected function _addProxy(Request $request, $options)
     {

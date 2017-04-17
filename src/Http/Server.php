@@ -63,6 +63,7 @@ class Server
      * @param \Psr\Http\Message\ServerRequestInterface|null $request The request to use or null.
      * @param \Psr\Http\Message\ResponseInterface|null $response The response to use or null.
      * @return \Psr\Http\Message\ResponseInterface
+     * @throws \InvalidArgumentException
      * @throws \RuntimeException When the application does not make a response.
      */
     public function run(ServerRequestInterface $request = null, ResponseInterface $response = null)

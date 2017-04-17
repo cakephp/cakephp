@@ -66,6 +66,7 @@ class ResponseTransformer
      *
      * @param \Psr\Http\Message\ResponseInterface $response The response to convert.
      * @return array A hash of 'body' and 'file'
+     * @throws \RuntimeException
      */
     protected static function getBody(PsrResponse $response)
     {
@@ -154,6 +155,7 @@ class ResponseTransformer
      *
      * @param \Cake\Http\Response $response The CakePHP response to convert
      * @return \Psr\Http\Message\ResponseInterface $response The equivalent PSR7 response.
+     * @throws \InvalidArgumentException
      */
     public static function toPsr(CakeResponse $response)
     {
@@ -247,6 +249,7 @@ class ResponseTransformer
      *
      * @param \Cake\Http\Response $response The cake response to extract the body from.
      * @return \Psr\Http\Message\StreamInterface|string The stream.
+     * @throws \InvalidArgumentException
      */
     protected static function getStream($response)
     {
