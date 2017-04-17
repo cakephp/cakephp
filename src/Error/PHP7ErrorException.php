@@ -45,8 +45,8 @@ class PHP7ErrorException extends Exception
             '(%s) - %s in %s on %s',
             get_class($error),
             $this->message,
-            $this->file ?: "null",
-            $this->line ?: "null"
+            $this->file ?: 'null',
+            $this->line ?: 'null'
         );
         parent::__construct($msg, $this->code);
     }

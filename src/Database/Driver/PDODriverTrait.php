@@ -29,7 +29,7 @@ trait PDODriverTrait
      *
      * @var \PDO|null
      */
-    protected $_connection = null;
+    protected $_connection;
 
     /**
      * Establishes a connection to the database server

@@ -37,7 +37,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @var \Cake\TestSuite\Fixture\FixtureManager|null
      */
-    public $fixtureManager = null;
+    public $fixtureManager;
 
     /**
      * By default, all fixtures attached to this class will be truncated and reloaded after each test.
@@ -574,7 +574,7 @@ abstract class TestCase extends BaseTestCase
     {
         $upper = $result + $margin;
         $lower = $result - $margin;
-        static::assertTrue((($expected <= $upper) && ($expected >= $lower)), $message);
+        static::assertTrue(($expected <= $upper) && ($expected >= $lower), $message);
     }
 
     /**
@@ -590,7 +590,7 @@ abstract class TestCase extends BaseTestCase
     {
         $upper = $result + $margin;
         $lower = $result - $margin;
-        static::assertTrue((($expected > $upper) || ($expected < $lower)), $message);
+        static::assertTrue(($expected > $upper) || ($expected < $lower), $message);
     }
 
     /**

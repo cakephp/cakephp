@@ -53,7 +53,7 @@ class ExtractTask extends Shell
      *
      * @var string|null
      */
-    protected $_file = null;
+    protected $_file;
 
     /**
      * Contains all content waiting to be write
@@ -81,7 +81,7 @@ class ExtractTask extends Shell
      *
      * @var string|null
      */
-    protected $_output = null;
+    protected $_output;
 
     /**
      * An array of directories to exclude.
@@ -259,7 +259,7 @@ class ExtractTask extends Shell
      */
     protected function _addTranslation($domain, $msgid, $details = [])
     {
-        $context = isset($details['msgctxt']) ? $details['msgctxt'] : "";
+        $context = isset($details['msgctxt']) ? $details['msgctxt'] : '';
 
         if (empty($this->_translations[$domain][$msgid][$context])) {
             $this->_translations[$domain][$msgid][$context] = [
@@ -486,13 +486,13 @@ class ExtractTask extends Shell
                         $occurrences[] = $file . ':' . implode(';', $lines);
                     }
                     $occurrences = implode("\n#: ", $occurrences);
-                    $header = "";
+                    $header = '';
                     if (!$this->param('no-location')) {
                         $header = '#: ' . str_replace(DIRECTORY_SEPARATOR, '/', str_replace($paths, '', $occurrences)) . "\n";
                     }
 
                     $sentence = '';
-                    if ($context !== "") {
+                    if ($context !== '') {
                         $sentence .= "msgctxt \"{$context}\"\n";
                     }
                     if ($plural === false) {
@@ -571,7 +571,7 @@ class ExtractTask extends Shell
                 if (strtoupper($response) === 'N') {
                     $response = '';
                     while (!$response) {
-                        $response = $this->in("What would you like to name this file?", null, 'new_' . $filename);
+                        $response = $this->in('What would you like to name this file?', null, 'new_' . $filename);
                         $File = new File($this->_output . $response);
                         $filename = $response;
                     }
@@ -598,7 +598,7 @@ class ExtractTask extends Shell
         $output .= "msgid \"\"\n";
         $output .= "msgstr \"\"\n";
         $output .= "\"Project-Id-Version: PROJECT VERSION\\n\"\n";
-        $output .= "\"POT-Creation-Date: " . date("Y-m-d H:iO") . "\\n\"\n";
+        $output .= '"POT-Creation-Date: ' . date('Y-m-d H:iO') . "\\n\"\n";
         $output .= "\"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\\n\"\n";
         $output .= "\"Last-Translator: NAME <EMAIL@ADDRESS>\\n\"\n";
         $output .= "\"Language-Team: LANGUAGE <EMAIL@ADDRESS>\\n\"\n";

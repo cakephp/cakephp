@@ -47,7 +47,7 @@ class ControllerAuthorize extends BaseAuthorize
      *
      * @var \Cake\Controller\Controller
      */
-    protected $_Controller = null;
+    protected $_Controller;
 
     /**
      * {@inheritDoc}

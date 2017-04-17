@@ -97,7 +97,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @var \Cake\Database\StatementInterface|null
      */
-    protected $_iterator = null;
+    protected $_iterator;
 
     /**
      * The object responsible for generating query placeholders and temporarily store values
@@ -105,14 +105,14 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @var \Cake\Database\ValueBinder|null
      */
-    protected $_valueBinder = null;
+    protected $_valueBinder;
 
     /**
      * Instance of functions builder object used for generating arbitrary SQL functions.
      *
      * @var \Cake\Database\FunctionsBuilder|null
      */
-    protected $_functionsBuilder = null;
+    protected $_functionsBuilder;
 
     /**
      * Boolean for tracking whether or not buffered results
@@ -412,7 +412,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             if (is_array($this->_parts['distinct'])) {
                 $merge = $this->_parts['distinct'];
             }
-            $on = ($overwrite) ? array_values($on) : array_merge($merge, array_values($on));
+            $on = $overwrite ? array_values($on) : array_merge($merge, array_values($on));
         }
 
         $this->_parts['distinct'] = $on;

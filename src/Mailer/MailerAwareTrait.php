@@ -47,6 +47,6 @@ trait MailerAwareTrait
             throw new MissingMailerException(compact('name'));
         }
 
-        return (new $className($email));
+        return new $className($email);
     }
 }

@@ -118,8 +118,7 @@ class ExistsIn
             $schema = $source->getSchema();
             foreach ($this->_fields as $i => $field) {
                 if ($schema->column($field) && $schema->isNullable($field) && $entity->get($field) === null) {
-                    unset($bindingKey[$i]);
-                    unset($this->_fields[$i]);
+                    unset($bindingKey[$i], $this->_fields[$i]);
                 }
             }
         }

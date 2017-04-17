@@ -63,7 +63,7 @@ abstract class Cell
      *
      * @var string
      */
-    public $plugin = null;
+    public $plugin;
 
     /**
      * An instance of a Cake\Http\ServerRequest object that contains information about the current request.
@@ -238,7 +238,7 @@ abstract class Cell
         if (empty($this->_cache)) {
             return [];
         }
-        $template = $template ?: "default";
+        $template = $template ?: 'default';
         $key = 'cell_' . Inflector::underscore(get_class($this)) . '_' . $action . '_' . $template;
         $key = str_replace('\\', '_', $key);
         $default = [
