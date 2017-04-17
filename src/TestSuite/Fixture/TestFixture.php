@@ -43,7 +43,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
      *
      * @var string
      */
-    public $table = null;
+    public $table;
 
     /**
      * Fields / Schema for the fixture.
@@ -65,7 +65,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
      *
      * @var array|null
      */
-    public $import = null;
+    public $import;
 
     /**
      * Fixture records to be inserted.

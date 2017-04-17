@@ -40,7 +40,7 @@ class Exception extends RuntimeException
      *
      * @var array|null
      */
-    protected $_responseHeaders = null;
+    protected $_responseHeaders;
 
     /**
      * Constructor.

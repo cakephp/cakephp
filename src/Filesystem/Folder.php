@@ -72,7 +72,7 @@ class Folder
      *
      * @var string
      */
-    public $path = null;
+    public $path;
 
     /**
      * Sortedness. Whether or not list results

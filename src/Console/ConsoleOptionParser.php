@@ -79,7 +79,7 @@ class ConsoleOptionParser
      * @see \Cake\Console\ConsoleOptionParser::description()
      * @var string
      */
-    protected $_description = null;
+    protected $_description;
 
     /**
      * Epilog text - displays after options when help is generated
@@ -87,7 +87,7 @@ class ConsoleOptionParser
      * @see \Cake\Console\ConsoleOptionParser::epilog()
      * @var string
      */
-    protected $_epilog = null;
+    protected $_epilog;
 
     /**
      * Option definitions.

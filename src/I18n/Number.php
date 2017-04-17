@@ -52,7 +52,7 @@ class Number
      *
      * @var string|null
      */
-    protected static $_defaultCurrency = null;
+    protected static $_defaultCurrency;
 
     /**
      * Formats a number with a level of precision.

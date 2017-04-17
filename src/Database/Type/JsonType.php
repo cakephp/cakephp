@@ -35,7 +35,7 @@ class JsonType extends Type
      *
      * @var string|null
      */
-    protected $_name = null;
+    protected $_name;
 
     /**
      * Constructor.

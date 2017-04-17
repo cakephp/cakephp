@@ -30,7 +30,7 @@ class RedisEngine extends CacheEngine
      *
      * @var \Redis
      */
-    protected $_Redis = null;
+    protected $_Redis;
 
     /**
      * The default config used unless overridden by runtime configuration

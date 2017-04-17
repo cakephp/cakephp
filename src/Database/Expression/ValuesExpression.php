@@ -52,7 +52,7 @@ class ValuesExpression implements ExpressionInterface
      *
      * @var \Cake\Database\Query|null
      */
-    protected $_query = null;
+    protected $_query;
 
     /**
      * Whether or not values have been casted to expressions

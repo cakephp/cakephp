@@ -40,7 +40,7 @@ class ConsoleLog extends BaseLog
      *
      * @var \Cake\Console\ConsoleOutput
      */
-    protected $_output = null;
+    protected $_output;
 
     /**
      * Constructs a new Console Logger.

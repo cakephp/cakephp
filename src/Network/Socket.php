@@ -55,7 +55,7 @@ class Socket
      *
      * @var resource|null
      */
-    public $connection = null;
+    public $connection;
 
     /**
      * This boolean contains the current state of the Socket class

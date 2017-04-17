@@ -28,7 +28,7 @@ class UnloadTask extends Shell
      *
      * @var string
      */
-    public $bootstrap = null;
+    public $bootstrap;
 
     /**
      * Execution method always used for tasks.

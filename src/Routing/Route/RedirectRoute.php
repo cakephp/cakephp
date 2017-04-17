@@ -34,7 +34,7 @@ class RedirectRoute extends Route
      * @var \Cake\Http\Response
      * @deprecated 3.2.0 This property is unused.
      */
-    public $response = null;
+    public $response;
 
     /**
      * The location to redirect to. Either a string or a CakePHP array URL.

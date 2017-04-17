@@ -36,7 +36,7 @@ class MemcachedEngine extends CacheEngine
      *
      * @var \Memcached
      */
-    protected $_Memcached = null;
+    protected $_Memcached;
 
     /**
      * The default config used unless overridden by runtime configuration

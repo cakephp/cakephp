@@ -42,7 +42,7 @@ class EagerLoader
      *
      * @var \Cake\ORM\EagerLoadable[]|\Cake\ORM\EagerLoadable|null
      */
-    protected $_normalized = null;
+    protected $_normalized;
 
     /**
      * List of options accepted by associations in contain()
