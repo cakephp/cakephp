@@ -309,6 +309,8 @@ class RouteBuilder
      * @param callable|null $callback An optional callback to be executed in a nested scope. Nested
      *   scopes inherit the existing path and 'id' parameter.
      * @return void
+     * @throws \InvalidArgumentException
+     * @throws \BadMethodCallException
      */
     public function resources($name, $options = [], $callback = null)
     {
@@ -571,6 +573,8 @@ class RouteBuilder
      *   element should match. Also contains additional parameters such as which routed parameters should be
      *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
      * @return void
+     * @throws \InvalidArgumentException
+     * @throws \BadMethodCallException
      */
     public function redirect($route, $url, array $options = [])
     {
@@ -637,6 +641,7 @@ class RouteBuilder
      * @param callable|null $callback The callback to invoke that builds the plugin routes
      *   Only required when $options is defined.
      * @return void
+     * @throws \InvalidArgumentException
      */
     public function plugin($name, $options = [], $callback = null)
     {
@@ -702,6 +707,8 @@ class RouteBuilder
      * @param string|null $routeClass the route class to use, uses the default routeClass
      *   if not specified
      * @return void
+     * @throws \InvalidArgumentException
+     * @throws \BadMethodCallException
      */
     public function fallbacks($routeClass = null)
     {

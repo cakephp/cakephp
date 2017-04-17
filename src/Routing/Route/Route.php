@@ -310,6 +310,7 @@ class Route
      * @param string $url The URL to attempt to parse.
      * @param string $method The HTTP method of the request being parsed.
      * @return array|false An array of request parameters, or false on failure.
+     * @throws \InvalidArgumentException
      * @deprecated 3.4.0 Use/implement parseRequest() instead as it provides more flexibility/control.
      */
     public function parse($url, $method = '')

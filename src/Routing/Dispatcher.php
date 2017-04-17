@@ -52,6 +52,8 @@ class Dispatcher
      * @param \Cake\Http\ServerRequest $request Request object to dispatch.
      * @param \Cake\Http\Response $response Response object to put the results of the dispatch into.
      * @return string|null if `$request['return']` is set then it returns response body, null otherwise
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      * @throws \LogicException When the controller did not get created in the Dispatcher.beforeDispatch event.
      */
     public function dispatch(ServerRequest $request, Response $response)
