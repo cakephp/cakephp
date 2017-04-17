@@ -69,7 +69,7 @@ class UnloadTask extends Shell
         $content = $bootstrap->read();
 
         if (!preg_match("@\n\s*Plugin::loadAll@", $content)) {
-            $newContent = preg_replace($finder, "", $content);
+            $newContent = preg_replace($finder, '', $content);
 
             if ($newContent === $content) {
                 return false;

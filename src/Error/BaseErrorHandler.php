@@ -354,7 +354,7 @@ abstract class BaseErrorHandler
             $exception;
         $config = $this->_options;
         $message = sprintf(
-            "[%s] %s in %s on line %s",
+            '[%s] %s in %s on line %s',
             get_class($exception),
             $exception->getMessage(),
             $exception->getFile(),
