@@ -231,7 +231,7 @@ class RelativeTimeFormatter
             }
 
             if ($months >= 12) {
-                ++$years;
+                $years++;
                 $months -= 12;
             }
 
