@@ -427,7 +427,7 @@ class Debugger
         if (!isset($data[$line])) {
             return $lines;
         }
-        $line = $line - 1;
+        --$line;
         for ($i = $line - $context; $i < $line + $context + 1; $i++) {
             if (!isset($data[$i])) {
                 continue;
