@@ -2343,7 +2343,6 @@ class Response implements ResponseInterface
      */
     protected function _sendFile($file, $range)
     {
-        $compress = $this->outputCompressed();
         ob_implicit_flush(true);
 
         $file->open('rb');
