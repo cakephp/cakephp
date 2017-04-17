@@ -192,6 +192,8 @@ class Session
      *   instantiated session handler object.
      *
      * @param array $config The Configuration to apply to this session object
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function __construct(array $config = [])
     {
@@ -353,6 +355,8 @@ class Session
      *
      * @param string|null $name Variable name to check for
      * @return bool True if variable is there
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function check($name = null)
     {
@@ -372,6 +376,8 @@ class Session
      *
      * @param string|null $name The name of the session variable (or a path as sent to Hash.extract)
      * @return string|null The value of the session variable, null if session not available,
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      *   session not started, or provided name not found in the session.
      */
     public function read($name = null)
@@ -396,6 +402,8 @@ class Session
      *
      * @param string $name The key to read and remove (or a path as sent to Hash.extract).
      * @return mixed The value of the session variable, null if session not available,
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      *   session not started, or provided name not found in the session.
      */
     public function consume($name)
@@ -417,6 +425,7 @@ class Session
      * @param string|array $name Name of variable
      * @param mixed $value Value to write
      * @return void
+     * @throws \RuntimeException
      */
     public function write($name, $value = null)
     {
@@ -465,6 +474,8 @@ class Session
      *
      * @param string $name Session variable to remove
      * @return void
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function delete($name)
     {
@@ -498,6 +509,7 @@ class Session
      * Helper method to destroy invalid sessions.
      *
      * @return void
+     * @throws \RuntimeException
      */
     public function destroy()
     {
@@ -545,6 +557,7 @@ class Session
      * Restarts this session.
      *
      * @return void
+     * @throws \RuntimeException
      */
     public function renew()
     {
@@ -574,6 +587,8 @@ class Session
      * accessed was after the configured timeout.
      *
      * @return bool
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     protected function _timedOut()
     {
