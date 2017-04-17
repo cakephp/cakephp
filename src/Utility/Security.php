@@ -60,7 +60,7 @@ class Security
      */
     public static function hash($string, $type = null, $salt = false)
     {
-        if (empty($type)) {
+        if (null === $type) {
             $type = static::$hashType;
         }
         $type = strtolower($type);

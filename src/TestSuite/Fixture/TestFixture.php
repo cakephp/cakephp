@@ -285,7 +285,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
      */
     public function create(ConnectionInterface $db)
     {
-        if (empty($this->_schema)) {
+        if (null === $this->_schema) {
             return false;
         }
 
@@ -320,7 +320,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
      */
     public function drop(ConnectionInterface $db)
     {
-        if (empty($this->_schema)) {
+        if (null === $this->_schema) {
             return false;
         }
 

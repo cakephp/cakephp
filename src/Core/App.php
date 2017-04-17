@@ -184,13 +184,13 @@ class App
         if ($type === 'Plugin') {
             return (array)Configure::read('App.paths.plugins');
         }
-        if (empty($plugin) && $type === 'Locale') {
+        if (null === $plugin && $type === 'Locale') {
             return (array)Configure::read('App.paths.locales');
         }
-        if (empty($plugin) && $type === 'Template') {
+        if (null === $plugin && $type === 'Template') {
             return (array)Configure::read('App.paths.templates');
         }
-        if (!empty($plugin)) {
+        if (null !== $plugin) {
             return [Plugin::classPath($plugin) . $type . DIRECTORY_SEPARATOR];
         }
 

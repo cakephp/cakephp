@@ -182,7 +182,7 @@ class PaginatorComponent extends Component
         list($finder, $options) = $this->_extractFinder($options);
 
         /* @var \Cake\Datasource\RepositoryInterface $object */
-        if (empty($query)) {
+        if (null === $query) {
             $query = $object->find($finder, $options);
         } else {
             $query->applyOptions($options);

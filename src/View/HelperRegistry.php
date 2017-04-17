@@ -75,7 +75,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
             }
         }
 
-        if (!empty($exception)) {
+        if (null !== $exception) {
             throw $exception;
         }
 

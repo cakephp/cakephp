@@ -1291,7 +1291,7 @@ class View implements EventDispatcherInterface
         }
         $templatePaths = App::path('Template');
         $pluginPaths = $themePaths = [];
-        if (!empty($plugin)) {
+        if (null !== $plugin) {
             for ($i = 0, $count = count($templatePaths); $i < $count; $i++) {
                 $pluginPaths[] = $templatePaths[$i] . 'Plugin' . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR;
             }

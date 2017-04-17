@@ -1950,7 +1950,7 @@ class FormHelper extends Helper
      */
     public function submit($caption = null, array $options = [])
     {
-        if (!is_string($caption) && empty($caption)) {
+        if (!is_string($caption) && null === $caption) {
             $caption = __d('cake', 'Submit');
         }
         $options += [
@@ -2087,7 +2087,7 @@ class FormHelper extends Helper
         // Secure the field if there are options, or it's a multi select.
         // Single selects with no options don't submit, but multiselects do.
         if ($attributes['secure'] &&
-            empty($options) &&
+            null === $options &&
             empty($attributes['empty']) &&
             empty($attributes['multiple'])
         ) {

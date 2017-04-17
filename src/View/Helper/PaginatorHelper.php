@@ -118,7 +118,7 @@ class PaginatorHelper extends Helper
      */
     public function params($model = null)
     {
-        if (empty($model)) {
+        if (null === $model) {
             $model = $this->defaultModel();
         }
         if (!$this->request->getParam('paging') || !$this->request->getParam('paging.' . $model)) {
@@ -443,7 +443,7 @@ class PaginatorHelper extends Helper
         $url = $options['url'];
         unset($options['url']);
 
-        if (empty($title)) {
+        if (null === $title) {
             $title = $key;
 
             if (strpos($title, '.') !== false) {

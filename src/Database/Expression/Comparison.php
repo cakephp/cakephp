@@ -272,7 +272,7 @@ class Comparison implements ExpressionInterface, FieldInterface
             unset($value[$k]);
         }
 
-        if (!empty($value)) {
+        if (null !== $value) {
             $parts += $generator->generateManyNamed($value, $type);
         }
 

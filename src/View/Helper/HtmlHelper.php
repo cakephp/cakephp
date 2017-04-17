@@ -316,7 +316,7 @@ class HtmlHelper extends Helper
      */
     public function charset($charset = null)
     {
-        if (empty($charset)) {
+        if (null === $charset) {
             $charset = strtolower(Configure::read('App.encoding'));
         }
 
@@ -1083,7 +1083,7 @@ class HtmlHelper extends Helper
      */
     public function div($class = null, $text = null, array $options = [])
     {
-        if (!empty($class)) {
+        if (null !== $class) {
             $options['class'] = $class;
         }
 

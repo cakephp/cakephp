@@ -518,7 +518,7 @@ class RequestHandlerComponent extends Component
         $accepts = $response->mapType(array_shift($acceptRaw));
 
         if (!$type) {
-            if (empty($this->ext) && !empty($accepts)) {
+            if (null === $this->ext && !empty($accepts)) {
                 return $accepts[0];
             }
 

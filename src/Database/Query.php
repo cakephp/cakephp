@@ -1972,7 +1972,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     protected function _conjugate($part, $append, $conjunction, $types)
     {
         $expression = $this->_parts[$part] ?: $this->newExpr();
-        if (empty($append)) {
+        if (null === $append) {
             $this->_parts[$part] = $expression;
 
             return;

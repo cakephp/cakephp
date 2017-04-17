@@ -533,13 +533,13 @@ class AuthComponent extends Component
      */
     public function isAuthorized($user = null, ServerRequest $request = null)
     {
-        if (empty($user) && !$this->user()) {
+        if (null === $user && !$this->user()) {
             return false;
         }
-        if (empty($user)) {
+        if (null === $user) {
             $user = $this->user();
         }
-        if (empty($request)) {
+        if (null === $request) {
             $request = $this->request;
         }
         if (empty($this->_authorizeObjects)) {
