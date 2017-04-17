@@ -418,6 +418,7 @@ class BelongsToMany extends Association
      * @param \Cake\ORM\Query $query the query to be altered to include the target table data
      * @param array $options Any extra options or overrides to be taken in account
      * @return void
+     * @throws \RuntimeException
      */
     public function attachTo(Query $query, array $options = [])
     {
@@ -457,6 +458,7 @@ class BelongsToMany extends Association
 
     /**
      * {@inheritDoc}
+     * @throws \RuntimeException
      */
     protected function _appendNotMatching($query, $options)
     {
@@ -527,6 +529,7 @@ class BelongsToMany extends Association
      * {@inheritDoc}
      *
      * @return callable
+     * @throws \InvalidArgumentException
      */
     public function eagerLoader(array $options)
     {
@@ -708,6 +711,7 @@ class BelongsToMany extends Association
      * in the parent entity cannot be traversed
      * @return \Cake\Datasource\EntityInterface|bool The parent entity after all links have been
      * created if no errors happened, false otherwise
+     * @throws \Cake\ORM\Exception\RolledbackTransactionException
      */
     protected function _saveTarget(EntityInterface $parentEntity, $entities, $options)
     {
@@ -775,6 +779,7 @@ class BelongsToMany extends Association
      * junction table
      * @param array $options list of options accepted by `Table::save()`
      * @return bool success
+     * @throws \Cake\ORM\Exception\RolledbackTransactionException
      */
     protected function _saveLinks(EntityInterface $sourceEntity, $targetEntities, $options)
     {
@@ -843,9 +848,10 @@ class BelongsToMany extends Association
      * @param array $targetEntities list of entities belonging to the `target` side
      *   of this association
      * @param array $options list of options to be passed to the internal `save` call
-     * @throws \InvalidArgumentException when any of the values in $targetEntities is
      *   detected to not be already persisted
+     * @throws \InvalidArgumentException when any of the values in $targetEntities is
      * @return bool true on success, false otherwise
+     * @throws \Exception
      */
     public function link(EntityInterface $sourceEntity, array $targetEntities, array $options = [])
     {
@@ -897,6 +903,7 @@ class BelongsToMany extends Association
      * @throws \InvalidArgumentException if non persisted entities are passed or if
      *   any of them is lacking a primary key value
      * @return bool Success
+     * @throws \Exception
      */
     public function unlink(EntityInterface $sourceEntity, array $targetEntities, $options = [])
     {
@@ -1053,6 +1060,7 @@ class BelongsToMany extends Association
      * @param array $options The options to for the find
      * @see \Cake\ORM\Table::find()
      * @return \Cake\ORM\Query
+     * @throws \RuntimeException
      */
     public function find($type = null, array $options = [])
     {
@@ -1151,6 +1159,7 @@ class BelongsToMany extends Association
      * @throws \InvalidArgumentException if non persisted entities are passed or if
      *   any of them is lacking a primary key value
      * @return bool success
+     * @throws \Exception
      */
     public function replaceLinks(EntityInterface $sourceEntity, array $targetEntities, array $options = [])
     {
@@ -1406,6 +1415,7 @@ class BelongsToMany extends Association
      *
      * @param array $opts original list of options passed in constructor
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _options(array $opts)
     {

@@ -148,6 +148,7 @@ class Behavior implements EventListenerInterface
      *
      * @param \Cake\ORM\Table $table The table this behavior is attached to.
      * @param array $config The config for this behavior.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(Table $table, array $config = [])
     {
@@ -196,6 +197,7 @@ class Behavior implements EventListenerInterface
      * @param array $defaults The default method mappings.
      * @param array $config The customized method mappings.
      * @return array A de-duped list of config data.
+     * @throws \Cake\Core\Exception\Exception
      */
     protected function _resolveMethodAliases($key, $defaults, $config)
     {

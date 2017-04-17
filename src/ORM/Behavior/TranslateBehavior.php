@@ -557,6 +557,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @param \Cake\Datasource\ResultSetInterface $results Results to modify.
      * @return \Cake\Collection\CollectionInterface
+     * @throws \InvalidArgumentException
      */
     public function groupTranslations($results)
     {

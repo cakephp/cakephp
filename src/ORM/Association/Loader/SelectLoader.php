@@ -117,6 +117,7 @@ class SelectLoader
      *
      * @param array $options Same options as `Association::eagerLoader()`
      * @return callable
+     * @throws \InvalidArgumentException
      */
     public function buildEagerLoader(array $options)
     {
@@ -324,6 +325,7 @@ class SelectLoader
      *
      * @param array $options The options for getting the link field.
      * @return string|array
+     * @throws \RuntimeException
      */
     protected function _linkField($options)
     {

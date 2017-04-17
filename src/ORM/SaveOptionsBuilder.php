@@ -49,6 +49,7 @@ class SaveOptionsBuilder extends ArrayObject
      *
      * @param \Cake\ORM\Table $table A table instance.
      * @param array $options Options to parse when instantiating.
+     * @throws \InvalidArgumentException
      */
     public function __construct(Table $table, array $options = [])
     {
@@ -97,6 +98,7 @@ class SaveOptionsBuilder extends ArrayObject
      * @param \Cake\ORM\Table $table Table object.
      * @param array $associations An associations array.
      * @return void
+     * @throws \RuntimeException
      */
     protected function _associated(Table $table, array $associations)
     {
@@ -146,6 +148,7 @@ class SaveOptionsBuilder extends ArrayObject
      *
      * @param string $validate Name of the validation rule set to use.
      * @return \Cake\ORM\SaveOptionsBuilder
+     * @throws \RuntimeException
      */
     public function validate($validate)
     {

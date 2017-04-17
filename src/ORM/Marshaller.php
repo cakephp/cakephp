@@ -159,6 +159,8 @@ class Marshaller
      * @param array $data The data to hydrate.
      * @param array $options List of options
      * @return \Cake\Datasource\EntityInterface
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      * @see \Cake\ORM\Table::newEntity()
      * @see \Cake\ORM\Entity::$_accessible
      */
@@ -280,6 +282,8 @@ class Marshaller
      * @param array $value The data to hydrate
      * @param array $options List of options.
      * @return mixed
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     protected function _marshalAssociation($assoc, $value, $options)
     {
@@ -329,6 +333,8 @@ class Marshaller
      * @param array $data The data to hydrate.
      * @param array $options List of options
      * @return array An array of hydrated records.
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @see \Cake\ORM\Table::newEntities()
      * @see \Cake\ORM\Entity::$_accessible
      */
@@ -355,6 +361,8 @@ class Marshaller
      * @param array $data The data to convert into entities.
      * @param array $options List of options.
      * @return array An array of built entities.
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     protected function _belongsToMany(Association $assoc, array $data, $options = [])
     {
@@ -378,7 +386,7 @@ class Marshaller
                 if (count($keys) === $primaryCount) {
                     $rowConditions = [];
                     foreach ($keys as $key => $value) {
-                        $rowConditions[][$target->aliasfield($key)] = $value;
+                        $rowConditions[][$target->aliasField($key)] = $value;
                     }
 
                     if ($forceNew && !$target->exists($rowConditions)) {
@@ -446,6 +454,7 @@ class Marshaller
      * @param \Cake\ORM\Association $assoc The association class for the belongsToMany association.
      * @param array $ids The list of ids to load.
      * @return array An array of entities.
+     * @throws \RuntimeException
      */
     protected function _loadAssociatedByIds($assoc, $ids)
     {
@@ -476,6 +485,7 @@ class Marshaller
      * @param \Cake\ORM\Association $assoc The association class for the belongsToMany association.
      * @param array $ids The list of ids to load.
      * @return array An array of entities.
+     * @throws \RuntimeException
      * @deprecated Use _loadAssociatedByIds()
      */
     protected function _loadBelongsToMany($assoc, $ids)
@@ -519,6 +529,8 @@ class Marshaller
      * @param array $data key value list of fields to be merged into the entity
      * @param array $options List of options.
      * @return \Cake\Datasource\EntityInterface
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      * @see \Cake\ORM\Entity::$_accessible
      */
     public function merge(EntityInterface $entity, array $data, array $options = [])
@@ -624,6 +636,8 @@ class Marshaller
      * @param array $data list of arrays to be merged into the entities
      * @param array $options List of options.
      * @return array
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @see \Cake\ORM\Entity::$_accessible
      */
     public function mergeMany($entities, array $data, array $options = [])
@@ -703,6 +717,8 @@ class Marshaller
      * @param array $value The data to hydrate
      * @param array $options List of options.
      * @return mixed
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     protected function _mergeAssociation($original, $assoc, $value, $options)
     {
@@ -735,6 +751,8 @@ class Marshaller
      * @param array $value The data to hydrate
      * @param array $options List of options.
      * @return array
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     protected function _mergeBelongsToMany($original, $assoc, $value, $options)
     {
@@ -765,6 +783,8 @@ class Marshaller
      * @param array $value The data to hydrate
      * @param array $options List of options.
      * @return array An array of entities
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     protected function _mergeJoinData($original, $assoc, $value, $options)
     {
