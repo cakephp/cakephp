@@ -430,7 +430,7 @@ trait DateFormatTrait
         return [
             'time' => $this->toIso8601String(),
             'timezone' => $this->getTimezone()->getName(),
-            'fixedNowTime' => $this->hasTestNow() ? $this->getTestNow()->toIso8601String() : false
+            'fixedNowTime' => static::hasTestNow() ? static::getTestNow()->toIso8601String() : false
         ];
     }
 }

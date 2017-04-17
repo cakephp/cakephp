@@ -160,7 +160,7 @@ class FrozenTime extends Chronos implements JsonSerializable
      */
     public function timeAgoInWords(array $options = [])
     {
-        return $this->diffFormatter()->timeAgoInWords($this, $options);
+        return static::diffFormatter()->timeAgoInWords($this, $options);
     }
 
     /**
