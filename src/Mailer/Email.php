@@ -1558,7 +1558,8 @@ class Email implements JsonSerializable, Serializable
 
         if (!$className) {
             throw new InvalidArgumentException(sprintf('Transport class "%s" not found.', $config['className']));
-        } elseif (!method_exists($className, 'send')) {
+        }
+        if (!method_exists($className, 'send')) {
             throw new InvalidArgumentException(sprintf('The "%s" does not have a send() method.', $className));
         }
 
