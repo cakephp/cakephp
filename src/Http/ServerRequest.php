@@ -561,7 +561,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         $ref = $this->env('HTTP_REFERER');
 
         $base = Configure::read('App.fullBaseUrl') . $this->webroot;
-        if (!empty($ref) && !empty($base)) {
+        if (null !== $ref && !empty($base)) {
             if ($local && strpos($ref, $base) === 0) {
                 $ref = substr($ref, strlen($base));
                 if (!strlen($ref)) {

@@ -61,7 +61,7 @@ class CaseExpression implements ExpressionInterface
      */
     public function __construct($conditions = [], $values = [], $types = [])
     {
-        if (!empty($conditions)) {
+        if (null !== $conditions) {
             $this->add($conditions, $values, $types);
         }
 

@@ -263,7 +263,7 @@ class CookieComponent extends Component
      */
     public function check($key = null)
     {
-        if (empty($key)) {
+        if (null === $key) {
             return false;
         }
 

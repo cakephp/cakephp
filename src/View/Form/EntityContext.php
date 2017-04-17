@@ -240,7 +240,7 @@ class EntityContext implements ContextInterface
         $parts = explode('.', $field);
         $entity = $this->entity($parts);
 
-        if (end($parts) === '_ids' && !empty($entity)) {
+        if (end($parts) === '_ids' && null !== $entity) {
             return $this->_extractMultiple($entity, $parts);
         }
 

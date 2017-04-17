@@ -255,7 +255,7 @@ class Number
             return self::$_defaultCurrency = null;
         }
 
-        if (empty(self::$_defaultCurrency)) {
+        if (null === self::$_defaultCurrency) {
             $locale = ini_get('intl.default_locale') ?: static::DEFAULT_LOCALE;
             $formatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
             self::$_defaultCurrency = $formatter->getTextAttribute(NumberFormatter::CURRENCY_CODE);

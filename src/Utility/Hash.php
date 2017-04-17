@@ -53,7 +53,7 @@ class Hash
             );
         }
 
-        if (empty($data) || $path === null) {
+        if (null === $data || $path === null) {
             return $default;
         }
 
@@ -465,10 +465,10 @@ class Hash
         }
 
         $vals = null;
-        if (!empty($valuePath) && is_array($valuePath)) {
+        if (null !== $valuePath && is_array($valuePath)) {
             $format = array_shift($valuePath);
             $vals = static::format($data, $valuePath, $format);
-        } elseif (!empty($valuePath)) {
+        } elseif (null !== $valuePath) {
             $vals = static::extract($data, $valuePath);
         }
         if (empty($vals)) {

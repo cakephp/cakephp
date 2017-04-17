@@ -258,7 +258,7 @@ class Shell
      */
     public function loadTasks()
     {
-        if ($this->tasks === true || empty($this->tasks) || empty($this->Tasks)) {
+        if ($this->tasks === true || empty($this->tasks) || null === $this->Tasks) {
             return true;
         }
         $this->_taskMap = $this->Tasks->normalizeArray((array)$this->tasks);
@@ -767,7 +767,7 @@ class Shell
     {
         $this->_io->err(sprintf('<error>Error:</error> %s', $title));
 
-        if (!empty($message)) {
+        if (null !== $message) {
             $this->_io->err($message);
         }
 

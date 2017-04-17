@@ -69,7 +69,7 @@ class Form
      */
     public function schema(Schema $schema = null)
     {
-        if ($schema === null && empty($this->_schema)) {
+        if ($schema === null && null === $this->_schema) {
             $schema = $this->_buildSchema(new Schema());
         }
         if ($schema) {
@@ -106,7 +106,7 @@ class Form
      */
     public function validator(Validator $validator = null)
     {
-        if ($validator === null && empty($this->_validator)) {
+        if ($validator === null && null === $this->_validator) {
             $validator = $this->_buildValidator(new Validator());
         }
         if ($validator) {

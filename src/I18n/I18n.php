@@ -213,7 +213,7 @@ class I18n
     {
         static::defaultLocale();
 
-        if (!empty($locale)) {
+        if (null !== $locale) {
             Locale::setDefault($locale);
             if (isset(static::$_collection)) {
                 static::translators()->setLocale($locale);

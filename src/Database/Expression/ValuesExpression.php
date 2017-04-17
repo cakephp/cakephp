@@ -258,7 +258,7 @@ class ValuesExpression implements ExpressionInterface
      */
     public function sql(ValueBinder $generator)
     {
-        if (empty($this->_values) && empty($this->_query)) {
+        if (empty($this->_values) && null === $this->_query) {
             return '';
         }
 
