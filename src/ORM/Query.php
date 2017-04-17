@@ -178,7 +178,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param array|\Cake\Database\ExpressionInterface|string|\Cake\ORM\Table|\Cake\ORM\Association $fields fields
      * to be added to the list.
      * @param bool $overwrite whether to reset fields with passed list or not
-     * @return $this
+     * @return DatabaseQuery|Query
      * @throws \RuntimeException
      */
     public function select($fields = [], $overwrite = false)
@@ -254,7 +254,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @deprecated 3.4.0 Use setEagerLoader()/getEagerLoader() instead.
      * @param \Cake\ORM\EagerLoader|null $instance The eager loader to use. Pass null
      *   to get the current eagerloader.
-     * @return \Cake\ORM\EagerLoader|$this
+     * @return EagerLoader|Query
      */
     public function eagerLoader(EagerLoader $instance = null)
     {
@@ -374,7 +374,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param array|string|null $associations List of table aliases to be queried.
      * @param bool $override Whether override previous list with the one passed
      * defaults to merging previous list with the new one.
-     * @return array|$this
+     * @return array|Query
      * @throws \RuntimeException
      */
     public function contain($associations = null, $override = false)
@@ -926,7 +926,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @deprecated 3.4.0 Use enableHydration()/isHydrationEnabled() instead.
      * @param bool|null $enable Use a boolean to set the hydration mode.
      *   Null will fetch the current hydration mode.
-     * @return bool|$this A boolean when reading, and $this when setting the mode.
+     * @return bool|Query A boolean when reading, and $this when setting the mode.
      */
     public function hydrate($enable = null)
     {
@@ -1127,7 +1127,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Can be combined with set() and where() methods to create update queries.
      *
      * @param string|null $table Unused parameter.
-     * @return $this
+     * @return DatabaseQuery|Query
      */
     public function update($table = null)
     {
@@ -1143,7 +1143,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Can be combined with the where() method to create delete queries.
      *
      * @param string|null $table Unused parameter.
-     * @return $this
+     * @return DatabaseQuery|Query
      */
     public function delete($table = null)
     {
@@ -1260,7 +1260,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @deprecated 3.4.0 Use enableAutoFields()/isAutoFieldsEnabled() instead.
      * @param bool|null $value The value to set or null to read the current value.
-     * @return bool|$this Either the current value or the query object.
+     * @return bool|Query Either the current value or the query object.
      */
     public function autoFields($value = null)
     {

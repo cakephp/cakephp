@@ -1480,7 +1480,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|null $name Dot separated name of the value to read/write
      * @param mixed ...$args The data to set (deprecated)
-     * @return mixed|$this Either the value being read, or this so you can chain consecutive writes.
+     * @return array|ServerRequest Either the value being read, or this so you can chain consecutive writes.
      * @throws \InvalidArgumentException
      * @deprecated 3.4.0 Use withData() and getData() or getParsedBody() instead.
      */
@@ -1728,7 +1728,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string|null $value Value to set. Default null.
      * @param string|null $default Default value when trying to retrieve an environment
      *   variable's value that does not exist. The value parameter must be null.
-     * @return $this|string|null This instance if used as setter,
+     * @return ServerRequest|string This instance if used as setter,
      *   if used as getter either the environment value, or null if the value doesn't exist.
      */
     public function env($key, $value = null, $default = null)

@@ -303,7 +303,7 @@ class ConsoleOptionParser
      *
      * @deprecated 3.4.0 Use setCommand()/getCommand() instead.
      * @param string|null $text The text to set, or null if you want to read
-     * @return string|$this If reading, the value of the command. If setting $this will be returned.
+     * @return ConsoleOptionParser|string If reading, the value of the command. If setting $this will be returned.
      */
     public function command($text = null)
     {
@@ -347,7 +347,7 @@ class ConsoleOptionParser
      * @deprecated 3.4.0 Use setDescription()/getDescription() instead.
      * @param string|array|null $text The text to set, or null if you want to read. If an array the
      *   text will be imploded with "\n".
-     * @return string|$this If reading, the value of the description. If setting $this will be returned.
+     * @return ConsoleOptionParser|string If reading, the value of the description. If setting $this will be returned.
      */
     public function description($text = null)
     {
@@ -393,7 +393,7 @@ class ConsoleOptionParser
      * @deprecated 3.4.0 Use setEpilog()/getEpilog() instead.
      * @param string|array|null $text Text when setting or null when reading. If an array the text will
      *   be imploded with "\n".
-     * @return string|$this If reading, the value of the epilog. If setting $this will be returned.
+     * @return ConsoleOptionParser|string If reading, the value of the epilog. If setting $this will be returned.
      */
     public function epilog($text = null)
     {

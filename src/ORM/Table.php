@@ -963,7 +963,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $associated the alias for the target table. This is used to
      * uniquely identify the association
      * @param array $options list of options to configure the association definition
-     * @return \Cake\ORM\Association\BelongsTo
+     * @return Association|BelongsTo
      * @throws \InvalidArgumentException
      */
     public function belongsTo($associated, array $options = [])
@@ -1008,7 +1008,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $associated the alias for the target table. This is used to
      * uniquely identify the association
      * @param array $options list of options to configure the association definition
-     * @return \Cake\ORM\Association\HasOne
+     * @return Association|HasOne
      * @throws \InvalidArgumentException
      */
     public function hasOne($associated, array $options = [])
@@ -1059,7 +1059,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $associated the alias for the target table. This is used to
      * uniquely identify the association
      * @param array $options list of options to configure the association definition
-     * @return \Cake\ORM\Association\HasMany
+     * @return Association|HasMany
      * @throws \InvalidArgumentException
      */
     public function hasMany($associated, array $options = [])
@@ -1112,7 +1112,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $associated the alias for the target table. This is used to
      * uniquely identify the association
      * @param array $options list of options to configure the association definition
-     * @return \Cake\ORM\Association\BelongsToMany
+     * @return Association|BelongsToMany
      * @throws \InvalidArgumentException
      */
     public function belongsToMany($associated, array $options = [])

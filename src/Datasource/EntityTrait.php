@@ -409,7 +409,7 @@ trait EntityTrait
      *
      * @deprecated 3.4.0 Use EntityTrait::setHidden() and EntityTrait::getHidden()
      * @param null|array $properties Either an array of properties to hide or null to get properties
-     * @return array|$this
+     * @return array|EntityTrait
      */
     public function hiddenProperties($properties = null)
     {
@@ -460,7 +460,7 @@ trait EntityTrait
      *
      * @deprecated 3.4.0 Use EntityTrait::getVirtual() and EntityTrait::setVirtual()
      * @param null|array $properties Either an array of properties to treat as virtual or null to get properties
-     * @return array|$this
+     * @return array|EntityTrait
      */
     public function virtualProperties($properties = null)
     {
@@ -758,7 +758,7 @@ trait EntityTrait
      * @param string $property the field to set or check status for
      * @param bool $isDirty true means the property was changed, false means
      * it was not changed
-     * @return $this
+     * @return bool|EntityTrait
      */
     public function setDirty($property, $isDirty)
     {
@@ -1061,7 +1061,7 @@ trait EntityTrait
      * @param string|array|null $field The field to get invalid value for, or the value to set.
      * @param mixed|null $value The invalid value to be set for $field.
      * @param bool $overwrite Whether or not to overwrite pre-existing values for $field.
-     * @return $this|mixed
+     * @return array|EntityTrait
      */
     public function invalid($field = null, $value = null, $overwrite = false)
     {
@@ -1122,7 +1122,7 @@ trait EntityTrait
      * @param string|array $property single or list of properties to change its accessibility
      * @param bool|null $set true marks the property as accessible, false will
      * mark it as protected.
-     * @return $this|bool
+     * @return bool|EntityTrait
      */
     public function accessible($property, $set = null)
     {
@@ -1227,7 +1227,7 @@ trait EntityTrait
      *
      * @deprecated 3.4.0 Use EntityTrait::getSource() and EntityTrait::setSource()
      * @param string|null $alias the alias of the repository
-     * @return string|$this
+     * @return EntityTrait|string
      */
     public function source($alias = null)
     {

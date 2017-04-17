@@ -100,7 +100,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      *
      * @deprecated 3.4.0 Use setName()/getName() instead.
      * @param string|null $name The name of the function
-     * @return string|$this
+     * @return FunctionExpression|string
      */
     public function name($name = null)
     {
