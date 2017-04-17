@@ -319,11 +319,11 @@ class ConsoleOutput
      *
      * @param int $type The output type to use. Should be one of the class constants.
      * @return void
-     * @throws InvalidArgumentException in case of a not supported output type.
+     * @throws \InvalidArgumentException in case of a not supported output type.
      */
     public function setOutputAs($type)
     {
-        if (in_array($type, [self::RAW, self::PLAIN, self::COLOR], true) === false) {
+        if (!in_array($type, [self::RAW, self::PLAIN, self::COLOR], true)) {
             throw new InvalidArgumentException(sprintf('Invalid output type "%s".', $type));
         }
 
