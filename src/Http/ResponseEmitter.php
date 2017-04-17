@@ -73,6 +73,7 @@ class ResponseEmitter implements EmitterInterface
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
      * @param int $maxBufferLength The chunk size to emit
      * @return void
+     * @throws \RuntimeException
      */
     protected function emitBody(ResponseInterface $response, $maxBufferLength)
     {
@@ -100,6 +101,7 @@ class ResponseEmitter implements EmitterInterface
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
      * @param int $maxBufferLength The chunk size to emit
      * @return void
+     * @throws \RuntimeException
      */
     protected function emitBodyRange(array $range, ResponseInterface $response, $maxBufferLength)
     {

@@ -85,6 +85,7 @@ abstract class ServerRequestFactory extends BaseFactory
      * @param array $server The server parameters.
      * @param array $headers The normalized headers
      * @return \Psr\Http\Message\UriInterface a constructed Uri
+     * @throws \InvalidArgumentException
      */
     public static function marshalUriFromServer(array $server, array $headers)
     {
@@ -114,6 +115,7 @@ abstract class ServerRequestFactory extends BaseFactory
      * @param string $base The base path to remove.
      * @param \Psr\Http\Message\UriInterface $uri The uri to update.
      * @return \Psr\Http\Message\UriInterface The modified Uri instance.
+     * @throws \InvalidArgumentException
      */
     protected static function updatePath($base, $uri)
     {
@@ -144,6 +146,7 @@ abstract class ServerRequestFactory extends BaseFactory
      * @param \Psr\Http\Message\UriInterface $uri The Uri instance.
      * @param array $server The SERVER data to use.
      * @return array An array containing the [baseDir, webroot]
+     * @throws \InvalidArgumentException
      */
     protected static function getBase($uri, $server)
     {

@@ -72,6 +72,7 @@ abstract class BaseApplication
      * @param \Psr\Http\Message\ResponseInterface $response The response
      * @param callable $next The next middleware
      * @return \Psr\Http\Message\ResponseInterface
+     * @throws \LogicException
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {

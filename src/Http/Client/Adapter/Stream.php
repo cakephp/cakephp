@@ -67,6 +67,7 @@ class Stream
      * @param \Cake\Http\Client\Request $request The request object to send.
      * @param array $options Array of options for the stream.
      * @return array Array of populated Response objects
+     * @throws \Cake\Core\Exception\Exception
      */
     public function send(Request $request, array $options)
     {
@@ -169,6 +170,7 @@ class Stream
      * @param \Cake\Http\Client\Request $request The request being sent.
      * @param array $options Array of options to use.
      * @return void
+     * @throws \RuntimeException
      */
     protected function _buildContent(Request $request, $options)
     {

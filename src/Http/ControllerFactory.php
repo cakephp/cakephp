@@ -30,6 +30,7 @@ class ControllerFactory
      * @param \Cake\Http\ServerRequest $request The request to build a controller for.
      * @param \Cake\Http\Response $response The response to use.
      * @return \Cake\Controller\Controller
+     * @throws \Cake\Routing\Exception\MissingControllerException
      */
     public function create(ServerRequest $request, Response $response)
     {
