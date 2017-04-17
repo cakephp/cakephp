@@ -40,6 +40,7 @@ abstract class BaseLog extends AbstractLogger
      * __construct method
      *
      * @param array $config Configuration array
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(array $config = [])
     {
