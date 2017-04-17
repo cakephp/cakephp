@@ -375,6 +375,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param bool $override Whether override previous list with the one passed
      * defaults to merging previous list with the new one.
      * @return array|$this
+     * @throws \RuntimeException
      */
     public function contain($associations = null, $override = false)
     {
@@ -796,6 +797,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Returns the COUNT(*) for the query. If the query has not been
      * modified, and the count has already been performed the cached
      * value is returned
+     * @throws \RuntimeException
      */
     public function count()
     {
@@ -1032,6 +1034,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @see \Cake\Database\Query::execute()
      * @return void
+     * @throws \RuntimeException
      */
     protected function _transformQuery()
     {
@@ -1163,6 +1166,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param array $columns The columns to insert into.
      * @param array $types A map between columns & their datatypes.
      * @return DatabaseQuery|Query
+     * @throws \RuntimeException
      */
     public function insert(array $columns, array $types = [])
     {

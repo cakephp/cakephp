@@ -173,6 +173,7 @@ class BelongsToMany extends Association
      * Gets the name of the field representing the foreign key to the target table.
      *
      * @return string
+     * @throws \RuntimeException
      */
     public function getTargetForeignKey()
     {
@@ -261,6 +262,7 @@ class BelongsToMany extends Association
      *
      * @param string|\Cake\ORM\Table|null $table Name or instance for the join table
      * @return \Cake\ORM\Table
+     * @throws \RuntimeException
      */
     public function junction($table = null)
     {
@@ -315,6 +317,7 @@ class BelongsToMany extends Association
      * @param \Cake\ORM\Table $source The source table.
      * @param \Cake\ORM\Table $target The target table.
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _generateTargetAssociations($junction, $source, $target)
     {
@@ -354,6 +357,7 @@ class BelongsToMany extends Association
      * @param \Cake\ORM\Table $junction The junction table.
      * @param \Cake\ORM\Table $source The source table.
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _generateSourceAssociations($junction, $source)
     {
@@ -382,6 +386,7 @@ class BelongsToMany extends Association
      * @param \Cake\ORM\Table $source The source table.
      * @param \Cake\ORM\Table $target The target table.
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _generateJunctionAssociations($junction, $source, $target)
     {
@@ -529,6 +534,7 @@ class BelongsToMany extends Association
      * {@inheritDoc}
      *
      * @return callable
+     * @throws \RuntimeException
      * @throws \InvalidArgumentException
      */
     public function eagerLoader(array $options)
@@ -561,6 +567,8 @@ class BelongsToMany extends Association
      * @param \Cake\Datasource\EntityInterface $entity The entity that started the cascading delete.
      * @param array $options The options for the original delete.
      * @return bool Success.
+     * @throws \RuntimeException
+     * @throws \Exception
      */
     public function cascadeDelete(EntityInterface $entity, array $options = [])
     {
@@ -670,6 +678,8 @@ class BelongsToMany extends Association
      * @throws \InvalidArgumentException if the property representing the association
      * in the parent entity cannot be traversed
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
+     * @throws \Cake\ORM\Exception\RolledbackTransactionException
+     * @throws \Exception
      * the saved entity
      * @see \Cake\ORM\Table::save()
      * @see \Cake\ORM\Association\BelongsToMany::replaceLinks()
@@ -710,6 +720,7 @@ class BelongsToMany extends Association
      * @throws \InvalidArgumentException if the property representing the association
      * in the parent entity cannot be traversed
      * @return \Cake\Datasource\EntityInterface|bool The parent entity after all links have been
+     * @throws \RuntimeException
      * created if no errors happened, false otherwise
      * @throws \Cake\ORM\Exception\RolledbackTransactionException
      */
@@ -779,6 +790,8 @@ class BelongsToMany extends Association
      * junction table
      * @param array $options list of options accepted by `Table::save()`
      * @return bool success
+     * @throws \Cake\ORM\Exception\MissingEntityException
+     * @throws \RuntimeException
      * @throws \Cake\ORM\Exception\RolledbackTransactionException
      */
     protected function _saveLinks(EntityInterface $sourceEntity, $targetEntities, $options)
@@ -851,6 +864,7 @@ class BelongsToMany extends Association
      *   detected to not be already persisted
      * @throws \InvalidArgumentException when any of the values in $targetEntities is
      * @return bool true on success, false otherwise
+     * @throws \Cake\ORM\Exception\RolledbackTransactionException
      * @throws \Exception
      */
     public function link(EntityInterface $sourceEntity, array $targetEntities, array $options = [])
@@ -1060,6 +1074,7 @@ class BelongsToMany extends Association
      * @param array $options The options to for the find
      * @see \Cake\ORM\Table::find()
      * @return \Cake\ORM\Query
+     * @throws \BadMethodCallException
      * @throws \RuntimeException
      */
     public function find($type = null, array $options = [])
@@ -1090,6 +1105,7 @@ class BelongsToMany extends Association
      * @param \Cake\ORM\Query $query The query to append.
      * @param string|array $conditions The query conditions to use.
      * @return \Cake\ORM\Query The modified query.
+     * @throws \RuntimeException
      */
     protected function _appendJunctionJoin($query, $conditions)
     {
@@ -1159,6 +1175,8 @@ class BelongsToMany extends Association
      * @throws \InvalidArgumentException if non persisted entities are passed or if
      *   any of them is lacking a primary key value
      * @return bool success
+     * @throws \RuntimeException
+     * @throws \Cake\ORM\Exception\RolledbackTransactionException
      * @throws \Exception
      */
     public function replaceLinks(EntityInterface $sourceEntity, array $targetEntities, array $options = [])
@@ -1221,6 +1239,8 @@ class BelongsToMany extends Association
      * the `$jointEntities`
      * @param array $options list of options accepted by `Table::delete()`
      * @return array
+     * @throws \RuntimeException
+     * @throws \Exception
      */
     protected function _diffLinks($existing, $jointEntities, $targetEntities, $options = [])
     {
@@ -1316,6 +1336,7 @@ class BelongsToMany extends Association
      * @throws \InvalidArgumentException if any of the entities is lacking a primary
      *   key value
      * @return array
+     * @throws \RuntimeException
      */
     protected function _collectJointEntities($sourceEntity, $targetEntities)
     {
@@ -1372,6 +1393,7 @@ class BelongsToMany extends Association
      * results.
      *
      * @return string
+     * @throws \RuntimeException
      */
     protected function _junctionAssociationName()
     {
@@ -1391,6 +1413,7 @@ class BelongsToMany extends Association
      *
      * @param string|null $name The name of the junction table.
      * @return string
+     * @throws \RuntimeException
      */
     protected function _junctionTableName($name = null)
     {

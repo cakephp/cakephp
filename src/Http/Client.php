@@ -336,6 +336,8 @@ class Client
      * @param mixed $data The request body.
      * @param array $options The options to use. Contains auth, proxy etc.
      * @return \Cake\Http\Client\Response
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
      */
     protected function _doRequest($method, $url, $data, $options)
     {

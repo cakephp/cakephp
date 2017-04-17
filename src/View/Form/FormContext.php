@@ -143,6 +143,7 @@ class FormContext implements ContextInterface
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function hasError($field)
     {

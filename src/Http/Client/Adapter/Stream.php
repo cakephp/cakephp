@@ -91,6 +91,8 @@ class Stream
      * @param array $headers The list of headers from the request(s)
      * @param string $content The response content.
      * @return array The list of responses from the request(s)
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function createResponses($headers, $content)
     {
@@ -117,6 +119,8 @@ class Stream
      * @param \Cake\Http\Client\Request $request The request to build context from.
      * @param array $options Additional request options.
      * @return void
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     protected function _buildContext(Request $request, $options)
     {
@@ -190,6 +194,7 @@ class Stream
      * @param \Cake\Http\Client\Request $request The request being sent.
      * @param array $options Array of options to use.
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      */
     protected function _buildOptions(Request $request, $options)
     {
@@ -215,6 +220,7 @@ class Stream
      * @param \Cake\Http\Client\Request $request The request being sent.
      * @param array $options Array of options to use.
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _buildSslContext(Request $request, $options)
     {
@@ -248,6 +254,7 @@ class Stream
      *
      * @param \Cake\Http\Client\Request $request The request object.
      * @return array Array of populated Response objects
+     * @throws \InvalidArgumentException
      * @throws \Cake\Core\Exception\Exception
      */
     protected function _send(Request $request)

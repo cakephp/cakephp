@@ -131,6 +131,8 @@ class Cache
      *
      * @param string $name Name of the config array that needs an engine instance built
      * @return void
+     * @throws \RuntimeException
+     * @throws \Exception
      * @throws \InvalidArgumentException When a cache engine cannot be created.
      */
     protected static function _buildEngine($name)

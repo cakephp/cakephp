@@ -101,6 +101,7 @@ class JsonView extends SerializedView
      * @param string|null $view The view being rendered.
      * @param string|null $layout The layout being rendered.
      * @return string|null The rendered view.
+     * @throws \RuntimeException
      * @throws \InvalidArgumentException
      */
     public function render($view = null, $layout = null)

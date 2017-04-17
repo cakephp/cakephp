@@ -67,6 +67,8 @@ class LazyEagerLoader
      * @param array $contain The associations to be loaded
      * @param \Cake\ORM\Table $source The table to use for fetching the top level entities
      * @return \Cake\ORM\Query
+     * @throws \RuntimeException
+     * @throws \BadMethodCallException
      * @throws \InvalidArgumentException
      */
     protected function _getQuery($objects, $contain, $source)

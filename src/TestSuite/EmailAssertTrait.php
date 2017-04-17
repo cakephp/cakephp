@@ -37,6 +37,7 @@ trait EmailAssertTrait
      *
      * @param array|string|null $content The email's content to send.
      * @return void
+     * @throws \BadMethodCallException
      */
     public function send($content = null)
     {
@@ -48,6 +49,7 @@ trait EmailAssertTrait
      *
      * @param bool $new Tells if new instance should forcibly be created.
      * @return \Cake\Mailer\Email
+     * @throws \InvalidArgumentException
      */
     public function email($new = false)
     {
@@ -185,6 +187,7 @@ trait EmailAssertTrait
      * @param string|null $name CC'd person name.
      * @param string|null $message The failure message to define.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertEmailCcContains($email, $name = null, $message = null)
     {
@@ -222,6 +225,7 @@ trait EmailAssertTrait
      * @param string|null $name BCC'd person name.
      * @param string|null $message The failure message to define.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertEmailBccContains($email, $name = null, $message = null)
     {
@@ -260,6 +264,7 @@ trait EmailAssertTrait
      * @param string|null $name Recipient's name.
      * @param string|null $message The failure message to define.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertEmailToContains($email, $name = null, $message = null)
     {
@@ -278,6 +283,7 @@ trait EmailAssertTrait
      * @param array|null $file Expected attachment's file info.
      * @param string|null $message The failure message to define.
      * @return void
+     * @throws \PHPUnit_Framework_AssertionFailedError
      */
     public function assertEmailAttachmentsContains($filename, array $file = null, $message = null)
     {

@@ -151,6 +151,7 @@ class SelectLoader
      *
      * @param array $options options accepted by eagerLoader()
      * @return \Cake\ORM\Query
+     * @throws \RuntimeException
      * @throws \InvalidArgumentException When a key is required for associations but not selected.
      */
     protected function _buildQuery($options)
@@ -247,6 +248,7 @@ class SelectLoader
      * @param string $key the fields that should be used for filtering
      * @param \Cake\ORM\Query $subquery The Subquery to use for filtering
      * @return \Cake\ORM\Query
+     * @throws \RuntimeException
      */
     protected function _addFilteringJoin($query, $key, $subquery)
     {
@@ -360,6 +362,7 @@ class SelectLoader
      *
      * @param \Cake\ORM\Query $query the original query used to load source records
      * @return \Cake\ORM\Query
+     * @throws \RuntimeException
      */
     protected function _buildSubquery($query)
     {
@@ -423,6 +426,7 @@ class SelectLoader
      * @param \Cake\ORM\Query $fetchQuery The query to get results from
      * @param array $options The options passed to the eager loader
      * @return array
+     * @throws \RuntimeException
      */
     protected function _buildResultMap($fetchQuery, $options)
     {

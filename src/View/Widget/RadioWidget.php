@@ -146,6 +146,8 @@ class RadioWidget implements WidgetInterface
      * @param array $data Additional options for input generation.
      * @param \Cake\View\Form\ContextInterface $context The form context
      * @return string
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     protected function _renderInput($val, $text, $data, $context)
     {

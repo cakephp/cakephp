@@ -39,6 +39,7 @@ abstract class SerializedView extends View
      * @param \Cake\Http\Response|null $response Response instance.
      * @param \Cake\Event\EventManager|null $eventManager EventManager instance.
      * @param array $viewOptions An array of view options
+     * @throws \InvalidArgumentException
      */
     public function __construct(
         ServerRequest $request = null,
@@ -86,6 +87,7 @@ abstract class SerializedView extends View
      * @param string|bool|null $view The view being rendered.
      * @param string|null $layout The layout being rendered.
      * @return string|null The rendered view.
+     * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
     public function render($view = null, $layout = null)

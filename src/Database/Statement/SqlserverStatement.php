@@ -29,6 +29,7 @@ class SqlserverStatement extends PDOStatement
      * This overrides the PDOStatement::bindValue method in order to bind binary columns using the required attribute.
      *
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      */
     public function bindValue($column, $value, $type = 'string')
     {

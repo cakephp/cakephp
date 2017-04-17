@@ -166,6 +166,7 @@ abstract class Cell
      * @param string|null $template Custom template name to render. If not provided (null), the last
      * value will be used. This value is automatically set by `CellTrait::cell()`.
      * @return string The rendered cell.
+     * @throws \Cake\View\Exception\MissingViewException
      * @throws \InvalidArgumentException
      * @throws \Cake\Core\Exception\Exception
      * @throws \BadMethodCallException

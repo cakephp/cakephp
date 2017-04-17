@@ -262,6 +262,7 @@ class AuthComponent extends Component
      *
      * @param \Cake\Event\Event $event Event instance.
      * @return \Cake\Http\Response|null
+     * @throws \Cake\Core\Exception\Exception
      */
     public function startup(Event $event)
     {
@@ -277,6 +278,7 @@ class AuthComponent extends Component
      *
      * @param \Cake\Event\Event $event Event instance.
      * @return \Cake\Http\Response|null
+     * @throws \InvalidArgumentException
      * @throws \Cake\Core\Exception\Exception
      */
     public function authCheck(Event $event)
@@ -344,6 +346,7 @@ class AuthComponent extends Component
      * @param \Cake\Controller\Controller $controller A reference to the instantiating
      *   controller object
      * @return bool True if action is accessible without authentication else false
+     * @throws \InvalidArgumentException
      */
     protected function _isAllowed(Controller $controller)
     {
@@ -432,6 +435,9 @@ class AuthComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller A reference to the controller object.
      * @return bool True if current action is login action else false.
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Routing\Exception\MissingRouteException
+     * @throws \Cake\Core\Exception\Exception
      */
     protected function _isLoginAction(Controller $controller)
     {
@@ -450,6 +456,8 @@ class AuthComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller A reference to the controller object
      * @return \Cake\Http\Response
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
      * @throws \Cake\Network\Exception\ForbiddenException
      */
     protected function _unauthorized(Controller $controller)
@@ -520,6 +528,7 @@ class AuthComponent extends Component
      * @param \Cake\Http\ServerRequest|null $request The request to authenticate for.
      *   If empty, the current request will be used.
      * @return bool True if $user is authorized, otherwise false
+     * @throws \InvalidArgumentException
      * @throws \Cake\Core\Exception\Exception
      */
     public function isAuthorized($user = null, ServerRequest $request = null)
@@ -676,6 +685,7 @@ class AuthComponent extends Component
      *
      * @param array|\ArrayAccess $user User data.
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#identifying-users-and-logging-them-in
      */
     public function setUser($user)
@@ -690,6 +700,7 @@ class AuthComponent extends Component
      * which the authenticate classes can listen for and perform custom logout logic.
      *
      * @return string Normalized config `logoutRedirect`
+     * @throws \InvalidArgumentException
      * @throws \Cake\Core\Exception\Exception
      * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#logging-users-out
      */
@@ -711,6 +722,7 @@ class AuthComponent extends Component
      *
      * @param string|null $key Field to retrieve. Leave null to get entire User record.
      * @return mixed|null Either User record or null if no user is logged in, or retrieved field if key is specified.
+     * @throws \Cake\Core\Exception\Exception
      * @throws \InvalidArgumentException
      * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#accessing-the-logged-in-user
      */
@@ -783,6 +795,7 @@ class AuthComponent extends Component
      *
      * @param string|array|null $url Optional URL to write as the login redirect URL.
      * @return string Redirect URL
+     * @throws \InvalidArgumentException
      * @throws \Cake\Core\Exception\Exception
      */
     public function redirectUrl($url = null)
@@ -818,6 +831,7 @@ class AuthComponent extends Component
      * to.
      *
      * @return array|bool User record data, or false, if the user could not be identified.
+     * @throws \InvalidArgumentException
      * @throws \Cake\Core\Exception\Exception
      */
     public function identify()
@@ -1029,6 +1043,7 @@ class AuthComponent extends Component
      * request is not of type GET.
      *
      * @return string
+     * @throws \InvalidArgumentException
      */
     protected function _getUrlToRedirectBackTo()
     {

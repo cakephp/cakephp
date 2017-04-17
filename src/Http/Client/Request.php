@@ -234,6 +234,8 @@ class Request extends Message implements RequestInterface
      *
      * @param string|array|null $body The body for the request. Leave null for get
      * @return mixed Either $this or the body value.
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function body($body = null)
     {

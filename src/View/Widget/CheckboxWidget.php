@@ -38,6 +38,7 @@ class CheckboxWidget extends BasicWidget
      * @param array $data The data to create a checkbox with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string Generated HTML string.
+     * @throws \RuntimeException
      */
     public function render(array $data, ContextInterface $context)
     {

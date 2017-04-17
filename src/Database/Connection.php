@@ -468,6 +468,7 @@ class Connection implements ConnectionInterface
      * Commits current transaction.
      *
      * @return bool true on success, false otherwise
+     * @throws \Cake\Database\Exception\NestedTransactionRollbackException
      */
     public function commit()
     {
@@ -755,6 +756,7 @@ class Connection implements ConnectionInterface
      * @param mixed $value The value to quote.
      * @param string|null $type Type to be used for determining kind of quoting to perform
      * @return string Quoted value
+     * @throws \InvalidArgumentException
      */
     public function quote($value, $type = null)
     {

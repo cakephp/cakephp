@@ -51,6 +51,7 @@ trait StringTemplateTrait
      *
      * @param string|null $template String for reading a specific template, null for all.
      * @return string|array
+     * @throws \Cake\Core\Exception\Exception
      */
     public function getTemplates($template = null)
     {

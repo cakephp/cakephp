@@ -251,6 +251,7 @@ class TimeHelper extends Helper
      * @param int|string|\DateTime $dateTime UNIX timestamp, strtotime() valid string or DateTime object
      * @param array $options Default format if timestamp is used in $dateString
      * @return string Relative time string.
+     * @throws \Cake\Core\Exception\Exception
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
     public function timeAgoInWords($dateTime, array $options = [])

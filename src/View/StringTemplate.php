@@ -107,6 +107,7 @@ class StringTemplate
      * Constructor.
      *
      * @param array $config A set of templates to add.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(array $config = [])
     {

@@ -40,6 +40,9 @@ class UrlHelper extends Helper
      *    the reverse routing features of CakePHP.
      * @param array|bool $options Array of options; bool `full` for BC reasons.
      * @return string Full translated URL with base path.
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Routing\Exception\MissingRouteException
+     * @throws \Cake\Core\Exception\Exception
      */
     public function build($url = null, $options = false)
     {
@@ -140,6 +143,7 @@ class UrlHelper extends Helper
      *   `ext` Asset extension to append
      *   `plugin` False value will prevent parsing path as a plugin
      * @return string Generated URL
+     * @throws \Cake\Core\Exception\MissingPluginException
      * @throws \InvalidArgumentException
      */
     public function assetUrl($path, array $options = [])

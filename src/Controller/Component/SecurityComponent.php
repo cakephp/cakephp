@@ -147,6 +147,7 @@ class SecurityComponent extends Component
      *
      * @param string|array|null $actions Actions list
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      */
     public function requireSecure($actions = null)
     {
@@ -162,6 +163,7 @@ class SecurityComponent extends Component
      *
      * @param string|array $actions Actions list
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      * @deprecated 3.2.2 This feature is confusing and not useful.
      */
     public function requireAuth($actions)
@@ -196,6 +198,7 @@ class SecurityComponent extends Component
      * @param \Cake\Controller\Exception\SecurityException|null $exception Additional debug info describing the cause
      * @throws \Cake\Network\Exception\BadRequestException
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _throwException($exception = null)
     {
@@ -256,6 +259,8 @@ class SecurityComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @return bool true if authentication required
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @throws \Cake\Controller\Exception\AuthSecurityException
      * @deprecated 3.2.2 This feature is confusing and not useful.
      */
@@ -313,6 +318,7 @@ class SecurityComponent extends Component
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @throws \Cake\Controller\Exception\AuthSecurityException
      * @return bool true if submitted form is valid
+     * @throws \InvalidArgumentException
      * @throws \Cake\Controller\Exception\SecurityException
      */
     protected function _validatePost(Controller $controller)
@@ -342,6 +348,7 @@ class SecurityComponent extends Component
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @throws \Cake\Controller\Exception\SecurityException
      * @return string fields token
+     * @throws \InvalidArgumentException
      */
     protected function _validToken(Controller $controller)
     {
@@ -377,6 +384,7 @@ class SecurityComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @return array
+     * @throws \InvalidArgumentException
      */
     protected function _hashParts(Controller $controller)
     {
@@ -563,6 +571,8 @@ class SecurityComponent extends Component
      *
      * @param \Cake\Http\ServerRequest $request The request object to add into.
      * @return bool
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function generateToken(ServerRequest $request)
     {

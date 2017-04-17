@@ -223,6 +223,7 @@ class EntityContext implements ContextInterface
      *   - `schemaDefault`: Boolean indicating whether default value from table
      *     schema should be used if it's not explicitly provided.
      * @return mixed The value of the field or null on a miss.
+     * @throws \Cake\ORM\Exception\MissingEntityException
      * @throws \RuntimeException
      * @throws \InvalidArgumentException
      */
@@ -563,6 +564,9 @@ class EntityContext implements ContextInterface
      *
      * @param string $field A dot separated path to check errors on.
      * @return bool Returns true if the errors for the field are not empty.
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\ORM\Exception\MissingEntityException
      */
     public function hasError($field)
     {

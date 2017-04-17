@@ -385,6 +385,7 @@ class Router
      *
      * @param \Cake\Http\ServerRequest|array $request Parameters and path information or a Cake\Http\ServerRequest object.
      * @return void
+     * @throws \InvalidArgumentException
      */
     public static function setRequestInfo($request)
     {

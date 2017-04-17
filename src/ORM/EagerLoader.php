@@ -300,6 +300,7 @@ class EagerLoader
      * @param \Cake\ORM\Table $repository The table containing the association that
      * will be normalized
      * @return array
+     * @throws \RuntimeException
      * @throws \InvalidArgumentException
      */
     public function normalized(Table $repository)
@@ -412,6 +413,7 @@ class EagerLoader
      * to the passed query. This can be overridden according to the settings defined
      * per association in the containments array
      * @return void
+     * @throws \InvalidArgumentException
      */
     public function attachAssociations(Query $query, Table $repository, $includeFields)
     {
@@ -627,6 +629,7 @@ class EagerLoader
      * associations
      * @param \Cake\Database\StatementInterface $statement The statement created after executing the $query
      * @return \Cake\Database\StatementInterface statement modified statement with extra loaders
+     * @throws \RuntimeException
      * @throws \InvalidArgumentException
      */
     public function loadExternal($query, $statement)
@@ -680,6 +683,7 @@ class EagerLoader
      * @param \Cake\ORM\Table $table The table containing the association that
      * will be normalized
      * @return array
+     * @throws \RuntimeException
      * @throws \InvalidArgumentException
      */
     public function associationsMap($table)

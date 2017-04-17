@@ -76,6 +76,8 @@ class SessionStorage implements StorageInterface
      * Read user record from session.
      *
      * @return array|null User record if available else null.
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function read()
     {
@@ -95,6 +97,7 @@ class SessionStorage implements StorageInterface
      *
      * @param array|\ArrayAccess $user User record.
      * @return void
+     * @throws \RuntimeException
      */
     public function write($user)
     {
@@ -110,6 +113,8 @@ class SessionStorage implements StorageInterface
      * The session id is also renewed to help mitigate issues with session replays.
      *
      * @return void
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function delete()
     {
@@ -121,6 +126,8 @@ class SessionStorage implements StorageInterface
 
     /**
      * {@inheritDoc}
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function redirectUrl($url = null)
     {

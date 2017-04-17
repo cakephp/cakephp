@@ -100,6 +100,8 @@ trait CookieCryptTrait
      * @param string|bool $mode Encryption mode
      * @param string|null $key Used as the security salt if specified.
      * @return string|array Decrypted values
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     protected function _decrypt($values, $mode, $key = null)
     {

@@ -197,6 +197,7 @@ class SelectBoxWidget extends BasicWidget
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping
      * @return string Formatted template string
+     * @throws \RuntimeException
      */
     protected function _renderOptgroup($label, $optgroup, $disabled, $selected, $templateVars, $escape)
     {
@@ -228,6 +229,7 @@ class SelectBoxWidget extends BasicWidget
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping.
      * @return array Option elements.
+     * @throws \RuntimeException
      */
     protected function _renderOptions($options, $disabled, $selected, $templateVars, $escape)
     {

@@ -415,6 +415,7 @@ class TableSchema
      *
      * @param string $column The column name to get the base type from
      * @return string|null The base type name
+     * @throws \InvalidArgumentException
      */
     public function baseColumnType($column)
     {

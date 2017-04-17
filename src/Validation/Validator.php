@@ -476,6 +476,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   returns true.
      * @param string|null $message The message to show if the field presence validation fails.
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function requirePresence($field, $mode = true, $message = null)
     {
@@ -566,6 +567,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * the field will allowed to be empty only when the callback returns true.
      * @param string|null $message The message to show if the field is not
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function allowEmpty($field, $when = true, $message = null)
     {

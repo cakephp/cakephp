@@ -32,6 +32,7 @@ trait DependentDeleteTrait
      * @param \Cake\Datasource\EntityInterface $entity The entity that started the cascaded delete.
      * @param array $options The options for the original delete.
      * @return bool Success.
+     * @throws \RuntimeException
      */
     public function cascadeDelete(EntityInterface $entity, array $options = [])
     {

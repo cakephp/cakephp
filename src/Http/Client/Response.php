@@ -488,6 +488,7 @@ class Response extends Message implements ResponseInterface
      * @param callable|null $parser The callback to use to decode
      *   the response body.
      * @return mixed The response body.
+     * @throws \RuntimeException
      */
     public function body($parser = null)
     {
@@ -554,6 +555,7 @@ class Response extends Message implements ResponseInterface
      * Provides magic __get() support.
      *
      * @return array
+     * @throws \RuntimeException
      */
     protected function _getBody()
     {

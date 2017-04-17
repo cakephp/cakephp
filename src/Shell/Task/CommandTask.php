@@ -139,6 +139,7 @@ class CommandTask extends Shell
      *
      * @param string $commandName The command you want subcommands from.
      * @return array
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     public function subCommands($commandName)
     {

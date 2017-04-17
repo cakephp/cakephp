@@ -47,6 +47,7 @@ class EventFiredWith extends Constraint
      * @param EventManager $eventManager Event manager to check
      * @param string $dataKey Data key
      * @param string $dataValue Data value
+     * @throws \PHPUnit\Framework\AssertionFailedError
      */
     public function __construct($eventManager, $dataKey, $dataValue)
     {
@@ -65,6 +66,7 @@ class EventFiredWith extends Constraint
      *
      * @param mixed $other Constraint check
      * @return bool
+     * @throws \PHPUnit\Framework\AssertionFailedError
      */
     public function matches($other)
     {

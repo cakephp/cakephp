@@ -170,6 +170,7 @@ class Log
      * Initializes registry and configurations
      *
      * @return void
+     * @throws \Exception
      */
     protected static function _init()
     {

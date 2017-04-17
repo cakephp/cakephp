@@ -1467,6 +1467,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param string|\Cake\Database\ExpressionInterface $table The table you want to update.
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function update($table)
     {

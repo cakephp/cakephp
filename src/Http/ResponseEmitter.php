@@ -38,6 +38,8 @@ class ResponseEmitter implements EmitterInterface
 {
     /**
      * {@inheritDoc}
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function emit(ResponseInterface $response, $maxBufferLength = 8192)
     {

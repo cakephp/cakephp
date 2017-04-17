@@ -245,6 +245,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @throws \Cake\ORM\Exception\MissingEntityException
      * @throws \RuntimeException
      * @throws \InvalidArgumentException
+     * @throws \Cake\Database\Exception
      */
     public function __construct(array $config = [])
     {
@@ -1535,6 +1536,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   is persisted.
      * @param array $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface An entity.
+     * @throws \InvalidArgumentException
+     * @throws \Cake\ORM\Exception\MissingEntityException
      * @throws \Cake\ORM\Exception\RolledbackTransactionException
      * @throws \RuntimeException
      * @throws \BadMethodCallException
@@ -1624,6 +1627,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * {@inheritDoc}
      * @throws \RuntimeException
+     * @throws \BadMethodCallException
      */
     public function exists($conditions)
     {
@@ -1722,6 +1726,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   is aborted in the afterSave event.
      * @throws \Exception
      * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function save(EntityInterface $entity, $options = [])
     {
@@ -1792,6 +1797,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
      * @param \ArrayObject $options the options to use for the save operation
      * @return \Cake\Datasource\EntityInterface|bool
+     * @throws \Cake\Database\Exception
      * @throws \InvalidArgumentException
      * @throws \RuntimeException When an entity is missing some of the primary keys.
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction

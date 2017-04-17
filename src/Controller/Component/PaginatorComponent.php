@@ -161,6 +161,7 @@ class PaginatorComponent extends Component
      * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface $object The table or query to paginate.
      * @param array $settings The settings/configuration used for pagination.
      * @return \Cake\Datasource\ResultSetInterface Query results
+     * @throws \InvalidArgumentException
      * @throws \Cake\Network\Exception\NotFoundException
      */
     public function paginate($object, array $settings = [])

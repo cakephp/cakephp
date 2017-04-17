@@ -82,6 +82,7 @@ class SaveOptionsBuilder extends ArrayObject
      *
      * @param string|array $associated String or array of associations.
      * @return \Cake\ORM\SaveOptionsBuilder
+     * @throws \RuntimeException
      */
     public function associated($associated)
     {

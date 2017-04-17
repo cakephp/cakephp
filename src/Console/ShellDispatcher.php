@@ -55,6 +55,9 @@ class ShellDispatcher
      * @param array $args the argv from PHP
      * @param bool $bootstrap Should the environment be bootstrapped.
      * @throws \Cake\Core\Exception\Exception
+     * @throws \BadMethodCallException
+     * @throws \InvalidArgumentException
+     * @throws \UnexpectedValueException
      */
     public function __construct($args = [], $bootstrap = true)
     {
@@ -156,6 +159,7 @@ class ShellDispatcher
      * Initializes the environment and loads the CakePHP core.
      *
      * @return bool Success.
+     * @throws \InvalidArgumentException
      */
     protected function _bootstrap()
     {
@@ -177,6 +181,8 @@ class ShellDispatcher
      * Built-in extra parameter is :
      * - `requested` : if used, will prevent the Shell welcome message to be displayed
      * @return int The cli command exit code. 0 is success.
+     * @throws \Cake\Core\Exception\MissingPluginException
+     * @throws \Cake\Console\Exception\MissingShellException
      * @throws \Cake\Console\Exception\MissingShellMethodException
      */
     public function dispatch($extra = [])
@@ -242,6 +248,7 @@ class ShellDispatcher
      * Using the shell name alone
      *
      * @return array the resultant list of aliases
+     * @throws \Cake\Core\Exception\MissingPluginException
      * @throws \BadMethodCallException
      * @throws \UnexpectedValueException
      * @throws \InvalidArgumentException

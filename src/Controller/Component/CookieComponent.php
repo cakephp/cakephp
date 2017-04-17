@@ -114,6 +114,7 @@ class CookieComponent extends Component
      *
      * @param array $config The config data.
      * @return void
+     * @throws \InvalidArgumentException
      * @throws \Cake\Core\Exception\Exception
      */
     public function initialize(array $config)
@@ -306,6 +307,8 @@ class CookieComponent extends Component
      * @param string $name Name for cookie
      * @param string $value Value for cookie
      * @return void
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     protected function _write($name, $value)
     {

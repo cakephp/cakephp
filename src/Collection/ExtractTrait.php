@@ -59,6 +59,7 @@ trait ExtractTrait
      * @param array|\ArrayAccess $data Data.
      * @param array $path Path to extract from.
      * @return mixed
+     * @throws \InvalidArgumentException
      */
     protected function _extract($data, $path)
     {

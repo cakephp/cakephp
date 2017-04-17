@@ -33,6 +33,7 @@ class AssetsTask extends Shell
      * @param string|null $name Name of plugin for which to symlink assets.
      *   If null all plugins will be processed.
      * @return void
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     public function symlink($name = null)
     {
@@ -46,6 +47,7 @@ class AssetsTask extends Shell
      * @param string|null $name Name of plugin for which to symlink assets.
      *   If null all plugins will be processed.
      * @return void
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     public function copy($name = null)
     {
