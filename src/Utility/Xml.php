@@ -325,6 +325,7 @@ class Xml
      *
      * @param array $data Array with information to create childs
      * @return void
+     * @throws \Cake\Utility\Exception\XmlException
      */
     protected static function _createChild($data)
     {
