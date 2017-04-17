@@ -66,7 +66,7 @@ if (!function_exists('h')) {
             $charset = $double;
         }
 
-        return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, ($charset) ? $charset : $defaultCharset, $double);
+        return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, $charset ?: $defaultCharset, $double);
     }
 
 }
