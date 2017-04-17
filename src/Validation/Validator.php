@@ -598,6 +598,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param array $defaults default settings
      * @param string|array $settings settings from data
      * @return array
+     * @throws \InvalidArgumentException
      */
     protected function _convertValidatorToArray($fieldName, $defaults = [], $settings = [])
     {
@@ -680,6 +681,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   callable is passed then the field will allowed to be empty only when
      *   the callback returns false.
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function notEmpty($field, $message = null, $when = false)
     {
@@ -762,6 +764,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::alphaNumeric()
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function lengthBetween($field, array $range, $message = null, $when = null)
     {
@@ -1302,6 +1305,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::range()
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function range($field, array $range, $message = null, $when = null)
     {
