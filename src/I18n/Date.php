@@ -130,6 +130,6 @@ class Date extends MutableDate implements JsonSerializable
      */
     public function timeAgoInWords(array $options = [])
     {
-        return $this->diffFormatter()->dateAgoInWords($this, $options);
+        return static::diffFormatter()->dateAgoInWords($this, $options);
     }
 }
