@@ -147,6 +147,7 @@ class MessagesFileLoader
      * and package name.
      *
      * @return array The list of folders where the translation file should be looked for
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     public function translationsFolders()
     {
