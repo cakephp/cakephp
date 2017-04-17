@@ -2527,21 +2527,21 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests that the getEagerLoaded function works and is transmitted correctly to eagerly
+     * Tests that the isEagerLoaded function works and is transmitted correctly to eagerly
      * loaded associations
      *
      * @return void
      */
-    public function testGetEagerLoaded()
+    public function testIsEagerLoaded()
     {
         $table = TableRegistry::get('authors');
         $table->hasMany('articles');
         $query = $table->find()->contain(['articles' => function ($q) {
-            $this->assertTrue($q->getEagerLoaded());
+            $this->assertTrue($q->isEagerLoaded());
 
             return $q;
         }]);
-        $this->assertFalse($query->getEagerLoaded());
+        $this->assertFalse($query->isEagerLoaded());
 
         $table->eventManager()->attach(function ($e, $q, $o, $primary) {
             $this->assertTrue($primary);
