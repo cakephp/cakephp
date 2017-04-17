@@ -263,7 +263,7 @@ trait EntityTrait
                 continue;
             }
 
-            $setter = $this->_accessor($p, 'set');
+            $setter = static::_accessor($p, 'set');
             if ($setter) {
                 $value = $this->{$setter}($value);
             }
@@ -287,7 +287,7 @@ trait EntityTrait
         }
 
         $value = null;
-        $method = $this->_accessor($property, 'get');
+        $method = static::_accessor($property, 'get');
 
         if (isset($this->_properties[$property])) {
             $value =& $this->_properties[$property];

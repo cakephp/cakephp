@@ -762,7 +762,7 @@ class Debugger
         ];
         $data += $defaults;
 
-        $files = $this->trace(['start' => $data['start'], 'format' => 'points']);
+        $files = static::trace(['start' => $data['start'], 'format' => 'points']);
         $code = '';
         $file = null;
         if (isset($files[0]['file'])) {
@@ -771,16 +771,16 @@ class Debugger
             $file = $files[1];
         }
         if ($file) {
-            $code = $this->excerpt($file['file'], $file['line'] - 1, 1);
+            $code = static::excerpt($file['file'], $file['line'] - 1, 1);
         }
-        $trace = $this->trace(['start' => $data['start'], 'depth' => '20']);
+        $trace = static::trace(['start' => $data['start'], 'depth' => '20']);
         $insertOpts = ['before' => '{:', 'after' => '}'];
         $context = [];
         $links = [];
         $info = '';
 
         foreach ((array)$data['context'] as $var => $value) {
-            $context[] = "\${$var} = " . $this->exportVar($value, 3);
+            $context[] = "\${$var} = " . static::exportVar($value, 3);
         }
 
         switch ($this->_outputFormat) {
@@ -789,7 +789,7 @@ class Debugger
 
                 return;
             case 'log':
-                $this->log(compact('context', 'trace') + $data);
+                static::log(compact('context', 'trace') + $data);
 
                 return;
         }
