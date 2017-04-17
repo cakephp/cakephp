@@ -1281,9 +1281,8 @@ class Response implements ResponseInterface
             if (!$public && !$private && !$noCache) {
                 return null;
             }
-            $sharable = $public || !($private || $noCache);
 
-            return $sharable;
+            return $public || !($private || $noCache);
         }
         if ($public) {
             $this->_cacheDirectives['public'] = true;
