@@ -115,7 +115,7 @@ class WidgetRegistry
     public function add(array $widgets)
     {
         foreach ($widgets as $object) {
-            if (gettype($object) === 'object' &&
+            if (is_object($object) &&
                 !($object instanceof WidgetInterface)
             ) {
                 throw new RuntimeException(
