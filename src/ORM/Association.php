@@ -1133,10 +1133,8 @@ abstract class Association
         $target = $this->_targetTable;
         $autoFields = $surrogate->isAutoFieldsEnabled();
 
-        if (empty($fields) && !$autoFields) {
-            if ($options['includeFields'] && ($fields === null || $fields !== false)) {
-                $fields = $target->getSchema()->columns();
-            }
+        if (empty($fields) && !$autoFields && $options['includeFields'] && ($fields === null || $fields !== false)) {
+            $fields = $target->getSchema()->columns();
         }
 
         if ($autoFields === true) {
