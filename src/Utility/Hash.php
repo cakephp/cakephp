@@ -819,7 +819,7 @@ class Hash
         $depth = 1;
         while ($elem = array_shift($data)) {
             if (is_array($elem)) {
-                ++$depth;
+                $depth++;
                 $data = $elem;
             } else {
                 break;
