@@ -169,7 +169,7 @@ class ValidationRule
 
         $newRecord = $context['newRecord'];
         if (!empty($this->_on)) {
-            if ($this->_on === 'create' && !$newRecord || $this->_on === 'update' && $newRecord) {
+            if (($this->_on === 'create' && !$newRecord) || ($this->_on === 'update' && $newRecord)) {
                 return true;
             }
         }
