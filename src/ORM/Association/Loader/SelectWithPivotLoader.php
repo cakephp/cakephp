@@ -74,6 +74,7 @@ class SelectWithPivotLoader extends SelectLoader
      *
      * @param array $options options accepted by eagerLoader()
      * @return \Cake\ORM\Query
+     * @throws \RuntimeException
      * @throws \InvalidArgumentException When a key is required for associations but not selected.
      */
     protected function _buildQuery($options)

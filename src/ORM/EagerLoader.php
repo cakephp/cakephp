@@ -300,6 +300,7 @@ class EagerLoader
      * @param \Cake\ORM\Table $repository The table containing the association that
      * will be normalized
      * @return array
+     * @throws \InvalidArgumentException
      */
     public function normalized(Table $repository)
     {
@@ -444,6 +445,7 @@ class EagerLoader
      * @param \Cake\ORM\Table $repository The table containing the associations to be
      * attached
      * @return array
+     * @throws \InvalidArgumentException
      */
     public function attachableAssociations(Table $repository)
     {
@@ -462,6 +464,7 @@ class EagerLoader
      * @param \Cake\ORM\Table $repository The table containing the associations
      * to be loaded
      * @return \Cake\ORM\EagerLoadable[]
+     * @throws \InvalidArgumentException
      */
     public function externalAssociations(Table $repository)
     {
@@ -486,6 +489,7 @@ class EagerLoader
      * chain of associations to be loaded. The second value is the path to follow in
      * entities' properties to fetch a record of the corresponding association.
      * @return \Cake\ORM\EagerLoadable Object with normalized associations
+     * @throws \RuntimeException
      * @throws \InvalidArgumentException When containments refer to associations that do not exist.
      */
     protected function _normalizeContain(Table $parent, $alias, $options, $paths)
@@ -623,6 +627,7 @@ class EagerLoader
      * associations
      * @param \Cake\Database\StatementInterface $statement The statement created after executing the $query
      * @return \Cake\Database\StatementInterface statement modified statement with extra loaders
+     * @throws \InvalidArgumentException
      */
     public function loadExternal($query, $statement)
     {
@@ -675,6 +680,7 @@ class EagerLoader
      * @param \Cake\ORM\Table $table The table containing the association that
      * will be normalized
      * @return array
+     * @throws \InvalidArgumentException
      */
     public function associationsMap($table)
     {
@@ -699,6 +705,7 @@ class EagerLoader
      * @param array $level An array of EagerLoadable instances.
      * @param bool $matching Whether or not it is an association loaded through `matching()`.
      * @return array
+     * @throws \RuntimeException
      */
     protected function _buildAssociationsMap($map, $level, $matching = false)
     {
@@ -758,6 +765,7 @@ class EagerLoader
      * @param \Cake\ORM\Query $query The query from which the results where generated
      * @param \Cake\Database\Statement\BufferedStatement $statement The statement to work on
      * @return array
+     * @throws \RuntimeException
      */
     protected function _collectKeys($external, $query, $statement)
     {

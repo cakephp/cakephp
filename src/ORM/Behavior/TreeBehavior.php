@@ -431,6 +431,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\ORM\Query $query Query.
      * @param array $options Array of options as described above
      * @return \Cake\ORM\Query
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException
      * @throws \InvalidArgumentException When the 'for' key is not passed in $options
      */
     public function findChildren(Query $query, array $options)
@@ -540,6 +541,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $node The node to remove from the tree
      * @return \Cake\Datasource\EntityInterface|false the node after being removed from the tree or
      * false on error
+     * @throws \Exception
      */
     public function removeFromTree(EntityInterface $node)
     {
@@ -556,6 +558,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $node The node to remove from the tree
      * @return \Cake\Datasource\EntityInterface|false the node after being removed from the tree or
      * false on error
+     * @throws \Cake\ORM\Exception\RolledbackTransactionException
      */
     protected function _removeFromTree($node)
     {
@@ -805,6 +808,7 @@ class TreeBehavior extends Behavior
      * parent column.
      *
      * @return void
+     * @throws \Exception
      */
     public function recover()
     {
@@ -946,6 +950,7 @@ class TreeBehavior extends Behavior
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to ensure fields for
      * @return void
+     * @throws \Cake\Datasource\Exception\InvalidPrimaryKeyException
      */
     protected function _ensureFields($entity)
     {

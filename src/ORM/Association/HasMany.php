@@ -248,6 +248,8 @@ class HasMany extends Association
      * of this association
      * @param array $options list of options to be passed to the internal `save` call
      * @return bool true on success, false otherwise
+     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public function link(EntityInterface $sourceEntity, array $targetEntities, array $options = [])
     {
@@ -434,6 +436,7 @@ class HasMany extends Association
      * @param array $remainingEntities Entities that should not be deleted
      * @param array $options list of options accepted by `Table::delete()`
      * @return bool success
+     * @throws \InvalidArgumentException
      */
     protected function _unlinkAssociated(array $properties, EntityInterface $entity, Table $target, array $remainingEntities = [], array $options = [])
     {
@@ -623,6 +626,7 @@ class HasMany extends Association
      *
      * @param array $opts original list of options passed in constructor
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _options(array $opts)
     {
@@ -638,6 +642,7 @@ class HasMany extends Association
      * {@inheritDoc}
      *
      * @return callable
+     * @throws \InvalidArgumentException
      */
     public function eagerLoader(array $options)
     {
