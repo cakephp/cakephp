@@ -147,7 +147,7 @@ class Stream
     {
         $headers = [];
         foreach ($request->getHeaders() as $name => $values) {
-            $headers[] = sprintf('%s: %s', $name, implode(", ", $values));
+            $headers[] = sprintf('%s: %s', $name, implode(', ', $values));
         }
 
         $cookies = [];

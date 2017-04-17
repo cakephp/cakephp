@@ -1189,7 +1189,7 @@ class Response implements ResponseInterface
     public function disableCache()
     {
         $this->_setHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
-        $this->_setHeader('Last-Modified', gmdate("D, d M Y H:i:s") . " GMT");
+        $this->_setHeader('Last-Modified', gmdate('D, d M Y H:i:s') . ' GMT');
         $this->_setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
     }
 
@@ -1201,7 +1201,7 @@ class Response implements ResponseInterface
     public function withDisabledCache()
     {
         return $this->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT')
-            ->withHeader('Last-Modified', gmdate("D, d M Y H:i:s") . " GMT")
+            ->withHeader('Last-Modified', gmdate('D, d M Y H:i:s') . ' GMT')
             ->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
     }
 
@@ -1219,7 +1219,7 @@ class Response implements ResponseInterface
             $time = strtotime($time);
         }
 
-        $this->_setHeader('Date', gmdate("D, j M Y G:i:s ", time()) . 'GMT');
+        $this->_setHeader('Date', gmdate('D, j M Y G:i:s ', time()) . 'GMT');
 
         $this->modified($since);
         $this->expires($time);
@@ -1240,7 +1240,7 @@ class Response implements ResponseInterface
             $time = strtotime($time);
         }
 
-        return $this->withHeader('Date', gmdate("D, j M Y G:i:s ", time()) . 'GMT')
+        return $this->withHeader('Date', gmdate('D, j M Y G:i:s ', time()) . 'GMT')
             ->withModified($since)
             ->withExpires($time)
             ->withSharable(true)
@@ -1749,8 +1749,8 @@ class Response implements ResponseInterface
      */
     public function compress()
     {
-        $compressionEnabled = ini_get("zlib.output_compression") !== '1' &&
-            extension_loaded("zlib") &&
+        $compressionEnabled = ini_get('zlib.output_compression') !== '1' &&
+            extension_loaded('zlib') &&
             (strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
 
         return $compressionEnabled && ob_start('ob_gzhandler');
@@ -1764,7 +1764,7 @@ class Response implements ResponseInterface
     public function outputCompressed()
     {
         return strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false
-            && (ini_get("zlib.output_compression") === '1' || in_array('ob_gzhandler', ob_list_handlers()));
+            && (ini_get('zlib.output_compression') === '1' || in_array('ob_gzhandler', ob_list_handlers()));
     }
 
     /**

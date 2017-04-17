@@ -428,7 +428,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
         if (!$this->isAction($request->getParam('action'))) {
             throw new MissingActionException([
-                'controller' => $this->name . "Controller",
+                'controller' => $this->name . 'Controller',
                 'action' => $request->getParam('action'),
                 'prefix' => $request->getParam('prefix') ?: '',
                 'plugin' => $request->getParam('plugin'),

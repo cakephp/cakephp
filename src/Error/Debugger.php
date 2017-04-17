@@ -67,7 +67,7 @@ class Debugger
     protected $_templates = [
         'log' => [
             'trace' => '{:reference} - {:path}, line {:line}',
-            'error' => "{:error} ({:code}): {:description} in [{:file}, line {:line}]"
+            'error' => '{:error} ({:code}): {:description} in [{:file}, line {:line}]'
         ],
         'js' => [
             'error' => '',
@@ -429,7 +429,7 @@ class Debugger
             if (!isset($data[$i])) {
                 continue;
             }
-            $string = str_replace(["\r\n", "\n"], "", static::_highlight($data[$i]));
+            $string = str_replace(["\r\n", "\n"], '', static::_highlight($data[$i]));
             if ($i == $line) {
                 $lines[] = '<span class="code-highlight">' . $string . '</span>';
             } else {
@@ -551,7 +551,7 @@ class Debugger
      */
     protected static function _array(array $var, $depth, $indent)
     {
-        $out = "[";
+        $out = '[';
         $break = $end = null;
         if (!empty($var)) {
             $break = "\n" . str_repeat("\t", $indent);

@@ -248,7 +248,7 @@ class RssHelper extends Helper
                 case 'enclosure':
                     if (is_string($val['url']) && is_file(WWW_ROOT . $val['url']) && file_exists(WWW_ROOT . $val['url'])) {
                         if (!isset($val['length']) && strpos($val['url'], '://') === false) {
-                            $val['length'] = sprintf("%u", filesize(WWW_ROOT . $val['url']));
+                            $val['length'] = sprintf('%u', filesize(WWW_ROOT . $val['url']));
                         }
                         if (!isset($val['type']) && function_exists('mime_content_type')) {
                             $val['type'] = mime_content_type(WWW_ROOT . $val['url']);

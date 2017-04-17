@@ -80,13 +80,13 @@ class FrozenTime extends Chronos implements JsonSerializable
      * @see \Cake\I18n\FrozenTime::timeAgoInWords()
      */
     public static $wordAccuracy = [
-        'year' => "day",
-        'month' => "day",
-        'week' => "day",
-        'day' => "hour",
-        'hour' => "minute",
-        'minute' => "minute",
-        'second' => "second",
+        'year' => 'day',
+        'month' => 'day',
+        'week' => 'day',
+        'day' => 'hour',
+        'hour' => 'minute',
+        'minute' => 'minute',
+        'second' => 'second',
     ];
 
     /**
