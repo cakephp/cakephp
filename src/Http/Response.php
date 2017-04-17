@@ -1736,7 +1736,7 @@ class Response implements ResponseInterface
         } else {
             $result = new DateTime($time);
         }
-        $result->setTimeZone(new DateTimeZone('UTC'));
+        $result->setTimezone(new DateTimeZone('UTC'));
 
         return $result;
     }
