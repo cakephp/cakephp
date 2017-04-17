@@ -51,6 +51,7 @@ class ActionDispatcher
      * @param \Cake\Http\ControllerFactory|null $factory A controller factory instance.
      * @param \Cake\Event\EventManager|null $eventManager An event manager if you want to inject one.
      * @param \Cake\Event\EventListenerInterface[] $filters The list of filters to include.
+     * @throws \InvalidArgumentException
      */
     public function __construct($factory = null, $eventManager = null, array $filters = [])
     {
@@ -69,6 +70,8 @@ class ActionDispatcher
      * @param \Cake\Http\ServerRequest $request The request to dispatch.
      * @param \Cake\Http\Response $response The response to dispatch.
      * @return \Cake\Http\Response A modified/replaced response.
+     * @throws \Cake\Routing\Exception\MissingControllerException
+     * @throws \Cake\Controller\Exception\MissingActionException
      * @throws \LogicException
      */
     public function dispatch(ServerRequest $request, Response $response)
