@@ -163,7 +163,7 @@ class SqlserverSchema extends BaseSchema
         }
 
         $field += [
-            'null' => $row['null'] === '1' ? true : false,
+            'null' => $row['null'] === '1',
             'default' => $this->_defaultValue($row['default']),
             'collate' => $row['collation_name'],
         ];

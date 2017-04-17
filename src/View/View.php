@@ -488,7 +488,7 @@ class View implements EventDispatcherInterface
             $options['cache'] = $this->_elementCache($name, $data, $options);
         }
 
-        $pluginCheck = $options['plugin'] === false ? false : true;
+        $pluginCheck = $options['plugin'] !== false;
         $file = $this->_getElementFileName($name, $pluginCheck);
         if ($file && $options['cache']) {
             return $this->cache(function () use ($file, $data, $options) {

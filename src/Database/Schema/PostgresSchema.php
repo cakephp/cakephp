@@ -163,7 +163,7 @@ class PostgresSchema extends BaseSchema
 
         $field += [
             'default' => $this->_defaultValue($row['default']),
-            'null' => $row['null'] === 'YES' ? true : false,
+            'null' => $row['null'] === 'YES',
             'collate' => $row['collation_name'],
             'comment' => $row['comment']
         ];
