@@ -66,7 +66,7 @@ class ConditionDecorator extends AbstractDecorator
             if ($condition === 'unless') {
                 return false;
             }
-            
+
             return true;
         }
         if (!is_callable($this->_options[$condition])) {
