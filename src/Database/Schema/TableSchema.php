@@ -506,7 +506,7 @@ class TableSchema
             $attrs = ['type' => $attrs];
         }
         $attrs = array_intersect_key($attrs, static::$_indexKeys);
-        $attrs = $attrs + static::$_indexKeys;
+        $attrs += static::$_indexKeys;
         unset($attrs['references'], $attrs['update'], $attrs['delete']);
 
         if (!in_array($attrs['type'], static::$_validIndexTypes, true)) {
@@ -602,7 +602,7 @@ class TableSchema
             $attrs = ['type' => $attrs];
         }
         $attrs = array_intersect_key($attrs, static::$_indexKeys);
-        $attrs = $attrs + static::$_indexKeys;
+        $attrs += static::$_indexKeys;
         if (!in_array($attrs['type'], static::$_validConstraintTypes, true)) {
             throw new Exception(sprintf('Invalid constraint type "%s" in table "%s".', $attrs['type'], $this->_table));
         }

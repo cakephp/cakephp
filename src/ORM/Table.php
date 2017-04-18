@@ -1889,7 +1889,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $primary = array_intersect_key($data, $primary) + $primary;
 
         $filteredKeys = array_filter($primary, 'strlen');
-        $data = $data + $filteredKeys;
+        $data += $filteredKeys;
 
         if (count($primary) > 1) {
             $schema = $this->getSchema();
