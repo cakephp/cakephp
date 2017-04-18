@@ -53,8 +53,8 @@ class ControllerFactory
      * Determine the controller class name based on current request and controller param
      *
      * @param \Cake\Http\ServerRequest $request The request to build a controller for.
-     * @param string $controllerName The controller name present in the request params
-     * @return bool|string
+     * @param string|null $controllerName The controller name present in the request params
+     * @return string|null
      */
     public function getControllerClass(ServerRequest $request, $controllerName = null)
     {
@@ -91,7 +91,7 @@ class ControllerFactory
             $this->missingController($request);
         }
 
-        return App::className($pluginPath . $controller, $namespace, 'Controller');
+        return App::className($pluginPath . $controller, $namespace, 'Controller') ?: null;
     }
 
     /**
