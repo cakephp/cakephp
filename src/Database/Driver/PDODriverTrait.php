@@ -155,7 +155,7 @@ trait PDODriverTrait
             return false;
         }
 
-        return $this->_connection->rollBack();
+        return $this->_connection->rollback();
     }
 
     /**
