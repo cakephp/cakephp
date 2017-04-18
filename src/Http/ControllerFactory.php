@@ -33,13 +33,39 @@ class ControllerFactory
      */
     public function create(ServerRequest $request, Response $response)
     {
-        $pluginPath = $controller = null;
-        $namespace = 'Controller';
-        if ($request->getParam('plugin')) {
-            $pluginPath = $request->getParam('plugin') . '.';
-        }
+        $controller = null;
         if ($request->getParam('controller')) {
             $controller = $request->getParam('controller');
+        }
+        $className = $this->getControllerClass($request, $controller);
+        if (!$className) {
+            $this->missingController($request);
+        }
+        $reflection = new ReflectionClass($className);
+        if ($reflection->isAbstract() || $reflection->isInterface()) {
+            $this->missingController($request);
+        }
+
+        return $reflection->newInstance($request, $response, $controller);
+    }
+
+    /**
+     * Determine the controller class name based on current request and controller param
+     *
+     * @param \Cake\Http\ServerRequest $request The request to build a controller for.
+     * @param string $controllerName The controller name present in the request params
+     * @return bool|string
+     */
+    public function getControllerClass(ServerRequest $request, $controllerName = null)
+    {
+        $pluginPath = null;
+        $controller = $controllerName;
+        $namespace = 'Controller';
+        if (!$controller && $request->getParam('controller')) {
+            $controller = $request->getParam('controller');
+        }
+        if ($request->getParam('plugin')) {
+            $pluginPath = $request->getParam('plugin') . '.';
         }
         if ($request->getParam('prefix')) {
             if (strpos($request->getParam('prefix'), '/') === false) {
@@ -65,16 +91,7 @@ class ControllerFactory
             $this->missingController($request);
         }
 
-        $className = App::className($pluginPath . $controller, $namespace, 'Controller');
-        if (!$className) {
-            $this->missingController($request);
-        }
-        $reflection = new ReflectionClass($className);
-        if ($reflection->isAbstract() || $reflection->isInterface()) {
-            $this->missingController($request);
-        }
-
-        return $reflection->newInstance($request, $response, $controller);
+        return App::className($pluginPath . $controller, $namespace, 'Controller');
     }
 
     /**
