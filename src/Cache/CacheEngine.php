@@ -52,7 +52,7 @@ abstract class CacheEngine
      *
      * @var string
      */
-    protected $_groupPrefix = null;
+    protected $_groupPrefix;
 
     /**
      * Initialize the cache engine

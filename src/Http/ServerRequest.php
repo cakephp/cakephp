@@ -387,8 +387,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     protected function _processGet($query, $queryString = '')
     {
         $unsetUrl = '/' . str_replace(['.', ' '], '_', urldecode($this->url));
-        unset($query[$unsetUrl]);
-        unset($query[$this->base . $unsetUrl]);
+        unset($query[$unsetUrl], $query[$this->base . $unsetUrl]);
         if (strlen($queryString)) {
             parse_str($queryString, $queryArgs);
             $query += $queryArgs;
@@ -1769,7 +1768,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     protected function _readInput()
     {
         if (empty($this->_input)) {
-            $fh = fopen('php://input', 'r');
+            $fh = fopen('php://input', 'rb');
             $content = stream_get_contents($fh);
             fclose($fh);
             $this->_input = $content;

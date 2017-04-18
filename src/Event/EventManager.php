@@ -37,7 +37,7 @@ class EventManager
      *
      * @var \Cake\Event\EventManager
      */
-    protected static $_generalManager = null;
+    protected static $_generalManager;
 
     /**
      * List of listener callbacks associated to
@@ -470,7 +470,7 @@ class EventManager
      */
     public function matchingListeners($eventKeyPattern)
     {
-        $matchPattern = '/' . preg_quote($eventKeyPattern, "/") . '/';
+        $matchPattern = '/' . preg_quote($eventKeyPattern, '/') . '/';
         $matches = array_intersect_key(
             $this->_listeners,
             array_flip(

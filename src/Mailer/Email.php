@@ -167,7 +167,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @var string
      */
-    protected $_domain = null;
+    protected $_domain;
 
     /**
      * The subject of the email
@@ -224,7 +224,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @var \Cake\Mailer\AbstractTransport|null
      */
-    protected $_transport = null;
+    protected $_transport;
 
     /**
      * Charset the email body is sent in
@@ -239,14 +239,14 @@ class Email implements JsonSerializable, Serializable
      *
      * @var string|null
      */
-    public $headerCharset = null;
+    public $headerCharset;
 
     /**
      * The application wide charset, used to encode headers and body
      *
      * @var string|null
      */
-    protected $_appCharset = null;
+    protected $_appCharset;
 
     /**
      * List of files that should be attached to the email.
@@ -262,14 +262,14 @@ class Email implements JsonSerializable, Serializable
      *
      * @var string|null
      */
-    protected $_boundary = null;
+    protected $_boundary;
 
     /**
      * Contains the optional priority of the email.
      *
      * @var int|null
      */
-    protected $_priority = null;
+    protected $_priority;
 
     /**
      * An array mapping url schemes to fully qualified Transport class names
@@ -1548,7 +1548,8 @@ class Email implements JsonSerializable, Serializable
 
         if (!$className) {
             throw new InvalidArgumentException(sprintf('Transport class "%s" not found.', $config['className']));
-        } elseif (!method_exists($className, 'send')) {
+        }
+        if (!method_exists($className, 'send')) {
             throw new InvalidArgumentException(sprintf('The "%s" does not have a send() method.', $className));
         }
 

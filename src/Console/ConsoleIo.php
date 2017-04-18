@@ -101,10 +101,10 @@ class ConsoleIo
      */
     public function __construct(ConsoleOutput $out = null, ConsoleOutput $err = null, ConsoleInput $in = null, HelperRegistry $helpers = null)
     {
-        $this->_out = $out ? $out : new ConsoleOutput('php://stdout');
-        $this->_err = $err ? $err : new ConsoleOutput('php://stderr');
-        $this->_in = $in ? $in : new ConsoleInput('php://stdin');
-        $this->_helpers = $helpers ? $helpers : new HelperRegistry();
+        $this->_out = $out ?: new ConsoleOutput('php://stdout');
+        $this->_err = $err ?: new ConsoleOutput('php://stderr');
+        $this->_in = $in ?: new ConsoleInput('php://stdin');
+        $this->_helpers = $helpers ?: new HelperRegistry();
         $this->_helpers->setIo($this);
     }
 

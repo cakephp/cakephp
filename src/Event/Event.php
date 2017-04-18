@@ -32,7 +32,7 @@ class Event
      *
      * @var string
      */
-    protected $_name = null;
+    protected $_name;
 
     /**
      * The object this event applies to (usually the same object that generates the event)
@@ -53,7 +53,7 @@ class Event
      *
      * @var mixed
      */
-    public $result = null;
+    public $result;
 
     /**
      * Flags an event as stopped or not, default is false

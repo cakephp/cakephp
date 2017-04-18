@@ -71,7 +71,7 @@ class PoFileParser
      */
     public function parse($resource)
     {
-        $stream = fopen($resource, 'r');
+        $stream = fopen($resource, 'rb');
 
         $defaults = [
             'ids' => [],

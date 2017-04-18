@@ -163,7 +163,7 @@ class PostgresSchema extends BaseSchema
 
         $field += [
             'default' => $this->_defaultValue($row['default']),
-            'null' => $row['null'] === 'YES' ? true : false,
+            'null' => $row['null'] === 'YES',
             'collate' => $row['collation_name'],
             'comment' => $row['comment']
         ];
@@ -171,7 +171,7 @@ class PostgresSchema extends BaseSchema
 
         if ($field['type'] === 'numeric' || $field['type'] === 'decimal') {
             $field['length'] = $row['column_precision'];
-            $field['precision'] = $row['column_scale'] ? $row['column_scale'] : null;
+            $field['precision'] = $row['column_scale'] ?: null;
         }
         $schema->addColumn($row['name'], $field);
     }
@@ -198,7 +198,7 @@ class PostgresSchema extends BaseSchema
         // Remove quotes and postgres casts
         return preg_replace(
             "/^'(.*)'(?:::.*)$/",
-            "$1",
+            '$1',
             $default
         );
     }
@@ -208,7 +208,7 @@ class PostgresSchema extends BaseSchema
      */
     public function describeIndexSql($tableName, $config)
     {
-        $sql = "SELECT
+        $sql = 'SELECT
         c2.relname,
         a.attname,
         i.indisprimary,
@@ -221,7 +221,7 @@ class PostgresSchema extends BaseSchema
         WHERE n.nspname = ?
         AND a.attnum = ANY(i.indkey)
         AND c.relname = ?
-        ORDER BY i.indisprimary DESC, i.indisunique DESC, c.relname, a.attnum";
+        ORDER BY i.indisprimary DESC, i.indisunique DESC, c.relname, a.attnum';
 
         $schema = 'public';
         if (!empty($config['schema'])) {
@@ -287,7 +287,7 @@ class PostgresSchema extends BaseSchema
      */
     public function describeForeignKeySql($tableName, $config)
     {
-        $sql = "SELECT
+        $sql = 'SELECT
         c.conname AS name,
         c.contype AS type,
         a.attname AS column_name,
@@ -303,7 +303,7 @@ class PostgresSchema extends BaseSchema
         INNER JOIN pg_catalog.pg_attribute ab ON (a.attrelid = cl.oid AND c.confrelid = ab.attrelid AND ab.attnum = ANY(c.confkey))
         WHERE n.nspname = ?
         AND cl.relname = ?
-        ORDER BY name, a.attnum, ab.attnum DESC";
+        ORDER BY name, a.attnum, ab.attnum DESC';
 
         $schema = empty($config['schema']) ? 'public' : $config['schema'];
 

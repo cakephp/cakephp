@@ -12,7 +12,6 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-use Cake\Error\Debugger;
 ?>
 <!DOCTYPE html>
 <html>

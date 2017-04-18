@@ -106,7 +106,7 @@ if (!function_exists('breakpoint')) {
             return 'extract(\Psy\Shell::debug(get_defined_vars(), isset($this) ? $this : null));';
         }
         trigger_error(
-            "psy/psysh must be installed and you must be in a CLI environment to use the breakpoint function",
+            'psy/psysh must be installed and you must be in a CLI environment to use the breakpoint function',
             E_USER_WARNING
         );
     }
