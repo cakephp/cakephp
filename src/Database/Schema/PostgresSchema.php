@@ -171,7 +171,7 @@ class PostgresSchema extends BaseSchema
 
         if ($field['type'] === 'numeric' || $field['type'] === 'decimal') {
             $field['length'] = $row['column_precision'];
-            $field['precision'] = $row['column_scale'] ? $row['column_scale'] : null;
+            $field['precision'] = $row['column_scale'] ?: null;
         }
         $schema->addColumn($row['name'], $field);
     }

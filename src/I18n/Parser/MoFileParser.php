@@ -59,7 +59,7 @@ class MoFileParser
      */
     public function parse($resource)
     {
-        $stream = fopen($resource, 'r');
+        $stream = fopen($resource, 'rb');
 
         $stat = fstat($stream);
 

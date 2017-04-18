@@ -160,7 +160,7 @@ class ConsoleOutput
      */
     public function __construct($stream = 'php://stdout')
     {
-        $this->_output = fopen($stream, 'w');
+        $this->_output = fopen($stream, 'wb');
 
         if ((DIRECTORY_SEPARATOR === '\\' && !(bool)env('ANSICON') && env('ConEmuANSI') !== 'ON') ||
             (function_exists('posix_isatty') && !posix_isatty($this->_output))

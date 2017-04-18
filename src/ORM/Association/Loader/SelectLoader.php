@@ -154,7 +154,6 @@ class SelectLoader
      */
     protected function _buildQuery($options)
     {
-        $alias = $this->targetAlias;
         $key = $this->_linkField($options);
         $filter = $options['keys'];
         $useSubquery = $options['strategy'] === Association::STRATEGY_SUBQUERY;
