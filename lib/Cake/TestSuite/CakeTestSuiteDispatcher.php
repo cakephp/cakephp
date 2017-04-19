@@ -132,7 +132,11 @@ class CakeTestSuiteDispatcher {
  *
  * @return bool true if found, false otherwise
  */
-	public function loadTestFramework() {
+    public function loadTestFramework() {
+        $composerAutoload = realpath(__DIR__ . '/../../../vendor/autoload.php');
+        if (file_exists($composerAutoload)) {
+            require_once $composerAutoload;
+        }
 		if (class_exists('PHPUnit_Framework_TestCase')) {
 			return true;
 		}
