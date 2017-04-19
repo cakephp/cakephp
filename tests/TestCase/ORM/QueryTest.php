@@ -2555,6 +2555,34 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that the isEagerLoaded function works and is transmitted correctly to eagerly
+     * loaded associations
+     *
+     * @return void
+     */
+    public function testIsEagerLoaded()
+    {
+        $table = TableRegistry::get('authors');
+        $table->hasMany('articles');
+        $query = $table->find()->contain(['articles' => function ($q) {
+            $this->assertTrue($q->isEagerLoaded());
+
+            return $q;
+        }]);
+        $this->assertFalse($query->isEagerLoaded());
+
+        $table->eventManager()->attach(function ($e, $q, $o, $primary) {
+            $this->assertTrue($primary);
+        }, 'Model.beforeFind');
+
+        TableRegistry::get('articles')
+            ->eventManager()->attach(function ($e, $q, $o, $primary) {
+                $this->assertFalse($primary);
+            }, 'Model.beforeFind');
+        $query->all();
+    }
+
+    /**
      * Tests that columns from manual joins are also contained in the result set
      *
      * @return void

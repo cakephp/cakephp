@@ -986,7 +986,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             $table->dispatchEvent('Model.beforeFind', [
                 $this,
                 new ArrayObject($this->_options),
-                !$this->eagerLoaded()
+                !$this->isEagerLoaded()
             ]);
         }
     }
