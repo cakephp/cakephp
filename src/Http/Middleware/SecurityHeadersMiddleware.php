@@ -124,7 +124,7 @@ class SecurityHeadersMiddleware
         }
 
         $this->checkValues($mode, ['1', '0', '1; mode=block']);
-        $this->headers['x-permitted-cross-domain-policies'] = $mode;
+        $this->headers['x-xss-protection'] = $mode;
 
         return $this;
     }

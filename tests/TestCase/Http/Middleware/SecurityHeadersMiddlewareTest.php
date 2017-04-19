@@ -50,22 +50,12 @@ class SecurityHeadersMiddlewareTest extends TestCase
             ->noSniff();
 
         $expected = [
-            'x-permitted-cross-domain-policies' => [
-                0 => '1; mode=block'
-            ],
-            'referrer-policy' => [
-                0 => 'same-origin'
-            ],
-            'x-frame-options' => [
-                0 => 'sameorigin'
-            ],
-            'x-download-options' => [
-                0 => 'noopen'
-            ],
-            'x-content-type-options' => [
-                0 => 'nosniff'
-            ]
-
+            'x-permitted-cross-domain-policies' => ['all'],
+            'x-xss-protection' => ['1; mode=block'],
+            'referrer-policy' => ['same-origin'],
+            'x-frame-options' => ['sameorigin'],
+            'x-download-options' => ['noopen'],
+            'x-content-type-options' => ['nosniff']
         ];
 
         $result = $middleware($request, $response, $next);
