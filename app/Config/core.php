@@ -116,9 +116,16 @@
  * for any URL generation inside the application, set the following
  * configuration variable to the http(s) address to your domain. This
  * will override the automatic detection of full base URL and can be
- * useful when generating links from the CLI (e.g. sending emails)
+ * useful when generating links from the CLI (e.g. sending emails).
+ * If the application runs in a subfolder, you should also set App.base.
  */
 	//Configure::write('App.fullBaseUrl', 'http://example.com');
+
+/**
+ * The base directory the app resides in. Should be used if the
+ * application runs in a subfolder and App.fullBaseUrl is set.
+ */
+	//Configure::write('App.base', '/my_app');
 
 /**
  * Web path to the public images directory under webroot.
