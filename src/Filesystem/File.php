@@ -109,7 +109,6 @@ class File
 
         if (is_dir($dir) && is_writable($dir) && !$this->exists()) {
             if (touch($this->path)) {
-
                 return true;
             }
         }
