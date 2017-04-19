@@ -248,6 +248,13 @@ abstract class ControllerTestCase extends CakeTestCase {
 				$_GET = array();
 			}
 		}
+
+		if (strpos($url, '?') !== false) {
+			list($url, $query) = explode('?', $url, 2);
+			parse_str($query, $queryArgs);
+			$_GET += $queryArgs;
+		}
+
 		$_SERVER['REQUEST_URI'] = $url;
 		$request = $this->getMock('CakeRequest', array('_readInput'));
 
