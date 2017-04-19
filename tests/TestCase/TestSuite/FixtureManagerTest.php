@@ -282,7 +282,10 @@ class FixtureManagerTest extends TestCase
         // the 'other' connection as the alias should not be ignored.
         $testOther = $this->getMockBuilder('Cake\Database\Connection')
             ->setMethods(['execute'])
-            ->setConstructorArgs([['driver' => $connection->getDriver()]])
+            ->setConstructorArgs([[
+                'database' => $connection->config()['database'],
+                'driver' => $connection->getDriver()
+            ]])
             ->getMock();
         $testOther->expects($this->atLeastOnce())
             ->method('execute')
