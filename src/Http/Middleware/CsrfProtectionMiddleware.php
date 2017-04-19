@@ -113,7 +113,14 @@ class CsrfProtectionMiddleware
         return $next($request, $response);
     }
 
-    protected function _validateAndUnsetTokenField(ServerRequest &$request) {
+    /**
+     * Checks if the request is POST, PUT, DELETE or PATCH and validates the CSRF token
+     *
+     * @param \Cake\Http\ServerRequest $request The request object.
+     * @return void
+     */
+    protected function _validateAndUnsetTokenField(ServerRequest &$request)
+    {
         if (in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH']) || $request->getData()) {
             $this->_validateToken($request);
             $body = $request->getParsedBody();
