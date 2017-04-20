@@ -2126,7 +2126,6 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @return void
      * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use withParam() or param() instead.
      */
-
     public function offsetSet($name, $value)
     {
         $this->params[$name] = $value;
