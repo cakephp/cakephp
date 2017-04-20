@@ -20,9 +20,9 @@ use Aura\Intl\FormatterLocator;
 use Aura\Intl\Package;
 use Aura\Intl\PackageLocator;
 use Aura\Intl\TranslatorLocator;
+use Cake\I18n\Translator;
 use Cake\I18n\TranslatorFactory;
 use Cake\I18n\TranslatorRegistry;
-use Cake\I18n\Translator;
 use Cake\TestSuite\TestCase;
 
 class TranslatorRegistryTest extends TestCase
