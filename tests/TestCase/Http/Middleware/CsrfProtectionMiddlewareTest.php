@@ -77,7 +77,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
      *
      * @return callable
      */
-    protected function _getNextClosure() {
+    protected function _getNextClosure()
+    {
         return function ($request, $response) {
             return $response;
         };
@@ -168,6 +169,94 @@ class CsrfProtectionMiddlewareTest extends TestCase
             ],
             'post' => ['a' => 'b'],
             'cookies' => ['csrfToken' => 'testing123']
+        ]);
+        $response = new Response();
+
+        $middleware = new CsrfProtectionMiddleware();
+        $middleware($request, $response, $this->_getNextClosure());
+    }
+
+    /**
+     * Test that request data works with the various http methods.
+     *
+     * @dataProvider httpMethodProvider
+     * @return void
+     */
+    public function testValidTokenRequestData($method)
+    {
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => $method,
+            ],
+            'post' => ['_csrfToken' => 'testing123'],
+            'cookies' => ['csrfToken' => 'testing123']
+        ]);
+        $response = new Response();
+
+        // No exception means everything is OK
+        $middleware = new CsrfProtectionMiddleware();
+        $middleware($request, $response, $this->_getNextClosure());
+        $this->assertNull($request->getData('_csrfToken'));
+    }
+
+    /**
+     * Test that request data works with the various http methods.
+     *
+     * @dataProvider httpMethodProvider
+     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
+     * @return void
+     */
+    public function testInvalidTokenRequestData($method)
+    {
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => $method,
+            ],
+            'post' => ['_csrfToken' => 'nope'],
+            'cookies' => ['csrfToken' => 'testing123']
+        ]);
+        $response = new Response();
+
+        $middleware = new CsrfProtectionMiddleware();
+        $middleware($request, $response, $this->_getNextClosure());
+    }
+
+    /**
+     * Test that missing post field fails
+     *
+     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
+     * @return void
+     */
+    public function testInvalidTokenRequestDataMissing()
+    {
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+            ],
+            'post' => [],
+            'cookies' => ['csrfToken' => 'testing123']
+        ]);
+        $response = new Response();
+
+        $middleware = new CsrfProtectionMiddleware();
+        $middleware($request, $response, $this->_getNextClosure());
+    }
+
+    /**
+     * Test that missing header and cookie fails
+     *
+     * @dataProvider httpMethodProvider
+     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
+     * @return void
+     */
+    public function testInvalidTokenMissingCookie($method)
+    {
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => $method
+            ],
+            'post' => ['_csrfToken' => 'could-be-valid'],
+            'cookies' => []
         ]);
         $response = new Response();
 

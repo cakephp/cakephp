@@ -32,7 +32,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * If the request data is missing or does not match the cookie data,
  * an InvalidCsrfTokenException will be raised.
  *
- * This component integrates with the FormHelper automatically and when
+ * This middleware integrates with the FormHelper automatically and when
  * used together your forms will have CSRF tokens automatically added
  * when `$this->Form->create(...)` is used in a view.
  */
@@ -72,7 +72,7 @@ class CsrfProtectionMiddleware
      */
     public function __construct(array $config = [])
     {
-        $this->_config = $this->_defaultConfig + $config;
+        $this->_config = $config + $this->_defaultConfig;
     }
 
     /**
@@ -88,7 +88,7 @@ class CsrfProtectionMiddleware
         $cookies = $request->getCookieParams();
         $cookieData = null;
         if (isset($cookies[$this->_config['cookieName']])) {
-            $cookieData = isset($cookies[$this->_config['cookieName']]);
+            $cookieData = $cookies[$this->_config['cookieName']];
         }
 
         if (!empty($cookieData)) {
@@ -103,12 +103,12 @@ class CsrfProtectionMiddleware
         }
 
         if ($method === 'GET' && $cookieData === null) {
-            $this->_setCookie($request, $response);
+            $this->_setToken($request, $response);
 
             return $next($request, $response);
         }
 
-        $this->_validateAndUnsetTokenField($request);
+        $request = $this->_validateAndUnsetTokenField($request);
 
         return $next($request, $response);
     }
@@ -119,7 +119,7 @@ class CsrfProtectionMiddleware
      * @param \Cake\Http\ServerRequest $request The request object.
      * @return void
      */
-    protected function _validateAndUnsetTokenField(ServerRequest &$request)
+    protected function _validateAndUnsetTokenField(ServerRequest $request)
     {
         if (in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH']) || $request->getData()) {
             $this->_validateToken($request);
@@ -129,10 +129,12 @@ class CsrfProtectionMiddleware
                 $request = $request->withParsedBody($body);
             }
         }
+
+        return $request;
     }
 
     /**
-     * Set the cookie in the response.
+     * Set the token in the response.
      *
      * Also sets the request->params['_csrfToken'] so the newly minted
      * token is available in the request data.
@@ -141,7 +143,7 @@ class CsrfProtectionMiddleware
      * @param \Cake\Http\Response $response The response object.
      * @return void
      */
-    protected function _setCookie(ServerRequest &$request, Response &$response)
+    protected function _setToken(ServerRequest &$request, Response &$response)
     {
         $expiry = new Time($this->_config['expiry']);
         $value = hash('sha512', Security::randomBytes(16), false);
