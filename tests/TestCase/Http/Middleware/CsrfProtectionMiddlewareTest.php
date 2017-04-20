@@ -27,26 +27,6 @@ class CsrfProtectionMiddlewareTest extends TestCase
 {
 
     /**
-     * setup
-     *
-     * @return void
-     */
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
-    /**
-     * teardown
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
-    /**
      * Data provider for HTTP method tests.
      *
      * HEAD and GET do not populate $_POST or request->data.
