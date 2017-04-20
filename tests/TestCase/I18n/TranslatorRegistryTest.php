@@ -12,25 +12,25 @@
  * @since         3.4.6
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\Test\TestCase\I18n;
 
-
 use Aura\Intl\BasicFormatter;
-use Aura\Intl\Package;
 use Aura\Intl\FormatterLocator;
+use Aura\Intl\Package;
 use Aura\Intl\PackageLocator;
-use Cake\I18n\TranslatorFactory;
-use Cake\TestSuite\TestCase;
-use Cake\I18n\TranslatorRegistry;
 use Aura\Intl\TranslatorLocator;
+use Cake\I18n\TranslatorFactory;
+use Cake\I18n\TranslatorRegistry;
 use Cake\I18n\Translator;
+use Cake\TestSuite\TestCase;
 
 class TranslatorRegistryTest extends TestCase
 {
     /**
      * Test Package null initialization from cache
      */
-    public function testGetNullPackageInitializationFromCache ()
+    public function testGetNullPackageInitializationFromCache()
     {
         $translatorFactory = $this->getMockBuilder(TranslatorFactory::class)->getMock();
         $translatorLocator = $this->getMockBuilder(TranslatorLocator::class)->disableOriginalConstructor()->getMock();
