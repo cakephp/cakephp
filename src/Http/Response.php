@@ -2080,7 +2080,9 @@ class Response implements ResponseInterface
     {
         if ($cookie instanceof Cookie) {
             return $cookie->toArrayResponse();
-        } elseif ($cookie->getExpiry()) {
+        }
+
+        if ($cookie->getExpiry()) {
             $expires = $cookie->getExpiry()->format('U');
         } else {
             $expires = '';

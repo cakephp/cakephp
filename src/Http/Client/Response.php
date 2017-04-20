@@ -462,7 +462,9 @@ class Response extends Message implements ResponseInterface
     {
         if ($cookie instanceof Cookie) {
             return $cookie->toArrayClient();
-        } elseif ($cookie->getExpiry()) {
+        }
+
+        if ($cookie->getExpiry()) {
             $expires = $cookie->getExpiry()->format(Cookie::EXPIRES_FORMAT);
         } else {
             $expires = '';
