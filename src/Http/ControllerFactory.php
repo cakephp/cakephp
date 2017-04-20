@@ -33,11 +33,7 @@ class ControllerFactory
      */
     public function create(ServerRequest $request, Response $response)
     {
-        $controller = null;
-        if ($request->getParam('controller')) {
-            $controller = $request->getParam('controller');
-        }
-        $className = $this->getControllerClass($request, $controller);
+        $className = $this->getControllerClass($request);
         if (!$className) {
             $this->missingController($request);
         }
@@ -46,22 +42,20 @@ class ControllerFactory
             $this->missingController($request);
         }
 
-        return $reflection->newInstance($request, $response, $controller);
+        return $reflection->newInstance($request, $response);
     }
 
     /**
      * Determine the controller class name based on current request and controller param
      *
      * @param \Cake\Http\ServerRequest $request The request to build a controller for.
-     * @param string|null $controllerName The controller name present in the request params
      * @return string|null
      */
-    public function getControllerClass(ServerRequest $request, $controllerName = null)
+    public function getControllerClass(ServerRequest $request)
     {
-        $pluginPath = null;
-        $controller = $controllerName;
+        $pluginPath = $controller = null;
         $namespace = 'Controller';
-        if (!$controller && $request->getParam('controller')) {
+        if ($request->getParam('controller')) {
             $controller = $request->getParam('controller');
         }
         if ($request->getParam('plugin')) {
