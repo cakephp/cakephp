@@ -166,4 +166,13 @@ interface CookieInterface
      * @return string
      */
     public function toHeaderValue();
+
+    /**
+     * Convert the cookie into an array of its properties.
+     *
+     * Primarily useful where backwards compatibility is needed.
+     *
+     * @return array
+     */
+    public function toArray();
 }
