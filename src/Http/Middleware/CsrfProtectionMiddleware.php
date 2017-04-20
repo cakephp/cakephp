@@ -14,8 +14,6 @@
  */
 namespace Cake\Http\Middleware;
 
-use Cake\Http\Response;
-use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\Network\Exception\InvalidCsrfTokenException;
 use Cake\Utility\Security;
@@ -83,7 +81,7 @@ class CsrfProtectionMiddleware
      * @param callable $next Callback to invoke the next middleware.
      * @return \Psr\Http\Message\ResponseInterface A response
      */
-    public function __invoke(ServerRequestInterface &$request, ResponseInterface $response, $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
         $cookies = $request->getCookieParams();
         $cookieData = null;
@@ -97,11 +95,12 @@ class CsrfProtectionMiddleware
             $request = $request->withAttribute('params', $params);
         }
 
-        $method = $request->getMethod();
-        if ($method === 'requested') {
+        $requested = $request->getParam('requested');
+        if ($requested === 1) {
             return $next($request, $response);
         }
 
+        $method = $request->getMethod();
         if ($method === 'GET' && $cookieData === null) {
             $this->_setToken($request, $response);
 
@@ -119,7 +118,7 @@ class CsrfProtectionMiddleware
      * @param \Cake\Http\ServerRequest $request The request object.
      * @return void
      */
-    protected function _validateAndUnsetTokenField(ServerRequest $request)
+    protected function _validateAndUnsetTokenField(ServerRequestInterface $request)
     {
         if (in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH']) || $request->getData()) {
             $this->_validateToken($request);
@@ -143,7 +142,7 @@ class CsrfProtectionMiddleware
      * @param \Cake\Http\Response $response The response object.
      * @return void
      */
-    protected function _setToken(ServerRequest &$request, Response &$response)
+    protected function _setToken(ServerRequestInterface &$request, ResponseInterface &$response)
     {
         $expiry = new Time($this->_config['expiry']);
         $value = hash('sha512', Security::randomBytes(16), false);
@@ -168,7 +167,7 @@ class CsrfProtectionMiddleware
      * @throws \Cake\Network\Exception\InvalidCsrfTokenException when the CSRF token is invalid or missing.
      * @return void
      */
-    protected function _validateToken(ServerRequest $request)
+    protected function _validateToken(ServerRequestInterface $request)
     {
         $cookies = $request->getCookieParams();
         $cookie = isset($cookies[$this->_config['cookieName']]) ? $cookies[$this->_config['cookieName']] : null;
