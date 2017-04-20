@@ -163,7 +163,7 @@ class Cookie implements CookieInterface
      *
      * @return string
      */
-    protected function getFormattedExpires()
+    public function getFormattedExpires()
     {
         if (!$this->expiresAt) {
             return '';
