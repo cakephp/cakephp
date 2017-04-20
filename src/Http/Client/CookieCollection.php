@@ -70,7 +70,7 @@ class CookieCollection extends BaseCollection
     }
 
     /**
-     * Get all the stored cookies.
+     * Get all the stored cookies as arrays.
      *
      * @return array
      */
