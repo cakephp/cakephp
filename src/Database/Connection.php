@@ -309,7 +309,7 @@ class Connection implements ConnectionInterface
     public function run(Query $query)
     {
         $statement = $this->prepare($query);
-        $query->valueBinder()->attachTo($statement);
+        $query->getValueBinder()->attachTo($statement);
         $statement->execute();
 
         return $statement;

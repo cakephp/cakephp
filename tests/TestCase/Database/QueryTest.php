@@ -4330,6 +4330,18 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test getValueBinder()
+     *
+     * @return void
+     */
+    public function testGetValueBinder()
+    {
+        $query = new Query($this->connection);
+
+        $this->assertInstanceOf('\Cake\Database\ValueBinder', $query->getValueBinder());
+    }
+
+    /**
      * Assertion for comparing a table's contents with what is in it.
      *
      * @param string $table
