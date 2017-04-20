@@ -666,7 +666,7 @@ class Debugger
      * Set the output format for Debugger error rendering.
      *
      * @param string $format The format you want errors to be output as.
-     * @return null
+     * @return void
      * @throws \InvalidArgumentException When choosing a format that doesn't exist.
      */
     public static function setOutputAs($format)
@@ -677,8 +677,6 @@ class Debugger
             throw new InvalidArgumentException('Invalid Debugger output format.');
         }
         $self->_outputFormat = $format;
-
-        return null;
     }
 
     /**
