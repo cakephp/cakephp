@@ -18,6 +18,7 @@ use Cake\Core\Configure;
 use Cake\Filesystem\File;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
+use Cake\Http\Cookie\CookieInterface;
 use Cake\Log\Log;
 use Cake\Network\CorsBuilder;
 use Cake\Network\Exception\NotFoundException;
@@ -1938,7 +1939,9 @@ class Response implements ResponseInterface
                 return null;
             }
 
-            return $this->_cookies->get($options)->toArrayResponse();
+            $cookie = $this->_cookies->get($options);
+
+            return $this->toArrayResponse($cookie);
         }
 
         $options += [
@@ -2042,7 +2045,9 @@ class Response implements ResponseInterface
             return null;
         }
 
-        return $this->_cookies->get($name)->toArrayResponse();
+        $cookie = $this->_cookies->get($name);
+
+        return $this->toArrayResponse($cookie);
     }
 
     /**
@@ -2056,10 +2061,40 @@ class Response implements ResponseInterface
     {
         $out = [];
         foreach ($this->_cookies as $cookie) {
-            $out[$cookie->getName()] = $cookie->toArrayResponse();
+            $out[$cookie->getName()] = $this->toArrayResponse($cookie);
         }
 
         return $out;
+    }
+
+    /**
+     * Convert the cookie into an array of its properties.
+     *
+     * This method is compatible with the historical behavior of Cake\Http\Response,
+     * where `httponly` is `httpOnly` and `expires` is `expire`
+     *
+     * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie object.
+     * @return array
+     */
+    protected function toArrayResponse(CookieInterface $cookie)
+    {
+        if ($cookie instanceof Cookie) {
+            return $cookie->toArrayResponse();
+        } elseif ($cookie->getExpiry()) {
+            $expires = $cookie->getExpiry()->format('U');
+        } else {
+            $expires = '';
+        }
+
+        return [
+            'name' => $cookie->getName(),
+            'value' => $cookie->getValue(),
+            'path' => $cookie->getPath(),
+            'domain' => $cookie->getDomain(),
+            'secure' => $cookie->isSecure(),
+            'httpOnly' => $cookie->isHttpOnly(),
+            'expire' => $expires
+        ];
     }
 
     /**
