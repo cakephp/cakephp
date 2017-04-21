@@ -51,12 +51,35 @@ class EventDispatcherTraitTest extends TestCase
     }
 
     /**
-     * testSettingEventManager
+     * testEventManager
      *
-     * @covers \Cake\Event\EventDispatcherTrait::eventManager
      * @return void
      */
-    public function testSettingEventManager()
+    public function testEventManager()
+    {
+        $eventManager = new EventManager();
+
+        $this->subject->eventManager($eventManager);
+
+        $this->assertSame($eventManager, $this->subject->eventManager());
+    }
+
+    /**
+     * testGetEventManager
+     *
+     * @return void
+     */
+    public function testGetEventManager()
+    {
+        $this->assertInstanceOf(EventManager::class, $this->subject->getEventManager());
+    }
+
+    /**
+     * testSetEventManager
+     *
+     * @return void
+     */
+    public function testSetEventManager()
     {
         $eventManager = new EventManager();
 
