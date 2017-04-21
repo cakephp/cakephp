@@ -26,7 +26,7 @@ trait EventDispatcherTrait
      *
      * @var \Cake\Event\EventManager
      */
-    protected $_eventManager = null;
+    protected $_eventManager;
 
     /**
      * Default class name for new event objects.

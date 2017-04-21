@@ -52,7 +52,7 @@ class Number
      *
      * @var string|null
      */
-    protected static $_defaultCurrency = null;
+    protected static $_defaultCurrency;
 
     /**
      * Formats a number with a level of precision.
@@ -225,7 +225,7 @@ class Number
         $formatter = static::formatter(['type' => static::FORMAT_CURRENCY] + $options);
         $abs = abs($value);
         if (!empty($options['fractionSymbol']) && $abs > 0 && $abs < 1) {
-            $value = $value * 100;
+            $value *= 100;
             $pos = isset($options['fractionPosition']) ? $options['fractionPosition'] : 'after';
 
             return static::format($value, ['precision' => 0, $pos => $options['fractionSymbol']]);

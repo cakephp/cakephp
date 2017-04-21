@@ -675,7 +675,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         // If now, the whole _translations property is empty,
         // unset it completely and return
         if (empty($entity->get('_translations'))) {
-            $entity->unsetProperty("_translations");
+            $entity->unsetProperty('_translations');
         }
     }
 

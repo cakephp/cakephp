@@ -42,7 +42,7 @@ class SqlserverSchema extends BaseSchema
      */
     public function describeColumnSql($tableName, $config)
     {
-        $sql = "SELECT DISTINCT
+        $sql = 'SELECT DISTINCT
             AC.column_id AS [column_id],
             AC.name AS [name],
             TY.name AS [type],
@@ -58,7 +58,7 @@ class SqlserverSchema extends BaseSchema
             INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id]
             INNER JOIN sys.[types] TY ON TY.[user_type_id] = AC.[user_type_id]
             WHERE T.[name] = ? AND S.[name] = ?
-            ORDER BY column_id";
+            ORDER BY column_id';
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
 
@@ -163,7 +163,7 @@ class SqlserverSchema extends BaseSchema
         }
 
         $field += [
-            'null' => $row['null'] === '1' ? true : false,
+            'null' => $row['null'] === '1',
             'default' => $this->_defaultValue($row['default']),
             'collate' => $row['collation_name'],
         ];
@@ -261,7 +261,7 @@ class SqlserverSchema extends BaseSchema
      */
     public function describeForeignKeySql($tableName, $config)
     {
-        $sql = "SELECT FK.[name] AS [foreign_key_name], FK.[delete_referential_action_desc] AS [delete_type],
+        $sql = 'SELECT FK.[name] AS [foreign_key_name], FK.[delete_referential_action_desc] AS [delete_type],
                 FK.[update_referential_action_desc] AS [update_type], C.name AS [column], RT.name AS [reference_table],
                 RC.name AS [reference_column]
             FROM sys.foreign_keys FK
@@ -271,7 +271,7 @@ class SqlserverSchema extends BaseSchema
             INNER JOIN sys.schemas S ON S.schema_id = T.schema_id AND S.schema_id = RT.schema_id
             INNER JOIN sys.columns C ON C.column_id = FKC.parent_column_id AND C.object_id = FKC.parent_object_id
             INNER JOIN sys.columns RC ON RC.column_id = FKC.referenced_column_id AND RC.object_id = FKC.referenced_object_id
-            WHERE FK.is_ms_shipped = 0 AND T.name = ? AND S.name = ?";
+            WHERE FK.is_ms_shipped = 0 AND T.name = ? AND S.name = ?';
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
 

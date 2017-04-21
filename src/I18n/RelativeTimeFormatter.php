@@ -202,7 +202,7 @@ class RelativeTimeFormatter
 
             if ($months >= 12) {
                 $years = floor($months / 12);
-                $months = $months - ($years * 12);
+                $months -= ($years * 12);
             }
             if ($future['m'] < $past['m'] && $future['Y'] - $past['Y'] === 1) {
                 $years--;
@@ -231,25 +231,25 @@ class RelativeTimeFormatter
             }
 
             if ($months >= 12) {
-                $years = $years + 1;
-                $months = $months - 12;
+                $years++;
+                $months -= 12;
             }
 
             if ($days >= 7) {
                 $weeks = floor($days / 7);
-                $days = $days - ($weeks * 7);
+                $days -= ($weeks * 7);
             }
         } else {
             $years = $months = $weeks = 0;
             $days = floor($diff / 86400);
 
-            $diff = $diff - ($days * 86400);
+            $diff -= ($days * 86400);
 
             $hours = floor($diff / 3600);
-            $diff = $diff - ($hours * 3600);
+            $diff -= ($hours * 3600);
 
             $minutes = floor($diff / 60);
-            $diff = $diff - ($minutes * 60);
+            $diff -= ($minutes * 60);
             $seconds = $diff;
         }
 

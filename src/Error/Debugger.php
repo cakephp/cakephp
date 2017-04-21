@@ -67,7 +67,7 @@ class Debugger
     protected $_templates = [
         'log' => [
             'trace' => '{:reference} - {:path}, line {:line}',
-            'error' => "{:error} ({:code}): {:description} in [{:file}, line {:line}]"
+            'error' => '{:error} ({:code}): {:description} in [{:file}, line {:line}]'
         ],
         'js' => [
             'error' => '',
@@ -424,12 +424,12 @@ class Debugger
         if (!isset($data[$line])) {
             return $lines;
         }
-        $line = $line - 1;
+        $line--;
         for ($i = $line - $context; $i < $line + $context + 1; $i++) {
             if (!isset($data[$i])) {
                 continue;
             }
-            $string = str_replace(["\r\n", "\n"], "", static::_highlight($data[$i]));
+            $string = str_replace(["\r\n", "\n"], '', static::_highlight($data[$i]));
             if ($i == $line) {
                 $lines[] = '<span class="code-highlight">' . $string . '</span>';
             } else {
@@ -507,7 +507,7 @@ class Debugger
     {
         switch (static::getType($var)) {
             case 'boolean':
-                return ($var) ? 'true' : 'false';
+                return $var ? 'true' : 'false';
             case 'integer':
                 return '(int) ' . $var;
             case 'float':
@@ -551,7 +551,7 @@ class Debugger
      */
     protected static function _array(array $var, $depth, $indent)
     {
-        $out = "[";
+        $out = '[';
         $break = $end = null;
         if (!empty($var)) {
             $break = "\n" . str_repeat("\t", $indent);
@@ -755,7 +755,7 @@ class Debugger
         ];
         $data += $defaults;
 
-        $files = $this->trace(['start' => $data['start'], 'format' => 'points']);
+        $files = static::trace(['start' => $data['start'], 'format' => 'points']);
         $code = '';
         $file = null;
         if (isset($files[0]['file'])) {
@@ -764,16 +764,16 @@ class Debugger
             $file = $files[1];
         }
         if ($file) {
-            $code = $this->excerpt($file['file'], $file['line'] - 1, 1);
+            $code = static::excerpt($file['file'], $file['line'] - 1, 1);
         }
-        $trace = $this->trace(['start' => $data['start'], 'depth' => '20']);
+        $trace = static::trace(['start' => $data['start'], 'depth' => '20']);
         $insertOpts = ['before' => '{:', 'after' => '}'];
         $context = [];
         $links = [];
         $info = '';
 
         foreach ((array)$data['context'] as $var => $value) {
-            $context[] = "\${$var} = " . $this->exportVar($value, 3);
+            $context[] = "\${$var} = " . static::exportVar($value, 3);
         }
 
         switch ($this->_outputFormat) {
@@ -782,7 +782,7 @@ class Debugger
 
                 return;
             case 'log':
-                $this->log(compact('context', 'trace') + $data);
+                static::log(compact('context', 'trace') + $data);
 
                 return;
         }

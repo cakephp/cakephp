@@ -78,13 +78,13 @@ class Time extends MutableDateTime implements JsonSerializable
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
     public static $wordAccuracy = [
-        'year' => "day",
-        'month' => "day",
-        'week' => "day",
-        'day' => "hour",
-        'hour' => "minute",
-        'minute' => "minute",
-        'second' => "second",
+        'year' => 'day',
+        'month' => 'day',
+        'week' => 'day',
+        'day' => 'hour',
+        'hour' => 'minute',
+        'minute' => 'minute',
+        'second' => 'second',
     ];
 
     /**
@@ -239,7 +239,7 @@ class Time extends MutableDateTime implements JsonSerializable
      */
     public function timeAgoInWords(array $options = [])
     {
-        return $this->diffFormatter()->timeAgoInWords($this, $options);
+        return static::diffFormatter()->timeAgoInWords($this, $options);
     }
 
     /**

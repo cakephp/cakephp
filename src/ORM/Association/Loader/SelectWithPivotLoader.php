@@ -164,7 +164,6 @@ class SelectWithPivotLoader extends SelectLoader
     {
         $resultMap = [];
         $key = (array)$options['foreignKey'];
-        $hydrated = $fetchQuery->isHydrationEnabled();
 
         foreach ($fetchQuery->all() as $result) {
             if (!isset($result[$this->junctionProperty])) {

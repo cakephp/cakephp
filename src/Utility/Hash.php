@@ -345,7 +345,7 @@ class Hash
         $count = count($path);
         $last = $count - 1;
         foreach ($path as $i => $key) {
-            if ((is_numeric($key) && (int)($key) > 0 || $key === '0') &&
+            if ((is_numeric($key) && (int)$key > 0 || $key === '0') &&
                 strpos($key, '0') !== 0
             ) {
                 $key = (int)$key;
@@ -819,7 +819,7 @@ class Hash
         $depth = 1;
         while ($elem = array_shift($data)) {
             if (is_array($elem)) {
-                $depth += 1;
+                $depth++;
                 $data = $elem;
             } else {
                 break;
@@ -1077,8 +1077,7 @@ class Hash
         $intersection = array_intersect_key($data, $compare);
         while (($key = key($intersection)) !== null) {
             if ($data[$key] == $compare[$key]) {
-                unset($data[$key]);
-                unset($compare[$key]);
+                unset($data[$key], $compare[$key]);
             }
             next($intersection);
         }

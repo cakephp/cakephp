@@ -39,7 +39,7 @@ class I18n
      *
      * @var \Cake\I18n\TranslatorRegistry|null
      */
-    protected static $_collection = null;
+    protected static $_collection;
 
     /**
      * The environment default locale

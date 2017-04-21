@@ -987,9 +987,8 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $this->triggerBeforeFind();
 
         $this->_transformQuery();
-        $sql = parent::sql($binder);
 
-        return $sql;
+        return parent::sql($binder);
     }
 
     /**

@@ -255,6 +255,58 @@ class FixtureManagerTest extends TestCase
     }
 
     /**
+     * Test load uses aliased connections via a mock.
+     *
+     * Ensure that FixtureManager uses connection aliases
+     * protecting 'live' tables from being wiped by mistakes in
+     * fixture connection names.
+     *
+     * @return void
+     */
+    public function testLoadConnectionAliasUsage()
+    {
+        $connection = ConnectionManager::get('test');
+        $statement = $this->getMockBuilder('Cake\Database\StatementInterface')
+            ->getMock();
+
+        // This connection should _not_ be used.
+        $other = $this->getMockBuilder('Cake\Database\Connection')
+            ->setMethods(['execute'])
+            ->setConstructorArgs([['driver' => $connection->getDriver()]])
+            ->getMock();
+        $other->expects($this->never())
+            ->method('execute')
+            ->will($this->returnValue($statement));
+
+        // This connection should be used instead of
+        // the 'other' connection as the alias should not be ignored.
+        $testOther = $this->getMockBuilder('Cake\Database\Connection')
+            ->setMethods(['execute'])
+            ->setConstructorArgs([[
+                'database' => $connection->config()['database'],
+                'driver' => $connection->getDriver()
+            ]])
+            ->getMock();
+        $testOther->expects($this->atLeastOnce())
+            ->method('execute')
+            ->will($this->returnValue($statement));
+
+        ConnectionManager::config('other', $other);
+        ConnectionManager::config('test_other', $testOther);
+
+        // Connect the alias making test_other an alias of other.
+        ConnectionManager::alias('test_other', 'other');
+
+        $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
+        $test->fixtures = ['core.other_articles'];
+        $this->manager->fixturize($test);
+        $this->manager->load($test);
+
+        ConnectionManager::drop('other');
+        ConnectionManager::drop('test_other');
+    }
+
+    /**
      * Test loading fixtures using loadSingle()
      *
      * @return void

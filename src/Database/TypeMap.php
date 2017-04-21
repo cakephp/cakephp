@@ -125,7 +125,7 @@ class TypeMap
      */
     public function addDefaults(array $types)
     {
-        $this->_defaults = $this->_defaults + $types;
+        $this->_defaults += $types;
     }
 
     /**

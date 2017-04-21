@@ -56,9 +56,9 @@ class TextHelper extends Helper
     protected $_placeholders = [];
 
     /**
-     * String utility instance
+     * Cake Utility Text instance
      *
-     * @var \stdClass
+     * @var \Cake\Utility\Text
      */
     protected $_engine;
 

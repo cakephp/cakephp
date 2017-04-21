@@ -1420,7 +1420,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($cacheConfig) {
             if (!$cacheKey) {
                 $cacheKey = sprintf(
-                    "get:%s.%s%s",
+                    'get:%s.%s%s',
                     $this->getConnection()->configName(),
                     $this->getTable(),
                     json_encode($primaryKey)
@@ -1889,7 +1889,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $primary = array_intersect_key($data, $primary) + $primary;
 
         $filteredKeys = array_filter($primary, 'strlen');
-        $data = $data + $filteredKeys;
+        $data += $filteredKeys;
 
         if (count($primary) > 1) {
             $schema = $this->getSchema();
@@ -2401,9 +2401,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if ($data === null) {
             $class = $this->getEntityClass();
-            $entity = new $class([], ['source' => $this->getRegistryAlias()]);
 
-            return $entity;
+            return new $class([], ['source' => $this->getRegistryAlias()]);
         }
         if (!isset($options['associated'])) {
             $options['associated'] = $this->_associations->keys();
@@ -2717,7 +2716,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'entityClass' => $this->getEntityClass(),
             'associations' => $associations ? $associations->keys() : false,
             'behaviors' => $behaviors ? $behaviors->loaded() : false,
-            'defaultConnection' => $this->defaultConnectionName(),
+            'defaultConnection' => static::defaultConnectionName(),
             'connectionName' => $conn ? $conn->configName() : null
         ];
     }

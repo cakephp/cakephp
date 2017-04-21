@@ -97,7 +97,7 @@ class Text
                 }
             }
             if ($tmpOffset !== -1) {
-                $buffer .= mb_substr($data, $offset, ($tmpOffset - $offset));
+                $buffer .= mb_substr($data, $offset, $tmpOffset - $offset);
                 $char = mb_substr($data, $tmpOffset, 1);
                 if (!$depth && $char === $separator) {
                     $results[] = $buffer;
@@ -173,7 +173,7 @@ class Text
         $format = $options['format'];
         $data = (array)$data;
         if (empty($data)) {
-            return ($options['clean']) ? static::cleanInsert($str, $options) : $str;
+            return $options['clean'] ? static::cleanInsert($str, $options) : $str;
         }
 
         if (!isset($format)) {
@@ -193,7 +193,7 @@ class Text
                 $str = substr_replace($str, $val, $pos, 1);
             }
 
-            return ($options['clean']) ? static::cleanInsert($str, $options) : $str;
+            return $options['clean'] ? static::cleanInsert($str, $options) : $str;
         }
 
         asort($data);
@@ -209,7 +209,7 @@ class Text
         }
         $dataReplacements = array_combine($hashKeys, array_values($data));
         foreach ($dataReplacements as $tmpHash => $tmpValue) {
-            $tmpValue = (is_array($tmpValue)) ? '' : $tmpValue;
+            $tmpValue = is_array($tmpValue) ? '' : $tmpValue;
             $str = str_replace($tmpHash, $tmpValue, $str);
         }
 
@@ -217,7 +217,7 @@ class Text
             $str = str_replace($options['escape'] . $options['before'], $options['before'], $str);
         }
 
-        return ($options['clean']) ? static::cleanInsert($str, $options) : $str;
+        return $options['clean'] ? static::cleanInsert($str, $options) : $str;
     }
 
     /**
@@ -347,7 +347,7 @@ class Text
 
         if (!empty($options['indentAt']) && $options['indentAt'] === 0) {
             $indentLength = !empty($options['indent']) ? strlen($options['indent']) : 0;
-            $options['width'] = $options['width'] - $indentLength;
+            $options['width'] -= $indentLength;
 
             return self::wrap($text, $options);
         }
@@ -491,7 +491,7 @@ class Text
                     $segment = "(?![^<]+>)$segment(?![^<]+>)";
                 }
 
-                $with[] = (is_array($format)) ? $format[$key] : $format;
+                $with[] = is_array($format) ? $format[$key] : $format;
                 $replace[] = sprintf($options['regex'], $segment);
             }
 
@@ -916,7 +916,7 @@ class Text
         $length = strlen($string);
 
         for ($i = 0; $i < $length; $i++) {
-            $value = ord(($string[$i]));
+            $value = ord($string[$i]);
             if ($value > 128) {
                 return true;
             }

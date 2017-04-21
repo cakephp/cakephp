@@ -45,6 +45,12 @@ class Sqlserver extends Driver
         'flags' => [],
         'init' => [],
         'settings' => [],
+        'attributes' => [],
+        'app' => null,
+        'connectionPooling' => null,
+        'failoverPartner' => null,
+        'loginTimeout' => null,
+        'multiSubnetFailover' => null,
     ];
 
     /**
@@ -69,6 +75,21 @@ class Sqlserver extends Driver
         }
 
         $dsn = "sqlsrv:Server={$config['host']};Database={$config['database']};MultipleActiveResultSets=false";
+        if ($config['app'] !== null) {
+            $dsn .= ";APP={$config['app']}";
+        }
+        if ($config['connectionPooling'] !== null) {
+            $dsn .= ";ConnectionPooling={$config['connectionPooling']}";
+        }
+        if ($config['failoverPartner'] !== null) {
+            $dsn .= ";Failover_Partner={$config['failoverPartner']}";
+        }
+        if ($config['loginTimeout'] !== null) {
+            $dsn .= ";LoginTimeout={$config['loginTimeout']}";
+        }
+        if ($config['multiSubnetFailover'] !== null) {
+            $dsn .= ";MultiSubnetFailover={$config['multiSubnetFailover']}";
+        }
         $this->_connect($dsn, $config);
 
         $connection = $this->connection();
@@ -80,6 +101,11 @@ class Sqlserver extends Driver
         if (!empty($config['settings']) && is_array($config['settings'])) {
             foreach ($config['settings'] as $key => $value) {
                 $connection->exec("SET {$key} {$value}");
+            }
+        }
+        if (!empty($config['attributes']) && is_array($config['attributes'])) {
+            foreach ($config['attributes'] as $key => $value) {
+                $connection->setAttribute($key, $value);
             }
         }
 

@@ -60,14 +60,14 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @var string|null
      */
-    protected $_appClass = null;
+    protected $_appClass;
 
     /**
      * The customized application constructor arguments.
      *
      * @var array|null
      */
-    protected $_appArgs = null;
+    protected $_appArgs;
 
     /**
      * The data used to build the next request.
@@ -81,14 +81,14 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @var \Cake\Http\Response|null
      */
-    protected $_response = null;
+    protected $_response;
 
     /**
      * The exception being thrown if the case.
      *
      * @var \Exception|null
      */
-    protected $_exception = null;
+    protected $_exception;
 
     /**
      * Session data to use in the next request.
@@ -109,28 +109,28 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @var \Cake\Controller\Controller|null
      */
-    protected $_controller = null;
+    protected $_controller;
 
     /**
      * The last rendered view
      *
      * @var string|null
      */
-    protected $_viewName = null;
+    protected $_viewName;
 
     /**
      * The last rendered layout
      *
      * @var string|null
      */
-    protected $_layoutName = null;
+    protected $_layoutName;
 
     /**
      * The session instance from the last request
      *
      * @var \Cake\Network\Session|null
      */
-    protected $_requestSession = null;
+    protected $_requestSession;
 
     /**
      * Boolean flag for whether or not the request should have
@@ -152,7 +152,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @var null|string
      */
-    protected $_cookieEncryptionKey = null;
+    protected $_cookieEncryptionKey;
 
     /**
      * Auto-detect if the HTTP middleware stack should be used.
