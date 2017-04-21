@@ -620,27 +620,6 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Convert the cookie into an array of its properties.
-     *
-     * This method is compatible with the historical behavior of Cake\Http\Response,
-     * where `httponly` is `httpOnly` and `expires` is `expire`
-     *
-     * @return array
-     */
-    public function toArrayResponse()
-    {
-        return [
-            'name' => $this->getName(),
-            'value' => $this->getValue(),
-            'path' => $this->getPath(),
-            'domain' => $this->getDomain(),
-            'secure' => $this->isSecure(),
-            'httpOnly' => $this->isHttpOnly(),
-            'expire' => $this->getExpiresTimestamp()
-        ];
-    }
-
-    /**
      * Implode method to keep keys are multidimensional arrays
      *
      * @param array $array Map of key and values

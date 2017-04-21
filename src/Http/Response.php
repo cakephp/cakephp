@@ -1941,7 +1941,7 @@ class Response implements ResponseInterface
 
             $cookie = $this->_cookies->get($options);
 
-            return $this->toArrayResponse($cookie);
+            return $this->convertCookie($cookie);
         }
 
         $options += [
@@ -2047,7 +2047,7 @@ class Response implements ResponseInterface
 
         $cookie = $this->_cookies->get($name);
 
-        return $this->toArrayResponse($cookie);
+        return $this->convertCookie($cookie);
     }
 
     /**
@@ -2061,7 +2061,7 @@ class Response implements ResponseInterface
     {
         $out = [];
         foreach ($this->_cookies as $cookie) {
-            $out[$cookie->getName()] = $this->toArrayResponse($cookie);
+            $out[$cookie->getName()] = $this->convertCookie($cookie);
         }
 
         return $out;
@@ -2076,18 +2076,8 @@ class Response implements ResponseInterface
      * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie object.
      * @return array
      */
-    protected function toArrayResponse(CookieInterface $cookie)
+    public function convertCookie(CookieInterface $cookie)
     {
-        if ($cookie instanceof Cookie) {
-            return $cookie->toArrayResponse();
-        }
-
-        if ($cookie->getExpiry()) {
-            $expires = $cookie->getExpiry()->format('U');
-        } else {
-            $expires = '';
-        }
-
         return [
             'name' => $cookie->getName(),
             'value' => $cookie->getValue(),
@@ -2095,7 +2085,7 @@ class Response implements ResponseInterface
             'domain' => $cookie->getDomain(),
             'secure' => $cookie->isSecure(),
             'httpOnly' => $cookie->isHttpOnly(),
-            'expire' => $expires
+            'expire' => $cookie->getExpiresTimestamp()
         ];
     }
 
