@@ -373,7 +373,7 @@ class QueryRegressionTest extends TestCase
         $articles = TableRegistry::get('Articles');
         $articles->belongsTo('Authors');
 
-        $articles->eventManager()->on('Model.beforeFind', function (Event $event, $query) {
+        $articles->getEventManager()->on('Model.beforeFind', function (Event $event, $query) {
             return $query->contain('Authors');
         });
 
@@ -1618,7 +1618,7 @@ class QueryRegressionTest extends TestCase
         $articles->hasMany('articlesTags');
         $tags = $articles->association('articlesTags')->target()->belongsTo('tags');
 
-        $tags->target()->eventManager()->on('Model.beforeFind', function ($e, $query) {
+        $tags->target()->getEventManager()->on('Model.beforeFind', function ($e, $query) {
             return $query->formatResults(function ($results) {
                 return $results->map(function (\Cake\ORM\Entity $tag) {
                     $tag->name .= ' - visited';

@@ -1763,7 +1763,7 @@ class MarshallerTest extends TestCase
         $entity->clean();
 
         // Adding a forced join to have another table with the same column names
-        $this->articles->Tags->eventManager()->attach(function ($e, $query) {
+        $this->articles->Tags->getEventManager()->attach(function ($e, $query) {
             $left = new IdentifierExpression('Tags.id');
             $right = new IdentifierExpression('a.id');
             $query->leftJoin(['a' => 'tags'], $query->newExpr()->eq($left, $right));
@@ -1823,7 +1823,7 @@ class MarshallerTest extends TestCase
             'conditions' => ['ArticleTags.article_id' => 1]
         ]);
 
-        $this->articles->Tags->eventManager()
+        $this->articles->Tags->getEventManager()
             ->on('Model.beforeFind', function (Event $event, $query) use (&$called) {
                 $called = true;
 
@@ -2423,7 +2423,7 @@ class MarshallerTest extends TestCase
             ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 1],
             ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
         ];
-        $this->comments->eventManager()->on('Model.beforeFind', function (Event $event, $query) {
+        $this->comments->getEventManager()->on('Model.beforeFind', function (Event $event, $query) {
             return $query->contain(['Articles']);
         });
         $marshall = new Marshaller($this->comments);
@@ -3139,7 +3139,7 @@ class MarshallerTest extends TestCase
 
         $marshall = new Marshaller($this->articles);
 
-        $this->articles->eventManager()->on(
+        $this->articles->getEventManager()->on(
             'Model.beforeMarshal',
             function ($e, $data, $options) {
                 $this->assertArrayHasKey('validate', $options);
@@ -3186,7 +3186,7 @@ class MarshallerTest extends TestCase
         $marshall = new Marshaller($this->articles);
 
         // Assert event options are correct
-        $this->articles->users->eventManager()->on(
+        $this->articles->users->getEventManager()->on(
             'Model.beforeMarshal',
             function ($e, $data, $options) {
                 $this->assertArrayHasKey('validate', $options);
@@ -3200,28 +3200,28 @@ class MarshallerTest extends TestCase
             }
         );
 
-        $this->articles->users->eventManager()->on(
+        $this->articles->users->getEventManager()->on(
             'Model.beforeMarshal',
             function ($e, $data, $options) {
                 $data['secret'] = 'h45h3d';
             }
         );
 
-        $this->articles->comments->eventManager()->on(
+        $this->articles->comments->getEventManager()->on(
             'Model.beforeMarshal',
             function ($e, $data) {
                 $data['comment'] .= ' (modified)';
             }
         );
 
-        $this->articles->tags->eventManager()->on(
+        $this->articles->tags->getEventManager()->on(
             'Model.beforeMarshal',
             function ($e, $data) {
                 $data['tag'] .= ' (modified)';
             }
         );
 
-        $this->articles->tags->junction()->eventManager()->on(
+        $this->articles->tags->junction()->getEventManager()->on(
             'Model.beforeMarshal',
             function ($e, $data) {
                 $data['modified_by'] = 1;

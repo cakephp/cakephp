@@ -35,7 +35,7 @@ class BehaviorRegistryTest extends TestCase
     {
         parent::setUp();
         $this->Table = new Table(['table' => 'articles']);
-        $this->EventManager = $this->Table->eventManager();
+        $this->EventManager = $this->Table->getEventManager();
         $this->Behaviors = new BehaviorRegistry($this->Table);
         Configure::write('App.namespace', 'TestApp');
     }

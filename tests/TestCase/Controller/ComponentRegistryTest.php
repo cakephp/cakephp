@@ -177,7 +177,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testReset()
     {
-        $eventManager = $this->Components->getController()->eventManager();
+        $eventManager = $this->Components->getController()->getEventManager();
         $instance = $this->Components->load('Auth');
         $this->assertSame(
             $instance,
@@ -199,7 +199,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testUnload()
     {
-        $eventManager = $this->Components->getController()->eventManager();
+        $eventManager = $this->Components->getController()->getEventManager();
 
         $result = $this->Components->load('Auth');
         $this->Components->unload('Auth');
@@ -227,7 +227,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testSet()
     {
-        $eventManager = $this->Components->getController()->eventManager();
+        $eventManager = $this->Components->getController()->getEventManager();
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
 
         $auth = new AuthComponent($this->Components);

@@ -57,7 +57,7 @@ class HelperRegistryTest extends TestCase
     {
         parent::setUp();
         $this->View = new View();
-        $this->Events = $this->View->eventManager();
+        $this->Events = $this->View->getEventManager();
         $this->Helpers = new HelperRegistry($this->View);
     }
 

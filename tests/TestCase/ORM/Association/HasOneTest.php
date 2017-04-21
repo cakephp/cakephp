@@ -284,7 +284,7 @@ class HasOneTest extends TestCase
         $query = $this->user->query();
 
         $this->listenerCalled = false;
-        $this->profile->eventManager()->on('Model.beforeFind', function ($event, $query, $options, $primary) {
+        $this->profile->getEventManager()->on('Model.beforeFind', function ($event, $query, $options, $primary) {
             $this->listenerCalled = true;
             $this->assertInstanceOf('\Cake\Event\Event', $event);
             $this->assertInstanceOf('\Cake\ORM\Query', $query);
@@ -311,7 +311,7 @@ class HasOneTest extends TestCase
         ];
         $this->listenerCalled = false;
         $opts = new \ArrayObject(['something' => 'more']);
-        $this->profile->eventManager()->on(
+        $this->profile->getEventManager()->on(
             'Model.beforeFind',
             function ($event, $query, $options, $primary) use ($opts) {
                 $this->listenerCalled = true;
@@ -345,7 +345,7 @@ class HasOneTest extends TestCase
         ];
         $association = new HasOne('Profiles', $config);
 
-        $this->profile->eventManager()->on('Model.beforeDelete', function () {
+        $this->profile->getEventManager()->on('Model.beforeDelete', function () {
             $this->fail('Callbacks should not be triggered when callbacks do not cascade.');
         });
 

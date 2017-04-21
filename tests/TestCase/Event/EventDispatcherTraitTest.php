@@ -62,7 +62,7 @@ class EventDispatcherTraitTest extends TestCase
 
         $this->subject->eventManager($eventManager);
 
-        $this->assertSame($eventManager, $this->subject->eventManager());
+        $this->assertSame($eventManager, $this->subject->getEventManager());
     }
 
     /**

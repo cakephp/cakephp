@@ -941,7 +941,7 @@ class ViewTest extends TestCase
         $callback = function (Event $event, $file) use (&$count) {
             $count++;
         };
-        $events = $this->View->eventManager();
+        $events = $this->View->getEventManager();
         $events->attach($callback, 'View.beforeRender');
         $events->attach($callback, 'View.afterRender');
 
@@ -1048,7 +1048,7 @@ class ViewTest extends TestCase
         $View->autoLayout = false;
         $listener = new TestViewEventListenerInterface();
 
-        $View->eventManager()->attach($listener);
+        $View->getEventManager()->attach($listener);
 
         $View->render('index');
         $this->assertEquals(View::TYPE_VIEW, $listener->beforeRenderViewType);

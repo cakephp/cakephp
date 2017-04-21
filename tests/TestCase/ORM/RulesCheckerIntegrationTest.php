@@ -690,7 +690,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
 
-        $table->eventManager()->on(
+        $table->getEventManager()->on(
             'Model.beforeRules',
             function (Event $event, Entity $entity, \ArrayObject $options, $operation) {
                 $this->assertEquals(
@@ -730,7 +730,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
 
-        $table->eventManager()->on(
+        $table->getEventManager()->on(
             'Model.afterRules',
             function (Event $event, Entity $entity, \ArrayObject $options, $result, $operation) {
                 $this->assertEquals(
@@ -768,7 +768,7 @@ class RulesCheckerIntegrationTest extends TestCase
         ]);
 
         $table = TableRegistry::get('Articles');
-        $table->eventManager()->on('Model.buildRules', function (Event $event, RulesChecker $rules) {
+        $table->getEventManager()->on('Model.buildRules', function (Event $event, RulesChecker $rules) {
             $rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
         });
 
@@ -813,7 +813,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(['author_id']));
 
-        $table->Authors->eventManager()->on('Model.beforeFind', function (Event $event, $query) {
+        $table->Authors->getEventManager()->on('Model.beforeFind', function (Event $event, $query) {
             $query->leftJoin(['a2' => 'authors']);
         });
 
@@ -859,7 +859,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('author_id', 'Authors'));
 
-        $table->Authors->eventManager()->on('Model.beforeFind', function (Event $event, $query) {
+        $table->Authors->getEventManager()->on('Model.beforeFind', function (Event $event, $query) {
             $query->leftJoin(['a2' => 'authors']);
         });
 

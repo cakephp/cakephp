@@ -93,7 +93,7 @@ class ActionDispatcherTest extends TestCase
     public function testAddFilter()
     {
         $this->assertCount(1, $this->dispatcher->getFilters());
-        $events = $this->dispatcher->eventManager();
+        $events = $this->dispatcher->getEventManager();
         $this->assertCount(1, $events->listeners('Dispatcher.beforeDispatch'));
         $this->assertCount(1, $events->listeners('Dispatcher.afterDispatch'));
 
