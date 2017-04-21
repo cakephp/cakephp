@@ -183,7 +183,6 @@ class CsrfProtectionMiddlewareTest extends TestCase
         // No exception means everything is OK
         $middleware = new CsrfProtectionMiddleware();
         $middleware($request, $response, $closure);
-
     }
 
     /**
