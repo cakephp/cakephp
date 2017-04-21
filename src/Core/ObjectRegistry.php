@@ -290,7 +290,7 @@ abstract class ObjectRegistry
             $this->unload($objectName);
         }
         if ($this instanceof EventDispatcherInterface && $object instanceof EventListenerInterface) {
-            $this->eventManager()->on($object);
+            $this->getEventManager()->on($object);
         }
         $this->_loaded[$name] = $object;
     }
@@ -312,7 +312,7 @@ abstract class ObjectRegistry
 
         $object = $this->_loaded[$objectName];
         if ($this instanceof EventDispatcherInterface && $object instanceof EventListenerInterface) {
-            $this->eventManager()->off($object);
+            $this->getEventManager()->off($object);
         }
         unset($this->_loaded[$objectName]);
     }

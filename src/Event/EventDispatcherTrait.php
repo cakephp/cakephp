@@ -107,7 +107,7 @@ trait EventDispatcherTrait
         }
 
         $event = new $this->_eventClass($name, $subject, $data);
-        $this->eventManager()->dispatch($event);
+        $this->getEventManager()->dispatch($event);
 
         return $event;
     }

@@ -75,7 +75,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     public function setTable(Table $table)
     {
         $this->_table = $table;
-        $this->eventManager($table->eventManager());
+        $this->eventManager($table->getEventManager());
     }
 
     /**
@@ -131,7 +131,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         $instance = new $class($this->_table, $config);
         $enable = isset($config['enabled']) ? $config['enabled'] : true;
         if ($enable) {
-            $this->eventManager()->on($instance);
+            $this->getEventManager()->on($instance);
         }
         $methods = $this->_getMethods($instance, $class, $alias);
         $this->_methodMap += $methods['methods'];

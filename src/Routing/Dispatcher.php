@@ -56,7 +56,7 @@ class Dispatcher
      */
     public function dispatch(ServerRequest $request, Response $response)
     {
-        $actionDispatcher = new ActionDispatcher(null, $this->eventManager(), $this->_filters);
+        $actionDispatcher = new ActionDispatcher(null, $this->getEventManager(), $this->_filters);
         $response = $actionDispatcher->dispatch($request, $response);
         if (isset($request->params['return'])) {
             return $response->body();

@@ -396,7 +396,7 @@ class BehaviorRegistryTest extends TestCase
     public function testSetTable()
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
-        $table->expects($this->once())->method('eventManager');
+        $table->expects($this->once())->method('getEventManager');
 
         $this->Behaviors->setTable($table);
     }

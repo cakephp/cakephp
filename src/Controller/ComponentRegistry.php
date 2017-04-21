@@ -68,7 +68,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     public function setController(Controller $controller)
     {
         $this->_Controller = $controller;
-        $this->eventManager($controller->eventManager());
+        $this->eventManager($controller->getEventManager());
     }
 
     /**
@@ -119,7 +119,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
         $instance = new $class($this, $config);
         $enable = isset($config['enabled']) ? $config['enabled'] : true;
         if ($enable) {
-            $this->eventManager()->on($instance);
+            $this->getEventManager()->on($instance);
         }
 
         return $instance;

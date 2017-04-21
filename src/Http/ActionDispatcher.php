@@ -149,7 +149,7 @@ class ActionDispatcher
     public function addFilter(EventListenerInterface $filter)
     {
         $this->filters[] = $filter;
-        $this->eventManager()->on($filter);
+        $this->getEventManager()->on($filter);
     }
 
     /**

@@ -465,7 +465,7 @@ abstract class IntegrationTestCase extends TestCase
             $controller = $event->getSubject();
         }
         $this->_controller = $controller;
-        $events = $controller->eventManager();
+        $events = $controller->getEventManager();
         $events->on('View.beforeRender', function ($event, $viewFile) {
             if (!$this->_viewName) {
                 $this->_viewName = $viewFile;
