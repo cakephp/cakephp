@@ -551,6 +551,7 @@ class Session
         if ($this->_hasSession() && !$this->started()) {
             return true;
         }
+        
         return false;
     }
 
