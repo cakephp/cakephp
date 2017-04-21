@@ -446,7 +446,7 @@ class Response extends Message implements ResponseInterface
 
         $cookie = $this->cookies->get($name);
 
-        return $this->toArrayClient($cookie);
+        return $this->convertCookie($cookie);
     }
 
     /**
@@ -458,18 +458,8 @@ class Response extends Message implements ResponseInterface
      * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie object.
      * @return array
      */
-    protected function toArrayClient(CookieInterface $cookie)
+    public function convertCookie(CookieInterface $cookie)
     {
-        if ($cookie instanceof Cookie) {
-            return $cookie->toArrayClient();
-        }
-
-        if ($cookie->getExpiry()) {
-            $expires = $cookie->getExpiry()->format(Cookie::EXPIRES_FORMAT);
-        } else {
-            $expires = '';
-        }
-
         return [
             'name' => $cookie->getName(),
             'value' => $cookie->getValue(),
@@ -477,7 +467,7 @@ class Response extends Message implements ResponseInterface
             'domain' => $cookie->getDomain(),
             'secure' => $cookie->isSecure(),
             'httponly' => $cookie->isHttpOnly(),
-            'expires' => $expires
+            'expires' => $cookie->getFormattedExpires()
         ];
     }
 
@@ -505,7 +495,7 @@ class Response extends Message implements ResponseInterface
 
         $cookies = [];
         foreach ($this->cookies as $cookie) {
-            $cookies[$cookie->getName()] = $this->toArrayClient($cookie);
+            $cookies[$cookie->getName()] = $this->convertCookie($cookie);
         }
 
         return $cookies;

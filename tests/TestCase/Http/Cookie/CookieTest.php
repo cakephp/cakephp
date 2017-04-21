@@ -570,32 +570,6 @@ class CookieTest extends TestCase
     }
 
     /**
-     * Test toArrayClient
-     *
-     * @return void
-     */
-    public function testToArrayClient()
-    {
-        $date = Chronos::parse('2017-03-31 12:34:56');
-        $cookie = new Cookie('cakephp', 'cakephp-rocks');
-        $cookie = $cookie->withDomain('cakephp.org')
-            ->withPath('/api')
-            ->withExpiry($date)
-            ->withHttpOnly(true)
-            ->withSecure(true);
-        $expected = [
-            'name' => 'cakephp',
-            'value' => 'cakephp-rocks',
-            'path' => '/api',
-            'domain' => 'cakephp.org',
-            'expires' => 'Fri, 31-Mar-2017 12:34:56 GMT',
-            'secure' => true,
-            'httponly' => true
-        ];
-        $this->assertEquals($expected, $cookie->toArrayClient());
-    }
-
-    /**
      * Test toArrayResponse
      *
      * @return void

@@ -622,27 +622,6 @@ class Cookie implements CookieInterface
     /**
      * Convert the cookie into an array of its properties.
      *
-     * This method is compatible with older client code that
-     * expects date strings instead of timestamps.
-     *
-     * @return array
-     */
-    public function toArrayClient()
-    {
-        return [
-            'name' => $this->getName(),
-            'value' => $this->getValue(),
-            'path' => $this->getPath(),
-            'domain' => $this->getDomain(),
-            'secure' => $this->isSecure(),
-            'httponly' => $this->isHttpOnly(),
-            'expires' => $this->getFormattedExpires()
-        ];
-    }
-
-    /**
-     * Convert the cookie into an array of its properties.
-     *
      * This method is compatible with the historical behavior of Cake\Http\Response,
      * where `httponly` is `httpOnly` and `expires` is `expire`
      *
