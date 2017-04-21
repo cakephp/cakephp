@@ -251,7 +251,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $this->eventManager($eventManager);
         }
 
-        $this->modelFactory('Table', [$this->tableLocator(), 'get']);
+        $this->modelFactory('Table', [$this->getTableLocator(), 'get']);
         $modelClass = ($this->plugin ? $this->plugin . '.' : '') . $this->name;
         $this->_setModelClass($modelClass);
 

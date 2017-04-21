@@ -292,7 +292,7 @@ class BelongsToMany extends Association
             return $this->_junctionTable;
         }
 
-        $tableLocator = $this->tableLocator();
+        $tableLocator = $this->getTableLocator();
         if ($table === null && $this->_through) {
             $table = $this->_through;
         } elseif ($table === null) {
