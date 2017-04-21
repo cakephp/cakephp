@@ -576,6 +576,7 @@ class ConsoleOptionParser
             $command = $name;
             $name = $command->name();
         } else {
+            $name = Inflector::underscore($name);
             $defaults = [
                 'name' => $name,
                 'help' => '',
