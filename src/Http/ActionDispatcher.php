@@ -55,7 +55,7 @@ class ActionDispatcher
     public function __construct($factory = null, $eventManager = null, array $filters = [])
     {
         if ($eventManager) {
-            $this->eventManager($eventManager);
+            $this->setEventManager($eventManager);
         }
         foreach ($filters as $filter) {
             $this->addFilter($filter);

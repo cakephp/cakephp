@@ -68,7 +68,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     public function setController(Controller $controller)
     {
         $this->_Controller = $controller;
-        $this->eventManager($controller->getEventManager());
+        $this->setEventManager($controller->getEventManager());
     }
 
     /**

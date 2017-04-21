@@ -75,7 +75,10 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     public function setTable(Table $table)
     {
         $this->_table = $table;
-        $this->eventManager($table->getEventManager());
+        $eventManager = $table->getEventManager();
+        if ($eventManager !== null) {
+            $this->setEventManager($eventManager);
+        }
     }
 
     /**

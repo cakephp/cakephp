@@ -144,7 +144,9 @@ abstract class Cell
         EventManager $eventManager = null,
         array $cellOptions = []
     ) {
-        $this->eventManager($eventManager);
+        if ($eventManager !== null) {
+            $this->setEventManager($eventManager);
+        }
         $this->request = $request;
         $this->response = $response;
         $this->modelFactory('Table', [$this->tableLocator(), 'get']);

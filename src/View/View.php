@@ -333,7 +333,9 @@ class View implements EventDispatcherInterface
                 $this->{$var} = $viewOptions[$var];
             }
         }
-        $this->eventManager($eventManager);
+        if ($eventManager !== null) {
+            $this->setEventManager($eventManager);
+        }
         $this->request = $request ?: Router::getRequest(true);
         $this->response = $response ?: new Response();
         if (!$this->request) {

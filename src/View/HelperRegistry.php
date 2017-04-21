@@ -44,7 +44,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
     public function __construct(View $view)
     {
         $this->_View = $view;
-        $this->eventManager($view->getEventManager());
+        $this->setEventManager($view->getEventManager());
     }
 
     /**

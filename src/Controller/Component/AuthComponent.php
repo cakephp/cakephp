@@ -252,7 +252,7 @@ class AuthComponent extends Component
     public function initialize(array $config)
     {
         $controller = $this->_registry->getController();
-        $this->eventManager($controller->getEventManager());
+        $this->setEventManager($controller->getEventManager());
         $this->response =& $controller->response;
         $this->session = $controller->request->getSession();
     }
