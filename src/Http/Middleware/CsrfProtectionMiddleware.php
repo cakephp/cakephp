@@ -39,11 +39,11 @@ class CsrfProtectionMiddleware
     /**
      * Default config for the CSRF handling.
      *
-     *  - cookieName = The name of the cookie to send.
-     *  - expiry = How long the CSRF token should last. Defaults to browser session.
-     *  - secure = Whether or not the cookie will be set with the Secure flag. Defaults to false.
-     *  - httpOnly = Whether or not the cookie will be set with the HttpOnly flag. Defaults to false.
-     *  - field = The form field to check. Changing this will also require configuring
+     *  - `cookieName` = The name of the cookie to send.
+     *  - `expiry` = How long the CSRF token should last. Defaults to browser session.
+     *  - `secure` = Whether or not the cookie will be set with the Secure flag. Defaults to false.
+     *  - `httpOnly` = Whether or not the cookie will be set with the HttpOnly flag. Defaults to false.
+     *  - `field` = The form field to check. Changing this will also require configuring
      *    FormHelper.
      *
      * @var array
@@ -66,7 +66,7 @@ class CsrfProtectionMiddleware
     /**
      * Constructor
      *
-     * @param array $config Config options
+     * @param array $config Config options. See $_defaultConfig for valid keys.
      */
     public function __construct(array $config = [])
     {
@@ -97,11 +97,12 @@ class CsrfProtectionMiddleware
 
         $method = $request->getMethod();
         if ($method === 'GET' && $cookieData === null) {
-            list($request, $response) = $this->_setToken($request, $response);
+            $token = $this->_createToken();
+            $request = $this->_addTokenToRequest($token, $request);
+            $response = $this->_addTokenCookie($token, $request, $response);
 
             return $next($request, $response);
         }
-
         $request = $this->_validateAndUnsetTokenField($request);
 
         return $next($request, $response);
@@ -128,26 +129,44 @@ class CsrfProtectionMiddleware
     }
 
     /**
-     * Set the token in the response.
+     * Create a new token to be used for CSRF protection
      *
-     * Also sets the request->params['_csrfToken'] so the newly minted
-     * token is available in the request data.
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request The request object.
-     * @param \Psr\Http\Message\ResponseInterface $response The response object.
-     * @return array
+     * @return string
      */
-    protected function _setToken(ServerRequestInterface $request, ResponseInterface $response)
+    protected function _createToken()
+    {
+        return hash('sha512', Security::randomBytes(16), false);
+    }
+
+    /**
+     * Add a CSRF token to the request parameters.
+     *
+     * @param string $token The token to add.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request to augment
+     * @return \Psr\Http\Message\ServerRequestInterface Modified request
+     */
+    protected function _addTokenToRequest($token, ServerRequestInterface $request)
+    {
+        $params = $request->getAttribute('params');
+        $params['_csrfToken'] = $token;
+
+        return $request->withAttribute('params', $params);
+    }
+
+    /**
+     * Add a CSRF token to the response cookies.
+     *
+     * @param string $token The token to add.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The to get cookie path data from
+     * @param \Cake\Http\Response $response The response to augment
+     * @return \Cake\Http\Response Modified response
+     */
+    protected function _addTokenCookie($token, $request, $response)
     {
         $expiry = new Time($this->_config['expiry']);
-        $value = hash('sha512', Security::randomBytes(16), false);
 
-        $params = $request->getAttribute('params');
-        $params['_csrfToken'] = $value;
-        $request = $request->withAttribute('params', $params);
-
-        $response = $response->withCookie($this->_config['cookieName'], [
-            'value' => $value,
+        return $response->withCookie($this->_config['cookieName'], [
+            'value' => $token,
             'expire' => $expiry->format('U'),
             'path' => $request->getAttribute('webroot'),
             'secure' => $this->_config['secure'],

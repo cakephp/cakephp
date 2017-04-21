@@ -110,7 +110,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         // No exception means the test is valid
         $middleware = new CsrfProtectionMiddleware();
-        $middleware($request, $response, $this->_getNextClosure());
+        $response = $middleware($request, $response, $this->_getNextClosure());
+        $this->assertInstanceOf(Response::class, $response);
     }
 
     /**
@@ -133,7 +134,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         // No exception means the test is valid
         $middleware = new CsrfProtectionMiddleware();
-        $middleware($request, $response, $this->_getNextClosure());
+        $response = $middleware($request, $response, $this->_getNextClosure());
+        $this->assertInstanceOf(Response::class, $response);
     }
 
     /**
@@ -304,6 +306,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'field' => 'token',
             'expiry' => 90,
         ]);
-        $middleware($request, $response, $this->_getNextClosure());
+        $response = $middleware($request, $response, $this->_getNextClosure());
+        $this->assertInstanceOf(Response::class, $response);
     }
 }
