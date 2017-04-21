@@ -102,7 +102,7 @@ class CsrfProtectionMiddleware
 
         $method = $request->getMethod();
         if ($method === 'GET' && $cookieData === null) {
-            $this->_setToken($request, $response);
+            list($request, $response) = $this->_setToken($request, $response);
 
             return $next($request, $response);
         }
@@ -140,9 +140,9 @@ class CsrfProtectionMiddleware
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request object.
      * @param \Psr\Http\Message\ResponseInterface $response The response object.
-     * @return void
+     * @return array
      */
-    protected function _setToken(ServerRequestInterface &$request, ResponseInterface &$response)
+    protected function _setToken(ServerRequestInterface $request, ResponseInterface $response)
     {
         $expiry = new Time($this->_config['expiry']);
         $value = hash('sha512', Security::randomBytes(16), false);
@@ -158,6 +158,8 @@ class CsrfProtectionMiddleware
             'secure' => $this->_config['secure'],
             'httpOnly' => $this->_config['httpOnly'],
         ]);
+
+        return [$request, $response];
     }
 
     /**
