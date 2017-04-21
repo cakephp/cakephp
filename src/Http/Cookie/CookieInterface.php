@@ -20,6 +20,14 @@ use DateTimeInterface;
  */
 interface CookieInterface
 {
+
+    /**
+     * Expires attribute format.
+     *
+     * @var string
+     */
+    const EXPIRES_FORMAT = 'D, d-M-Y H:i:s T';
+
     /**
      * Sets the cookie name
      *
@@ -95,6 +103,23 @@ interface CookieInterface
      * @return DateTimeInterface|null Timestamp of expiry or null
      */
     public function getExpiry();
+
+    /**
+     * Get the timestamp from the expiration time
+     *
+     * Timestamps are strings as large timestamps can overflow MAX_INT
+     * in 32bit systems.
+     *
+     * @return string|null The expiry time as a string timestamp.
+     */
+    public function getExpiresTimestamp();
+
+    /**
+     * Builds the expiration value part of the header string
+     *
+     * @return string
+     */
+    public function getFormattedExpires();
 
     /**
      * Create a cookie with an updated expiration date

@@ -49,13 +49,6 @@ class Cookie implements CookieInterface
 {
 
     /**
-     * Expires attribute format.
-     *
-     * @var string
-     */
-    const EXPIRES_FORMAT = 'D, d-M-Y H:i:s T';
-
-    /**
      * Cookie name
      *
      * @var string
@@ -156,20 +149,6 @@ class Cookie implements CookieInterface
             $expiresAt = $expiresAt->setTimezone(new DateTimezone('GMT'));
         }
         $this->expiresAt = $expiresAt;
-    }
-
-    /**
-     * Builds the expiration value part of the header string
-     *
-     * @return string
-     */
-    protected function getFormattedExpires()
-    {
-        if (!$this->expiresAt) {
-            return '';
-        }
-
-        return $this->expiresAt->format(static::EXPIRES_FORMAT);
     }
 
     /**
@@ -473,6 +452,20 @@ class Cookie implements CookieInterface
         }
 
         return $this->expiresAt->format('U');
+    }
+
+    /**
+     * Builds the expiration value part of the header string
+     *
+     * @return string
+     */
+    public function getFormattedExpires()
+    {
+        if (!$this->expiresAt) {
+            return '';
+        }
+
+        return $this->expiresAt->format(static::EXPIRES_FORMAT);
     }
 
     /**
