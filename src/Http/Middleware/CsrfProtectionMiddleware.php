@@ -23,7 +23,7 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * Provides CSRF protection & validation.
  *
- * This component adds a CSRF token to a cookie. The cookie value is compared to
+ * This middleware adds a CSRF token to a cookie. The cookie value is compared to
  * request data, or the X-CSRF-Token header on each PATCH, POST,
  * PUT, or DELETE request.
  *
@@ -115,8 +115,8 @@ class CsrfProtectionMiddleware
     /**
      * Checks if the request is POST, PUT, DELETE or PATCH and validates the CSRF token
      *
-     * @param \Cake\Http\ServerRequest $request The request object.
-     * @return void
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request object.
+     * @return \Psr\Http\Message\ServerRequestInterface
      */
     protected function _validateAndUnsetTokenField(ServerRequestInterface $request)
     {
@@ -138,8 +138,8 @@ class CsrfProtectionMiddleware
      * Also sets the request->params['_csrfToken'] so the newly minted
      * token is available in the request data.
      *
-     * @param \Cake\Http\ServerRequest $request The request object.
-     * @param \Cake\Http\Response $response The response object.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request object.
+     * @param \Psr\Http\Message\ResponseInterface $response The response object.
      * @return void
      */
     protected function _setToken(ServerRequestInterface &$request, ResponseInterface &$response)
@@ -163,9 +163,9 @@ class CsrfProtectionMiddleware
     /**
      * Validate the request data against the cookie token.
      *
-     * @param \Cake\Http\ServerRequest $request The request to validate against.
-     * @throws \Cake\Network\Exception\InvalidCsrfTokenException when the CSRF token is invalid or missing.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request to validate against.
      * @return void
+     * @throws \Cake\Network\Exception\InvalidCsrfTokenException When the CSRF token is invalid or missing.
      */
     protected function _validateToken(ServerRequestInterface $request)
     {
