@@ -69,18 +69,40 @@ class TableRegistry
      *
      * @param \Cake\ORM\Locator\LocatorInterface|null $locator Instance of a locator to use.
      * @return \Cake\ORM\Locator\LocatorInterface
+     * @deprecated 3.5.0 Use getter/setter instead.
      */
     public static function locator(LocatorInterface $locator = null)
     {
         if ($locator) {
-            static::$_locator = $locator;
+            static::setTableLocator($locator);
         }
 
+        return static::getTableLocator();
+    }
+
+    /**
+     * Returns a singleton instance of LocatorInterface implementation.
+     *
+     * @return \Cake\ORM\Locator\LocatorInterface
+     */
+    public static function getTableLocator()
+    {
         if (!static::$_locator) {
             static::$_locator = new static::$_defaultLocatorClass;
         }
 
         return static::$_locator;
+    }
+
+    /**
+     * Sets singleton instance of LocatorInterface implementation.
+     *
+     * @param \Cake\ORM\Locator\LocatorInterface|null $locator Instance of a locator to use.
+     * @return void
+     */
+    public static function setTableLocator(LocatorInterface $locator)
+    {
+        static::$_locator = $locator;
     }
 
     /**
