@@ -554,7 +554,6 @@ class Session
         
         return false;
     }
-
     /**
      * Restarts this session.
      *
