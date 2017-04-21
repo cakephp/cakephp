@@ -600,26 +600,6 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Convert the cookie into an array of its properties.
-     *
-     * Primarily useful where backwards compatibility is needed.
-     *
-     * @return array
-     */
-    public function toArray()
-    {
-        return [
-            'name' => $this->getName(),
-            'value' => $this->getValue(),
-            'path' => $this->getPath(),
-            'domain' => $this->getDomain(),
-            'secure' => $this->isSecure(),
-            'httponly' => $this->isHttpOnly(),
-            'expires' => $this->getExpiresTimestamp()
-        ];
-    }
-
-    /**
      * Implode method to keep keys are multidimensional arrays
      *
      * @param array $array Map of key and values
