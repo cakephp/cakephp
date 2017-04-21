@@ -251,28 +251,6 @@ class CsrfProtectionMiddlewareTest extends TestCase
     }
 
     /**
-     * Test that CSRF checks are not applied to request action requests.
-     *
-     * @return void
-     */
-    public function testCsrfValidationSkipsRequestAction()
-    {
-        $request = new ServerRequest([
-            'environment' => ['REQUEST_METHOD' => 'POST'],
-            'params' => ['requested' => 1],
-            'post' => ['_csrfToken' => 'nope'],
-            'cookies' => ['csrfToken' => 'testing123']
-        ]);
-        $response = new Response();
-
-        $closure = function ($request, $response) {
-            $this->assertEquals('testing123', $request->params['_csrfToken']);
-        };
-
-        $middleware = new CsrfProtectionMiddleware();
-        $middleware($request, $response, $closure);
-    }
-    /**
      * Test that the configuration options work.
      *
      * @return void

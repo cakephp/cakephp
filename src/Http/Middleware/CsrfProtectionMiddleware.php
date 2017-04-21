@@ -95,11 +95,6 @@ class CsrfProtectionMiddleware
             $request = $request->withAttribute('params', $params);
         }
 
-        $requested = $request->getParam('requested');
-        if ($requested === 1) {
-            return $next($request, $response);
-        }
-
         $method = $request->getMethod();
         if ($method === 'GET' && $cookieData === null) {
             list($request, $response) = $this->_setToken($request, $response);
