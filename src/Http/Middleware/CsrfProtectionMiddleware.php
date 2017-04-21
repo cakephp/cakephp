@@ -16,8 +16,8 @@ namespace Cake\Http\Middleware;
 
 use Cake\I18n\Time;
 use Cake\Network\Exception\InvalidCsrfTokenException;
-use Cake\Utility\Security;
 use Cake\Utility\Hash;
+use Cake\Utility\Security;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -170,8 +170,6 @@ class CsrfProtectionMiddleware
             'secure' => $this->_config['secure'],
             'httpOnly' => $this->_config['httpOnly'],
         ]);
-
-        return [$request, $response];
     }
 
     /**
