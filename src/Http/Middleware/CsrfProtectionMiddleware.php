@@ -17,6 +17,7 @@ namespace Cake\Http\Middleware;
 use Cake\I18n\Time;
 use Cake\Network\Exception\InvalidCsrfTokenException;
 use Cake\Utility\Security;
+use Cake\Utility\Hash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -84,12 +85,9 @@ class CsrfProtectionMiddleware
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
         $cookies = $request->getCookieParams();
-        $cookieData = null;
-        if (isset($cookies[$this->_config['cookieName']])) {
-            $cookieData = $cookies[$this->_config['cookieName']];
-        }
+        $cookieData = Hash::get($cookies, $this->_config['cookieName']);
 
-        if (!empty($cookieData)) {
+        if (strlen($cookieData) > 0) {
             $params = $request->getAttribute('params');
             $params['_csrfToken'] = $cookieData;
             $request = $request->withAttribute('params', $params);
@@ -186,8 +184,8 @@ class CsrfProtectionMiddleware
     protected function _validateToken(ServerRequestInterface $request)
     {
         $cookies = $request->getCookieParams();
-        $cookie = isset($cookies[$this->_config['cookieName']]) ? $cookies[$this->_config['cookieName']] : null;
-        $post = $request->getData($this->_config['field']);
+        $cookie = Hash::get($cookies, $this->_config['cookieName']);
+        $post = Hash::get($request->getParsedBody(), $this->_config['field']);
         $header = $request->getHeaderLine('X-CSRF-Token');
 
         if (!$cookie) {
