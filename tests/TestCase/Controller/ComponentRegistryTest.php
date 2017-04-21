@@ -112,7 +112,7 @@ class ComponentRegistryTest extends TestCase
         $mock->expects($this->never())
             ->method('attach');
 
-        $this->Components->getController()->eventManager($mock);
+        $this->Components->getController()->setEventManager($mock);
 
         $result = $this->Components->load('Cookie', ['enabled' => false]);
         $this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $result);

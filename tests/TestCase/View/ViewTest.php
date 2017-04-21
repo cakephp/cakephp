@@ -1155,7 +1155,7 @@ class ViewTest extends TestCase
         $View->templatePath($this->PostsController->name);
 
         $manager = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
-        $View->eventManager($manager);
+        $View->setEventManager($manager);
 
         $manager->expects($this->at(0))->method('dispatch')
             ->with(
