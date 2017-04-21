@@ -59,7 +59,7 @@ class FactoryLocator
     public static function get($type)
     {
         if (!isset(static::$_modelFactories['Table'])) {
-            static::$_modelFactories['Table'] = [TableRegistry::locator(), 'get'];
+            static::$_modelFactories['Table'] = [TableRegistry::getTableLocator(), 'get'];
         }
 
         if (!isset(static::$_modelFactories[$type])) {

@@ -43,7 +43,7 @@ class LocatorAwareTraitTest extends TestCase
     public function testTableLocator()
     {
         $tableLocator = $this->subject->tableLocator();
-        $this->assertSame(TableRegistry::locator(), $tableLocator);
+        $this->assertSame(TableRegistry::getTableLocator(), $tableLocator);
 
         $newLocator = $this->getMockBuilder('Cake\ORM\Locator\LocatorInterface')->getMock();
         $subjectLocator = $this->subject->tableLocator($newLocator);
