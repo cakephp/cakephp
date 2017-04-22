@@ -672,7 +672,6 @@ abstract class TestCase extends BaseTestCase
         }
 
         TableRegistry::set($baseClass, $mock);
-        TableRegistry::set($alias, $mock);
 
         return $mock;
     }
