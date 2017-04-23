@@ -665,7 +665,7 @@ class ConsoleOptionParser
      */
     public function parse($argv)
     {
-        $command = isset($argv[0]) ? $argv[0] : null;
+        $command = isset($argv[0]) ? Inflector::underscore($argv[0]) : null;
         if (isset($this->_subcommands[$command])) {
             array_shift($argv);
         }
