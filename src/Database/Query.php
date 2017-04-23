@@ -1811,7 +1811,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * A ValueBinder is responsible for generating query placeholders and temporarily
      * associate values to those placeholders so that they can be passed correctly
-     * statement object.
+     * to the statement object.
      *
      * @return \Cake\Database\ValueBinder
      */
@@ -1830,7 +1830,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * A ValueBinder is responsible for generating query placeholders and temporarily
      * associate values to those placeholders so that they can be passed correctly
-     * statement object.
+     * to the statement object.
      *
      * @deprecated 3.5.0 Use getValueBinder() for the getter part instead.
      * @param \Cake\Database\ValueBinder|null $binder new instance to be set. If no value is passed the
