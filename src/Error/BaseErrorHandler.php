@@ -128,7 +128,7 @@ abstract class BaseErrorHandler
         if (error_reporting() === 0) {
             return false;
         }
-        list($error, $log) = $this->mapErrorCode($code);
+        list($error, $log) = static::mapErrorCode($code);
         if ($log === LOG_ERR) {
             return $this->handleFatalError($code, $description, $file, $line);
         }
@@ -244,7 +244,7 @@ abstract class BaseErrorHandler
         $units = strtoupper(substr($limit, -1));
         $current = (int)substr($limit, 0, strlen($limit) - 1);
         if ($units === 'M') {
-            $current = $current * 1024;
+            $current *= 1024;
             $units = 'K';
         }
         if ($units === 'G') {

@@ -712,7 +712,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if (empty($table)) {
             throw new RuntimeException('Unable to locate an object compatible with paginate.');
         }
-        $settings = $settings + $this->paginate;
+        $settings += $this->paginate;
 
         return $this->Paginator->paginate($table, $settings);
     }

@@ -147,8 +147,6 @@ abstract class ServerRequestFactory extends BaseFactory
      */
     protected static function getBase($uri, $server)
     {
-        $path = $uri->getPath();
-
         $base = $webroot = $baseUrl = null;
         $config = Configure::read('App');
         extract($config);

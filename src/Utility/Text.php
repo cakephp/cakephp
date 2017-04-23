@@ -345,7 +345,7 @@ class Text
 
         if (!empty($options['indentAt']) && $options['indentAt'] === 0) {
             $indentLength = !empty($options['indent']) ? strlen($options['indent']) : 0;
-            $options['width'] = $options['width'] - $indentLength;
+            $options['width'] -= $indentLength;
 
             return self::wrap($text, $options);
         }

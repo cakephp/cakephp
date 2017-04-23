@@ -360,7 +360,7 @@ class FixtureManager
     {
         $dbs = $this->_fixtureConnections($fixtures);
         foreach ($dbs as $connection => $fixtures) {
-            $db = ConnectionManager::get($connection, false);
+            $db = ConnectionManager::get($connection);
             $logQueries = $db->logQueries();
             if ($logQueries && !$this->_debug) {
                 $db->logQueries(false);
