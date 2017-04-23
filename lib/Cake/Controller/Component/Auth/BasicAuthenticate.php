@@ -89,7 +89,7 @@ class BasicAuthenticate extends BaseAuthenticate {
 			$pass = env('PHP_AUTH_PW');
 		} else {
 			$httpAuthorization = $request->header('Authorization');
-			if ($httpAuthorization !== false && strlen($httpAuthorization) > 0 && strpos($httpAuthorization, 'basic') !== false) {
+			if ($httpAuthorization !== false && strlen($httpAuthorization) > 0 && strpos($httpAuthorization, 'Basic') !== false) {
 				list($username, $pass) = explode(':', base64_decode(substr($httpAuthorization, 6)));
 			}
 		}
