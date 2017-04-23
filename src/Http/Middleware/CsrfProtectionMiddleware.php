@@ -75,7 +75,7 @@ class CsrfProtectionMiddleware
     }
 
     /**
-     * Serve assets if the path matches one.
+     * Checks and sets the CSRF token depending on the HTTP verb.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @param \Psr\Http\Message\ResponseInterface $response The response.
