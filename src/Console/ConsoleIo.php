@@ -262,11 +262,24 @@ class ConsoleIo
      *
      * @param int $mode The output mode.
      * @return void
+     * @see \Cake\Console\ConsoleOutput::setOutputAs()
+     */
+    public function setOutputAs($mode)
+    {
+        $this->_out->setOutputAs($mode);
+    }
+
+    /**
+     * Change the output mode of the stdout stream
+     *
+     * @deprecated 3.5.0 Use setOutputAs() instead.
+     * @param int $mode The output mode.
+     * @return void
      * @see \Cake\Console\ConsoleOutput::outputAs()
      */
     public function outputAs($mode)
     {
-        $this->_out->outputAs($mode);
+        $this->_out->setOutputAs($mode);
     }
 
     /**

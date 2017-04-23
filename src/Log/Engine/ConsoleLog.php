@@ -75,7 +75,7 @@ class ConsoleLog extends BaseLog
         } else {
             throw new InvalidArgumentException('`stream` not a ConsoleOutput nor string');
         }
-        $this->_output->outputAs($config['outputAs']);
+        $this->_output->setOutputAs($config['outputAs']);
     }
 
     /**

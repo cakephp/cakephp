@@ -23,13 +23,6 @@ class CookieTest extends TestCase
 {
 
     /**
-     * Encryption key used in the tests
-     *
-     * @var string
-     */
-    protected $encryptionKey = 'someverysecretkeythatisatleast32charslong';
-
-    /**
      * Generate invalid cookie names.
      *
      * @return array
@@ -68,37 +61,6 @@ class CookieTest extends TestCase
     public function testValidateNameEmptyName()
     {
         new Cookie('', '');
-    }
-
-    /**
-     * Test decrypting the cookie
-     *
-     * @return void
-     */
-    public function testDecrypt()
-    {
-        $value = 'cakephp-rocks-and-is-awesome';
-        $cookie = new Cookie('cakephp', $value);
-        $cookie->encrypt($this->encryptionKey);
-        $this->assertTextStartsWith('Q2FrZQ==.', $cookie->getValue());
-        $cookie->decrypt($this->encryptionKey);
-        $this->assertSame($value, $cookie->getValue());
-    }
-
-    /**
-     * Testing encrypting the cookie
-     *
-     * @return void
-     */
-    public function testEncrypt()
-    {
-        $value = 'cakephp-rocks-and-is-awesome';
-
-        $cookie = new Cookie('cakephp', $value);
-        $cookie->encrypt($this->encryptionKey);
-
-        $this->assertNotEquals($value, $cookie->getValue());
-        $this->assertNotEmpty($cookie->getValue());
     }
 
     /**
