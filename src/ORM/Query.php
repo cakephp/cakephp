@@ -383,7 +383,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         if ($associations === null) {
-            return $this->getEagerLoader()->contain();
+            return $loader->contain();
         }
 
         $result = $loader->contain($associations);
