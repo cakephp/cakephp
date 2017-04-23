@@ -657,9 +657,7 @@ class Debugger
      */
     public static function getOutputAs()
     {
-        $self = Debugger::getInstance();
-
-        return $self->_outputFormat;
+        return Debugger::getInstance()->_outputFormat;
     }
 
     /**
