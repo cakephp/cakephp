@@ -1805,6 +1805,34 @@ class QueryTest extends TestCase
     }
 
     /**
+     * testClearContain
+     *
+     * @return void
+     */
+    public function testClearContain()
+    {
+        $query = $this->getMockBuilder('\Cake\ORM\Query')
+            ->setMethods(['all'])
+            ->setConstructorArgs([$this->connection, $this->table])
+            ->getMock();
+
+        $query->contain([
+            'Articles'
+        ]);
+
+        $result = $query->contain();
+        $this->assertInternalType('array', $result);
+        $this->assertNotEmpty($result);
+
+        $result = $query->clearContain();
+        $this->assertInstanceOf(Query::class, $result);
+
+        $result = $query->contain();
+        $this->assertInternalType('array', $result);
+        $this->assertEmpty($result);
+    }
+
+    /**
      * Tests that query can proxy collection methods
      *
      * @dataProvider collectionMethodsProvider

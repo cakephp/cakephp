@@ -379,8 +379,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $loader = $this->getEagerLoader();
         if ($override === true) {
-            $loader->clearContain();
-            $this->_dirty();
+            $this->clearContain();
         }
 
         if ($associations === null) {
@@ -389,6 +388,19 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         $result = $loader->contain($associations);
         $this->_addAssociationsToTypeMap($this->repository(), $this->getTypeMap(), $result);
+
+        return $this;
+    }
+
+    /**
+     * Clears the contained associations from the current query.
+     *
+     * @return $this
+     */
+    public function clearContain()
+    {
+        $this->getEagerLoader()->clearContain();
+        $this->_dirty();
 
         return $this;
     }
