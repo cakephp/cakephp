@@ -70,7 +70,7 @@ endif;
 <p>
 	<?php
 	$filePresent = null;
-	if (file_exists(CONFIG_DIR . DS . 'database.php')):
+	if (file_exists(CONFIG . DS . 'database.php')):
 		echo '<span class="notice success">';
 			echo __d('cake_dev', 'Your database configuration file is present.');
 			$filePresent = true;

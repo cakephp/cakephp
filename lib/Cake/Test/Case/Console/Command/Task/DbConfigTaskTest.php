@@ -44,7 +44,7 @@ class DbConfigTaskTest extends CakeTestCase {
 			array($out, $out, $in)
 		);
 
-		$this->Task->path = CONFIG_DIR . DS;
+		$this->Task->path = CONFIG . DS;
 	}
 
 /**
@@ -79,7 +79,7 @@ class DbConfigTaskTest extends CakeTestCase {
 	public function testInitialize() {
 		$this->Task->initialize();
 		$this->assertFalse(empty($this->Task->path));
-		$this->assertEquals(CONFIG_DIR . DS, $this->Task->path);
+		$this->assertEquals(CONFIG . DS, $this->Task->path);
 	}
 
 /**

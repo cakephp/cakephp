@@ -45,7 +45,7 @@ class PluginTask extends AppShell {
  */
 	public function initialize() {
 		$this->path = current(App::path('plugins'));
-		$this->bootstrap = CONFIG_DIR . DS . 'bootstrap.php';
+		$this->bootstrap = CONFIG . DS . 'bootstrap.php';
 	}
 
 /**

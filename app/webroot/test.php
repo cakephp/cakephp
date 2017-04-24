@@ -49,8 +49,8 @@ if (!defined('APP_DIR')) {
 /**
  * Config Directory
  */
-if (!defined('CONFIG_DIR')) {
-	define('CONFIG_DIR', ROOT . DS . APP_DIR . DS . 'Config');
+if (!defined('CONFIG')) {
+	define('CONFIG', ROOT . DS . APP_DIR . DS . 'Config');
 }
 
 /**
