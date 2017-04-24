@@ -1238,7 +1238,7 @@ class CakeEmail {
 		if (is_string($config)) {
 			if (!$this->_configInstance) {
 				if (!class_exists($this->_configClass) && !config('email')) {
-					throw new ConfigureException(__d('cake_dev', '%s not found.', APP . 'Config' . DS . 'email.php'));
+					throw new ConfigureException(__d('cake_dev', '%s not found.', CONFIG_DIR . DS . 'email.php'));
 				}
 				$this->_configInstance = new $this->_configClass();
 			}
