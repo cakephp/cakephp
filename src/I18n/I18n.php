@@ -116,7 +116,7 @@ class I18n
      * );
      * ```
      *
-     * @deprecated Deprecated since 3.5. Use getTranslator() and setTranslator()
+     * @deprecated 3.5 Use getTranslator() and setTranslator()
      * @param string $name The domain of the translation messages.
      * @param string|null $locale The locale for the translator.
      * @param callable|null $loader A callback function or callable class responsible for
@@ -262,7 +262,7 @@ class I18n
      * When called with no arguments it will return the currently configure
      * locale as stored in the `intl.default_locale` PHP setting.
      *
-     * @deprecated Deprecated since 3.5. Use setLocale() and getLocale().
+     * @deprecated 3.5 Use setLocale() and getLocale().
      * @param string|null $locale The name of the locale to set as default.
      * @return string|null The name of the default locale.
      */
@@ -315,7 +315,7 @@ class I18n
      * the value as stored in the `intl.default_locale` PHP setting before
      * any manipulation by this class.
      *
-     * @deprecated Deprecated since 3.5. Use getDefaultLocale()
+     * @deprecated 3.5 Use getDefaultLocale()
      * @return string
      */
     public static function defaultLocale()
@@ -346,7 +346,7 @@ class I18n
      *
      * If called with no arguments, it will return the currently configured value.
      *
-     * @deprecated Deprecated since 3.5. Use getDefaultFormatter() and setDefaultFormatter().
+     * @deprecated 3.5 Use getDefaultFormatter() and setDefaultFormatter().
      * @param string|null $name The name of the formatter to use.
      * @return string The name of the formatter.
      */
