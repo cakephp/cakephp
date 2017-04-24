@@ -27,6 +27,12 @@ class DebuggerTestCaseDebugger extends Debugger
 {
 }
 
+class SecretThing
+{
+    private $secret = 'shhh';
+    protected $hidden = 'hide';
+}
+
 class DebuggableThing
 {
 
@@ -380,6 +386,26 @@ TEXT;
         fclose($file);
         $result = Debugger::exportVar($file);
         $this->assertTextEquals('unknown', $result);
+    }
+
+    /**
+     * test exportVar() doesn't modify accessibility.
+     *
+     * @return void
+     */
+    public function testExportVarAccessible()
+    {
+        $subject = new SecretThing();
+        $result = Debugger::exportVar($subject);
+        $expected = <<<TEXT
+object(Cake\Test\TestCase\Error\SecretThing) {
+	[protected] hidden => 'hide'
+	[private] secret => 'shhh'
+}
+TEXT;
+        $this->assertTextEquals($expected, $result);
+        $this->assertFalse(isset($subject->hidden));
+        $this->assertFalse(isset($subject->secret));
     }
 
     /**
