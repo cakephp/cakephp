@@ -778,4 +778,60 @@ class RouteBuilderTest extends TestCase
         $this->assertArrayHasKey('api:v1:ping', $all);
         $this->assertArrayHasKey('web:pong', $all);
     }
+
+    /**
+     * Test adding middleware to the collection.
+     *
+     * @return void
+     */
+    public function testRegisterMiddleware()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * Test registering invalid middleware
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage The 'bad' middleware is not callable.
+     * @return void
+     */
+    public function testRegisterMiddlewareObject()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * Test registering invalid middleware
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage The 'bad' middleware is not callable.
+     * @return void
+     */
+    public function testRegisterMiddlewareString()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * Test applying middleware to a scope when it doesn't exist
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Cannot apply 'bad' middleware to /api path. It has not been registered.
+     * @return void
+     */
+    public function testMiddlewareInvalidName()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * Test applying middleware to a scope
+     *
+     * @return void
+     */
+    public function testMiddleware()
+    {
+        $this->markTestIncomplete();
+    }
 }

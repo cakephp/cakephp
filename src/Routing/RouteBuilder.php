@@ -714,4 +714,32 @@ class RouteBuilder
         $this->connect('/:controller', ['action' => 'index'], compact('routeClass'));
         $this->connect('/:controller/:action/*', [], compact('routeClass'));
     }
+
+    /**
+     * Register a middleware with the RouteCollection.
+     *
+     * Once middleware has been registered, it can be applied to the current routing
+     * scope or any child scopes that share the same RoutingCollection.
+     *
+     * @param string $name The name of the middleware. Used when applying middleware to a scope.
+     * @param callable $middleware The middleware object to register.
+     * @return $this
+     * @see \Cake\Routing\RouteCollection
+     */
+    public function registerMiddleware($name, $middleware)
+    {
+    }
+
+    /**
+     * Apply a middleware to the current route scope.
+     *
+     * Requires middleware to be registered via `registerMiddleware()`
+     *
+     * @param string[] ...$names The names of the middleware to apply to the current scope.
+     * @return $this
+     * @see \Cake\Routing\RouteCollection::addMiddlewareToScope()
+     */
+    public function middleware(...$names)
+    {
+    }
 }
