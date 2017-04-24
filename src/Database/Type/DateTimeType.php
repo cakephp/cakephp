@@ -322,4 +322,17 @@ class DateTimeType extends Type implements TypeInterface
     {
         return PDO::PARAM_STR;
     }
+
+    /**
+     * Returns the base type name that this class is inheriting.
+     * This is useful when extending base type for adding extra functionality
+     * but still want the rest of the framework to use the same assumptions it would
+     * do about the base type it inherits from.
+     *
+     * @return string
+     */
+    public function getBaseType()
+    {
+        return $this->_name;
+    }
 }
