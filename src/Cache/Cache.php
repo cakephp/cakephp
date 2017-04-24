@@ -108,22 +108,45 @@ class Cache
 
     /**
      * Returns the Cache Registry instance used for creating and using cache adapters.
+     *
+     * @return \Cake\Core\ObjectRegistry
+     */
+    public static function getRegistry()
+    {
+        if (!static::$_registry) {
+            static::$_registry = new CacheRegistry();
+        }
+
+        return static::$_registry;
+    }
+
+    /**
+     * Returns the Cache Registry instance used for creating and using cache adapters.
      * Also allows for injecting of a new registry instance.
      *
+     * @param \Cake\Core\ObjectRegistry|null $registry Injectable registry object.
+     * @return \Cake\Core\ObjectRegistry
+     */
+    public static function setRegistry(ObjectRegistry $registry)
+    {
+        static::$_registry = $registry;
+    }
+
+    /**
+     * Returns the Cache Registry instance used for creating and using cache adapters.
+     * Also allows for injecting of a new registry instance.
+     *
+     * @deprecated Use getRegistry() and setRegistry() instead.
      * @param \Cake\Core\ObjectRegistry|null $registry Injectable registry object.
      * @return \Cake\Core\ObjectRegistry
      */
     public static function registry(ObjectRegistry $registry = null)
     {
         if ($registry) {
-            static::$_registry = $registry;
+            static::setRegistry($registry);
         }
 
-        if (!static::$_registry) {
-            static::$_registry = new CacheRegistry();
-        }
-
-        return static::$_registry;
+        return static::getRegistry();
     }
 
     /**
@@ -135,7 +158,7 @@ class Cache
      */
     protected static function _buildEngine($name)
     {
-        $registry = static::registry();
+        $registry = static::getRegistry();
 
         if (empty(static::$_config[$name]['className'])) {
             throw new InvalidArgumentException(
@@ -174,7 +197,7 @@ class Cache
             return new NullEngine();
         }
 
-        $registry = static::registry();
+        $registry = static::getRegistry();
 
         if (isset($registry->{$config})) {
             return $registry->{$config};
