@@ -3099,4 +3099,10 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::imageWidth($upload, '>', 2000));
         $this->assertFalse(Validation::imageWidth($upload, '==', 3000));
     }
+
+    public function testContainNonAlphaNumericAndCCWithScalar()
+    {
+        $this->assertFalse(Validation::cc(['869972521242198'], ['voyager']));
+        $this->assertFalse(Validation::containsNonAlphaNumeric('ab#cd#ef', 3));
+    }
 }
