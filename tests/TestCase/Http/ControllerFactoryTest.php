@@ -265,7 +265,7 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * Test building controller name passing no controller name
+     * Test building controller name when passing no controller name
      *
      * @return void
      */
