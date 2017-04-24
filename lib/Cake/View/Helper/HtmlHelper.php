@@ -1187,7 +1187,7 @@ class HtmlHelper extends AppHelper {
 /**
  * Load Html tag configuration.
  *
- * Loads a file from APP/Config that contains tag data. By default the file is expected
+ * Loads a file from CONFIG that contains tag data. By default the file is expected
  * to be compatible with PhpReader:
  *
  * `$this->Html->loadConfig('tags.php');`
@@ -1206,7 +1206,7 @@ class HtmlHelper extends AppHelper {
  * `$this->Html->loadConfig(array('tags.ini', 'ini'));`
  *
  * Its expected that the `tags` index will exist from any configuration file that is read.
- * You can also specify the path to read the configuration file from, if APP/Config is not
+ * You can also specify the path to read the configuration file from, if CONFIG is not
  * where the file is.
  *
  * `$this->Html->loadConfig('tags.php', APP . 'Lib' . DS);`
