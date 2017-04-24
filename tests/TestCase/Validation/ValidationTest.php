@@ -620,6 +620,8 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('869958670174621', ['voyager']));
         $this->assertTrue(Validation::cc('869921250068209', ['voyager']));
         $this->assertTrue(Validation::cc('869972521242198', ['voyager']));
+        //SCALAR
+        $this->assertFalse(Validation::cc(['869972521242198'], ['voyager']));
     }
 
     /**
@@ -1961,6 +1963,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::email('abc@yahoo!.com'));
         $this->assertFalse(Validation::email('abc@example_underscored.com'));
         $this->assertFalse(Validation::email('raw@test.ra.ru....com'));
+        $this->assertFalse(Validation::email(1));
     }
 
     /**
@@ -2814,6 +2817,9 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::containsNonAlphaNumeric('abcdef##', 3));
         $this->assertFalse(Validation::containsNonAlphaNumeric('abc##def', 3));
         $this->assertFalse(Validation::containsNonAlphaNumeric('ab#cd#ef', 3));
+
+        //CHECK SCALAR
+        $this->assertFalse(Validation::containsNonAlphaNumeric(['ab#cd#ef']));
     }
 
     /**
