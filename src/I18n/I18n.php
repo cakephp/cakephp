@@ -206,22 +206,45 @@ class I18n
      * When called with no arguments it will return the currently configure
      * locale as stored in the `intl.default_locale` PHP setting.
      *
+     * @deprecated Deprecated since 3.5. Use setLocale() and getLocale().
      * @param string|null $locale The name of the locale to set as default.
      * @return string|null The name of the default locale.
      */
     public static function locale($locale = null)
     {
-        static::defaultLocale();
-
         if (!empty($locale)) {
-            Locale::setDefault($locale);
-            if (isset(static::$_collection)) {
-                static::translators()->setLocale($locale);
-            }
+            static::setLocale($locale);
 
             return null;
         }
 
+        return self::getLocale();
+    }
+
+    /**
+     * Sets the default locale to use for future translator instances.
+     * This also affects the `intl.default_locale` PHP setting.
+     *
+     * @param string $locale The name of the locale to set as default.
+     * @return void
+     */
+    public static function setLocale($locale)
+    {
+        Locale::setDefault($locale);
+        if (isset(static::$_collection)) {
+            static::translators()->setLocale($locale);
+        }
+    }
+
+    /**
+     * Will return the currently configure locale as stored in the
+     * `intl.default_locale` PHP setting.
+     *
+     * @return string The name of the default locale.
+     */
+    public static function getLocale()
+    {
+        static::getDefaultLocale();
         $current = Locale::getDefault();
         if ($current === '') {
             $current = static::DEFAULT_LOCALE;
@@ -236,9 +259,22 @@ class I18n
      * the value as stored in the `intl.default_locale` PHP setting before
      * any manipulation by this class.
      *
+     * @deprecated Deprecated since 3.5. Use getDefaultLocale()
      * @return string
      */
     public static function defaultLocale()
+    {
+        return static::getDefaultLocale();
+    }
+
+    /**
+     * This returns the default locale before any modifications, i.e.
+     * the value as stored in the `intl.default_locale` PHP setting before
+     * any manipulation by this class.
+     *
+     * @return string
+     */
+    public static function getDefaultLocale()
     {
         if (static::$_defaultLocale === null) {
             static::$_defaultLocale = Locale::getDefault() ?: static::DEFAULT_LOCALE;
@@ -254,12 +290,36 @@ class I18n
      *
      * If called with no arguments, it will return the currently configured value.
      *
+     * @deprecated Deprecated since 3.5. Use getDefaultFormatter() and setDefaultFormatter().
      * @param string|null $name The name of the formatter to use.
      * @return string The name of the formatter.
      */
     public static function defaultFormatter($name = null)
     {
         return static::translators()->defaultFormatter($name);
+    }
+
+    /**
+     * Returns the currently configured default formatter.
+     *
+     * @return string The name of the formatter.
+     */
+    public static function getDefaultFormatter()
+    {
+        return static::translators()->defaultFormatter();
+    }
+
+    /**
+     * Sets the name of the default messages formatter to use for future
+     * translator instances. By default the `default` and `sprintf` formatters
+     * are available.
+     *
+     * @param string $name The name of the formatter to use.
+     * @return void
+     */
+    public static function setDefaultFormatter($name)
+    {
+        static::translators()->defaultFormatter($name);
     }
 
     /**
