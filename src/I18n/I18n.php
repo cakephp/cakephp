@@ -72,7 +72,7 @@ class I18n
                 },
             ]),
             new TranslatorFactory,
-            static::locale()
+            static::getLocale()
         );
 
         if (class_exists('Cake\Cache\Cache')) {
@@ -84,9 +84,58 @@ class I18n
 
     /**
      * Returns an instance of a translator that was configured for the name and passed
-     * locale. If no locale is passed then it takes the value returned by the `locale()` method.
+     * locale. If no locale is passed then it takes the value returned by the `getLocale()` method.
      *
      * This method can be used to configure future translators, this is achieved by passing a callable
+     * as the last argument of this function.
+     *
+     * ### Example:
+     *
+     * ```
+     *  I18n::translator('default', 'fr_FR', function () {
+     *      $package = new \Aura\Intl\Package();
+     *      $package->setMessages([
+     *          'Cake' => 'Gâteau'
+     *      ]);
+     *      return $package;
+     *  });
+     *
+     *  $translator = I18n::translator('default', 'fr_FR');
+     *  echo $translator->translate('Cake');
+     * ```
+     *
+     * You can also use the `Cake\I18n\MessagesFileLoader` class to load a specific
+     * file from a folder. For example for loading a `my_translations.po` file from
+     * the `src/Locale/custom` folder, you would do:
+     *
+     * ```
+     * I18n::translator(
+     *  'default',
+     *  'fr_FR',
+     *  new MessagesFileLoader('my_translations', 'custom', 'po');
+     * );
+     * ```
+     *
+     * @deprecated Deprecated since 3.5. Use getTranslator() and setTranslator()
+     * @param string $name The domain of the translation messages.
+     * @param string|null $locale The locale for the translator.
+     * @param callable|null $loader A callback function or callable class responsible for
+     * constructing a translations package instance.
+     * @return \Aura\Intl\TranslatorInterface|null The configured translator.
+     */
+    public static function translator($name = 'default', $locale = null, callable $loader = null)
+    {
+        if ($loader !== null) {
+            static::setTranslator($name, $locale, $loader);
+
+            return null;
+        }
+
+        return self::getTranslator($name, $locale);
+    }
+
+    /**
+     * Configures future translators, this is achieved by passing a callable
      * as the last argument of this function.
      *
      * ### Example:
@@ -120,21 +169,28 @@ class I18n
      * @param string|null $locale The locale for the translator.
      * @param callable|null $loader A callback function or callable class responsible for
      * constructing a translations package instance.
-     * @return \Aura\Intl\TranslatorInterface|null The configured translator.
+     * @return void
      */
-    public static function translator($name = 'default', $locale = null, callable $loader = null)
+    public static function setTranslator($name = 'default', $locale = null, callable $loader)
     {
-        if ($loader !== null) {
-            $locale = $locale ?: static::locale();
+        $locale = $locale ?: static::getLocale();
 
-            $loader = static::translators()->setLoaderFallback($name, $loader);
+        $loader = static::translators()->setLoaderFallback($name, $loader);
 
-            $packages = static::translators()->getPackages();
-            $packages->set($name, $locale, $loader);
+        $packages = static::translators()->getPackages();
+        $packages->set($name, $locale, $loader);
+    }
 
-            return null;
-        }
-
+    /**
+     * Returns an instance of a translator that was configured for the name and passed
+     * locale. If no locale is passed then it takes the value returned by the `getLocale()` method.
+     *
+     * @param string $name The domain of the translation messages.
+     * @param string|null $locale The locale for the translator.
+     * @return \Aura\Intl\TranslatorInterface The configured translator.
+     */
+    public static function getTranslator($name = 'default', $locale = null)
+    {
         $translators = static::translators();
 
         if ($locale) {
