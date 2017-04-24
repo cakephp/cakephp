@@ -92,6 +92,11 @@ Cache::config([
         'engine' => 'File',
         'prefix' => 'cake_model_',
         'serialize' => true
+    ],
+    '_cake_i18n_' => [
+        'engine' => 'File',
+        'prefix' => 'cake_i18n_',
+        'serialize' => true
     ]
 ]);
 

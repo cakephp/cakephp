@@ -56,7 +56,7 @@ class I18nTest extends TestCase
         I18n::defaultFormatter('default');
         I18n::locale($this->locale);
         Plugin::unload();
-        Cache::clear(false, '_cake_core_');
+        Cache::clear(false, '_cake_i18n_');
     }
 
     /**
@@ -647,10 +647,10 @@ class I18nTest extends TestCase
         $english = I18n::translator();
         $spanish = I18n::translator('default', 'es_ES');
 
-        $cached = Cache::read('translations.default.en_US', '_cake_core_');
+        $cached = Cache::read('translations.default.en_US', '_cake_i18n_');
         $this->assertEquals($english, $cached);
 
-        $cached = Cache::read('translations.default.es_ES', '_cake_core_');
+        $cached = Cache::read('translations.default.es_ES', '_cake_i18n_');
         $this->assertEquals($spanish, $cached);
 
         $this->assertSame($english, I18n::translator());
