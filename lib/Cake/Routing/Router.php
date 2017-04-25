@@ -1281,7 +1281,7 @@ class Router {
  */
 	protected static function _loadRoutes() {
 		static::$initialized = true;
-		include CONFIG . DS . 'routes.php';
+		include CONFIG . 'routes.php';
 	}
 
 }

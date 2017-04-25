@@ -153,7 +153,7 @@ class CakeEmailTest extends CakeTestCase {
 		parent::setUp();
 
 		$this->_configFileExists = true;
-		$emailConfig = new File(CONFIG . DS . 'email.php');
+		$emailConfig = new File(CONFIG . 'email.php');
 		if (!$emailConfig->exists()) {
 			$this->_configFileExists = false;
 			$emailConfig->create();
@@ -176,7 +176,7 @@ class CakeEmailTest extends CakeTestCase {
 		App::build();
 
 		if (!$this->_configFileExists) {
-			unlink(CONFIG . DS . 'email.php');
+			unlink(CONFIG . 'email.php');
 		}
 	}
 
