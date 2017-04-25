@@ -532,7 +532,7 @@ abstract class IntegrationTestCase extends TestCase
         if (isset($this->_request['headers'])) {
             foreach ($this->_request['headers'] as $k => $v) {
                 $name = strtoupper(str_replace('-', '_', $k));
-                if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
+                if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE', 'PHP_AUTH_USER', 'PHP_AUTH_PW'])) {
                     $name = 'HTTP_' . $name;
                 }
                 $env[$name] = $v;
