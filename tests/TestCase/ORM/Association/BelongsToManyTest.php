@@ -377,7 +377,7 @@ class BelongsToManyTest extends TestCase
             ->setMethods(['__invoke'])
             ->getMock();
         $counter->expects($this->exactly(2))->method('__invoke');
-        $articleTag->eventManager()->on('Model.beforeDelete', $counter);
+        $articleTag->getEventManager()->on('Model.beforeDelete', $counter);
 
         $this->assertEquals(2, $articleTag->find()->where(['article_id' => 1])->count());
         $entity = new Entity(['id' => 1, 'name' => 'PHP']);
@@ -712,7 +712,7 @@ class BelongsToManyTest extends TestCase
     {
         $articles = TableRegistry::get('Articles');
         $tags = TableRegistry::get('Tags');
-        $tags->eventManager()->on('Model.buildRules', function (Event $event, $rules) {
+        $tags->getEventManager()->on('Model.buildRules', function (Event $event, $rules) {
             $rules->add(function () {
                 return false;
             }, 'rule', ['errorField' => 'name', 'message' => 'Bad data']);

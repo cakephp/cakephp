@@ -248,7 +248,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $this->response = $response !== null ? $response : new Response();
 
         if ($eventManager !== null) {
-            $this->eventManager($eventManager);
+            $this->setEventManager($eventManager);
         }
 
         $this->modelFactory('Table', [$this->tableLocator(), 'get']);
@@ -263,7 +263,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $this->_mergeControllerVars();
         $this->_loadComponents();
-        $this->eventManager()->on($this);
+        $this->getEventManager()->on($this);
     }
 
     /**

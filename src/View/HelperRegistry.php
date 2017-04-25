@@ -44,7 +44,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
     public function __construct(View $view)
     {
         $this->_View = $view;
-        $this->eventManager($view->eventManager());
+        $this->setEventManager($view->getEventManager());
     }
 
     /**
@@ -150,7 +150,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
         }
         $enable = isset($settings['enabled']) ? $settings['enabled'] : true;
         if ($enable) {
-            $this->eventManager()->on($instance);
+            $this->getEventManager()->on($instance);
         }
 
         return $instance;

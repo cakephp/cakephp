@@ -378,7 +378,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
     {
         $this->controller->dispatchEvent('Controller.shutdown');
         $dispatcher = DispatcherFactory::create();
-        $eventManager = $dispatcher->eventManager();
+        $eventManager = $dispatcher->getEventManager();
         foreach ($dispatcher->filters() as $filter) {
             $eventManager->on($filter);
         }

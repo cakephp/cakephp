@@ -474,7 +474,7 @@ class TableTest extends TestCase
             'table' => 'users',
             'connection' => $this->connection,
         ]);
-        $table->eventManager()->on(
+        $table->getEventManager()->on(
             'Model.beforeFind',
             function (Event $event, $query, $options) {
                 $query->limit(1);
@@ -498,7 +498,7 @@ class TableTest extends TestCase
             'connection' => $this->connection,
         ]);
         $expected = ['One', 'Two', 'Three'];
-        $table->eventManager()->on(
+        $table->getEventManager()->on(
             'Model.beforeFind',
             function (Event $event, $query, $options) use ($expected) {
                 $query->setResult($expected);
@@ -2261,7 +2261,7 @@ class TableTest extends TestCase
             $this->assertSame($data, $entity);
             $entity->set('password', 'foo');
         };
-        $table->eventManager()->on('Model.beforeSave', $listener);
+        $table->getEventManager()->on('Model.beforeSave', $listener);
         $this->assertSame($data, $table->save($data));
         $this->assertEquals($data->id, self::$nextUserId);
         $row = $table->find('all')->where(['id' => self::$nextUserId])->first();
@@ -2289,8 +2289,8 @@ class TableTest extends TestCase
         $listener2 = function ($e, $entity, $options) {
             $this->assertTrue($options['crazy']);
         };
-        $table->eventManager()->on('Model.beforeSave', $listener1);
-        $table->eventManager()->on('Model.beforeSave', $listener2);
+        $table->getEventManager()->on('Model.beforeSave', $listener1);
+        $table->getEventManager()->on('Model.beforeSave', $listener2);
         $this->assertSame($data, $table->save($data));
         $this->assertEquals($data->id, self::$nextUserId);
 
@@ -2318,7 +2318,7 @@ class TableTest extends TestCase
 
             return $entity;
         };
-        $table->eventManager()->on('Model.beforeSave', $listener);
+        $table->getEventManager()->on('Model.beforeSave', $listener);
         $this->assertSame($data, $table->save($data));
         $this->assertNull($data->id);
         $row = $table->find('all')->where(['id' => self::$nextUserId])->first();
@@ -2344,7 +2344,7 @@ class TableTest extends TestCase
             $this->assertTrue($entity->dirty());
             $called = true;
         };
-        $table->eventManager()->on('Model.afterSave', $listener);
+        $table->getEventManager()->on('Model.afterSave', $listener);
 
         $calledAfterCommit = false;
         $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
@@ -2353,7 +2353,7 @@ class TableTest extends TestCase
             $this->assertNotSame($data->get('username'), $data->getOriginal('username'));
             $calledAfterCommit = true;
         };
-        $table->eventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
+        $table->getEventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
 
         $this->assertSame($data, $table->save($data));
         $this->assertTrue($called);
@@ -2379,13 +2379,13 @@ class TableTest extends TestCase
             $this->assertSame($data, $entity);
             $called = true;
         };
-        $table->eventManager()->on('Model.afterSave', $listener);
+        $table->getEventManager()->on('Model.afterSave', $listener);
 
         $calledAfterCommit = false;
         $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
             $calledAfterCommit = true;
         };
-        $table->eventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
+        $table->getEventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
 
         $this->assertSame($data, $table->save($data, ['atomic' => false]));
         $this->assertEquals($data->id, self::$nextUserId);
@@ -2411,7 +2411,7 @@ class TableTest extends TestCase
         $listener = function ($e, $entity, $options) use (&$called) {
             $called = true;
         };
-        $table->eventManager()->on('Model.afterSaveCommit', $listener);
+        $table->getEventManager()->on('Model.afterSaveCommit', $listener);
 
         $this->connection->begin();
         $this->assertSame($data, $table->save($data));
@@ -2437,7 +2437,7 @@ class TableTest extends TestCase
         $listener = function ($e, $entity, $options) use (&$called) {
             $called = true;
         };
-        $table->eventManager()->on('Model.afterSaveCommit', $listener);
+        $table->getEventManager()->on('Model.afterSaveCommit', $listener);
 
         $this->connection->begin();
         $this->assertSame($data, $table->save($data, ['atomic' => false]));
@@ -2481,13 +2481,13 @@ class TableTest extends TestCase
         $listener = function ($e, $entity, $options) use ($data, &$called) {
             $called = true;
         };
-        $table->eventManager()->on('Model.afterSave', $listener);
+        $table->getEventManager()->on('Model.afterSave', $listener);
 
         $calledAfterCommit = false;
         $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
             $calledAfterCommit = true;
         };
-        $table->eventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
+        $table->getEventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
 
         $this->assertFalse($table->save($data));
         $this->assertFalse($called);
@@ -2517,13 +2517,13 @@ class TableTest extends TestCase
         $listenerForArticle = function ($e, $entity, $options) use (&$calledForArticle) {
             $calledForArticle = true;
         };
-        $table->eventManager()->on('Model.afterSaveCommit', $listenerForArticle);
+        $table->getEventManager()->on('Model.afterSaveCommit', $listenerForArticle);
 
         $calledForAuthor = false;
         $listenerForAuthor = function ($e, $entity, $options) use (&$calledForAuthor) {
             $calledForAuthor = true;
         };
-        $table->authors->eventManager()->on('Model.afterSaveCommit', $listenerForAuthor);
+        $table->authors->getEventManager()->on('Model.afterSaveCommit', $listenerForAuthor);
 
         $this->assertSame($entity, $table->save($entity));
         $this->assertFalse($entity->isNew());
@@ -2787,7 +2787,7 @@ class TableTest extends TestCase
             $this->assertFalse($entity->isNew());
             $called = true;
         };
-        $table->eventManager()->on('Model.beforeSave', $listener);
+        $table->getEventManager()->on('Model.beforeSave', $listener);
         $this->assertSame($entity, $table->save($entity));
         $this->assertTrue($called);
     }
@@ -3218,13 +3218,13 @@ class TableTest extends TestCase
             $this->assertSame($data, $entity);
             $called = true;
         };
-        $table->eventManager()->on('Model.afterDelete', $listener);
+        $table->getEventManager()->on('Model.afterDelete', $listener);
 
         $calledAfterCommit = false;
         $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
             $calledAfterCommit = true;
         };
-        $table->eventManager()->on('Model.afterDeleteCommit', $listenerAfterCommit);
+        $table->getEventManager()->on('Model.afterDeleteCommit', $listenerAfterCommit);
 
         $table->delete($data, ['atomic' => false]);
         $this->assertTrue($called);
@@ -3248,13 +3248,13 @@ class TableTest extends TestCase
         $listener = function ($e, $entity, $options) use (&$called) {
             $called = true;
         };
-        $table->eventManager()->on('Model.afterDeleteCommit', $listener);
+        $table->getEventManager()->on('Model.afterDeleteCommit', $listener);
 
         $called2 = false;
         $listener = function ($e, $entity, $options) use (&$called2) {
             $called2 = true;
         };
-        $table->articles->eventManager()->on('Model.afterDeleteCommit', $listener);
+        $table->articles->getEventManager()->on('Model.afterDeleteCommit', $listener);
 
         $entity = $table->get(1);
         $this->assertTrue($table->delete($entity));
@@ -4972,7 +4972,7 @@ class TableTest extends TestCase
         $tags->cascadeCallbacks(true);
 
         $actualOptions = null;
-        $tags->junction()->eventManager()->on(
+        $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5007,7 +5007,7 @@ class TableTest extends TestCase
         $tags = $articles->belongsToMany('Tags');
 
         $actualOptions = null;
-        $tags->junction()->eventManager()->on(
+        $tags->junction()->getEventManager()->on(
             'Model.beforeSave',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5044,7 +5044,7 @@ class TableTest extends TestCase
         $tags = $articles->belongsToMany('Tags');
 
         $actualOptions = null;
-        $tags->junction()->eventManager()->on(
+        $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5077,13 +5077,13 @@ class TableTest extends TestCase
 
         $actualSaveOptions = null;
         $actualDeleteOptions = null;
-        $tags->junction()->eventManager()->on(
+        $tags->junction()->getEventManager()->on(
             'Model.beforeSave',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualSaveOptions) {
                 $actualSaveOptions = $options->getArrayCopy();
             }
         );
-        $tags->junction()->eventManager()->on(
+        $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualDeleteOptions) {
                 $actualDeleteOptions = $options->getArrayCopy();
@@ -5136,7 +5136,7 @@ class TableTest extends TestCase
         $articles->cascadeCallbacks(true);
 
         $actualOptions = null;
-        $articles->target()->eventManager()->on(
+        $articles->target()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5172,7 +5172,7 @@ class TableTest extends TestCase
         $articles = $authors->hasMany('Articles');
 
         $actualOptions = null;
-        $articles->target()->eventManager()->on(
+        $articles->target()->getEventManager()->on(
             'Model.beforeSave',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5215,7 +5215,7 @@ class TableTest extends TestCase
         $articles->cascadeCallbacks(true);
 
         $actualOptions = null;
-        $articles->target()->eventManager()->on(
+        $articles->target()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5252,13 +5252,13 @@ class TableTest extends TestCase
 
         $actualSaveOptions = null;
         $actualDeleteOptions = null;
-        $articles->target()->eventManager()->on(
+        $articles->target()->getEventManager()->on(
             'Model.beforeSave',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualSaveOptions) {
                 $actualSaveOptions = $options->getArrayCopy();
             }
         );
-        $articles->target()->eventManager()->on(
+        $articles->target()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualDeleteOptions) {
                 $actualDeleteOptions = $options->getArrayCopy();
@@ -5313,7 +5313,7 @@ class TableTest extends TestCase
         $tags = $articles->belongsToMany('Tags');
 
         $actualOptions = null;
-        $tags->junction()->eventManager()->on(
+        $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5345,7 +5345,7 @@ class TableTest extends TestCase
         $articles->cascadeCallbacks(true);
 
         $actualOptions = null;
-        $articles->target()->eventManager()->on(
+        $articles->target()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -6042,10 +6042,10 @@ class TableTest extends TestCase
         $table = TableRegistry::get('articles');
         $table->belongsTo('authors');
 
-        $eventManager = $table->eventManager();
+        $eventManager = $table->getEventManager();
 
         $associationBeforeFindCount = 0;
-        $table->association('authors')->target()->eventManager()->on(
+        $table->association('authors')->target()->getEventManager()->on(
             'Model.beforeFind',
             function (Event $event, Query $query, ArrayObject $options, $primary) use (&$associationBeforeFindCount) {
                 $this->assertTrue(is_bool($primary));
@@ -6225,7 +6225,7 @@ class TableTest extends TestCase
 
         $counter = 0;
         $userTable->Comments
-            ->eventManager()
+            ->getEventManager()
             ->on('Model.afterSave', function (Event $event, $entity) use (&$counter) {
                 if ($entity->dirty()) {
                     $counter++;
@@ -6262,7 +6262,7 @@ class TableTest extends TestCase
 
         $counter = 0;
         $table->Tags->junction()
-            ->eventManager()
+            ->getEventManager()
             ->on('Model.afterSave', function (Event $event, $entity) use (&$counter) {
                 if ($entity->dirty()) {
                     $counter++;

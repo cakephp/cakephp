@@ -731,7 +731,7 @@ class HasManyTest extends TestCase
         $listenerAfterSave = function ($e, $entity, $options) use ($articles) {
             $this->assertTrue($articles->connection()->inTransaction(), 'Multiple transactions used to save associated models.');
         };
-        $articles->eventManager()->on('Model.afterSave', $listenerAfterSave);
+        $articles->getEventManager()->on('Model.afterSave', $listenerAfterSave);
 
         $options = ['atomic' => false];
         $assoc->link($entity, $articles->find('all')->toArray(), $options);

@@ -35,7 +35,7 @@ class BehaviorRegistryTest extends TestCase
     {
         parent::setUp();
         $this->Table = new Table(['table' => 'articles']);
-        $this->EventManager = $this->Table->eventManager();
+        $this->EventManager = $this->Table->getEventManager();
         $this->Behaviors = new BehaviorRegistry($this->Table);
         Configure::write('App.namespace', 'TestApp');
     }
@@ -396,7 +396,7 @@ class BehaviorRegistryTest extends TestCase
     public function testSetTable()
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
-        $table->expects($this->once())->method('eventManager');
+        $table->expects($this->once())->method('getEventManager');
 
         $this->Behaviors->setTable($table);
     }

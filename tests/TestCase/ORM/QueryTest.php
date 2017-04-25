@@ -1310,7 +1310,7 @@ class QueryTest extends TestCase
         $table->belongsToMany('Tags');
 
         $articlesTags
-            ->eventManager()
+            ->getEventManager()
             ->on('Model.beforeFind', function (Event $event, $query) {
                 $query->formatResults(function ($results) {
                     foreach ($results as $result) {
@@ -1614,7 +1614,7 @@ class QueryTest extends TestCase
     {
         $table = TableRegistry::get('Articles');
         $table->hasMany('Comments');
-        $table->eventManager()
+        $table->getEventManager()
             ->on('Model.beforeFind', function (Event $event, $query) {
                 $query
                     ->limit(1)
@@ -1635,7 +1635,7 @@ class QueryTest extends TestCase
     {
         $callCount = 0;
         $table = TableRegistry::get('Articles');
-        $table->eventManager()
+        $table->getEventManager()
             ->on('Model.beforeFind', function (Event $event, $query) use (&$callCount) {
                 $valueBinder = new ValueBinder();
                 $query->sql($valueBinder);
@@ -2543,12 +2543,12 @@ class QueryTest extends TestCase
         }]);
         $this->assertFalse($query->eagerLoaded());
 
-        $table->eventManager()->attach(function ($e, $q, $o, $primary) {
+        $table->getEventManager()->attach(function ($e, $q, $o, $primary) {
             $this->assertTrue($primary);
         }, 'Model.beforeFind');
 
         TableRegistry::get('articles')
-            ->eventManager()->attach(function ($e, $q, $o, $primary) {
+            ->getEventManager()->attach(function ($e, $q, $o, $primary) {
                 $this->assertFalse($primary);
             }, 'Model.beforeFind');
         $query->all();
@@ -2571,12 +2571,12 @@ class QueryTest extends TestCase
         }]);
         $this->assertFalse($query->isEagerLoaded());
 
-        $table->eventManager()->attach(function ($e, $q, $o, $primary) {
+        $table->getEventManager()->attach(function ($e, $q, $o, $primary) {
             $this->assertTrue($primary);
         }, 'Model.beforeFind');
 
         TableRegistry::get('articles')
-            ->eventManager()->attach(function ($e, $q, $o, $primary) {
+            ->getEventManager()->attach(function ($e, $q, $o, $primary) {
                 $this->assertFalse($primary);
             }, 'Model.beforeFind');
         $query->all();
@@ -2810,7 +2810,7 @@ class QueryTest extends TestCase
     {
         $table = TableRegistry::get('Articles');
         $table->hasMany('Comments');
-        $table->eventManager()
+        $table->getEventManager()
             ->on('Model.beforeFind', function (Event $event, $query) {
                 $query
                     ->limit(5)

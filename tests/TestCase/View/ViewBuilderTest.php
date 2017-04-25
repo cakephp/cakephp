@@ -138,7 +138,7 @@ class ViewBuilderTest extends TestCase
         $this->assertEquals('TestTheme', $view->theme);
         $this->assertSame($request, $view->request);
         $this->assertSame($response, $view->response);
-        $this->assertSame($events, $view->eventManager());
+        $this->assertSame($events, $view->getEventManager());
         $this->assertSame(['one' => 'value'], $view->viewVars);
         $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $view->Html);
         $this->assertInstanceOf('Cake\View\Helper\FormHelper', $view->Form);

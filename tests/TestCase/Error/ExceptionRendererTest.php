@@ -771,7 +771,7 @@ class ExceptionRendererTest extends TestCase
 
         $ExceptionRenderer->controller = new Controller();
         $ExceptionRenderer->controller->helpers = ['Fail', 'Boom'];
-        $ExceptionRenderer->controller->eventManager()->on(
+        $ExceptionRenderer->controller->getEventManager()->on(
             'Controller.beforeRender',
             function (Event $event) {
                 $this->called = true;
