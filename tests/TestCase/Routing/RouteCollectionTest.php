@@ -747,13 +747,18 @@ class RouteCollectionTest extends TestCase
             ->getMock();
         $this->collection->registerMiddleware('callable', $mock);
 
-        $this->collection->enableMiddleware('/articles/:article_id/comments', ['callable']);
-        $this->markTestIncomplete();
+        $this->collection->enableMiddleware('/api-:version/articles/:article_id/comments', ['callable']);
 
-        $middleware = $this->collection->getMatchingMiddleware('/articles/123/comments');
+        $middleware = $this->collection->getMatchingMiddleware('/api-1/articles/comments');
+        $this->assertEmpty($middleware);
+
+        $middleware = $this->collection->getMatchingMiddleware('/api-1/articles/yay/comments');
         $this->assertEquals([$mock], $middleware);
 
-        $middleware = $this->collection->getMatchingMiddleware('/articles/abc-123/comments/99');
+        $middleware = $this->collection->getMatchingMiddleware('/api-1/articles/123/comments');
+        $this->assertEquals([$mock], $middleware);
+
+        $middleware = $this->collection->getMatchingMiddleware('/api-abc123/articles/abc-123/comments/99');
         $this->assertEquals([$mock], $middleware);
     }
 

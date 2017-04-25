@@ -425,6 +425,10 @@ class RouteCollection
                 throw new RuntimeException($message);
             }
         }
+        // Matches route element pattern in Cake\Routing\Route
+        $path = '#^' . preg_quote($path, '#') . '#';
+        $path = preg_replace('/\\\\:([a-z0-9-_]+(?<![-_]))/i', '[^/]+', $path);
+
         if (!isset($this->_middlewarePaths[$path])) {
             $this->_middlewarePaths[$path] = [];
         }
@@ -447,8 +451,8 @@ class RouteCollection
     public function getMatchingMiddleware($needle)
     {
         $matching = [];
-        foreach ($this->_middlewarePaths as $path => $middleware) {
-            if (strpos($needle, $path) === 0) {
+        foreach ($this->_middlewarePaths as $pattern => $middleware) {
+            if (preg_match($pattern, $needle)) {
                 $matching = array_merge($matching, $middleware);
             }
         }
