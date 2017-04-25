@@ -2816,6 +2816,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::containsNonAlphaNumeric('##abcdef', 3));
         $this->assertFalse(Validation::containsNonAlphaNumeric('abcdef##', 3));
         $this->assertFalse(Validation::containsNonAlphaNumeric('abc##def', 3));
+        $this->assertFalse(Validation::containsNonAlphaNumeric('ab#cd#ef', 3));
 
         //Non alpha numeric should not pass as array
         $this->assertFalse(Validation::containsNonAlphaNumeric(['abc#']));
