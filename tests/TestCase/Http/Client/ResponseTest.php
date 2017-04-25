@@ -430,31 +430,4 @@ XML;
         $response = new Response($headers, $body);
         $this->assertEquals('Hello world!', $response->body);
     }
-
-    /**
-     * Test convertCookie
-     *
-     * @return void
-     */
-    public function testConvertCookie()
-    {
-        $date = Chronos::parse('2017-03-31 12:34:56');
-        $cookie = new Cookie('cakephp', 'cakephp-rocks');
-        $cookie = $cookie->withDomain('cakephp.org')
-            ->withPath('/api')
-            ->withExpiry($date)
-            ->withHttpOnly(true)
-            ->withSecure(true);
-        $expected = [
-            'name' => 'cakephp',
-            'value' => 'cakephp-rocks',
-            'path' => '/api',
-            'domain' => 'cakephp.org',
-            'expires' => 'Fri, 31-Mar-2017 12:34:56 GMT',
-            'secure' => true,
-            'httponly' => true
-        ];
-        $response = new Response([], '');
-        $this->assertEquals($expected, $response->convertCookie($cookie));
-    }
 }

@@ -79,7 +79,7 @@ class CookieCollection extends BaseCollection
     {
         $out = [];
         foreach ($this->cookies as $cookie) {
-            $out[] = $this->convertCookie($cookie);
+            $out[] = $this->convertCookieToArray($cookie);
         }
 
         return $out;
@@ -93,7 +93,7 @@ class CookieCollection extends BaseCollection
      * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie object.
      * @return array
      */
-    public function convertCookie(CookieInterface $cookie)
+    protected function convertCookieToArray(CookieInterface $cookie)
     {
         return [
             'name' => $cookie->getName(),

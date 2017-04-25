@@ -446,7 +446,7 @@ class Response extends Message implements ResponseInterface
 
         $cookie = $this->cookies->get($name);
 
-        return $this->convertCookie($cookie);
+        return $this->convertCookieToArray($cookie);
     }
 
     /**
@@ -458,7 +458,7 @@ class Response extends Message implements ResponseInterface
      * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie object.
      * @return array
      */
-    public function convertCookie(CookieInterface $cookie)
+    protected function convertCookieToArray(CookieInterface $cookie)
     {
         return [
             'name' => $cookie->getName(),
@@ -495,7 +495,7 @@ class Response extends Message implements ResponseInterface
 
         $cookies = [];
         foreach ($this->cookies as $cookie) {
-            $cookies[$cookie->getName()] = $this->convertCookie($cookie);
+            $cookies[$cookie->getName()] = $this->convertCookieToArray($cookie);
         }
 
         return $cookies;

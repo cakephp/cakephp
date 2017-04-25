@@ -303,30 +303,4 @@ class CookieCollectionTest extends TestCase
         $expected = [];
         $this->assertEquals($expected, $result);
     }
-
-    /**
-     * Test convertCookie
-     *
-     * @return void
-     */
-    public function testConvertCookie()
-    {
-        $date = Chronos::parse('2017-03-31 12:34:56');
-        $cookie = new Cookie('cakephp', 'cakephp-rocks');
-        $cookie = $cookie->withDomain('cakephp.org')
-            ->withPath('/api')
-            ->withExpiry($date)
-            ->withHttpOnly(true)
-            ->withSecure(true);
-        $expected = [
-            'name' => 'cakephp',
-            'value' => 'cakephp-rocks',
-            'path' => '/api',
-            'domain' => 'cakephp.org',
-            'expires' => $date->format('U'),
-            'secure' => true,
-            'httponly' => true
-        ];
-        $this->assertEquals($expected, $this->cookies->convertCookie($cookie));
-    }
 }
