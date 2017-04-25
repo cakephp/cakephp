@@ -35,7 +35,7 @@ trait LocatorAwareTrait
      *
      * @param \Cake\ORM\Locator\LocatorInterface|null $tableLocator LocatorInterface instance.
      * @return \Cake\ORM\Locator\LocatorInterface
-     * @deprecated 3.5.0 Use getter/setter instead.
+     * @deprecated 3.5.0 Use getTableLocator()/setTableLocator() instead.
      */
     public function tableLocator(LocatorInterface $tableLocator = null)
     {

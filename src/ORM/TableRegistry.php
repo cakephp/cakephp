@@ -69,7 +69,7 @@ class TableRegistry
      *
      * @param \Cake\ORM\Locator\LocatorInterface|null $locator Instance of a locator to use.
      * @return \Cake\ORM\Locator\LocatorInterface
-     * @deprecated 3.5.0 Use getter/setter instead.
+     * @deprecated 3.5.0 Use getTableLocator()/setTableLocator() instead.
      */
     public static function locator(LocatorInterface $locator = null)
     {
