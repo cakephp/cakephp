@@ -43,7 +43,7 @@ trait EventDispatcherTrait
      *
      * @param \Cake\Event\EventManager|null $eventManager the eventManager to set
      * @return \Cake\Event\EventManager
-     * @deprecated 3.5.0 Use getter/setter instead.
+     * @deprecated 3.5.0 Use getEventManager()/setEventManager() instead.
      */
     public function eventManager(EventManager $eventManager = null)
     {
