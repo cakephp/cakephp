@@ -403,7 +403,7 @@ class RouteCollection
      * Check if the named middleware has been registered.
      *
      * @param string $name The name of the middleware to check.
-     * @return void
+     * @return bool
      */
     public function hasMiddleware($name)
     {
@@ -414,7 +414,7 @@ class RouteCollection
      * Enable a registered middleware(s) for the provided path
      *
      * @param string $path The URL path to register middleware for.
-     * @param string[] $names The middleware names to add for the path.
+     * @param string[] $middleware The middleware names to add for the path.
      * @return $this
      */
     public function enableMiddleware($path, array $middleware)
