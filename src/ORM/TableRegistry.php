@@ -88,7 +88,7 @@ class TableRegistry
     public static function getTableLocator()
     {
         if (!static::$_locator) {
-            static::$_locator = new static::$_defaultLocatorClass;
+            static::$_locator = new static::$_defaultLocatorClass();
         }
 
         return static::$_locator;
@@ -97,12 +97,12 @@ class TableRegistry
     /**
      * Sets singleton instance of LocatorInterface implementation.
      *
-     * @param \Cake\ORM\Locator\LocatorInterface|null $locator Instance of a locator to use.
+     * @param \Cake\ORM\Locator\LocatorInterface|null $tableLocator Instance of a locator to use.
      * @return void
      */
-    public static function setTableLocator(LocatorInterface $locator)
+    public static function setTableLocator(LocatorInterface $tableLocator)
     {
-        static::$_locator = $locator;
+        static::$_locator = $tableLocator;
     }
 
     /**
