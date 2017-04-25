@@ -179,6 +179,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * to be added to the list.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
+     * @throws \RuntimeException
      */
     public function select($fields = [], $overwrite = false)
     {
@@ -374,6 +375,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param bool $override Whether override previous list with the one passed
      * defaults to merging previous list with the new one.
      * @return array|$this
+     * @throws \RuntimeException
      */
     public function contain($associations = null, $override = false)
     {
@@ -402,6 +404,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *   This typemap is indirectly mutated via Cake\ORM\Query::addDefaultTypes()
      * @param array $associations The nested tree of associations to walk.
      * @return void
+     * @throws \RuntimeException
      */
     protected function _addAssociationsToTypeMap($table, $typeMap, $associations)
     {
@@ -470,6 +473,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param callable|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
+     * @throws \RuntimeException
      */
     public function matching($assoc, callable $builder = null)
     {
@@ -542,6 +546,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param callable|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
+     * @throws \RuntimeException
      */
     public function leftJoinWith($assoc, callable $builder = null)
     {
@@ -590,6 +595,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param callable|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
+     * @throws \RuntimeException
      * @see \Cake\ORM\Query::matching()
      */
     public function innerJoinWith($assoc, callable $builder = null)
@@ -655,6 +661,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param callable|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
+     * @throws \RuntimeException
      */
     public function notMatching($assoc, callable $builder = null)
     {
@@ -790,6 +797,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Returns the COUNT(*) for the query. If the query has not been
      * modified, and the count has already been performed the cached
      * value is returned
+     * @throws \RuntimeException
      */
     public function count()
     {
@@ -804,6 +812,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Performs and returns the COUNT(*) for the query.
      *
      * @return int
+     * @throws \RuntimeException
      */
     protected function _performCount()
     {
@@ -997,6 +1006,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * associations.
      *
      * @return \Cake\ORM\ResultSet
+     * @throws \InvalidArgumentException
      */
     protected function _execute()
     {
@@ -1023,6 +1033,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @see \Cake\Database\Query::execute()
      * @return void
+     * @throws \RuntimeException
      */
     protected function _transformQuery()
     {
@@ -1043,6 +1054,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * the fields for the default table.
      *
      * @return void
+     * @throws \RuntimeException
      */
     protected function _addDefaultFields()
     {
@@ -1152,7 +1164,8 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @param array $columns The columns to insert into.
      * @param array $types A map between columns & their datatypes.
-     * @return $this
+     * @return DatabaseQuery|Query
+     * @throws \RuntimeException
      */
     public function insert(array $columns, array $types = [])
     {
@@ -1203,6 +1216,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Part of JsonSerializable interface.
      *
      * @return \Cake\Datasource\ResultSetInterface The data to convert to JSON.
+     * @throws \RuntimeException
      */
     public function jsonSerialize()
     {

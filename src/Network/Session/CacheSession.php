@@ -79,6 +79,7 @@ class CacheSession implements SessionHandlerInterface
      *
      * @param string $id The key of the value to read
      * @return string The value of the key or empty if it does not exist
+     * @throws \InvalidArgumentException
      */
     public function read($id)
     {
@@ -97,6 +98,7 @@ class CacheSession implements SessionHandlerInterface
      * @param int $id ID that uniquely identifies session in database
      * @param mixed $data The value of the data to be saved.
      * @return bool True for successful write, false otherwise.
+     * @throws \InvalidArgumentException
      */
     public function write($id, $data)
     {
@@ -112,6 +114,7 @@ class CacheSession implements SessionHandlerInterface
      *
      * @param int $id ID that uniquely identifies session in cache
      * @return bool Always true.
+     * @throws \InvalidArgumentException
      */
     public function destroy($id)
     {
@@ -125,6 +128,7 @@ class CacheSession implements SessionHandlerInterface
      *
      * @param string $maxlifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
      * @return bool Always true.
+     * @throws \InvalidArgumentException
      */
     public function gc($maxlifetime)
     {

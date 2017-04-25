@@ -59,6 +59,7 @@ class DashedRoute extends Route
      * @param string $url The URL to parse
      * @param string $method The HTTP method.
      * @return array|false An array of request parameters, or false on failure.
+     * @throws \InvalidArgumentException
      */
     public function parse($url, $method = '')
     {

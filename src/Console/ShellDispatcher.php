@@ -54,6 +54,10 @@ class ShellDispatcher
      *
      * @param array $args the argv from PHP
      * @param bool $bootstrap Should the environment be bootstrapped.
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \BadMethodCallException
+     * @throws \InvalidArgumentException
+     * @throws \UnexpectedValueException
      */
     public function __construct($args = [], $bootstrap = true)
     {
@@ -120,6 +124,7 @@ class ShellDispatcher
      * @param array $argv The argv from PHP
      * @param array $extra Extra parameters
      * @return int The exit code of the shell process.
+     * @throws \Cake\Core\Exception\Exception
      */
     public static function run($argv, $extra = [])
     {
@@ -154,6 +159,7 @@ class ShellDispatcher
      * Initializes the environment and loads the CakePHP core.
      *
      * @return bool Success.
+     * @throws \InvalidArgumentException
      */
     protected function _bootstrap()
     {
@@ -175,6 +181,9 @@ class ShellDispatcher
      * Built-in extra parameter is :
      * - `requested` : if used, will prevent the Shell welcome message to be displayed
      * @return int The cli command exit code. 0 is success.
+     * @throws \Cake\Core\Exception\MissingPluginException
+     * @throws \Cake\Console\Exception\MissingShellException
+     * @throws \Cake\Console\Exception\MissingShellMethodException
      */
     public function dispatch($extra = [])
     {
@@ -201,6 +210,8 @@ class ShellDispatcher
      * Built-in extra parameter is :
      * - `requested` : if used, will prevent the Shell welcome message to be displayed
      * @return bool
+     * @throws \Cake\Core\Exception\MissingPluginException
+     * @throws \Cake\Console\Exception\MissingShellException
      * @throws \Cake\Console\Exception\MissingShellMethodException
      */
     protected function _dispatch($extra = [])
@@ -237,6 +248,11 @@ class ShellDispatcher
      * Using the shell name alone
      *
      * @return array the resultant list of aliases
+     * @throws \Cake\Core\Exception\MissingPluginException
+     * @throws \BadMethodCallException
+     * @throws \UnexpectedValueException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Datasource\Exception\MissingModelException
      */
     public function addShortPluginAliases()
     {
@@ -396,6 +412,7 @@ class ShellDispatcher
      * Shows console help. Performs an internal dispatch to the CommandList Shell
      *
      * @return void
+     * @throws \Cake\Console\Exception\MissingShellMethodException
      */
     public function help()
     {
@@ -407,6 +424,7 @@ class ShellDispatcher
      * Prints the currently installed version of CakePHP. Performs an internal dispatch to the CommandList Shell
      *
      * @return void
+     * @throws \Cake\Console\Exception\MissingShellMethodException
      */
     public function version()
     {

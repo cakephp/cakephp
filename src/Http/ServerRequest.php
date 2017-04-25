@@ -224,6 +224,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * the request.
      *
      * @return self
+     * @throws \InvalidArgumentException
      * @deprecated 3.4.0 Use `Cake\Http\ServerRequestFactory` instead.
      */
     public static function createFromGlobals()
@@ -253,6 +254,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|array $config An array of request data to create a request with.
      *   The string version of this argument is *deprecated* and will be removed in 4.0.0
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function __construct($config = [])
     {
@@ -281,6 +284,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param array $config The config data to use.
      * @return void
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     protected function _setConfig($config)
     {
@@ -347,6 +352,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param array $data Array of post data.
      * @return array
+     * @throws \RuntimeException
      */
     protected function _processPost($data)
     {
@@ -402,6 +408,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param array $post Post data to merge files onto.
      * @param array $files Uploaded files to merge in.
      * @return array merged post + file data.
+     * @throws \InvalidArgumentException
      */
     protected function _processFiles($post, $files)
     {
@@ -455,6 +462,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param array $value $_FILES struct
      * @return array|UploadedFileInterface
+     * @throws \InvalidArgumentException
      */
     protected function _createUploadedFile(array $value)
     {
@@ -479,6 +487,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param array $files The file data to normalize & convert.
      * @return array An array of UploadedFileInterface objects.
+     * @throws \InvalidArgumentException
      */
     protected function _normalizeNestedFiles(array $files = [])
     {
@@ -554,6 +563,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param bool $local Attempt to return a local address.
      *   Local addresses do not contain hostnames.
      * @return string The referring address for this request.
+     * @throws \InvalidArgumentException
      */
     public function referer($local = false)
     {
@@ -1142,6 +1152,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $method The HTTP method to use.
      * @return static A new instance with the updated method.
+     * @throws \InvalidArgumentException
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function withMethod($method)
@@ -1407,6 +1418,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|null $name Query string variable name or null to read all.
      * @return string|array|null The value being read
+     * @throws \InvalidArgumentException
      * @deprecated 3.4.0 Use getQuery() or the PSR-7 getQueryParams() and withQueryParams() methods instead.
      */
     public function query($name = null)
@@ -1433,6 +1445,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string|null $name The name or dotted path to the query param or null to read all.
      * @param mixed $default The default value if the named parameter is not set, and $name is not null.
      * @return null|string|array Query data.
+     * @throws \InvalidArgumentException
      * @see ServerRequest::getQueryParams()
      */
     public function getQuery($name = null, $default = null)
@@ -1468,6 +1481,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string|null $name Dot separated name of the value to read/write
      * @param mixed ...$args The data to set (deprecated)
      * @return mixed|$this Either the value being read, or this so you can chain consecutive writes.
+     * @throws \InvalidArgumentException
      * @deprecated 3.4.0 Use withData() and getData() or getParsedBody() instead.
      */
     public function data($name = null, ...$args)
@@ -1506,6 +1520,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string|null $name Dot separated name of the value to read. Or null to read all data.
      * @param mixed $default The default data.
      * @return null|string|array The value being read.
+     * @throws \InvalidArgumentException
      */
     public function getData($name = null, $default = null)
     {
@@ -1525,6 +1540,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string $name The name of the parameter to get.
      * @param mixed ...$args Value to set (deprecated).
      * @return mixed|$this The value of the provided parameter. Will
+     * @throws \InvalidArgumentException
      *   return false if the parameter doesn't exist or is falsey.
      * @deprecated 3.4.0 Use getParam() and withParam() instead.
      */
@@ -1562,6 +1578,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *     supply additional parameters for the decoding callback using var args, see above.
      * @param array ...$args The additional arguments
      * @return string The decoded/processed request data.
+     * @throws \RuntimeException
      */
     public function input($callback = null, ...$args)
     {
@@ -1598,6 +1615,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string $key The key or dotted path you want to read.
      * @param string $default The default value if the cookie is not set.
      * @return null|array|string Either the cookie value, or null if the value doesn't exist.
+     * @throws \InvalidArgumentException
      */
     public function getCookie($key, $default = null)
     {
@@ -1689,6 +1707,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $version HTTP protocol version
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withProtocolVersion($version)
     {
@@ -1783,6 +1802,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $input A string to replace original parsed data from input()
      * @return void
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @deprecated 3.4.0 This method will be removed in 4.0.0. Use withBody() instead.
      */
     public function setInput($input)
@@ -1835,6 +1856,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string $name The name or dotted path to parameter.
      * @param mixed $default The default value if $name is not set.
      * @return mixed
+     * @throws \InvalidArgumentException
      */
     public function getParam($name, $default = false)
     {
@@ -1923,6 +1945,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $path The dot separated path to the file you want.
      * @return null|\Psr\Http\Message\UploadedFileInterface
+     * @throws \InvalidArgumentException
      */
     public function getUploadedFile($path)
     {

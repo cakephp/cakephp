@@ -52,17 +52,18 @@ class CommandListShell extends Shell
      * Main function Prints out the list of shells.
      *
      * @return void
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     public function main()
     {
         if (!$this->param('xml') && !$this->param('version')) {
-            $this->out("<info>Current Paths:</info>", 2);
-            $this->out("* app:  " . APP_DIR);
-            $this->out("* root: " . rtrim(ROOT, DIRECTORY_SEPARATOR));
-            $this->out("* core: " . rtrim(CORE_PATH, DIRECTORY_SEPARATOR));
-            $this->out("");
+            $this->out('<info>Current Paths:</info>', 2);
+            $this->out('* app:  ' . APP_DIR);
+            $this->out('* root: ' . rtrim(ROOT, DIRECTORY_SEPARATOR));
+            $this->out('* core: ' . rtrim(CORE_PATH, DIRECTORY_SEPARATOR));
+            $this->out('');
 
-            $this->out("<info>Available Shells:</info>", 2);
+            $this->out('<info>Available Shells:</info>', 2);
         }
 
         if ($this->param('version')) {
@@ -97,9 +98,9 @@ class CommandListShell extends Shell
             $this->out();
         }
 
-        $this->out("To run an app or core command, type <info>`cake shell_name [args]`</info>");
-        $this->out("To run a plugin command, type <info>`cake Plugin.shell_name [args]`</info>");
-        $this->out("To get help on a specific command, type <info>`cake shell_name --help`</info>", 2);
+        $this->out('To run an app or core command, type <info>`cake shell_name [args]`</info>');
+        $this->out('To run a plugin command, type <info>`cake Plugin.shell_name [args]`</info>');
+        $this->out('To get help on a specific command, type <info>`cake shell_name --help`</info>', 2);
     }
 
     /**
@@ -134,6 +135,7 @@ class CommandListShell extends Shell
      * Gets the option parser instance and configures it.
      *
      * @return \Cake\Console\ConsoleOptionParser
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     public function getOptionParser()
     {

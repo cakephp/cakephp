@@ -327,6 +327,7 @@ class Email implements JsonSerializable, Serializable
      * Constructor
      *
      * @param array|string|null $config Array of configs, or string to load configs from email.php
+     * @throws \InvalidArgumentException
      */
     public function __construct($config = null)
     {
@@ -588,6 +589,7 @@ class Email implements JsonSerializable, Serializable
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function setTo($email, $name = null)
     {
@@ -612,6 +614,7 @@ class Email implements JsonSerializable, Serializable
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
      * @return array|$this
+     * @throws \InvalidArgumentException
      */
     public function to($email = null, $name = null)
     {
@@ -629,6 +632,7 @@ class Email implements JsonSerializable, Serializable
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function addTo($email, $name = null)
     {
@@ -642,6 +646,7 @@ class Email implements JsonSerializable, Serializable
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function setCc($email = null, $name = null)
     {
@@ -666,6 +671,7 @@ class Email implements JsonSerializable, Serializable
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
      * @return array|$this
+     * @throws \InvalidArgumentException
      */
     public function cc($email = null, $name = null)
     {
@@ -683,6 +689,7 @@ class Email implements JsonSerializable, Serializable
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function addCc($email, $name = null)
     {
@@ -696,6 +703,7 @@ class Email implements JsonSerializable, Serializable
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function setBcc($email, $name = null)
     {
@@ -720,6 +728,7 @@ class Email implements JsonSerializable, Serializable
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
      * @return array|$this
+     * @throws \InvalidArgumentException
      */
     public function bcc($email = null, $name = null)
     {
@@ -737,6 +746,7 @@ class Email implements JsonSerializable, Serializable
      *   Array with email as key, name as value or email as value (without name)
      * @param string|null $name Name
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function addBcc($email, $name = null)
     {
@@ -1880,6 +1890,7 @@ class Email implements JsonSerializable, Serializable
      * @param array|\Cake\Mailer\AbstractTransport|null $config Either an array of configuration
      *   data, or a transport instance. Null when using key as array.
      * @return void
+     * @throws \InvalidArgumentException
      * @throws \BadMethodCallException When modifying an existing configuration.
      */
     public static function setConfigTransport($key, $config = null)
@@ -1940,6 +1951,7 @@ class Email implements JsonSerializable, Serializable
      * @param array|\Cake\Mailer\AbstractTransport|null $config Either an array of configuration
      *   data, or a transport instance.
      * @return array|null Either null when setting or an array of data when reading.
+     * @throws \InvalidArgumentException
      * @throws \BadMethodCallException When modifying an existing configuration.
      */
     public static function configTransport($key, $config = null)
@@ -1983,6 +1995,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array $config String with configuration name, or
      *    an array with config.
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function setProfile($config)
     {
@@ -2011,6 +2024,7 @@ class Email implements JsonSerializable, Serializable
      * @param null|string|array $config String with configuration name, or
      *    an array with config or null to return current config.
      * @return string|array|$this
+     * @throws \InvalidArgumentException
      */
     public function profile($config = null)
     {
@@ -2026,6 +2040,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @param string|array|null $content String with message or array with messages
      * @return array
+     * @throws \InvalidArgumentException
      * @throws \BadMethodCallException
      */
     public function send($content = null)
@@ -2060,6 +2075,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @param array $contents The content with 'headers' and 'message' keys.
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _logDelivery($contents)
     {
@@ -2092,6 +2108,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array $transportConfig String to use config from EmailConfig or array with configs
      * @param bool $send Send the email or just return the instance pre-configured
      * @return static Instance of Cake\Mailer\Email
+     * @throws \BadMethodCallException
      * @throws \InvalidArgumentException
      */
     public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'default', $send = true)
@@ -2483,6 +2500,9 @@ class Email implements JsonSerializable, Serializable
      *
      * @param array $content Content to render
      * @return array Email body ready to be sent
+     * @throws \Cake\View\Exception\MissingViewException
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \InvalidArgumentException
      */
     protected function _render($content)
     {
@@ -2590,6 +2610,8 @@ class Email implements JsonSerializable, Serializable
      *
      * @param string $content The content passed in from send() in most cases.
      * @return array The rendered content with html and text keys.
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \Cake\View\Exception\MissingViewException
      */
     protected function _renderTemplates($content)
     {
@@ -2718,6 +2740,7 @@ class Email implements JsonSerializable, Serializable
      * @param mixed $item Reference to the view var value.
      * @param string $key View var key.
      * @return void
+     * @throws \RuntimeException
      */
     protected function _checkViewVars(&$item, $key)
     {
@@ -2762,6 +2785,7 @@ class Email implements JsonSerializable, Serializable
      * Serializes the Email object.
      *
      * @return string
+     * @throws \Exception
      */
     public function serialize()
     {

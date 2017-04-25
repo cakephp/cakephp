@@ -56,6 +56,7 @@ class FlashComponent extends Component
      *
      * @param \Cake\Controller\ComponentRegistry $registry A ComponentRegistry for this component
      * @param array $config Array of config.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
@@ -83,6 +84,8 @@ class FlashComponent extends Component
      *   in params.
      * @param array $options An array of options
      * @return void
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function set($message, array $options = [])
     {

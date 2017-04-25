@@ -112,6 +112,7 @@ class Helper implements EventListenerInterface
      *
      * @param \Cake\View\View $View The View this helper is being attached to.
      * @param array $config Configuration settings for the helper.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(View $View, array $config = [])
     {
@@ -144,6 +145,7 @@ class Helper implements EventListenerInterface
      *
      * @param string $name Name of the property being accessed.
      * @return \Cake\View\Helper|null Helper instance if helper with provided name exists
+     * @throws \Exception
      */
     public function __get($name)
     {

@@ -217,6 +217,9 @@ class FormHelper extends Helper
      *
      * @param \Cake\View\View $View The View this helper is being attached to.
      * @param array $config Configuration settings for the helper.
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(View $View, array $config = [])
     {
@@ -247,6 +250,8 @@ class FormHelper extends Helper
      * @param \Cake\View\Widget\WidgetRegistry|null $instance The registry instance to set.
      * @param array $widgets An array of widgets
      * @return \Cake\View\Widget\WidgetRegistry
+     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\Exception
      */
     public function widgetRegistry(WidgetRegistry $instance = null, $widgets = [])
     {
@@ -266,6 +271,8 @@ class FormHelper extends Helper
      * Add the default suite of context providers provided by CakePHP.
      *
      * @return void
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     protected function _addDefaultContextProviders()
     {
@@ -326,6 +333,10 @@ class FormHelper extends Helper
      *   to make a context-less form.
      * @param array $options An array of html attributes and options.
      * @return string An formatted opening FORM tag.
+     * @throws \Cake\Routing\Exception\MissingRouteException
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#Cake\View\Helper\FormHelper::create
      */
     public function create($context = null, array $options = [])
@@ -448,6 +459,8 @@ class FormHelper extends Helper
      * @param \Cake\View\Form\ContextInterface $context The context object to use.
      * @param array $options An array of options from create()
      * @return string The action attribute for the form.
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     protected function _formUrl($context, $options)
     {
@@ -489,6 +502,9 @@ class FormHelper extends Helper
      *
      * @param string|array $url The URL of the last form.
      * @return void
+     * @throws \Cake\Routing\Exception\MissingRouteException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
      */
     protected function _lastAction($url)
     {
@@ -504,6 +520,7 @@ class FormHelper extends Helper
      * SecurityComponent
      *
      * @return string
+     * @throws \InvalidArgumentException
      */
     protected function _csrfField()
     {
@@ -532,6 +549,9 @@ class FormHelper extends Helper
      * @param array $secureAttributes Secure attributes which will be passed as HTML attributes
      *   into the hidden input elements generated for the Security Component.
      * @return string A closing FORM tag.
+     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \InvalidArgumentException
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#closing-the-form
      */
     public function end(array $secureAttributes = [])
@@ -567,7 +587,9 @@ class FormHelper extends Helper
      * @param array $secureAttributes will be passed as HTML attributes into the hidden
      *    input elements generated for the Security Component.
      * @return string A hidden input field with a security hash, or empty string when
+     * @throws \RuntimeException
      *   secured forms are not in use.
+     * @throws \InvalidArgumentException
      */
     public function secure(array $fields = [], array $secureAttributes = [])
     {
@@ -687,6 +709,7 @@ class FormHelper extends Helper
      *
      * @param string $field This should be "modelname.fieldname"
      * @return bool If there are errors this method returns true, else false.
+     * @throws \RuntimeException
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#displaying-and-checking-errors
      */
     public function isFieldError($field)
@@ -709,6 +732,7 @@ class FormHelper extends Helper
      *   it should be a hash of key names => messages.
      * @param array $options See above.
      * @return string Formatted errors or ''.
+     * @throws \RuntimeException
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#displaying-and-checking-errors
      */
     public function error($field, $text = null, array $options = [])
@@ -818,6 +842,7 @@ class FormHelper extends Helper
      *   fieldName.
      * @param array $options An array of HTML attributes.
      * @return string The formatted LABEL element
+     * @throws \RuntimeException
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-labels
      */
     public function label($fieldName, $text = null, array $options = [])
@@ -886,6 +911,7 @@ class FormHelper extends Helper
      * - `legend` Set to false to disable the legend for the generated control set. Or supply a string
      *    to customize the legend text.
      * @return string Completed form controls.
+     * @throws \RuntimeException
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#generating-entire-forms
      */
     public function allControls(array $fields = [], array $options = [])
@@ -915,6 +941,7 @@ class FormHelper extends Helper
      * - `legend` Set to false to disable the legend for the generated control set. Or supply a string
      *    to customize the legend text.
      * @return string Completed form controls.
+     * @throws \RuntimeException
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#generating-entire-forms
      * @deprecated 3.4.0 Use FormHelper::allControls() instead.
      */
@@ -943,6 +970,8 @@ class FormHelper extends Helper
      * - `legend` Set to false to disable the legend for the generated input set.
      *    Or supply a string to customize the legend text.
      * @return string Completed form inputs.
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#generating-entire-forms
      */
     public function controls(array $fields, array $options = [])
@@ -992,6 +1021,9 @@ class FormHelper extends Helper
      * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
      *    to customize the legend text.
      * @return string Completed form inputs.
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function fieldset($fields = '', array $options = [])
     {
@@ -1060,6 +1092,7 @@ class FormHelper extends Helper
      * @param string $fieldName This should be "modelname.fieldname"
      * @param array $options Each type of input takes different options.
      * @return string Completed form widget.
+     * @throws \RuntimeException
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-form-inputs
      */
     public function control($fieldName, array $options = [])
@@ -1151,6 +1184,7 @@ class FormHelper extends Helper
      * @param string $fieldName This should be "modelname.fieldname"
      * @param array $options Each type of input takes different options.
      * @return string Completed form widget.
+     * @throws \RuntimeException
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-form-inputs
      * @deprecated 3.4.0 Use FormHelper::control() instead.
      */
@@ -1164,6 +1198,8 @@ class FormHelper extends Helper
      *
      * @param array $options The options for group template
      * @return string The generated group template
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \RuntimeException
      */
     protected function _groupTemplate($options)
     {
@@ -1185,6 +1221,8 @@ class FormHelper extends Helper
      *
      * @param array $options The options for input container template
      * @return string The generated input container template
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \RuntimeException
      */
     protected function _inputContainerTemplate($options)
     {
@@ -1208,6 +1246,7 @@ class FormHelper extends Helper
      * @param string $fieldName the field name
      * @param array $options The options for the input element
      * @return string The generated input element
+     * @throws \RuntimeException
      */
     protected function _getInput($fieldName, $options)
     {
@@ -1243,6 +1282,7 @@ class FormHelper extends Helper
      * @param string $fieldName The name of the field to parse options for.
      * @param array $options Options list.
      * @return array Options
+     * @throws \RuntimeException
      */
     protected function _parseOptions($fieldName, $options)
     {
@@ -1265,6 +1305,7 @@ class FormHelper extends Helper
      * @param string $fieldName the name of the field to guess a type for
      * @param array $options the options passed to the input method
      * @return string
+     * @throws \RuntimeException
      */
     protected function _inputType($fieldName, $options)
     {
@@ -1347,6 +1388,7 @@ class FormHelper extends Helper
      * @param bool $allowOverride Whether or not it is allowed for this method to
      * overwrite the 'type' key in options.
      * @return array
+     * @throws \RuntimeException
      */
     protected function _magicOptions($fieldName, $options, $allowOverride)
     {
@@ -1504,6 +1546,8 @@ class FormHelper extends Helper
      * @param string $fieldName Name of a field, like this "modelname.fieldname"
      * @param array $options Array of HTML attributes.
      * @return string|array An HTML text input element.
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-checkboxes
      */
     public function checkbox($fieldName, array $options = [])
@@ -1559,6 +1603,8 @@ class FormHelper extends Helper
      * @param array|\Traversable $options Radio button options array.
      * @param array $attributes Array of attributes.
      * @return string Completed radio widget set.
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-radio-buttons
      */
     public function radio($fieldName, $options = [], array $attributes = [])
@@ -1605,6 +1651,8 @@ class FormHelper extends Helper
      * @param string $method Method name / input type to make.
      * @param array $params Parameters for the method call
      * @return string Formatted input method.
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      * @throws \Cake\Core\Exception\Exception When there are no params for the method call.
      */
     public function __call($method, $params)
@@ -1634,6 +1682,8 @@ class FormHelper extends Helper
      * @param string $fieldName Name of a field, in the form "modelname.fieldname"
      * @param array $options Array of HTML attributes, and special options above.
      * @return string A generated HTML text input element
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-textareas
      */
     public function textarea($fieldName, array $options = [])
@@ -1650,6 +1700,8 @@ class FormHelper extends Helper
      * @param string $fieldName Name of a field, in the form of "modelname.fieldname"
      * @param array $options Array of HTML attributes.
      * @return string A generated hidden input
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-hidden-inputs
      */
     public function hidden($fieldName, array $options = [])
@@ -1679,6 +1731,8 @@ class FormHelper extends Helper
      * @param string $fieldName Name of a field, in the form "modelname.fieldname"
      * @param array $options Array of HTML attributes.
      * @return string A generated file input.
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-file-inputs
      */
     public function file($fieldName, array $options = [])
@@ -1704,6 +1758,7 @@ class FormHelper extends Helper
      * @param string $title The button's caption. Not automatically HTML encoded
      * @param array $options Array of options and HTML attributes.
      * @return string A HTML button tag.
+     * @throws \RuntimeException
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-button-elements
      */
     public function button($title, array $options = [])
@@ -1732,6 +1787,8 @@ class FormHelper extends Helper
      * @param string|array $url URL as string or array
      * @param array $options Array of options and HTML attributes.
      * @return string A HTML button tag.
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      */
     public function postButton($title, $url, array $options = [])
@@ -1785,6 +1842,10 @@ class FormHelper extends Helper
      *   external URL (starts with http://)
      * @param array $options Array of HTML attributes.
      * @return string An `<a />` element.
+     * @throws \RuntimeException
+     * @throws \Cake\Routing\Exception\MissingRouteException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      */
     public function postLink($title, $url = null, array $options = [])
@@ -1881,6 +1942,10 @@ class FormHelper extends Helper
      *  OR if the first character is not /, image is relative to webroot/img.
      * @param array $options Array of options. See above.
      * @return string A HTML submit button
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\MissingPluginException
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \RuntimeException
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-buttons-and-submit-elements
      */
     public function submit($caption = null, array $options = [])
@@ -1995,6 +2060,8 @@ class FormHelper extends Helper
      *   SELECT element
      * @param array $attributes The HTML attributes of the select element.
      * @return string Formatted SELECT element
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      * @see \Cake\View\Helper\FormHelper::multiCheckbox() for creating multiple checkboxes.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-select-pickers
      */
@@ -2068,6 +2135,8 @@ class FormHelper extends Helper
      *   (as 'value'=>'Text' pairs) to be used in the checkboxes element.
      * @param array $attributes The HTML attributes of the select element.
      * @return string Formatted SELECT element
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      * @see \Cake\View\Helper\FormHelper::select() for supported option formats.
      */
     public function multiCheckbox($fieldName, $options, array $attributes = [])
@@ -2347,6 +2416,8 @@ class FormHelper extends Helper
      * @param string $fieldName Prefix name for the SELECT element
      * @param array $options Array of Options
      * @return string Generated set of select boxes for the date and time formats chosen.
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-date-and-time-inputs
      */
     public function dateTime($fieldName, array $options = [])
@@ -2450,6 +2521,8 @@ class FormHelper extends Helper
      * @param string $fieldName Prefix name for the SELECT element
      * @param array $options Array of Options
      * @return string Generated set of select boxes for time formats chosen.
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      * @see \Cake\View\Helper\FormHelper::dateTime() for templating options.
      */
     public function time($fieldName, array $options = [])
@@ -2479,6 +2552,8 @@ class FormHelper extends Helper
      * @param string $fieldName Prefix name for the SELECT element
      * @param array $options Array of Options
      * @return string Generated set of select boxes for time formats chosen.
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      * @see \Cake\View\Helper\FormHelper::dateTime() for templating options.
      */
     public function date($fieldName, array $options = [])
@@ -2523,6 +2598,8 @@ class FormHelper extends Helper
      * @param string $field Name of the field to initialize options for.
      * @param array $options Array of options to append options into.
      * @return array Array of options for the input.
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     protected function _initInputField($field, $options = [])
     {
@@ -2655,6 +2732,7 @@ class FormHelper extends Helper
      *
      * @param \Cake\View\Form\ContextInterface|null $context Either the new context when setting, or null to get.
      * @return null|\Cake\View\Form\ContextInterface The context for the form.
+     * @throws \RuntimeException
      */
     public function context($context = null)
     {
@@ -2710,6 +2788,7 @@ class FormHelper extends Helper
      * @param array|\Cake\View\Widget\WidgetInterface $spec Either a string class
      *   name or an object implementing the WidgetInterface.
      * @return void
+     * @throws \RuntimeException
      */
     public function addWidget($name, $spec)
     {
@@ -2727,6 +2806,7 @@ class FormHelper extends Helper
      * @param string $name The name of the widget. e.g. 'text'.
      * @param array $data The data to render.
      * @return string
+     * @throws \RuntimeException
      */
     public function widget($name, array $data = [])
     {
@@ -2752,6 +2832,7 @@ class FormHelper extends Helper
      * This method will not reset any templates set in custom widgets.
      *
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      */
     public function resetTemplates()
     {
@@ -2802,6 +2883,7 @@ class FormHelper extends Helper
      * @param string $fieldname The fieldname to fetch the value for.
      * @param array|null $options The options containing default values.
      * @return string|null Field value derived from sources or defaults.
+     * @throws \RuntimeException
      */
     public function getSourceValue($fieldname, $options = [])
     {

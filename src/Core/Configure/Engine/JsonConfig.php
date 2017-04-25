@@ -90,6 +90,7 @@ class JsonConfig implements ConfigEngineInterface
      *  be treated as a plugin prefix.
      * @param array $data Data to dump.
      * @return bool Success
+     * @throws \Cake\Core\Exception\Exception
      */
     public function dump($key, array $data)
     {

@@ -251,6 +251,7 @@ class TimeHelper extends Helper
      * @param int|string|\DateTime $dateTime UNIX timestamp, strtotime() valid string or DateTime object
      * @param array $options Default format if timestamp is used in $dateString
      * @return string Relative time string.
+     * @throws \Cake\Core\Exception\Exception
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
     public function timeAgoInWords($dateTime, array $options = [])
@@ -348,6 +349,7 @@ class TimeHelper extends Helper
      * @param bool|string $invalid Default value to display on invalid dates
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
      * @return string Formatted and translated date string
+     * @throws \Exception
      * @see \Cake\I18n\Time::i18nFormat()
      */
     public function format($date, $format = null, $invalid = false, $timezone = null)

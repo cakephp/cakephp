@@ -144,6 +144,7 @@ class PostgresSchema extends BaseSchema
 
     /**
      * {@inheritDoc}
+     * @throws \Cake\Database\Exception
      */
     public function convertColumnDescription(TableSchema $schema, $row)
     {
@@ -233,6 +234,7 @@ class PostgresSchema extends BaseSchema
 
     /**
      * {@inheritDoc}
+     * @throws \Cake\Database\Exception
      */
     public function convertIndexDescription(TableSchema $schema, $row)
     {
@@ -268,6 +270,7 @@ class PostgresSchema extends BaseSchema
      * @param string $type The index type.
      * @param array $row The metadata record to update with.
      * @return void
+     * @throws \Cake\Database\Exception
      */
     protected function _convertConstraint($schema, $name, $type, $row)
     {
@@ -312,6 +315,7 @@ class PostgresSchema extends BaseSchema
 
     /**
      * {@inheritDoc}
+     * @throws \Cake\Database\Exception
      */
     public function convertForeignKeyDescription(TableSchema $schema, $row)
     {

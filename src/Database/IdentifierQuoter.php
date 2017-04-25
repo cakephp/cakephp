@@ -49,6 +49,7 @@ class IdentifierQuoter
      *
      * @param \Cake\Database\Query $query The query to have its identifiers quoted
      * @return \Cake\Database\Query
+     * @throws \RuntimeException
      */
     public function quote(Query $query)
     {
@@ -174,6 +175,7 @@ class IdentifierQuoter
      *
      * @param \Cake\Database\Query $query The insert query to quote.
      * @return void
+     * @throws \RuntimeException
      */
     protected function _quoteInsert($query)
     {

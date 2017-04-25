@@ -84,6 +84,8 @@ class RoutesShell extends Shell
      *
      * Takes variadic arguments of key/value pairs.
      * @return bool Success
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
      */
     public function generate()
     {
@@ -93,7 +95,7 @@ class RoutesShell extends Shell
             $this->out("> $url");
             $this->out();
         } catch (MissingRouteException $e) {
-            $this->err("<warning>The provided parameters do not match any routes.</warning>");
+            $this->err('<warning>The provided parameters do not match any routes.</warning>');
             $this->out();
 
             return false;
@@ -119,8 +121,8 @@ class RoutesShell extends Shell
         ])->addSubcommand('generate', [
             'help' => 'Check a routing array against the routes. ' .
                 "Will output the URL if there is a match.\n\n" .
-                "Routing parameters should be supplied in a key:value format. " .
-                "For example `controller:Articles action:view 2`"
+                'Routing parameters should be supplied in a key:value format. ' .
+                'For example `controller:Articles action:view 2`'
         ]);
 
         return $parser;

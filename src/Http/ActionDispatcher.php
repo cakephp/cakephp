@@ -51,6 +51,7 @@ class ActionDispatcher
      * @param \Cake\Http\ControllerFactory|null $factory A controller factory instance.
      * @param \Cake\Event\EventManager|null $eventManager An event manager if you want to inject one.
      * @param \Cake\Event\EventListenerInterface[] $filters The list of filters to include.
+     * @throws \InvalidArgumentException
      */
     public function __construct($factory = null, $eventManager = null, array $filters = [])
     {
@@ -69,6 +70,9 @@ class ActionDispatcher
      * @param \Cake\Http\ServerRequest $request The request to dispatch.
      * @param \Cake\Http\Response $response The response to dispatch.
      * @return \Cake\Http\Response A modified/replaced response.
+     * @throws \Cake\Routing\Exception\MissingControllerException
+     * @throws \Cake\Controller\Exception\MissingActionException
+     * @throws \LogicException
      */
     public function dispatch(ServerRequest $request, Response $response)
     {
@@ -105,6 +109,7 @@ class ActionDispatcher
      *
      * @param \Cake\Controller\Controller $controller The controller to invoke.
      * @return \Cake\Http\Response The response
+     * @throws \Cake\Controller\Exception\MissingActionException
      * @throws \LogicException If the controller action returns a non-response value.
      */
     protected function _invoke(Controller $controller)
@@ -144,6 +149,7 @@ class ActionDispatcher
      * @param \Cake\Event\EventListenerInterface $filter The filter to connect. Can be
      *   any EventListenerInterface. Typically an instance of \Cake\Routing\DispatcherFilter.
      * @return void
+     * @throws \InvalidArgumentException
      * @deprecated This is only available for backwards compatibility with DispatchFilters
      */
     public function addFilter(EventListenerInterface $filter)

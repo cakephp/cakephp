@@ -56,6 +56,7 @@ class IntegerType extends Type implements TypeInterface
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return int|null
+     * @throws \InvalidArgumentException
      */
     public function toDatabase($value, Driver $driver)
     {

@@ -112,6 +112,7 @@ class CounterCacheBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @param \ArrayObject $options The options for the query
      * @return void
+     * @throws \RuntimeException
      */
     public function beforeSave(Event $event, EntityInterface $entity, $options)
     {
@@ -202,6 +203,7 @@ class CounterCacheBehavior extends Behavior
      * @param \Cake\ORM\Association $assoc The association object
      * @param array $settings The settings for for counter cache for this association
      * @return void
+     * @throws \RuntimeException
      */
     protected function _processAssociation(Event $event, EntityInterface $entity, Association $assoc, array $settings)
     {
@@ -252,6 +254,8 @@ class CounterCacheBehavior extends Behavior
      * @param array $config The counter cache configuration for a single field
      * @param array $conditions Additional conditions given to the query
      * @return int The number of relations matching the given config and conditions
+     * @throws \RuntimeException
+     * @throws \BadMethodCallException
      */
     protected function _getCount(array $config, array $conditions)
     {

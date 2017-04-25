@@ -172,6 +172,7 @@ class ResultSet implements ResultSetInterface
      *
      * @param \Cake\ORM\Query $query Query from where results come
      * @param \Cake\Database\StatementInterface $statement The statement to fetch from
+     * @throws \InvalidArgumentException
      */
     public function __construct($query, $statement)
     {
@@ -310,6 +311,7 @@ class ResultSet implements ResultSetInterface
      * Part of Serializable interface.
      *
      * @return string Serialized object
+     * @throws \Cake\Database\Exception
      */
     public function serialize()
     {
@@ -376,6 +378,7 @@ class ResultSet implements ResultSetInterface
      *
      * @param \Cake\ORM\Query $query The query from where to derive the associations
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _calculateAssociationMap($query)
     {
@@ -474,6 +477,7 @@ class ResultSet implements ResultSetInterface
      * seeded results.
      *
      * @return mixed
+     * @throws \RuntimeException
      */
     protected function _fetchResult()
     {
@@ -494,6 +498,7 @@ class ResultSet implements ResultSetInterface
      *
      * @param mixed $row Array containing columns and values or false if there is no results
      * @return array Results
+     * @throws \RuntimeException
      */
     protected function _groupResult($row)
     {

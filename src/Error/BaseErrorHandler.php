@@ -64,6 +64,8 @@ abstract class BaseErrorHandler
      * Register the error and exception handlers.
      *
      * @return void
+     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public function register()
     {
@@ -122,6 +124,8 @@ abstract class BaseErrorHandler
      * @param int|null $line Line that triggered the error
      * @param array|null $context Context
      * @return bool True if error was handled
+     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public function handleError($code, $description, $file = null, $line = null, $context = null)
     {
@@ -210,6 +214,7 @@ abstract class BaseErrorHandler
      * @param string $file File on which error occurred
      * @param int $line Line that triggered the error
      * @return bool
+     * @throws \Exception
      */
     public function handleFatalError($code, $description, $file, $line)
     {
@@ -263,6 +268,7 @@ abstract class BaseErrorHandler
      * @param string $level The level name of the log.
      * @param array $data Array of error data.
      * @return bool
+     * @throws \InvalidArgumentException
      */
     protected function _logError($level, $data)
     {
@@ -296,6 +302,7 @@ abstract class BaseErrorHandler
      *
      * @param \Exception $exception Exception instance.
      * @return bool
+     * @throws \InvalidArgumentException
      */
     protected function _logException(Exception $exception)
     {
@@ -346,6 +353,7 @@ abstract class BaseErrorHandler
      *
      * @param \Exception $exception Exception instance
      * @return string Formatted message
+     * @throws \InvalidArgumentException
      */
     protected function _getMessage(Exception $exception)
     {

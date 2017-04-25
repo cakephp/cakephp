@@ -114,6 +114,7 @@ class Type implements TypeInterface
      * Returns an arrays with all the mapped type objects, indexed by name
      *
      * @return array
+     * @throws \InvalidArgumentException
      */
     public static function buildAll()
     {

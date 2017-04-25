@@ -78,6 +78,8 @@ class FileLog extends BaseLog
      * Sets protected properties based on config provided
      *
      * @param array $config Configuration array
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \InvalidArgumentException
      */
     public function __construct(array $config = [])
     {

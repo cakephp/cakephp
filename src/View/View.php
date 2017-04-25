@@ -315,6 +315,7 @@ class View implements EventDispatcherInterface
      * @param \Cake\Event\EventManager|null $eventManager Event manager instance.
      * @param array $viewOptions View options. See View::$_passedVars for list of
      *   options which get set as class properties.
+     * @throws \InvalidArgumentException
      */
     public function __construct(
         ServerRequest $request = null,
@@ -478,6 +479,9 @@ class View implements EventDispatcherInterface
      * - `plugin` - setting to false will force to use the application's element from plugin templates, when the
      *   plugin has element with same name. Defaults to true
      * @return string Rendered Element
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @throws \RuntimeException
      * @throws \Cake\View\Exception\MissingElementException When an element is missing and `ignoreMissing`
      *   is false.
      */
@@ -519,6 +523,7 @@ class View implements EventDispatcherInterface
      * @param callable $block The block of code that you want to cache the output of.
      * @param array $options The options defining the cache key etc.
      * @return string The rendered content.
+     * @throws \InvalidArgumentException
      * @throws \RuntimeException When $options is lacking a 'key' option.
      */
     public function cache(callable $block, array $options = [])
@@ -573,6 +578,8 @@ class View implements EventDispatcherInterface
      * @param string|false|null $view Name of view file to use
      * @param string|null $layout Layout to use.
      * @return string|null Rendered content or null if content already rendered and returned earlier.
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      * @throws \Cake\Core\Exception\Exception If there is an error in the view.
      * @triggers View.beforeRender $this, [$viewFileName]
      * @triggers View.afterRender $this, [$viewFileName]
@@ -616,6 +623,8 @@ class View implements EventDispatcherInterface
      * @param string $content Content to render in a template, wrapped by the surrounding layout.
      * @param string|null $layout Layout name
      * @return mixed Rendered output, or false on error
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      * @throws \Cake\Core\Exception\Exception if there is an error in the view.
      * @triggers View.beforeLayout $this, [$layoutFileName]
      * @triggers View.afterLayout $this, [$layoutFileName]
@@ -706,6 +715,7 @@ class View implements EventDispatcherInterface
      *
      * @param string $name The name of the block to capture for.
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      * @see \Cake\View\ViewBlock::start()
      */
     public function start($name)
@@ -722,6 +732,7 @@ class View implements EventDispatcherInterface
      * @param mixed $value The content for the block. Value will be type cast
      *   to string.
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      * @see \Cake\View\ViewBlock::concat()
      */
     public function append($name, $value = null)
@@ -738,6 +749,7 @@ class View implements EventDispatcherInterface
      * @param mixed $value The content for the block. Value will be type cast
      *   to string.
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      * @see \Cake\View\ViewBlock::concat()
      */
     public function prepend($name, $value)
@@ -816,6 +828,10 @@ class View implements EventDispatcherInterface
      *
      * @param string $name The template or element to 'extend' the current one with.
      * @return void
+     * @throws \Cake\Core\Exception\MissingPluginException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\View\Exception\MissingLayoutException
+     * @throws \Cake\View\Exception\MissingTemplateException
      * @throws \LogicException when you extend a template with itself or make extend loops.
      * @throws \LogicException when you extend an element which doesn't exist
      */
@@ -860,6 +876,9 @@ class View implements EventDispatcherInterface
      * @param string $object Type of object, i.e. 'form' or 'link'
      * @param string $url The object's target URL
      * @return string
+     * @throws \Cake\Routing\Exception\MissingRouteException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
      */
     public function uuid($object, $url)
     {
@@ -937,6 +956,7 @@ class View implements EventDispatcherInterface
      * Interact with the HelperRegistry to load all the helpers.
      *
      * @return void
+     * @throws \Exception
      */
     public function loadHelpers()
     {
@@ -1033,6 +1053,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the helper to load.
      * @param array $config Settings for the helper
      * @return \Cake\View\Helper a constructed helper object.
+     * @throws \Exception
      * @see \Cake\View\HelperRegistry::load()
      */
     public function loadHelper($name, array $config = [])
@@ -1052,6 +1073,8 @@ class View implements EventDispatcherInterface
      *
      * @param string|null $name Controller action to find template filename for
      * @return string Template filename
+     * @throws \Cake\Core\Exception\MissingPluginException
+     * @throws \InvalidArgumentException
      * @throws \Cake\View\Exception\MissingTemplateException when a view file could not be found.
      */
     protected function _getViewFileName($name = null)
@@ -1159,6 +1182,8 @@ class View implements EventDispatcherInterface
      *
      * @param string|null $name The name of the layout to find.
      * @return string Filename for layout file (.ctp).
+     * @throws \Cake\Core\Exception\MissingPluginException
+     * @throws \InvalidArgumentException
      * @throws \Cake\View\Exception\MissingLayoutException when a layout cannot be located
      */
     protected function _getLayoutFileName($name = null)
@@ -1194,6 +1219,8 @@ class View implements EventDispatcherInterface
      * @param string $name The name of the element to find.
      * @param bool $pluginCheck - if false will ignore the request's plugin if parsed plugin is not loaded
      * @return string|false Either a string to the element filename or false when one can't be found.
+     * @throws \Cake\Core\Exception\MissingPluginException
+     * @throws \InvalidArgumentException
      */
     protected function _getElementFileName($name, $pluginCheck = true)
     {
@@ -1223,6 +1250,7 @@ class View implements EventDispatcherInterface
      *
      * @param string $basePath Base path on which to get the prefixed one.
      * @return array Array with all the templates paths.
+     * @throws \InvalidArgumentException
      */
     protected function _getSubPaths($basePath)
     {
@@ -1249,6 +1277,7 @@ class View implements EventDispatcherInterface
      * @param string|null $plugin Optional plugin name to scan for view files.
      * @param bool $cached Set to false to force a refresh of view paths. Default true.
      * @return array paths
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     protected function _paths($plugin = null, $cached = true)
     {
@@ -1342,6 +1371,7 @@ class View implements EventDispatcherInterface
      * @param array $data Data to render
      * @param array $options Element options
      * @return string
+     * @throws \LogicException
      * @triggers View.beforeRender $this, [$file]
      * @triggers View.afterRender $this, [$file, $element]
      */

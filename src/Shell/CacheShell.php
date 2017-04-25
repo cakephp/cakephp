@@ -93,6 +93,7 @@ class CacheShell extends Shell
      * Clear metadata.
      *
      * @return void
+     * @throws \Cake\Console\Exception\StopException
      */
     public function clearAll()
     {

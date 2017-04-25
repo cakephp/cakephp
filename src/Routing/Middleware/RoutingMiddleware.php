@@ -32,6 +32,8 @@ class RoutingMiddleware
      * @param \Psr\Http\Message\ResponseInterface $response The response.
      * @param callable $next The next middleware to call.
      * @return \Psr\Http\Message\ResponseInterface A response.
+     * @throws \Cake\Routing\Exception\MissingRouteException
+     * @throws \InvalidArgumentException
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {

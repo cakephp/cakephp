@@ -54,6 +54,7 @@ class ConsoleLog extends BaseLog
      *
      * @param array $config Options for the FileLog, see above.
      * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(array $config = [])
     {

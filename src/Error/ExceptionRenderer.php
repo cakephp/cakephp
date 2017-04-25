@@ -84,6 +84,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * code error depending on the code used to construct the error.
      *
      * @param \Exception $exception Exception.
+     * @throws \InvalidArgumentException
      */
     public function __construct(Exception $exception)
     {
@@ -110,6 +111,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * a bare controller will be used.
      *
      * @return \Cake\Controller\Controller
+     * @throws \InvalidArgumentException
      * @triggers Controller.startup $controller
      */
     protected function _getController()
@@ -151,6 +153,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * Renders the response for the exception.
      *
      * @return \Cake\Http\Response The response to be sent.
+     * @throws \InvalidArgumentException
      */
     public function render()
     {
@@ -206,6 +209,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * @param string $method The method name to invoke.
      * @param \Exception $exception The exception to render.
      * @return \Cake\Http\Response The response to send.
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     protected function _customMethod($method, $exception)
     {
@@ -245,6 +250,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * @param \Exception $exception Exception.
      * @param int $code Error code.
      * @return string Error message
+     * @throws \InvalidArgumentException
      */
     protected function _message(Exception $exception, $code)
     {
@@ -271,6 +277,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * @param string $method Method name.
      * @param int $code Error code.
      * @return string Template name
+     * @throws \InvalidArgumentException
      */
     protected function _template(Exception $exception, $method, $code)
     {
@@ -318,6 +325,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
      *
      * @param string $template The template to render.
      * @return \Cake\Http\Response A response object that can be sent.
+     * @throws \Cake\View\Exception\MissingViewException
+     * @throws \Cake\Core\Exception\Exception
      */
     protected function _outputMessage($template)
     {
@@ -350,6 +359,10 @@ class ExceptionRenderer implements ExceptionRendererInterface
      *
      * @param string $template The template to render.
      * @return \Cake\Http\Response A response object that can be sent.
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \Cake\View\Exception\MissingViewException
      */
     protected function _outputMessageSafe($template)
     {
@@ -373,6 +386,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * Triggers the afterFilter and afterDispatch events.
      *
      * @return \Cake\Http\Response The response to serve.
+     * @throws \InvalidArgumentException
      */
     protected function _shutdown()
     {

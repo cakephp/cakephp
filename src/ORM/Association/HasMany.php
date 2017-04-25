@@ -158,6 +158,8 @@ class HasMany extends Association
      * @param array|\ArrayObject $options options to be passed to the save method in
      * the target table
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
+     * @throws \RuntimeException
+     * @throws \Cake\ORM\Exception\RolledbackTransactionException
      * the saved entity
      * @see \Cake\ORM\Table::save()
      * @throws \InvalidArgumentException when the association data cannot be traversed.
@@ -248,6 +250,8 @@ class HasMany extends Association
      * of this association
      * @param array $options list of options to be passed to the internal `save` call
      * @return bool true on success, false otherwise
+     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public function link(EntityInterface $sourceEntity, array $targetEntities, array $options = [])
     {
@@ -318,6 +322,7 @@ class HasMany extends Association
      * @throws \InvalidArgumentException if non persisted entities are passed or if
      * any of them is lacking a primary key value
      * @return void
+     * @throws \RuntimeException
      */
     public function unlink(EntityInterface $sourceEntity, array $targetEntities, $options = [])
     {
@@ -434,6 +439,7 @@ class HasMany extends Association
      * @param array $remainingEntities Entities that should not be deleted
      * @param array $options list of options accepted by `Table::delete()`
      * @return bool success
+     * @throws \InvalidArgumentException
      */
     protected function _unlinkAssociated(array $properties, EntityInterface $entity, Table $target, array $remainingEntities = [], array $options = [])
     {
@@ -474,6 +480,8 @@ class HasMany extends Association
      * @param array $conditions The conditions that specifies what are the objects to be unlinked
      * @param array $options list of options accepted by `Table::delete()`
      * @return bool success
+     * @throws \RuntimeException
+     * @throws \Exception
      */
     protected function _unlink(array $foreignKey, Table $target, array $conditions = [], array $options = [])
     {
@@ -623,6 +631,7 @@ class HasMany extends Association
      *
      * @param array $opts original list of options passed in constructor
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _options(array $opts)
     {
@@ -638,6 +647,8 @@ class HasMany extends Association
      * {@inheritDoc}
      *
      * @return callable
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function eagerLoader(array $options)
     {

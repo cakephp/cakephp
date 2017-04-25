@@ -360,6 +360,10 @@ class ConsoleIo
      *   to control logging levels. VERBOSE enables debug logs, NORMAL does not include debug logs,
      *   QUIET disables notice, info and debug logs.
      * @return void
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \LogicException
+     * @throws \BadMethodCallException
+     * @throws \InvalidArgumentException
      */
     public function setLoggers($enable)
     {
@@ -395,6 +399,8 @@ class ConsoleIo
      * @param string $name The name of the helper to render
      * @param array $settings Configuration data for the helper.
      * @return \Cake\Console\Helper The created helper instance.
+     * @throws \RuntimeException
+     * @throws \Exception
      */
     public function helper($name, array $settings = [])
     {

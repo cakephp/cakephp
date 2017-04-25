@@ -80,6 +80,8 @@ class I18nShell extends Shell
      *
      * @param string|null $language Language code to use.
      * @return void
+     * @throws \Cake\Core\Exception\MissingPluginException
+     * @throws \Cake\Console\Exception\StopException
      */
     public function init($language = null)
     {

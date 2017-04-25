@@ -115,6 +115,7 @@ class Component implements EventListenerInterface
      *
      * @param \Cake\Controller\ComponentRegistry $registry A ComponentRegistry this component can use to lazy load its components
      * @param array $config Array of configuration settings.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
@@ -161,6 +162,8 @@ class Component implements EventListenerInterface
      *
      * @param string $name Name of component to get.
      * @return mixed A Component object or null.
+     * @throws \RuntimeException
+     * @throws \Exception
      */
     public function __get($name)
     {

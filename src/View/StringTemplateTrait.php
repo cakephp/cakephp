@@ -37,6 +37,7 @@ trait StringTemplateTrait
      *
      * @param array $templates Templates to be added.
      * @return $this
+     * @throws \Cake\Core\Exception\Exception
      */
     public function setTemplates(array $templates)
     {
@@ -50,6 +51,7 @@ trait StringTemplateTrait
      *
      * @param string|null $template String for reading a specific template, null for all.
      * @return string|array
+     * @throws \Cake\Core\Exception\Exception
      */
     public function getTemplates($template = null)
     {
@@ -63,6 +65,7 @@ trait StringTemplateTrait
      * @param string|null|array $templates null or string allow reading templates. An array
      *   allows templates to be added.
      * @return $this|string|array
+     * @throws \Cake\Core\Exception\Exception
      */
     public function templates($templates = null)
     {
@@ -81,6 +84,7 @@ trait StringTemplateTrait
      * @param string $name The template name.
      * @param array $data The data to insert.
      * @return string
+     * @throws \RuntimeException
      */
     public function formatTemplate($name, $data)
     {
@@ -91,6 +95,7 @@ trait StringTemplateTrait
      * Returns the templater instance.
      *
      * @return \Cake\View\StringTemplate
+     * @throws \Cake\Core\Exception\Exception
      */
     public function templater()
     {

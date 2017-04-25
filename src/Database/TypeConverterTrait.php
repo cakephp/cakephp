@@ -27,6 +27,7 @@ trait TypeConverterTrait
      * @param mixed $value The value to cast
      * @param \Cake\Database\Type|string $type The type name or type instance to use.
      * @return array list containing converted value and internal type
+     * @throws \InvalidArgumentException
      */
     public function cast($value, $type)
     {

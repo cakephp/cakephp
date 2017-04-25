@@ -72,6 +72,7 @@ class RouteCollection
      * @param array $options Additional options for the route. Primarily for the
      *   `_name` option, which enables named routes.
      * @return void
+     * @throws \Cake\Routing\Exception\DuplicateNamedRouteException
      */
     public function add(Route $route, array $options = [])
     {
@@ -117,6 +118,7 @@ class RouteCollection
      * @param string $url URL to parse.
      * @param string $method The HTTP method to use.
      * @return array An array of request parameters parsed from the URL.
+     * @throws \InvalidArgumentException
      * @throws \Cake\Routing\Exception\MissingRouteException When a URL has no matching route.
      */
     public function parse($url, $method = '')

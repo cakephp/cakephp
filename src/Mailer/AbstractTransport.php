@@ -43,6 +43,7 @@ abstract class AbstractTransport
      * Constructor
      *
      * @param array $config Configuration options.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct($config = [])
     {

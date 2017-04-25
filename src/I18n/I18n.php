@@ -54,6 +54,7 @@ class I18n
      * or to configure some aspect of future translations that are not yet constructed.
      *
      * @return \Cake\I18n\TranslatorRegistry The translators collection.
+     * @throws \InvalidArgumentException
      */
     public static function translators()
     {
@@ -121,6 +122,8 @@ class I18n
      * @param callable|null $loader A callback function or callable class responsible for
      * constructing a translations package instance.
      * @return \Aura\Intl\TranslatorInterface|null The configured translator.
+     * @throws \Aura\Intl\Exception
+     * @throws \InvalidArgumentException
      */
     public static function translator($name = 'default', $locale = null, callable $loader = null)
     {
@@ -193,6 +196,7 @@ class I18n
      * @param callable $loader A callable object that should return a Package
      * instance to be used for assembling a new translator.
      * @return void
+     * @throws \InvalidArgumentException
      */
     public static function config($name, callable $loader)
     {
@@ -208,6 +212,7 @@ class I18n
      *
      * @param string|null $locale The name of the locale to set as default.
      * @return string|null The name of the default locale.
+     * @throws \InvalidArgumentException
      */
     public static function locale($locale = null)
     {
@@ -256,6 +261,7 @@ class I18n
      *
      * @param string|null $name The name of the formatter to use.
      * @return string The name of the formatter.
+     * @throws \InvalidArgumentException
      */
     public static function defaultFormatter($name = null)
     {
@@ -267,6 +273,7 @@ class I18n
      *
      * @param bool $enable flag to enable or disable fallback
      * @return void
+     * @throws \InvalidArgumentException
      */
     public static function useFallback($enable = true)
     {

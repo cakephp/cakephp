@@ -57,6 +57,7 @@ class BasicWidget implements WidgetInterface
      * @param array $data The data to build an input with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
+     * @throws \RuntimeException
      */
     public function render(array $data, ContextInterface $context)
     {

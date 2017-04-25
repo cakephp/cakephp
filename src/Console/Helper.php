@@ -46,6 +46,7 @@ abstract class Helper
      *
      * @param \Cake\Console\ConsoleIo $io The ConsoleIo instance to use.
      * @param array $config The settings for this helper.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(ConsoleIo $io, array $config = [])
     {

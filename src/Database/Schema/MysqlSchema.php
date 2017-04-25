@@ -153,6 +153,7 @@ class MysqlSchema extends BaseSchema
 
     /**
      * {@inheritDoc}
+     * @throws \Cake\Database\Exception
      */
     public function convertColumnDescription(TableSchema $schema, $row)
     {
@@ -171,6 +172,7 @@ class MysqlSchema extends BaseSchema
 
     /**
      * {@inheritDoc}
+     * @throws \Cake\Database\Exception
      */
     public function convertIndexDescription(TableSchema $schema, $row)
     {
@@ -243,6 +245,7 @@ class MysqlSchema extends BaseSchema
 
     /**
      * {@inheritDoc}
+     * @throws \Cake\Database\Exception
      */
     public function convertForeignKeyDescription(TableSchema $schema, $row)
     {

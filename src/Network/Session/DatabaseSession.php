@@ -89,6 +89,8 @@ class DatabaseSession implements SessionHandlerInterface
      *
      * @param int|string $id The key of the value to read
      * @return string The value of the key or empty if it does not exist
+     * @throws \RuntimeException
+     * @throws \BadMethodCallException
      */
     public function read($id)
     {
@@ -122,6 +124,9 @@ class DatabaseSession implements SessionHandlerInterface
      * @param int $id ID that uniquely identifies session in database
      * @param mixed $data The value of the data to be saved.
      * @return bool True for successful write, false otherwise.
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\ORM\Exception\RolledbackTransactionException
      */
     public function write($id, $data)
     {
@@ -141,6 +146,8 @@ class DatabaseSession implements SessionHandlerInterface
      *
      * @param int $id ID that uniquely identifies session in database
      * @return bool True for successful delete, false otherwise.
+     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public function destroy($id)
     {

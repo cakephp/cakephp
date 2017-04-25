@@ -97,6 +97,7 @@ class ViewBlock
      * End a capturing block. The compliment to ViewBlock::start()
      *
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      * @see \Cake\View\ViewBlock::start()
      */
     public function end()
@@ -134,6 +135,7 @@ class ViewBlock
      * @param string $mode If ViewBlock::APPEND content will be appended to existing content.
      *   If ViewBlock::PREPEND it will be prepended.
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      */
     public function concat($name, $value = null, $mode = ViewBlock::APPEND)
     {

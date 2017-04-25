@@ -167,6 +167,7 @@ trait QueryTrait
      * @param string|\Cake\Cache\CacheEngine $config Either the name of the cache config to use, or
      *   a cache config instance.
      * @return $this
+     * @throws \RuntimeException
      */
     public function cache($key, $config = 'default')
     {
@@ -262,6 +263,7 @@ trait QueryTrait
      * on Cake\Collection\Collection.
      *
      * @return \Cake\Datasource\ResultSetInterface
+     * @throws \RuntimeException
      */
     public function all()
     {

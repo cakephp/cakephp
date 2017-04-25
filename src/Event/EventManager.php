@@ -197,6 +197,7 @@ class EventManager
      *
      * @param \Cake\Event\EventListenerInterface $subscriber Event listener.
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _attachSubscriber(EventListenerInterface $subscriber)
     {

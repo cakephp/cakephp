@@ -165,6 +165,7 @@ class FixtureInjector implements TestListener
      *
      * @param \PHPUnit\Framework\Test $test The test case
      * @return void
+     * @throws \Cake\Core\Exception\Exception
      */
     public function startTest(Test $test)
     {

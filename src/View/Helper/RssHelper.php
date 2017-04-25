@@ -96,6 +96,7 @@ class RssHelper extends Helper
      * @param array $attrib `<rss />` tag attributes
      * @param string|null $content Tag content.
      * @return string An RSS document
+     * @throws \Cake\Utility\Exception\XmlException
      */
     public function document($attrib = [], $content = null)
     {
@@ -117,6 +118,7 @@ class RssHelper extends Helper
      * @param array $elements Named array elements which are converted to tags
      * @param string|null $content Content (`<item />`'s belonging to this channel
      * @return string An RSS `<channel />`
+     * @throws \Cake\Utility\Exception\XmlException
      */
     public function channel($attrib = [], $elements = [], $content = null)
     {
@@ -186,6 +188,7 @@ class RssHelper extends Helper
      * @param array $att The attributes of the `<item />` element
      * @param array $elements The list of elements contained in this `<item />`
      * @return string An RSS `<item />` element
+     * @throws \Cake\Utility\Exception\XmlException
      */
     public function item($att = [], $elements = [])
     {
@@ -293,6 +296,7 @@ class RssHelper extends Helper
      * @param string|array|null $content XML element content
      * @param bool $endTag Whether the end tag of the element should be printed
      * @return string XML
+     * @throws \Cake\Utility\Exception\XmlException
      */
     public function elem($name, $attrib = [], $content = null, $endTag = true)
     {

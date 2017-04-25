@@ -534,7 +534,7 @@ class Validation
      * The list of what is considered to be boolean values, may be set via $booleanValues.
      *
      * @param bool|int|string $check Value to check.
-     * @param string $booleanValues List of valid boolean values, defaults to `[true, false, 0, 1, '0', '1']`.
+     * @param array $booleanValues List of valid boolean values, defaults to `[true, false, 0, 1, '0', '1']`.
      * @return bool Success.
      */
     public static function boolean($check, array $booleanValues = [])
@@ -1100,6 +1100,7 @@ class Validation
      * @param string|null $operator See `Validation::comparison()`.
      * @param int|string|null $size Size in bytes or human readable string like '5MB'.
      * @return bool Success
+     * @throws \InvalidArgumentException
      */
     public static function fileSize($check, $operator = null, $size = null)
     {
@@ -1159,6 +1160,9 @@ class Validation
      * @param array $file The uploaded file data from PHP.
      * @param array $options An array of options for the validation.
      * @return bool
+     * @throws \RuntimeException
+     * @throws \LogicException
+     * @throws \InvalidArgumentException
      */
     public static function uploadedFile($file, array $options = [])
     {
@@ -1211,6 +1215,8 @@ class Validation
      * @param array $file The uploaded file data from PHP.
      * @param array $options Options to validate width and height.
      * @return bool
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public static function imageSize($file, $options)
     {
@@ -1252,6 +1258,8 @@ class Validation
      * @param string $operator Comparision operator.
      * @param int $width Min or max width.
      * @return bool
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public static function imageWidth($file, $operator, $width)
     {
@@ -1270,6 +1278,8 @@ class Validation
      * @param string $operator Comparision operator.
      * @param int $height Min or max width.
      * @return bool
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public static function imageHeight($file, $operator, $height)
     {
@@ -1297,6 +1307,7 @@ class Validation
      * @param string $value Geographic location as string
      * @param array $options Options for the validation logic.
      * @return bool
+     * @throws \RuntimeException
      */
     public static function geoCoordinate($value, array $options = [])
     {
@@ -1327,6 +1338,7 @@ class Validation
      * @param string $value Latitude as string
      * @param array $options Options for the validation logic.
      * @return bool
+     * @throws \RuntimeException
      * @link https://en.wikipedia.org/wiki/Latitude
      * @see \Cake\Validation\Validation::geoCoordinate()
      */
@@ -1343,6 +1355,7 @@ class Validation
      * @param string $value Latitude as string
      * @param array $options Options for the validation logic.
      * @return bool
+     * @throws \RuntimeException
      * @link https://en.wikipedia.org/wiki/Longitude
      * @see \Cake\Validation\Validation::geoCoordinate()
      */

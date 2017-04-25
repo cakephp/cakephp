@@ -96,6 +96,11 @@ trait RequestActionTrait
      * @param array $extra if array includes the key "return" it sets the autoRender to true.  Can
      *    also be used to submit GET/POST data, and passed arguments.
      * @return mixed Boolean true or false on success/failure, or contents
+     * @throws \Cake\Routing\Exception\MissingRouteException
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \LogicException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      *    of rendered action if 'return' is set in $extra.
      * @deprecated 3.3.0 You should refactor your code to use View Cells instead of this method.
      */

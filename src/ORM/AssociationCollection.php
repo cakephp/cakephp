@@ -167,6 +167,7 @@ class AssociationCollection implements IteratorAggregate
      *   associations not in this list will not be saved.
      * @param array $options The options for the save operation.
      * @return bool Success
+     * @throws \InvalidArgumentException
      */
     public function saveParents(Table $table, EntityInterface $entity, $associations, array $options = [])
     {
@@ -189,6 +190,7 @@ class AssociationCollection implements IteratorAggregate
      *   associations not in this list will not be saved.
      * @param array $options The options for the save operation.
      * @return bool Success
+     * @throws \InvalidArgumentException
      */
     public function saveChildren(Table $table, EntityInterface $entity, array $associations, array $options)
     {

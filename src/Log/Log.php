@@ -170,6 +170,7 @@ class Log
      * Initializes registry and configurations
      *
      * @return void
+     * @throws \Exception
      */
     protected static function _init()
     {
@@ -187,6 +188,7 @@ class Log
      * adapters.
      *
      * @return void
+     * @throws \Exception
      */
     protected static function _loadConfig()
     {
@@ -268,6 +270,7 @@ class Log
      * @param string|array $key The name of the logger config, or an array of multiple configs.
      * @param array|null $config An array of name => config data for adapter.
      * @return void
+     * @throws \LogicException
      * @throws \BadMethodCallException When trying to modify an existing config.
      */
     public static function setConfig($key, $config = null)
@@ -399,6 +402,7 @@ class Log
      *  will be treated as the `scope` key.
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
+     * @throws \InvalidArgumentException
      */
     public static function emergency($message, $context = [])
     {
@@ -415,6 +419,7 @@ class Log
      *  will be treated as the `scope` key.
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
+     * @throws \InvalidArgumentException
      */
     public static function alert($message, $context = [])
     {
@@ -431,6 +436,7 @@ class Log
      *  will be treated as the `scope` key.
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
+     * @throws \InvalidArgumentException
      */
     public static function critical($message, $context = [])
     {
@@ -447,6 +453,7 @@ class Log
      *  will be treated as the `scope` key.
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
+     * @throws \InvalidArgumentException
      */
     public static function error($message, $context = [])
     {
@@ -463,6 +470,7 @@ class Log
      *  will be treated as the `scope` key.
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
+     * @throws \InvalidArgumentException
      */
     public static function warning($message, $context = [])
     {
@@ -479,6 +487,7 @@ class Log
      *  will be treated as the `scope` key.
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
+     * @throws \InvalidArgumentException
      */
     public static function notice($message, $context = [])
     {
@@ -495,6 +504,7 @@ class Log
      *  will be treated as the `scope` key.
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
+     * @throws \InvalidArgumentException
      */
     public static function debug($message, $context = [])
     {
@@ -511,6 +521,7 @@ class Log
      *  will be treated as the `scope` key.
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
+     * @throws \InvalidArgumentException
      */
     public static function info($message, $context = [])
     {

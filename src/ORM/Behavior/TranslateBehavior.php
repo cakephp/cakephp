@@ -95,6 +95,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @param \Cake\ORM\Table $table The table this behavior is attached to.
      * @param array $config The config for this behavior.
+     * @throws \Cake\Core\Exception\Exception
      */
     public function __construct(Table $table, array $config = [])
     {
@@ -141,6 +142,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @param string $strategy the strategy used in the _i18n association
      *
      * @return void
+     * @throws \InvalidArgumentException
      */
     public function setupFieldAssociations($fields, $table, $model, $strategy)
     {
@@ -265,6 +267,9 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @param \ArrayObject $options the options passed to the save method
      * @return void
+     * @throws \RuntimeException
+     * @throws \BadMethodCallException
+     * @throws \InvalidArgumentException
      */
     public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)
     {
@@ -371,6 +376,9 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * `'translations' => true` to the options provided to `Table::newEntity()` or `Table::patchEntity()`.
      *
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \Cake\ORM\Exception\MissingEntityException
      */
     public function buildMarshalMap($marshaller, $map, $options)
     {
@@ -413,6 +421,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @param string|null $locale The locale to use for fetching translated records
      * @return string
+     * @throws \InvalidArgumentException
      */
     public function locale($locale = null)
     {
@@ -557,6 +566,8 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @param \Cake\Datasource\ResultSetInterface $results Results to modify.
      * @return \Cake\Collection\CollectionInterface
+     * @throws \Cake\ORM\Exception\MissingEntityException
+     * @throws \InvalidArgumentException
      */
     public function groupTranslations($results)
     {
@@ -597,6 +608,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _bundleTranslatedFields($entity)
     {
@@ -685,6 +697,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @param array $ruleSet an array of arary of conditions to be used for finding each
      * @return array
+     * @throws \RuntimeException
      */
     protected function _findExistingTranslations($ruleSet)
     {

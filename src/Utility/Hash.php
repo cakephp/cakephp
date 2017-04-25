@@ -119,6 +119,7 @@ class Hash
      * @param string $path The path to extract.
      * @return array An array of the extracted values. Returns an empty array
      *   if there are no matches.
+     * @throws \InvalidArgumentException
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::extract
      */
     public static function extract($data, $path)
@@ -445,6 +446,7 @@ class Hash
      * @param string|null $valuePath A dot-separated string.
      * @param string|null $groupPath A dot-separated string.
      * @return array Combined array
+     * @throws \InvalidArgumentException
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::combine
      * @throws \RuntimeException When keys and values count is unequal.
      */
@@ -522,6 +524,7 @@ class Hash
      * @param array $paths An array containing one or more Hash::extract()-style key paths
      * @param string $format Format string into which values will be inserted, see sprintf()
      * @return array|null An array of strings extracted from `$path` and formatted with `$format`
+     * @throws \InvalidArgumentException
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::format
      * @see sprintf()
      * @see \Cake\Utility\Hash::extract()
@@ -605,6 +608,7 @@ class Hash
      * @param array $data The data to check.
      * @param string $path The path to check for.
      * @return bool Existence of path.
+     * @throws \InvalidArgumentException
      * @see \Cake\Utility\Hash::extract()
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::check
      */
@@ -861,6 +865,7 @@ class Hash
      * @param string $path The path to extract for mapping over.
      * @param callable $function The function to call on each extracted value.
      * @return array An array of the modified values.
+     * @throws \InvalidArgumentException
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::map
      */
     public static function map(array $data, $path, $function)
@@ -877,6 +882,7 @@ class Hash
      * @param string $path The path to extract from $data.
      * @param callable $function The function to call on each extracted value.
      * @return mixed The reduced value.
+     * @throws \InvalidArgumentException
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::reduce
      */
     public static function reduce(array $data, $path, $function)
@@ -909,6 +915,7 @@ class Hash
      * @param string $path The path to extract from $data.
      * @param callable $function The function to call on each extracted value.
      * @return mixed The results of the applied method.
+     * @throws \InvalidArgumentException
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::apply
      */
     public static function apply(array $data, $path, $function)
@@ -949,6 +956,7 @@ class Hash
      * @param string $dir See directions above. Defaults to 'asc'.
      * @param array|string $type See direction types above. Defaults to 'regular'.
      * @return array Sorted array of data
+     * @throws \InvalidArgumentException
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::sort
      */
     public static function sort(array $data, $path, $dir = 'asc', $type = 'regular')

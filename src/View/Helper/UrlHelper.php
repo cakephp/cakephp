@@ -40,6 +40,9 @@ class UrlHelper extends Helper
      *    the reverse routing features of CakePHP.
      * @param array|bool $options Array of options; bool `full` for BC reasons.
      * @return string Full translated URL with base path.
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Routing\Exception\MissingRouteException
+     * @throws \Cake\Core\Exception\Exception
      */
     public function build($url = null, $options = false)
     {
@@ -72,6 +75,7 @@ class UrlHelper extends Helper
      *   `pathPrefix` Path prefix for relative URLs
      *   `plugin` False value will prevent parsing path as a plugin
      * @return string Generated URL
+     * @throws \InvalidArgumentException
      */
     public function image($path, array $options = [])
     {
@@ -93,6 +97,7 @@ class UrlHelper extends Helper
      *   `ext` Asset extension to append
      *   `plugin` False value will prevent parsing path as a plugin
      * @return string Generated URL
+     * @throws \InvalidArgumentException
      */
     public function css($path, array $options = [])
     {
@@ -115,6 +120,7 @@ class UrlHelper extends Helper
      *   `ext` Asset extension to append
      *   `plugin` False value will prevent parsing path as a plugin
      * @return string Generated URL
+     * @throws \InvalidArgumentException
      */
     public function script($path, array $options = [])
     {
@@ -137,6 +143,8 @@ class UrlHelper extends Helper
      *   `ext` Asset extension to append
      *   `plugin` False value will prevent parsing path as a plugin
      * @return string Generated URL
+     * @throws \Cake\Core\Exception\MissingPluginException
+     * @throws \InvalidArgumentException
      */
     public function assetUrl($path, array $options = [])
     {
@@ -196,6 +204,8 @@ class UrlHelper extends Helper
      *
      * @param string $path The file path to timestamp, the path must be inside WWW_ROOT
      * @return string Path with a timestamp added, or not.
+     * @throws \Cake\Core\Exception\MissingPluginException
+     * @throws \InvalidArgumentException
      */
     public function assetTimestamp($path)
     {
@@ -232,6 +242,8 @@ class UrlHelper extends Helper
      *
      * @param string $file The file to create a webroot path to.
      * @return string Web accessible path to file.
+     * @throws \Cake\Core\Exception\MissingPluginException
+     * @throws \InvalidArgumentException
      */
     public function webroot($file)
     {

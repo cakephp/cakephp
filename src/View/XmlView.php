@@ -95,6 +95,8 @@ class XmlView extends SerializedView
      *
      * @param array|string $serialize The name(s) of the view variable(s) that need(s) to be serialized
      * @return string The serialized data
+     * @throws \Cake\Utility\Exception\XmlException
+     * @throws \InvalidArgumentException
      */
     protected function _serialize($serialize)
     {

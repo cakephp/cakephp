@@ -228,6 +228,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param string|null $name Override the name useful in testing when using mocks.
      * @param \Cake\Event\EventManager|null $eventManager The event manager. Defaults to a new instance.
      * @param \Cake\Controller\ComponentRegistry|null $components The component registry. Defaults to a new instance.
+     * @throws \InvalidArgumentException
      */
     public function __construct(ServerRequest $request = null, Response $response = null, $name = null, $eventManager = null, $components = null)
     {
@@ -315,6 +316,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param string $name The name of the component to load.
      * @param array $config The config for the component.
      * @return \Cake\Controller\Component
+     * @throws \RuntimeException
+     * @throws \Exception
      */
     public function loadComponent($name, array $config = [])
     {
@@ -329,6 +332,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param string $name Property name
      * @return bool|object The model instance or false
+     * @throws \UnexpectedValueException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Datasource\Exception\MissingModelException
      */
     public function __get($name)
     {
@@ -401,6 +407,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @return void
+     * @throws \InvalidArgumentException
      */
     public function setRequest(ServerRequest $request)
     {
@@ -417,6 +424,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * exists and isn't private.
      *
      * @return mixed The resulting response.
+     * @throws \InvalidArgumentException
      * @throws \LogicException When request is not set.
      * @throws \Cake\Controller\Exception\MissingActionException When actions are not defined or inaccessible.
      */
@@ -537,6 +545,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *     or an absolute URL
      * @param int $status HTTP status code (eg: 301)
      * @return \Cake\Http\Response|null
+     * @throws \Cake\Routing\Exception\MissingRouteException
+     * @throws \Cake\Core\Exception\Exception
+     * @throws \InvalidArgumentException
      * @link http://book.cakephp.org/3.0/en/controllers.html#Controller::redirect
      */
     public function redirect($url, $status = 302)
@@ -591,6 +602,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param string|null $view View to use for rendering
      * @param string|null $layout Layout to use
      * @return \Cake\Http\Response A response object containing the rendered view.
+     * @throws \Cake\View\Exception\MissingViewException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
      * @link http://book.cakephp.org/3.0/en/controllers.html#rendering-a-view
      */
     public function render($view = null, $layout = null)
@@ -629,6 +644,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Get the viewPath based on controller name and request prefix.
      *
      * @return string
+     * @throws \InvalidArgumentException
      */
     protected function _viewPath()
     {
@@ -650,6 +666,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param string|array|null $default Default URL to use if HTTP_REFERER cannot be read from headers
      * @param bool $local If true, restrict referring URLs to local server
      * @return string Referring URL
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\Exception
      */
     public function referer($default = null, $local = false)
     {
@@ -687,7 +705,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Cake\ORM\Table|string|\Cake\ORM\Query|null $object Table to paginate
      * (e.g: Table instance, 'TableName' or a Query object)
      * @param array $settings The settings/configuration used for pagination.
-     * @return \Cake\ORM\ResultSet Query results
+     * @return \Cake\Datasource\ResultSetInterface|\Cake\ORM\ResultSet
+     * @throws \Cake\Network\Exception\NotFoundException
+     * @throws \UnexpectedValueException
+     * @throws \Cake\Datasource\Exception\MissingModelException
+     * @throws \InvalidArgumentException
      * @link http://book.cakephp.org/3.0/en/controllers.html#paginating-a-model
      * @throws \RuntimeException When no compatible table object can be found.
      */

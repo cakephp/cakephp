@@ -37,6 +37,7 @@ class Request extends Message implements RequestInterface
      * @param string $method The HTTP method to use.
      * @param array $headers The HTTP headers to set.
      * @param array|string|null $data The request body to use.
+     * @throws \InvalidArgumentException
      */
     public function __construct($url = '', $method = self::METHOD_GET, array $headers = [], $data = null)
     {
@@ -84,6 +85,7 @@ class Request extends Message implements RequestInterface
      *
      * @param string|null $url The url for the request. Leave null for get
      * @return $this|string Either $this or the url value.
+     * @throws \InvalidArgumentException
      * @deprecated 3.3.0 Use getUri() and withUri() instead.
      */
     public function url($url = null)
@@ -231,6 +233,8 @@ class Request extends Message implements RequestInterface
      *
      * @param string|array|null $body The body for the request. Leave null for get
      * @return mixed Either $this or the body value.
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function body($body = null)
     {

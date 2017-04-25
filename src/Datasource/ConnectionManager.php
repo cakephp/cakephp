@@ -68,6 +68,8 @@ class ConnectionManager
      * @param string|array $key The name of the connection config, or an array of multiple configs.
      * @param array|null $config An array of name => config data for adapter.
      * @return void
+     * @throws \LogicException
+     * @throws \BadMethodCallException
      * @throws \Cake\Core\Exception\Exception When trying to modify an existing config.
      * @see \Cake\Core\StaticConfigTrait::config()
      */
@@ -104,6 +106,7 @@ class ConnectionManager
      *
      * @param string|null $config The DSN string to convert to a configuration array
      * @return array The configuration array to be stored after parsing the DSN
+     * @throws \InvalidArgumentException
      */
     public static function parseDsn($config = null)
     {
@@ -184,6 +187,7 @@ class ConnectionManager
      * @param string $name The connection name.
      * @param bool $useAliases Set to false to not use aliased connections.
      * @return \Cake\Datasource\ConnectionInterface A connection object.
+     * @throws \RuntimeException
      * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException When config
      * data is missing.
      */

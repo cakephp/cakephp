@@ -37,6 +37,8 @@ class Oauth
      * @param \Cake\Http\Client\Request $request The request object.
      * @param array $credentials Authentication credentials.
      * @return \Cake\Http\Client\Request The updated request.
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @throws \Cake\Core\Exception\Exception On invalid signature types.
      */
     public function authentication(Request $request, array $credentials)
@@ -275,6 +277,7 @@ class Oauth
      * @param \Cake\Http\Client\Request $request The request object.
      * @param array $oauthValues Oauth values.
      * @return string sorted and normalized values
+     * @throws \InvalidArgumentException
      */
     protected function _normalizedParams($request, $oauthValues)
     {

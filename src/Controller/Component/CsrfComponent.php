@@ -73,6 +73,8 @@ class CsrfComponent extends Component
      *
      * @param \Cake\Event\Event $event Event instance.
      * @return void
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Network\Exception\InvalidCsrfTokenException
      */
     public function startup(Event $event)
     {
@@ -144,6 +146,7 @@ class CsrfComponent extends Component
      * @param \Cake\Http\ServerRequest $request The request to validate against.
      * @throws \Cake\Network\Exception\InvalidCsrfTokenException when the CSRF token is invalid or missing.
      * @return void
+     * @throws \InvalidArgumentException
      */
     protected function _validateToken(ServerRequest $request)
     {

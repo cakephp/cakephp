@@ -31,6 +31,7 @@ class SubjectFilterDecorator extends AbstractDecorator
 
     /**
      * {@inheritDoc}
+     * @throws \RuntimeException
      */
     public function __invoke()
     {
@@ -47,6 +48,7 @@ class SubjectFilterDecorator extends AbstractDecorator
      *
      * @param \Cake\Event\Event $event Event object.
      * @return bool
+     * @throws \RuntimeException
      */
     public function canTrigger(Event $event)
     {

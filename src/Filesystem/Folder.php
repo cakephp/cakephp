@@ -406,6 +406,7 @@ class Folder
      *
      * @param string $path The path to check.
      * @return bool
+     * @throws \InvalidArgumentException
      * @deprecated 3.2.12 This method will be removed in 4.0.0. Use inPath() instead.
      */
     public function inCakePath($path = '')

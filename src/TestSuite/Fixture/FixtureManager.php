@@ -88,6 +88,7 @@ class FixtureManager
      *
      * @param \Cake\TestSuite\TestCase $test The test case to inspect.
      * @return void
+     * @throws \UnexpectedValueException
      */
     public function fixturize($test)
     {
@@ -119,6 +120,7 @@ class FixtureManager
      * a pile of configuration work.
      *
      * @return void
+     * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException
      */
     protected function _aliasConnections()
     {
@@ -162,6 +164,7 @@ class FixtureManager
      *
      * @param \Cake\TestSuite\TestCase $test The test suite to load fixtures for.
      * @return void
+     * @throws \InvalidArgumentException
      * @throws \UnexpectedValueException when a referenced fixture does not exist.
      */
     protected function _loadFixtures($test)
@@ -355,6 +358,8 @@ class FixtureManager
      * @param array $fixtures A list of fixtures to operate on.
      * @param callable $operation The operation to run on each connection + fixture set.
      * @return void
+     * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException
+     * @throws \Exception
      */
     protected function _runOperation($fixtures, $operation)
     {
@@ -431,6 +436,7 @@ class FixtureManager
      * @param \Cake\Datasource\ConnectionInterface|null $db Connection instance or leave null to get a Connection from the fixture
      * @param bool $dropTables Whether or not tables should be dropped and re-created.
      * @return void
+     * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException
      * @throws \UnexpectedValueException if $name is not a previously loaded class
      */
     public function loadSingle($name, $db = null, $dropTables = true)

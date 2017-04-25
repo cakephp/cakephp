@@ -90,7 +90,7 @@ class ConsoleErrorHandler extends BaseErrorHandler
         }
 
         $message = sprintf(
-            "<error>%s</error> %s in [%s, line %s]",
+            '<error>%s</error> %s in [%s, line %s]',
             $errorName,
             $exception->getMessage(),
             $exception->getFile(),

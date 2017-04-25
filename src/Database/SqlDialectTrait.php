@@ -160,6 +160,7 @@ trait SqlDialectTrait
      *
      * @param \Cake\Database\Query $query The query to translate
      * @return \Cake\Database\Query The modified query
+     * @throws \RuntimeException
      */
     protected function _deleteQueryTranslator($query)
     {
@@ -192,6 +193,7 @@ trait SqlDialectTrait
      *
      * @param \Cake\Database\Query $query The query to translate
      * @return \Cake\Database\Query The modified query
+     * @throws \RuntimeException
      */
     protected function _updateQueryTranslator($query)
     {
