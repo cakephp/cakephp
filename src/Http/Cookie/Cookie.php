@@ -49,13 +49,6 @@ class Cookie implements CookieInterface
 {
 
     /**
-     * Expires attribute format.
-     *
-     * @var string
-     */
-    const EXPIRES_FORMAT = 'D, d-M-Y H:i:s T';
-
-    /**
      * Cookie name
      *
      * @var string
@@ -156,20 +149,6 @@ class Cookie implements CookieInterface
             $expiresAt = $expiresAt->setTimezone(new DateTimezone('GMT'));
         }
         $this->expiresAt = $expiresAt;
-    }
-
-    /**
-     * Builds the expiration value part of the header string
-     *
-     * @return string
-     */
-    protected function getFormattedExpires()
-    {
-        if (!$this->expiresAt) {
-            return '';
-        }
-
-        return $this->expiresAt->format(static::EXPIRES_FORMAT);
     }
 
     /**
@@ -476,6 +455,20 @@ class Cookie implements CookieInterface
     }
 
     /**
+     * Builds the expiration value part of the header string
+     *
+     * @return string
+     */
+    public function getFormattedExpires()
+    {
+        if (!$this->expiresAt) {
+            return '';
+        }
+
+        return $this->expiresAt->format(static::EXPIRES_FORMAT);
+    }
+
+    /**
      * Check if a cookie is expired when compared to $time
      *
      * Cookies without an expiration date always return false.
@@ -604,68 +597,6 @@ class Cookie implements CookieInterface
     public function isExpanded()
     {
         return $this->isExpanded;
-    }
-
-    /**
-     * Convert the cookie into an array of its properties.
-     *
-     * Primarily useful where backwards compatibility is needed.
-     *
-     * @return array
-     */
-    public function toArray()
-    {
-        return [
-            'name' => $this->getName(),
-            'value' => $this->getValue(),
-            'path' => $this->getPath(),
-            'domain' => $this->getDomain(),
-            'secure' => $this->isSecure(),
-            'httponly' => $this->isHttpOnly(),
-            'expires' => $this->getExpiresTimestamp()
-        ];
-    }
-
-    /**
-     * Convert the cookie into an array of its properties.
-     *
-     * This method is compatible with older client code that
-     * expects date strings instead of timestamps.
-     *
-     * @return array
-     */
-    public function toArrayClient()
-    {
-        return [
-            'name' => $this->getName(),
-            'value' => $this->getValue(),
-            'path' => $this->getPath(),
-            'domain' => $this->getDomain(),
-            'secure' => $this->isSecure(),
-            'httponly' => $this->isHttpOnly(),
-            'expires' => $this->getFormattedExpires()
-        ];
-    }
-
-    /**
-     * Convert the cookie into an array of its properties.
-     *
-     * This method is compatible with the historical behavior of Cake\Http\Response,
-     * where `httponly` is `httpOnly` and `expires` is `expire`
-     *
-     * @return array
-     */
-    public function toArrayResponse()
-    {
-        return [
-            'name' => $this->getName(),
-            'value' => $this->getValue(),
-            'path' => $this->getPath(),
-            'domain' => $this->getDomain(),
-            'secure' => $this->isSecure(),
-            'httpOnly' => $this->isHttpOnly(),
-            'expire' => $this->getExpiresTimestamp()
-        ];
     }
 
     /**

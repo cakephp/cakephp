@@ -14,6 +14,7 @@
 namespace Cake\Http\Client;
 
 use Cake\Http\Cookie\CookieCollection as BaseCollection;
+use Cake\Http\Cookie\CookieInterface;
 
 /**
  * Container class for cookies used in Http\Client.
@@ -32,7 +33,7 @@ class CookieCollection extends BaseCollection
      * Store the cookies that haven't expired. If a cookie has been expired
      * and is currently stored, it will be removed.
      *
-     * @param \Cake\Http\Client\Response $response The response to read cookies from
+     * @param Response $response The response to read cookies from
      * @param string $url The request URL used for default host/path values.
      * @return void
      */
@@ -70,7 +71,7 @@ class CookieCollection extends BaseCollection
     }
 
     /**
-     * Get all the stored cookies.
+     * Get all the stored cookies as arrays.
      *
      * @return array
      */
@@ -78,10 +79,31 @@ class CookieCollection extends BaseCollection
     {
         $out = [];
         foreach ($this->cookies as $cookie) {
-            $out[] = $cookie->toArray();
+            $out[] = $this->convertCookieToArray($cookie);
         }
 
         return $out;
+    }
+
+    /**
+     * Convert the cookie into an array of its properties.
+     *
+     * Primarily useful where backwards compatibility is needed.
+     *
+     * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie object.
+     * @return array
+     */
+    protected function convertCookieToArray(CookieInterface $cookie)
+    {
+        return [
+            'name' => $cookie->getName(),
+            'value' => $cookie->getValue(),
+            'path' => $cookie->getPath(),
+            'domain' => $cookie->getDomain(),
+            'secure' => $cookie->isSecure(),
+            'httponly' => $cookie->isHttpOnly(),
+            'expires' => $cookie->getExpiresTimestamp()
+        ];
     }
 }
 

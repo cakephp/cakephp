@@ -13,9 +13,11 @@
  */
 namespace Cake\Http\Client;
 
+use Cake\Http\Cookie\Cookie;
 // This alias is necessary to avoid class name conflicts
 // with the deprecated class in this namespace.
 use Cake\Http\Cookie\CookieCollection as CookiesCollection;
+use Cake\Http\Cookie\CookieInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use Zend\Diactoros\MessageTrait;
@@ -442,7 +444,31 @@ class Response extends Message implements ResponseInterface
             return null;
         }
 
-        return $this->cookies->get($name)->toArrayClient();
+        $cookie = $this->cookies->get($name);
+
+        return $this->convertCookieToArray($cookie);
+    }
+
+    /**
+     * Convert the cookie into an array of its properties.
+     *
+     * This method is compatible with older client code that
+     * expects date strings instead of timestamps.
+     *
+     * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie object.
+     * @return array
+     */
+    protected function convertCookieToArray(CookieInterface $cookie)
+    {
+        return [
+            'name' => $cookie->getName(),
+            'value' => $cookie->getValue(),
+            'path' => $cookie->getPath(),
+            'domain' => $cookie->getDomain(),
+            'secure' => $cookie->isSecure(),
+            'httponly' => $cookie->isHttpOnly(),
+            'expires' => $cookie->getFormattedExpires()
+        ];
     }
 
     /**
@@ -469,7 +495,7 @@ class Response extends Message implements ResponseInterface
 
         $cookies = [];
         foreach ($this->cookies as $cookie) {
-            $cookies[$cookie->getName()] = $cookie->toArrayClient();
+            $cookies[$cookie->getName()] = $this->convertCookieToArray($cookie);
         }
 
         return $cookies;
