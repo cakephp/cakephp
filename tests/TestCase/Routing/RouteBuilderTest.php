@@ -21,6 +21,7 @@ use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\Route\RedirectRoute;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
+use stdClass;
 
 /**
  * RouteBuilder test case
@@ -786,43 +787,39 @@ class RouteBuilderTest extends TestCase
      */
     public function testRegisterMiddleware()
     {
-        $this->markTestIncomplete();
+        $func = function () {
+        };
+        $routes = new RouteBuilder($this->collection, '/api');
+        $result = $routes->registerMiddleware('test', $func);
+
+        $this->assertSame($result, $routes);
+        $this->assertTrue($this->collection->hasMiddleware('test'));
     }
 
     /**
      * Test registering invalid middleware
      *
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage The 'bad' middleware is not callable.
-     * @return void
-     */
-    public function testRegisterMiddlewareObject()
-    {
-        $this->markTestIncomplete();
-    }
-
-    /**
-     * Test registering invalid middleware
-     *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage The 'bad' middleware is not callable.
+     * @expectedExceptionMessage The 'bad' middleware is not a callable object.
      * @return void
      */
     public function testRegisterMiddlewareString()
     {
-        $this->markTestIncomplete();
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->registerMiddleware('bad', 'strlen');
     }
 
     /**
      * Test applying middleware to a scope when it doesn't exist
      *
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot apply 'bad' middleware to /api path. It has not been registered.
+     * @expectedExceptionMessage Cannot apply 'bad' middleware to path '/api'. It has not been registered.
      * @return void
      */
     public function testMiddlewareInvalidName()
     {
-        $this->markTestIncomplete();
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->middleware('bad');
     }
 
     /**
@@ -832,6 +829,17 @@ class RouteBuilderTest extends TestCase
      */
     public function testMiddleware()
     {
-        $this->markTestIncomplete();
+        $func = function () {
+        };
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->registerMiddleware('test', $func)
+            ->registerMiddleware('test2', $func);
+        $result = $routes->middleware('test', 'test2');
+
+        $this->assertSame($result, $routes);
+        $this->assertEquals(
+            [$func, $func],
+            $this->collection->getMatchingMiddleware('/api/v1/ping')
+        );
     }
 }

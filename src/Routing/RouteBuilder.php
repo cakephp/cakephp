@@ -728,6 +728,9 @@ class RouteBuilder
      */
     public function registerMiddleware($name, $middleware)
     {
+        $this->_collection->registerMiddleware($name, $middleware);
+
+        return $this;
     }
 
     /**
@@ -741,5 +744,8 @@ class RouteBuilder
      */
     public function middleware(...$names)
     {
+        $this->_collection->enableMiddleware($this->_path, $names);
+
+        return $this;
     }
 }
