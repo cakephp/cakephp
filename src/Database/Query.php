@@ -275,7 +275,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function sql(ValueBinder $generator = null)
     {
         if (!$generator) {
-            $generator = $this->valueBinder();
+            $generator = $this->getValueBinder();
             $generator->resetCount();
         }
 
@@ -1801,9 +1801,27 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function bind($param, $value, $type = 'string')
     {
-        $this->valueBinder()->bind($param, $value, $type);
+        $this->getValueBinder()->bind($param, $value, $type);
 
         return $this;
+    }
+
+    /**
+     * Returns the currently used ValueBinder instance.
+     *
+     * A ValueBinder is responsible for generating query placeholders and temporarily
+     * associate values to those placeholders so that they can be passed correctly
+     * to the statement object.
+     *
+     * @return \Cake\Database\ValueBinder
+     */
+    public function getValueBinder()
+    {
+        if ($this->_valueBinder === null) {
+            $this->_valueBinder = new ValueBinder();
+        }
+
+        return $this->_valueBinder;
     }
 
     /**
@@ -1812,8 +1830,9 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * A ValueBinder is responsible for generating query placeholders and temporarily
      * associate values to those placeholders so that they can be passed correctly
-     * statement object.
+     * to the statement object.
      *
+     * @deprecated 3.5.0 Use getValueBinder() for the getter part instead.
      * @param \Cake\Database\ValueBinder|null $binder new instance to be set. If no value is passed the
      *   default one will be returned
      * @return $this|\Cake\Database\ValueBinder
@@ -2004,7 +2023,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         $this->_dirty = true;
 
         if ($this->_iterator && $this->_valueBinder) {
-            $this->valueBinder()->reset();
+            $this->getValueBinder()->reset();
         }
     }
 
@@ -2065,7 +2084,7 @@ class Query implements ExpressionInterface, IteratorAggregate
                 throw new RuntimeException($errstr, $errno);
             }, E_ALL);
             $sql = $this->sql();
-            $params = $this->valueBinder()->bindings();
+            $params = $this->getValueBinder()->bindings();
         } catch (RuntimeException $e) {
             $sql = 'SQL could not be generated for this query as it is incomplete.';
             $params = [];
