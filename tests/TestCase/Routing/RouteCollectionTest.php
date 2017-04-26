@@ -649,7 +649,7 @@ class RouteCollectionTest extends TestCase
      *
      * @return void
      */
-    public function testEnableMiddlewareBasic()
+    public function testApplyMiddlewareBasic()
     {
         $mock = $this->getMockBuilder('\stdClass')
             ->setMethods(['__invoke'])
@@ -657,7 +657,7 @@ class RouteCollectionTest extends TestCase
         $this->collection->registerMiddleware('callable', $mock);
         $this->collection->registerMiddleware('callback_two', $mock);
 
-        $result = $this->collection->enableMiddleware('/api', ['callable', 'callback_two']);
+        $result = $this->collection->applyMiddleware('/api', ['callable', 'callback_two']);
         $this->assertSame($result, $this->collection);
     }
 
@@ -674,7 +674,7 @@ class RouteCollectionTest extends TestCase
         $this->collection->registerMiddleware('callable', $mock);
         $this->collection->registerMiddleware('callback_two', $mock);
 
-        $result = $this->collection->enableMiddleware('/api', ['callable']);
+        $result = $this->collection->applyMiddleware('/api', ['callable']);
         $middleware = $this->collection->getMatchingMiddleware('/api/v1/articles');
         $this->assertCount(1, $middleware);
         $this->assertSame($middleware[0], $mock);
@@ -696,8 +696,8 @@ class RouteCollectionTest extends TestCase
         $this->collection->registerMiddleware('callable', $mock);
         $this->collection->registerMiddleware('callback_two', $mockTwo);
 
-        $this->collection->enableMiddleware('/api', ['callable']);
-        $this->collection->enableMiddleware('/api/v1/articles', ['callback_two']);
+        $this->collection->applyMiddleware('/api', ['callable']);
+        $this->collection->applyMiddleware('/api/v1/articles', ['callback_two']);
 
         $middleware = $this->collection->getMatchingMiddleware('/articles');
         $this->assertCount(0, $middleware);
@@ -727,8 +727,8 @@ class RouteCollectionTest extends TestCase
         $this->collection->registerMiddleware('callable', $mock);
         $this->collection->registerMiddleware('callback_two', $mockTwo);
 
-        $this->collection->enableMiddleware('/api', ['callable']);
-        $this->collection->enableMiddleware('/api/v1/articles', ['callback_two', 'callable']);
+        $this->collection->applyMiddleware('/api', ['callable']);
+        $this->collection->applyMiddleware('/api/v1/articles', ['callback_two', 'callable']);
 
         $middleware = $this->collection->getMatchingMiddleware('/api/v1/articles/1');
         $this->assertCount(2, $middleware);
@@ -740,14 +740,14 @@ class RouteCollectionTest extends TestCase
      *
      * @return void
      */
-    public function testEnableMiddlewareWithPlaceholder()
+    public function testApplyMiddlewareWithPlaceholder()
     {
         $mock = $this->getMockBuilder('\stdClass')
             ->setMethods(['__invoke'])
             ->getMock();
         $this->collection->registerMiddleware('callable', $mock);
 
-        $this->collection->enableMiddleware('/api-:version/articles/:article_id/comments', ['callable']);
+        $this->collection->applyMiddleware('/api-:version/articles/:article_id/comments', ['callable']);
 
         $middleware = $this->collection->getMatchingMiddleware('/api-1/articles/comments');
         $this->assertEmpty($middleware);
@@ -769,12 +769,12 @@ class RouteCollectionTest extends TestCase
      * @expectedExceptionMessage Cannot apply 'bad' middleware to path '/api'. It has not been registered.
      * @return void
      */
-    public function testEnableMiddlewareUnregistered()
+    public function testApplyMiddlewareUnregistered()
     {
         $mock = $this->getMockBuilder('\stdClass')
             ->setMethods(['__invoke'])
             ->getMock();
         $this->collection->registerMiddleware('callable', $mock);
-        $this->collection->enableMiddleware('/api', ['callable', 'bad']);
+        $this->collection->applyMiddleware('/api', ['callable', 'bad']);
     }
 }

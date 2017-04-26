@@ -816,10 +816,10 @@ class RouteBuilderTest extends TestCase
      * @expectedExceptionMessage Cannot apply 'bad' middleware to path '/api'. It has not been registered.
      * @return void
      */
-    public function testMiddlewareInvalidName()
+    public function testApplyMiddlewareInvalidName()
     {
         $routes = new RouteBuilder($this->collection, '/api');
-        $routes->middleware('bad');
+        $routes->applyMiddleware('bad');
     }
 
     /**
@@ -827,14 +827,14 @@ class RouteBuilderTest extends TestCase
      *
      * @return void
      */
-    public function testMiddleware()
+    public function testApplyMiddleware()
     {
         $func = function () {
         };
         $routes = new RouteBuilder($this->collection, '/api');
         $routes->registerMiddleware('test', $func)
             ->registerMiddleware('test2', $func);
-        $result = $routes->middleware('test', 'test2');
+        $result = $routes->applyMiddleware('test', 'test2');
 
         $this->assertSame($result, $routes);
         $this->assertEquals(

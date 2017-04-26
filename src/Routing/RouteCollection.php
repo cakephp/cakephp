@@ -411,13 +411,13 @@ class RouteCollection
     }
 
     /**
-     * Enable a registered middleware(s) for the provided path
+     * Apply a registered middleware(s) for the provided path
      *
      * @param string $path The URL path to register middleware for.
      * @param string[] $middleware The middleware names to add for the path.
      * @return $this
      */
-    public function enableMiddleware($path, array $middleware)
+    public function applyMiddleware($path, array $middleware)
     {
         foreach ($middleware as $name) {
             if (!$this->hasMiddleware($name)) {

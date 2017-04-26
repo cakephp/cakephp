@@ -742,9 +742,9 @@ class RouteBuilder
      * @return $this
      * @see \Cake\Routing\RouteCollection::addMiddlewareToScope()
      */
-    public function middleware(...$names)
+    public function applyMiddleware(...$names)
     {
-        $this->_collection->enableMiddleware($this->_path, $names);
+        $this->_collection->applyMiddleware($this->_path, $names);
 
         return $this;
     }
