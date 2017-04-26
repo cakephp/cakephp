@@ -616,7 +616,7 @@ class HtmlHelper extends Helper
      *
      * @param array $options Options for the code block.
      * @return void
-     * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-javascript-blocks
+     * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-inline-javascript-blocks
      */
     public function scriptStart(array $options = [])
     {
@@ -630,7 +630,7 @@ class HtmlHelper extends Helper
      * the settings used when the scriptBlock was started
      *
      * @return string|null Depending on the settings of scriptStart() either a script tag or null
-     * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-javascript-blocks
+     * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-inline-javascript-blocks
      */
     public function scriptEnd()
     {
