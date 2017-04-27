@@ -1986,7 +1986,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         } else {
             $expression = $this->newExpr()
                 ->setConjunction($conjunction)
-                ->add([$append, $expression], $types);
+                ->add([$expression, $append], $types);
         }
 
         $this->_parts[$part] = $expression;
