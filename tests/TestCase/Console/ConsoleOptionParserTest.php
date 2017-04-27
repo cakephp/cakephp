@@ -592,6 +592,22 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * Tests setting a subcommand up for a Shell method `initMyDb`.
+     *
+     * @return void
+     */
+    public function testSubcommandCamelBacked()
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $result = $parser->addSubcommand('initMyDb', [
+            'help' => 'Initialize the database'
+        ]);
+
+        $subcommands = array_keys($result->subcommands());
+        $this->assertEquals(['init_my_db'], $subcommands, 'Adding a subcommand does not work with camel backed method names.');
+    }
+
+    /**
      * Test addSubcommand inherits options as no
      * parser is created.
      *

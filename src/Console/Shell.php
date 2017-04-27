@@ -440,7 +440,7 @@ class Shell
      */
     public function runCommand($argv, $autoMethod = false, $extra = [])
     {
-        $command = isset($argv[0]) ? $argv[0] : null;
+        $command = isset($argv[0]) ? Inflector::underscore($argv[0]) : null;
         $this->OptionParser = $this->getOptionParser();
         try {
             list($this->params, $this->args) = $this->OptionParser->parse($argv);
