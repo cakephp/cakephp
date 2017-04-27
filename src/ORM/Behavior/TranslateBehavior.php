@@ -118,7 +118,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      */
     public function initialize(array $config)
     {
-        $this->_translationTable = $this->tableLocator()->get($this->_config['translationTable']);
+        $this->_translationTable = $this->getTableLocator()->get($this->_config['translationTable']);
 
         $this->setupFieldAssociations(
             $this->_config['fields'],
@@ -147,7 +147,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         $targetAlias = $this->_translationTable->getAlias();
         $alias = $this->_table->getAlias();
         $filter = $this->_config['onlyTranslated'];
-        $tableLocator = $this->tableLocator();
+        $tableLocator = $this->getTableLocator();
 
         foreach ($fields as $field) {
             $name = $alias . '_' . $field . '_translation';
