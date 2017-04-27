@@ -655,7 +655,7 @@ class Debugger
      *
      * @return string Returns the current format when getting.
      */
-    public static function getOutputAs()
+    public static function getOutputFormat()
     {
         return Debugger::getInstance()->_outputFormat;
     }
@@ -667,7 +667,7 @@ class Debugger
      * @return void
      * @throws \InvalidArgumentException When choosing a format that doesn't exist.
      */
-    public static function setOutputAs($format)
+    public static function setOutputFormat($format)
     {
         $self = Debugger::getInstance();
 
@@ -680,7 +680,7 @@ class Debugger
     /**
      * Get/Set the output format for Debugger error rendering.
      *
-     * @deprecated 3.5.0 Use getOutputAs()/setOutputAs() instead.
+     * @deprecated 3.5.0 Use getOutputFormat()/setOutputFormat() instead.
      * @param string|null $format The format you want errors to be output as.
      *   Leave null to get the current format.
      * @return string|null Returns null when setting. Returns the current format when getting.

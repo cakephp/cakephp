@@ -154,14 +154,14 @@ class DebuggerTest extends TestCase
     }
 
     /**
-     * Test that getOutputAs/setOutputAs works.
+     * Test that getOutputFormat/setOutputFormat works.
      *
      * @return void
      */
-    public function testGetSetOutputAs()
+    public function testGetSetOutputFormat()
     {
-        Debugger::setOutputAs('html');
-        $this->assertEquals('html', Debugger::getOutputAs());
+        Debugger::setOutputFormat('html');
+        $this->assertEquals('html', Debugger::getOutputFormat());
     }
 
     /**
@@ -172,7 +172,7 @@ class DebuggerTest extends TestCase
      */
     public function testSetOutputAsException()
     {
-        Debugger::setOutputAs('Invalid junk');
+        Debugger::setOutputFormat('Invalid junk');
     }
 
     /**
