@@ -18,6 +18,7 @@ use Cake\Routing\Exception\DuplicateNamedRouteException;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Route\Route;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 
 /**
  * Contains a collection of routes.
@@ -57,6 +58,20 @@ class RouteCollection
      * @var array
      */
     protected $_paths = [];
+
+    /**
+     * A map of middleware names and the related objects.
+     *
+     * @var array
+     */
+    protected $_middleware = [];
+
+    /**
+     * A map of paths and the list of applicable middleware.
+     *
+     * @var array
+     */
+    protected $_middlewarePaths = [];
 
     /**
      * Route extensions
@@ -362,5 +377,93 @@ class RouteCollection
         }
 
         return $this->_extensions = $extensions;
+    }
+
+    /**
+     * Register a middleware with the RouteCollection.
+     *
+     * Once middleware has been registered, it can be applied to the current routing
+     * scope or any child scopes that share the same RoutingCollection.
+     *
+     * @param string $name The name of the middleware. Used when applying middleware to a scope.
+     * @param callable $middleware The middleware object to register.
+     * @return $this
+     */
+    public function registerMiddleware($name, callable $middleware)
+    {
+        if (is_string($middleware)) {
+            throw new RuntimeException("The '$name' middleware is not a callable object.");
+        }
+        $this->_middleware[$name] = $middleware;
+
+        return $this;
+    }
+
+    /**
+     * Check if the named middleware has been registered.
+     *
+     * @param string $name The name of the middleware to check.
+     * @return bool
+     */
+    public function hasMiddleware($name)
+    {
+        return isset($this->_middleware[$name]);
+    }
+
+    /**
+     * Apply a registered middleware(s) for the provided path
+     *
+     * @param string $path The URL path to register middleware for.
+     * @param string[] $middleware The middleware names to add for the path.
+     * @return $this
+     */
+    public function applyMiddleware($path, array $middleware)
+    {
+        foreach ($middleware as $name) {
+            if (!$this->hasMiddleware($name)) {
+                $message = "Cannot apply '$name' middleware to path '$path'. It has not been registered.";
+                throw new RuntimeException($message);
+            }
+        }
+        // Matches route element pattern in Cake\Routing\Route
+        $path = '#^' . preg_quote($path, '#') . '#';
+        $path = preg_replace('/\\\\:([a-z0-9-_]+(?<![-_]))/i', '[^/]+', $path);
+
+        if (!isset($this->_middlewarePaths[$path])) {
+            $this->_middlewarePaths[$path] = [];
+        }
+        $this->_middlewarePaths[$path] = array_merge($this->_middlewarePaths[$path], $middleware);
+
+        return $this;
+    }
+
+    /**
+     * Get an array of middleware that matches the provided URL.
+     *
+     * All middleware lists that match the URL will be merged together from shortest
+     * path to longest path. If a middleware would be added to the set more than
+     * once because it is connected to multiple path substrings match, it will only
+     * be added once at its first occurrence.
+     *
+     * @param string $needle The URL path to find middleware for.
+     * @return array
+     */
+    public function getMatchingMiddleware($needle)
+    {
+        $matching = [];
+        foreach ($this->_middlewarePaths as $pattern => $middleware) {
+            if (preg_match($pattern, $needle)) {
+                $matching = array_merge($matching, $middleware);
+            }
+        }
+
+        $resolved = [];
+        foreach ($matching as $name) {
+            if (!isset($resolved[$name])) {
+                $resolved[$name] = $this->_middleware[$name];
+            }
+        }
+
+        return array_values($resolved);
     }
 }

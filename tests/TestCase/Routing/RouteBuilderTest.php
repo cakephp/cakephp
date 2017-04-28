@@ -21,6 +21,7 @@ use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\Route\RedirectRoute;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
+use stdClass;
 
 /**
  * RouteBuilder test case
@@ -777,5 +778,68 @@ class RouteBuilderTest extends TestCase
         $all = $this->collection->named();
         $this->assertArrayHasKey('api:v1:ping', $all);
         $this->assertArrayHasKey('web:pong', $all);
+    }
+
+    /**
+     * Test adding middleware to the collection.
+     *
+     * @return void
+     */
+    public function testRegisterMiddleware()
+    {
+        $func = function () {
+        };
+        $routes = new RouteBuilder($this->collection, '/api');
+        $result = $routes->registerMiddleware('test', $func);
+
+        $this->assertSame($result, $routes);
+        $this->assertTrue($this->collection->hasMiddleware('test'));
+    }
+
+    /**
+     * Test registering invalid middleware
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage The 'bad' middleware is not a callable object.
+     * @return void
+     */
+    public function testRegisterMiddlewareString()
+    {
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->registerMiddleware('bad', 'strlen');
+    }
+
+    /**
+     * Test applying middleware to a scope when it doesn't exist
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Cannot apply 'bad' middleware to path '/api'. It has not been registered.
+     * @return void
+     */
+    public function testApplyMiddlewareInvalidName()
+    {
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->applyMiddleware('bad');
+    }
+
+    /**
+     * Test applying middleware to a scope
+     *
+     * @return void
+     */
+    public function testApplyMiddleware()
+    {
+        $func = function () {
+        };
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->registerMiddleware('test', $func)
+            ->registerMiddleware('test2', $func);
+        $result = $routes->applyMiddleware('test', 'test2');
+
+        $this->assertSame($result, $routes);
+        $this->assertEquals(
+            [$func, $func],
+            $this->collection->getMatchingMiddleware('/api/v1/ping')
+        );
     }
 }
