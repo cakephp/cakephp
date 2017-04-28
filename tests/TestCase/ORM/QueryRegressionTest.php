@@ -92,6 +92,32 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
+     * Tests that eagerloading associations with aliased fields works.
+     *
+     * @return void
+     */
+    public function testEagerLoadingAliasedAssociationFields()
+    {
+        $this->loadFixtures('Articles', 'Authors');
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors', [
+            'foreignKey' => 'author_id'
+        ]);
+        $result = $table->find()
+            ->contain(['Authors' => [
+                'fields' => [
+                    'id',
+                    'Authors__aliased_name' => 'name'
+                ]
+            ]])
+            ->where(['Articles.id' => 1])
+            ->first();
+        $this->assertInstanceOf(EntityInterface::class, $result);
+        $this->assertInstanceOf(EntityInterface::class, $result->author);
+        $this->assertSame('mariano', $result->author->aliased_name);
+    }
+
+    /**
      * Tests that eagerloading and hydration works for associations that have
      * different aliases in the association and targetTable
      *
