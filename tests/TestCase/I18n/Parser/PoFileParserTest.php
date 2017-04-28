@@ -37,7 +37,11 @@ class PoFileParserTest extends TestCase
         $messages = $parser->parse($file);
         $this->assertCount(5, $messages);
         $expected = [
-            'Plural Rule 1' => 'Plural Rule 1 (translated)',
+            'Plural Rule 1' => [
+                '_context' => [
+                    '' => 'Plural Rule 1 (translated)',
+                ],
+            ],
             '%d = 1' => [
                 '_context' => [
                     'This is the context' => 'First Context trasnlation',
@@ -52,14 +56,22 @@ class PoFileParserTest extends TestCase
                     ]
                 ]
             ],
-            '%-5d = 1' => '%-5d = 1 (translated)',
+            '%-5d = 1' => [
+                '_context' => [
+                    '' => '%-5d = 1 (translated)',
+                ],
+            ],
             '%-5d = 0 or > 1' => [
-                0 => '%-5d = 1 (translated)',
-                1 => '',
-                2 => '',
-                3 => '',
-                4 => '%-5d = 0 or > 1 (translated)'
-            ]
+                '_context' => [
+                    '' => [
+                        0 => '%-5d = 1 (translated)',
+                        1 => '',
+                        2 => '',
+                        3 => '',
+                        4 => '%-5d = 0 or > 1 (translated)'
+                    ],
+                ],
+            ],
         ];
         $this->assertEquals($expected, $messages);
     }
@@ -75,7 +87,7 @@ class PoFileParserTest extends TestCase
         $file = APP . 'Locale' . DS . 'en' . DS . 'default.po';
         $messages = $parser->parse($file);
         $this->assertCount(12, $messages);
-        $this->assertTextEquals("v\nsecond line", $messages["valid\nsecond line"]);
+        $this->assertTextEquals("v\nsecond line", $messages["valid\nsecond line"]['_context']['']);
     }
 
     /**
@@ -89,7 +101,7 @@ class PoFileParserTest extends TestCase
         $file = APP . 'Locale' . DS . 'en' . DS . 'default.po';
         $messages = $parser->parse($file);
 
-        $this->assertTextEquals('this is a "quoted string" (translated)', $messages['this is a "quoted string"']);
+        $this->assertTextEquals('this is a "quoted string" (translated)', $messages['this is a "quoted string"']['_context']['']);
     }
 
     /**
@@ -113,7 +125,7 @@ class PoFileParserTest extends TestCase
 
             return $package;
         });
-        $this->assertTextEquals('En cours', $messages['Pending']);
-        $this->assertTextEquals('En resolved', $messages['Resolved']);
+        $this->assertTextEquals('En cours', $messages['Pending']['_context']['']);
+        $this->assertTextEquals('En resolved', $messages['Resolved']['_context']['']);
     }
 }
