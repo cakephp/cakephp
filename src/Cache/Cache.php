@@ -121,7 +121,8 @@ class Cache
     }
 
     /**
-     * Returns the Cache Registry instance used for creating and using cache adapters.
+     * Sets the Cache Registry instance used for creating and using cache adapters.
+     *
      * Also allows for injecting of a new registry instance.
      *
      * @param \Cake\Core\ObjectRegistry $registry Injectable registry object.
@@ -136,9 +137,9 @@ class Cache
      * Returns the Cache Registry instance used for creating and using cache adapters.
      * Also allows for injecting of a new registry instance.
      *
-     * @deprecated Deprecated since 3.5. Use getRegistry() and setRegistry() instead.
      * @param \Cake\Core\ObjectRegistry|null $registry Injectable registry object.
      * @return \Cake\Core\ObjectRegistry
+     * @deprecated Deprecated since 3.5. Use getRegistry() and setRegistry() instead.
      */
     public static function registry(ObjectRegistry $registry = null)
     {
