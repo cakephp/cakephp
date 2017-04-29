@@ -14,6 +14,7 @@
  */
 namespace Cake\Routing\Middleware;
 
+use Cake\Http\Runner;
 use Cake\Routing\Exception\RedirectException;
 use Cake\Routing\Router;
 use Psr\Http\Message\ResponseInterface;
@@ -55,7 +56,14 @@ class RoutingMiddleware
                 $response->getHeaders()
             );
         }
+        $middleware = Router::getMatchingMiddleware($request->getUri()->getPath());
+        if ($middleware) {
+            $middleware->add($next);
+            $runner = new Runner();
 
-        return $next($request, $response);
+            return $runner->run($middleware, $request, $response);
+        } else {
+            return $next($request, $response);
+        }
     }
 }
