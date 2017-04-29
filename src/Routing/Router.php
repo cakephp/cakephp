@@ -1074,6 +1074,12 @@ class Router
         return static::$_collection->routes();
     }
 
+    /**
+     * Get a MiddlewareQueue of middleware that matches the provided path.
+     *
+     * @param string $path The URL path to match for.
+     * @return \Cake\Http\MiddlewareQueue|null Either a queue or null if there are no matching middleware.
+     */
     public static function getMatchingMiddleware($path)
     {
         if (!static::$initialized) {
