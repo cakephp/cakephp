@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Routing;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
@@ -3349,6 +3350,30 @@ class RouterTest extends TestCase
     public function testSetRequestContextInvalid()
     {
         Router::setRequestContext(new \stdClass);
+    }
+
+    /**
+     * Test getting path specific middleware.
+     *
+     * @return void
+     */
+    public function testGetMatchingMiddleware()
+    {
+        Router::scope('/', function ($routes) {
+            $routes->connect('/articles', ['controller' => 'Articles']);
+            $routes->registerMiddleware('noop', function () {
+            });
+        });
+        Router::scope('/api/v1', function ($routes) {
+            $routes->applyMiddleware('noop');
+            $routes->connect('/articles', ['controller' => 'Articles', 'prefix' => 'Api']);
+        });
+        $result = Router::getMatchingMiddleware('/articles');
+        $this->assertNull($result);
+
+        $result = Router::getMatchingMiddleware('/api/v1/articles');
+        $this->assertInstanceOf(MiddlewareQueue::class, $result);
+        $this->assertCount(1, $result);
     }
 
     /**
