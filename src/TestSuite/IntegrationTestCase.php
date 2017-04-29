@@ -763,7 +763,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!empty($result)) {
             $message .= ': ' . $result;
         }
-        $this->assertTrue(empty($result), $message);
+        $this->assertEmpty($result, $message);
     }
 
     /**

@@ -356,6 +356,9 @@ class Marshaller
      * @param array $data The data to convert into entities.
      * @param array $options List of options.
      * @return array An array of built entities.
+     * @throws \BadMethodCallException
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     protected function _belongsToMany(Association $assoc, array $data, $options = [])
     {
@@ -379,7 +382,7 @@ class Marshaller
                 if (count($keys) === $primaryCount) {
                     $rowConditions = [];
                     foreach ($keys as $key => $value) {
-                        $rowConditions[][$target->aliasfield($key)] = $value;
+                        $rowConditions[][$target->aliasField($key)] = $value;
                     }
 
                     if ($forceNew && !$target->exists($rowConditions)) {

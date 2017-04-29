@@ -106,6 +106,7 @@ class File
     public function create()
     {
         $dir = $this->Folder->pwd();
+
         if (is_dir($dir) && is_writable($dir) && !$this->exists()) {
             if (touch($this->path)) {
                 return true;
@@ -127,10 +128,8 @@ class File
         if (!$force && is_resource($this->handle)) {
             return true;
         }
-        if ($this->exists() === false) {
-            if ($this->create() === false) {
-                return false;
-            }
+        if ($this->exists() === false && $this->create() === false) {
+            return false;
         }
 
         $this->handle = fopen($this->path, $mode);
@@ -227,10 +226,8 @@ class File
     {
         $success = false;
         if ($this->open($mode, $force) === true) {
-            if ($this->lock !== null) {
-                if (flock($this->handle, LOCK_EX) === false) {
-                    return false;
-                }
+            if ($this->lock !== null && flock($this->handle, LOCK_EX) === false) {
+                return false;
             }
 
             if (fwrite($this->handle, $data) !== false) {
@@ -620,10 +617,8 @@ class File
             return false;
         }
 
-        if ($this->lock !== null) {
-            if (flock($this->handle, LOCK_EX) === false) {
-                return false;
-            }
+        if ($this->lock !== null && flock($this->handle, LOCK_EX) === false) {
+            return false;
         }
 
         $replaced = $this->write(str_replace($search, $replace, $this->read()), 'w', true);

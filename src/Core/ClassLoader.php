@@ -62,7 +62,7 @@ class ClassLoader
         if ($prepend) {
             array_unshift($this->_prefixes[$prefix], $baseDir);
         } else {
-            array_push($this->_prefixes[$prefix], $baseDir);
+            $this->_prefixes[$prefix][] = $baseDir;
         }
     }
 

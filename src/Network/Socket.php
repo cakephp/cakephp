@@ -317,10 +317,8 @@ class Socket
      */
     public function write($data)
     {
-        if (!$this->connected) {
-            if (!$this->connect()) {
-                return false;
-            }
+        if (!$this->connected && !$this->connect()) {
+            return false;
         }
         $totalBytes = strlen($data);
         $written = 0;
@@ -344,10 +342,8 @@ class Socket
      */
     public function read($length = 1024)
     {
-        if (!$this->connected) {
-            if (!$this->connect()) {
-                return false;
-            }
+        if (!$this->connected && !$this->connect()) {
+            return false;
         }
 
         if (!feof($this->connection)) {
