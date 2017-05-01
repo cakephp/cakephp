@@ -184,10 +184,12 @@ class RoutingMiddlewareTest extends TestCase
         Router::scope('/api', function ($routes) {
             $routes->registerMiddleware('first', function ($req, $res, $next) {
                 $this->log[] = 'first';
+
                 return $next($req, $res);
             });
             $routes->registerMiddleware('second', function ($req, $res, $next) {
                 $this->log[] = 'second';
+
                 return $next($req, $res);
             });
             $routes->connect('/ping', ['controller' => 'Pings']);
@@ -202,6 +204,7 @@ class RoutingMiddlewareTest extends TestCase
         $response = new Response();
         $next = function ($req, $res) {
             $this->log[] = 'last';
+
             return $res;
         };
         $middleware = new RoutingMiddleware();
@@ -221,17 +224,19 @@ class RoutingMiddlewareTest extends TestCase
         Router::scope('/api', function ($routes) {
             $routes->registerMiddleware('first', function ($req, $res, $next) {
                 $this->log[] = 'first';
+
                 return $res;
             });
             $routes->registerMiddleware('second', function ($req, $res, $next) {
                 $this->log[] = 'second';
+
                 return $next($req, $res);
             });
 
             $routes->applyMiddleware('second');
             $routes->connect('/ping', ['controller' => 'Pings']);
 
-            $routes->scope('/v1', function ($routes ) {
+            $routes->scope('/v1', function ($routes) {
                 $routes->applyMiddleware('first');
                 $routes->connect('/articles', ['controller' => 'Articles']);
             });

@@ -15,8 +15,8 @@
 namespace Cake\Routing;
 
 use Cake\Core\Configure;
-use Cake\Http\ServerRequest;
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -1090,6 +1090,7 @@ class Router
         if ($middleware) {
             return new MiddlewareQueue($middleware);
         }
+
         return null;
     }
 
