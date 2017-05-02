@@ -110,6 +110,9 @@ trait RequestActionTrait
             unset($extra[$index]);
         }
         $extra += ['autoRender' => 0, 'return' => 1, 'bare' => 1, 'requested' => 1];
+        if (isset($this->request->params['_csrfToken'])) {
+            $extra += ['_csrfToken' => $this->request->params['_csrfToken']];
+        }
 
         $baseUrl = Configure::read('App.fullBaseUrl');
         if (is_string($url) && strpos($url, $baseUrl) === 0) {
