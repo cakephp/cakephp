@@ -2848,4 +2848,95 @@ class PaginatorHelperTest extends TestCase
 
         $this->assertSame($expected, $this->View->fetch('meta'));
     }
+
+    /**
+     * test the limitControl() method
+     *
+     * @return void
+     */
+    public function testLimitControl()
+    {
+        $out = $this->Paginator->limitControl([1 => 1]);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()']],
+            ['option' => ['value' => '1']],
+            '1',
+            '/option',
+            '/select',
+            '/div',
+            '/form'
+        ];
+        $this->assertHtml($expected, $out);
+
+        $out = $this->Paginator->limitControl([1 => 1, 5 => 5], null, ['class' => 'form-control']);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()', 'class' => 'form-control']],
+            ['option' => ['value' => '1']],
+            '1',
+            '/option',
+            ['option' => ['value' => '5']],
+            '5',
+            '/option',
+            '/select',
+            '/div',
+            '/form'
+        ];
+        $this->assertHtml($expected, $out);
+
+        $out = $this->Paginator->limitControl([], null, ['class' => 'form-control']);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()', 'class' => 'form-control']],
+            ['option' => ['value' => '20']],
+            '20',
+            '/option',
+            ['option' => ['value' => '50']],
+            '50',
+            '/option',
+            ['option' => ['value' => '100']],
+            '100',
+            '/option',
+            '/select',
+            '/div',
+            '/form'
+        ];
+        $this->assertHtml($expected, $out);
+
+        $out = $this->Paginator->limitControl();
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()']],
+            ['option' => ['value' => '20']],
+            '20',
+            '/option',
+            ['option' => ['value' => '50']],
+            '50',
+            '/option',
+            ['option' => ['value' => '100']],
+            '100',
+            '/option',
+            '/select',
+            '/div',
+            '/form'
+        ];
+        $this->assertHtml($expected, $out);
+    }
 }
