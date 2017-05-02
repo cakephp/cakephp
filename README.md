@@ -1,11 +1,28 @@
-# CakePHP Framework
-
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
-[![Build Status](https://img.shields.io/travis/cakephp/cakephp/master.svg?style=flat-square)](https://travis-ci.org/cakephp/cakephp)
-[![Coverage Status](https://img.shields.io/codecov/c/github/cakephp/cakephp.svg?style=flat-square)](https://codecov.io/github/cakephp/cakephp)
-[![Code Consistency](https://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/grade.svg)](https://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/)
-[![Total Downloads](https://img.shields.io/packagist/dt/cakephp/cakephp.svg?style=flat-square)](https://packagist.org/packages/cakephp/cakephp)
-[![Latest Stable Version](https://img.shields.io/packagist/v/cakephp/cakephp.svg?style=flat-square&label=stable)](https://packagist.org/packages/cakephp/cakephp)
+<p align="center">
+  <a href="https://cakephp.org/" target="_blank" >
+    <img alt="CakePHP" src="https://cakephp.org/v2/img/logos/CakePHP_Logo.svg" width="400" />
+  </a>
+</p>
+<p align="center">
+    <a href="LICENSE.txt" target="_blank">
+        <img alt="Software License" src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square">
+    </a>
+    <a href="https://travis-ci.org/cakephp/cakephp" target="_blank">
+        <img alt="Build Status" src="https://img.shields.io/travis/cakephp/cakephp/master.svg?style=flat-square">
+    </a>
+    <a href="https://codecov.io/github/cakephp/cakephp" target="_blank">
+        <img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/cakephp/cakephp.svg?style=flat-square">
+    </a>
+    <a href="https://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/" target="_blank">
+        <img alt="Code Consistency" src="https://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/grade.svg">
+    </a>
+    <a href="https://packagist.org/packages/cakephp/cakephp" target="_blank">
+        <img alt="Total Downloads" src="https://img.shields.io/packagist/dt/cakephp/cakephp.svg?style=flat-square">
+    </a>
+    <a href="https://packagist.org/packages/cakephp/cakephp" target="_blank">
+        <img alt="Latest Stable Version" src="https://img.shields.io/packagist/v/cakephp/cakephp.svg?style=flat-square&label=stable">
+    </a>
+</p>
 
 [CakePHP](https://cakephp.org) is a rapid development framework for PHP which
 uses commonly known design patterns like Associative Data
