@@ -62,8 +62,7 @@ class RoutingMiddleware
             $runner = new Runner();
 
             return $runner->run($middleware, $request, $response);
-        } else {
-            return $next($request, $response);
         }
+        return $next($request, $response);
     }
 }
