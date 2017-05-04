@@ -328,6 +328,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
                 'model' => $model
             ])
             ->enableBufferedResults(false)
+            ->all()
             ->indexBy('field');
 
         $modified = [];
@@ -704,6 +705,6 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             $query->unionAll($q);
         }
 
-        return $query->combine('num', 'id')->toArray();
+        return $query->all()->combine('num', 'id')->toArray();
     }
 }
