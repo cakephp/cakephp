@@ -643,7 +643,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|null $name Name
      * @return $this
      */
-    public function setCc($email = null, $name = null)
+    public function setCc($email, $name = null)
     {
         return $this->_setEmail('_cc', $email, $name);
     }

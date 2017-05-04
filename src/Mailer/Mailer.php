@@ -98,7 +98,7 @@ use Cake\Mailer\Exception\MissingActionException;
  * @method array getReturnPath()
  * @method \Cake\Mailer\Email returnPath($email = null, $name = null)
  * @method \Cake\Mailer\Email addTo($email, $name = null)
- * @method \Cake\Mailer\Email setCc($email = null, $name = null)
+ * @method \Cake\Mailer\Email setCc($email, $name = null)
  * @method array getCc()
  * @method \Cake\Mailer\Email cc($email = null, $name = null)
  * @method \Cake\Mailer\Email addCc($email, $name = null)
