@@ -555,6 +555,25 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostEmptyForm method
+     *
+     * Test that validatePost fails if empty form is submitted.
+     *
+     * @return void
+     * @triggers Controller.startup $this->Controller
+     */
+    public function testValidatePostEmptyForm()
+    {
+        $this->Controller->request = $this->Controller->request
+            ->withEnv('REQUEST_METHOD', 'POST')
+            ->withParsedBody([]);
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->Security->startup($event);
+        $result = $this->validatePost('AuthSecurityException', '\'_Token\' was not found in request data.');
+        $this->assertFalse($result, 'validatePost passed when empty form is submitted');
+    }
+
+    /**
      * testValidatePostObjectDeserialize
      *
      * Test that objects can't be passed into the serialized string. This was a vector for RFI and LFI
