@@ -119,7 +119,6 @@ class Translator implements TranslatorInterface
     public function translate($key, array $tokensValues = [])
     {
         $message = $this->getMessage($key);
-
         if (!$message) {
             // Fallback to the message key
             $message = $key;
@@ -135,7 +134,9 @@ class Translator implements TranslatorInterface
                 $message = current($message['_context']);
             } elseif (!isset($message['_context'][$context])) {
                 $message = $key;
-            } elseif (!isset($message['_context'][$context])) {
+            } elseif (is_string($message['_context'][$context]) &&
+                strlen($message['_context'][$context]) === 0
+            ) {
                 $message = $key;
             } else {
                 $message = $message['_context'][$context];

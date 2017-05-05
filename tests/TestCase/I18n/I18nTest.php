@@ -441,7 +441,8 @@ class I18nTest extends TestCase
             return $package;
         });
 
-        $this->assertEquals('', __x('character', 'letter'));
+        $this->assertEquals('letter', __x('character', 'letter'));
+        $this->assertEquals('letter', __x('unknown', 'letter'));
     }
 
     /**
