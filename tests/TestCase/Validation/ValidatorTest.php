@@ -298,6 +298,28 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Test that validation on a certain condition generate errors
+     *
+     * @return void
+     */
+    public function testErrorsWithPresenceRequiredOnCreate()
+    {
+        $validator = new Validator;
+        $validator->requirePresence('id', 'update');
+        $validator->allowEmpty('id', 'create');
+        $validator->requirePresence('title');
+
+        $data = [
+            'title' => 'Example title'
+        ];
+
+        $expected = [];
+        $result = $validator->errors($data);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Test that errors() can work with nested data.
      *
      * @return void
