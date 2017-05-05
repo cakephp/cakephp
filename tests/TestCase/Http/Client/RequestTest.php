@@ -63,6 +63,26 @@ class RequestTest extends TestCase
     }
 
     /**
+     * test nested array data for encoding of brackets, header and constructor
+     *
+     * @return void
+     */
+    public function testConstructorArrayNestedData()
+    {
+        $headers = [
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer valid-token',
+        ];
+        $data = ['a' => 'b', 'c' => ['foo', 'bar']];
+        $request = new Request('http://example.com', 'POST', $headers, $data);
+
+        $this->assertEquals('http://example.com', $request->url());
+        $this->assertEquals('POST', $request->getMethod());
+        $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaderLine('Content-Type'));
+        $this->assertEquals('a=b&c%5B0%5D=foo&c%5B1%5D=bar', $request->body());
+    }
+
+    /**
      * test url method
      *
      * @return void
