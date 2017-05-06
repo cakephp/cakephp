@@ -227,7 +227,7 @@ class SecurityComponent extends Component {
 	public function startup(Controller $controller) {
 		$this->request = $controller->request;
 		$this->_action = $controller->request->params['action'];
-		$hasData = !empty($controller->request->data);
+		$hasData = ($controller->request->data || $controller->request->is(array('put', 'post', 'delete', 'patch')));
 		try {
 			$this->_methodsRequired($controller);
 			$this->_secureRequired($controller);
@@ -487,9 +487,6 @@ class SecurityComponent extends Component {
  * @return bool true if submitted form is valid
  */
 	protected function _validatePost(Controller $controller) {
-		if (empty($controller->request->data)) {
-			return true;
-		}
 		$token = $this->_validToken($controller);
 		$hashParts = $this->_hashParts($controller);
 		$check = Security::hash(implode('', $hashParts), 'sha1');
