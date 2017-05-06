@@ -69,6 +69,5 @@ class RoutingMiddleware
         $runner = new Runner();
 
         return $runner->run($middleware, $request, $response);
-
     }
 }
