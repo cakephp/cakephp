@@ -3103,4 +3103,18 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::imageWidth($upload, '>', 2000));
         $this->assertFalse(Validation::imageWidth($upload, '==', 3000));
     }
+
+    /**
+     * Test hexColor
+     */
+    public function testHexColor()
+    {
+        $this->assertTrue(Validation::hexColor('#F01234'));
+        $this->assertTrue(Validation::hexColor('#F56789'));
+        $this->assertTrue(Validation::hexColor('#abcdef'));
+        $this->assertTrue(Validation::hexColor('#ABCDEF'));
+
+        $this->assertFalse(Validation::hexColor('#fff'));
+        $this->assertFalse(Validation::hexColor('ffffff'));
+    }
 }
