@@ -25,6 +25,8 @@ use Zend\Diactoros\ServerRequestFactory;
  */
 class RoutingMiddlewareTest extends TestCase
 {
+    protected $log = [];
+
     /**
      * Setup method
      *
@@ -35,6 +37,7 @@ class RoutingMiddlewareTest extends TestCase
         parent::setUp();
         Router::reload();
         Router::connect('/articles', ['controller' => 'Articles', 'action' => 'index']);
+        $this->log = [];
     }
 
     /**
@@ -168,5 +171,89 @@ class RoutingMiddlewareTest extends TestCase
         };
         $middleware = new RoutingMiddleware();
         $middleware($request, $response, $next);
+    }
+
+    /**
+     * Test invoking simple scoped middleware
+     *
+     * @return void
+     */
+    public function testInvokeScopedMiddleware()
+    {
+        $this->counter = 0;
+        Router::scope('/api', function ($routes) {
+            $routes->registerMiddleware('first', function ($req, $res, $next) {
+                $this->log[] = 'first';
+
+                return $next($req, $res);
+            });
+            $routes->registerMiddleware('second', function ($req, $res, $next) {
+                $this->log[] = 'second';
+
+                return $next($req, $res);
+            });
+            $routes->connect('/ping', ['controller' => 'Pings']);
+            // Connect middleware in reverse to test ordering.
+            $routes->applyMiddleware('second', 'first');
+        });
+
+        $request = ServerRequestFactory::fromGlobals([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/ping'
+        ]);
+        $response = new Response();
+        $next = function ($req, $res) {
+            $this->log[] = 'last';
+
+            return $res;
+        };
+        $middleware = new RoutingMiddleware();
+        $result = $middleware($request, $response, $next);
+        $this->assertSame($response, $result, 'Should return result');
+        $this->assertSame(['second', 'first', 'last'], $this->log);
+    }
+
+    /**
+     * Test control flow in scoped middleware.
+     *
+     * @return void
+     */
+    public function testInvokeScopedMiddlewareReturnResponse()
+    {
+        $this->counter = 0;
+        Router::scope('/api', function ($routes) {
+            $routes->registerMiddleware('first', function ($req, $res, $next) {
+                $this->log[] = 'first';
+
+                return $res;
+            });
+            $routes->registerMiddleware('second', function ($req, $res, $next) {
+                $this->log[] = 'second';
+
+                return $next($req, $res);
+            });
+
+            $routes->applyMiddleware('second');
+            $routes->connect('/ping', ['controller' => 'Pings']);
+
+            $routes->scope('/v1', function ($routes) {
+                $routes->applyMiddleware('first');
+                $routes->connect('/articles', ['controller' => 'Articles']);
+            });
+        });
+
+        $request = ServerRequestFactory::fromGlobals([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/v1/articles'
+        ]);
+        $response = new Response();
+        $next = function ($req, $res) {
+            $this->fail('Should not be invoked as second returns a response');
+        };
+        $middleware = new RoutingMiddleware();
+        $result = $middleware($request, $response, $next);
+
+        $this->assertSame($response, $result, 'Should return result');
+        $this->assertSame(['second', 'first'], $this->log);
     }
 }

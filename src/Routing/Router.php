@@ -15,6 +15,7 @@
 namespace Cake\Routing;
 
 use Cake\Core\Configure;
+use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
@@ -1071,6 +1072,26 @@ class Router
         }
 
         return static::$_collection->routes();
+    }
+
+    /**
+     * Get a MiddlewareQueue of middleware that matches the provided path.
+     *
+     * @param string $path The URL path to match for.
+     * @return \Cake\Http\MiddlewareQueue|null Either a queue or null if there are no matching middleware.
+     */
+    public static function getMatchingMiddleware($path)
+    {
+        if (!static::$initialized) {
+            static::_loadRoutes();
+        }
+
+        $middleware = static::$_collection->getMatchingMiddleware($path);
+        if ($middleware) {
+            return new MiddlewareQueue($middleware);
+        }
+
+        return null;
     }
 
     /**

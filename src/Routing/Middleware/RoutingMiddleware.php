@@ -14,6 +14,7 @@
  */
 namespace Cake\Routing\Middleware;
 
+use Cake\Http\Runner;
 use Cake\Routing\Exception\RedirectException;
 use Cake\Routing\Router;
 use Psr\Http\Message\ResponseInterface;
@@ -28,6 +29,11 @@ class RoutingMiddleware
 {
 
     /**
+     * Apply routing and update the request.
+     *
+     * Any route/path specific middleware will be wrapped around $next and then the new middleware stack
+     * will be invoked.
+     *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @param \Psr\Http\Message\ResponseInterface $response The response.
      * @param callable $next The next middleware to call.
@@ -55,7 +61,13 @@ class RoutingMiddleware
                 $response->getHeaders()
             );
         }
+        $middleware = Router::getMatchingMiddleware($request->getUri()->getPath());
+        if (!$middleware) {
+            return $next($request, $response);
+        }
+        $middleware->add($next);
+        $runner = new Runner();
 
-        return $next($request, $response);
+        return $runner->run($middleware, $request, $response);
     }
 }
