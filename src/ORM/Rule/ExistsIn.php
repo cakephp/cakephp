@@ -35,7 +35,7 @@ class ExistsIn
     /**
      * The repository where the field will be looked for
      *
-     * @var \Cake\Datasource\RepositoryInterface
+     * @var \Cake\Datasource\RepositoryInterface|\Cake\ORM\Association
      */
     protected $_repository;
 
