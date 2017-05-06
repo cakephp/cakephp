@@ -818,7 +818,7 @@ class ConsoleOptionParser
             $value = $option->defaultValue();
         }
         if ($option->validChoice($value)) {
-            if ($option->acceptsMultiple($value)) {
+            if ($option->acceptsMultiple()) {
                 $params[$name][] = $value;
             } else {
                 $params[$name] = $value;

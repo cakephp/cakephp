@@ -20,6 +20,7 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
+use Cake\ORM\Association\BelongsToMany;
 use RuntimeException;
 
 /**
@@ -158,7 +159,7 @@ class Marshaller
      *
      * @param array $data The data to hydrate.
      * @param array $options List of options
-     * @return \Cake\Datasource\EntityInterface
+     * @return \Cake\ORM\Entity
      * @see \Cake\ORM\Table::newEntity()
      * @see \Cake\ORM\Entity::$_accessible
      */
@@ -168,7 +169,7 @@ class Marshaller
 
         $primaryKey = (array)$this->_table->getPrimaryKey();
         $entityClass = $this->_table->getEntityClass();
-        /* @var \Cake\Datasource\EntityInterface $entity */
+        /* @var \Cake\ORM\Entity $entity */
         $entity = new $entityClass();
         $entity->setSource($this->_table->getRegistryAlias());
 
@@ -352,12 +353,12 @@ class Marshaller
      * Builds the related entities and handles the special casing
      * for junction table entities.
      *
-     * @param \Cake\ORM\Association $assoc The association to marshal.
+     * @param \Cake\ORM\BelongsToMany $assoc The association to marshal.
      * @param array $data The data to convert into entities.
      * @param array $options List of options.
      * @return array An array of built entities.
      */
-    protected function _belongsToMany(Association $assoc, array $data, $options = [])
+    protected function _belongsToMany(BelongsToMany $assoc, array $data, $options = [])
     {
         $associated = isset($options['associated']) ? $options['associated'] : [];
         $forceNew = isset($options['forceNew']) ? $options['forceNew'] : false;
@@ -379,7 +380,7 @@ class Marshaller
                 if (count($keys) === $primaryCount) {
                     $rowConditions = [];
                     foreach ($keys as $key => $value) {
-                        $rowConditions[][$target->aliasfield($key)] = $value;
+                        $rowConditions[][$target->aliasField($key)] = $value;
                     }
 
                     if ($forceNew && !$target->exists($rowConditions)) {
@@ -761,7 +762,7 @@ class Marshaller
      * Merge the special _joinData property into the entity set.
      *
      * @param \Cake\Datasource\EntityInterface $original The original entity
-     * @param \Cake\ORM\Association $assoc The association to marshall
+     * @param \Cake\ORM\Association\BelongsToMany $assoc The association to marshall
      * @param array $value The data to hydrate
      * @param array $options List of options.
      * @return array An array of entities

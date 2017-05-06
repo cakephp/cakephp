@@ -46,7 +46,7 @@ class DependentDeleteHelper
         $conditions = array_combine($foreignKey, $entity->extract($bindingKey));
 
         if ($association->getCascadeCallbacks()) {
-            foreach ($association->find()->where($conditions)->toList() as $related) {
+            foreach ($association->find()->where($conditions)->all()->toList() as $related) {
                 $table->delete($related, $options);
             }
 

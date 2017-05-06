@@ -599,7 +599,7 @@ class BelongsToMany extends Association
         $table = $this->junction();
         $hasMany = $this->getSource()->association($table->getAlias());
         if ($this->_cascadeCallbacks) {
-            foreach ($hasMany->find('all')->where($conditions)->toList() as $related) {
+            foreach ($hasMany->find('all')->where($conditions)->all()->toList() as $related) {
                 $table->delete($related, $options);
             }
 
