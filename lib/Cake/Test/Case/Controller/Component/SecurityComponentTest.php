@@ -279,6 +279,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requirePost(array('posted'));
+		$this->Controller->Security->validatePost = false;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
@@ -292,6 +293,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requirePost('posted');
+		$this->Controller->Security->validatePost = false;
 		$this->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
@@ -306,6 +308,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireSecure(array('posted'));
+		$this->Controller->Security->validatePost = false;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
@@ -394,6 +397,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$this->Controller->request['action'] = 'getted';
 		$this->Controller->Security->requirePost('posted');
+		$this->Controller->Security->validatePost = false;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
@@ -407,6 +411,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->request['action'] = 'getted';
 		$this->Controller->Security->requireGet(array('getted'));
+		$this->Controller->Security->validatePost = false;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
@@ -420,6 +425,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$this->Controller->request['action'] = 'getted';
 		$this->Controller->Security->requireGet('getted');
+		$this->Controller->Security->validatePost = false;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
@@ -433,6 +439,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->request['action'] = 'posted';
 		$this->Security->requireGet('getted');
+		$this->Security->validatePost = false;
 		$this->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
@@ -446,6 +453,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->request['action'] = 'putted';
 		$this->Controller->Security->requirePut(array('putted'));
+		$this->Controller->Security->validatePost = false;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
@@ -459,6 +467,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$this->Controller->request['action'] = 'putted';
 		$this->Controller->Security->requirePut('putted');
+		$this->Controller->Security->validatePost = false;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
@@ -472,6 +481,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requirePut('putted');
+		$this->Controller->Security->validatePost = false;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
@@ -485,6 +495,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->request['action'] = 'deleted';
 		$this->Controller->Security->requireDelete(array('deleted', 'other_method'));
+		$this->Controller->Security->validatePost = false;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
@@ -498,6 +509,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'DELETE';
 		$this->Controller->request['action'] = 'deleted';
 		$this->Controller->Security->requireDelete('deleted');
+		$this->Controller->Security->validatePost = false;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
@@ -511,6 +523,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireDelete('deleted');
+		$this->Controller->Security->validatePost = false;
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
@@ -604,6 +617,21 @@ class SecurityComponentTest extends CakeTestCase {
 		);
 		$result = $this->validatePost('AuthSecurityException', '\'_Token.fields\' was not found in request data.');
 		$this->assertFalse($result, 'validatePost passed when fields were missing. %s');
+	}
+
+/**
+ * testValidatePostEmptyForm method
+ *
+ * Test that validatePost fails if empty form is submitted.
+ *
+ * @return void
+ */
+	public function testValidatePostEmptyForm() {
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$this->Controller->request->data = array();
+		$this->Controller->Security->startup($this->Controller);
+		$result = $this->validatePost('AuthSecurityException', '\'_Token\' was not found in request data.');
+		$this->assertFalse($result, 'validatePost passed when empty form is submitted');
 	}
 
 /**
