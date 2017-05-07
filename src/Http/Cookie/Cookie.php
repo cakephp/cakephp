@@ -16,7 +16,6 @@ namespace Cake\Http\Cookie;
 use Cake\Chronos\Chronos;
 use Cake\Utility\Hash;
 use DateTimeImmutable;
-use DateTimeInterface;
 use DateTimezone;
 use InvalidArgumentException;
 use RuntimeException;
@@ -72,7 +71,7 @@ class Cookie implements CookieInterface
     /**
      * Expiration time
      *
-     * @var DateTimeInterface
+     * @var \DateTime|\DateTimeImmutable|null
      */
     protected $expiresAt;
 
@@ -108,13 +107,13 @@ class Cookie implements CookieInterface
      * Constructor
      *
      * The constructors args are similar to the native PHP `setcookie()` method.
-     * The only difference is the 3rd argument which excepts null or an object
-     * implementing \DateTimeInterface instead an integer.
+     * The only difference is the 3rd argument which excepts null or an
+     * DateTime or DateTimeImmutable object instead an integer.
      *
      * @link http://php.net/manual/en/function.setcookie.php
      * @param string $name Cookie name
      * @param string|array $value Value of the cookie
-     * @param \DateTimeInterface|null $expiresAt Expiration time and date
+     * @param \DateTime|\DateTimeImmutable|null $expiresAt Expiration time and date
      * @param string $path Path
      * @param string $domain Domain
      * @param bool $secure Is secure
@@ -123,7 +122,7 @@ class Cookie implements CookieInterface
     public function __construct(
         $name,
         $value = '',
-        DateTimeInterface $expiresAt = null,
+        $expiresAt = null,
         $path = '',
         $domain = '',
         $secure = false,
@@ -416,10 +415,10 @@ class Cookie implements CookieInterface
     /**
      * Create a cookie with an updated expiration date
      *
-     * @param \DateTimeInterface $dateTime Date time object
+     * @param \DateTime|\DateTimeImmutable $dateTime Date time object
      * @return static
      */
-    public function withExpiry(DateTimeInterface $dateTime)
+    public function withExpiry($dateTime)
     {
         $new = clone $this;
         $new->expiresAt = $dateTime->setTimezone(new DateTimezone('GMT'));
@@ -430,7 +429,7 @@ class Cookie implements CookieInterface
     /**
      * Get the current expiry time
      *
-     * @return DateTimeInterface|null Timestamp of expiry or null
+     * @return \DateTime|\DateTimeImmutable|null Timestamp of expiry or null
      */
     public function getExpiry()
     {
@@ -473,10 +472,10 @@ class Cookie implements CookieInterface
      *
      * Cookies without an expiration date always return false.
      *
-     * @param \DatetimeInterface $time The time to test against. Defaults to 'now' in UTC.
+     * @param \DateTime|\DateTimeImmutable $time The time to test against. Defaults to 'now' in UTC.
      * @return bool
      */
-    public function isExpired(DatetimeInterface $time = null)
+    public function isExpired($time = null)
     {
         $time = $time ?: new DateTimeImmutable('now', new DateTimezone('UTC'));
         if (!$this->expiresAt) {

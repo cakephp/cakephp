@@ -169,7 +169,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Connection instance
      *
-     * @var \Cake\Datasource\ConnectionInterface
+     * @var \Cake\Database\Connection
      */
     protected $_connection;
 
@@ -494,7 +494,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the connection instance.
      *
-     * @return \Cake\Datasource\ConnectionInterface
+     * @return \Cake\Database\Connection
      */
     public function getConnection()
     {

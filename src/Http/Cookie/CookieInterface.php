@@ -13,8 +13,6 @@
  */
 namespace Cake\Http\Cookie;
 
-use DateTimeInterface;
-
 /**
  * Cookie Interface
  */
@@ -100,7 +98,7 @@ interface CookieInterface
     /**
      * Get the current expiry time
      *
-     * @return DateTimeInterface|null Timestamp of expiry or null
+     * @return \DateTime|\DateTimeImmutable|null Timestamp of expiry or null
      */
     public function getExpiry();
 
@@ -124,10 +122,10 @@ interface CookieInterface
     /**
      * Create a cookie with an updated expiration date
      *
-     * @param DateTimeInterface $dateTime Date time object
+     * @param \DateTime|\DateTimeImmutable $dateTime Date time object
      * @return static
      */
-    public function withExpiry(DateTimeInterface $dateTime);
+    public function withExpiry($dateTime);
 
     /**
      * Create a new cookie that will virtually never expire.
@@ -150,10 +148,10 @@ interface CookieInterface
      *
      * Cookies without an expiration date always return false.
      *
-     * @param \DatetimeInterface $time The time to test against. Defaults to 'now' in UTC.
+     * @param \DateTime|\DateTimeImmutable $time The time to test against. Defaults to 'now' in UTC.
      * @return bool
      */
-    public function isExpired(DatetimeInterface $time = null);
+    public function isExpired($time = null);
 
     /**
      * Check if the cookie is HTTP only
