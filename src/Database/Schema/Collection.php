@@ -15,7 +15,7 @@
 namespace Cake\Database\Schema;
 
 use Cake\Database\Exception;
-use Cake\Datasource\ConnectionInterface;
+use Cake\Database\Connection;
 use PDOException;
 
 /**
@@ -30,7 +30,7 @@ class Collection
     /**
      * Connection object
      *
-     * @var \Cake\Datasource\ConnectionInterface
+     * @var \Cake\Database\Connection
      */
     protected $_connection;
 
@@ -44,9 +44,9 @@ class Collection
     /**
      * Constructor.
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection The connection instance.
+     * @param \Cake\Database\Connection $connection The connection instance.
      */
-    public function __construct(ConnectionInterface $connection)
+    public function __construct(Connection $connection)
     {
         $this->_connection = $connection;
         $this->_dialect = $connection->driver()->schemaDialect();
