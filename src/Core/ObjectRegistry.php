@@ -17,6 +17,7 @@ namespace Cake\Core;
 use ArrayIterator;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventListenerInterface;
+use Countable;
 use IteratorAggregate;
 use RuntimeException;
 
@@ -36,7 +37,7 @@ use RuntimeException;
  * @see \Cake\View\HelperRegistry
  * @see \Cake\Console\TaskRegistry
  */
-abstract class ObjectRegistry implements IteratorAggregate
+abstract class ObjectRegistry implements Countable, IteratorAggregate
 {
 
     /**
@@ -356,6 +357,16 @@ abstract class ObjectRegistry implements IteratorAggregate
     public function getIterator()
     {
         return new ArrayIterator($this->_loaded);
+    }
+
+    /**
+     * Returns the number of loaded objects.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->_loaded);
     }
 
     /**
