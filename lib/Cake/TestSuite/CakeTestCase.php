@@ -655,7 +655,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @deprecated 3.0.0 This is a compatibility wrapper for 1.x. It will be removed in 3.0.
  * @return void
  */
-	protected function expectException($name = 'Exception', $message = '') {
+	public function expectException($name = 'Exception', $message = '') {
 		$this->setExpectedException($name, $message);
 	}
 

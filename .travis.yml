@@ -32,6 +32,9 @@ matrix:
     - php: 7.0
       env: PHPCS=1
 
+    - php: 7.1
+      env: DB=mysql PHPUNIT=5.7.19
+
 
 before_script:
   - composer global require "phpunit/phpunit=$PHPUNIT"
