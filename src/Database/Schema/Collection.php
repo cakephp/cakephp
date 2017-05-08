@@ -14,8 +14,8 @@
  */
 namespace Cake\Database\Schema;
 
-use Cake\Database\Exception;
 use Cake\Database\Connection;
+use Cake\Database\Exception;
 use PDOException;
 
 /**
