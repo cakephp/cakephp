@@ -262,13 +262,15 @@ abstract class ObjectRegistry
      *
      * If the registry subclass has an event manager, the objects will be detached from events as well.
      *
-     * @return void
+     * @return $this
      */
     public function reset()
     {
         foreach (array_keys($this->_loaded) as $name) {
             $this->unload($name);
         }
+
+        return $this;
     }
 
     /**
@@ -279,7 +281,7 @@ abstract class ObjectRegistry
      *
      * @param string $objectName The name of the object to set in the registry.
      * @param object $object instance to store in the registry
-     * @return void
+     * @return $this
      */
     public function set($objectName, $object)
     {
@@ -293,6 +295,8 @@ abstract class ObjectRegistry
             $this->eventManager()->on($object);
         }
         $this->_loaded[$name] = $object;
+
+        return $this;
     }
 
     /**
@@ -301,7 +305,7 @@ abstract class ObjectRegistry
      * If this registry has an event manager, the object will be detached from any events as well.
      *
      * @param string $objectName The name of the object to remove from the registry.
-     * @return void
+     * @return $this
      */
     public function unload($objectName)
     {
@@ -315,6 +319,8 @@ abstract class ObjectRegistry
             $this->eventManager()->off($object);
         }
         unset($this->_loaded[$objectName]);
+
+        return $this;
     }
 
     /**
