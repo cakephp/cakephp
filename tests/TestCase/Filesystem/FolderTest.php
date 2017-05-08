@@ -797,16 +797,16 @@ class FolderTest extends TestCase
      */
     public function testFindRecursive()
     {
-        $Folder = new Folder(CORE_PATH);
+        $Folder = new Folder(CORE_PATH . 'config');
         $result = $Folder->findRecursive('(config|paths)\.php');
         $expected = [
             CORE_PATH . 'config' . DS . 'config.php'
         ];
         $this->assertSame([], array_diff($expected, $result));
-        $this->assertSame([], array_diff($expected, $result));
 
-        $result = $Folder->findRecursive('(config|woot)\.php', true);
+        $result = $Folder->findRecursive('(config|bootstrap)\.php', true);
         $expected = [
+            CORE_PATH . 'config' . DS . 'bootstrap.php',
             CORE_PATH . 'config' . DS . 'config.php'
         ];
         $this->assertSame($expected, $result);
