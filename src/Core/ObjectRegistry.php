@@ -235,6 +235,29 @@ abstract class ObjectRegistry
     }
 
     /**
+     * Sets an object.
+     *
+     * @param string $name Name of a property to set.
+     * @param mixed $object Object to set.
+     * @return void
+     */
+    public function __set($name, $object)
+    {
+        $this->set($name, $object);
+    }
+
+    /**
+     * Unsets an object.
+     *
+     * @param string $name Name of a property to unset.
+     * @return void
+     */
+    public function __unset($name)
+    {
+        $this->unload($name);
+    }
+
+    /**
      * Normalizes an object array, creates an array that makes lazy loading
      * easier
      *
