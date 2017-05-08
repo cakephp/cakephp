@@ -14,8 +14,10 @@
  */
 namespace Cake\Core;
 
+use ArrayIterator;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventListenerInterface;
+use IteratorAggregate;
 use RuntimeException;
 
 /**
@@ -34,7 +36,7 @@ use RuntimeException;
  * @see \Cake\View\HelperRegistry
  * @see \Cake\Console\TaskRegistry
  */
-abstract class ObjectRegistry
+abstract class ObjectRegistry implements IteratorAggregate
 {
 
     /**
@@ -344,6 +346,16 @@ abstract class ObjectRegistry
         unset($this->_loaded[$objectName]);
 
         return $this;
+    }
+
+    /**
+     * Returns an array iterator.
+     *
+     * @return \ArrayIterator
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->_loaded);
     }
 
     /**
