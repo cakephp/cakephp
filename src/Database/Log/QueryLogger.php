@@ -44,7 +44,8 @@ class QueryLogger
      * @param array $config
      * @return void
      */
-    public function __construct(array $config = []) {
+    public function __construct(array $config = [])
+    {
         $this->setConfig($config);
     }
 
