@@ -269,7 +269,7 @@ class HelperRegistryTest extends TestCase
         );
         $this->assertCount(1, $this->Events->listeners('View.beforeRender'));
 
-        $this->assertNull($this->Helpers->unload('EventListenerTest'), 'No return expected');
+        $this->assertSame($this->Helpers, $this->Helpers->unload('EventListenerTest'));
         $this->assertCount(0, $this->Events->listeners('View.beforeRender'));
     }
 

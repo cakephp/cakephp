@@ -186,7 +186,7 @@ class ComponentRegistryTest extends TestCase
         );
         $this->assertCount(1, $eventManager->listeners('Controller.startup'));
 
-        $this->assertNull($this->Components->reset(), 'No return expected');
+        $this->assertSame($this->Components, $this->Components->reset());
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
 
         $this->assertNotSame($instance, $this->Components->load('Auth'));
