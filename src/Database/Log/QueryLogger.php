@@ -41,7 +41,12 @@ class QueryLogger
     /**
      * Constructor
      *
-     * @param array $config
+     * The $config array takes the following keys:
+     *
+     * - threshold: Threshold in milliseconds to log only query running slower than the given threshold. Default is 0.
+     * - filter: A callable to filter based on the LoggedQuery object.
+     *
+     * @param array $config Config options
      * @return void
      */
     public function __construct(array $config = [])
