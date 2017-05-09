@@ -181,7 +181,8 @@ class QueryLoggerTest extends TestCase
      *
      * @return void
      */
-    public function testThreshold() {
+    public function testThreshold()
+    {
         $logger = $this->getMockBuilder(QueryLogger::class)
             ->setConstructorArgs([
                 ['threshold' => 500]
@@ -206,7 +207,8 @@ class QueryLoggerTest extends TestCase
      *
      * @return void
      */
-    public function testCallback() {
+    public function testCallback()
+    {
         $filter = function ($query) {
             if ($query->query !== 'cakephp') {
                 return false;
