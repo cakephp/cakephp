@@ -21,6 +21,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
+use Cake\Event\EventManager;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -2089,5 +2090,23 @@ TEXT;
         $View->viewPath = 'mypath';
         $this->assertEquals('mypath', $View->templatePath());
         $this->assertEquals('mypath', $View->templatePath);
+    }
+
+    /**
+     * Test that creating a view fires the initialize event.
+     *
+     * @return void
+     */
+    public function testInitializeEvent()
+    {
+        $count = 0;
+        $callback = function (Event $event) use (&$count) {
+            $count++;
+        };
+        EventManager::instance()->on('View.initialize', $callback);
+        $view = new TestView();
+
+        $this->assertEquals(1, $count, 'Callback should be called');
+        EventManager::instance()->off('View.initialize', $callback);
     }
 }

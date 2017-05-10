@@ -347,6 +347,7 @@ class View implements EventDispatcherInterface
         }
         $this->Blocks = new ViewBlock();
         $this->initialize();
+        $this->dispatchEvent('View.initialize');
         $this->loadHelpers();
     }
 
