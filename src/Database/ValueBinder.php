@@ -50,9 +50,18 @@ class ValueBinder
      */
     public function bind($param, $value, $type = 'string')
     {
-        $this->_bindings[$param] = compact('value', 'type') + [
-            'placeholder' => is_int($param) ? $param : substr($param, 1)
-        ];
+        if(is_array($value)) {
+            foreach($value as $k => $val) {
+                $this->_bindings[$param . '_' . $k] = compact('type') + [
+                    'value' => $val,
+                    'placeholder' => is_int($param) ? $param . '_' . $k : substr($param . '_' . $k, 1)
+                ];
+            }
+        } else {
+            $this->_bindings[$param] = compact('value', 'type') + [
+                'placeholder' => is_int($param) ? $param : substr($param, 1)
+            ];
+        }
     }
 
     /**
