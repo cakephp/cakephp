@@ -203,8 +203,12 @@ class CookieComponent extends Component
         foreach ($key as $name => $value) {
             $this->_load($name);
 
-            $this->_values = Hash::insert($this->_values, $name, $value);
             $parts = explode('.', $name);
+            if (count($parts) > 1) {
+                $this->_values = Hash::insert($this->_values, $name, $value);
+            } else {
+                $this->_values[$name] = $value;
+            }
             $keys[] = $parts[0];
         }
 
