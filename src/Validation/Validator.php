@@ -68,6 +68,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     protected $_useI18n = false;
 
     /**
+     * Whether or not to add requirePresence rule on each new rule
+     *
+     * @var bool
+     */
+    protected $_autoRequire = false;
+
+    /**
      * Contains the validation messages associated with checking the emptiness
      * for each corresponding field.
      *
@@ -339,7 +346,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function add($field, $name, $rule = [])
     {
-        $field = $this->field($field);
+        $ruleSet = $this->field($field);
 
         if (!is_array($name)) {
             $rules = [$name => $rule];
@@ -347,10 +354,36 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $rules = $name;
         }
 
+        if ($this->_autoRequire) {
+            $rules += [
+                '_requirePresence' => []
+            ];
+
+            $rules['_requirePresence'] += [
+                'mode' => true,
+                'message' => null
+            ];
+
+            $this->requirePresence($field, $rules['_requirePresence']['mode'], $rules['_requirePresence']['message']);
+        }
+        unset($rules['_requirePresence']);
+
         foreach ($rules as $name => $rule) {
-            $field->add($name, $rule);
+            $ruleSet->add($name, $rule);
         }
 
+        return $this;
+    }
+
+    /**
+     * Adds automaticly requirePresence on each field added through add method
+     *
+     * @param bool $require whether auto require is on or off
+     * @return $this
+     */
+    public function autoRequire($require)
+    {
+        $this->_autoRequire = $require;
         return $this;
     }
 
