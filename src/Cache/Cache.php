@@ -189,10 +189,25 @@ class Cache
      * If the cache engine & configuration are missing an error will be
      * triggered.
      *
+     * @deprecated 3.5 Use getEngine() instead.
      * @param string $config The configuration name you want an engine for.
      * @return \Cake\Cache\CacheEngine When caching is disabled a null engine will be returned.
      */
     public static function engine($config)
+    {
+        return static::getEngine($config);
+    }
+
+    /**
+     * Fetch the engine attached to a specific configuration name.
+     *
+     * If the cache engine & configuration are missing an error will be
+     * triggered.
+     *
+     * @param string $config The configuration name you want an engine for.
+     * @return \Cake\Cache\CacheEngine When caching is disabled a null engine will be returned.
+     */
+    public static function getEngine($config)
     {
         if (!static::$_enabled) {
             return new NullEngine();
