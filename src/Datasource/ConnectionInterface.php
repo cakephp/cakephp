@@ -17,6 +17,13 @@ namespace Cake\Datasource;
 /**
  * This interface defines the methods you can depend on in
  * a connection.
+ *
+ * The following methods will be added in version 4.0.0
+ *
+ * @method $this setDriver($driver, $config = []);
+ * @method \Cake\Database\Driver getDriver();
+ * @method bool inTransaction();
+ * @method bool rollback();
  */
 interface ConnectionInterface
 {
