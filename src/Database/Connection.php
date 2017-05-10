@@ -810,6 +810,8 @@ class Connection implements ConnectionInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @deprecated 3.5.0 Use getLogger() and setLogger() instead.
      */
     public function logger($instance = null)
     {

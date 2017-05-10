@@ -109,6 +109,7 @@ class LoggingStatement extends StatementDecorator
      * Sets the logger object instance. When called with no arguments
      * it returns the currently setup logger instance
      *
+     * @deprecated 3.5.0 Use getLogger() and setLogger() instead.
      * @param object|null $instance Logger object instance.
      * @return object|null Logger instance
      */
