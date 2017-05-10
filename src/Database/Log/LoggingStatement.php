@@ -124,7 +124,7 @@ class LoggingStatement extends StatementDecorator
     /**
      * Sets a logger
      *
-     * @param object Logger object
+     * @param object $logger Logger object
      * @return void
      */
     public function setLogger($logger)

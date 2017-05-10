@@ -823,7 +823,7 @@ class Connection implements ConnectionInterface
     /**
      * Sets a logger
      *
-     * @param object Logger object
+     * @param object $logger Logger object
      * @return void
      */
     public function setLogger($logger)
