@@ -183,7 +183,7 @@ class ResultSet implements ResultSetInterface
         $this->_hydrate = $query->isHydrationEnabled();
         $this->_entityClass = $repository->getEntityClass();
         $this->_useBuffering = $query->isBufferedResultsEnabled();
-        $this->_defaultAlias = $this->_defaultTable->alias();
+        $this->_defaultAlias = $this->_defaultTable->getAlias();
         $this->_calculateColumnMap($query);
         $this->_calculateTypeMap();
         $this->_autoFields = $query->isAutoFieldsEnabled();

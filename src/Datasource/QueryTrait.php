@@ -230,7 +230,7 @@ trait QueryTrait
         }
 
         if (!$alias) {
-            $alias = $this->repository()->alias();
+            $alias = $this->repository()->getAlias();
         }
 
         $key = sprintf('%s__%s', $alias, $field);

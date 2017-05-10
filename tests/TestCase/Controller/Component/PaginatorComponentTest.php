@@ -97,7 +97,7 @@ class PaginatorComponentTest extends TestCase
     public function testPageParamCasting()
     {
         $this->Post->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('Posts'));
 
         $query = $this->_getMockFindQuery();
@@ -591,7 +591,7 @@ class PaginatorComponentTest extends TestCase
     {
         $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())
             ->method('hasField')
@@ -652,7 +652,7 @@ class PaginatorComponentTest extends TestCase
     {
         $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
@@ -675,7 +675,7 @@ class PaginatorComponentTest extends TestCase
     {
         $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->once())
             ->method('hasField')
@@ -705,7 +705,7 @@ class PaginatorComponentTest extends TestCase
     {
         $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())->method('hasField')
             ->will($this->returnValue(true));
@@ -733,7 +733,7 @@ class PaginatorComponentTest extends TestCase
     {
         $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->once())->method('hasField')
             ->will($this->returnValue(false));
@@ -762,7 +762,7 @@ class PaginatorComponentTest extends TestCase
     {
         $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->once())
             ->method('hasField')
@@ -793,7 +793,7 @@ class PaginatorComponentTest extends TestCase
     {
         $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
@@ -821,7 +821,7 @@ class PaginatorComponentTest extends TestCase
     {
         $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
@@ -843,7 +843,7 @@ class PaginatorComponentTest extends TestCase
     {
         $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())->method('hasField')
             ->will($this->returnValue(true));
@@ -865,7 +865,7 @@ class PaginatorComponentTest extends TestCase
     {
         $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
