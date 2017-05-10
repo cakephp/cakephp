@@ -153,7 +153,7 @@ class DateTimeType extends Type implements TypeInterface
 
         $class = $this->_className;
         try {
-            $compare = $date = false;
+            $date = false;
             if ($value === '' || $value === null || $value === false || $value === true) {
                 return null;
             }
@@ -163,10 +163,6 @@ class DateTimeType extends Type implements TypeInterface
                 return $this->_parseValue($value);
             } elseif (is_string($value)) {
                 $date = new $class($value);
-                $compare = true;
-            }
-            if ($compare && $date && $date->format($this->_format) !== $value) {
-                return $value;
             }
             if ($date) {
                 return $date;
