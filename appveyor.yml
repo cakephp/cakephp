@@ -18,6 +18,8 @@ environment:
   matrix:
       - db: 2012
         db_dsn: 'sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false'
+      - db: 2012
+        db_dsn: 'sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false&compiler=Cake\Database\SqlserverWithTrigger'
 
 services:
   - mssql2012sp1

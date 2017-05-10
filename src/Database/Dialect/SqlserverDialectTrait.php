@@ -346,6 +346,10 @@ trait SqlserverDialectTrait
      */
     public function newCompiler()
     {
+        if (isset($this->_config['compiler'])) {
+            $class = $this->_config['compiler'] . 'Compiler';
+            return new $class();
+        }
         return new SqlserverCompiler();
     }
 
