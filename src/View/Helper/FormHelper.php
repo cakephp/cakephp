@@ -121,7 +121,8 @@ class FormHelper extends Helper
             'radioWrapper' => '{{label}}',
             'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
             'submitContainer' => '<div class="submit">{{content}}</div>',
-        ]
+        ],
+        'pkInputType' => 'hidden'
     ];
 
     /**
@@ -1271,7 +1272,7 @@ class FormHelper extends Helper
         $context = $this->_getContext();
 
         if ($context->isPrimaryKey($fieldName)) {
-            return 'hidden';
+            if ($this->_config['pkInputType']) return $this->_config['pkInputType'];
         }
 
         if (substr($fieldName, -3) === '_id') {
