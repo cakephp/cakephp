@@ -121,7 +121,11 @@ class ValidationRule
             $callable = $this->_rule;
             $isCallable = true;
         } else {
-            $provider = $providers[$this->_provider];
+            if (isset($providers[$this->_provider])) {
+                $provider = $providers[$this->_provider];
+            } else {
+                $provider = $this->_provider;
+            }
             $callable = [$provider, $this->_rule];
             $isCallable = is_callable($callable);
         }
