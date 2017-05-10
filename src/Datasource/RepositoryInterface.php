@@ -90,7 +90,7 @@ interface RepositoryInterface
      *
      * @param string|array|callable|\Cake\Database\Expression\QueryExpression $fields A hash of field => new value.
      * @param mixed $conditions Conditions to be used, accepts anything Query::where()
-     * can take.
+     * can take. If no condition is passed, update all records.
      * @return int Count Returns the affected rows.
      */
     public function updateAll($fields, $conditions);

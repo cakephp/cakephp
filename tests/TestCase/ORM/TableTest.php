@@ -871,6 +871,18 @@ class TableTest extends TestCase
         $expected = array_fill(0, 3, $fields);
         $expected[] = ['username' => 'garrett'];
         $this->assertEquals($expected, $result);
+
+        $fields = ['username' => 'pierre'];
+        $count = $table->find()->count();
+        $result = $table->updateAll($fields);
+        $this->assertSame($count, $result);
+
+        $result = $table->find('all')
+            ->select(['username'])
+            ->hydrate(false)
+            ->toArray();
+        $expected = array_fill(0, $count, $fields);
+        $this->assertEquals($expected, $result);
     }
 
     /**
