@@ -86,10 +86,7 @@ class FileLog extends BaseLog
         if (!empty($this->_config['path'])) {
             $this->_path = $this->_config['path'];
         }
-        if ($this->_path !== null &&
-            Configure::read('debug') &&
-            !is_dir($this->_path)
-        ) {
+        if ($this->_path !== null && !is_dir($this->_path)) {
             mkdir($this->_path, 0775, true);
         }
 
