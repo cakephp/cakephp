@@ -159,7 +159,7 @@ class CsrfProtectionMiddleware
      * @param \Cake\Http\Response $response The response to augment
      * @return \Cake\Http\Response Modified response
      */
-    protected function _addTokenCookie($token, $request, $response)
+    protected function _addTokenCookie($token, ServerRequestInterface $request, ResponseInterface $response)
     {
         $expiry = new Time($this->_config['expiry']);
 
