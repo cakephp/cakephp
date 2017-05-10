@@ -115,9 +115,30 @@ class LoggingStatement extends StatementDecorator
     public function logger($instance = null)
     {
         if ($instance === null) {
-            return $this->_logger;
+            return $this->getLogger();
         }
 
         return $this->_logger = $instance;
+    }
+
+    /**
+     * Sets a logger
+     *
+     * @param object Logger object
+     * @return void
+     */
+    public function setLogger($logger)
+    {
+        $this->_logger = $logger;
+    }
+
+    /**
+     * Gets the logger object
+     *
+     * @return object logger instance
+     */
+    public function getLogger()
+    {
+        return $this->_logger;
     }
 }
