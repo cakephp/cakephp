@@ -17,9 +17,11 @@ namespace Cake\ORM;
 use ArrayObject;
 use BadMethodCallException;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Type;
 use Cake\Datasource\ConnectionInterface;
+use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\RepositoryInterface;
@@ -40,6 +42,7 @@ use Cake\Utility\Inflector;
 use Cake\Validation\ValidatorAwareTrait;
 use InvalidArgumentException;
 use RuntimeException;
+
 
 /**
  * Represents a single database table.
@@ -524,6 +527,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getSchema()
     {
+        $logQueries = ConnectionManager::get('default')->logQueries();
+        $logSchemaQueries = Configure::read('App.logSchemaQueries');
+        if (!$logSchemaQueries) {
+            ConnectionManager::get('default')->logQueries(false);
+        }
         if ($this->_schema === null) {
             $this->_schema = $this->_initializeSchema(
                 $this->getConnection()
@@ -531,6 +539,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     ->describe($this->getTable())
             );
         }
+        ConnectionManager::get('default')->logQueries($logQueries);
 
         return $this->_schema;
     }
