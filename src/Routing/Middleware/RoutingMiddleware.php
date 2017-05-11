@@ -14,6 +14,7 @@
  */
 namespace Cake\Routing\Middleware;
 
+use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
 use Cake\Routing\Exception\RedirectException;
 use Cake\Routing\Router;
@@ -27,7 +28,6 @@ use Zend\Diactoros\Response\RedirectResponse;
  */
 class RoutingMiddleware
 {
-
     /**
      * Apply routing and update the request.
      *
@@ -61,11 +61,12 @@ class RoutingMiddleware
                 $response->getHeaders()
             );
         }
-        $middleware = Router::getMatchingMiddleware($request->getUri()->getPath());
-        if (!$middleware) {
+        $matching = Router::getRouteCollection()->getMatchingMiddleware($request->getUri()->getPath());
+        if (!$matching) {
             return $next($request, $response);
         }
-        $middleware->add($next);
+        $matching[] = $next;
+        $middleware = new MiddlewareQueue($matching);
         $runner = new Runner();
 
         return $runner->run($middleware, $request, $response);

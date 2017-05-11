@@ -3341,30 +3341,6 @@ class RouterTest extends TestCase
     }
 
     /**
-     * Test getting path specific middleware.
-     *
-     * @return void
-     */
-    public function testGetMatchingMiddleware()
-    {
-        Router::scope('/', function ($routes) {
-            $routes->connect('/articles', ['controller' => 'Articles']);
-            $routes->registerMiddleware('noop', function () {
-            });
-        });
-        Router::scope('/api/v1', function ($routes) {
-            $routes->applyMiddleware('noop');
-            $routes->connect('/articles', ['controller' => 'Articles', 'prefix' => 'Api']);
-        });
-        $result = Router::getMatchingMiddleware('/articles');
-        $this->assertNull($result);
-
-        $result = Router::getMatchingMiddleware('/api/v1/articles');
-        $this->assertInstanceOf(MiddlewareQueue::class, $result);
-        $this->assertCount(1, $result);
-    }
-
-    /**
      * Test getting the route collection
      *
      * @return void
