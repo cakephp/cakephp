@@ -1043,7 +1043,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         if (empty($this->_parts['from'])) {
-            $this->from([$this->_repository->alias() => $this->_repository->table()]);
+            $this->from([$this->_repository->getAlias() => $this->_repository->table()]);
         }
         $this->_addDefaultFields();
         $this->getEagerLoader()->attachAssociations($this, $this->_repository, !$this->_hasFields);
@@ -1067,7 +1067,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             $select = $this->clause('select');
         }
 
-        $aliased = $this->aliasFields($select, $this->repository()->alias());
+        $aliased = $this->aliasFields($select, $this->repository()->getAlias());
         $this->select($aliased, true);
     }
 
@@ -1148,7 +1148,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function delete($table = null)
     {
         $repo = $this->repository();
-        $this->from([$repo->alias() => $repo->table()]);
+        $this->from([$repo->getAlias() => $repo->table()]);
 
         return parent::delete();
     }
