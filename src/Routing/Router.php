@@ -911,6 +911,26 @@ class Router
     }
 
     /**
+     * Create a RouteBuilder for the provided path.
+     *
+     * @param string $path The path to set the builder to.
+     * @param array $options The options for the builder
+     * @return \Cake\Routing\RouteBuilder
+     */
+    public static function getRouteBuilder($path, array $options = [])
+    {
+        $defaults = [
+            'routeClass' => static::defaultRouteClass(),
+            'extensions' => static::$_defaultExtensions,
+        ];
+        $options += $defaults;
+        return new RouteBuilder(static::$_collection, $path, [], [
+            'routeClass' => $options['routeClass'],
+            'extensions' => $options['extensions'],
+        ]);
+    }
+
+    /**
      * Create a routing scope.
      *
      * Routing scopes allow you to keep your routes DRY and avoid repeating
@@ -954,18 +974,12 @@ class Router
      */
     public static function scope($path, $params = [], $callback = null)
     {
-        $options = [
-            'routeClass' => static::defaultRouteClass(),
-            'extensions' => static::$_defaultExtensions,
-        ];
+        $options = [];
         if (is_array($params)) {
-            $options = $params + $options;
+            $options = $params;
             unset($params['routeClass'], $params['extensions']);
         }
-        $builder = new RouteBuilder(static::$_collection, '/', [], [
-            'routeClass' => $options['routeClass'],
-            'extensions' => $options['extensions'],
-        ]);
+        $builder = static::getRouteBuilder('/', $options);
         $builder->scope($path, $params, $callback);
     }
 

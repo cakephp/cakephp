@@ -19,6 +19,7 @@ use Cake\Core\Plugin;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
@@ -3350,6 +3351,25 @@ class RouterTest extends TestCase
         $collection = Router::getRouteCollection();
         $this->assertInstanceOf(RouteCollection::class, $collection);
         $this->assertCount(0, $collection->routes());
+    }
+
+    /**
+     * Test getting a route builder instance.
+     *
+     * @return void
+     */
+    public function testGetRouteBuilder()
+    {
+        $builder = Router::getRouteBuilder('/api');
+        $this->assertInstanceOf(RouteBuilder::class, $builder);
+        $this->assertSame('/api', $builder->path());
+
+        $builder = Router::getRouteBuilder('/', [
+            'routeClass' => 'InflectedRoute',
+            'extensions' => ['json']
+        ]);
+        $this->assertInstanceOf(RouteBuilder::class, $builder);
+        $this->assertSame(['json'], $builder->extensions());
     }
 
     /**
