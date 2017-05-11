@@ -62,6 +62,19 @@ abstract class BaseApplication
     }
 
     /**
+     * Define the routes for an application.
+     *
+     * By default this will load `config/routes.php` for ease of use and backwards compatibility.
+     *
+     * @param \Cake\Routing\RouteBuilder $routes A route builder to add routes into.
+     * @return void
+     */
+    public function routes($routes)
+    {
+        require $this->configDir . '/routes.php';
+    }
+
+    /**
      * Invoke the application.
      *
      * - Convert the PSR response into CakePHP equivalents.
