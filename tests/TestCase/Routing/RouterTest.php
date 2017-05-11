@@ -2035,7 +2035,6 @@ class RouterTest extends TestCase
         Router::connect('/:controller/:action/*');
 
         $request = new ServerRequest();
-        $request->env('HTTP_HOST', 'localhost');
         Router::pushRequest(
             $request->addParams([
                 'plugin' => null, 'controller' => 'images', 'action' => 'index'
@@ -2067,7 +2066,6 @@ class RouterTest extends TestCase
         Router::connect('/:controller/:action/*');
 
         $request = new ServerRequest();
-        $request->env('HTTP_HOST', 'localhost');
         $request->env('HTTPS', 'on');
         Router::pushRequest(
             $request->addParams([
@@ -3339,17 +3337,6 @@ class RouterTest extends TestCase
 
         $result = Router::url('/pages/home');
         $this->assertEquals('/subdir/pages/home', $result);
-    }
-
-    /**
-     * Test setting the request context.
-     *
-     * @expectedException \InvalidArgumentException
-     * @return void
-     */
-    public function testSetRequestContextInvalid()
-    {
-        Router::setRequestContext(new \stdClass);
     }
 
     /**

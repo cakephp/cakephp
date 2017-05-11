@@ -419,34 +419,19 @@ class Router
     /**
      * Store the request context for a given request.
      *
-     * @param \Cake\Http\ServerRequest|\Psr\Http\Message\ServerRequestInterface $request The request instance.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request instance.
      * @return void
      * @throws InvalidArgumentException When parameter is an incorrect type.
      */
-    public static function setRequestContext($request)
+    public static function setRequestContext(ServerRequestInterface $request)
     {
-        if ($request instanceof ServerRequest) {
-            static::$_requestContext = [
-                '_base' => $request->base,
-                '_port' => $request->port(),
-                '_scheme' => $request->scheme(),
-                '_host' => $request->host()
-            ];
-
-            return;
-        }
-        if ($request instanceof ServerRequestInterface) {
-            $uri = $request->getUri();
-            static::$_requestContext = [
-                '_base' => $request->getAttribute('base'),
-                '_port' => $uri->getPort(),
-                '_scheme' => $uri->getScheme(),
-                '_host' => $uri->getHost(),
-            ];
-
-            return;
-        }
-        throw new InvalidArgumentException('Unknown request type received.');
+        $uri = $request->getUri();
+        static::$_requestContext = [
+            '_base' => $request->getAttribute('base'),
+            '_port' => $uri->getPort(),
+            '_scheme' => $uri->getScheme(),
+            '_host' => $uri->getHost(),
+        ];
     }
 
     /**
