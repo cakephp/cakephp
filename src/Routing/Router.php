@@ -1060,6 +1060,16 @@ class Router
     }
 
     /**
+     * Get the RouteCollection inside the Router
+     *
+     * @return \Cake\Routing\RouteCollection
+     */
+    public static function getRouteCollection()
+    {
+        return static::$_collection;
+    }
+
+    /**
      * Get a MiddlewareQueue of middleware that matches the provided path.
      *
      * @param string $path The URL path to match for.

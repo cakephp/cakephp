@@ -19,6 +19,7 @@ use Cake\Core\Plugin;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
+use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
@@ -3361,6 +3362,18 @@ class RouterTest extends TestCase
         $result = Router::getMatchingMiddleware('/api/v1/articles');
         $this->assertInstanceOf(MiddlewareQueue::class, $result);
         $this->assertCount(1, $result);
+    }
+
+    /**
+     * Test getting the route collection
+     *
+     * @return void
+     */
+    public function testGetRouteCollection()
+    {
+        $collection = Router::getRouteCollection();
+        $this->assertInstanceOf(RouteCollection::class, $collection);
+        $this->assertCount(0, $collection->routes());
     }
 
     /**
