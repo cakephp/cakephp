@@ -14,8 +14,11 @@
  */
 namespace Cake\Core;
 
+use ArrayIterator;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventListenerInterface;
+use Countable;
+use IteratorAggregate;
 use RuntimeException;
 
 /**
@@ -34,7 +37,7 @@ use RuntimeException;
  * @see \Cake\View\HelperRegistry
  * @see \Cake\Console\TaskRegistry
  */
-abstract class ObjectRegistry
+abstract class ObjectRegistry implements Countable, IteratorAggregate
 {
 
     /**
@@ -149,7 +152,7 @@ abstract class ObjectRegistry
      * Should resolve the classname for a given object type.
      *
      * @param string $class The class to resolve.
-     * @return string|false The resolved name or false for failure.
+     * @return string|bool The resolved name or false for failure.
      */
     abstract protected function _resolveClassName($class);
 
@@ -235,6 +238,29 @@ abstract class ObjectRegistry
     }
 
     /**
+     * Sets an object.
+     *
+     * @param string $name Name of a property to set.
+     * @param mixed $object Object to set.
+     * @return void
+     */
+    public function __set($name, $object)
+    {
+        $this->set($name, $object);
+    }
+
+    /**
+     * Unsets an object.
+     *
+     * @param string $name Name of a property to unset.
+     * @return void
+     */
+    public function __unset($name)
+    {
+        $this->unload($name);
+    }
+
+    /**
      * Normalizes an object array, creates an array that makes lazy loading
      * easier
      *
@@ -262,13 +288,15 @@ abstract class ObjectRegistry
      *
      * If the registry subclass has an event manager, the objects will be detached from events as well.
      *
-     * @return void
+     * @return $this
      */
     public function reset()
     {
         foreach (array_keys($this->_loaded) as $name) {
             $this->unload($name);
         }
+
+        return $this;
     }
 
     /**
@@ -279,7 +307,7 @@ abstract class ObjectRegistry
      *
      * @param string $objectName The name of the object to set in the registry.
      * @param object $object instance to store in the registry
-     * @return void
+     * @return $this
      */
     public function set($objectName, $object)
     {
@@ -293,6 +321,8 @@ abstract class ObjectRegistry
             $this->eventManager()->on($object);
         }
         $this->_loaded[$name] = $object;
+
+        return $this;
     }
 
     /**
@@ -301,7 +331,7 @@ abstract class ObjectRegistry
      * If this registry has an event manager, the object will be detached from any events as well.
      *
      * @param string $objectName The name of the object to remove from the registry.
-     * @return void
+     * @return $this
      */
     public function unload($objectName)
     {
@@ -315,6 +345,28 @@ abstract class ObjectRegistry
             $this->eventManager()->off($object);
         }
         unset($this->_loaded[$objectName]);
+
+        return $this;
+    }
+
+    /**
+     * Returns an array iterator.
+     *
+     * @return \ArrayIterator
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->_loaded);
+    }
+
+    /**
+     * Returns the number of loaded objects.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->_loaded);
     }
 
     /**

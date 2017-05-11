@@ -186,7 +186,7 @@ class ComponentRegistryTest extends TestCase
         );
         $this->assertCount(1, $eventManager->listeners('Controller.startup'));
 
-        $this->assertNull($this->Components->reset(), 'No return expected');
+        $this->assertSame($this->Components, $this->Components->reset());
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
 
         $this->assertNotSame($instance, $this->Components->load('Auth'));
@@ -201,8 +201,25 @@ class ComponentRegistryTest extends TestCase
     {
         $eventManager = $this->Components->getController()->getEventManager();
 
-        $result = $this->Components->load('Auth');
-        $this->Components->unload('Auth');
+        $this->Components->load('Auth');
+        $result = $this->Components->unload('Auth');
+
+        $this->assertSame($this->Components, $result);
+        $this->assertFalse(isset($this->Components->Auth), 'Should be gone');
+        $this->assertCount(0, $eventManager->listeners('Controller.startup'));
+    }
+
+    /**
+     * Test __unset.
+     *
+     * @return void
+     */
+    public function testUnset()
+    {
+        $eventManager = $this->Components->getController()->getEventManager();
+
+        $this->Components->load('Auth');
+        unset($this->Components->Auth);
 
         $this->assertFalse(isset($this->Components->Auth), 'Should be gone');
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
@@ -231,9 +248,57 @@ class ComponentRegistryTest extends TestCase
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
 
         $auth = new AuthComponent($this->Components);
-        $this->Components->set('Auth', $auth);
+        $result = $this->Components->set('Auth', $auth);
 
-        $this->assertTrue(isset($this->Components->Auth), 'Should be gone');
+        $this->assertSame($this->Components, $result);
+        $this->assertTrue(isset($this->Components->Auth), 'Should be present');
         $this->assertCount(1, $eventManager->listeners('Controller.startup'));
+    }
+
+    /**
+     * Test __set.
+     *
+     * @return void
+     */
+    public function testMagicSet()
+    {
+        $eventManager = $this->Components->getController()->getEventManager();
+        $this->assertCount(0, $eventManager->listeners('Controller.startup'));
+
+        $auth = new AuthComponent($this->Components);
+        $this->Components->Auth = $auth;
+
+        $this->assertTrue(isset($this->Components->Auth), 'Should be present');
+        $this->assertCount(1, $eventManager->listeners('Controller.startup'));
+    }
+
+    /**
+     * Test Countable.
+     *
+     * @return void
+     */
+    public function testCountable()
+    {
+        $this->Components->load('Auth');
+        $this->assertInstanceOf('\Countable', $this->Components);
+        $count = count($this->Components);
+        $this->assertEquals(1, $count);
+    }
+
+    /**
+     * Test Traversable.
+     *
+     * @return void
+     */
+    public function testTraversable()
+    {
+        $this->Components->load('Auth');
+        $this->assertInstanceOf('\Traversable', $this->Components);
+
+        $result = null;
+        foreach ($this->Components as $component) {
+            $result = $component;
+        }
+        $this->assertNotNull($result);
     }
 }
