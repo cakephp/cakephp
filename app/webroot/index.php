@@ -44,6 +44,13 @@ if (!defined('APP_DIR')) {
 }
 
 /**
+ * Config Directory
+ */
+if (!defined('CONFIG')) {
+	define('CONFIG', ROOT . DS . APP_DIR . DS . 'Config' . DS);
+}
+
+/**
  * The absolute path to the "cake" directory, WITHOUT a trailing DS.
  *
  * Un-comment this line to specify a fixed path to CakePHP.

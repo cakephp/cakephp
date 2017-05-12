@@ -54,6 +54,13 @@ if (!defined('APP')) {
 }
 
 /**
+ * Config Directory
+ */
+if (!defined('CONFIG')) {
+	define('CONFIG', ROOT . DS . APP_DIR . DS . 'Config' . DS);
+}
+
+/**
  * Path to the application's libs directory.
  */
 	define('APPLIBS', APP . 'Lib' . DS);

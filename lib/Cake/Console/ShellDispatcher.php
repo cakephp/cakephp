@@ -144,7 +144,7 @@ class ShellDispatcher {
 		$boot = file_exists(ROOT . DS . APP_DIR . DS . 'Config' . DS . 'bootstrap.php');
 		require CORE_PATH . 'Cake' . DS . 'bootstrap.php';
 
-		if (!file_exists(APP . 'Config' . DS . 'core.php')) {
+		if (!file_exists(CONFIG . 'core.php')) {
 			include_once CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'Console' . DS . 'Templates' . DS . 'skel' . DS . 'Config' . DS . 'core.php';
 			App::build();
 		}

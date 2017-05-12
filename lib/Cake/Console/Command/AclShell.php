@@ -89,7 +89,7 @@ class AclShell extends AppShell {
 				$this->args = null;
 				return $this->DbConfig->execute();
 			}
-			require_once APP . 'Config' . DS . 'database.php';
+			require_once CONFIG . 'database.php';
 
 			if (!in_array($this->command, array('initdb'))) {
 				$collection = new ComponentCollection();
