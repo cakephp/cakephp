@@ -924,6 +924,7 @@ class Router
             'extensions' => static::$_defaultExtensions,
         ];
         $options += $defaults;
+
         return new RouteBuilder(static::$_collection, $path, [], [
             'routeClass' => $options['routeClass'],
             'extensions' => $options['extensions'],
