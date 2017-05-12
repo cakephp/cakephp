@@ -31,6 +31,13 @@ use Zend\Diactoros\Response\RedirectResponse;
 class RoutingMiddleware
 {
     /**
+     * The application that will have its routing hook invoked.
+     *
+     * @var \Cake\Http\BaseApplication
+     */
+    protected $app;
+
+    /**
      * Constructor
      *
      * @param \Cake\Http\BaseApplication $app The application instance that routes are defined on.
