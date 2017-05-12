@@ -175,6 +175,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     protected $_connection;
 
     /**
+     * Connection configure name stored in serialization.
+     *
+     * @var string
+     */
+    protected $_connectionName;
+
+    /**
      * The schema object containing a description of this table fields
      *
      * @var \Cake\Database\Schema\TableSchema
@@ -2748,9 +2755,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function __wakeup()
     {
-        if (isset($this->_connectionName)) {
+        if ($this->_connectionName !== null) {
             $this->_connection = ConnectionManager::get($this->_connectionName);
-            unset($this->_connectionName);
+            $this->_connectionName = null;
         }
     }
 }
