@@ -917,7 +917,7 @@ class Router
      * @param array $options The options for the builder
      * @return \Cake\Routing\RouteBuilder
      */
-    public static function getRouteBuilder($path, array $options = [])
+    public static function createRouteBuilder($path, array $options = [])
     {
         $defaults = [
             'routeClass' => static::defaultRouteClass(),
@@ -980,7 +980,7 @@ class Router
             $options = $params;
             unset($params['routeClass'], $params['extensions']);
         }
-        $builder = static::getRouteBuilder('/', $options);
+        $builder = static::createRouteBuilder('/', $options);
         $builder->scope($path, $params, $callback);
     }
 

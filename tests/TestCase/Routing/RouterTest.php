@@ -3358,13 +3358,13 @@ class RouterTest extends TestCase
      *
      * @return void
      */
-    public function testGetRouteBuilder()
+    public function testCreateRouteBuilder()
     {
-        $builder = Router::getRouteBuilder('/api');
+        $builder = Router::createRouteBuilder('/api');
         $this->assertInstanceOf(RouteBuilder::class, $builder);
         $this->assertSame('/api', $builder->path());
 
-        $builder = Router::getRouteBuilder('/', [
+        $builder = Router::createRouteBuilder('/', [
             'routeClass' => 'InflectedRoute',
             'extensions' => ['json']
         ]);
