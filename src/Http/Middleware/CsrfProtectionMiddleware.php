@@ -155,9 +155,9 @@ class CsrfProtectionMiddleware
      * Add a CSRF token to the response cookies.
      *
      * @param string $token The token to add.
-     * @param \Psr\Http\Message\ServerRequestInterface $request The to get cookie path data from
-     * @param \Cake\Http\Response $response The response to augment
-     * @return \Cake\Http\Response Modified response
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request to validate against.
+     * @param \Psr\Http\Message\ResponseInterface $response The response.
+     * @return @param \Psr\Http\Message\ResponseInterface $response Modified response.
      */
     protected function _addTokenCookie($token, ServerRequestInterface $request, ResponseInterface $response)
     {
