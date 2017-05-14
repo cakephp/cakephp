@@ -126,7 +126,7 @@ class I18n
     public static function translator($name = 'default', $locale = null, callable $loader = null)
     {
         if ($loader !== null) {
-            static::setTranslator($name, $locale, $loader);
+            static::setTranslator($name, $loader, $locale);
 
             return null;
         }
@@ -135,21 +135,23 @@ class I18n
     }
 
     /**
+     * Sets a translator.
+     *
      * Configures future translators, this is achieved by passing a callable
      * as the last argument of this function.
      *
      * ### Example:
      *
      * ```
-     *  I18n::translator('default', 'fr_FR', function () {
+     *  I18n::setTranslator('default', function () {
      *      $package = new \Aura\Intl\Package();
      *      $package->setMessages([
      *          'Cake' => 'Gâteau'
      *      ]);
      *      return $package;
-     *  });
+     *  }, 'fr_FR');
      *
-     *  $translator = I18n::translator('default', 'fr_FR');
+     *  $translator = I18n::getTranslator('default', 'fr_FR');
      *  echo $translator->translate('Cake');
      * ```
      *
@@ -158,10 +160,10 @@ class I18n
      * the `src/Locale/custom` folder, you would do:
      *
      * ```
-     * I18n::translator(
+     * I18n::setTranslator(
      *  'default',
-     *  'fr_FR',
      *  new MessagesFileLoader('my_translations', 'custom', 'po');
+     *  'fr_FR'
      * );
      * ```
      *
@@ -324,6 +326,8 @@ class I18n
     }
 
     /**
+     * Returns the default locale.
+     *
      * This returns the default locale before any modifications, i.e.
      * the value as stored in the `intl.default_locale` PHP setting before
      * any manipulation by this class.
@@ -341,8 +345,9 @@ class I18n
 
     /**
      * Sets the name of the default messages formatter to use for future
-     * translator instances. By default the `default` and `sprintf` formatters
-     * are available.
+     * translator instances.
+     *
+     * By default the `default` and `sprintf` formatters are available.
      *
      * If called with no arguments, it will return the currently configured value.
      *
