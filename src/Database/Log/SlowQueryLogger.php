@@ -43,7 +43,7 @@ class SlowQueryLogger extends QueryLogger
      * - threshold: Threshold in milliseconds to log only query running slower than the given threshold. Default is 0.
      * - filter: A callable to filter based on the LoggedQuery object.
      *
-     * @param array $config
+     * @param array $config Config options.
      * @return void
      */
     public function __construct(array $config = [])
