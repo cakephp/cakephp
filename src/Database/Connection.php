@@ -826,11 +826,13 @@ class Connection implements ConnectionInterface
      * Sets a logger
      *
      * @param object $logger Logger object
-     * @return void
+     * @return $this
      */
     public function setLogger($logger)
     {
         $this->_logger = $logger;
+
+        return $this;
     }
 
     /**
