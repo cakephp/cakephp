@@ -171,7 +171,7 @@ class PaginatorComponent extends Component
             $object = $query->repository();
         }
 
-        $alias = $object->getAlias();
+        $alias = $object->alias();
         $options = $this->mergeOptions($alias, $settings);
         $options = $this->validateSort($object, $options);
         $options = $this->checkLimit($options);
@@ -379,7 +379,7 @@ class PaginatorComponent extends Component
      */
     protected function _prefix(RepositoryInterface $object, $order, $whitelisted = false)
     {
-        $tableAlias = $object->getAlias();
+        $tableAlias = $object->alias();
         $tableOrder = [];
         foreach ($order as $key => $value) {
             if (is_numeric($key)) {

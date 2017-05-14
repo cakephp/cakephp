@@ -73,7 +73,7 @@ class PaginatorComponentTest extends TestCase
         $registry = new ComponentRegistry($controller);
         $this->Paginator = new PaginatorComponent($registry, []);
 
-        $this->Post = $this->getMockBuilder('Cake\ORM\Table')
+        $this->Post = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -97,7 +97,7 @@ class PaginatorComponentTest extends TestCase
     public function testPageParamCasting()
     {
         $this->Post->expects($this->any())
-            ->method('getAlias')
+            ->method('alias')
             ->will($this->returnValue('Posts'));
 
         $query = $this->_getMockFindQuery();
@@ -589,9 +589,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortInvalidDirection()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
-            ->method('getAlias')
+            ->method('alias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())
             ->method('hasField')
@@ -650,9 +650,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistFailure()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
-            ->method('getAlias')
+            ->method('alias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
@@ -673,9 +673,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistTrusted()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
-            ->method('getAlias')
+            ->method('alias')
             ->will($this->returnValue('model'));
         $model->expects($this->once())
             ->method('hasField')
@@ -703,9 +703,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistEmpty()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
-            ->method('getAlias')
+            ->method('alias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())->method('hasField')
             ->will($this->returnValue(true));
@@ -731,9 +731,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistNotInSchema()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
-            ->method('getAlias')
+            ->method('alias')
             ->will($this->returnValue('model'));
         $model->expects($this->once())->method('hasField')
             ->will($this->returnValue(false));
@@ -760,9 +760,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistMultiple()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
-            ->method('getAlias')
+            ->method('alias')
             ->will($this->returnValue('model'));
         $model->expects($this->once())
             ->method('hasField')
@@ -791,9 +791,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortMultiple()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
-            ->method('getAlias')
+            ->method('alias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
@@ -819,9 +819,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWithString()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
-            ->method('getAlias')
+            ->method('alias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
@@ -841,9 +841,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortNoSort()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
-            ->method('getAlias')
+            ->method('alias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())->method('hasField')
             ->will($this->returnValue(true));
@@ -863,9 +863,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortInvalidAlias()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
-            ->method('getAlias')
+            ->method('alias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
