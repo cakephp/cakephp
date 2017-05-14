@@ -14,7 +14,6 @@
  */
 namespace Cake\Database\Log;
 
-use Cake\Core\InstanceConfigTrait;
 use Cake\Log\Log;
 
 /**
@@ -25,34 +24,6 @@ use Cake\Log\Log;
  */
 class QueryLogger
 {
-
-    use InstanceConfigTrait;
-
-    /**
-     * Default Config
-     *
-     * @var array
-     */
-    protected $_defaultConfig = [
-        'threshold' => 0,
-        'filter' => null
-    ];
-
-    /**
-     * Constructor
-     *
-     * The $config array takes the following keys:
-     *
-     * - threshold: Threshold in milliseconds to log only query running slower than the given threshold. Default is 0.
-     * - filter: A callable to filter based on the LoggedQuery object.
-     *
-     * @param array $config Config options
-     * @return void
-     */
-    public function __construct(array $config = [])
-    {
-        $this->setConfig($config);
-    }
 
     /**
      * Writes a LoggedQuery into a log
@@ -65,19 +36,6 @@ class QueryLogger
         if (!empty($query->params)) {
             $query->query = $this->_interpolate($query);
         }
-
-        if ($query->took < $this->getConfig('threshold')) {
-            return;
-        }
-
-        $filter = $this->getConfig('filter');
-        if (is_callable($filter)) {
-            $result = $filter($query);
-            if (!$result) {
-                return;
-            }
-        }
-
         $this->_log($query);
     }
 
