@@ -249,13 +249,13 @@ class FunctionsBuilder
     public function now($type = 'datetime')
     {
         if ($type === 'datetime') {
-            return $this->_build('NOW')->returnType('datetime');
+            return $this->_build('NOW')->setReturnType('datetime');
         }
         if ($type === 'date') {
-            return $this->_build('CURRENT_DATE')->returnType('date');
+            return $this->_build('CURRENT_DATE')->setReturnType('date');
         }
         if ($type === 'time') {
-            return $this->_build('CURRENT_TIME')->returnType('time');
+            return $this->_build('CURRENT_TIME')->setReturnType('time');
         }
     }
 
