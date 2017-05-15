@@ -94,7 +94,7 @@ class IniAcl extends CakeObject implements AclInterface {
  */
 	public function check($aro, $aco, $action = null) {
 		if (!$this->config) {
-			$this->config = $this->readConfigFile(APP . 'Config' . DS . 'acl.ini.php');
+			$this->config = $this->readConfigFile(CONFIG . 'acl.ini.php');
 		}
 		$aclConfig = $this->config;
 

@@ -501,7 +501,7 @@ class ConsoleShell extends AppShell {
 		extract(Router::getNamedExpressions());
 
 		//@codingStandardsIgnoreStart
-		if (!@include APP . 'Config' . DS . 'routes.php') {
+		if (!@include CONFIG . 'routes.php') {
 			//@codingStandardsIgnoreEnd
 			return false;
 		}

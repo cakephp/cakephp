@@ -69,10 +69,10 @@ class Configure {
 		if ($boot) {
 			static::_appDefaults();
 
-			if (!include APP . 'Config' . DS . 'core.php') {
+			if (!include CONFIG . 'core.php') {
 				trigger_error(__d('cake_dev',
 						"Can't find application core file. Please create %s, and make sure it is readable by PHP.",
-						APP . 'Config' . DS . 'core.php'),
+						CONFIG . 'core.php'),
 					E_USER_ERROR
 				);
 			}
@@ -95,10 +95,10 @@ class Configure {
 			}
 			static::_setErrorHandlers($error, $exception);
 
-			if (!include APP . 'Config' . DS . 'bootstrap.php') {
+			if (!include CONFIG . 'bootstrap.php') {
 				trigger_error(__d('cake_dev',
 						"Can't find application bootstrap file. Please create %s, and make sure it is readable by PHP.",
-						APP . 'Config' . DS . 'bootstrap.php'),
+						CONFIG . 'bootstrap.php'),
 					E_USER_ERROR
 				);
 			}

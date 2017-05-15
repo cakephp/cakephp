@@ -58,11 +58,11 @@ endif;
 	$settings = Cache::settings();
 	if (!empty($settings)):
 		echo '<span class="notice success">';
-			echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit %s', '<em>' . $settings['engine'] . 'Engine</em>', 'APP/Config/core.php');
+			echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit %s', '<em>' . $settings['engine'] . 'Engine</em>', CONFIG . 'core.php');
 		echo '</span>';
 	else:
 		echo '<span class="notice">';
-			echo __d('cake_dev', 'Your cache is NOT working. Please check the settings in %s', 'APP/Config/core.php');
+			echo __d('cake_dev', 'Your cache is NOT working. Please check the settings in %s', CONFIG . 'core.php');
 		echo '</span>';
 	endif;
 	?>
@@ -70,7 +70,7 @@ endif;
 <p>
 	<?php
 	$filePresent = null;
-	if (file_exists(APP . 'Config' . DS . 'database.php')):
+	if (file_exists(CONFIG . 'database.php')):
 		echo '<span class="notice success">';
 			echo __d('cake_dev', 'Your database configuration file is present.');
 			$filePresent = true;
@@ -79,7 +79,7 @@ endif;
 		echo '<span class="notice">';
 			echo __d('cake_dev', 'Your database configuration file is NOT present.');
 			echo '<br/>';
-			echo __d('cake_dev', 'Rename %s to %s', 'APP/Config/database.php.default', 'APP/Config/database.php');
+			echo __d('cake_dev', 'Rename %s to %s', CONFIG . 'database.php.default', CONFIG . 'database.php');
 		echo '</span>';
 	endif;
 	?>
