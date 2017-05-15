@@ -135,7 +135,7 @@ class ConsoleOptionParser
     protected $_tokens = [];
 
     /**
-     * Help alias use in the HelpFormatter.
+     * Help alias used in the HelpFormatter.
      *
      * @see \Cake\Console\HelpFormatter::setAlias()
      * @var string
