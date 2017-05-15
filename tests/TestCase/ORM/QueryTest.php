@@ -2019,6 +2019,32 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Integration test that uses the contain signature that is the same as the
+     * matching signature
+     *
+     * @return void
+     */
+    public function testContainSecondSignature()
+    {
+        $table = TableRegistry::get('authors');
+        $table->hasMany('articles');
+        $query = new Query($this->connection, $table);
+        $query
+            ->select()
+            ->contain('articles', function ($q) {
+                return $q->where(['articles.id' => 1]);
+            });
+
+        $ids = [];
+        foreach ($query as $entity) {
+            foreach ((array)$entity->articles as $article) {
+                $ids[] = $article->id;
+            }
+        }
+        $this->assertEquals([1], array_unique($ids));
+    }
+
+    /**
      * Integration test to ensure that filtering associations with the queryBuilder
      * option works.
      *

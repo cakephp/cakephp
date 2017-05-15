@@ -126,12 +126,21 @@ class EagerLoader
      * @param array|string $associations list of table aliases to be queried.
      * When this method is called multiple times it will merge previous list with
      * the new one.
+     * @param callable|null $queryBuilder The query builder callable
      * @return array Containments.
      */
-    public function contain($associations = [])
+    public function contain($associations = [], callable $queryBuilder = null)
     {
         if (empty($associations)) {
             return $this->_containments;
+        }
+
+        if ($queryBuilder) {
+            $associations = [
+                $associations => [
+                    'queryBuilder' => $queryBuilder
+                ]
+            ];
         }
 
         $associations = (array)$associations;

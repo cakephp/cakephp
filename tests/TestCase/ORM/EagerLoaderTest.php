@@ -333,6 +333,26 @@ class EagerLoaderTest extends TestCase
     }
 
     /**
+     * Tests using the same signature as matching with contain
+     *
+     * @return void
+     */
+    public function testContainSecondSignature()
+    {
+        $builder = function ($query) {
+        };
+        $loader = new EagerLoader;
+        $loader->contain('clients', $builder);
+
+        $expected = [
+            'clients' => [
+                'queryBuilder' => $builder
+            ]
+        ];
+        $this->assertEquals($expected, $loader->contain());
+    }
+
+    /**
      * Tests that query builders are stacked
      *
      * @return void
