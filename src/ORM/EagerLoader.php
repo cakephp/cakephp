@@ -829,4 +829,18 @@ class EagerLoader
 
         return $keys;
     }
+
+    /**
+     * Clone hook implementation
+     *
+     * Clone the _matching eager loader as well.
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        if ($this->_matching) {
+            $this->_matching = clone $this->_matching;
+        }
+    }
 }
