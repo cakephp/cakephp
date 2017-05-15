@@ -71,6 +71,7 @@ class HelpFormatter
     /**
      * Set the alias
      *
+     * @param string $alias The alias
      * @return void
      * @throws \Cake\Console\Exception\ConsoleException When alias is not a string.
      */
