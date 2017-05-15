@@ -816,13 +816,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $name The name of the behavior. Can be a short class reference.
      * @param array $options The options for the behavior to use.
-     * @return void
+     * @return $this
      * @throws \RuntimeException If a behavior is being reloaded.
      * @see \Cake\ORM\Behavior
      */
     public function addBehavior($name, array $options = [])
     {
         $this->_behaviors->load($name, $options);
+
+        return $this;
     }
 
     /**
@@ -837,12 +839,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      *
      * @param string $name The alias that the behavior was added with.
-     * @return void
+     * @return $this
      * @see \Cake\ORM\Behavior
      */
     public function removeBehavior($name)
     {
         $this->_behaviors->unload($name);
+
+        return $this;
     }
 
     /**
@@ -908,7 +912,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * keys are used the values will be treated as association aliases.
      *
      * @param array $params Set of associations to bind (indexed by association type)
-     * @return void
+     * @return $this
      * @see \Cake\ORM\Table::belongsTo()
      * @see \Cake\ORM\Table::hasOne()
      * @see \Cake\ORM\Table::hasMany()
@@ -925,6 +929,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 $this->{$assocType}($associated, $options);
             }
         }
+
+        return $this;
     }
 
     /**

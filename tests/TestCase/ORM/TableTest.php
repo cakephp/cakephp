@@ -822,7 +822,8 @@ class TableTest extends TestCase
         ];
 
         $table = new Table(['table' => 'dates']);
-        $table->addAssociations($params);
+        $result = $table->addAssociations($params);
+        $this->assertSame($table, $result);
 
         $associations = $table->associations();
 
@@ -1550,7 +1551,8 @@ class TableTest extends TestCase
             'table' => 'articles',
             'behaviors' => $mock
         ]);
-        $table->addBehavior('Sluggable');
+        $result = $table->addBehavior('Sluggable');
+        $this->assertSame($table, $result);
     }
 
     /**
@@ -1561,8 +1563,8 @@ class TableTest extends TestCase
     public function testAddBehaviorDuplicate()
     {
         $table = new Table(['table' => 'articles']);
-        $this->assertNull($table->addBehavior('Sluggable', ['test' => 'value']));
-        $this->assertNull($table->addBehavior('Sluggable', ['test' => 'value']));
+        $this->assertSame($table, $table->addBehavior('Sluggable', ['test' => 'value']));
+        $this->assertSame($table, $table->addBehavior('Sluggable', ['test' => 'value']));
         try {
             $table->addBehavior('Sluggable', ['thing' => 'thing']);
             $this->fail('No exception raised');
@@ -1589,7 +1591,8 @@ class TableTest extends TestCase
             'table' => 'articles',
             'behaviors' => $mock
         ]);
-        $table->removeBehavior('Sluggable');
+        $result = $table->removeBehavior('Sluggable');
+        $this->assertSame($table, $result);
     }
 
     /**
