@@ -413,7 +413,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      */
     public function testFlashAssertionsAfterRender()
     {
-        $this->enableRememberFlashMessages();
+        $this->enableRetainFlashMessages();
         $this->get('/posts/index/with_flash');
 
         $this->assertSession('An error message', 'Flash.flash.0.message');

@@ -154,7 +154,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @var bool
      */
-    protected $_rememberFlashMessages = false;
+    protected $_retainFlashMessages = false;
 
     /**
      * Stored flash messages before render
@@ -202,7 +202,7 @@ abstract class IntegrationTestCase extends TestCase
         $this->_appArgs = null;
         $this->_securityToken = false;
         $this->_csrfToken = false;
-        $this->_rememberFlashMessages = false;
+        $this->_retainFlashMessages = false;
         $this->_useHttpServer = false;
     }
 
@@ -264,9 +264,9 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @return void
      */
-    public function enableRememberFlashMessages()
+    public function enableRetainFlashMessages()
     {
-        $this->_rememberFlashMessages = true;
+        $this->_retainFlashMessages = true;
     }
 
     /**
@@ -452,7 +452,7 @@ abstract class IntegrationTestCase extends TestCase
             $request = $this->_buildRequest($url, $method, $data);
             $response = $dispatcher->execute($request);
             $this->_requestSession = $request['session'];
-            if ($this->_rememberFlashMessages) {
+            if ($this->_retainFlashMessages) {
                 $this->_requestSession->write('Flash', $this->_flashMessages);
             }
             $this->_response = $response;
@@ -500,7 +500,7 @@ abstract class IntegrationTestCase extends TestCase
             if (!$this->_viewName) {
                 $this->_viewName = $viewFile;
             }
-            if ($this->_rememberFlashMessages) {
+            if ($this->_retainFlashMessages) {
                 $this->_flashMessages = $controller->request->session()->read('Flash');
             }
         });
