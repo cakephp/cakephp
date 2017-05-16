@@ -46,7 +46,7 @@ class DateTimeType extends Type implements TypeInterface
      * class is constructed. After that use `useMutable()` or `useImmutable()` instead.
      *
      * @var string
-     * @deprecated Use DateTimeType::useMutable() or DateTimeType::useImmutable() instead.
+     * @deprecated 3.2.0 Use DateTimeType::useMutable() or DateTimeType::useImmutable() instead.
      */
     public static $dateTimeClass = 'Cake\I18n\Time';
 
