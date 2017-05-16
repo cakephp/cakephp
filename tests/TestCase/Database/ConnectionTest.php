@@ -18,6 +18,8 @@ use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Exception\NestedTransactionRollbackException;
+use Cake\Database\Log\LoggingStatement;
+use Cake\Database\Log\QueryLogger;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use ReflectionMethod;
@@ -145,14 +147,14 @@ class ConnectionTest extends TestCase
     public function testDriverOptionClassNameSupport()
     {
         $connection = new Connection(['driver' => 'TestDriver']);
-        $this->assertInstanceOf('\TestApp\Database\Driver\TestDriver', $connection->driver());
+        $this->assertInstanceOf('\TestApp\Database\Driver\TestDriver', $connection->getDriver());
 
         $connection = new Connection(['driver' => 'TestPlugin.TestDriver']);
-        $this->assertInstanceOf('\TestPlugin\Database\Driver\TestDriver', $connection->driver());
+        $this->assertInstanceOf('\TestPlugin\Database\Driver\TestDriver', $connection->getDriver());
 
-        list(, $name) = namespaceSplit(get_class($this->connection->driver()));
+        list(, $name) = namespaceSplit(get_class($this->connection->getDriver()));
         $connection = new Connection(['driver' => $name]);
-        $this->assertInstanceOf(get_class($this->connection->driver()), $connection->driver());
+        $this->assertInstanceOf(get_class($this->connection->getDriver()), $connection->getDriver());
     }
 
     /**
@@ -163,9 +165,9 @@ class ConnectionTest extends TestCase
      */
     public function testWrongCredentials()
     {
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
         $this->skipIf(isset($config['url']), 'Datasource has dsn, skipping.');
-        $connection = new Connection(['database' => '/dev/nonexistent'] + ConnectionManager::config('test'));
+        $connection = new Connection(['database' => '/dev/nonexistent'] + ConnectionManager::getConfig('test'));
         $connection->connect();
     }
 
@@ -794,9 +796,21 @@ class ConnectionTest extends TestCase
      */
     public function testSetLogger()
     {
-        $logger = new \Cake\Database\Log\QueryLogger;
+        $logger = new QueryLogger;
         $this->connection->logger($logger);
         $this->assertSame($logger, $this->connection->logger());
+    }
+
+    /**
+     * Tests setting and getting the logger object
+     *
+     * @return void
+     */
+    public function testGetAndSetLogger()
+    {
+        $logger = new QueryLogger();
+        $this->connection->setLogger($logger);
+        $this->assertSame($logger, $this->connection->getLogger());
     }
 
     /**
@@ -806,11 +820,11 @@ class ConnectionTest extends TestCase
      */
     public function testLoggerDecorator()
     {
-        $logger = new \Cake\Database\Log\QueryLogger;
+        $logger = new QueryLogger;
         $this->connection->logQueries(true);
         $this->connection->logger($logger);
         $st = $this->connection->prepare('SELECT 1');
-        $this->assertInstanceOf('Cake\Database\Log\LoggingStatement', $st);
+        $this->assertInstanceOf(LoggingStatement::class, $st);
         $this->assertSame($logger, $st->logger());
 
         $this->connection->logQueries(false);
@@ -839,7 +853,7 @@ class ConnectionTest extends TestCase
      */
     public function testLogFunction()
     {
-        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
+        $logger = $this->getMockBuilder(QueryLogger::class)->getMock();
         $this->connection->logger($logger);
         $logger->expects($this->once())->method('log')
             ->with($this->logicalAnd(
@@ -857,7 +871,7 @@ class ConnectionTest extends TestCase
     public function testLogBeginRollbackTransaction()
     {
         $connection = $this
-            ->getMockBuilder('\Cake\Database\Connection')
+            ->getMockBuilder(Connection::class)
             ->setMethods(['connect'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -866,7 +880,7 @@ class ConnectionTest extends TestCase
         $driver = $this->getMockFormDriver();
         $connection->driver($driver);
 
-        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
+        $logger = $this->getMockBuilder(QueryLogger::class)->getMock();
         $connection->logger($logger);
         $logger->expects($this->at(0))->method('log')
             ->with($this->logicalAnd(
@@ -892,12 +906,12 @@ class ConnectionTest extends TestCase
     public function testLogCommitTransaction()
     {
         $driver = $this->getMockFormDriver();
-        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->setMethods(['connect'])
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
 
-        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
+        $logger = $this->getMockBuilder(QueryLogger::class)->getMock();
         $connection->logger($logger);
 
         $logger->expects($this->at(1))->method('log')
@@ -919,7 +933,7 @@ class ConnectionTest extends TestCase
     public function testTransactionalSuccess()
     {
         $driver = $this->getMockFormDriver();
-        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->setMethods(['connect', 'commit', 'begin'])
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
@@ -942,7 +956,7 @@ class ConnectionTest extends TestCase
     public function testTransactionalFail()
     {
         $driver = $this->getMockFormDriver();
-        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->setMethods(['connect', 'commit', 'begin', 'rollback'])
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
@@ -968,7 +982,7 @@ class ConnectionTest extends TestCase
     public function testTransactionalWithException()
     {
         $driver = $this->getMockFormDriver();
-        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->setMethods(['connect', 'commit', 'begin', 'rollback'])
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
@@ -989,7 +1003,7 @@ class ConnectionTest extends TestCase
     public function testSchemaCollection()
     {
         $driver = $this->getMockFormDriver();
-        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->setMethods(['connect'])
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();

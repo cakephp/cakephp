@@ -810,17 +810,43 @@ class Connection implements ConnectionInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @deprecated 3.5.0 Use getLogger() and setLogger() instead.
      */
     public function logger($instance = null)
     {
         if ($instance === null) {
-            if ($this->_logger === null) {
-                $this->_logger = new QueryLogger();
-            }
-
-            return $this->_logger;
+            return $this->getLogger();
         }
-        $this->_logger = $instance;
+
+        $this->setLogger($instance);
+    }
+
+    /**
+     * Sets a logger
+     *
+     * @param object $logger Logger object
+     * @return $this
+     */
+    public function setLogger($logger)
+    {
+        $this->_logger = $logger;
+
+        return $this;
+    }
+
+    /**
+     * Gets the logger object
+     *
+     * @return object logger instance
+     */
+    public function getLogger()
+    {
+        if ($this->_logger === null) {
+            $this->_logger = new QueryLogger();
+        }
+
+        return $this->_logger;
     }
 
     /**
