@@ -1530,8 +1530,20 @@ class Query implements ExpressionInterface, IteratorAggregate
             return $this;
         }
 
+        if (is_array($key)) {
+            foreach ($key as $field => &$value) {
+                $type = $this->typeMap()->type($field);
+                if (!$type) {
+                    continue;
+                }
+
+                $value = Type::build($type)->toDatabase($value, $this->connection()->driver());
+            }
+        }
+
         if (is_array($key) || $key instanceof ExpressionInterface) {
             $types = (array)$value;
+
             $this->_parts['set']->add($key, $types);
 
             return $this;
