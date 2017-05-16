@@ -294,6 +294,35 @@ xml;
     }
 
     /**
+     * Test setting a help alias
+     *
+     * @return void
+     */
+    public function testWithHelpAlias()
+    {
+        $parser = new ConsoleOptionParser('mycommand', false);
+        $formatter = new HelpFormatter($parser);
+        $formatter->setAlias('foo');
+        $result = $formatter->text();
+        $expected = 'foo mycommand [-h]';
+        $this->assertContains($expected, $result);
+    }
+
+    /**
+     * Tests that setting a none string help alias triggers an exception
+     *
+     * @expectedException \Cake\Console\Exception\ConsoleException
+     * @expectedExceptionMessage Alias must be of type string.
+     * @return void
+     */
+    public function testWithNoneStringHelpAlias()
+    {
+        $parser = new ConsoleOptionParser('mycommand', false);
+        $formatter = new HelpFormatter($parser);
+        $formatter->setAlias(['foo']);
+    }
+
+    /**
      * test help() with options and arguments that have choices.
      *
      * @return void
