@@ -89,7 +89,7 @@ class CacheTest extends TestCase
         $this->_configCache();
         Cache::disable();
 
-        $result = Cache::getEngine('tests');
+        $result = Cache::engine('tests');
         $this->assertInstanceOf('Cake\Cache\Engine\NullEngine', $result);
     }
 
@@ -105,7 +105,7 @@ class CacheTest extends TestCase
         Cache::setConfig('tests', [
             'className' => '\StdClass'
         ]);
-        Cache::getEngine('tests');
+        Cache::engine('tests');
     }
 
     /**
@@ -122,7 +122,7 @@ class CacheTest extends TestCase
         Cache::setConfig('tests', [
             'engine' => $mock
         ]);
-        Cache::getEngine('tests');
+        Cache::engine('tests');
     }
 
     /**
@@ -137,12 +137,12 @@ class CacheTest extends TestCase
 
         $config = ['engine' => 'TestAppCache', 'path' => TMP, 'prefix' => 'cake_test_'];
         Cache::setConfig('libEngine', $config);
-        $engine = Cache::getEngine('libEngine');
+        $engine = Cache::engine('libEngine');
         $this->assertInstanceOf('TestApp\Cache\Engine\TestAppCacheEngine', $engine);
 
         $config = ['engine' => 'TestPlugin.TestPluginCache', 'path' => TMP, 'prefix' => 'cake_test_'];
         $result = Cache::setConfig('pluginLibEngine', $config);
-        $engine = Cache::getEngine('pluginLibEngine');
+        $engine = Cache::engine('pluginLibEngine');
         $this->assertInstanceOf('TestPlugin\Cache\Engine\TestPluginCacheEngine', $engine);
 
         Cache::drop('libEngine');
@@ -217,7 +217,7 @@ class CacheTest extends TestCase
         $this->assertNotContains('test', Cache::configured(), 'test config should not exist.');
         Cache::setConfig('tests', $config);
 
-        $engine = Cache::getEngine('tests');
+        $engine = Cache::engine('tests');
         $this->assertInstanceOf('Cake\Cache\Engine\FileEngine', $engine);
         $this->assertContains('tests', Cache::configured());
     }
@@ -232,7 +232,7 @@ class CacheTest extends TestCase
     {
         $config = ['engine' => 'Imaginary'];
         Cache::setConfig('test', $config);
-        Cache::getEngine('test');
+        Cache::engine('test');
     }
 
     /**
@@ -249,7 +249,7 @@ class CacheTest extends TestCase
         Cache::setConfig('test', [
             'engine' => '\RubbishEngine'
         ]);
-        Cache::getEngine('tests');
+        Cache::engine('tests');
     }
 
     /**
@@ -296,7 +296,7 @@ class CacheTest extends TestCase
             'prefix' => 'cache_value_'
         ]);
 
-        $engine = Cache::getEngine('cache.dotted');
+        $engine = Cache::engine('cache.dotted');
         $this->assertContains('cache.dotted', Cache::configured());
         $this->assertNotContains('dotted', Cache::configured());
         $this->assertInstanceOf('Cake\Cache\Engine\FileEngine', $engine);
@@ -411,7 +411,7 @@ class CacheTest extends TestCase
         ]);
         $this->assertInstanceOf(
             'TestApp\Cache\Engine\TestAppCacheEngine',
-            Cache::getEngine('unconfigTest')
+            Cache::engine('unconfigTest')
         );
         $this->assertTrue(Cache::drop('unconfigTest'));
     }
