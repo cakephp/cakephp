@@ -1799,6 +1799,19 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the hexColor proxy method
+     *
+     * @return void
+     */
+    public function testHexColor()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'hexColor');
+        $this->assertEmpty($validator->errors(['username' => '#FFFFFF']));
+        $this->assertNotEmpty($validator->errors(['username' => 'FFFFFF']));
+    }
+
+    /**
      * Tests the multiple proxy method
      *
      * @return void
