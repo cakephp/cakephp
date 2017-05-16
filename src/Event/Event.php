@@ -88,7 +88,7 @@ class Event
      *
      * @param string $attribute Attribute name.
      * @return mixed
-     * @deprecated Public properties will be removed.
+     * @deprecated 3.4.0 Public properties will be removed.
      */
     public function __get($attribute)
     {
@@ -109,7 +109,7 @@ class Event
      * @param string $attribute Attribute name.
      * @param mixed $value The value to set.
      * @return void
-     * @deprecated Public properties will be removed.
+     * @deprecated 3.4.0 Public properties will be removed.
      */
     public function __set($attribute, $value)
     {

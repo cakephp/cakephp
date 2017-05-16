@@ -27,7 +27,7 @@ class DateType extends DateTimeType
      * class is constructed. After that use `useMutable()` or `useImmutable()` instead.
      *
      * @var string
-     * @deprecated Use DateType::useMutable() or DateType::useImmutable() instead.
+     * @deprecated 3.2.0 Use DateType::useMutable() or DateType::useImmutable() instead.
      */
     public static $dateTimeClass = 'Cake\I18n\Date';
 
