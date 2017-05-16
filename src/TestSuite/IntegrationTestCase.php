@@ -149,6 +149,21 @@ abstract class IntegrationTestCase extends TestCase
     protected $_csrfToken = false;
 
     /**
+     * Boolean flag for whether or not the request should re-store
+     * flash messages
+     *
+     * @var bool
+     */
+    protected $_retainFlashMessages = false;
+
+    /**
+     * Stored flash messages before render
+     *
+     * @var null|array
+     */
+    protected $_flashMessages;
+
+    /**
      *
      * @var null|string
      */
@@ -187,6 +202,7 @@ abstract class IntegrationTestCase extends TestCase
         $this->_appArgs = null;
         $this->_securityToken = false;
         $this->_csrfToken = false;
+        $this->_retainFlashMessages = false;
         $this->_useHttpServer = false;
     }
 
@@ -240,6 +256,17 @@ abstract class IntegrationTestCase extends TestCase
     public function enableCsrfToken()
     {
         $this->_csrfToken = true;
+    }
+
+    /**
+     * Calling this method will re-store flash messages into the test session
+     * after being removed by the FlashHelper
+     *
+     * @return void
+     */
+    public function enableRetainFlashMessages()
+    {
+        $this->_retainFlashMessages = true;
     }
 
     /**
@@ -425,6 +452,9 @@ abstract class IntegrationTestCase extends TestCase
             $request = $this->_buildRequest($url, $method, $data);
             $response = $dispatcher->execute($request);
             $this->_requestSession = $request['session'];
+            if ($this->_retainFlashMessages) {
+                $this->_requestSession->write('Flash', $this->_flashMessages);
+            }
             $this->_response = $response;
         } catch (\PHPUnit\Exception $e) {
             throw $e;
@@ -466,9 +496,12 @@ abstract class IntegrationTestCase extends TestCase
         }
         $this->_controller = $controller;
         $events = $controller->eventManager();
-        $events->on('View.beforeRender', function ($event, $viewFile) {
+        $events->on('View.beforeRender', function ($event, $viewFile) use ($controller) {
             if (!$this->_viewName) {
                 $this->_viewName = $viewFile;
+            }
+            if ($this->_retainFlashMessages) {
+                $this->_flashMessages = $controller->request->session()->read('Flash');
             }
         });
         $events->on('View.beforeLayout', function ($event, $viewFile) {

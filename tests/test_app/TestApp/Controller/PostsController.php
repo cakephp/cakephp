@@ -48,9 +48,10 @@ class PostsController extends AppController
     /**
      * Index method.
      *
+     * @param string $layout
      * @return void
      */
-    public function index()
+    public function index($layout = 'default')
     {
         $this->Flash->error('An error message');
         $this->response->cookie([
@@ -58,6 +59,7 @@ class PostsController extends AppController
             'value' => 1
         ]);
         $this->set('test', 'value');
+        $this->viewBuilder()->setLayout($layout);
     }
 
     /**
