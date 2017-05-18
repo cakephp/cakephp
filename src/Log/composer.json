@@ -13,7 +13,7 @@
     "authors": [
         {
             "name": "CakePHP Community",
-            "homepage": "https://cakephp.org"
+            "homepage": "https://github.com/cakephp/log/graphs/contributors"
         }
     ],
     "autoload": {

@@ -14,7 +14,7 @@
     "authors": [
         {
             "name": "CakePHP Community",
-            "homepage": "https://cakephp.org"
+            "homepage": "https://github.com/cakephp/database/graphs/contributors"
         }
     ],
     "require": {
