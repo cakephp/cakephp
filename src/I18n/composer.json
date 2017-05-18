@@ -4,15 +4,17 @@
     "license": "MIT",
     "authors": [
         {
-        "name": "CakePHP Community",
-        "homepage": "https://cakephp.org"
-    }
+            "name": "CakePHP Community",
+            "homepage": "https://cakephp.org"
+        }
     ],
     "autoload": {
         "psr-4": {
             "Cake\\I18n\\": "."
         },
-        "files": ["functions.php"]
+        "files": [
+            "functions.php"
+        ]
     },
     "require": {
         "cakephp/core": "~3.0",

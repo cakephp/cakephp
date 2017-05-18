@@ -9,13 +9,15 @@
         }
     ],
     "suggest": {
-      "ext-intl": "To use Text::transliterate() or Text::slug()",
-      "lib-ICU": "To use Text::transliterate() or Text::slug()"
+        "ext-intl": "To use Text::transliterate() or Text::slug()",
+        "lib-ICU": "To use Text::transliterate() or Text::slug()"
     },
     "autoload": {
         "psr-4": {
             "Cake\\Utility\\": "."
         },
-        "files": ["bootstrap.php"]
+        "files": [
+            "bootstrap.php"
+        ]
     }
 }
