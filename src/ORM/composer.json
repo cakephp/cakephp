@@ -1,6 +1,13 @@
 {
     "name": "cakephp/orm",
     "description": "CakePHP ORM - Provides a flexible and powerful ORM implementing a data-mapper pattern.",
+    "type": "library",
+    "keywords": [
+        "cakephp",
+        "orm",
+        "data-mapper",
+        "data-mapper pattern"
+    ],
     "license": "MIT",
     "authors": [
         {
