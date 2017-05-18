@@ -1,6 +1,11 @@
 {
     "name": "cakephp/form",
     "description": "CakePHP Form library",
+    "type": "library",
+    "keywords": [
+        "cakephp",
+        "form"
+    ],
     "license": "MIT",
     "authors": [
         {
