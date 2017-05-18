@@ -1,6 +1,13 @@
 {
     "name": "cakephp/filesystem",
     "description": "CakePHP filesystem convenience classes to help you work with files and folders.",
+    "type": "library",
+    "keywords": [
+        "cakephp",
+        "filesystem",
+        "files",
+        "folders"
+    ],
     "license": "MIT",
     "authors": [
         {
