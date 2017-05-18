@@ -1,6 +1,15 @@
 {
     "name": "cakephp/utility",
     "description": "CakePHP Utility classes such as Inflector, String, Hash, and Security",
+    "type": "library",
+    "keywords": [
+        "cakephp",
+        "utility",
+        "inflector",
+        "string",
+        "hash",
+        "security"
+    ],
     "license": "MIT",
     "authors": [
         {
