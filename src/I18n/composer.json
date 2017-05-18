@@ -1,6 +1,18 @@
 {
     "name": "cakephp/i18n",
     "description": "CakePHP Internationalization library with support for messages translation and dates and numbers localization",
+    "type": "library",
+    "keywords": [
+        "cakephp",
+        "i18n",
+        "internationalisation",
+        "internationalization",
+        "localisation",
+        "localization",
+        "translation",
+        "date",
+        "number"
+    ],
     "license": "MIT",
     "authors": [
         {
