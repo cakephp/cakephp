@@ -1,6 +1,14 @@
 {
     "name": "cakephp/datasource",
     "description": "Provides connection managing and traits for Entities and Queries that can be reused for different datastores",
+    "type": "library",
+    "keywords": [
+        "cakephp",
+        "datasource",
+        "connection management",
+        "entity",
+        "query"
+    ],
     "homepage": "https://cakephp.org",
     "license": "MIT",
     "authors": [
