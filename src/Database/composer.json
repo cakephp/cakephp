@@ -1,6 +1,14 @@
 {
     "name": "cakephp/database",
     "description": "Flexible and powerful Database abstraction library with a familiar PDO-like API",
+    "type": "library",
+    "keywords": [
+        "cakephp",
+        "database",
+        "abstraction",
+        "database abstraction",
+        "pdo"
+    ],
     "license": "MIT",
     "authors": [
         {
