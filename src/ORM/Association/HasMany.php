@@ -440,8 +440,13 @@ class HasMany extends Association
         $primaryKey = (array)$target->getPrimaryKey();
         $exclusions = new Collection($remainingEntities);
         $exclusions = $exclusions->map(
-            function ($ent) use ($primaryKey) {
-                return $ent->extract($primaryKey);
+            function ($ent) use ($target, $primaryKey) {
+                $fields = $ent->extract($primaryKey);
+                foreach ($fields as $field => $value) {
+                    $fields[$target->aliasField($field)] = $value;
+                    unset($fields[$field]);
+                }
+                return $fields;
             }
         )
         ->filter(
