@@ -27,6 +27,7 @@
         }
     },
     "require": {
+        "php": ">=5.6.0",
         "cakephp/core": "~3.0"
     }
 }

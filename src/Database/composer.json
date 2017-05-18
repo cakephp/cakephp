@@ -24,6 +24,7 @@
         "source": "https://github.com/cakephp/database"
     },
     "require": {
+        "php": ">=5.6.0",
         "cakephp/core": "~3.0",
         "cakephp/datasource": "~3.0"
     },

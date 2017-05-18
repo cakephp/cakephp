@@ -24,6 +24,9 @@
         "irc": "irc://irc.freenode.org/cakephp",
         "source": "https://github.com/cakephp/utility"
     },
+    "require": {
+        "php": ">=5.6.0"
+    },
     "suggest": {
         "ext-intl": "To use Text::transliterate() or Text::slug()",
         "lib-ICU": "To use Text::transliterate() or Text::slug()"
