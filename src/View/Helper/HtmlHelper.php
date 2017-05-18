@@ -824,7 +824,8 @@ class HtmlHelper extends Helper
      *   `$options['url']`.
      * - `fullBase` If true the src attribute will get a full address for the image file.
      * - `plugin` False value will prevent parsing path as a plugin
-     *
+     * - `pathImage` Returns the image path
+     * 
      * @param string $path Path to the image file, relative to the app/webroot/img/ directory.
      * @param array $options Array of HTML attributes. See above for special options.
      * @return string completed img tag
@@ -834,6 +835,10 @@ class HtmlHelper extends Helper
     {
         $path = $this->Url->image($path, $options);
         $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
+
+        if (!empty($options['pathImage'])){
+            return $path;
+        }
 
         if (!isset($options['alt'])) {
             $options['alt'] = '';
