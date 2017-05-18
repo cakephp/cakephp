@@ -14,8 +14,8 @@
  */
 namespace Cake\Database\Schema;
 
-use Cake\Database\Schema\TableSchema;
 use Cake\Database\Exception;
+use Cake\Database\Schema\TableSchema;
 
 /**
  * Schema generation/reflection features for MySQL
