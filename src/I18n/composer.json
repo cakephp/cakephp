@@ -27,14 +27,6 @@
         "irc": "irc://irc.freenode.org/cakephp",
         "source": "https://github.com/cakephp/i18n"
     },
-    "autoload": {
-        "psr-4": {
-            "Cake\\I18n\\": "."
-        },
-        "files": [
-            "functions.php"
-        ]
-    },
     "require": {
         "php": ">=5.6.0",
         "cakephp/core": "~3.0",
@@ -44,5 +36,13 @@
     },
     "suggest": {
         "cakephp/cache": "Require this if you want automatic caching of translators"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cake\\I18n\\": "."
+        },
+        "files": [
+            "functions.php"
+        ]
     }
 }

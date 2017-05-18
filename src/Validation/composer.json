@@ -21,15 +21,15 @@
         "irc": "irc://irc.freenode.org/cakephp",
         "source": "https://github.com/cakephp/validation"
     },
-    "autoload": {
-        "psr-4": {
-            "Cake\\Validation\\": "."
-        }
-    },
     "require": {
         "php": ">=5.6.0",
         "cakephp/utility": "~3.0",
         "cakephp/i18n": "~3.0",
         "psr/http-message": "~1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cake\\Validation\\": "."
+        }
     }
 }

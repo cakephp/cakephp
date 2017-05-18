@@ -21,13 +21,13 @@
         "irc": "irc://irc.freenode.org/cakephp",
         "source": "https://github.com/cakephp/cache"
     },
+    "require": {
+        "php": ">=5.6.0",
+        "cakephp/core": "~3.0"
+    },
     "autoload": {
         "psr-4": {
             "Cake\\Cache\\": "."
         }
-    },
-    "require": {
-        "php": ">=5.6.0",
-        "cakephp/core": "~3.0"
     }
 }
