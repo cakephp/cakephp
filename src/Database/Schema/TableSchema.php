@@ -249,6 +249,118 @@ class TableSchema
     const INDEX_FULLTEXT = 'fulltext';
 
     /**
+     * Binary column type
+     *
+     * @var string
+     */
+    const TYPE_BINARY = 'binary';
+
+    /**
+     * Date column type
+     *
+     * @var string
+     */
+    const TYPE_DATE = 'date';
+
+    /**
+     * Datetime column type
+     *
+     * @var string
+     */
+    const TYPE_DATETIME = 'datetime';
+
+    /**
+     * Time column type
+     *
+     * @var string
+     */
+    const TYPE_TIME = 'time';
+
+    /**
+     * Timestamp column type
+     *
+     * @var string
+     */
+    const TYPE_TIMESTAMP = 'timestamp';
+
+    /**
+     * json column type
+     *
+     * @var string
+     */
+    const TYPE_JSON = 'json';
+
+    /**
+     * String column type
+     *
+     * @var string
+     */
+    const TYPE_STRING = 'string';
+
+    /**
+     * Text column type
+     *
+     * @var string
+     */
+    const TYPE_TEXT = 'text';
+
+    /**
+     * Tiny Integer column type
+     *
+     * @var string
+     */
+    const TYPE_TINYINTEGER = 'tinyinteger';
+
+    /**
+     * Small Integer column type
+     *
+     * @var string
+     */
+    const TYPE_SMALLINTEGER = 'smallinteger';
+
+    /**
+     * Integer column type
+     *
+     * @var string
+     */
+    const TYPE_INTEGER = 'integer';
+
+    /**
+     * Big Integer column type
+     *
+     * @var string
+     */
+    const TYPE_BIGINTEGER = 'biginteger';
+
+    /**
+     * Float column type
+     *
+     * @var string
+     */
+    const TYPE_FLOAT = 'float';
+
+    /**
+     * Decimal column type
+     *
+     * @var string
+     */
+    const TYPE_DECIMAL = 'decimal';
+
+    /**
+     * Boolean column type
+     *
+     * @var string
+     */
+    const TYPE_BOOLEAN = 'boolean';
+
+    /**
+     * UUID column type
+     *
+     * @var string
+     */
+    const TYPE_UUID = 'uuid';
+
+    /**
      * Foreign key cascade action
      *
      * @var string
