@@ -1,6 +1,13 @@
 {
     "name": "cakephp/log",
     "description": "CakePHP logging library with support for multiple different streams",
+    "type": "library",
+    "keywords": [
+        "cakephp",
+        "log",
+        "logging",
+        "streams"
+    ],
     "license": "MIT",
     "authors": [
         {
