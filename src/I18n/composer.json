@@ -29,8 +29,8 @@
     },
     "require": {
         "php": ">=5.6.0",
-        "cakephp/core": "^3.0.0",
         "ext-intl": "*",
+        "cakephp/core": "^3.0.0",
         "cakephp/chronos": "^1.0.0",
         "aura/intl": "^3.0.0"
     },
