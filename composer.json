@@ -3,7 +3,16 @@
     "description": "The CakePHP framework",
     "type": "library",
     "keywords": [
-        "framework"
+        "framework",
+        "mvc",
+        "rapid-development",
+        "conventions over configuration",
+        "dry",
+        "orm",
+        "form",
+        "validation",
+        "rest-api",
+        "psr-7"
     ],
     "homepage": "https://cakephp.org",
     "license": "MIT",
