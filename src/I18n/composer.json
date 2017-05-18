@@ -21,6 +21,12 @@
             "homepage": "https://github.com/cakephp/i18n/graphs/contributors"
         }
     ],
+    "support": {
+        "issues": "https://github.com/cakephp/cakephp/issues",
+        "forum": "https://stackoverflow.com/tags/cakephp",
+        "irc": "irc://irc.freenode.org/cakephp",
+        "source": "https://github.com/cakephp/i18n"
+    },
     "autoload": {
         "psr-4": {
             "Cake\\I18n\\": "."

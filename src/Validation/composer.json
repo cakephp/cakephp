@@ -15,6 +15,12 @@
             "homepage": "https://github.com/cakephp/validation/graphs/contributors"
         }
     ],
+    "support": {
+        "issues": "https://github.com/cakephp/cakephp/issues",
+        "forum": "https://stackoverflow.com/tags/cakephp",
+        "irc": "irc://irc.freenode.org/cakephp",
+        "source": "https://github.com/cakephp/validation"
+    },
     "autoload": {
         "psr-4": {
             "Cake\\Validation\\": "."

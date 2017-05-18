@@ -18,6 +18,12 @@
             "homepage": "https://github.com/cakephp/utility/graphs/contributors"
         }
     ],
+    "support": {
+        "issues": "https://github.com/cakephp/cakephp/issues",
+        "forum": "https://stackoverflow.com/tags/cakephp",
+        "irc": "irc://irc.freenode.org/cakephp",
+        "source": "https://github.com/cakephp/utility"
+    },
     "suggest": {
         "ext-intl": "To use Text::transliterate() or Text::slug()",
         "lib-ICU": "To use Text::transliterate() or Text::slug()"

@@ -16,6 +16,12 @@
             "homepage": "https://github.com/cakephp/event/graphs/contributors"
         }
     ],
+    "support": {
+        "issues": "https://github.com/cakephp/cakephp/issues",
+        "forum": "https://stackoverflow.com/tags/cakephp",
+        "irc": "irc://irc.freenode.org/cakephp",
+        "source": "https://github.com/cakephp/event"
+    },
     "autoload": {
         "psr-4": {
             "Cake\\Event\\": "."
