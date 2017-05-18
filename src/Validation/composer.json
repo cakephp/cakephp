@@ -1,6 +1,12 @@
 {
     "name": "cakephp/validation",
     "description": "CakePHP Validation library",
+    "type": "library",
+    "keywords": [
+        "cakephp",
+        "validation",
+        "data validation"
+    ],
     "license": "MIT",
     "authors": [
         {
