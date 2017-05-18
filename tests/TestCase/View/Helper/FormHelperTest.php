@@ -3249,6 +3249,21 @@ class FormHelperTest extends TestCase
     {
         $articles = TableRegistry::get('Articles');
         $articles->schema()->addColumn('active', ['type' => 'boolean', 'default' => null]);
+        $article = $articles->newEntity();
+
+        $this->Form->create($article);
+
+        $result = $this->Form->control('Articles.active');
+        $expected = [
+            'div' => ['class' => 'input checkbox'],
+            'input' => ['type' => 'hidden', 'name' => 'Articles[active]', 'value' => '0'],
+            'label' => ['for' => 'articles-active'],
+            ['input' => ['type' => 'checkbox', 'name' => 'Articles[active]', 'value' => '1', 'id' => 'articles-active']],
+            'Active',
+            '/label',
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
 
         $result = $this->Form->control('Articles.active', ['label' => false, 'checked' => true]);
         $expected = [
