@@ -393,7 +393,7 @@ trait QueryTrait
      * $singleUser = $query->select(['id', 'username'])->first();
      * ```
      *
-     * @return \Cake\Datasource\EntityInterface|null The first result from the ResultSet.
+     * @return \Cake\Datasource\EntityInterface|array|null The first result from the ResultSet.
      */
     public function first()
     {
@@ -408,7 +408,7 @@ trait QueryTrait
      * Get the first result from the executing query or raise an exception.
      *
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When there is no first record.
-     * @return \Cake\Datasource\EntityInterface The first result from the ResultSet.
+     * @return \Cake\Datasource\EntityInterface|array The first result from the ResultSet.
      */
     public function firstOrFail()
     {
