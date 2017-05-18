@@ -8,6 +8,7 @@
         "dispatcher",
         "observer pattern"
     ],
+    "homepage": "https://cakephp.org",
     "license": "MIT",
     "authors": [
         {

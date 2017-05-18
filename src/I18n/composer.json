@@ -13,6 +13,7 @@
         "date",
         "number"
     ],
+    "homepage": "https://cakephp.org",
     "license": "MIT",
     "authors": [
         {

@@ -8,6 +8,7 @@
         "logging",
         "streams"
     ],
+    "homepage": "https://cakephp.org",
     "license": "MIT",
     "authors": [
         {

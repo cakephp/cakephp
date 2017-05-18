@@ -7,6 +7,7 @@
         "validation",
         "data validation"
     ],
+    "homepage": "https://cakephp.org",
     "license": "MIT",
     "authors": [
         {

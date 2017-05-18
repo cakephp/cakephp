@@ -8,6 +8,7 @@
         "data-mapper",
         "data-mapper pattern"
     ],
+    "homepage": "https://cakephp.org",
     "license": "MIT",
     "authors": [
         {

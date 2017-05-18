@@ -6,6 +6,7 @@
         "cakephp",
         "form"
     ],
+    "homepage": "https://cakephp.org",
     "license": "MIT",
     "authors": [
         {

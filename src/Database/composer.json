@@ -9,6 +9,7 @@
         "database abstraction",
         "pdo"
     ],
+    "homepage": "https://cakephp.org",
     "license": "MIT",
     "authors": [
         {

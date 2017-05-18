@@ -10,6 +10,7 @@
         "hash",
         "security"
     ],
+    "homepage": "https://cakephp.org",
     "license": "MIT",
     "authors": [
         {

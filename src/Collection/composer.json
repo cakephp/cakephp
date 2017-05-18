@@ -8,6 +8,7 @@
         "iterators",
         "arrays"
     ],
+    "homepage": "https://cakephp.org",
     "license": "MIT",
     "authors": [
         {
