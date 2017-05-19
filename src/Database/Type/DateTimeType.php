@@ -118,6 +118,7 @@ class DateTimeType extends Type implements TypeInterface
         }
 
         $format = (array)$this->_format;
+
         return $value->format(array_shift($format));
     }
 
@@ -210,7 +211,7 @@ class DateTimeType extends Type implements TypeInterface
     }
 
     /**
-     * @param \Cake\I18n\Time|\DateTime $date
+     * @param \Cake\I18n\Time|\DateTime $date DateTime object
      * @param mixed $value Request data
      * @return bool
      */
