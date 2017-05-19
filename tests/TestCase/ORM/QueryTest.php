@@ -2714,12 +2714,20 @@ class QueryTest extends TestCase
         $query->offset(10)
             ->limit(1)
             ->order(['Articles.id' => 'DESC'])
-            ->contain(['Comments']);
+            ->contain(['Comments'])
+            ->matching('Comments');
         $copy = $query->cleanCopy();
 
         $this->assertNotSame($copy, $query);
-        $this->assertNotSame($copy->eagerLoader(), $query->eagerLoader());
-        $this->assertNotEmpty($copy->eagerLoader()->contain());
+        $copyLoader = $copy->getEagerLoader();
+        $loader = $query->getEagerLoader();
+        $this->assertEquals($copyLoader, $loader, 'should be equal');
+        $this->assertNotSame($copyLoader, $loader, 'should be clones');
+        $this->assertNotSame(
+            $this->readAttribute($copyLoader, '_matching'),
+            $this->readAttribute($loader, '_matching'),
+            'should be clones'
+        );
         $this->assertNull($copy->clause('offset'));
         $this->assertNull($copy->clause('limit'));
         $this->assertNull($copy->clause('order'));

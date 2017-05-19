@@ -765,6 +765,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $clone->formatResults(null, true);
         $clone->setSelectTypeMap(new TypeMap());
         $clone->decorateResults(null, true);
+        $clone->setEagerLoader(clone $this->getEagerLoader());
 
         return $clone;
     }

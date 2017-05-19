@@ -176,6 +176,42 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
+     * Tests that eagerloading and hydration works for associations that have
+     * different aliases in the association and targetTable
+     *
+     * @return void
+     */
+    public function testEagerLoadingNestedMatchingCalls()
+    {
+        $this->loadFixtures('Articles', 'Authors', 'Tags', 'ArticlesTags', 'AuthorsTags');
+        $articles = TableRegistry::get('Articles');
+        $articles->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'targetForeignKey' => 'tag_id',
+            'joinTable' => 'articles_tags'
+        ]);
+        $tags = TableRegistry::get('Tags');
+        $tags->belongsToMany('Authors', [
+            'foreignKey' => 'tag_id',
+            'targetForeignKey' => 'author_id',
+            'joinTable' => 'authors_tags'
+        ]);
+
+        $query = $articles->find()
+            ->matching('Tags', function ($q) {
+                return $q->matching('Authors', function ($q) {
+                    return $q->where(['Authors.name' => 'larry']);
+                });
+            });
+        $this->assertEquals(3, $query->count());
+
+        $result = $query->first();
+        $this->assertInstanceOf(EntityInterface::class, $result);
+        $this->assertInstanceOf(EntityInterface::class, $result->_matchingData['Tags']);
+        $this->assertInstanceOf(EntityInterface::class, $result->_matchingData['Authors']);
+    }
+
+    /**
      * Tests that duplicate aliases in contain() can be used, even when they would
      * naturally be attached to the query instead of eagerly loaded. What should
      * happen here is that One of the duplicates will be changed to be loaded using
