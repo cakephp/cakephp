@@ -109,6 +109,7 @@ class ValidateUsersTable extends Table
  * FormHelperTest class
  *
  * @property \Cake\View\Helper\FormHelper $Form
+ * @property \Cake\View\View $View
  */
 class FormHelperTest extends TestCase
 {
@@ -126,6 +127,11 @@ class FormHelperTest extends TestCase
      * @var bool
      */
     public $autoFixtures = false;
+
+    /**
+     * @var array
+     */
+    protected $article = [];
 
     /**
      * setUp method
@@ -8459,7 +8465,7 @@ class FormHelperTest extends TestCase
         $this->Form->templates(['input' => '<input/>']);
         $this->assertEquals('<input/>', $this->Form->templater()->get('input'));
 
-        $this->assertNull($this->Form->resetTemplates());
+        $this->Form->resetTemplates();
         $this->assertNotEquals('<input/>', $this->Form->templater()->get('input'));
     }
 

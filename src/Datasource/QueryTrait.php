@@ -393,7 +393,7 @@ trait QueryTrait
      * $singleUser = $query->select(['id', 'username'])->first();
      * ```
      *
-     * @return mixed the first result from the ResultSet
+     * @return \Cake\Datasource\EntityInterface|array|null The first result from the ResultSet.
      */
     public function first()
     {
@@ -408,18 +408,19 @@ trait QueryTrait
      * Get the first result from the executing query or raise an exception.
      *
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When there is no first record.
-     * @return mixed The first result from the ResultSet.
+     * @return \Cake\Datasource\EntityInterface|array The first result from the ResultSet.
      */
     public function firstOrFail()
     {
         $entity = $this->first();
-        if ($entity) {
-            return $entity;
+        if (!$entity) {
+            throw new RecordNotFoundException(sprintf(
+                'Record not found in table "%s"',
+                $this->repository()->table()
+            ));
         }
-        throw new RecordNotFoundException(sprintf(
-            'Record not found in table "%s"',
-            $this->repository()->table()
-        ));
+
+        return $entity;
     }
 
     /**
