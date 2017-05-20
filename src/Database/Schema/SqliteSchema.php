@@ -15,6 +15,7 @@
 namespace Cake\Database\Schema;
 
 use Cake\Database\Exception;
+use Cake\Database\Schema\TableSchema;
 
 /**
  * Schema management/reflection features for Sqlite
@@ -66,46 +67,46 @@ class SqliteSchema extends BaseSchema
         }
 
         if ($col === 'bigint') {
-            return ['type' => 'biginteger', 'length' => $length, 'unsigned' => $unsigned];
+            return ['type' => TableSchema::TYPE_BIGINTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
         if ($col == 'smallint') {
-            return ['type' => 'smallinteger', 'length' => $length, 'unsigned' => $unsigned];
+            return ['type' => TableSchema::TYPE_SMALLINTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
         if ($col == 'tinyint') {
-            return ['type' => 'tinyinteger', 'length' => $length, 'unsigned' => $unsigned];
+            return ['type' => TableSchema::TYPE_TINYINTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
         if (strpos($col, 'int') !== false) {
-            return ['type' => 'integer', 'length' => $length, 'unsigned' => $unsigned];
+            return ['type' => TableSchema::TYPE_INTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
         if (strpos($col, 'decimal') !== false) {
-            return ['type' => 'decimal', 'length' => null, 'unsigned' => $unsigned];
+            return ['type' => TableSchema::TYPE_DECIMAL, 'length' => null, 'unsigned' => $unsigned];
         }
         if (in_array($col, ['float', 'real', 'double'])) {
-            return ['type' => 'float', 'length' => null, 'unsigned' => $unsigned];
+            return ['type' => TableSchema::TYPE_FLOAT, 'length' => null, 'unsigned' => $unsigned];
         }
 
         if (strpos($col, 'boolean') !== false) {
-            return ['type' => 'boolean', 'length' => null];
+            return ['type' => TableSchema::TYPE_BOOLEAN, 'length' => null];
         }
 
         if ($col === 'char' && $length === 36) {
-            return ['type' => 'uuid', 'length' => null];
+            return ['type' => TableSchema::TYPE_UUID, 'length' => null];
         }
         if ($col === 'char') {
-            return ['type' => 'string', 'fixed' => true, 'length' => $length];
+            return ['type' => TableSchema::TYPE_STRING, 'fixed' => true, 'length' => $length];
         }
         if (strpos($col, 'char') !== false) {
-            return ['type' => 'string', 'length' => $length];
+            return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
         }
 
         if (in_array($col, ['blob', 'clob'])) {
-            return ['type' => 'binary', 'length' => null];
+            return ['type' => TableSchema::TYPE_BINARY, 'length' => null];
         }
         if (in_array($col, ['date', 'time', 'timestamp', 'datetime'])) {
             return ['type' => $col, 'length' => null];
         }
 
-        return ['type' => 'text', 'length' => null];
+        return ['type' => TableSchema::TYPE_TEXT, 'length' => null];
     }
 
     /**
@@ -283,29 +284,36 @@ class SqliteSchema extends BaseSchema
     {
         $data = $schema->column($name);
         $typeMap = [
-            'uuid' => ' CHAR(36)',
-            'smallinteger' => ' SMALLINT',
-            'tinyinteger' => ' TINYINT',
-            'integer' => ' INTEGER',
-            'biginteger' => ' BIGINT',
-            'boolean' => ' BOOLEAN',
-            'binary' => ' BLOB',
-            'float' => ' FLOAT',
-            'decimal' => ' DECIMAL',
-            'date' => ' DATE',
-            'time' => ' TIME',
-            'datetime' => ' DATETIME',
-            'timestamp' => ' TIMESTAMP',
-            'json' => ' TEXT'
+            TableSchema::TYPE_UUID => ' CHAR(36)',
+            TableSchema::TYPE_TINYINTEGER => ' TINYINT',
+            TableSchema::TYPE_SMALLINTEGER => ' SMALLINT',
+            TableSchema::TYPE_INTEGER => ' INTEGER',
+            TableSchema::TYPE_BIGINTEGER => ' BIGINT',
+            TableSchema::TYPE_BOOLEAN => ' BOOLEAN',
+            TableSchema::TYPE_BINARY => ' BLOB',
+            TableSchema::TYPE_FLOAT => ' FLOAT',
+            TableSchema::TYPE_DECIMAL => ' DECIMAL',
+            TableSchema::TYPE_DATE => ' DATE',
+            TableSchema::TYPE_TIME => ' TIME',
+            TableSchema::TYPE_DATETIME => ' DATETIME',
+            TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
+            TableSchema::TYPE_JSON => ' TEXT'
         ];
 
         $out = $this->_driver->quoteIdentifier($name);
-        $hasUnsigned = ['smallinteger', 'tinyinteger', 'biginteger', 'integer', 'float', 'decimal'];
+        $hasUnsigned = [
+            TableSchema::TYPE_TINYINTEGER,
+            TableSchema::TYPE_SMALLINTEGER,
+            TableSchema::TYPE_INTEGER,
+            TableSchema::TYPE_BIGINTEGER,
+            TableSchema::TYPE_FLOAT,
+            TableSchema::TYPE_DECIMAL
+        ];
 
         if (in_array($data['type'], $hasUnsigned, true) &&
             isset($data['unsigned']) && $data['unsigned'] === true
         ) {
-            if ($data['type'] !== 'integer' || [$name] !== (array)$schema->primaryKey()) {
+            if ($data['type'] !== TableSchema::TYPE_INTEGER || [$name] !== (array)$schema->primaryKey()) {
                 $out .= ' UNSIGNED';
             }
         }
@@ -314,11 +322,13 @@ class SqliteSchema extends BaseSchema
             $out .= $typeMap[$data['type']];
         }
 
-        if ($data['type'] === 'text' && $data['length'] !== TableSchema::LENGTH_TINY) {
+        if ($data['type'] === TableSchema::TYPE_TEXT && $data['length'] !== TableSchema::LENGTH_TINY) {
             $out .= ' TEXT';
         }
 
-        if ($data['type'] === 'string' || ($data['type'] === 'text' && $data['length'] === TableSchema::LENGTH_TINY)) {
+        if ($data['type'] === TableSchema::TYPE_STRING ||
+            ($data['type'] === TableSchema::TYPE_TEXT && $data['length'] === TableSchema::LENGTH_TINY)
+        ) {
             $out .= ' VARCHAR';
 
             if (isset($data['length'])) {
@@ -326,14 +336,18 @@ class SqliteSchema extends BaseSchema
             }
         }
 
-        $integerTypes = ['integer', 'smallinteger', 'tinyinteger'];
+        $integerTypes = [
+            TableSchema::TYPE_TINYINTEGER,
+            TableSchema::TYPE_SMALLINTEGER,
+            TableSchema::TYPE_INTEGER,
+        ];
         if (in_array($data['type'], $integerTypes, true) &&
             isset($data['length']) && [$name] !== (array)$schema->primaryKey()
         ) {
                 $out .= '(' . (int)$data['length'] . ')';
         }
 
-        $hasPrecision = ['float', 'decimal'];
+        $hasPrecision = [TableSchema::TYPE_FLOAT, TableSchema::TYPE_DECIMAL];
         if (in_array($data['type'], $hasPrecision, true) &&
             (isset($data['length']) || isset($data['precision']))
         ) {
@@ -344,11 +358,11 @@ class SqliteSchema extends BaseSchema
             $out .= ' NOT NULL';
         }
 
-        if ($data['type'] === 'integer' && [$name] === (array)$schema->primaryKey()) {
+        if ($data['type'] === TableSchema::TYPE_INTEGER && [$name] === (array)$schema->primaryKey()) {
             $out .= ' PRIMARY KEY AUTOINCREMENT';
         }
 
-        if (isset($data['null']) && $data['null'] === true && $data['type'] === 'timestamp') {
+        if (isset($data['null']) && $data['null'] === true && $data['type'] === TableSchema::TYPE_TIMESTAMP) {
             $out .= ' DEFAULT NULL';
         }
         if (isset($data['default'])) {
@@ -370,7 +384,7 @@ class SqliteSchema extends BaseSchema
         $data = $schema->constraint($name);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY &&
             count($data['columns']) === 1 &&
-            $schema->column($data['columns'][0])['type'] === 'integer'
+            $schema->column($data['columns'][0])['type'] === TableSchema::TYPE_INTEGER
         ) {
             return '';
         }
