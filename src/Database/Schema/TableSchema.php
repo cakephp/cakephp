@@ -284,7 +284,7 @@ class TableSchema
     const TYPE_TIMESTAMP = 'timestamp';
 
     /**
-     * json column type
+     * JSON column type
      *
      * @var string
      */
