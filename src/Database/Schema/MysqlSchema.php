@@ -328,13 +328,13 @@ class MysqlSchema extends BaseSchema
         }
         if (isset($specialMap[$data['type']])) {
             switch ($data['type']) {
-                case 'string':
+                case TableSchema::TYPE_STRING:
                     $out .= !empty($data['fixed']) ? ' CHAR' : ' VARCHAR';
                     if (!isset($data['length'])) {
                         $data['length'] = 255;
                     }
                     break;
-                case 'text':
+                case TableSchema::TYPE_TEXT:
                     $isKnownLength = in_array($data['length'], Table::$columnLengths);
                     if (empty($data['length']) || !$isKnownLength) {
                         $out .= ' TEXT';
@@ -347,7 +347,7 @@ class MysqlSchema extends BaseSchema
                     }
 
                     break;
-                case 'binary':
+                case TableSchema::TYPE_BINARY:
                     $isKnownLength = in_array($data['length'], Table::$columnLengths);
                     if (empty($data['length']) || !$isKnownLength) {
                         $out .= ' BLOB';
