@@ -32,6 +32,7 @@ use Cake\Utility\Security;
  * - Use hash compatible syntax to read/write/delete values.
  *
  * @link http://book.cakephp.org/3.0/en/controllers/components/cookie.html
+ * @deprecated 3.5.0 Use Cake\Http\Middleware\EncryptedCookieMiddleware and Cake\Http\Cookie\Cookie methods instead.
  */
 class CookieComponent extends Component
 {
