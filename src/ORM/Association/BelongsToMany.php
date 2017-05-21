@@ -1282,13 +1282,13 @@ class BelongsToMany extends Association
     protected function _checkPersistenceStatus($sourceEntity, array $targetEntities)
     {
         if ($sourceEntity->isNew()) {
-            $error = 'Source entity needs to be persisted before proceeding';
+            $error = 'Source entity needs to be persisted before links can be created or removed.';
             throw new InvalidArgumentException($error);
         }
 
         foreach ($targetEntities as $entity) {
             if ($entity->isNew()) {
-                $error = 'Cannot link not persisted entities';
+                $error = 'Cannot link entities that have not been persisted yet.';
                 throw new InvalidArgumentException($error);
             }
         }

@@ -67,17 +67,6 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
-     * Tear down
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        TableRegistry::clear();
-    }
-
-    /**
      * Tests that foreignKey() returns the correct configured value
      *
      * @return void
@@ -390,7 +379,7 @@ class BelongsToManyTest extends TestCase
      * Test linking entities having a non persisted source entity
      *
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Source entity needs to be persisted before proceeding
+     * @expectedExceptionMessage Source entity needs to be persisted before links can be created or removed
      * @return void
      */
     public function testLinkWithNotPersistedSource()
@@ -410,7 +399,7 @@ class BelongsToManyTest extends TestCase
      * Test liking entities having a non persisted target entity
      *
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Cannot link not persisted entities
+     * @expectedExceptionMessage Cannot link entities that have not been persisted yet
      * @return void
      */
     public function testLinkWithNotPersistedTarget()
@@ -482,7 +471,7 @@ class BelongsToManyTest extends TestCase
      * Test liking entities having a non persisted source entity
      *
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Source entity needs to be persisted before proceeding
+     * @expectedExceptionMessage Source entity needs to be persisted before links can be created or removed
      * @return void
      */
     public function testUnlinkWithNotPersistedSource()
@@ -502,7 +491,7 @@ class BelongsToManyTest extends TestCase
      * Test liking entities having a non persisted target entity
      *
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Cannot link not persisted entities
+     * @expectedExceptionMessage Cannot link entities that have not been persisted
      * @return void
      */
     public function testUnlinkWithNotPersistedTarget()
