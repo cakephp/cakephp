@@ -40,6 +40,12 @@ use Traversable;
  *
  * Automatic generation of HTML FORMs from given data.
  *
+ * @method string text($fieldName, array $options = [])
+ * @method string number($fieldName, array $options = [])
+ * @method string email($fieldName, array $options = [])
+ * @method string password($fieldName, array $options = [])
+ * @method string search($fieldName, array $options = [])
+ *
  * @property \Cake\View\Helper\HtmlHelper $Html
  * @property \Cake\View\Helper\UrlHelper $Url
  * @link http://book.cakephp.org/3.0/en/views/helpers/form.html
@@ -2664,7 +2670,7 @@ class FormHelper extends Helper
      * If there is no active form null will be returned.
      *
      * @param \Cake\View\Form\ContextInterface|null $context Either the new context when setting, or null to get.
-     * @return null|\Cake\View\Form\ContextInterface The context for the form.
+     * @return \Cake\View\Form\ContextInterface The context for the form.
      */
     public function context($context = null)
     {
@@ -2681,7 +2687,7 @@ class FormHelper extends Helper
      * If no type can be matched a NullContext will be returned.
      *
      * @param mixed $data The data to get a context provider for.
-     * @return mixed Context provider.
+     * @return \Cake\View\Form\ContextInterface Context provider.
      * @throws \RuntimeException when the context class does not implement the
      *   ContextInterface.
      */

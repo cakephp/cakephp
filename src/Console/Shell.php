@@ -782,7 +782,7 @@ class Shell
      * @throws \Cake\Console\Exception\StopException
      * @return int Error code
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#styling-output
-     * @deprecated Since 3.2.0. Use Shell::abort() instead.
+     * @deprecated 3.2.0 Use Shell::abort() instead.
      */
     public function error($title, $message = null, $exitCode = self::CODE_ERROR)
     {

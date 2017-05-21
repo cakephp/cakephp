@@ -167,6 +167,61 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
      * is not part of the Oauth spec.
      *
      * See Normalize Request Parameters (section 9.1.1)
+     *
+     * @return void
+     */
+    public function testBaseStringWithPostDataNestedArrays()
+    {
+        $request = new Request();
+        $request->url('http://example.com/search?q=pogo')
+            ->method(Request::METHOD_POST)
+            ->body([
+                'search' => [
+                    'filters' => [
+                        'field' => 'date',
+                        'value' => 'one two'
+                    ]
+                ]
+            ]);
+
+        $auth = new Oauth();
+        $values = [
+            'oauth_version' => '1.0',
+            'oauth_nonce' => uniqid(),
+            'oauth_timestamp' => time(),
+            'oauth_signature_method' => 'HMAC-SHA1',
+            'oauth_token' => 'token',
+            'oauth_consumer_key' => 'consumer-key',
+        ];
+        $result = $auth->baseString($request, $values);
+
+        $this->assertContains('POST&', $result, 'method was missing.');
+        $this->assertContains(
+            'http%3A%2F%2Fexample.com%2Fsearch&',
+            $result
+        );
+        $this->assertContains(
+            '&oauth_consumer_key%3Dconsumer-key' .
+            '%26oauth_nonce%3D' . $values['oauth_nonce'] .
+            '%26oauth_signature_method%3DHMAC-SHA1' .
+            '%26oauth_timestamp%3D' . $values['oauth_timestamp'] .
+            '%26oauth_token%3Dtoken' .
+            '%26oauth_version%3D1.0' .
+            '%26q%3Dpogo' .
+            '%26search%5Bfilters%5D%5Bfield%5D%3Ddate' .
+            '%26search%5Bfilters%5D%5Bvalue%5D%3Done%20two',
+            $result
+        );
+    }
+
+    /**
+     * Ensure that post data is sorted and encoded.
+     *
+     * Keys with array values have to be serialized using
+     * a more standard HTTP approach. PHP flavoured HTTP
+     * is not part of the Oauth spec.
+     *
+     * See Normalize Request Parameters (section 9.1.1)
      * http://wiki.oauth.net/w/page/12238556/TestCases
      *
      * @return void
@@ -178,8 +233,8 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
             ->method(Request::METHOD_POST)
             ->body([
                 'address' => 'post',
-                'tags' => ['oauth', 'cake'],
-                'zed' => 'last'
+                'zed' => 'last',
+                'tags' => ['oauth', 'cake']
             ]);
 
         $auth = new Oauth();

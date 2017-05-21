@@ -357,6 +357,9 @@ class Marshaller
      * @param array $data The data to convert into entities.
      * @param array $options List of options.
      * @return array An array of built entities.
+     * @throws \BadMethodCallException
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     protected function _belongsToMany(BelongsToMany $assoc, array $data, $options = [])
     {

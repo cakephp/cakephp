@@ -31,7 +31,7 @@ class ValidatorTest extends TestCase
      */
     public function testAddingRulesToField()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->add('title', 'not-blank', ['rule' => 'notBlank']);
         $set = $validator->field('title');
         $this->assertInstanceOf('Cake\Validation\ValidationSet', $set);
@@ -126,7 +126,7 @@ class ValidatorTest extends TestCase
      */
     public function testFieldDefault()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $this->assertFalse($validator->hasField('foo'));
 
         $field = $validator->field('foo');
@@ -142,7 +142,7 @@ class ValidatorTest extends TestCase
      */
     public function testFieldSetter()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validationSet = new ValidationSet;
         $validator->field('thing', $validationSet);
         $this->assertSame($validationSet, $validator->field('thing'));
@@ -155,7 +155,7 @@ class ValidatorTest extends TestCase
      */
     public function testRemove()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->add('title', 'not-blank', ['rule' => 'notBlank']);
         $validator->add('title', 'foo', ['rule' => 'bar']);
         $this->assertCount(2, $validator->field('title'));
@@ -178,7 +178,7 @@ class ValidatorTest extends TestCase
      */
     public function testRequirePresence()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $this->assertSame($validator, $validator->requirePresence('title'));
         $this->assertTrue($validator->field('title')->isPresenceRequired());
 
@@ -199,7 +199,7 @@ class ValidatorTest extends TestCase
      */
     public function testRequirePresenceAsArray()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->requirePresence(['title', 'created']);
         $this->assertTrue($validator->field('title')->isPresenceRequired());
         $this->assertTrue($validator->field('created')->isPresenceRequired());
@@ -237,7 +237,7 @@ class ValidatorTest extends TestCase
      */
     public function testRequirePresenceCallback()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $require = true;
         $validator->requirePresence('title', function ($context) use (&$require) {
             $this->assertEquals([], $context['data']);
@@ -260,7 +260,7 @@ class ValidatorTest extends TestCase
      */
     public function testIsPresenceRequired()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $this->assertSame($validator, $validator->requirePresence('title'));
         $this->assertTrue($validator->isPresenceRequired('title', true));
         $this->assertTrue($validator->isPresenceRequired('title', false));
@@ -285,7 +285,7 @@ class ValidatorTest extends TestCase
      */
     public function testErrorsWithPresenceRequired()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->requirePresence('title');
         $errors = $validator->errors(['foo' => 'something']);
         $expected = ['title' => ['_required' => 'This field is required']];
@@ -295,6 +295,28 @@ class ValidatorTest extends TestCase
 
         $validator->requirePresence('title', false);
         $this->assertEmpty($validator->errors(['foo' => 'bar']));
+    }
+
+    /**
+     * Test that validation on a certain condition generate errors
+     *
+     * @return void
+     */
+    public function testErrorsWithPresenceRequiredOnCreate()
+    {
+        $validator = new Validator();
+        $validator->requirePresence('id', 'update');
+        $validator->allowEmpty('id', 'create');
+        $validator->requirePresence('title');
+
+        $data = [
+            'title' => 'Example title'
+        ];
+
+        $expected = [];
+        $result = $validator->errors($data);
+
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -416,7 +438,7 @@ class ValidatorTest extends TestCase
      */
     public function testCustomErrorsWithPresenceRequired()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->requirePresence('title', true, 'Custom message');
         $errors = $validator->errors(['foo' => 'something']);
         $expected = ['title' => ['_required' => 'Custom message']];
@@ -430,7 +452,7 @@ class ValidatorTest extends TestCase
      */
     public function testCustomErrorsWithPresenceRequiredAsArray()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->requirePresence(['title', 'content'], true, 'Custom message');
         $errors = $validator->errors(['foo' => 'something']);
         $expected = [
@@ -460,7 +482,7 @@ class ValidatorTest extends TestCase
      */
     public function testAllowEmpty()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $this->assertSame($validator, $validator->allowEmpty('title'));
         $this->assertTrue($validator->field('title')->isEmptyAllowed());
 
@@ -478,7 +500,7 @@ class ValidatorTest extends TestCase
      */
     public function testAllowEmptyDateTime()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->allowEmpty('created')
             ->add('created', 'date', ['rule' => 'date']);
 
@@ -524,7 +546,7 @@ class ValidatorTest extends TestCase
      */
     public function testAllowEmptyFileFields()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->allowEmpty('picture')
             ->add('picture', 'file', ['rule' => 'uploadedFile']);
 
@@ -558,7 +580,7 @@ class ValidatorTest extends TestCase
      */
     public function testAllowEmptyAsArray()
     {
-        $validator = new Validator;
+        $validator = new Validator();
 
         $validator->allowEmpty([
             'title',
@@ -615,7 +637,7 @@ class ValidatorTest extends TestCase
      */
     public function testNotEmpty()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->notEmpty('title');
         $this->assertFalse($validator->field('title')->isEmptyAllowed());
 
@@ -630,7 +652,7 @@ class ValidatorTest extends TestCase
      */
     public function testNotEmptyAsArray()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->notEmpty(['title', 'created']);
         $this->assertFalse($validator->field('title')->isEmptyAllowed());
         $this->assertFalse($validator->field('created')->isEmptyAllowed());
@@ -694,7 +716,7 @@ class ValidatorTest extends TestCase
      */
     public function testNotEmptyModes()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->notEmpty('title', 'Need a title', 'create');
         $this->assertFalse($validator->isEmptyAllowed('title', true));
         $this->assertTrue($validator->isEmptyAllowed('title', false));
@@ -719,7 +741,7 @@ class ValidatorTest extends TestCase
      */
     public function testNotEmptyAndIsAllowed()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->allowEmpty('title')
             ->notEmpty('title', 'Need it', 'update');
         $this->assertTrue($validator->isEmptyAllowed('title', true));
@@ -743,7 +765,7 @@ class ValidatorTest extends TestCase
      */
     public function testAllowEmptyCallback()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $allow = true;
         $validator->allowEmpty('title', function ($context) use (&$allow) {
             $this->assertEquals([], $context['data']);
@@ -765,7 +787,7 @@ class ValidatorTest extends TestCase
      */
     public function testNotEmptyCallback()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $prevent = true;
         $validator->notEmpty('title', 'error message', function ($context) use (&$prevent) {
             $this->assertEquals([], $context['data']);
@@ -787,7 +809,7 @@ class ValidatorTest extends TestCase
      */
     public function testIsEmptyAllowed()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $this->assertSame($validator, $validator->allowEmpty('title'));
         $this->assertTrue($validator->isEmptyAllowed('title', true));
         $this->assertTrue($validator->isEmptyAllowed('title', false));
@@ -812,7 +834,7 @@ class ValidatorTest extends TestCase
      */
     public function testErrorsWithEmptyNotAllowed()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->notEmpty('title');
         $errors = $validator->errors(['title' => '']);
         $expected = ['title' => ['_empty' => 'This field cannot be left empty']];
@@ -843,7 +865,7 @@ class ValidatorTest extends TestCase
      */
     public function testCustomErrorsWithAllowedEmpty()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->allowEmpty('title', false, 'Custom message');
         $errors = $validator->errors(['title' => null]);
         $expected = ['title' => ['_empty' => 'Custom message']];
@@ -857,7 +879,7 @@ class ValidatorTest extends TestCase
      */
     public function testCustomErrorsWithEmptyNotAllowed()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->notEmpty('title', 'Custom message');
         $errors = $validator->errors(['title' => '']);
         $expected = ['title' => ['_empty' => 'Custom message']];
@@ -871,7 +893,7 @@ class ValidatorTest extends TestCase
      */
     public function testErrorsWithEmptyAllowed()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->allowEmpty('title');
         $errors = $validator->errors(['title' => '']);
         $this->assertEmpty($errors);
@@ -902,7 +924,7 @@ class ValidatorTest extends TestCase
      */
     public function testProvider()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $object = new \stdClass;
         $this->assertSame($validator, $validator->provider('foo', $object));
         $this->assertSame($object, $validator->provider('foo'));
@@ -923,7 +945,7 @@ class ValidatorTest extends TestCase
      */
     public function testErrorsFromDefaultProvider()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator
             ->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('email', 'notBlank', ['rule' => 'notBlank'])
@@ -946,7 +968,7 @@ class ValidatorTest extends TestCase
      */
     public function testErrorsFromCustomProvider()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator
             ->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
@@ -992,7 +1014,7 @@ class ValidatorTest extends TestCase
      */
     public function testMethodsWithExtraArguments()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->add('title', 'cool', [
             'rule' => ['isCool', 'and', 'awesome'],
             'provider' => 'thing'
@@ -1037,7 +1059,7 @@ class ValidatorTest extends TestCase
      */
     public function testUsingClosureAsRule()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->add('name', 'myRule', [
             'rule' => function ($data, $provider) {
                 $this->assertEquals('foo', $data);
@@ -1056,7 +1078,7 @@ class ValidatorTest extends TestCase
      */
     public function testErrorsWithLastRule()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator
             ->add('email', 'alpha', ['rule' => 'alphanumeric', 'last' => true])
             ->add('email', 'email', ['rule' => 'email', 'message' => 'Y u no write email?']);
@@ -1077,7 +1099,7 @@ class ValidatorTest extends TestCase
      */
     public function testArrayAccessGet()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator
             ->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
@@ -1092,7 +1114,7 @@ class ValidatorTest extends TestCase
      */
     public function testArrayAccessExists()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator
             ->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
@@ -1108,7 +1130,7 @@ class ValidatorTest extends TestCase
      */
     public function testArrayAccessSet()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator
             ->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
@@ -1125,7 +1147,7 @@ class ValidatorTest extends TestCase
      */
     public function testArrayAccessUnset()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator
             ->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
@@ -1141,7 +1163,7 @@ class ValidatorTest extends TestCase
      */
     public function testCount()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator
             ->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
@@ -1155,7 +1177,7 @@ class ValidatorTest extends TestCase
      */
     public function testAddMultiple()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->add('title', [
             'notBlank' => [
                 'rule' => 'notBlank'
@@ -1177,7 +1199,7 @@ class ValidatorTest extends TestCase
      */
     public function testCompareWithIntegration()
     {
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->add('password', [
             'compare' => [
                 'rule' => ['compareWith', 'password_compare']
@@ -1774,6 +1796,19 @@ class ValidatorTest extends TestCase
         $validator->isArray('username');
         $this->assertEmpty($validator->errors(['username' => [1, 2, 3]]));
         $this->assertNotEmpty($validator->errors(['username' => 'is not an array']));
+    }
+
+    /**
+     * Tests the hexColor proxy method
+     *
+     * @return void
+     */
+    public function testHexColor()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'hexColor');
+        $this->assertEmpty($validator->errors(['username' => '#FFFFFF']));
+        $this->assertNotEmpty($validator->errors(['username' => 'FFFFFF']));
     }
 
     /**

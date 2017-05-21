@@ -402,7 +402,7 @@ class Log
      */
     public static function emergency($message, $context = [])
     {
-        return static::write('emergency', $message, $context);
+        return static::write(__FUNCTION__, $message, $context);
     }
 
     /**
@@ -418,7 +418,7 @@ class Log
      */
     public static function alert($message, $context = [])
     {
-        return static::write('alert', $message, $context);
+        return static::write(__FUNCTION__, $message, $context);
     }
 
     /**
@@ -434,7 +434,7 @@ class Log
      */
     public static function critical($message, $context = [])
     {
-        return static::write('critical', $message, $context);
+        return static::write(__FUNCTION__, $message, $context);
     }
 
     /**
@@ -450,7 +450,7 @@ class Log
      */
     public static function error($message, $context = [])
     {
-        return static::write('error', $message, $context);
+        return static::write(__FUNCTION__, $message, $context);
     }
 
     /**
@@ -466,7 +466,7 @@ class Log
      */
     public static function warning($message, $context = [])
     {
-        return static::write('warning', $message, $context);
+        return static::write(__FUNCTION__, $message, $context);
     }
 
     /**
@@ -482,7 +482,7 @@ class Log
      */
     public static function notice($message, $context = [])
     {
-        return static::write('notice', $message, $context);
+        return static::write(__FUNCTION__, $message, $context);
     }
 
     /**
@@ -498,7 +498,7 @@ class Log
      */
     public static function debug($message, $context = [])
     {
-        return static::write('debug', $message, $context);
+        return static::write(__FUNCTION__, $message, $context);
     }
 
     /**
@@ -514,6 +514,6 @@ class Log
      */
     public static function info($message, $context = [])
     {
-        return static::write('info', $message, $context);
+        return static::write(__FUNCTION__, $message, $context);
     }
 }

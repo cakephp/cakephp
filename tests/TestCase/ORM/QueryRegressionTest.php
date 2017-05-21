@@ -92,6 +92,32 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
+     * Tests that eagerloading associations with aliased fields works.
+     *
+     * @return void
+     */
+    public function testEagerLoadingAliasedAssociationFields()
+    {
+        $this->loadFixtures('Articles', 'Authors');
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors', [
+            'foreignKey' => 'author_id'
+        ]);
+        $result = $table->find()
+            ->contain(['Authors' => [
+                'fields' => [
+                    'id',
+                    'Authors__aliased_name' => 'name'
+                ]
+            ]])
+            ->where(['Articles.id' => 1])
+            ->first();
+        $this->assertInstanceOf(EntityInterface::class, $result);
+        $this->assertInstanceOf(EntityInterface::class, $result->author);
+        $this->assertSame('mariano', $result->author->aliased_name);
+    }
+
+    /**
      * Tests that eagerloading and hydration works for associations that have
      * different aliases in the association and targetTable
      *
@@ -147,6 +173,42 @@ class QueryRegressionTest extends TestCase
             'finder' => 'list'
         ]);
         $table->find()->contain('Tags')->toArray();
+    }
+
+    /**
+     * Tests that eagerloading and hydration works for associations that have
+     * different aliases in the association and targetTable
+     *
+     * @return void
+     */
+    public function testEagerLoadingNestedMatchingCalls()
+    {
+        $this->loadFixtures('Articles', 'Authors', 'Tags', 'ArticlesTags', 'AuthorsTags');
+        $articles = TableRegistry::get('Articles');
+        $articles->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'targetForeignKey' => 'tag_id',
+            'joinTable' => 'articles_tags'
+        ]);
+        $tags = TableRegistry::get('Tags');
+        $tags->belongsToMany('Authors', [
+            'foreignKey' => 'tag_id',
+            'targetForeignKey' => 'author_id',
+            'joinTable' => 'authors_tags'
+        ]);
+
+        $query = $articles->find()
+            ->matching('Tags', function ($q) {
+                return $q->matching('Authors', function ($q) {
+                    return $q->where(['Authors.name' => 'larry']);
+                });
+            });
+        $this->assertEquals(3, $query->count());
+
+        $result = $query->first();
+        $this->assertInstanceOf(EntityInterface::class, $result);
+        $this->assertInstanceOf(EntityInterface::class, $result->_matchingData['Tags']);
+        $this->assertInstanceOf(EntityInterface::class, $result->_matchingData['Authors']);
     }
 
     /**

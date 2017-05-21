@@ -109,6 +109,7 @@ class ValidateUsersTable extends Table
  * FormHelperTest class
  *
  * @property \Cake\View\Helper\FormHelper $Form
+ * @property \Cake\View\View $View
  */
 class FormHelperTest extends TestCase
 {
@@ -126,6 +127,11 @@ class FormHelperTest extends TestCase
      * @var bool
      */
     public $autoFixtures = false;
+
+    /**
+     * @var array
+     */
+    protected $article = [];
 
     /**
      * setUp method
@@ -3291,47 +3297,65 @@ class FormHelperTest extends TestCase
      */
     public function testControlCheckbox()
     {
-        $result = $this->Form->control('User.active', ['label' => false, 'checked' => true]);
+        $articles = TableRegistry::get('Articles');
+        $articles->schema()->addColumn('active', ['type' => 'boolean', 'default' => null]);
+        $article = $articles->newEntity();
+
+        $this->Form->create($article);
+
+        $result = $this->Form->control('Articles.active');
         $expected = [
             'div' => ['class' => 'input checkbox'],
-            'input' => ['type' => 'hidden', 'name' => 'User[active]', 'value' => '0'],
-            ['input' => ['type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'user-active', 'checked' => 'checked']],
+            'input' => ['type' => 'hidden', 'name' => 'Articles[active]', 'value' => '0'],
+            'label' => ['for' => 'articles-active'],
+            ['input' => ['type' => 'checkbox', 'name' => 'Articles[active]', 'value' => '1', 'id' => 'articles-active']],
+            'Active',
+            '/label',
             '/div'
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->control('User.active', ['label' => false, 'checked' => 1]);
+        $result = $this->Form->control('Articles.active', ['label' => false, 'checked' => true]);
         $expected = [
             'div' => ['class' => 'input checkbox'],
-            'input' => ['type' => 'hidden', 'name' => 'User[active]', 'value' => '0'],
-            ['input' => ['type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'user-active', 'checked' => 'checked']],
+            'input' => ['type' => 'hidden', 'name' => 'Articles[active]', 'value' => '0'],
+            ['input' => ['type' => 'checkbox', 'name' => 'Articles[active]', 'value' => '1', 'id' => 'articles-active', 'checked' => 'checked']],
             '/div'
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->control('User.active', ['label' => false, 'checked' => '1']);
+        $result = $this->Form->control('Articles.active', ['label' => false, 'checked' => 1]);
         $expected = [
             'div' => ['class' => 'input checkbox'],
-            'input' => ['type' => 'hidden', 'name' => 'User[active]', 'value' => '0'],
-            ['input' => ['type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'user-active', 'checked' => 'checked']],
+            'input' => ['type' => 'hidden', 'name' => 'Articles[active]', 'value' => '0'],
+            ['input' => ['type' => 'checkbox', 'name' => 'Articles[active]', 'value' => '1', 'id' => 'articles-active', 'checked' => 'checked']],
             '/div'
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->control('User.disabled', [
+        $result = $this->Form->control('Articles.active', ['label' => false, 'checked' => '1']);
+        $expected = [
+            'div' => ['class' => 'input checkbox'],
+            'input' => ['type' => 'hidden', 'name' => 'Articles[active]', 'value' => '0'],
+            ['input' => ['type' => 'checkbox', 'name' => 'Articles[active]', 'value' => '1', 'id' => 'articles-active', 'checked' => 'checked']],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('Articles.disabled', [
             'label' => 'Disabled',
             'type' => 'checkbox',
             'data-foo' => 'disabled'
         ]);
         $expected = [
             'div' => ['class' => 'input checkbox'],
-            'input' => ['type' => 'hidden', 'name' => 'User[disabled]', 'value' => '0'],
-            'label' => ['for' => 'user-disabled'],
+            'input' => ['type' => 'hidden', 'name' => 'Articles[disabled]', 'value' => '0'],
+            'label' => ['for' => 'articles-disabled'],
             ['input' => [
                 'type' => 'checkbox',
-                'name' => 'User[disabled]',
+                'name' => 'Articles[disabled]',
                 'value' => '1',
-                'id' => 'user-disabled',
+                'id' => 'articles-disabled',
                 'data-foo' => 'disabled'
             ]],
             'Disabled',
@@ -3340,20 +3364,20 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->control('User.confirm', [
+        $result = $this->Form->control('Articles.confirm', [
             'label' => 'Confirm <b>me</b>!',
             'type' => 'checkbox',
             'escape' => false
         ]);
         $expected = [
             'div' => ['class' => 'input checkbox'],
-            'input' => ['type' => 'hidden', 'name' => 'User[confirm]', 'value' => '0'],
-            'label' => ['for' => 'user-confirm'],
+            'input' => ['type' => 'hidden', 'name' => 'Articles[confirm]', 'value' => '0'],
+            'label' => ['for' => 'articles-confirm'],
             ['input' => [
                 'type' => 'checkbox',
-                'name' => 'User[confirm]',
+                'name' => 'Articles[confirm]',
                 'value' => '1',
-                'id' => 'user-confirm',
+                'id' => 'articles-confirm',
             ]],
             'Confirm <b>me</b>!',
             '/label',
@@ -8485,7 +8509,7 @@ class FormHelperTest extends TestCase
         $this->Form->templates(['input' => '<input/>']);
         $this->assertEquals('<input/>', $this->Form->templater()->get('input'));
 
-        $this->assertNull($this->Form->resetTemplates());
+        $this->Form->resetTemplates();
         $this->assertNotEquals('<input/>', $this->Form->templater()->get('input'));
     }
 
