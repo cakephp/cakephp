@@ -15,6 +15,7 @@
 namespace Cake\Database\Schema;
 
 use Cake\Database\Exception;
+use Cake\Database\Schema\TableSchema;
 
 /**
  * Schema management/reflection features for Postgres.
@@ -90,56 +91,56 @@ class PostgresSchema extends BaseSchema
             return ['type' => $col, 'length' => null];
         }
         if (strpos($col, 'timestamp') !== false) {
-            return ['type' => 'timestamp', 'length' => null];
+            return ['type' => TableSchema::TYPE_TIMESTAMP, 'length' => null];
         }
         if (strpos($col, 'time') !== false) {
-            return ['type' => 'time', 'length' => null];
+            return ['type' => TableSchema::TYPE_TIME, 'length' => null];
         }
         if ($col === 'serial' || $col === 'integer') {
-            return ['type' => 'integer', 'length' => 10];
+            return ['type' => TableSchema::TYPE_INTEGER, 'length' => 10];
         }
         if ($col === 'bigserial' || $col === 'bigint') {
-            return ['type' => 'biginteger', 'length' => 20];
+            return ['type' => TableSchema::TYPE_BIGINTEGER, 'length' => 20];
         }
         if ($col === 'smallint') {
-            return ['type' => 'smallinteger', 'length' => 5];
+            return ['type' => TableSchema::TYPE_SMALLINTEGER, 'length' => 5];
         }
         if ($col === 'inet') {
-            return ['type' => 'string', 'length' => 39];
+            return ['type' => TableSchema::TYPE_STRING, 'length' => 39];
         }
         if ($col === 'uuid') {
-            return ['type' => 'uuid', 'length' => null];
+            return ['type' => TableSchema::TYPE_UUID, 'length' => null];
         }
         if ($col === 'char' || $col === 'character') {
-            return ['type' => 'string', 'fixed' => true, 'length' => $length];
+            return ['type' => TableSchema::TYPE_STRING, 'fixed' => true, 'length' => $length];
         }
         // money is 'string' as it includes arbitrary text content
         // before the number value.
         if (strpos($col, 'char') !== false ||
             strpos($col, 'money') !== false
         ) {
-            return ['type' => 'string', 'length' => $length];
+            return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
         }
         if (strpos($col, 'text') !== false) {
-            return ['type' => 'text', 'length' => null];
+            return ['type' => TableSchema::TYPE_TEXT, 'length' => null];
         }
         if ($col === 'bytea') {
-            return ['type' => 'binary', 'length' => null];
+            return ['type' => TableSchema::TYPE_BINARY, 'length' => null];
         }
         if ($col === 'real' || strpos($col, 'double') !== false) {
-            return ['type' => 'float', 'length' => null];
+            return ['type' => TableSchema::TYPE_FLOAT, 'length' => null];
         }
         if (strpos($col, 'numeric') !== false ||
             strpos($col, 'decimal') !== false
         ) {
-            return ['type' => 'decimal', 'length' => null];
+            return ['type' => TableSchema::TYPE_DECIMAL, 'length' => null];
         }
 
         if (strpos($col, 'json') !== false) {
-            return ['type' => 'json', 'length' => null];
+            return ['type' => TableSchema::TYPE_JSON, 'length' => null];
         }
 
-        return ['type' => 'string', 'length' => null];
+        return ['type' => TableSchema::TYPE_STRING, 'length' => null];
     }
 
     /**
@@ -149,7 +150,7 @@ class PostgresSchema extends BaseSchema
     {
         $field = $this->_convertColumn($row['type']);
 
-        if ($field['type'] === 'boolean') {
+        if ($field['type'] === TableSchema::TYPE_BOOLEAN) {
             if ($row['default'] === 'true') {
                 $row['default'] = 1;
             }
@@ -351,38 +352,40 @@ class PostgresSchema extends BaseSchema
         $data = $schema->column($name);
         $out = $this->_driver->quoteIdentifier($name);
         $typeMap = [
-            'tinyinteger' => ' SMALLINT',
-            'smallinteger' => ' SMALLINT',
-            'boolean' => ' BOOLEAN',
-            'binary' => ' BYTEA',
-            'float' => ' FLOAT',
-            'decimal' => ' DECIMAL',
-            'date' => ' DATE',
-            'time' => ' TIME',
-            'datetime' => ' TIMESTAMP',
-            'timestamp' => ' TIMESTAMP',
-            'uuid' => ' UUID',
-            'json' => ' JSONB'
+            TableSchema::TYPE_TINYINTEGER => ' SMALLINT',
+            TableSchema::TYPE_SMALLINTEGER => ' SMALLINT',
+            TableSchema::TYPE_BINARY => ' BYTEA',
+            TableSchema::TYPE_BOOLEAN => ' BOOLEAN',
+            TableSchema::TYPE_FLOAT => ' FLOAT',
+            TableSchema::TYPE_DECIMAL => ' DECIMAL',
+            TableSchema::TYPE_DATE => ' DATE',
+            TableSchema::TYPE_TIME => ' TIME',
+            TableSchema::TYPE_DATETIME => ' TIMESTAMP',
+            TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
+            TableSchema::TYPE_UUID => ' UUID',
+            TableSchema::TYPE_JSON => ' JSONB'
         ];
 
         if (isset($typeMap[$data['type']])) {
             $out .= $typeMap[$data['type']];
         }
 
-        if ($data['type'] === 'integer' || $data['type'] === 'biginteger') {
-            $type = $data['type'] === 'integer' ? ' INTEGER' : ' BIGINT';
+        if ($data['type'] === TableSchema::TYPE_INTEGER || $data['type'] === TableSchema::TYPE_BIGINTEGER) {
+            $type = $data['type'] === TableSchema::TYPE_INTEGER ? ' INTEGER' : ' BIGINT';
             if ([$name] === $schema->primaryKey() || $data['autoIncrement'] === true) {
-                $type = $data['type'] === 'integer' ? ' SERIAL' : ' BIGSERIAL';
+                $type = $data['type'] === TableSchema::TYPE_INTEGER ? ' SERIAL' : ' BIGSERIAL';
                 unset($data['null'], $data['default']);
             }
             $out .= $type;
         }
 
-        if ($data['type'] === 'text' && $data['length'] !== TableSchema::LENGTH_TINY) {
+        if ($data['type'] === TableSchema::TYPE_TEXT && $data['length'] !== TableSchema::LENGTH_TINY) {
             $out .= ' TEXT';
         }
 
-        if ($data['type'] === 'string' || ($data['type'] === 'text' && $data['length'] === TableSchema::LENGTH_TINY)) {
+        if ($data['type'] === TableSchema::TYPE_STRING ||
+            ($data['type'] === TableSchema::TYPE_TEXT && $data['length'] === TableSchema::LENGTH_TINY)
+        ) {
             $isFixed = !empty($data['fixed']);
             $type = ' VARCHAR';
             if ($isFixed) {
@@ -394,16 +397,16 @@ class PostgresSchema extends BaseSchema
             }
         }
 
-        $hasCollate = ['text', 'string'];
+        $hasCollate = [TableSchema::TYPE_TEXT, TableSchema::TYPE_STRING];
         if (in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {
             $out .= ' COLLATE "' . $data['collate'] . '"';
         }
 
-        if ($data['type'] === 'float' && isset($data['precision'])) {
+        if ($data['type'] === TableSchema::TYPE_FLOAT && isset($data['precision'])) {
             $out .= '(' . (int)$data['precision'] . ')';
         }
 
-        if ($data['type'] === 'decimal' &&
+        if ($data['type'] === TableSchema::TYPE_DECIMAL &&
             (isset($data['length']) || isset($data['precision']))
         ) {
             $out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
@@ -414,8 +417,9 @@ class PostgresSchema extends BaseSchema
         }
 
         if (isset($data['default']) &&
-            in_array($data['type'], ['timestamp', 'datetime']) &&
-            strtolower($data['default']) === 'current_timestamp') {
+            in_array($data['type'], [TableSchema::TYPE_TIMESTAMP, TableSchema::TYPE_DATETIME]) &&
+            strtolower($data['default']) === 'current_timestamp'
+        ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
         } elseif (isset($data['default'])) {
             $defaultValue = $data['default'];

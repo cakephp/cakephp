@@ -85,60 +85,60 @@ class SqlserverSchema extends BaseSchema
             return ['type' => $col, 'length' => null];
         }
         if (strpos($col, 'datetime') !== false) {
-            return ['type' => 'timestamp', 'length' => null];
+            return ['type' => TableSchema::TYPE_TIMESTAMP, 'length' => null];
         }
 
         if ($col === 'tinyint') {
-            return ['type' => 'tinyinteger', 'length' => $precision ?: 3];
+            return ['type' => TableSchema::TYPE_TINYINTEGER, 'length' => $precision ?: 3];
         }
         if ($col === 'smallint') {
-            return ['type' => 'smallinteger', 'length' => $precision ?: 5];
+            return ['type' => TableSchema::TYPE_SMALLINTEGER, 'length' => $precision ?: 5];
         }
         if ($col === 'int' || $col === 'integer') {
-            return ['type' => 'integer', 'length' => $precision ?: 10];
+            return ['type' => TableSchema::TYPE_INTEGER, 'length' => $precision ?: 10];
         }
         if ($col === 'bigint') {
-            return ['type' => 'biginteger', 'length' => $precision ?: 20];
+            return ['type' => TableSchema::TYPE_BIGINTEGER, 'length' => $precision ?: 20];
         }
         if ($col === 'bit') {
-            return ['type' => 'boolean', 'length' => null];
+            return ['type' => TableSchema::TYPE_BOOLEAN, 'length' => null];
         }
         if (strpos($col, 'numeric') !== false ||
             strpos($col, 'money') !== false ||
             strpos($col, 'decimal') !== false
         ) {
-            return ['type' => 'decimal', 'length' => $precision, 'precision' => $scale];
+            return ['type' => TableSchema::TYPE_DECIMAL, 'length' => $precision, 'precision' => $scale];
         }
 
         if ($col === 'real' || $col === 'float') {
-            return ['type' => 'float', 'length' => null];
+            return ['type' => TableSchema::TYPE_FLOAT, 'length' => null];
         }
 
         if (strpos($col, 'varchar') !== false && $length < 0) {
-            return ['type' => 'text', 'length' => null];
+            return ['type' => TableSchema::TYPE_TEXT, 'length' => null];
         }
 
         if (strpos($col, 'varchar') !== false) {
-            return ['type' => 'string', 'length' => $length ?: 255];
+            return ['type' => TableSchema::TYPE_STRING, 'length' => $length ?: 255];
         }
 
         if (strpos($col, 'char') !== false) {
-            return ['type' => 'string', 'fixed' => true, 'length' => $length];
+            return ['type' => TableSchema::TYPE_STRING, 'fixed' => true, 'length' => $length];
         }
 
         if (strpos($col, 'text') !== false) {
-            return ['type' => 'text', 'length' => null];
+            return ['type' => TableSchema::TYPE_TEXT, 'length' => null];
         }
 
         if ($col === 'image' || strpos($col, 'binary')) {
-            return ['type' => 'binary', 'length' => null];
+            return ['type' => TableSchema::TYPE_BINARY, 'length' => null];
         }
 
         if ($col === 'uniqueidentifier') {
-            return ['type' => 'uuid'];
+            return ['type' => TableSchema::TYPE_UUID];
         }
 
-        return ['type' => 'string', 'length' => null];
+        return ['type' => TableSchema::TYPE_STRING, 'length' => null];
     }
 
     /**
@@ -158,7 +158,7 @@ class SqlserverSchema extends BaseSchema
         if (!empty($row['autoincrement'])) {
             $field['autoIncrement'] = true;
         }
-        if ($field['type'] === 'boolean') {
+        if ($field['type'] === TableSchema::TYPE_BOOLEAN) {
             $row['default'] = (int)$row['default'];
         }
 
@@ -331,37 +331,37 @@ class SqlserverSchema extends BaseSchema
         $data = $schema->column($name);
         $out = $this->_driver->quoteIdentifier($name);
         $typeMap = [
-            'tinyinteger' => ' TINYINT',
-            'smallinteger' => ' SMALLINT',
-            'integer' => ' INTEGER',
-            'biginteger' => ' BIGINT',
-            'boolean' => ' BIT',
-            'float' => ' FLOAT',
-            'decimal' => ' DECIMAL',
-            'date' => ' DATE',
-            'time' => ' TIME',
-            'datetime' => ' DATETIME',
-            'timestamp' => ' DATETIME',
-            'uuid' => ' UNIQUEIDENTIFIER',
-            'json' => ' NVARCHAR(MAX)',
+            TableSchema::TYPE_TINYINTEGER => ' TINYINT',
+            TableSchema::TYPE_SMALLINTEGER => ' SMALLINT',
+            TableSchema::TYPE_INTEGER => ' INTEGER',
+            TableSchema::TYPE_BIGINTEGER => ' BIGINT',
+            TableSchema::TYPE_BOOLEAN => ' BIT',
+            TableSchema::TYPE_FLOAT => ' FLOAT',
+            TableSchema::TYPE_DECIMAL => ' DECIMAL',
+            TableSchema::TYPE_DATE => ' DATE',
+            TableSchema::TYPE_TIME => ' TIME',
+            TableSchema::TYPE_DATETIME => ' DATETIME',
+            TableSchema::TYPE_TIMESTAMP => ' DATETIME',
+            TableSchema::TYPE_UUID => ' UNIQUEIDENTIFIER',
+            TableSchema::TYPE_JSON => ' NVARCHAR(MAX)',
         ];
 
         if (isset($typeMap[$data['type']])) {
             $out .= $typeMap[$data['type']];
         }
 
-        if ($data['type'] === 'integer' || $data['type'] === 'biginteger') {
+        if ($data['type'] === TableSchema::TYPE_INTEGER || $data['type'] === TableSchema::TYPE_BIGINTEGER) {
             if ([$name] === $schema->primaryKey() || $data['autoIncrement'] === true) {
                 unset($data['null'], $data['default']);
                 $out .= ' IDENTITY(1, 1)';
             }
         }
 
-        if ($data['type'] === 'text' && $data['length'] !== Table::LENGTH_TINY) {
+        if ($data['type'] === TableSchema::TYPE_TEXT && $data['length'] !== Table::LENGTH_TINY) {
             $out .= ' NVARCHAR(MAX)';
         }
 
-        if ($data['type'] === 'binary') {
+        if ($data['type'] === TableSchema::TYPE_BINARY) {
             $out .= ' VARBINARY';
 
             if ($data['length'] !== Table::LENGTH_TINY) {
@@ -371,7 +371,9 @@ class SqlserverSchema extends BaseSchema
             }
         }
 
-        if ($data['type'] === 'string' || ($data['type'] === 'text' && $data['length'] === Table::LENGTH_TINY)) {
+        if ($data['type'] === TableSchema::TYPE_STRING ||
+            ($data['type'] === TableSchema::TYPE_TEXT && $data['length'] === Table::LENGTH_TINY)
+        ) {
             $type = ' NVARCHAR';
 
             if (!empty($data['fixed'])) {
@@ -385,16 +387,16 @@ class SqlserverSchema extends BaseSchema
             $out .= sprintf('%s(%d)', $type, $data['length']);
         }
 
-        $hasCollate = ['text', 'string'];
+        $hasCollate = [TableSchema::TYPE_TEXT, TableSchema::TYPE_STRING];
         if (in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {
             $out .= ' COLLATE ' . $data['collate'];
         }
 
-        if ($data['type'] === 'float' && isset($data['precision'])) {
+        if ($data['type'] === TableSchema::TYPE_FLOAT && isset($data['precision'])) {
             $out .= '(' . (int)$data['precision'] . ')';
         }
 
-        if ($data['type'] === 'decimal' &&
+        if ($data['type'] === TableSchema::TYPE_DECIMAL &&
             (isset($data['length']) || isset($data['precision']))
         ) {
             $out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
@@ -405,8 +407,9 @@ class SqlserverSchema extends BaseSchema
         }
 
         if (isset($data['default']) &&
-            in_array($data['type'], ['timestamp', 'datetime']) &&
-            strtolower($data['default']) === 'current_timestamp') {
+            in_array($data['type'], [TableSchema::TYPE_TIMESTAMP, TableSchema::TYPE_DATETIME]) &&
+            strtolower($data['default']) === 'current_timestamp'
+        ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
         } elseif (isset($data['default'])) {
             $default = is_bool($data['default']) ? (int)$data['default'] : $this->_driver->schemaValue($data['default']);
