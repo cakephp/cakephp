@@ -419,34 +419,19 @@ class Router
     /**
      * Store the request context for a given request.
      *
-     * @param \Cake\Http\ServerRequest|\Psr\Http\Message\ServerRequestInterface $request The request instance.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request instance.
      * @return void
      * @throws InvalidArgumentException When parameter is an incorrect type.
      */
-    public static function setRequestContext($request)
+    public static function setRequestContext(ServerRequestInterface $request)
     {
-        if ($request instanceof ServerRequest) {
-            static::$_requestContext = [
-                '_base' => $request->base,
-                '_port' => $request->port(),
-                '_scheme' => $request->scheme(),
-                '_host' => $request->host()
-            ];
-
-            return;
-        }
-        if ($request instanceof ServerRequestInterface) {
-            $uri = $request->getUri();
-            static::$_requestContext = [
-                '_base' => $request->getAttribute('base'),
-                '_port' => $uri->getPort(),
-                '_scheme' => $uri->getScheme(),
-                '_host' => $uri->getHost(),
-            ];
-
-            return;
-        }
-        throw new InvalidArgumentException('Unknown request type received.');
+        $uri = $request->getUri();
+        static::$_requestContext = [
+            '_base' => $request->getAttribute('base'),
+            '_port' => $uri->getPort(),
+            '_scheme' => $uri->getScheme(),
+            '_host' => $uri->getHost(),
+        ];
     }
 
     /**
@@ -926,6 +911,27 @@ class Router
     }
 
     /**
+     * Create a RouteBuilder for the provided path.
+     *
+     * @param string $path The path to set the builder to.
+     * @param array $options The options for the builder
+     * @return \Cake\Routing\RouteBuilder
+     */
+    public static function createRouteBuilder($path, array $options = [])
+    {
+        $defaults = [
+            'routeClass' => static::defaultRouteClass(),
+            'extensions' => static::$_defaultExtensions,
+        ];
+        $options += $defaults;
+
+        return new RouteBuilder(static::$_collection, $path, [], [
+            'routeClass' => $options['routeClass'],
+            'extensions' => $options['extensions'],
+        ]);
+    }
+
+    /**
      * Create a routing scope.
      *
      * Routing scopes allow you to keep your routes DRY and avoid repeating
@@ -969,18 +975,12 @@ class Router
      */
     public static function scope($path, $params = [], $callback = null)
     {
-        $options = [
-            'routeClass' => static::defaultRouteClass(),
-            'extensions' => static::$_defaultExtensions,
-        ];
+        $options = [];
         if (is_array($params)) {
-            $options = $params + $options;
+            $options = $params;
             unset($params['routeClass'], $params['extensions']);
         }
-        $builder = new RouteBuilder(static::$_collection, '/', [], [
-            'routeClass' => $options['routeClass'],
-            'extensions' => $options['extensions'],
-        ]);
+        $builder = static::createRouteBuilder('/', $options);
         $builder->scope($path, $params, $callback);
     }
 
@@ -1075,28 +1075,19 @@ class Router
     }
 
     /**
-     * Get a MiddlewareQueue of middleware that matches the provided path.
+     * Get the RouteCollection inside the Router
      *
-     * @param string $path The URL path to match for.
-     * @return \Cake\Http\MiddlewareQueue|null Either a queue or null if there are no matching middleware.
+     * @return \Cake\Routing\RouteCollection
      */
-    public static function getMatchingMiddleware($path)
+    public static function getRouteCollection()
     {
-        if (!static::$initialized) {
-            static::_loadRoutes();
-        }
-
-        $middleware = static::$_collection->getMatchingMiddleware($path);
-        if ($middleware) {
-            return new MiddlewareQueue($middleware);
-        }
-
-        return null;
+        return static::$_collection;
     }
 
     /**
      * Loads route configuration
      *
+     * @deprecated 3.5.0 Routes will be loaded via the Application::routes() hook in 4.0.0
      * @return void
      */
     protected static function _loadRoutes()

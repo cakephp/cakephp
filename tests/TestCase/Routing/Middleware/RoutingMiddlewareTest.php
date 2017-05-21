@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Routing\Middleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use TestApp\Application;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
@@ -101,6 +102,35 @@ class RoutingMiddlewareTest extends TestCase
             $this->assertEquals($expected, $req->getAttribute('params'));
         };
         $middleware = new RoutingMiddleware();
+        $middleware($request, $response, $next);
+    }
+
+    /**
+     * Test middleware invoking hook method
+     *
+     * @return void
+     */
+    public function testRoutesHookInvokedOnApp()
+    {
+        Router::reload();
+        $this->assertFalse(Router::$initialized, 'Router precondition failed');
+
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/app/articles']);
+        $response = new Response();
+        $next = function ($req, $res) {
+            $expected = [
+                'controller' => 'Articles',
+                'action' => 'index',
+                'plugin' => null,
+                'pass' => [],
+                '_matchedRoute' => '/app/articles'
+            ];
+            $this->assertEquals($expected, $req->getAttribute('params'));
+            $this->assertTrue(Router::$initialized, 'Router state should indicate routes loaded');
+            $this->assertCount(1, Router::routes());
+        };
+        $app = new Application(CONFIG);
+        $middleware = new RoutingMiddleware($app);
         $middleware($request, $response, $next);
     }
 

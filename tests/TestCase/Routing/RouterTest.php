@@ -19,6 +19,8 @@ use Cake\Core\Plugin;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
+use Cake\Routing\RouteBuilder;
+use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
@@ -2035,7 +2037,6 @@ class RouterTest extends TestCase
         Router::connect('/:controller/:action/*');
 
         $request = new ServerRequest();
-        $request->env('HTTP_HOST', 'localhost');
         Router::pushRequest(
             $request->addParams([
                 'plugin' => null, 'controller' => 'images', 'action' => 'index'
@@ -2067,7 +2068,6 @@ class RouterTest extends TestCase
         Router::connect('/:controller/:action/*');
 
         $request = new ServerRequest();
-        $request->env('HTTP_HOST', 'localhost');
         $request->env('HTTPS', 'on');
         Router::pushRequest(
             $request->addParams([
@@ -3342,38 +3342,34 @@ class RouterTest extends TestCase
     }
 
     /**
-     * Test setting the request context.
+     * Test getting the route collection
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
-    public function testSetRequestContextInvalid()
+    public function testGetRouteCollection()
     {
-        Router::setRequestContext(new \stdClass);
+        $collection = Router::getRouteCollection();
+        $this->assertInstanceOf(RouteCollection::class, $collection);
+        $this->assertCount(0, $collection->routes());
     }
 
     /**
-     * Test getting path specific middleware.
+     * Test getting a route builder instance.
      *
      * @return void
      */
-    public function testGetMatchingMiddleware()
+    public function testCreateRouteBuilder()
     {
-        Router::scope('/', function ($routes) {
-            $routes->connect('/articles', ['controller' => 'Articles']);
-            $routes->registerMiddleware('noop', function () {
-            });
-        });
-        Router::scope('/api/v1', function ($routes) {
-            $routes->applyMiddleware('noop');
-            $routes->connect('/articles', ['controller' => 'Articles', 'prefix' => 'Api']);
-        });
-        $result = Router::getMatchingMiddleware('/articles');
-        $this->assertNull($result);
+        $builder = Router::createRouteBuilder('/api');
+        $this->assertInstanceOf(RouteBuilder::class, $builder);
+        $this->assertSame('/api', $builder->path());
 
-        $result = Router::getMatchingMiddleware('/api/v1/articles');
-        $this->assertInstanceOf(MiddlewareQueue::class, $result);
-        $this->assertCount(1, $result);
+        $builder = Router::createRouteBuilder('/', [
+            'routeClass' => 'InflectedRoute',
+            'extensions' => ['json']
+        ]);
+        $this->assertInstanceOf(RouteBuilder::class, $builder);
+        $this->assertSame(['json'], $builder->extensions());
     }
 
     /**

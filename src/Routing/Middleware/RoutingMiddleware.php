@@ -14,8 +14,11 @@
  */
 namespace Cake\Routing\Middleware;
 
+use Cake\Http\BaseApplication;
+use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
 use Cake\Routing\Exception\RedirectException;
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -27,12 +30,46 @@ use Zend\Diactoros\Response\RedirectResponse;
  */
 class RoutingMiddleware
 {
+    /**
+     * The application that will have its routing hook invoked.
+     *
+     * @var \Cake\Http\BaseApplication
+     */
+    protected $app;
+
+    /**
+     * Constructor
+     *
+     * @param \Cake\Http\BaseApplication $app The application instance that routes are defined on.
+     */
+    public function __construct(BaseApplication $app = null)
+    {
+        $this->app = $app;
+    }
+
+    /**
+     * Trigger the application's routes() hook if the application exists.
+     *
+     * If the middleware is created without an Application, routes will be
+     * loaded via the automatic route loading that pre-dates the routes() hook.
+     *
+     * @return void
+     */
+    protected function loadRoutes()
+    {
+        if ($this->app) {
+            $builder = Router::createRouteBuilder('/');
+            $this->app->routes($builder);
+            // Prevent routes from being loaded again
+            Router::$initialized = true;
+        }
+    }
 
     /**
      * Apply routing and update the request.
      *
-     * Any route/path specific middleware will be wrapped around $next and then the new middleware stack
-     * will be invoked.
+     * Any route/path specific middleware will be wrapped around $next and then the new middleware stack will be
+     * invoked.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @param \Psr\Http\Message\ResponseInterface $response The response.
@@ -41,6 +78,7 @@ class RoutingMiddleware
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
+        $this->loadRoutes();
         try {
             Router::setRequestContext($request);
             $params = (array)$request->getAttribute('params', []);
@@ -61,11 +99,12 @@ class RoutingMiddleware
                 $response->getHeaders()
             );
         }
-        $middleware = Router::getMatchingMiddleware($request->getUri()->getPath());
-        if (!$middleware) {
+        $matching = Router::getRouteCollection()->getMatchingMiddleware($request->getUri()->getPath());
+        if (!$matching) {
             return $next($request, $response);
         }
-        $middleware->add($next);
+        $matching[] = $next;
+        $middleware = new MiddlewareQueue($matching);
         $runner = new Runner();
 
         return $runner->run($middleware, $request, $response);
