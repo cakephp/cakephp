@@ -214,7 +214,7 @@ class Connection implements ConnectionInterface
      * Connects to the configured database.
      *
      * @throws \Cake\Database\Exception\MissingConnectionException if credentials are invalid.
-     * @return bool true, if the connection attempt was successful or already connected.
+     * @return bool true, if the connection was already established or the attempt was successful.
      */
     public function connect()
     {
