@@ -125,7 +125,14 @@ class PoFileParserTest extends TestCase
 
             return $package;
         });
-        $this->assertTextEquals('En cours', $messages['Pending']['_context']['']);
-        $this->assertTextEquals('En resolved', $messages['Resolved']['_context']['']);
+        $this->assertSame('En cours', $messages['Pending']['_context']['']);
+        $this->assertSame('En cours - context', $messages['Pending']['_context']['Pay status']);
+        $this->assertSame('En resolved', $messages['Resolved']['_context']['']);
+        $this->assertSame('En resolved - context', $messages['Resolved']['_context']['Pay status']);
+
+        $this->assertSame('En cours', __('Pending'));
+        $this->assertSame('En cours - context', __x('Pay status', 'Pending'));
+        $this->assertSame('En resolved', __('Resolved'));
+        $this->assertSame('En resolved - context', __x('Pay status', 'Resolved'));
     }
 }
