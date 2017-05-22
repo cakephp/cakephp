@@ -119,7 +119,7 @@ class PoFileParserTest extends TestCase
         $file = APP . 'Locale' . DS . 'en' . DS . 'context.po';
         $messages = $parser->parse($file);
 
-        I18n::translator('default', 'en_US', function () use ($messages) {
+        I18n::translator('default', 'de_DE', function () use ($messages) {
             $package = new Package('default');
             $package->setMessages($messages);
 
@@ -131,7 +131,7 @@ class PoFileParserTest extends TestCase
         $this->assertSame('En resolved - context', $messages['Resolved']['_context']['Pay status']);
 
         // Confirm actual behavior
-        I18n::locale('en_US');
+        I18n::locale('de_DE');
         $this->assertSame('En cours', __('Pending'));
         $this->assertSame('En cours - context', __x('Pay status', 'Pending'));
         $this->assertSame('En resolved', __('Resolved'));
