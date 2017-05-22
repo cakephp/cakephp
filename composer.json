@@ -11,7 +11,6 @@
         "orm",
         "form",
         "validation",
-        "rest-api",
         "psr-7"
     ],
     "homepage": "https://cakephp.org",
