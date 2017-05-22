@@ -225,6 +225,8 @@ class Connection implements ConnectionInterface
         } catch (\Exception $e) {
             throw new MissingConnectionException(['reason' => $e->getMessage()]);
         }
+
+        return false;
     }
 
     /**
