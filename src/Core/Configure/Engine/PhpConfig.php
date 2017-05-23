@@ -91,10 +91,44 @@ class PhpConfig implements ConfigEngineInterface
      */
     public function dump($key, array $data)
     {
-        $contents = '<?php' . "\n" . 'return ' . var_export($data, true) . ';';
-
+        $contents = '<?php' . "\n" . 'return ' . $this->shortArrayVarExport($data, 0) . ';';
         $filename = $this->_getFilePath($key);
 
         return file_put_contents($filename, $contents) > 0;
+    }
+
+    /**
+     *
+     * Converts an array $data into a string of PHP code using the Short Array Syntax.
+     *
+     * Similar to var_export() except it uses the Short Array Syntax;
+     *
+     * @param array $array Array to dump in Short Array Syntax
+     * @param int $indent Indentation Level
+     * @return string A parsable string representation of a short array syntax variable
+     */
+    public function shortArrayVarExport($array, $indent)
+    {
+        $whiteSpace = "    "; // 4 Whitespace
+        $indentation = str_repeat($whiteSpace, $indent);
+        $opening = $indentation . "[";
+        $closing = PHP_EOL . $indentation . "]";
+
+        $vars = [];
+        foreach ($array as $key => $value) {
+            $key = (is_int($key)) ? (int)$key : "'$key'";
+
+            if (is_array($value)) {
+                $value = PHP_EOL . $this->shortArrayVarExport($value, $indent + 1);
+            } elseif (is_null($value)) {
+                $value = "null";
+            } else {
+                $value = var_export($value, true);
+            }
+
+            $vars[] = PHP_EOL . str_repeat($whiteSpace, $indent + 1) . "$key => " . $value;
+        }
+
+        return $opening . implode(',', $vars) . $closing;
     }
 }

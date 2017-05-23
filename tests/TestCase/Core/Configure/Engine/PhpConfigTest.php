@@ -33,15 +33,17 @@ class PhpConfigTest extends TestCase
         'One' => [
             'two' => 'value',
             'three' => [
-                'four' => 'value four'
+                'four' => 'value four',
             ],
             'is_null' => null,
             'bool_false' => false,
             'bool_true' => true,
         ],
         'Asset' => [
-            'timestamp' => 'force'
+            'timestamp' => 'force',
         ],
+        ')',
+        '),',
     ];
 
     /**
@@ -143,27 +145,28 @@ class PhpConfigTest extends TestCase
         $this->assertGreaterThan(0, $result);
         $expected = <<<PHP
 <?php
-return array (
-  'One' => 
-  array (
-    'two' => 'value',
-    'three' => 
-    array (
-      'four' => 'value four',
-    ),
-    'is_null' => NULL,
-    'bool_false' => false,
-    'bool_true' => true,
-  ),
-  'Asset' => 
-  array (
-    'timestamp' => 'force',
-  ),
-);
+return [
+    'One' => 
+    [
+        'two' => 'value',
+        'three' => 
+        [
+            'four' => 'value four'
+        ],
+        'is_null' => null,
+        'bool_false' => false,
+        'bool_true' => true
+    ],
+    'Asset' => 
+    [
+        'timestamp' => 'force'
+    ],
+    0 => ')',
+    1 => '),'
+];
 PHP;
         $file = TMP . 'test.php';
         $contents = file_get_contents($file);
-
         unlink($file);
         $this->assertTextEquals($expected, $contents);
 
