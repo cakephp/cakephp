@@ -797,14 +797,19 @@ class BelongsToMany extends Association
             $sourceKeys = array_combine($foreignKey, $sourceEntity->extract($bindingKey));
             $targetKeys = array_combine($assocForeignKey, $e->extract($targetPrimaryKey));
 
-            if ($sourceKeys !== $joint->extract($foreignKey)) {
-                $joint->set($sourceKeys, ['guard' => false]);
+            $changedKeys = (
+                $sourceKeys !== $joint->extract($foreignKey) ||
+                $targetKeys !== $joint->extract($assocForeignKey)
+            );
+            // Keys were changed, the junction table record _could_ be
+            // new. By clearing the primary key values, and marking the entity
+            // as new, we let save() sort out whether or not we have a new link
+            // or if we are updating an existing link.
+            if ($changedKeys) {
+                $joint->isNew(true);
+                $joint->unsetProperty($junction->getPrimaryKey())
+                    ->set(array_merge($sourceKeys, $targetKeys), ['guard' => false]);
             }
-
-            if ($targetKeys !== $joint->extract($assocForeignKey)) {
-                $joint->set($targetKeys, ['guard' => false]);
-            }
-
             $saved = $junction->save($joint, $options);
 
             if (!$saved && !empty($options['atomic'])) {
@@ -1282,13 +1287,13 @@ class BelongsToMany extends Association
     protected function _checkPersistenceStatus($sourceEntity, array $targetEntities)
     {
         if ($sourceEntity->isNew()) {
-            $error = 'Source entity needs to be persisted before proceeding';
+            $error = 'Source entity needs to be persisted before links can be created or removed.';
             throw new InvalidArgumentException($error);
         }
 
         foreach ($targetEntities as $entity) {
             if ($entity->isNew()) {
-                $error = 'Cannot link not persisted entities';
+                $error = 'Cannot link entities that have not been persisted yet.';
                 throw new InvalidArgumentException($error);
             }
         }
