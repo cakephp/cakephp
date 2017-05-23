@@ -128,6 +128,7 @@ class EagerLoader
      * the new one.
      * @param callable|null $queryBuilder The query builder callable
      * @return array Containments.
+     * @throws \InvalidArgumentException When using $queryBuilder with an array of $associations
      */
     public function contain($associations = [], callable $queryBuilder = null)
     {
@@ -136,6 +137,12 @@ class EagerLoader
         }
 
         if ($queryBuilder) {
+            if (!is_string($associations)) {
+                throw new InvalidArgumentException(
+                    sprintf('Cannot set containments. To use $queryBuilder, $associations must be a string')
+                );
+            }
+
             $associations = [
                 $associations => [
                     'queryBuilder' => $queryBuilder
