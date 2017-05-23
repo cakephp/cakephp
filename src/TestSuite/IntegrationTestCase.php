@@ -452,7 +452,7 @@ abstract class IntegrationTestCase extends TestCase
             $request = $this->_buildRequest($url, $method, $data);
             $response = $dispatcher->execute($request);
             $this->_requestSession = $request['session'];
-            if ($this->_retainFlashMessages) {
+            if ($this->_retainFlashMessages && $this->_flashMessages) {
                 $this->_requestSession->write('Flash', $this->_flashMessages);
             }
             $this->_response = $response;
