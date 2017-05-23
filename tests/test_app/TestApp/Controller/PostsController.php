@@ -70,6 +70,7 @@ class PostsController extends AppController
     public function flashNoRender()
     {
         $this->Flash->error('An error message');
+
         return $this->redirect(['action' => 'index']);
     }
 
