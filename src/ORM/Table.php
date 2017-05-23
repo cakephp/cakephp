@@ -2240,7 +2240,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 ));
             }
             foreach ($fields as $field) {
-                $conditions[$this->aliasField($field)] = array_shift($args);
+                $value = array_shift($args);
+
+                if (is_array($value)) {
+                    $field .= ' IN';
+                }
+
+                $conditions[$this->aliasField($field)] = $value;
             }
 
             return $conditions;

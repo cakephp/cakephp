@@ -3581,6 +3581,25 @@ class TableTest extends TestCase
      *
      * @return void
      */
+    public function testMagicFindAllAcceptingArray()
+    {
+        $table = TableRegistry::get('Users');
+
+        $result = $table->findAllByUsername(['nate', 'larry']);
+        $this->assertInstanceOf('Cake\ORM\Query', $result);
+        $this->assertNull($result->clause('limit'));
+        $expected = new QueryExpression(
+            ['Users.username IN' => ['nate', 'larry']],
+            $this->usersTypeMap
+        );
+        $this->assertEquals($expected, $result->clause('where'));
+    }
+
+    /**
+     * Test magic findAllByXX method.
+     *
+     * @return void
+     */
     public function testMagicFindAllOr()
     {
         $table = TableRegistry::get('Users');
