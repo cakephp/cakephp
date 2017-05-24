@@ -16,6 +16,7 @@ namespace Cake\Routing\Route;
 
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
+use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -87,6 +88,13 @@ class Route
     protected $_extensions = [];
 
     /**
+     * Valid HTTP methods.
+     *
+     * @var array
+     */
+    const VALID_METHODS = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
+
+    /**
      * Constructor for a Route
      *
      * ### Options
@@ -104,11 +112,12 @@ class Route
     public function __construct($template, $defaults = [], array $options = [])
     {
         $this->template = $template;
-        $this->defaults = (array)$defaults;
-        if (isset($this->defaults['[method]'])) {
-            $this->defaults['_method'] = $this->defaults['[method]'];
-            unset($this->defaults['[method]']);
+        // @deprecated The `[method]` format should be removed in 4.0.0
+        if (isset($defaults['[method]'])) {
+            $defaults['_method'] = $defaults['[method]'];
+            unset($defaults['[method]']);
         }
+        $this->defaults = (array)$defaults;
         $this->options = $options + ['_ext' => []];
         $this->setExtensions((array)$this->options['_ext']);
     }
@@ -149,6 +158,27 @@ class Route
     public function getExtensions()
     {
         return $this->_extensions;
+    }
+
+    /**
+     * Set the accepted HTTP methods for this route.
+     *
+     * @param array $methods The HTTP methods to accept.
+     * @return $this
+     * @throws \InvalidArgumentException
+     */
+    public function setMethods(array $methods)
+    {
+        $methods = array_map('strtoupper', $methods);
+        $diff = array_diff($methods, static::VALID_METHODS);
+        if ($diff !== []) {
+            throw new InvalidArgumentException(
+                sprintf('Invalid HTTP method received. %s is invalid.', implode(', ', $diff))
+            );
+        }
+        $this->defaults['_method'] = $methods;
+
+        return $this;
     }
 
     /**
@@ -623,6 +653,7 @@ class Route
         if (empty($this->defaults['_method'])) {
             return true;
         }
+        // @deprecated The `[method]` support should be removed in 4.0.0
         if (isset($url['[method]'])) {
             $url['_method'] = $url['[method]'];
         }

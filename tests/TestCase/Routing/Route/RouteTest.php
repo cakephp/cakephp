@@ -1523,4 +1523,34 @@ class RouteTest extends TestCase
         ];
         $this->assertEquals($expected, $route->parse('/', 'GET'));
     }
+
+    /**
+     * Test setting the method on a route.
+     *
+     * @return void
+     */
+    public function testSetMethods()
+    {
+        $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
+        $result = $route->setMethods(['put']);
+
+        $this->assertSame($result, $route, 'Should return this');
+        $this->assertSame(['PUT'], $route->defaults['_method'], 'method is wrong');
+
+        $route->setMethods(['post', 'get', 'patch']);
+        $this->assertSame(['POST', 'GET', 'PATCH'], $route->defaults['_method']);
+    }
+
+    /**
+     * Test setting the method on a route to an invalid method
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid HTTP method received. NOPE is invalid
+     * @return void
+     */
+    public function testSetMethodsInvalid()
+    {
+        $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
+        $route->setMethods(['nope']);
+    }
 }
