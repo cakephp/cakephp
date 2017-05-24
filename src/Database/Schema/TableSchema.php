@@ -558,6 +558,17 @@ class TableSchema
     }
 
     /**
+     * Returns true if a column exists in the schema.
+     *
+     * @param string $name Column name.
+     * @return bool
+     */
+    public function hasColumn($name)
+    {
+        return isset($this->_columns[$name]);
+    }
+
+    /**
      * Returns the base type name for the provided column.
      * This represent the database type a more complex class is
      * based upon.
