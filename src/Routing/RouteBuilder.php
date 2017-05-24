@@ -612,7 +612,12 @@ class RouteBuilder
             $params = [];
         }
         $name = Inflector::underscore($name);
-        $path = '/' . $name;
+        if (isset($params['path'])) {
+            $path = '/' . $params['path'];
+            unset($params['path']);
+        } else {
+            $path = '/' . $name;
+        }
         if (isset($this->_params['prefix'])) {
             $name = $this->_params['prefix'] . '/' . $name;
         }
