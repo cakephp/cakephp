@@ -17,6 +17,10 @@ namespace Cake\Datasource;
 /**
  * Describes the methods that any class representing a data storage should
  * comply with.
+ *
+ * New methods that will be added in version 4.0.0
+ *
+ * @method int deleteEach($conditions, $options = []);
  */
 interface RepositoryInterface
 {
@@ -111,6 +115,7 @@ interface RepositoryInterface
      * @see \Cake\Datasource\RepositoryInterface::delete()
      */
     public function deleteAll($conditions);
+
 
     /**
      * Returns true if there is any record in this repository matching the specified
