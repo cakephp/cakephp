@@ -1553,4 +1553,25 @@ class RouteTest extends TestCase
         $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
         $route->setMethods(['nope']);
     }
+
+    /**
+     * Test setting requirements through the method
+     *
+     * @return void
+     */
+    public function testSetRequirements()
+    {
+        $route = new Route('/reviews/:date/:id', ['controller' => 'Reviews', 'action' => 'view']);
+        $result = $route->setRequirements([
+            'date' => '\d+\-\d+\-\d+',
+            'id' => '[a-z]+'
+        ]);
+        $this->assertSame($result, $route, 'Should return this');
+        $this->assertArrayHasKey('id', $route->options);
+        $this->assertArrayHasKey('date', $route->options);
+        $this->assertSame('[a-z]+', $route->options['id']);
+
+        $this->assertFalse($route->parse('/reviews/a-b-c/xyz'));
+        $this->assertNotEmpty($route->parse('/reviews/2016-05-12/xyz'));
+    }
 }

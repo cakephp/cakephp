@@ -182,6 +182,19 @@ class Route
     }
 
     /**
+     * Set pattern requirements for routing parameters
+     *
+     * @param array $patterns The patterns to apply to routing elements
+     * @return $this
+     */
+    public function setRequirements(array $patterns)
+    {
+        $this->options = array_merge($this->options, $patterns);
+
+        return $this;
+    }
+
+    /**
      * Check if a Route has been compiled into a regular expression.
      *
      * @return bool
