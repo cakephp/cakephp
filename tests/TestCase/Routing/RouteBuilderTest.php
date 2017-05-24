@@ -362,6 +362,10 @@ class RouteBuilderTest extends TestCase
             $r->prefix('v10', ['path' => 'v1.0'], function ($r2) {
                 $this->assertEquals('/admin/api/v1.0', $r2->path());
                 $this->assertEquals(['prefix' => 'admin/api/v10'], $r2->params());
+                $r2->prefix('b1', ['path' => '/beta.1'], function ($r3) {
+                    $this->assertEquals('/admin/api/v1.0/beta.1', $r3->path());
+                    $this->assertEquals(['prefix' => 'admin/api/v10/b1'], $r3->params());
+                });
             });
         });
         $this->assertNull($res);
