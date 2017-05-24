@@ -1032,7 +1032,7 @@ class TableSchema
      * Generate the SQL statements to add the constraints to the table
      *
      * @param \Cake\Database\Connection $connection The connection to generate SQL for.
-     * @return array SQL to drop a table.
+     * @return array SQL to add the constraints.
      */
     public function addConstraintSql(Connection $connection)
     {
