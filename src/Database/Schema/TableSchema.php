@@ -512,18 +512,49 @@ class TableSchema
      * @param string $name The column to get the type of.
      * @param string|null $type The type to set the column to.
      * @return string|null Either the column type or null.
+     * @deprecated 3.5.0 Use setColumnType()/getColumnType() instead.
      */
     public function columnType($name, $type = null)
+    {
+        if ($type !== null) {
+            $this->setColumnType($name, $type);
+        }
+
+        return $this->getColumnType($name);
+    }
+
+    /**
+     * Returns column type or null if a column does not exist.
+     *
+     * @param string $name The column to get the type of.
+     * @return string|null
+     */
+    public function getColumnType($name)
     {
         if (!isset($this->_columns[$name])) {
             return null;
         }
-        if ($type !== null) {
-            $this->_columns[$name]['type'] = $type;
-            $this->_typeMap[$name] = $type;
-        }
 
         return $this->_columns[$name]['type'];
+    }
+
+    /**
+     * Sets the type of a column.
+     *
+     * @param string $name The column to set the type of.
+     * @param string $type The type to set the column to.
+     * @return $this
+     */
+    public function setColumnType($name, $type)
+    {
+        if (!isset($this->_columns[$name])) {
+            return $this;
+        }
+
+        $this->_columns[$name]['type'] = $type;
+        $this->_typeMap[$name] = $type;
+
+        return $this;
     }
 
     /**
