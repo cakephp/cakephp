@@ -351,6 +351,23 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Test creating sub-scopes with prefix()
+     *
+     * @return void
+     */
+    public function testPathWithDotInPrefix()
+    {
+        $routes = new RouteBuilder($this->collection, '/admin', ['prefix' => 'admin']);
+        $res = $routes->prefix('api', function ($r) {
+            $r->prefix('v10', ['path' => 'v1.0'], function ($r2) {
+                $this->assertEquals('/admin/api/v1.0', $r2->path());
+                $this->assertEquals(['prefix' => 'admin/api/v10'], $r2->params());
+            });
+        });
+        $this->assertNull($res);
+    }
+
+    /**
      * Test creating sub-scopes with plugin()
      *
      * @return void
