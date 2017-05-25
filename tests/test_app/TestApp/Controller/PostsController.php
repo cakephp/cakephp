@@ -63,6 +63,18 @@ class PostsController extends AppController
     }
 
     /**
+     * Sets a flash message and redirects (no rendering)
+     *
+     * @return \Cake\Network\Response
+     */
+    public function flashNoRender()
+    {
+        $this->Flash->error('An error message');
+
+        return $this->redirect(['action' => 'index']);
+    }
+
+    /**
      * Stub get method
      *
      * @return void

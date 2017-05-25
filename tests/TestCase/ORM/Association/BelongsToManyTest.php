@@ -67,17 +67,6 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
-     * Tear down
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        TableRegistry::clear();
-    }
-
-    /**
      * Tests that foreignKey() returns the correct configured value
      *
      * @return void
@@ -390,7 +379,7 @@ class BelongsToManyTest extends TestCase
      * Test linking entities having a non persisted source entity
      *
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Source entity needs to be persisted before proceeding
+     * @expectedExceptionMessage Source entity needs to be persisted before links can be created or removed
      * @return void
      */
     public function testLinkWithNotPersistedSource()
@@ -410,7 +399,7 @@ class BelongsToManyTest extends TestCase
      * Test liking entities having a non persisted target entity
      *
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Cannot link not persisted entities
+     * @expectedExceptionMessage Cannot link entities that have not been persisted yet
      * @return void
      */
     public function testLinkWithNotPersistedTarget()
@@ -427,15 +416,88 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Tests that linking entities will persist correctly with append strategy
+     *
+     * @return void
+     */
+    public function testLinkSuccessSaveAppend()
+    {
+        $articles = TableRegistry::get('Articles');
+        $tags = TableRegistry::get('Tags');
+
+        $config = [
+            'sourceTable' => $articles,
+            'targetTable' => $tags,
+            'joinTable' => 'articles_tags',
+            'saveStrategy' => BelongsToMany::SAVE_APPEND,
+        ];
+        $assoc = $articles->belongsToMany('Tags', $config);
+
+        // Load without tags as that is a main use case for append strategies
+        $article = $articles->get(1);
+        $opts = ['markNew' => false];
+        $tags = [
+            new Entity(['id' => 2, 'name' => 'add'], $opts),
+            new Entity(['id' => 3, 'name' => 'adder'], $opts)
+        ];
+
+        $this->assertTrue($assoc->link($article, $tags));
+        $this->assertCount(2, $article->tags, 'In-memory tags are incorrect');
+        $this->assertSame([2, 3], collection($article->tags)->extract('id')->toList());
+
+        $article = $articles->get(1, ['contain' => ['Tags']]);
+        $this->assertCount(3, $article->tags, 'Persisted tags are wrong');
+        $this->assertSame([1, 2, 3], collection($article->tags)->extract('id')->toList());
+    }
+
+    /**
+     * Tests that linking the same tag to multiple articles works
+     *
+     * @return void
+     */
+    public function testLinkSaveAppendSharedTarget()
+    {
+        $articles = TableRegistry::get('Articles');
+        $tags = TableRegistry::get('Tags');
+        $articlesTags = TableRegistry::get('ArticlesTags');
+        $articlesTags->deleteAll('1=1');
+
+        $config = [
+            'sourceTable' => $articles,
+            'targetTable' => $tags,
+            'joinTable' => 'articles_tags',
+            'saveStrategy' => BelongsToMany::SAVE_APPEND,
+        ];
+        $assoc = $articles->belongsToMany('Tags', $config);
+
+        $articleOne = $articles->get(1);
+        $articleTwo = $articles->get(2);
+
+        $tagTwo = $tags->get(2);
+        $tagThree = $tags->get(3);
+
+        $this->assertTrue($assoc->link($articleOne, [$tagThree, $tagTwo]));
+        $this->assertTrue($assoc->link($articleTwo, [$tagThree]));
+
+        $this->assertCount(2, $articleOne->tags, 'In-memory tags are incorrect');
+        $this->assertSame([3, 2], collection($articleOne->tags)->extract('id')->toList());
+
+        $this->assertCount(1, $articleTwo->tags, 'In-memory tags are incorrect');
+        $this->assertSame([3], collection($articleTwo->tags)->extract('id')->toList());
+        $rows = $articlesTags->find()->all();
+        $this->assertCount(3, $rows, '3 link rows should be created.');
+    }
+
+    /**
      * Tests that liking entities will validate data and pass on to _saveLinks
      *
      * @return void
      */
-    public function testLinkSuccess()
+    public function testLinkSuccessWithMocks()
     {
         $connection = ConnectionManager::get('test');
         $joint = $this->getMockBuilder('\Cake\ORM\Table')
-            ->setMethods(['save'])
+            ->setMethods(['save', 'getPrimaryKey'])
             ->setConstructorArgs([['alias' => 'ArticlesTags', 'connection' => $connection]])
             ->getMock();
 
@@ -452,7 +514,10 @@ class BelongsToManyTest extends TestCase
         $tags = [new Entity(['id' => 2], $opts), new Entity(['id' => 3], $opts)];
         $saveOptions = ['foo' => 'bar'];
 
-        $joint->expects($this->at(0))
+        $joint->method('getPrimaryKey')
+            ->will($this->returnValue(['article_id', 'tag_id']));
+
+        $joint->expects($this->at(1))
             ->method('save')
             ->will($this->returnCallback(function ($e, $opts) use ($entity) {
                 $expected = ['article_id' => 1, 'tag_id' => 2];
@@ -463,7 +528,7 @@ class BelongsToManyTest extends TestCase
                 return $entity;
             }));
 
-        $joint->expects($this->at(1))
+        $joint->expects($this->at(2))
             ->method('save')
             ->will($this->returnCallback(function ($e, $opts) use ($entity) {
                 $expected = ['article_id' => 1, 'tag_id' => 3];
@@ -482,7 +547,7 @@ class BelongsToManyTest extends TestCase
      * Test liking entities having a non persisted source entity
      *
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Source entity needs to be persisted before proceeding
+     * @expectedExceptionMessage Source entity needs to be persisted before links can be created or removed
      * @return void
      */
     public function testUnlinkWithNotPersistedSource()
@@ -502,7 +567,7 @@ class BelongsToManyTest extends TestCase
      * Test liking entities having a non persisted target entity
      *
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Cannot link not persisted entities
+     * @expectedExceptionMessage Cannot link entities that have not been persisted
      * @return void
      */
     public function testUnlinkWithNotPersistedTarget()
