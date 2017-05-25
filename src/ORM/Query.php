@@ -352,14 +352,21 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Failing to do so will trigger exceptions.
      *
      * ```
-     * // Use special join conditions for getting an Articles's belongsTo 'authors'
+     * // Use a query builder to add conditions to the containment
+     * $query->contain('Authors', function ($q) {
+     *     return $q->where(...); // add conditions
+     * });
+     * // Use special join conditions for multiple containments in the same method call
      * $query->contain([
      *     'Authors' => [
      *         'foreignKey' => false,
      *         'queryBuilder' => function ($q) {
      *             return $q->where(...); // Add full filtering conditions
      *         }
-     *     ]
+     *     ],
+     *     'Tags' => function ($q) {
+     *         return $q->where(...); // add conditions
+     *     }
      * ]);
      * ```
      *
@@ -371,7 +378,9 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * previous list will be emptied.
      *
      * @param array|string|null $associations List of table aliases to be queried.
-     * @param bool $override Whether override previous list with the one passed
+     * @param callable|bool $override The query builder for the association, or
+     *   if associations is an array, a bool on whether to override previous list
+     *   with the one passed
      * defaults to merging previous list with the new one.
      * @return array|$this
      */
@@ -386,7 +395,12 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             return $loader->contain();
         }
 
-        $result = $loader->contain($associations);
+        $queryBuilder = null;
+        if (is_callable($override)) {
+            $queryBuilder = $override;
+        }
+
+        $result = $loader->contain($associations, $queryBuilder);
         $this->_addAssociationsToTypeMap($this->repository(), $this->getTypeMap(), $result);
 
         return $this;
