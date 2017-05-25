@@ -88,6 +88,7 @@ abstract class BaseLog extends AbstractLogger
      * @return string
      */
     protected function _format($data, array $context = [])
+    {
         if (is_string($data)) {
             return $data;
         }
