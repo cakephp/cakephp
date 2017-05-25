@@ -613,7 +613,7 @@ class RouteBuilder
         }
         $name = Inflector::underscore($name);
         if (isset($params['path'])) {
-            $path = ($params['path'][0] === '/' ? '' : '/') . $params['path'];
+            $path = $params['path'];
             unset($params['path']);
         } else {
             $path = '/' . $name;

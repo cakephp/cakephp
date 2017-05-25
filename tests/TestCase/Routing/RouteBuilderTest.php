@@ -359,7 +359,7 @@ class RouteBuilderTest extends TestCase
     {
         $routes = new RouteBuilder($this->collection, '/admin', ['prefix' => 'admin']);
         $res = $routes->prefix('api', function ($r) {
-            $r->prefix('v10', ['path' => 'v1.0'], function ($r2) {
+            $r->prefix('v10', ['path' => '/v1.0'], function ($r2) {
                 $this->assertEquals('/admin/api/v1.0', $r2->path());
                 $this->assertEquals(['prefix' => 'admin/api/v10'], $r2->params());
                 $r2->prefix('b1', ['path' => '/beta.1'], function ($r3) {
