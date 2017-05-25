@@ -182,23 +182,23 @@ class FileLog extends BaseLog
      */
     protected function _rotateFile($filename)
     {
-        $filepath = $this->_path . $filename;
-        clearstatcache(true, $filepath);
+        $filePath = $this->_path . $filename;
+        clearstatcache(true, $filePath);
 
-        if (!file_exists($filepath) ||
-            filesize($filepath) < $this->_size
+        if (!file_exists($filePath) ||
+            filesize($filePath) < $this->_size
         ) {
             return null;
         }
 
         $rotate = $this->_config['rotate'];
         if ($rotate === 0) {
-            $result = unlink($filepath);
+            $result = unlink($filePath);
         } else {
-            $result = rename($filepath, $filepath . '.' . time());
+            $result = rename($filePath, $filePath . '.' . time());
         }
 
-        $files = glob($filepath . '.*');
+        $files = glob($filePath . '.*');
         if ($files) {
             $filesToDelete = count($files) - $rotate;
             while ($filesToDelete > 0) {
