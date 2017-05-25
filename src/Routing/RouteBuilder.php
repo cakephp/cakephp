@@ -587,13 +587,24 @@ class RouteBuilder
      * This method creates a scoped route collection that includes
      * relevant prefix information.
      *
-     * The path parameter is used to generate the routing parameter name.
+     * The $name parameter is used to generate the routing parameter name.
      * For example a path of `admin` would result in `'prefix' => 'admin'` being
      * applied to all connected routes.
      *
      * You can re-open a prefix as many times as necessary, as well as nest prefixes.
      * Nested prefixes will result in prefix values like `admin/api` which translates
      * to the `Controller\Admin\Api\` namespace.
+     *
+     * If you need to have prefix with dots, eg: '/api/v1.0', use 'path' key
+     * for $params argument:
+     *
+     * ```
+     * $route->prefix('api', function($route) {
+     *     $route->prefix('v10', ['path' => '/v1.0'], function($route) {
+     *         // Translates to `Controller\Api\V10\` namespace
+     *     });
+     * });
+     * ```
      *
      * @param string $name The prefix name to use.
      * @param array|callable $params An array of routing defaults to add to each connected route.
