@@ -195,6 +195,19 @@ class Route
     }
 
     /**
+     * Set host requirement
+     *
+     * @param string $host The host name this route is bound to
+     * @return $this
+     */
+    public function setHost($host)
+    {
+        $this->options['_host'] = $host;
+
+        return $this;
+    }
+
+    /**
      * Check if a Route has been compiled into a regular expression.
      *
      * @return bool

@@ -1574,4 +1574,28 @@ class RouteTest extends TestCase
         $this->assertFalse($route->parse('/reviews/a-b-c/xyz'));
         $this->assertNotEmpty($route->parse('/reviews/2016-05-12/xyz'));
     }
+
+    /**
+     * Test setting host requirements
+     *
+     * @return void
+     */
+    public function testSetHost()
+    {
+        $route = new Route('/reviews', ['controller' => 'Reviews', 'action' => 'index']);
+        $result = $route->setHost('blog.example.com');
+        $this->assertSame($result, $route, 'Should return this');
+
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'a.example.com',
+                'PATH_INFO' => '/reviews'
+            ]
+        ]);
+        $this->assertFalse($route->parseRequest($request));
+
+        $uri = $request->getUri();
+        $request = $request->withUri($uri->withHost('blog.example.com'));
+        $this->assertNotEmpty($route->parseRequest($request));
+    }
 }
