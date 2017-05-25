@@ -195,7 +195,7 @@ class FileLog extends BaseLog
         if ($rotate === 0) {
             $result = unlink($filepath);
         } else {
-            $result = rename($filepath, $filepath . '.' . time());
+            $result = rename($filepath, $filepath . '.' . time() . '.log');
         }
 
         $files = glob($filepath . '.*');
