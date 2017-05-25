@@ -84,10 +84,10 @@ abstract class BaseLog extends AbstractLogger
      * or add additional info to the logged message.
      *
      * @param mixed $data The data to be converted to string and logged.
+     * @param array $context Additional logging information for the message.
      * @return string
      */
-    protected function _format($data)
-    {
+    protected function _format($data, array $context = [])
         if (is_string($data)) {
             return $data;
         }
