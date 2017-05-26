@@ -611,6 +611,7 @@ class Router
         // In 4.x this should be replaced with state injected via setRequestContext
         $request = static::getRequest(true);
         if ($request) {
+            $request->params += $params;
             $params = $request->params;
             $here = $request->here;
             $base = $request->getAttribute('base');
