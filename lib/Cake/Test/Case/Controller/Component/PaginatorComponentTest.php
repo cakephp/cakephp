@@ -320,11 +320,19 @@ class PaginatorComponentTest extends CakeTestCase {
 
 		$Controller->PaginatorControllerPost->order = null;
 
+		/* ORDER ARRAY FIELD => SORT MODE */
 		$Controller->Paginator->settings = array(
 			'order' => array('PaginatorControllerComment.id' => 'ASC')
 		);
 		$results = Hash::extract($Controller->Paginator->paginate('PaginatorControllerComment'), '{n}.PaginatorControllerComment.id');
 		$this->assertEquals(array(1, 2, 3, 4, 5, 6), $results);
+
+		/* ORDER ARRAY "FIELD SORT" MODE */
+		$Controller->Paginator->settings = array(
+			'order' => array('PaginatorControllerComment.id DESC')
+		);
+		$results = Hash::extract($Controller->Paginator->paginate('PaginatorControllerComment'), '{n}.PaginatorControllerComment.id');
+		$this->assertEquals(array(6, 5, 4, 3, 2, 1), $results);
 
 		$Controller->Paginator->settings = array(
 			'order' => array('PaginatorControllerPost.id' => 'ASC')
@@ -619,6 +627,7 @@ class PaginatorComponentTest extends CakeTestCase {
 		$result = $Controller->Paginator->validateSort($Controller->PaginatorControllerPost, array());
 		$this->assertArrayNotHasKey('order', $result);
 
+		/* DEFAULT */
 		$Controller->PaginatorControllerPost->order = array(
 			'PaginatorControllerPost.id',
 			'PaginatorControllerPost.created' => 'asc'
@@ -627,6 +636,18 @@ class PaginatorComponentTest extends CakeTestCase {
 		$expected = array(
 			'PaginatorControllerPost.id' => 'asc',
 			'PaginatorControllerPost.created' => 'asc'
+		);
+		$this->assertEquals($expected, $result['order']);
+
+		/* CLASSIC */
+		$Controller->PaginatorControllerPost->order = array(
+			'PaginatorControllerPost.id ASC',
+			'PaginatorControllerPost.created DESC'
+		);
+		$result = $Controller->Paginator->validateSort($Controller->PaginatorControllerPost, array());
+		$expected = array(
+			'PaginatorControllerPost.id' => 'ASC',
+			'PaginatorControllerPost.created' => 'DESC'
 		);
 		$this->assertEquals($expected, $result['order']);
 	}
