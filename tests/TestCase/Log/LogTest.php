@@ -126,7 +126,7 @@ class LogTest extends TestCase
     }
 
     /**
-     * test config() with valid key name
+     * test invalid level
      *
      * @expectedException \InvalidArgumentException
      * @return void
