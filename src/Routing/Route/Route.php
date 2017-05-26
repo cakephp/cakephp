@@ -182,12 +182,12 @@ class Route
     }
 
     /**
-     * Set pattern requirements for routing parameters
+     * Set routing key patterns for routing parameters
      *
      * @param array $patterns The patterns to apply to routing elements
      * @return $this
      */
-    public function setRequirements(array $patterns)
+    public function setPatterns(array $patterns)
     {
         $this->options = array_merge($this->options, $patterns);
 

@@ -1555,14 +1555,14 @@ class RouteTest extends TestCase
     }
 
     /**
-     * Test setting requirements through the method
+     * Test setting patterns through the method
      *
      * @return void
      */
-    public function testSetRequirements()
+    public function testSetPatterns()
     {
         $route = new Route('/reviews/:date/:id', ['controller' => 'Reviews', 'action' => 'view']);
-        $result = $route->setRequirements([
+        $result = $route->setPatterns([
             'date' => '\d+\-\d+\-\d+',
             'id' => '[a-z]+'
         ]);
