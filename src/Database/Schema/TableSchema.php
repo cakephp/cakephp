@@ -17,6 +17,7 @@ namespace Cake\Database\Schema;
 use Cake\Database\Connection;
 use Cake\Database\Exception;
 use Cake\Database\Type;
+use Cake\Datasource\SchemaInterface;
 
 /**
  * Represents a single table in a database schema.
@@ -29,7 +30,7 @@ use Cake\Database\Type;
  * Schema\Collection objects. They can also be converted into SQL using the
  * createSql(), dropSql() and truncateSql() methods.
  */
-class TableSchema
+class TableSchema implements SchemaInterface
 {
 
     /**
@@ -249,118 +250,6 @@ class TableSchema
     const INDEX_FULLTEXT = 'fulltext';
 
     /**
-     * Binary column type
-     *
-     * @var string
-     */
-    const TYPE_BINARY = 'binary';
-
-    /**
-     * Date column type
-     *
-     * @var string
-     */
-    const TYPE_DATE = 'date';
-
-    /**
-     * Datetime column type
-     *
-     * @var string
-     */
-    const TYPE_DATETIME = 'datetime';
-
-    /**
-     * Time column type
-     *
-     * @var string
-     */
-    const TYPE_TIME = 'time';
-
-    /**
-     * Timestamp column type
-     *
-     * @var string
-     */
-    const TYPE_TIMESTAMP = 'timestamp';
-
-    /**
-     * JSON column type
-     *
-     * @var string
-     */
-    const TYPE_JSON = 'json';
-
-    /**
-     * String column type
-     *
-     * @var string
-     */
-    const TYPE_STRING = 'string';
-
-    /**
-     * Text column type
-     *
-     * @var string
-     */
-    const TYPE_TEXT = 'text';
-
-    /**
-     * Tiny Integer column type
-     *
-     * @var string
-     */
-    const TYPE_TINYINTEGER = 'tinyinteger';
-
-    /**
-     * Small Integer column type
-     *
-     * @var string
-     */
-    const TYPE_SMALLINTEGER = 'smallinteger';
-
-    /**
-     * Integer column type
-     *
-     * @var string
-     */
-    const TYPE_INTEGER = 'integer';
-
-    /**
-     * Big Integer column type
-     *
-     * @var string
-     */
-    const TYPE_BIGINTEGER = 'biginteger';
-
-    /**
-     * Float column type
-     *
-     * @var string
-     */
-    const TYPE_FLOAT = 'float';
-
-    /**
-     * Decimal column type
-     *
-     * @var string
-     */
-    const TYPE_DECIMAL = 'decimal';
-
-    /**
-     * Boolean column type
-     *
-     * @var string
-     */
-    const TYPE_BOOLEAN = 'boolean';
-
-    /**
-     * UUID column type
-     *
-     * @var string
-     */
-    const TYPE_UUID = 'uuid';
-
-    /**
      * Foreign key cascade action
      *
      * @var string
@@ -493,8 +382,20 @@ class TableSchema
      *
      * @param string $name The column name.
      * @return array|null Column data or null.
+     * @deprecated 3.5.0 Use getColumn() instead.
      */
     public function column($name)
+    {
+        return $this->getColumn($name);
+    }
+
+    /**
+     * Get column data in the table.
+     *
+     * @param string $name The column name.
+     * @return array|null Column data or null.
+     */
+    public function getColumn($name)
     {
         if (!isset($this->_columns[$name])) {
             return null;
@@ -708,8 +609,20 @@ class TableSchema
      *
      * @param string $name The name of the index.
      * @return array|null Array of index data, or null
+     * @deprecated 3.5.0 Use getIndex() instead.
      */
     public function index($name)
+    {
+        return $this->getIndex($name);
+    }
+
+    /**
+     * Read information about an index based on name.
+     *
+     * @param string $name The name of the index.
+     * @return array|null Array of index data, or null
+     */
+    public function getIndex($name)
     {
         if (!isset($this->_indexes[$name])) {
             return null;
@@ -813,13 +726,15 @@ class TableSchema
      * Remove a constraint.
      *
      * @param string $name Name of the constraint to remove
-     * @return void
+     * @return $this
      */
     public function dropConstraint($name)
     {
         if (isset($this->_constraints[$name])) {
             unset($this->_constraints[$name]);
         }
+
+        return $this;
     }
 
     /**
@@ -875,8 +790,20 @@ class TableSchema
      *
      * @param string $name The name of the constraint.
      * @return array|null Array of constraint data, or null
+     * @deprecated 3.5.0 Use getConstraint() instead.
      */
     public function constraint($name)
+    {
+        return $this->getConstraint($name);
+    }
+
+    /**
+     * Read information about a constraint based on name.
+     *
+     * @param string $name The name of the constraint.
+     * @return array|null Array of constraint data, or null
+     */
+    public function getConstraint($name)
     {
         if (!isset($this->_constraints[$name])) {
             return null;
