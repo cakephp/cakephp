@@ -1523,4 +1523,79 @@ class RouteTest extends TestCase
         ];
         $this->assertEquals($expected, $route->parse('/', 'GET'));
     }
+
+    /**
+     * Test setting the method on a route.
+     *
+     * @return void
+     */
+    public function testSetMethods()
+    {
+        $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
+        $result = $route->setMethods(['put']);
+
+        $this->assertSame($result, $route, 'Should return this');
+        $this->assertSame(['PUT'], $route->defaults['_method'], 'method is wrong');
+
+        $route->setMethods(['post', 'get', 'patch']);
+        $this->assertSame(['POST', 'GET', 'PATCH'], $route->defaults['_method']);
+    }
+
+    /**
+     * Test setting the method on a route to an invalid method
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid HTTP method received. NOPE is invalid
+     * @return void
+     */
+    public function testSetMethodsInvalid()
+    {
+        $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
+        $route->setMethods(['nope']);
+    }
+
+    /**
+     * Test setting patterns through the method
+     *
+     * @return void
+     */
+    public function testSetPatterns()
+    {
+        $route = new Route('/reviews/:date/:id', ['controller' => 'Reviews', 'action' => 'view']);
+        $result = $route->setPatterns([
+            'date' => '\d+\-\d+\-\d+',
+            'id' => '[a-z]+'
+        ]);
+        $this->assertSame($result, $route, 'Should return this');
+        $this->assertArrayHasKey('id', $route->options);
+        $this->assertArrayHasKey('date', $route->options);
+        $this->assertSame('[a-z]+', $route->options['id']);
+
+        $this->assertFalse($route->parse('/reviews/a-b-c/xyz'));
+        $this->assertNotEmpty($route->parse('/reviews/2016-05-12/xyz'));
+    }
+
+    /**
+     * Test setting host requirements
+     *
+     * @return void
+     */
+    public function testSetHost()
+    {
+        $route = new Route('/reviews', ['controller' => 'Reviews', 'action' => 'index']);
+        $result = $route->setHost('blog.example.com');
+        $this->assertSame($result, $route, 'Should return this');
+
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'a.example.com',
+                'PATH_INFO' => '/reviews'
+            ]
+        ]);
+        $this->assertFalse($route->parseRequest($request));
+
+        $uri = $request->getUri();
+        $request = $request->withUri($uri->withHost('blog.example.com'));
+        $this->assertNotEmpty($route->parseRequest($request));
+    }
 }
