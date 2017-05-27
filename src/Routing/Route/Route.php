@@ -182,7 +182,7 @@ class Route
     }
 
     /**
-     * Set routing key patterns for routing parameters
+     * Set regexp patterns for routing parameters
      *
      * @param array $patterns The patterns to apply to routing elements
      * @return $this
