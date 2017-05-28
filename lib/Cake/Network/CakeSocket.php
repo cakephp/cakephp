@@ -44,7 +44,8 @@ class CakeSocket {
 		'host' => 'localhost',
 		'protocol' => 'tcp',
 		'port' => 80,
-		'timeout' => 30
+		'timeout' => 30,
+		'cryptoType' => 'tls',
 	);
 
 /**
@@ -96,7 +97,7 @@ class CakeSocket {
 		'sslv2_server' => STREAM_CRYPTO_METHOD_SSLv2_SERVER,
 		'sslv3_server' => STREAM_CRYPTO_METHOD_SSLv3_SERVER,
 		'sslv23_server' => STREAM_CRYPTO_METHOD_SSLv23_SERVER,
-		'tls_server' => STREAM_CRYPTO_METHOD_TLS_SERVER
+		'tls_server' => STREAM_CRYPTO_METHOD_TLS_SERVER,
 		// @codingStandardsIgnoreEnd
 	);
 
@@ -116,6 +117,44 @@ class CakeSocket {
  */
 	public function __construct($config = array()) {
 		$this->config = array_merge($this->_baseConfig, $config);
+
+		$this->_addTlsVersions();
+	}
+
+/**
+ * Add TLS versions that are dependent on specific PHP versions.
+ *
+ * These TLS versions are not supported by older PHP versions,
+ * so we have to conditionally set them if they are supported.
+ *
+ * As of PHP5.6.6, STREAM_CRYPTO_METHOD_TLS_CLIENT does not include
+ * TLS1.1 or 1.2. If we have TLS1.2 support we need to update the method map.
+ *
+ * @see https://bugs.php.net/bug.php?id=69195
+ * @see https://github.com/php/php-src/commit/10bc5fd4c4c8e1dd57bd911b086e9872a56300a0
+ * @return void
+ */
+	protected function _addTlsVersions() {
+		$conditionalCrypto = array(
+			'tlsv1_1_client' => 'STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT',
+			'tlsv1_2_client' => 'STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT',
+			'tlsv1_1_server' => 'STREAM_CRYPTO_METHOD_TLSv1_1_SERVER',
+			'tlsv1_2_server' => 'STREAM_CRYPTO_METHOD_TLSv1_2_SERVER'
+		);
+		foreach ($conditionalCrypto as $key => $const) {
+			if (defined($const)) {
+				$this->_encryptMethods[$key] = constant($const);
+			}
+		}
+
+		// @codingStandardsIgnoreStart
+		if (isset($this->_encryptMethods['tlsv1_2_client'])) {
+			$this->_encryptMethods['tls_client'] = STREAM_CRYPTO_METHOD_TLS_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
+		}
+		if (isset($this->_encryptMethods['tlsv1_2_server'])) {
+			$this->_encryptMethods['tls_server'] = STREAM_CRYPTO_METHOD_TLS_SERVER | STREAM_CRYPTO_METHOD_TLSv1_1_SERVER | STREAM_CRYPTO_METHOD_TLSv1_2_SERVER;
+		}
+		// @codingStandardsIgnoreEnd
 	}
 
 /**
@@ -205,7 +244,7 @@ class CakeSocket {
 					}
 				}
 
-				$this->enableCrypto('tls', 'client');
+				$this->enableCrypto($this->config['cryptoType'], 'client');
 			}
 		}
 		return $this->connected;
@@ -433,7 +472,7 @@ class CakeSocket {
 /**
  * Encrypts current stream socket, using one of the defined encryption methods.
  *
- * @param string $type Type which can be one of 'sslv2', 'sslv3', 'sslv23' or 'tls'.
+ * @param string $type Type which can be one of 'sslv2', 'sslv3', 'sslv23', 'tls', 'tlsv1_1' or 'tlsv1_2'.
  * @param string $clientOrServer Can be one of 'client', 'server'. Default is 'client'.
  * @param bool $enable Enable or disable encryption. Default is true (enable)
  * @return bool True on success

@@ -248,7 +248,16 @@ abstract class ControllerTestCase extends CakeTestCase {
 				$_GET = array();
 			}
 		}
-		$request = $this->getMock('CakeRequest', array('_readInput'), array($url));
+
+		if (strpos($url, '?') !== false) {
+			list($url, $query) = explode('?', $url, 2);
+			parse_str($query, $queryArgs);
+			$_GET += $queryArgs;
+		}
+
+		$_SERVER['REQUEST_URI'] = $url;
+		/** @var CakeRequest|PHPUnit_Framework_MockObject_MockObject $request */
+		$request = $this->getMock('CakeRequest', array('_readInput'));
 
 		if (is_string($options['data'])) {
 			$request->expects($this->any())
@@ -349,9 +358,12 @@ abstract class ControllerTestCase extends CakeTestCase {
 		), (array)$mocks);
 
 		list($plugin, $name) = pluginSplit($controller);
+		/** @var Controller|PHPUnit_Framework_MockObject_MockObject $controllerObj */
 		$controllerObj = $this->getMock($name . 'Controller', $mocks['methods'], array(), '', false);
 		$controllerObj->name = $name;
+		/** @var CakeRequest|PHPUnit_Framework_MockObject_MockObject $request */
 		$request = $this->getMock('CakeRequest');
+		/** @var CakeResponse|PHPUnit_Framework_MockObject_MockObject $response */
 		$response = $this->getMock($this->_responseClass, array('_sendHeader'));
 		$controllerObj->__construct($request, $response);
 		$controllerObj->Components->setController($controllerObj);
@@ -385,6 +397,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 				));
 			}
 			$config = isset($controllerObj->components[$component]) ? $controllerObj->components[$component] : array();
+			/** @var Component|PHPUnit_Framework_MockObject_MockObject $componentObj */
 			$componentObj = $this->getMock($componentClass, $methods, array($controllerObj->Components, $config));
 			$controllerObj->Components->set($name, $componentObj);
 			$controllerObj->Components->enable($name);

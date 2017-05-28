@@ -504,7 +504,8 @@ class FormHelper extends AppHelper {
 		}
 		return $this->hidden('_Token.key', array(
 			'value' => $this->request->params['_Token']['key'], 'id' => 'Token' . mt_rand(),
-			'secure' => static::SECURE_SKIP
+			'secure' => static::SECURE_SKIP,
+			'autocomplete' => 'off',
 		));
 	}
 
@@ -622,12 +623,14 @@ class FormHelper extends AppHelper {
 			'value' => urlencode($fields . ':' . $locked),
 			'id' => 'TokenFields' . mt_rand(),
 			'secure' => static::SECURE_SKIP,
+			'autocomplete' => 'off',
 		));
 		$out = $this->hidden('_Token.fields', $tokenFields);
 		$tokenUnlocked = array_merge($secureAttributes, array(
 			'value' => urlencode($unlocked),
 			'id' => 'TokenUnlocked' . mt_rand(),
 			'secure' => static::SECURE_SKIP,
+			'autocomplete' => 'off',
 		));
 		$out .= $this->hidden('_Token.unlocked', $tokenUnlocked);
 		if ($debugSecurity) {

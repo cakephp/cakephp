@@ -624,4 +624,107 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$this->assertEquals($restored, $_POST);
 	}
 
+/**
+ * Tests that the `App.base` path is properly stripped from the URL generated from the
+ * given URL array, and that consequently the correct controller/action is being matched.
+ *
+ * @return void
+ */
+	public function testAppBaseConfigCompatibilityWithArrayUrls() {
+		Configure::write('App.base', '/cakephp');
+
+		$this->Case->generate('TestsApps');
+		$this->Case->testAction(array('controller' => 'tests_apps', 'action' => 'index'));
+
+		$this->assertEquals('/cakephp', $this->Case->controller->request->base);
+		$this->assertEquals('/cakephp/', $this->Case->controller->request->webroot);
+		$this->assertEquals('/cakephp/tests_apps', $this->Case->controller->request->here);
+		$this->assertEquals('tests_apps', $this->Case->controller->request->url);
+
+		$expected = array(
+			'plugin' => null,
+			'controller' => 'tests_apps',
+			'action' => 'index',
+			'named' => array(),
+			'pass' => array(),
+		);
+		$this->assertEquals($expected, array_intersect_key($this->Case->controller->request->params, $expected));
+	}
+
+/**
+ * Tests that query string data from URL arrays properly makes it into the request object
+ * on GET requests.
+ *
+ * @return void
+ */
+	public function testTestActionWithArrayUrlQueryStringDataViaGetRequest() {
+		$query = array('foo' => 'bar');
+
+		$this->Case->generate('TestsApps');
+		$this->Case->testAction(
+			array(
+				'controller' => 'tests_apps',
+				'action' => 'index',
+				'?' => $query
+			),
+			array(
+				'method' => 'get'
+			)
+		);
+
+		$this->assertEquals('tests_apps', $this->Case->controller->request->url);
+		$this->assertEquals($query, $this->Case->controller->request->query);
+	}
+
+/**
+ * Tests that query string data from URL arrays properly makes it into the request object
+ * on POST requests.
+ *
+ * @return void
+ */
+	public function testTestActionWithArrayUrlQueryStringDataViaPostRequest() {
+		$query = array('foo' => 'bar');
+
+		$this->Case->generate('TestsApps');
+		$this->Case->testAction(
+			array(
+				'controller' => 'tests_apps',
+				'action' => 'index',
+				'?' => $query
+			),
+			array(
+				'method' => 'post'
+			)
+		);
+
+		$this->assertEquals('tests_apps', $this->Case->controller->request->url);
+		$this->assertEquals($query, $this->Case->controller->request->query);
+	}
+
+/**
+ * Tests that query string data from both, URL arrays as well as the `data` option,
+ * properly makes it into the request object.
+ *
+ * @return void
+ */
+	public function testTestActionWithArrayUrlQueryStringDataAndDataOptionViaGetRequest() {
+		$query = array('foo' => 'bar');
+		$data = array('bar' => 'foo');
+
+		$this->Case->generate('TestsApps');
+		$this->Case->testAction(
+			array(
+				'controller' => 'tests_apps',
+				'action' => 'index',
+				'?' => $query
+			),
+			array(
+				'method' => 'get',
+				'data' => $data
+			)
+		);
+
+		$this->assertEquals('tests_apps', $this->Case->controller->request->url);
+		$this->assertEquals($data + $query, $this->Case->controller->request->query);
+	}
 }

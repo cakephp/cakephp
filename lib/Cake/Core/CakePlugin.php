@@ -17,8 +17,9 @@
  */
 
 /**
- * CakePlugin is responsible for loading and unloading plugins. It also can
- * retrieve plugin paths and load their bootstrap and routes files.
+ * CakePlugin is responsible for loading and unloading plugins.
+ *
+ * It also can retrieve plugin paths and load their bootstrap and routes files.
  *
  * @package       Cake.Core
  * @link http://book.cakephp.org/2.0/en/plugins.html
@@ -37,45 +38,47 @@ class CakePlugin {
  *
  * Examples:
  *
- * `CakePlugin::load('DebugKit')`
+ * `CakePlugin::load('DebugKit');`
  *
- * Will load the DebugKit plugin and will not load any bootstrap nor route files
+ * Will load the DebugKit plugin and will not load any bootstrap nor route files.
  *
- * `CakePlugin::load('DebugKit', array('bootstrap' => true, 'routes' => true))`
+ * `CakePlugin::load('DebugKit', array('bootstrap' => true, 'routes' => true));`
  *
- * will load the bootstrap.php and routes.php files
+ * Will load the bootstrap.php and routes.php files.
  *
- * `CakePlugin::load('DebugKit', array('bootstrap' => false, 'routes' => true))`
+ * `CakePlugin::load('DebugKit', array('bootstrap' => false, 'routes' => true));`
  *
- * will load routes.php file but not bootstrap.php
+ * Will load routes.php file but not bootstrap.php.
  *
- * `CakePlugin::load('DebugKit', array('bootstrap' => array('config1', 'config2')))`
+ * `CakePlugin::load('DebugKit', array('bootstrap' => array('config1', 'config2')));`
  *
- * will load config1.php and config2.php files
+ * Will load config1.php and config2.php files.
  *
- * `CakePlugin::load('DebugKit', array('bootstrap' => 'aCallableMethod'))`
+ * `CakePlugin::load('DebugKit', array('bootstrap' => 'aCallableMethod'));`
  *
- * will run the aCallableMethod function to initialize it
+ * Will run the aCallableMethod function to initialize it.
  *
  * Bootstrap initialization functions can be expressed as a PHP callback type,
  * including closures. Callbacks will receive two parameters
- * (plugin name, plugin configuration)
+ * (plugin name, plugin configuration).
  *
  * It is also possible to load multiple plugins at once. Examples:
  *
- * `CakePlugin::load(array('DebugKit', 'ApiGenerator'))`
+ * `CakePlugin::load(array('DebugKit', 'ApiGenerator'));`
  *
- * will load the DebugKit and ApiGenerator plugins
+ * Will load the DebugKit and ApiGenerator plugins.
  *
- * `CakePlugin::load(array('DebugKit', 'ApiGenerator'), array('bootstrap' => true))`
+ * `CakePlugin::load(array('DebugKit', 'ApiGenerator'), array('bootstrap' => true));`
  *
- * will load bootstrap file for both plugins
+ * Will load bootstrap file for both plugins.
  *
  * ```
  * 	CakePlugin::load(array(
- * 		'DebugKit' => array('routes' => true),
- * 		'ApiGenerator'
- * 		), array('bootstrap' => true))
+ * 		    'DebugKit' => array('routes' => true),
+ * 		    'ApiGenerator'
+ * 		),
+ *      array('bootstrap' => true)
+ *  );
  * ```
  *
  * Will only load the bootstrap for ApiGenerator and only the routes for DebugKit.
@@ -124,6 +127,7 @@ class CakePlugin {
 
 /**
  * Will load all the plugins located in the configured plugins folders
+ *
  * If passed an options array, it will be used as a common default for all plugins to be loaded
  * It is possible to set specific defaults for each plugins in the options array. Examples:
  *
@@ -131,7 +135,7 @@ class CakePlugin {
  * 	CakePlugin::loadAll(array(
  * 		array('bootstrap' => true),
  * 		'DebugKit' => array('routes' => true, 'bootstrap' => false),
- * 	))
+ * 	));
  * ```
  *
  * The above example will load the bootstrap file for all plugins, but for DebugKit it will only load
@@ -140,11 +144,11 @@ class CakePlugin {
  * each plugin you can use the `ignoreMissing` option:
  *
  * ```
- * CakePlugin::loadAll(array(
- *   'ignoreMissing' => true,
- *   'bootstrap' => true,
- *   'routes' => true,
- * ));
+ *  CakePlugin::loadAll(array(
+ *  	'ignoreMissing' => true,
+ *  	'bootstrap' => true,
+ *  	'routes' => true,
+ *  ));
  * ```
  *
  * The ignoreMissing option will do additional file_exists() calls but is simpler
@@ -155,12 +159,12 @@ class CakePlugin {
  */
 	public static function loadAll($options = array()) {
 		$plugins = App::objects('plugins');
-		foreach ($plugins as $p) {
-			$opts = isset($options[$p]) ? (array)$options[$p] : array();
+		foreach ($plugins as $plugin) {
+			$pluginOptions = isset($options[$plugin]) ? (array)$options[$plugin] : array();
 			if (isset($options[0])) {
-				$opts += $options[0];
+				$pluginOptions += $options[0];
 			}
-			static::load($p, $opts);
+			static::load($plugin, $pluginOptions);
 		}
 	}
 

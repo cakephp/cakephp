@@ -66,19 +66,14 @@ class Validation {
  *
  * Returns true if string contains something other than whitespace
  *
- * $check can be passed as an array:
- * array('check' => 'valueToCheck');
- *
- * @param string|array $check Value to check
+ * @param string $check Value to check
  * @return bool Success
  */
 	public static function notBlank($check) {
-		if (!is_scalar($check)) {
+		if (empty($check) && !is_bool($check) && !is_numeric($check)) {
 			return false;
 		}
-		if (empty($check) && (string)$check !== '0') {
-			return false;
-		}
+
 		return static::_check($check, '/[^\s]+/m');
 	}
 
