@@ -493,6 +493,7 @@ class RouteBuilder
     /**
      * Helper to create routes that only respond to a single HTTP method.
      *
+     * @param string $method The HTTP method name to match.
      * @param string $template The URL template to use.
      * @param array $target An array describing the target route parameters. These parameters
      *   should indicate the plugin, prefix, controller, and action that this route points to.
