@@ -393,6 +393,131 @@ class RouteBuilder
     }
 
     /**
+     * Create a route that only responds to GET requests.
+     *
+     * @param string $template The URL template to use.
+     * @param array $target An array describing the target route parameters. These parameters
+     *   should indicate the plugin, prefix, controller, and action that this route points to.
+     * @param string $name The name of the route.
+     * @return \Cake\Routing\Route\Route
+     */
+    public function get($template, $target, $name = null)
+    {
+        return $this->_methodRoute('GET', $template, $target, $name);
+    }
+
+    /**
+     * Create a route that only responds to POST requests.
+     *
+     * @param string $template The URL template to use.
+     * @param array $target An array describing the target route parameters. These parameters
+     *   should indicate the plugin, prefix, controller, and action that this route points to.
+     * @param string $name The name of the route.
+     * @return \Cake\Routing\Route\Route
+     */
+    public function post($template, $target, $name = null)
+    {
+        return $this->_methodRoute('POST', $template, $target, $name);
+    }
+
+    /**
+     * Create a route that only responds to PUT requests.
+     *
+     * @param string $template The URL template to use.
+     * @param array $target An array describing the target route parameters. These parameters
+     *   should indicate the plugin, prefix, controller, and action that this route points to.
+     * @param string $name The name of the route.
+     * @return \Cake\Routing\Route\Route
+     */
+    public function put($template, $target, $name = null)
+    {
+        return $this->_methodRoute('PUT', $template, $target, $name);
+    }
+
+    /**
+     * Create a route that only responds to PATCH requests.
+     *
+     * @param string $template The URL template to use.
+     * @param array $target An array describing the target route parameters. These parameters
+     *   should indicate the plugin, prefix, controller, and action that this route points to.
+     * @param string $name The name of the route.
+     * @return \Cake\Routing\Route\Route
+     */
+    public function patch($template, $target, $name = null)
+    {
+        return $this->_methodRoute('PATCH', $template, $target, $name);
+    }
+
+    /**
+     * Create a route that only responds to DELETE requests.
+     *
+     * @param string $template The URL template to use.
+     * @param array $target An array describing the target route parameters. These parameters
+     *   should indicate the plugin, prefix, controller, and action that this route points to.
+     * @param string $name The name of the route.
+     * @return \Cake\Routing\Route\Route
+     */
+    public function delete($template, $target, $name = null)
+    {
+        return $this->_methodRoute('DELETE', $template, $target, $name);
+    }
+
+    /**
+     * Create a route that only responds to HEAD requests.
+     *
+     * @param string $template The URL template to use.
+     * @param array $target An array describing the target route parameters. These parameters
+     *   should indicate the plugin, prefix, controller, and action that this route points to.
+     * @param string $name The name of the route.
+     * @return \Cake\Routing\Route\Route
+     */
+    public function head($template, $target, $name = null)
+    {
+        return $this->_methodRoute('HEAD', $template, $target, $name);
+    }
+
+    /**
+     * Create a route that only responds to OPTIONS requests.
+     *
+     * @param string $template The URL template to use.
+     * @param array $target An array describing the target route parameters. These parameters
+     *   should indicate the plugin, prefix, controller, and action that this route points to.
+     * @param string $name The name of the route.
+     * @return \Cake\Routing\Route\Route
+     */
+    public function options($template, $target, $name = null)
+    {
+        return $this->_methodRoute('OPTIONS', $template, $target, $name);
+    }
+
+    /**
+     * Helper to create routes that only respond to a single HTTP method.
+     *
+     * @param string $template The URL template to use.
+     * @param array $target An array describing the target route parameters. These parameters
+     *   should indicate the plugin, prefix, controller, and action that this route points to.
+     * @param string $name The name of the route.
+     * @return \Cake\Routing\Route\Route
+     */
+    protected function _methodRoute($method, $template, $target, $name)
+    {
+        if ($name !== null) {
+            $name = $this->_namePrefix . $name;
+        }
+        $options = [
+            '_method' => $method,
+            '_ext' => $this->_extensions,
+            'routeClass' => $this->_routeClass,
+            '_name' => $name,
+        ];
+
+        $route = $this->_makeRoute($template, $target, $options);
+        $this->_collection->add($route, $options);
+
+        return $route;
+    }
+
+    /**
      * Connects a new Route.
      *
      * Routes are a way of connecting request URLs to objects in your application.
@@ -432,12 +557,12 @@ class RouteBuilder
      * $options offers several 'special' keys that have special meaning
      * in the $options array.
      *
-     * - `pass` is used to define which of the routed parameters should be shifted
-     *   into the pass array. Adding a parameter to pass will remove it from the
-     *   regular route array. Ex. `'pass' => ['slug']`.
      * - `routeClass` is used to extend and change how individual routes parse requests
      *   and handle reverse routing, via a custom routing class.
      *   Ex. `'routeClass' => 'SlugRoute'`
+     * - `pass` is used to define which of the routed parameters should be shifted
+     *   into the pass array. Adding a parameter to pass will remove it from the
+     *   regular route array. Ex. `'pass' => ['slug']`.
      * -  `persist` is used to define which route parameters should be automatically
      *   included when generating new URLs. You can override persistent parameters
      *   by redefining them in a URL or remove them by setting the parameter to `false`.
@@ -448,7 +573,7 @@ class RouteBuilder
      *   reverse routing lookups. If undefined a name will be generated for each
      *   connected route.
      * - `_ext` is an array of filename extensions that will be parsed out of the url if present.
-     *   See {@link ScopedRouteCollection::extensions()}.
+     *   See {@link \Cake\Routing\RouteCollection::extensions()}.
      * - `_method` Only match requests with specific HTTP verbs.
      *
      * Example of using the `_method` condition:

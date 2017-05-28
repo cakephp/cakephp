@@ -842,4 +842,44 @@ class RouteBuilderTest extends TestCase
             $this->collection->getMatchingMiddleware('/api/v1/ping')
         );
     }
+
+    /**
+     * @return array
+     */
+    public static function httpMethodProvider()
+    {
+        return [
+            ['GET'],
+            ['POST'],
+            ['PUT'],
+            ['PATCH'],
+            ['DELETE'],
+            ['OPTIONS'],
+            ['HEAD'],
+        ];
+    }
+
+    /**
+     * Test that the HTTP method helpers create the right kind of routes.
+     *
+     * @dataProvider httpMethodProvider
+     * @return void
+     */
+    public function testHttpMethods($method)
+    {
+        $routes = new RouteBuilder($this->collection, '/', [], ['namePrefix' => 'app:']);
+        $route = $routes->{strtolower($method)}(
+            '/bookmarks/:id',
+            ['controller' => 'Bookmarks', 'action' => 'view'],
+            'route-name'
+        );
+        $this->assertInstanceOf(Route::class, $route, 'Should return a route');
+        $this->assertSame($method, $route->options['_method']);
+        $this->assertSame('app:route-name', $route->options['_name']);
+        $this->assertSame('/bookmarks/:id', $route->template);
+        $this->assertEquals(
+            ['plugin' => null, 'controller' => 'Bookmarks', 'action' => 'view'],
+            $route->defaults
+        );
+    }
 }
