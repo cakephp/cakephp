@@ -96,7 +96,7 @@ if (!empty($failed)) {
 	trigger_error("CakePHP core could not be found. Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/test.php. It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
 }
 
-if (Configure::read('debug') < 1) {
+if (Configure::read('debug') < CAKE_DEBUG_MODE) {
 	throw new NotFoundException(__d('cake_dev', 'Debug setting does not allow access to this URL.'));
 }
 
