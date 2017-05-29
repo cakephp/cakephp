@@ -26,6 +26,10 @@ class CakeText {
 /**
  * Generate a random UUID
  *
+ * Warning: This method should not be used as a random seed for any cryptographic operations.
+ * Instead you should use the ssl or mcrypt extensions.
+ *
+ *
  * @see http://www.ietf.org/rfc/rfc4122.txt
  * @return string RFC 4122 UUID
  */

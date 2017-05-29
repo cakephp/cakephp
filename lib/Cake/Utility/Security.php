@@ -64,7 +64,7 @@ class Security {
  * @deprecated 2.8.1 This method was removed in 3.0.0
  */
 	public static function generateAuthKey() {
-		return Security::hash(CakeText::uuid());
+		return Security::hash(openssl_random_pseudo_bytes(32));
 	}
 
 /**
