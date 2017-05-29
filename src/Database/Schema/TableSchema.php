@@ -17,7 +17,6 @@ namespace Cake\Database\Schema;
 use Cake\Database\Connection;
 use Cake\Database\Exception;
 use Cake\Database\Type;
-use Cake\Datasource\SchemaInterface;
 
 /**
  * Represents a single table in a database schema.
@@ -30,7 +29,7 @@ use Cake\Datasource\SchemaInterface;
  * Schema\Collection objects. They can also be converted into SQL using the
  * createSql(), dropSql() and truncateSql() methods.
  */
-class TableSchema implements SchemaInterface, SqlGeneratorInterface
+class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
 {
 
     /**
@@ -299,9 +298,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Get the name of the table.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function name()
     {
@@ -309,32 +306,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Add a column to the table.
-     *
-     * ### Attributes
-     *
-     * Columns can have several attributes:
-     *
-     * - `type` The type of the column. This should be
-     *   one of CakePHP's abstract types.
-     * - `length` The length of the column.
-     * - `precision` The number of decimal places to store
-     *   for float and decimal types.
-     * - `default` The default value of the column.
-     * - `null` Whether or not the column can hold nulls.
-     * - `fixed` Whether or not the column is a fixed length column.
-     *   This is only present/valid with string columns.
-     * - `unsigned` Whether or not the column is an unsigned column.
-     *   This is only present/valid for integer, decimal, float columns.
-     *
-     * In addition to the above keys, the following keys are
-     * implemented in some database dialects, but not all:
-     *
-     * - `comment` The comment for the column.
-     *
-     * @param string $name The name of the column
-     * @param array $attrs The attributes for the column.
-     * @return $this
+     * {@inheritDoc}
      */
     public function addColumn($name, $attrs)
     {
@@ -353,12 +325,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Remove a column from the table schema.
-     *
-     * If the column is not defined in the table, no error will be raised.
-     *
-     * @param string $name The name of the column
-     * @return $this
+     * {@inheritDoc}
      */
     public function removeColumn($name)
     {
@@ -368,9 +335,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Get the column names in the table.
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function columns()
     {
@@ -390,10 +355,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Get column data in the table.
-     *
-     * @param string $name The column name.
-     * @return array|null Column data or null.
+     * {@inheritDoc}
      */
     public function getColumn($name)
     {
@@ -425,10 +387,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Returns column type or null if a column does not exist.
-     *
-     * @param string $name The column to get the type of.
-     * @return string|null
+     * {@inheritDoc}
      */
     public function getColumnType($name)
     {
@@ -440,11 +399,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Sets the type of a column.
-     *
-     * @param string $name The column to set the type of.
-     * @param string $type The type to set the column to.
-     * @return $this
+     * {@inheritDoc}
      */
     public function setColumnType($name, $type)
     {
@@ -459,10 +414,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Returns true if a column exists in the schema.
-     *
-     * @param string $name Column name.
-     * @return bool
+     * {@inheritDoc}
      */
     public function hasColumn($name)
     {
@@ -470,12 +422,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Returns the base type name for the provided column.
-     * This represent the database type a more complex class is
-     * based upon.
-     *
-     * @param string $column The column name to get the base type from
-     * @return string|null The base type name
+     * {@inheritDoc}
      */
     public function baseColumnType($column)
     {
@@ -497,10 +444,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Returns an array where the keys are the column names in the schema
-     * and the values the database type they have.
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function typeMap()
     {
@@ -508,12 +452,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Check whether or not a field is nullable
-     *
-     * Missing columns are nullable.
-     *
-     * @param string $name The column to get the type of.
-     * @return bool Whether or not the field is nullable.
+     * {@inheritDoc}
      */
     public function isNullable($name)
     {
@@ -525,9 +464,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Get a hash of columns and their default values.
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function defaultValues()
     {
@@ -546,19 +483,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Add an index.
-     *
-     * Used to add indexes, and full text indexes in platforms that support
-     * them.
-     *
-     * ### Attributes
-     *
-     * - `type` The type of index being added.
-     * - `columns` The columns in the index.
-     *
-     * @param string $name The name of the index.
-     * @param array $attrs The attributes for the index.
-     * @return $this
+     * {@inheritDoc}
      * @throws \Cake\Database\Exception
      */
     public function addIndex($name, $attrs)
@@ -595,9 +520,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Get the names of all the indexes in the table.
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function indexes()
     {
@@ -617,10 +540,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Read information about an index based on name.
-     *
-     * @param string $name The name of the index.
-     * @return array|null Array of index data, or null
+     * {@inheritDoc}
      */
     public function getIndex($name)
     {
@@ -632,10 +552,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Get the column(s) used for the primary key.
-     *
-     * @return array Column name(s) for the primary key. An
-     *   empty list will be returned when the table has no primary key.
+     * {@inheritDoc}
      */
     public function primaryKey()
     {
@@ -649,24 +566,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Add a constraint.
-     *
-     * Used to add constraints to a table. For example primary keys, unique
-     * keys and foreign keys.
-     *
-     * ### Attributes
-     *
-     * - `type` The type of constraint being added.
-     * - `columns` The columns in the index.
-     * - `references` The table, column a foreign key references.
-     * - `update` The behavior on update. Options are 'restrict', 'setNull', 'cascade', 'noAction'.
-     * - `delete` The behavior on delete. Options are 'restrict', 'setNull', 'cascade', 'noAction'.
-     *
-     * The default for 'update' & 'delete' is 'cascade'.
-     *
-     * @param string $name The name of the constraint.
-     * @param array $attrs The attributes for the constraint.
-     * @return $this
+     * {@inheritDoc}
      * @throws \Cake\Database\Exception
      */
     public function addConstraint($name, $attrs)
@@ -723,10 +623,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Remove a constraint.
-     *
-     * @param string $name Name of the constraint to remove
-     * @return $this
+     * {@inheritDoc}
      */
     public function dropConstraint($name)
     {
@@ -776,9 +673,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Get the names of all the constraints in the table.
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function constraints()
     {
@@ -798,10 +693,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Read information about a constraint based on name.
-     *
-     * @param string $name The name of the constraint.
-     * @return array|null Array of constraint data, or null
+     * {@inheritDoc}
      */
     public function getConstraint($name)
     {
@@ -813,13 +705,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Sets the options for a table.
-     *
-     * Table options allow you to set platform specific table level options.
-     * For example the engine type in MySQL.
-     *
-     * @param array $options The options to set, or null to read options.
-     * @return $this
+     * {@inheritDoc}
      */
     public function setOptions($options)
     {
@@ -829,12 +715,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Gets the options for a table.
-     *
-     * Table options allow you to set platform specific table level options.
-     * For example the engine type in MySQL.
-     *
-     * @return array An array of options.
+     * {@inheritDoc}
      */
     public function getOptions()
     {
@@ -861,10 +742,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Sets whether the table is temporary in the database.
-     *
-     * @param bool $temporary Whether or not the table is to be temporary.
-     * @return $this
+     * {@inheritDoc}
      */
     public function setTemporary($temporary)
     {
@@ -874,9 +752,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Gets whether the table is temporary in the database.
-     *
-     * @return bool The current temporary setting.
+     * {@inheritDoc}
      */
     public function isTemporary()
     {
@@ -900,14 +776,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Generate the SQL to create the Table.
-     *
-     * Uses the connection to access the schema dialect
-     * to generate platform specific SQL.
-     *
-     * @param \Cake\Database\Connection $connection The connection to generate SQL for.
-     * @return array List of SQL statements to create the table and the
-     *    required indexes.
+     * {@inheritDoc}
      */
     public function createSql(Connection $connection)
     {
@@ -927,13 +796,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Generate the SQL to drop a table.
-     *
-     * Uses the connection to access the schema dialect to generate platform
-     * specific SQL.
-     *
-     * @param \Cake\Database\Connection $connection The connection to generate SQL for.
-     * @return array SQL to drop a table.
+     * {@inheritDoc}
      */
     public function dropSql(Connection $connection)
     {
@@ -943,10 +806,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Generate the SQL statements to truncate a table
-     *
-     * @param \Cake\Database\Connection $connection The connection to generate SQL for.
-     * @return array SQL to truncate a table.
+     * {@inheritDoc}
      */
     public function truncateSql(Connection $connection)
     {
@@ -956,10 +816,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Generate the SQL statements to add the constraints to the table
-     *
-     * @param \Cake\Database\Connection $connection The connection to generate SQL for.
-     * @return array SQL to add the constraints.
+     * {@inheritDoc}
      */
     public function addConstraintSql(Connection $connection)
     {
@@ -969,10 +826,7 @@ class TableSchema implements SchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Generate the SQL statements to drop the constraints to the table
-     *
-     * @param \Cake\Database\Connection $connection The connection to generate SQL for.
-     * @return array SQL to drop a table.
+     * {@inheritDoc}
      */
     public function dropConstraintSql(Connection $connection)
     {
