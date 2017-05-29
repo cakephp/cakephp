@@ -9,25 +9,29 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.2.12
+ * @since         3.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
- * @deprecated 3.5.0 Use Cake\Database\Schema\TableSchemaAwareInterface instead.
  */
-namespace Cake\Datasource;
-
-use Cake\Database\Schema\TableSchema;
+namespace Cake\Database\Schema;
 
 /**
  * Defines the interface for getting the schema.
  */
-interface TableSchemaInterface
+interface TableSchemaAwareInterface
 {
 
     /**
      * Get and set the schema for this fixture.
      *
-     * @param \Cake\Database\Schema\TableSchema|null $schema The table to set.
-     * @return \Cake\Database\Schema\TableSchema|null
+     * @return \Cake\Database\Schema\TableSchemaInterface|null
      */
-    public function schema(TableSchema $schema = null);
+    public function getTableSchema();
+
+    /**
+     * Get and set the schema for this fixture.
+     *
+     * @param \Cake\Database\Schema\TableSchemaInterface $schema The table to set.
+     * @return $this
+     */
+    public function setTableSchema(TableSchemaInterface $schema);
 }
