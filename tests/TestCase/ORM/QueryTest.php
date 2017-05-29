@@ -3030,6 +3030,9 @@ class QueryTest extends TestCase
         $table = TableRegistry::get('Datatypes');
         $entity = $table->newEntity([]);
         $entity->cost = $big;
+        $entity->tiny = 1;
+        $entity->small = 10;
+
         $table->save($entity);
         $out = $table->find()->where([
             'cost' => $big
