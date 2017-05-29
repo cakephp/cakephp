@@ -1,6 +1,5 @@
-The MIT License (MIT)
+MIT License
 
-CakePHP(tm) : The Rapid Development PHP Framework (http://cakephp.org)
 Copyright (c) 2005-2017, Cake Software Foundation, Inc. (http://cakefoundation.org)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
