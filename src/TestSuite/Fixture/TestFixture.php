@@ -452,7 +452,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchema
     /**
      * {@inheritDoc}
      */
-    public function getTableSchema(): DatabaseTableSchemaInterface
+    public function getTableSchema()
     {
         return $this->_schema;
     }
