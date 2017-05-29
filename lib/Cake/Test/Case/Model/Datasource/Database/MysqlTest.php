@@ -4210,6 +4210,15 @@ SQL;
 
 		$data = array(
 			array(
+				'id' => 0,
+				'user_id' => 1,
+				'title' => 'Zeroth Article Title',
+				'body' => 'Zeroth Article Body',
+				'published' => 'N',
+				'created' => $datetime,
+				'updated' => $datetime,
+			),
+			array(
 				'id' => 102,
 				'user_id' => 1,
 				'title' => 'test',
