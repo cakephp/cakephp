@@ -16,6 +16,7 @@ namespace Cake\Http;
 use Cake\Core\App;
 use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Http\Client\CookieCollection as ClientCookieCollection;
 use Cake\Http\Client\Request;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Utility\Hash;
@@ -168,7 +169,7 @@ class Client
             $this->_cookies = $this->_config['cookieJar'];
             $this->setConfig('cookieJar', null);
         } else {
-            $this->_cookies = new CookieCollection();
+            $this->_cookies = new ClientCookieCollection();
         }
     }
 
