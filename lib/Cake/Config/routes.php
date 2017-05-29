@@ -38,7 +38,7 @@
  * - `/:controller'
  * - `/:controller/:action/*'
  *
- * You can disable the connection of default routes by deleting the require inside APP/Config/routes.php.
+ * You can disable the connection of default routes by deleting the require inside CONFIG/routes.php.
  */
 $prefixes = Router::prefixes();
 
