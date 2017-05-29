@@ -1198,6 +1198,28 @@ class DateTimeWidgetTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testRenderYear()
+    {
+        $result = $this->DateTime->render([
+            'name' => 'date',
+            'val' => '2009',
+            'month' => false,
+            'day' => false,
+            'hour' => false,
+            'minute' => false,
+            'second' => false,
+        ], $this->context);
+
+        $expected = '<select name="date[year]"><option value="';
+        $this->assertContains($expected, $result);
+
+        $expected = '<option value="2009" selected="selected">2009</option></select>';
+        $this->assertContains($expected, $result);
+    }
+
+    /**
      * Test rendering with templateVars
      *
      * @return void
