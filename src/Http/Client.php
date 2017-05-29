@@ -176,10 +176,34 @@ class Client
      * Get the cookies stored in the Client.
      *
      * @return \Cake\Http\Cookie\CookieCollection
+     * @deprecated 3.5.0 Use getCookies() instead.
      */
     public function cookies()
     {
         return $this->_cookies;
+    }
+
+    /**
+     * Get the cookies stored in the Client.
+     *
+     * @return \Cake\Http\Cookie\CookieCollection
+     */
+    public function getCookies()
+    {
+        return $this->_cookies;
+    }
+
+    /**
+     * Sets the cookie collection.
+     *
+     * @param \Cake\Http\Cookie\CookieCollection $cookies Cookie collection to be set.
+     * @return $this
+     */
+    public function setCookies(CookieCollection $cookies)
+    {
+        $this->_cookies = $cookies;
+
+        return $this;
     }
 
     /**
