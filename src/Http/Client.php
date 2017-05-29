@@ -16,8 +16,8 @@ namespace Cake\Http;
 use Cake\Core\App;
 use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Http\Client\CookieCollection;
 use Cake\Http\Client\Request;
+use Cake\Http\Cookie\CookieCollection;
 use Cake\Utility\Hash;
 
 /**
@@ -175,9 +175,7 @@ class Client
     /**
      * Get the cookies stored in the Client.
      *
-     * Returns an array of cookie data arrays.
-     *
-     * @return \Cake\Http\Client\CookieCollection
+     * @return \Cake\Http\Cookie\CookieCollection
      */
     public function cookies()
     {
