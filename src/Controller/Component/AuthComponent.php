@@ -895,6 +895,10 @@ class AuthComponent extends Component
         if (is_string($config)) {
             $class = $config;
             $config = [];
+        } elseif (is_array($config)) {
+            $key = key($config);
+            $class = $key;
+            $config = $config[$key];
         } else {
             $class = $config['className'];
             unset($config['className']);
