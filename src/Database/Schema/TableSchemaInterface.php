@@ -17,8 +17,7 @@ namespace Cake\Database\Schema;
 use Cake\Datasource\SchemaInterface;
 
 /**
- *
- * @author Robert Pustułka <r.pustulka@robotusers.com>
+ * An interface used by database TableSchema objects.
  */
 interface TableSchemaInterface extends SchemaInterface
 {
