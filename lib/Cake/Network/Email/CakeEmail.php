@@ -1085,7 +1085,11 @@ class CakeEmail {
 				$fileInfo['mimetype'] = mime_content_type($fileInfo['file']);
 			}
 			if (!isset($fileInfo['mimetype'])) {
-				$fileInfo['mimetype'] = 'application/octet-stream';
+				if (function_exists('mime_content_type')) {
+					$fileInfo['mimetype'] = mime_content_type($fileInfo['file']);
+				} else {
+					$fileInfo['mimetype'] = 'application/octet-stream';
+				}
 			}
 			$attach[$name] = $fileInfo;
 		}
@@ -1719,6 +1723,27 @@ class CakeEmail {
 			$rendered[$type] = $this->_wrap($content);
 			$rendered[$type] = implode("\n", $rendered[$type]);
 			$rendered[$type] = rtrim($rendered[$type], "\n");
+		}
+
+		/* Embed images inline in html templates */
+		if (!empty($rendered['html'])) {
+			preg_match_all('~<img[^>]*src\s*=\s*(["\'])(cid://|file://|cid:|file:)([^\1]+)\1~iU', serialize($this->viewVars), $userFiles);
+			$userFiles = array_unique($userFiles[3]);
+			preg_match_all('~<img[^>]*src\s*=\s*(["\'])(cid://|file://|cid:|file:)([^\1]+)\1~iU', $rendered['html'], $embebFiles);
+			$embebFiles = array_unique($embebFiles[3]);
+			$embebFiles = array_diff($embebFiles, $userFiles);
+			foreach ($embebFiles as $file) {
+				if (is_file($file)) {
+					$cid = sha1($file);
+					$images['cid:' . $cid] = ['file' => $file, 'contentId' => $cid];
+					$files['cid:' . $cid] = '~(<img[^>]*src\s*=\s*)(["\'])(cid://|file://|cid:|file:)' . preg_quote($file) . '\2~iU';
+					$cids['cid:' . $cid] = '\1\2cid:' . $cid . '\2';
+				}
+			}
+			if (!empty($images)) {
+				$this->addAttachments($images);
+				$rendered['html'] = preg_replace($files, $cids, $rendered['html']);
+			}
 		}
 		return $rendered;
 	}
