@@ -166,14 +166,20 @@ trait ValidatorAwareTrait
      */
     public function createValidator($name)
     {
+        $method = 'validation' . ucfirst($name);
+        if (!method_exists($this, $method)) {
+            $message = sprintf('The %s::%s() validation method does not exists.', __CLASS__, $method);
+            throw new RuntimeException($message);
+        }
+
         $validator = new $this->_validatorClass;
-        $validator = $this->{'validation' . ucfirst($name)}($validator);
+        $validator = $this->$method($validator);
         if ($this instanceof EventDispatcherInterface) {
             $this->dispatchEvent(self::BUILD_VALIDATOR_EVENT, compact('validator', 'name'));
         }
 
         if (!$validator instanceof Validator) {
-            throw new RuntimeException(sprintf('The %s::%s() validation method must return an instance of %s.', __CLASS__, 'validation' . ucfirst($name), Validator::class));
+            throw new RuntimeException(sprintf('The %s::%s() validation method must return an instance of %s.', __CLASS__, $method, Validator::class));
         }
         $validator->setProvider(self::VALIDATOR_PROVIDER_NAME, $this);
 

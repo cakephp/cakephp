@@ -3398,6 +3398,19 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that a RuntimeException is thrown if the custom validator method does not exist.
+     *
+     * @return void
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage The Cake\ORM\Table::validationMissing() validation method does not exists.
+     */
+    public function testValidatorWithMissingMethod()
+    {
+        $table = new Table();
+        $table->getValidator('missing');
+    }
+
+    /**
      * Tests that it is possible to set a custom validator under a name
      *
      * @return void
