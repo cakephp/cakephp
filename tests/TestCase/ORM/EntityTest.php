@@ -490,22 +490,22 @@ class EntityTest extends TestCase
     public function testHas()
     {
         $entity = new Entity(['id' => 1, 'name' => 'Juan', 'foo' => null]);
-        $this->assertTrue($entity->has('id'));
-        $this->assertTrue($entity->has('name'));
-        $this->assertFalse($entity->has('foo'));
-        $this->assertFalse($entity->has('last_name'));
+        $this->assertTrue($entity->hasProperty('id'));
+        $this->assertTrue($entity->hasProperty('name'));
+        $this->assertFalse($entity->hasProperty('foo'));
+        $this->assertFalse($entity->hasProperty('last_name'));
 
-        $this->assertTrue($entity->has(['id']));
-        $this->assertTrue($entity->has(['id', 'name']));
-        $this->assertFalse($entity->has(['id', 'foo']));
-        $this->assertFalse($entity->has(['id', 'nope']));
+        $this->assertTrue($entity->hasProperty(['id']));
+        $this->assertTrue($entity->hasProperty(['id', 'name']));
+        $this->assertFalse($entity->hasProperty(['id', 'foo']));
+        $this->assertFalse($entity->hasProperty(['id', 'nope']));
 
         $entity = $this->getMockBuilder('\Cake\ORM\Entity')
             ->setMethods(['_getThings'])
             ->getMock();
         $entity->expects($this->once())->method('_getThings')
             ->will($this->returnValue(0));
-        $this->assertTrue($entity->has('things'));
+        $this->assertTrue($entity->hasProperty('things'));
     }
 
     /**
@@ -1572,5 +1572,68 @@ class EntityTest extends TestCase
         $this->assertTrue($cloned->dirty());
         $this->assertTrue($cloned->dirty('a'));
         $this->assertTrue($cloned->dirty('b'));
+    }
+
+    /**
+     * Test the isEmpty() check
+     *
+     * @return void
+     */
+    public function testIsEmpty()
+    {
+        $entity = new Entity([
+            'array' => ['foo' => 'bar'],
+            'emptyArray' => [],
+            'object' => new \stdClass(),
+            'string' => 'string',
+            'emptyString' => '',
+            'intZero' => 0,
+            'intNotZero' => 1,
+            'floatZero' => 0.0,
+            'floatNonZero' => 1.5,
+            'null' => null
+        ]);
+
+        $this->assertFalse($entity->isEmpty('array'));
+        $this->assertTrue($entity->isEmpty('emptyArray'));
+        $this->assertFalse($entity->isEmpty('object'));
+        $this->assertFalse($entity->isEmpty('string'));
+        $this->assertTrue($entity->isEmpty('emptyString'));
+        $this->assertFalse($entity->isEmpty('intZero'));
+        $this->assertFalse($entity->isEmpty('intNotZero'));
+        $this->assertFalse($entity->isEmpty('floatZero'));
+        $this->assertFalse($entity->isEmpty('floatNonZero'));
+        $this->assertTrue($entity->isEmpty('null'));
+    }
+
+    /**
+     * Test hasValue()
+     *
+     * @return void
+     */
+    public function testHasValue() {
+        $entity = new Entity([
+            'array' => ['foo' => 'bar'],
+            'emptyArray' => [],
+            'object' => new \stdClass(),
+            'string' => 'string',
+            'emptyString' => '',
+            'intZero' => 0,
+            'intNotZero' => 1,
+            'floatZero' => 0.0,
+            'floatNonZero' => 1.5,
+            'null' => null
+        ]);
+
+        $this->assertTrue($entity->hasValue('array'));
+        $this->assertFalse($entity->hasValue('emptyArray'));
+        $this->assertTrue($entity->hasValue('object'));
+        $this->assertTrue($entity->hasValue('string'));
+        $this->assertFalse($entity->hasValue('emptyString'));
+        $this->assertTrue($entity->hasValue('intZero'));
+        $this->assertTrue($entity->hasValue('intNotZero'));
+        $this->assertTrue($entity->hasValue('floatZero'));
+        $this->assertTrue($entity->hasValue('floatNonZero'));
+        $this->assertFalse($entity->hasValue('null'));
     }
 }
