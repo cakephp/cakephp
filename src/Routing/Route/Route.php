@@ -184,11 +184,18 @@ class Route
     /**
      * Set regexp patterns for routing parameters
      *
+     * If any of your patterns contain multibyte values, the `multibytePattern`
+     * mode will be enabled.
+     *
      * @param array $patterns The patterns to apply to routing elements
      * @return $this
      */
     public function setPatterns(array $patterns)
     {
+        $patternValues = implode("", $patterns);
+        if (mb_strlen($patternValues) < strlen($patternValues)) {
+            $this->options['multibytePattern'] = true;
+        }
         $this->options = array_merge($this->options, $patterns);
 
         return $this;
@@ -203,6 +210,41 @@ class Route
     public function setHost($host)
     {
         $this->options['_host'] = $host;
+
+        return $this;
+    }
+
+    /**
+     * Set the names of parameters that will be converted into passed parameters
+     *
+     * @param array $names The names of the parameters that should be passed.
+     * @return $this
+     */
+    public function setPass(array $names)
+    {
+        $this->options['pass'] = $names;
+
+        return $this;
+    }
+
+    /**
+     * Set the names of parameters that will persisted automatically
+     *
+     * Persistent parametesr allow you to define which route parameters should be automatically
+     * included when generating new URLs. You can override persistent parameters
+     * by redefining them in a URL or remove them by setting the persistent parameter to `false`.
+     *
+     * ```
+     * // remove a persistent 'date' parameter
+     * Router::url(['date' => false', ...]);
+     * ```
+     *
+     * @param array $names The names of the parameters that should be passed.
+     * @return $this
+     */
+    public function setPersist(array $names)
+    {
+        $this->options['persist'] = $names;
 
         return $this;
     }
