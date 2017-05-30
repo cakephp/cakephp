@@ -1611,7 +1611,8 @@ class EntityTest extends TestCase
      *
      * @return void
      */
-    public function testHasValue() {
+    public function testHasValue()
+    {
         $entity = new Entity([
             'array' => ['foo' => 'bar'],
             'emptyArray' => [],
