@@ -3412,6 +3412,22 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests hasValidator method.
+     *
+     * @return void
+     */
+    public function testHasValidator()
+    {
+        $table = new Table;
+        $this->assertTrue($table->hasValidator('default'));
+        $this->assertFalse($table->hasValidator('other'));
+
+        $validator = new \Cake\Validation\Validator;
+        $table->setValidator('other', $validator);
+        $this->assertTrue($table->hasValidator('other'));
+    }
+
+    /**
      * Tests that the source of an existing Entity is the same as a new one
      *
      * @return void

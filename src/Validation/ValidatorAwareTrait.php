@@ -214,6 +214,11 @@ trait ValidatorAwareTrait
      */
     public function hasValidator($name)
     {
+        $method = 'validation' . ucfirst($name);
+        if (method_exists($this, $method)) {
+            return true;
+        }
+
         return isset($this->_validators[$name]);
     }
 
