@@ -28,6 +28,11 @@
 *.gif binary
 *.ico binary
 *.mo binary
+*.ttf	binary
+*.woff 	binary
+*.woff2	binary
+*.eot	binary
+*.otf	binary
 
 # Remove files for archives generated using `git archive`
 appveyor.yml export-ignore
