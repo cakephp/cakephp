@@ -16,9 +16,8 @@ namespace Cake\Http;
 use Cake\Core\App;
 use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Http\Client\CookieCollection as ClientCookieCollection;
+use Cake\Http\Client\CookieCollection;
 use Cake\Http\Client\Request;
-use Cake\Http\Cookie\CookieCollection;
 use Cake\Utility\Hash;
 
 /**
@@ -169,42 +168,18 @@ class Client
             $this->_cookies = $this->_config['cookieJar'];
             $this->setConfig('cookieJar', null);
         } else {
-            $this->_cookies = new ClientCookieCollection();
+            $this->_cookies = new CookieCollection();
         }
     }
 
     /**
      * Get the cookies stored in the Client.
      *
-     * @return \Cake\Http\Cookie\CookieCollection
-     * @deprecated 3.5.0 Use getCookies() instead.
+     * @return \Cake\Http\Client\CookieCollection
      */
     public function cookies()
     {
         return $this->_cookies;
-    }
-
-    /**
-     * Get the cookies stored in the Client.
-     *
-     * @return \Cake\Http\Cookie\CookieCollection
-     */
-    public function getCookies()
-    {
-        return $this->_cookies;
-    }
-
-    /**
-     * Sets the cookie collection.
-     *
-     * @param \Cake\Http\Cookie\CookieCollection $cookies Cookie collection to be set.
-     * @return $this
-     */
-    public function setCookies(CookieCollection $cookies)
-    {
-        $this->_cookies = $cookies;
-
-        return $this;
     }
 
     /**

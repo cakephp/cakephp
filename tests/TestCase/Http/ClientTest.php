@@ -622,22 +622,18 @@ class ClientTest extends TestCase
     }
 
     /**
-     * Test cookie collection getter and setter,
+     * Test cookieJar config option.
      *
      * @return void
      */
-    public function testCookies()
+    public function testCookieJar()
     {
         $jar = new CookieCollection();
         $http = new Client([
             'cookieJar' => $jar
         ]);
 
-        $this->assertSame($jar, $http->getCookies());
-
-        $cookies = new CookieCollection();
-        $http->setCookies($cookies);
-        $this->assertSame($cookies, $http->getCookies());
+        $this->assertSame($jar, $http->cookies());
     }
 
     /**
