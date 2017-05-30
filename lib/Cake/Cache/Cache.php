@@ -164,6 +164,10 @@ class Cache {
  * @throws CacheException
  */
 	protected static function _buildEngine($name) {
+		if (Configure::read('Cache.disable')) {
+			return true;
+		}
+
 		$config = static::$_config[$name];
 
 		list($plugin, $class) = pluginSplit($config['engine'], true);
