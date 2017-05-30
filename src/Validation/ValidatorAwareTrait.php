@@ -169,7 +169,7 @@ trait ValidatorAwareTrait
         $validator = new $this->_validatorClass;
         $validator = $this->{'validation' . ucfirst($name)}($validator);
         if ($this instanceof EventDispatcherInterface) {
-            $this->dispatchEvent('Model.buildValidator', compact('validator', 'name'));
+            $this->dispatchEvent(self::BUILD_VALIDATOR_EVENT, compact('validator', 'name'));
         }
 
         if (!$validator instanceof Validator) {
