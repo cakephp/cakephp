@@ -17,6 +17,7 @@ use Cake\Core\Configure;
 use Cake\Http\Client;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
+use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\TestSuite\TestCase;
 
@@ -634,6 +635,41 @@ class ClientTest extends TestCase
         ]);
 
         $this->assertSame($jar, $http->cookies());
+    }
+
+    /**
+     * Test addCookie() method.
+     *
+     * @return void
+     */
+    public function testAddCookie()
+    {
+        $client = new Client();
+        $cookie = new Cookie('foo');
+
+        $this->assertFalse($client->cookies()->has('foo'));
+
+        $client->addCookie($cookie);
+        $this->assertTrue($client->cookies()->has('foo'));
+    }
+
+    /**
+     * Test removeCookie() method.
+     *
+     * @return void
+     */
+    public function testRemoveCookie()
+    {
+        $cookie = new Cookie('foo');
+        $jar = new CookieCollection([$cookie]);
+        $client = new Client([
+            'cookieJar' => $jar
+        ]);
+
+        $this->assertTrue($client->cookies()->has('foo'));
+
+        $client->removeCookie('foo');
+        $this->assertFalse($client->cookies()->has('foo'));
     }
 
     /**
