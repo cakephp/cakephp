@@ -98,9 +98,7 @@ trait ValidatorAwareTrait
     public function validator($name = null, Validator $validator = null)
     {
         if ($validator !== null) {
-            if ($name === null) {
-                $name = self::DEFAULT_VALIDATOR;
-            }
+            $name = $name ?: self::DEFAULT_VALIDATOR;
             $this->setValidator($name, $validator);
         }
 
@@ -142,9 +140,7 @@ trait ValidatorAwareTrait
      */
     public function getValidator($name = null)
     {
-        if ($name === null) {
-            $name = self::DEFAULT_VALIDATOR;
-        }
+        $name = $name ?: self::DEFAULT_VALIDATOR;
         if (!isset($this->_validators[$name])) {
             $validator = $this->createValidator($name);
             $this->setValidator($name, $validator);
@@ -164,7 +160,7 @@ trait ValidatorAwareTrait
      * @return \Cake\Validation\Validator
      * @throws \RuntimeException
      */
-    public function createValidator($name)
+    protected function createValidator($name)
     {
         $method = 'validation' . ucfirst($name);
         if (!method_exists($this, $method)) {
