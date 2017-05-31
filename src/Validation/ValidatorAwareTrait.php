@@ -177,7 +177,6 @@ trait ValidatorAwareTrait
         if (!$validator instanceof Validator) {
             throw new RuntimeException(sprintf('The %s::%s() validation method must return an instance of %s.', __CLASS__, $method, Validator::class));
         }
-        $validator->setProvider(self::VALIDATOR_PROVIDER_NAME, $this);
 
         return $validator;
     }
