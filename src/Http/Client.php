@@ -197,19 +197,6 @@ class Client
     }
 
     /**
-     * Removes a cookie from the Client collection.
-     *
-     * @param string $name Cookie name.
-     * @return $this
-     */
-    public function removeCookie($name)
-    {
-        $this->_cookies = $this->_cookies->remove($name);
-
-        return $this;
-    }
-
-    /**
      * Do a GET request.
      *
      * The $data argument supports a special `_content` key

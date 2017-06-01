@@ -654,25 +654,6 @@ class ClientTest extends TestCase
     }
 
     /**
-     * Test removeCookie() method.
-     *
-     * @return void
-     */
-    public function testRemoveCookie()
-    {
-        $cookie = new Cookie('foo');
-        $jar = new CookieCollection([$cookie]);
-        $client = new Client([
-            'cookieJar' => $jar
-        ]);
-
-        $this->assertTrue($client->cookies()->has('foo'));
-
-        $client->removeCookie('foo');
-        $this->assertFalse($client->cookies()->has('foo'));
-    }
-
-    /**
      * test head request with querystring data
      *
      * @return void
