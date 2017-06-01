@@ -3355,10 +3355,10 @@ class TableTest extends TestCase
     public function testValidatorDefault()
     {
         $table = new Table();
-        $validator = $table->validator();
+        $validator = $table->getValidator();
         $this->assertSame($table, $validator->provider('table'));
         $this->assertInstanceOf('Cake\Validation\Validator', $validator);
-        $default = $table->validator('default');
+        $default = $table->getValidator('default');
         $this->assertSame($validator, $default);
     }
 
@@ -3374,9 +3374,9 @@ class TableTest extends TestCase
             ->getMock();
         $table->expects($this->once())->method('validationForOtherStuff')
             ->will($this->returnArgument(0));
-        $other = $table->validator('forOtherStuff');
+        $other = $table->getValidator('forOtherStuff');
         $this->assertInstanceOf('Cake\Validation\Validator', $other);
-        $this->assertNotSame($other, $table->validator());
+        $this->assertNotSame($other, $table->getValidator());
         $this->assertSame($table, $other->provider('table'));
     }
 
@@ -3394,7 +3394,20 @@ class TableTest extends TestCase
             ->getMock();
         $table->expects($this->once())
             ->method('validationBad');
-        $table->validator('bad');
+        $table->getValidator('bad');
+    }
+
+    /**
+     * Tests that a RuntimeException is thrown if the custom validator method does not exist.
+     *
+     * @return void
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage The Cake\ORM\Table::validationMissing() validation method does not exists.
+     */
+    public function testValidatorWithMissingMethod()
+    {
+        $table = new Table();
+        $table->getValidator('missing');
     }
 
     /**
@@ -3406,9 +3419,25 @@ class TableTest extends TestCase
     {
         $table = new Table;
         $validator = new \Cake\Validation\Validator;
-        $table->validator('other', $validator);
-        $this->assertSame($validator, $table->validator('other'));
+        $table->setValidator('other', $validator);
+        $this->assertSame($validator, $table->getValidator('other'));
         $this->assertSame($table, $validator->provider('table'));
+    }
+
+    /**
+     * Tests hasValidator method.
+     *
+     * @return void
+     */
+    public function testHasValidator()
+    {
+        $table = new Table;
+        $this->assertTrue($table->hasValidator('default'));
+        $this->assertFalse($table->hasValidator('other'));
+
+        $validator = new \Cake\Validation\Validator;
+        $table->setValidator('other', $validator);
+        $this->assertTrue($table->hasValidator('other'));
     }
 
     /**
@@ -3437,7 +3466,7 @@ class TableTest extends TestCase
     public function testNewEntityAndValidation()
     {
         $table = TableRegistry::get('Articles');
-        $validator = $table->validator()->requirePresence('title');
+        $validator = $table->getValidator()->requirePresence('title');
         $entity = $table->newEntity([]);
         $errors = $entity->errors();
         $this->assertNotEmpty($errors['title']);
@@ -5931,10 +5960,10 @@ class TableTest extends TestCase
         };
         EventManager::instance()->on('Model.buildValidator', $cb);
         $articles = TableRegistry::get('Articles');
-        $articles->validator();
+        $articles->getValidator();
         $this->assertEquals(1, $count, 'Callback should be called');
 
-        $articles->validator();
+        $articles->getValidator();
         $this->assertEquals(1, $count, 'Callback should be called only once');
     }
 
@@ -6076,7 +6105,7 @@ class TableTest extends TestCase
                 $buildValidatorCount ++;
             }
         );
-        $table->validator();
+        $table->getValidator();
         $this->assertEquals(1, $buildValidatorCount);
 
         $buildRulesCount =
@@ -6307,7 +6336,7 @@ class TableTest extends TestCase
     public function testEntityClean()
     {
         $table = TableRegistry::get('Articles');
-        $validator = $table->validator()->requirePresence('body');
+        $validator = $table->getValidator()->requirePresence('body');
         $entity = $table->newEntity(['title' => 'mark']);
 
         $entity->dirty('title', true);

@@ -37,6 +37,7 @@ use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Exception\RolledbackTransactionException;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
+use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
 use InvalidArgumentException;
 use RuntimeException;
@@ -123,7 +124,7 @@ use RuntimeException;
  *
  * @see \Cake\Event\EventManager for reference on the events system.
  */
-class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface
+class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
 
     use EventDispatcherTrait;
@@ -131,18 +132,18 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     use ValidatorAwareTrait;
 
     /**
-     * Name of default validation set.
-     *
-     * @var string
-     */
-    const DEFAULT_VALIDATOR = 'default';
-
-    /**
      * The alias this object is assigned to validators as.
      *
      * @var string
      */
     const VALIDATOR_PROVIDER_NAME = 'table';
+
+    /**
+     * The name of the event dispatched when a validator has been built.
+     *
+     * @var string
+     */
+    const BUILD_VALIDATOR_EVENT = 'Model.buildValidator';
 
     /**
      * The rules class name that is used.
@@ -275,10 +276,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
         if (!empty($config['validator'])) {
             if (!is_array($config['validator'])) {
-                $this->validator(static::DEFAULT_VALIDATOR, $config['validator']);
+                $this->setValidator(static::DEFAULT_VALIDATOR, $config['validator']);
             } else {
                 foreach ($config['validator'] as $name => $validator) {
-                    $this->validator($name, $validator);
+                    $this->setValidator($name, $validator);
                 }
             }
         }
