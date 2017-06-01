@@ -368,6 +368,14 @@ class TextHelperTest extends TestCase
             [
                 'https://sevvlor.com/page%20not%20found',
                 '<a href="https://sevvlor.com/page%20not%20found">https://sevvlor.com/page%20not%20found</a>'
+            ],
+            [
+                'https://fakedomain.ext/path/#!topic/test',
+                '<a href="https://fakedomain.ext/path/#!topic/test">https://fakedomain.ext/path/#!topic/test</a>'
+            ],
+            [
+                'https://fakedomain.ext/path/#!topic/test;other;tag',
+                '<a href="https://fakedomain.ext/path/#!topic/test;other;tag">https://fakedomain.ext/path/#!topic/test;other;tag</a>'
             ]
         ];
     }
