@@ -232,10 +232,10 @@ class Marshaller
             return [];
         }
         if ($options['validate'] === true) {
-            $options['validate'] = $this->_table->validator('default');
+            $options['validate'] = $this->_table->getValidator();
         }
         if (is_string($options['validate'])) {
-            $options['validate'] = $this->_table->validator($options['validate']);
+            $options['validate'] = $this->_table->getValidator($options['validate']);
         }
         if (!is_object($options['validate'])) {
             throw new RuntimeException(

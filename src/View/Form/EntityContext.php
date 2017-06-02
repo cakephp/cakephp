@@ -467,7 +467,7 @@ class EntityContext implements ContextInterface
             $method = $this->_context['validator'][$alias];
         }
 
-        $validator = $table->validator($method);
+        $validator = $table->getValidator($method);
         $validator->setProvider('entity', $entity);
 
         return $this->_validator[$key] = $validator;
