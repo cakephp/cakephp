@@ -335,6 +335,7 @@ class HtmlHelper extends Helper
      * - `confirm` JavaScript confirmation message.
      *
      * @param string|array $title The content to be wrapped by `<a>` tags.
+     *   Can also be array if $url is null and will use the URL as title then.
      * @param string|array|null $url Cake-relative URL or array of URL parameters, or
      *   external URL (starts with http://)
      * @param array $options Array of options and HTML attributes.
