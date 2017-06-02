@@ -382,7 +382,7 @@ class TextHelperTest extends TestCase
                 'This is text,<a href="https://fakedomain.ext/path/#!topic/test,tag">https://fakedomain.ext/path/#!topic/test,tag</a>, with a comma'
             ],
             [
-                'This is text,https://fakedomain.ext/path/#!topic/test,tag, with a comma',
+                'This is text https://fakedomain.ext/path/#!topic/path!',
                 'This is text <a href="https://fakedomain.ext/path/#!topic/path">https://fakedomain.ext/path/#!topic/path</a>!'
             ]
         ];
