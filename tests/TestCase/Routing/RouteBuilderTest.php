@@ -882,4 +882,28 @@ class RouteBuilderTest extends TestCase
             $route->defaults
         );
     }
+
+    /**
+     * Integration test for http method helpers and route fluent method
+     *
+     * @return void
+     */
+    public function testHttpMethodIntegration()
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->scope('/', function ($routes) {
+            $routes->get('/faq/:page', ['controller' => 'Pages', 'action' => 'faq'], 'faq')
+                ->setPatterns(['page' => '[a-z0-9_]+'])
+                ->setHost('docs.example.com');
+
+            $routes->post('/articles/:id', ['controller' => 'Articles', 'action' => 'update'], 'article:update')
+                ->setPatterns(['id' => '[0-9]+'])
+                ->setPass(['id']);
+        });
+        $this->assertCount(2, $this->collection->routes());
+        $this->assertEquals(['faq', 'article:update'], array_keys($this->collection->named()));
+        $this->assertNotEmpty($this->collection->parse('/faq/things_you_know'));
+        $result = $this->collection->parse('/articles/123');
+        $this->assertEquals(['123'], $result['pass']);
+    }
 }

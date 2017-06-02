@@ -1570,9 +1570,27 @@ class RouteTest extends TestCase
         $this->assertArrayHasKey('id', $route->options);
         $this->assertArrayHasKey('date', $route->options);
         $this->assertSame('[a-z]+', $route->options['id']);
+        $this->assertArrayNotHasKey('multibytePattern', $route->options);
 
         $this->assertFalse($route->parse('/reviews/a-b-c/xyz'));
         $this->assertNotEmpty($route->parse('/reviews/2016-05-12/xyz'));
+    }
+
+    /**
+     * Test setting patterns enables multibyte mode
+     *
+     * @return void
+     */
+    public function testSetPatternsMultibyte()
+    {
+        $route = new Route('/reviews/:accountid/:slug', ['controller' => 'Reviews', 'action' => 'view']);
+        $result = $route->setPatterns([
+            'date' => '[A-zА-я\-\ ]+',
+            'accountid' => '[a-z]+'
+        ]);
+        $this->assertArrayHasKey('multibytePattern', $route->options);
+
+        $this->assertNotEmpty($route->parse('/reviews/abcs/bla-blan-тест'));
     }
 
     /**
@@ -1597,5 +1615,31 @@ class RouteTest extends TestCase
         $uri = $request->getUri();
         $request = $request->withUri($uri->withHost('blog.example.com'));
         $this->assertNotEmpty($route->parseRequest($request));
+    }
+
+    /**
+     * Test setting pass parameters
+     *
+     * @return void
+     */
+    public function testSetPass()
+    {
+        $route = new Route('/reviews/:date/:id', ['controller' => 'Reviews', 'action' => 'view']);
+        $result = $route->setPass(['date', 'id']);
+        $this->assertSame($result, $route, 'Should return this');
+        $this->assertEquals(['date', 'id'], $route->options['pass']);
+    }
+
+    /**
+     * Test setting persisted parameters
+     *
+     * @return void
+     */
+    public function testSetPersist()
+    {
+        $route = new Route('/reviews/:date/:id', ['controller' => 'Reviews', 'action' => 'view']);
+        $result = $route->setPersist(['date']);
+        $this->assertSame($result, $route, 'Should return this');
+        $this->assertEquals(['date'], $route->options['persist']);
     }
 }
