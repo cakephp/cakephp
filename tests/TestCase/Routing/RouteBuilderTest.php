@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Routing;
 
+use Cake\Core\Plugin;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
@@ -38,6 +39,17 @@ class RouteBuilderTest extends TestCase
     {
         parent::setUp();
         $this->collection = new RouteCollection();
+    }
+
+    /**
+     * Teardown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        Plugin::unload('TestPlugin');
     }
 
     /**
@@ -905,5 +917,45 @@ class RouteBuilderTest extends TestCase
         $this->assertNotEmpty($this->collection->parse('/faq/things_you_know'));
         $result = $this->collection->parse('/articles/123');
         $this->assertEquals(['123'], $result['pass']);
+    }
+
+    /**
+     * Test loading routes from a missing plugin
+     *
+     * @expectedException Cake\Core\Exception\MissingPluginException
+     * @return void
+     */
+    public function testLoadPluginBadPlugin()
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->loadPlugin('Nope');
+    }
+
+    /**
+     * Test loading routes from a missing file
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Cannot load routes for the plugin named TestPlugin.
+     * @return void
+     */
+    public function testLoadPluginBadFile()
+    {
+        Plugin::load('TestPlugin');
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->loadPlugin('TestPlugin', 'nope.php');
+    }
+
+    /**
+     * Test loading routes with success
+     *
+     * @return void
+     */
+    public function testLoadPlugin()
+    {
+        Plugin::load('TestPlugin');
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->loadPlugin('TestPlugin');
+        $this->assertCount(1, $this->collection->routes());
+        $this->assertNotEmpty($this->collection->parse('/test_plugin'));
     }
 }

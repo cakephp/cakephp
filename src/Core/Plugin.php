@@ -329,6 +329,7 @@ class Plugin
      * @param string|null $plugin name of the plugin, if null will operate on all plugins having enabled the
      * loading of routes files
      * @return bool
+     * @deprecated 3.5.0 Use Cake\Routing\RouteBuilder::loadPlugin() instead.
      */
     public static function routes($plugin = null)
     {
