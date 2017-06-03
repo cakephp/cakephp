@@ -92,13 +92,13 @@ class I18n
      * ### Example:
      *
      * ```
-     *  I18n::translator('default', 'fr_FR', function () {
+     *  I18n::setTranslator('default', function () {
      *      $package = new \Aura\Intl\Package();
      *      $package->setMessages([
      *          'Cake' => 'Gâteau'
      *      ]);
      *      return $package;
-     *  });
+     *  }, 'fr_FR');
      *
      *  $translator = I18n::translator('default', 'fr_FR');
      *  echo $translator->translate('Cake');
@@ -162,14 +162,14 @@ class I18n
      * ```
      * I18n::setTranslator(
      *  'default',
-     *  new MessagesFileLoader('my_translations', 'custom', 'po');
+     *  new MessagesFileLoader('my_translations', 'custom', 'po'),
      *  'fr_FR'
      * );
      * ```
      *
      * @param string $name The domain of the translation messages.
      * @param callable|null $loader A callback function or callable class responsible for
-     * constructing a translations package instance.
+     *   constructing a translations package instance.
      * @param string|null $locale The locale for the translator.
      * @return void
      */
@@ -177,15 +177,16 @@ class I18n
     {
         $locale = $locale ?: static::getLocale();
 
-        $loader = static::translators()->setLoaderFallback($name, $loader);
-
-        $packages = static::translators()->getPackages();
+        $translators = static::translators();
+        $loader = $translators->setLoaderFallback($name, $loader);
+        $packages = $translators->getPackages();
         $packages->set($name, $locale, $loader);
     }
 
     /**
-     * Returns an instance of a translator that was configured for the name and passed
-     * locale. If no locale is passed then it takes the value returned by the `getLocale()` method.
+     * Returns an instance of a translator that was configured for the name and locale.
+     *
+     * If no locale is passed then it takes the value returned by the `getLocale()` method.
      *
      * @param string $name The domain of the translation messages.
      * @param string|null $locale The locale for the translator.
@@ -197,7 +198,7 @@ class I18n
 
         if ($locale) {
             $currentLocale = $translators->getLocale();
-            static::translators()->setLocale($locale);
+            $translators->setLocale($locale);
         }
 
         $translator = $translators->get($name);
