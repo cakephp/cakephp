@@ -47,7 +47,7 @@ class TimeHelperTest extends TestCase
         $this->View = new View();
         $this->Time = new TimeHelper($this->View);
         Time::$defaultLocale = 'en_US';
-        $this->locale = I18n::locale();
+        $this->locale = I18n::getLocale();
     }
 
     /**
@@ -59,7 +59,7 @@ class TimeHelperTest extends TestCase
     {
         parent::tearDown();
         Time::$defaultLocale = 'en_US';
-        I18n::locale($this->locale);
+        I18n::setLocale($this->locale);
     }
 
     /**
@@ -522,7 +522,7 @@ class TimeHelperTest extends TestCase
         $expected = 'Date invalid';
         $this->assertEquals($expected, $result);
 
-        I18n::locale('fr_FR');
+        I18n::setLocale('fr_FR');
         Time::$defaultLocale = 'fr_FR';
         $time = new \Cake\I18n\FrozenTime('Thu Jan 14 13:59:28 2010');
         $result = $this->Time->format($time, \IntlDateFormatter::FULL);

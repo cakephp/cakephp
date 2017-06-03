@@ -35,7 +35,7 @@ class NumberTest extends TestCase
     {
         parent::setUp();
         $this->Number = new Number();
-        $this->locale = I18n::locale();
+        $this->locale = I18n::getLocale();
     }
 
     /**
@@ -47,7 +47,7 @@ class NumberTest extends TestCase
     {
         parent::tearDown();
         unset($this->Number);
-        I18n::locale($this->locale);
+        I18n::setLocale($this->locale);
         Number::defaultCurrency(false);
     }
 
@@ -100,13 +100,13 @@ class NumberTest extends TestCase
      */
     public function testParseFloat()
     {
-        I18n::locale('de_DE');
+        I18n::setLocale('de_DE');
         $value = '1.234.567,891';
         $result = $this->Number->parseFloat($value);
         $expected = 1234567.891;
         $this->assertEquals($expected, $result);
 
-        I18n::locale('pt_BR');
+        I18n::setLocale('pt_BR');
         $value = '1.234,37';
         $result = $this->Number->parseFloat($value);
         $expected = 1234.37;
@@ -308,7 +308,7 @@ class NumberTest extends TestCase
         $this->assertEquals('USD', $result);
 
         $this->Number->defaultCurrency(false);
-        I18n::locale('es_ES');
+        I18n::setLocale('es_ES');
         $this->assertEquals('EUR', $this->Number->defaultCurrency());
 
         $this->Number->defaultCurrency('JPY');
@@ -398,7 +398,7 @@ class NumberTest extends TestCase
      */
     public function testPrecisionLocalized()
     {
-        I18n::locale('fr_FR');
+        I18n::setLocale('fr_FR');
         $result = $this->Number->precision(1.234);
         $this->assertEquals('1,234', $result);
     }
@@ -530,7 +530,7 @@ class NumberTest extends TestCase
      */
     public function testReadableSizeLocalized()
     {
-        I18n::locale('fr_FR');
+        I18n::setLocale('fr_FR');
         $result = $this->Number->toReadableSize(1321205);
         $this->assertEquals('1,26 MB', $result);
 
@@ -563,7 +563,7 @@ class NumberTest extends TestCase
      */
     public function testOrdinal()
     {
-        I18n::locale('en_US');
+        I18n::setLocale('en_US');
         $result = $this->Number->ordinal(1);
         $this->assertEquals('1st', $result);
 
@@ -581,7 +581,7 @@ class NumberTest extends TestCase
         $result = $this->Number->ordinal(4);
         $this->assertEquals('4th', $result);
 
-        I18n::locale('fr_FR');
+        I18n::setLocale('fr_FR');
         $result = $this->Number->ordinal(1);
         $this->assertEquals('1er', $result);
 

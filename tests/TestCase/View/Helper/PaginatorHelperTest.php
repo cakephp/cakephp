@@ -75,7 +75,7 @@ class PaginatorHelperTest extends TestCase
         Router::connect('/:controller/:action/*');
         Router::connect('/:plugin/:controller/:action/*');
 
-        $this->locale = I18n::locale();
+        $this->locale = I18n::getLocale();
     }
 
     /**
@@ -88,7 +88,7 @@ class PaginatorHelperTest extends TestCase
         parent::tearDown();
         unset($this->View, $this->Paginator);
 
-        I18n::locale($this->locale);
+        I18n::setLocale($this->locale);
     }
 
     /**
@@ -2616,7 +2616,7 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->counter($input);
         $this->assertEquals($expected, $result);
 
-        I18n::locale('de-DE');
+        I18n::setLocale('de-DE');
         $expected = 'Page 1.523 of 1.000, showing 1.230 records out of 234.567 total, ';
         $expected .= 'starting on record 4.566.001, ending on 234.567';
         $result = $this->Paginator->counter($input);

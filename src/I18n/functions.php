@@ -32,7 +32,7 @@ if (!function_exists('__')) {
             $args = $args[0];
         }
 
-        return I18n::translator()->translate($singular, $args);
+        return I18n::getTranslator()->translate($singular, $args);
     }
 
 }
@@ -58,7 +58,7 @@ if (!function_exists('__n')) {
             $args = $args[0];
         }
 
-        return I18n::translator()->translate(
+        return I18n::getTranslator()->translate(
             $plural,
             ['_count' => $count, '_singular' => $singular] + $args
         );
@@ -85,7 +85,7 @@ if (!function_exists('__d')) {
             $args = $args[0];
         }
 
-        return I18n::translator($domain)->translate($msg, $args);
+        return I18n::getTranslator($domain)->translate($msg, $args);
     }
 
 }
@@ -113,7 +113,7 @@ if (!function_exists('__dn')) {
             $args = $args[0];
         }
 
-        return I18n::translator($domain)->translate(
+        return I18n::getTranslator($domain)->translate(
             $plural,
             ['_count' => $count, '_singular' => $singular] + $args
         );
@@ -142,7 +142,7 @@ if (!function_exists('__x')) {
             $args = $args[0];
         }
 
-        return I18n::translator()->translate($singular, ['_context' => $context] + $args);
+        return I18n::getTranslator()->translate($singular, ['_context' => $context] + $args);
     }
 
 }
@@ -171,7 +171,7 @@ if (!function_exists('__xn')) {
             $args = $args[0];
         }
 
-        return I18n::translator()->translate(
+        return I18n::getTranslator()->translate(
             $plural,
             ['_count' => $count, '_singular' => $singular, '_context' => $context] + $args
         );
@@ -201,7 +201,7 @@ if (!function_exists('__dx')) {
             $args = $args[0];
         }
 
-        return I18n::translator($domain)->translate(
+        return I18n::getTranslator($domain)->translate(
             $msg,
             ['_context' => $context] + $args
         );
@@ -234,7 +234,7 @@ if (!function_exists('__dxn')) {
             $args = $args[0];
         }
 
-        return I18n::translator($domain)->translate(
+        return I18n::getTranslator($domain)->translate(
             $plural,
             ['_count' => $count, '_singular' => $singular, '_context' => $context] + $args
         );

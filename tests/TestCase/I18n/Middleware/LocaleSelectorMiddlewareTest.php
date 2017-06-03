@@ -64,13 +64,13 @@ class LocaleSelectorMiddlewareTest extends TestCase
         $response = new Response();
         $middleware = new LocaleSelectorMiddleware([]);
         $middleware($request, $response, $this->next);
-        $this->assertSame($this->locale, I18n::locale());
+        $this->assertSame($this->locale, I18n::getLocale());
 
         $request = ServerRequestFactory::fromGlobals(['HTTP_ACCEPT_LANGUAGE' => 'garbage']);
         $response = new Response();
         $middleware = new LocaleSelectorMiddleware([]);
         $middleware($request, $response, $this->next);
-        $this->assertSame($this->locale, I18n::locale());
+        $this->assertSame($this->locale, I18n::getLocale());
     }
 
     /**
@@ -84,7 +84,7 @@ class LocaleSelectorMiddlewareTest extends TestCase
         $response = new Response();
         $middleware = new LocaleSelectorMiddleware(['en_CA', 'en_US', 'es']);
         $middleware($request, $response, $this->next);
-        $this->assertSame($this->locale, I18n::locale(), 'en-GB is not accepted');
+        $this->assertSame($this->locale, I18n::getLocale(), 'en-GB is not accepted');
     }
 
     /**
@@ -98,7 +98,7 @@ class LocaleSelectorMiddlewareTest extends TestCase
         $response = new Response();
         $middleware = new LocaleSelectorMiddleware(['en_CA', 'es']);
         $middleware($request, $response, $this->next);
-        $this->assertSame('es', I18n::locale(), 'es is accepted');
+        $this->assertSame('es', I18n::getLocale(), 'es is accepted');
     }
 
     /**
@@ -113,10 +113,10 @@ class LocaleSelectorMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals(['HTTP_ACCEPT_LANGUAGE' => 'es,es-ES;q=0.8,da;q=0.4']);
         $middleware($request, $response, $this->next);
-        $this->assertSame('es', I18n::locale(), 'es is accepted');
+        $this->assertSame('es', I18n::getLocale(), 'es is accepted');
 
         $request = ServerRequestFactory::fromGlobals(['HTTP_ACCEPT_LANGUAGE' => 'en;q=0.4,es;q=0.6,da;q=0.8']);
         $middleware($request, $response, $this->next);
-        $this->assertSame('da', I18n::locale(), 'da is accepted');
+        $this->assertSame('da', I18n::getLocale(), 'da is accepted');
     }
 }
