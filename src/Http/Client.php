@@ -18,6 +18,7 @@ use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Http\Client\CookieCollection;
 use Cake\Http\Client\Request;
+use Cake\Http\Cookie\CookieInterface;
 use Cake\Utility\Hash;
 
 /**
@@ -175,13 +176,24 @@ class Client
     /**
      * Get the cookies stored in the Client.
      *
-     * Returns an array of cookie data arrays.
-     *
      * @return \Cake\Http\Client\CookieCollection
      */
     public function cookies()
     {
         return $this->_cookies;
+    }
+
+    /**
+     * Adds a cookie to the Client collection.
+     *
+     * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie object.
+     * @return $this
+     */
+    public function addCookie(CookieInterface $cookie)
+    {
+        $this->_cookies = $this->_cookies->add($cookie);
+
+        return $this;
     }
 
     /**

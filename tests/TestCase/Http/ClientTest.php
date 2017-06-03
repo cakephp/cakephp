@@ -17,6 +17,8 @@ use Cake\Core\Configure;
 use Cake\Http\Client;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
+use Cake\Http\Cookie\Cookie;
+use Cake\Http\Cookie\CookieCollection;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -618,6 +620,37 @@ class ClientTest extends TestCase
         $this->assertCount(1, $cookies);
         $this->assertTrue($cookies->has('first'));
         $this->assertFalse($cookies->has('expiring'));
+    }
+
+    /**
+     * Test cookieJar config option.
+     *
+     * @return void
+     */
+    public function testCookieJar()
+    {
+        $jar = new CookieCollection();
+        $http = new Client([
+            'cookieJar' => $jar
+        ]);
+
+        $this->assertSame($jar, $http->cookies());
+    }
+
+    /**
+     * Test addCookie() method.
+     *
+     * @return void
+     */
+    public function testAddCookie()
+    {
+        $client = new Client();
+        $cookie = new Cookie('foo');
+
+        $this->assertFalse($client->cookies()->has('foo'));
+
+        $client->addCookie($cookie);
+        $this->assertTrue($client->cookies()->has('foo'));
     }
 
     /**
