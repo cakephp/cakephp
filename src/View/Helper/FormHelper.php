@@ -1795,7 +1795,7 @@ class FormHelper extends Helper
      */
     public function postLink($title, $url = null, array $options = [])
     {
-        $options += ['block' => null, 'confirm' => null];
+        $options += ['escape' => true, 'block' => null, 'confirm' => null];
 
         $requestMethod = 'POST';
         if (!empty($options['method'])) {
