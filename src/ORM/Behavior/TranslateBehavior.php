@@ -417,7 +417,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     public function locale($locale = null)
     {
         if ($locale === null) {
-            return $this->_locale ?: I18n::locale();
+            return $this->_locale ?: I18n::getLocale();
         }
 
         return $this->_locale = (string)$locale;

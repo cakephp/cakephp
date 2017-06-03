@@ -55,7 +55,7 @@ class TranslateBehaviorTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        I18n::locale(I18n::defaultLocale());
+        I18n::setLocale(I18n::defaultLocale());
         TableRegistry::clear();
     }
 
@@ -179,7 +179,7 @@ class TranslateBehaviorTest extends TestCase
      */
     public function testFindSingleLocaleAssociatedEnv()
     {
-        I18n::locale('eng');
+        I18n::setLocale('eng');
 
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
@@ -226,7 +226,7 @@ class TranslateBehaviorTest extends TestCase
         ];
         $this->assertSame($expected, $results);
 
-        I18n::locale('spa');
+        I18n::setLocale('spa');
 
         $results = $table->find()
             ->select(['id', 'title', 'body'])
@@ -339,11 +339,11 @@ class TranslateBehaviorTest extends TestCase
         $field = $table->translationField('title');
         $this->assertSame($expectedSameLocale, $field);
 
-        I18n::locale('es_ES');
+        I18n::setLocale('es_ES');
         $field = $table->translationField('title');
         $this->assertSame($expectedOtherLocale, $field);
 
-        I18n::locale('en');
+        I18n::setLocale('en');
         $field = $table->translationField('title');
         $this->assertSame($expectedOtherLocale, $field);
 
@@ -354,11 +354,11 @@ class TranslateBehaviorTest extends TestCase
             'defaultLocale' => 'de_DE'
         ]);
 
-        I18n::locale('de_DE');
+        I18n::setLocale('de_DE');
         $field = $table->translationField('title');
         $this->assertSame($expectedSameLocale, $field);
 
-        I18n::locale('en_US');
+        I18n::setLocale('en_US');
         $field = $table->translationField('title');
         $this->assertSame($expectedOtherLocale, $field);
 
@@ -1112,7 +1112,7 @@ class TranslateBehaviorTest extends TestCase
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $table->entityClass(__NAMESPACE__ . '\Article');
-        I18n::locale('fra');
+        I18n::setLocale('fra');
         $translations = [
             'fra' => ['title' => 'Un article'],
             'spa' => ['title' => 'Un artículo']
@@ -1290,7 +1290,7 @@ class TranslateBehaviorTest extends TestCase
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title']]);
         $table->entityClass(__NAMESPACE__ . '\Article');
-        I18n::locale('fra');
+        I18n::setLocale('fra');
         $article = $table->get(1);
         $article->set('body', 'New Body');
         $table->save($article);

@@ -58,7 +58,7 @@ class TimeTest extends TestCase
         FrozenTime::setJsonEncodeFormat("yyyy-MM-dd'T'HH:mm:ssxxx");
 
         date_default_timezone_set('UTC');
-        I18n::locale(I18n::DEFAULT_LOCALE);
+        I18n::setLocale(I18n::DEFAULT_LOCALE);
     }
 
     /**
@@ -845,7 +845,7 @@ class TimeTest extends TestCase
      */
     public function testRussianTimeAgoInWords($class)
     {
-        I18n::locale('ru_RU');
+        I18n::setLocale('ru_RU');
         $time = new $class('5 days ago');
         $result = $time->timeAgoInWords();
         $this->assertEquals('5 days ago', $result);
