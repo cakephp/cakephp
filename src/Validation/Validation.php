@@ -1160,6 +1160,7 @@ class Validation
             'maxSize' => null,
             'types' => null,
             'optional' => false,
+            'isUploadedFile' => true
         ];
         if (!is_array($file) && !($file instanceof UploadedFileInterface)) {
             return false;
@@ -1176,7 +1177,11 @@ class Validation
                 return false;
             }
             $error = (int)$file['error'];
-            $isUploaded = is_uploaded_file($file['tmp_name']);
+            if ($options['isUploadedFile']) {
+                $isUploaded = is_uploaded_file($file['tmp_name']);
+            } else {
+                $isUploaded = true;
+            }
         }
 
         if (!static::uploadError($file, $options['optional'])) {
