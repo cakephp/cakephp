@@ -56,8 +56,18 @@ class Paginator
         'whitelist' => ['limit', 'sort', 'page', 'direction']
     ];
 
+    /**
+     * Request params.
+     *
+     * @var array
+     */
     protected $_params = [];
 
+    /**
+     * Paging params after pagination operation is done.
+     *
+     * @var array
+     */
     protected $_pagingParams = [];
 
     /**
@@ -253,11 +263,22 @@ class Paginator
         return [$type, $options];
     }
 
-    public function setParams($params)
+    /**
+     * Set params.
+     *
+     * @param array $params
+     * @return void
+     */
+    public function setParams(array $params = [])
     {
         $this->_params = $params;
     }
 
+    /**
+     * Get paging params after pagination operation.
+     *
+     * @return array
+     */
     public function getPagingParams()
     {
         return $this->_pagingParams;

@@ -54,8 +54,16 @@ class PaginatorComponent extends Component
         'whitelist' => ['limit', 'sort', 'page', 'direction']
     ];
 
+    /**
+     * ORM paginator instance.
+     *
+     * @var \Cake\ORM\Paginator
+     */
     protected $_paginator;
 
+    /**
+     * {@inheritDoc}
+     */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
         $this->_paginator = new Paginator();
@@ -192,6 +200,22 @@ class PaginatorComponent extends Component
         return $results;
     }
 
+    /**
+     * Merges the various options that Pagination uses.
+     * Pulls settings together from the following places:
+     *
+     * - General pagination settings
+     * - Model specific settings.
+     * - Request parameters
+     *
+     * The result of this method is the aggregate of all the option sets combined together. You can change
+     * config value `whitelist` to modify which options/values can be set using request parameters.
+     *
+     * @param string $alias Model alias being paginated, if the general settings has a key with this value
+     *   that key's settings will be used for pagination instead of the general ones.
+     * @param array $settings The settings to merge with the request data.
+     * @return array Array of merged options.
+     */
     public function mergeOptions($alias, $settings)
     {
         $request = $this->_registry->getController()->request;
@@ -200,6 +224,11 @@ class PaginatorComponent extends Component
         return $this->_paginator->mergeOptions($alias, $settings);
     }
 
+    /**
+     * Set paging params to request instance.
+     *
+     * @return void
+     */
     protected function _setPagingParams()
     {
         $request = $this->_registry->getController()->request;
@@ -212,26 +241,71 @@ class PaginatorComponent extends Component
             + (array)$request->getParam('paging');
     }
 
+    /**
+     * Proxy getting/setting config options to Paginator.
+     *
+     * @param string|array|null $key The key to get/set, or a complete array of configs.
+     * @param mixed|null $value The value to set.
+     * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
+     * @return mixed Config value being read, or the object itself on write operations.
+     */
     public function config($key = null, $value = null, $merge = true)
     {
-        return $this->_paginator->config($key, $value, $merge);
+        $return = $this->_paginator->config($key, $value, $merge);
+        if ($return instanceof Paginator) {
+            $return = $this;
+        }
+
+        return $return;
     }
 
+    /**
+     * Proxy setting config options to Paginator.
+     *
+     * @param string|array $key The key to set, or a complete array of configs.
+     * @param mixed|null $value The value to set.
+     * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
+     * @return $this
+     */
     public function setConfig($key, $value = null, $merge = true)
     {
-        return $this->_paginator->setConfig($key, $value, $merge);
+        $this->_paginator->setConfig($key, $value, $merge);
+
+        return $this;
     }
 
+    /**
+     * Proxy getting config options to Paginator.
+     *
+     * @param string|null $key The key to get or null for the whole config.
+     * @return mixed Config value being read.
+     */
     public function getConfig($key = null)
     {
         return $this->_paginator->getConfig($key);
     }
 
+    /**
+     * Proxy setting config options to Paginator.
+     *
+     * @param string|array $key The key to set, or a complete array of configs.
+     * @param mixed|null $value The value to set.
+     * @return $this
+     */
     public function configShallow($key, $value = null)
     {
-        return $this->_paginator->configShallow($key, $value = null);
+        $this->_paginator->configShallow($key, $value = null);
+
+        return $this;
     }
 
+    /**
+     * Proxy method calls to Paginator.
+     *
+     * @param string $method Method name.
+     * @param array $args Method arguments.
+     * @return mixed
+     */
     public function __call($method, $args)
     {
         return call_user_func_array([$this->_paginator, $method], $args);
