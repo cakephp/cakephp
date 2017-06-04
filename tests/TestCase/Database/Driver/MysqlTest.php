@@ -20,6 +20,8 @@ use PDO;
 
 /**
  * Tests Mysql driver
+ *
+ * @group Mysql
  */
 class MysqlTest extends TestCase
 {
@@ -131,6 +133,90 @@ class MysqlTest extends TestCase
     }
 
     /**
+     * Test update with limit
+     *
+     * @return void
+     */
+    public function testDeleteLimit()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([[]])
+            ->getMock();
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
+        $connection
+            ->expects($this->any())
+            ->method('driver')
+            ->will($this->returnValue($driver));
+
+        $query = new \Cake\Database\Query($connection);
+        $query->delete('articles')
+            ->where(['published' => true])
+            ->limit(5);
+        $this->assertEquals('DELETE FROM articles WHERE published = :c0 LIMIT 5', $query->sql());
+    }
+
+    /**
+     * Test update with limit
+     *
+     * @return void
+     */
+    public function testDeleteModifier()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([[]])
+            ->getMock();
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
+        $connection
+            ->expects($this->any())
+            ->method('driver')
+            ->will($this->returnValue($driver));
+
+        $query = new \Cake\Database\Query($connection);
+        $query->delete('articles')
+            ->where(['published' => true])
+            ->modifier('LOW_PRIORITY');
+        $this->assertEquals('DELETE LOW_PRIORITY FROM articles WHERE published = :c0', $query->sql());
+    }
+
+    /**
+     * Test update with limit
+     *
+     * @return void
+     */
+    public function testDeleteOrder()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([[]])
+            ->getMock();
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
+        $connection
+            ->expects($this->any())
+            ->method('driver')
+            ->will($this->returnValue($driver));
+
+        $query = new \Cake\Database\Query($connection);
+        $query->delete('articles')
+            ->where(['published' => true])
+            ->order(['created' => 'DESC']);
+        $this->assertEquals('DELETE FROM articles WHERE published = :c0 ORDER BY created DESC', $query->sql());
+    }
+
+    /**
      * Test isConnected
      *
      * @return void
@@ -153,6 +239,64 @@ class MysqlTest extends TestCase
         $driver = $connection->driver();
         $this->assertFalse($driver->rollbackTransaction());
         $this->assertTrue($driver->isConnected());
+    }
+
+    /**
+     * Test update with limit
+     *
+     * @return void
+     */
+    public function testUpdateLimit()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([[]])
+            ->getMock();
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
+        $connection
+            ->expects($this->any())
+            ->method('driver')
+            ->will($this->returnValue($driver));
+
+        $query = new \Cake\Database\Query($connection);
+        $query->update('articles')
+            ->set(['title' => 'FooBar'])
+            ->where(['published' => true])
+            ->limit(5);
+        $this->assertEquals('UPDATE articles SET title = :c0 WHERE published = :c1 LIMIT 5', $query->sql());
+    }
+
+    /**
+     * Test update with limit
+     *
+     * @return void
+     */
+    public function testUpdateOrder()
+    {
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([[]])
+            ->getMock();
+
+        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+            ->setMethods(['connect', 'driver'])
+            ->setConstructorArgs([['log' => false]])
+            ->getMock();
+        $connection
+            ->expects($this->any())
+            ->method('driver')
+            ->will($this->returnValue($driver));
+
+        $query = new \Cake\Database\Query($connection);
+        $query->update('articles')
+            ->set(['title' => 'FooBar'])
+            ->where(['published' => true])
+            ->order(['created' => 'DESC']);
+        $this->assertEquals('UPDATE articles SET title = :c0 WHERE published = :c1 ORDER BY created DESC', $query->sql());
     }
 
     public function testCommitTransactionAutoConnect()

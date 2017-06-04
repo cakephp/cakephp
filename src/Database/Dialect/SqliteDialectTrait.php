@@ -15,6 +15,7 @@
 namespace Cake\Database\Dialect;
 
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Query;
 use Cake\Database\Schema\SqliteSchema;
 use Cake\Database\SqlDialectTrait;
 use Cake\Database\SqliteCompiler;
@@ -65,6 +66,63 @@ trait SqliteDialectTrait
         'week' => 'W',
         'year' => 'Y'
     ];
+
+    /**
+     * Modifies the original delete query to support ORDER BY and LIMIT
+     * clauses.
+     *
+     * @param \Cake\Database\Query $query The query to translate.
+     * @return \Cake\Database\Query
+     */
+    protected function _updateQueryTranslator($query)
+    {
+        if ($query->clause('limit') === null) {
+            return $query;
+        }
+
+        $inner = new Query($query->connection());
+        $inner->select('rowid')
+            ->from($query->clause('from'))
+            ->where($query->clause('where'))
+            ->order($query->clause('order'))
+            ->limit($query->clause('limit'));
+
+        $outer = new Query($query->connection());
+        $outer
+            ->update($query->clause('from'))
+            ->set($query->clause('set'))
+            ->where(['rowid IN' => $inner]);
+
+        return $outer;
+    }
+
+    /**
+     * Modifies the original delete query to support ORDER BY and LIMIT
+     * clauses.
+     *
+     * @param \Cake\Database\Query $query The query to translate.
+     * @return \Cake\Database\Query
+     */
+    protected function _deleteQueryTranslator($query)
+    {
+        if ($query->clause('limit') === null) {
+            return $query;
+        }
+
+        $inner = new Query($query->connection());
+        $inner->select('rowid')
+            ->from($query->clause('from'))
+            ->where($query->clause('where'))
+            ->order($query->clause('order'))
+            ->limit($query->clause('limit'));
+
+        $outer = new Query($query->connection());
+        $outer
+            ->delete($query->clause('from'))
+            ->where(['rowid IN' => $inner]);
+
+        return $outer;
+    }
 
     /**
      * Returns a dictionary of expressions to be transformed when compiling a Query

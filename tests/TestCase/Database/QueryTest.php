@@ -2670,6 +2670,30 @@ class QueryTest extends TestCase
         $result->closeCursor();
     }
 
+    public function testDeleteWithLimit()
+    {
+        $this->loadFixtures('Authors');
+
+        $query = new Query($this->connection);
+
+        $query->delete('authors')
+            ->where('1 = 1')
+            ->limit(1)
+            ->order(['id' => 'desc']);
+
+        $result = $query->execute();
+        $result->closeCursor();
+
+        $total = (new Query($this->connection))->select('*')
+            ->from('authors')
+            ->order(['id' => 'desc'])
+            ->execute();
+
+        $result = $total->fetchAll('assoc');
+        $this->assertCount(self::AUTHOR_COUNT - 1, $result);
+        $this->assertEquals([3, 2, 1], array_column($result, 'id'));
+    }
+
     /**
      * Tests that delete queries that contain joins do trigger a notice,
      * warning about possible incompatibilities with aliases being removed

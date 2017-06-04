@@ -34,7 +34,6 @@ class SqlserverCompiler extends QueryCompiler
      * {@inheritDoc}
      */
     protected $_templates = [
-        'delete' => 'DELETE',
         'where' => ' WHERE %s',
         'group' => ' GROUP BY %s ',
         'having' => ' HAVING %s ',
@@ -74,6 +73,34 @@ class SqlserverCompiler extends QueryCompiler
             $modifiers,
             $table,
             implode(', ', $columns)
+        );
+    }
+
+    /**
+     * Generates the DELETE part of a SQL query
+     *
+     * @param array $parts The parts to build
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @return string
+     */
+    protected function _buildDeletePart($parts, $query, $generator)
+    {
+        $parts = $this->_stringifyExpressions((array)$parts, $generator);
+
+        if ($query->clause('limit') === null) {
+            return sprintf('DELETE %s', implode(', ', $parts));
+        }
+
+        $template = "WITH CTE AS (SELECT TOP %d * %s %s %s) DELETE %s FROM CTE %s";
+
+        return sprintf(
+            $template,
+            $parts[5],
+            $parts[2],
+            $parts[3],
+            $parts[4],
+            $parts[6]
         );
     }
 
