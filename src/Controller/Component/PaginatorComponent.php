@@ -16,7 +16,6 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
-use Cake\Core\InstanceConfigTrait;
 use Cake\Network\Exception\NotFoundException;
 use Cake\ORM\Paginator;
 
@@ -32,10 +31,6 @@ use Cake\ORM\Paginator;
  */
 class PaginatorComponent extends Component
 {
-    use InstanceConfigTrait {
-        setConfig as protected _setConfig;
-        configShallow as protected _configShallow;
-    }
 
     /**
      * Default pagination settings.
@@ -217,18 +212,24 @@ class PaginatorComponent extends Component
             + (array)$request->getParam('paging');
     }
 
+    public function config($key = null, $value = null, $merge = true)
+    {
+        return $this->_paginator->config($key, $value, $merge);
+    }
+
     public function setConfig($key, $value = null, $merge = true)
     {
-        $this->_paginator->setConfig($key, $value, $merge);
+        return $this->_paginator->setConfig($key, $value, $merge);
+    }
 
-        return $this->_setConfig($key, $value, $merge);
+    public function getConfig($key = null)
+    {
+        return $this->_paginator->getConfig($key);
     }
 
     public function configShallow($key, $value = null)
     {
-        $this->_paginator->configShallow($key, $value = null);
-
-        return $this->_configShallow($key, $value = null);
+        return $this->_paginator->configShallow($key, $value = null);
     }
 
     public function __call($method, $args)
