@@ -22,6 +22,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Http\ServerRequest;
 use Cake\Network\Exception\NotFoundException;
 use Cake\ORM\Entity;
+use Cake\ORM\Paginator;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -37,6 +38,13 @@ class PaginatorTestController extends Controller
      * @var array
      */
     public $components = ['Paginator'];
+}
+
+/**
+ * Custom paginator
+ */
+class CustomPaginator extends Paginator
+{
 }
 
 class PaginatorComponentTest extends TestCase
@@ -70,8 +78,8 @@ class PaginatorComponentTest extends TestCase
         $this->request = new ServerRequest('controller_posts/index');
         $this->request->params['pass'] = [];
         $controller = new Controller($this->request);
-        $registry = new ComponentRegistry($controller);
-        $this->Paginator = new PaginatorComponent($registry, []);
+        $this->registry = new ComponentRegistry($controller);
+        $this->Paginator = new PaginatorComponent($this->registry, []);
 
         $this->Post = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')
             ->disableOriginalConstructor()
@@ -87,6 +95,27 @@ class PaginatorComponentTest extends TestCase
     {
         parent::tearDown();
         TableRegistry::clear();
+    }
+
+    /**
+     * testPaginatorSetting
+     *
+     * @return void
+     */
+    public function testPaginatorSetting()
+    {
+        $paginator = new CustomPaginator();
+        $component = new PaginatorComponent($this->registry, [
+            'paginator' => $paginator
+        ]);
+
+        $this->assertSame($paginator, $component->getPaginator());
+
+        $component = new PaginatorComponent($this->registry, []);
+        $this->assertNotSame($paginator, $component->getPaginator());
+
+        $component->setPaginator($paginator);
+        $this->assertSame($paginator, $component->getPaginator());
     }
 
     /**

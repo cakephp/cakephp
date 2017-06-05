@@ -66,7 +66,12 @@ class PaginatorComponent extends Component
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
-        $this->_paginator = new Paginator();
+        if (isset($config['paginator'])) {
+            $this->_paginator = $config['paginator'];
+            unset($config['paginator']);
+        } else {
+            $this->_paginator = new Paginator();
+        }
 
         parent::__construct($registry, $config);
     }
@@ -222,6 +227,29 @@ class PaginatorComponent extends Component
         $this->_paginator->setParams($request->getQueryParams());
 
         return $this->_paginator->mergeOptions($alias, $settings);
+    }
+
+    /**
+     * Set paginator instance.
+     *
+     * @param \Cake\ORM\Paginator $paginator Paginator instance.
+     * @return self
+     */
+    public function setPaginator(Paginator $paginator)
+    {
+        $this->_paginator = $paginator;
+
+        return $this;
+    }
+
+    /**
+     * Get paginator instance.
+     *
+     * @return \Cake\ORM\Paginator
+     */
+    public function getPaginator()
+    {
+        return $this->_paginator;
     }
 
     /**
