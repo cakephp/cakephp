@@ -25,6 +25,12 @@ use Cake\View\Form\FormContext;
  */
 class FormContextTest extends TestCase
 {
+    /**
+     * The request object.
+     *
+     * @var \Cake\Http\ServerRequest
+     */
+    protected $request;
 
     /**
      * setup method.

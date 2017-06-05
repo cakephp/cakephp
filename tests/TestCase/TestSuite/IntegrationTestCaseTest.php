@@ -420,6 +420,21 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test flash assertions stored with enableRememberFlashMessages() even if
+     * no view is rendered
+     *
+     * @return void
+     */
+    public function testFlashAssertionsWithNoRender()
+    {
+        $this->enableRetainFlashMessages();
+        $this->get('/posts/flashNoRender');
+        $this->assertRedirect();
+
+        $this->assertSession('An error message', 'Flash.flash.0.message');
+    }
+
+    /**
      * Tests the failure message for assertCookieNotSet
      *
      * @expectedException \PHPUnit\Framework\AssertionFailedError

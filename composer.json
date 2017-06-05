@@ -2,7 +2,17 @@
     "name": "cakephp/cakephp",
     "description": "The CakePHP framework",
     "type": "library",
-    "keywords": ["framework"],
+    "keywords": [
+        "framework",
+        "mvc",
+        "rapid-development",
+        "conventions over configuration",
+        "dry",
+        "orm",
+        "form",
+        "validation",
+        "psr-7"
+    ],
     "homepage": "https://cakephp.org",
     "license": "MIT",
     "authors": [
@@ -21,10 +31,10 @@
         "php": ">=5.6.0",
         "ext-intl": "*",
         "ext-mbstring": "*",
-        "cakephp/chronos": "~1.0",
+        "cakephp/chronos": "^1.0.0",
         "aura/intl": "^3.0.0",
-        "psr/log": "^1.0",
-        "zendframework/zend-diactoros": "^1.4"
+        "psr/log": "^1.0.0",
+        "zendframework/zend-diactoros": "^1.4.0"
     },
     "suggest": {
         "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation.",
