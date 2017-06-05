@@ -122,7 +122,7 @@ class RouteCollection
 
         $extensions = $route->getExtensions();
         if (count($extensions) > 0) {
-            $this->extensions($extensions);
+            $this->setExtensions($extensions);
         }
     }
 
@@ -362,23 +362,48 @@ class RouteCollection
      * @param bool $merge Whether to merge with or override existing extensions.
      *   Defaults to `true`.
      * @return array The valid extensions.
+     * @deprecated 3.5.0 Use getExtensions()/setExtensions() instead.
      */
     public function extensions($extensions = null, $merge = true)
     {
-        if ($extensions === null) {
-            return $this->_extensions;
+        if ($extensions !== null) {
+            $this->setExtensions((array)$extensions, $merge);
         }
 
-        $extensions = (array)$extensions;
+        return $this->getExtensions();
+    }
+
+    /**
+     * Get the extensions that can be handled.
+     *
+     * @return array The valid extensions.
+     */
+    public function getExtensions()
+    {
+        return $this->_extensions;
+    }
+
+    /**
+     * Set the extensions that the route collection can handle.
+     *
+     * @param array $extensions The list of extensions to set.
+     * @param bool $merge Whether to merge with or override existing extensions.
+     *   Defaults to `true`.
+     * @return $this
+     */
+    public function setExtensions(array $extensions, $merge = true)
+    {
         if ($merge) {
             $extensions = array_unique(array_merge(
                 $this->_extensions,
                 $extensions
             ));
         }
+        $this->_extensions = $extensions;
 
-        return $this->_extensions = $extensions;
+        return $this;
     }
+
 
     /**
      * Register a middleware with the RouteCollection.

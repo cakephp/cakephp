@@ -844,7 +844,7 @@ class Router
                 static::_loadRoutes();
             }
 
-            return array_unique(array_merge(static::$_defaultExtensions, $collection->extensions()));
+            return array_unique(array_merge(static::$_defaultExtensions, $collection->getExtensions()));
         }
         $extensions = (array)$extensions;
         if ($merge) {

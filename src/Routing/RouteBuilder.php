@@ -574,7 +574,7 @@ class RouteBuilder
      *   reverse routing lookups. If undefined a name will be generated for each
      *   connected route.
      * - `_ext` is an array of filename extensions that will be parsed out of the url if present.
-     *   See {@link \Cake\Routing\RouteCollection::extensions()}.
+     *   See {@link \Cake\Routing\RouteCollection::setExtensions()}.
      * - `_method` Only match requests with specific HTTP verbs.
      *
      * Example of using the `_method` condition:
