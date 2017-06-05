@@ -2708,6 +2708,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * {@inheritDoc}
+     */
+    protected function validationMethodExists($method)
+    {
+        return method_exists($this, $method) || $this->behaviors()->hasMethod($method);
+    }
+
+    /**
      * Returns an array that can be used to describe the internal state of this
      * object.
      *

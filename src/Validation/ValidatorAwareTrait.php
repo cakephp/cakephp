@@ -163,7 +163,7 @@ trait ValidatorAwareTrait
     protected function createValidator($name)
     {
         $method = 'validation' . ucfirst($name);
-        if (!method_exists($this, $method)) {
+        if (!$this->validationMethodExists($method)) {
             $message = sprintf('The %s::%s() validation method does not exists.', __CLASS__, $method);
             throw new RuntimeException($message);
         }
@@ -216,11 +216,22 @@ trait ValidatorAwareTrait
     public function hasValidator($name)
     {
         $method = 'validation' . ucfirst($name);
-        if (method_exists($this, $method)) {
+        if ($this->validationMethodExists($method)) {
             return true;
         }
 
         return isset($this->_validators[$name]);
+    }
+
+    /**
+     * Checks if validation method exists.
+     *
+     * @param string $name Validation method name.
+     * @return bool
+     */
+    protected function validationMethodExists($name)
+    {
+        return method_exists($this, $name);
     }
 
     /**
