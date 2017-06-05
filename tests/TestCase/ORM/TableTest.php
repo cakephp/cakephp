@@ -3363,6 +3363,21 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that there exists a validator defined in a behavior.
+     *
+     * @return void
+     */
+    public function testValidatorBehavior()
+    {
+        $table = new Table();
+        $table->addBehavior('Validation');
+
+        $validator = $table->getValidator('Behavior');
+        $set = $validator->field('name');
+        $this->assertTrue(isset($set['behaviorRule']));
+    }
+
+    /**
      * Tests that it is possible to define custom validator methods
      *
      * @return void
