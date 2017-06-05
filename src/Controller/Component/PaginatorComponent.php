@@ -17,6 +17,7 @@ namespace Cake\Controller\Component;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Network\Exception\NotFoundException;
+use Cake\ORM\Exception\PageOutOfBoundsException;
 use Cake\ORM\Paginator;
 
 /**
@@ -196,10 +197,10 @@ class PaginatorComponent extends Component
             );
 
             $this->_setPagingParams();
-        } catch (NotFoundException $e) {
+        } catch (PageOutOfBoundsException $e) {
             $this->_setPagingParams();
 
-            throw $e;
+            throw new NotFoundException();
         }
 
         return $results;

@@ -17,7 +17,7 @@ namespace Cake\ORM;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
-use Cake\Network\Exception\NotFoundException;
+use Cake\ORM\Exception\PageOutOfBoundsException;
 use Cake\Utility\Hash;
 
 /**
@@ -167,7 +167,7 @@ class Paginator
      * @param array $params Request params
      * @param array $settings The settings/configuration used for pagination.
      * @return \Cake\Datasource\ResultSetInterface Query results
-     * @throws \Cake\Network\Exception\NotFoundException
+     * @throws \Cake\ORM\Exception\PageOutOfBoundsException
      */
     public function paginate($object, array $params = null, array $settings = [])
     {
@@ -237,7 +237,7 @@ class Paginator
         $this->_pagingParams = [$alias => $paging];
 
         if ($requestedPage > $page) {
-            throw new NotFoundException();
+            throw new PageOutOfBoundsException([$requestedPage]);
         }
 
         return $results;
