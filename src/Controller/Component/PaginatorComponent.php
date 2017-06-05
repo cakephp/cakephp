@@ -225,9 +225,12 @@ class PaginatorComponent extends Component
     public function mergeOptions($alias, $settings)
     {
         $request = $this->_registry->getController()->request;
-        $this->_paginator->setParams($request->getQueryParams());
 
-        return $this->_paginator->mergeOptions($alias, $settings);
+        return $this->_paginator->mergeOptions(
+            $alias,
+            $request->getQueryParams(),
+            $settings
+        );
     }
 
     /**

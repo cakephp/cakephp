@@ -57,13 +57,6 @@ class Paginator
     ];
 
     /**
-     * Request params.
-     *
-     * @var array
-     */
-    protected $_params = [];
-
-    /**
      * Paging params after pagination operation is done.
      *
      * @var array
@@ -169,7 +162,7 @@ class Paginator
      * @return \Cake\Datasource\ResultSetInterface Query results
      * @throws \Cake\ORM\Exception\PageOutOfBoundsException
      */
-    public function paginate($object, array $params = null, array $settings = [])
+    public function paginate($object, array $params = [], array $settings = [])
     {
         $query = null;
         if ($object instanceof QueryInterface) {
@@ -177,12 +170,8 @@ class Paginator
             $object = $query->repository();
         }
 
-        if ($params !== null) {
-            $this->_params = $params;
-        }
-
         $alias = $object->alias();
-        $options = $this->mergeOptions($alias, $settings);
+        $options = $this->mergeOptions($alias, $params, $settings);
         $options = $this->validateSort($object, $options);
         $options = $this->checkLimit($options);
 
@@ -264,17 +253,6 @@ class Paginator
     }
 
     /**
-     * Set params.
-     *
-     * @param array $params
-     * @return void
-     */
-    public function setParams(array $params = [])
-    {
-        $this->_params = $params;
-    }
-
-    /**
      * Get paging params after pagination operation.
      *
      * @return array
@@ -297,20 +275,20 @@ class Paginator
      *
      * @param string $alias Model alias being paginated, if the general settings has a key with this value
      *   that key's settings will be used for pagination instead of the general ones.
+     * @param array $params Request params.
      * @param array $settings The settings to merge with the request data.
      * @return array Array of merged options.
      */
-    public function mergeOptions($alias, $settings)
+    public function mergeOptions($alias, $params, $settings)
     {
         $defaults = $this->getDefaults($alias, $settings);
         $scope = Hash::get($settings, 'scope', null);
-        $query = $this->_params;
         if ($scope) {
-            $query = Hash::get($query, $scope, []);
+            $params = Hash::get($params, $scope, []);
         }
-        $query = array_intersect_key($query, array_flip($this->_config['whitelist']));
+        $params = array_intersect_key($params, array_flip($this->config('whitelist')));
 
-        return array_merge($defaults, $query);
+        return array_merge($defaults, $params);
     }
 
     /**
