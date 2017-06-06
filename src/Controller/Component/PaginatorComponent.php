@@ -16,6 +16,7 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
+use Cake\Datasource\QueryInterface;
 use Cake\Network\Exception\NotFoundException;
 use Cake\ORM\Exception\PageOutOfBoundsException;
 use Cake\ORM\Paginator;
@@ -187,6 +188,11 @@ class PaginatorComponent extends Component
      */
     public function paginate($object, array $settings = [])
     {
+        $query = null;
+        if ($object instanceof QueryInterface) {
+            $query = $object;
+        }
+
         $request = $this->_registry->getController()->request;
 
         try {
@@ -265,12 +271,10 @@ class PaginatorComponent extends Component
     {
         $request = $this->_registry->getController()->request;
 
-        if (!$request->getParam('paging')) {
-            $request->params['paging'] = [];
-        }
-
-        $request->params['paging'] = $this->_paginator->getPagingParams()
-            + (array)$request->getParam('paging');
+        $request->addParams([
+            'paging' => $this->_paginator->getPagingParams()
+                + (array)$request->getParam('paging')
+        ]);
     }
 
     /**
