@@ -404,7 +404,6 @@ class RouteCollection
         return $this;
     }
 
-
     /**
      * Register a middleware with the RouteCollection.
      *
