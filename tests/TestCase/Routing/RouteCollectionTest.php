@@ -593,7 +593,7 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
-     * Test get/set combined method.
+     * Test combined get/set method.
      *
      * @return void
      * @deprecated 3.5.0
