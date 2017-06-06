@@ -62,11 +62,21 @@ class ConsoleIntegrationTestCase extends TestCase
      * Runs cli integration test
      *
      * @param string $command Command to run
+     * @param array $input Input values to pass to an interactive shell
      * @return void
      */
-    public function cli($command)
+    public function cli($command, array $input = [])
     {
         $dispatcher = $this->_makeDispatcher("bin/cake $command");
+
+        $i = 0;
+        foreach ($input as $in) {
+            $this->_in
+                ->expects($this->at($i++))
+                ->method('read')
+                ->will($this->returnValue($in));
+        }
+
         $this->_exitCode = $dispatcher->dispatch();
     }
 
@@ -118,6 +128,18 @@ class ConsoleIntegrationTestCase extends TestCase
     public function assertOutputContains($expected)
     {
         $output = implode(PHP_EOL, $this->_out->messages());
+        $this->assertContains($expected, $output);
+    }
+
+    /**
+     * Asserts `stderr` contains expected output
+     *
+     * @param string $expected Expected output
+     * @return void
+     */
+    public function assertErrorContains($expected)
+    {
+        $output = implode(PHP_EOL, $this->_err->messages());
         $this->assertContains($expected, $output);
     }
 

@@ -2,10 +2,23 @@
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Console\Shell;
+use Cake\Core\Configure;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
 {
+
+    /**
+     * setUp
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+
+        Configure::write('App.namespace', 'TestApp');
+    }
 
     /**
      * tests cli
@@ -30,6 +43,32 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
         $this->cli('routes');
 
         $this->assertOutputContains('Welcome to CakePHP');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+    }
+
+    /**
+     * tests cli with input
+     *
+     * @return void
+     */
+    public function testCliWithInput()
+    {
+        $this->cli('sample bridge', ['javascript']);
+
+        $this->assertErrorContains('No!');
+        $this->assertExitCode(Shell::CODE_ERROR);
+    }
+
+    /**
+     * tests cli with multiple inputs
+     *
+     * @return void
+     */
+    public function testCliWithMultipleInput()
+    {
+        $this->cli('sample bridge', ['cake', 'blue']);
+
+        $this->assertOutputContains('You may pass');
         $this->assertExitCode(Shell::CODE_SUCCESS);
     }
 
