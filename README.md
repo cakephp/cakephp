@@ -78,6 +78,8 @@ tests for CakePHP by doing the following:
 * [CONTRIBUTING.md](.github/CONTRIBUTING.md) - Quick pointers for contributing to the CakePHP project.
 * [CookBook "Contributing" Section](https://book.cakephp.org/3.0/en/contributing.html) - Details about contributing to the project.
 
+[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) - Code of conduct. All contributors are expected to abide by this.
+
 # Security
 
 If you’ve found a security issue in CakePHP, please use the following procedure instead of the normal bug reporting system. Instead of using the bug tracker, mailing list or IRC please send an email to security [at] cakephp.org. Emails sent to this address go to the CakePHP core team on a private mailing list.
