@@ -200,7 +200,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['subcommands', 'app.sample']);
         $output = $this->out->output;
 
-        $expected = "derp load returnValue sample withAbort\n";
+        $expected = "bridge derp load returnValue sample withAbort\n";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -258,7 +258,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['subcommands', 'sample']);
         $output = $this->out->output;
 
-        $expected = "derp load returnValue sample withAbort\n";
+        $expected = "bridge derp load returnValue sample withAbort\n";
         $this->assertTextEquals($expected, $output);
     }
 
