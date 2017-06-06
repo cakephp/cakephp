@@ -168,7 +168,18 @@ class Cache
         }
 
         $config = static::$_config[$name];
-        $registry->load($name, $config);
+
+        try {
+            $registry->load($name, $config);
+        } catch (RuntimeException $e) {
+            if (!array_key_exists('fallback', $config)) {
+                throw $e;
+            }
+            $fallbackEngine = static::engine($config['fallback']);
+            static::getRegistry()->set($name, $fallbackEngine);
+
+            return;
+        }
 
         if ($config['className'] instanceof CacheEngine) {
             $config = $config['className']->getConfig();

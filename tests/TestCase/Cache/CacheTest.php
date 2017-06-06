@@ -65,6 +65,67 @@ class CacheTest extends TestCase
     }
 
     /**
+     * tests Cache::engine() fallback
+     *
+     * @return void
+     */
+    public function testCacheEngineFallback()
+    {
+        Cache::setConfig('tests', [
+            'engine' => 'File',
+            'path' => DS . 'missing_dir',
+            'prefix' => 'test_',
+            'fallback' => 'tests_fallback'
+        ]);
+        Cache::setConfig('tests_fallback', [
+            'engine' => 'File',
+            'path' => TMP,
+            'prefix' => 'test_',
+        ]);
+
+        $engine = Cache::engine('tests');
+        $path = $engine->getConfig('path');
+        $this->assertSame(TMP, $path);
+
+        Cache::drop('tests');
+        Cache::drop('tests_fallback');
+    }
+
+    /**
+     * tests cache fallback
+     *
+     * @return void
+     */
+    public function testCacheFallbackIntegration()
+    {
+        Cache::setConfig('tests', [
+            'engine' => 'File',
+            'path' => DS . 'unwritable_dir',
+            'prefix' => 'test_',
+            'fallback' => 'tests_fallback',
+        ]);
+        Cache::setConfig('tests_fallback', [
+            'engine' => 'File',
+            'path' => DS . 'still_unwritable_dir',
+            'prefix' => 'test_',
+            'fallback' => 'tests_fallback_final',
+        ]);
+        Cache::setConfig('tests_fallback_final', [
+            'engine' => 'File',
+            'path' => TMP,
+            'prefix' => 'test_',
+        ]);
+
+        $this->assertTrue(Cache::write('fallback', 'worked', 'tests'));
+        $this->assertSame('worked', Cache::read('fallback', 'tests'));
+        $this->assertTrue(Cache::delete('fallback', 'tests'));
+
+        Cache::drop('tests');
+        Cache::drop('tests_fallback');
+        Cache::drop('tests_fallback_final');
+    }
+
+    /**
      * Check that no fatal errors are issued doing normal things when Cache.disable is true.
      *
      * @return void
