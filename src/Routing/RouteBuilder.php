@@ -537,6 +537,7 @@ class RouteBuilder
         if (!Plugin::loaded($name)) {
             throw new MissingPluginException(['plugin' => $name]);
         }
+
         $path = Plugin::configPath($name) . DIRECTORY_SEPARATOR . $file;
         if (!file_exists($path)) {
             throw new InvalidArgumentException(sprintf(
@@ -545,6 +546,7 @@ class RouteBuilder
                 $path
             ));
         }
+
         $routes = $this;
         include $path;
     }
