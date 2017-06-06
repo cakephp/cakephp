@@ -27,7 +27,7 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
      */
     public function testCli()
     {
-        $this->cli('');
+        $this->exec('');
 
         $this->assertOutputContains('Welcome to CakePHP');
         $this->assertExitCode(Shell::CODE_ERROR);
@@ -40,7 +40,7 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
      */
     public function testCliCoreCommand()
     {
-        $this->cli('routes');
+        $this->exec('routes');
 
         $this->assertOutputContains('Welcome to CakePHP');
         $this->assertExitCode(Shell::CODE_SUCCESS);
@@ -53,7 +53,7 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
      */
     public function testCliWithInput()
     {
-        $this->cli('sample bridge', ['javascript']);
+        $this->exec('sample bridge', ['javascript']);
 
         $this->assertErrorContains('No!');
         $this->assertExitCode(Shell::CODE_ERROR);
@@ -66,7 +66,7 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
      */
     public function testCliWithMultipleInput()
     {
-        $this->cli('sample bridge', ['cake', 'blue']);
+        $this->exec('sample bridge', ['cake', 'blue']);
 
         $this->assertOutputContains('You may pass');
         $this->assertExitCode(Shell::CODE_SUCCESS);

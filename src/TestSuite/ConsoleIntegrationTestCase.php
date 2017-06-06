@@ -65,7 +65,7 @@ class ConsoleIntegrationTestCase extends TestCase
      * @param array $input Input values to pass to an interactive shell
      * @return void
      */
-    public function cli($command, array $input = [])
+    public function exec($command, array $input = [])
     {
         $dispatcher = $this->_makeDispatcher("bin/cake $command");
 
