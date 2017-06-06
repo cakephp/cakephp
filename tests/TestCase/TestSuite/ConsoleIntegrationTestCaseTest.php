@@ -21,11 +21,11 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
     }
 
     /**
-     * tests cli
+     * tests exec
      *
      * @return void
      */
-    public function testCli()
+    public function testExec()
     {
         $this->exec('');
 
@@ -38,7 +38,7 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function testCliCoreCommand()
+    public function testExecCoreCommand()
     {
         $this->exec('routes');
 
@@ -47,11 +47,11 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
     }
 
     /**
-     * tests cli with input
+     * tests exec with input
      *
      * @return void
      */
-    public function testCliWithInput()
+    public function testExecWithInput()
     {
         $this->exec('sample bridge', ['javascript']);
 
@@ -60,11 +60,11 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
     }
 
     /**
-     * tests cli with multiple inputs
+     * tests exec with multiple inputs
      *
      * @return void
      */
-    public function testCliWithMultipleInput()
+    public function testExecWithMultipleInput()
     {
         $this->exec('sample bridge', ['cake', 'blue']);
 
