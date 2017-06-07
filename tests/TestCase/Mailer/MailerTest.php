@@ -53,6 +53,7 @@ class MailerTest extends TestCase
         $result = (new TestMailer())->layout('foo');
         $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
         $this->assertEquals('foo', $result->viewBuilder()->layout());
+        $this->assertEquals('foo', $result->getLayout());
     }
 
     public function testProxies()
@@ -81,6 +82,23 @@ class MailerTest extends TestCase
             ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain']
         ]);
         $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
+    }
+
+    /**
+     * Test that get/set methods can be proxied.
+     *
+     * @return void
+     */
+    public function testGetSetProxies()
+    {
+        $mailer = new TestMailer();
+        $result = $mailer->setLayout('custom')
+            ->setTo('test@example.com')
+            ->setCc('cc@example.com');
+        $this->assertSame($result, $mailer);
+
+        $this->assertSame(['test@example.com' => 'test@example.com'], $result->getTo());
+        $this->assertSame(['cc@example.com' => 'cc@example.com'], $result->getCc());
     }
 
     public function testSet()
