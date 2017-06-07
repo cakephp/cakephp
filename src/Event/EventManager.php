@@ -161,7 +161,7 @@ class EventManager
      *
      * @param callable|null $callable The callable function you want invoked.
      *
-     * @return void
+     * @return $this
      * @throws \InvalidArgumentException When event key is missing or callable is not an
      *   instance of Cake\Event\EventListenerInterface.
      */
@@ -170,7 +170,7 @@ class EventManager
         if ($eventKey instanceof EventListenerInterface) {
             $this->_attachSubscriber($eventKey);
 
-            return;
+            return $this;
         }
         $argCount = func_num_args();
         if ($argCount === 2) {
@@ -178,7 +178,7 @@ class EventManager
                 'callable' => $options
             ];
 
-            return;
+            return $this;
         }
         if ($argCount === 3) {
             $priority = isset($options['priority']) ? $options['priority'] : static::$defaultPriority;
@@ -186,7 +186,7 @@ class EventManager
                 'callable' => $callable
             ];
 
-            return;
+            return $this;
         }
         throw new InvalidArgumentException('Invalid arguments for EventManager::on().');
     }
@@ -287,34 +287,34 @@ class EventManager
      * @param string|\Cake\Event\EventListenerInterface $eventKey The event unique identifier name
      *   with which the callback has been associated, or the $listener you want to remove.
      * @param callable|null $callable The callback you want to detach.
-     * @return void
+     * @return $this
      */
     public function off($eventKey, $callable = null)
     {
         if ($eventKey instanceof EventListenerInterface) {
             $this->_detachSubscriber($eventKey);
 
-            return;
+            return $this;
         }
         if ($callable instanceof EventListenerInterface) {
             $this->_detachSubscriber($callable, $eventKey);
 
-            return;
+            return $this;
         }
         if ($callable === null && is_string($eventKey)) {
             unset($this->_listeners[$eventKey]);
 
-            return;
+            return $this;
         }
         if ($callable === null) {
             foreach (array_keys($this->_listeners) as $name) {
                 $this->off($name, $eventKey);
             }
 
-            return;
+            return $this;
         }
         if (empty($this->_listeners[$eventKey])) {
-            return;
+            return $this;
         }
         foreach ($this->_listeners[$eventKey] as $priority => $callables) {
             foreach ($callables as $k => $callback) {
@@ -324,6 +324,8 @@ class EventManager
                 }
             }
         }
+
+        return $this;
     }
 
     /**
@@ -495,24 +497,28 @@ class EventManager
      * Adds an event to the list if the event list object is present.
      *
      * @param \Cake\Event\Event $event An event to add to the list.
-     * @return void
+     * @return $this
      */
     public function addEventToList(Event $event)
     {
         if ($this->_eventList) {
             $this->_eventList->add($event);
         }
+
+        return $this;
     }
 
     /**
      * Enables / disables event tracking at runtime.
      *
      * @param bool $enabled True or false to enable / disable it.
-     * @return void
+     * @return $this
      */
     public function trackEvents($enabled)
     {
         $this->_trackEvents = (bool)$enabled;
+
+        return $this;
     }
 
     /**
@@ -529,23 +535,27 @@ class EventManager
      * Enables the listing of dispatched events.
      *
      * @param \Cake\Event\EventList $eventList The event list object to use.
-     * @return void
+     * @return $this
      */
     public function setEventList(EventList $eventList)
     {
         $this->_eventList = $eventList;
         $this->_trackEvents = true;
+
+        return $this;
     }
 
     /**
      * Disables the listing of dispatched events.
      *
-     * @return void
+     * @return $this
      */
     public function unsetEventList()
     {
         $this->_eventList = null;
         $this->_trackEvents = false;
+
+        return $this;
     }
 
     /**
