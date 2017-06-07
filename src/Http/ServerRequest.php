@@ -1498,7 +1498,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * $request->getData('Post.title');
      *
      * // With a default value.
-     * $request->getData('Post.not there', 'default value);
+     * $request->getData('Post.not there', 'default value');
      * ```
      *
      * When reading values you will get `null` for keys/values that do not exist.
