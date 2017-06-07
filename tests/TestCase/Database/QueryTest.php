@@ -4330,6 +4330,18 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test that reading an undefined clause does not emit an error.
+     *
+     * @return void
+     */
+    public function testClauseUndefined()
+    {
+        $query = new Query($this->connection);
+        $this->assertEmpty($query->clause('where'));
+        $this->assertNull($query->clause('nope'));
+    }
+
+    /**
      * Assertion for comparing a table's contents with what is in it.
      *
      * @param string $table

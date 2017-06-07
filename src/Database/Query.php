@@ -1698,7 +1698,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function clause($name)
     {
-        return $this->_parts[$name];
+        return isset($this->_parts[$name]) ? $this->_parts[$name] : null;
     }
 
     /**
