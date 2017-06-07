@@ -70,7 +70,7 @@ abstract class Driver
     /**
      * Establishes a connection to the database server
      *
-     * @return bool true con success
+     * @return bool true on success
      */
     abstract public function connect();
 
