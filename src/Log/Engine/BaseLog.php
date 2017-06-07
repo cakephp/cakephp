@@ -100,7 +100,7 @@ abstract class BaseLog extends AbstractLogger
         }
 
         if ($object && $data instanceof JsonSerializable) {
-            return json_encode($data);
+            return json_encode($data, JSON_UNESCAPED_UNICODE);
         }
 
         return print_r($data, true);
