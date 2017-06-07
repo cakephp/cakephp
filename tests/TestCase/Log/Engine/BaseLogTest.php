@@ -18,6 +18,28 @@ use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Psr\Log\LogLevel;
 
+/**
+ * Class BaseLogImpl
+ * Implementation of abstract class {@see Cake\Log\Engine\BaseLog},
+ * required by test case {@see Cake\Test\TestCase\Log\Engine\BaseLogTest}.
+ */
+class BaseLogImpl extends BaseLog
+{
+    /**
+     * Logs with an arbitrary level.
+     *
+     * @param mixed $level
+     * @param mixed $message
+     * @param array $context
+     *
+     * @return mixed
+     */
+    public function log($level, $message, array $context = [])
+    {
+        return $this->_format($message, $context);
+    }
+}
+
 class BaseLogTest extends TestCase
 {
 
@@ -33,22 +55,7 @@ class BaseLogTest extends TestCase
     {
         parent::setUp();
 
-        $this->logger = new class() extends BaseLog {
-
-            /**
-             * Logs with an arbitrary level.
-             *
-             * @param mixed $level
-             * @param mixed $message
-             * @param array $context
-             *
-             * @return mixed
-             */
-            public function log($level, $message, array $context = array())
-            {
-                return $this->_format($message, $context);
-            }
-        };
+        $this->logger = new BaseLogImpl();
     }
 
     private function assertUnescapedUnicode(array $needles, string $haystack)
