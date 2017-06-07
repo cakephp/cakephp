@@ -2832,12 +2832,12 @@ class Model extends CakeObject implements CakeEventListener {
 		if (!$cascade && !$callbacks) {
 			return $db->delete($this, $conditions);
 		}
-
+		$recursive = min($this->recursive, 0);
 		$ids = $this->find('all', array_merge(array(
 			'fields' => "{$this->alias}.{$this->primaryKey}",
 			'order' => false,
 			'group' => "{$this->alias}.{$this->primaryKey}",
-			'recursive' => 0), compact('conditions'))
+			'recursive' => $recursive), compact('conditions'))
 		);
 
 		if ($ids === false || $ids === null) {
