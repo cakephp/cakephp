@@ -1011,7 +1011,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->text('title');
         $expected = ['input' => [
-            'name' => 'title', 'type' => 'text', 'required' => 'required'
+            'name' => 'title', 'type' => 'text', 'required'
         ]];
         $this->assertHtml($expected, $result);
 
@@ -1372,12 +1372,13 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->control('foo');
         $expected = [
-            'div' => ['class' => 'input file'],
+            'div' => ['class' => 'input file required'],
             'label' => ['for' => 'foo'],
             'Foo',
             '/label',
             ['input' => [
                 'type' => 'file', 'name' => 'foo',
+                'required',
                 'id' => 'foo'
             ]],
             '/div'
@@ -2731,7 +2732,7 @@ class FormHelperTest extends TestCase
             'input' => [
                 'type' => 'text', 'name' => 'title',
                 'id' => 'title', 'class' => 'form-error',
-                'required' => 'required',
+                'required',
             ],
             ['div' => ['class' => 'error-message']],
             'Custom error!',
@@ -2753,7 +2754,7 @@ class FormHelperTest extends TestCase
                 'name' => 'title',
                 'id' => 'title',
                 'class' => 'form-error',
-                'required' => 'required'
+                'required'
             ],
             ['div' => ['class' => 'error-message']],
             'Custom error!',
@@ -2874,7 +2875,7 @@ class FormHelperTest extends TestCase
             'label' => ['for'],
             'Balance',
             '/label',
-            'input' => ['name', 'type' => 'number', 'id', 'step'],
+            'input' => ['name', 'type' => 'number', 'id', 'required', 'step'],
             '/div',
         ];
         $this->assertHtml($expected, $result);
@@ -2885,7 +2886,7 @@ class FormHelperTest extends TestCase
             'label' => ['for'],
             'Cost Decimal',
             '/label',
-            'input' => ['name', 'type' => 'number', 'step' => '0.001', 'id'],
+            'input' => ['name', 'type' => 'number', 'required', 'step' => '0.001', 'id'],
             '/div',
         ];
         $this->assertHtml($expected, $result);
@@ -2896,7 +2897,7 @@ class FormHelperTest extends TestCase
             'label' => ['for'],
             'Null Decimal',
             '/label',
-            'input' => ['name', 'type' => 'number', 'id'],
+            'input' => ['name', 'type' => 'number', 'required', 'id'],
             '/div',
         ];
         $this->assertHtml($expected, $result);
@@ -3903,11 +3904,11 @@ class FormHelperTest extends TestCase
         $this->View->viewVars['balances'] = [0 => 'nothing', 1 => 'some', 100 => 'a lot'];
         $result = $this->Form->control('balance');
         $expected = [
-            'div' => ['class' => 'input select'],
+            'div' => ['class' => 'input select required'],
             'label' => ['for' => 'balance'],
             'Balance',
             '/label',
-            'select' => ['name' => 'balance', 'id' => 'balance'],
+            'select' => ['name' => 'balance', 'id' => 'balance', 'required'],
             ['option' => ['value' => '0']],
             'nothing',
             '/option',
@@ -5038,7 +5039,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'select' => [
                 'name' => 'user_id',
-                'required' => 'required'
+                'required'
             ],
             ['option' => ['value' => '0']], 'option A', '/option',
             '/select'
@@ -7006,7 +7007,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->control('title', ['label' => false]);
         $expected = [
             'div' => ['class' => 'input text required'],
-            'input' => ['type' => 'text', 'required' => 'required', 'id' => 'title', 'name' => 'title'],
+            'input' => ['type' => 'text', 'required', 'id' => 'title', 'name' => 'title'],
             '/div'
         ];
         $this->assertHtml($expected, $result);
@@ -8211,7 +8212,7 @@ class FormHelperTest extends TestCase
                 '/label',
                 'textarea' => [
                     'name',
-                    'required' => 'required',
+                    'required',
                     'id' => '0-comments-1-comment',
                     'rows' => 5
                 ],
@@ -8316,7 +8317,7 @@ class FormHelperTest extends TestCase
                 'type' => 'text',
                 'name' => 'title',
                 'id' => 'title',
-                'required' => 'required',
+                'required',
             ],
             '/div'
         ];
@@ -8653,7 +8654,7 @@ class FormHelperTest extends TestCase
         $this->Form->setValueSources(['context']);
         $result = $this->Form->control('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '3']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'required', 'id' => 'id', 'value' => '3']],
         ];
         $this->assertHtml($expected, $result);
 
@@ -8661,7 +8662,7 @@ class FormHelperTest extends TestCase
         $this->Form->setValueSources(['query']);
         $result = $this->Form->control('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '5']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'required', 'id' => 'id', 'value' => '5']],
         ];
         $this->assertHtml($expected, $result);
 
@@ -8672,7 +8673,7 @@ class FormHelperTest extends TestCase
         $this->Form->create($article);
         $result = $this->Form->control('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '5b']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'required', 'id' => 'id', 'value' => '5b']],
         ];
         $this->assertHtml($expected, $result);
 
@@ -8680,14 +8681,14 @@ class FormHelperTest extends TestCase
         $this->Form->create($article);
         $result = $this->Form->control('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '5b']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'required', 'id' => 'id', 'value' => '5b']],
         ];
         $this->assertHtml($expected, $result);
 
         $this->Form->setValueSources(['query']);
         $result = $this->Form->control('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '5a']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'required', 'id' => 'id', 'value' => '5a']],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -8710,21 +8711,21 @@ class FormHelperTest extends TestCase
         $this->Form->setValueSources(['context', 'query']);
         $result = $this->Form->control('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '3']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'required', 'id' => 'id', 'value' => '3']],
         ];
         $this->assertHtml($expected, $result);
 
         $this->Form->setValueSources(['query', 'context']);
         $result = $this->Form->control('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '9']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'required', 'id' => 'id', 'value' => '9']],
         ];
         $this->assertHtml($expected, $result);
 
         $this->Form->setValueSources(['data', 'query', 'context']);
         $result = $this->Form->control('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '9']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'required', 'id' => 'id', 'value' => '9']],
         ];
         $this->assertHtml($expected, $result);
 
@@ -8733,7 +8734,7 @@ class FormHelperTest extends TestCase
         $this->Form->setValueSources(['data', 'query', 'context']);
         $result = $this->Form->control('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '8']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'required', 'id' => 'id', 'value' => '8']],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -8755,7 +8756,7 @@ class FormHelperTest extends TestCase
         $this->Form->create($article, ['valueSources' => 'query']);
         $result = $this->Form->control('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '5']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'required', 'id' => 'id', 'value' => '5']],
         ];
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
@@ -8765,7 +8766,7 @@ class FormHelperTest extends TestCase
         $this->Form->create($article, ['valueSources' => 'query']);
         $result = $this->Form->control('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '5']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'required', 'id' => 'id', 'value' => '5']],
         ];
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
@@ -8775,7 +8776,7 @@ class FormHelperTest extends TestCase
         $this->Form->create($article, ['valueSources' => 'data']);
         $result = $this->Form->control('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '4']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'required', 'id' => 'id', 'value' => '4']],
         ];
         $this->assertHtml($expected, $result);
 
@@ -8786,7 +8787,7 @@ class FormHelperTest extends TestCase
         $this->Form->create($article, ['valueSources' => ['context', 'data']]);
         $result = $this->Form->control('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '4']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'required', 'id' => 'id', 'value' => '4']],
         ];
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
@@ -8812,7 +8813,7 @@ class FormHelperTest extends TestCase
             ->create($article, ['valueSources' => ['query', 'data']]);
         $result = $this->Form->control('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '11']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'required', 'id' => 'id', 'value' => '11']],
         ];
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
@@ -8823,7 +8824,7 @@ class FormHelperTest extends TestCase
             ->create($article, ['valueSources' => ['query', 'data']]);
         $result = $this->Form->control('id');
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'id', 'id' => 'id', 'value' => '10']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'required', 'id' => 'id', 'value' => '10']],
         ];
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
