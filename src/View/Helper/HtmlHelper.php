@@ -353,7 +353,11 @@ class HtmlHelper extends Helper
             $title = h(urldecode($title));
             $escapeTitle = false;
         }
-
+        
+        if (isset($options['target']) && !isset($options['rel'])) {
+            $options['rel'] = 'noopener noreferrer';
+        }
+        
         if (isset($options['escapeTitle'])) {
             $escapeTitle = $options['escapeTitle'];
             unset($options['escapeTitle']);
