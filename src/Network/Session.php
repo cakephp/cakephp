@@ -356,7 +356,7 @@ class Session
      */
     public function check($name = null)
     {
-        if ($this->_hasSession() && !$this->started()) {
+        if ($this->_checkTimeoutSession()) {
             $this->start();
         }
 
@@ -376,7 +376,7 @@ class Session
      */
     public function read($name = null)
     {
-        if ($this->_hasSession() && !$this->started()) {
+        if ($this->_checkTimeoutSession()) {
             $this->start();
         }
 
@@ -501,7 +501,7 @@ class Session
      */
     public function destroy()
     {
-        if ($this->_hasSession() && !$this->started()) {
+        if ($this->_checkTimeoutSession()) {
             $this->start();
         }
 
@@ -541,6 +541,19 @@ class Session
             || $this->_isCLI;
     }
 
+    /**
+     * Returns checking session is timeout
+     *
+     * @return bool
+     */
+    protected function _checkTimeoutSession()
+    {
+        if ($this->_hasSession() && !$this->started()) {
+            return true;
+        }
+        
+        return false;
+    }
     /**
      * Restarts this session.
      *
