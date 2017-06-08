@@ -95,6 +95,40 @@ class CacheTest extends TestCase
     }
 
     /**
+     * tests Cache::engine() fallback when using groups
+     *
+     * @return void
+     */
+    public function testCacheFallbackWithGroups()
+    {
+        $filename = tempnam(TMP, 'tmp_');
+
+        Cache::setConfig('tests', [
+            'engine' => 'File',
+            'path' => $filename,
+            'prefix' => 'test_',
+            'fallback' => 'tests_fallback',
+            'groups' => ['group1', 'group2'],
+        ]);
+        Cache::setConfig('tests_fallback', [
+            'engine' => 'File',
+            'path' => TMP,
+            'prefix' => 'test_',
+            'groups' => ['group3', 'group1'],
+        ]);
+
+        $result = Cache::groupConfigs('group1');
+        $this->assertSame(['group1' => ['tests', 'tests_fallback']], $result);
+
+        $result = Cache::groupConfigs('group2');
+        $this->assertSame(['group2' => ['tests']], $result);
+
+        Cache::drop('tests');
+        Cache::drop('tests_fallback');
+        unlink($filename);
+    }
+
+    /**
      * tests cache fallback
      *
      * @return void
@@ -108,22 +142,27 @@ class CacheTest extends TestCase
             'path' => $filename,
             'prefix' => 'test_',
             'fallback' => 'tests_fallback',
+            'groups' => ['integration_group']
         ]);
         Cache::setConfig('tests_fallback', [
             'engine' => 'File',
             'path' => $filename,
-            'prefix' => 'test_',
+            'prefix' => 'test_fallback_',
             'fallback' => 'tests_fallback_final',
         ]);
         Cache::setConfig('tests_fallback_final', [
             'engine' => 'File',
             'path' => TMP,
-            'prefix' => 'test_',
+            'prefix' => 'test_fallback_final_',
         ]);
 
         $this->assertTrue(Cache::write('fallback', 'worked', 'tests'));
         $this->assertSame('worked', Cache::read('fallback', 'tests'));
         $this->assertTrue(Cache::delete('fallback', 'tests'));
+
+        $this->assertTrue(Cache::write('fallback_grouped', 'worked', 'tests'));
+        $this->assertTrue(Cache::clearGroup('integration_group', 'tests'));
+        $this->assertFalse(Cache::read('fallback_grouped', 'tests'));
 
         Cache::drop('tests');
         Cache::drop('tests_fallback');
@@ -382,12 +421,13 @@ class CacheTest extends TestCase
             'groups' => ['posts', 'comments'],
         ]);
 
-        $expected = [
-            'posts' => ['latest'],
-            'comments' => ['latest'],
-        ];
         $result = Cache::groupConfigs();
-        $this->assertEquals($expected, $result);
+
+        $this->assertArrayHasKey('posts', $result);
+        $this->assertContains('latest', $result['posts']);
+
+        $this->assertArrayHasKey('comments', $result);
+        $this->assertContains('latest', $result['comments']);
 
         $result = Cache::groupConfigs('posts');
         $this->assertEquals(['posts' => ['latest']], $result);
@@ -399,12 +439,18 @@ class CacheTest extends TestCase
         ]);
 
         $result = Cache::groupConfigs();
-        $expected = [
-            'posts' => ['latest', 'page'],
-            'comments' => ['latest'],
-            'archive' => ['page']
-        ];
-        $this->assertEquals($expected, $result);
+
+        $this->assertArrayHasKey('posts', $result);
+        $this->assertContains('latest', $result['posts']);
+        $this->assertContains('page', $result['posts']);
+
+        $this->assertArrayHasKey('comments', $result);
+        $this->assertContains('latest', $result['comments']);
+        $this->assertNotContains('page', $result['comments']);
+
+        $this->assertArrayHasKey('archive', $result);
+        $this->assertContains('page', $result['archive']);
+        $this->assertNotContains('latest', $result['archive']);
 
         $result = Cache::groupConfigs('archive');
         $this->assertEquals(['archive' => ['page']], $result);

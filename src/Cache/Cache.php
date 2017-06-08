@@ -175,10 +175,10 @@ class Cache
             if (!array_key_exists('fallback', $config)) {
                 throw $e;
             }
-            $fallbackEngine = static::engine($config['fallback']);
-            static::getRegistry()->set($name, $fallbackEngine);
-
-            return;
+            $fallbackEngine = clone static::engine($config['fallback']);
+            $copyableConfig = ['groups' => null, 'prefix' => null];
+            $fallbackEngine->init(array_intersect_key($config, $copyableConfig));
+            $registry->set($name, $fallbackEngine);
         }
 
         if ($config['className'] instanceof CacheEngine) {
