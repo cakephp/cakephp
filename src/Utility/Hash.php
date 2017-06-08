@@ -139,6 +139,9 @@ class Hash
         }
 
         if (strpos($path, '[') === false) {
+            if (is_array($data) && preg_match('|^\{n\}\.(\w+)$|', $path, $matches)) {
+                return array_column($data, $matches[1]);
+            }
             $tokens = explode('.', $path);
         } else {
             $tokens = Text::tokenize($path, '.', '[', ']');
