@@ -208,7 +208,8 @@ class CookieCollectionTest extends TestCase
         $response = (new Response())
             ->withAddedHeader('Set-Cookie', 'test=value')
             ->withAddedHeader('Set-Cookie', 'expiring=soon; Expires=Wed, 09-Jun-2021 10:18:14 GMT; Path=/; HttpOnly; Secure;')
-            ->withAddedHeader('Set-Cookie', 'session=123abc; Domain=www.example.com');
+            ->withAddedHeader('Set-Cookie', 'session=123abc; Domain=www.example.com')
+            ->withAddedHeader('Set-Cookie', 'maxage=value; Max-Age=60; Expires=Wed, 09-Jun-2021 10:18:14 GMT;');
         $new = $collection->addFromResponse($response, $request);
         $this->assertNotSame($new, $collection, 'Should clone collection');
 
@@ -218,6 +219,7 @@ class CookieCollectionTest extends TestCase
         $this->assertSame('value', $new->get('test')->getValue());
         $this->assertSame('123abc', $new->get('session')->getValue());
         $this->assertSame('soon', $new->get('expiring')->getValue());
+        $this->assertSame('value', $new->get('maxage')->getValue());
 
         $this->assertSame('/app', $new->get('test')->getPath(), 'cookies should inherit request path');
         $this->assertSame('/', $new->get('expiring')->getPath(), 'path attribute should be used.');
@@ -231,6 +233,13 @@ class CookieCollectionTest extends TestCase
         $session = $new->get('session');
         $this->assertNull($session->getExpiry(), 'No expiry');
         $this->assertSame('www.example.com', $session->getDomain(), 'Has domain');
+
+        $maxage = $new->get('maxage');
+        $this->assertLessThanOrEqual(
+            (new DateTime('60 seconds'))->format('Y-m-d H:i:s'),
+            $maxage->getExpiry()->format('Y-m-d H:i:s'),
+            'Has max age'
+        );
     }
 
     /**
