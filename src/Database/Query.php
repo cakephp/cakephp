@@ -1703,6 +1703,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             $clauses = implode(', ', array_keys($this->_parts));
             throw new InvalidArgumentException("The '$name' clause is not defined. Valid clauses are: $clauses");
         }
+
         return $this->_parts[$name];
     }
 
