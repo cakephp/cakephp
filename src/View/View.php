@@ -315,6 +315,7 @@ class View implements EventDispatcherInterface
      * @param \Cake\Event\EventManager|null $eventManager Event manager instance.
      * @param array $viewOptions View options. See View::$_passedVars for list of
      *   options which get set as class properties.
+     * @triggers View.initialize $this
      */
     public function __construct(
         ServerRequest $request = null,
@@ -347,6 +348,7 @@ class View implements EventDispatcherInterface
         }
         $this->Blocks = new ViewBlock();
         $this->initialize();
+        $this->dispatchEvent('View.initialize');
         $this->loadHelpers();
     }
 
