@@ -327,4 +327,20 @@ class AssociationCollection implements IteratorAggregate
     {
         return new ArrayIterator($this->_items);
     }
+
+    /**
+     * Get the names of all the associations in the collection.
+     *
+     * @return array
+     */
+    public function getNames()
+    {
+        $return = [];
+
+        foreach ($this->_items as $item) {
+            $return[] = $item->name();
+        }
+
+        return $return;
+    }
 }
