@@ -1653,7 +1653,7 @@ class Model extends CakeObject implements CakeEventListener {
  * @link http://book.cakephp.org/2.0/en/models/retrieving-your-data.html#model-field
  */
 	public function field($name, $conditions = null, $order = null) {
-		if ($conditions === null && !in_array($this->id, [false, null], true)) {
+		if ($conditions === null && !in_array($this->id, array(false, null), true)) {
 			$conditions = array($this->alias . '.' . $this->primaryKey => $this->id);
 		}
 
