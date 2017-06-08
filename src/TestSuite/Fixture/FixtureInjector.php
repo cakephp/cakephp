@@ -81,7 +81,7 @@ class FixtureInjector implements TestListener
      */
     public function startTestSuite(TestSuite $suite)
     {
-        if (empty($this->_first)) {
+        if (null === $this->_first) {
             $this->_first = $suite;
         }
     }

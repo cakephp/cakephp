@@ -1001,7 +1001,7 @@ abstract class IntegrationTestCase extends TestCase
      */
     public function assertSession($expected, $path, $message = '')
     {
-        if (empty($this->_requestSession)) {
+        if (null === $this->_requestSession) {
             $this->fail('There is no stored session data. Perhaps you need to run a request?');
         }
         $result = $this->_requestSession->read($path);

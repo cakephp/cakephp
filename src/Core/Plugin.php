@@ -157,7 +157,7 @@ class Plugin
         static::$_plugins[$plugin] = $config;
 
         if ($config['autoload'] === true) {
-            if (empty(static::$_loader)) {
+            if (null === static::$_loader) {
                 static::$_loader = new ClassLoader();
                 static::$_loader->register();
             }

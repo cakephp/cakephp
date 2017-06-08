@@ -173,7 +173,7 @@ class Stream
     protected function _buildContent(Request $request, $options)
     {
         $body = $request->getBody();
-        if (empty($body)) {
+        if (null === $body) {
             $this->_contextOptions['content'] = '';
 
             return;

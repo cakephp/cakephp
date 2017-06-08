@@ -26,7 +26,7 @@ class UnauthorizedException extends HttpException
      */
     public function __construct($message = null, $code = 401)
     {
-        if (empty($message)) {
+        if (null === $message) {
             $message = 'Unauthorized';
         }
         parent::__construct($message, $code);

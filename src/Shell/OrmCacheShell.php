@@ -43,7 +43,7 @@ class OrmCacheShell extends Shell
             return false;
         }
         $tables = [$name];
-        if (empty($name)) {
+        if (null === $name) {
             $tables = $schema->listTables();
         }
         foreach ($tables as $table) {
@@ -68,7 +68,7 @@ class OrmCacheShell extends Shell
             return false;
         }
         $tables = [$name];
-        if (empty($name)) {
+        if (null === $name) {
             $tables = $schema->listTables();
         }
         $configName = $schema->getCacheMetadata();

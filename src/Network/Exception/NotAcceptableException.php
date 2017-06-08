@@ -26,7 +26,7 @@ class NotAcceptableException extends HttpException
      */
     public function __construct($message = null, $code = 406)
     {
-        if (empty($message)) {
+        if (null === $message) {
             $message = 'Not Acceptable';
         }
         parent::__construct($message, $code);

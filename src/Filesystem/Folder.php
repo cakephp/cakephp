@@ -135,7 +135,7 @@ class Folder
      */
     public function __construct($path = null, $create = false, $mode = false)
     {
-        if (empty($path)) {
+        if (null === $path) {
             $path = TMP;
         }
         if ($mode) {
@@ -148,7 +148,7 @@ class Folder
         if (!Folder::isAbsolute($path)) {
             $path = realpath($path);
         }
-        if (!empty($path)) {
+        if (null !== $path) {
             $this->cd($path);
         }
     }

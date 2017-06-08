@@ -133,14 +133,14 @@ class ExceptionRenderer implements ExceptionRendererInterface
         // Retry RequestHandler, as another aspect of startupProcess()
         // could have failed. Ignore any exceptions out of startup, as
         // there could be userland input data parsers.
-        if ($startup === false && !empty($controller) && isset($controller->RequestHandler)) {
+        if ($startup === false && null !== $controller && isset($controller->RequestHandler)) {
             try {
                 $event = new Event('Controller.startup', $controller);
                 $controller->RequestHandler->startup($event);
             } catch (Exception $e) {
             }
         }
-        if (empty($controller)) {
+        if (null === $controller) {
             $controller = new Controller($request, $response);
         }
 

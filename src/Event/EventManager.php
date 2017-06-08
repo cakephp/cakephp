@@ -83,7 +83,7 @@ class EventManager
         if ($manager instanceof EventManager) {
             static::$_generalManager = $manager;
         }
-        if (empty(static::$_generalManager)) {
+        if (null === static::$_generalManager) {
             static::$_generalManager = new static();
         }
 
@@ -336,10 +336,10 @@ class EventManager
     protected function _detachSubscriber(EventListenerInterface $subscriber, $eventKey = null)
     {
         $events = (array)$subscriber->implementedEvents();
-        if (!empty($eventKey) && empty($events[$eventKey])) {
+        if (null !== $eventKey && empty($events[$eventKey])) {
             return;
         }
-        if (!empty($eventKey)) {
+        if (null !== $eventKey) {
             $events = [$eventKey => $events[$eventKey]];
         }
         foreach ($events as $key => $function) {

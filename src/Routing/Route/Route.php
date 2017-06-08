@@ -158,7 +158,7 @@ class Route
      */
     public function compiled()
     {
-        return !empty($this->_compiledRoute);
+        return null !== $this->_compiledRoute;
     }
 
     /**
@@ -189,7 +189,7 @@ class Route
      */
     protected function _writeRoute()
     {
-        if (empty($this->template) || ($this->template === '/')) {
+        if (null === $this->template || ($this->template === '/')) {
             $this->_compiledRoute = '#^/*$#';
             $this->keys = [];
 
@@ -252,7 +252,7 @@ class Route
      */
     public function getName()
     {
-        if (!empty($this->_name)) {
+        if (null !== $this->_name) {
             return $this->_name;
         }
         $name = '';
@@ -314,7 +314,7 @@ class Route
      */
     public function parse($url, $method = '')
     {
-        if (empty($this->_compiledRoute)) {
+        if (null === $this->_compiledRoute) {
             $this->compile();
         }
         list($url, $ext) = $this->_parseExtension($url);
@@ -476,7 +476,7 @@ class Route
      */
     public function match(array $url, array $context = [])
     {
-        if (empty($this->_compiledRoute)) {
+        if (null === $this->_compiledRoute) {
             $this->compile();
         }
         $defaults = $this->defaults;

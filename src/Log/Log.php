@@ -173,7 +173,7 @@ class Log
      */
     protected static function _init()
     {
-        if (empty(static::$_registry)) {
+        if (null === static::$_registry) {
             static::$_registry = new LogEngineRegistry();
         }
         if (static::$_dirtyConfig) {

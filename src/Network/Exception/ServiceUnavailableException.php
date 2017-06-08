@@ -26,7 +26,7 @@ class ServiceUnavailableException extends HttpException
      */
     public function __construct($message = null, $code = 503)
     {
-        if (empty($message)) {
+        if (null === $message) {
             $message = 'Service Unavailable';
         }
         parent::__construct($message, $code);
