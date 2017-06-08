@@ -298,7 +298,7 @@ class RouteCollection
                 throw new MissingRouteException([
                     'url' => $name,
                     'context' => $context,
-                    'message' => 'A named route was found for "%s", but matching failed.',
+                    'message' => sprintf('A named route was found for "%s", but matching failed.', $name),
                 ]);
             }
             throw new MissingRouteException(['url' => $name, 'context' => $context]);
