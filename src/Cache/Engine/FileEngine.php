@@ -427,7 +427,8 @@ class FileEngine extends CacheEngine
             //@codingStandardsIgnoreEnd
         }
 
-        if ($success && $this->_init && !($dir->isDir() && $dir->isWritable())) {
+        $isWritableDir = ($dir->isDir() && $dir->isWritable());
+        if (!$success || ($this->_init && !$isWritableDir)) {
             $this->_init = false;
             trigger_error(sprintf(
                 '%s is not writable',
