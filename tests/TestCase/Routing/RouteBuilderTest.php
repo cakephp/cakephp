@@ -127,7 +127,7 @@ class RouteBuilderTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/l', ['prefix' => 'api']);
 
         $route = new Route('/:controller');
-        $this->assertNull($routes->connect($route));
+        $this->assertSame($route, $routes->connect($route));
 
         $result = $this->collection->routes()[0];
         $this->assertSame($route, $result);
@@ -142,10 +142,10 @@ class RouteBuilderTest extends TestCase
     {
         $routes = new RouteBuilder($this->collection, '/l', ['prefix' => 'api']);
 
-        $this->assertNull($routes->connect('/:controller'));
-        $route = $this->collection->routes()[0];
-
+        $route = $routes->connect('/:controller');
         $this->assertInstanceOf(Route::class, $route);
+
+        $this->assertSame($route, $this->collection->routes()[0]);
         $this->assertEquals('/l/:controller', $route->template);
         $expected = ['prefix' => 'api', 'action' => 'index', 'plugin' => null];
         $this->assertEquals($expected, $route->defaults);

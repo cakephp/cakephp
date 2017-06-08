@@ -592,7 +592,7 @@ class RouteBuilder
      *   element should match. Also contains additional parameters such as which routed parameters should be
      *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
      *   custom routing class.
-     * @return void
+     * @return \Cake\Routing\Route\Route
      * @throws \InvalidArgumentException
      * @throws \BadMethodCallException
      */
@@ -615,6 +615,8 @@ class RouteBuilder
 
         $route = $this->_makeRoute($route, $defaults, $options);
         $this->_collection->add($route, $options);
+
+        return $route;
     }
 
     /**
