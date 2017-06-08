@@ -1592,6 +1592,15 @@ class EntityTest extends TestCase
             'body' => 'einstein'
         ], $entity->getInvalid());
 
+        $set = $entity->setInvalid([
+            'title' => 'nikola',
+            'body' => 'tesla'
+        ]);
+        $this->assertSame([
+            'title' => 'albert',
+            'body' => 'einstein'
+        ], $set->getInvalid());
+
         $overwrite = $entity->setInvalid([
             'title' => 'nikola',
             'body' => 'tesla'
