@@ -71,9 +71,11 @@ class CacheTest extends TestCase
      */
     public function testCacheEngineFallback()
     {
+        $filename = tempnam(TMP, 'tmp_');
+
         Cache::setConfig('tests', [
             'engine' => 'File',
-            'path' => DS . 'missing_dir',
+            'path' => $filename,
             'prefix' => 'test_',
             'fallback' => 'tests_fallback'
         ]);
@@ -89,6 +91,7 @@ class CacheTest extends TestCase
 
         Cache::drop('tests');
         Cache::drop('tests_fallback');
+        unlink($filename);
     }
 
     /**
@@ -98,15 +101,17 @@ class CacheTest extends TestCase
      */
     public function testCacheFallbackIntegration()
     {
+        $filename = tempnam(TMP, 'tmp_');
+
         Cache::setConfig('tests', [
             'engine' => 'File',
-            'path' => DS . 'unwritable_dir',
+            'path' => $filename,
             'prefix' => 'test_',
             'fallback' => 'tests_fallback',
         ]);
         Cache::setConfig('tests_fallback', [
             'engine' => 'File',
-            'path' => DS . 'still_unwritable_dir',
+            'path' => $filename,
             'prefix' => 'test_',
             'fallback' => 'tests_fallback_final',
         ]);
@@ -123,6 +128,7 @@ class CacheTest extends TestCase
         Cache::drop('tests');
         Cache::drop('tests_fallback');
         Cache::drop('tests_fallback_final');
+        unlink($filename);
     }
 
     /**
