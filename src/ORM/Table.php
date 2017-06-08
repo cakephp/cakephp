@@ -20,6 +20,7 @@ use Cake\Core\App;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Type;
 use Cake\Datasource\ConnectionInterface;
+use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\RepositoryInterface;
@@ -172,6 +173,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @var \Cake\Datasource\ConnectionInterface
      */
     protected $_connection;
+
+    /**
+     * Connection configure name stored in serialization.
+     *
+     * @var string
+     */
+    protected $_connectionName;
 
     /**
      * The schema object containing a description of this table fields
@@ -2719,5 +2727,37 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'defaultConnection' => static::defaultConnectionName(),
             'connectionName' => $conn ? $conn->configName() : null
         ];
+    }
+
+    /**
+     * Returns properties to be serialized.
+     *
+     * All properties are returned with an exception of `_connection` property.
+     * Connection config name is returned instead as `_connectionName` property.
+     *
+     * @return array
+     */
+    public function __sleep()
+    {
+        if ($this->_connection !== null) {
+            $this->_connectionName = $this->_connection->configName();
+        }
+
+        $properties = array_diff(array_keys(get_object_vars($this)), ['_connection']);
+
+        return $properties;
+    }
+
+    /**
+     * Instantiates the connection based on `_connectionName` property.
+     *
+     * @return void
+     */
+    public function __wakeup()
+    {
+        if ($this->_connectionName !== null) {
+            $this->_connection = ConnectionManager::get($this->_connectionName);
+            $this->_connectionName = null;
+        }
     }
 }

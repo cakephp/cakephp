@@ -6512,4 +6512,21 @@ class TableTest extends TestCase
             'SQLServer does not support the requirements of this test.'
         );
     }
+
+    /**
+     * Test __sleep() and __wakeup() methods.
+     *
+     * @return void
+     */
+    public function testSerialize()
+    {
+        $table = TableRegistry::get('Authors');
+
+        $serialized = serialize($table);
+        $unserialized = unserialize($serialized);
+
+        $this->assertInstanceOf(Table::class, $unserialized);
+        $this->assertEquals($table->getAlias(), $unserialized->getAlias());
+        $this->assertSame($table->getConnection(), $unserialized->getConnection());
+    }
 }
