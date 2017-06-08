@@ -58,7 +58,7 @@ trait TypeMapTrait
      *
      * @deprecated 3.4.0 Use setTypeMap()/getTypeMap() instead.
      * @param array|\Cake\Database\TypeMap|null $typeMap Creates a TypeMap if array, otherwise sets the given TypeMap
-     * @return $this|\Cake\Database\TypeMap
+     * @return TypeMap|TypeMapTrait
      */
     public function typeMap($typeMap = null)
     {
@@ -97,7 +97,7 @@ trait TypeMapTrait
      *
      * @deprecated 3.4.0 Use setDefaultTypes()/getDefaultTypes() instead.
      * @param array|null $types The array of types to set.
-     * @return $this|array
+     * @return array|TypeMapTrait
      */
     public function defaultTypes(array $types = null)
     {

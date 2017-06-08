@@ -177,7 +177,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @deprecated 3.4.0 Use setConnection()/getConnection() instead.
      * @param \Cake\Datasource\ConnectionInterface|null $connection Connection instance
-     * @return $this|\Cake\Datasource\ConnectionInterface
+     * @return Query|\Cake\Datasource\ConnectionInterface
      */
     public function connection($connection = null)
     {
@@ -1816,7 +1816,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param \Cake\Database\ValueBinder|null $binder new instance to be set. If no value is passed the
      *   default one will be returned
-     * @return $this|\Cake\Database\ValueBinder
+     * @return Query|ValueBinder
      */
     public function valueBinder($binder = null)
     {
@@ -1885,7 +1885,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @deprecated 3.4.0 Use enableBufferedResults()/isBufferedResultsEnabled() instead.
      * @param bool|null $enable Whether or not to enable buffering
-     * @return bool|$this
+     * @return bool|Query
      */
     public function bufferResults($enable = null)
     {
@@ -1932,7 +1932,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @deprecated 3.4.0 Use setSelectTypeMap()/getSelectTypeMap() instead.
      * @param \Cake\Database\TypeMap|null $typeMap The map object to use
-     * @return $this|\Cake\Database\TypeMap
+     * @return Query|TypeMap
      */
     public function selectTypeMap(TypeMap $typeMap = null)
     {

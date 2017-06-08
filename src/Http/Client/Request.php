@@ -83,7 +83,8 @@ class Request extends Message implements RequestInterface
      * compatibility reasons, and is not part of the PSR7 interface.
      *
      * @param string|null $url The url for the request. Leave null for get
-     * @return $this|string Either $this or the url value.
+     * @return Request|string Either $this or the url value.
+     * @throws \InvalidArgumentException
      * @deprecated 3.3.0 Use getUri() and withUri() instead.
      */
     public function url($url = null)
@@ -209,7 +210,7 @@ class Request extends Message implements RequestInterface
      * compatibility reasons, and is not part of the PSR7 interface.
      *
      * @param string|null $version The HTTP version.
-     * @return $this|string Either $this or the HTTP version.
+     * @return Request|string Either $this or the HTTP version.
      * @deprecated 3.3.0 Use getProtocolVersion() and withProtocolVersion() instead.
      */
     public function version($version = null)
