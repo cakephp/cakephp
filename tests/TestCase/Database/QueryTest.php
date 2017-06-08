@@ -4330,6 +4330,20 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test that reading an undefined clause does not emit an error.
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The 'nope' clause is not defined. Valid clauses are: delete, update
+     * @return void
+     */
+    public function testClauseUndefined()
+    {
+        $query = new Query($this->connection);
+        $this->assertEmpty($query->clause('where'));
+        $query->clause('nope');
+    }
+
+    /**
      * Assertion for comparing a table's contents with what is in it.
      *
      * @param string $table
