@@ -7041,6 +7041,12 @@ class ModelReadTest extends BaseModelTest {
 
 		$result = $TestModel->field('COUNT(*)', true);
 		$this->assertEquals(4, $result);
+
+		$TestModel->id = null;
+		$result = $TestModel->field('user', array(
+			'user' => 'mariano'
+		));
+		$this->assertEquals('mariano', $result);
 	}
 
 /**
