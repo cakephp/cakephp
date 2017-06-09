@@ -173,7 +173,9 @@ class Cache
             $registry->load($name, $config);
         } catch (RuntimeException $e) {
             if (!array_key_exists('fallback', $config)) {
-                throw $e;
+                $registry->set($name, new NullEngine());
+                trigger_error($e->getMessage(), E_USER_WARNING);
+                return;
             }
             $fallbackEngine = clone static::engine($config['fallback']);
             $copyableConfig = ['groups' => null, 'prefix' => null];

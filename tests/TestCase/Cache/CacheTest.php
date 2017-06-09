@@ -17,9 +17,11 @@ namespace Cake\Test\TestCase\Cache;
 use Cake\Cache\Cache;
 use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
+use Cake\Cache\Engine\NullEngine;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Error\Error;
 
 /**
  * CacheTest class
@@ -196,39 +198,43 @@ class CacheTest extends TestCase
         Cache::disable();
 
         $result = Cache::engine('tests');
-        $this->assertInstanceOf('Cake\Cache\Engine\NullEngine', $result);
+        $this->assertInstanceOf(NullEngine::class, $result);
     }
 
     /**
      * Test configuring an invalid class fails
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cache engines must use Cake\Cache\CacheEngine
      * @return void
      */
     public function testConfigInvalidClassType()
     {
+        $this->expectException(Error::class);
+        $this->expectExceptionMessage('Cache engines must use Cake\Cache\CacheEngine');
+
         Cache::setConfig('tests', [
             'className' => '\StdClass'
         ]);
-        Cache::engine('tests');
+        $result = Cache::engine('tests');
+        $this->assertInstanceOf(NullEngine::class, $result);
     }
 
     /**
-     * Test engine init failing causes an error
+     * Test engine init failing triggers an error but falls back to NullEngine
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage not properly configured
      * @return void
      */
     public function testConfigFailedInit()
     {
+        $this->expectException(Error::class);
+        $this->expectExceptionMessage('is not properly configured');
+
         $mock = $this->getMockForAbstractClass('Cake\Cache\CacheEngine', [], '', true, true, true, ['init']);
         $mock->method('init')->will($this->returnValue(false));
         Cache::setConfig('tests', [
             'engine' => $mock
         ]);
-        Cache::engine('tests');
+        $result = Cache::engine('tests');
+        $this->assertInstanceOf(NullEngine::class, $result);
     }
 
     /**
