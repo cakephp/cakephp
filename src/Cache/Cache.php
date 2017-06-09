@@ -175,6 +175,7 @@ class Cache
             if (!array_key_exists('fallback', $config)) {
                 $registry->set($name, new NullEngine());
                 trigger_error($e->getMessage(), E_USER_WARNING);
+
                 return;
             }
             $fallbackEngine = clone static::engine($config['fallback']);
