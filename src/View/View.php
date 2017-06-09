@@ -197,7 +197,7 @@ class View implements EventDispatcherInterface
      *
      * @var array
      */
-    public $uuIds = [];
+    public $uuids = [];
 
     /**
      * An instance of a \Cake\Http\ServerRequest object that contains information about the current request.
@@ -299,6 +299,13 @@ class View implements EventDispatcherInterface
      * @var string
      */
     const TYPE_ELEMENT = 'element';
+
+    /**
+     * Constant for name of view file 'Element'
+     *
+     * @var string
+     */
+    const NAME_ELEMENT = 'Element';
 
     /**
      * Constant for view file type 'layout'
@@ -509,7 +516,7 @@ class View implements EventDispatcherInterface
         if (empty($options['ignoreMissing'])) {
             list ($plugin, $name) = pluginSplit($name, true);
             $name = str_replace('/', DIRECTORY_SEPARATOR, $name);
-            $file = $plugin . ucfirst(static::TYPE_ELEMENT) . DIRECTORY_SEPARATOR . $name . $this->_ext;
+            $file = $plugin . static::NAME_ELEMENT . DIRECTORY_SEPARATOR . $name . $this->_ext;
             throw new MissingElementException([$file]);
         }
     }
@@ -837,7 +844,7 @@ class View implements EventDispatcherInterface
                     if (!$parent) {
                         list($plugin, $name) = $this->pluginSplit($name);
                         $paths = $this->_paths($plugin);
-                        $defaultPath = $paths[0] . ucfirst(static::TYPE_ELEMENT) . DIRECTORY_SEPARATOR;
+                        $defaultPath = $paths[0] . static::NAME_ELEMENT . DIRECTORY_SEPARATOR;
                         throw new LogicException(sprintf(
                             'You cannot extend an element which does not exist (%s).',
                             $defaultPath . $name . $this->_ext
@@ -873,11 +880,11 @@ class View implements EventDispatcherInterface
         $c = 1;
         $url = Router::url($url);
         $hash = $object . substr(md5($object . $url), 0, 10);
-        while (in_array($hash, $this->uuIds)) {
+        while (in_array($hash, $this->uuids)) {
             $hash = $object . substr(md5($object . $url . $c), 0, 10);
             $c++;
         }
-        $this->uuIds[] = $hash;
+        $this->uuids[] = $hash;
 
         return $hash;
     }
@@ -1207,7 +1214,7 @@ class View implements EventDispatcherInterface
         list($plugin, $name) = $this->pluginSplit($name, $pluginCheck);
 
         $paths = $this->_paths($plugin);
-        $elementPaths = $this->_getSubPaths(ucfirst(static::TYPE_ELEMENT));
+        $elementPaths = $this->_getSubPaths(static::NAME_ELEMENT);
 
         foreach ($paths as $path) {
             foreach ($elementPaths as $elementPath) {
