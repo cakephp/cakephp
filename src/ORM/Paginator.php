@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.4.8
+ * @since         3.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\ORM;
@@ -21,14 +21,7 @@ use Cake\ORM\Exception\PageOutOfBoundsException;
 use Cake\Utility\Hash;
 
 /**
- * This component is used to handle automatic model data pagination. The primary way to use this
- * component is to call the paginate() method. There is a convenience wrapper on Controller as well.
- *
- * ### Configuring pagination
- *
- * You configure pagination when calling paginate(). See that method for more details.
- *
- * @link http://book.cakephp.org/3.0/en/controllers/components/pagination.html
+ * This class is used to handle automatic model data pagination.
  */
 class Paginator
 {
@@ -68,11 +61,13 @@ class Paginator
      *
      * ### Configuring pagination
      *
-     * When calling `paginate()` you can use the $settings parameter to pass in pagination settings.
-     * These settings are used to build the queries made and control other pagination settings.
+     * When calling `paginate()` you can use the $settings parameter to pass in
+     * pagination settings. These settings are used to build the queries made
+     * and control other pagination settings.
      *
-     * If your settings contain a key with the current table's alias. The data inside that key will be used.
-     * Otherwise the top level configuration will be used.
+     * If your settings contain a key with the current table's alias. The data
+     * inside that key will be used. Otherwise the top level configuration will
+     * be used.
      *
      * ```
      *  $settings = [
@@ -82,8 +77,8 @@ class Paginator
      *  $results = $paginator->paginate($table, $settings);
      * ```
      *
-     * The above settings will be used to paginate any Table. You can configure Table specific settings by
-     * keying the settings with the Table alias.
+     * The above settings will be used to paginate any repository. You can configure
+     * repository specific settings by keying the settings with the repository alias.
      *
      * ```
      *  $settings = [
@@ -96,13 +91,15 @@ class Paginator
      *  $results = $paginator->paginate($table, $settings);
      * ```
      *
-     * This would allow you to have different pagination settings for `Articles` and `Comments` tables.
+     * This would allow you to have different pagination settings for
+     * `Articles` and `Comments` repositories.
      *
      * ### Controlling sort fields
      *
-     * By default CakePHP will automatically allow sorting on any column on the table object being
-     * paginated. Often times you will want to allow sorting on either associated columns or calculated
-     * fields. In these cases you will need to define a whitelist of all the columns you wish to allow
+     * By default CakePHP will automatically allow sorting on any column on the
+     * repository object being paginated. Often times you will want to allow
+     * sorting on either associated columns or calculated fields. In these cases
+     * you will need to define a whitelist of all the columns you wish to allow
      * sorting on. You can define the whitelist in the `$settings` parameter:
      *
      * ```
@@ -118,7 +115,8 @@ class Paginator
      *
      * ### Paginating with custom finders
      *
-     * You can paginate with any find type defined on your table using the `finder` option.
+     * You can paginate with any find type defined on your table using the
+     * `finder` option.
      *
      * ```
      *  $settings = [
@@ -142,7 +140,8 @@ class Paginator
      *
      * ### Scoping Request parameters
      *
-     * By using request parameter scopes you can paginate multiple queries in the same controller action:
+     * By using request parameter scopes you can paginate multiple queries in
+     * the same controller action:
      *
      * ```
      * $articles = $paginator->paginate($articlesQuery, ['scope' => 'articles']);
@@ -179,7 +178,6 @@ class Paginator
         $options['page'] = (int)$options['page'] < 1 ? 1 : (int)$options['page'];
         list($finder, $options) = $this->_extractFinder($options);
 
-        /* @var \Cake\Datasource\RepositoryInterface $object */
         if (empty($query)) {
             $query = $object->find($finder, $options);
         } else {
@@ -233,11 +231,11 @@ class Paginator
     }
 
     /**
-     * Extracts the finder name and options out of the provided pagination options
+     * Extracts the finder name and options out of the provided pagination options.
      *
-     * @param array $options the pagination options
-     * @return array An array containing in the first position the finder name and
-     * in the second the options to be passed to it
+     * @param array $options the pagination options.
+     * @return array An array containing in the first position the finder name
+     *   and in the second the options to be passed to it.
      */
     protected function _extractFinder($options)
     {
@@ -263,18 +261,20 @@ class Paginator
     }
 
     /**
-     * Merges the various options that Pagination uses.
+     * Merges the various options that Paginator uses.
      * Pulls settings together from the following places:
      *
      * - General pagination settings
      * - Model specific settings.
      * - Request parameters
      *
-     * The result of this method is the aggregate of all the option sets combined together. You can change
-     * config value `whitelist` to modify which options/values can be set using request parameters.
+     * The result of this method is the aggregate of all the option sets
+     * combined together. You can change config value `whitelist` to modify
+     * which options/values can be set using request parameters.
      *
-     * @param string $alias Model alias being paginated, if the general settings has a key with this value
-     *   that key's settings will be used for pagination instead of the general ones.
+     * @param string $alias Model alias being paginated, if the general settings
+     *   has a key with this value that key's settings will be used for
+     *   pagination instead of the general ones.
      * @param array $params Request params.
      * @param array $settings The settings to merge with the request data.
      * @return array Array of merged options.
@@ -292,12 +292,13 @@ class Paginator
     }
 
     /**
-     * Get the settings for a $model. If there are no settings for a specific model, the general settings
-     * will be used.
+     * Get the settings for a $model. If there are no settings for a specific
+     * repository, the general settings will be used.
      *
      * @param string $alias Model name to get settings for.
      * @param array $settings The settings which is used for combining.
-     * @return array An array of pagination settings for a model, or the general settings.
+     * @return array An array of pagination settings for a model,
+     *   or the general settings.
      */
     public function getDefaults($alias, $settings)
     {
@@ -320,21 +321,27 @@ class Paginator
     }
 
     /**
-     * Validate that the desired sorting can be performed on the $object. Only fields or
-     * virtualFields can be sorted on. The direction param will also be sanitized. Lastly
-     * sort + direction keys will be converted into the model friendly order key.
+     * Validate that the desired sorting can be performed on the $object.
      *
-     * You can use the whitelist parameter to control which columns/fields are available for sorting.
-     * This helps prevent users from ordering large result sets on un-indexed values.
+     * Only fields or virtualFields can be sorted on. The direction param will
+     * also be sanitized. Lastly sort + direction keys will be converted into
+     * the model friendly order key.
      *
-     * If you need to sort on associated columns or synthetic properties you will need to use a whitelist.
+     * You can use the whitelist parameter to control which columns/fields are
+     * available for sorting. This helps prevent users from ordering large
+     * result sets on un-indexed values.
      *
-     * Any columns listed in the sort whitelist will be implicitly trusted. You can use this to sort
-     * on synthetic columns, or columns added in custom find operations that may not exist in the schema.
+     * If you need to sort on associated columns or synthetic properties you
+     * will need to use a whitelist.
+     *
+     * Any columns listed in the sort whitelist will be implicitly trusted.
+     * You can use this to sort on synthetic columns, or columns added in custom
+     * find operations that may not exist in the schema.
      *
      * @param \Cake\Datasource\RepositoryInterface $object Repository object.
      * @param array $options The pagination options being used for this request.
-     * @return array An array of options with sort + direction removed and replaced with order if possible.
+     * @return array An array of options with sort + direction removed and
+     *   replaced with order if possible.
      */
     public function validateSort(RepositoryInterface $object, array $options)
     {
@@ -378,7 +385,7 @@ class Paginator
      *
      * @param \Cake\Datasource\RepositoryInterface $object Repository object.
      * @param array $order Order array.
-     * @param bool $whitelisted Whether or not the field was whitelisted
+     * @param bool $whitelisted Whether or not the field was whitelisted.
      * @return array Final order array.
      */
     protected function _prefix(RepositoryInterface $object, $order, $whitelisted = false)
@@ -418,7 +425,7 @@ class Paginator
      * Check the limit parameter and ensure it's within the maxLimit bounds.
      *
      * @param array $options An array of options with a limit key to be checked.
-     * @return array An array of options for pagination
+     * @return array An array of options for pagination.
      */
     public function checkLimit(array $options)
     {
