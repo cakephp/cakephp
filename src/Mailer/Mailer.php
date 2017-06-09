@@ -249,7 +249,10 @@ abstract class Mailer implements EventListenerInterface
      */
     public function __call($method, $args)
     {
-        $this->_email->$method(...$args);
+        $result = $this->_email->$method(...$args);
+        if (strpos($method, 'get') === 0) {
+            return $result;
+        }
 
         return $this;
     }
