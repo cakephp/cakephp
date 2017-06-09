@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         0.10.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\View;
 
@@ -301,11 +301,25 @@ class View implements EventDispatcherInterface
     const TYPE_ELEMENT = 'element';
 
     /**
+     * Constant for name of view file 'Element'
+     *
+     * @var string
+     */
+    const NAME_ELEMENT = 'Element';
+
+    /**
      * Constant for view file type 'layout'
      *
      * @var string
      */
     const TYPE_LAYOUT = 'layout';
+
+    /**
+     * Constant for template folder  'Template'
+     *
+     * @var string
+     */
+    const NAME_TEMPLATE = 'Template';
 
     /**
      * Constructor
@@ -502,7 +516,7 @@ class View implements EventDispatcherInterface
         if (empty($options['ignoreMissing'])) {
             list ($plugin, $name) = pluginSplit($name, true);
             $name = str_replace('/', DIRECTORY_SEPARATOR, $name);
-            $file = $plugin . 'Element' . DIRECTORY_SEPARATOR . $name . $this->_ext;
+            $file = $plugin . static::NAME_ELEMENT . DIRECTORY_SEPARATOR . $name . $this->_ext;
             throw new MissingElementException([$file]);
         }
     }
@@ -830,7 +844,7 @@ class View implements EventDispatcherInterface
                     if (!$parent) {
                         list($plugin, $name) = $this->pluginSplit($name);
                         $paths = $this->_paths($plugin);
-                        $defaultPath = $paths[0] . 'Element' . DIRECTORY_SEPARATOR;
+                        $defaultPath = $paths[0] . static::NAME_ELEMENT . DIRECTORY_SEPARATOR;
                         throw new LogicException(sprintf(
                             'You cannot extend an element which does not exist (%s).',
                             $defaultPath . $name . $this->_ext
@@ -1200,7 +1214,7 @@ class View implements EventDispatcherInterface
         list($plugin, $name) = $this->pluginSplit($name, $pluginCheck);
 
         $paths = $this->_paths($plugin);
-        $elementPaths = $this->_getSubPaths('Element');
+        $elementPaths = $this->_getSubPaths(static::NAME_ELEMENT);
 
         foreach ($paths as $path) {
             foreach ($elementPaths as $elementPath) {
@@ -1260,17 +1274,17 @@ class View implements EventDispatcherInterface
                 return $this->_pathsForPlugin[$plugin];
             }
         }
-        $templatePaths = App::path('Template');
+        $templatePaths = App::path(static::NAME_TEMPLATE);
         $pluginPaths = $themePaths = [];
         if (!empty($plugin)) {
             for ($i = 0, $count = count($templatePaths); $i < $count; $i++) {
                 $pluginPaths[] = $templatePaths[$i] . 'Plugin' . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR;
             }
-            $pluginPaths = array_merge($pluginPaths, App::path('Template', $plugin));
+            $pluginPaths = array_merge($pluginPaths, App::path(static::NAME_TEMPLATE, $plugin));
         }
 
         if (!empty($this->theme)) {
-            $themePaths = App::path('Template', Inflector::camelize($this->theme));
+            $themePaths = App::path(static::NAME_TEMPLATE, Inflector::camelize($this->theme));
 
             if ($plugin) {
                 for ($i = 0, $count = count($themePaths); $i < $count; $i++) {
@@ -1283,7 +1297,7 @@ class View implements EventDispatcherInterface
             $themePaths,
             $pluginPaths,
             $templatePaths,
-            [dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Template' . DIRECTORY_SEPARATOR]
+            [dirname(__DIR__) . DIRECTORY_SEPARATOR . static::NAME_TEMPLATE . DIRECTORY_SEPARATOR]
         );
 
         if ($plugin !== null) {
