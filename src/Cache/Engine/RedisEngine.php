@@ -240,9 +240,9 @@ class RedisEngine extends CacheEngine
             $value = serialize($value);
         }
 
-        // setnx() doesn't have an expiry option, so overwrite the key with one
+        // setnx() doesn't have an expiry option, so follow up with an expiry
         if ($this->_Redis->setnx($key, $value)) {
-            return $this->_Redis->setex($key, $duration, $value);
+            return $this->_Redis->setTimeout($key, $duration);
         }
 
         return false;
