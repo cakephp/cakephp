@@ -1695,9 +1695,15 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param string $name name of the clause to be returned
      * @return mixed
+     * @throws InvalidArgumentException When the named clause does not exist.
      */
     public function clause($name)
     {
+        if (!array_key_exists($name, $this->_parts)) {
+            $clauses = implode(', ', array_keys($this->_parts));
+            throw new InvalidArgumentException("The '$name' clause is not defined. Valid clauses are: $clauses");
+        }
+
         return $this->_parts[$name];
     }
 

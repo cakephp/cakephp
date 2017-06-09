@@ -18,7 +18,7 @@ use InvalidArgumentException;
 use PDO;
 
 /**
- * Represents a database diver containing all specificities for
+ * Represents a database driver containing all specificities for
  * a database engine including its SQL dialect
  */
 abstract class Driver
@@ -70,7 +70,7 @@ abstract class Driver
     /**
      * Establishes a connection to the database server
      *
-     * @return bool true con success
+     * @return bool true on success
      */
     abstract public function connect();
 
