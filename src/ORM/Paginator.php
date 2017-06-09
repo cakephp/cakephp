@@ -23,7 +23,7 @@ use Cake\Utility\Hash;
 /**
  * This class is used to handle automatic model data pagination.
  */
-class Paginator
+class Paginator implements PaginatorInterface
 {
     use InstanceConfigTrait;
 
