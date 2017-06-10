@@ -168,6 +168,6 @@ Our primary goal is to provide a structured framework that enables PHP users at 
     <ul><li>Join a live session and get skilled with the framework</li></ul></li>
     <li><a href="http://cakefest.org">CakeFest </a>
     <ul><li>Don\'t miss our annual CakePHP conference</li></ul></li>
-    <li><a href="http://cakefoundation.org">Cake Software Foundation </a>
+    <li><a href="https://cakefoundation.org">Cake Software Foundation </a>
     <ul><li>Promoting development related to CakePHP</li></ul></li>
 </ul>
