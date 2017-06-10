@@ -27,11 +27,11 @@ class PageOutOfBoundsException extends Exception
     /**
      * Constructor
      *
-     * @param string|null $message If no message is given 'Page not found.' will be the message
-     * @param int $code Status code, defaults to 404
+     * @param string|null $message The error message.
+     * @param int $code The code of the error, is also the HTTP status code for the error.
      */
-    public function __construct($message = null, $code = 404)
+    public function __construct($message = null, $code = 404, $previous = null)
     {
-        parent::__construct($message, $code);
+        parent::__construct($message, $code, $previous = null);
     }
 }
