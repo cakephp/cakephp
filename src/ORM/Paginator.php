@@ -170,7 +170,8 @@ class Paginator implements PaginatorInterface
         }
 
         $alias = $object->alias();
-        $options = $this->mergeOptions($alias, $params, $settings);
+        $defaults = $this->getDefaults($alias, $settings);
+        $options = $this->mergeOptions($params, $defaults);
         $options = $this->validateSort($object, $options);
         $options = $this->checkLimit($options);
 
@@ -187,9 +188,6 @@ class Paginator implements PaginatorInterface
         $results = $query->all();
         $numResults = count($results);
         $count = $numResults ? $query->count() : 0;
-
-        $defaults = $this->getDefaults($alias, $settings);
-        unset($defaults[0]);
 
         $page = $options['page'];
         $limit = $options['limit'];
@@ -272,23 +270,19 @@ class Paginator implements PaginatorInterface
      * combined together. You can change config value `whitelist` to modify
      * which options/values can be set using request parameters.
      *
-     * @param string $alias Model alias being paginated, if the general settings
-     *   has a key with this value that key's settings will be used for
-     *   pagination instead of the general ones.
      * @param array $params Request params.
      * @param array $settings The settings to merge with the request data.
      * @return array Array of merged options.
      */
-    public function mergeOptions($alias, $params, $settings)
+    public function mergeOptions($params, $settings)
     {
-        $defaults = $this->getDefaults($alias, $settings);
         $scope = Hash::get($settings, 'scope', null);
         if ($scope) {
             $params = Hash::get($params, $scope, []);
         }
         $params = array_intersect_key($params, array_flip($this->config('whitelist')));
 
-        return array_merge($defaults, $params);
+        return array_merge($settings, $params);
     }
 
     /**

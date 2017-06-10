@@ -228,9 +228,8 @@ class PaginatorComponent extends Component
         $request = $this->_registry->getController()->request;
 
         return $this->_paginator->mergeOptions(
-            $alias,
             $request->getQueryParams(),
-            $settings
+            $this->_paginator->getDefaults($alias, $settings)
         );
     }
 
