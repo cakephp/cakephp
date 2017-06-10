@@ -1260,7 +1260,7 @@ class CakeResponse {
  * This method allow multiple ways to setup the domains, see the examples
  *
  * ### Full URI
- * e.g `cors($request, 'http://www.cakephp.org');`
+ * e.g `cors($request, 'https://www.cakephp.org');`
  *
  * ### URI with wildcard
  * e.g `cors($request, 'http://*.cakephp.org');`
@@ -1272,7 +1272,7 @@ class CakeResponse {
  * e.g `cors($request, '*');`
  *
  * ### Whitelist of URIs
- * e.g `cors($request, array('http://www.cakephp.org', '*.google.com', 'https://myproject.github.io'));`
+ * e.g `cors($request, array('https://www.cakephp.org', '*.google.com', 'https://myproject.github.io'));`
  *
  * @param CakeRequest $request Request object
  * @param string|array $allowedDomains List of allowed domains, see method description for more details

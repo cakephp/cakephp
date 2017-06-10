@@ -564,11 +564,11 @@ class HttpSocket extends CakeSocket {
  * URLs.
  *
  * ```
- * $http = new HttpSocket('http://www.cakephp.org');
+ * $http = new HttpSocket('https://www.cakephp.org');
  * $url = $http->url('/search?q=bar');
  * ```
  *
- * Would return `http://www.cakephp.org/search?q=bar`
+ * Would return `https://cakephp.org/search?q=bar`
  *
  * url() can also be used with custom templates:
  *
